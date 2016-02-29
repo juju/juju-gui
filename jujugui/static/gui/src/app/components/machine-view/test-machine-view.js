@@ -1112,10 +1112,12 @@ describe('MachineView', function() {
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
         addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
         createMachine={createMachine}
         destroyMachines={destroyMachines}
         environmentName="My Env"
         units={units}
+        placeUnit={sinon.stub()}
         removeUnits={removeUnits}
         services={services}
         machines={machines} />, true);

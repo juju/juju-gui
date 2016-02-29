@@ -118,7 +118,8 @@ describe('EntityHeader', function() {
       <juju.components.EntityHeader
         entityModel={mockEntity}
         changeState={sinon.spy()}
-        deployService={sinon.spy()} />);
+        deployService={sinon.spy()}
+        scrollPosition={0} />);
     var deployAction = output.refs.deployAction;
     assert.equal(deployAction.props.type, 'confirm');
     assert.equal(deployAction.props.title, 'Add to canvas');
@@ -130,9 +131,9 @@ describe('EntityHeader', function() {
       <juju.components.EntityHeader
         entityModel={mockEntity}
         changeState={sinon.spy()}
-        deployService={sinon.spy()} />);
-    var deployAction = output.refs.deployAction;
-    var textContent = deployAction.props.children;
+        deployService={sinon.spy()}
+        scrollPosition={0} />);
+    var textContent = output.refs.deployAction.innerText;
     assert.equal(textContent, 'This type of charm can only be deployed from ' +
       'the command line.');
   });
@@ -148,7 +149,8 @@ describe('EntityHeader', function() {
         getBundleYAML={getBundleYAML}
         deployService={deployService}
         changeState={changeState}
-        entityModel={mockEntity} />);
+        entityModel={mockEntity}
+        scrollPosition={0}/>);
     var deployAction = output.refs.deployAction;
     // Simulate a click.
     deployAction.props.action();
@@ -168,7 +170,8 @@ describe('EntityHeader', function() {
         getBundleYAML={getBundleYAML}
         deployService={deployService}
         changeState={changeState}
-        entityModel={entity} />);
+        entityModel={entity}
+        scrollPosition={0} />);
     var deployAction = output.refs.deployAction;
     // Simulate a click.
     deployAction.props.action();
@@ -192,7 +195,8 @@ describe('EntityHeader', function() {
         deployService={deployService}
         changeState={changeState}
         entityModel={entity}
-        addNotification={addNotification} />);
+        addNotification={addNotification}
+        scrollPosition={0} />);
     var deployAction = output.refs.deployAction;
     // Simulate a click.
     deployAction.props.action();

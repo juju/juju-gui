@@ -82,7 +82,9 @@ describe('EntityContentRelations', function() {
         changeState={changeState}
         relations={mockEntity.get('relations')} />);
     var expectedLength = Object.keys(provides).length;
-    assert.equal(output.refs.list.props.children.length, expectedLength);
+    assert.equal(
+      output.refs.list.getElementsByClassName('section__list-item').length,
+      expectedLength);
   });
 
   it('can navigate to a relation', function() {
@@ -91,7 +93,8 @@ describe('EntityContentRelations', function() {
       <juju.components.EntityContentRelations
         changeState={changeState}
         relations={mockEntity.get('relations')} />);
-    output.refs.list.props.children[0].props.onClick();
+    var item = output.refs.list.getElementsByClassName('section__list-item')[0];
+    testUtils.Simulate.click(item);
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionC: {

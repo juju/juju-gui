@@ -53,6 +53,7 @@ describe('Inspector', function() {
           service={service}
           destroyService={destroyService}
           getUnitStatusCounts={getUnitStatusCounts}
+          linkify={sinon.stub()}
           clearState={clearState}
           appPreviousState={appPreviousState}
           appState={appState}
@@ -93,6 +94,7 @@ describe('Inspector', function() {
           appState={appState}
           destroyUnits={destroyUnits}
           envResolved={envResolved}
+          linkify={sinon.stub()}
           appPreviousState={appPreviousState}
           changeState={changeStateStub}>
         </juju.components.Inspector>);
@@ -110,7 +112,7 @@ describe('Inspector', function() {
 
   it('displays the configuration when the app state calls for it', function() {
     var setConfig = sinon.stub();
-    var charm = 'charm';
+    var charm = {};
     var getStub = sinon.stub();
     var changeState = sinon.stub();
     var getYAMLConfig = sinon.stub();
@@ -178,6 +180,7 @@ describe('Inspector', function() {
           service={service}
           destroyUnits={destroyUnits}
           changeState={changeState}
+          linkify={sinon.stub()}
           appPreviousState={appPreviousState}
           appState={appState}>
         </juju.components.Inspector>);
@@ -214,6 +217,7 @@ describe('Inspector', function() {
         appState={appState}
         destroyUnits={sinon.stub()}
         envResolved={sinon.stub()}
+        linkify={sinon.stub()}
         appPreviousState={sinon.stub()}
         changeState={changeState} />, true);
     var instance = shallowRenderer.getMountedInstance();
@@ -236,6 +240,7 @@ describe('Inspector', function() {
         appState={appState}
         destroyUnits={sinon.stub()}
         envResolved={sinon.stub()}
+        linkify={sinon.stub()}
         appPreviousState={sinon.stub()}
         changeState={sinon.stub()} />);
     // The displayed component should not have been updated.
@@ -281,6 +286,7 @@ describe('Inspector', function() {
           service={service}
           destroyUnits={destroyUnits}
           changeState={changeState}
+          linkify={sinon.stub()}
           appPreviousState={appPreviousState}
           appState={appState}>
         </juju.components.Inspector>);
@@ -320,6 +326,7 @@ describe('Inspector', function() {
           service={service}
           destroyUnits={destroyUnits}
           changeState={changeState}
+          linkify={sinon.stub()}
           appPreviousState={appPreviousState}
           appState={appState}>
         </juju.components.Inspector>);
@@ -368,6 +375,7 @@ describe('Inspector', function() {
           service={service}
           destroyUnits={destroyUnits}
           changeState={changeState}
+          linkify={sinon.stub()}
           appPreviousState={appPreviousState}
           appState={appState}>
         </juju.components.Inspector>);
@@ -400,6 +408,7 @@ describe('Inspector', function() {
         }}};
     var output = jsTestUtils.shallowRender(
       <juju.components.Inspector
+        linkify={sinon.stub()}
         service={service}
         appPreviousState={appPreviousState}
         appState={appState} />);
@@ -436,6 +445,7 @@ describe('Inspector', function() {
         addNotification={addNotification}
         changeState={changeState}
         exposeService={exposeService}
+        linkify={sinon.stub()}
         unexposeService={unexposeService}
         service={service}
         appPreviousState={appPreviousState}
@@ -472,6 +482,7 @@ describe('Inspector', function() {
         service={service}
         appPreviousState={appPreviousState}
         appState={appState}
+        linkify={sinon.stub()}
         serviceRelations={serviceRelations} />);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
@@ -511,6 +522,7 @@ describe('Inspector', function() {
         setCharm={setCharm}
         getCharm={getCharm}
         getAvailableVersions={getAvailableVersions}
+        linkify={sinon.stub()}
         appPreviousState={appPreviousState}
         service={service}
         appState={appState} />);
@@ -548,6 +560,7 @@ describe('Inspector', function() {
           changeState={changeStub}
           appState={appState}
           appPreviousState={appPreviousState}
+          linkify={sinon.stub()}
           service={service} />);
     var output = shallowRenderer.getRenderOutput();
     output.props.children[0].props.backCallback();
@@ -585,6 +598,7 @@ describe('Inspector', function() {
           changeState={changeStub}
           appState={appState}
           appPreviousState={appPreviousState}
+          linkify={sinon.stub()}
           service={service} />);
     var output = shallowRenderer.getRenderOutput();
     output.props.children[0].props.backCallback();
@@ -622,6 +636,7 @@ describe('Inspector', function() {
           changeState={changeStub}
           appState={appState}
           appPreviousState={appPreviousState}
+          linkify={sinon.stub()}
           service={service} />);
     var output = shallowRenderer.getRenderOutput();
     output.props.children[0].props.backCallback();
@@ -651,6 +666,7 @@ describe('Inspector', function() {
           changeState={changeStub}
           appState={appState}
           appPreviousState={appPreviousState}
+          linkify={sinon.stub()}
           service={service} />);
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children[0],
@@ -684,6 +700,7 @@ describe('Inspector', function() {
           changeState={changeStub}
           appState={appState}
           appPreviousState={appPreviousState}
+          linkify={sinon.stub()}
           service={service} />);
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children[0],
@@ -720,6 +737,7 @@ describe('Inspector', function() {
           changeState={changeStub}
           appState={appState}
           appPreviousState={appPreviousState}
+          linkify={sinon.stub()}
           service={service} />);
     shallowRenderer.getRenderOutput();
     assert.equal(changeStub.callCount, 0);
@@ -735,6 +753,7 @@ describe('Inspector', function() {
           changeState={changeStub}
           appState={appState}
           appPreviousState={appPreviousState}
+          linkify={sinon.stub()}
           service={service} />);
     shallowRenderer.getRenderOutput();
     assert.equal(changeStub.callCount, 1);
