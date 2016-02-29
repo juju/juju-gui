@@ -5,6 +5,9 @@
     bottom: 0;
     right: 0;
     left: 0;
+    background-color: $canvas-background;
+    border-top: 1px solid $mid-grey;
+    box-shadow: none;
 
     &__close {
         position: fixed;

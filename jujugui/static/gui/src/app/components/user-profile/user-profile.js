@@ -401,12 +401,6 @@ YUI.add('user-profile', function() {
         <juju.components.Panel
           instanceName="user-profile"
           visible={true}>
-          <span className="user-profile__close"
-            tabIndex="0" role="button"
-            onClick={this.close}>
-            <juju.components.SvgIcon name="close_16"
-              size="16" />
-          </span>
           <div className="twelve-col">
             <div className="inner-wrapper">
               <juju.components.UserProfileHeader

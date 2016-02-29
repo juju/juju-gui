@@ -76,12 +76,6 @@ describe('UserProfile', () => {
       <juju.components.Panel
         instanceName="user-profile"
         visible={true}>
-        <span className="user-profile__close"
-          tabIndex="0" role="button"
-          onClick={instance.close}>
-          <juju.components.SvgIcon name="close_16"
-            size="16" />
-        </span>
         <div className="twelve-col">
           <div className="inner-wrapper">
             <juju.components.UserProfileHeader
@@ -360,7 +354,7 @@ describe('UserProfile', () => {
           </juju.components.UserProfileEntity>]}
         </ul>
       </div>);
-    assert.deepEqual(output.props.children[1].props.children, expected);
+    assert.deepEqual(output.props.children.props.children, expected);
   });
 
   it('does not pass the charmstore login if interactiveLogin is falsy', () => {
@@ -385,7 +379,7 @@ describe('UserProfile', () => {
         environmentCount={0}
         interactiveLogin={undefined}
         username="test-owner" />);
-    assert.deepEqual(output.props.children[1].props.children.props.children[0],
+    assert.deepEqual(output.props.children.props.children.props.children[0],
       expected);
   });
 
@@ -411,32 +405,6 @@ describe('UserProfile', () => {
     var instance = renderer.getMountedInstance();
     instance._interactiveLogin();
     assert.equal(charmstore.bakery.fetchMacaroonFromStaticPath.callCount, 1);
-  });
-
-  it('closes when clicking the close button', () => {
-    var changeState = sinon.stub();
-    var listEnvs = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <juju.components.UserProfile
-        charmstore={{}}
-        changeState={changeState}
-        createSocketURL={sinon.stub()}
-        dbEnvironmentSet={sinon.stub()}
-        getDiagramURL={sinon.stub()}
-        switchEnv={sinon.stub()}
-        listEnvs={listEnvs}
-        showConnectingMask={sinon.stub()}
-        storeUser={sinon.stub()}
-        username="test-owner" />);
-
-    output.props.children[0].props.onClick();
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: null,
-        metadata: null
-      }
-    });
   });
 
   it('requests jem envs if jem is provided and updates state', () => {
