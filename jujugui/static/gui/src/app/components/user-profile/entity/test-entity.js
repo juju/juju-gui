@@ -58,8 +58,8 @@ describe('UserProfileEntity', () => {
         </div>
         <div className="user-profile__entity-details twelve-col"
           style={{height: '0px', opacity: 0}}>
-          <div className={'user-profile__entity-details-inner twelve-col ' +
-            'no-margin-bottom'}>
+          <div className="twelve-col no-margin-bottom"
+            ref="inner">
             <div className="user-profile__entity-details-header twelve-col">
               <div className="ten-col no-margin-bottom">
                 {undefined}{"sandbox"}
@@ -115,8 +115,8 @@ describe('UserProfileEntity', () => {
         </div>
         <div className="user-profile__entity-details twelve-col"
           style={{height: '0px', opacity: 0}}>
-          <div className={'user-profile__entity-details-inner twelve-col ' +
-            'no-margin-bottom'}>
+          <div className="twelve-col no-margin-bottom"
+            ref="inner">
             <div className="user-profile__entity-details-header twelve-col">
               <div className="ten-col no-margin-bottom">
                 {undefined}{"django-cluster"}
@@ -205,8 +205,8 @@ describe('UserProfileEntity', () => {
         </div>
         <div className="user-profile__entity-details twelve-col"
           style={{height: '0px', opacity: 0}}>
-          <div className={'user-profile__entity-details-inner twelve-col ' +
-            'no-margin-bottom'}>
+          <div className="twelve-col no-margin-bottom"
+            ref="inner">
             <div className="user-profile__entity-details-header twelve-col">
               <div className="ten-col no-margin-bottom">
                 <img className="user-profile__entity-icon"
@@ -333,7 +333,7 @@ describe('UserProfileEntity', () => {
     });
   });
 
-  xit('can toggle to the expanded view', () => {
+  it('can toggle to the expanded view', () => {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
         entity={model}
@@ -341,6 +341,8 @@ describe('UserProfileEntity', () => {
         type="model" />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
+    // Mock the ref.
+    instance.refs = {inner: {offsetHeight: 10}};
     output.props.onClick();
     output = renderer.getRenderOutput();
     var expected = (

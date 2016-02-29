@@ -100,9 +100,7 @@ YUI.add('user-profile-entity', function() {
     _toggle: function() {
       var expanded = this.state.expanded;
       this.setState({expanded: !expanded}, () => {
-        var node = ReactDOM.findDOMNode(this);
-        var newHeight = expanded ? '0px' : node.querySelector(
-          '.user-profile__entity-details-inner').offsetHeight + 'px';
+        var newHeight = expanded ? '0px' : this.refs.inner.offsetHeight + 'px';
         this.setState({styles: {
           height: newHeight,
           opacity: expanded ? 0 : 1
@@ -315,8 +313,8 @@ YUI.add('user-profile-entity', function() {
           </div>
           <div className="user-profile__entity-details twelve-col"
             style={this.state.styles}>
-            <div className={'user-profile__entity-details-inner twelve-col ' +
-              'no-margin-bottom'}>
+            <div className="twelve-col no-margin-bottom"
+              ref="inner">
               <div className="user-profile__entity-details-header twelve-col">
                 <div className="ten-col no-margin-bottom">
                   {icon}{name}
