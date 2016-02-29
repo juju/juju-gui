@@ -754,7 +754,7 @@ YUI.add('juju-gui', function(Y) {
           charmstore={this.get('charmstore')} />,
         document.getElementById('charmbrowser-container'));
       // The model name should not be visible when viewing the profile.
-      document.getElementById('environment-switcher').classList.add('hidden');
+      this._renderBreadcrumb({ showEnvSwitcher: false });
     },
 
     /**
@@ -1051,14 +1051,19 @@ YUI.add('juju-gui', function(Y) {
 
     _emptySectionC: function() {
       // If the model name has been hidden by the profile then show it again.
-      document.getElementById(
-        'environment-switcher').classList.remove('hidden');
+      this._renderBreadcrumb({ showEnvSwitcher: true });
       ReactDOM.unmountComponentAtNode(
         document.getElementById('charmbrowser-container'));
     },
 
-    _renderBreadcrumb: function() {
-      var showEnvSwitcher = true;
+    /**
+      Renders the breadcrumb component to the DOM.
+
+      @method _renderBreadcrumb
+      @param {Object} options
+        showEnvSwitcher: false
+    */
+    _renderBreadcrumb: function({ showEnvSwitcher=true } = {}) {
       if(this.env.findFacadeVersion('ModelManager') === null &&
          this.env.findFacadeVersion('EnvironmentManager') === null) {
         // We do not want to show the model switcher if it isn't supported as
