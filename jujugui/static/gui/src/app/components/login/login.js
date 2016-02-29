@@ -24,6 +24,7 @@ YUI.add('login-component', function() {
 
     propTypes: {
       envName: React.PropTypes.string.isRequired,
+      helpMessage: React.PropTypes.string.isRequired,
       setCredentials: React.PropTypes.func.isRequired,
       login: React.PropTypes.func.isRequired,
       loginFailure: React.PropTypes.bool
@@ -108,7 +109,7 @@ YUI.add('login-component', function() {
             </form>
           </div>
           <div className="login__message">
-            Find your password with `juju api-info --password password`
+            {this.props.helpMessage}
             <div className="login__message-link">
               <a
                 href="https://jujucharms.com"
