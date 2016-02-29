@@ -10,6 +10,9 @@
         font-size: 23px;
 
         &:before {
+            /* inline-block is necessary to avoid the hover underline from the
+            link from spilling over into the before */
+            display: inline-block;
             content: '/';
             position: relative;
             left: -7px;

@@ -24,7 +24,7 @@ YUI.add('header-breadcrumb', function() {
     propTypes: {
       app: React.PropTypes.object.isRequired,
       env: React.PropTypes.object.isRequired,
-      environmentName: React.PropTypes.string.isRequired,
+      envName: React.PropTypes.string.isRequired,
       dbEnvironmentSet: React.PropTypes.func.isRequired,
       jem: React.PropTypes.object,
       envList: React.PropTypes.array,

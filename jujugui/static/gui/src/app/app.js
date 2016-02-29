@@ -1072,7 +1072,7 @@ YUI.add('juju-gui', function(Y) {
         <components.HeaderBreadcrumb
           app={this}
           env={this.env}
-          environmentName={envName}
+          envName={envName}
           dbEnvironmentSet={this.db.environment.set.bind(this.db.environment)}
           jem={this.jem}
           envList={this.get('environmentList')}
