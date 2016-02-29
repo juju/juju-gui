@@ -53,7 +53,7 @@ describe('UserProfile', () => {
     };
   });
 
-  it('renders the header and lists', () => {
+  it('renders the empty state', () => {
     var jem = {
       listEnvironments: sinon.stub().callsArgWith(0, null, {envs: []})
     };
@@ -85,78 +85,18 @@ describe('UserProfile', () => {
               environmentCount={0}
               interactiveLogin={instance._interactiveLogin}
               username="test-owner" />
-            <div className="user-profile__header twelve-col no-margin-bottom">
-              Models
-              <span className="user-profile__size">
-                ({0})
-              </span>
+            <div className="user-profile__empty twelve-col no-margin-bottom">
+              <img alt="Empty profile"
+                className="user-profile__empty-image"
+                src="/juju-ui/assets/images/non-sprites/empty_profile.png" />
+              <h2 className="user-profile__empty-title">
+                Your profile is currently empty
+              </h2>
+              <p className="user-profile__empty-text">
+                Your models, bundles and charms will appear here when you create
+                them.
+              </p>
             </div>
-            <ul className="user-profile__list twelve-col">
-              <li className="user-profile__list-header twelve-col">
-                <span className="user-profile__list-col three-col">
-                  Name
-                </span>
-                <span className="user-profile__list-col four-col">
-                  Credential
-                </span>
-                <span className="user-profile__list-col two-col">
-                  Last accessed
-                </span>
-                <span className="user-profile__list-col one-col">
-                  Units
-                </span>
-                <span className={
-                  'user-profile__list-col two-col last-col'}>
-                  Owner
-                </span>
-              </li>
-              {[]}
-            </ul>
-            <div className="user-profile__header twelve-col no-margin-bottom">
-              Bundles
-              <span className="user-profile__size">
-                ({0})
-              </span>
-            </div>
-            <ul className="user-profile__list twelve-col">
-              <li className="user-profile__list-header twelve-col">
-                <span className="user-profile__list-col five-col">
-                  Name
-                </span>
-                <span className={
-                  'user-profile__list-col three-col user-profile__list-icons'}>
-                  Charms
-                </span>
-                <span className="user-profile__list-col one-col prepend-one">
-                  Units
-                </span>
-                <span className={
-                  'user-profile__list-col two-col last-col'}>
-                  Owner
-                </span>
-              </li>
-              {[]}
-            </ul>
-            <div className="user-profile__header twelve-col no-margin-bottom">
-              Charms
-              <span className="user-profile__size">
-                ({0})
-              </span>
-            </div>
-            <ul className="user-profile__list twelve-col">
-              <li className="user-profile__list-header twelve-col">
-                <span className="user-profile__list-col three-col">
-                  Name
-                </span>
-                <span className="user-profile__list-col seven-col">
-                  Series
-                </span>
-                <span className="user-profile__list-col two-col last-col">
-                  Owner
-                </span>
-              </li>
-              {[]}
-            </ul>
           </div>
         </div>
       </juju.components.Panel>
@@ -164,9 +104,9 @@ describe('UserProfile', () => {
     assert.deepEqual(output, expected);
   });
 
-  it('displays loading spinners before the content loads', () => {
+  it('displays loading spinners for charms and bundles', () => {
     var jem = {
-      listEnvironments: sinon.stub()
+      listEnvironments: sinon.stub().callsArgWith(0, null, {envs: models})
     };
     charmstore.list = sinon.stub();
     var component = jsTestUtils.shallowRender(
@@ -184,17 +124,46 @@ describe('UserProfile', () => {
         username="test-owner" />, true);
     var output = component.getRenderOutput();
     assert.deepEqual(
-      output.props.children.props.children.props.children[2]
-        .props.children[1],
-      <juju.components.Spinner />);
+      output.props.children.props.children.props.children[1]
+        .props.children[1], (
+          <div className="twelve-col">
+          <juju.components.Spinner />
+          </div>
+        ));
     assert.deepEqual(
-      output.props.children.props.children.props.children[4]
-        .props.children[1],
-      <juju.components.Spinner />);
+      output.props.children.props.children.props.children[1].props
+        .children[2], (
+          <div className="twelve-col">
+          <juju.components.Spinner />
+          </div>
+        ));
+  });
+
+  it('displays loading spinners for models', () => {
+    var jem = {
+      listEnvironments: sinon.stub()
+    };
+    var component = jsTestUtils.shallowRender(
+      <juju.components.UserProfile
+        charmstore={charmstore}
+        createSocketURL={sinon.stub()}
+        dbEnvironmentSet={sinon.stub()}
+        getDiagramURL={sinon.stub()}
+        jem={jem}
+        switchEnv={sinon.stub()}
+        showConnectingMask={sinon.stub()}
+        interactiveLogin={true}
+        changeState={sinon.stub()}
+        storeUser={sinon.stub()}
+        username="test-owner" />, true);
+    var output = component.getRenderOutput();
     assert.deepEqual(
-      output.props.children.props.children.props.children[6]
-        .props.children[1],
-      <juju.components.Spinner />);
+      output.props.children.props.children.props.children[1]
+        .props.children[0], (
+          <div className="twelve-col">
+          <juju.components.Spinner />
+          </div>
+        ));
   });
 
   it('renders lists of entities', () => {
@@ -228,164 +197,172 @@ describe('UserProfile', () => {
           environmentCount={1}
           interactiveLogin={instance._interactiveLogin}
           username="test-owner" />
-        <div className="user-profile__header twelve-col no-margin-bottom">
-          Models
-          <span className="user-profile__size">
-            ({1})
-          </span>
-        </div>
-        <ul className="user-profile__list twelve-col">
-          <li className="user-profile__list-header twelve-col">
-            <span className="user-profile__list-col three-col">
-              Name
-            </span>
-            <span className="user-profile__list-col four-col">
-              Credential
-            </span>
-            <span className="user-profile__list-col two-col">
-              Last accessed
-            </span>
-            <span className="user-profile__list-col one-col">
-              Units
-            </span>
-            <span className={
-              'user-profile__list-col two-col last-col'}>
-              Owner
-            </span>
-          </li>
-          {[<juju.components.UserProfileEntity
-            entity={models[0]}
-            key="env1"
-            switchEnv={switchEnv}
-            type="model">
-            <span className="user-profile__list-col three-col">
-              sandbox
-            </span>
-            <span className="user-profile__list-col four-col">
-              --
-            </span>
-            <span className="user-profile__list-col two-col">
-              today
-            </span>
-            <span className="user-profile__list-col one-col">
-              --
-            </span>
-            <span className="user-profile__list-col two-col last-col">
-              test-owner
-            </span>
-          </juju.components.UserProfileEntity>]}
-        </ul>
-        <div className="user-profile__header twelve-col no-margin-bottom">
-          Bundles
-          <span className="user-profile__size">
-            ({1})
-          </span>
-        </div>
-        <ul className="user-profile__list twelve-col">
-          <li className="user-profile__list-header twelve-col">
-            <span className="user-profile__list-col five-col">
-              Name
-            </span>
-            <span className={
-              'user-profile__list-col three-col user-profile__list-icons'}>
+        <div>
+          <div>
+            <div className="user-profile__header twelve-col no-margin-bottom">
+              Models
+              <span className="user-profile__size">
+                ({1})
+              </span>
+            </div>
+            <ul className="user-profile__list twelve-col">
+              <li className="user-profile__list-header twelve-col">
+                <span className="user-profile__list-col three-col">
+                  Name
+                </span>
+                <span className="user-profile__list-col four-col">
+                  Credential
+                </span>
+                <span className="user-profile__list-col two-col">
+                  Last accessed
+                </span>
+                <span className="user-profile__list-col one-col">
+                  Units
+                </span>
+                <span className={
+                  'user-profile__list-col two-col last-col'}>
+                  Owner
+                </span>
+              </li>
+              {[<juju.components.UserProfileEntity
+                entity={models[0]}
+                key="env1"
+                switchEnv={switchEnv}
+                type="model">
+                <span className="user-profile__list-col three-col">
+                  sandbox
+                </span>
+                <span className="user-profile__list-col four-col">
+                  --
+                </span>
+                <span className="user-profile__list-col two-col">
+                  today
+                </span>
+                <span className="user-profile__list-col one-col">
+                  --
+                </span>
+                <span className="user-profile__list-col two-col last-col">
+                  test-owner
+                </span>
+              </juju.components.UserProfileEntity>]}
+            </ul>
+          </div>
+          <div>
+            <div className="user-profile__header twelve-col no-margin-bottom">
+              Bundles
+              <span className="user-profile__size">
+                ({1})
+              </span>
+            </div>
+            <ul className="user-profile__list twelve-col">
+              <li className="user-profile__list-header twelve-col">
+                <span className="user-profile__list-col five-col">
+                  Name
+                </span>
+                <span className={
+                  'user-profile__list-col three-col user-profile__list-icons'}>
+                  Charms
+                </span>
+                <span className="user-profile__list-col one-col prepend-one">
+                  Units
+                </span>
+                <span className={
+                  'user-profile__list-col two-col last-col'}>
+                  Owner
+                </span>
+              </li>
+              {[<juju.components.UserProfileEntity
+                changeState={changeState}
+                entity={bundles[0]}
+                getDiagramURL={getDiagramURL}
+                key="django-cluster"
+                type="bundle">
+                <span className={'user-profile__list-col five-col ' +
+                  'user-profile__list-name'}>
+                  django-cluster
+                  <ul className="user-profile__list-tags">
+                    {[<li className="user-profile__comma-item"
+                      key="django-cluster-database">
+                      database
+                    </li>]}
+                  </ul>
+                </span>
+                <span className={'user-profile__list-col three-col ' +
+                  'user-profile__list-icons'}>
+                  <img className="user-profile__list-icon"
+                    key="icon-0-gunicorn"
+                    src="example.com/9/gunicorn/icon.svg"
+                    title="gunicorn" />
+                  <img className="user-profile__list-icon"
+                    key="icon-1-django"
+                    src="example.com/9/django/icon.svg"
+                    title="django" />
+                </span>
+                <span className="user-profile__list-col one-col prepend-one">
+                  {5}
+                </span>
+                <span className="user-profile__list-col two-col last-col">
+                  test-owner
+                </span>
+              </juju.components.UserProfileEntity>]}
+            </ul>
+          </div>
+          <div>
+            <div className="user-profile__header twelve-col no-margin-bottom">
               Charms
-            </span>
-            <span className="user-profile__list-col one-col prepend-one">
-              Units
-            </span>
-            <span className={
-              'user-profile__list-col two-col last-col'}>
-              Owner
-            </span>
-          </li>
-          {[<juju.components.UserProfileEntity
-            changeState={changeState}
-            entity={bundles[0]}
-            getDiagramURL={getDiagramURL}
-            key="django-cluster"
-            type="bundle">
-            <span className={'user-profile__list-col five-col ' +
-              'user-profile__list-name'}>
-              django-cluster
-              <ul className="user-profile__list-tags">
-                {[<li className="user-profile__comma-item"
-                  key="django-cluster-database">
-                  database
-                </li>]}
-              </ul>
-            </span>
-            <span className={'user-profile__list-col three-col ' +
-              'user-profile__list-icons'}>
-              <img className="user-profile__list-icon"
-                key="icon-0-gunicorn"
-                src="example.com/9/gunicorn/icon.svg"
-                title="gunicorn" />
-              <img className="user-profile__list-icon"
-                key="icon-1-django"
-                src="example.com/9/django/icon.svg"
-                title="django" />
-            </span>
-            <span className="user-profile__list-col one-col prepend-one">
-              {5}
-            </span>
-            <span className="user-profile__list-col two-col last-col">
-              test-owner
-            </span>
-          </juju.components.UserProfileEntity>]}
-        </ul>
-        <div className="user-profile__header twelve-col no-margin-bottom">
-          Charms
-          <span className="user-profile__size">
-            ({1})
-          </span>
+              <span className="user-profile__size">
+                ({1})
+              </span>
+            </div>
+            <ul className="user-profile__list twelve-col">
+              <li className="user-profile__list-header twelve-col">
+                <span className="user-profile__list-col three-col">
+                  Name
+                </span>
+                <span className="user-profile__list-col seven-col">
+                  Series
+                </span>
+                <span className="user-profile__list-col two-col last-col">
+                  Owner
+                </span>
+              </li>
+              {[<juju.components.UserProfileEntity
+                changeState={changeState}
+                entity={charms[0]}
+                key="cs:django"
+                type="charm">
+                <span className={'user-profile__list-col three-col ' +
+                  'user-profile__list-name'}>
+                  django
+                  <ul className="user-profile__list-tags">
+                    {[<li className="user-profile__comma-item"
+                      key="cs:django-database">
+                      database
+                    </li>]}
+                  </ul>
+                </span>
+                <span className="user-profile__list-col four-col">
+                  <ul className="user-profile__list-series">
+                    {[<li className="user-profile__comma-item"
+                      key="cs:django-trusty">
+                      trusty
+                    </li>]}
+                  </ul>
+                </span>
+                <span className={'user-profile__list-col one-col ' +
+                  'user-profile__list-icons'}>
+                  <img className="user-profile__list-icon"
+                    src="example.com/9/django/icon.svg"
+                    title="django" />
+                </span>
+                <span className={'user-profile__list-col two-col ' +
+                  'prepend-two last-col'}>
+                  test-owner
+                </span>
+              </juju.components.UserProfileEntity>]}
+            </ul>
+          </div>
         </div>
-        <ul className="user-profile__list twelve-col">
-          <li className="user-profile__list-header twelve-col">
-            <span className="user-profile__list-col three-col">
-              Name
-            </span>
-            <span className="user-profile__list-col seven-col">
-              Series
-            </span>
-            <span className="user-profile__list-col two-col last-col">
-              Owner
-            </span>
-          </li>
-          {[<juju.components.UserProfileEntity
-            changeState={changeState}
-            entity={charms[0]}
-            key="cs:django"
-            type="charm">
-            <span className={'user-profile__list-col three-col ' +
-              'user-profile__list-name'}>
-              django
-              <ul className="user-profile__list-tags">
-                {[<li className="user-profile__comma-item"
-                  key="cs:django-database">
-                  database
-                </li>]}
-              </ul>
-            </span>
-            <span className="user-profile__list-col four-col">
-              <ul className="user-profile__list-series">
-                {[<li className="user-profile__comma-item"
-                  key="cs:django-trusty">
-                  trusty
-                </li>]}
-              </ul>
-            </span>
-            <span className={'user-profile__list-col one-col ' +
-              'user-profile__list-icons'}>
-              <img className="user-profile__list-icon"
-                src="example.com/9/django/icon.svg"
-                title="django" />
-            </span>
-            <span className={'user-profile__list-col two-col ' +
-              'prepend-two last-col'}>
-              test-owner
-            </span>
-          </juju.components.UserProfileEntity>]}
-        </ul>
       </div>);
     assert.deepEqual(output.props.children.props.children, expected);
   });

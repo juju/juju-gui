@@ -24,6 +24,24 @@
         font-size: 1.375em;
     }
 
+    &__empty {
+        text-align: center;
+
+        &-image {
+            margin: 40px 0;
+        }
+
+        &-title {
+            margin-bottom: 40px;
+        }
+
+        &-text {
+            max-width: 360px;
+            margin: 0 auto;
+            color: $warm-grey;
+        }
+    }
+
     &__size {
         color: $light-mid-grey;
         margin-left: 0.25em;
