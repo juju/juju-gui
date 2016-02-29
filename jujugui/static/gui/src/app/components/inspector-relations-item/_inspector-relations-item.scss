@@ -13,8 +13,10 @@
         line-height: 1.5;
         cursor: pointer;
 
+        &:focus,
+        &:active,
         &:hover {
-            background-color: #f7f7f7;
+            background-color: $hover-background;
         }
     }
 

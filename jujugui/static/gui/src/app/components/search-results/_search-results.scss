@@ -61,8 +61,10 @@
                         padding-bottom: 8px;
                     }
 
+                    &:focus,
+                    &:active,
                     &:hover {
-                        background-color: #f7f7f7;
+                        background-color: $hover-background;
                     }
                 }
             }
@@ -99,6 +101,7 @@
             border-color: $light-mid-grey;
             display: inline-block;
             cursor: pointer;
+            float: left;
 
             @media only screen and (min-width : 768px) {
                 padding: 8px 20px 4px;
@@ -150,6 +153,12 @@
                         z-index: index($z-indexed-elements, search-results-cell--hover);
                     }
                 }
+            }
+
+            &:focus,
+            &:active,
+            &:hover {
+                background-color: $hover-background;
             }
         }
 
