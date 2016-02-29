@@ -2,18 +2,28 @@
     &--expanded {
         .user-profile__entity {
             &-summary {
-                display: none;
+                height: 0;
+                opacity: 0;
             }
 
             &-details {
                 @extend %floating-panel;
-                display: block;
             }
         }
     }
 
+    &-summary {
+        // Force hardware acceleration.
+        transform: translate3d(0, 0, 0);
+        transition: all .3s;
+        height: 20px;
+        opacity: 1;
+    }
+
     &-details {
-        transition: all 0.3s;
+        // Force hardware acceleration.
+        transform: translate3d(0, 0, 0);
+        transition: all .3s;
         margin: 5px 0 5px -15px;
         overflow: hidden;
 
