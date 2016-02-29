@@ -23,7 +23,7 @@ YUI.add('header-breadcrumb', function() {
   juju.components.HeaderBreadcrumb = React.createClass({
     propTypes: {
       app: React.PropTypes.object.isRequired,
-      env: React.PropTypes.object.isRequired,
+      env: React.PropTypes.object,
       envName: React.PropTypes.string.isRequired,
       dbEnvironmentSet: React.PropTypes.func.isRequired,
       jem: React.PropTypes.object,
@@ -31,7 +31,8 @@ YUI.add('header-breadcrumb', function() {
       changeState: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
       authDetails: React.PropTypes.object,
-      showEnvSwitcher: React.PropTypes.bool.isRequired
+      showEnvSwitcher: React.PropTypes.bool.isRequired,
+      userName: React.PropTypes.string
     },
 
     /**
@@ -53,19 +54,20 @@ YUI.add('header-breadcrumb', function() {
               envList={this.props.envList}
               changeState={this.props.changeState}
               showConnectingMask={this.props.showConnectingMask}
-              authDetails={this.props.auth} />
+              authDetails={this.props.authDetails} />
           </li>);
       }
       return;
     },
 
     render: function() {
+      var auth = this.props.authDetails;
       return (
         <ul className="header-breadcrumb">
           <li className="header-breadcrumb__list-item"></li>
           <li className="header-breadcrumb__list-item">
             <a className="header-breadcrumb--link" href="/profile/">
-              anonymous
+              {auth && auth.user && auth.user.name || 'anonymous'}
             </a>
           </li>
           {this._renderEnvSwitcher()}
