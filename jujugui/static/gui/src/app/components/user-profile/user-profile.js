@@ -228,7 +228,10 @@ YUI.add('user-profile', function() {
     */
     _generateModelRows: function() {
       if (this.state.loadingModels) {
-        return <juju.components.Spinner />;
+        return (
+          <div className="twelve-col">
+            <juju.components.Spinner />
+          </div>);
       }
       var envList = this.state.envList;
       if (envList.length === 0) {
@@ -261,7 +264,7 @@ YUI.add('user-profile', function() {
           </juju.components.UserProfileEntity>);
       });
       return (
-        <div className="twelve-col no-margin-bottom">
+        <div>
           <div className="user-profile__header twelve-col no-margin-bottom">
             Models
             <span className="user-profile__size">
@@ -367,7 +370,10 @@ YUI.add('user-profile', function() {
     */
     _generateBundleRows: function() {
       if (this.state.loadingBundles) {
-        return <juju.components.Spinner />;
+        return (
+          <div className="twelve-col">
+            <juju.components.Spinner />
+          </div>);
       }
       var bundleList = this.state.bundleList;
       if (bundleList.length === 0) {
@@ -414,7 +420,7 @@ YUI.add('user-profile', function() {
           </juju.components.UserProfileEntity>);
       });
       return (
-        <div className="twelve-col no-margin-bottom">
+        <div>
           <div className="user-profile__header twelve-col no-margin-bottom">
             Bundles
             <span className="user-profile__size">
@@ -451,7 +457,10 @@ YUI.add('user-profile', function() {
     */
     _generateCharmRows: function() {
       if (this.state.loadingCharms) {
-        return <juju.components.Spinner />;
+        return (
+          <div className="twelve-col">
+            <juju.components.Spinner />
+          </div>);
       }
       var charmList = this.state.charmList;
       if (charmList.length === 0) {
@@ -489,7 +498,7 @@ YUI.add('user-profile', function() {
           </juju.components.UserProfileEntity>);
       });
       return (
-        <div className="twelve-col no-margin-bottom">
+        <div>
           <div className="user-profile__header twelve-col no-margin-bottom">
             Charms
             <span className="user-profile__size">
@@ -538,7 +547,7 @@ YUI.add('user-profile', function() {
           </div>);
       }
       return (
-        <div className="twelve-col no-margin-bottom">
+        <div>
           {this._generateModelRows()}
           {this._generateBundleRows()}
           {this._generateCharmRows()}

@@ -104,9 +104,9 @@ describe('UserProfile', () => {
     assert.deepEqual(output, expected);
   });
 
-  it('displays loading spinners before the content loads', () => {
+  it('displays loading spinners for charms and bundles', () => {
     var jem = {
-      listEnvironments: sinon.stub()
+      listEnvironments: sinon.stub().callsArgWith(0, null, {envs: models})
     };
     charmstore.list = sinon.stub();
     var component = jsTestUtils.shallowRender(
@@ -124,17 +124,46 @@ describe('UserProfile', () => {
         username="test-owner" />, true);
     var output = component.getRenderOutput();
     assert.deepEqual(
-      output.props.children.props.children.props.children[2]
-        .props.children[1],
-      <juju.components.Spinner />);
+      output.props.children.props.children.props.children[1]
+        .props.children[1], (
+          <div className="twelve-col">
+          <juju.components.Spinner />
+          </div>
+        ));
     assert.deepEqual(
-      output.props.children.props.children.props.children[4]
-        .props.children[1],
-      <juju.components.Spinner />);
+      output.props.children.props.children.props.children[1].props
+        .children[2], (
+          <div className="twelve-col">
+          <juju.components.Spinner />
+          </div>
+        ));
+  });
+
+  it('displays loading spinners for models', () => {
+    var jem = {
+      listEnvironments: sinon.stub()
+    };
+    var component = jsTestUtils.shallowRender(
+      <juju.components.UserProfile
+        charmstore={charmstore}
+        createSocketURL={sinon.stub()}
+        dbEnvironmentSet={sinon.stub()}
+        getDiagramURL={sinon.stub()}
+        jem={jem}
+        switchEnv={sinon.stub()}
+        showConnectingMask={sinon.stub()}
+        interactiveLogin={true}
+        changeState={sinon.stub()}
+        storeUser={sinon.stub()}
+        username="test-owner" />, true);
+    var output = component.getRenderOutput();
     assert.deepEqual(
-      output.props.children.props.children.props.children[6]
-        .props.children[1],
-      <juju.components.Spinner />);
+      output.props.children.props.children.props.children[1]
+        .props.children[0], (
+          <div className="twelve-col">
+          <juju.components.Spinner />
+          </div>
+        ));
   });
 
   it('renders lists of entities', () => {
@@ -168,8 +197,8 @@ describe('UserProfile', () => {
           environmentCount={1}
           interactiveLogin={instance._interactiveLogin}
           username="test-owner" />
-        <div className="twelve-col no-margin-bottom">
-          <div className="twelve-col no-margin-bottom">
+        <div>
+          <div>
             <div className="user-profile__header twelve-col no-margin-bottom">
               Models
               <span className="user-profile__size">
@@ -218,7 +247,7 @@ describe('UserProfile', () => {
               </juju.components.UserProfileEntity>]}
             </ul>
           </div>
-          <div className="twelve-col no-margin-bottom">
+          <div>
             <div className="user-profile__header twelve-col no-margin-bottom">
               Bundles
               <span className="user-profile__size">
@@ -278,7 +307,7 @@ describe('UserProfile', () => {
               </juju.components.UserProfileEntity>]}
             </ul>
           </div>
-          <div className="twelve-col no-margin-bottom">
+          <div>
             <div className="user-profile__header twelve-col no-margin-bottom">
               Charms
               <span className="user-profile__size">
