@@ -184,15 +184,15 @@ describe('UserProfile', () => {
         username="test-owner" />, true);
     var output = component.getRenderOutput();
     assert.deepEqual(
-      output.props.children[1].props.children.props.children[2]
+      output.props.children.props.children.props.children[2]
         .props.children[1],
       <juju.components.Spinner />);
     assert.deepEqual(
-      output.props.children[1].props.children.props.children[4]
+      output.props.children.props.children.props.children[4]
         .props.children[1],
       <juju.components.Spinner />);
     assert.deepEqual(
-      output.props.children[1].props.children.props.children[6]
+      output.props.children.props.children.props.children[6]
         .props.children[1],
       <juju.components.Spinner />);
   });
