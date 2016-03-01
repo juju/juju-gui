@@ -221,78 +221,64 @@ YUI.add('user-profile', function() {
     },
 
     /**
-      Generate the rows of model details.
+      Generate the details for the provided model.
 
-      @method _generateModelRows
-      @returns {Array} The markup for the rows.
+      @method _generateModelRow
+      @param {Object} model A model object.
+      @returns {Array} The markup for the row.
     */
-    _generateModelRows: function() {
-      if (this.state.loadingModels) {
-        return (
-          <div className="twelve-col">
-            <juju.components.Spinner />
-          </div>);
-      }
-      var envList = this.state.envList;
-      if (envList.length === 0) {
-        return;
-      }
-      var components = [];
-      envList.forEach((model) => {
-        var uuid = model.uuid;
-        components.push(
-          <juju.components.UserProfileEntity
-            entity={model}
-            key={uuid}
-            switchEnv={this.props.switchEnv}
-            type="model">
-            <span className="user-profile__list-col three-col">
-              {model.name}
-            </span>
-            <span className="user-profile__list-col four-col">
-              --
-            </span>
-            <span className="user-profile__list-col two-col">
-              {model.lastConnection}
-            </span>
-            <span className="user-profile__list-col one-col">
-              --
-            </span>
-            <span className="user-profile__list-col two-col last-col">
-              {model.owner}
-            </span>
-          </juju.components.UserProfileEntity>);
-      });
+    _generateModelRow: function(model) {
+      var uuid = model.uuid;
       return (
-        <div>
-          <div className="user-profile__header twelve-col no-margin-bottom">
-            Models
-            <span className="user-profile__size">
-              ({envList.length})
-            </span>
-          </div>
-          <ul className="user-profile__list twelve-col">
-            <li className="user-profile__list-header twelve-col">
-              <span className="user-profile__list-col three-col">
-                Name
-              </span>
-              <span className="user-profile__list-col four-col">
-                Credential
-              </span>
-              <span className="user-profile__list-col two-col">
-                Last accessed
-              </span>
-              <span className="user-profile__list-col one-col">
-                Units
-              </span>
-              <span className={
-                'user-profile__list-col two-col last-col'}>
-                Owner
-              </span>
-            </li>
-            {components}
-          </ul>
-        </div>);
+        <juju.components.UserProfileEntity
+          entity={model}
+          key={uuid}
+          switchEnv={this.props.switchEnv}
+          type="model">
+          <span className="user-profile__list-col three-col">
+            {model.name}
+          </span>
+          <span className="user-profile__list-col four-col">
+            --
+          </span>
+          <span className="user-profile__list-col two-col">
+            {model.lastConnection}
+          </span>
+          <span className="user-profile__list-col one-col">
+            --
+          </span>
+          <span className="user-profile__list-col two-col last-col">
+            {model.owner}
+          </span>
+        </juju.components.UserProfileEntity>);
+    },
+
+    /**
+      Generate the header for the models.
+
+      @method _generateModelHeader
+      @returns {Array} The markup for the header.
+    */
+    _generateModelHeader: function() {
+      return (
+        <li className="user-profile__list-header twelve-col">
+          <span className="user-profile__list-col three-col">
+            Name
+          </span>
+          <span className="user-profile__list-col four-col">
+            Credential
+          </span>
+          <span className="user-profile__list-col two-col">
+            Last accessed
+          </span>
+          <span className="user-profile__list-col one-col">
+            Units
+          </span>
+          <span className={
+            'user-profile__list-col two-col last-col'}>
+            Owner
+          </span>
+        </li>);
     },
 
     /**
@@ -363,161 +349,187 @@ YUI.add('user-profile', function() {
     },
 
     /**
-      Generate the rows of bundle details.
+      Generate the details for the provided bundle.
 
-      @method _generateBundleRows
-      @returns {Array} The markup for the rows.
+      @method _generateBundleRow
+      @param {Object} bundle A bundle object.
+      @returns {Array} The markup for the row.
     */
-    _generateBundleRows: function() {
-      if (this.state.loadingBundles) {
-        return (
-          <div className="twelve-col">
-            <juju.components.Spinner />
-          </div>);
-      }
-      var bundleList = this.state.bundleList;
-      if (bundleList.length === 0) {
-        return;
-      }
-      var components = [];
-      bundleList.forEach((bundle) => {
-        var id = bundle.id;
-        var services = [];
-        var serviceNames = Object.keys(bundle.services);
-        serviceNames.forEach((serviceName, idx) => {
-          var service = bundle.services[serviceName];
-          var id = service.charm;
-          var key = `icon-${idx}-${id}`;
-          services.push(
-            <img className="user-profile__list-icon"
-              key={key}
-              src={this._getIcon(id)}
-              title={service.charm} />);
-        });
-        var unitCount = bundle.unitCount || <span>&nbsp;</span>;
-        components.push(
-          <juju.components.UserProfileEntity
-            changeState={this.props.changeState}
-            entity={bundle}
-            getDiagramURL={this.props.getDiagramURL}
-            key={id}
-            type="bundle">
-            <span className={'user-profile__list-col five-col ' +
-              'user-profile__list-name'}>
-              {bundle.name}
-              {this._generateTags(bundle.tags, id)}
-            </span>
-            <span className={'user-profile__list-col three-col ' +
-              'user-profile__list-icons'}>
-              {services}
-            </span>
-            <span className="user-profile__list-col one-col prepend-one">
-              {unitCount}
-            </span>
-            <span className="user-profile__list-col two-col last-col">
-              {bundle.owner}
-            </span>
-          </juju.components.UserProfileEntity>);
+    _generateBundleRow: function(bundle) {
+      var id = bundle.id;
+      var services = [];
+      var serviceNames = Object.keys(bundle.services);
+      serviceNames.forEach((serviceName, idx) => {
+        var service = bundle.services[serviceName];
+        var id = service.charm;
+        var key = `icon-${idx}-${id}`;
+        services.push(
+          <img className="user-profile__list-icon"
+            key={key}
+            src={this._getIcon(id)}
+            title={service.charm} />);
       });
+      var unitCount = bundle.unitCount || <span>&nbsp;</span>;
       return (
-        <div>
-          <div className="user-profile__header twelve-col no-margin-bottom">
-            Bundles
-            <span className="user-profile__size">
-              ({bundleList.length})
-            </span>
-          </div>
-          <ul className="user-profile__list twelve-col">
-            <li className="user-profile__list-header twelve-col">
-              <span className="user-profile__list-col five-col">
-                Name
-              </span>
-              <span className={'user-profile__list-col three-col ' +
-                'user-profile__list-icons'}>
-                Charms
-              </span>
-              <span className="user-profile__list-col one-col prepend-one">
-                Units
-              </span>
-              <span className={
-                'user-profile__list-col two-col last-col'}>
-                Owner
-              </span>
-            </li>
-            {components}
-          </ul>
-        </div>);
+        <juju.components.UserProfileEntity
+          changeState={this.props.changeState}
+          entity={bundle}
+          getDiagramURL={this.props.getDiagramURL}
+          key={id}
+          type="bundle">
+          <span className={'user-profile__list-col five-col ' +
+            'user-profile__list-name'}>
+            {bundle.name}
+            {this._generateTags(bundle.tags, id)}
+          </span>
+          <span className={'user-profile__list-col three-col ' +
+            'user-profile__list-icons'}>
+            {services}
+          </span>
+          <span className="user-profile__list-col one-col prepend-one">
+            {unitCount}
+          </span>
+          <span className="user-profile__list-col two-col last-col">
+            {bundle.owner}
+          </span>
+        </juju.components.UserProfileEntity>);
     },
 
     /**
-      Generate the rows of charm details.
+      Generate the header for the bundles.
 
-      @method _generateCharmRows
+      @method _generateBundleHeader
+      @returns {Array} The markup for the header.
+    */
+    _generateBundleHeader: function() {
+      return (
+        <li className="user-profile__list-header twelve-col">
+          <span className="user-profile__list-col five-col">
+            Name
+          </span>
+          <span className={'user-profile__list-col three-col ' +
+            'user-profile__list-icons'}>
+            Charms
+          </span>
+          <span className="user-profile__list-col one-col prepend-one">
+            Units
+          </span>
+          <span className={
+            'user-profile__list-col two-col last-col'}>
+            Owner
+          </span>
+        </li>);
+    },
+
+    /**
+      Generate the details for the provided charm.
+
+      @method _generateCharmRow
+      @param {Object} charm A charm object.
+      @returns {Array} The markup for the row.
+    */
+    _generateCharmRow: function(charm) {
+      var id = charm.id;
+      // Ensure the icon is set.
+      charm.icon = charm.icon || this._getIcon(id);
+      return (
+        <juju.components.UserProfileEntity
+          changeState={this.props.changeState}
+          entity={charm}
+          key={id}
+          type="charm">
+          <span className={'user-profile__list-col three-col ' +
+            'user-profile__list-name'}>
+            {charm.name}
+            {this._generateTags(charm.tags, id)}
+          </span>
+          <span className="user-profile__list-col four-col">
+            {this._generateSeries(charm.series, id)}
+          </span>
+          <span className={'user-profile__list-col one-col ' +
+            'user-profile__list-icons'}>
+            <img className="user-profile__list-icon"
+              src={charm.icon}
+              title={charm.name} />
+          </span>
+          <span className={'user-profile__list-col two-col ' +
+            'prepend-two last-col'}>
+            {charm.owner}
+          </span>
+        </juju.components.UserProfileEntity>);
+    },
+
+    /**
+      Generate the header for the charms.
+
+      @method _generateCharmHeader
+      @returns {Array} The markup for the header.
+    */
+    _generateCharmHeader: function() {
+      return (
+        <li className="user-profile__list-header twelve-col">
+          <span className="user-profile__list-col three-col">
+            Name
+          </span>
+          <span className="user-profile__list-col seven-col">
+            Series
+          </span>
+          <span className="user-profile__list-col two-col last-col">
+            Owner
+          </span>
+        </li>);
+    },
+
+    /**
+      Generate the rows of for the provided entity.
+
+      @method _generateRows
+      @param {String} type The type of entity.
+      @param {Array} list The list of entities.
+      @param {Boolean} loading Whether the data is loading.
       @returns {Array} The markup for the rows.
     */
-    _generateCharmRows: function() {
-      if (this.state.loadingCharms) {
+    _generateRows: function(type, list, loading) {
+      if (loading) {
         return (
           <div className="twelve-col">
             <juju.components.Spinner />
           </div>);
       }
-      var charmList = this.state.charmList;
-      if (charmList.length === 0) {
+      if (list.length === 0) {
         return;
       }
-      var components = [];
-      charmList.forEach((charm) => {
-        var id = charm.id;
-        // Ensure the icon is set.
-        charm.icon = charm.icon || this._getIcon(id);
-        components.push(
-          <juju.components.UserProfileEntity
-            changeState={this.props.changeState}
-            entity={charm}
-            key={id}
-            type="charm">
-            <span className={'user-profile__list-col three-col ' +
-              'user-profile__list-name'}>
-              {charm.name}
-              {this._generateTags(charm.tags, id)}
-            </span>
-            <span className="user-profile__list-col four-col">
-              {this._generateSeries(charm.series, id)}
-            </span>
-            <span className={'user-profile__list-col one-col ' +
-              'user-profile__list-icons'}>
-              <img className="user-profile__list-icon"
-                src={charm.icon}
-                title={charm.name} />
-            </span>
-            <span className={'user-profile__list-col two-col ' +
-              'prepend-two last-col'}>
-              {charm.owner}
-            </span>
-          </juju.components.UserProfileEntity>);
+      var generateRow;
+      var header;
+      var rows = [];
+      var title;
+      if (type === 'models') {
+        generateRow = this._generateModelRow;
+        header = this._generateModelHeader();
+        title = 'Models';
+      } else if (type === 'bundles') {
+        generateRow = this._generateBundleRow;
+        header = this._generateBundleHeader();
+        title = 'Bundles';
+      } else if (type === 'charms') {
+        generateRow = this._generateCharmRow;
+        header = this._generateCharmHeader();
+        title = 'Charms';
+      }
+      list.forEach((model) => {
+        rows.push(generateRow(model));
       });
       return (
         <div>
           <div className="user-profile__header twelve-col no-margin-bottom">
-            Charms
+            {title}
             <span className="user-profile__size">
-              ({charmList.length})
+              ({list.length})
             </span>
           </div>
           <ul className="user-profile__list twelve-col">
-            <li className="user-profile__list-header twelve-col">
-              <span className="user-profile__list-col three-col">
-                Name
-              </span>
-              <span className="user-profile__list-col seven-col">
-                Series
-              </span>
-              <span className="user-profile__list-col two-col last-col">
-                Owner
-              </span>
-            </li>
-            {components}
+            {header}
+            {rows}
           </ul>
         </div>);
     },
@@ -548,9 +560,10 @@ YUI.add('user-profile', function() {
       }
       return (
         <div>
-          {this._generateModelRows()}
-          {this._generateBundleRows()}
-          {this._generateCharmRows()}
+          {this._generateRows('models', state.envList, state.loadingModels)}
+          {this._generateRows(
+            'bundles', state.bundleList, state.loadingBundles)}
+          {this._generateRows('charms', state.charmList, state.loadingCharms)}
         </div>);
     },
 
