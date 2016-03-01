@@ -38,6 +38,7 @@ describe('HeaderBreadcrumb', () => {
     var jem = {jem: 'jem'};
     var envList = ['envList'];
     var changeState = sinon.stub();
+    var getAppState = sinon.stub();
     var showConnectingMask = sinon.stub();
     var authDetails = {user: {name: 'foo'}};
     var output = jsTestUtils.shallowRender(
@@ -49,13 +50,13 @@ describe('HeaderBreadcrumb', () => {
         jem={jem}
         envList={envList}
         changeState={changeState}
+        getAppState={getAppState}
         showConnectingMask={showConnectingMask}
         authDetails={authDetails}
         showEnvSwitcher={true} />);
 
     var expected = (
       <ul className="header-breadcrumb">
-        <li className="header-breadcrumb__list-item"></li>
         <li className="header-breadcrumb__list-item">
           <a className="header-breadcrumb--link" href="/profile/">
             foo
@@ -86,6 +87,7 @@ describe('HeaderBreadcrumb', () => {
     var jem = {jem: 'jem'};
     var envList = ['envList'];
     var changeState = sinon.stub();
+    var getAppState = sinon.stub();
     var showConnectingMask = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
@@ -96,10 +98,11 @@ describe('HeaderBreadcrumb', () => {
         jem={jem}
         envList={envList}
         changeState={changeState}
+        getAppState={getAppState}
         showConnectingMask={showConnectingMask}
         showEnvSwitcher={true} />);
     assert.equal(
-      output.props.children[1].props.children.props.children, 'anonymous');
+      output.props.children[0].props.children.props.children, 'anonymous');
   });
 
   it('does not render the env switcher if told not to', () => {
@@ -110,6 +113,7 @@ describe('HeaderBreadcrumb', () => {
     var jem = {jem: 'jem'};
     var envList = ['envList'];
     var changeState = sinon.stub();
+    var getAppState = sinon.stub();
     var showConnectingMask = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
@@ -120,10 +124,39 @@ describe('HeaderBreadcrumb', () => {
         jem={jem}
         envList={envList}
         changeState={changeState}
+        getAppState={getAppState}
         showConnectingMask={showConnectingMask}
         showEnvSwitcher={false} />);
     // There will be no third child if the envSwitcher is rendered
-    assert.equal(output.props.children[2], undefined);
+    assert.equal(output.props.children[1], undefined);
+  });
+
+  it('doesnt render the env switcher when sectionC profile is visible', () => {
+    var app = {app:'app'};
+    var env = {env: 'env'};
+    var envName = 'bar';
+    var dbEnvironmentSet = sinon.stub();
+    var jem = {jem: 'jem'};
+    var envList = ['envList'];
+    var changeState = sinon.stub();
+    var getAppState = sinon.stub().returns('profile');
+    var showConnectingMask = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.HeaderBreadcrumb
+        app={app}
+        env={env}
+        envName={envName}
+        dbEnvironmentSet={dbEnvironmentSet}
+        jem={jem}
+        envList={envList}
+        changeState={changeState}
+        getAppState={getAppState}
+        showConnectingMask={showConnectingMask}
+        // Even though showEnvSwitcher is true, because the profile is visibile
+        // it shouldn't render the env switcher.
+        showEnvSwitcher={true} />);
+    // There will be no third child if the envSwitcher is rendered
+    assert.equal(output.props.children[1], undefined);
   });
 
 });

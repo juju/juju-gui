@@ -29,6 +29,7 @@ YUI.add('header-breadcrumb', function() {
       jem: React.PropTypes.object,
       envList: React.PropTypes.array,
       changeState: React.PropTypes.func.isRequired,
+      getAppState: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
       authDetails: React.PropTypes.object,
       showEnvSwitcher: React.PropTypes.bool.isRequired,
@@ -42,7 +43,9 @@ YUI.add('header-breadcrumb', function() {
       @method _renderEnvSwitcher
     */
     _renderEnvSwitcher: function() {
-      if (this.props.showEnvSwitcher) {
+      var component = this.props.getAppState(
+        'current', 'sectionC', 'component');
+      if (this.props.showEnvSwitcher && component !== 'profile') {
         return (
           <li className="header-breadcrumb__list-item">
             <window.juju.components.EnvSwitcher
@@ -64,7 +67,6 @@ YUI.add('header-breadcrumb', function() {
       var auth = this.props.authDetails;
       return (
         <ul className="header-breadcrumb">
-          <li className="header-breadcrumb__list-item"></li>
           <li className="header-breadcrumb__list-item">
             <a className="header-breadcrumb--link" href="/profile/">
               {auth && auth.user && auth.user.name || 'anonymous'}

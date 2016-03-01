@@ -1068,6 +1068,7 @@ YUI.add('juju-gui', function(Y) {
       }
       var auth = this._getAuth(authEndpoint);
       var envName = this.get('jujuEnvUUID') || this.db.environment.get('name');
+      var state = this.state;
       ReactDOM.render(
         <components.HeaderBreadcrumb
           app={this}
@@ -1077,6 +1078,7 @@ YUI.add('juju-gui', function(Y) {
           jem={this.jem}
           envList={this.get('environmentList')}
           changeState={this.changeState.bind(this)}
+          getAppState={state.getState.bind(state)}
           showConnectingMask={this.showConnectingMask.bind(this)}
           authDetails={auth}
           showEnvSwitcher={showEnvSwitcher}/>,

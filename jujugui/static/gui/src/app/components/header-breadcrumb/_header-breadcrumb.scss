@@ -3,7 +3,7 @@
 }
 .header-breadcrumb {
     @extend %list-style;
-    padding: 20px 0 20px 0;
+    padding: 20px 0;
 
     &--link {
         color: $ubuntu-orange;
@@ -23,6 +23,6 @@
 
     &__list-item {
         float: left;
-        padding-left: 20px
+        padding-left: 20px;
     }
 }
