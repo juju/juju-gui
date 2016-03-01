@@ -31,6 +31,7 @@ describe('UserProfileHeader', () => {
     var interactiveLogin = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.UserProfileHeader
+        authenticated={false}
         avatar="avatar.png"
         bundleCount={5}
         charmCount={2}
@@ -67,6 +68,7 @@ describe('UserProfileHeader', () => {
   it('can render without a login button', () => {
     var output = jsTestUtils.shallowRender(
       <juju.components.UserProfileHeader
+        authenticated={true}
         avatar="avatar.png"
         bundleCount={5}
         charmCount={2}
@@ -76,9 +78,23 @@ describe('UserProfileHeader', () => {
     assert.isUndefined(output.props.children[0]);
   });
 
+  it('does not display the login button when authenticated', () => {
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UserProfileHeader
+        authenticated={true}
+        avatar="avatar.png"
+        bundleCount={5}
+        charmCount={2}
+        environmentCount={1}
+        interactiveLogin={sinon.stub()}
+        username="spinach" />);
+    assert.isUndefined(output.props.children[0]);
+  });
+
   it('can render with a default avatar', () => {
     var output = jsTestUtils.shallowRender(
       <juju.components.UserProfileHeader
+        authenticated={true}
         avatar=""
         bundleCount={5}
         charmCount={2}
