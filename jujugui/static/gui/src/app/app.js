@@ -711,12 +711,16 @@ YUI.add('juju-gui', function(Y) {
       }
       // If the charmbrowser is open then don't show the logout link.
       var visible = !this.state.getState('current', 'sectionC', 'metadata');
-      var bakery = this.get('charmstore').bakery;
+      var charmstore = this.get('charmstore');
+      var bakery = charmstore.bakery;
       ReactDOM.render(
         <window.juju.components.Logout
           logout={this.logout.bind(this)}
-          visible={visible}
-          clearCookie={bakery.clearCookie.bind(bakery)} />,
+          clearCookie={bakery.clearCookie.bind(bakery)}
+          charmstoreLogoutUrl={charmstore.getLogoutUrl()}
+          getUser={this.getUser.bind(this, 'charmstore')}
+          clearUser={this.clearUser.bind(this, 'charmstore')}
+          visible={visible} />,
         document.getElementById('profile-link-container'));
     },
 
@@ -2046,6 +2050,27 @@ YUI.add('juju-gui', function(Y) {
         this.cookieHandler.check();
       }
       next();
+    },
+
+    /**
+      Get the user info for the supplied service.
+
+      @method getUser
+      @param {String} service The service the macaroon comes from.
+      @return {Object} The user information.
+    */
+    getUser: function(service) {
+      return this.get('users')[service];
+    },
+
+    /**
+      Clears the user info for the supplied service.
+
+      @method clearUser
+      @param {String} service The service the macaroon comes from.
+    */
+    clearUser: function(service) {
+      delete this.get('users')[service];
     },
 
     /**

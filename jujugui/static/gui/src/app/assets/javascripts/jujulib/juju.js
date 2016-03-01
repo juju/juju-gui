@@ -226,6 +226,16 @@ var module = module;
   }
 
   charmstore.prototype = {
+
+    /**
+      Returns the url that you need to visit to log out of the charmstore.
+
+      @method getLogoutUrl
+      @return {String} The url to visit to log out.
+    */
+    getLogoutUrl: function() {
+      return this._generatePath('logout');
+    },
     /**
       Generates a path to the charmstore apiv4 based on the query and endpoint
       params passed in.
