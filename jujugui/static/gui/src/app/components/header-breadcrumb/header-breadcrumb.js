@@ -69,7 +69,7 @@ YUI.add('header-breadcrumb', function() {
         <ul className="header-breadcrumb">
           <li className="header-breadcrumb__list-item">
             <a className="header-breadcrumb--link" href="/profile/">
-              {auth && auth.user && auth.user.name || 'anonymous'}
+              {auth && auth.user || 'anonymous'}
             </a>
           </li>
           {this._renderEnvSwitcher()}

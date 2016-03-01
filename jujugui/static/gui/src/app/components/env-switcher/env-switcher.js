@@ -147,8 +147,8 @@ YUI.add('env-switcher', function() {
       var jem = this.props.jem;
       var envOwnerName = 'admin';
       var auth = this.props.authDetails;
-      if (auth && auth.user && auth.user.name) {
-        envOwnerName = auth.user.name;
+      if (auth && auth.user) {
+        envOwnerName = auth.user;
       }
       // Use the custom provided name or fall back to an auto-incremented one.
       var envName = customEnvName || 'new-env-' + this.state.envList.length;

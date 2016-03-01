@@ -447,4 +447,42 @@ describe('jujulib charmstore', function() {
           {target: { responseText: '[notvalidjson]'}});
     });
   });
+
+  describe('whoami', function() {
+    it('queries who the current user is', function() {
+      charmstore.whoami();
+      assert.equal(charmstore.bakery.sendGetRequest.callCount, 1);
+    });
+
+    it('calls the success handler with an auth object', function(done) {
+      var cb = function(error, auth) {
+        // If it gets here then it has successfully called.
+        if (error) {
+          assert.fail('callback should not fail.');
+        }
+        assert.deepEqual(auth, {user: 'test', groups: []});
+        done();
+      };
+      charmstore.whoami(cb);
+      var requestArgs = charmstore.bakery.sendGetRequest.lastCall.args;
+      assert.equal(requestArgs[0], 'local/v4/whoami');
+      // Call the makeRequest success handler simulating a response object;
+      requestArgs[1](
+          {target: { responseText: '{"User": "test", "Groups": []}'}});
+    });
+
+    it('calls the failure handler for json parse failures', function(done) {
+      var cb = function(error, list) {
+        if (error) {
+          done();
+        } else {
+          assert.fail('callback should not succeed.');
+        }
+      };
+      charmstore.whoami(cb);
+      // Call the makeRequest success handler simulating a response object;
+      charmstore.bakery.sendGetRequest.lastCall.args[1](
+          {target: { responseText: '[notvalidjson]'}});
+    });
+  });
 });

@@ -1236,10 +1236,11 @@ describe('App', function() {
   });
 
   describe('storeUser', function() {
-    var Y, app;
+    var Y, app, csStub, jemStub, testUtils;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
@@ -1250,46 +1251,39 @@ describe('App', function() {
         viewContainer: container,
         consoleEnabled: true
       });
+      jemStub = testUtils.makeStubFunction();
+      app.jem = {
+        whoami: jemStub
+      };
+      var charmstore = app.get('charmstore');
+      csStub = testUtils.makeStubMethod(charmstore, 'whoami');
+      this._cleanups.push(csStub);
     });
 
     afterEach(function() {
       app.destroy({remove: true});
     });
 
-    var makeMacaroon = function(invalid) {
-      var data = [{
-        caveats: [{cid: 'nothing'}, {cid: 'also nothing'}],
-      }, {
-        caveats: [{cid: 'declared username rose'}, {cid: 'more nothing'}]
-      }, {
-        caveats: [{cid: 'whole lot of nothing'}]
-      }];
-      if (invalid) {
-        data.push({caveats: [{cid: 'declared username bad wolf'}]});
-        data.push({caveats: [{cid: 'declared username dalek'}]});
-      }
-      data = JSON.stringify(data);
-      return btoa(data);
-    };
-
-    it('handles no macaroon being found.', function() {
-      app.storeUser('jem', '');
+    it('calls jem whoami for jem users', function() {
+      var user = {user: 'test'};
+      app.storeUser('jem');
+      assert.equal(jemStub.callCount(), 1);
+      assert.equal(csStub.callCount(), 0);
+      var cb = jemStub.lastArguments()[0];
+      cb(null, user);
       var users = app.get('users');
-      assert.isUndefined(users['jem']);
+      assert.deepEqual(users['jem'], user);
     });
 
-    it('can get username from a macaroon.', function() {
-      var macaroon = makeMacaroon();
-      app.storeUser('jem', macaroon);
+    it('calls charmstore whoami for charmstore users', function() {
+      var user = {user: 'test'};
+      app.storeUser('charmstore');
+      assert.equal(csStub.callCount(), 1);
+      assert.equal(jemStub.callCount(), 0);
+      var cb = csStub.lastArguments()[0];
+      cb(null, user);
       var users = app.get('users');
-      assert.deepEqual(users['jem'], {user: {name: 'rose'}});
-    });
-
-    it('returns null if the macaroon has multiple usernames.', function() {
-      var macaroon = makeMacaroon(true);
-      app.storeUser('jem', macaroon);
-      var users = app.get('users');
-      assert.isUndefined(users['jem']);
+      assert.deepEqual(users['charmstore'], user);
     });
   });
 

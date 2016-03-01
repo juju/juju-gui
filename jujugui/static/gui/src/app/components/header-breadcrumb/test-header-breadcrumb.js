@@ -40,7 +40,7 @@ describe('HeaderBreadcrumb', () => {
     var changeState = sinon.stub();
     var getAppState = sinon.stub();
     var showConnectingMask = sinon.stub();
-    var authDetails = {user: {name: 'foo'}};
+    var authDetails = {user: 'foo'};
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
         app={app}

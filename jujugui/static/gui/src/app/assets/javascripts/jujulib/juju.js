@@ -59,6 +59,22 @@ var module = module;
     }
   };
 
+  var _transformAuthObject = function(callback, error, data) {
+    if (error !== null) {
+      callback(error, data);
+    } else {
+      var auth = {};
+      // Mapping from the API's attributes to the lowercase attributes more
+      // common in the JS world. Not sure if we want to do this, or if
+      // there's a better way (i.e., one that handles deeply nested
+      // structures), but this works for now.
+      Object.keys(data).forEach(function(key) {
+        auth[key.toLowerCase()] = data[key];
+      });
+      callback(error, auth);
+    }
+  };
+
   /**
      Environment object for jujulib.
 
@@ -158,6 +174,25 @@ var module = module;
       };
       var url = [this.jemUrl, 'env', envOwnerName].join('/');
       _makeRequest(this.bakery, url, 'POST', body, callback);
+    },
+
+    /**
+      Queries the whoami service for auth info.
+
+      @method whoami
+      @param callback {Function} A callback to handle errors or accept the data
+          from the request. Must accept an error message or null as its first
+          parameter and the response data as its second.
+    */
+    whoami: function(callback) {
+      var url = [this.jemUrl, 'whoami'].join('/');
+      _makeRequest(
+        this.bakery,
+        url,
+        'GET',
+        null,
+        _transformAuthObject.bind(this, callback)
+      );
     }
   };
 
@@ -501,6 +536,25 @@ var module = module;
         'GET',
         null,
         this._transformQueryResults.bind(this, callback));
+    },
+
+    /**
+      Queries the whoami service for auth info.
+
+      @method whoami
+      @param callback {Function} A callback to handle errors or accept the data
+          from the request. Must accept an error message or null as its first
+          parameter and the response data as its second.
+    */
+    whoami: function(callback) {
+      var path = this._generatePath('whoami');
+      return _makeRequest(
+        this.bakery,
+        path,
+        'GET',
+        null,
+        _transformAuthObject.bind(this, callback)
+      );
     },
 
     /**
