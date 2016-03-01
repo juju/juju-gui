@@ -60,7 +60,7 @@ describe('App', function() {
         'login-container',
         'notifications-container',
         'loading-message',
-        'environment-switcher'
+        'header-breadcrumb'
       ];
       container = Y.Node.create('<div>');
       container.set('id', 'test-container');
@@ -1173,11 +1173,12 @@ describe('App', function() {
       };
       app.env = fake_env;
       app.db = fake_db;
+      app._renderBreadcrumb = Y['juju-tests'].utils.makeStubFunction();
       return app;
     };
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
         done();
       });
     });
@@ -1222,6 +1223,15 @@ describe('App', function() {
       assert.equal(
           app.env.setPassword, 'new-password',
           'Credentials should have been set.');
+    });
+
+    it('calls to update the breadcrumb with proper authEndpoint', function() {
+      app = _generateMockedApp(false);
+      app.switchEnv('uuid');
+      assert.equal(app._renderBreadcrumb.callCount(), 1);
+      assert.deepEqual(app._renderBreadcrumb.lastArguments()[0], {
+        authEndpoint: 'jem'
+      });
     });
   });
 

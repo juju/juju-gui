@@ -17,11 +17,9 @@
     &--left {
         z-index: index($z-indexed-elements, header-banner-breadcrumbs);
         left: 0;
-        margin-top: -6px;
     }
 
-    &__link,
-    &__link--breadcrumb {
+    &__link {
         @extend .border-box;
         color: $text-colour;
         display: block;
@@ -33,32 +31,16 @@
         }
     }
 
-    &__link--breadcrumb {
-        color: $ubuntu-orange;
-        font-size: 23px;
-
-        &:before {
-            content: '/';
-            position: relative;
-            left: -7px;
-            top: 1px;
-            color: $mid-grey;
-        }
-    }
-
     &__logo {
         position: relative;
+        float: left;
         top: -1px;
-        margin-left: 10px;
+        padding: 20px 0 20px 20px;
     }
 
-    .header-banner__list {
+    .header-banner__list--right {
         @extend %list-style;
-
-        &--right {
-            @extend %list-style;
-            float: right;
-        }
+        float: right;
     }
 
     .header-banner__list-item {

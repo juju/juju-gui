@@ -429,19 +429,8 @@ YUI.add('juju-gui', function(Y) {
       ecs.on('currentCommitFinished', this._renderDeployment.bind(this));
       // Instantiate the Juju environment.
       this._generateSocketUrl(function(socketUrl, user, password) {
-        // XXX Update the header breadcrumb to show the username. This is a
-        // quick hack for the demo, which has since been slightly cleaned up;
-        // however, it is still definitely hacky and should be replaced as
-        // soon as possible.
-        var breadcrumbElement = document.querySelector(
-            '#user-name .header-banner__link--breadcrumb');
-        var auth = this._getAuth('charmstore');
-        if (breadcrumbElement) {
-          breadcrumbElement.textContent = auth && auth.user && auth.user.name ||
-            window.juju_config.user ||
-            'admin';
-        }
-
+        // Update the breadcrumb to display the proper user and model name.
+        this._renderBreadcrumb({authEndpoint: 'charmstore'});
         this.set('socket_url', socketUrl);
         var envOptions = {
           ecs: ecs,
@@ -754,7 +743,7 @@ YUI.add('juju-gui', function(Y) {
           charmstore={this.get('charmstore')} />,
         document.getElementById('charmbrowser-container'));
       // The model name should not be visible when viewing the profile.
-      document.getElementById('environment-switcher').classList.add('hidden');
+      this._renderBreadcrumb({ showEnvSwitcher: false });
     },
 
     /**
@@ -1051,39 +1040,49 @@ YUI.add('juju-gui', function(Y) {
 
     _emptySectionC: function() {
       // If the model name has been hidden by the profile then show it again.
-      document.getElementById(
-        'environment-switcher').classList.remove('hidden');
+      this._renderBreadcrumb({ showEnvSwitcher: true });
       ReactDOM.unmountComponentAtNode(
         document.getElementById('charmbrowser-container'));
     },
 
     /**
-      Renders the environment switcher
+      Renders the breadcrumb component to the DOM.
 
-      @method _renderEnvSwitcher
+      @method _renderBreadcrumb
+      @param {Object} options
+        showEnvSwitcher: false
     */
-    _renderEnvSwitcher: function() {
-      if(this.env.findFacadeVersion('ModelManager') === null &&
+    _renderBreadcrumb: function(
+        { showEnvSwitcher=true, authEndpoint='charmstore' } = {}) {
+      // If this.env is undefined then do not render the switcher because there
+      // is no env to connect to. It will be undefined when the breadcrumb
+      // is rendered in the callback for generateSocketUrl because an env
+      // has not yet been created.
+      if(!this.env ||
+         this.env.findFacadeVersion('ModelManager') === null &&
          this.env.findFacadeVersion('EnvironmentManager') === null) {
         // We do not want to show the model switcher if it isn't supported as
         // it throws an error in the browser console and confuses the user
         // as it's visible but not functional.
-        return;
+        showEnvSwitcher = false;
       }
-      var auth = this._getAuth('jem');
+      var auth = this._getAuth(authEndpoint);
       var envName = this.get('jujuEnvUUID') || this.db.environment.get('name');
+      var state = this.state;
       ReactDOM.render(
-        <components.EnvSwitcher
+        <components.HeaderBreadcrumb
           app={this}
           env={this.env}
-          environmentName={envName}
+          envName={envName}
           dbEnvironmentSet={this.db.environment.set.bind(this.db.environment)}
           jem={this.jem}
           envList={this.get('environmentList')}
           changeState={this.changeState.bind(this)}
+          getAppState={state.getState.bind(state)}
           showConnectingMask={this.showConnectingMask.bind(this)}
-          authDetails={auth} />,
-        document.getElementById('environment-switcher'));
+          authDetails={auth}
+          showEnvSwitcher={showEnvSwitcher}/>,
+        document.getElementById('header-breadcrumb'));
     },
 
     /**
@@ -1787,17 +1786,8 @@ YUI.add('juju-gui', function(Y) {
           password: password
         });
       };
-
-      // XXX Update the header breadcrumb to show the username. This is a
-      // quick hack for the demo.
-      var breadcrumbElement = document.querySelector(
-          '#user-name .header-banner__link--breadcrumb');
-      var auth = this._getAuth('jem');
-      if (breadcrumbElement) {
-        breadcrumbElement.textContent = auth && auth.user && auth.user.name ||
-          window.juju_config.user ||
-          'admin';
-      }
+      // Update the breadcrumb to display the proper user and model name.
+      this._renderBreadcrumb({authEndpoint: 'jem'});
       // Tell the environment to use the new socket URL when reconnecting.
       this.env.set('socket_url', socketUrl);
       // Clear uncommitted state.
@@ -1915,7 +1905,7 @@ YUI.add('juju-gui', function(Y) {
         this.db.machines.filterByParent().length
       );
       this._renderDeployment();
-      this._renderEnvSwitcher();
+      this._renderBreadcrumb();
       this._renderHeaderSearch();
       // When we render the components we also want to trigger the rest of
       // the application to render but only based on the current state.
@@ -2291,7 +2281,7 @@ YUI.add('juju-gui', function(Y) {
     'charmbrowser-component',
     'deployment-component',
     'env-size-display',
-    'env-switcher',
+    'header-breadcrumb',
     'expanding-progress',
     'header-search',
     'inspector-component',

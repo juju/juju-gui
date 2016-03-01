@@ -1,0 +1,28 @@
+#header-breadcrumb {
+    float: left;
+}
+.header-breadcrumb {
+    @extend %list-style;
+    padding: 20px 0;
+
+    &--link {
+        color: $ubuntu-orange;
+        font-size: 23px;
+
+        &:before {
+            /* inline-block is necessary to avoid the hover underline from the
+            link from spilling over into the before */
+            display: inline-block;
+            content: '/';
+            position: relative;
+            left: -7px;
+            top: 1px;
+            color: $mid-grey;
+        }
+    }
+
+    &__list-item {
+        float: left;
+        padding-left: 20px;
+    }
+}
