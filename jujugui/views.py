@@ -73,6 +73,9 @@ def config(request):
     base_url = settings.get('jujugui.base_url')
     env_uuid = settings.get('jujugui.uuid', 'sandbox')
 
+    jem_macaroons = settings.get('jujugui.jem_macaroons')
+    charmstore_macaroons = settings.get('jujugui.charmstore_macaroons')
+
     if sandbox_enabled:
         user = user if user is not None else 'admin'
         password = password if password is not None else 'password'
@@ -101,6 +104,9 @@ def config(request):
         # The jem url and path.
         'jemURL': settings['jujugui.jem_url'],
         'jemAPIPath': settings['jujugui.jem_api_path'],
+        # Any provided macaroons.
+        'charmstoreMacaroons': charmstore_macaroons,
+        'jemMacaroons': jem_macaroons,
         # WebSocket connection to the Juju API.
         'socket_protocol': socket_protocol,
         'user': user,
