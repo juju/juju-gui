@@ -115,24 +115,6 @@ YUI.add('deployment-bar', function() {
     },
 
     /**
-      Generate the install button if it should be displayed.
-
-      @method _generateInstallButton
-      @returns {Object} The install button.
-    */
-    _generateInstallButton: function() {
-      if (!this.props.showInstall) {
-        return;
-      }
-      return (
-        <a className="deployment-bar__install-button"
-          href="https://jujucharms.com/get-started"
-          target="_blank">
-          Install Juju
-        </a>);
-    },
-
-    /**
       Returns the classes for the button based on the provided props.
       @method _generateClasses
       @returns {String} The collection of class names.
@@ -146,11 +128,23 @@ YUI.add('deployment-bar', function() {
       );
     },
 
+    /**
+      Returns the classes for the button based on the provided props.
+      @method _generateClasses
+      @returns {String} The collection of class names.
+    */
+    _generatePanelClass: function() {
+      return classNames(
+        this.props.showInstall ?
+          'deployment-bar-panel--sandboxed' : 'deployment-bar-panel'
+      );
+    },
+
     render: function() {
       var changeCount = Object.keys(this.props.currentChangeSet).length;
       return (
         <juju.components.Panel
-          instanceName="deployment-bar-panel"
+          instanceName={this._generatePanelClass()}
           visible={true}>
           <div className={this._generateClasses()}>
             <span className="deployment-bar__import link"
@@ -170,7 +164,6 @@ YUI.add('deployment-bar', function() {
               onChange={this._handleImportFile}
               accept=".zip,.yaml,.yml"
               ref="file-input" />
-            {this._generateInstallButton()}
             <juju.components.DeploymentBarNotification
               change={this.state.latestChangeDescription} />
             <div className="deployment-bar__deploy">
