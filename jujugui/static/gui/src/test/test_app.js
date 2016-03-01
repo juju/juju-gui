@@ -1224,15 +1224,6 @@ describe('App', function() {
           app.env.setPassword, 'new-password',
           'Credentials should have been set.');
     });
-
-    it('calls to update the breadcrumb with proper authEndpoint', function() {
-      app = _generateMockedApp(false);
-      app.switchEnv('uuid');
-      assert.equal(app._renderBreadcrumb.callCount(), 1);
-      assert.deepEqual(app._renderBreadcrumb.lastArguments()[0], {
-        authEndpoint: 'jem'
-      });
-    });
   });
 
   describe('storeUser', function() {
