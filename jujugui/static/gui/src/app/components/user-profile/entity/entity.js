@@ -37,7 +37,11 @@ YUI.add('user-profile-entity', function() {
     */
     getInitialState: function() {
       return {
-        expanded: false
+        expanded: false,
+        styles: {
+          height: '0px',
+          opacity: 0
+        }
       };
     },
 
@@ -94,7 +98,14 @@ YUI.add('user-profile-entity', function() {
       @method _toggle
     */
     _toggle: function() {
-      this.setState({expanded: !this.state.expanded});
+      var expanded = this.state.expanded;
+      this.setState({expanded: !expanded}, () => {
+        var newHeight = expanded ? '0px' : this.refs.inner.offsetHeight + 'px';
+        this.setState({styles: {
+          height: newHeight,
+          opacity: expanded ? 0 : 1
+        }});
+      });
     },
 
     /**
@@ -300,29 +311,33 @@ YUI.add('user-profile-entity', function() {
             'user-profile__entity-summary twelve-col no-margin-bottom'}>
             {this.props.children}
           </div>
-          <div className="user-profile__entity-details twelve-col">
-            <div className="user-profile__entity-details-header twelve-col">
-              <div className="ten-col no-margin-bottom">
-                {icon}{name}
+          <div className="user-profile__entity-details twelve-col"
+            style={this.state.styles}>
+            <div className="twelve-col no-margin-bottom"
+              ref="inner">
+              <div className="user-profile__entity-details-header twelve-col">
+                <div className="ten-col no-margin-bottom">
+                  {icon}{name}
+                </div>
+                <div className={'user-profile__entity-details-header-action ' +
+                  'two-col last-col no-margin-bottom'}>
+                  <juju.components.GenericButton
+                    action={buttonAction}
+                    title={isModel ? 'Manage' : 'View'} />
+                </div>
               </div>
-              <div className={'user-profile__entity-details-header-action ' +
-                'two-col last-col no-margin-bottom'}>
-                <juju.components.GenericButton
-                  action={buttonAction}
-                  title={isModel ? 'Manage' : 'View'} />
+              <div className={'user-profile__entity-details-content ' +
+                'twelve-col no-margin-bottom'}>
+                {this._generateSeries()}
+                {this._generateServices()}
+                <div className="three-col last-col">
+                  Owner: {entity.owner}
+                </div>
+                {this._generateDiagram()}
+                {this._generateDescription()}
+                {this._generateTags()}
+                {this._generateCommits()}
               </div>
-            </div>
-            <div className={'user-profile__entity-details-content twelve-col ' +
-              'no-margin-bottom'}>
-              {this._generateSeries()}
-              {this._generateServices()}
-              <div className="three-col last-col">
-                Owner: {entity.owner}
-              </div>
-              {this._generateDiagram()}
-              {this._generateDescription()}
-              {this._generateTags()}
-              {this._generateCommits()}
             </div>
           </div>
         </li>);
