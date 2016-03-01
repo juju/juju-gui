@@ -570,6 +570,24 @@ YUI.add('juju-env-bakery', function(Y) {
           }
         }
         return null;
+      },
+
+      /**
+        Clears the cookies saved for macaroons.
+
+        @method clearCookie
+      */
+      clearCookie: function() {
+        var name = this.macaroonName;
+        var pathParts = '/profile'.split('/');
+        var currentPath = ' path=';
+        // Delete the / cookie first
+        document.cookie = `${name}=; expires=Thu, 01-Jan-1970 00:00:01 GMT;`;
+        pathParts.forEach(part => {
+          currentPath += ((currentPath.substr(-1) !== '/') ? '/' : '') + part;
+          document.cookie =
+            `${name}=; expires=Thu, 01-Jan-1970 00:00:01 GMT;${currentPath};`;
+        });
       }
     }
   );

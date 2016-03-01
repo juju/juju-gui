@@ -711,10 +711,12 @@ YUI.add('juju-gui', function(Y) {
       }
       // If the charmbrowser is open then don't show the logout link.
       var visible = !this.state.getState('current', 'sectionC', 'metadata');
+      var bakery = this.get('charmstore').bakery;
       ReactDOM.render(
         <window.juju.components.Logout
           logout={this.logout.bind(this)}
-          visible={visible} />,
+          visible={visible}
+          clearCookie={bakery.clearCookie.bind(bakery)} />,
         document.getElementById('profile-link-container'));
     },
 

@@ -24,12 +24,15 @@ YUI.add('logout-component', function() {
 
     propTypes: {
       logout: React.PropTypes.func.isRequired,
-      visible: React.PropTypes.bool.isRequired
+      visible: React.PropTypes.bool.isRequired,
+      clearCookie: React.PropTypes.func.isRequired
     },
 
     logout: function(e) {
+      var props = this.props;
       e.preventDefault();
-      this.props.logout();
+      props.clearCookie();
+      props.logout();
     },
 
     /**
