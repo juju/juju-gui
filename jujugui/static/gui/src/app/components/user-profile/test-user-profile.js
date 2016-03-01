@@ -428,7 +428,6 @@ describe('UserProfile', () => {
     instance._interactiveLogin();
     assert.equal(charmstore.bakery.fetchMacaroonFromStaticPath.callCount, 1);
     assert.equal(storeUser.callCount, 1);
-    assert.equal(storeUser.args[0][1], macaroon);
   });
 
   it('gets the entity data when the user authenticates', () => {
