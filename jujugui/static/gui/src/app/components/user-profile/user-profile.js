@@ -61,9 +61,9 @@ YUI.add('user-profile', function() {
       }
     },
 
-    componentWillReceiveProps: function(nextProps) {
+    componentDidUpdate: function(prevProps, prevState) {
       // If the user has just been authenticated then update the data.
-      if (!this.props.authenticated && nextProps.authenticated) {
+      if (!prevProps.authenticated && this.props.authenticated) {
         this._getData();
       }
     },
