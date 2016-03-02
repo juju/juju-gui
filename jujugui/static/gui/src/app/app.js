@@ -1285,7 +1285,8 @@ YUI.add('juju-gui', function(Y) {
         // Store away the charmstore auth info.
         var macaroon = bakery.getMacaroon();
         if (macaroon) {
-          this.storeUser('charmstore');
+          this.get('users')['charmstore'] = {loading: true};
+          this.storeUser('charmstore', false, true);
         }
       }
     },
@@ -2053,8 +2054,9 @@ YUI.add('juju-gui', function(Y) {
       @param {String} service The service the macaroon comes from.
       @param {String} macaroon The base64 encoded macaroon.
       @param {Boolean} rerenderProfile Rerender the user profile.
+      @param {Boolean} rerenderBreadcrumb Rerender the breadcrumb.
      */
-    storeUser: function(service, rerenderProfile) {
+    storeUser: function(service, rerenderProfile, rerenderBreadcrumb) {
       var callback = function(error, auth) {
         if (error) {
           console.error('Unable to query user information', error);
@@ -2067,6 +2069,9 @@ YUI.add('juju-gui', function(Y) {
           if (rerenderProfile) {
             this._renderUserProfile();
           }
+        }
+        if (rerenderBreadcrumb) {
+          this._renderBreadcrumb();
         }
       };
       if (service === 'jem') {
