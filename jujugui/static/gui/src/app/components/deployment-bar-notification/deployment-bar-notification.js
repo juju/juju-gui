@@ -33,7 +33,7 @@ YUI.add('deployment-bar-notification', function() {
       try {
         // This will throw a warning that it can't be found sometimes, that's
         // fine to ignore.
-        node = ReactDOM.findDOMNode(this);
+        node = this.refs.deploymentBarNotificationContainer;
         // Fade out the notification.
         node.classList.remove('deployment-bar__notification--visible');
       } catch (e) {
