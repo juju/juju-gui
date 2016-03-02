@@ -1235,6 +1235,59 @@ describe('App', function() {
     });
   });
 
+  describe('getUser', function() {
+    var Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+        done();
+      });
+    });
+
+    it('gets the set user for the supplied service', function() {
+      container = Y.Node.create('<div id="test" class="container"></div>');
+      var app = new Y.juju.App({
+        viewContainer: container,
+        consoleEnabled: true
+      });
+      var charmstoreUser = {
+        name: 'foo'
+      };
+      app.set('users', {
+        'charmstore': charmstoreUser
+      });
+      assert.deepEqual(app.getUser('charmstore'), charmstoreUser);
+    });
+
+  });
+
+  describe('clearUser', function() {
+    var Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+        done();
+      });
+    });
+
+    it('clears the set user for the supplied service', function() {
+      container = Y.Node.create('<div id="test" class="container"></div>');
+      var app = new Y.juju.App({
+        viewContainer: container,
+        consoleEnabled: true
+      });
+      var charmstoreUser = {
+        name: 'foo'
+      };
+      app.set('users', {
+        'charmstore': charmstoreUser
+      });
+      app.clearUser('charmstore');
+      assert.equal(app.getUser('charmstore'), undefined);
+    });
+
+  });
+
   describe('storeUser', function() {
     var Y, app, csStub, jemStub, testUtils;
 

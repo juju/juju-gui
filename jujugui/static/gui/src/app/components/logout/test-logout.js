@@ -32,43 +32,95 @@ describe('Logout', () => {
 
   it('renders properly', () => {
     var logout = sinon.stub();
+    var logoutUrl = 'http://logout';
     var output = jsTestUtils.shallowRender(
       <juju.components.Logout
         logout={logout}
-        visible={true} />);
+        visible={true}
+        clearCookie={sinon.stub()}
+        charmstoreLogoutUrl={logoutUrl}
+        getUser={sinon.stub()}
+        clearUser={sinon.stub()}/>);
     var expected = (
       <a className="logout-link"
-        href="#"
-        onClick={output.props.onClick}>Logout</a>
+        href={logoutUrl}
+        onClick={output.props.onClick}
+        target="_blank">Logout</a>
       );
     assert.deepEqual(output, expected);
   });
 
   it('can be hidden', () => {
     var logout = sinon.stub();
+    var logoutUrl = 'http://logout';
     var output = jsTestUtils.shallowRender(
       <juju.components.Logout
         logout={logout}
-        visible={false} />);
+        visible={false}
+        clearCookie={sinon.stub()}
+        charmstoreLogoutUrl={logoutUrl}
+        getUser={sinon.stub()}
+        clearUser={sinon.stub()} />);
     var expected = (
       <a className="logout-link logout-link--hidden"
-        href="#"
-        onClick={output.props.onClick}>Logout</a>
+        href={logoutUrl}
+        onClick={output.props.onClick}
+        target="_blank">Logout</a>
       );
     assert.deepEqual(output, expected);
   });
 
   it('calls the logout prop on click', () => {
     var logout = sinon.stub();
+    var logoutUrl = 'http://logout';
     var prevent = sinon.stub();
+    var clearUser = sinon.stub();
+    var clearCookie = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Logout
         logout={logout}
-        visible={true} />);
+        visible={true}
+        clearCookie={clearCookie}
+        charmstoreLogoutUrl={logoutUrl}
+        getUser={sinon.stub().returns(undefined)}
+        clearUser={clearUser} />);
     assert.equal(logout.callCount, 0);
     output.props.onClick({ preventDefault: prevent });
+    // It should clear the user and the cookie.
+    assert.equal(clearUser.callCount, 1);
+    assert.equal(clearCookie.callCount, 1);
+
     assert.equal(logout.callCount, 1);
+    // preventDefault should only be called if no user is defined. There is no
+    // need to redirect the user if they do not need to log out.
+    // The next test checks to make sure that it does in that case.
     assert.equal(prevent.callCount, 1);
+  });
+
+  it('lets the user navigate if a user exists', () => {
+    var logout = sinon.stub();
+    var logoutUrl = 'http://logout';
+    var prevent = sinon.stub();
+    var clearUser = sinon.stub();
+    var getUser = sinon.stub().returns(true);
+    var clearCookie = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.Logout
+        logout={logout}
+        visible={true}
+        clearCookie={clearCookie}
+        charmstoreLogoutUrl={logoutUrl}
+        getUser={getUser}
+        clearUser={clearUser} />);
+    assert.equal(logout.callCount, 0);
+    output.props.onClick({ preventDefault: prevent });
+    // It should clear the user and the cookie.
+    assert.equal(clearUser.callCount, 1);
+    assert.equal(clearCookie.callCount, 1);
+
+    assert.equal(logout.callCount, 1);
+    // Unless getUser returns a user it shouldn't call preventDefault.
+    assert.equal(prevent.callCount, 0);
   });
 
 });
