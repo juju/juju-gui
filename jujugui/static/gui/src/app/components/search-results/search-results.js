@@ -21,6 +21,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('search-results', function(Y) {
 
   juju.components.SearchResults = React.createClass({
+    propTypes: {
+      getName: React.PropTypes.func.isRequired
+    },
+
     searchXhr: null,
 
      /**
@@ -32,17 +36,24 @@ YUI.add('search-results', function(Y) {
 
       @method collapseSeries
       @param {Array} entities The entities in their uncollapsed state.
+      @param {Function} getName The util for getting names from the charm ids.
+      @returns {Array} The entities with collapsed series.
      */
-    collapseSeries: function(entities) {
-      function entityKey(entity) {
-        return [entity.name, entity.owner, entity.type, entity.promulgated];
+    collapseSeries: function(entities, getName) {
+      function entityKey(entity, getName) {
+        return [
+          getName(entity.id),
+          entity.owner,
+          entity.type,
+          entity.promulgated
+        ];
       }
 
       var collapsedEntities = {},
           orderedKeys = [];
       for (var i = 0, l = entities.length; i < l; i++) {
         var entity = entities[i],
-            key = entityKey(entity),
+            key = entityKey(entity, getName),
             series = entity.series,
             url = entity.url || '',
             value = {name: series, url: url};
@@ -80,8 +91,9 @@ YUI.add('search-results', function(Y) {
           // Ensure downloads and URL are present.
           entity.downloads = entity.downloads || 0;
           entity.url = entity.url || '';
+          var name = getName(entity.id);
           entity.id = entity.series.length > 0 ?
-              entity.series[0].name + '/' + entity.name : entity.name;
+              entity.series[0].name + '/' + name : name;
           collapsedEntities[key] = entity;
           // Save the key so we can preserve sort order.
           orderedKeys.push(key);
@@ -115,7 +127,7 @@ YUI.add('search-results', function(Y) {
         return model.toEntity();
       }, this);
       var activeComponent;
-      results = this.collapseSeries(results);
+      results = this.collapseSeries(results, this.props.getName);
       // Split the results into promulgated and normal.
       var promulgatedResults = [],
           normalResults = [];

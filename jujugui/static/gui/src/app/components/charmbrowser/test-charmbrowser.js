@@ -52,13 +52,15 @@ describe('Charmbrowser', function() {
     var changeState = sinon.stub();
     var charmstoreSearch = sinon.stub();
     var makeEntityModel = sinon.spy();
+    var utils = {getName: sinon.stub()};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         appState={appState}
         makeEntityModel={makeEntityModel}
         changeState={changeState}
         series={series}
-        charmstoreSearch={charmstoreSearch} />, true);
+        charmstoreSearch={charmstoreSearch}
+        utils={utils} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -70,6 +72,7 @@ describe('Charmbrowser', function() {
             ref="charmbrowser">
             <juju.components.SearchResults
               changeState={changeState}
+              getName={utils.getName}
               seriesList={series}
               makeEntityModel={makeEntityModel}
               query={query}
@@ -97,7 +100,8 @@ describe('Charmbrowser', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         appState={appState}
-        changeState={changeState} />, true);
+        changeState={changeState}
+        utils={{}} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     assert.deepEqual(output,
@@ -124,6 +128,7 @@ describe('Charmbrowser', function() {
       }};
     var charmstoreSearch = sinon.stub();
     var changeState = sinon.stub();
+    var utils = {getName: sinon.stub()};
     var makeEntityModel = sinon.spy();
     var seriesList = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
@@ -132,10 +137,11 @@ describe('Charmbrowser', function() {
         charmstoreSearch={charmstoreSearch}
         makeEntityModel={makeEntityModel}
         series={seriesList}
-        changeState={changeState} />, true);
+        changeState={changeState}
+        utils={utils} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
-    assert.deepEqual(output,
+    var expected = (
         <juju.components.Panel
           instanceName="white-box"
           clickAction={instance._close}
@@ -145,10 +151,12 @@ describe('Charmbrowser', function() {
             <juju.components.Store
               makeEntityModel={makeEntityModel}
               charmstoreSearch={charmstoreSearch}
+              getName={utils.getName}
               seriesList={seriesList}
               changeState={changeState} />
           </div>
         </juju.components.Panel>);
+    assert.deepEqual(output, expected);
   });
 
   it('displays entity details when the app state calls for it', function() {

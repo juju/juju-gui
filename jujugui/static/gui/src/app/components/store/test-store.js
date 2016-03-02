@@ -33,11 +33,13 @@ describe('Store', function() {
   it('can render correctly', function() {
     var changeState = sinon.stub();
     var charmstoreSearch = sinon.stub();
+    var getName = sinon.stub();
     var makeEntityModel = sinon.stub();
     var seriesList = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Store
         charmstoreSearch={charmstoreSearch}
+        getName={getName}
         makeEntityModel={makeEntityModel}
         seriesList={seriesList}
         changeState={changeState} />);
@@ -50,6 +52,7 @@ describe('Store', function() {
         <juju.components.SearchResults
           changeState={changeState}
           charmstoreSearch={charmstoreSearch}
+          getName={getName}
           makeEntityModel={makeEntityModel}
           seriesList={seriesList}
           inline={true}

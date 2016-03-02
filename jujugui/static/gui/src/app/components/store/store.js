@@ -21,6 +21,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('store', function() {
 
   juju.components.Store = React.createClass({
+    propTypes: {
+      getName: React.PropTypes.func.isRequired
+    },
 
     render: function() {
       return (
@@ -32,6 +35,7 @@ YUI.add('store', function() {
           <juju.components.SearchResults
             changeState={this.props.changeState}
             charmstoreSearch={this.props.charmstoreSearch}
+            getName={this.props.getName}
             makeEntityModel={this.props.makeEntityModel}
             seriesList={this.props.seriesList}
             inline={true}
@@ -42,5 +46,6 @@ YUI.add('store', function() {
   });
 
 }, '0.1.0', { requires: [
-  'mid-point'
+  'mid-point',
+  'search-results'
 ]});

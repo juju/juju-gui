@@ -94,6 +94,7 @@ describe('LoginComponent', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.Login
         envName="testenv"
+        helpMessage="Exterminate!"
         setCredentials={sinon.stub()}
         login={sinon.stub()}
         loginFailure={true} />);
@@ -111,6 +112,7 @@ describe('LoginComponent', function() {
     var component = testUtils.renderIntoDocument(
       <juju.components.Login
         envName="testenv"
+        helpMessage="Exterminate!"
         setCredentials={setCredentials}
         login={login} />);
     component.refs.username.value = 'foo';
@@ -131,6 +133,7 @@ describe('LoginComponent', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
         envName="testenv"
+        helpMessage="Exterminate!"
         setCredentials={sinon.stub()}
         login={sinon.stub()}
         loginFailure={true} />, true);

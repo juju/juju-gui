@@ -43,6 +43,7 @@ describe('SearchResults', function() {
       var query = 'spinach';
       var output = jsTestUtils.shallowRender(
           <juju.components.SearchResults
+            getName={sinon.stub()}
             query={query} />);
       assert.deepEqual(output,
         <div className="search-results">
@@ -57,7 +58,8 @@ describe('SearchResults', function() {
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             query="nothing here"
-            charmstoreSearch={charmstoreSearch} />, true);
+            charmstoreSearch={charmstoreSearch}
+            getName={sinon.stub()} />, true);
       shallowRenderer.getMountedInstance().componentDidMount();
       var output = shallowRenderer.getRenderOutput();
       assert.deepEqual(output,
@@ -85,7 +87,8 @@ describe('SearchResults', function() {
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
             query="nothing here"
-            charmstoreSearch={charmstoreSearch} />, true);
+            charmstoreSearch={charmstoreSearch}
+            getName={sinon.stub()} />, true);
       var instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       var output = shallowRenderer.getRenderOutput();
@@ -134,6 +137,7 @@ describe('SearchResults', function() {
             query={query}
             seriesList={series}
             charmstoreSearch={charmstoreSearch}
+            getName={sinon.stub()}
             makeEntityModel={makeEntityModel} />, true);
       var instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
@@ -152,6 +156,9 @@ describe('SearchResults', function() {
 
     it('can render the search results', function() {
       var changeState = sinon.spy();
+      var getName = (val) => {
+        return val;
+      };
       var sortItems = [{
         label: 'Default',
         value: ''
@@ -245,11 +252,12 @@ describe('SearchResults', function() {
             seriesList={series}
             changeState={changeState}
             charmstoreSearch={charmstoreSearch}
+            getName={getName}
             makeEntityModel={makeEntityModel} />, true);
       var instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       var output = shallowRenderer.getRenderOutput();
-      assert.deepEqual(output,
+      var expected = (
         <div className="search-results">
           <div className="row no-padding-top">
             <div className="inner-wrapper list-block">
@@ -316,6 +324,7 @@ describe('SearchResults', function() {
             </div>
           </div>
         </div>);
+      assert.deepEqual(output, expected);
     });
   });
 
@@ -331,12 +340,16 @@ describe('SearchResults', function() {
     });
 
     it('collapses identical charms with different series', function() {
+      var getName = (val) => {
+        return val;
+      };
       var entities = [
-        {name: 'foo', owner: 'bar', type: 'charm', series: 'trusty'},
-        {name: 'foo', owner: 'bar', type: 'charm', series: 'precise'},
-        {name: 'foo', owner: 'baz', type: 'charm', series: 'vivid'}
+        {id: 'foo', name: 'foo', owner: 'bar', type: 'charm', series: 'trusty'},
+        {id: 'foo', name: 'foo', owner: 'bar', type: 'charm',
+          series: 'precise'},
+        {id: 'foo', name: 'foo', owner: 'baz', type: 'charm', series: 'vivid'}
       ];
-      var actual = searchResults.collapseSeries(entities),
+      var actual = searchResults.collapseSeries(entities, getName),
           first = entities[0],
           last = entities[2];
       var expected = [{
@@ -360,28 +373,40 @@ describe('SearchResults', function() {
     });
 
     it('aggregates downloads when collapsing charms', function() {
+      var getName = sinon.stub();
       var entities = [
         {name: 'c1', owner: 'o1', type: 'c', series: 's1', downloads: 1},
         {name: 'c1', owner: 'o1', type: 'c', series: 's2', downloads: 5},
         {name: 'c1', owner: 'o2', type: 'c', series: 's3', downloads: 3}
       ];
-      var actual = searchResults.collapseSeries(entities);
+      var actual = searchResults.collapseSeries(entities, getName);
       assert.equal(actual[0].downloads, 6, 'downloads not aggregated');
       assert.equal(actual[1].downloads, 3, 'downloads improperly aggregated');
     });
 
     it('maintains sort order when collapsing charms', function() {
+      var getName = (val) => {
+        return val;
+      };
       var entities = [
-        {name: 'foo1', owner: 'bar', type: 'c', series: 's1', downloads: 6},
-        {name: 'foo2', owner: 'bar', type: 'c', series: 's1', downloads: 5},
-        {name: 'foo1', owner: 'bar', type: 'c', series: 's2', downloads: 4},
-        {name: 'foo3', owner: 'bar', type: 'c', series: 's1', downloads: 4},
-        {name: 'foo2', owner: 'bar', type: 'c', series: 's1', downloads: 3},
-        {name: 'foo3', owner: 'bar', type: 'c', series: 's3', downloads: 3},
-        {name: 'foo3', owner: 'bar', type: 'c', series: 's4', downloads: 3},
-        {name: 'foo3', owner: 'bar', type: 'c', series: 's5', downloads: 3}
+        {id: 'foo1', name: 'foo1', owner: 'bar', type: 'c', series: 's1',
+          downloads: 6},
+        {id: 'foo2', name: 'foo2', owner: 'bar', type: 'c', series: 's1',
+          downloads: 5},
+        {id: 'foo1', name: 'foo1', owner: 'bar', type: 'c', series: 's2',
+          downloads: 4},
+        {id: 'foo3', name: 'foo3', owner: 'bar', type: 'c', series: 's1',
+          downloads: 4},
+        {id: 'foo2', name: 'foo2', owner: 'bar', type: 'c', series: 's1',
+          downloads: 3},
+        {id: 'foo3', name: 'foo3', owner: 'bar', type: 'c', series: 's3',
+          downloads: 3},
+        {id: 'foo3', name: 'foo3', owner: 'bar', type: 'c', series: 's4',
+          downloads: 3},
+        {id: 'foo3', name: 'foo3', owner: 'bar', type: 'c', series: 's5',
+          downloads: 3}
       ];
-      var actual = searchResults.collapseSeries(entities);
+      var actual = searchResults.collapseSeries(entities, getName);
       assert.equal(actual[0].name, 'foo1',
                    'foo1 did not maintain sort position');
       assert.equal(actual[0].downloads, 10,
@@ -397,12 +422,13 @@ describe('SearchResults', function() {
     });
 
     it('sorts the series within collapsed results', function() {
+      var getName = sinon.stub();
       var entities = [
         {name: 'c1', owner: 'o1', type: 'c', series: 'trusty'},
         {name: 'c1', owner: 'o1', type: 'c', series: 'precise'},
         {name: 'c1', owner: 'o1', type: 'c', series: 'vivid'}
       ];
-      var actual = searchResults.collapseSeries(entities),
+      var actual = searchResults.collapseSeries(entities, getName),
           actualSeries = actual[0].series,
           seriesNames = [];
       for (var i = 0, l = actualSeries.length; i < l; i++) {
@@ -412,12 +438,13 @@ describe('SearchResults', function() {
     });
 
     it('de-dupes the series within collapsed results', function() {
+      var getName = sinon.stub();
       var entities = [
         {name: 'c1', owner: 'o1', type: 'c', series: 'trusty'},
         {name: 'c1', owner: 'o1', type: 'c', series: 'precise'},
         {name: 'c1', owner: 'o1', type: 'c', series: 'trusty'}
       ];
-      var actual = searchResults.collapseSeries(entities),
+      var actual = searchResults.collapseSeries(entities, getName),
           actualSeries = actual[0].series,
           seriesNames = [];
       for (var i = 0, l = actualSeries.length; i < l; i++) {
@@ -573,7 +600,8 @@ describe('SearchResults', function() {
           <juju.components.SearchResults
             changeState={changeState}
             query={query}
-            charmstoreSearch={charmstoreSearch} />, true);
+            charmstoreSearch={charmstoreSearch}
+            getName={sinon.stub()} />, true);
       shallowRenderer.getMountedInstance().componentDidMount();
       shallowRenderer.unmount();
       assert.equal(abort.callCount, 1);
