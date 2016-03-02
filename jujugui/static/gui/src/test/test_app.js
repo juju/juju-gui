@@ -1331,13 +1331,17 @@ describe('App', function() {
     });
   });
 
-  describe('_getAuth', function() {
-    var Y, app;
+  describe.only('_getAuth', function() {
+    var Y, app, credStub, utils;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
-        done();
-      });
+      Y = YUI(GlobalConfig).use([
+          'juju-gui',
+          'juju-tests-utils'
+        ], function(Y) {
+          utils = Y.namespace('juju-tests.utils');
+          done();
+        });
     });
 
     beforeEach(function() {
@@ -1346,6 +1350,8 @@ describe('App', function() {
         viewContainer: container,
         consoleEnabled: true
       });
+      credStub = utils.makeStubMethod(app.env, 'getCredentials');
+      this._cleanups.push(credStub.reset);
     });
 
     afterEach(function() {
@@ -1360,12 +1366,19 @@ describe('App', function() {
     it('uses external auth if present', function() {
       app.set('auth', 'baz');
       app.set('users', { 'foo': 'bar' });
-      assert.equal(app._getAuth('foo'), 'baz');
+      assert.equal(app._getAuth(), 'baz');
     });
 
     it('does not break when auth is not set', function() {
       app.set('users', {});
-      assert.isUndefined(app._getAuth('foo'));
+      assert.isUndefined(app._getAuth());
+    });
+
+    it('falls back to controller credentials when necessary', function() {
+      var user = {username: 'admin'};
+      credStub = utils.makeStubMethod(app.env, 'getCredentials', user);
+      app.set('users', {});
+      assert.deepEqual(app._getAuth(), {user: user.username});
     });
   });
 

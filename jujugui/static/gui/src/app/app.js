@@ -2118,9 +2118,19 @@ YUI.add('juju-gui', function(Y) {
       var users = this.get('users');
       var user;
       if (users) {
+        var controllerUser;
+        if (this.env) {
+          var credentials = this.env.getCredentials();
+          if (credentials) {
+            controllerUser = {
+              user: credentials.username
+            };
+          }
+        }
         // Precedence order of the various services used by the GUI:
         user = users.jem ||
-               users.charmstore;
+               users.charmstore ||
+               controllerUser;
       }
       return user;
     }
