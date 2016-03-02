@@ -1285,7 +1285,7 @@ YUI.add('juju-gui', function(Y) {
         // Store away the charmstore auth info.
         var macaroon = bakery.getMacaroon();
         if (macaroon) {
-          this.get('users')['charmstore'] = {user: '...'};
+          this.get('users')['charmstore'] = {loading: true};
           this.storeUser('charmstore', false, true);
         }
       }
