@@ -56,27 +56,20 @@ YUI.add('user-profile', function() {
     },
 
     componentWillMount: function() {
+      this._fetchEnvironments();
       if (this.props.authenticated) {
-        this._getData();
+        this._fetchEntities('charm');
+        this._fetchEntities('bundle');
       }
     },
 
     componentDidUpdate: function(prevProps, prevState) {
       // If the user has just been authenticated then update the data.
       if (!prevProps.authenticated && this.props.authenticated) {
-        this._getData();
+        this._fetchEnvironments();
+        this._fetchEntities('charm');
+        this._fetchEntities('bundle');
       }
-    },
-
-    /**
-      Get the data for the models, charms and bundles.
-
-      @method _getData
-    */
-    _getData:  function() {
-      this._fetchEnvironments();
-      this._fetchEntities('charm');
-      this._fetchEntities('bundle');
     },
 
     /**
