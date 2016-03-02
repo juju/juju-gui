@@ -56,11 +56,11 @@ YUI.add('user-profile', function() {
     },
 
     componentWillMount: function() {
-      this._fetchEnvironments();
-      if (this.props.authenticated) {
-        this._fetchEntities('charm');
-        this._fetchEntities('bundle');
-      }
+      // this._fetchEnvironments();
+      // if (this.props.authenticated) {
+      //   this._fetchEntities('charm');
+      //   this._fetchEntities('bundle');
+      // }
     },
 
     componentDidUpdate: function(prevProps, prevState) {
@@ -558,12 +558,9 @@ YUI.add('user-profile', function() {
         state.envList.length === 0) {
         return (
           <div className="user-profile__empty twelve-col no-margin-bottom">
-            <span className="user-profile__empty-image">
-              <juju.components.SvgIcon
-                height="227"
-                name="empty-profile"
-                width="269" />
-            </span>
+            <img alt="Empty profile"
+              className="user-profile__empty-image"
+              src="/juju-ui/assets/images/non-sprites/empty_profile.png" />
             <h2 className="user-profile__empty-title">
               Your profile is currently empty
             </h2>
