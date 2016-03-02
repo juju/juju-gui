@@ -31,8 +31,10 @@ describe('InspectorConfirm', function() {
   });
 
   it('generates the correct classes if it is closed', function() {
+    var buttons = [];
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorConfirm
+          buttons={buttons}
           message="My message" />);
     assert.deepEqual(output,
       <div className="inspector-confirm">
@@ -40,13 +42,15 @@ describe('InspectorConfirm', function() {
           My message
         </p>
         <juju.components.ButtonRow
-        buttons={undefined} />
+        buttons={buttons} />
       </div>);
   });
 
   it('generates the correct classes if it is open', function() {
+    var buttons = [];
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorConfirm
+          buttons={buttons}
           message="My message"
           open={true} />);
     assert.deepEqual(output,
@@ -55,13 +59,15 @@ describe('InspectorConfirm', function() {
           My message
         </p>
         <juju.components.ButtonRow
-        buttons={undefined} />
+        buttons={buttons} />
       </div>);
   });
 
   it('displays the provided message', function() {
+    var buttons = [];
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorConfirm
+          buttons={buttons}
           message="My message" />);
     assert.deepEqual(output.props.children[0],
       <p className="inspector-confirm__message">
@@ -70,8 +76,10 @@ describe('InspectorConfirm', function() {
   });
 
   it('hides the message if one is not provided', function() {
+    var buttons = [];
     var output = jsTestUtils.shallowRender(
-        <juju.components.InspectorConfirm />);
+        <juju.components.InspectorConfirm
+          buttons={buttons} />);
     assert.deepEqual(output.props.children[0],
       <p className="inspector-confirm__message hidden">
         {undefined}

@@ -22,7 +22,21 @@ YUI.add('charmbrowser-component', function() {
 
   juju.components.Charmbrowser = React.createClass({
     propTypes: {
+      addNotification: React.PropTypes.func.isRequired,
       apiUrl: React.PropTypes.string.isRequired,
+      appState: React.PropTypes.object.isRequired,
+      changeState: React.PropTypes.func.isRequired,
+      charmstoreSearch: React.PropTypes.func.isRequired,
+      deployService: React.PropTypes.func.isRequired,
+      getBundleYAML: React.PropTypes.func.isRequired,
+      getDiagramURL: React.PropTypes.func.isRequired,
+      getEntity: React.PropTypes.func.isRequired,
+      getFile: React.PropTypes.func.isRequired,
+      importBundleYAML: React.PropTypes.func.isRequired,
+      makeEntityModel: React.PropTypes.func.isRequired,
+      utils: React.PropTypes.object.isRequired,
+      renderMarkdown: React.PropTypes.func.isRequired,
+      series: React.PropTypes.array.isRequired,
       utils: React.PropTypes.object.isRequired
     },
 

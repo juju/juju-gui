@@ -55,6 +55,7 @@ describe('AddedServicesListItem', function() {
           unfocusService={sinon.stub()}
           changeState={sinon.stub()}
           getUnitStatusCounts={getUnitStatusCounts()}
+          hoverService={sinon.stub()}
           panToService={sinon.stub()}
           service={mockService} />, true);
 
@@ -125,6 +126,7 @@ describe('AddedServicesListItem', function() {
             unfocusService={sinon.stub()}
             changeState={sinon.stub()}
             getUnitStatusCounts={status.statusCounts}
+            hoverService={sinon.stub()}
             panToService={sinon.stub()}
             service={service} />, true);
 
@@ -171,6 +173,7 @@ describe('AddedServicesListItem', function() {
         unfocusService={sinon.stub()}
         changeState={sinon.stub()}
         getUnitStatusCounts={getUnitStatusCounts()}
+        hoverService={sinon.stub()}
         panToService={sinon.stub()}
         service={service} />, true);
 
@@ -215,6 +218,7 @@ describe('AddedServicesListItem', function() {
         unfocusService={sinon.stub()}
         changeState={sinon.stub()}
         getUnitStatusCounts={getUnitStatusCounts(1, 1)}
+        hoverService={sinon.stub()}
         panToService={sinon.stub()}
         service={service} />, true);
 
@@ -259,6 +263,7 @@ describe('AddedServicesListItem', function() {
         unfocusService={sinon.stub()}
         changeState={sinon.stub()}
         getUnitStatusCounts={getUnitStatusCounts(0, 1, 1)}
+        hoverService={sinon.stub()}
         panToService={sinon.stub()}
         service={service} />, true);
 
@@ -306,6 +311,7 @@ describe('AddedServicesListItem', function() {
           unfocusService={sinon.stub()}
           changeState={changeStub}
           getUnitStatusCounts={getUnitStatusCounts()}
+          hoverService={sinon.stub()}
           panToService={panToService}
           service={service} />);
     var output = shallowRenderer.getRenderOutput();

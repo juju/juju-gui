@@ -48,19 +48,27 @@ describe('Charmbrowser', function() {
           owner: 'charmers'
         }
       }};
-    var series = sinon.stub();
+    var series = [];
     var changeState = sinon.stub();
     var charmstoreSearch = sinon.stub();
     var makeEntityModel = sinon.spy();
     var utils = {getName: sinon.stub()};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
+        addNotification={sinon.stub()}
         appState={appState}
-        makeEntityModel={makeEntityModel}
         changeState={changeState}
-        series={series}
         charmstoreSearch={charmstoreSearch}
-        utils={utils} />, true);
+        deployService={sinon.stub()}
+        getBundleYAML={sinon.stub()}
+        getDiagramURL={sinon.stub()}
+        getEntity={sinon.stub()}
+        getFile={sinon.stub()}
+        importBundleYAML={sinon.stub()}
+        makeEntityModel={makeEntityModel}
+        utils={utils}
+        renderMarkdown={sinon.stub()}
+        series={series} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -99,9 +107,20 @@ describe('Charmbrowser', function() {
     var changeState = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
+        addNotification={sinon.stub()}
         appState={appState}
         changeState={changeState}
-        utils={{}} />, true);
+        charmstoreSearch={sinon.stub()}
+        deployService={sinon.stub()}
+        getBundleYAML={sinon.stub()}
+        getDiagramURL={sinon.stub()}
+        getEntity={sinon.stub()}
+        getFile={sinon.stub()}
+        importBundleYAML={sinon.stub()}
+        makeEntityModel={sinon.stub()}
+        utils={{}}
+        renderMarkdown={sinon.stub()}
+        series={[]} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     assert.deepEqual(output,
@@ -130,15 +149,23 @@ describe('Charmbrowser', function() {
     var changeState = sinon.stub();
     var utils = {getName: sinon.stub()};
     var makeEntityModel = sinon.spy();
-    var seriesList = sinon.stub();
+    var seriesList = [];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
+        addNotification={sinon.stub()}
         appState={appState}
-        charmstoreSearch={charmstoreSearch}
-        makeEntityModel={makeEntityModel}
-        series={seriesList}
         changeState={changeState}
-        utils={utils} />, true);
+        charmstoreSearch={charmstoreSearch}
+        deployService={sinon.stub()}
+        getBundleYAML={sinon.stub()}
+        getDiagramURL={sinon.stub()}
+        getEntity={sinon.stub()}
+        getFile={sinon.stub()}
+        importBundleYAML={sinon.stub()}
+        makeEntityModel={makeEntityModel}
+        utils={utils}
+        renderMarkdown={sinon.stub()}
+        series={seriesList}/>, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -184,19 +211,21 @@ describe('Charmbrowser', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
+        addNotification={addNotification}
         apiUrl={apiUrl}
         appState={appState}
         changeState={changeState}
+        charmstoreSearch={sinon.stub()}
         deployService={deployService}
-        importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
-        makeEntityModel={makeEntityModel}
         getFile={getFile}
+        importBundleYAML={importBundleYAML}
+        makeEntityModel={makeEntityModel}
+        utils={utils}
         renderMarkdown={renderMarkdown}
-        addNotification={addNotification}
-        utils={utils} />, true);
+        series={[]} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     assert.deepEqual(output,

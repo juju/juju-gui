@@ -175,12 +175,15 @@ describe('Configuration', function() {
     var charm = {
       get: sinon.stub().returns({ option1: option1, option2: option2 })
     };
+    var option1key = 'string body value';
+    var option2key = true;
+    var serviceGet = sinon.stub();
+    serviceGet.withArgs('id').returns('abc123$');
+    serviceGet.withArgs('name').returns('servicename');
+    serviceGet.withArgs('config').returns(
+      { option1: option1key, option2: option2key });
     var service = {
-      get: function(val) {
-        if (val === 'id') { return 'abc123$'; }
-        if (val === 'name') { return 'servicename'; }
-        return {};
-      },
+      get: serviceGet,
       set: sinon.stub()
     };
     var updateUnit = sinon.stub();
@@ -223,12 +226,15 @@ describe('Configuration', function() {
     var charm = {
       get: sinon.stub().returns({ option1: option1, option2: option2 })
     };
+    var option1key = 'string body value';
+    var option2key = true;
+    var serviceGet = sinon.stub();
+    serviceGet.withArgs('id').returns('abc123$');
+    serviceGet.withArgs('name').returns('servicename');
+    serviceGet.withArgs('config').returns(
+      { option1: option1key, option2: option2key });
     var service = {
-      get: function(val) {
-        if (val === 'id') { return 'abc123$'; }
-        if (val === 'name') { return 'servicename'; }
-        return {};
-      },
+      get: serviceGet,
       set: sinon.stub()
     };
     var updateUnit = sinon.stub();
@@ -269,11 +275,16 @@ describe('Configuration', function() {
     var charm = {
       get: sinon.stub().returns({ option1: option1, option2: option2 })
     };
+    var option1key = 'string body value';
+    var option2key = true;
+    var serviceGet = sinon.stub();
+    serviceGet.withArgs('id').returns('abc123');
+    serviceGet.withArgs('name').returns('servicename');
+    serviceGet.withArgs('config').returns(
+      { option1: option1key, option2: option2key });
     var service = {
-      get: function(val) {
-        if (val === 'id') { return 'abc123'; }
-        return {};
-      }
+      get: serviceGet,
+      set: sinon.stub()
     };
     var component = testUtils.renderIntoDocument(
       <juju.components.Configuration
