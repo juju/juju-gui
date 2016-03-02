@@ -729,6 +729,7 @@ YUI.add('juju-gui', function(Y) {
       var charmstore = this.get('charmstore');
       ReactDOM.render(
         <window.juju.components.UserProfile
+          authenticated={!!username}
           jem={this.jem}
           listEnvs={this.env.listEnvs.bind(this.env)}
           changeState={this.changeState.bind(this)}
@@ -2051,8 +2052,9 @@ YUI.add('juju-gui', function(Y) {
       @method storeUser
       @param {String} service The service the macaroon comes from.
       @param {String} macaroon The base64 encoded macaroon.
+      @param {Boolean} rerenderProfile Rerender the user profile.
      */
-    storeUser: function(service) {
+    storeUser: function(service, rerenderProfile) {
       var callback = function(error, auth) {
         if (error) {
           console.error('Unable to query user information', error);
@@ -2060,6 +2062,11 @@ YUI.add('juju-gui', function(Y) {
         }
         if (auth) {
           this.get('users')[service] = auth;
+          // If the profile is visible then we want to rerender it with the
+          // updated username.
+          if (rerenderProfile) {
+            this._renderUserProfile();
+          }
         }
       };
       if (service === 'jem') {

@@ -23,6 +23,7 @@ YUI.add('user-profile', function() {
   juju.components.UserProfile = React.createClass({
 
     propTypes: {
+      authenticated: React.PropTypes.bool.isRequired,
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       createSocketURL: React.PropTypes.func.isRequired,
@@ -56,8 +57,19 @@ YUI.add('user-profile', function() {
 
     componentWillMount: function() {
       this._fetchEnvironments();
-      this._fetchEntities('charm');
-      this._fetchEntities('bundle');
+      if (this.props.authenticated) {
+        this._fetchEntities('charm');
+        this._fetchEntities('bundle');
+      }
+    },
+
+    componentDidUpdate: function(prevProps, prevState) {
+      // If the user has just been authenticated then update the data.
+      if (!prevProps.authenticated && this.props.authenticated) {
+        this._fetchEnvironments();
+        this._fetchEntities('charm');
+        this._fetchEntities('bundle');
+      }
     },
 
     /**
@@ -216,7 +228,7 @@ YUI.add('user-profile', function() {
       if (error) {
         console.log(error);
       } else {
-        this.props.storeUser('charmstore');
+        this.props.storeUser('charmstore', true);
       }
     },
 
@@ -575,6 +587,7 @@ YUI.add('user-profile', function() {
           <div className="twelve-col">
             <div className="inner-wrapper">
               <juju.components.UserProfileHeader
+                authenticated={this.props.authenticated}
                 avatar=""
                 bundleCount={this.state.bundleList.length}
                 charmCount={this.state.charmList.length}
