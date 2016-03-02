@@ -24,12 +24,25 @@ YUI.add('logout-component', function() {
 
     propTypes: {
       logout: React.PropTypes.func.isRequired,
-      visible: React.PropTypes.bool.isRequired
+      visible: React.PropTypes.bool.isRequired,
+      clearCookie: React.PropTypes.func.isRequired,
+      charmstoreLogoutUrl: React.PropTypes.string.isRequired,
+      getUser: React.PropTypes.func.isRequired,
+      clearUser: React.PropTypes.func.isRequired
     },
 
     logout: function(e) {
-      e.preventDefault();
-      this.props.logout();
+      var props = this.props;
+      if (!props.getUser()) {
+        // If we don't have stored user information for the charmstore then
+        // the user isn't logged in so there is no point to redirect
+        // them to another page to log out.
+        e.preventDefault();
+      }
+      // Clear the user data on log out.
+      props.clearUser();
+      props.clearCookie();
+      props.logout();
     },
 
     /**
@@ -50,8 +63,9 @@ YUI.add('logout-component', function() {
     render: function() {
       return (
         <a className={this._generateClasses()}
-          href="#"
-          onClick={this.logout}>
+          href={this.props.charmstoreLogoutUrl}
+          onClick={this.logout}
+          target="_blank">
           Logout
         </a>
       );

@@ -29,6 +29,13 @@ describe('jujulib charmstore', function() {
     });
   });
 
+  describe('getLogoutUrl', function() {
+    it('returns a valid logout url', function() {
+      var path = charmstore.getLogoutUrl();
+      assert.equal(path, 'local/v4/logout');
+    });
+  });
+
   describe('_transformQueryResults', function() {
     var data = {
       Results: [
