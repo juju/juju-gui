@@ -88,7 +88,7 @@ YUI.add('user-profile-header', function() {
           </h1>
           <ul className="user-profile-header__counts">
             <li className="user-profile-header__count">
-              {environmentCount} environment{environmentPlural}
+              {environmentCount} model{environmentPlural}
             </li>
             <li className="user-profile-header__count">
               {bundleCount} bundle{bundlePlural}

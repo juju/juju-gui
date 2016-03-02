@@ -558,9 +558,12 @@ YUI.add('user-profile', function() {
         state.envList.length === 0) {
         return (
           <div className="user-profile__empty twelve-col no-margin-bottom">
-            <img alt="Empty profile"
-              className="user-profile__empty-image"
-              src="/juju-ui/assets/images/non-sprites/empty_profile.png" />
+            <span className="user-profile__empty-image">
+              <juju.components.SvgIcon
+                height="227"
+                name="empty-profile"
+                width="269" />
+            </span>
             <h2 className="user-profile__empty-title">
               Your profile is currently empty
             </h2>
