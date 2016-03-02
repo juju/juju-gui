@@ -730,7 +730,7 @@ YUI.add('juju-gui', function(Y) {
       @method _renderUserProfile
     */
     _renderUserProfile: function() {
-      var auth = this._getAuth('jem') || this._getAuth('charmstore');
+      var auth = this._getAuth();
       var username = auth && auth.user || 'anonymous';
       var charmstore = this.get('charmstore');
       ReactDOM.render(
@@ -1073,7 +1073,7 @@ YUI.add('juju-gui', function(Y) {
         // as it's visible but not functional.
         showEnvSwitcher = false;
       }
-      var auth = this._getAuth('jem') || this._getAuth('charmstore');
+      var auth = this._getAuth();
       var envName = this.get('jujuEnvUUID') || this.db.environment.get('name');
       var state = this.state;
       ReactDOM.render(
@@ -2109,15 +2109,20 @@ YUI.add('juju-gui', function(Y) {
       situations where auth is set outside the GUI (i.e., embedded).
 
       @method _getAuth
-      @param {String} service The service to retrieve auth info from.
      */
-    _getAuth: function(service) {
+    _getAuth: function() {
       var externalAuth = this.get('auth');
       if (externalAuth) {
         return externalAuth;
       }
       var users = this.get('users');
-      return users && users[service];
+      var user;
+      if (users) {
+        // Precedence order of the various services used by the GUI:
+        user = users.jem ||
+               users.charmstore;
+      }
+      return user;
     }
 
   }, {

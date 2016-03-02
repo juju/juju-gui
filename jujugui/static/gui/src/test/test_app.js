@@ -1352,9 +1352,9 @@ describe('App', function() {
       app.destroy({remove: true});
     });
 
-    it('fetches the auth for a particular service', function() {
-      app.set('users', { 'foo': 'bar' });
-      assert.equal(app._getAuth('foo'), 'bar');
+    it('fetches the auth', function() {
+      app.set('users', { 'jem': 'bar' });
+      assert.equal(app._getAuth(), 'bar');
     });
 
     it('uses external auth if present', function() {
