@@ -430,7 +430,7 @@ YUI.add('juju-gui', function(Y) {
       // Instantiate the Juju environment.
       this._generateSocketUrl(function(socketUrl, user, password) {
         // Update the breadcrumb to display the proper user and model name.
-        this._renderBreadcrumb({authEndpoint: 'charmstore'});
+        this._renderBreadcrumb();
         this.set('socket_url', socketUrl);
         var envOptions = {
           ecs: ecs,
@@ -724,12 +724,12 @@ YUI.add('juju-gui', function(Y) {
       @method _renderUserProfile
     */
     _renderUserProfile: function() {
-      var auth = this.get('users')['charmstore'];
-      var username = auth && auth.user;
+      var auth = this._getAuth('jem') || this._getAuth('charmstore');
+      var username = auth && auth.user || 'anonymous';
       var charmstore = this.get('charmstore');
       ReactDOM.render(
         <window.juju.components.UserProfile
-          authenticated={!!username}
+          authenticated={!!auth}
           jem={this.jem}
           listEnvs={this.env.listEnvs.bind(this.env)}
           changeState={this.changeState.bind(this)}
@@ -740,7 +740,7 @@ YUI.add('juju-gui', function(Y) {
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           interactiveLogin={this.get('interactiveLogin')}
           storeUser={this.storeUser.bind(this)}
-          username={username || 'anonymous'}
+          username={username}
           charmstore={this.get('charmstore')} />,
         document.getElementById('charmbrowser-container'));
       // The model name should not be visible when viewing the profile.
@@ -1054,7 +1054,7 @@ YUI.add('juju-gui', function(Y) {
         showEnvSwitcher: false
     */
     _renderBreadcrumb: function(
-        { showEnvSwitcher=true, authEndpoint='charmstore' } = {}) {
+        { showEnvSwitcher=true } = {}) {
       // If this.env is undefined then do not render the switcher because there
       // is no env to connect to. It will be undefined when the breadcrumb
       // is rendered in the callback for generateSocketUrl because an env
@@ -1067,7 +1067,7 @@ YUI.add('juju-gui', function(Y) {
         // as it's visible but not functional.
         showEnvSwitcher = false;
       }
-      var auth = this._getAuth(authEndpoint);
+      var auth = this._getAuth('jem') || this._getAuth('charmstore');
       var envName = this.get('jujuEnvUUID') || this.db.environment.get('name');
       var state = this.state;
       ReactDOM.render(
@@ -1792,7 +1792,7 @@ YUI.add('juju-gui', function(Y) {
         });
       };
       // Update the breadcrumb to display the proper user and model name.
-      this._renderBreadcrumb({authEndpoint: 'jem'});
+      this._renderBreadcrumb();
       // Tell the environment to use the new socket URL when reconnecting.
       this.env.set('socket_url', socketUrl);
       // Clear uncommitted state.
