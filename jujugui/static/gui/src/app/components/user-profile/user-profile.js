@@ -27,6 +27,7 @@ YUI.add('user-profile', function() {
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       createSocketURL: React.PropTypes.func.isRequired,
+      currentModel: React.PropTypes.string,
       dbEnvironmentSet: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       interactiveLogin: React.PropTypes.bool,
@@ -56,11 +57,11 @@ YUI.add('user-profile', function() {
     },
 
     componentWillMount: function() {
-      // this._fetchEnvironments();
-      // if (this.props.authenticated) {
-      //   this._fetchEntities('charm');
-      //   this._fetchEntities('bundle');
-      // }
+      this._fetchEnvironments();
+      if (this.props.authenticated) {
+        this._fetchEntities('charm');
+        this._fetchEntities('bundle');
+      }
     },
 
     componentDidUpdate: function(prevProps, prevState) {
@@ -244,6 +245,7 @@ YUI.add('user-profile', function() {
       return (
         <juju.components.UserProfileEntity
           entity={model}
+          expanded={model.name === this.props.currentModel}
           key={uuid}
           switchEnv={this.props.switchEnv}
           type="model">

@@ -52,7 +52,7 @@ describe('UserProfileHeader', () => {
         </h1>
         <ul className="user-profile-header__counts">
           <li className="user-profile-header__count">
-            {1} environment{''}
+            {1} model{''}
           </li>
           <li className="user-profile-header__count">
             {5} bundle{'s'}
