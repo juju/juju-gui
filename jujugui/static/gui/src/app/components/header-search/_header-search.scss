@@ -1,6 +1,6 @@
 .header-search {
     $transition-duration: 0.3s;
-    padding: 20px 20px;
+    padding: 20px;
     background-color: transparent;
     color: $warm-grey;
     transition: background-color $transition-duration;
@@ -68,8 +68,12 @@
     &__input {
         width: 136px;
         background-color: transparent;
-        border: none;
+        border: none !important;
+        box-shadow: none !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
         transition: width $transition-duration;
+        box-sizing: content-box !important;
 
         &:focus,
         &:active,

@@ -98,12 +98,26 @@ $z-indexed-elements: search-results-list-block__tags,
     full-screen-mask,
     centered-column;
 
+// Imports vanilla from node_modules
+@import '../../../../../../../node_modules/vanilla-framework/scss/vanilla';
+/// Include vanilla modules
+@mixin juju-gui-vanilla {
+  @include vf-reset;
+  @include vf-helpers;
+  @include vf-buttons;
+  @include vf-clearfix;
+  @include vf-grid;
+  @include vf-lists;
+  @include vf-rows;
+  @include vf-typography;
+  @include vf-tables;
+}
+@include juju-gui-vanilla;
+
 // Imports need to be after vars.
 @import "animations";
 @import "typography";
 @import "mixins";
-@import "grid";
-
 
 //XXX: Temporarily remove the focus state of interactive elements:
 // Luca says: "Can we remove it for the time being and we'll make sure we
@@ -113,14 +127,8 @@ $z-indexed-elements: search-results-list-block__tags,
     outline: none;
 }
 
-body,
-input,
-button,
-select,
-textarea {
-    font-family: $font-family;
-    font-weight: 300;
-    color: $text-colour;
+html {
+  overflow-y: hidden;
 }
 
 body {
@@ -137,8 +145,7 @@ body {
 }
 
 %link,
-.link,
-a {
+.link {
     cursor: pointer;
     color: $ubuntu-orange;
     text-decoration: none;
@@ -310,10 +317,6 @@ code {
     color: $cool-grey;
 }
 
-.no-margin-bottom {
-    margin-bottom: 0;
-}
-
 /** Widgets **/
 @import "header";
 @import "loading";
@@ -333,9 +336,6 @@ code {
 @import "canvas/relation";
 @import "canvas/relation-menu";
 @import "canvas/service";
-
-/** Pull in the Vanilla grid **/
-@include vf-grid;
 
 @import "plugins/prism";
 @import "plugins/prism-overrides";

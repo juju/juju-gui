@@ -16,6 +16,8 @@
     }
 
     .env-list {
+        margin-left: 0;
+
         &__input {
             box-sizing: border-box;
             padding: 10px 10px 8px 10px;
@@ -30,6 +32,7 @@
             z-index: 1;
             list-style-type: none;
             padding: 10px 20px;
+            margin-bottom: 0;
         }
 
         &__environment:hover,

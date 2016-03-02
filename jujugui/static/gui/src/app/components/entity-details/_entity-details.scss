@@ -1,4 +1,9 @@
 .entity-details {
+
+    .row-hero {
+        margin-top: 0;
+    }
+
     p {
         line-height: 1.6;
     }
@@ -12,6 +17,7 @@
             list-style: none;
             margin-left: 0;
             float: left;
+            margin-bottom: 0;
         }
     }
 
