@@ -545,6 +545,25 @@ describe('utilities', function() {
   });
 })();
 
+(function() {
+
+  describe('utils.getName', function() {
+    var utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('returns the name of a charmstore charm', function() {
+      var name = utils.getName('cs:~uros/precise/rails-server-47');
+      assert.strictEqual(name, 'rails-server');
+    });
+
+  });
+})();
 
 (function() {
   describe('DecoratedRelation and RelationCollection', function() {

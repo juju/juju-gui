@@ -1362,6 +1362,22 @@ YUI.add('juju-view-utils', function(Y) {
     return parts[0];
   };
 
+  /**
+    Return the name from the given charm ID.
+
+    @method getName
+    @param {String} id A fully qualified charm ID, like
+      "cs:trusty/django-42" or "cs:~frankban/utopic/juju-gui-0"
+    @return {String} The charm name.
+  */
+  utils.getName = function(id) {
+    var parts = id.split('/');
+    // The last part will be the name and version number e.g. juju-gui-0.
+    var idParts = parts[parts.length - 1].split('-');
+    // Remove the version number from the end.
+    return idParts.splice(0, idParts.length - 1).join('-');
+  };
+
   /*
     pluralize is a helper that handles pluralization of strings.
     The requirement for pluralization is based on the passed in object,

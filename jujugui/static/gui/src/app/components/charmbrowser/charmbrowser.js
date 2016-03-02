@@ -21,6 +21,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('charmbrowser-component', function() {
 
   juju.components.Charmbrowser = React.createClass({
+    propTypes: {
+      utils: React.PropTypes.object.isRequired
+    },
+
     /**
       Get the current state of the charmbrowser.
 
@@ -112,6 +116,7 @@ YUI.add('charmbrowser-component', function() {
               <juju.components.Store
                 charmstoreSearch={this.props.charmstoreSearch}
                 changeState={this.props.changeState}
+                getName={utils.getName}
                 seriesList={this.props.series}
                 makeEntityModel={this.props.makeEntityModel} />
           );
@@ -121,6 +126,7 @@ YUI.add('charmbrowser-component', function() {
               <juju.components.SearchResults
                 changeState={this.props.changeState}
                 charmstoreSearch={this.props.charmstoreSearch}
+                getName={utils.getName}
                 makeEntityModel={this.props.makeEntityModel}
                 query={metadata.search}
                 seriesList={this.props.series}
