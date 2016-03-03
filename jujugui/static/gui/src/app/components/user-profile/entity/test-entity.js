@@ -41,7 +41,7 @@ describe('UserProfileEntity', () => {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
         entity={model}
-        switchEnv={sinon.stub()}
+        switchModel={sinon.stub()}
         type="model">
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
@@ -262,20 +262,20 @@ describe('UserProfileEntity', () => {
   });
 
   it('can switch envs for a model', () => {
-    var switchEnv = sinon.stub();
+    var switchModel = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
         entity={model}
-        switchEnv={switchEnv}
+        switchModel={switchModel}
         type="model">
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
     var output = renderer.getRenderOutput();
     output.props.children[1].props.children.props.children[0].props.children[1]
       .props.children.props.action();
-    assert.equal(switchEnv.callCount, 1);
-    assert.equal(switchEnv.args[0][0], 'env1');
-    assert.equal(switchEnv.args[0][1], 'sandbox');
+    assert.equal(switchModel.callCount, 1);
+    assert.equal(switchModel.args[0][0], 'env1');
+    assert.equal(switchModel.args[0][1], 'sandbox');
   });
 
   it('can navigate to view a charm or bundle', () => {
@@ -337,7 +337,7 @@ describe('UserProfileEntity', () => {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
         entity={model}
-        switchEnv={sinon.stub()}
+        switchModel={sinon.stub()}
         type="model" />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();

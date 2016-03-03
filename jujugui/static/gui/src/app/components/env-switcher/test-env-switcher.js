@@ -37,7 +37,8 @@ describe('EnvSwitcher', function() {
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
-        environmentName="MyEnv" />, true);
+        environmentName="MyEnv"
+        switchModel={sinon.stub()} />, true);
 
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -75,7 +76,8 @@ describe('EnvSwitcher', function() {
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
-        env={env} />, true);
+        env={env}
+        switchModel={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     // Click the toggler
     output.props.children[0].props.onClick({
@@ -86,7 +88,8 @@ describe('EnvSwitcher', function() {
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
-        env={env} />);
+        env={env}
+        switchModel={sinon.stub()} />);
 
     var instance = renderer.getMountedInstance();
     output = renderer.getRenderOutput();
@@ -108,7 +111,8 @@ describe('EnvSwitcher', function() {
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
-        jem={jem} />, true);
+        jem={jem}
+        switchModel={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
     assert.equal(listEnvs.callCount, 1);
@@ -128,7 +132,8 @@ describe('EnvSwitcher', function() {
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
-        env={env} />, true);
+        env={env}
+        switchModel={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
     assert.equal(listEnvs.callCount, 1);
@@ -147,7 +152,8 @@ describe('EnvSwitcher', function() {
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
-        env={env} />, true);
+        env={env}
+        switchModel={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
     // Click the toggler
@@ -172,24 +178,18 @@ describe('EnvSwitcher', function() {
       user: 'The Dr.',
       password: 'buffalo'
     }];
-    var socketURL = '/a/socket/url/abc123';
-    var createSocketURL = sinon.stub().returns(socketURL);
     var listEnvs = sinon.stub();
-    var switchEnv = sinon.stub();
+    var switchModel = sinon.stub();
     var mask = sinon.stub();
     var jem = {
       listEnvironments: listEnvs
-    };
-    var app = {
-      createSocketURL: createSocketURL,
-      switchEnv: switchEnv
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         dbEnvironmentSet={sinon.stub()}
         showConnectingMask={mask}
         jem={jem}
-        app={app} />, true);
+        switchModel={switchModel} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
     listEnvs.args[0][0](null, envs);
@@ -199,14 +199,12 @@ describe('EnvSwitcher', function() {
       }
     });
     assert.equal(mask.callCount, 1);
-    assert.equal(switchEnv.callCount, 1);
+    assert.equal(switchModel.callCount, 1);
     assert.deepEqual(instance.state, {
       showEnvList: false,
       envList: envs
     });
-    assert.deepEqual(switchEnv.args[0], [
-      socketURL, envs[0].user, envs[0].password
-    ]);
+    assert.deepEqual(switchModel.args[0], ['abc123', envs]);
   });
 
   // To fully test the new env creation it has to be tested accepting a custom
@@ -232,20 +230,14 @@ describe('EnvSwitcher', function() {
       listServers: listSrv,
       newEnvironment: newEnv
     };
-    var socketURL = '/a/socket/url/abc123';
-    var createSocketURL = sinon.stub().returns(socketURL);
-    var switchEnv = sinon.stub();
-    var app = {
-      createSocketURL: createSocketURL,
-      switchEnv: switchEnv
-    };
+    var switchModel = sinon.stub();
     var dbset = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={dbset}
         jem={jem}
-        app={app} />, true);
+        switchModel={switchModel} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
     listEnvs.args[0][0](null, envs);
@@ -272,7 +264,7 @@ describe('EnvSwitcher', function() {
     // Then switch to the new one.
     envs.push(createdEnv);
     listEnvs.args[1][0](null, envs);
-    assert.equal(switchEnv.callCount, 1);
+    assert.equal(switchModel.callCount, 1);
     // After creating a new env it should call to update the environment name
     // in the db.
     assert.equal(dbset.callCount, 1);
@@ -306,7 +298,8 @@ describe('EnvSwitcher', function() {
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
-        env={env} />, true);
+        env={env}
+        switchModel={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
     listEnvs.args[0][1](envs);
@@ -328,7 +321,8 @@ describe('EnvSwitcher', function() {
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
-        changeState={changeState} />, true);
+        changeState={changeState}
+        switchModel={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     instance.showUserProfile();
     assert.equal(changeState.callCount, 1);

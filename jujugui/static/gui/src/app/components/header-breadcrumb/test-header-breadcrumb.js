@@ -31,7 +31,7 @@ describe('HeaderBreadcrumb', () => {
   });
 
   it('Renders properly', () => {
-    var app = {app:'app'};
+    var switchModel = sinon.stub();
     var env = {env: 'env'};
     var envName = 'bar';
     var dbEnvironmentSet = sinon.stub();
@@ -43,7 +43,6 @@ describe('HeaderBreadcrumb', () => {
     var authDetails = {user: 'foo'};
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
-        app={app}
         env={env}
         envName={envName}
         dbEnvironmentSet={dbEnvironmentSet}
@@ -53,7 +52,8 @@ describe('HeaderBreadcrumb', () => {
         getAppState={getAppState}
         showConnectingMask={showConnectingMask}
         authDetails={authDetails}
-        showEnvSwitcher={true} />);
+        showEnvSwitcher={true}
+        switchModel={switchModel} />);
 
     var expected = (
       <ul className="header-breadcrumb">
@@ -64,7 +64,6 @@ describe('HeaderBreadcrumb', () => {
         </li>
         <li className="header-breadcrumb__list-item">
           <window.juju.components.EnvSwitcher
-            app={app}
             env={env}
             environmentName={envName}
             dbEnvironmentSet={dbEnvironmentSet}
@@ -72,7 +71,8 @@ describe('HeaderBreadcrumb', () => {
             envList={envList}
             changeState={changeState}
             showConnectingMask={showConnectingMask}
-            authDetails={authDetails} />
+            authDetails={authDetails}
+            switchModel={switchModel} />
         </li>
       </ul>
     );
@@ -100,7 +100,8 @@ describe('HeaderBreadcrumb', () => {
         changeState={changeState}
         getAppState={getAppState}
         showConnectingMask={showConnectingMask}
-        showEnvSwitcher={true} />);
+        showEnvSwitcher={true}
+        switchModel={sinon.stub()} />);
     assert.equal(
       output.props.children[0].props.children.props.children, 'anonymous');
   });
@@ -126,7 +127,8 @@ describe('HeaderBreadcrumb', () => {
         changeState={changeState}
         getAppState={getAppState}
         showConnectingMask={showConnectingMask}
-        showEnvSwitcher={false} />);
+        showEnvSwitcher={false}
+        switchModel={sinon.stub()} />);
     // There will be no third child if the envSwitcher is rendered
     assert.equal(output.props.children[1], undefined);
   });
@@ -154,7 +156,8 @@ describe('HeaderBreadcrumb', () => {
         showConnectingMask={showConnectingMask}
         // Even though showEnvSwitcher is true, because the profile is visibile
         // it shouldn't render the env switcher.
-        showEnvSwitcher={true} />);
+        showEnvSwitcher={true}
+        switchModel={sinon.stub()} />);
     // There will be no third child if the envSwitcher is rendered
     assert.equal(output.props.children[1], undefined);
   });
