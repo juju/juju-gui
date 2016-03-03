@@ -367,6 +367,18 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+      Handle CreateModel messages.
+
+      @method handleModelManagerCreateModel
+      @param {Object} data The contents of the API arguments.
+      @param {Object} client The active ClientConnection.
+      @param {Object} state An instance of FakeBackend.
+    */
+    handleModelManagerCreateModel: function(data, client, state) {
+      console.log('Creating models is not supported in the sandbox.');
+    },
+
+    /**
     Handle ListModels.
 
     @method handleModelManagerListModels
