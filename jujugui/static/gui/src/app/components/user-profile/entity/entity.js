@@ -25,6 +25,7 @@ YUI.add('user-profile-entity', function() {
     propTypes: {
       changeState: React.PropTypes.func,
       entity: React.PropTypes.object.isRequired,
+      expanded: React.PropTypes.bool,
       getDiagramURL: React.PropTypes.func,
       switchEnv: React.PropTypes.func,
       type: React.PropTypes.string.isRequired
@@ -43,6 +44,19 @@ YUI.add('user-profile-entity', function() {
           opacity: 0
         }
       };
+    },
+
+    /**
+      Called once the component has initially mounted.
+
+      @method componentDidMount
+    */
+    componentDidMount: function() {
+      // If the component should initially be shown as expanded then animate it
+      // open.
+      if (this.props.expanded) {
+        this._toggle();
+      }
     },
 
     /**

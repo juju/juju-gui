@@ -232,6 +232,7 @@ describe('UserProfile', () => {
               </li>
               {[<juju.components.UserProfileEntity
                 entity={models[0]}
+                expanded={false}
                 key="env1"
                 switchEnv={switchEnv}
                 type="model">

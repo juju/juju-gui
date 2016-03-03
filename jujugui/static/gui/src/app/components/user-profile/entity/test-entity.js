@@ -353,4 +353,27 @@ describe('UserProfileEntity', () => {
       </li>);
     assert.deepEqual(output, expected);
   });
+
+  it('can initially be expanded', () => {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.UserProfileEntity
+        entity={model}
+        expanded={true}
+        switchEnv={sinon.stub()}
+        type="model" />, true);
+    var instance = renderer.getMountedInstance();
+    // Mock the ref.
+    instance.refs = {inner: {offsetHeight: 10}};
+    // The shallow renderer does not call componentDidMount, so call it
+    // manually.
+    instance.componentDidMount();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <li className={'user-profile__entity user-profile__list-row twelve-col ' +
+        'user-profile__entity--expanded'}
+        onClick={instance._toggle}>
+        {output.props.children}
+      </li>);
+    assert.deepEqual(output, expected);
+  });
 });

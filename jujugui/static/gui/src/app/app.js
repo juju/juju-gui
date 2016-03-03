@@ -736,6 +736,7 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.UserProfile
           authenticated={!!auth}
+          currentModel={this.get('jujuEnvUUID')}
           jem={this.jem}
           listEnvs={this.env.listEnvs.bind(this.env)}
           changeState={this.changeState.bind(this)}
