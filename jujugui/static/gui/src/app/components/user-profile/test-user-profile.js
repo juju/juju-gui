@@ -594,9 +594,10 @@ describe('UserProfile', () => {
     var listEnvsAbort = sinon.stub();
     var listEnvs = sinon.stub().returns({abort: listEnvsAbort});
     charmstore.list = sinon.stub().returns({abort: charmstoreAbort});
+    var users = {charmstore: {user: 'test-owner'}};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfile
-        authenticated={true}
+        users={users}
         changeState={sinon.stub()}
         charmstore={charmstore}
         dbEnvironmentSet={sinon.stub()}
@@ -606,7 +607,7 @@ describe('UserProfile', () => {
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         switchModel={sinon.stub()}
-        username="test-owner" />, true);
+        username={users.charmstore.user} />, true);
     renderer.unmount();
     assert.equal(charmstoreAbort.callCount, 2);
     assert.equal(listEnvsAbort.callCount, 1);

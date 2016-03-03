@@ -36,7 +36,7 @@ YUI.add('user-profile', function() {
       storeUser: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
       users: React.PropTypes.object.isRequired,
-      user: React.PropTypes.string
+      user: React.PropTypes.object
     },
 
     getInitialState: function() {

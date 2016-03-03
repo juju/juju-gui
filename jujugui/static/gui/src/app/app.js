@@ -2117,6 +2117,8 @@ YUI.add('juju-gui', function(Y) {
       var user;
       if (users) {
         var controllerUser;
+        // Sometimes _getAuth may be called before the env connection is
+        // established, particularly when the app is being initialized.
         if (this.env) {
           var credentials = this.env.getCredentials();
           if (credentials && credentials.user) {

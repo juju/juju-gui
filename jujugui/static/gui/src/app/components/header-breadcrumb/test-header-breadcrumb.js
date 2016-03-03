@@ -79,7 +79,7 @@ describe('HeaderBreadcrumb', () => {
     assert.deepEqual(output, expected);
   });
 
-  it('defaults username to anonymous if none is provided', () => {
+  it('removes username from breadcrumbs if none is provided', () => {
     var app = {app:'app'};
     var env = {env: 'env'};
     var envName = 'bar';
@@ -102,8 +102,7 @@ describe('HeaderBreadcrumb', () => {
         showConnectingMask={showConnectingMask}
         showEnvSwitcher={true}
         switchModel={sinon.stub()} />);
-    assert.equal(
-      output.props.children[0].props.children.props.children, 'anonymous');
+    assert.equal(output.props.children[0], undefined);
   });
 
   it('does not render the env switcher if told not to', () => {
