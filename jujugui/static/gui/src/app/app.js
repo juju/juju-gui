@@ -731,11 +731,11 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderUserProfile: function() {
       var auth = this._getAuth();
-      var username = auth && auth.user || 'anonymous';
+      var username = auth && auth.user;
       var charmstore = this.get('charmstore');
       ReactDOM.render(
         <window.juju.components.UserProfile
-          authenticated={!!auth}
+          users={this.get('users')}
           currentModel={this.get('jujuEnvUUID')}
           jem={this.jem}
           listEnvs={this.env.listEnvs.bind(this.env)}
@@ -2121,9 +2121,9 @@ YUI.add('juju-gui', function(Y) {
         var controllerUser;
         if (this.env) {
           var credentials = this.env.getCredentials();
-          if (credentials) {
+          if (credentials && credentials.user) {
             controllerUser = {
-              user: credentials.username
+              user: credentials.user
             };
           }
         }

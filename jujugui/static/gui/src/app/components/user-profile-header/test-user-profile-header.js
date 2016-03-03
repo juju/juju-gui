@@ -29,9 +29,10 @@ describe('UserProfileHeader', () => {
 
   it('renders', () => {
     var interactiveLogin = sinon.stub();
+    var users = {};
     var output = jsTestUtils.shallowRender(
       <juju.components.UserProfileHeader
-        authenticated={false}
+        users={users}
         avatar="avatar.png"
         bundleCount={5}
         charmCount={2}
@@ -66,9 +67,10 @@ describe('UserProfileHeader', () => {
   });
 
   it('can render without a login button', () => {
+    var users = {charmstore: {user: 'test'}};
     var output = jsTestUtils.shallowRender(
       <juju.components.UserProfileHeader
-        authenticated={true}
+        users={users}
         avatar="avatar.png"
         bundleCount={5}
         charmCount={2}
@@ -78,10 +80,11 @@ describe('UserProfileHeader', () => {
     assert.isUndefined(output.props.children[0]);
   });
 
-  it('does not display the login button when authenticated', () => {
+  it('hides the login button when authenticated to charmstore', () => {
+    var users = {charmstore: {user: 'test'}};
     var output = jsTestUtils.shallowRender(
       <juju.components.UserProfileHeader
-        authenticated={true}
+        users={users}
         avatar="avatar.png"
         bundleCount={5}
         charmCount={2}
@@ -92,9 +95,10 @@ describe('UserProfileHeader', () => {
   });
 
   it('can render with a default avatar', () => {
+    var users = {charmstore: {user: 'test'}};
     var output = jsTestUtils.shallowRender(
       <juju.components.UserProfileHeader
-        authenticated={true}
+        users={users}
         avatar=""
         bundleCount={5}
         charmCount={2}

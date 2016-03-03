@@ -1375,10 +1375,10 @@ describe('App', function() {
     });
 
     it('falls back to controller credentials when necessary', function() {
-      var user = {username: 'admin'};
+      var user = {user: 'admin'};
       credStub = utils.makeStubMethod(app.env, 'getCredentials', user);
       app.set('users', {});
-      assert.deepEqual(app._getAuth(), {user: user.username});
+      assert.deepEqual(app._getAuth(), {user: user.user});
     });
   });
 

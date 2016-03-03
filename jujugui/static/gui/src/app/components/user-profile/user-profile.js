@@ -24,7 +24,7 @@ YUI.add('user-profile', function() {
     xhrs: [],
 
     propTypes: {
-      authenticated: React.PropTypes.bool.isRequired,
+      users: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
@@ -37,12 +37,6 @@ YUI.add('user-profile', function() {
       storeUser: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
       username: React.PropTypes.string
-    },
-
-    getDefaultProps: function() {
-      return {
-        username: ''
-      };
     },
 
     getInitialState: function() {
@@ -58,7 +52,7 @@ YUI.add('user-profile', function() {
 
     componentWillMount: function() {
       this._fetchEnvironments();
-      if (this.props.authenticated) {
+      if (this.props.users.charmstore) {
         this._fetchEntities('charm');
         this._fetchEntities('bundle');
       }
@@ -72,7 +66,7 @@ YUI.add('user-profile', function() {
 
     componentDidUpdate: function(prevProps, prevState) {
       // If the user has just been authenticated then update the data.
-      if (!prevProps.authenticated && this.props.authenticated) {
+      if (!prevProps.username && this.props.username) {
         this._fetchEnvironments();
         this._fetchEntities('charm');
         this._fetchEntities('bundle');
@@ -131,7 +125,7 @@ YUI.add('user-profile', function() {
       var callback = this._fetchEntitiesCallback.bind(this, type);
       var charmstore = this.props.charmstore;
       var username = this.props.username;
-      if (charmstore && charmstore.list) {
+      if (charmstore && charmstore.list && username) {
         var state = {};
         if (type === 'charm') {
           state.loadingCharms = true;
@@ -579,7 +573,7 @@ YUI.add('user-profile', function() {
           <div className="twelve-col">
             <div className="inner-wrapper">
               <juju.components.UserProfileHeader
-                authenticated={this.props.authenticated}
+                users={this.props.users}
                 avatar=""
                 bundleCount={this.state.bundleList.length}
                 charmCount={this.state.charmList.length}
