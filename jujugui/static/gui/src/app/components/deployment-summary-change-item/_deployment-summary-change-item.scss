@@ -23,5 +23,6 @@
 
     &__icon {
         @extend %icon--small;
+        margin-right: 10px;
     }
 }

@@ -68,12 +68,8 @@
     &__input {
         width: 136px;
         background-color: transparent;
-        border: none !important;
-        box-shadow: none !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
         transition: width $transition-duration;
-        box-sizing: content-box !important;
+        border: none;
 
         &:focus,
         &:active,
