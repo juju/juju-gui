@@ -42,7 +42,6 @@ YUI.add('user-profile-header', function() {
       var interactiveLogin = this.props.interactiveLogin;
       var authenticated = this.props.users.charmstore;
       if (!interactiveLogin || authenticated) {
-        debugger;
         return;
       }
       return (

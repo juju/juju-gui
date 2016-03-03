@@ -24,7 +24,6 @@ YUI.add('user-profile', function() {
     xhrs: [],
 
     propTypes: {
-      users: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
@@ -36,7 +35,8 @@ YUI.add('user-profile', function() {
       showConnectingMask: React.PropTypes.func.isRequired,
       storeUser: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
-      username: React.PropTypes.string
+      users: React.PropTypes.object.isRequired,
+      user: React.PropTypes.string
     },
 
     getInitialState: function() {
@@ -65,9 +65,11 @@ YUI.add('user-profile', function() {
     },
 
     componentDidUpdate: function(prevProps, prevState) {
-      // If the user has just been authenticated then update the data.
-      if (!prevProps.username && this.props.username) {
+      // If the user has changed then update the data.
+      if (prevProps.user !== this.props.user) {
         this._fetchEnvironments();
+      }
+      if (prevProps.users.charmstore !== this.props.users.charmstore) {
         this._fetchEntities('charm');
         this._fetchEntities('bundle');
       }
@@ -124,7 +126,8 @@ YUI.add('user-profile', function() {
     _fetchEntities:  function(type) {
       var callback = this._fetchEntitiesCallback.bind(this, type);
       var charmstore = this.props.charmstore;
-      var username = this.props.username;
+      var username = this.props.users.charmstore
+                     && this.props.users.charmstore.user;
       if (charmstore && charmstore.list && username) {
         var state = {};
         if (type === 'charm') {
@@ -149,21 +152,21 @@ YUI.add('user-profile', function() {
       @param {Object} data The data from the request.
     */
     _fetchEntitiesCallback: function(type, error, data) {
+      // Turn off the loader, regardless of success or error.
+      if (type === 'charm') {
+        this.setState({loadingCharms: false});
+      } else if (type === 'bundle') {
+        this.setState({loadingBundles: false});
+      }
       if (error) {
         console.log(error);
         return;
       }
       // Pull out just the data we need to display.
       if (type === 'charm') {
-        this.setState({
-          charmList: data,
-          loadingCharms: false
-        });
+        this.setState({charmList: data});
       } else if (type === 'bundle') {
-        this.setState({
-          bundleList: data,
-          loadingBundles: false
-        });
+        this.setState({bundleList: data});
       }
     },
 
@@ -540,8 +543,14 @@ YUI.add('user-profile', function() {
     */
     _generateContent: function() {
       var state = this.state;
-      if (state.bundleList.length === 0 && state.charmList.length === 0 &&
-        state.envList.length === 0) {
+      // We can't be loading anything, and all the lists must be empty.
+      var isEmpty = !state.loadingBundles
+                    && !state.loadingCharms
+                    && !state.loadingModels
+                    && state.bundleList.length === 0
+                    && state.charmList.length === 0
+                    && state.envList.length === 0;
+      if (isEmpty) {
         return (
           <div className="user-profile__empty twelve-col no-margin-bottom">
             <img alt="Empty profile"
@@ -566,6 +575,7 @@ YUI.add('user-profile', function() {
     },
 
     render: function() {
+      var username = this.props.user && this.props.user.user;
       return (
         <juju.components.Panel
           instanceName="user-profile"
@@ -580,7 +590,7 @@ YUI.add('user-profile', function() {
                 environmentCount={this.state.envList.length}
                 interactiveLogin={this.props.interactiveLogin ?
                   this._interactiveLogin : undefined}
-                username={this.props.username} />
+                username={username} />
               {this._generateContent()}
             </div>
           </div>

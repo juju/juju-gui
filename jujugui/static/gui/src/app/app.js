@@ -730,12 +730,9 @@ YUI.add('juju-gui', function(Y) {
       @method _renderUserProfile
     */
     _renderUserProfile: function() {
-      var auth = this._getAuth();
-      var username = auth && auth.user;
       var charmstore = this.get('charmstore');
       ReactDOM.render(
         <window.juju.components.UserProfile
-          users={this.get('users')}
           currentModel={this.get('jujuEnvUUID')}
           jem={this.jem}
           listEnvs={this.env.listEnvs.bind(this.env)}
@@ -747,7 +744,8 @@ YUI.add('juju-gui', function(Y) {
           storeUser={this.storeUser.bind(this)}
           switchModel={views.utils.switchModel.bind(
             this, this.createSocketURL.bind(this), this.switchEnv.bind(this))}
-          username={username}
+          user={this._getAuth()}
+          users={this.get('users')}
           charmstore={this.get('charmstore')} />,
         document.getElementById('charmbrowser-container'));
       // The model name should not be visible when viewing the profile.
@@ -2129,8 +2127,8 @@ YUI.add('juju-gui', function(Y) {
         }
         // Precedence order of the various services used by the GUI:
         user = users.jem ||
-               users.charmstore ||
-               controllerUser;
+               controllerUser ||
+               users.charmstore;
       }
       return user;
     }

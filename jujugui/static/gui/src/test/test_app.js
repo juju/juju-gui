@@ -1331,17 +1331,17 @@ describe('App', function() {
     });
   });
 
-  describe.only('_getAuth', function() {
+  describe('_getAuth', function() {
     var Y, app, credStub, utils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
-          'juju-gui',
-          'juju-tests-utils'
-        ], function(Y) {
-          utils = Y.namespace('juju-tests.utils');
-          done();
-        });
+        'juju-gui',
+        'juju-tests-utils'
+      ], function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        done();
+      });
     });
 
     beforeEach(function() {
@@ -1372,13 +1372,6 @@ describe('App', function() {
     it('does not break when auth is not set', function() {
       app.set('users', {});
       assert.isUndefined(app._getAuth());
-    });
-
-    it('falls back to controller credentials when necessary', function() {
-      var user = {user: 'admin'};
-      credStub = utils.makeStubMethod(app.env, 'getCredentials', user);
-      app.set('users', {});
-      assert.deepEqual(app._getAuth(), {user: user.user});
     });
   });
 
