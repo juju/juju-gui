@@ -61,11 +61,10 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         authenticated={true}
         charmstore={{}}
-        createSocketURL={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         getDiagramURL={sinon.stub()}
         jem={jem}
-        switchEnv={sinon.stub()}
+        switchModel={sinon.stub()}
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
         changeState={sinon.stub()}
@@ -115,11 +114,10 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         authenticated={true}
         charmstore={charmstore}
-        createSocketURL={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         getDiagramURL={sinon.stub()}
         jem={jem}
-        switchEnv={sinon.stub()}
+        switchModel={sinon.stub()}
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
         changeState={sinon.stub()}
@@ -150,11 +148,10 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         authenticated={true}
         charmstore={charmstore}
-        createSocketURL={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         getDiagramURL={sinon.stub()}
         jem={jem}
-        switchEnv={sinon.stub()}
+        switchModel={sinon.stub()}
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
         changeState={sinon.stub()}
@@ -176,16 +173,15 @@ describe('UserProfile', () => {
     };
     var changeState = sinon.stub();
     var getDiagramURL = sinon.stub();
-    var switchEnv = sinon.stub();
+    var switchModel = sinon.stub();
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         authenticated={true}
         charmstore={charmstore}
-        createSocketURL={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         getDiagramURL={getDiagramURL}
         jem={jem}
-        switchEnv={switchEnv}
+        switchModel={switchModel}
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
         changeState={changeState}
@@ -234,7 +230,7 @@ describe('UserProfile', () => {
                 entity={models[0]}
                 expanded={false}
                 key="env1"
-                switchEnv={switchEnv}
+                switchModel={instance.switchEnv}
                 type="model">
                 <span className="user-profile__list-col three-col">
                   sandbox
@@ -379,11 +375,10 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         authenticated={true}
         charmstore={{}}
-        switchEnv={sinon.stub()}
+        switchModel={sinon.stub()}
         listEnvs={sinon.stub()}
         showConnectingMask={sinon.stub()}
         changeState={sinon.stub()}
-        createSocketURL={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         getDiagramURL={sinon.stub()}
         interactiveLogin={false}
@@ -414,11 +409,10 @@ describe('UserProfile', () => {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         authenticated={true}
-        switchEnv={sinon.stub()}
+        switchModel={sinon.stub()}
         listEnvs={sinon.stub()}
         showConnectingMask={sinon.stub()}
         changeState={sinon.stub()}
-        createSocketURL={sinon.stub()}
         charmstore={charmstore}
         dbEnvironmentSet={sinon.stub()}
         getDiagramURL={sinon.stub()}
@@ -437,11 +431,10 @@ describe('UserProfile', () => {
     jsTestUtils.shallowRender(
       <juju.components.UserProfile
         authenticated={false}
-        switchEnv={sinon.stub()}
+        switchModel={sinon.stub()}
         listEnvs={sinon.stub()}
         showConnectingMask={sinon.stub()}
         changeState={sinon.stub()}
-        createSocketURL={sinon.stub()}
         charmstore={charmstore}
         dbEnvironmentSet={sinon.stub()}
         getDiagramURL={sinon.stub()}
@@ -452,11 +445,10 @@ describe('UserProfile', () => {
     jsTestUtils.shallowRender(
       <juju.components.UserProfile
         authenticated={true}
-        switchEnv={sinon.stub()}
+        switchModel={sinon.stub()}
         listEnvs={sinon.stub()}
         showConnectingMask={sinon.stub()}
         changeState={sinon.stub()}
-        createSocketURL={sinon.stub()}
         charmstore={charmstore}
         dbEnvironmentSet={sinon.stub()}
         getDiagramURL={sinon.stub()}
@@ -473,10 +465,9 @@ describe('UserProfile', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         authenticated={true}
-        switchEnv={sinon.stub()}
+        switchModel={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={{}}
-        createSocketURL={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         getDiagramURL={sinon.stub()}
         showConnectingMask={sinon.stub()}
@@ -494,10 +485,9 @@ describe('UserProfile', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         authenticated={true}
-        switchEnv={sinon.stub()}
+        switchModel={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={{}}
-        createSocketURL={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         getDiagramURL={sinon.stub()}
         showConnectingMask={sinon.stub()}
@@ -510,14 +500,13 @@ describe('UserProfile', () => {
     assert.deepEqual(instance.state.envList, models);
   });
 
-  it('switches env when calling switchEnv method passed to list', () => {
+  it('switches env when calling switchModel method passed to list', () => {
     // This method is passed down to child components and called from there.
     // We are just calling it directly here to unit test the method.
-    var switchEnv = sinon.stub();
+    var switchModel = sinon.stub();
     var changeState = sinon.stub();
     var listEnvs = sinon.stub();
     var showMask = sinon.stub();
-    var createSocketURL = sinon.stub().returns('gensocketurl');
     var dbset = sinon.stub();
     var envs = [{
       uuid: 'abc123',
@@ -527,8 +516,7 @@ describe('UserProfile', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         authenticated={true}
-        switchEnv={switchEnv}
-        createSocketURL={createSocketURL}
+        switchModel={switchModel}
         changeState={changeState}
         charmstore={{}}
         getDiagramURL={sinon.stub()}
@@ -546,10 +534,10 @@ describe('UserProfile', () => {
     // Make sure we show the canvas loading mask when switching models.
     assert.equal(showMask.callCount, 1);
     // We need to call to generate the proper socket URL.
-    assert.equal(createSocketURL.callCount, 1);
-    // Check that switchEnv is called with the proper values.
-    assert.equal(switchEnv.callCount, 1, 'switchEnv not called');
-    assert.deepEqual(switchEnv.args[0], ['gensocketurl', 'foo', 'bar']);
+    // Check that switchModel is called with the proper values.
+    assert.equal(switchModel.callCount, 1, 'switchEnv not called');
+    assert.deepEqual(switchModel.args[0], ['abc123', [{
+      uuid: 'abc123', user: 'foo', password: 'bar'}]]);
     // The database needs to be updated with the new model name.
     assert.equal(dbset.callCount, 1);
     assert.deepEqual(dbset.args[0], ['name', 'modelname']);
@@ -571,14 +559,13 @@ describe('UserProfile', () => {
         authenticated={true}
         changeState={sinon.stub()}
         charmstore={charmstore}
-        createSocketURL={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         listEnvs={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
-        switchEnv={sinon.stub()}
+        switchModel={sinon.stub()}
         username={username} />, true);
     var instance = component.getMountedInstance();
     assert.equal(charmstore.list.callCount, 2,

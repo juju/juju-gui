@@ -1324,4 +1324,42 @@ describe('utilities', function() {
     });
   });
 
+  describe('switchModel', function() {
+    var utils, testUtils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', 'juju-tests-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        testUtils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    it('can switch models', function() {
+      var createSocketURL = testUtils.makeStubFunction('newaddress:80');
+      var switchEnv = testUtils.makeStubFunction();
+      var models = [{
+        uuid: 'uuid1',
+        user: 'spinach',
+        password: 'hasselhoff',
+        'host-ports': [
+          'localhost:80',
+          'localhost:443'
+        ]
+      }];
+      utils.switchModel(createSocketURL, switchEnv, 'uuid1', models);
+      assert.deepEqual(createSocketURL.callCount(), 1);
+      var socketArgs = createSocketURL.allArguments();
+      assert.deepEqual(socketArgs[0][0], 'localhost');
+      assert.deepEqual(socketArgs[0][1], '80');
+      assert.deepEqual(socketArgs[0][2], models[0].uuid);
+      assert.deepEqual(switchEnv.callCount(), 1);
+      var switchEnvArgs = switchEnv.allArguments();
+      assert.deepEqual(switchEnvArgs[0][0], 'newaddress:80');
+      assert.deepEqual(switchEnvArgs[0][1], models[0].user);
+      assert.deepEqual(switchEnvArgs[0][2], models[0].password);
+    });
+
+  });
+
 })();

@@ -1899,6 +1899,36 @@ YUI.add('juju-view-utils', function(Y) {
     return 0;
   };
 
+  /**
+    Switch models using the correct username and password.
+
+    @method switchModel
+    @param {Function} createSocketURL The function to create a socket URL.
+    @param {Function} switchEnv The function to switch models.
+    @param {String} uuid A model UUID.
+    @param {Array} modelList A list of models.
+  */
+  utils.switchModel = function(createSocketURL, switchEnv, uuid, modelList) {
+    var username, password, address, port;
+    var found = modelList.some((model) => {
+      if (model.uuid === uuid) {
+        username = model.user;
+        password = model.password;
+        if (model['host-ports']) {
+          var hostport = model['host-ports'][0].split(':');
+          address = hostport[0];
+          port = hostport[1];
+        }
+        return true;
+      }
+    });
+    if (!found) {
+      console.log('No user credentials for model: ', uuid);
+    }
+    var socketUrl = createSocketURL(address, port, uuid);
+    switchEnv(socketUrl, username, password);
+  };
+
 }, '0.1.0', {
   requires: [
     'base-build',

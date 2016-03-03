@@ -740,13 +740,13 @@ YUI.add('juju-gui', function(Y) {
           jem={this.jem}
           listEnvs={this.env.listEnvs.bind(this.env)}
           changeState={this.changeState.bind(this)}
-          switchEnv={this.switchEnv.bind(this)}
           dbEnvironmentSet={this.db.environment.set.bind(this.db.environment)}
-          createSocketURL={this.createSocketURL.bind(this)}
           showConnectingMask={this.showConnectingMask.bind(this)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           interactiveLogin={this.get('interactiveLogin')}
           storeUser={this.storeUser.bind(this)}
+          switchModel={views.utils.switchModel.bind(
+            this, this.createSocketURL.bind(this), this.switchEnv.bind(this))}
           username={username}
           charmstore={this.get('charmstore')} />,
         document.getElementById('charmbrowser-container'));
@@ -1079,7 +1079,6 @@ YUI.add('juju-gui', function(Y) {
       var state = this.state;
       ReactDOM.render(
         <components.HeaderBreadcrumb
-          app={this}
           env={this.env}
           envName={envName}
           dbEnvironmentSet={this.db.environment.set.bind(this.db.environment)}
@@ -1089,7 +1088,10 @@ YUI.add('juju-gui', function(Y) {
           getAppState={state.getState.bind(state)}
           showConnectingMask={this.showConnectingMask.bind(this)}
           authDetails={auth}
-          showEnvSwitcher={showEnvSwitcher}/>,
+          showEnvSwitcher={showEnvSwitcher}
+          switchModel={views.utils.switchModel.bind(
+            this, this.createSocketURL.bind(this),
+            this.switchEnv.bind(this))} />,
         document.getElementById('header-breadcrumb'));
     },
 
@@ -1780,15 +1782,7 @@ YUI.add('juju-gui', function(Y) {
     switchEnv: function(socketUrl, username, password) {
       console.log('switching to new socket URL:', socketUrl);
       if (this.get('sandbox')) {
-        console.log('switching environments is not supported in sandbox');
-        // In the sandbox we need to close the profile page to simulate loading
-        // a model.
-        this.changeState({
-          sectionC: {
-            component: null,
-            metadata: null
-          }
-        });
+        console.log('switching models is not supported in sandbox');
       }
       if (username && password) {
         // We don't always get a new username and password when switching

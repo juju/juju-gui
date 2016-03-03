@@ -26,7 +26,6 @@ YUI.add('user-profile', function() {
       authenticated: React.PropTypes.bool.isRequired,
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
-      createSocketURL: React.PropTypes.func.isRequired,
       currentModel: React.PropTypes.string,
       dbEnvironmentSet: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
@@ -35,7 +34,7 @@ YUI.add('user-profile', function() {
       listEnvs: React.PropTypes.func,
       showConnectingMask: React.PropTypes.func.isRequired,
       storeUser: React.PropTypes.func.isRequired,
-      switchEnv: React.PropTypes.func.isRequired,
+      switchModel: React.PropTypes.func.isRequired,
       username: React.PropTypes.string
     },
 
@@ -166,35 +165,16 @@ YUI.add('user-profile', function() {
 
     /**
       Take the supplied UUID, fetch the username and password then call the
-      passed in switchEnv method.
+      passed in switchModel method.
 
       @method switchEnv
       @param {String} uuid The env UUID.
       @param {String} name The env name.
     */
     switchEnv: function(uuid, name) {
-      var username = '';
-      var password = '';
-      var address, port;
       var props = this.props;
       props.showConnectingMask();
-      var found = this.state.envList.some((env) => {
-        if (env.uuid === uuid) {
-          username = env.user;
-          password = env.password;
-          if (env['host-ports']) {
-            var hostport = env['host-ports'][0].split(':');
-            address = hostport[0];
-            port = hostport[1];
-          }
-          return true;
-        }
-      });
-      if (!found) {
-        console.log('No user credentials for env: ', uuid);
-      }
-      var socketUrl = props.createSocketURL(address, port, uuid);
-      props.switchEnv(socketUrl, username, password);
+      props.switchModel(uuid, this.state.envList);
       props.dbEnvironmentSet('name', name);
       this.close();
     },
@@ -247,7 +227,7 @@ YUI.add('user-profile', function() {
           entity={model}
           expanded={model.name === this.props.currentModel}
           key={uuid}
-          switchEnv={this.props.switchEnv}
+          switchModel={this.switchEnv}
           type="model">
           <span className="user-profile__list-col three-col">
             {model.name}

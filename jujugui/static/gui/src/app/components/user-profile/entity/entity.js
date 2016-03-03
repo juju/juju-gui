@@ -27,7 +27,7 @@ YUI.add('user-profile-entity', function() {
       entity: React.PropTypes.object.isRequired,
       expanded: React.PropTypes.bool,
       getDiagramURL: React.PropTypes.func,
-      switchEnv: React.PropTypes.func,
+      switchModel: React.PropTypes.func,
       type: React.PropTypes.string.isRequired
     },
 
@@ -84,7 +84,7 @@ YUI.add('user-profile-entity', function() {
       @param {Object} e The click event.
     */
     _switchEnv: function(uuid, name, e) {
-      this.props.switchEnv(uuid, name);
+      this.props.switchModel(uuid, name);
     },
 
     /**

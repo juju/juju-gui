@@ -25,9 +25,9 @@ YUI.add('env-switcher', function() {
       jem: React.PropTypes.object,
       env: React.PropTypes.object,
       environmentName: React.PropTypes.string,
-      app: React.PropTypes.object,
       showConnectingMask: React.PropTypes.func.isRequired,
-      dbEnvironmentSet: React.PropTypes.func.isRequired
+      dbEnvironmentSet: React.PropTypes.func.isRequired,
+      switchModel: React.PropTypes.func.isRequired
     },
 
     getInitialState: function() {
@@ -122,8 +122,8 @@ YUI.add('env-switcher', function() {
     },
 
     /**
-      Hides the env list and calls the switchEnv method based on the data-id of
-      the currentTarget passed to this click handler.
+      Hides the env list and calls the switchModel method based on the data-id
+      of the currentTarget passed to this click handler.
 
       @method handleEnvClick
       @param {Object} e The click event.
@@ -134,7 +134,8 @@ YUI.add('env-switcher', function() {
       props.showConnectingMask();
       this.setState({showEnvList: false});
       props.dbEnvironmentSet('name', currentTarget.getAttribute('data-name'));
-      this.switchEnv(currentTarget.getAttribute('data-id'));
+      props.switchModel(
+        currentTarget.getAttribute('data-id'), this.state.envList);
     },
 
     /**
@@ -199,35 +200,8 @@ YUI.add('env-switcher', function() {
         return;
       }
       this.props.dbEnvironmentSet('name', data.name || data.path);
-      this.updateEnvList(this.switchEnv.bind(this, data.uuid));
-    },
-
-    /**
-      Take the supplied UUID, fetch the username and password then call the
-      passed in switchEnv method.
-
-      @method switchEnv
-      @param {String} uuid The env UUID.
-    */
-    switchEnv: function(uuid) {
-      var username, password, address, port;
-      var found = this.state.envList.some((env) => {
-        if (env.uuid === uuid) {
-          username = env.user;
-          password = env.password;
-          if (env['host-ports']) {
-            var hostport = env['host-ports'][0].split(':');
-            address = hostport[0];
-            port = hostport[1];
-          }
-          return true;
-        }
-      });
-      if (!found) {
-        console.log('No user credentials for env: ', uuid);
-      }
-      var socketUrl = this.props.app.createSocketURL(address, port, uuid);
-      this.props.app.switchEnv(socketUrl, username, password);
+      this.updateEnvList(this.props.switchModel.bind(
+        this, data.uuid, this.state.envList));
     },
 
     /**
