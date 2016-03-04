@@ -1060,8 +1060,7 @@ YUI.add('juju-gui', function(Y) {
       @param {Object} options
         showEnvSwitcher: false
     */
-    _renderBreadcrumb: function(
-        { showEnvSwitcher=true } = {}) {
+    _renderBreadcrumb: function({ showEnvSwitcher=true } = {}) {
       // If this.env is undefined then do not render the switcher because there
       // is no env to connect to. It will be undefined when the breadcrumb
       // is rendered in the callback for generateSocketUrl because an env
@@ -1793,8 +1792,6 @@ YUI.add('juju-gui', function(Y) {
           password: password
         });
       };
-      // Update the breadcrumb to display the proper user and model name.
-      this._renderBreadcrumb();
       // Tell the environment to use the new socket URL when reconnecting.
       this.env.set('socket_url', socketUrl);
       // Clear uncommitted state.
@@ -1898,6 +1895,8 @@ YUI.add('juju-gui', function(Y) {
         this.set('jujuEnvUUID', environmentName);
       }
       this.db.environment.set('name', environmentName);
+      // Update the breadcrumb with the new model name.
+      this._renderBreadcrumb();
     },
 
     /**
