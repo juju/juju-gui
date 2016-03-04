@@ -350,7 +350,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // function which will be picked up by the setTimeout, and the app will
       // start.
       startTheApp = function() {
-        setLoadingMessageText('Connecting to the Juju environment');
+        setLoadingMessageText('Connecting to the Juju model');
 
         window.flags = featureFlags(
             window.location.href,

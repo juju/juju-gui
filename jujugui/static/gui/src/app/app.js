@@ -180,7 +180,7 @@ YUI.add('juju-gui', function(Y) {
         callback: function(evt) {
           this.fire('navigateTo', { url: '/:gui:/' });
         },
-        help: 'Navigate to the Environment overview',
+        help: 'Navigate to the model overview',
         label: 'Alt + e'
       },
       'S-+': {
@@ -195,7 +195,7 @@ YUI.add('juju-gui', function(Y) {
       },
       'S-0': {
         fire: 'panToCenter',
-        help: 'Center the Environment overview',
+        help: 'Center the model overview',
         label: 'Shift + 0'
       },
       'esc': {
@@ -223,7 +223,7 @@ YUI.add('juju-gui', function(Y) {
         callback: function(evt) {
           views.utils.exportEnvironmentFile(this.db);
         },
-        help: 'Export the environment',
+        help: 'Export the model',
         label: 'Shift + d'
       },
 
@@ -1234,7 +1234,7 @@ YUI.add('juju-gui', function(Y) {
         // Setup environment listing.
         this.jem.listEnvironments((error, envList) => {
           if (error) {
-            console.log('Environment listing failure: ' + error);
+            console.log('Model listing failure: ' + error);
             return;
           }
 

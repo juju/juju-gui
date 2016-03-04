@@ -650,7 +650,7 @@ YUI.add('juju-env-go', function(Y) {
      */
     _handleEnvironmentInfo: function(data) {
       if (data.Error) {
-        console.warn('Error retrieving environment information.');
+        console.warn('Error retrieving model information.');
         return;
       }
       // Store default series and provider type in the env.
@@ -2807,7 +2807,7 @@ YUI.add('juju-env-go', function(Y) {
         this.environmentGet(data => {
           if (data.err) {
             intermediateCallback({
-              Error: 'cannot get environment configuration: ' + data.err
+              Error: 'cannot get model configuration: ' + data.err
             });
             return;
           }
