@@ -87,7 +87,7 @@ YUI.add('shortcuts', function() {
             </div>
             <div className="three-col last-col">
               <label htmlFor="environment-name">
-                Change the name of this environment in the GUI.
+                Change the name of this Model in the GUI.
               </label>
             </div>
             <div className="two-col">

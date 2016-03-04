@@ -173,7 +173,7 @@ YUI.add('env-switcher', function() {
             this.createEnvCallback);
         } else {
           console.log(
-            'Cannot create a new environment: No state servers found.');
+            'Cannot create a new model: No state servers found.');
         }
       };
 
@@ -240,7 +240,7 @@ YUI.add('env-switcher', function() {
       return (
         <div className="env-switcher"
           role="navigation"
-          aria-label="Environment switcher">
+          aria-label="Model switcher">
           <div
             className="env-switcher--toggle"
             onClick={this.toggleEnvList}

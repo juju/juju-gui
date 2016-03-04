@@ -3622,7 +3622,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('handles failures while retrieving env config', function(done) {
       env.createEnv('bad-env', 'user-dalek', function(data) {
         assert.strictEqual(
-          data.err, 'cannot get environment configuration: bad wolf');
+          data.err, 'cannot get model configuration: bad wolf');
         done();
       });
       // Mimic the first response to ModelManager.ConfigSkeleton.

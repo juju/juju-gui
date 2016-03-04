@@ -114,7 +114,7 @@ YUI.add('env-list', function() {
           <input
             type="text"
             name="envName"
-            placeholder="New environment name"
+            placeholder="New model name"
             onChange={this.envNameChange}
             className="env-list__input"
             ref="envName"/>

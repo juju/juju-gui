@@ -31,7 +31,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
   var ziputils = Y.namespace('juju.ziputils');
   var viewUtils = Y.namespace('juju.views.utils');
 
-  var VALUE_ERROR = {error: 'Unparsable environment data.'};
+  var VALUE_ERROR = {error: 'Unparsable model data.'};
   var UNAUTHENTICATED_ERROR = {error: 'Please log in.'};
 
   /**

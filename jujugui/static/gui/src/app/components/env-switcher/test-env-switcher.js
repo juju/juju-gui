@@ -45,7 +45,7 @@ describe('EnvSwitcher', function() {
 
     var expected = <div className="env-switcher"
         role="navigation"
-        aria-label="Environment switcher">
+        aria-label="Model switcher">
         <div
           className="env-switcher--toggle"
           onClick={instance.toggleEnvList}

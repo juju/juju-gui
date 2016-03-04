@@ -139,7 +139,7 @@ describe('MachineView', function() {
                 <li>Create machines</li>
                 <li>Create containers</li>
                 <li>Customise placement</li>
-                <li>Scale up your environment</li>
+                <li>Scale up your model</li>
                 <li>Manually place new units</li>
                 <li>Collocate services</li>
               </ul>
@@ -520,7 +520,7 @@ describe('MachineView', function() {
           <li>Create machines</li>
           <li>Create containers</li>
           <li>Customise placement</li>
-          <li>Scale up your environment</li>
+          <li>Scale up your model</li>
           <li>Manually place new units</li>
           <li>Collocate services</li>
         </ul>
