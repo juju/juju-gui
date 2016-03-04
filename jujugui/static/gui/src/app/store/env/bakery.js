@@ -96,7 +96,7 @@ YUI.add('juju-env-bakery', function(Y) {
           callback('Static macaroon path was not defined.');
           return;
         }
-        this.webhandler.sendGetRequest(
+        return this.webhandler.sendGetRequest(
           this.staticMacaroonPath, null, null, null, false, null,
           this._interactivePrefetch.bind(this, callback));
       },

@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('user-profile', function() {
 
   juju.components.UserProfile = React.createClass({
+    xhrs: [],
 
     propTypes: {
       authenticated: React.PropTypes.bool.isRequired,
@@ -63,6 +64,12 @@ YUI.add('user-profile', function() {
       }
     },
 
+    componentWillUnmount: function() {
+      this.xhrs.forEach((xhr) => {
+        xhr && xhr.abort && xhr.abort();
+      });
+    },
+
     componentDidUpdate: function(prevProps, prevState) {
       // If the user has just been authenticated then update the data.
       if (!prevProps.authenticated && this.props.authenticated) {
@@ -83,12 +90,14 @@ YUI.add('user-profile', function() {
       this.setState({loadingModels: true}, () => {
         // Delay the call until after the state change to prevent race
         // conditions.
+        var xhr;
         if (jem) {
-          jem.listEnvironments(this._fetchEnvironmentsCallback);
+          xhr = jem.listEnvironments(this._fetchEnvironmentsCallback);
         } else {
-          props.listEnvs(
+          xhr = props.listEnvs(
             'user-admin', this._fetchEnvironmentsCallback.bind(this, null));
         }
+        this.xhrs.push(xhr);
       });
     },
 
@@ -132,7 +141,8 @@ YUI.add('user-profile', function() {
         this.setState(state, () => {
           // Delay the call until after the state change to prevent race
           // conditions.
-          charmstore.list(username, callback, type);
+          var xhr = charmstore.list(username, callback, type);
+          this.xhrs.push(xhr);
         });
       }
     },
