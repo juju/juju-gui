@@ -111,7 +111,7 @@ var module = module;
         }
         callback(error, data);
       };
-      _makeRequest(
+      return _makeRequest(
           this.bakery, this.jemUrl + '/env', 'GET', null, _listEnvironments);
     },
 

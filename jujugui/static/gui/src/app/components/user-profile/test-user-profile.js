@@ -577,4 +577,27 @@ describe('UserProfile', () => {
     assert.deepEqual(instance.state.bundleList, bundles,
                      'callback does not properly set bundle state');
   });
+
+  it('will abort the requests when unmounting', function() {
+    var charmstoreAbort = sinon.stub();
+    var listEnvsAbort = sinon.stub();
+    var listEnvs = sinon.stub().returns({abort: listEnvsAbort});
+    charmstore.list = sinon.stub().returns({abort: charmstoreAbort});
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.UserProfile
+        authenticated={true}
+        changeState={sinon.stub()}
+        charmstore={charmstore}
+        dbEnvironmentSet={sinon.stub()}
+        getDiagramURL={sinon.stub()}
+        interactiveLogin={true}
+        listEnvs={listEnvs}
+        showConnectingMask={sinon.stub()}
+        storeUser={sinon.stub()}
+        switchModel={sinon.stub()}
+        username="test-owner" />, true);
+    renderer.unmount();
+    assert.equal(charmstoreAbort.callCount, 2);
+    assert.equal(listEnvsAbort.callCount, 1);
+  });
 });
