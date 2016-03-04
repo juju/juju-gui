@@ -173,7 +173,7 @@ YUI.add('env-switcher', function() {
             this.createEnvCallback);
         } else {
           console.log(
-            'Cannot create a new model: No state servers found.');
+            'Cannot create a new model: No controllers found.');
         }
       };
 
