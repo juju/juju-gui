@@ -50,6 +50,7 @@
             }
 
             &-unit {
+                margin-bottom: 0;
                 float: left;
             }
 
@@ -85,5 +86,6 @@
     &-units {
         margin-top: 7px;
         list-style: none;
+        margin-left: 0;
     }
 }

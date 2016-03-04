@@ -9,6 +9,10 @@
     border-radius: 0;
     box-shadow: none;
     z-index: index($z-indexed-elements, inspector-panel);
+
+    li {
+      margin-bottom: 0;
+    }
 }
 
 .panel-component.white-box {

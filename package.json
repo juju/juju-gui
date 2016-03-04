@@ -28,6 +28,7 @@
     "smash": "0.0.12",
     "svg-sprite": "^1.2.19",
     "uglify-js": "^2.6.1",
+    "vanilla-framework": "0.0.62",
     "yui": "3.11.0"
   },
   "devDependencies": {

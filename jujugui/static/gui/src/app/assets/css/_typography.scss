@@ -53,3 +53,19 @@
   src: url(juju-ui/assets/fonts/ubuntumono-r-webfont.woff2) format('woff2'),
        url(juju-ui/assets/fonts/ubuntumono-r-webfont.woff) format('woff');
 }
+
+input,
+button,
+select,
+textarea {
+    font-family: $font-family;
+    font-weight: 300;
+    color: $text-colour;
+}
+
+p,
+li,
+code,
+pre {
+    font-size: 1em;
+}

@@ -4,6 +4,7 @@
     .row {
         overflow: auto;
         padding: 80px 0;
+        border-bottom: 0;
 
         &:nth-child(odd) {
             background-color: $light-grey;
@@ -24,13 +25,17 @@
     }
 
     &__metadata {
-        margin: 80px 0 0 0;
+        margin-top: 80px;
         font-size: 16px;
         font-weight: 100;
 
         h4 {
             border-bottom: 1px solid $light-mid-grey;
             padding-bottom: 1em;
+        }
+
+        ul {
+            margin: 1em 0;
         }
 
         li {

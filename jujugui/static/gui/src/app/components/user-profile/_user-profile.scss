@@ -50,6 +50,7 @@
     &__list {
         @extend %list-style;
         border-bottom: 1px solid $mid-grey;
+        margin-bottom: 20px;
 
         &-row,
         &-header {
@@ -75,8 +76,12 @@
             padding-bottom: 0;
         }
 
+        &-series {
+            margin-left: 0;
+        }
+
         &-name {
-            margin: -9px 0;
+            margin-top: -9px;
         }
 
         &-tags {
