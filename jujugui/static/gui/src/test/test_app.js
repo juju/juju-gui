@@ -1332,10 +1332,14 @@ describe('App', function() {
   });
 
   describe('_getAuth', function() {
-    var Y, app;
+    var Y, app, credStub, utils;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+      Y = YUI(GlobalConfig).use([
+        'juju-gui',
+        'juju-tests-utils'
+      ], function(Y) {
+        utils = Y.namespace('juju-tests.utils');
         done();
       });
     });
@@ -1346,26 +1350,28 @@ describe('App', function() {
         viewContainer: container,
         consoleEnabled: true
       });
+      credStub = utils.makeStubMethod(app.env, 'getCredentials');
+      this._cleanups.push(credStub.reset);
     });
 
     afterEach(function() {
       app.destroy({remove: true});
     });
 
-    it('fetches the auth for a particular service', function() {
-      app.set('users', { 'foo': 'bar' });
-      assert.equal(app._getAuth('foo'), 'bar');
+    it('fetches the auth', function() {
+      app.set('users', { 'jem': 'bar' });
+      assert.equal(app._getAuth(), 'bar');
     });
 
     it('uses external auth if present', function() {
       app.set('auth', 'baz');
       app.set('users', { 'foo': 'bar' });
-      assert.equal(app._getAuth('foo'), 'baz');
+      assert.equal(app._getAuth(), 'baz');
     });
 
     it('does not break when auth is not set', function() {
       app.set('users', {});
-      assert.isUndefined(app._getAuth('foo'));
+      assert.isUndefined(app._getAuth());
     });
   });
 

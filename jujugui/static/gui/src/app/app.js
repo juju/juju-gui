@@ -730,12 +730,9 @@ YUI.add('juju-gui', function(Y) {
       @method _renderUserProfile
     */
     _renderUserProfile: function() {
-      var auth = this._getAuth('jem') || this._getAuth('charmstore');
-      var username = auth && auth.user || 'anonymous';
       var charmstore = this.get('charmstore');
       ReactDOM.render(
         <window.juju.components.UserProfile
-          authenticated={!!auth}
           currentModel={this.get('jujuEnvUUID')}
           jem={this.jem}
           listEnvs={this.env.listEnvs.bind(this.env)}
@@ -747,7 +744,8 @@ YUI.add('juju-gui', function(Y) {
           storeUser={this.storeUser.bind(this)}
           switchModel={views.utils.switchModel.bind(
             this, this.createSocketURL.bind(this), this.switchEnv.bind(this))}
-          username={username}
+          user={this._getAuth()}
+          users={this.get('users')}
           charmstore={this.get('charmstore')} />,
         document.getElementById('charmbrowser-container'));
       // The model name should not be visible when viewing the profile.
@@ -1073,7 +1071,7 @@ YUI.add('juju-gui', function(Y) {
         // as it's visible but not functional.
         showEnvSwitcher = false;
       }
-      var auth = this._getAuth('jem') || this._getAuth('charmstore');
+      var auth = this._getAuth();
       var envName = this.get('jujuEnvUUID') || this.db.environment.get('name');
       var state = this.state;
       ReactDOM.render(
@@ -2109,15 +2107,32 @@ YUI.add('juju-gui', function(Y) {
       situations where auth is set outside the GUI (i.e., embedded).
 
       @method _getAuth
-      @param {String} service The service to retrieve auth info from.
      */
-    _getAuth: function(service) {
+    _getAuth: function() {
       var externalAuth = this.get('auth');
       if (externalAuth) {
         return externalAuth;
       }
       var users = this.get('users');
-      return users && users[service];
+      var user;
+      if (users) {
+        var controllerUser;
+        // Sometimes _getAuth may be called before the env connection is
+        // established, particularly when the app is being initialized.
+        if (this.env) {
+          var credentials = this.env.getCredentials();
+          if (credentials && credentials.user) {
+            controllerUser = {
+              user: credentials.user
+            };
+          }
+        }
+        // Precedence order of the various services used by the GUI:
+        user = users.jem ||
+               controllerUser ||
+               users.charmstore;
+      }
+      return user;
     }
 
   }, {

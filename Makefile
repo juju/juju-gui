@@ -70,8 +70,8 @@ help:
 	@echo "sysdeps - install the system-wide dependencies"
 	@echo "test - run python tests with the default Python"
 	@echo "test-deps - install the test dependencies"
-	@echo "test-js-karma - run newer js tests in terminal; primarily for CI build"
-	@echo "test-mocha-karma - run older js tests that have transitioned to karma in the terminal"
+	@echo "test-js - run newer js tests in terminal; primarily for CI build"
+	@echo "test-js-old - run older js tests that have transitioned to karma in the terminal"
 	@echo "update-downloadcache - update the download cache"
 
 
@@ -346,13 +346,13 @@ lint-js: $(NODE_MODULES)
 test: $(JUJUGUI) $(PYTEST)
 	$(PYTEST) -s jujugui/tests
 
-.PHONY: test-js-karma
-test-js-karma: gui
+.PHONY: test-js
+test-js: gui
 	$(NODE_MODULES)/.bin/karma start karma.conf.js --single-run --browsers PhantomJS --log-level warn --reporters mocha
 
-.PHONY: test-mocha-karma
-test-mocha-karma: gui
-	./scripts/test-mocha-karma.sh
+.PHONY: test-js-old
+test-js-old: gui
+	./scripts/test-js-old.sh
 
 
 .PHONY: start-karma
@@ -366,7 +366,7 @@ test-selenium: gui $(PY) $(SELENIUM)
 	JUJU_GUI_TEST_BROWSER="chrome" ./scripts/test-js-selenium.sh
 
 .PHONY: check
-check: clean-pyc lint lint-js test test-mocha-karma test-js-karma
+check: clean-pyc lint lint-js test test-js-old test-js
 
 # ci-check is the target run by CI.
 .PHONY: ci-check

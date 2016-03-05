@@ -65,15 +65,20 @@ YUI.add('header-breadcrumb', function() {
 
     render: function() {
       var auth = this.props.authDetails;
-      var loading = auth && auth.loading;
-      var username = loading ? '...' : auth && auth.user || 'anonymous';
-      return (
-        <ul className="header-breadcrumb">
+      var userItem;
+      if (auth && (auth.user || auth.loading)) {
+        var username = auth.loading ? '...' : auth.user;
+        userItem = (
           <li className="header-breadcrumb__list-item">
             <a className="header-breadcrumb--link" href="/profile/">
               {username}
             </a>
           </li>
+        );
+      }
+      return (
+        <ul className="header-breadcrumb">
+          {userItem}
           {this._renderEnvSwitcher()}
         </ul>
       );
