@@ -2131,6 +2131,9 @@ YUI.add('juju-gui', function(Y) {
         user = users.jem ||
                controllerUser ||
                users.charmstore;
+        if (user && user.user) {
+          user.user = user.user.replace('user-', '').replace('@local', '');
+        }
       }
       return user;
     }

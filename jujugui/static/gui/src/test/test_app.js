@@ -1359,8 +1359,9 @@ describe('App', function() {
     });
 
     it('fetches the auth', function() {
-      app.set('users', { 'jem': 'bar' });
-      assert.equal(app._getAuth(), 'bar');
+      var user = {user: 'admin'};
+      app.set('users', {'jem': user});
+      assert.deepEqual(app._getAuth(), user);
     });
 
     it('uses external auth if present', function() {
@@ -1372,6 +1373,16 @@ describe('App', function() {
     it('does not break when auth is not set', function() {
       app.set('users', {});
       assert.isUndefined(app._getAuth());
+    });
+
+    it('can clean up the username', function() {
+      app.set('users', {jem: {user: 'user-admin'}});
+      assert.equal(app._getAuth().user, 'admin');
+    });
+
+    it('can clean up the username for Juju 2.0', function() {
+      app.set('users', {jem: {user: 'user-admin@local'}});
+      assert.equal(app._getAuth().user, 'admin');
     });
   });
 
