@@ -165,11 +165,6 @@ YUI.add('deployment-bar', function() {
               tabIndex="0">
               Export
             </span>
-            <input className="deployment-bar__file"
-              type="file"
-              onChange={this._handleImportFile}
-              accept=".zip,.yaml,.yml"
-              ref="file-input" />
             {this._generateInstallButton()}
             <juju.components.DeploymentBarNotification
               change={this.state.latestChangeDescription} />
@@ -185,6 +180,11 @@ YUI.add('deployment-bar', function() {
                 disabled={changeCount === 0}
                 title={this._getDeployButtonLabel(this.props.hasCommits)} />
             </div>
+            <input className="deployment-bar__file"
+              type="file"
+              onChange={this._handleImportFile}
+              accept=".zip,.yaml,.yml"
+              ref="file-input" />
           </div>
         </juju.components.Panel>
       );

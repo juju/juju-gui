@@ -74,11 +74,6 @@ describe('DeploymentBar', function() {
             tabIndex="0">
             Export
           </span>
-          <input className="deployment-bar__file"
-            type="file"
-            onChange={instance._handleImportFile}
-            accept=".zip,.yaml,.yml"
-            ref="file-input" />
           <a className="deployment-bar__install-button"
             href="https://jujucharms.com/get-started"
             target="_blank">
@@ -98,6 +93,11 @@ describe('DeploymentBar', function() {
               disabled={false}
               title="Deploy changes" />
           </div>
+          <input className="deployment-bar__file"
+            type="file"
+            onChange={instance._handleImportFile}
+            accept=".zip,.yaml,.yml"
+            ref="file-input" />
         </div>
       </juju.components.Panel>);
     assert.deepEqual(output, expected);
@@ -116,7 +116,7 @@ describe('DeploymentBar', function() {
         renderDragOverNotification={sinon.stub()}
         services={services}
         showInstall={false} />);
-    assert.isUndefined(output.props.children.props.children[3]);
+    assert.isUndefined(output.props.children.props.children[2]);
   });
 
   it('enables the button if there are changes', function() {
@@ -132,7 +132,7 @@ describe('DeploymentBar', function() {
         renderDragOverNotification={sinon.stub()}
         services={services}
         showInstall={true} />);
-    assert.deepEqual(output.props.children.props.children[5].props.children[1],
+    assert.deepEqual(output.props.children.props.children[4].props.children[1],
         <juju.components.GenericButton
           action={deployButtonAction}
           type="confirm"
@@ -213,7 +213,7 @@ describe('DeploymentBar', function() {
       'file-input': {files: ['apache2.yaml']},
     };
     var output = shallowRenderer.getRenderOutput();
-    output.props.children.props.children[2].props.onChange();
+    output.props.children.props.children[5].props.onChange();
     assert.equal(importBundleFile.callCount, 1);
     assert.equal(importBundleFile.args[0][0], 'apache2.yaml');
   });
@@ -231,7 +231,7 @@ describe('DeploymentBar', function() {
         renderDragOverNotification={sinon.stub()}
         services={services}
         showInstall={true} />);
-    assert.deepEqual(output.props.children.props.children[5].props.children[1],
+    assert.deepEqual(output.props.children.props.children[4].props.children[1],
         <juju.components.GenericButton
           action={deployButtonAction}
           type="confirm"
@@ -253,7 +253,7 @@ describe('DeploymentBar', function() {
         renderDragOverNotification={sinon.stub()}
         services={services}
         showInstall={true} />);
-    assert.deepEqual(output.props.children.props.children[5].props.children[1],
+    assert.deepEqual(output.props.children.props.children[4].props.children[1],
         <juju.components.GenericButton
           action={deployButtonAction}
           type="confirm"
@@ -292,7 +292,7 @@ describe('DeploymentBar', function() {
         services={services}
         showInstall={true} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children.props.children[4],
+    assert.deepEqual(output.props.children.props.children[3],
       <juju.components.DeploymentBarNotification
         change={change} />);
     assert.equal(generateChangeDescription.args[0][0], 'add-services-change');
@@ -330,7 +330,7 @@ describe('DeploymentBar', function() {
         services={services}
         showInstall={true} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children.props.children[4],
+    assert.deepEqual(output.props.children.props.children[3],
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Re-render with the new props.
@@ -349,7 +349,7 @@ describe('DeploymentBar', function() {
         services={services}
         showInstall={true} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children.props.children[4],
+    assert.deepEqual(output.props.children.props.children[3],
       <juju.components.DeploymentBarNotification
         change={change} />);
   });
@@ -385,7 +385,7 @@ describe('DeploymentBar', function() {
         services={services}
         showInstall={true} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children.props.children[4],
+    assert.deepEqual(output.props.children.props.children[3],
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Re-render with the new props.
@@ -404,7 +404,7 @@ describe('DeploymentBar', function() {
         services={services}
         showInstall={true} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children.props.children[4],
+    assert.deepEqual(output.props.children.props.children[3],
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Remove the last change and check that the notification does not update.
@@ -422,7 +422,7 @@ describe('DeploymentBar', function() {
         services={services}
         showInstall={true} />);
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children.props.children[4],
+    assert.deepEqual(output.props.children.props.children[3],
       <juju.components.DeploymentBarNotification
         change={change} />);
   });
