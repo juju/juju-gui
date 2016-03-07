@@ -31,7 +31,7 @@ describe('LoginComponent', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
         envName="testenv"
-        helpMessage="Exterminate!"
+        helpMessage={<span>Exterminate!</span>}
         setCredentials={sinon.stub()}
         login={sinon.stub()}/>, true);
     var instance = renderer.getMountedInstance();
@@ -76,7 +76,7 @@ describe('LoginComponent', function() {
           </form>
         </div>
         <div className="login__message">
-          Exterminate!
+          <span>Exterminate!</span>
           <div className="login__message-link">
             <a
               href="https://jujucharms.com"
@@ -94,7 +94,7 @@ describe('LoginComponent', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.Login
         envName="testenv"
-        helpMessage="Exterminate!"
+        helpMessage={<span>Exterminate!</span>}
         setCredentials={sinon.stub()}
         login={sinon.stub()}
         loginFailure={true} />);
@@ -112,7 +112,7 @@ describe('LoginComponent', function() {
     var component = testUtils.renderIntoDocument(
       <juju.components.Login
         envName="testenv"
-        helpMessage="Exterminate!"
+        helpMessage={<span>Exterminate!</span>}
         setCredentials={setCredentials}
         login={login} />);
     component.refs.username.value = 'foo';
@@ -133,7 +133,7 @@ describe('LoginComponent', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
         envName="testenv"
-        helpMessage="Exterminate!"
+        helpMessage={<span>Exterminate!</span>}
         setCredentials={sinon.stub()}
         login={sinon.stub()}
         loginFailure={true} />, true);
