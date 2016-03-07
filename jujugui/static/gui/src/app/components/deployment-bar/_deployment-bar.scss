@@ -5,6 +5,7 @@
     &__import,
     &__export {
         margin-right: 10px;
+        line-height: 40px;
     }
 
     &__import {
@@ -24,6 +25,7 @@
 
     &__file {
         @extend %deployment-bar__links;
+        display: block;
         visibility: hidden;
         width: 0;
     }
