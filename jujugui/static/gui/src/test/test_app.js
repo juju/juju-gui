@@ -1377,12 +1377,9 @@ describe('App', function() {
 
     it('can clean up the username', function() {
       app.set('users', {jem: {user: 'user-admin'}});
-      assert.equal(app._getAuth().user, 'admin');
-    });
-
-    it('can clean up the username for Juju 2.0', function() {
-      app.set('users', {jem: {user: 'user-admin@local'}});
-      assert.equal(app._getAuth().user, 'admin');
+      var auth = app._getAuth();
+      assert.equal(auth.user, 'user-admin');
+      assert.equal(auth.usernameDisplay, 'admin');
     });
   });
 

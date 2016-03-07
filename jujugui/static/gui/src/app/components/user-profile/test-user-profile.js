@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('UserProfile', () => {
-  var models, charmstore, charms, bundles;
+  var models, charmstore, charms, bundles, users;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -51,13 +51,16 @@ describe('UserProfile', () => {
       version: '9',
       url: 'example.com/'
     };
+    users = {charmstore: {
+      user: 'test-owner',
+      usernameDisplay: 'test owner'
+    }};
   });
 
   it('renders the empty state', () => {
     var jem = {
       listEnvironments: sinon.stub().callsArgWith(0, null, {envs: []})
     };
-    var users = {charmstore: {user: 'test'}};
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         users={users}
@@ -86,7 +89,7 @@ describe('UserProfile', () => {
               charmCount={0}
               environmentCount={0}
               interactiveLogin={instance._interactiveLogin}
-              username={users.charmstore.user} />
+              username={users.charmstore.usernameDisplay} />
             <div className="user-profile__empty twelve-col no-margin-bottom">
               <img alt="Empty profile"
                 className="user-profile__empty-image"
@@ -111,7 +114,6 @@ describe('UserProfile', () => {
       listEnvironments: sinon.stub().callsArgWith(0, null, {envs: models})
     };
     charmstore.list = sinon.stub();
-    var users = {charmstore: {user: 'test'}};
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         users={users}
@@ -146,7 +148,6 @@ describe('UserProfile', () => {
     var jem = {
       listEnvironments: sinon.stub()
     };
-    var users = {charmstore: {user: 'test'}};
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         users={users}
@@ -177,7 +178,6 @@ describe('UserProfile', () => {
     var changeState = sinon.stub();
     var getDiagramURL = sinon.stub();
     var switchModel = sinon.stub();
-    var users = {charmstore: {user: 'test-owner'}};
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         users={users}
@@ -202,7 +202,7 @@ describe('UserProfile', () => {
           charmCount={1}
           environmentCount={1}
           interactiveLogin={instance._interactiveLogin}
-          username={users.charmstore.user} />
+          username={users.charmstore.usernameDisplay} />
         <div>
           <div>
             <div className="user-profile__header twelve-col no-margin-bottom">
@@ -375,7 +375,6 @@ describe('UserProfile', () => {
   });
 
   it('does not pass the charmstore login if interactiveLogin is falsy', () => {
-    var users = {charmstore: {user: 'test'}};
     var output = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         users={users}
@@ -397,7 +396,7 @@ describe('UserProfile', () => {
         charmCount={0}
         environmentCount={0}
         interactiveLogin={undefined}
-        username={users.charmstore.user} />);
+        username={users.charmstore.usernameDisplay} />);
     assert.deepEqual(output.props.children.props.children.props.children[0],
       expected);
   });
@@ -411,7 +410,6 @@ describe('UserProfile', () => {
           sinon.stub().callsArgWith(0, null, macaroon)
       }
     };
-    var users = {charmstore: {user: 'test'}};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         switchModel={sinon.stub()}
@@ -434,7 +432,6 @@ describe('UserProfile', () => {
   it('gets the entity data when the user authenticates', () => {
     var list = sinon.stub();
     var charmstore = {list: list};
-    var users = {charmstore: {user: 'test'}};
     jsTestUtils.shallowRender(
       <juju.components.UserProfile
         switchModel={sinon.stub()}
@@ -469,7 +466,6 @@ describe('UserProfile', () => {
     var jem = {
       listEnvironments: sinon.stub().callsArgWith(0, null, {envs: models})
     };
-    var users = {charmstore: {user: 'test'}};
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         switchModel={sinon.stub()}
@@ -490,7 +486,6 @@ describe('UserProfile', () => {
 
   it('requests jes envs if no jem is provided and updates state', () => {
     var listEnvs = sinon.stub().callsArgWith(1, {envs: models});
-    var users = {charmstore: {user: 'test'}};
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         switchModel={sinon.stub()}
@@ -522,7 +517,6 @@ describe('UserProfile', () => {
       user: 'foo',
       password: 'bar'
     }];
-    var users = {charmstore: {user: 'test'}};
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         switchModel={switchModel}
@@ -563,8 +557,6 @@ describe('UserProfile', () => {
   });
 
   it('requests entities and updates state', () => {
-    var username = 'test-owner';
-    var users = {charmstore: {user: username}};
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         users={users}
@@ -581,7 +573,7 @@ describe('UserProfile', () => {
     var instance = component.getMountedInstance();
     assert.equal(charmstore.list.callCount, 2,
                  'charmstore list not called');
-    assert.equal(charmstore.list.args[0][0], username,
+    assert.equal(charmstore.list.args[0][0], 'test-owner',
                  'username not passed to list request');
     assert.deepEqual(instance.state.charmList, charms,
                      'callback does not properly set charm state');
@@ -594,7 +586,6 @@ describe('UserProfile', () => {
     var listEnvsAbort = sinon.stub();
     var listEnvs = sinon.stub().returns({abort: listEnvsAbort});
     charmstore.list = sinon.stub().returns({abort: charmstoreAbort});
-    var users = {charmstore: {user: 'test-owner'}};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         users={users}

@@ -575,7 +575,7 @@ YUI.add('user-profile', function() {
     },
 
     render: function() {
-      var username = this.props.user && this.props.user.user;
+      var username = this.props.user && this.props.user.usernameDisplay;
       return (
         <juju.components.Panel
           instanceName="user-profile"
