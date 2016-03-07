@@ -27,12 +27,15 @@ var module = module;
          e.g. '/env'
      @param method {String} The type of http method to use, e.g. GET or POST.
      @param params {Object} Optional data object to sent with e.g. POST commands.
-     @params callback {Function} A callback to handle errors or accept the data
+     @param callback {Function} A callback to handle errors or accept the data
          from the request. Must accept an error message or null as its first
          parameter and the response data as its second.
-     @params parse {Boolean} Whether or not to parse the response as JSON.
+     @param parse {Boolean} Whether or not to parse the response as JSON.
+     @param redirect {Boolean} Whether or not to redirect on a 401 within
+        the bakery.
   */
-  var _makeRequest = function(bakery, path, method, params, callback, parse) {
+  var _makeRequest = function(
+    bakery, path, method, params, callback, parse, redirect) {
     var success = function(xhr) {
       var data = xhr.target.responseText,
           error = null;
@@ -52,10 +55,10 @@ var module = module;
       callback(error, data);
     };
     if (method === 'GET') {
-      return bakery.sendGetRequest(path, success, failure);
+      return bakery.sendGetRequest(path, success, failure, redirect);
     } else if (method === 'POST') {
       return bakery.sendPostRequest(
-          path, JSON.stringify(params), success, failure);
+          path, JSON.stringify(params), success, failure, redirect);
     }
   };
 
@@ -191,7 +194,11 @@ var module = module;
         url,
         'GET',
         null,
-        _transformAuthObject.bind(this, callback)
+        _transformAuthObject.bind(this, callback),
+        false,
+        // turn off redirect, we want to silently fail
+        // if the macaroon is valid.
+        false
       );
     }
   };
@@ -563,7 +570,11 @@ var module = module;
         path,
         'GET',
         null,
-        _transformAuthObject.bind(this, callback)
+        _transformAuthObject.bind(this, callback),
+        false,
+        // turn off redirect, we want to silently fail
+        // if the macaroon is valid.
+        false
       );
     },
 

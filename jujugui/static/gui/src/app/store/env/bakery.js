@@ -134,9 +134,12 @@ YUI.add('juju-env-bakery', function(Y) {
        @param {Function} failureCallback Called when the api request fails
               with a response of >= 400 except 401 and a WWW-Authenticate
               header will trigger authentication.
+       @param {Boolean} redirect Whether the handler should redirect if there
+              is a 401 on the request.
        @return {Object} The asynchronous request instance.
-       */
-      sendGetRequest: function (path, successCallback, failureCallback) {
+      */
+      sendGetRequest: function (
+        path, successCallback, failureCallback, redirect) {
         var macaroons = this.getMacaroon();
         var headers = {'Bakery-Protocol-Version': 1};
         if (macaroons !== null) {
@@ -149,7 +152,8 @@ YUI.add('juju-env-bakery', function(Y) {
             this,
             path,
             successCallback,
-            failureCallback
+            failureCallback,
+            redirect
           )
         );
       },
@@ -167,9 +171,12 @@ YUI.add('juju-env-bakery', function(Y) {
        @param failureCallback {Function} Called when the api request fails
               with a response of >= 400 except 401/407 where it does
               authentication.
+       @param {Boolean} redirect Whether the handler should redirect if there
+              is a 401 on the request.
        @param {Object} response The XHR response object from initial request.
-       */
-      sendPostRequest: function (path, data, successCallback, failureCallback) {
+      */
+      sendPostRequest: function (
+        path, data, successCallback, failureCallback, redirect) {
         var macaroons = this.getMacaroon();
         var headers = {
           'Bakery-Protocol-Version': 1,
@@ -185,7 +192,9 @@ YUI.add('juju-env-bakery', function(Y) {
             this,
             path,
             successCallback,
-            failureCallback)
+            failureCallback,
+            redirect
+          )
         );
       },
 
@@ -202,14 +211,18 @@ YUI.add('juju-env-bakery', function(Y) {
               successfully.
        @param {Function} failureCallback Called when the api request fails
               with a response of >= 40  0 (except 401/407).
+       @param {Boolean} redirect Whether the handler should redirect if there
+              is a 401 on the request.
        @param {Object} response The XHR response object.
        @return {undefined} Nothing.
-       */
-      _requestHandlerWithInteraction: function (path, successCallback,
-                                                failureCallback, response) {
+      */
+      _requestHandlerWithInteraction: function (
+        path, successCallback, failureCallback, redirect=true, response) {
+
         var target = response.target;
         if (target.status === 401 &&
-          target.getResponseHeader('Www-Authenticate') === 'Macaroon') {
+          target.getResponseHeader('Www-Authenticate') === 'Macaroon' &&
+          redirect === true) {
           var jsonResponse = JSON.parse(target.responseText);
           this._authenticate(
             jsonResponse.Info.Macaroon,
