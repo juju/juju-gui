@@ -60,11 +60,12 @@ describe('LocalInspector', function() {
     var output = shallowRenderer.getRenderOutput();
     var buttons = [{
       title: 'Cancel',
-      action: instance._close
+      action: instance._close,
+      type: 'base'
     }, {
       title: 'Upload',
       action: instance._handleUpload,
-      type: 'confirm'
+      type: 'neutral'
     }];
     var options = output.props.children[1].props.children[1].props.children;
     var expected = (
@@ -144,11 +145,12 @@ describe('LocalInspector', function() {
     var output = shallowRenderer.getRenderOutput();
     var buttons = [{
       title: 'Cancel',
-      action: instance._close
+      action: instance._close,
+      type: 'base'
     }, {
       title: 'Upload',
       action: instance._handleUpdate,
-      type: 'confirm'
+      type: 'neutral'
     }];
     var options = output.props.children[1].props.children[1].props.children;
     var expected = (

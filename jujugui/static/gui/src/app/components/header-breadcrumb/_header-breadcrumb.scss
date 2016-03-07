@@ -6,18 +6,24 @@
     padding: 20px 0;
 
     &--link {
-        color: $ubuntu-orange;
+        position: relative;
+        border-bottom: 1px solid currentColor;
         font-size: 23px;
+        text-decoration: none;
+
+        &:focus,
+        &:active,
+        &:hover {
+          text-decoration: none;
+        }
 
         &:before {
-            /* inline-block is necessary to avoid the hover underline from the
-            link from spilling over into the before */
-            display: inline-block;
             content: '/';
-            position: relative;
-            left: -7px;
-            top: 1px;
+            position: absolute;
+            left: -13px;
+            top: 4px;
             color: $mid-grey;
+
         }
     }
 

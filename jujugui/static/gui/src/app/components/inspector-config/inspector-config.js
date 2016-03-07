@@ -288,10 +288,11 @@ YUI.add('inspector-config', function() {
       }];
       var actionButtons = [{
         title: 'Cancel',
+        type: 'base',
         action: this._showInspectorIndex
       }, {
         title: 'Save changes',
-        type: 'confirm',
+        type: 'neutral',
         action: this._saveConfig
       }];
 

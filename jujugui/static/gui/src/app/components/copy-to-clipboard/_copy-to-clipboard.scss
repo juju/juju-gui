@@ -38,6 +38,8 @@
         background-position: center center;
         background-size: $icon-size;
 
+        &:focus,
+        &:active,
         &:hover {
             background-color: transparentize($light-mid-grey, 0.25);
         }

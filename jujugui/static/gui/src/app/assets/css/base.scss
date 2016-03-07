@@ -101,11 +101,16 @@ $z-indexed-elements: search-results-list-block__tags,
 
 // Imports vanilla from node_modules
 @import '../../../../../../../node_modules/vanilla-framework/scss/vanilla';
+
+// Imports need to be after vars.
+@import "animations";
+@import "typography";
+@import "mixins";
+
 /// Include vanilla modules
 @mixin juju-gui-vanilla {
   @include vf-reset;
   @include vf-helpers;
-  @include vf-buttons;
   @include vf-clearfix;
   @include vf-grid;
   @include vf-lists;
@@ -114,11 +119,6 @@ $z-indexed-elements: search-results-list-block__tags,
   @include vf-tables;
 }
 @include juju-gui-vanilla;
-
-// Imports need to be after vars.
-@import "animations";
-@import "typography";
-@import "mixins";
 
 //XXX: Temporarily remove the focus state of interactive elements:
 // Luca says: "Can we remove it for the time being and we'll make sure we
@@ -149,19 +149,8 @@ a,
 %link,
 .link {
     cursor: pointer;
-    color: $ubuntu-orange;
-    text-decoration: none;
-
-    &:hover,
-    &:focus,
-    &:active {
-        text-decoration: underline;
-    }
-}
-
-button {
-    cursor: pointer;
-    -webkit-appearance: button;
+    color: $cool-grey;
+    text-decoration: underline;
 }
 
 input[type="text"],
@@ -330,6 +319,7 @@ code {
 
 /** Components **/
 @import "components";
+@include gui-buttons;
 
 /** Canvas **/
 @import "canvas/canvas";

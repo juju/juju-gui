@@ -18,6 +18,8 @@
         .notification-list-item__hide .svg-icon {
             stroke: $white;
 
+            &:focus,
+            &:active,
             &:hover {
                 stroke: rgba(255, 255, 255, 0.6);
             }
@@ -109,6 +111,8 @@
         transition: stroke 0.3s;
         stroke: $text-colour;
 
+        &:focus,
+        &:active,
         &:hover {
             stroke: rgba(51, 51, 51, 0.6);
         }

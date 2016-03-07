@@ -43,7 +43,7 @@ describe('UserProfileHeader', () => {
       <div className="user-profile-header twelve-col">
         <juju.components.GenericButton
           title="Log in to the charmstore"
-          type="login"
+          type="inline-neutral"
           action={interactiveLogin} />
         <img alt="spinach"
           className="user-profile-header__avatar"
@@ -95,7 +95,7 @@ describe('UserProfileHeader', () => {
     var expected = (
       <juju.components.GenericButton
         title="Log in to the charmstore"
-        type="login"
+        type="inline-neutral"
         action={interactiveLogin} />
     );
     assert.deepEqual(output.props.children[0], expected);

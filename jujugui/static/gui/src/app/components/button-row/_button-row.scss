@@ -1,8 +1,26 @@
 .button-row {
     @extend %fade-in;
     padding: 10px;
-}
 
-.env-list-panel .button-row {
-  padding: 0;
+    [class^="button--"] {
+        width: 100%;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    &--multiple [class^="button--"] {
+        margin-right: 10px;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
+    &--count-2 [class^="button--"] {
+        width: calc(50% - 5px);
+    }
+
+    &--count-3 [class^="button--"] {
+        width: calc(33.333% - 7px);
+    }
 }

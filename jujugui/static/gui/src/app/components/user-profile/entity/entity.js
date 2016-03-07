@@ -337,7 +337,9 @@ YUI.add('user-profile-entity', function() {
                   'two-col last-col no-margin-bottom'}>
                   <juju.components.GenericButton
                     action={buttonAction}
+                    type='inline-neutral'
                     title={isModel ? 'Manage' : 'View'} />
+
                 </div>
               </div>
               <div className={'user-profile__entity-details-content ' +

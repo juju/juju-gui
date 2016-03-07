@@ -71,7 +71,7 @@ describe('LoginComponent', function() {
             <juju.components.GenericButton
               action={instance._handleSubmit}
               submit={true}
-              type="confirm"
+              type="positive"
               title="Login" />
           </form>
         </div>

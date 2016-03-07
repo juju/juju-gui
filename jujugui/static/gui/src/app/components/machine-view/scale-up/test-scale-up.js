@@ -121,11 +121,12 @@ describe('MachineViewScaleUp', function() {
         </ul>
         <juju.components.ButtonRow buttons={[{
           action: toggleScaleUp,
-          title: 'Cancel'
+          title: 'Cancel',
+          type: 'base'
         }, {
           action: instance._handleAddUnits,
           title: 'Add units',
-          type: 'confirm'
+          type: 'neutral'
         }]} />
       </form>);
     assert.deepEqual(output, expected);
@@ -181,7 +182,7 @@ describe('MachineViewScaleUp', function() {
         services={services}
         toggleScaleUp={toggleScaleUp} />, true);
     var confirm = ReactDOM.findDOMNode(output).querySelector(
-      '.generic-button--type-confirm');
+      '.button--neutral');
     var input1 = output.refs['scaleUpUnit-111111$'];
     input1.value = '5';
     var input2 = output.refs['scaleUpUnit-222222$'];
@@ -223,7 +224,7 @@ describe('MachineViewScaleUp', function() {
         services={services}
         toggleScaleUp={toggleScaleUp} />, true);
     var confirm = ReactDOM.findDOMNode(output).querySelector(
-      '.generic-button--type-confirm');
+      '.button--neutral');
     var input1 = output.refs['scaleUpUnit-juju-gui'];
     input1.value = '5';
     testUtils.Simulate.click(confirm);

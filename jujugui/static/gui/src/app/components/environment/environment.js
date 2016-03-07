@@ -40,8 +40,8 @@ YUI.add('environment', function() {
                 <g className="plus-service">
                   <circle fill="#FFF" stroke="#CECDCD" cx="374.527"
                     cy="96.438" r="63"/>
-                  <circle fill="#DD4815" cx="374.527" cy="96.438"
-                    r="32"/>
+                  <circle fill="#38b44a" cx="374.527" cy="96.438"
+                    r="32" className="plus-service__plus-circle"/>
                   <path fill="#FFF"
                     d="M383.527 95.438h-8v-8h-2v8h-8v2h8v8h2v-8h8"/>
                 </g>

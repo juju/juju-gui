@@ -86,11 +86,12 @@ YUI.add('machine-view-scale-up', function() {
     render: function() {
       var buttons = [{
         action: this.props.toggleScaleUp,
-        title: 'Cancel'
+        title: 'Cancel',
+        type: 'base'
       }, {
         action: this._handleAddUnits,
         title: 'Add units',
-        type: 'confirm'
+        type: 'neutral'
       }];
       return (
         <form className="machine-view__scale-up"

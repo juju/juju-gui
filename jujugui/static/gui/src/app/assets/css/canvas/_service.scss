@@ -14,6 +14,8 @@ g.service {
       &__link {
          cursor: pointer;
 
+         &:focus,
+         &:active,
          &:hover {
             fill: $white;
          }
@@ -72,6 +74,8 @@ g.service {
    }
 
    &.hover,
+   &:focus,
+   &:active,
    &:hover {
 
       .service-block__halo {
@@ -117,6 +121,8 @@ g.service {
       }
 
       &.hover,
+      &:focus,
+      &:active,
       &:hover {
          .service-block__halo {
             r: 80;

@@ -90,13 +90,12 @@ YUI.add('machine-view-header', function() {
             activeItem={this.props.activeMenuItem}
             items={menuItems} />);
       } else if (toggle) {
-        var icon = toggle.toggleOn ? 'close_16' : 'add-light-16';
-        var type = toggle.toggleOn ? 'grey' : 'confirm';
+        var icon = toggle.toggleOn ? 'close_16_white' : 'add-light-16';
         return (
           <juju.components.GenericButton
             action={toggle.action}
             disabled={toggle.disabled}
-            type={type}
+            type='inline-positive'
             icon={icon} />);
       }
     },

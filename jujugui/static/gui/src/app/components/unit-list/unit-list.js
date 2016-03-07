@@ -266,17 +266,20 @@ YUI.add('unit-list', function() {
       if (this.props.unitStatus === 'error') {
         buttons.push({
           title: 'Resolve',
+          type: 'base',
           action: this._handleUpdateUnits.bind(this, 'resolve'),
           disabled: disabled
         });
         buttons.push({
           title: 'Retry',
+          type: 'base',
           action: this._handleUpdateUnits.bind(this, 'retry'),
           disabled: disabled
         });
       }
       buttons.push({
         title: 'Remove',
+        type: 'neutral',
         action: this._handleUpdateUnits.bind(this, 'remove'),
         disabled: disabled
       });

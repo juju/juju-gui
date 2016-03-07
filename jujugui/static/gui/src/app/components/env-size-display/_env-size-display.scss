@@ -18,8 +18,12 @@
         li {
             display: inline;
 
-            &.active a {
+            a {
                 color: $text-colour;
+            }
+
+            &.active a {
+                text-decoration: none;
             }
         }
 

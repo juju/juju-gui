@@ -23,6 +23,7 @@
         cursor: pointer;
 
         &.hover,
+        &:focus,
         &:active,
         &:hover {
             background-color: $hover-background;

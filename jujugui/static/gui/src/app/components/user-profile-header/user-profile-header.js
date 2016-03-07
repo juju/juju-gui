@@ -49,7 +49,7 @@ YUI.add('user-profile-header', function() {
       return (
         <juju.components.GenericButton
           title="Log in to the charmstore"
-          type="login"
+          type="inline-neutral"
           action={interactiveLogin} />);
     },
 

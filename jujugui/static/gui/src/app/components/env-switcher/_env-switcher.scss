@@ -2,21 +2,19 @@
     &--toggle {
         cursor: pointer;
         color: $cool-grey;
+        border-bottom: 1px solid currentColor;
 
         .environment-name {
+            position: relative;
             font-size: 23px;
 
             &:before {
                 content: '/';
-                position: relative;
-                left: -8px;
-                top: 1px;
+                position: absolute;
+                left: -13px;
+                top: 4px;
                 color: $mid-grey;
             }
-        }
-
-        &:focus {
-            outline: 1px dotted $ubuntu-orange;
         }
 
         .svg-icon {
@@ -24,11 +22,5 @@
             vertical-align: text-top;
             fill: currentColor;
         }
-
-        &:hover {
-            color: $ubuntu-orange;
-        }
     }
-
-
 }

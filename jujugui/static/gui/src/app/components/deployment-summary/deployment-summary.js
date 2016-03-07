@@ -164,12 +164,12 @@ YUI.add('deployment-summary-classic', function() {
             </div>
             <div className="deployment-summary-classic__footer">
               <juju.components.GenericButton
-                type="clear-changes"
+                type="inline-neutral"
                 action={this._handleClear}
                 title="Clear changes" />
               <juju.components.GenericButton
                 action={this._handleDeploy}
-                type="confirm"
+                type="inline-positive"
                 title="Deploy" />
             </div>
           </div>

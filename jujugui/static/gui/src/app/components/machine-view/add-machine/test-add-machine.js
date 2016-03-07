@@ -39,11 +39,12 @@ describe('MachineViewAddMachine', function() {
     var output = renderer.getRenderOutput();
     var buttons = [{
       title: 'Cancel',
+      type: 'base',
       action: close
     }, {
       title: 'Create',
       action: instance._submitForm,
-      type: 'confirm',
+      type: 'neutral',
       disabled: undefined
     }];
     var expected = (
@@ -75,11 +76,12 @@ describe('MachineViewAddMachine', function() {
     var output = renderer.getRenderOutput();
     var buttons = [{
       title: 'Cancel',
+      type: 'base',
       action: close
     }, {
       title: 'Create',
       action: instance._submitForm,
-      type: 'confirm',
+      type: 'neutral',
       disabled: true
     }];
     var expected = (
@@ -255,7 +257,7 @@ describe('MachineViewAddMachine', function() {
     selectNode.value = 'lxc';
     testUtils.Simulate.change(selectNode);
     testUtils.Simulate.click(outputNode.querySelector(
-      '.generic-button--type-confirm'));
+      '.button--neutral'));
     assert.equal(createMachine.callCount, 1);
     assert.equal(createMachine.args[0][0], 'lxc');
     assert.equal(createMachine.args[0][1], 'new0');

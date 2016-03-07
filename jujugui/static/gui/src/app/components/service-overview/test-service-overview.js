@@ -428,7 +428,7 @@ describe('ServiceOverview', function() {
       action: output.props.children[2].props.buttons[0].action
     }, {
       title: 'Confirm',
-      type: 'confirm',
+      type: 'destructive',
       action: output.props.children[2].props.buttons[1].action
     }];
     var confirmMessage = 'Are you sure you want to destroy the service? ' +
@@ -454,7 +454,7 @@ describe('ServiceOverview', function() {
       action: output.props.children[2].props.buttons[0].action
     }, {
       title: 'Confirm',
-      type: 'confirm',
+      type: 'destructive',
       action: output.props.children[2].props.buttons[1].action
     }];
     // Fire the click action.
@@ -486,7 +486,7 @@ describe('ServiceOverview', function() {
       action: output.props.children[2].props.buttons[0].action
     },{
       title: 'Confirm',
-      type: 'confirm',
+      type: 'destructive',
       action: output.props.children[2].props.buttons[1].action
     }];
     // Open the confirmation.
@@ -526,7 +526,7 @@ describe('ServiceOverview', function() {
       action: output.props.children[2].props.buttons[0].action
     }, {
       title: 'Confirm',
-      type: 'confirm',
+      type: 'destructive',
       action: output.props.children[2].props.buttons[1].action
     }];
     // Open the confirmation.

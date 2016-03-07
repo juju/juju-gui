@@ -34,16 +34,15 @@ YUI.add('generic-button', function() {
     */
     _generateClasses: function() {
       return classNames(
-        'generic-button',
-        this.props.type ? 'generic-button--type-' + this.props.type : '',
+        this.props.type ? 'button--' + this.props.type : 'button--neutral',
         {
-          'generic-button--disabled': this.props.disabled
+          'button--disabled': this.props.disabled
         }
       );
     },
 
     /**
-      Call the action if not disabled.
+      Call the action if not disabled.  
 
       @method _handleClick
       @param {Object} e The click event.

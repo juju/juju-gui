@@ -25,7 +25,7 @@
         height: 24px;
         width: 24px;
         margin: 4px;
-        background-color: #505050;
+        background-color: $cool-grey;
         text-align: center;
         line-height: 20px;
         font-size: 16px;
@@ -74,7 +74,7 @@
     &--input:checked ~ label {
         .boolean-config--handle {
             left: 25px;
-            background-color: $ubuntu-orange;
+            background-color: $success;
         }
         &:before {
             background-image:

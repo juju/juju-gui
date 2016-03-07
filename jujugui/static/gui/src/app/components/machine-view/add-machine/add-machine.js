@@ -250,11 +250,12 @@ YUI.add('machine-view-add-machine', function() {
       var props = this.props;
       var buttons = [{
         title: 'Cancel',
-        action: props.close
+        action: props.close,
+        type: 'base'
       }, {
         title: props.unit ? 'Place' : 'Create',
         action: this._submitForm,
-        type: 'confirm',
+        type: 'neutral',
         // In the add-container mode disable the Create button until a container
         // type has been selected.
         disabled: !props.unit && !props.machines && props.parentId &&

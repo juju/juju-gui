@@ -55,11 +55,13 @@ YUI.add('inspector-change-version-item', function() {
         <li className="inspector-current-version__item"
           role="button" tabIndex="0"
           onClick={this.props.itemAction}>
-          <span title={this.props.id}>
+          <span title={this.props.id}
+           className="inspector-current-version__title">
             {this._generateTitle()}
           </span>
           <juju.components.GenericButton
             key={this.props.id}
+            type='inline-neutral'
             title={this._generateButtonLabel()}
             action={this.props.buttonAction} />
         </li>

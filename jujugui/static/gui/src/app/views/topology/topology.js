@@ -150,7 +150,7 @@ YUI.add('juju-topology', function(Y) {
             '<circle cx="64" cy="64" r="80" stroke="#888888" stroke-width="1" fill="transparent" stroke-dasharray="5, 5" class="plus-service__halo" id="yui_3_11_0_1_1444041610389_7098"></circle>' +
             '<path class="plus-service__inner-circle" fill="#FAFBFB" d="M63.5 126.5c-34.738 0-63-28.262-63-63s28.262-63 63-63 63 28.262 63 63-28.262 63-63 63z"/>' +
             '<path fill="#CECDCD" d="M63.5 1C97.962 1 126 29.038 126 63.5S97.962 126 63.5 126 1 97.962 1 63.5 29.038 1 63.5 1m0-1C28.43 0 0 28.43 0 63.5S28.43 127 63.5 127 127 98.57 127 63.5 98.57 0 63.5 0z"/>' +
-            '<circle fill="#DC4A26" cx="63.5" cy="63.5" r="32.5"/>' +
+            '<circle fill="#38b44a" cx="63.5" cy="63.5" r="32.5" class="plus-service__plus-circle"/>' +
             '<g fill="none" stroke="#FFF" stroke-width="2" stroke-miterlimit="10">' +
             '<path d="M63.5 54.5v18M72.5 63.5h-18"/>' +
             '</g>' +

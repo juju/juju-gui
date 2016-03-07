@@ -151,8 +151,7 @@ describe('Configuration', function() {
     // actually interacting with the DOM.
     testUtils.Simulate.change(bool, {target: {checked: false}});
 
-    var save = domNode.querySelector('.generic-button--type-confirm');
-
+    var save = domNode.querySelector('.button-row--count-2 .button--neutral');
     testUtils.Simulate.click(save);
 
     assert.equal(setConfig.callCount, 1);
@@ -205,7 +204,7 @@ describe('Configuration', function() {
     name.innerText = 'newservicename';
     testUtils.Simulate.input(name);
 
-    var save = domNode.querySelector('.generic-button--type-confirm');
+    var save = domNode.querySelector('.button-row--count-2 .button--neutral');
     testUtils.Simulate.click(save);
 
     assert.equal(service.set.callCount, 1);
@@ -253,7 +252,7 @@ describe('Configuration', function() {
     name.innerText = 'newservicename';
     testUtils.Simulate.input(name);
 
-    var save = domNode.querySelector('.generic-button--type-confirm');
+    var save = domNode.querySelector('.button-row--count-2 .button--neutral');
     testUtils.Simulate.click(save);
 
     // Make sure it emits a notification if the name exists.
