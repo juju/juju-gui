@@ -40,7 +40,10 @@ describe('HeaderBreadcrumb', () => {
     var changeState = sinon.stub();
     var getAppState = sinon.stub();
     var showConnectingMask = sinon.stub();
-    var authDetails = {user: 'foo'};
+    var authDetails = {
+      user: 'foo',
+      usernameDisplay: 'Foo'
+    };
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
         env={env}
@@ -59,7 +62,7 @@ describe('HeaderBreadcrumb', () => {
       <ul className="header-breadcrumb">
         <li className="header-breadcrumb__list-item">
           <a className="header-breadcrumb--link" href="/profile/">
-            foo
+            Foo
           </a>
         </li>
         <li className="header-breadcrumb__list-item">

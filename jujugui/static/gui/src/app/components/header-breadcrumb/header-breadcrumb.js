@@ -67,7 +67,7 @@ YUI.add('header-breadcrumb', function() {
       var auth = this.props.authDetails;
       var userItem;
       if (auth && (auth.user || auth.loading)) {
-        var username = auth.loading ? '...' : auth.user;
+        var username = auth.loading ? '...' : auth.usernameDisplay;
         userItem = (
           <li className="header-breadcrumb__list-item">
             <a className="header-breadcrumb--link" href="/profile/">
