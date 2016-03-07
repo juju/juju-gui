@@ -195,7 +195,7 @@ var module = module;
         'GET',
         null,
         _transformAuthObject.bind(this, callback),
-        false,
+        true,
         // turn off redirect, we want to silently fail
         // if the macaroon is valid.
         false
@@ -571,7 +571,7 @@ var module = module;
         'GET',
         null,
         _transformAuthObject.bind(this, callback),
-        false,
+        true,
         // turn off redirect, we want to silently fail
         // if the macaroon is valid.
         false
