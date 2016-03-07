@@ -23,6 +23,10 @@ YUI.add('deployment-bar-notification', function() {
   juju.components.DeploymentBarNotification = React.createClass({
     timeout: null,
 
+    propTypes: {
+      change: React.PropTypes.object
+    },
+
     /**
       Fade out the notification.
 

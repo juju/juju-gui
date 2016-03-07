@@ -22,6 +22,10 @@ YUI.add('deployment-summary-change-item-classic', function() {
 
   juju.components.DeploymentSummaryChangeItemClassic = React.createClass({
 
+    propTypes: {
+      change: React.PropTypes.object.isRequired
+    },
+
     /**
       Generate the icon node.
 

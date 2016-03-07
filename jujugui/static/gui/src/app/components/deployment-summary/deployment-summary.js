@@ -22,6 +22,16 @@ YUI.add('deployment-summary-classic', function() {
 
   juju.components.DeploymentSummaryClassic = React.createClass({
 
+    propTypes: {
+      autoPlaceDefault: React.PropTypes.bool.isRequired,
+      autoPlaceUnits: React.PropTypes.func.isRequired,
+      changeDescriptions: React.PropTypes.array.isRequired,
+      changeState: React.PropTypes.func.isRequired,
+      ecsClear: React.PropTypes.func.isRequired,
+      ecsCommit: React.PropTypes.func.isRequired,
+      getUnplacedUnitCount: React.PropTypes.func.isRequired
+    },
+
     /**
       Get the current state of the component.
 
