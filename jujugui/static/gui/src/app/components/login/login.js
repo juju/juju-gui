@@ -24,7 +24,7 @@ YUI.add('login-component', function() {
 
     propTypes: {
       envName: React.PropTypes.string.isRequired,
-      helpMessage: React.PropTypes.string.isRequired,
+      helpMessage: React.PropTypes.object.isRequired,
       setCredentials: React.PropTypes.func.isRequired,
       login: React.PropTypes.func.isRequired,
       loginFailure: React.PropTypes.bool

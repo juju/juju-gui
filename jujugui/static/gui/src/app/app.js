@@ -682,11 +682,18 @@ YUI.add('juju-gui', function(Y) {
       @param {Boolean} failure Whether the login failed.
     */
     _renderLogin: function(failure) {
-      var msg = 'Find your username and password with ' +
-                '`juju show-controller --include-passwords`';
+      var msg = (
+        <p>
+          Find your username and password with<br />
+          <code>`juju show-controller --show-passwords`</code>
+        </p>);
       if (this.get('jujuCoreVersion').lastIndexOf('1.', 0) === 0) {
         // Use old command to retrieve the password.
-        msg = 'Find your password with `juju api-info --password password`';
+        msg = (
+          <p>
+            Find your password with<br />
+            <code>`juju api-info --password password`</code>
+          </p>);
       }
       document.getElementById('loading-message').style.display = 'none';
       ReactDOM.render(
