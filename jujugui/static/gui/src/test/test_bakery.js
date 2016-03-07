@@ -214,7 +214,7 @@ describe('Bakery', function() {
             'a location')
       );
       bakery._requestHandlerWithInteraction(
-        'path', success, failure, {
+        'path', success, failure, true, {
           target: {
             status: 401,
             responseText: JSON.stringify({'Info': {'Macaroon': m}}),
@@ -292,7 +292,7 @@ describe('Bakery', function() {
         };
 
         bakery._requestHandlerWithInteraction(
-          'path', success, failure, {
+          'path', success, failure, true, {
             target: {
               status: 401,
               responseText: JSON.stringify({'Info': {'Macaroon': m}}),
@@ -375,7 +375,7 @@ describe('Bakery', function() {
         };
 
         bakery._requestHandlerWithInteraction(
-          'path', success, failure, {
+          'path', success, failure, true, {
             target: {
               status: 401,
               responseText: JSON.stringify({'Info': {'Macaroon': m}}),
@@ -415,7 +415,7 @@ describe('Bakery', function() {
             nacl.util.decodeUTF8('secret'), 'some id', 'a location')
       );
       bakery._requestHandlerWithInteraction(
-        'path', success, failure, {
+        'path', success, failure, true, {
           target: {
             status: 401,
             responseText: JSON.stringify({'Info': {'Macaroon': m}}),
@@ -433,7 +433,7 @@ describe('Bakery', function() {
       this._cleanups.push(requestHandler.reset);
 
       bakery._requestHandlerWithInteraction(
-        'path', success, failure, {
+        'path', success, failure, true, {
           target: {
             status: 200,
             responseText: '{"Info": "Success"}'
