@@ -24,8 +24,7 @@ YUI.add('entity-content-config-option', function() {
 
     /* Define and validate the properites available on this component. */
     propTypes: {
-      option: React.PropTypes.object.isRequired,
-      key: React.PropTypes.string
+      option: React.PropTypes.object.isRequired
     },
 
     /**

@@ -42,12 +42,17 @@ describe('EntityDetails', function() {
   it('can be rendered', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
+        addNotification={sinon.stub()}
         id="test"
         deployService={sinon.spy()}
         changeState={sinon.spy()}
+        getDiagramURL={sinon.stub()}
         getEntity={sinon.spy()}
+        getFile={sinon.stub()}
+        importBundleYAML={sinon.stub()}
         makeEntityModel={sinon.spy()}
         pluralize={sinon.spy()}
+        renderMarkdown={sinon.stub()}
         scrollPosition={0} />);
     assert.equal(output.props.className, 'entity-details');
   });
@@ -72,6 +77,7 @@ describe('EntityDetails', function() {
           changeState={changeState}
           importBundleYAML={importBundleYAML}
           getBundleYAML={getBundleYAML}
+          getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
           scrollPosition={100}
@@ -123,10 +129,12 @@ describe('EntityDetails', function() {
     var renderMarkdown = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
+          addNotification={sinon.stub()}
           deployService={deployService}
           changeState={changeState}
           importBundleYAML={importBundleYAML}
           getBundleYAML={getBundleYAML}
+          getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
           makeEntityModel={sinon.spy()}
@@ -227,10 +235,12 @@ describe('EntityDetails', function() {
     var renderMarkdown = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
+          addNotification={sinon.stub()}
           deployService={deployService}
           changeState={changeState}
           importBundleYAML={importBundleYAML}
           getBundleYAML={getBundleYAML}
+          getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
           makeEntityModel={sinon.spy()}

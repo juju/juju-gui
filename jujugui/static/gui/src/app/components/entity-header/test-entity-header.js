@@ -43,9 +43,12 @@ describe('EntityHeader', function() {
   it('renders an entity properly', function() {
     var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityHeader
+          addNotification={sinon.stub()}
           deployService={sinon.spy()}
           changeState={sinon.spy()}
           entityModel={mockEntity}
+          getBundleYAML={sinon.stub()}
+          importBundleYAML={sinon.stub()}
           scrollPosition={0} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -116,9 +119,12 @@ describe('EntityHeader', function() {
   it('displays an add to canvas button', function() {
     var output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
+        addNotification={sinon.stub()}
         entityModel={mockEntity}
         changeState={sinon.spy()}
         deployService={sinon.spy()}
+        getBundleYAML={sinon.stub()}
+        importBundleYAML={sinon.stub()}
         scrollPosition={0} />);
     var deployAction = output.refs.deployAction;
     assert.equal(deployAction.props.type, 'positive');
@@ -129,9 +135,12 @@ describe('EntityHeader', function() {
     mockEntity.set('series', undefined);
     var output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
+        addNotification={sinon.stub()}
         entityModel={mockEntity}
         changeState={sinon.spy()}
         deployService={sinon.spy()}
+        getBundleYAML={sinon.stub()}
+        importBundleYAML={sinon.stub()}
         scrollPosition={0} />);
     var textContent = output.refs.deployAction.innerText;
     assert.equal(textContent, 'This type of charm can only be deployed from ' +
@@ -145,6 +154,7 @@ describe('EntityHeader', function() {
     var getBundleYAML = sinon.stub();
     var output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
+        addNotification={sinon.stub()}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
         deployService={deployService}
@@ -166,6 +176,7 @@ describe('EntityHeader', function() {
     var entity = jsTestUtils.makeEntity(true);
     var output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
+        addNotification={sinon.stub()}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
         deployService={deployService}

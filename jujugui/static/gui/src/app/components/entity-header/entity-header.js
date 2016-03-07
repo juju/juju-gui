@@ -23,9 +23,12 @@ YUI.add('entity-header', function() {
   juju.components.EntityHeader = React.createClass({
     /* Define and validate the properites available on this component. */
     propTypes: {
+      addNotification: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       deployService: React.PropTypes.func.isRequired,
+      getBundleYAML: React.PropTypes.func.isRequired,
       entityModel: React.PropTypes.object.isRequired,
+      importBundleYAML: React.PropTypes.func.isRequired,
       scrollPosition: React.PropTypes.number.isRequired
     },
 
