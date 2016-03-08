@@ -280,6 +280,7 @@ describe('UserProfileEntity', () => {
 
   it('can navigate to view a charm or bundle', () => {
     var bundle = jsTestUtils.makeEntity(true).toEntity();
+    bundle.id = 'cs:django-cluster';
     var getDiagramURL = sinon.stub().returns('bundle.svg');
     var changeState = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
