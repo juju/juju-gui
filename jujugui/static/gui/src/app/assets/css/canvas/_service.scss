@@ -126,6 +126,10 @@ g.service {
             transform: translate(65px, -30px);
          }
       }
+
+      .sub-rel-count {
+         fill: $warm-grey;
+      }
    }
 
    &.is-selected {
