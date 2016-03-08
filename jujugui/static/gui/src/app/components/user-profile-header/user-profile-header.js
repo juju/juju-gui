@@ -39,8 +39,10 @@ YUI.add('user-profile-header', function() {
       @returns {Object} The login component.
     */
     _generateLogin: function() {
-      var interactiveLogin = this.props.interactiveLogin;
-      var authenticated = this.props.users.charmstore;
+      var props = this.props;
+      var interactiveLogin = props.interactiveLogin;
+      var users = props.users;
+      var authenticated = users.charmstore && users.charmstore.user;
       if (!interactiveLogin || authenticated) {
         return;
       }

@@ -470,7 +470,7 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         storeUser={sinon.stub()}
-        username={users.charmstore.user} />);
+        user={users.charmstore} />);
     assert.equal(list.callCount, 2);
   });
 
