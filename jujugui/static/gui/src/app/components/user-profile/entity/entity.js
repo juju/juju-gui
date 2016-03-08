@@ -100,7 +100,7 @@ YUI.add('user-profile-entity', function() {
           component: 'charmbrowser',
           metadata: {
             activeComponent: 'entity-details',
-            id: id
+            id: id.replace('cs:', '')
           }
         }
       });
