@@ -281,7 +281,7 @@ YUI.add('juju-topology-service', function(Y) {
     subRelationIndicator.append('text').append('tspan')
       .attr({
         'class': 'sub-rel-count',
-        'x': 35,
+        'x': 30,
         'y': 45 * 0.8
       });
 
