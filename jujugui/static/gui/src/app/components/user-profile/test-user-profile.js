@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('UserProfile', () => {
-  var models, charmstore, charms, bundles, users;
+  var models, charmstore, charms, bundles, users, env;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -55,6 +55,10 @@ describe('UserProfile', () => {
       user: 'test-owner',
       usernameDisplay: 'test owner'
     }};
+    env = {
+      findFacadeVersion: sinon.stub(),
+      get: sinon.stub().returns('default')
+    };
   });
 
   it('renders the empty state', () => {
@@ -66,6 +70,7 @@ describe('UserProfile', () => {
         users={users}
         charmstore={{}}
         dbEnvironmentSet={sinon.stub()}
+        env={env}
         getDiagramURL={sinon.stub()}
         jem={jem}
         switchModel={sinon.stub()}
@@ -119,6 +124,7 @@ describe('UserProfile', () => {
         users={users}
         charmstore={charmstore}
         dbEnvironmentSet={sinon.stub()}
+        env={env}
         getDiagramURL={sinon.stub()}
         jem={jem}
         switchModel={sinon.stub()}
@@ -153,6 +159,7 @@ describe('UserProfile', () => {
         users={users}
         charmstore={charmstore}
         dbEnvironmentSet={sinon.stub()}
+        env={env}
         getDiagramURL={sinon.stub()}
         jem={jem}
         switchModel={sinon.stub()}
@@ -183,6 +190,7 @@ describe('UserProfile', () => {
         users={users}
         charmstore={charmstore}
         dbEnvironmentSet={sinon.stub()}
+        env={env}
         getDiagramURL={getDiagramURL}
         jem={jem}
         switchModel={switchModel}
@@ -384,6 +392,7 @@ describe('UserProfile', () => {
         showConnectingMask={sinon.stub()}
         changeState={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
+        env={env}
         getDiagramURL={sinon.stub()}
         interactiveLogin={false}
         storeUser={sinon.stub()}
@@ -419,6 +428,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={charmstore}
         dbEnvironmentSet={sinon.stub()}
+        env={env}
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         storeUser={storeUser}
@@ -441,6 +451,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={charmstore}
         dbEnvironmentSet={sinon.stub()}
+        env={env}
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         storeUser={sinon.stub()}
@@ -455,6 +466,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={charmstore}
         dbEnvironmentSet={sinon.stub()}
+        env={env}
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         storeUser={sinon.stub()}
@@ -473,6 +485,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={{}}
         dbEnvironmentSet={sinon.stub()}
+        env={env}
         getDiagramURL={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
@@ -493,6 +506,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={{}}
         dbEnvironmentSet={sinon.stub()}
+        env={env}
         getDiagramURL={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
@@ -523,6 +537,7 @@ describe('UserProfile', () => {
         users={users}
         changeState={changeState}
         charmstore={{}}
+        env={env}
         getDiagramURL={sinon.stub()}
         showConnectingMask={showMask}
         storeUser={sinon.stub()}
@@ -563,6 +578,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={charmstore}
         dbEnvironmentSet={sinon.stub()}
+        env={env}
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         listEnvs={sinon.stub()}
@@ -581,6 +597,32 @@ describe('UserProfile', () => {
                      'callback does not properly set bundle state');
   });
 
+  it('gets the default model for older versions of Juju', () => {
+    env.findFacadeVersion = sinon.stub().returns(null);
+    var component = jsTestUtils.shallowRender(
+      <juju.components.UserProfile
+        users={users}
+        changeState={sinon.stub()}
+        charmstore={charmstore}
+        dbEnvironmentSet={sinon.stub()}
+        env={env}
+        getDiagramURL={sinon.stub()}
+        interactiveLogin={true}
+        listEnvs={sinon.stub()}
+        showConnectingMask={sinon.stub()}
+        storeUser={sinon.stub()}
+        switchModel={sinon.stub()}
+        user={users.charmstore} />, true);
+    var instance = component.getMountedInstance();
+    component.getRenderOutput();
+    assert.deepEqual(instance.state.envList, [{
+      name: 'default',
+      owner: 'test owner',
+      uuid: '',
+      lastConnection: 'now'
+    }]);
+  });
+
   it('will abort the requests when unmounting', function() {
     var charmstoreAbort = sinon.stub();
     var listEnvsAbort = sinon.stub();
@@ -592,6 +634,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={charmstore}
         dbEnvironmentSet={sinon.stub()}
+        env={env}
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         listEnvs={listEnvs}
