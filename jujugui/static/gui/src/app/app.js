@@ -2105,7 +2105,7 @@ YUI.add('juju-gui', function(Y) {
       };
       if (service === 'jem') {
         this.jem.whoami(callback.bind(this));
-      } else if (service == 'charmstore') {
+      } else if (service === 'charmstore') {
         this.get('charmstore').whoami(callback.bind(this));
       } else {
         console.error('Unrecognized service', service);

@@ -51,10 +51,12 @@ YUI.add('user-profile', function() {
     },
 
     componentWillMount: function() {
-      this._fetchEnvironments();
-      if (this.props.users.charmstore) {
-        this._fetchEntities('charm');
-        this._fetchEntities('bundle');
+      var props = this.props,
+          users = props.users;
+      this._fetchEnvironments(props);
+      if (users.charmstore && users.charmstore.user) {
+        this._fetchEntities('charm', props);
+        this._fetchEntities('bundle', props);
       }
     },
 
@@ -64,14 +66,18 @@ YUI.add('user-profile', function() {
       });
     },
 
-    componentDidUpdate: function(prevProps, prevState) {
+    componentWillReceiveProps: function(nextProps) {
       // If the user has changed then update the data.
-      if (prevProps.user !== this.props.user) {
-        this._fetchEnvironments();
+      var props = this.props;
+      if (nextProps.user.user !== props.user.user) {
+        this._fetchEnvironments(nextProps);
       }
-      if (prevProps.users.charmstore !== this.props.users.charmstore) {
-        this._fetchEntities('charm');
-        this._fetchEntities('bundle');
+      // Compare next and previous charmstore users in a data-safe manner.
+      var prevCSUser = props.users.charmstore || {};
+      var nextCSUser = nextProps.users.charmstore || {};
+      if (nextCSUser.user !== prevCSUser.user) {
+        this._fetchEntities('charm', nextProps);
+        this._fetchEntities('bundle', nextProps);
       }
     },
 
@@ -79,9 +85,9 @@ YUI.add('user-profile', function() {
       Makes a request of JEM or JES to fetch the users availble environments.
 
       @method _fetchEnvironments
+      @param {Object} props the properties to use when connection to JEM/JES
     */
-    _fetchEnvironments:  function() {
-      var props = this.props;
+    _fetchEnvironments:  function(props) {
       var jem = props.jem;
       this.setState({loadingModels: true}, () => {
         // Delay the call until after the state change to prevent race
@@ -122,12 +128,12 @@ YUI.add('user-profile', function() {
 
       @method _fetchEntities
       @param {String} type the entity type, charm or bundle
+      @param {Object} props the properties to use when connection to charmstore
     */
-    _fetchEntities:  function(type) {
+    _fetchEntities:  function(type, props) {
       var callback = this._fetchEntitiesCallback.bind(this, type);
-      var charmstore = this.props.charmstore;
-      var username = this.props.users.charmstore
-                     && this.props.users.charmstore.user;
+      var charmstore = props.charmstore;
+      var username = props.users.charmstore && props.users.charmstore.user;
       if (charmstore && charmstore.list && username) {
         var state = {};
         if (type === 'charm') {

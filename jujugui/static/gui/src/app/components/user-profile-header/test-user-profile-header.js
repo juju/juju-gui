@@ -66,20 +66,6 @@ describe('UserProfileHeader', () => {
     assert.deepEqual(output, expected);
   });
 
-  it('can render without a login button', () => {
-    var users = {charmstore: {user: 'test'}};
-    var output = jsTestUtils.shallowRender(
-      <juju.components.UserProfileHeader
-        users={users}
-        avatar="avatar.png"
-        bundleCount={5}
-        charmCount={2}
-        environmentCount={1}
-        interactiveLogin={undefined}
-        username="spinach" />);
-    assert.isUndefined(output.props.children[0]);
-  });
-
   it('hides the login button when authenticated to charmstore', () => {
     var users = {charmstore: {user: 'test'}};
     var output = jsTestUtils.shallowRender(
@@ -92,6 +78,27 @@ describe('UserProfileHeader', () => {
         interactiveLogin={sinon.stub()}
         username="spinach" />);
     assert.isUndefined(output.props.children[0]);
+  });
+
+  it('shows the login button when no username', () => {
+    var users = {charmstore: {loading: true}};
+    var interactiveLogin = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UserProfileHeader
+        users={users}
+        avatar="avatar.png"
+        bundleCount={5}
+        charmCount={2}
+        environmentCount={1}
+        interactiveLogin={interactiveLogin}
+        username="spinach" />);
+    var expected = (
+      <juju.components.GenericButton
+        title="Log in to the charmstore"
+        type="login"
+        action={interactiveLogin} />
+    );
+    assert.deepEqual(output.props.children[0], expected);
   });
 
   it('can render with a default avatar', () => {
