@@ -28,6 +28,7 @@ YUI.add('user-profile', function() {
       charmstore: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
       dbEnvironmentSet: React.PropTypes.func.isRequired,
+      env: React.PropTypes.object.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       interactiveLogin: React.PropTypes.bool,
       jem: React.PropTypes.object,
@@ -86,6 +87,25 @@ YUI.add('user-profile', function() {
       this.setState({loadingModels: true}, () => {
         // Delay the call until after the state change to prevent race
         // conditions.
+        var env = this.props.env;
+        if (env.findFacadeVersion('ModelManager') === null &&
+          env.findFacadeVersion('EnvironmentManager') === null) {
+          // If we're on Juju < 2 then pass the default model to the list.
+          var environmentName = env.get('environmentName');
+          var username = this.props.user && this.props.user.usernameDisplay;
+          this._fetchEnvironmentsCallback(null, {
+            environmentCount: 1,
+            envs: [{
+              name: environmentName,
+              owner: username,
+              // Leave the UUID blank so that it navigates to the default model
+              // when selected.
+              uuid: '',
+              lastConnection: 'now'
+            }]
+          });
+          return;
+        }
         var xhr;
         if (jem) {
           xhr = jem.listEnvironments(this._fetchEnvironmentsCallback);
