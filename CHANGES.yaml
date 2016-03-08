@@ -1,25 +1,25 @@
-# This file keeps track of the changes to the project.  We use it both to
-# document the changes, and to find the most recent version numbers.  See the
-# release process documented in docs/process.rst for details.
-
-# This file uses the YAML format because it is easy to write and it is easy to
-# convert to JSON, which seemed like a reasonable goal in case we want to use
-# this data in the GUI itself at some point.  Here's an example of how to
-# write the changes data.
-
-# - unreleased:
-# - 0.5.0:
-#   - Did something
-#   - Did something else
-#   - >
-#     Another thing that spans multiple lines
-#     like this
-# - 0.4.0:
-#   - Something!
-#   - Ooh!
-
-# Release identifiers in this file should always be "unreleased" or
-# [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
+- 2.0.3:
+    - Removed and optimised code reducing the final size that needs to be sent.
+    - (FIX) The service inspector duplicating units when scaling up.
+    - (FIX) Require two clicks to switch between services on the canvas.
+- 2.0.2:
+    - >
+      (FIX) The removal of the insecure config option. This functionality has
+      been re-enabled for now however in the near future we will be disabling
+      it for good forcing the GUI and its websockets over a secure connection.
+      Note: The GUI and it's websockets are served over a secure connection
+      by default.
+- 2.0.1:
+    - When clicking stacked charm icons the active one now is moved to the top.
+    - >
+      (FIX) Deploying the same charm multiple times woudl generate invalid
+      charm names.
+- 2.0.0:
+    - Completely redesigned and rewritten user interface.
+    - Improved integration with the charmstore.
+    - New Machine View with drag and drop functionality across units.
+    - Creation and switching of models across your controller.
+    - New bundle deploy functionality.
 - 1.4.6:
     - (FIX) Fix relationline following.
 - 1.4.5:
