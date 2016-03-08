@@ -184,8 +184,10 @@ describe('jujulib environment manager', function() {
   it('identifies the current user', function(done) {
     var currentUser = {user: 'test'};
     var bakery = {
-      sendGetRequest: function(path, data, success, failure) {
+      sendGetRequest: function(path, success, failure, redirect) {
         assert.equal(path, 'http://example.com/v1/whoami');
+        // Make sure that we have disabled redirect on 401
+        assert.strictEqual(redirect, false);
         var xhr = _makeXHRRequest(currentUser);
         success(xhr);
       },

@@ -473,6 +473,8 @@ describe('jujulib charmstore', function() {
       charmstore.whoami(cb);
       var requestArgs = charmstore.bakery.sendGetRequest.lastCall.args;
       assert.equal(requestArgs[0], 'local/v4/whoami');
+      // Make sure that we have disabled redirect on 401
+      assert.strictEqual(requestArgs[3], false);
       // Call the makeRequest success handler simulating a response object;
       requestArgs[1](
           {target: { responseText: '{"User": "test", "Groups": []}'}});
