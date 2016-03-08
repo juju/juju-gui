@@ -24,8 +24,8 @@ YUI.add('deployment-bar', function() {
     propTypes: {
       exportEnvironmentFile: React.PropTypes.func.isRequired,
       renderDragOverNotification: React.PropTypes.func.isRequired,
+      hasEntities: React.PropTypes.bool.isRequired,
       importBundleFile: React.PropTypes.func.isRequired,
-      services: React.PropTypes.array.isRequired,
       showInstall: React.PropTypes.bool.isRequired
     },
 
@@ -141,7 +141,8 @@ YUI.add('deployment-bar', function() {
       return classNames(
         'deployment-bar',
         {
-          'deployment-bar--initial': this.props.services.length === 0
+          'deployment-bar--initial': !this.props.hasEntities &&
+            Object.keys(this.props.currentChangeSet).length === 0
         }
       );
     },

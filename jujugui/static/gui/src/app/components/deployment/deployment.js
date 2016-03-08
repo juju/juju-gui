@@ -24,6 +24,7 @@ YUI.add('deployment-component', function() {
     propTypes: {
       exportEnvironmentFile: React.PropTypes.func.isRequired,
       ecsClear: React.PropTypes.func.isRequired,
+      hasEntities: React.PropTypes.bool.isRequired,
       showInstall: React.PropTypes.bool.isRequired
     },
 
@@ -73,10 +74,10 @@ YUI.add('deployment-component', function() {
               exportEnvironmentFile={this.props.exportEnvironmentFile}
               renderDragOverNotification={this.props.renderDragOverNotification}
               importBundleFile={this.props.importBundleFile}
+              hasEntities={this.props.hasEntities}
               hideDragOverNotification={this.props.hideDragOverNotification}
               generateChangeDescription={generateChangeDescription}
               currentChangeSet={currentChangeSet}
-              services={this.props.services}
               showInstall={this.props.showInstall} />
           };
           break;
