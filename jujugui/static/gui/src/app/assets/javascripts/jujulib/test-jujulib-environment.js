@@ -185,7 +185,6 @@ describe('jujulib environment manager', function() {
     var currentUser = {user: 'test'};
     var bakery = {
       sendGetRequest: function(path, success, failure, redirect) {
-        console.log(arguments);
         assert.equal(path, 'http://example.com/v1/whoami');
         // Make sure that we have disabled redirect on 401
         assert.strictEqual(redirect, false);
