@@ -1176,7 +1176,7 @@ YUI.add('juju-models', function(Y) {
       } else {
         // Return the unplaced units.
         predicate = function(unit) {
-          return !unit.machine;
+          return !unit.machine && !unit.subordinate;
         };
       }
       machine = machine || null;

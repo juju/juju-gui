@@ -1049,7 +1049,8 @@ describe('test_model.js', function() {
           {id: 'rails/2', machine: '1/lxc/1'},
           {id: 'postgres/2'},
           {id: 'mysql/47', machine: '1/kvm/0/lxc/1'},
-          {id: 'mysql/12', machine: '15/lxc/6'}
+          {id: 'mysql/12', machine: '15/lxc/6'},
+          {id: 'ghost/1', machine: '', subordinate: true}
         ]);
       });
 
