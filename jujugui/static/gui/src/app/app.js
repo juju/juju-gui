@@ -738,6 +738,9 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderUserProfile: function() {
       var charmstore = this.get('charmstore');
+      // NOTE: we need to clone this.get('users') below; passing in without
+      // cloning breaks React's ability to distinguish between this.props and
+      // nextProps on the lifecycle methods.
       ReactDOM.render(
         <window.juju.components.UserProfile
           currentModel={this.get('jujuEnvUUID')}
@@ -752,7 +755,7 @@ YUI.add('juju-gui', function(Y) {
           switchModel={views.utils.switchModel.bind(
             this, this.createSocketURL.bind(this), this.switchEnv.bind(this))}
           user={this._getAuth()}
-          users={this.get('users')}
+          users={Y.clone(this.get('users'), true)}
           charmstore={this.get('charmstore')} />,
         document.getElementById('charmbrowser-container'));
       // The model name should not be visible when viewing the profile.
