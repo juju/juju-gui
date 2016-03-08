@@ -45,15 +45,14 @@ describe('DeploymentBar', function() {
   it('can render and pass the correct props', function() {
     var currentChangeSet = {one: 1, two: 2};
     var deployButtonAction = sinon.stub();
-    var services = [];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
         deployButtonAction={deployButtonAction}
         exportEnvironmentFile={sinon.stub()}
+        hasEntities={true}
         importBundleFile={sinon.stub()}
         renderDragOverNotification={sinon.stub()}
-        services={services}
         showInstall={true} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -61,7 +60,7 @@ describe('DeploymentBar', function() {
       <juju.components.Panel
         instanceName="deployment-bar-panel"
         visible={true}>
-        <div className="deployment-bar deployment-bar--initial">
+        <div className="deployment-bar">
           <span className="deployment-bar__import link"
             onClick={instance._handleImportClick}
             role="button"
@@ -103,18 +102,89 @@ describe('DeploymentBar', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('sets the initial class if there are no changes or entites', function() {
+    var currentChangeSet = {};
+    var deployButtonAction = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentBar
+        currentChangeSet={currentChangeSet}
+        deployButtonAction={deployButtonAction}
+        exportEnvironmentFile={sinon.stub()}
+        hasEntities={false}
+        importBundleFile={sinon.stub()}
+        renderDragOverNotification={sinon.stub()}
+        showInstall={true} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.Panel
+        instanceName="deployment-bar-panel"
+        visible={true}>
+        <div className="deployment-bar deployment-bar--initial">
+          {output.props.children.props.children}
+        </div>
+      </juju.components.Panel>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('does not set the initial class if there are entites', function() {
+    var currentChangeSet = {};
+    var deployButtonAction = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentBar
+        currentChangeSet={currentChangeSet}
+        deployButtonAction={deployButtonAction}
+        exportEnvironmentFile={sinon.stub()}
+        hasEntities={true}
+        importBundleFile={sinon.stub()}
+        renderDragOverNotification={sinon.stub()}
+        showInstall={true} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.Panel
+        instanceName="deployment-bar-panel"
+        visible={true}>
+        <div className="deployment-bar">
+          {output.props.children.props.children}
+        </div>
+      </juju.components.Panel>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('does not set the initial class if there are changes', function() {
+    var currentChangeSet = {one: true};
+    var deployButtonAction = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentBar
+        currentChangeSet={currentChangeSet}
+        deployButtonAction={deployButtonAction}
+        exportEnvironmentFile={sinon.stub()}
+        hasEntities={false}
+        importBundleFile={sinon.stub()}
+        renderDragOverNotification={sinon.stub()}
+        showInstall={true} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.Panel
+        instanceName="deployment-bar-panel"
+        visible={true}>
+        <div className="deployment-bar">
+          {output.props.children.props.children}
+        </div>
+      </juju.components.Panel>);
+    assert.deepEqual(output, expected);
+  });
+
   it('can render without the install button', function() {
     var currentChangeSet = {one: 1, two: 2};
     var deployButtonAction = sinon.stub();
-    var services = [];
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
         deployButtonAction={deployButtonAction}
         exportEnvironmentFile={sinon.stub()}
+        hasEntities={false}
         importBundleFile={sinon.stub()}
         renderDragOverNotification={sinon.stub()}
-        services={services}
         showInstall={false} />);
     assert.isUndefined(output.props.children.props.children[2]);
   });
@@ -122,15 +192,14 @@ describe('DeploymentBar', function() {
   it('enables the button if there are changes', function() {
     var currentChangeSet = {one: 1, two: 2};
     var deployButtonAction = sinon.stub();
-    var services = [];
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
         deployButtonAction={deployButtonAction}
         exportEnvironmentFile={sinon.stub()}
+        hasEntities={false}
         importBundleFile={sinon.stub()}
         renderDragOverNotification={sinon.stub()}
-        services={services}
         showInstall={true} />);
     assert.deepEqual(output.props.children.props.children[4].props.children[1],
         <juju.components.GenericButton
@@ -144,15 +213,14 @@ describe('DeploymentBar', function() {
     var currentChangeSet = {one: 1, two: 2};
     var deployButtonAction = sinon.stub();
     var exportEnvironmentFile = sinon.stub();
-    var services = [];
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
         deployButtonAction={deployButtonAction}
         exportEnvironmentFile={exportEnvironmentFile}
+        hasEntities={false}
         importBundleFile={sinon.stub()}
         renderDragOverNotification={sinon.stub()}
-        services={services}
         showInstall={true} />);
     output.props.children.props.children[1].props.onClick();
     assert.equal(exportEnvironmentFile.callCount, 1);
@@ -167,18 +235,17 @@ describe('DeploymentBar', function() {
     var renderDragOverNotification = sinon.stub();
     var exportEnvironmentFile = sinon.stub();
     var deployButtonAction = sinon.stub();
-    var services = [];
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         hasCommits={false}
         deployButtonAction={deployButtonAction}
         exportEnvironmentFile={exportEnvironmentFile}
         renderDragOverNotification={renderDragOverNotification}
+        hasEntities={false}
         importBundleFile={importBundleFile}
         hideDragOverNotification={hideDragOverNotification}
         generateChangeDescription={generateChangeDescription}
         currentChangeSet={currentChangeSet}
-        services={services}
         showInstall={true} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {'file-input': {click: fileClick}};
@@ -195,7 +262,6 @@ describe('DeploymentBar', function() {
     var renderDragOverNotification = sinon.stub();
     var exportEnvironmentFile = sinon.stub();
     var deployButtonAction = sinon.stub();
-    var services = [];
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         hasCommits={false}
@@ -203,10 +269,10 @@ describe('DeploymentBar', function() {
         exportEnvironmentFile={exportEnvironmentFile}
         renderDragOverNotification={renderDragOverNotification}
         importBundleFile={importBundleFile}
+        hasEntities={false}
         hideDragOverNotification={hideDragOverNotification}
         generateChangeDescription={generateChangeDescription}
         currentChangeSet={currentChangeSet}
-        services={services}
         showInstall={true} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {
@@ -221,15 +287,14 @@ describe('DeploymentBar', function() {
   it('disables the button if there are no changes', function() {
     var currentChangeSet = {};
     var deployButtonAction = sinon.stub();
-    var services = [];
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
         deployButtonAction={deployButtonAction}
         exportEnvironmentFile={sinon.stub()}
+        hasEntities={false}
         importBundleFile={sinon.stub()}
         renderDragOverNotification={sinon.stub()}
-        services={services}
         showInstall={true} />);
     assert.deepEqual(output.props.children.props.children[4].props.children[1],
         <juju.components.GenericButton
@@ -242,16 +307,15 @@ describe('DeploymentBar', function() {
   it('passes the button the correct title if there are commits', function() {
     var currentChangeSet = {};
     var deployButtonAction = sinon.stub();
-    var services = [];
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
         hasCommits={true}
+        hasEntities={false}
         deployButtonAction={deployButtonAction}
         exportEnvironmentFile={sinon.stub()}
         importBundleFile={sinon.stub()}
         renderDragOverNotification={sinon.stub()}
-        services={services}
         showInstall={true} />);
     assert.deepEqual(output.props.children.props.children[4].props.children[1],
         <juju.components.GenericButton
@@ -266,17 +330,16 @@ describe('DeploymentBar', function() {
     var currentChangeSet = {'add-services-1': 'add-services-change'};
     var deployButtonAction = sinon.stub();
     var generateChangeDescription = sinon.stub().returns(change);
-    var services = [];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
         exportEnvironmentFile={sinon.stub()}
         generateChangeDescription={generateChangeDescription}
         hasCommits={true}
+        hasEntities={false}
         deployButtonAction={deployButtonAction}
         importBundleFile={sinon.stub()}
         renderDragOverNotification={sinon.stub()}
-        services={services}
         showInstall={true} />, true);
     var output = renderer.getRenderOutput();
     // Re-render the component so that componentWillReceiveProps is called.
@@ -286,10 +349,10 @@ describe('DeploymentBar', function() {
         exportEnvironmentFile={sinon.stub()}
         generateChangeDescription={generateChangeDescription}
         hasCommits={true}
+        hasEntities={false}
         deployButtonAction={deployButtonAction}
         importBundleFile={sinon.stub()}
         renderDragOverNotification={sinon.stub()}
-        services={services}
         showInstall={true} />);
     output = renderer.getRenderOutput();
     assert.deepEqual(output.props.children.props.children[3],
@@ -304,17 +367,16 @@ describe('DeploymentBar', function() {
     var currentChangeSet = {'add-services-1': 'add-services-change'};
     var deployButtonAction = sinon.stub();
     var generateChangeDescription = sinon.stub().returns(change);
-    var services = [];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
         exportEnvironmentFile={sinon.stub()}
         generateChangeDescription={generateChangeDescription}
         hasCommits={true}
+        hasEntities={false}
         deployButtonAction={deployButtonAction}
         importBundleFile={sinon.stub()}
         renderDragOverNotification={sinon.stub()}
-        services={services}
         showInstall={true} />, true);
     var output = renderer.getRenderOutput();
     // Re-render the component so that componentWillReceiveProps is called.
@@ -324,10 +386,10 @@ describe('DeploymentBar', function() {
         exportEnvironmentFile={sinon.stub()}
         generateChangeDescription={generateChangeDescription}
         hasCommits={true}
+        hasEntities={false}
         deployButtonAction={deployButtonAction}
         importBundleFile={sinon.stub()}
         renderDragOverNotification={sinon.stub()}
-        services={services}
         showInstall={true} />);
     output = renderer.getRenderOutput();
     assert.deepEqual(output.props.children.props.children[3],
@@ -343,10 +405,10 @@ describe('DeploymentBar', function() {
         exportEnvironmentFile={sinon.stub()}
         generateChangeDescription={generateChangeDescription}
         hasCommits={true}
+        hasEntities={false}
         importBundleFile={sinon.stub()}
         deployButtonAction={deployButtonAction}
         renderDragOverNotification={sinon.stub()}
-        services={services}
         showInstall={true} />);
     output = renderer.getRenderOutput();
     assert.deepEqual(output.props.children.props.children[3],
@@ -359,17 +421,16 @@ describe('DeploymentBar', function() {
     var currentChangeSet = {'add-services-1': 'add-services-change'};
     var deployButtonAction = sinon.stub();
     var generateChangeDescription = sinon.stub().returns(change);
-    var services = [];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
         exportEnvironmentFile={sinon.stub()}
         generateChangeDescription={generateChangeDescription}
         hasCommits={true}
+        hasEntities={false}
         importBundleFile={sinon.stub()}
         deployButtonAction={deployButtonAction}
         renderDragOverNotification={sinon.stub()}
-        services={services}
         showInstall={true} />, true);
     var output = renderer.getRenderOutput();
     // Re-render the component so that componentWillReceiveProps is called.
@@ -379,10 +440,10 @@ describe('DeploymentBar', function() {
         exportEnvironmentFile={sinon.stub()}
         generateChangeDescription={generateChangeDescription}
         hasCommits={true}
+        hasEntities={false}
         importBundleFile={sinon.stub()}
         deployButtonAction={deployButtonAction}
         renderDragOverNotification={sinon.stub()}
-        services={services}
         showInstall={true} />);
     output = renderer.getRenderOutput();
     assert.deepEqual(output.props.children.props.children[3],
@@ -398,10 +459,10 @@ describe('DeploymentBar', function() {
         exportEnvironmentFile={sinon.stub()}
         generateChangeDescription={generateChangeDescription}
         hasCommits={true}
+        hasEntities={false}
         deployButtonAction={deployButtonAction}
         importBundleFile={sinon.stub()}
         renderDragOverNotification={sinon.stub()}
-        services={services}
         showInstall={true} />);
     output = renderer.getRenderOutput();
     assert.deepEqual(output.props.children.props.children[3],
@@ -416,10 +477,10 @@ describe('DeploymentBar', function() {
         exportEnvironmentFile={sinon.stub()}
         generateChangeDescription={generateChangeDescription}
         hasCommits={true}
+        hasEntities={false}
         importBundleFile={sinon.stub()}
         deployButtonAction={deployButtonAction}
         renderDragOverNotification={sinon.stub()}
-        services={services}
         showInstall={true} />);
     output = renderer.getRenderOutput();
     assert.deepEqual(output.props.children.props.children[3],

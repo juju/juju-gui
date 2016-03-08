@@ -818,8 +818,11 @@ YUI.add('juju-gui', function(Y) {
     _renderDeployment: function() {
       var env = this.env;
       var ecs = env.get('ecs');
-      var services = this.db.services;
-      var units = this.db.units;
+      var db = this.db;
+      var services = db.services;
+      var servicesArray = services.toArray();
+      var machines = db.machines.toArray();
+      var units = db.units;
       var utils = views.utils;
       var changesUtils = this.changesUtils;
       var currentChangeSet = ecs.getCurrentChangeSet();
@@ -828,19 +831,19 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.Deployment
           changeState={this.changeState.bind(this)}
-          services={services.toArray()}
+          services={servicesArray}
           ecsCommit={ecs.commit.bind(ecs, env)}
           ecsClear={ecs.clear.bind(ecs)}
           exportEnvironmentFile={
-            utils.exportEnvironmentFile.bind(utils, this.db)}
+            utils.exportEnvironmentFile.bind(utils, db)}
           renderDragOverNotification={
             this._renderDragOverNotification.bind(this)}
           importBundleFile={this.bundleImporter.importBundleFile.bind(
             this.bundleImporter)}
+          hasEntities={servicesArray.length > 0 || machines.length > 0}
           hideDragOverNotification={this._hideDragOverNotification.bind(this)}
           changeDescriptions={changeDescriptions}
-          getUnplacedUnitCount={utils.getUnplacedUnitCount.bind(this,
-              this.db.units)}
+          getUnplacedUnitCount={utils.getUnplacedUnitCount.bind(this, db.units)}
           autoPlaceUnits={this._autoPlaceUnits.bind(this)}
           generateChangeDescription={
               changesUtils.generateChangeDescription.bind(

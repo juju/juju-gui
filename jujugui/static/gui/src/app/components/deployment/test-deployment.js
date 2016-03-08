@@ -45,6 +45,7 @@ describe('Deployment', function() {
         currentChangeSet={currentChangeSet}
         renderDragOverNotification={renderDragOverNotification}
         importBundleFile={importBundleFile}
+        hasEntities={false}
         hideDragOverNotification={hideDragOverNotification}
         generateChangeDescription={generateChangeDescription}
         activeComponent="deployment-bar"
@@ -58,10 +59,10 @@ describe('Deployment', function() {
         exportEnvironmentFile={exportEnvironmentFile}
         renderDragOverNotification={renderDragOverNotification}
         importBundleFile={importBundleFile}
+        hasEntities={false}
         hideDragOverNotification={hideDragOverNotification}
         generateChangeDescription={generateChangeDescription}
         currentChangeSet={currentChangeSet}
-        services={services}
         showInstall={true} />
     </div>);
   });
@@ -80,6 +81,7 @@ describe('Deployment', function() {
         exportEnvironmentFile={exportEnvironmentFile}
         renderDragOverNotification={renderDragOverNotification}
         importBundleFile={importBundleFile}
+        hasEntities={false}
         hideDragOverNotification={hideDragOverNotification}
         generateChangeDescription={generateChangeDescription}
         currentChangeSet={currentChangeSet}
@@ -92,11 +94,11 @@ describe('Deployment', function() {
           hasCommits={false}
           renderDragOverNotification={renderDragOverNotification}
           importBundleFile={importBundleFile}
+          hasEntities={false}
           hideDragOverNotification={hideDragOverNotification}
           generateChangeDescription={generateChangeDescription}
           deployButtonAction={output.props.children.props.deployButtonAction}
           currentChangeSet={currentChangeSet}
-          services={services}
           showInstall={true} />
       </div>);
   });
@@ -117,6 +119,7 @@ describe('Deployment', function() {
         exportEnvironmentFile={exportEnvironmentFile}
         renderDragOverNotification={renderDragOverNotification}
         importBundleFile={importBundleFile}
+        hasEntities={false}
         hideDragOverNotification={hideDragOverNotification}
         generateChangeDescription={generateChangeDescription}
         activeComponent="deployment-summary"
@@ -133,6 +136,7 @@ describe('Deployment', function() {
         exportEnvironmentFile={exportEnvironmentFile}
         renderDragOverNotification={renderDragOverNotification}
         importBundleFile={importBundleFile}
+        hasEntities={false}
         hideDragOverNotification={hideDragOverNotification}
         generateChangeDescription={generateChangeDescription}
         activeComponent="deployment-bar"
@@ -147,11 +151,11 @@ describe('Deployment', function() {
           hasCommits={true}
           renderDragOverNotification={renderDragOverNotification}
           importBundleFile={importBundleFile}
+          hasEntities={false}
           hideDragOverNotification={hideDragOverNotification}
           generateChangeDescription={generateChangeDescription}
           deployButtonAction={output.props.children.props.deployButtonAction}
           currentChangeSet={currentChangeSet}
-          services={services}
           showInstall={true} />
       </div>);
   });
@@ -175,6 +179,7 @@ describe('Deployment', function() {
         services={services}
         renderDragOverNotification={renderDragOverNotification}
         importBundleFile={importBundleFile}
+        hasEntities={false}
         hideDragOverNotification={hideDragOverNotification}
         generateChangeDescription={generateChangeDescription}
         activeComponent="deployment-summary"
@@ -189,6 +194,7 @@ describe('Deployment', function() {
         services={services}
         renderDragOverNotification={renderDragOverNotification}
         importBundleFile={importBundleFile}
+        hasEntities={false}
         hideDragOverNotification={hideDragOverNotification}
         generateChangeDescription={generateChangeDescription}
         activeComponent="deployment-bar"
@@ -202,11 +208,11 @@ describe('Deployment', function() {
           hasCommits={true}
           renderDragOverNotification={renderDragOverNotification}
           importBundleFile={importBundleFile}
+          hasEntities={false}
           hideDragOverNotification={hideDragOverNotification}
           generateChangeDescription={generateChangeDescription}
           deployButtonAction={output.props.children.props.deployButtonAction}
           currentChangeSet={currentChangeSet}
-          services={services}
           showInstall={true} />
       </div>);
     assert.deepEqual(output, expected);
@@ -227,6 +233,7 @@ describe('Deployment', function() {
         currentChangeSet={currentChangeSet}
         renderDragOverNotification={renderDragOverNotification}
         importBundleFile={importBundleFile}
+        hasEntities={false}
         hideDragOverNotification={hideDragOverNotification}
         changeDescriptions={changeDescriptions}
         exportEnvironmentFile={exportEnvironmentFile}
@@ -264,6 +271,7 @@ describe('Deployment', function() {
         ecsCommit={sinon.stub()}
         exportEnvironmentFile={exportEnvironmentFile}
         renderDragOverNotification={renderDragOverNotification}
+        hasEntities={false}
         importBundleFile={importBundleFile}
         hideDragOverNotification={hideDragOverNotification}
         services={services}
@@ -279,6 +287,7 @@ describe('Deployment', function() {
         exportEnvironmentFile={exportEnvironmentFile}
         renderDragOverNotification={renderDragOverNotification}
         importBundleFile={importBundleFile}
+        hasEntities={false}
         hideDragOverNotification={hideDragOverNotification}
         services={services}
         generateChangeDescription={generateChangeDescription}
@@ -293,11 +302,11 @@ describe('Deployment', function() {
           exportEnvironmentFile={exportEnvironmentFile}
           renderDragOverNotification={renderDragOverNotification}
           importBundleFile={importBundleFile}
+          hasEntities={false}
           hideDragOverNotification={hideDragOverNotification}
           generateChangeDescription={generateChangeDescription}
           deployButtonAction={output.props.children.props.deployButtonAction}
           currentChangeSet={newChangeSet}
-          services={services}
           showInstall={true} />
       </div>);
     assert.deepEqual(output, expected);
@@ -322,6 +331,7 @@ describe('Deployment', function() {
         currentChangeSet={currentChangeSet}
         changeDescriptions={changeDescriptions}
         getUnplacedUnitCount={getUnplacedUnitCount}
+        hasEntities={false}
         importBundleFile={importBundleFile}
         activeComponent="deployment-summary"
         renderDragOverNotification={renderDragOverNotification}
@@ -351,6 +361,7 @@ describe('Deployment', function() {
         currentChangeSet={currentChangeSet}
         changeDescriptions={changeDescriptions}
         getUnplacedUnitCount={getUnplacedUnitCount}
+        hasEntities={false}
         importBundleFile={importBundleFile}
         activeComponent="deployment-summary"
         renderDragOverNotification={renderDragOverNotification}
@@ -388,6 +399,7 @@ describe('Deployment', function() {
         changeDescriptions={changeDescriptions}
         generateChangeDescription={generateChangeDescription}
         getUnplacedUnitCount={getUnplacedUnitCount}
+        hasEntities={false}
         importBundleFile={importBundleFile}
         activeComponent="deployment-summary"
         renderDragOverNotification={renderDragOverNotification}
