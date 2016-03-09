@@ -88,7 +88,9 @@ describe('SearchResultsItem', function() {
                 className="list-icons__image"
                 alt="mysql" />
               <span className="tooltip__tooltip">
-                mysql
+                <span className="tooltip__inner">
+                  mysql
+                </span>
               </span>
             </li>]}
           </ul>
@@ -154,7 +156,9 @@ describe('SearchResultsItem', function() {
                 className="list-icons__image"
                 alt="mysql" />
               <span className="tooltip__tooltip">
-                mysql
+                <span className="tooltip__inner">
+                  mysql
+                </span>
               </span>
             </li>]}
           </ul>
@@ -229,7 +233,9 @@ describe('SearchResultsItem', function() {
                 className="list-icons__image"
                 alt="wordpress" />
               <span className="tooltip__tooltip">
-                wordpress
+                <span className="tooltip__inner">
+                  wordpress
+                </span>
               </span>
             </li>
             <li className="list-icons__item tooltip"
@@ -240,7 +246,9 @@ describe('SearchResultsItem', function() {
                 className="list-icons__image"
                 alt="apache2" />
               <span className="tooltip__tooltip">
-                apache2
+                <span className="tooltip__inner">
+                  apache2
+                </span>
               </span>
             </li>
           </ul>

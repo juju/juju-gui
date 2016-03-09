@@ -82,7 +82,9 @@ YUI.add('search-results-item', function(Y) {
               className="list-icons__image"
               alt={service.displayName} />
             <span className="tooltip__tooltip">
-              {service.displayName}
+              <span className="tooltip__inner">
+                {service.displayName}
+              </span>
             </span>
           </li>
         );
