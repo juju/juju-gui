@@ -38,7 +38,8 @@ describe('EnvSwitcher', function() {
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         environmentName="MyEnv"
-        switchModel={sinon.stub()} />, true);
+        switchModel={sinon.stub()}
+        uncommittedChanges={false} />, true);
 
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -77,7 +78,8 @@ describe('EnvSwitcher', function() {
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         env={env}
-        switchModel={sinon.stub()} />, true);
+        switchModel={sinon.stub()}
+        uncommittedChanges={false} />, true);
     var output = renderer.getRenderOutput();
     // Click the toggler
     output.props.children[0].props.onClick({
@@ -89,7 +91,8 @@ describe('EnvSwitcher', function() {
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         env={env}
-        switchModel={sinon.stub()} />);
+        switchModel={sinon.stub()}
+        uncommittedChanges={false} />);
 
     var instance = renderer.getMountedInstance();
     output = renderer.getRenderOutput();
@@ -99,7 +102,8 @@ describe('EnvSwitcher', function() {
         handleEnvClick={instance.handleEnvClick}
         createNewEnv={instance.createNewEnv}
         showUserProfile={instance.showUserProfile}
-        envs={[]}/>);
+        envs={[]}
+        uncommittedChanges={false} />);
   });
 
   it('fetches a list of environments on mount (JEM)', function() {
@@ -112,7 +116,8 @@ describe('EnvSwitcher', function() {
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         jem={jem}
-        switchModel={sinon.stub()} />, true);
+        switchModel={sinon.stub()}
+        uncommittedChanges={false} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
     assert.equal(listEnvs.callCount, 1);
@@ -133,7 +138,8 @@ describe('EnvSwitcher', function() {
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         env={env}
-        switchModel={sinon.stub()} />, true);
+        switchModel={sinon.stub()}
+        uncommittedChanges={false} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
     assert.equal(listEnvs.callCount, 1);
@@ -153,7 +159,8 @@ describe('EnvSwitcher', function() {
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         env={env}
-        switchModel={sinon.stub()} />, true);
+        switchModel={sinon.stub()}
+        uncommittedChanges={false} />, true);
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
     // Click the toggler
@@ -189,14 +196,14 @@ describe('EnvSwitcher', function() {
         dbEnvironmentSet={sinon.stub()}
         showConnectingMask={mask}
         jem={jem}
-        switchModel={switchModel} />, true);
+        switchModel={switchModel}
+        uncommittedChanges={false} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
     listEnvs.args[0][0](null, envs);
     instance.handleEnvClick({
-      currentTarget: {
-        getAttribute: () => 'abc123'
-      }
+      name: 'abc123',
+      id: 'abc123'
     });
     assert.equal(mask.callCount, 1);
     assert.equal(switchModel.callCount, 1);
@@ -237,7 +244,8 @@ describe('EnvSwitcher', function() {
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={dbset}
         jem={jem}
-        switchModel={switchModel} />, true);
+        switchModel={switchModel}
+        uncommittedChanges={false} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
     listEnvs.args[0][0](null, envs);
@@ -299,7 +307,8 @@ describe('EnvSwitcher', function() {
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         env={env}
-        switchModel={sinon.stub()} />, true);
+        switchModel={sinon.stub()}
+        uncommittedChanges={false} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
     listEnvs.args[0][1](envs);
@@ -322,7 +331,8 @@ describe('EnvSwitcher', function() {
         showConnectingMask={sinon.stub()}
         dbEnvironmentSet={sinon.stub()}
         changeState={changeState}
-        switchModel={sinon.stub()} />, true);
+        switchModel={sinon.stub()}
+        uncommittedChanges={false} />, true);
     var instance = renderer.getMountedInstance();
     instance.showUserProfile();
     assert.equal(changeState.callCount, 1);

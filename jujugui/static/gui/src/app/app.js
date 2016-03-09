@@ -1074,13 +1074,19 @@ YUI.add('juju-gui', function(Y) {
       // is no env to connect to. It will be undefined when the breadcrumb
       // is rendered in the callback for generateSocketUrl because an env
       // has not yet been created.
-      if(!this.env ||
-         this.env.findFacadeVersion('ModelManager') === null &&
-         this.env.findFacadeVersion('EnvironmentManager') === null) {
+      var env = this.env;
+      if(!env ||
+         env.findFacadeVersion('ModelManager') === null &&
+         env.findFacadeVersion('EnvironmentManager') === null) {
         // We do not want to show the model switcher if it isn't supported as
         // it throws an error in the browser console and confuses the user
         // as it's visible but not functional.
         showEnvSwitcher = false;
+      }
+      var uncommittedChanges = false;
+      if (env) {
+        var currentChangeSet = env.get('ecs').getCurrentChangeSet();
+        uncommittedChanges = Object.keys(currentChangeSet).length > 0;
       }
       var auth = this._getAuth();
       var envName = this.get('jujuEnvUUID') || this.db.environment.get('name');
@@ -1099,7 +1105,8 @@ YUI.add('juju-gui', function(Y) {
           showEnvSwitcher={showEnvSwitcher}
           switchModel={views.utils.switchModel.bind(
             this, this.createSocketURL.bind(this),
-            this.switchEnv.bind(this))} />,
+            this.switchEnv.bind(this))}
+          uncommittedChanges={uncommittedChanges} />,
         document.getElementById('header-breadcrumb'));
     },
 
