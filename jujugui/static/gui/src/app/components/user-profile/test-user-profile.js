@@ -456,7 +456,6 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
-    component.getRenderOutput();
     assert.equal(list.callCount, 0);
     component.render(
       <juju.components.UserProfile
