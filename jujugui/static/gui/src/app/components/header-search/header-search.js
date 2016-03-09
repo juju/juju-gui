@@ -132,6 +132,7 @@ YUI.add('header-search', function() {
         active: true,
         inputStyles: this._generateInputStyles(inputOpen)
       });
+      this.refs.searchInput.focus();
     },
 
     /**
@@ -185,7 +186,6 @@ YUI.add('header-search', function() {
       // search box should be opened.
       if (!this.state.inputStyles.width) {
         this._openSearch(true);
-        this.refs.searchInput.focus();
         return;
       }
       this.props.changeState({
