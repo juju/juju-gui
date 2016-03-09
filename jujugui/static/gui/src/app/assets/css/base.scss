@@ -38,6 +38,7 @@ $font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $font-family-mono: 'Ubuntu Mono', 'Ubuntu-Mono', 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace;
 
 /* Shades of grey */
+$black: #000;
 $white: #fff;
 $light-grey: #f5f5f5;
 $light-mid-grey: #d4d4d4;
@@ -322,6 +323,7 @@ code {
 @import "header";
 @import "loading";
 @import "shortcuts";
+@import "tooltip";
 
 /** Cookies **/
 @import "cookies";

@@ -1,0 +1,34 @@
+.tooltip {
+    position: relative;
+
+    &:hover {
+        .tooltip__tooltip {
+            display: block;
+        }
+    }
+
+    &__tooltip {
+        display: none;
+        position: absolute;
+        bottom: calc(100% + 10px);
+        left: 50%;
+    }
+
+    &__inner {
+        display: block;
+        position: relative;
+        left: -50%;
+        padding: 5px 10px;
+        background-color: $black;
+        border-radius: 3px;
+        color: $white;
+        font-size: 14px;
+        white-space: nowrap;
+
+        &:after {
+            @include diamond($black, 8px);
+            left: 50%;
+            margin-left: -4px;
+        }
+    }
+}
