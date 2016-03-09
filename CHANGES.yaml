@@ -1,3 +1,25 @@
+- 2.1.0:
+    - Added Juju 2.0-beta support.
+    - Updated all API calls to support Juju 1.x and 2.x-beta facades.
+    - Added the ability to create and switch between models in Juju 2.0.
+    - Updated terminology to match the Juju 2.0 terminology.
+    - >
+      Created user profile view which shows you your available models, bundles
+      and charms after logging into the charmstore.
+    - >
+      Added support for syntax highlighting in the charm details pages in the
+      charmbrowser when the charm author provides a GitHub Flavoured Markdown
+      readme file.
+    - >
+      Added the ability to drag uncommitted units between machines in the
+      machine view.
+    - Unit statuses are now also shown in the machine view.
+    - Many UI tweaks and updates.
+    - >
+      (FIX) When subordinates are deployed extra empty machines are no longer
+      created.
+    - (FIX) Websockets are now closed properly when switching models.
+    - (FIX) On logging out all cookies are now deleted.
 - 2.0.3:
     - Removed and optimised code reducing the final size that needs to be sent.
     - (FIX) The service inspector duplicating units when scaling up.
