@@ -72,6 +72,10 @@ YUI.add('juju-env-bakery', function(Y) {
         this.staticMacaroonPath = cfg.staticMacaroonPath;
         this.setCookiePath = cfg.setCookiePath;
         this.nonceLen = 24;
+        if (cfg.macaroon) {
+          var prefix = this.macaroonName + '=';
+          document.cookie = prefix + cfg.macaroon;
+        }
       },
 
 
