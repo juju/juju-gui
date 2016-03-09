@@ -80,14 +80,16 @@ describe('SearchResultsItem', function() {
         </div>
         <div className="three-col charm-logos__column list-block__column">
           <ul className="list-icons clearfix">
-            {[<li className="list-icons__item"
+            {[<li className="list-icons__item tooltip"
               key="mysql"
               role="button" tabIndex="0"
-              title="mysql"
               onClick={icons[0].props.onClick}>
               <img src="juju-ui/assets/images/non-sprites/charm_160.svg"
                 className="list-icons__image"
                 alt="mysql" />
+              <span className="tooltip__tooltip">
+                mysql
+              </span>
             </li>]}
           </ul>
         </div>
@@ -144,14 +146,16 @@ describe('SearchResultsItem', function() {
         </div>
         <div className="three-col charm-logos__column list-block__column">
           <ul className="list-icons clearfix">
-            {[<li className="list-icons__item"
+            {[<li className="list-icons__item tooltip"
               key="mysql"
               role="button" tabIndex="0"
-              title="mysql"
               onClick={icons[0].props.onClick}>
               <img src="juju-ui/assets/images/non-sprites/charm_160.svg"
                 className="list-icons__image"
                 alt="mysql" />
+              <span className="tooltip__tooltip">
+                mysql
+              </span>
             </li>]}
           </ul>
         </div>
@@ -217,23 +221,27 @@ describe('SearchResultsItem', function() {
         </div>
         <div className="three-col charm-logos__column list-block__column">
           <ul className="list-icons clearfix">
-            <li className="list-icons__item"
+            <li className="list-icons__item tooltip"
               key="wordpress"
               role="button" tabIndex="0"
-              title="wordpress"
               onClick={icons[0].props.onClick}>
               <img src="wordpress.svg"
                 className="list-icons__image"
                 alt="wordpress" />
+              <span className="tooltip__tooltip">
+                wordpress
+              </span>
             </li>
-            <li className="list-icons__item"
+            <li className="list-icons__item tooltip"
               key="apache2"
               role="button" tabIndex="0"
-              title="apache2"
               onClick={icons[1].props.onClick}>
               <img src="apache2.svg"
                 className="list-icons__image"
                 alt="apache2" />
+              <span className="tooltip__tooltip">
+                apache2
+              </span>
             </li>
           </ul>
         </div>

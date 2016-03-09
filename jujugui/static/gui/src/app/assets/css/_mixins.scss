@@ -131,11 +131,11 @@ button,
     }
 }
 
-@mixin diamond($color: inherit) {
+@mixin diamond($color: inherit, $size: 6px) {
     @include rotate(45deg);
     content: '';
-    width: 6px;
-    height: 6px;
+    width: $size;
+    height: $size;
     position: absolute;
     display: block;
     background-color: $color;

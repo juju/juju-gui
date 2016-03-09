@@ -74,14 +74,16 @@ YUI.add('search-results-item', function(Y) {
         var src = service.iconPath ||
             'juju-ui/assets/images/non-sprites/charm_160.svg';
         components.push(
-          <li className="list-icons__item"
+          <li className="list-icons__item tooltip"
             key={service.displayName}
             role="button" tabIndex="0"
-            title={service.displayName}
             onClick={this._handleItemClick.bind(this, service.id)}>
             <img src={src}
               className="list-icons__image"
               alt={service.displayName} />
+            <span className="tooltip__tooltip">
+              {service.displayName}
+            </span>
           </li>
         );
       }, this);
