@@ -157,7 +157,7 @@ describe('MachineView', function() {
             dropUnit={instance._dropUnit}
             menuItems={[{
               label: 'Add container',
-              action: instance._addContainer
+              action: null
             }, {
               label: 'Sort by:'
             }, {
