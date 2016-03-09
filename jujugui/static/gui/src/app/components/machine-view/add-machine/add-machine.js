@@ -255,7 +255,9 @@ YUI.add('machine-view-add-machine', function() {
         title: props.unit ? 'Place' : 'Create',
         action: this._submitForm,
         type: 'confirm',
-        disabled:!props.unit && !props.machines && props.parentId &&
+        // In the add-container mode disable the Create button until a container
+        // type has been selected.
+        disabled: !props.unit && !props.machines && props.parentId &&
           !this.state.selectedContainer
       }];
       return (
