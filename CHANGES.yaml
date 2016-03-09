@@ -12,7 +12,7 @@
 - 2.0.1:
     - When clicking stacked charm icons the active one now is moved to the top.
     - >
-      (FIX) Deploying the same charm multiple times woudl generate invalid
+      (FIX) Deploying the same charm multiple times would generate invalid
       charm names.
 - 2.0.0:
     - Completely redesigned and rewritten user interface.
