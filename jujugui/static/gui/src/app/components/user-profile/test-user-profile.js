@@ -442,7 +442,7 @@ describe('UserProfile', () => {
   it('gets the entity data when the user authenticates', () => {
     var list = sinon.stub();
     var charmstore = {list: list};
-    jsTestUtils.shallowRender(
+    var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         switchModel={sinon.stub()}
         users={{}}
@@ -455,9 +455,9 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         storeUser={sinon.stub()}
-        user={users.charmstore} />);
+        user={users.charmstore} />, true);
     assert.equal(list.callCount, 0);
-    jsTestUtils.shallowRender(
+    component.render(
       <juju.components.UserProfile
         switchModel={sinon.stub()}
         users={users}
