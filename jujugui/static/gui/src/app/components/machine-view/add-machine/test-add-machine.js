@@ -43,7 +43,8 @@ describe('MachineViewAddMachine', function() {
     }, {
       title: 'Create',
       action: instance._submitForm,
-      type: 'confirm'
+      type: 'confirm',
+      disabled: undefined
     }];
     var expected = (
       <div className="add-machine">
@@ -78,7 +79,8 @@ describe('MachineViewAddMachine', function() {
     }, {
       title: 'Create',
       action: instance._submitForm,
-      type: 'confirm'
+      type: 'confirm',
+      disabled: true
     }];
     var expected = (
       <div className="add-machine">

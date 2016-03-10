@@ -638,7 +638,7 @@ YUI.add('machine-view', function() {
       }];
       var containerMenuItems = [{
         label: 'Add container',
-        action: this._addContainer
+        action: this.state.selectedMachine ? this._addContainer : null
       }, {
         label: 'Sort by:'
       }, {

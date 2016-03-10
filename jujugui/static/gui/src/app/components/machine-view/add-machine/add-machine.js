@@ -247,13 +247,18 @@ YUI.add('machine-view-add-machine', function() {
       @return {Object} The buttons.
     */
     _generateButtons: function() {
+      var props = this.props;
       var buttons = [{
         title: 'Cancel',
-        action: this.props.close
+        action: props.close
       }, {
-        title: this.props.unit ? 'Place' : 'Create',
+        title: props.unit ? 'Place' : 'Create',
         action: this._submitForm,
-        type: 'confirm'
+        type: 'confirm',
+        // In the add-container mode disable the Create button until a container
+        // type has been selected.
+        disabled: !props.unit && !props.machines && props.parentId &&
+          !this.state.selectedContainer
       }];
       return (
         <juju.components.ButtonRow
