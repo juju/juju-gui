@@ -27,7 +27,8 @@ YUI.add('env-switcher', function() {
       environmentName: React.PropTypes.string,
       showConnectingMask: React.PropTypes.func.isRequired,
       dbEnvironmentSet: React.PropTypes.func.isRequired,
-      switchModel: React.PropTypes.func.isRequired
+      switchModel: React.PropTypes.func.isRequired,
+      uncommittedChanges: React.PropTypes.bool.isRequired
     },
 
     getInitialState: function() {
@@ -126,16 +127,14 @@ YUI.add('env-switcher', function() {
       of the currentTarget passed to this click handler.
 
       @method handleEnvClick
-      @param {Object} e The click event.
+      @param {String} model The model to switch to.
     */
-    handleEnvClick: function(e) {
-      var currentTarget = e.currentTarget;
+    handleEnvClick: function(model) {
       var props = this.props;
       props.showConnectingMask();
       this.setState({showEnvList: false});
-      props.dbEnvironmentSet('name', currentTarget.getAttribute('data-name'));
-      props.switchModel(
-        currentTarget.getAttribute('data-id'), this.state.envList);
+      props.dbEnvironmentSet('name', model.name);
+      props.switchModel(model.id, this.state.envList);
     },
 
     /**
@@ -231,6 +230,7 @@ YUI.add('env-switcher', function() {
           handleEnvClick={this.handleEnvClick}
           createNewEnv={this.createNewEnv}
           showUserProfile={this.showUserProfile}
+          uncommittedChanges={this.props.uncommittedChanges}
           envs={this.state.envList} />;
       }
       return '';

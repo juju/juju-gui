@@ -56,7 +56,8 @@ describe('HeaderBreadcrumb', () => {
         showConnectingMask={showConnectingMask}
         authDetails={authDetails}
         showEnvSwitcher={true}
-        switchModel={switchModel} />);
+        switchModel={switchModel}
+        uncommittedChanges={false} />);
 
     var expected = (
       <ul className="header-breadcrumb">
@@ -75,7 +76,8 @@ describe('HeaderBreadcrumb', () => {
             changeState={changeState}
             showConnectingMask={showConnectingMask}
             authDetails={authDetails}
-            switchModel={switchModel} />
+            switchModel={switchModel}
+            uncommittedChanges={false} />
         </li>
       </ul>
     );
@@ -104,7 +106,8 @@ describe('HeaderBreadcrumb', () => {
         getAppState={getAppState}
         showConnectingMask={showConnectingMask}
         showEnvSwitcher={true}
-        switchModel={sinon.stub()} />);
+        switchModel={sinon.stub()}
+        uncommittedChanges={false} />);
     assert.equal(output.props.children[0], undefined);
   });
 
@@ -130,7 +133,8 @@ describe('HeaderBreadcrumb', () => {
         getAppState={getAppState}
         showConnectingMask={showConnectingMask}
         showEnvSwitcher={false}
-        switchModel={sinon.stub()} />);
+        switchModel={sinon.stub()}
+        uncommittedChanges={false} />);
     // There will be no third child if the envSwitcher is rendered
     assert.equal(output.props.children[1], undefined);
   });
@@ -159,7 +163,8 @@ describe('HeaderBreadcrumb', () => {
         // Even though showEnvSwitcher is true, because the profile is visibile
         // it shouldn't render the env switcher.
         showEnvSwitcher={true}
-        switchModel={sinon.stub()} />);
+        switchModel={sinon.stub()}
+        uncommittedChanges={false} />);
     // There will be no third child if the envSwitcher is rendered
     assert.equal(output.props.children[1], undefined);
   });

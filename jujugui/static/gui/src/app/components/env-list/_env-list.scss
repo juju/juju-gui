@@ -40,6 +40,10 @@
             background-color: $hover-background;
             cursor: pointer;
         }
+
+        &__message {
+            padding: 10px 10px 0 10px;
+        }
     }
 
     .button-row {

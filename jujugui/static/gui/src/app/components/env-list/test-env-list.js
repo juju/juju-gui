@@ -36,17 +36,19 @@ describe('EnvList', function() {
     // that both are displayed as the name.
     var envs = [{ uuid: 'abc123', name: 'the name' },
                 { uuid: '123abc', path: 'the path' }];
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvList
-        envs={envs} />);
-
-    assert.deepEqual(output.props.children[0].props.children, [
-      <li className="env-list__environment"
+        envs={envs}
+        uncommittedChanges={false} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    assert.deepEqual(output.props.children[0].props.children[0].props.children,
+      [<li className="env-list__environment"
         role="menuitem"
         tabIndex="0"
         data-id={envs[0].uuid}
         data-name={envs[0].name}
-        onClick={undefined}
+        onClick={instance._handleModelClick}
         key={envs[0].uuid}>
         {envs[0].name}
       </li>,
@@ -55,7 +57,7 @@ describe('EnvList', function() {
         tabIndex="0"
         data-id={envs[1].uuid}
         data-name={envs[1].path}
-        onClick={undefined}
+        onClick={instance._handleModelClick}
         key={envs[1].uuid}>
         {envs[1].path}
       </li>]);
@@ -64,12 +66,60 @@ describe('EnvList', function() {
   it('clicking an env calls the handleEnvClick prop', function() {
     var envs = [{ uuid: 'abc123', name: 'the name' }];
     var handleEnvClick = sinon.stub();
+    var getAttribute = sinon.stub();
+    getAttribute.withArgs('data-id').returns('abc123');
+    getAttribute.withArgs('data-name').returns('the name');
     var output = jsTestUtils.shallowRender(
       <juju.components.EnvList
         envs={envs}
-        handleEnvClick={handleEnvClick} />);
-    output.props.children[0].props.children[0].props.onClick();
+        handleEnvClick={handleEnvClick}
+        uncommittedChanges={false} />);
+    output.props.children[0].props.children[0].props.children[0].props.onClick({
+      currentTarget: {
+        getAttribute: getAttribute
+      }
+    });
     assert.equal(handleEnvClick.callCount, 1);
+  });
+
+  it('confirms when clicking a model with uncommitted changes', function() {
+    var envs = [{ uuid: 'abc123', name: 'the name' }];
+    var handleEnvClick = sinon.stub();
+    var getAttribute = sinon.stub();
+    getAttribute.withArgs('data-id').returns('abc123');
+    getAttribute.withArgs('data-name').returns('the name');
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.EnvList
+        envs={envs}
+        handleEnvClick={handleEnvClick}
+        uncommittedChanges={true} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    output.props.children[0].props.children[0].props.children[0].props.onClick({
+      currentTarget: {
+        getAttribute: getAttribute
+      }
+    });
+    output = renderer.getRenderOutput();
+    var buttons = [{
+      title: 'Cancel',
+      action: instance._cancelSwitchModel
+    }, {
+      title: 'Switch',
+      type: 'confirm',
+      action: instance._switchModel
+    }];
+    var expected = (
+      <juju.components.Panel
+        instanceName="env-list-panel"
+        visible={true}>
+        <div className="env-list__message">
+          You have uncommitted changes to your model. You will lose these
+          changes if you switch models.
+        </div>
+        <juju.components.ButtonRow buttons={buttons} />
+      </juju.components.Panel>);
+    assert.deepEqual(output, expected);
   });
 
   it('createNewEnv prop passed to buttonRow passes envName', function() {
@@ -78,7 +128,8 @@ describe('EnvList', function() {
     var component = testUtils.renderIntoDocument(
       <juju.components.EnvList
         envs={envs}
-        createNewEnv={createNewEnv} />);
+        createNewEnv={createNewEnv}
+        uncommittedChanges={false} />);
     // Set the new environment name
     component.refs.envName.value = 'new env name';
     testUtils.Simulate.change(component.refs.envName);
@@ -97,7 +148,8 @@ describe('EnvList', function() {
     var component = testUtils.renderIntoDocument(
       <juju.components.EnvList
         envs={envs}
-        showUserProfile={showUserProfile} />);
+        showUserProfile={showUserProfile}
+        uncommittedChanges={false} />);
 
     testUtils.Simulate.click(
         ReactDOM.findDOMNode(component)
