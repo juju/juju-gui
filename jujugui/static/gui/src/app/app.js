@@ -1237,7 +1237,8 @@ YUI.add('juju-gui', function(Y) {
       @return {String} The fully qualified WebSocket URL.
     */
     _generateSocketUrl: function(callback) {
-      this.jem = null, existingMacaroons;
+      this.jem = null;
+      var existingMacaroons;
       if (window.juju_config) {
         existingMacaroons = window.juju_config.jemMacaroons;
       }
