@@ -1086,6 +1086,10 @@ YUI.add('juju-gui', function(Y) {
         // as it's visible but not functional.
         showEnvSwitcher = false;
       }
+      // If we're in sandbox we don't want to display the switcher.
+      if (this.get('sandbox')) {
+        showEnvSwitcher = false;
+      }
       var uncommittedChanges = false;
       if (env) {
         var currentChangeSet = env.get('ecs').getCurrentChangeSet();

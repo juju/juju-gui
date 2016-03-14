@@ -156,57 +156,57 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     // testing. Note that this uses the gojuju style relation ideas for
     // additional compatibility.
     var additionalRelations = { 'result': [
-        [
-          'relationInfo',
-          'add', {
-            Key: 'mysql:db mediawiki:db',
-            Id: 5,
-            Endpoints: [
-              {
-                ServiceName: 'mysql',
-                Relation: {
-                  Name: 'db',
-                  Role: 'server',
-                  Interface: 'mysql',
-                  Scope: 'global'
-                }
-              }, {
-                ServiceName: 'mediawiki',
-                Relation: {
-                  Name: 'db',
-                  Role: 'client',
-                  Interface: 'mysql',
-                  Scope: 'global'
-                }
+      [
+        'relationInfo',
+        'add', {
+          Key: 'mysql:db mediawiki:db',
+          Id: 5,
+          Endpoints: [
+            {
+              ServiceName: 'mysql',
+              Relation: {
+                Name: 'db',
+                Role: 'server',
+                Interface: 'mysql',
+                Scope: 'global'
               }
-            ]
-          }
-        ], [
-          'relationInfo',
-          'add', {
-            Key: 'mysql:db-slave mediawiki:db-slave',
-            Id: 6,
-            Endpoints: [
-              {
-                ServiceName: 'mysql',
-                Relation: {
-                  Name: 'db-slave',
-                  Role: 'server',
-                  Interface: 'mysql',
-                  Scope: 'global'
-                }
-              }, {
-                ServiceName: 'mediawiki',
-                Relation: {
-                  Name: 'db-slave',
-                  Role: 'client',
-                  Interface: 'mysql',
-                  Scope: 'global'
-                }
+            }, {
+              ServiceName: 'mediawiki',
+              Relation: {
+                Name: 'db',
+                Role: 'client',
+                Interface: 'mysql',
+                Scope: 'global'
               }
-            ]
-          }
-        ]
+            }
+          ]
+        }
+      ], [
+        'relationInfo',
+        'add', {
+          Key: 'mysql:db-slave mediawiki:db-slave',
+          Id: 6,
+          Endpoints: [
+            {
+              ServiceName: 'mysql',
+              Relation: {
+                Name: 'db-slave',
+                Role: 'server',
+                Interface: 'mysql',
+                Scope: 'global'
+              }
+            }, {
+              ServiceName: 'mediawiki',
+              Relation: {
+                Name: 'db-slave',
+                Role: 'client',
+                Interface: 'mysql',
+                Scope: 'global'
+              }
+            }
+          ]
+        }
+      ]
     ]};
 
     before(function(done) {
