@@ -925,62 +925,62 @@ YUI.add('juju-models', function(Y) {
   // human maintenance, so verify your assumptions before proceeding from
   // reading this code.
   var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
-      {
-        ATTRS: {
-          displayName: {},
-          charmUrl: {},
-          machine: {},
-          agent_state: {},
-          agent_state_info: {},
-          agent_state_data: {},
-          // This is empty if there are no relation errors, and otherwise
-          // shows only the relations with errors.  The data structure in that
-          // case is a hash mapping a local relation name to a list of services
-          // on the other end, like {'cache': ['memcached']}.
-          relation_errors: {},
-          /**
-            If the unit has been marked for deletion via the ECS.
+    {
+      ATTRS: {
+        displayName: {},
+        charmUrl: {},
+        machine: {},
+        agent_state: {},
+        agent_state_info: {},
+        agent_state_data: {},
+        // This is empty if there are no relation errors, and otherwise
+        // shows only the relations with errors.  The data structure in that
+        // case is a hash mapping a local relation name to a list of services
+        // on the other end, like {'cache': ['memcached']}.
+        relation_errors: {},
+        /**
+          If the unit has been marked for deletion via the ECS.
 
-            @attribute deleted
-            @type {Boolean}
-          */
-          deleted: {},
-          /**
-            If the unit has been marked as hidden when another was highlighted.
+          @attribute deleted
+          @type {Boolean}
+        */
+        deleted: {},
+        /**
+          If the unit has been marked as hidden when another was highlighted.
 
-            @attribute hide
-            @type {Boolean}
-            @default false
-          */
-          hide: {
-            value: false
-          },
-          /**
-            If the unit has been marked as faded.
+          @attribute hide
+          @type {Boolean}
+          @default false
+        */
+        hide: {
+          value: false
+        },
+        /**
+          If the unit has been marked as faded.
 
-            @attribute fade
-            @type {Boolean}
-            @default false
-          */
-          fade: {
-            value: false
-          },
-          config: {},
-          /**
-            Whether the unit belongs to a service deployed from a subordinate
-            charm.
+          @attribute fade
+          @type {Boolean}
+          @default false
+        */
+        fade: {
+          value: false
+        },
+        config: {},
+        /**
+          Whether the unit belongs to a service deployed from a subordinate
+          charm.
 
-            @attribute subordinate
-            @type {Boolean}
-          */
-          subordinate: {
-            value: false
-          },
-          open_ports: {},
-          public_address: {},
-          private_address: {}
-        }
-      });
+          @attribute subordinate
+          @type {Boolean}
+        */
+        subordinate: {
+          value: false
+        },
+        open_ports: {},
+        public_address: {},
+        private_address: {}
+      }
+    });
   models.ServiceUnit = ServiceUnit;
 
   /**

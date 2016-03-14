@@ -1519,11 +1519,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           {Jobs: [machineJobs.HOST_UNITS]},
           {Jobs: [machineJobs.MANAGE_ENVIRON], Series: 'precise'},
           {Jobs: [machineJobs.HOST_UNITS], ContainerType: 'kvm'},
-          {
-            Jobs: [machineJobs.HOST_UNITS],
-            ContainerType: 'lxc',
-            ParentId: '1'
-          }
+          {Jobs: [machineJobs.HOST_UNITS], ContainerType: 'lxc', ParentId: '1' }
       ];
       var expectedMsg = {
         RequestId: 1,
