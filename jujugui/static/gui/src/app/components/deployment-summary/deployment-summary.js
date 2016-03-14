@@ -23,7 +23,6 @@ YUI.add('deployment-summary', function() {
   juju.components.DeploymentSummary = React.createClass({
 
     propTypes: {
-      summaryClearAction: React.PropTypes.func.isRequired
     },
 
     /**
@@ -49,51 +48,27 @@ YUI.add('deployment-summary', function() {
       var listHeaderClassName = 'deployment-summary-change-item ' +
           'deployment-summary__list-header';
       return (
-        <juju.components.Panel
-          instanceName="white-box"
-          visible={true}>
-          <div className="deployment-summary">
-            <div className="deployment-summary__header">
-              <span className="deployment-summary__close"
-                tabIndex="0" role="button"
-                onClick={this.props.closeButtonAction}>
-                <juju.components.SvgIcon name="close_16"
-                  size="16" />
+        <div>
+          <h2 className="deployment-panel__title">
+            Deployment summary
+          </h2>
+          <juju.components.DeploymentSummaryPlacement
+            handleViewMachinesClick={this.props.handleViewMachinesClick}
+            handlePlacementChange={this.props.handlePlacementChange}
+            autoPlace={this.props.autoPlace}
+            getUnplacedUnitCount={this.props.getUnplacedUnitCount} />
+          <ul className="deployment-summary__list">
+            <li className={listHeaderClassName}>
+              <span className="deployment-summary-change-item__change">
+                Change
               </span>
-              <h2 className="deployment-summary__title">
-                Deployment summary
-              </h2>
-              <juju.components.DeploymentSummaryPlacement
-                handleViewMachinesClick={this.props.handleViewMachinesClick}
-                handlePlacementChange={this.props.handlePlacementChange}
-                autoPlace={this.props.autoPlace}
-                getUnplacedUnitCount={this.props.getUnplacedUnitCount} />
-            </div>
-            <div className="deployment-summary__content">
-              <ul className="deployment-summary__list">
-                <li className={listHeaderClassName}>
-                  <span className="deployment-summary-change-item__change">
-                    Change
-                  </span>
-                  <span className="deployment-summary-change-item__time">
-                    Time
-                  </span>
-                </li>
-                {this._generateChangeItems()}
-              </ul>
-            </div>
-            <div className="deployment-summary__footer">
-              <juju.components.GenericButton
-                type="clear-changes"
-                action={this.props.summaryClearAction}
-                title="Clear changes" />
-              <juju.components.GenericButton
-                action={this.props.deployButtonAction}
-                type="confirm"
-                title="Deploy" />
-            </div>
-          </div>
-        </juju.components.Panel>
+              <span className="deployment-summary-change-item__time">
+                Time
+              </span>
+            </li>
+            {this._generateChangeItems()}
+          </ul>
+        </div>
       );
     }
   });
@@ -101,7 +76,4 @@ YUI.add('deployment-summary', function() {
 }, '0.1.0', { requires: [
   'deployment-summary-change-item',
   'deployment-summary-placement',
-  'generic-button',
-  'panel-component',
-  'svg-icon'
 ]});

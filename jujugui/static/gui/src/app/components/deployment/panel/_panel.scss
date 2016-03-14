@@ -1,0 +1,83 @@
+.deployment-panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    &__scroll {
+        @extend %scroll-children;
+        // Expand this container to take the full parent height.
+        flex: 2;
+    }
+
+    &__header {
+        margin: 0 20px;
+        padding: 10px 10px 0 0;
+        border-bottom: 1px solid $light-mid-grey;
+        text-align: center;
+
+        .svg-icon {
+            float: left;
+            vertical-align: middle;
+        }
+
+        &-steps {
+            @extend %list-style;
+            display: inline-block;
+            margin-bottom: -1px;
+            border-bottom: 1px solid $ubuntu-orange;
+        }
+
+        &-step {
+            display: inline-block;
+            margin: 0 10px 0 0;
+            padding: 10px 20px;
+
+            &:last-child {
+                margin-right: 0;
+            }
+
+            &--active {
+                border-bottom: 2px solid $ubuntu-orange;
+            }
+        }
+    }
+
+    &__close {
+        @extend %link;
+        float: right;
+        margin-top: -5px;
+        color: $text-colour;
+    }
+
+    &__title {
+        font-size: 1.375em;
+        margin-bottom: 20px;
+    }
+
+    &__content {
+        @extend %collapse-children;
+        padding: 40px 20px 5px 20px;
+    }
+
+    &__footer {
+        padding: 20px;
+        border-top: 1px solid $light-mid-grey;
+        text-align: right;
+
+        .button-row {
+            padding: 0;
+
+            &--multiple .generic-button {
+                width: auto;
+                padding-left: 20px;
+                padding-right: 20px;
+
+                &:first-child {
+                    float: left;
+                }
+            }
+        }
+    }
+}

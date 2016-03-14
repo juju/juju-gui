@@ -69,7 +69,8 @@ YUI.add('panel-component', function() {
       return (
         <div className={this._genClasses()}
           onClick={this._handleClick}>
-          <div onClick={this._stopBubble}>
+          <div className="panel-component__inner"
+            onClick={this._stopBubble}>
             {this.props.children}
           </div>
         </div>
@@ -78,6 +79,4 @@ YUI.add('panel-component', function() {
 
   });
 
-}, '0.1.0', { requires: [
-  'added-services-list'
-]});
+}, '0.1.0', { requires: []});

@@ -1,6 +1,11 @@
 .panel-component {
     @extend %floating-panel;
     position: absolute;
+
+    &__inner {
+        display: flex;
+        height: 100%;
+    }
 }
 
 .panel-component.inspector-panel {
@@ -11,7 +16,7 @@
     z-index: index($z-indexed-elements, inspector-panel);
 
     li {
-      margin-bottom: 0;
+        margin-bottom: 0;
     }
 }
 
@@ -26,8 +31,10 @@
     box-shadow: none;
 }
 
-.deployment-view .panel-component.white-box {
-    z-index: index($z-indexed-elements, deployment-summary-panel);
+.deployment-view .panel-component.deployment-panel {
+    z-index: index($z-indexed-elements, deployment-panel);
+    border-radius: 0;
+    box-shadow: none;
 }
 
 .panel-component.deployment-bar-panel {
@@ -40,6 +47,6 @@
 }
 
 .panel-component.env-list-panel {
-  top: 50px;
-  right: -210px;
+    top: 50px;
+    right: -210px;
 }

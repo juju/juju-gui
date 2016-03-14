@@ -2300,6 +2300,7 @@ YUI.add('juju-gui', function(Y) {
     'net-utils',
     'ns-routing-app-extension',
     // React components
+    'added-services-list',
     'charmbrowser-component',
     'deployment-component',
     'env-size-display',
