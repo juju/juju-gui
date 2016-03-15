@@ -49,13 +49,11 @@ YUI.add('deployment-component', function() {
       @return {Object} The markup for the panel content.
     */
     _generateActivePanel: function() {
-      var activeChild;
       switch (this.state.activeComponent) {
         case 'deployment-summary':
-          var changeDescriptions = this.props.changeDescriptions;
-          activeChild = {
+          return {
             component: <juju.components.DeploymentSummary
-              changeDescriptions={changeDescriptions}
+              changeDescriptions={this.props.changeDescriptions}
               handleViewMachinesClick={this.handleViewMachinesClick}
               handlePlacementChange={this.handlePlacementChange}
               autoPlace={this.state.autoPlace}
@@ -69,9 +67,7 @@ YUI.add('deployment-component', function() {
               type: 'confirm'
             }]
           };
-          break;
       }
-      return activeChild;
     },
 
     componentDidMount: function() {
@@ -83,7 +79,7 @@ YUI.add('deployment-component', function() {
     },
 
     /**
-      Check if we have an commits.
+      Check if we have any commits.
 
       @param {Function} callback A function to call once the state has updated.
       @method _updateHasCommits
@@ -193,8 +189,8 @@ YUI.add('deployment-component', function() {
     },
 
     render: function() {
-      var activeChild = this._generateActivePanel();
       var activeComponent = this.state.activeComponent;
+      var activeChild = this._generateActivePanel();
       var steps = [{
         title: 'Deploy',
         active: activeComponent === 'deployment-summary'

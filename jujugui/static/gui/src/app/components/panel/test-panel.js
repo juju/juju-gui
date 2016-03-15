@@ -41,7 +41,8 @@ describe('PanelComponent', function() {
     var expected = (
       <div className="panel-component custom-instance-name"
         onClick={instance._handleClick}>
-        <div onClick={instance._stopBubble}>
+        <div className="panel-component__inner"
+          onClick={instance._stopBubble}>
           {undefined}
         </div>
       </div>);
@@ -58,7 +59,8 @@ describe('PanelComponent', function() {
     var expected = (
       <div className="panel-component custom-instance-name hidden"
         onClick={instance._handleClick}>
-        <div onClick={instance._stopBubble}>
+        <div className="panel-component__inner"
+          onClick={instance._stopBubble}>
           {undefined}
         </div>
       </div>);
@@ -78,7 +80,8 @@ describe('PanelComponent', function() {
     assert.deepEqual(output,
       <div className="panel-component custom-instance-name"
         onClick={instance._handleClick}>
-        <div onClick={instance._stopBubble}>
+        <div className="panel-component__inner"
+          onClick={instance._stopBubble}>
           <div>child</div>
         </div>
       </div>);

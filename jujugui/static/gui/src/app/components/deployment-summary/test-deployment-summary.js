@@ -32,11 +32,8 @@ describe('DeploymentSummary', function() {
 
   it('can display a list of changes', function() {
     var getUnplacedUnitCount = sinon.stub().returns(0);
-    var summaryClearAction = sinon.stub();
     var handleViewMachinesClick = sinon.stub();
     var handlePlacementChange = sinon.stub();
-    var closeButtonAction = sinon.stub();
-    var deployButtonAction = sinon.stub();
     var changeDescriptions = [{
       icon: 'my-icon.svg',
       description: 'Django was added',
@@ -57,59 +54,32 @@ describe('DeploymentSummary', function() {
         'deployment-summary__list-header';
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        summaryClearAction={summaryClearAction}
         getUnplacedUnitCount={getUnplacedUnitCount}
         changeDescriptions={changeDescriptions}
-        deployButtonAction={deployButtonAction}
         handleViewMachinesClick={handleViewMachinesClick}
         handlePlacementChange={handlePlacementChange}
-        autoPlace={false}
-        closeButtonAction={closeButtonAction} />);
+        autoPlace={false} />);
     assert.deepEqual(output,
-      <juju.components.Panel
-        instanceName="white-box"
-        visible={true}>
-        <div className="deployment-summary">
-          <div className="deployment-summary__header">
-            <span className="deployment-summary__close"
-              tabIndex="0" role="button"
-              onClick={closeButtonAction}>
-              <juju.components.SvgIcon name="close_16"
-                size="16" />
+      <div>
+        <h2 className="deployment-panel__title">
+          Deployment summary
+        </h2>
+        <juju.components.DeploymentSummaryPlacement
+          handleViewMachinesClick={handleViewMachinesClick}
+          handlePlacementChange={handlePlacementChange}
+          autoPlace={false}
+          getUnplacedUnitCount={getUnplacedUnitCount} />
+        <ul className="deployment-summary__list">
+          <li className={className}>
+            <span className="deployment-summary-change-item__change">
+              Change
             </span>
-            <h2 className="deployment-summary__title">
-              Deployment summary
-            </h2>
-            <juju.components.DeploymentSummaryPlacement
-              handleViewMachinesClick={handleViewMachinesClick}
-              handlePlacementChange={handlePlacementChange}
-              autoPlace={false}
-              getUnplacedUnitCount={getUnplacedUnitCount} />
-          </div>
-          <div className="deployment-summary__content">
-            <ul className="deployment-summary__list">
-              <li className={className}>
-                <span className="deployment-summary-change-item__change">
-                  Change
-                </span>
-                <span className="deployment-summary-change-item__time">
-                  Time
-                </span>
-              </li>
-              {changeItems}
-            </ul>
-          </div>
-          <div className="deployment-summary__footer">
-            <juju.components.GenericButton
-              type="clear-changes"
-              action={summaryClearAction}
-              title="Clear changes" />
-            <juju.components.GenericButton
-              action={deployButtonAction}
-              type="confirm"
-              title="Deploy" />
-          </div>
-        </div>
-      </juju.components.Panel>);
+            <span className="deployment-summary-change-item__time">
+              Time
+            </span>
+          </li>
+          {changeItems}
+        </ul>
+      </div>);
   });
 });
