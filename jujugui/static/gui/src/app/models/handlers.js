@@ -110,6 +110,76 @@ YUI.add('juju-delta-handlers', function(Y) {
         result.tags = tags.join(',');
       }
       return result;
+    },
+
+    /**
+      Translates the new JujuStatus and WorkloadStatus's to the legacy Juju 1
+      values.
+
+      This logic is a JS implementation of the Juju core implementation to
+      accomplish the same task:
+      https://github.com/
+        juju/juju/blob/juju-1.26-alpha1/state/status_model.go#L272
+
+      @method translateToLegacyAgentState
+      @param {String} agentStatus JujuStatus.Current
+      @param {String} workloadStatus WorkloadStatus.Current
+      @param {String} workloadStatusMessage WorkloadStatus.Message
+    */
+    translateToLegacyAgentState: function(
+      agentStatus, workloadStatus, workloadStatusMessage) {
+      var statusMaintenance = 'maintenance';
+      var statusAllocating = 'allocating';
+      var statusPending = 'pending';
+      var statusError = 'error';
+      var statusRebooting = 'rebooting';
+      var statusExecuting = 'executing';
+      var statusIdle = 'idle';
+      var statusLost = 'lost';
+      var statusFailed = 'failed';
+      var statusTerminated = 'terminated';
+      var statusStarted = 'started';
+      var statusStopped = 'stopped';
+
+      var messageInstalling = 'installing charm software';
+      var isInstalled = workloadStatus != statusMaintenance ||
+                        workloadStatusMessage != messageInstalling;
+
+      switch (agentStatus) {
+
+        case statusAllocating:
+          return statusPending;
+          break;
+
+        case statusError:
+          return statusError;
+          break;
+
+        case statusRebooting:
+        case statusExecuting:
+        case statusIdle:
+        case statusLost:
+        case statusFailed:
+          switch (workloadStatus) {
+
+            case statusError:
+              return statusError;
+              break;
+
+            case statusTerminated:
+              return statusStopped;
+              break;
+
+            case statusMaintenance:
+              return isInstalled ? statusStarted : statusPending;
+              break;
+
+            default:
+              return statusStarted;
+              break;
+          }
+          break;
+      }
     }
 
   };
@@ -168,9 +238,6 @@ YUI.add('juju-delta-handlers', function(Y) {
         charmUrl: change.CharmURL,
         service: change.Service,
         machine: change.MachineId,
-        agent_state: change.Status,
-        agent_state_info: change.StatusInfo,
-        agent_state_data: change.StatusData,
         public_address: change.PublicAddress,
         private_address: change.PrivateAddress,
         open_ports: utils.convertOpenPorts(change.Ports),
@@ -179,6 +246,23 @@ YUI.add('juju-delta-handlers', function(Y) {
         // attribute could be undefined.
         subordinate: change.Subordinate
       };
+      // Juju 2.0 changes the delta structure by removing Status, StatusInfo,
+      // and StatusData in favour of JujuStatus.Message and JujuStatus.Data.
+      // If change.JujuStatus is not defined then we will use the old delta
+      // structure.
+      var jujuStatus = change.JujuStatus;
+      var workloadStatus = change.WorkloadStatus;
+      if (jujuStatus) {
+        unitData.agent_state = utils.translateToLegacyAgentState(
+          jujuStatus.Current, workloadStatus.Current, workloadStatus.Message);
+        unitData.agent_state_info = change.JujuStatus.Message;
+        unitData.agent_state_data = change.JujuStatus.Data;
+      } else {
+        // For Juju 1.x
+        unitData.agent_state = change.Status;
+        unitData.agent_state_info = change.StatusInfo;
+        unitData.agent_state_data = change.StatusData;
+      }
       var machineData = {
         id: change.MachineId,
         public_address: change.PublicAddress
