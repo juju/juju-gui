@@ -173,6 +173,193 @@ describe('Juju delta handlers', function() {
         assert.strictEqual(django.get('units').size(), 0);
       });
     });
+
+    describe('Juju 2.x unit delta', function() {
+      // Ensure the unit has been correctly created in the given model list.
+      var assertCreated = function(list) {
+        var change = {
+          Name: 'django/1',
+          Service: 'django',
+          MachineId: '1',
+          JujuStatus: {
+            Current: 'allocating',
+            Message: 'waiting for machine',
+            Data: {}
+          },
+          WorkloadStatus: {},
+          PublicAddress: 'example.com',
+          PrivateAddress: '10.0.0.1',
+          Subordinate: false,
+          Ports: [{Number: 80, Protocol: 'tcp'}, {Number: 42, Protocol: 'udp'}]
+        };
+        unitInfo(db, 'add', change);
+        // Retrieve the unit from the list.
+        var unit = list.getById('django/1');
+        assert.strictEqual(unit.service, 'django');
+        assert.strictEqual(unit.machine, '1');
+        assert.strictEqual(unit.agent_state, 'pending');
+        assert.strictEqual(unit.agent_state_info, 'waiting for machine');
+        assert.strictEqual(unit.public_address, 'example.com');
+        assert.strictEqual(unit.private_address, '10.0.0.1');
+        assert.strictEqual(unit.subordinate, false, 'subordinate');
+        assert.deepEqual(unit.open_ports, ['80/tcp', '42/udp']);
+      };
+
+      it('creates a unit in the database (global list)', function() {
+        db.services.add({id: 'django'});
+        assertCreated(db.units);
+      });
+
+      it('creates a unit in the database (service list)', function() {
+        var django = db.services.add({id: 'django'});
+        assertCreated(django.get('units'));
+      });
+
+      // Ensure the unit has been correctly updated in the given model list.
+      var assertUpdated = function(list, workloadInError) {
+        db.addUnits({
+          id: 'django/2',
+          agent_state: 'pending',
+          public_address: 'example.com',
+          private_address: '10.0.0.1'
+        });
+        var change = {
+          Name: 'django/2',
+          Service: 'django',
+          JujuStatus: {
+            Current: 'idle',
+            Message: '',
+            Data: {}
+          },
+          WorkloadStatus: {
+            Current: 'maintenance',
+            Message: 'installing charm software'
+          },
+          PublicAddress: 'example.com',
+          PrivateAddress: '192.168.0.1',
+          Subordinate: true
+        };
+        if (workloadInError) {
+          change.JujuStatus.Current = 'executing';
+          change.WorkloadStatus = {
+            Current: 'error',
+            Message: 'hook run error',
+            Data: {foo: 'bar'}
+          };
+        }
+        unitInfo(db, 'change', change);
+        // Retrieve the unit from the database.
+        var unit = list.getById('django/2');
+        if (!workloadInError) {
+          assert.strictEqual(unit.agent_state, 'pending');
+        } else {
+          assert.equal(unit.agent_state, 'error');
+          assert.equal(unit.agent_state_info, 'hook run error');
+          assert.deepEqual(unit.agent_state_data, {foo: 'bar'});
+        }
+        assert.strictEqual(unit.public_address, 'example.com');
+        assert.strictEqual(unit.private_address, '192.168.0.1');
+        assert.strictEqual(unit.subordinate, true, 'subordinate');
+      };
+
+      it('updates a unit in the database (global list)', function() {
+        db.services.add({id: 'django'});
+        assertUpdated(db.units, true);
+      });
+
+      it('updates a unit in the database (service list)', function() {
+        var django = db.services.add({id: 'django'});
+        assertUpdated(django.get('units'));
+      });
+
+      it('updates a unit when workload status is in error', function() {
+        db.services.add({id: 'django'});
+        assertUpdated(db.units);
+      });
+
+      it('creates or updates the corresponding machine', function() {
+        var machine;
+        db.services.add({id: 'django'});
+        var change = {
+          Name: 'django/2',
+          Service: 'django',
+          MachineId: '1',
+          JujuStatus: {
+            Current: 'idle',
+            Message: '',
+            Data: {}
+          },
+          WorkloadStatus: {
+            Current: 'maintenance',
+            Message: 'installing charm software'
+          },
+          PublicAddress: 'example.com'
+        };
+        unitInfo(db, 'add', change);
+        assert.strictEqual(1, db.machines.size());
+        // Retrieve the machine from the database.
+        machine = db.machines.getById(1);
+        assert.strictEqual('example.com', machine.public_address);
+        // Update the machine.
+        change.PublicAddress = 'example.com/foo';
+        unitInfo(db, 'change', change);
+        assert.strictEqual(1, db.machines.size());
+        // Retrieve the machine from the database (again).
+        machine = db.machines.getById('1');
+        assert.strictEqual('example.com/foo', machine.public_address);
+      });
+
+      it('skips machine create if a service is unassociated', function() {
+        db.services.add({id: 'django'});
+        var change = {
+          Name: 'django/2',
+          Service: 'django',
+          MachineId: '',
+          JujuStatus: {
+            Current: 'idle',
+            Message: '',
+            Data: {}
+          },
+          WorkloadStatus: {
+            Current: 'maintenance',
+            Message: 'installing charm software'
+          },
+          PublicAddress: 'example.com'
+        };
+        unitInfo(db, 'add', change);
+        assert.strictEqual(0, db.machines.size());
+      });
+
+      it('removes a unit from the database', function() {
+        var django = db.services.add({id: 'django'});
+        db.addUnits({
+          id: 'django/2',
+          agent_state: 'pending',
+          public_address: 'example.com',
+          private_address: '10.0.0.1'
+        });
+        var change = {
+          Name: 'django/2',
+          Service: 'django',
+          JujuStatus: {
+            Current: 'idle',
+            Message: '',
+            Data: {}
+          },
+          WorkloadStatus: {
+            Current: 'idle',
+            Message: ''
+          },
+          PublicAddress: 'example.com',
+          PrivateAddress: '192.168.0.1'
+        };
+        unitInfo(db, 'remove', change);
+        // The unit has been removed from both the global list and the service.
+        assert.strictEqual(db.units.size(), 0);
+        assert.strictEqual(django.get('units').size(), 0);
+      });
+
+    });
   });
 
   describe('serviceInfo handler', function() {
