@@ -67,7 +67,6 @@ def config(request):
     settings = request.registry.settings
     request.response.content_type = 'application/javascript'
     sandbox_enabled = settings['jujugui.sandbox']
-    jem_url = settings['jujugui.jem_url']
 
     user = settings.get('jujugui.user')
     password = settings.get('jujugui.password')
@@ -98,13 +97,15 @@ def config(request):
         'simulateEvents': False,
         # The charm store URL and path.
         'charmstoreURL': settings['jujugui.charmstore_url'],
-        'apiPath': settings['jujugui.api_path'],
+        'charmstoreAPIPath': settings['jujugui.charmstore_api_path'],
+        # The jem url and path.
+        'jemURL': settings['jujugui.jem_url'],
+        'jemAPIPath': settings['jujugui.jem_api_path'],
         # WebSocket connection to the Juju API.
         'socket_protocol': socket_protocol,
         'user': user,
         'password': password,
         'jujuEnvUUID': env_uuid,
-        'jemUrl': jem_url,
         'interactiveLogin': settings['jujugui.interactive_login'],
         # Enable/disable sandbox (demonstration) mode.
         'sandbox': sandbox_enabled,
