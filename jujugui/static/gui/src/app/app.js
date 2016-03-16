@@ -2318,6 +2318,7 @@ YUI.add('juju-gui', function(Y) {
     'node',
     'model',
     'app-cookies-extension',
+    'app-renderer-extension',
     'cookie',
     'querystring',
     'event-key',
