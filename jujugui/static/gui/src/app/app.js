@@ -1240,13 +1240,14 @@ YUI.add('juju-gui', function(Y) {
     */
     _generateSocketUrl: function(callback) {
       this.jem = null;
-      if (this.get('jemUrl')) {
+      if (this.get('jemURL')) {
         var bakery = new Y.juju.environments.web.Bakery({
           webhandler: new Y.juju.environments.web.WebHandler(),
           interactive: this.get('interactiveLogin'),
           serviceName: 'jem'
         });
-        this.jem = new window.jujulib.environment(this.get('jemUrl'), bakery);
+        this.jem = new window.jujulib.environment(
+            this.get('jemURL'), this.get('jemAPIPath'), bakery);
 
         // Store away the JEM auth info.
         var macaroon = bakery.getMacaroon();
@@ -1298,21 +1299,27 @@ YUI.add('juju-gui', function(Y) {
     _setupCharmstore: function(Charmstore) {
       if (this.get('charmstore') === undefined) {
         var jujuConfig = window.juju_config,
-            charmstoreURL, apiPath;
-        if (!jujuConfig || !jujuConfig.charmstoreURL || !jujuConfig.apiPath) {
-          console.error('No juju config for charmstoreURL or apiPath availble');
+            charmstoreURL, charmstoreAPIPath;
+        if (
+            !jujuConfig ||
+            !jujuConfig.charmstoreURL ||
+            !jujuConfig.charmstoreAPIPath) {
+          console.error(
+              'No juju config for charmstoreURL or charmstoreAPIPath availble');
         } else {
           charmstoreURL = jujuConfig.charmstoreURL;
-          apiPath = jujuConfig.apiPath;
+          charmstoreAPIPath = jujuConfig.charmstoreAPIPath;
         }
         var bakery = new Y.juju.environments.web.Bakery({
           webhandler: new Y.juju.environments.web.WebHandler(),
           interactive: this.get('interactiveLogin'),
-          setCookiePath: charmstoreURL + apiPath + '/set-auth-cookie',
-          staticMacaroonPath: `${charmstoreURL}${apiPath}/macaroon`,
+          setCookiePath: charmstoreURL + charmstoreAPIPath + '/set-auth-cookie',
+          staticMacaroonPath: `${charmstoreURL}${charmstoreAPIPath}/macaroon`,
           serviceName: 'charmstore'
         });
-        this.set('charmstore', new Charmstore(charmstoreURL, apiPath, bakery));
+        this.set(
+            'charmstore',
+            new Charmstore(charmstoreURL, charmstoreAPIPath, bakery));
         // Store away the charmstore auth info.
         var macaroon = bakery.getMacaroon();
         if (macaroon) {
@@ -2225,11 +2232,11 @@ YUI.add('juju-gui', function(Y) {
       /**
         Store the url for the JEM if it exists.
 
-        @attribute jemUrl
+        @attribute jemURL
         @type {String}
         @default undefined
        */
-      jemUrl: {},
+      jemURL: {},
 
       /**
        Whether or not to use interactive login for the IdM/JEM connection.

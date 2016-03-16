@@ -79,6 +79,22 @@ var module = module;
   };
 
   /**
+     Ensure that any url part becomes a part with only a trailing slash.
+
+     @param _normalizeURLPart {String} The piece of the url to noramlize.
+     @returns {String} A normalized url part.
+   */
+  var _normalizeURLPart = function(urlPart) {
+    // Remove any leading or trailing slashes
+    console.log("Before " + urlPart);
+    urlPart = urlPart.replace(/^\//, '').replace(/\/$/, '');
+    console.log("After " + urlPart);
+    // We always want the parts to have their trailing slash.
+    return urlPart + '/';
+  };
+
+
+  /**
      Environment object for jujulib.
 
      Provides access to the JEM API.
@@ -92,8 +108,12 @@ var module = module;
      @param bakery {Object} A bakery object for communicating with the JEM instance.
      @returns {Object} A client object for making JEM API calls.
    */
-  function environment(url, bakery) {
-    this.jemUrl = url + '/v1';
+  function environment(url, apiVersion, bakery) {
+    // XXX j.c.sackett 2016-03-16 We should probably adopt the generate query
+    // mechanism from charmstore but that's a larger rewrite. For now we're
+    // making sure we can take the same initialization data for the jem url as
+    // we do for the charmstore url.
+    this.jemUrl = _normalizeURLPart(url) + _normalizeURLPart(apiVersion);
     this.bakery = bakery;
   };
 
@@ -115,7 +135,7 @@ var module = module;
         callback(error, data);
       };
       return _makeRequest(
-          this.bakery, this.jemUrl + '/env', 'GET', null, _listEnvironments);
+          this.bakery, this.jemUrl + 'env', 'GET', null, _listEnvironments);
     },
 
     /**
@@ -134,7 +154,7 @@ var module = module;
         callback(error, data);
       };
       _makeRequest(
-          this.bakery, this.jemUrl + '/server', 'GET', null, _listServers);
+          this.bakery, this.jemUrl + 'server', 'GET', null, _listServers);
     },
     /**
        Provides the data for a particular environment.
@@ -148,7 +168,7 @@ var module = module;
      */
     getEnvironment: function (
         envOwnerName, envName, callback) {
-      var url = [this.jemUrl, 'env', envOwnerName, envName].join('/');
+      var url = [this.jemUrl + 'env', envOwnerName, envName].join('/');
       _makeRequest(this.bakery, url, 'GET', null, callback);
     },
 
@@ -175,7 +195,7 @@ var module = module;
         templates: [baseTemplate],
         'state-server': stateServer
       };
-      var url = [this.jemUrl, 'env', envOwnerName].join('/');
+      var url = [this.jemUrl + 'env', envOwnerName].join('/');
       _makeRequest(this.bakery, url, 'POST', body, callback);
     },
 
@@ -188,7 +208,7 @@ var module = module;
           parameter and the response data as its second.
     */
     whoami: function(callback) {
-      var url = [this.jemUrl, 'whoami'].join('/');
+      var url = this.jemUrl + 'whoami';
       _makeRequest(
         this.bakery,
         url,
@@ -222,8 +242,8 @@ var module = module;
      @returns {Object} A client object for making charmstore API calls.
    */
   function charmstore(url, apiVersion, bakery, processEntity) {
-    this.url = url;
-    this.version = apiVersion;
+    this.url = _normalizeURLPart(url);
+    this.version = _normalizeURLPart(apiVersion);
     this.bakery = bakery;
 
     // XXX jcsackett 2015-11-09 Methods that return entity data should
@@ -244,7 +264,7 @@ var module = module;
       return this._generatePath('logout');
     },
     /**
-      Generates a path to the charmstore apiv4 based on the query and endpoint
+      Generates a path to the charmstore api based on the query and endpoint
       params passed in.
 
       @method _generatePath
@@ -261,7 +281,7 @@ var module = module;
       if (extension) {
         endpoint = endpoint + extension;
       }
-      return this.url + this.version + '/' + endpoint + query;
+      return this.url + this.version + endpoint + query;
     },
 
     /**
@@ -407,7 +427,7 @@ var module = module;
         }
         processed.deployerFileUrl =
             this.url +
-            this.version + '/' +
+            this.version + 
             processed.id.replace('cs:', '') +
             '/archive/bundle.yaml';
       } else {
