@@ -10,15 +10,16 @@ from jujugui import options
 class TestUpdate(unittest.TestCase):
 
     default_settings = {
-        'jujugui.api_path': options.DEFAULT_API_PATH,
         'jujugui.auth': None,
         'jujugui.base_url': '',
+        'jujugui.charmstore_api_path': options.DEFAULT_CHARMSTORE_API_PATH,
         'jujugui.charmstore_url': options.DEFAULT_CHARMSTORE_URL,
         'jujugui.combine': True,
         'jujugui.GTM_enabled': False,
         'jujugui.gzip': True,
         'jujugui.interactive_login': False,
         'jujugui.jem_url': None,
+        'jujugui.jem_api_path': None,
         'jujugui.password': None,
         'jujugui.raw': False,
         'jujugui.sandbox': False,
@@ -35,7 +36,7 @@ class TestUpdate(unittest.TestCase):
 
     def test_customized_values(self):
         expected_settings = {
-            'jujugui.api_path': 'v4',
+            'jujugui.charmstore_api_path': 'v4',
             'jujugui.auth': 'blob',
             'jujugui.base_url': '/another/url',
             'jujugui.charmstore_url': 'https://1.2.3.4/api/',
@@ -44,6 +45,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.gzip': False,
             'jujugui.interactive_login': False,
             'jujugui.jem_url': 'http://1.2.3.4:8082',
+            'jujugui.jem_api_path': 'v1',
             'jujugui.password': 'Secret!',
             'jujugui.raw': False,
             'jujugui.sandbox': True,
@@ -52,7 +54,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.insecure': True,
         }
         settings = {
-            'jujugui.api_path': 'v4',
+            'jujugui.charmstore_api_path': 'v4',
             'jujugui.auth': 'blob',
             'jujugui.base_url': '/another/url',
             'jujugui.charmstore_url': 'https://1.2.3.4/api/',
@@ -61,6 +63,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.gzip': 'false',
             'jujugui.interactive_login': 'false',
             'jujugui.jem_url': 'http://1.2.3.4:8082',
+            'jujugui.jem_api_path': 'v1',
             'jujugui.password': 'Secret!',
             'jujugui.raw': 'off',
             'jujugui.sandbox': 'on',
