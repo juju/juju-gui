@@ -122,12 +122,13 @@ YUI.add('juju-delta-handlers', function(Y) {
         juju/juju/blob/juju-1.26-alpha1/state/status_model.go#L272
 
       @method translateToLegacyAgentState
-      @param {String} agentStatus JujuStatus.Current
+      @param {String} currentStatus JujuStatus.Current
       @param {String} workloadStatus WorkloadStatus.Current
       @param {String} workloadStatusMessage WorkloadStatus.Message
+      @return {String} The legacy agent state.
     */
     translateToLegacyAgentState: function(
-      agentStatus, workloadStatus, workloadStatusMessage) {
+      currentStatus, workloadStatus, workloadStatusMessage) {
       var statusMaintenance = 'maintenance';
       var statusAllocating = 'allocating';
       var statusPending = 'pending';
@@ -145,7 +146,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       var isInstalled = workloadStatus != statusMaintenance ||
                         workloadStatusMessage != messageInstalling;
 
-      switch (agentStatus) {
+      switch (currentStatus) {
 
         case statusAllocating:
           return statusPending;
@@ -251,18 +252,25 @@ YUI.add('juju-delta-handlers', function(Y) {
       // If change.JujuStatus is not defined then we will use the old delta
       // structure.
       var jujuStatus = change.JujuStatus;
-      var workloadStatus = change.WorkloadStatus;
       if (jujuStatus) {
-        unitData.agent_state = utils.translateToLegacyAgentState(
-          jujuStatus.Current, workloadStatus.Current, workloadStatus.Message);
-        unitData.agent_state_info = change.JujuStatus.Message;
-        unitData.agent_state_data = change.JujuStatus.Data;
+        var workloadStatus = change.WorkloadStatus;
+        if (workloadStatus.Current === 'error') {
+          unitData.agent_state = workloadStatus.Current;
+          unitData.agent_state_info = workloadStatus.Message;
+          unitData.agent_state_data = workloadStatus.Data;
+        } else {
+          unitData.agent_state = utils.translateToLegacyAgentState(
+            jujuStatus.Current, workloadStatus.Current, workloadStatus.Message);
+          unitData.agent_state_info = jujuStatus.Message;
+          unitData.agent_state_data = jujuStatus.Data;
+        }
       } else {
         // For Juju 1.x
         unitData.agent_state = change.Status;
         unitData.agent_state_info = change.StatusInfo;
         unitData.agent_state_data = change.StatusData;
       }
+
       var machineData = {
         id: change.MachineId,
         public_address: change.PublicAddress
