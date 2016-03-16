@@ -1055,6 +1055,62 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     });
 
+    describe('translateToLegacyAgentState', function() {
+      var translate;
+
+      before(function() {
+        translate = utils.translateToLegacyAgentState;
+      });
+
+      it('returns pending when allocating', function() {
+        assert.equal(translate('allocating'), 'pending');
+      });
+
+      it('returns error when in error', function() {
+        assert.equal(translate('error'), 'error');
+      });
+
+      describe('rebooting, executing, idle, lost, failed', function() {
+
+        var states = ['rebooting', 'executing', 'idle', 'lost', 'failed'];
+
+        states.forEach(function(state) {
+
+          it('returns error when in error: ' + state, function() {
+            assert.equal(translate(state, 'error'), 'error',
+              state + ' did not return the correct value');
+          });
+
+          it('returns stopped when terminated: ' + state, function() {
+            assert.equal(translate(state, 'terminated'), 'stopped',
+              state + ' did not return the correct value');
+          });
+
+          it('returns properly when in maintenance and installed: ' + state,
+            function() {
+              assert.equal(translate(state, 'maintenance'), 'started',
+                state + ' did not return the correct value');
+            });
+
+          it('returns pending when in maintenance and not installed: ' + state,
+            function() {
+              assert.equal(
+                translate(state, 'maintenance', 'installing charm software'),
+                'pending',
+                state + ' did not return the correct value');
+            });
+
+          it('returns started as a default: ' + state, function() {
+            assert.equal(translate(state, 'foobar'), 'started',
+              state + ' did not return the correct value');
+          });
+
+        });
+
+      });
+
+    });
+
   });
 
 })();
