@@ -2239,6 +2239,14 @@ YUI.add('juju-gui', function(Y) {
       jemURL: {},
 
       /**
+        Store the version of the jem API to use.
+        @attribute jemAPIPath
+        @type {String}
+        @default undefined
+       */
+      jemAPIPath: {},
+
+      /**
        Whether or not to use interactive login for the IdM/JEM connection.
 
        @attribute interactiveLogin

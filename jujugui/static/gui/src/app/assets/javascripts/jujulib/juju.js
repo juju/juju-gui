@@ -98,7 +98,7 @@ var module = module;
     // mechanism from charmstore but that's a larger rewrite. For now we're
     // making sure we can take the same initialization data for the jem url as
     // we do for the charmstore url.
-    this.jemUrl = url + apiVersion;
+    this.jemURL = url + apiVersion;
     this.bakery = bakery;
   };
 
@@ -120,7 +120,7 @@ var module = module;
         callback(error, data);
       };
       return _makeRequest(
-          this.bakery, this.jemUrl + '/env', 'GET', null, _listEnvironments);
+          this.bakery, this.jemURL + '/env', 'GET', null, _listEnvironments);
     },
 
     /**
@@ -139,7 +139,7 @@ var module = module;
         callback(error, data);
       };
       _makeRequest(
-          this.bakery, this.jemUrl + '/server', 'GET', null, _listServers);
+          this.bakery, this.jemURL + '/server', 'GET', null, _listServers);
     },
     /**
        Provides the data for a particular environment.
@@ -153,7 +153,7 @@ var module = module;
      */
     getEnvironment: function (
         envOwnerName, envName, callback) {
-      var url = [this.jemUrl, 'env', envOwnerName, envName].join('/');
+      var url = [this.jemURL, 'env', envOwnerName, envName].join('/');
       _makeRequest(this.bakery, url, 'GET', null, callback);
     },
 
@@ -180,7 +180,7 @@ var module = module;
         templates: [baseTemplate],
         'state-server': stateServer
       };
-      var url = [this.jemUrl, 'env', envOwnerName].join('/');
+      var url = [this.jemURL, 'env', envOwnerName].join('/');
       _makeRequest(this.bakery, url, 'POST', body, callback);
     },
 
@@ -193,7 +193,7 @@ var module = module;
           parameter and the response data as its second.
     */
     whoami: function(callback) {
-      var url = this.jemUrl + '/whoami';
+      var url = this.jemURL + '/whoami';
       _makeRequest(
         this.bakery,
         url,
@@ -412,7 +412,7 @@ var module = module;
         }
         processed.deployerFileUrl =
             this.url +
-            this.version + '/' + 
+            this.version + '/' +
             processed.id.replace('cs:', '') +
             '/archive/bundle.yaml';
       } else {
