@@ -349,7 +349,7 @@ describe('App', function() {
       it('is idempotent', function() {
         window.juju_config = {
           charmstoreURL: 'charmurl',
-          apiPath: 'v4'
+          charmstoreAPIPath: 'v4'
         };
         constructAppInstance({
           env: new juju.environments.GoEnvironment({
