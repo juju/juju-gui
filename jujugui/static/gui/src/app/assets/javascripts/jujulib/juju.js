@@ -78,6 +78,7 @@ var module = module;
     }
   };
 
+
   /**
      Environment object for jujulib.
 
@@ -92,8 +93,12 @@ var module = module;
      @param bakery {Object} A bakery object for communicating with the JEM instance.
      @returns {Object} A client object for making JEM API calls.
    */
-  function environment(url, bakery) {
-    this.jemUrl = url + '/v1';
+  function environment(url, apiVersion, bakery) {
+    // XXX j.c.sackett 2016-03-16 We should probably adopt the generate query
+    // mechanism from charmstore but that's a larger rewrite. For now we're
+    // making sure we can take the same initialization data for the jem url as
+    // we do for the charmstore url.
+    this.jemURL = url + apiVersion;
     this.bakery = bakery;
   };
 
@@ -115,7 +120,7 @@ var module = module;
         callback(error, data);
       };
       return _makeRequest(
-          this.bakery, this.jemUrl + '/env', 'GET', null, _listEnvironments);
+          this.bakery, this.jemURL + '/env', 'GET', null, _listEnvironments);
     },
 
     /**
@@ -134,7 +139,7 @@ var module = module;
         callback(error, data);
       };
       _makeRequest(
-          this.bakery, this.jemUrl + '/server', 'GET', null, _listServers);
+          this.bakery, this.jemURL + '/server', 'GET', null, _listServers);
     },
     /**
        Provides the data for a particular environment.
@@ -148,7 +153,7 @@ var module = module;
      */
     getEnvironment: function (
         envOwnerName, envName, callback) {
-      var url = [this.jemUrl, 'env', envOwnerName, envName].join('/');
+      var url = [this.jemURL, 'env', envOwnerName, envName].join('/');
       _makeRequest(this.bakery, url, 'GET', null, callback);
     },
 
@@ -175,7 +180,7 @@ var module = module;
         templates: [baseTemplate],
         'state-server': stateServer
       };
-      var url = [this.jemUrl, 'env', envOwnerName].join('/');
+      var url = [this.jemURL, 'env', envOwnerName].join('/');
       _makeRequest(this.bakery, url, 'POST', body, callback);
     },
 
@@ -188,7 +193,7 @@ var module = module;
           parameter and the response data as its second.
     */
     whoami: function(callback) {
-      var url = [this.jemUrl, 'whoami'].join('/');
+      var url = this.jemURL + '/whoami';
       _makeRequest(
         this.bakery,
         url,
@@ -244,7 +249,7 @@ var module = module;
       return this._generatePath('logout');
     },
     /**
-      Generates a path to the charmstore apiv4 based on the query and endpoint
+      Generates a path to the charmstore api based on the query and endpoint
       params passed in.
 
       @method _generatePath

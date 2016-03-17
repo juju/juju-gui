@@ -1736,7 +1736,7 @@ YUI.add('juju-view-utils', function(Y) {
   utils.getIconPath = function(charmId, isBundle, env) {
     var cfg = window.juju_config,
         charmstoreURL = (cfg && cfg.charmstoreURL) || '',
-        apiPath = (cfg && cfg.apiPath) || '',
+        apiPath = (cfg && cfg.charmstoreAPIPath) || '',
         localIndex = charmId.indexOf('local:'),
         path;
     if (localIndex > -1 && env) {

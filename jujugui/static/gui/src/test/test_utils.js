@@ -917,7 +917,7 @@ describe('utilities', function() {
     before(function(done) {
       window.juju_config = {
         charmstoreURL: 'local/',
-        apiPath: 'v4'
+        charmstoreAPIPath: 'v4'
       };
       YUI(GlobalConfig).use('juju-view-utils',
           function(Y) {
