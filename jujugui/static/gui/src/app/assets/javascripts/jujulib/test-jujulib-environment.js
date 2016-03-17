@@ -18,7 +18,7 @@ describe('jujulib environment manager', function() {
 
   it('exists', function() {
     var bakery = {};
-    env = new window.jujulib.environment('http://example.com', 'v1', bakery);
+    env = new window.jujulib.environment('http://example.com/', 'v1', bakery);
     assert.isTrue(env instanceof window.jujulib.environment);
   });
 
@@ -29,7 +29,7 @@ describe('jujulib environment manager', function() {
         success(xhr);
       }
     };
-    env = new window.jujulib.environment('http://example.com', 'v1', bakery);
+    env = new window.jujulib.environment('http://example.com/', 'v1', bakery);
     env.listEnvironments(function(error, data) {
       if (error) {
         assert.fail('error found when there should not be one.');
@@ -47,7 +47,7 @@ describe('jujulib environment manager', function() {
         failure(xhr);
       }
     };
-    env = new window.jujulib.environment('http://example.com', 'v1', bakery);
+    env = new window.jujulib.environment('http://example.com/', 'v1', bakery);
     env.listEnvironments(function(error, data) {
       if (error) {
         assert.equal(error, err);
@@ -65,7 +65,7 @@ describe('jujulib environment manager', function() {
         success(xhr);
       }
     };
-    env = new window.jujulib.environment('http://example.com', 'v1', bakery);
+    env = new window.jujulib.environment('http://example.com/', 'v1', bakery);
     env.listServers(function(error, data) {
       if (error) {
         assert.fail('error found when there should not be one.');
@@ -83,7 +83,7 @@ describe('jujulib environment manager', function() {
         failure(xhr);
       }
     };
-    env = new window.jujulib.environment('http://example.com', 'v1', bakery);
+    env = new window.jujulib.environment('http://example.com/', 'v1', bakery);
     env.listServers(function(error, data) {
       if (error) {
         assert.equal(error, err);
@@ -102,7 +102,7 @@ describe('jujulib environment manager', function() {
         success(xhr);
       }
     };
-    env = new window.jujulib.environment('http://example.com', 'v1', bakery);
+    env = new window.jujulib.environment('http://example.com/', 'v1', bakery);
     env.getEnvironment('rose', 'fnord', function(error, data) {
       if (error) {
         assert.fail('error found when there should not be one.');
@@ -121,7 +121,7 @@ describe('jujulib environment manager', function() {
         failure(xhr);
       }
     };
-    env = new window.jujulib.environment('http://example.com', 'v1', bakery);
+    env = new window.jujulib.environment('http://example.com/', 'v1', bakery);
     env.getEnvironment('rose', 'fnord', function(error, data) {
       if (error) {
         assert.equal(error, err);
@@ -148,7 +148,7 @@ describe('jujulib environment manager', function() {
       }
     };
 
-    env = new window.jujulib.environment('http://example.com', 'v1', bakery);
+    env = new window.jujulib.environment('http://example.com/', 'v1', bakery);
     env.newEnvironment('rose', 'fnord', 'rose/template', 'foo', 'password',
       function(error, data) {
         if (error) {
@@ -169,7 +169,7 @@ describe('jujulib environment manager', function() {
       },
     };
 
-    env = new window.jujulib.environment('http://example.com', 'v1', bakery);
+    env = new window.jujulib.environment('http://example.com/', 'v1', bakery);
     env.newEnvironment('rose', 'fnord', 'rose/template', 'foo', 'password',
       function(error, data) {
         if (error) {
@@ -194,7 +194,7 @@ describe('jujulib environment manager', function() {
       },
     };
 
-    env = new window.jujulib.environment('http://example.com', 'v1', bakery);
+    env = new window.jujulib.environment('http://example.com/', 'v1', bakery);
     env.whoami(
       function(error, data) {
         if (error) {
