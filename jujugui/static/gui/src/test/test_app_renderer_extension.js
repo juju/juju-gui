@@ -85,7 +85,9 @@ describe('App Renderer Extension', function() {
 
   describe('_renderBreadcrumb', function() {
     beforeEach(function() {
-      window.juju.components.HeaderBreadcrumb = {};
+      var stub = utils.makeStubMethod(window.juju.components,
+                                      'HeaderBreadcrumb');
+      this._cleanups.push(stub.reset);
     });
 
     it('renders a normal breadcrumb', function() {
