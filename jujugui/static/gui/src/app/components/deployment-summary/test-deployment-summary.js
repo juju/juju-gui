@@ -32,7 +32,6 @@ describe('DeploymentSummary', function() {
 
   it('can display a list of changes', function() {
     var getUnplacedUnitCount = sinon.stub().returns(0);
-    var handleViewMachinesClick = sinon.stub();
     var handlePlacementChange = sinon.stub();
     var changeDescriptions = [{
       icon: 'my-icon.svg',
@@ -52,20 +51,21 @@ describe('DeploymentSummary', function() {
         change={changeDescriptions[1]} />];
     var className = 'deployment-summary-change-item ' +
         'deployment-summary__list-header';
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
         getUnplacedUnitCount={getUnplacedUnitCount}
         changeDescriptions={changeDescriptions}
-        handleViewMachinesClick={handleViewMachinesClick}
         handlePlacementChange={handlePlacementChange}
-        autoPlace={false} />);
+        autoPlace={false} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
     assert.deepEqual(output,
       <div>
         <h2 className="deployment-panel__title">
           Deployment summary
         </h2>
         <juju.components.DeploymentSummaryPlacement
-          handleViewMachinesClick={handleViewMachinesClick}
+          handleViewMachinesClick={instance._handleViewMachinesClick}
           handlePlacementChange={handlePlacementChange}
           autoPlace={false}
           getUnplacedUnitCount={getUnplacedUnitCount} />
@@ -81,5 +81,30 @@ describe('DeploymentSummary', function() {
           {changeItems}
         </ul>
       </div>);
+  });
+
+  it('can navigate to the machine view', function() {
+    var getUnplacedUnitCount = sinon.stub().returns(0);
+    var handlePlacementChange = sinon.stub();
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.DeploymentSummary
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        changeDescriptions={[]}
+        changeState={changeState}
+        handlePlacementChange={handlePlacementChange}
+        autoPlace={false} />);
+    output.props.children[1].props.handleViewMachinesClick();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionB: {
+        component: 'machine',
+        metadata: {}
+      },
+      sectionC: {
+        component: null,
+        metadata: {}
+      }
+    });
   });
 });

@@ -23,24 +23,12 @@ YUI.add('deployment-component', function() {
   juju.components.Deployment = React.createClass({
     propTypes: {
       activeComponent: React.PropTypes.string,
+      autoPlaceUnits: React.PropTypes.func.isRequired,
+      changeDescriptions: React.PropTypes.array.isRequired,
       changeState: React.PropTypes.func.isRequired,
-      hasCommits: React.PropTypes.bool,
-      machines: React.PropTypes.array.isRequired,
-      setHasCommits: React.PropTypes.func.isRequired,
-      ecsClear: React.PropTypes.func.isRequired
-    },
-
-    /**
-      Get the current state of the component.
-
-      @method getInitialState
-      @returns {String} The current state.
-    */
-    getInitialState: function() {
-      // Setting a default state object.
-      return {
-        autoPlace: !localStorage.getItem('disable-auto-place')
-      };
+      ecsClear: React.PropTypes.func.isRequired,
+      ecsCommit: React.PropTypes.func.isRequired,
+      getUnplacedUnitCount: React.PropTypes.func.isRequired,
     },
 
     /**
@@ -52,141 +40,25 @@ YUI.add('deployment-component', function() {
     _generateActivePanel: function() {
       switch (this.props.activeComponent) {
         case 'summary':
+          var DeploymentSummary = juju.components.DeploymentSummary;
           return {
-            component: <juju.components.DeploymentSummary
+            component: <DeploymentSummary
+              autoPlaceUnits={this.props.autoPlaceUnits}
               changeDescriptions={this.props.changeDescriptions}
-              handleViewMachinesClick={this.handleViewMachinesClick}
-              handlePlacementChange={this.handlePlacementChange}
-              autoPlace={this.state.autoPlace}
+              changeState={this.props.changeState}
+              ecsClear={this.props.ecsClear}
+              ecsCommit={this.props.ecsCommit}
               getUnplacedUnitCount={this.props.getUnplacedUnitCount} />,
             buttons: [{
               title: 'Clear changes',
-              action: this._summaryClearAction
+              action: DeploymentSummary.prototype.summaryClearAction
             }, {
               title: 'Deploy',
-              action: this._summaryDeployAction,
+              action: DeploymentSummary.prototype.summaryDeployAction,
               type: 'confirm'
             }]
           };
       }
-    },
-
-    componentDidMount: function() {
-      this._updateHasCommits();
-    },
-
-    componentWillReceiveProps: function(nextProps) {
-      this._updateHasCommits();
-    },
-
-    /**
-      Check if we have any commits.
-
-      @param {Function} callback A function to call once the state has updated.
-      @method _updateHasCommits
-    */
-    _updateHasCommits: function() {
-      var hasCommits = false;
-      if (!this.props.hasCommits) {
-        this.props.services.forEach(service => {
-          if (!service.get('pending')) {
-            hasCommits = true;
-            return false;
-          }
-        });
-        if (!hasCommits) {
-          this.props.machines.forEach(machine => {
-            if (machine.commitStatus === 'committed') {
-              hasCommits = true;
-              return false;
-            }
-          });
-        }
-      }
-      if (hasCommits) {
-        this.props.setHasCommits();
-      }
-    },
-
-    /**
-      Handles calling to clear the ecs and then closing the deployment
-      summary.
-
-      @method _summaryClearAction
-    */
-    _summaryClearAction: function() {
-      this.props.ecsClear();
-      this.props.changeState({
-        sectionC: {
-          component: null,
-          metadata: {}
-        }
-      });
-    },
-
-    /**
-      Handle committing when the deploy button in the summary is clicked.
-
-      @method _summaryDeployAction
-    */
-    _summaryDeployAction: function() {
-      if (this.state.autoPlace) {
-        this.props.autoPlaceUnits();
-      }
-      // The env is already bound to ecsCommit in app.js.
-      this.props.ecsCommit();
-      this.setState({hasCommits: true}, () => {
-        this.props.changeState({
-          sectionC: {
-            component: null,
-            metadata: {}
-          }
-        });
-      });
-    },
-
-    /**
-      Handle closing the summary when the close button is clicked.
-
-      @method _summaryCloseAction
-    */
-    _summaryCloseAction: function() {
-      this.props.changeState({
-        sectionC: {
-          component: null,
-          metadata: {}
-        }
-      });
-    },
-
-    /**
-      Handle navigating to the machine view.
-
-      @method handleViewMachinesClick
-    */
-    handleViewMachinesClick: function() {
-      this.props.changeState({
-        sectionB: {
-          component: 'machine',
-          metadata: {}
-        },
-        sectionC: {
-          component: null,
-          metadata: {}
-        }
-      });
-    },
-
-    /**
-      Handle changes to the placement radio buttons.
-
-      @method handlePlacementChange
-      @param {Object} e The click event.
-    */
-    handlePlacementChange: function(e) {
-      this.setState({
-        autoPlace: e.currentTarget.getAttribute('data-placement') === 'placed'
-      });
     },
 
     render: function() {
@@ -199,7 +71,7 @@ YUI.add('deployment-component', function() {
       return (
         <juju.components.DeploymentPanel
           buttons={activeChild && activeChild.buttons}
-          closeButtonAction={this._summaryCloseAction}
+          changeState={this.props.changeState}
           steps={steps}
           visible={!!activeComponent}>
           {activeChild && activeChild.component}
@@ -211,7 +83,6 @@ YUI.add('deployment-component', function() {
 
 }, '0.1.0', {
   requires: [
-    'deployment-bar',
     'deployment-panel',
     'deployment-summary'
   ]

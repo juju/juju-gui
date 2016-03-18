@@ -23,6 +23,93 @@ YUI.add('deployment-summary', function() {
   juju.components.DeploymentSummary = React.createClass({
 
     propTypes: {
+      autoPlaceUnits: React.PropTypes.func.isRequired,
+      changeDescriptions: React.PropTypes.array.isRequired,
+      changeState: React.PropTypes.func.isRequired,
+      ecsClear: React.PropTypes.func.isRequired,
+      ecsCommit: React.PropTypes.func.isRequired,
+      getUnplacedUnitCount: React.PropTypes.func.isRequired
+    },
+
+    /**
+      Get the current state of the component.
+
+      @method getInitialState
+      @returns {String} The current state.
+    */
+    getInitialState: function() {
+      // Setting a default state object.
+      return {
+        autoPlace: !localStorage.getItem('disable-auto-place')
+      };
+    },
+
+    /**
+      Handles calling to clear the ecs and then closing the deployment
+      summary.
+
+      @method summaryClearAction
+    */
+    summaryClearAction: function() {
+      this.props.ecsClear();
+      this.props.changeState({
+        sectionC: {
+          component: null,
+          metadata: {}
+        }
+      });
+    },
+
+    /**
+      Handle committing when the deploy button in the summary is clicked.
+
+      @method summaryDeployAction
+    */
+    summaryDeployAction: function() {
+      console.log('summaryDeployAction');
+      if (this.state.autoPlace) {
+        this.props.autoPlaceUnits();
+      }
+      // The env is already bound to ecsCommit in app.js.
+      this.props.ecsCommit();
+      this.setState({hasCommits: true}, () => {
+        this.props.changeState({
+          sectionC: {
+            component: null,
+            metadata: {}
+          }
+        });
+      });
+    },
+
+    /**
+      Handle navigating to the machine view.
+
+      @method _handleViewMachinesClick
+    */
+    _handleViewMachinesClick: function() {
+      this.props.changeState({
+        sectionB: {
+          component: 'machine',
+          metadata: {}
+        },
+        sectionC: {
+          component: null,
+          metadata: {}
+        }
+      });
+    },
+
+    /**
+      Handle changes to the placement radio buttons.
+
+      @method _handlePlacementChange
+      @param {Object} e The click event.
+    */
+    _handlePlacementChange: function(e) {
+      this.setState({
+        autoPlace: e.currentTarget.getAttribute('data-placement') === 'placed'
+      });
     },
 
     /**
@@ -53,9 +140,9 @@ YUI.add('deployment-summary', function() {
             Deployment summary
           </h2>
           <juju.components.DeploymentSummaryPlacement
-            handleViewMachinesClick={this.props.handleViewMachinesClick}
-            handlePlacementChange={this.props.handlePlacementChange}
-            autoPlace={this.props.autoPlace}
+            handleViewMachinesClick={this._handleViewMachinesClick}
+            handlePlacementChange={this._handlePlacementChange}
+            autoPlace={this.state.autoPlace}
             getUnplacedUnitCount={this.props.getUnplacedUnitCount} />
           <ul className="deployment-summary__list">
             <li className={listHeaderClassName}>

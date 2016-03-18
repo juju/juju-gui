@@ -427,7 +427,8 @@ YUI.add('juju-gui', function(Y) {
       }
       var ecs = new juju.EnvironmentChangeSet({db: this.db});
       ecs.on('changeSetModified', this._renderDeployment.bind(this, undefined));
-      ecs.on('currentCommitFinished', this._renderDeployment.bind(this, undefined));
+      ecs.on('currentCommitFinished',
+        this._renderDeployment.bind(this, undefined));
       // Instantiate the Juju environment.
       this._generateSocketUrl(function(socketUrl, user, password) {
         // Update the breadcrumb to display the proper user and model name.
@@ -832,8 +833,6 @@ YUI.add('juju-gui', function(Y) {
       var ecs = env.get('ecs');
       var db = this.db;
       var services = db.services;
-      var servicesArray = services.toArray();
-      var machines = db.machines.toArray();
       var units = db.units;
       var utils = views.utils;
       var changesUtils = this.changesUtils;
@@ -843,20 +842,13 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.Deployment
           activeComponent={activeComponent}
-          changeState={this.changeState.bind(this)}
-          machines={machines}
-          services={servicesArray}
-          ecsCommit={ecs.commit.bind(ecs, env)}
-          ecsClear={ecs.clear.bind(ecs)}
-          changeDescriptions={changeDescriptions}
-          getUnplacedUnitCount={utils.getUnplacedUnitCount.bind(this, db.units)}
           autoPlaceUnits={this._autoPlaceUnits.bind(this)}
-          generateChangeDescription={
-              changesUtils.generateChangeDescription.bind(
-                  changesUtils, services, units)}
-          hasCommits={this._hasCommits}
-          currentChangeSet={currentChangeSet}
-          setHasCommits={this._setHasCommits.bind(this)} />,
+          changeDescriptions={changeDescriptions}
+          changeState={this.changeState.bind(this)}
+          ecsClear={ecs.clear.bind(ecs)}
+          ecsCommit={ecs.commit.bind(ecs, env)}
+          getUnplacedUnitCount={
+            utils.getUnplacedUnitCount.bind(this, db.units)} />,
         document.getElementById('deployment-container'));
     },
 
@@ -886,25 +878,16 @@ YUI.add('juju-gui', function(Y) {
           generateChangeDescription={
             changesUtils.generateChangeDescription.bind(
               changesUtils, services, units)}
-          hasCommits={this._hasCommits}
           hasEntities={servicesArray.length > 0 || machines.length > 0}
           hideDragOverNotification={this._hideDragOverNotification.bind(this)}
           importBundleFile={this.bundleImporter.importBundleFile.bind(
             this.bundleImporter)}
+          machines={machines}
           renderDragOverNotification={
             this._renderDragOverNotification.bind(this)}
+          services={servicesArray}
           showInstall={this.get('sandbox')} />,
         document.getElementById('deployment-bar-container'));
-    },
-
-    /**
-      Set the committed state.
-
-      @method _setHasCommits
-    */
-    _setHasCommits: function(activeComponent) {
-      this._hasCommits = true;
-      this._renderDeploymentBar();
     },
 
     /**

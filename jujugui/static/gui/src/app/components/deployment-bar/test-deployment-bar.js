@@ -307,22 +307,25 @@ describe('DeploymentBar', function() {
   it('passes the button the correct title if there are commits', function() {
     var currentChangeSet = {};
     var deployButtonAction = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    var services = [{
+      get: sinon.stub().returns(false)
+    }];
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         currentChangeSet={currentChangeSet}
-        hasCommits={true}
         hasEntities={false}
         deployButtonAction={deployButtonAction}
         exportEnvironmentFile={sinon.stub()}
         importBundleFile={sinon.stub()}
         renderDragOverNotification={sinon.stub()}
-        showInstall={true} />);
-    assert.deepEqual(output.props.children.props.children[4].props.children[1],
-        <juju.components.GenericButton
-          action={deployButtonAction}
-          type="confirm"
-          disabled={true}
-          title="Commit changes" />);
+        services={services}
+        showInstall={true} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.componentDidMount();
+    var output = renderer.getRenderOutput();
+    assert.equal(
+      output.props.children.props.children[4].props.children[1].props.title,
+      'Commit changes');
   });
 
   it('can display a notification', function() {

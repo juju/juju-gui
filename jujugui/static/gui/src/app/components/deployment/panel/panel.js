@@ -24,7 +24,7 @@ YUI.add('deployment-panel', function() {
 
     propTypes: {
       buttons: React.PropTypes.array,
-      closeButtonAction: React.PropTypes.func.isRequired,
+      changeState: React.PropTypes.func.isRequired,
       steps: React.PropTypes.array.isRequired,
       visible: React.PropTypes.bool.isRequired
     },
@@ -77,6 +77,20 @@ YUI.add('deployment-panel', function() {
         </div>);
     },
 
+    /**
+      Handle closing the panel when the close button is clicked.
+
+      @method _handleClose
+    */
+    _handleClose: function() {
+      this.props.changeState({
+        sectionC: {
+          component: null,
+          metadata: {}
+        }
+      });
+    },
+
     render: function() {
       return (
         <juju.components.Panel
@@ -91,7 +105,7 @@ YUI.add('deployment-panel', function() {
               {this._generateSteps()}
               <span className="deployment-panel__close">
                 <juju.components.GenericButton
-                  action={this.props.closeButtonAction}
+                  action={this._handleClose}
                   type="neutral"
                   title="Back to canvas" />
               </span>

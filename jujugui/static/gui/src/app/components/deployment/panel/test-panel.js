@@ -40,14 +40,16 @@ describe('DeploymentPanel', function() {
       title: 'Deploy',
       active: false,
     }];
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentPanel
         buttons={buttons}
         closeButtonAction={closeButtonAction}
         steps={steps}
         visible={true}>
         <span>content</span>
-      </juju.components.DeploymentPanel>);
+      </juju.components.DeploymentPanel>, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
     assert.deepEqual(output,
       <juju.components.Panel
         instanceName="deployment-panel"
@@ -71,7 +73,7 @@ describe('DeploymentPanel', function() {
             </ul>
             <span className="deployment-panel__close">
               <juju.components.GenericButton
-                action={closeButtonAction}
+                action={instance._handleClose}
                 type="neutral"
                 title="Back to canvas" />
             </span>
@@ -93,5 +95,26 @@ describe('DeploymentPanel', function() {
           </div>
         </div>
       </juju.components.Panel>);
+  });
+
+  it('can close', function() {
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.DeploymentPanel
+        buttons={[]}
+        changeState={changeState}
+        steps={[]}
+        visible={true}>
+        <span>content</span>
+      </juju.components.DeploymentPanel>);
+    output.props.children.props.children[0].props.children[2].props.children
+      .props.action();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionC: {
+        component: null,
+        metadata: {}
+      }
+    });
   });
 });

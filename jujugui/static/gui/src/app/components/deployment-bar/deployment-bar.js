@@ -25,6 +25,7 @@ YUI.add('deployment-bar', function() {
       changeState: React.PropTypes.func.isRequired,
       exportEnvironmentFile: React.PropTypes.func.isRequired,
       renderDragOverNotification: React.PropTypes.func.isRequired,
+      generateChangeDescription: React.PropTypes.func.isRequired,
       hasEntities: React.PropTypes.bool.isRequired,
       importBundleFile: React.PropTypes.func.isRequired,
       showInstall: React.PropTypes.bool.isRequired
@@ -40,12 +41,45 @@ YUI.add('deployment-bar', function() {
     */
     getInitialState: function() {
       return {
+        hasCommits: false,
         latestChangeDescription: null
       };
     },
 
+    componentDidMount: function() {
+      this._updateHasCommits();
+    },
+
     componentWillReceiveProps: function(nextProps) {
+      this._updateHasCommits();
       this._updateLatestChange(nextProps.currentChangeSet);
+    },
+
+    /**
+      Check if we have any commits.
+
+      @param {Function} callback A function to call once the state has updated.
+      @method _updateHasCommits
+    */
+    _updateHasCommits: function() {
+      var hasCommits = false;
+      if (!this.state.hasCommits) {
+        this.props.services.forEach(service => {
+          if (!service.get('pending')) {
+            hasCommits = true;
+            return false;
+          }
+        });
+        if (!hasCommits) {
+          this.props.machines.forEach(machine => {
+            if (machine.commitStatus === 'committed') {
+              hasCommits = true;
+              return false;
+            }
+          });
+        }
+      }
+      this.setState({hasCommits: hasCommits});
     },
 
     /**
