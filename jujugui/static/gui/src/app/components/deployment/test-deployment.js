@@ -30,54 +30,6 @@ describe('Deployment', function() {
     YUI().use('deployment-component', function() { done(); });
   });
 
-  it('can display the deployment bar', function() {
-    var currentChangeSet = sinon.stub();
-    var exportEnvironmentFile = sinon.stub();
-    var generateChangeDescription = sinon.stub();
-    var renderDragOverNotification = sinon.stub();
-    var importBundleFile = sinon.stub();
-    var hideDragOverNotification = sinon.stub();
-    var services = [];
-    var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.Deployment
-        ecsClear={sinon.stub()}
-        exportEnvironmentFile={exportEnvironmentFile}
-        currentChangeSet={currentChangeSet}
-        renderDragOverNotification={renderDragOverNotification}
-        importBundleFile={importBundleFile}
-        hasEntities={false}
-        hideDragOverNotification={hideDragOverNotification}
-        generateChangeDescription={generateChangeDescription}
-        services={services}
-        showInstall={true} />, true);
-    var instance = shallowRenderer.getMountedInstance();
-    var output = shallowRenderer.getRenderOutput();
-
-    assert.deepEqual(output, <div className="deployment-view">
-      <juju.components.DeploymentBar
-        hasCommits={false}
-        deployButtonAction={instance._barDeployAction}
-        exportEnvironmentFile={exportEnvironmentFile}
-        renderDragOverNotification={renderDragOverNotification}
-        importBundleFile={importBundleFile}
-        hasEntities={false}
-        hideDragOverNotification={hideDragOverNotification}
-        generateChangeDescription={generateChangeDescription}
-        currentChangeSet={currentChangeSet}
-        showInstall={true} />
-      <juju.components.DeploymentPanel
-        buttons={undefined}
-        closeButtonAction={instance._summaryCloseAction}
-        steps={[{
-          title: 'Deploy',
-          active: false
-        }]}
-        visible={false}>
-        {undefined}
-      </juju.components.DeploymentPanel>
-    </div>);
-  });
-
   it('does not display the deployment panel by default', function() {
     var currentChangeSet = sinon.stub();
     var exportEnvironmentFile = sinon.stub();
@@ -88,6 +40,7 @@ describe('Deployment', function() {
     var services = [];
     var output = jsTestUtils.shallowRender(
       <juju.components.Deployment
+        activeComponent="summary"
         ecsClear={sinon.stub()}
         exportEnvironmentFile={exportEnvironmentFile}
         renderDragOverNotification={renderDragOverNotification}
@@ -102,6 +55,7 @@ describe('Deployment', function() {
   });
 
   it('tracks that it has commits after the first deploy', function() {
+    var setHasCommits = sinon.stub();
     var currentChangeSet = sinon.stub();
     var exportEnvironmentFile = sinon.stub();
     var generateChangeDescription = sinon.stub();
@@ -112,6 +66,7 @@ describe('Deployment', function() {
     var services = [];
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
+        activeComponent="summary"
         ecsClear={sinon.stub()}
         ecsCommit={sinon.stub()}
         exportEnvironmentFile={exportEnvironmentFile}
@@ -123,92 +78,11 @@ describe('Deployment', function() {
         currentChangeSet={currentChangeSet}
         autoPlaceUnits={autoPlaceUnits}
         services={services}
+        setHasCommits={setHasCommits}
         showInstall={true} />, true);
     var instance = shallowRenderer.getMountedInstance();
-    var output = shallowRenderer.getRenderOutput();
     instance._summaryDeployAction();
-    shallowRenderer.render(
-      <juju.components.Deployment
-        ecsClear={sinon.stub()}
-        ecsCommit={sinon.stub()}
-        exportEnvironmentFile={exportEnvironmentFile}
-        renderDragOverNotification={renderDragOverNotification}
-        importBundleFile={importBundleFile}
-        hasEntities={false}
-        hideDragOverNotification={hideDragOverNotification}
-        generateChangeDescription={generateChangeDescription}
-        currentChangeSet={currentChangeSet}
-        services={services}
-        showInstall={true} />);
-    var output = shallowRenderer.getRenderOutput();
-    var expected = (
-      <juju.components.DeploymentBar
-        exportEnvironmentFile={exportEnvironmentFile}
-        hasCommits={true}
-        renderDragOverNotification={renderDragOverNotification}
-        importBundleFile={importBundleFile}
-        hasEntities={false}
-        hideDragOverNotification={hideDragOverNotification}
-        generateChangeDescription={generateChangeDescription}
-        deployButtonAction={instance._barDeployAction}
-        currentChangeSet={currentChangeSet}
-        showInstall={true} />);
-    assert.deepEqual(output.props.children[0], expected);
-  });
-
-  it('tracks that it has commits if existing non-pending service', function() {
-    var currentChangeSet = sinon.stub();
-    var exportEnvironmentFile = sinon.stub();
-    var generateChangeDescription = sinon.stub();
-    var renderDragOverNotification = sinon.stub();
-    var importBundleFile = sinon.stub();
-    var hideDragOverNotification = sinon.stub();
-    var services = [
-      {get: sinon.stub().returns(true)},
-      {get: sinon.stub().returns(false)}
-    ];
-    var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.Deployment
-        ecsClear={sinon.stub()}
-        ecsCommit={sinon.stub()}
-        exportEnvironmentFile={exportEnvironmentFile}
-        services={services}
-        renderDragOverNotification={renderDragOverNotification}
-        importBundleFile={importBundleFile}
-        hasEntities={false}
-        hideDragOverNotification={hideDragOverNotification}
-        generateChangeDescription={generateChangeDescription}
-        currentChangeSet={currentChangeSet}
-        showInstall={true} />, true);
-    var instance = shallowRenderer.getMountedInstance();
-    var output = shallowRenderer.getRenderOutput();
-    shallowRenderer.render(
-      <juju.components.Deployment
-        ecsClear={sinon.stub()}
-        ecsCommit={sinon.stub()}
-        exportEnvironmentFile={exportEnvironmentFile}
-        services={services}
-        renderDragOverNotification={renderDragOverNotification}
-        importBundleFile={importBundleFile}
-        hasEntities={false}
-        hideDragOverNotification={hideDragOverNotification}
-        generateChangeDescription={generateChangeDescription}
-        currentChangeSet={currentChangeSet}
-        showInstall={true} />);
-    output = shallowRenderer.getRenderOutput();
-    var expected = (
-      <juju.components.DeploymentBar
-        exportEnvironmentFile={exportEnvironmentFile}
-        hasCommits={true}
-        renderDragOverNotification={renderDragOverNotification}
-        importBundleFile={importBundleFile}
-        hasEntities={false}
-        hideDragOverNotification={hideDragOverNotification}
-        generateChangeDescription={generateChangeDescription}
-        deployButtonAction={instance._barDeployAction}
-        currentChangeSet={currentChangeSet}
-        showInstall={true} />);
-    assert.deepEqual(output.props.children[0], expected);
+    assert.equal(setHasCommits.callCount, 1);
   });
 
   it('can display the deployment summary', function() {
@@ -222,6 +96,7 @@ describe('Deployment', function() {
     var hideDragOverNotification = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
+        activeComponent="summary"
         ecsClear={ecsClear}
         currentChangeSet={currentChangeSet}
         renderDragOverNotification={renderDragOverNotification}
@@ -233,8 +108,6 @@ describe('Deployment', function() {
         getUnplacedUnitCount={getUnplacedUnitCount}
         showInstall={true} />, true);
     var instance = renderer.getMountedInstance();
-    // Display the panel.
-    instance._barDeployAction();
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.DeploymentSummary
@@ -258,6 +131,7 @@ describe('Deployment', function() {
     var services = [];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
+        activeComponent="summary"
         ecsClear={sinon.stub()}
         ecsCommit={ecsCommit}
         exportEnvironmentFile={exportEnvironmentFile}
@@ -270,9 +144,6 @@ describe('Deployment', function() {
         renderDragOverNotification={renderDragOverNotification}
         services={services}
         showInstall={true} />, true);
-    var instance = renderer.getMountedInstance();
-    // Display the panel.
-    instance._barDeployAction();
     var output = renderer.getRenderOutput();
     output.props.children[1].props.buttons[1].action();
     assert.equal(ecsCommit.callCount, 1);
@@ -291,6 +162,7 @@ describe('Deployment', function() {
     var services = [];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
+        activeComponent="summary"
         ecsClear={sinon.stub()}
         ecsCommit={ecsCommit}
         exportEnvironmentFile={exportEnvironmentFile}
@@ -303,11 +175,8 @@ describe('Deployment', function() {
         renderDragOverNotification={renderDragOverNotification}
         services={services}
         showInstall={true} />, true);
-    var instance = renderer.getMountedInstance();
-    // Display the panel.
-    instance._barDeployAction();
     var output = renderer.getRenderOutput();
-    output.props.children[1].props.children.props.handlePlacementChange({
+    output.props.children.props.handlePlacementChange({
       currentTarget: {
         getAttribute: sinon.stub().returns('placed')
       }
@@ -317,6 +186,7 @@ describe('Deployment', function() {
   });
 
   it('can handle navigating to the machine view', function() {
+    var changeActiveComponent = sinon.stub();
     var ecsCommit = sinon.stub();
     var changeState = sinon.stub();
     var autoPlaceUnits = sinon.stub();
@@ -330,10 +200,12 @@ describe('Deployment', function() {
     var services = [];
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
+        activeComponent="summary"
         ecsClear={sinon.stub()}
         ecsCommit={ecsCommit}
         exportEnvironmentFile={exportEnvironmentFile}
         changeState={changeState}
+        changeActiveComponent={changeActiveComponent}
         autoPlaceUnits={autoPlaceUnits}
         currentChangeSet={currentChangeSet}
         changeDescriptions={changeDescriptions}
@@ -344,11 +216,8 @@ describe('Deployment', function() {
         renderDragOverNotification={renderDragOverNotification}
         services={services}
         showInstall={true} />, true);
-    var instance = shallowRenderer.getMountedInstance();
-    // Display the panel.
-    instance._barDeployAction();
     var output = shallowRenderer.getRenderOutput();
-    output.props.children[1].props.children.props.handleViewMachinesClick();
+    output.props.children.props.handleViewMachinesClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionB: {
@@ -357,6 +226,6 @@ describe('Deployment', function() {
       }
     });
     // The deployment summary should have been closed.
-    assert.isNull(instance.state.activeComponent);
+    assert.equal(changeActiveComponent.callCount, 1);
   });
 });

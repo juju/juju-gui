@@ -147,6 +147,15 @@ YUI.add('deployment-bar', function() {
       );
     },
 
+    /**
+      Display the deployment summary when the deploy button is clicked.
+
+      @method _deployAction
+    */
+    _deployAction: function() {
+      this.props.changeActiveComponent('summary');
+    },
+
     render: function() {
       var changeCount = Object.keys(this.props.currentChangeSet).length;
       return (
@@ -171,12 +180,12 @@ YUI.add('deployment-bar', function() {
               change={this.state.latestChangeDescription} />
             <div className="deployment-bar__deploy">
               <juju.components.GenericButton
-                action={this.props.deployButtonAction}
+                action={this._deployAction}
                 type="blue"
                 disabled={changeCount === 0}
                 title={changeCount.toString()} />
               <juju.components.GenericButton
-                action={this.props.deployButtonAction}
+                action={this._deployAction}
                 type="confirm"
                 disabled={changeCount === 0}
                 title={this._getDeployButtonLabel(this.props.hasCommits)} />

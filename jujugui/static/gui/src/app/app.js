@@ -426,8 +426,8 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       var ecs = new juju.EnvironmentChangeSet({db: this.db});
-      ecs.on('changeSetModified', this._renderDeployment.bind(this));
-      ecs.on('currentCommitFinished', this._renderDeployment.bind(this));
+      ecs.on('changeSetModified', this._renderDeployment.bind(this, undefined));
+      ecs.on('currentCommitFinished', this._renderDeployment.bind(this, undefined));
       // Instantiate the Juju environment.
       this._generateSocketUrl(function(socketUrl, user, password) {
         // Update the breadcrumb to display the proper user and model name.
@@ -819,8 +819,16 @@ YUI.add('juju-gui', function(Y) {
       designated element.
 
       @method _renderDeployment
+      @param {String} activeComponent The active component state to display.
     */
-    _renderDeployment: function() {
+    _renderDeployment: function(activeComponent) {
+      // ecs calls that update the data for the component do not provide an
+      // active compontent, in which case we want to use the existing state.
+      if (activeComponent !== undefined) {
+        // XXX huwshimi 16 March 2016 - this should use the proper state system
+        // instead of using this ad-hoc state flag.
+        this._deploymentState = activeComponent;
+      }
       var env = this.env;
       var ecs = env.get('ecs');
       var db = this.db;
@@ -835,27 +843,79 @@ YUI.add('juju-gui', function(Y) {
           currentChangeSet, services, units);
       ReactDOM.render(
         <window.juju.components.Deployment
+          activeComponent={this._deploymentState}
+          changeActiveComponent={this._changeDeployComponent.bind(this)}
           changeState={this.changeState.bind(this)}
+          machines={machines}
           services={servicesArray}
           ecsCommit={ecs.commit.bind(ecs, env)}
           ecsClear={ecs.clear.bind(ecs)}
-          exportEnvironmentFile={
-            utils.exportEnvironmentFile.bind(utils, db)}
-          renderDragOverNotification={
-            this._renderDragOverNotification.bind(this)}
-          importBundleFile={this.bundleImporter.importBundleFile.bind(
-            this.bundleImporter)}
-          hasEntities={servicesArray.length > 0 || machines.length > 0}
-          hideDragOverNotification={this._hideDragOverNotification.bind(this)}
           changeDescriptions={changeDescriptions}
           getUnplacedUnitCount={utils.getUnplacedUnitCount.bind(this, db.units)}
           autoPlaceUnits={this._autoPlaceUnits.bind(this)}
           generateChangeDescription={
               changesUtils.generateChangeDescription.bind(
                   changesUtils, services, units)}
+          hasCommits={this._hasCommits}
           currentChangeSet={currentChangeSet}
-          showInstall={this.get('sandbox')} />,
+          setHasCommits={this._setHasCommits.bind(this)} />,
         document.getElementById('deployment-container'));
+    },
+
+    /**
+      Renders the Deployment component to the page in the
+      designated element.
+
+      @method _renderDeployment
+    */
+    _renderDeploymentBar: function() {
+      var env = this.env;
+      var ecs = env.get('ecs');
+      var db = this.db;
+      var services = db.services;
+      var servicesArray = services.toArray();
+      var machines = db.machines.toArray();
+      var units = db.units;
+      var utils = views.utils;
+      var changesUtils = this.changesUtils;
+      var currentChangeSet = ecs.getCurrentChangeSet();
+      ReactDOM.render(
+        <window.juju.components.DeploymentBar
+          changeActiveComponent={this._changeDeployComponent.bind(this)}
+          currentChangeSet={currentChangeSet}
+          exportEnvironmentFile={
+            utils.exportEnvironmentFile.bind(utils, db)}
+          generateChangeDescription={
+            changesUtils.generateChangeDescription.bind(
+              changesUtils, services, units)}
+          hasCommits={this._hasCommits}
+          hasEntities={servicesArray.length > 0 || machines.length > 0}
+          hideDragOverNotification={this._hideDragOverNotification.bind(this)}
+          importBundleFile={this.bundleImporter.importBundleFile.bind(
+            this.bundleImporter)}
+          renderDragOverNotification={
+            this._renderDragOverNotification.bind(this)}
+          showInstall={this.get('sandbox')} />,
+        document.getElementById('deployment-bar-container'));
+    },
+
+    /**
+      Change the state of the deployment flow.
+
+      @method _changeDeployComponent
+    */
+    _changeDeployComponent: function(activeComponent) {
+      this._renderDeployment(activeComponent);
+    },
+
+    /**
+      Change the state of the deployment flow.
+
+      @method _changeDeployComponent
+    */
+    _setHasCommits: function(activeComponent) {
+      this._hasCommits = true;
+      this._renderDeploymentBar();
     },
 
     /**
@@ -1891,7 +1951,7 @@ YUI.add('juju-gui', function(Y) {
         this.db.services.size(),
         this.db.machines.filterByParent().length
       );
-      this._renderDeployment();
+      this._renderDeploymentBar();
       this._renderBreadcrumb();
       this._renderHeaderSearch();
       // When we render the components we also want to trigger the rest of

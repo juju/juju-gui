@@ -22,10 +22,12 @@ YUI.add('deployment-component', function() {
 
   juju.components.Deployment = React.createClass({
     propTypes: {
-      exportEnvironmentFile: React.PropTypes.func.isRequired,
-      ecsClear: React.PropTypes.func.isRequired,
-      hasEntities: React.PropTypes.bool.isRequired,
-      showInstall: React.PropTypes.bool.isRequired
+      activeComponent: React.PropTypes.string,
+      changeActiveComponent: React.PropTypes.func.isRequired,
+      hasCommits: React.PropTypes.bool,
+      machines: React.PropTypes.array.isRequired,
+      setHasCommits: React.PropTypes.func.isRequired,
+      ecsClear: React.PropTypes.func.isRequired
     },
 
     /**
@@ -37,7 +39,6 @@ YUI.add('deployment-component', function() {
     getInitialState: function() {
       // Setting a default state object.
       return {
-        hasCommits: false,
         autoPlace: !localStorage.getItem('disable-auto-place')
       };
     },
@@ -49,8 +50,8 @@ YUI.add('deployment-component', function() {
       @return {Object} The markup for the panel content.
     */
     _generateActivePanel: function() {
-      switch (this.state.activeComponent) {
-        case 'deployment-summary':
+      switch (this.props.activeComponent) {
+        case 'summary':
           return {
             component: <juju.components.DeploymentSummary
               changeDescriptions={this.props.changeDescriptions}
@@ -84,35 +85,27 @@ YUI.add('deployment-component', function() {
       @param {Function} callback A function to call once the state has updated.
       @method _updateHasCommits
     */
-    _updateHasCommits: function(callback) {
+    _updateHasCommits: function() {
       var hasCommits = false;
-      if (!this.state.hasCommits) {
-        var services = this.props.services;
-        services.forEach(function(service) {
+      if (!this.props.hasCommits) {
+        this.props.services.forEach(service => {
           if (!service.get('pending')) {
             hasCommits = true;
             return false;
           }
-        }, this);
-      }
-      if (hasCommits) {
-        // If the callback exists then we always want to call it, but if we're
-        // setting the state we want to call it after the state has updated.
-        this.setState({hasCommits: true}, callback);
-      } else {
-        if (callback) {
-          callback();
+        });
+        if (!hasCommits) {
+          this.props.machines.forEach(machine => {
+            if (machine.commitStatus === 'committed') {
+              hasCommits = true;
+              return false;
+            }
+          });
         }
       }
-    },
-
-    /**
-      Handle committing when the deploy button in the bar is clicked.
-
-      @method _barDeployAction
-    */
-    _barDeployAction: function() {
-      this._changeActiveComponent('deployment-summary');
+      if (hasCommits) {
+        this.props.setHasCommits();
+      }
     },
 
     /**
@@ -123,7 +116,7 @@ YUI.add('deployment-component', function() {
     */
     _summaryClearAction: function() {
       this.props.ecsClear();
-      this._changeActiveComponent(null);
+      this.props.changeActiveComponent(null);
     },
 
     /**
@@ -138,7 +131,7 @@ YUI.add('deployment-component', function() {
       // The env is already bound to ecsCommit in app.js.
       this.props.ecsCommit();
       this.setState({hasCommits: true}, () => {
-        this._changeActiveComponent(null);
+        this.props.changeActiveComponent(null);
       });
     },
 
@@ -148,7 +141,7 @@ YUI.add('deployment-component', function() {
       @method _summaryCloseAction
     */
     _summaryCloseAction: function() {
-      this._changeActiveComponent(null);
+      this.props.changeActiveComponent(null);
     },
 
     /**
@@ -163,7 +156,7 @@ YUI.add('deployment-component', function() {
           metadata: {}
         }
       });
-      this._changeActiveComponent(null);
+      this.props.changeActiveComponent(null);
     },
 
     /**
@@ -178,44 +171,21 @@ YUI.add('deployment-component', function() {
       });
     },
 
-    /**
-      Change the state to reflect the chosen component.
-
-      @method _changeActiveComponent
-      @param {String} newComponent The component to switch to.
-    */
-    _changeActiveComponent: function(newComponent) {
-      this.setState({activeComponent: newComponent});
-    },
-
     render: function() {
-      var activeComponent = this.state.activeComponent;
+      var activeComponent = this.props.activeComponent;
       var activeChild = this._generateActivePanel();
       var steps = [{
         title: 'Deploy',
-        active: activeComponent === 'deployment-summary'
+        active: activeComponent === 'summary'
       }];
       return (
-        <div className="deployment-view">
-          <juju.components.DeploymentBar
-            hasCommits={this.state.hasCommits}
-            deployButtonAction={this._barDeployAction}
-            exportEnvironmentFile={this.props.exportEnvironmentFile}
-            renderDragOverNotification={this.props.renderDragOverNotification}
-            importBundleFile={this.props.importBundleFile}
-            hasEntities={this.props.hasEntities}
-            hideDragOverNotification={this.props.hideDragOverNotification}
-            generateChangeDescription={this.props.generateChangeDescription}
-            currentChangeSet={this.props.currentChangeSet}
-            showInstall={this.props.showInstall} />
-          <juju.components.DeploymentPanel
-            buttons={activeChild && activeChild.buttons}
-            closeButtonAction={this._summaryCloseAction}
-            steps={steps}
-            visible={!!activeComponent}>
-            {activeChild && activeChild.component}
-          </juju.components.DeploymentPanel>
-        </div>
+        <juju.components.DeploymentPanel
+          buttons={activeChild && activeChild.buttons}
+          closeButtonAction={this._summaryCloseAction}
+          steps={steps}
+          visible={!!activeComponent}>
+          {activeChild && activeChild.component}
+        </juju.components.DeploymentPanel>
       );
     }
 
