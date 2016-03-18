@@ -48,9 +48,9 @@ YUI.add('deployment-summary', function() {
       Handles calling to clear the ecs and then closing the deployment
       summary.
 
-      @method summaryClearAction
+      @method _handleClear
     */
-    summaryClearAction: function() {
+    _handleClear: function() {
       this.props.ecsClear();
       this.props.changeState({
         sectionC: {
@@ -63,10 +63,9 @@ YUI.add('deployment-summary', function() {
     /**
       Handle committing when the deploy button in the summary is clicked.
 
-      @method summaryDeployAction
+      @method _handleDeploy
     */
-    summaryDeployAction: function() {
-      console.log('summaryDeployAction');
+    _handleDeploy: function() {
       if (this.state.autoPlace) {
         this.props.autoPlaceUnits();
       }
@@ -134,33 +133,56 @@ YUI.add('deployment-summary', function() {
     render: function() {
       var listHeaderClassName = 'deployment-summary-change-item ' +
           'deployment-summary__list-header';
+      var buttons = [{
+        title: 'Clear changes',
+        action: this._handleClear
+      }, {
+        title: 'Deploy',
+        action: this._handleDeploy,
+        type: 'confirm'
+      }];
       return (
-        <div>
-          <h2 className="deployment-panel__title">
-            Deployment summary
-          </h2>
-          <juju.components.DeploymentSummaryPlacement
-            handleViewMachinesClick={this._handleViewMachinesClick}
-            handlePlacementChange={this._handlePlacementChange}
-            autoPlace={this.state.autoPlace}
-            getUnplacedUnitCount={this.props.getUnplacedUnitCount} />
-          <ul className="deployment-summary__list">
-            <li className={listHeaderClassName}>
-              <span className="deployment-summary-change-item__change">
-                Change
-              </span>
-              <span className="deployment-summary-change-item__time">
-                Time
-              </span>
-            </li>
-            {this._generateChangeItems()}
-          </ul>
+        <div className="deployment-panel__child">
+          <div className="deployment-panel__content">
+            <div className="twelve-col">
+              <div className="inner-wrapper">
+                <h2 className="deployment-panel__title">
+                  Deployment summary
+                </h2>
+                <juju.components.DeploymentSummaryPlacement
+                  handleViewMachinesClick={this._handleViewMachinesClick}
+                  handlePlacementChange={this._handlePlacementChange}
+                  autoPlace={this.state.autoPlace}
+                  getUnplacedUnitCount={this.props.getUnplacedUnitCount} />
+                <ul className="deployment-summary__list">
+                  <li className={listHeaderClassName}>
+                    <span className="deployment-summary-change-item__change">
+                      Change
+                    </span>
+                    <span className="deployment-summary-change-item__time">
+                      Time
+                    </span>
+                  </li>
+                  {this._generateChangeItems()}
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div className="deployment-panel__footer">
+            <div className="twelve-col no-margin-bottom">
+              <div className="inner-wrapper">
+                <juju.components.ButtonRow
+                  buttons={buttons} />
+              </div>
+            </div>
+          </div>
         </div>
       );
     }
   });
 
 }, '0.1.0', { requires: [
+  'button-row',
   'deployment-summary-change-item',
-  'deployment-summary-placement',
+  'deployment-summary-placement'
 ]});

@@ -2337,6 +2337,7 @@ YUI.add('juju-gui', function(Y) {
     // React components
     'added-services-list',
     'charmbrowser-component',
+    'deployment-bar',
     'deployment-component',
     'env-size-display',
     'header-breadcrumb',

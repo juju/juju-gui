@@ -23,7 +23,6 @@ YUI.add('deployment-panel', function() {
   juju.components.DeploymentPanel = React.createClass({
 
     propTypes: {
-      buttons: React.PropTypes.array,
       changeState: React.PropTypes.func.isRequired,
       steps: React.PropTypes.array.isRequired,
       visible: React.PropTypes.bool.isRequired
@@ -53,28 +52,6 @@ YUI.add('deployment-panel', function() {
         <ul className="deployment-panel__header-steps">
           {components}
         </ul>);
-    },
-
-    /**
-      Generate the list of buttons.
-
-      @method _generateButtons
-      @returns {Object} The markup for the buttons.
-    */
-    _generateButtons: function() {
-      var buttons = this.props.buttons;
-      if (!buttons) {
-        return;
-      }
-      return (
-        <div className="deployment-panel__footer">
-          <div className="twelve-col no-margin-bottom">
-            <div className="inner-wrapper">
-              <juju.components.ButtonRow
-                buttons={buttons} />
-            </div>
-          </div>
-        </div>);
     },
 
     /**
@@ -110,14 +87,7 @@ YUI.add('deployment-panel', function() {
                   title="Back to canvas" />
               </span>
             </div>
-            <div className="deployment-panel__content">
-              <div className="twelve-col">
-                <div className="inner-wrapper">
-                  {this.props.children}
-                </div>
-              </div>
-            </div>
-            {this._generateButtons()}
+            {this.props.children}
           </div>
         </juju.components.Panel>
       );
@@ -126,7 +96,6 @@ YUI.add('deployment-panel', function() {
 
 }, '0.1.0', { requires: [
   'generic-button',
-  'button-row',
   'panel-component',
   'svg-icon'
 ]});

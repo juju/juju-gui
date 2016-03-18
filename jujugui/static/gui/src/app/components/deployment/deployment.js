@@ -40,28 +40,19 @@ YUI.add('deployment-component', function() {
     _generateActivePanel: function() {
       switch (this.props.activeComponent) {
         case 'summary':
-          var DeploymentSummary = juju.components.DeploymentSummary;
-          return {
-            component: <DeploymentSummary
+          return (
+            <juju.components.DeploymentSummary
               autoPlaceUnits={this.props.autoPlaceUnits}
               changeDescriptions={this.props.changeDescriptions}
               changeState={this.props.changeState}
               ecsClear={this.props.ecsClear}
               ecsCommit={this.props.ecsCommit}
-              getUnplacedUnitCount={this.props.getUnplacedUnitCount} />,
-            buttons: [{
-              title: 'Clear changes',
-              action: DeploymentSummary.prototype.summaryClearAction
-            }, {
-              title: 'Deploy',
-              action: DeploymentSummary.prototype.summaryDeployAction,
-              type: 'confirm'
-            }]
-          };
+              getUnplacedUnitCount={this.props.getUnplacedUnitCount} />);
       }
     },
 
     render: function() {
+      // TODO: return the old summary component if we're not using the sax feature flag.
       var activeComponent = this.props.activeComponent;
       var activeChild = this._generateActivePanel();
       var steps = [{
@@ -70,11 +61,10 @@ YUI.add('deployment-component', function() {
       }];
       return (
         <juju.components.DeploymentPanel
-          buttons={activeChild && activeChild.buttons}
           changeState={this.props.changeState}
           steps={steps}
           visible={!!activeComponent}>
-          {activeChild && activeChild.component}
+          {activeChild}
         </juju.components.DeploymentPanel>
       );
     }

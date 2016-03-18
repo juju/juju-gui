@@ -5,6 +5,7 @@
     left: 0;
     right: 0;
 
+    &__child,
     &__scroll {
         @extend %scroll-children;
         // Expand this container to take the full parent height.
