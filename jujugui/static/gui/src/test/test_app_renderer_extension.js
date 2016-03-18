@@ -45,10 +45,38 @@ describe('App Renderer Extension', function() {
     Renderer = Y.Base.create(
         'apprenderer', Y.Base, [juju.AppRenderer], {});
     renderer = new Renderer();
+    // React method stubs.
     renderStub = utils.makeStubMethod(ReactDOM, 'render');
     this._cleanups.push(renderStub.reset);
     createElementStub = utils.makeStubMethod(React, 'createElement');
     this._cleanups.push(createElementStub.reset);
+    // Bootstrap various renderer attributes and properties.
+    var ecs = {
+      getCurrentChangeSet: utils.makeStubFunction({})
+    };
+    var Env = Y.Base.create('env', Y.Base, [], {
+      findFacadeVersion: utils.makeStubFunction('foo')
+    }, {
+      ATTRS: {
+        ecs: {}
+      }
+    });
+    renderer.env = new Env({ecs: ecs});
+    renderer.set('sandbox', false);
+    renderer._getAuth = utils.makeStubFunction({user: 'test'});
+    renderer.set('jujuEnvUUID', 'test');
+    renderer.state = {
+      getState: utils.makeStubFunction()
+    };
+    renderer.db = {
+      environment: {
+        set: utils.makeStubFunction()
+      }
+    };
+    renderer.changeState = utils.makeStubFunction();
+    renderer.showConnectingMask = utils.makeStubFunction();
+    renderer.switchEnv = utils.makeStubFunction();
+    renderer.createSocketURL = utils.makeStubFunction();
   });
 
   afterEach(function() {
@@ -57,32 +85,6 @@ describe('App Renderer Extension', function() {
 
   describe('_renderBreadcrumb', function() {
     beforeEach(function() {
-      var ecs = {
-        getCurrentChangeSet: utils.makeStubFunction({})
-      };
-      var Env = Y.Base.create('env', Y.Base, [], {
-        findFacadeVersion: utils.makeStubFunction('foo')
-      }, {
-        ATTRS: {
-          ecs: {}
-        }
-      });
-      renderer.env = new Env({ecs: ecs});
-      renderer.set('sandbox', false);
-      renderer._getAuth = utils.makeStubFunction({user: 'test'});
-      renderer.set('jujuEnvUUID', 'test');
-      renderer.state = {
-        getState: utils.makeStubFunction()
-      };
-      renderer.db = {
-        environment: {
-          set: utils.makeStubFunction()
-        }
-      };
-      renderer.changeState = utils.makeStubFunction();
-      renderer.showConnectingMask = utils.makeStubFunction();
-      renderer.switchEnv = utils.makeStubFunction();
-      renderer.createSocketURL = utils.makeStubFunction();
       window.juju.components.HeaderBreadcrumb = {};
     });
 
