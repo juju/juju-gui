@@ -40,14 +40,16 @@ describe('EntityFiles', function() {
   });
 
   it('renders a list of files', function() {
+    var apiUrl = 'https://api.jujucharms.com/charmstore/v4';
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityFiles
+        apiUrl={apiUrl}
         entityModel={mockEntity}
         pluralize={sinon.stub().returns('files')} />
     , true);
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
-    var archiveUrl = 'https://api.jujucharms.com/charmstore/v4/trusty/django/archive';  // eslint-disable-line max-len
+    var archiveUrl = `${apiUrl}/trusty/django/archive`;
     var fileItems = [
       <li key="foo.zip" className="entity-files__file">
         <a href={archiveUrl + '/foo.zip'} title="foo.zip" target="_blank">
@@ -125,26 +127,30 @@ describe('EntityFiles', function() {
     mockEntity.set('entityType', 'bundle');
     mockEntity.set('name', 'django');
     mockEntity.set('full_name', 'wordpress');
+    var apiUrl = 'https://api.jujucharms.com/charmstore/v4';
     var output = testUtils.renderIntoDocument(
       <juju.components.EntityFiles
+        apiUrl={apiUrl}
         entityModel={mockEntity}
         pluralize={sinon.spy()} />
     );
     assert.equal(output.refs.files.children[0].children[0].href,
-      'https://api.jujucharms.com/charmstore/v4/django/archive/foo.zip');
+      `${apiUrl}/django/archive/foo.zip`);
   });
 
   it('renders file urls correctly for charm', function() {
     mockEntity.set('entityType', 'charm');
     mockEntity.set('name', 'django');
     mockEntity.set('full_name', 'wordpress');
+    var apiUrl = 'https://api.jujucharms.com/charmstore/v4';
     var output = testUtils.renderIntoDocument(
       <juju.components.EntityFiles
+        apiUrl={apiUrl}
         entityModel={mockEntity}
         pluralize={sinon.spy()} />
     );
     assert.equal(output.refs.files.children[0].children[0].href,
-      'https://api.jujucharms.com/charmstore/v4/wordpress/archive/foo.zip');
+      `${apiUrl}/wordpress/archive/foo.zip`);
   });
 
   it('properly builds a tree structure from file paths', function() {

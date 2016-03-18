@@ -48,12 +48,14 @@ describe('EntityContent', function() {
   });
 
   it('can display a charm', function() {
+    var apiUrl = 'http://example.com';
     var renderMarkdown = sinon.spy();
     var getFile = sinon.spy();
     var changeState = sinon.spy();
     var pluralize = sinon.spy();
     var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityContent
+          apiUrl={apiUrl}
           changeState={changeState}
           entityModel={mockEntity}
           getFile={getFile}
@@ -127,6 +129,7 @@ describe('EntityContent', function() {
             </div>
             <div className="four-col">
               <juju.components.EntityFiles
+                apiUrl={apiUrl}
                 entityModel={mockEntity}
                 pluralize={pluralize} />
             </div>
@@ -158,12 +161,14 @@ describe('EntityContent', function() {
 
   it('can display a charm with no options', function() {
     mockEntity.set('options', null);
+    var apiUrl = 'http://example.com';
     var renderMarkdown = sinon.spy();
     var getFile = sinon.spy();
     var pluralize = sinon.spy();
     var changeState = sinon.spy();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
+        apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
         getFile={getFile}
@@ -225,6 +230,7 @@ describe('EntityContent', function() {
             </div>
             <div className="four-col">
               <juju.components.EntityFiles
+                apiUrl={apiUrl}
                 entityModel={mockEntity}
                 pluralize={pluralize} />
             </div>
@@ -241,6 +247,7 @@ describe('EntityContent', function() {
   });
 
   it('can display a bundle', function() {
+    var apiUrl = 'http://example.com';
     var renderMarkdown = sinon.spy();
     var getFile = sinon.spy();
     var changeState = sinon.spy();
@@ -248,6 +255,7 @@ describe('EntityContent', function() {
     var mockEntity = jsTestUtils.makeEntity(true);
     var output = jsTestUtils.shallowRender(
         <juju.components.EntityContent
+          apiUrl={apiUrl}
           changeState={changeState}
           entityModel={mockEntity}
           getFile={getFile}
@@ -267,6 +275,7 @@ describe('EntityContent', function() {
             {undefined}
             <div className="four-col">
               <juju.components.EntityFiles
+                apiUrl={apiUrl}
                 entityModel={mockEntity}
                 pluralize={pluralize} />
             </div>

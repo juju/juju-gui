@@ -53,6 +53,7 @@ describe('EntityDetails', function() {
   });
 
   it('fetches an entity properly', function() {
+    var apiUrl = 'http://example.com';
     var id = mockEntity.get('id');
     var getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
     var makeEntityModel = sinon.stub().returns(mockEntity);
@@ -66,6 +67,7 @@ describe('EntityDetails', function() {
     var addNotification = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
+          apiUrl={apiUrl}
           deployService={deployService}
           changeState={changeState}
           importBundleYAML={importBundleYAML}
@@ -97,6 +99,7 @@ describe('EntityDetails', function() {
             scrollPosition={100} />
           {undefined}
           <juju.components.EntityContent
+            apiUrl={apiUrl}
             changeState={changeState}
             entityModel={mockEntity}
             getFile={getFile}
@@ -149,6 +152,7 @@ describe('EntityDetails', function() {
   });
 
   it('can display a bundle diagram', function() {
+    var apiUrl = 'http://example.com';
     var mockEntity = jsTestUtils.makeEntity(true);
     var id = mockEntity.get('id');
     var getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
@@ -164,6 +168,7 @@ describe('EntityDetails', function() {
     var addNotification = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
+          apiUrl={apiUrl}
           deployService={deployService}
           changeState={changeState}
           importBundleYAML={importBundleYAML}
@@ -198,6 +203,7 @@ describe('EntityDetails', function() {
             getDiagramURL={getDiagramURL}
             id={id} />
           <juju.components.EntityContent
+            apiUrl={apiUrl}
             changeState={changeState}
             entityModel={mockEntity}
             getFile={getFile}

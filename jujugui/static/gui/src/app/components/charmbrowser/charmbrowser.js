@@ -22,6 +22,7 @@ YUI.add('charmbrowser-component', function() {
 
   juju.components.Charmbrowser = React.createClass({
     propTypes: {
+      apiUrl: React.PropTypes.string.isRequired,
       utils: React.PropTypes.object.isRequired
     },
 
@@ -142,6 +143,7 @@ YUI.add('charmbrowser-component', function() {
         case 'entity-details':
           activeChild = (
               <juju.components.EntityDetails
+                apiUrl={this.props.apiUrl}
                 changeState={this.props.changeState}
                 addNotification={this.props.addNotification}
                 importBundleYAML={this.props.importBundleYAML}
