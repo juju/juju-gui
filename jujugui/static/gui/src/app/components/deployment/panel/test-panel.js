@@ -78,21 +78,7 @@ describe('DeploymentPanel', function() {
                 title="Back to canvas" />
             </span>
           </div>
-          <div className="deployment-panel__content">
-            <div className="twelve-col">
-              <div className="inner-wrapper">
-                <span>content</span>
-              </div>
-            </div>
-          </div>
-          <div className="deployment-panel__footer">
-            <div className="twelve-col no-margin-bottom">
-              <div className="inner-wrapper">
-                <juju.components.ButtonRow
-                  buttons={buttons} />
-              </div>
-            </div>
-          </div>
+          <span>content</span>
         </div>
       </juju.components.Panel>);
   });

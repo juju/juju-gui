@@ -23,6 +23,7 @@ YUI.add('deployment-summary', function() {
   juju.components.DeploymentSummary = React.createClass({
 
     propTypes: {
+      autoPlaceDefault: React.PropTypes.bool,
       autoPlaceUnits: React.PropTypes.func.isRequired,
       changeDescriptions: React.PropTypes.array.isRequired,
       changeState: React.PropTypes.func.isRequired,
@@ -40,7 +41,7 @@ YUI.add('deployment-summary', function() {
     getInitialState: function() {
       // Setting a default state object.
       return {
-        autoPlace: !localStorage.getItem('disable-auto-place')
+        autoPlace: this.props.autoPlaceDefault
       };
     },
 
