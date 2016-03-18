@@ -1,3 +1,8 @@
+- 2.1.1:
+    - Add support for new Juju 2.0 unit info delta structure.
+    - Confirm switching models if there are uncommitted changes to the model.
+    - Disable container create button until form is complete.
+    - Add lang and dir attributes for users with rtl browser settings.
 - 2.1.0:
     - Added Juju 2.0-beta support.
     - Updated all API calls to support Juju 1.x and 2.x-beta facades.
