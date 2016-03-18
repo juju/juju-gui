@@ -22,6 +22,7 @@ YUI.add('deployment-bar', function() {
 
   juju.components.DeploymentBar = React.createClass({
     propTypes: {
+      changeState: React.PropTypes.func.isRequired,
       exportEnvironmentFile: React.PropTypes.func.isRequired,
       renderDragOverNotification: React.PropTypes.func.isRequired,
       hasEntities: React.PropTypes.bool.isRequired,
@@ -153,7 +154,14 @@ YUI.add('deployment-bar', function() {
       @method _deployAction
     */
     _deployAction: function() {
-      this.props.changeActiveComponent('summary');
+      this.props.changeState({
+        sectionC: {
+          component: 'deploy',
+          metadata: {
+            activeComponent: 'summary'
+          }
+        }
+      });
     },
 
     render: function() {

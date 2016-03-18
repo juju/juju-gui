@@ -330,6 +330,11 @@ YUI.add('juju-app-state', function(Y) {
               urlParts.push(metadata.container);
             }
           }
+          if (component === 'deploy') {
+            if (metadata.activeComponent) {
+              urlParts.push(metadata.activeComponent);
+            }
+          }
         }
       }, this);
 
@@ -467,6 +472,11 @@ YUI.add('juju-app-state', function(Y) {
         } else if (part.indexOf('profile') === 0) {
           state.sectionC = this._addToSection({
             component: 'profile'
+          });
+        } else if (part.indexOf('deploy') === 0) {
+          state.sectionC = this._addToSection({
+            component: 'deploy',
+            metadata: this._parseDeployUrl(part)
           });
         } else if (part.length > 0) {
           // If it's not an inspector or machine and it's more than 0 characters
@@ -634,6 +644,24 @@ YUI.add('juju-app-state', function(Y) {
     },
 
     /**
+      Parse the deploy url into a state object.
+
+      @method _parseDeployUrl
+      @param {String} url Deploy url to be parsed.
+      @return {Object} State object to be added to the deploy state.
+    */
+    _parseDeployUrl: function(url) {
+      url = url.replace(/^deploy\/?/, '');
+      var parts = url.split('/'),
+          state = {};
+      // If the url is 'deploy' then there is no extra state.
+      if (parts[0] !== '') {
+        state.activeComponent = parts[0];
+      }
+      return state;
+    },
+
+    /**
       Parse the charm url into a state object.
 
       @method _parseCharmUrl
@@ -662,7 +690,7 @@ YUI.add('juju-app-state', function(Y) {
       @return {Array} The url split into it's sections.
     */
     _splitIntoComponents: function(url) {
-      var sections = ['services', 'machine', 'inspector', 'profile'],
+      var sections = ['services', 'machine', 'inspector', 'profile', 'deploy'],
           parts = [],
           indexes = [];
       sections.forEach(function(section) {

@@ -821,13 +821,12 @@ YUI.add('juju-gui', function(Y) {
       @method _renderDeployment
       @param {String} activeComponent The active component state to display.
     */
-    _renderDeployment: function(activeComponent) {
+    _renderDeployment: function(metadata) {
+      var activeComponent;
       // ecs calls that update the data for the component do not provide an
       // active compontent, in which case we want to use the existing state.
-      if (activeComponent !== undefined) {
-        // XXX huwshimi 16 March 2016 - this should use the proper state system
-        // instead of using this ad-hoc state flag.
-        this._deploymentState = activeComponent;
+      if (metadata !== undefined) {
+        activeComponent = metadata.activeComponent;
       }
       var env = this.env;
       var ecs = env.get('ecs');
@@ -843,8 +842,7 @@ YUI.add('juju-gui', function(Y) {
           currentChangeSet, services, units);
       ReactDOM.render(
         <window.juju.components.Deployment
-          activeComponent={this._deploymentState}
-          changeActiveComponent={this._changeDeployComponent.bind(this)}
+          activeComponent={activeComponent}
           changeState={this.changeState.bind(this)}
           machines={machines}
           services={servicesArray}
@@ -881,7 +879,7 @@ YUI.add('juju-gui', function(Y) {
       var currentChangeSet = ecs.getCurrentChangeSet();
       ReactDOM.render(
         <window.juju.components.DeploymentBar
-          changeActiveComponent={this._changeDeployComponent.bind(this)}
+          changeState={this.changeState.bind(this)}
           currentChangeSet={currentChangeSet}
           exportEnvironmentFile={
             utils.exportEnvironmentFile.bind(utils, db)}
@@ -900,18 +898,9 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Change the state of the deployment flow.
+      Set the committed state.
 
-      @method _changeDeployComponent
-    */
-    _changeDeployComponent: function(activeComponent) {
-      this._renderDeployment(activeComponent);
-    },
-
-    /**
-      Change the state of the deployment flow.
-
-      @method _changeDeployComponent
+      @method _setHasCommits
     */
     _setHasCommits: function(activeComponent) {
       this._hasCommits = true;
@@ -1126,6 +1115,8 @@ YUI.add('juju-gui', function(Y) {
       this._renderBreadcrumb({ showEnvSwitcher: true });
       ReactDOM.unmountComponentAtNode(
         document.getElementById('charmbrowser-container'));
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('deployment-container'));
     },
 
     /**
@@ -1192,6 +1183,7 @@ YUI.add('juju-gui', function(Y) {
       dispatchers.sectionC = {
         profile: this._renderUserProfile.bind(this),
         charmbrowser: this._renderCharmbrowser.bind(this),
+        deploy: this._renderDeployment.bind(this),
         empty: this._emptySectionC.bind(this)
       };
       dispatchers.app = {

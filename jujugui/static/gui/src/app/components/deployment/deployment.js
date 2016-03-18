@@ -23,7 +23,7 @@ YUI.add('deployment-component', function() {
   juju.components.Deployment = React.createClass({
     propTypes: {
       activeComponent: React.PropTypes.string,
-      changeActiveComponent: React.PropTypes.func.isRequired,
+      changeState: React.PropTypes.func.isRequired,
       hasCommits: React.PropTypes.bool,
       machines: React.PropTypes.array.isRequired,
       setHasCommits: React.PropTypes.func.isRequired,
@@ -116,7 +116,12 @@ YUI.add('deployment-component', function() {
     */
     _summaryClearAction: function() {
       this.props.ecsClear();
-      this.props.changeActiveComponent(null);
+      this.props.changeState({
+        sectionC: {
+          component: null,
+          metadata: {}
+        }
+      });
     },
 
     /**
@@ -131,7 +136,12 @@ YUI.add('deployment-component', function() {
       // The env is already bound to ecsCommit in app.js.
       this.props.ecsCommit();
       this.setState({hasCommits: true}, () => {
-        this.props.changeActiveComponent(null);
+        this.props.changeState({
+          sectionC: {
+            component: null,
+            metadata: {}
+          }
+        });
       });
     },
 
@@ -141,7 +151,12 @@ YUI.add('deployment-component', function() {
       @method _summaryCloseAction
     */
     _summaryCloseAction: function() {
-      this.props.changeActiveComponent(null);
+      this.props.changeState({
+        sectionC: {
+          component: null,
+          metadata: {}
+        }
+      });
     },
 
     /**
@@ -154,9 +169,12 @@ YUI.add('deployment-component', function() {
         sectionB: {
           component: 'machine',
           metadata: {}
+        },
+        sectionC: {
+          component: null,
+          metadata: {}
         }
       });
-      this.props.changeActiveComponent(null);
     },
 
     /**
