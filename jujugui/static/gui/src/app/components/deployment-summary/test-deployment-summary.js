@@ -53,8 +53,12 @@ describe('DeploymentSummary', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
         autoPlaceDefault={true}
-        getUnplacedUnitCount={getUnplacedUnitCount}
-        changeDescriptions={changeDescriptions} />, true);
+        autoPlaceUnits={sinon.stub()}
+        changeDescriptions={changeDescriptions}
+        changeState={sinon.stub()}
+        ecsClear={sinon.stub()}
+        ecsCommit={sinon.stub()}
+        getUnplacedUnitCount={getUnplacedUnitCount} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var buttons = [{
@@ -109,9 +113,13 @@ describe('DeploymentSummary', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        getUnplacedUnitCount={getUnplacedUnitCount}
+        autoPlaceDefault={true}
+        autoPlaceUnits={sinon.stub()}
         changeDescriptions={[]}
-        changeState={changeState} />);
+        changeState={changeState}
+        ecsClear={sinon.stub()}
+        ecsCommit={sinon.stub()}
+        getUnplacedUnitCount={getUnplacedUnitCount} />);
     output.props.children[0].props.children.props.children.props.children[1]
       .props.handleViewMachinesClick();
     assert.equal(changeState.callCount, 1);
@@ -133,9 +141,12 @@ describe('DeploymentSummary', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        ecsClear={ecsClear}
+        autoPlaceDefault={true}
+        autoPlaceUnits={sinon.stub()}
         changeDescriptions={[]}
         changeState={changeState}
+        ecsClear={ecsClear}
+        ecsCommit={sinon.stub()}
         getUnplacedUnitCount={getUnplacedUnitCount} />);
     output.props.children[1].props.children.props.children.props.children
           .props.buttons[0].action();
@@ -156,7 +167,7 @@ describe('DeploymentSummary', function() {
     var getUnplacedUnitCount = sinon.stub().returns(0);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-      autoPlaceUnits={autoPlaceUnits}
+        autoPlaceUnits={autoPlaceUnits}
         autoPlaceDefault={false}
         ecsClear={sinon.stub()}
         ecsCommit={ecsCommit}
@@ -184,7 +195,7 @@ describe('DeploymentSummary', function() {
     var getUnplacedUnitCount = sinon.stub().returns(0);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-      autoPlaceUnits={autoPlaceUnits}
+        autoPlaceUnits={autoPlaceUnits}
         ecsClear={sinon.stub()}
         ecsCommit={ecsCommit}
         autoPlaceDefault={true}

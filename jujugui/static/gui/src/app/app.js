@@ -426,9 +426,8 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       var ecs = new juju.EnvironmentChangeSet({db: this.db});
-      ecs.on('changeSetModified', this._renderDeployment.bind(this, undefined));
-      ecs.on('currentCommitFinished',
-        this._renderDeployment.bind(this, undefined));
+      ecs.on('changeSetModified', this._renderDeploymentBar.bind(this));
+      ecs.on('currentCommitFinished', this._renderDeploymentBar.bind(this));
       // Instantiate the Juju environment.
       this._generateSocketUrl(function(socketUrl, user, password) {
         // Update the breadcrumb to display the proper user and model name.
@@ -823,12 +822,6 @@ YUI.add('juju-gui', function(Y) {
       @param {String} activeComponent The active component state to display.
     */
     _renderDeployment: function(metadata) {
-      var activeComponent;
-      // ecs calls that update the data for the component do not provide an
-      // active compontent, in which case we want to use the existing state.
-      if (metadata !== undefined) {
-        activeComponent = metadata.activeComponent;
-      }
       var env = this.env;
       var ecs = env.get('ecs');
       var db = this.db;
@@ -841,7 +834,7 @@ YUI.add('juju-gui', function(Y) {
           currentChangeSet, services, units);
       ReactDOM.render(
         <window.juju.components.Deployment
-          activeComponent={activeComponent}
+          activeComponent={metadata.activeComponent}
           autoPlaceDefault={localStorage.getItem('disable-auto-place')}
           autoPlaceUnits={this._autoPlaceUnits.bind(this)}
           changeDescriptions={changeDescriptions}

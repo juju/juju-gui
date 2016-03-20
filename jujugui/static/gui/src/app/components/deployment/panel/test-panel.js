@@ -42,8 +42,7 @@ describe('DeploymentPanel', function() {
     }];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentPanel
-        buttons={buttons}
-        closeButtonAction={closeButtonAction}
+        changeState={sinon.stub()}
         steps={steps}
         visible={true}>
         <span>content</span>
@@ -87,7 +86,6 @@ describe('DeploymentPanel', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentPanel
-        buttons={[]}
         changeState={changeState}
         steps={[]}
         visible={true}>

@@ -23,11 +23,15 @@ YUI.add('deployment-bar', function() {
   juju.components.DeploymentBar = React.createClass({
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
+      currentChangeSet: React.PropTypes.object.isRequired,
       exportEnvironmentFile: React.PropTypes.func.isRequired,
-      renderDragOverNotification: React.PropTypes.func.isRequired,
       generateChangeDescription: React.PropTypes.func.isRequired,
       hasEntities: React.PropTypes.bool.isRequired,
+      hideDragOverNotification: React.PropTypes.func.isRequired,
       importBundleFile: React.PropTypes.func.isRequired,
+      machines: React.PropTypes.array.isRequired,
+      renderDragOverNotification: React.PropTypes.func.isRequired,
+      services: React.PropTypes.array.isRequired,
       showInstall: React.PropTypes.bool.isRequired
     },
 
@@ -230,7 +234,7 @@ YUI.add('deployment-bar', function() {
                 action={this._deployAction}
                 type="confirm"
                 disabled={changeCount === 0}
-                title={this._getDeployButtonLabel(this.props.hasCommits)} />
+                title={this._getDeployButtonLabel(this.state.hasCommits)} />
             </div>
             <input className="deployment-bar__file"
               type="file"

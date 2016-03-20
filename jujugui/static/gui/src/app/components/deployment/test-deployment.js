@@ -31,63 +31,39 @@ describe('Deployment', function() {
   });
 
   it('can display nothing', function() {
-    var currentChangeSet = sinon.stub();
-    var exportEnvironmentFile = sinon.stub();
-    var generateChangeDescription = sinon.stub();
-    var renderDragOverNotification = sinon.stub();
-    var importBundleFile = sinon.stub();
-    var hideDragOverNotification = sinon.stub();
-    var services = [];
     var output = jsTestUtils.shallowRender(
       <juju.components.Deployment
         activeComponent={null}
+        autoPlaceUnits={sinon.stub()}
+        changeDescriptions={[]}
+        changeState={sinon.stub()}
         ecsClear={sinon.stub()}
-        exportEnvironmentFile={exportEnvironmentFile}
-        renderDragOverNotification={renderDragOverNotification}
-        importBundleFile={importBundleFile}
-        hasEntities={false}
-        hideDragOverNotification={hideDragOverNotification}
-        generateChangeDescription={generateChangeDescription}
-        currentChangeSet={currentChangeSet}
-        services={services}
-        showInstall={true} />);
+        ecsCommit={sinon.stub()}
+        getUnplacedUnitCount={sinon.stub()} />);
     assert.isFalse(output.props.visible, false);
   });
 
   it('can display the deployment summary', function() {
-    var autoPlaceDefault = sinon.stub();
     var autoPlaceUnits = sinon.stub();
     var changeState = sinon.stub();
-    var currentChangeSet = sinon.stub();
-    var exportEnvironmentFile = sinon.stub();
     var getUnplacedUnitCount = sinon.stub();
     var ecsClear = sinon.stub();
     var ecsCommit = sinon.stub();
-    var changeDescriptions = {};
-    var renderDragOverNotification = sinon.stub();
-    var importBundleFile = sinon.stub();
-    var hideDragOverNotification = sinon.stub();
+    var changeDescriptions = [];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
+        autoPlaceDefault={true}
         activeComponent="summary"
+        autoPlaceUnits={autoPlaceUnits}
+        changeDescriptions={changeDescriptions}
+        changeState={changeState}
         ecsClear={ecsClear}
         ecsCommit={ecsCommit}
-        currentChangeSet={currentChangeSet}
-        renderDragOverNotification={renderDragOverNotification}
-        importBundleFile={importBundleFile}
-        hasEntities={false}
-        hideDragOverNotification={hideDragOverNotification}
-        changeDescriptions={changeDescriptions}
-        exportEnvironmentFile={exportEnvironmentFile}
-        autoPlaceDefault={autoPlaceDefault}
-        autoPlaceUnits={autoPlaceUnits}
-        changeState={changeState}
-        getUnplacedUnitCount={getUnplacedUnitCount}
-        showInstall={true} />, true);
+        getUnplacedUnitCount={getUnplacedUnitCount}  />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.DeploymentSummary
-        autoPlaceDefault={autoPlaceDefault}
+        autoPlaceDefault={true}
         autoPlaceUnits={autoPlaceUnits}
         changeDescriptions={changeDescriptions}
         changeState={changeState}
