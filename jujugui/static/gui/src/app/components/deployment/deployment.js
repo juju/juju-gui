@@ -23,7 +23,6 @@ YUI.add('deployment-component', function() {
   juju.components.Deployment = React.createClass({
     propTypes: {
       activeComponent: React.PropTypes.string,
-      autoPlaceDefault: React.PropTypes.bool,
       autoPlaceUnits: React.PropTypes.func.isRequired,
       changeDescriptions: React.PropTypes.array.isRequired,
       changeState: React.PropTypes.func.isRequired,
@@ -43,7 +42,6 @@ YUI.add('deployment-component', function() {
         case 'summary':
           return (
             <juju.components.DeploymentSummary
-              autoPlaceDefault={this.props.autoPlaceDefault}
               autoPlaceUnits={this.props.autoPlaceUnits}
               changeDescriptions={this.props.changeDescriptions}
               changeState={this.props.changeState}

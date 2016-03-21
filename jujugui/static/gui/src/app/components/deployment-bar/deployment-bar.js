@@ -45,52 +45,52 @@ YUI.add('deployment-bar', function() {
     */
     getInitialState: function() {
       return {
-        hasCommits: false,
+        hasDeployed: false,
         latestChangeDescription: null
       };
     },
 
     componentDidMount: function() {
-      this._updateHasCommits();
+      this._updateHasDeployed(this.props);
     },
 
     componentWillReceiveProps: function(nextProps) {
-      this._updateHasCommits();
+      this._updateHasDeployed(nextProps);
       this._updateLatestChange(nextProps.currentChangeSet);
     },
 
     /**
-      Check if we have any commits.
+      Check if the model has ever been deployed.
 
-      @param {Function} callback A function to call once the state has updated.
-      @method _updateHasCommits
+      @method _updateHasDeployed
+      @param {Object} props The component props.
     */
-    _updateHasCommits: function() {
-      var hasCommits = false;
-      if (!this.state.hasCommits) {
-        this.props.services.forEach(service => {
+    _updateHasDeployed: function(props) {
+      var hasDeployed = false;
+      if (!this.state.hasDeployed) {
+        props.services.forEach(service => {
           if (!service.get('pending')) {
-            hasCommits = true;
+            hasDeployed = true;
             return false;
           }
         });
-        if (!hasCommits) {
-          this.props.machines.forEach(machine => {
+        if (!hasDeployed) {
+          props.machines.forEach(machine => {
             if (machine.commitStatus === 'committed') {
-              hasCommits = true;
+              hasDeployed = true;
               return false;
             }
           });
         }
+        this.setState({hasDeployed: hasDeployed});
       }
-      this.setState({hasCommits: hasCommits});
     },
 
     /**
       Update the state with the latest change if it has changed.
 
       @method _updateLatestChange
-      @param {Object} currentChangeSet The collection of ecs changes.
+      @param {Object} changeSet The collection of ecs changes.
     */
     _updateLatestChange: function(changeSet) {
       var keys = Object.keys(changeSet);
@@ -109,11 +109,10 @@ YUI.add('deployment-bar', function() {
       Get the label for the deploy button.
 
       @method _getDeployButtonLabel
-      @param {Boolean} hasCommits Does the env have commits.
       @returns {String} the label for the deploy button
     */
-    _getDeployButtonLabel: function(hasCommits) {
-      return hasCommits ? 'Commit changes' : 'Deploy changes';
+    _getDeployButtonLabel: function() {
+      return this.state.hasDeployed ? 'Commit changes' : 'Deploy changes';
     },
 
     /**
@@ -234,7 +233,7 @@ YUI.add('deployment-bar', function() {
                 action={this._deployAction}
                 type="confirm"
                 disabled={changeCount === 0}
-                title={this._getDeployButtonLabel(this.state.hasCommits)} />
+                title={this._getDeployButtonLabel()} />
             </div>
             <input className="deployment-bar__file"
               type="file"

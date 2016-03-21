@@ -34,9 +34,11 @@ describe('HeaderSearch', function() {
   it('sets the active class if there is search metadata', function() {
     var getAppState = sinon.stub();
     var changeState = sinon.stub();
-    getAppState.returns({
+    getAppState.withArgs('current', 'sectionC', 'metadata').returns({
       search: 'apache2'
     });
+    getAppState.withArgs('current', 'sectionC', 'component').returns(
+      'charmbrowser');
     var className = 'header-search header-search--active';
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch

@@ -39,7 +39,6 @@ describe('Deployment', function() {
     var changeDescriptions = [];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
-        autoPlaceDefault={true}
         activeComponent="summary"
         autoPlaceUnits={autoPlaceUnits}
         changeDescriptions={changeDescriptions}
@@ -50,7 +49,6 @@ describe('Deployment', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.DeploymentSummary
-        autoPlaceDefault={true}
         autoPlaceUnits={autoPlaceUnits}
         changeDescriptions={changeDescriptions}
         changeState={changeState}

@@ -905,6 +905,29 @@ describe('UI State object', function() {
           }
         }
       },
+      '/inspector/apache2/machine/3/lxc-0/deploy/foo/?search=spinach': {
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            id: 'apache2',
+            flash: {}
+          }
+        },
+        sectionB: {
+          component: 'machine',
+          metadata: {
+            id: '3',
+            container: 'lxc-0'
+          }
+        },
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: 'spinach'
+          }
+        }
+      },
       '/machine/3/lxc-0/inspector/apache2': {
         sectionA: {
           component: 'inspector',

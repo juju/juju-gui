@@ -52,7 +52,6 @@ describe('DeploymentSummary', function() {
         'deployment-summary__list-header';
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        autoPlaceDefault={true}
         autoPlaceUnits={sinon.stub()}
         changeDescriptions={changeDescriptions}
         changeState={sinon.stub()}
@@ -71,57 +70,68 @@ describe('DeploymentSummary', function() {
     }];
     var expected = (
       <div className="deployment-panel__child">
-        <div className="deployment-panel__content">
-          <div className="twelve-col">
-            <div className="inner-wrapper">
-              <h2 className="deployment-panel__title">
-                Deployment summary
-              </h2>
-              <juju.components.DeploymentSummaryPlacement
-                handleViewMachinesClick={instance._handleViewMachinesClick}
-                handlePlacementChange={instance._handlePlacementChange}
-                autoPlace={true}
-                getUnplacedUnitCount={getUnplacedUnitCount} />
-              <ul className="deployment-summary__list">
-                <li className={className}>
-                  <span className="deployment-summary-change-item__change">
-                    Change
-                  </span>
-                  <span className="deployment-summary-change-item__time">
-                    Time
-                  </span>
-                </li>
-                {changeItems}
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div className="deployment-panel__footer">
-          <div className="twelve-col no-margin-bottom">
-            <div className="inner-wrapper">
-              <juju.components.ButtonRow
-                buttons={buttons} />
-            </div>
-          </div>
-        </div>
+        <juju.components.DeploymentPanelContent>
+          <h2 className="deployment-panel__title">
+            Deployment summary
+          </h2>
+          {undefined}
+          <ul className="deployment-summary__list">
+            <li className={className}>
+              <span className="deployment-summary-change-item__change">
+                Change
+              </span>
+              <span className="deployment-summary-change-item__time">
+                Time
+              </span>
+            </li>
+            {changeItems}
+          </ul>
+        </juju.components.DeploymentPanelContent>
+        <juju.components.DeploymentPanelFooter
+          buttons={buttons} />
       </div>);
     assert.deepEqual(output, expected);
   });
 
+  it('can display a placement message', function() {
+    var getUnplacedUnitCount = sinon.stub().returns(1);
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentSummary
+        autoPlaceUnits={sinon.stub()}
+        changeDescriptions={[]}
+        changeState={sinon.stub()}
+        ecsClear={sinon.stub()}
+        ecsCommit={sinon.stub()}
+        getUnplacedUnitCount={getUnplacedUnitCount} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="deployment-summary__placement">
+        <span>
+          You have {'1'} unplaced unit{''} which will
+          be automatically placed.
+        </span>
+        <span className="link" tabIndex="0" role="button"
+          onClick={instance._handleViewMachinesClick}>
+          View machines
+        </span>
+      </div>);
+    assert.deepEqual(output.props.children[0].props.children[1], expected);
+  });
+
   it('can navigate to the machine view', function() {
-    var getUnplacedUnitCount = sinon.stub().returns(0);
+    var getUnplacedUnitCount = sinon.stub().returns(1);
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        autoPlaceDefault={true}
         autoPlaceUnits={sinon.stub()}
         changeDescriptions={[]}
         changeState={changeState}
         ecsClear={sinon.stub()}
         ecsCommit={sinon.stub()}
         getUnplacedUnitCount={getUnplacedUnitCount} />);
-    output.props.children[0].props.children.props.children.props.children[1]
-      .props.handleViewMachinesClick();
+    output.props.children[0].props.children[1].props.children[1]
+      .props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionB: {
@@ -141,15 +151,13 @@ describe('DeploymentSummary', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        autoPlaceDefault={true}
         autoPlaceUnits={sinon.stub()}
         changeDescriptions={[]}
         changeState={changeState}
         ecsClear={ecsClear}
         ecsCommit={sinon.stub()}
         getUnplacedUnitCount={getUnplacedUnitCount} />);
-    output.props.children[1].props.children.props.children.props.children
-          .props.buttons[0].action();
+    output.props.children[1].props.buttons[0].action();
     assert.equal(ecsClear.callCount, 1);
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -168,16 +176,14 @@ describe('DeploymentSummary', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
         autoPlaceUnits={autoPlaceUnits}
-        autoPlaceDefault={false}
         ecsClear={sinon.stub()}
         ecsCommit={ecsCommit}
         changeDescriptions={[]}
         changeState={changeState}
         getUnplacedUnitCount={getUnplacedUnitCount} />, true);
     var output = renderer.getRenderOutput();
-    output.props.children[1].props.children.props.children.props.children
-          .props.buttons[1].action();
-    assert.equal(autoPlaceUnits.callCount, 0);
+    output.props.children[1].props.buttons[1].action();
+    assert.equal(autoPlaceUnits.callCount, 1);
     assert.equal(ecsCommit.callCount, 1);
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -186,25 +192,5 @@ describe('DeploymentSummary', function() {
         metadata: {}
       }
     });
-  });
-
-  it('can deploy and auto place units', function() {
-    var autoPlaceUnits = sinon.stub();
-    var changeState = sinon.stub();
-    var ecsCommit = sinon.stub();
-    var getUnplacedUnitCount = sinon.stub().returns(0);
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentSummary
-        autoPlaceUnits={autoPlaceUnits}
-        ecsClear={sinon.stub()}
-        ecsCommit={ecsCommit}
-        autoPlaceDefault={true}
-        changeDescriptions={[]}
-        changeState={changeState}
-        getUnplacedUnitCount={getUnplacedUnitCount} />, true);
-    var output = renderer.getRenderOutput();
-    output.props.children[1].props.children.props.children.props.children
-          .props.buttons[1].action();
-    assert.equal(autoPlaceUnits.callCount, 1);
   });
 });

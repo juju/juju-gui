@@ -855,7 +855,6 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.Deployment
           activeComponent={metadata.activeComponent}
-          autoPlaceDefault={localStorage.getItem('disable-auto-place')}
           autoPlaceUnits={this._autoPlaceUnits.bind(this)}
           changeDescriptions={changeDescriptions}
           changeState={this.changeState.bind(this)}
@@ -882,11 +881,10 @@ YUI.add('juju-gui', function(Y) {
       var units = db.units;
       var utils = views.utils;
       var changesUtils = this.changesUtils;
-      var currentChangeSet = ecs.getCurrentChangeSet();
       ReactDOM.render(
         <window.juju.components.DeploymentBar
           changeState={this.changeState.bind(this)}
-          currentChangeSet={currentChangeSet}
+          currentChangeSet={ecs.getCurrentChangeSet()}
           exportEnvironmentFile={
             utils.exportEnvironmentFile.bind(utils, db)}
           generateChangeDescription={

@@ -56,6 +56,7 @@ describe('App', function() {
     YUI(GlobalConfig).use(['juju-gui'], function(Y) {
       var elements = [
         'charmbrowser-container',
+        'deployment-bar-container',
         'deployment-container',
         'login-container',
         'notifications-container',

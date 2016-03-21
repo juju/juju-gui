@@ -23,26 +23,12 @@ YUI.add('deployment-summary', function() {
   juju.components.DeploymentSummary = React.createClass({
 
     propTypes: {
-      autoPlaceDefault: React.PropTypes.bool,
       autoPlaceUnits: React.PropTypes.func.isRequired,
       changeDescriptions: React.PropTypes.array.isRequired,
       changeState: React.PropTypes.func.isRequired,
       ecsClear: React.PropTypes.func.isRequired,
       ecsCommit: React.PropTypes.func.isRequired,
       getUnplacedUnitCount: React.PropTypes.func.isRequired
-    },
-
-    /**
-      Get the current state of the component.
-
-      @method getInitialState
-      @returns {String} The current state.
-    */
-    getInitialState: function() {
-      // Setting a default state object.
-      return {
-        autoPlace: this.props.autoPlaceDefault
-      };
     },
 
     /**
@@ -76,9 +62,7 @@ YUI.add('deployment-summary', function() {
       @method _handleDeploy
     */
     _handleDeploy: function() {
-      if (this.state.autoPlace) {
-        this.props.autoPlaceUnits();
-      }
+      this.props.autoPlaceUnits();
       // The env is already bound to ecsCommit in app.js.
       this.props.ecsCommit();
       this.setState({hasCommits: true}, () => {
@@ -105,18 +89,6 @@ YUI.add('deployment-summary', function() {
     },
 
     /**
-      Handle changes to the placement radio buttons.
-
-      @method _handlePlacementChange
-      @param {Object} e The click event.
-    */
-    _handlePlacementChange: function(e) {
-      this.setState({
-        autoPlace: e.currentTarget.getAttribute('data-placement') === 'placed'
-      });
-    },
-
-    /**
       Generate the list of change items.
 
       @method _generateChangeItems
@@ -135,6 +107,31 @@ YUI.add('deployment-summary', function() {
       return changes;
     },
 
+    /**
+      Generate a message if there are unplaced units.
+
+      @method _generatePlacement
+      @returns {Object} The placement markup.
+    */
+    _generatePlacement: function() {
+      var unplacedCount = this.props.getUnplacedUnitCount();
+      if (unplacedCount === 0) {
+        return;
+      }
+      var plural = unplacedCount === 1 ? '' : 's';
+      return (
+        <div className="deployment-summary__placement">
+          <span>
+            You have {unplacedCount.toString()} unplaced unit{plural} which will
+            be automatically placed.
+          </span>
+          <span className="link" tabIndex="0" role="button"
+            onClick={this._handleViewMachinesClick}>
+            View machines
+          </span>
+        </div>);
+    },
+
     render: function() {
       var listHeaderClassName = 'deployment-summary-change-item ' +
           'deployment-summary__list-header';
@@ -148,46 +145,32 @@ YUI.add('deployment-summary', function() {
       }];
       return (
         <div className="deployment-panel__child">
-          <div className="deployment-panel__content">
-            <div className="twelve-col">
-              <div className="inner-wrapper">
-                <h2 className="deployment-panel__title">
-                  Deployment summary
-                </h2>
-                <juju.components.DeploymentSummaryPlacement
-                  handleViewMachinesClick={this._handleViewMachinesClick}
-                  handlePlacementChange={this._handlePlacementChange}
-                  autoPlace={this.state.autoPlace}
-                  getUnplacedUnitCount={this.props.getUnplacedUnitCount} />
-                <ul className="deployment-summary__list">
-                  <li className={listHeaderClassName}>
-                    <span className="deployment-summary-change-item__change">
-                      Change
-                    </span>
-                    <span className="deployment-summary-change-item__time">
-                      Time
-                    </span>
-                  </li>
-                  {this._generateChangeItems()}
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div className="deployment-panel__footer">
-            <div className="twelve-col no-margin-bottom">
-              <div className="inner-wrapper">
-                <juju.components.ButtonRow
-                  buttons={buttons} />
-              </div>
-            </div>
-          </div>
+          <juju.components.DeploymentPanelContent>
+            <h2 className="deployment-panel__title">
+              Deployment summary
+            </h2>
+            {this._generatePlacement()}
+            <ul className="deployment-summary__list">
+              <li className={listHeaderClassName}>
+                <span className="deployment-summary-change-item__change">
+                  Change
+                </span>
+                <span className="deployment-summary-change-item__time">
+                  Time
+                </span>
+              </li>
+              {this._generateChangeItems()}
+            </ul>
+          </juju.components.DeploymentPanelContent>
+          <juju.components.DeploymentPanelFooter
+            buttons={buttons} />
         </div>
       );
     }
   });
 
 }, '0.1.0', { requires: [
-  'button-row',
-  'deployment-summary-change-item',
-  'deployment-summary-placement'
+  'deployment-panel-content',
+  'deployment-panel-footer',
+  'deployment-summary-change-item'
 ]});
