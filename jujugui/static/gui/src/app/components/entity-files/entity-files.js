@@ -23,6 +23,7 @@ YUI.add('entity-files', function() {
   juju.components.EntityFiles = React.createClass({
     /* Define and validate the properites available on this component. */
     propTypes: {
+      apiUrl: React.PropTypes.string.isRequired,
       entityModel: React.PropTypes.object.isRequired,
       pluralize: React.PropTypes.func.isRequired
     },
@@ -175,10 +176,9 @@ YUI.add('entity-files', function() {
     render: function() {
       var entityModel = this.props.entityModel;
       var files = entityModel.get('files');
-      var apiUrl = 'https://api.jujucharms.com/charmstore/v4';
       var name = (entityModel.get('entityType') === 'bundle')?
         entityModel.get('name'):entityModel.get('full_name');
-      var archiveUrl = `${apiUrl}/${name}/archive`;
+      var archiveUrl = `${this.props.apiUrl}/${name}/archive`;
       return (
         <div className="entity-files section" id="files">
           <h3 className="section__title">

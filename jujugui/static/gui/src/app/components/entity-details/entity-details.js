@@ -25,6 +25,7 @@ YUI.add('entity-details', function() {
 
     /* Define and validate the properites available on this component. */
     propTypes: {
+      apiUrl: React.PropTypes.string.isRequired,
       changeState: React.PropTypes.func.isRequired,
       deployService: React.PropTypes.func.isRequired,
       getEntity: React.PropTypes.func.isRequired,
@@ -77,6 +78,7 @@ YUI.add('entity-details', function() {
                   scrollPosition={this.props.scrollPosition} />
                 {this._generateDiagram(entityModel)}
                 <juju.components.EntityContent
+                  apiUrl={this.props.apiUrl}
                   changeState={this.props.changeState}
                   getFile={this.props.getFile}
                   renderMarkdown={this.props.renderMarkdown}

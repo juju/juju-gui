@@ -161,6 +161,7 @@ describe('Charmbrowser', function() {
 
   it('displays entity details when the app state calls for it', function() {
     var id = 'foobar';
+    var apiUrl = 'http://example.com';
     var appState = {
       sectionC: {
         metadata: {
@@ -183,6 +184,7 @@ describe('Charmbrowser', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
+        apiUrl={apiUrl}
         appState={appState}
         changeState={changeState}
         deployService={deployService}
@@ -205,6 +207,7 @@ describe('Charmbrowser', function() {
           <div className="charmbrowser"
             ref="charmbrowser">
             <juju.components.EntityDetails
+              apiUrl={apiUrl}
               importBundleYAML={importBundleYAML}
               getBundleYAML={getBundleYAML}
               changeState={changeState}

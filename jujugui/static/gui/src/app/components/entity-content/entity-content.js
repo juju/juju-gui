@@ -23,6 +23,7 @@ YUI.add('entity-content', function() {
   juju.components.EntityContent = React.createClass({
     /* Define and validate the properites available on this component. */
     propTypes: {
+      apiUrl: React.PropTypes.string.isRequired,
       entityModel: React.PropTypes.object.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
       getFile: React.PropTypes.func.isRequired,
@@ -231,6 +232,7 @@ YUI.add('entity-content', function() {
               {this._showEntityRelations()}
               <div className="four-col">
                 <juju.components.EntityFiles
+                  apiUrl={this.props.apiUrl}
                   entityModel={entityModel}
                   pluralize={this.props.pluralize} />
               </div>
