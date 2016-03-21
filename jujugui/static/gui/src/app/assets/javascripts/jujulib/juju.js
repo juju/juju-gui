@@ -373,10 +373,6 @@ var module = module;
           location: extraInfo['bzr-url']
         }
       };
-      if (meta['charm-related']) {
-        this._lowerCaseKeys(meta['charm-related'], meta['charm-related']);
-        processed.relatedCharms = meta['charm-related'];
-      }
       if (meta['supported-series']) {
         processed.series = meta['supported-series']['SupportedSeries'];
       }
@@ -472,7 +468,7 @@ var module = module;
     getEntity: function(entityId, callback) {
       var filters = 'include=bundle-metadata&include=charm-metadata' +
                     '&include=charm-config&include=manifest&include=stats' +
-                    '&include=charm-related&include=extra-info&include=tags';
+                    '&include=extra-info&include=tags';
       return _makeRequest(
           this.bakery,
           this._generatePath(entityId, filters, '/meta/any'),

@@ -249,31 +249,6 @@ YUI.add('juju-charm-models', function(Y) {
     },
 
     /**
-      Setter for the relatedCharms attribute. Processes the related charms
-      value. Chooses the newest version of a related charm and then picks the
-      top three charms per interface.
-
-      @method _processRelatedCharms
-      @param {Object} relatedCharms The list of related charm id's from apiv4
-      @return {Object} The processed related charms.
-    */
-    _processRelatedCharms: function(relatedCharms) {
-      var provides, requires;
-      // Not all charms have related charms on both the provides and requires.
-      if (relatedCharms.provides) {
-        provides = this._dedupeRelatedCharms(relatedCharms.provides);
-      }
-      if (relatedCharms.requires) {
-        requires = this._dedupeRelatedCharms(relatedCharms.requires);
-      }
-      return {
-        all: relatedCharms,
-        provides: provides,
-        requires: requires
-      };
-    },
-
-    /**
       Removes all of the duplicate versions of the same charm from the related
       charms lists keeping the highest revision.
 
@@ -651,22 +626,18 @@ YUI.add('juju-charm-models', function(Y) {
       recent_download_count: {
         value: 0
       },
+
       /**
-        The related charms object is three parts for use in our situations.
+        The relations object is two parts for use in our situations.
         The keys are
-        - overall: the top scored related charms regardless of interface or
-                   provide/requires
         - provides: a nested object of the related charms for each provide
                     interface
         - requires: a nested object of the related charms for each require
                     interface
-        @attribute relatedCharms
+        @attribute relations
         @default undefined
         @type {Object}
        */
-      relatedCharms: {
-        setter: '_processRelatedCharms'
-      },
       relations: {},
 
       /**

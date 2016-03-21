@@ -129,14 +129,6 @@ describe('jujulib charmstore', function() {
             'bzr-revisions': 5,
             'bzr-url': 'cs:precise/mongodb'
           },
-          'charm-related': {
-            Requires: {
-              'ceph-client': { id: 'cs:foo' }
-            },
-            Provides: {
-              haproxy: { id: 'cs:bar' }
-            }
-          },
           'charm-config': {
             Options: {
               'foo-optn': {
@@ -188,14 +180,6 @@ describe('jujulib charmstore', function() {
           },
           requires: {}
         },
-        relatedCharms: {
-          requires: {
-            'ceph-client': { id: 'cs:foo' }
-          },
-          provides: {
-            haproxy: { id: 'cs:bar' }
-          }
-        },
         options: {
           'foo-optn': {
             'default': 'foo',
@@ -221,10 +205,6 @@ describe('jujulib charmstore', function() {
             Provides: {}
           },
           'extra-info': {},
-          'charm-related': {
-            Requires: {'ceph-client': {id: 'cs:foo'}},
-            Provides: {haproxy: {id: 'cs:bar'}}
-          },
           'charm-config': {Options: {}},
           stats: {ArchiveDownloadCount: 42}
         }
