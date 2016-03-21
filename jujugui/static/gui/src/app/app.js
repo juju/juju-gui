@@ -832,6 +832,22 @@ YUI.add('juju-gui', function(Y) {
       var currentChangeSet = ecs.getCurrentChangeSet();
       var changeDescriptions = changesUtils.generateAllChangeDescriptions(
           currentChangeSet, services, units);
+      if (!window.flags || !window.flags.sax) {
+        // Display the old deploy summary if we're not using the feature flag
+        // for the new deployment flow.
+        ReactDOM.render(
+          <window.juju.components.DeploymentSummaryClassic
+            autoPlaceDefault={!localStorage.getItem('disable-auto-place')}
+            autoPlaceUnits={this._autoPlaceUnits.bind(this)}
+            changeDescriptions={changeDescriptions}
+            changeState={this.changeState.bind(this)}
+            ecsClear={ecs.clear.bind(ecs)}
+            ecsCommit={ecs.commit.bind(ecs, env)}
+            getUnplacedUnitCount={
+              utils.getUnplacedUnitCount.bind(this, db.units)} />,
+          document.getElementById('deployment-container'));
+        return;
+      }
       ReactDOM.render(
         <window.juju.components.Deployment
           activeComponent={metadata.activeComponent}
@@ -2333,6 +2349,7 @@ YUI.add('juju-gui', function(Y) {
     'charmbrowser-component',
     'deployment-bar',
     'deployment-component',
+    'deployment-summary-classic',
     'env-size-display',
     'header-breadcrumb',
     'expanding-progress',

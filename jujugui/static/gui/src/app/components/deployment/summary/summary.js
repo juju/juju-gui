@@ -18,9 +18,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('deployment-summary-classic', function() {
+YUI.add('deployment-summary', function() {
 
-  juju.components.DeploymentSummaryClassic = React.createClass({
+  juju.components.DeploymentSummary = React.createClass({
+
+    propTypes: {
+      autoPlaceDefault: React.PropTypes.bool,
+      autoPlaceUnits: React.PropTypes.func.isRequired,
+      changeDescriptions: React.PropTypes.array.isRequired,
+      changeState: React.PropTypes.func.isRequired,
+      ecsClear: React.PropTypes.func.isRequired,
+      ecsCommit: React.PropTypes.func.isRequired,
+      getUnplacedUnitCount: React.PropTypes.func.isRequired
+    },
 
     /**
       Get the current state of the component.
@@ -71,7 +81,9 @@ YUI.add('deployment-summary-classic', function() {
       }
       // The env is already bound to ecsCommit in app.js.
       this.props.ecsCommit();
-      this._close();
+      this.setState({hasCommits: true}, () => {
+        this._close();
+      });
     },
 
     /**
@@ -115,7 +127,7 @@ YUI.add('deployment-summary-classic', function() {
       var changes = [];
       changeList.forEach(function(change, i) {
         changes.push(
-          <juju.components.DeploymentSummaryChangeItemClassic
+          <juju.components.DeploymentSummaryChangeItem
             key={i}
             change={change} />
           );
@@ -124,64 +136,58 @@ YUI.add('deployment-summary-classic', function() {
     },
 
     render: function() {
-      var listHeaderClassName = 'deployment-summary-change-item-classic ' +
-          'deployment-summary-classic__list-header';
+      var listHeaderClassName = 'deployment-summary-change-item ' +
+          'deployment-summary__list-header';
+      var buttons = [{
+        title: 'Clear changes',
+        action: this._handleClear
+      }, {
+        title: 'Deploy',
+        action: this._handleDeploy,
+        type: 'confirm'
+      }];
       return (
-        <juju.components.Panel
-          instanceName="white-box"
-          visible={true}>
-          <div className="deployment-summary-classic">
-            <div className="deployment-summary-classic__header">
-              <span className="deployment-summary-classic__close"
-                tabIndex="0" role="button"
-                onClick={this._close}>
-                <juju.components.SvgIcon name="close_16"
-                  size="16" />
-              </span>
-              <h2 className="deployment-summary-classic__title">
-                Deployment summary
-              </h2>
-              <juju.components.DeploymentSummaryPlacementClassic
-                handleViewMachinesClick={this._handleViewMachinesClick}
-                handlePlacementChange={this._handlePlacementChange}
-                autoPlace={this.props.autoPlaceDefault}
-                getUnplacedUnitCount={this.props.getUnplacedUnitCount} />
-            </div>
-            <div className="deployment-summary-classic__content">
-              <ul className="deployment-summary-classic__list">
-                <li className={listHeaderClassName}>
-                  <span className={
-                    'deployment-summary-change-item-classic__change'}>
-                    Change
-                  </span>
-                  <span className={
-                    'deployment-summary-change-item-classic__time'}>
-                    Time
-                  </span>
-                </li>
-                {this._generateChangeItems()}
-              </ul>
-            </div>
-            <div className="deployment-summary-classic__footer">
-              <juju.components.GenericButton
-                type="clear-changes"
-                action={this._handleClear}
-                title="Clear changes" />
-              <juju.components.GenericButton
-                action={this._handleDeploy}
-                type="confirm"
-                title="Deploy" />
+        <div className="deployment-panel__child">
+          <div className="deployment-panel__content">
+            <div className="twelve-col">
+              <div className="inner-wrapper">
+                <h2 className="deployment-panel__title">
+                  Deployment summary
+                </h2>
+                <juju.components.DeploymentSummaryPlacement
+                  handleViewMachinesClick={this._handleViewMachinesClick}
+                  handlePlacementChange={this._handlePlacementChange}
+                  autoPlace={this.state.autoPlace}
+                  getUnplacedUnitCount={this.props.getUnplacedUnitCount} />
+                <ul className="deployment-summary__list">
+                  <li className={listHeaderClassName}>
+                    <span className="deployment-summary-change-item__change">
+                      Change
+                    </span>
+                    <span className="deployment-summary-change-item__time">
+                      Time
+                    </span>
+                  </li>
+                  {this._generateChangeItems()}
+                </ul>
+              </div>
             </div>
           </div>
-        </juju.components.Panel>
+          <div className="deployment-panel__footer">
+            <div className="twelve-col no-margin-bottom">
+              <div className="inner-wrapper">
+                <juju.components.ButtonRow
+                  buttons={buttons} />
+              </div>
+            </div>
+          </div>
+        </div>
       );
     }
   });
 
 }, '0.1.0', { requires: [
-  'deployment-summary-change-item-classic',
-  'deployment-summary-placement-classic',
-  'generic-button',
-  'panel-component',
-  'svg-icon'
+  'button-row',
+  'deployment-summary-change-item',
+  'deployment-summary-placement'
 ]});

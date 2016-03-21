@@ -23,25 +23,25 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('DeploymentSummaryPlacementClassic', function() {
+describe('DeploymentSummaryPlacement', function() {
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-summary-placement-classic', function() { done(); });
+    YUI().use('deployment-summary-placement', function() { done(); });
   });
 
   it('can render the placement control', function() {
     var getUnplacedUnitCount = sinon.stub().returns(1);
     var handlePlacementChange = sinon.stub();
     var handleViewMachinesClick = sinon.stub();
-    var output = juju.components.DeploymentSummaryPlacementClassic({
+    var output = juju.components.DeploymentSummaryPlacement({
       autoPlace: false,
       handlePlacementChange: handlePlacementChange,
       handleViewMachinesClick: handleViewMachinesClick,
       getUnplacedUnitCount: getUnplacedUnitCount
     });
     assert.deepEqual(output,
-      <div className="deployment-summary-classic__placement">
+      <div className="deployment-summary__placement">
         You have {'1'} unplaced unit{''}, do you want to:
         {' '}
         <form>
@@ -50,10 +50,10 @@ describe('DeploymentSummaryPlacementClassic', function() {
               onChange={handlePlacementChange}
               data-placement="unplaced"
               id="leave-unplaced" name="placement"
-              className="deployment-summary-classic__placement-radio" />
+              className="deployment-summary__placement-radio" />
           {' '}
           <label htmlFor="leave-unplaced"
-              className="deployment-summary-classic__placement-label">
+              className="deployment-summary__placement-label">
             Leave unplaced
           </label>
           <input type="radio"
@@ -61,10 +61,10 @@ describe('DeploymentSummaryPlacementClassic', function() {
               onChange={handlePlacementChange}
               data-placement="placed"
               id="automatically-place" name="placement"
-              className="deployment-summary-classic__placement-radio" />
+              className="deployment-summary__placement-radio" />
           {' '}
           <label htmlFor="automatically-place"
-            className="deployment-summary-classic__placement-label">
+            className="deployment-summary__placement-label">
             Automatically place
           </label>
         </form>
@@ -80,7 +80,7 @@ describe('DeploymentSummaryPlacementClassic', function() {
     var getUnplacedUnitCount = sinon.stub().returns(0);
     var handlePlacementChange = sinon.stub();
     var handleViewMachinesClick = sinon.stub();
-    var output = juju.components.DeploymentSummaryPlacementClassic({
+    var output = juju.components.DeploymentSummaryPlacement({
       autoPlace: false,
       handlePlacementChange: handlePlacementChange,
       handleViewMachinesClick: handleViewMachinesClick,

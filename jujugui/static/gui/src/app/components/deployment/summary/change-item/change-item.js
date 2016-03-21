@@ -18,9 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('deployment-summary-change-item-classic', function() {
+YUI.add('deployment-summary-change-item', function() {
 
-  juju.components.DeploymentSummaryChangeItemClassic = React.createClass({
+  juju.components.DeploymentSummaryChangeItem = React.createClass({
 
     /**
       Generate the icon node.
@@ -31,7 +31,7 @@ YUI.add('deployment-summary-change-item-classic', function() {
     */
     _generateIcon: function(icon) {
       var node;
-      var className = 'deployment-summary-change-item-classic__icon';
+      var className = 'deployment-summary-change-item__icon';
       if (icon.indexOf('.svg') > -1) {
         node = <img src={icon} alt="" className={className} />;
       } else {
@@ -46,12 +46,12 @@ YUI.add('deployment-summary-change-item-classic', function() {
     render: function() {
       var change = this.props.change;
       return (
-        <li className="deployment-summary-change-item-classic">
-          <span className="deployment-summary-change-item-classic__change">
+        <li className="deployment-summary-change-item">
+          <span className="deployment-summary-change-item__change">
             {this._generateIcon(change.icon)}
             {change.description}
           </span>
-          <span className="deployment-summary-change-item-classic__time">
+          <span className="deployment-summary-change-item__time">
             {change.time}
           </span>
         </li>
