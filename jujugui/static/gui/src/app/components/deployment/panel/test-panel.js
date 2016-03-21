@@ -31,8 +31,6 @@ describe('DeploymentPanel', function() {
   });
 
   it('can render', function() {
-    var buttons = ['buttons'];
-    var closeButtonAction = sinon.stub();
     var steps = [{
       title: 'Start',
       active: true,
