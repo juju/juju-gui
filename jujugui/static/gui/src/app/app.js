@@ -50,6 +50,7 @@ YUI.add('juju-gui', function(Y) {
     Y.juju.NSRouter,
     widgets.AutodeployExtension,
     Y.juju.Cookies,
+    Y.juju.AppRenderer,
     Y.juju.GhostDeployer,
     Y.Event.EventTracker
   ];
@@ -1063,58 +1064,6 @@ YUI.add('juju-gui', function(Y) {
       this._renderBreadcrumb({ showEnvSwitcher: true });
       ReactDOM.unmountComponentAtNode(
         document.getElementById('charmbrowser-container'));
-    },
-
-    /**
-      Renders the breadcrumb component to the DOM.
-
-      @method _renderBreadcrumb
-      @param {Object} options
-        showEnvSwitcher: false
-    */
-    _renderBreadcrumb: function({ showEnvSwitcher=true } = {}) {
-      // If this.env is undefined then do not render the switcher because there
-      // is no env to connect to. It will be undefined when the breadcrumb
-      // is rendered in the callback for generateSocketUrl because an env
-      // has not yet been created.
-      var env = this.env;
-      if(!env ||
-         env.findFacadeVersion('ModelManager') === null &&
-         env.findFacadeVersion('EnvironmentManager') === null) {
-        // We do not want to show the model switcher if it isn't supported as
-        // it throws an error in the browser console and confuses the user
-        // as it's visible but not functional.
-        showEnvSwitcher = false;
-      }
-      // If we're in sandbox we don't want to display the switcher.
-      if (this.get('sandbox')) {
-        showEnvSwitcher = false;
-      }
-      var uncommittedChanges = false;
-      if (env) {
-        var currentChangeSet = env.get('ecs').getCurrentChangeSet();
-        uncommittedChanges = Object.keys(currentChangeSet).length > 0;
-      }
-      var auth = this._getAuth();
-      var envName = this.get('jujuEnvUUID') || this.db.environment.get('name');
-      var state = this.state;
-      ReactDOM.render(
-        <components.HeaderBreadcrumb
-          env={this.env}
-          envName={envName}
-          dbEnvironmentSet={this.db.environment.set.bind(this.db.environment)}
-          jem={this.jem}
-          envList={this.get('environmentList')}
-          changeState={this.changeState.bind(this)}
-          getAppState={state.getState.bind(state)}
-          showConnectingMask={this.showConnectingMask.bind(this)}
-          authDetails={auth}
-          showEnvSwitcher={showEnvSwitcher}
-          switchModel={views.utils.switchModel.bind(
-            this, this.createSocketURL.bind(this),
-            this.switchEnv.bind(this))}
-          uncommittedChanges={uncommittedChanges} />,
-        document.getElementById('header-breadcrumb'));
     },
 
     /**
@@ -2384,6 +2333,7 @@ YUI.add('juju-gui', function(Y) {
     'node',
     'model',
     'app-cookies-extension',
+    'app-renderer-extension',
     'cookie',
     'querystring',
     'event-key',
