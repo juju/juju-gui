@@ -23,9 +23,9 @@ YUI.add('deployment-panel', function() {
   juju.components.DeploymentPanel = React.createClass({
 
     propTypes: {
+      activeComponent: React.PropTypes.string.isRequired,
       changeState: React.PropTypes.func.isRequired,
-      steps: React.PropTypes.array.isRequired,
-      visible: React.PropTypes.bool.isRequired
+      steps: React.PropTypes.array.isRequired
     },
 
     /**
@@ -36,10 +36,12 @@ YUI.add('deployment-panel', function() {
     */
     _generateSteps: function() {
       var components = [];
+      var activeComponent = this.props.activeComponent;
       this.props.steps.forEach(function(step) {
         var className = classNames(
           'deployment-panel__header-step', {
-            'deployment-panel__header-step--active': step.active
+            'deployment-panel__header-step--active':
+              step.component === activeComponent
           }
         );
         components.push(
@@ -72,7 +74,7 @@ YUI.add('deployment-panel', function() {
       return (
         <juju.components.Panel
           instanceName="deployment-panel"
-          visible={this.props.visible}>
+          visible={true}>
           <div className="deployment-panel__scroll">
             <div className="deployment-panel__header">
               <juju.components.SvgIcon

@@ -33,16 +33,16 @@ describe('DeploymentPanel', function() {
   it('can render', function() {
     var steps = [{
       title: 'Start',
-      active: true,
+      component: 'start',
     }, {
       title: 'Deploy',
-      active: false,
+      active: 'deploy',
     }];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentPanel
+        activeComponent="start"
         changeState={sinon.stub()}
-        steps={steps}
-        visible={true}>
+        steps={steps}>
         <span>content</span>
       </juju.components.DeploymentPanel>, true);
     var instance = renderer.getMountedInstance();

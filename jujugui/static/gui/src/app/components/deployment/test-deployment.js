@@ -30,19 +30,6 @@ describe('Deployment', function() {
     YUI().use('deployment-component', function() { done(); });
   });
 
-  it('can display nothing', function() {
-    var output = jsTestUtils.shallowRender(
-      <juju.components.Deployment
-        activeComponent={null}
-        autoPlaceUnits={sinon.stub()}
-        changeDescriptions={[]}
-        changeState={sinon.stub()}
-        ecsClear={sinon.stub()}
-        ecsCommit={sinon.stub()}
-        getUnplacedUnitCount={sinon.stub()} />);
-    assert.isFalse(output.props.visible, false);
-  });
-
   it('can display the deployment summary', function() {
     var autoPlaceUnits = sinon.stub();
     var changeState = sinon.stub();

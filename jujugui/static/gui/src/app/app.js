@@ -832,6 +832,10 @@ YUI.add('juju-gui', function(Y) {
       var currentChangeSet = ecs.getCurrentChangeSet();
       var changeDescriptions = changesUtils.generateAllChangeDescriptions(
           currentChangeSet, services, units);
+      if (!metadata) {
+        // A deployment step was not provided in the URL.
+        return;
+      }
       if (!window.flags || !window.flags.sax) {
         // Display the old deploy summary if we're not using the feature flag
         // for the new deployment flow.

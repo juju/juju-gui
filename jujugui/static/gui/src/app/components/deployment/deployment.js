@@ -58,13 +58,13 @@ YUI.add('deployment-component', function() {
       var activeChild = this._generateActivePanel();
       var steps = [{
         title: 'Deploy',
-        active: activeComponent === 'summary'
+        component: 'summary'
       }];
       return (
         <juju.components.DeploymentPanel
+          activeComponent={activeComponent}
           changeState={this.props.changeState}
-          steps={steps}
-          visible={!!activeComponent}>
+          steps={steps}>
           {activeChild}
         </juju.components.DeploymentPanel>
       );
