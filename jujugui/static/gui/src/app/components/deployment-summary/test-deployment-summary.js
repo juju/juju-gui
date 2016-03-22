@@ -23,20 +23,15 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('DeploymentSummary', function() {
+describe('DeploymentSummaryClassic', function() {
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-summary', function() { done(); });
+    YUI().use('deployment-summary-classic', function() { done(); });
   });
 
   it('can display a list of changes', function() {
     var getUnplacedUnitCount = sinon.stub().returns(0);
-    var summaryClearAction = sinon.stub();
-    var handleViewMachinesClick = sinon.stub();
-    var handlePlacementChange = sinon.stub();
-    var closeButtonAction = sinon.stub();
-    var deployButtonAction = sinon.stub();
     var changeDescriptions = [{
       icon: 'my-icon.svg',
       description: 'Django was added',
@@ -47,65 +42,63 @@ describe('DeploymentSummary', function() {
       time: '10:13 am'
     }];
     var changeItems = [
-      <juju.components.DeploymentSummaryChangeItem
+      <juju.components.DeploymentSummaryChangeItemClassic
         key={0}
         change={changeDescriptions[0]} />,
-      <juju.components.DeploymentSummaryChangeItem
+      <juju.components.DeploymentSummaryChangeItemClassic
         key={1}
         change={changeDescriptions[1]} />];
-    var className = 'deployment-summary-change-item ' +
-        'deployment-summary__list-header';
-    var output = jsTestUtils.shallowRender(
-      <juju.components.DeploymentSummary
-        summaryClearAction={summaryClearAction}
+    var className = 'deployment-summary-change-item-classic ' +
+        'deployment-summary-classic__list-header';
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentSummaryClassic
         getUnplacedUnitCount={getUnplacedUnitCount}
         changeDescriptions={changeDescriptions}
-        deployButtonAction={deployButtonAction}
-        handleViewMachinesClick={handleViewMachinesClick}
-        handlePlacementChange={handlePlacementChange}
-        autoPlace={false}
-        closeButtonAction={closeButtonAction} />);
+        autoPlaceDefault={false} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
     assert.deepEqual(output,
       <juju.components.Panel
         instanceName="white-box"
         visible={true}>
-        <div className="deployment-summary">
-          <div className="deployment-summary__header">
-            <span className="deployment-summary__close"
+        <div className="deployment-summary-classic">
+          <div className="deployment-summary-classic__header">
+            <span className="deployment-summary-classic__close"
               tabIndex="0" role="button"
-              onClick={closeButtonAction}>
+              onClick={instance._close}>
               <juju.components.SvgIcon name="close_16"
                 size="16" />
             </span>
-            <h2 className="deployment-summary__title">
+            <h2 className="deployment-summary-classic__title">
               Deployment summary
             </h2>
-            <juju.components.DeploymentSummaryPlacement
-              handleViewMachinesClick={handleViewMachinesClick}
-              handlePlacementChange={handlePlacementChange}
+            <juju.components.DeploymentSummaryPlacementClassic
+              handleViewMachinesClick={instance._handleViewMachinesClick}
+              handlePlacementChange={instance._handlePlacementChange}
               autoPlace={false}
               getUnplacedUnitCount={getUnplacedUnitCount} />
           </div>
-          <div className="deployment-summary__content">
-            <ul className="deployment-summary__list">
+          <div className="deployment-summary-classic__content">
+            <ul className="deployment-summary-classic__list">
               <li className={className}>
-                <span className="deployment-summary-change-item__change">
+                <span className={
+                  'deployment-summary-change-item-classic__change'}>
                   Change
                 </span>
-                <span className="deployment-summary-change-item__time">
+                <span className="deployment-summary-change-item-classic__time">
                   Time
                 </span>
               </li>
               {changeItems}
             </ul>
           </div>
-          <div className="deployment-summary__footer">
+          <div className="deployment-summary-classic__footer">
             <juju.components.GenericButton
               type="clear-changes"
-              action={summaryClearAction}
+              action={instance._handleClear}
               title="Clear changes" />
             <juju.components.GenericButton
-              action={deployButtonAction}
+              action={instance._handleDeploy}
               type="confirm"
               title="Deploy" />
           </div>

@@ -22,211 +22,49 @@ YUI.add('deployment-component', function() {
 
   juju.components.Deployment = React.createClass({
     propTypes: {
-      exportEnvironmentFile: React.PropTypes.func.isRequired,
+      activeComponent: React.PropTypes.string,
+      autoPlaceUnits: React.PropTypes.func.isRequired,
+      changeDescriptions: React.PropTypes.array.isRequired,
+      changeState: React.PropTypes.func.isRequired,
       ecsClear: React.PropTypes.func.isRequired,
-      hasEntities: React.PropTypes.bool.isRequired,
-      showInstall: React.PropTypes.bool.isRequired
+      ecsCommit: React.PropTypes.func.isRequired,
+      getUnplacedUnitCount: React.PropTypes.func.isRequired,
     },
 
     /**
-      Get the current state of the component.
+      Generate the content for the active panel.
 
-      @method getInitialState
-      @returns {String} The current state.
+      @method _generateActivePanel
+      @return {Object} The markup for the panel content.
     */
-    getInitialState: function() {
-      // Setting a default state object.
-      var state = {
-        hasCommits: false,
-        autoPlace: !localStorage.getItem('disable-auto-place')
-      };
-      return this.generateState(this.props, state);
-    },
-
-    /**
-      Generates the state for the Deployment view based on the state.
-
-      @method generateState
-      @param {Object} nextProps The props which were sent to the component.
-      @param {Object} state The provided state properties.
-      @return {Object} A generated state object which can be passed to setState.
-    */
-    generateState: function(nextProps, state) {
-      if (!state) {
-        state = {};
+    _generateActivePanel: function() {
+      switch (this.props.activeComponent) {
+        case 'summary':
+          return (
+            <juju.components.DeploymentSummary
+              autoPlaceUnits={this.props.autoPlaceUnits}
+              changeDescriptions={this.props.changeDescriptions}
+              changeState={this.props.changeState}
+              ecsClear={this.props.ecsClear}
+              ecsCommit={this.props.ecsCommit}
+              getUnplacedUnitCount={this.props.getUnplacedUnitCount} />);
       }
-      state.activeComponent = nextProps.activeComponent || 'deployment-bar';
-      var hasCommits = this.state ? this.state.hasCommits : false;
-      var currentChangeSet = nextProps.currentChangeSet ||
-          this.props.currentChangeSet;
-      // We want the value of state.autoPlace if it has been defined, even if
-      // the value is false, so check that it is not undefined.
-      var autoPlace = state.autoPlace !== undefined ?
-          state.autoPlace : this.state.autoPlace;
-      switch (state.activeComponent) {
-        case 'deployment-bar':
-          var generateChangeDescription = nextProps.generateChangeDescription ||
-              this.props.generateChangeDescription;
-          state.activeChild = {
-            component: <juju.components.DeploymentBar
-              hasCommits={hasCommits}
-              deployButtonAction={this._barDeployAction}
-              exportEnvironmentFile={this.props.exportEnvironmentFile}
-              renderDragOverNotification={this.props.renderDragOverNotification}
-              importBundleFile={this.props.importBundleFile}
-              hasEntities={this.props.hasEntities}
-              hideDragOverNotification={this.props.hideDragOverNotification}
-              generateChangeDescription={generateChangeDescription}
-              currentChangeSet={currentChangeSet}
-              showInstall={this.props.showInstall} />
-          };
-          break;
-        case 'deployment-summary':
-          var changeDescriptions = nextProps.changeDescriptions ||
-              this.props.changeDescriptions;
-          state.activeChild = {
-            component: <juju.components.DeploymentSummary
-              summaryClearAction={this._summaryClearAction}
-              deployButtonAction={this._summaryDeployAction}
-              closeButtonAction={this._summaryCloseAction}
-              changeDescriptions={changeDescriptions}
-              handleViewMachinesClick={this.handleViewMachinesClick}
-              handlePlacementChange={this.handlePlacementChange}
-              autoPlace={autoPlace}
-              getUnplacedUnitCount={this.props.getUnplacedUnitCount} />
-          };
-          break;
-      }
-      return state;
-    },
-
-    componentDidMount: function() {
-      this._updateHasCommits();
-    },
-
-    componentWillReceiveProps: function(nextProps) {
-      this._updateHasCommits(() => {
-        this.setState(this.generateState(nextProps));
-      });
-    },
-
-    /**
-      Check if we have an commits.
-
-      @param {Function} callback A function to call once the state has updated.
-      @method _updateHasCommits
-    */
-    _updateHasCommits: function(callback) {
-      var hasCommits = false;
-      if (!this.state.hasCommits) {
-        var services = this.props.services;
-        services.forEach(function(service) {
-          if (!service.get('pending')) {
-            hasCommits = true;
-            return false;
-          }
-        }, this);
-      }
-      if (hasCommits) {
-        // If the callback exists then we always want to call it, but if we're
-        // setting the state we want to call it after the state has updated.
-        this.setState({hasCommits: true}, callback);
-      } else {
-        if (callback) {
-          callback();
-        }
-      }
-    },
-
-    /**
-      Handle committing when the deploy button in the bar is clicked.
-
-      @method _barDeployAction
-    */
-    _barDeployAction: function() {
-      this._changeActiveComponent('deployment-summary');
-    },
-
-    /**
-      Handles calling to clear the ecs and then closing the deployment
-      summary.
-
-      @method _summaryClearAction
-    */
-    _summaryClearAction: function() {
-      this.props.ecsClear();
-      this._changeActiveComponent('deployment-bar');
-    },
-
-    /**
-      Handle committing when the deploy button in the summary is clicked.
-
-      @method _summaryDeployAction
-    */
-    _summaryDeployAction: function() {
-      if (this.state.autoPlace) {
-        this.props.autoPlaceUnits();
-      }
-      // The env is already bound to ecsCommit in app.js.
-      this.props.ecsCommit();
-      this.setState({hasCommits: true}, () => {
-        this._changeActiveComponent('deployment-bar');
-      });
-    },
-
-    /**
-      Handle closing the summary when the close button is clicked.
-
-      @method _summaryCloseAction
-    */
-    _summaryCloseAction: function() {
-      this._changeActiveComponent('deployment-bar');
-    },
-
-    /**
-      Handle navigating to the machine view.
-
-      @method handleViewMachinesClick
-    */
-    handleViewMachinesClick: function() {
-      this.props.changeState({
-        sectionB: {
-          component: 'machine',
-          metadata: {}
-        }
-      });
-      this._changeActiveComponent('deployment-bar');
-    },
-
-    /**
-      Handle changes to the placement radio buttons.
-
-      @method handlePlacementChange
-      @param {Object} e The click event.
-    */
-    handlePlacementChange: function(e) {
-      this.setState({
-        autoPlace: e.currentTarget.getAttribute('data-placement') === 'placed'
-      });
-    },
-
-    /**
-      Change the state to reflect the chosen component.
-
-      @method _changeActiveComponent
-      @param {String} newComponent The component to switch to.
-    */
-    _changeActiveComponent: function(newComponent) {
-      var nextProps = this.state;
-      nextProps.activeComponent = newComponent;
-      this.setState(this.generateState(nextProps));
     },
 
     render: function() {
+      var activeComponent = this.props.activeComponent;
+      var activeChild = this._generateActivePanel();
+      var steps = [{
+        title: 'Deploy',
+        component: 'summary'
+      }];
       return (
-        <div className="deployment-view">
-          {this.state.activeChild.component}
-        </div>
+        <juju.components.DeploymentPanel
+          activeComponent={activeComponent}
+          changeState={this.props.changeState}
+          steps={steps}>
+          {activeChild}
+        </juju.components.DeploymentPanel>
       );
     }
 
@@ -234,7 +72,7 @@ YUI.add('deployment-component', function() {
 
 }, '0.1.0', {
   requires: [
-    'deployment-bar',
+    'deployment-panel',
     'deployment-summary'
   ]
 });

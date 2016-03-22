@@ -23,11 +23,11 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('DeploymentSummaryChangeItemClassic', function() {
+describe('DeploymentSummaryChangeItem', function() {
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-summary-change-item-classic', function() { done(); });
+    YUI().use('deployment-summary-change-item', function() { done(); });
   });
 
   it('can display a sprite icon', function() {
@@ -37,17 +37,17 @@ describe('DeploymentSummaryChangeItemClassic', function() {
       time: '10:12 am'
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.DeploymentSummaryChangeItemClassic
+      <juju.components.DeploymentSummaryChangeItem
         change={change} />);
     assert.deepEqual(output,
-      <li className="deployment-summary-change-item-classic">
-        <span className="deployment-summary-change-item-classic__change">
+      <li className="deployment-summary-change-item">
+        <span className="deployment-summary-change-item__change">
           <juju.components.SvgIcon name="my-icon"
-            className="deployment-summary-change-item-classic__icon"
+            className="deployment-summary-change-item__icon"
             size="16" />
           Django was added
         </span>
-        <span className="deployment-summary-change-item-classic__time">
+        <span className="deployment-summary-change-item__time">
           {change.time}
         </span>
       </li>);
@@ -60,16 +60,16 @@ describe('DeploymentSummaryChangeItemClassic', function() {
       time: '10:12 am'
     };
     var output = jsTestUtils.shallowRender(
-      <juju.components.DeploymentSummaryChangeItemClassic
+      <juju.components.DeploymentSummaryChangeItem
         change={change} />);
     assert.deepEqual(output,
-      <li className="deployment-summary-change-item-classic">
-        <span className="deployment-summary-change-item-classic__change">
+      <li className="deployment-summary-change-item">
+        <span className="deployment-summary-change-item__change">
           <img src="my-icon.svg" alt=""
-            className="deployment-summary-change-item-classic__icon" />
+            className="deployment-summary-change-item__icon" />
           Django was added
         </span>
-        <span className="deployment-summary-change-item-classic__time">
+        <span className="deployment-summary-change-item__time">
           {change.time}
         </span>
       </li>);

@@ -1,0 +1,32 @@
+.deployment-summary {
+    &__placement {
+        margin-top: 20px;
+        padding: 20px;
+        border-width: 1px 0;
+        border-style: solid;
+        border-color: $light-mid-grey;
+
+        form,
+        &-label {
+            display: inline-block;
+        }
+
+        &-radio {
+            margin: 0 5px 0 10px;
+        }
+
+        &-label {
+            margin-right: 10px;
+        }
+
+        .link {
+            margin-left: 10px;
+        }
+    }
+
+    &__list {
+        margin: 0;
+        list-style: none;
+    }
+
+}

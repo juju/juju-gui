@@ -22,10 +22,16 @@ YUI.add('deployment-bar', function() {
 
   juju.components.DeploymentBar = React.createClass({
     propTypes: {
+      changeState: React.PropTypes.func.isRequired,
+      currentChangeSet: React.PropTypes.object.isRequired,
       exportEnvironmentFile: React.PropTypes.func.isRequired,
-      renderDragOverNotification: React.PropTypes.func.isRequired,
+      generateChangeDescription: React.PropTypes.func.isRequired,
       hasEntities: React.PropTypes.bool.isRequired,
+      hideDragOverNotification: React.PropTypes.func.isRequired,
       importBundleFile: React.PropTypes.func.isRequired,
+      machines: React.PropTypes.array.isRequired,
+      renderDragOverNotification: React.PropTypes.func.isRequired,
+      services: React.PropTypes.array.isRequired,
       showInstall: React.PropTypes.bool.isRequired
     },
 
@@ -39,19 +45,52 @@ YUI.add('deployment-bar', function() {
     */
     getInitialState: function() {
       return {
+        hasDeployed: false,
         latestChangeDescription: null
       };
     },
 
+    componentDidMount: function() {
+      this._updateHasDeployed(this.props);
+    },
+
     componentWillReceiveProps: function(nextProps) {
+      this._updateHasDeployed(nextProps);
       this._updateLatestChange(nextProps.currentChangeSet);
+    },
+
+    /**
+      Check if the model has ever been deployed.
+
+      @method _updateHasDeployed
+      @param {Object} props The component props.
+    */
+    _updateHasDeployed: function(props) {
+      var hasDeployed = false;
+      if (!this.state.hasDeployed) {
+        props.services.forEach(service => {
+          if (!service.get('pending')) {
+            hasDeployed = true;
+            return false;
+          }
+        });
+        if (!hasDeployed) {
+          props.machines.forEach(machine => {
+            if (machine.commitStatus === 'committed') {
+              hasDeployed = true;
+              return false;
+            }
+          });
+        }
+        this.setState({hasDeployed: hasDeployed});
+      }
     },
 
     /**
       Update the state with the latest change if it has changed.
 
       @method _updateLatestChange
-      @param {Object} currentChangeSet The collection of ecs changes.
+      @param {Object} changeSet The collection of ecs changes.
     */
     _updateLatestChange: function(changeSet) {
       var keys = Object.keys(changeSet);
@@ -70,11 +109,10 @@ YUI.add('deployment-bar', function() {
       Get the label for the deploy button.
 
       @method _getDeployButtonLabel
-      @param {Boolean} hasCommits Does the env have commits.
       @returns {String} the label for the deploy button
     */
-    _getDeployButtonLabel: function(hasCommits) {
-      return hasCommits ? 'Commit changes' : 'Deploy changes';
+    _getDeployButtonLabel: function() {
+      return this.state.hasDeployed ? 'Commit changes' : 'Deploy changes';
     },
 
     /**
@@ -147,6 +185,22 @@ YUI.add('deployment-bar', function() {
       );
     },
 
+    /**
+      Display the deployment summary when the deploy button is clicked.
+
+      @method _deployAction
+    */
+    _deployAction: function() {
+      this.props.changeState({
+        sectionC: {
+          component: 'deploy',
+          metadata: {
+            activeComponent: 'summary'
+          }
+        }
+      });
+    },
+
     render: function() {
       var changeCount = Object.keys(this.props.currentChangeSet).length;
       return (
@@ -171,15 +225,15 @@ YUI.add('deployment-bar', function() {
               change={this.state.latestChangeDescription} />
             <div className="deployment-bar__deploy">
               <juju.components.GenericButton
-                action={this.props.deployButtonAction}
+                action={this._deployAction}
                 type="blue"
                 disabled={changeCount === 0}
                 title={changeCount.toString()} />
               <juju.components.GenericButton
-                action={this.props.deployButtonAction}
+                action={this._deployAction}
                 type="confirm"
                 disabled={changeCount === 0}
-                title={this._getDeployButtonLabel(this.props.hasCommits)} />
+                title={this._getDeployButtonLabel()} />
             </div>
             <input className="deployment-bar__file"
               type="file"

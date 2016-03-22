@@ -47,7 +47,7 @@ YUI.add('header-search', function() {
     _activeForComponent: function() {
       var component = this.props.getAppState(
         'current', 'sectionC', 'component');
-      return !!component && component !== 'profile';
+      return component === 'charmbrowser';
     },
 
     /**

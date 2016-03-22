@@ -426,8 +426,8 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       var ecs = new juju.EnvironmentChangeSet({db: this.db});
-      ecs.on('changeSetModified', this._renderDeployment.bind(this));
-      ecs.on('currentCommitFinished', this._renderDeployment.bind(this));
+      ecs.on('changeSetModified', this._renderDeploymentBar.bind(this));
+      ecs.on('currentCommitFinished', this._renderDeploymentBar.bind(this));
       // Instantiate the Juju environment.
       this._generateSocketUrl(function(socketUrl, user, password) {
         // Update the breadcrumb to display the proper user and model name.
@@ -819,8 +819,59 @@ YUI.add('juju-gui', function(Y) {
       designated element.
 
       @method _renderDeployment
+      @param {String} activeComponent The active component state to display.
     */
-    _renderDeployment: function() {
+    _renderDeployment: function(metadata) {
+      var env = this.env;
+      var ecs = env.get('ecs');
+      var db = this.db;
+      var services = db.services;
+      var units = db.units;
+      var utils = views.utils;
+      var changesUtils = this.changesUtils;
+      var currentChangeSet = ecs.getCurrentChangeSet();
+      var changeDescriptions = changesUtils.generateAllChangeDescriptions(
+          currentChangeSet, services, units);
+      if (!metadata) {
+        // A deployment step was not provided in the URL.
+        return;
+      }
+      if (!window.flags || !window.flags.sax) {
+        // Display the old deploy summary if we're not using the feature flag
+        // for the new deployment flow.
+        ReactDOM.render(
+          <window.juju.components.DeploymentSummaryClassic
+            autoPlaceDefault={!localStorage.getItem('disable-auto-place')}
+            autoPlaceUnits={this._autoPlaceUnits.bind(this)}
+            changeDescriptions={changeDescriptions}
+            changeState={this.changeState.bind(this)}
+            ecsClear={ecs.clear.bind(ecs)}
+            ecsCommit={ecs.commit.bind(ecs, env)}
+            getUnplacedUnitCount={
+              utils.getUnplacedUnitCount.bind(this, db.units)} />,
+          document.getElementById('deployment-container'));
+        return;
+      }
+      ReactDOM.render(
+        <window.juju.components.Deployment
+          activeComponent={metadata.activeComponent}
+          autoPlaceUnits={this._autoPlaceUnits.bind(this)}
+          changeDescriptions={changeDescriptions}
+          changeState={this.changeState.bind(this)}
+          ecsClear={ecs.clear.bind(ecs)}
+          ecsCommit={ecs.commit.bind(ecs, env)}
+          getUnplacedUnitCount={
+            utils.getUnplacedUnitCount.bind(this, db.units)} />,
+        document.getElementById('deployment-container'));
+    },
+
+    /**
+      Renders the Deployment component to the page in the
+      designated element.
+
+      @method _renderDeployment
+    */
+    _renderDeploymentBar: function() {
       var env = this.env;
       var ecs = env.get('ecs');
       var db = this.db;
@@ -830,32 +881,25 @@ YUI.add('juju-gui', function(Y) {
       var units = db.units;
       var utils = views.utils;
       var changesUtils = this.changesUtils;
-      var currentChangeSet = ecs.getCurrentChangeSet();
-      var changeDescriptions = changesUtils.generateAllChangeDescriptions(
-          currentChangeSet, services, units);
       ReactDOM.render(
-        <window.juju.components.Deployment
+        <window.juju.components.DeploymentBar
           changeState={this.changeState.bind(this)}
-          services={servicesArray}
-          ecsCommit={ecs.commit.bind(ecs, env)}
-          ecsClear={ecs.clear.bind(ecs)}
+          currentChangeSet={ecs.getCurrentChangeSet()}
           exportEnvironmentFile={
             utils.exportEnvironmentFile.bind(utils, db)}
-          renderDragOverNotification={
-            this._renderDragOverNotification.bind(this)}
-          importBundleFile={this.bundleImporter.importBundleFile.bind(
-            this.bundleImporter)}
+          generateChangeDescription={
+            changesUtils.generateChangeDescription.bind(
+              changesUtils, services, units)}
           hasEntities={servicesArray.length > 0 || machines.length > 0}
           hideDragOverNotification={this._hideDragOverNotification.bind(this)}
-          changeDescriptions={changeDescriptions}
-          getUnplacedUnitCount={utils.getUnplacedUnitCount.bind(this, db.units)}
-          autoPlaceUnits={this._autoPlaceUnits.bind(this)}
-          generateChangeDescription={
-              changesUtils.generateChangeDescription.bind(
-                  changesUtils, services, units)}
-          currentChangeSet={currentChangeSet}
+          importBundleFile={this.bundleImporter.importBundleFile.bind(
+            this.bundleImporter)}
+          machines={machines}
+          renderDragOverNotification={
+            this._renderDragOverNotification.bind(this)}
+          services={servicesArray}
           showInstall={this.get('sandbox')} />,
-        document.getElementById('deployment-container'));
+        document.getElementById('deployment-bar-container'));
     },
 
     /**
@@ -1066,6 +1110,8 @@ YUI.add('juju-gui', function(Y) {
       this._renderBreadcrumb({ showEnvSwitcher: true });
       ReactDOM.unmountComponentAtNode(
         document.getElementById('charmbrowser-container'));
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('deployment-container'));
     },
 
     /**
@@ -1132,6 +1178,7 @@ YUI.add('juju-gui', function(Y) {
       dispatchers.sectionC = {
         profile: this._renderUserProfile.bind(this),
         charmbrowser: this._renderCharmbrowser.bind(this),
+        deploy: this._renderDeployment.bind(this),
         empty: this._emptySectionC.bind(this)
       };
       dispatchers.app = {
@@ -1891,7 +1938,7 @@ YUI.add('juju-gui', function(Y) {
         this.db.services.size(),
         this.db.machines.filterByParent().length
       );
-      this._renderDeployment();
+      this._renderDeploymentBar();
       this._renderBreadcrumb();
       this._renderHeaderSearch();
       // When we render the components we also want to trigger the rest of
@@ -2300,8 +2347,11 @@ YUI.add('juju-gui', function(Y) {
     'net-utils',
     'ns-routing-app-extension',
     // React components
+    'added-services-list',
     'charmbrowser-component',
+    'deployment-bar',
     'deployment-component',
+    'deployment-summary-classic',
     'env-size-display',
     'header-breadcrumb',
     'expanding-progress',

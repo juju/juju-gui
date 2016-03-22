@@ -69,6 +69,8 @@ describe('UI State object', function() {
       'precise/apache2-13': ['precise/apache2-13'],
       'precise/apache2-13/machine/3/lxc-0': [
         'precise/apache2-13', 'machine/3/lxc-0'],
+      'precise/apache2-13/machine/3/lxc-0/deploy/summary': [
+        'precise/apache2-13', 'machine/3/lxc-0', 'deploy/summary'],
       'precise/apache2-13/machine/3/lxc-0/inspector/service123/charm': [
         'precise/apache2-13', 'machine/3/lxc-0', 'inspector/service123/charm']
     };
@@ -287,6 +289,22 @@ describe('UI State object', function() {
         Object.keys(parts).forEach(function(key) {
           assert.deepEqual(
               state._parseMachineUrl(key),
+              parts[key],
+              key + ' did not parse correctly');
+        });
+      });
+    });
+    describe('_parseDeployUrl', function() {
+      var parts = {
+        'deploy': { },
+        'deploy/summary': {
+          activeComponent: 'summary' }
+      };
+
+      it('can parse the deploy url parts', function() {
+        Object.keys(parts).forEach(function(key) {
+          assert.deepEqual(
+              state._parseDeployUrl(key),
               parts[key],
               key + ' did not parse correctly');
         });
@@ -846,8 +864,26 @@ describe('UI State object', function() {
           }
         }
       },
+      // Deployment flow urls.
+      '/deploy/': {
+        sectionA: {},
+        sectionB: {},
+        sectionC: {
+          component: 'deploy'
+        },
+      },
+      '/deploy/summary/': {
+        sectionA: {},
+        sectionB: {},
+        sectionC: {
+          component: 'deploy',
+          metadata: {
+            activeComponent: 'summary'
+          }
+        },
+      },
       // Multi section urls.
-      '/inspector/apache2/machine/3/lxc-0': {
+      '/inspector/apache2/machine/3/lxc-0/deploy/foo': {
         sectionA: {
           component: 'inspector',
           metadata: {
@@ -861,7 +897,36 @@ describe('UI State object', function() {
             id: '3',
             container: 'lxc-0'
           }
-        }, sectionC: {}
+        },
+        sectionC: {
+          component: 'deploy',
+          metadata: {
+            activeComponent: 'foo'
+          }
+        }
+      },
+      '/inspector/apache2/machine/3/lxc-0/deploy/foo/?search=spinach': {
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            id: 'apache2',
+            flash: {}
+          }
+        },
+        sectionB: {
+          component: 'machine',
+          metadata: {
+            id: '3',
+            container: 'lxc-0'
+          }
+        },
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: 'spinach'
+          }
+        }
       },
       '/machine/3/lxc-0/inspector/apache2': {
         sectionA: {
