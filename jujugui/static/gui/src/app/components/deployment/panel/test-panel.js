@@ -84,6 +84,7 @@ describe('DeploymentPanel', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentPanel
+        activeComponent="start"
         changeState={changeState}
         steps={[]}
         visible={true}>
