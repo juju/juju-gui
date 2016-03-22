@@ -1319,7 +1319,7 @@ YUI.add('juju-gui', function(Y) {
           interactive: this.get('interactiveLogin'),
           setCookiePath: charmstoreURL + charmstoreAPIPath + '/set-auth-cookie',
           staticMacaroonPath: `${charmstoreURL}${charmstoreAPIPath}/macaroon`,
-          serviceName: 'charmstore'
+          serviceName: 'charmstore',
           macaroon: existingMacaroons
         });
         this.set(
