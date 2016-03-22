@@ -103,10 +103,11 @@ describe('EnvList', function() {
     output = renderer.getRenderOutput();
     var buttons = [{
       title: 'Cancel',
+      type: 'base',
       action: instance._cancelSwitchModel
     }, {
       title: 'Switch',
-      type: 'confirm',
+      type: 'neutral',
       action: instance._switchModel
     }];
     var expected = (
@@ -136,7 +137,7 @@ describe('EnvList', function() {
 
     testUtils.Simulate.click(
         ReactDOM.findDOMNode(component)
-                .querySelector('.generic-button--type-confirm'));
+                .querySelector('.button--neutral'));
 
     assert.equal(createNewEnv.callCount, 1);
     assert.equal(createNewEnv.args[0][0], 'new env name');
@@ -153,7 +154,7 @@ describe('EnvList', function() {
 
     testUtils.Simulate.click(
         ReactDOM.findDOMNode(component)
-                .querySelector('.generic-button--type-show-profile'));
+                .querySelector('.button--base'));
 
     assert.equal(showUserProfile.callCount, 1);
   });

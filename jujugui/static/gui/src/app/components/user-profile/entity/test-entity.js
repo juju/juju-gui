@@ -68,6 +68,7 @@ describe('UserProfileEntity', () => {
                 'two-col last-col no-margin-bottom'}>
                 <juju.components.GenericButton
                   action={button.props.action}
+                  type="inline-neutral"
                   title="Manage" />
               </div>
             </div>
@@ -125,6 +126,7 @@ describe('UserProfileEntity', () => {
                 'two-col last-col no-margin-bottom'}>
                 <juju.components.GenericButton
                   action={button.props.action}
+                  type="inline-neutral"
                   title="View" />
               </div>
             </div>
@@ -218,6 +220,7 @@ describe('UserProfileEntity', () => {
                 'two-col last-col no-margin-bottom'}>
                 <juju.components.GenericButton
                   action={button.props.action}
+                  type="inline-neutral"
                   title="View" />
               </div>
             </div>

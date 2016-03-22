@@ -179,12 +179,13 @@ YUI.add('local-inspector', function() {
       var size = (file.size / 1024).toFixed(2);
       var buttons = [{
         title: 'Cancel',
-        action: this._close
+        action: this._close,
+        type: 'base'
       }, {
         title: 'Upload',
         action: this.state.activeComponent === 'new' ?
           this._handleUpload : this._handleUpdate,
-        type: 'confirm'
+        type: 'neutral'
       }];
       return (
         <div className="inspector-view local-inspector">

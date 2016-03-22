@@ -76,7 +76,7 @@ describe('DeploymentBar', function() {
             tabIndex="0">
             Export
           </span>
-          <a className="deployment-bar__install-button"
+          <a className="button--inline-neutral"
             href="https://jujucharms.com/get-started"
             target="_blank">
             Install Juju
@@ -86,12 +86,12 @@ describe('DeploymentBar', function() {
           <div className="deployment-bar__deploy">
             <juju.components.GenericButton
               action={instance._deployAction}
-              type="blue"
+              type="inline-deployment"
               disabled={false}
               title="2" />
             <juju.components.GenericButton
               action={instance._deployAction}
-              type="confirm"
+              type="inline-deployment"
               disabled={false}
               title="Deploy changes" />
           </div>

@@ -94,12 +94,12 @@ describe('DeploymentSummaryClassic', function() {
           </div>
           <div className="deployment-summary-classic__footer">
             <juju.components.GenericButton
-              type="clear-changes"
+              type="inline-neutral"
               action={instance._handleClear}
               title="Clear changes" />
             <juju.components.GenericButton
               action={instance._handleDeploy}
-              type="confirm"
+              type="inline-positive"
               title="Deploy" />
           </div>
         </div>

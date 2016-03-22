@@ -30,7 +30,8 @@
     &__link:not(.hidden) {
         display: block;
         margin-top: 3px;
-        color: $ubuntu-orange;
+        color: $cool-grey;
+        text-decoration: underline;
         white-space: nowrap;
         overflow: hidden;
         text-align: left;

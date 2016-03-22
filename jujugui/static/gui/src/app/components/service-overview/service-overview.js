@@ -262,7 +262,7 @@ YUI.add('service-overview', function() {
         action: this._hideConfirmation
       }, {
         title: 'Confirm',
-        type: 'confirm',
+        type: 'destructive',
         action: this._destroyService
       }];
       return (

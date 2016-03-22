@@ -178,9 +178,10 @@ YUI.add('machine-view', function() {
       return (
         <div>
           <div className="machine-view__auto-place">
-            <button onClick={this.props.autoPlaceUnits}>
-              Auto place
-            </button>
+            <juju.components.GenericButton
+              action={this.props.autoPlaceUnits}
+              type="inline-neutral"
+              title="Auto place" />
             or manually place
           </div>
           <ul className="machine-view__list">

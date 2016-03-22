@@ -169,7 +169,7 @@ YUI.add('entity-header', function() {
           <juju.components.GenericButton
             ref="deployAction"
             action={this._handleDeployClick}
-            type="confirm"
+            type="positive"
             title="Add to canvas" />
         );
       } else {

@@ -75,6 +75,8 @@
                 border-bottom: none;
             }
 
+            &:focus,
+            &:active,
             &:hover {
                 background-color: #f2f2f2;
             }
@@ -83,6 +85,8 @@
                 color: gray;
                 cursor: default;
 
+                &:focus,
+                &:active,
                 &:hover {
                     background-color: inherit;
                 }
@@ -118,6 +122,8 @@
             color: red;
         }
 
+        &:focus,
+        &:active,
         &:hover {
             background-color: inherit;
         }

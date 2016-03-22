@@ -44,11 +44,13 @@ describe('InspectorChangeVersionItem', function() {
         <li className="inspector-current-version__item"
           role="button" tabIndex="0"
           onClick={itemAction}>
-          <span title="cs:django-5">
+          <span title="cs:django-5"
+            className="inspector-current-version__title">
             django-5
           </span>
           <juju.components.GenericButton
             key="cs:django-5"
+            type="inline-neutral"
             title="Upgrade"
             action={buttonAction} />
         </li>);
@@ -68,11 +70,13 @@ describe('InspectorChangeVersionItem', function() {
         <li className="inspector-current-version__item"
           role="button" tabIndex="0"
           onClick={itemAction}>
-          <span title="cs:django-django-pango-pongo-5">
+          <span title="cs:django-django-pango-pongo-5"
+            className="inspector-current-version__title">
             djan...o-pongo-5
           </span>
           <juju.components.GenericButton
             key="cs:django-django-pango-pongo-5"
+            type="inline-neutral"
             title="Upgrade"
             action={buttonAction} />
         </li>);
@@ -92,11 +96,13 @@ describe('InspectorChangeVersionItem', function() {
         <li className="inspector-current-version__item"
           role="button" tabIndex="0"
           onClick={itemAction}>
-          <span title="cs:django-5">
+          <span title="cs:django-5"
+            className="inspector-current-version__title">
             django-5
           </span>
           <juju.components.GenericButton
             key="cs:django-5"
+            type="inline-neutral"
             title="Downgrade"
             action={buttonAction} />
         </li>);

@@ -315,6 +315,7 @@ describe('UnitList', () => {
     var buttonItems = output.props.children[2].props.buttons;
     var buttons = [{
       title: 'Remove',
+      type: 'neutral',
       action: buttonItems[0].action,
       disabled: true
     }];
@@ -335,14 +336,17 @@ describe('UnitList', () => {
     var buttonItems = output.props.children[2].props.buttons;
     var buttons = [{
       title: 'Resolve',
+      type: 'base',
       action: buttonItems[0].action,
       disabled: true
     }, {
       title: 'Retry',
+      type: 'base',
       action: buttonItems[1].action,
       disabled: true
     }, {
       title: 'Remove',
+      type: 'neutral',
       action: buttonItems[2].action,
       disabled: true
     }];
@@ -382,7 +386,7 @@ describe('UnitList', () => {
     checkboxes[3].checked = true;
     testUtils.Simulate.change(checkboxes[3]);
     var button = testUtils.findRenderedDOMComponentWithClass(
-        output, 'generic-button');
+        output, 'button--neutral');
     testUtils.Simulate.click(button);
     assert.equal(destroyUnits.callCount, 1);
     assert.deepEqual(destroyUnits.args[0][0], [units[0].id, units[2].id]);
@@ -411,7 +415,7 @@ describe('UnitList', () => {
     checkboxes[1].checked = true;
     testUtils.Simulate.change(checkboxes[1]);
     var button = testUtils.findRenderedDOMComponentWithClass(
-        output, 'generic-button');
+        output, 'button--neutral');
     testUtils.Simulate.click(button);
     assert.isFalse(output.refs['UnitListItem-' + units[0].id].state.checked);
   });
@@ -438,7 +442,7 @@ describe('UnitList', () => {
     testUtils.Simulate.change(checkboxes[0]);
     assert.isTrue(output.refs['select-all'].state.checked);
     var button = testUtils.findRenderedDOMComponentWithClass(
-        output, 'generic-button');
+        output, 'button--neutral');
     testUtils.Simulate.click(button);
     assert.isFalse(output.refs['UnitListItem-' + units[0].id].state.checked);
     assert.isFalse(output.refs['select-all'].state.checked);
@@ -473,7 +477,7 @@ describe('UnitList', () => {
     checkboxes[2].checked = true;
     testUtils.Simulate.change(checkboxes[2]);
     var button = testUtils.scryRenderedDOMComponentsWithClass(
-        output, 'generic-button')[0];
+        output, 'button--base')[0];
     testUtils.Simulate.click(button);
     assert.equal(envResolved.callCount, 2);
     assert.deepEqual(envResolved.args[0][0], units[0].id);
@@ -511,7 +515,7 @@ describe('UnitList', () => {
     checkboxes[2].checked = true;
     testUtils.Simulate.change(checkboxes[2]);
     var button = testUtils.scryRenderedDOMComponentsWithClass(
-        output, 'generic-button')[1];
+        output, 'button--base')[1];
     testUtils.Simulate.click(button);
     assert.equal(envResolved.callCount, 2);
     assert.deepEqual(envResolved.args[0][0], units[0].id);

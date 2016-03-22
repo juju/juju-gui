@@ -187,21 +187,22 @@ YUI.add('env-list', function() {
       if (this.state.showConfirm) {
         buttons = [{
           title: 'Cancel',
+          type: 'base',
           action: this._cancelSwitchModel
         }, {
           title: 'Switch',
-          type: 'confirm',
+          type: 'neutral',
           action: this._switchModel
         }];
         content = this._generateConfirm();
       } else {
         buttons = [{
           title: 'More',
-          type: 'show-profile',
+          type: 'base',
           action: this.showProfile
         }, {
           title: 'New',
-          type: 'confirm',
+          type: 'neutral',
           action: this.createNewEnv
         }];
         content = this._generateModels();

@@ -75,45 +75,47 @@ describe('MidPoint', function() {
       icon: 'icon.svg',
       name: 'Mongodb'
     }];
-    var output = jsTestUtils.shallowRender(
-      <juju.components.MidPoint />);
-    assert.deepEqual(output,
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MidPoint />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
       <div className="mid-point">
-        <h4 className="mid-point__title">Featured searches</h4>
-        <ul className="mid-point__charm-list">
-          <li tabIndex="0" role="button"
-            className="mid-point__charm"
-            data-id="trusty/mariadb"
-            key="trusty/mariadb"
-            onClick={output.props.children[1].props.children[0].props.onClick}>
-            <img src="icon.svg" alt="Mariadb"
-              className="mid-point__charm-icon" />
-            <span className="mid-point__charm-name">
-              Mariadb
-            </span>
-          </li>
-          <li tabIndex="0" role="button"
-            className="mid-point__charm"
-            data-id="trusty/mongodb"
-            key="trusty/mongodb"
-            onClick={output.props.children[1].props.children[1].props.onClick}>
-            <img src="icon.svg" alt="Mongodb"
-              className="mid-point__charm-icon" />
-            <span className="mid-point__charm-name">
-              Mongodb
-            </span>
-          </li>
+      <h4 className="mid-point__title">Featured searches</h4>
+      <ul className="mid-point__charm-list">
+        <li tabIndex="0" role="button"
+          className="mid-point__charm"
+          data-id="trusty/mariadb"
+          key="trusty/mariadb"
+          onClick={output.props.children[1].props.children[0].props.onClick}>
+          <img src="icon.svg" alt="Mariadb"
+            className="mid-point__charm-icon" />
+          <span className="mid-point__charm-name">
+            Mariadb
+          </span>
+        </li>
+        <li tabIndex="0" role="button"
+          className="mid-point__charm"
+          data-id="trusty/mongodb"
+          key="trusty/mongodb"
+          onClick={output.props.children[1].props.children[1].props.onClick}>
+          <img src="icon.svg" alt="Mongodb"
+            className="mid-point__charm-icon" />
+          <span className="mid-point__charm-name">
+            Mongodb
+          </span>
+        </li>
+      </ul>
+      <div className="mid-point__footer-row">
+        <ul className="mid-point__tag-list">
+          {juju.components.MidPoint.prototype.tags}
         </ul>
-        <div className="mid-point__footer-row">
-          <ul className="mid-point__tag-list">
-            {juju.components.MidPoint.prototype.tags}
-          </ul>
-          <button className="mid-point__store-button"
-            onClick={output.props.children[2].props.children[1].props.onClick}>
-            Show more
-          </button>
-        </div>
-      </div>);
+        <juju.components.GenericButton
+          action={output.props.children[2].props.children[1].props.action}
+          type="inline-neutral"
+          title="Show more" />
+      </div>
+    </div>);
+    assert.deepEqual(output, expected);
   });
 
   it('calls to show the charm details when clicking on a charm', function() {
@@ -155,41 +157,41 @@ describe('MidPoint', function() {
     }];
     var output = jsTestUtils.shallowRender(
       <juju.components.MidPoint />);
-    assert.deepEqual(output,
-      <div className="mid-point">
-        <h4 className="mid-point__title">Featured searches</h4>
-        <ul className="mid-point__charm-list">
-          {juju.components.MidPoint.prototype.charms}
+    var expected = (<div className="mid-point">
+      <h4 className="mid-point__title">Featured searches</h4>
+      <ul className="mid-point__charm-list">
+        {juju.components.MidPoint.prototype.charms}
+      </ul>
+      <div className="mid-point__footer-row">
+        <ul className="mid-point__tag-list">
+          <li tabIndex="0" role="button"
+            key="databases"
+            data-id="databases"
+            onClick={output.props.children[2].props.children[0].props.children[0].props.onClick} // eslint-disable-line max-len
+            className="mid-point__tag">
+            databases
+            <span className="mid-point__tag-count">
+              (5)
+            </span>
+          </li>
+          <li tabIndex="0" role="button"
+            key="ops"
+            data-id="ops"
+            onClick={output.props.children[2].props.children[0].props.children[1].props.onClick} // eslint-disable-line max-len
+            className="mid-point__tag">
+            ops
+            <span className="mid-point__tag-count">
+              (30)
+            </span>
+          </li>
         </ul>
-        <div className="mid-point__footer-row">
-          <ul className="mid-point__tag-list">
-            <li tabIndex="0" role="button"
-              key="databases"
-              data-id="databases"
-              onClick={output.props.children[2].props.children[0].props.children[0].props.onClick} // eslint-disable-line max-len
-              className="mid-point__tag">
-              databases
-              <span className="mid-point__tag-count">
-                (5)
-              </span>
-            </li>
-            <li tabIndex="0" role="button"
-              key="ops"
-              data-id="ops"
-              onClick={output.props.children[2].props.children[0].props.children[1].props.onClick} // eslint-disable-line max-len
-              className="mid-point__tag">
-              ops
-              <span className="mid-point__tag-count">
-                (30)
-              </span>
-            </li>
-          </ul>
-          <button className="mid-point__store-button"
-            onClick={output.props.children[2].props.children[1].props.onClick}>
-            Show more
-          </button>
-        </div>
-      </div>);
+        <juju.components.GenericButton
+          action={output.props.children[2].props.children[1].props.action}
+          type="inline-neutral"
+          title="Show more" />
+      </div>
+    </div>);
+    assert.deepEqual(output, expected);
   });
 
   it('calls to show the tag search results when clicking on a tag', function() {
@@ -223,10 +225,12 @@ describe('MidPoint', function() {
 
   it('navigates to the store when clicking the Show more button', function() {
     var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    var component = renderIntoDocument(
       <juju.components.MidPoint
         changeState={changeState} />);
-    output.props.children[2].props.children[1].props.onClick();
+    var node = queryComponentSelector(component, '.button--inline-neutral');
+    console.log(node);
+    testUtils.Simulate.click(node);
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionC: {
@@ -240,11 +244,12 @@ describe('MidPoint', function() {
 
   it('closes the store when clicking the Show less button', function() {
     var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    var component = renderIntoDocument(
       <juju.components.MidPoint
         storeOpen={true}
         changeState={changeState} />);
-    output.props.children[2].props.children[1].props.onClick();
+    var node = queryComponentSelector(component, '.button--inline-neutral');
+    testUtils.Simulate.click(node);
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionC: {
@@ -257,24 +262,20 @@ describe('MidPoint', function() {
   });
 
   it('display the correct label when the store is closed', function() {
-    var output = jsTestUtils.shallowRender(
+    var expected = 'Show more';
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.MidPoint
         storeOpen={false} />);
-    assert.deepEqual(output.props.children[2].props.children[1],
-      <button className="mid-point__store-button"
-        onClick={output.props.children[2].props.children[1].props.onClick}>
-        Show more
-      </button>);
+    var output = renderer.props.children[2].props.children[1].props.title;
+    assert.equal(output, expected);
   });
 
   it('display the correct label when the store is open', function() {
-    var output = jsTestUtils.shallowRender(
+    var expected = 'Show less';
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.MidPoint
         storeOpen={true} />);
-    assert.deepEqual(output.props.children[2].props.children[1],
-      <button className="mid-point__store-button"
-        onClick={output.props.children[2].props.children[1].props.onClick}>
-        Show less
-      </button>);
+    var output = renderer.props.children[2].props.children[1].props.title;
+    assert.equal(output, expected);
   });
 });

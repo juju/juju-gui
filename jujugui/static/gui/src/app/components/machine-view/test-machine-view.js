@@ -468,10 +468,8 @@ describe('MachineView', function() {
         get: getStub
       })
     };
-    var output = jsTestUtils.shallowRender(
-      // The component is wrapped to handle drag and drop, but we just want to
-      // test the internal component so we access it via DecoratedComponent.
-      <juju.components.MachineView.DecoratedComponent
+    var component = renderIntoDocument(
+      <juju.components.MachineView
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
         createMachine={sinon.stub()}
@@ -482,8 +480,9 @@ describe('MachineView', function() {
         removeUnits={sinon.stub()}
         services={services}
         units={units} />);
-    output.props.children.props.children[0].props.children[1].props.children[0]
-    .props.children[0].props.onClick();
+    var node = queryComponentSelector(component,
+      '.machine-view__auto-place .button--inline-neutral');
+    testUtils.Simulate.click(node);
     assert.equal(autoPlaceUnits.callCount, 1);
   });
 

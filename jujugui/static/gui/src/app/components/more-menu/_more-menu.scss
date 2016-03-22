@@ -33,6 +33,8 @@
             white-space: nowrap;
             margin-bottom: 0;
 
+            &:focus,
+            &:active,
             &:hover {
                 background-color: $hover-background;
                 cursor: pointer;
@@ -74,6 +76,8 @@
 
     &-unit:hover,
     &--selected:not(.machine-view__machine--root),
+    &:focus:not(.machine-view__machine--root),
+    &:active:not(.machine-view__machine--root),
     &:hover:not(.machine-view__machine--root) {
         & > .more-menu {
             display: block;

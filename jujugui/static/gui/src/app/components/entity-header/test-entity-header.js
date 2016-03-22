@@ -104,7 +104,7 @@ describe('EntityHeader', function() {
               <juju.components.GenericButton
                 ref="deployAction"
                 action={instance._handleDeployClick}
-                type="confirm"
+                type="positive"
                 title="Add to canvas" />
             </div>
           </div>
@@ -121,7 +121,7 @@ describe('EntityHeader', function() {
         deployService={sinon.spy()}
         scrollPosition={0} />);
     var deployAction = output.refs.deployAction;
-    assert.equal(deployAction.props.type, 'confirm');
+    assert.equal(deployAction.props.type, 'positive');
     assert.equal(deployAction.props.title, 'Add to canvas');
   });
 

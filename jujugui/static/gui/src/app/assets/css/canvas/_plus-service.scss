@@ -16,12 +16,18 @@
         }
     }
 
-    .plus-service__halo {
+    &__halo {
         transition: all .3s;
         opacity: 0;
         r: 60;
     }
 
+    &__plus-circle {
+        fill: $success;
+    }
+
+    &:focus,
+    &:active,
     &:hover {
         .plus-service__halo {
             r: 80;

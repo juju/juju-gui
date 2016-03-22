@@ -214,14 +214,15 @@ YUI.add('mid-point', function() {
             <ul className="mid-point__tag-list">
               {this._generateTagList()}
             </ul>
-            <button className="mid-point__store-button"
-              onClick={this._handleStoreClick}>
-              {this._generateStoreLabel()}
-            </button>
+            <juju.components.GenericButton
+              action={this._handleStoreClick}
+              type="inline-neutral"
+              title={this._generateStoreLabel()} />
           </div>
         </div>
       );
     }
   });
-
-}, '0.1.0', { requires: []});
+}, '0.1.0', { requires: [
+  'generic-button'
+]});

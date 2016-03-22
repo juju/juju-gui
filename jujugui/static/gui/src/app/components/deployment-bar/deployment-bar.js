@@ -163,7 +163,7 @@ YUI.add('deployment-bar', function() {
         return;
       }
       return (
-        <a className="deployment-bar__install-button"
+        <a className="button--inline-neutral"
           href="https://jujucharms.com/get-started"
           target="_blank">
           Install Juju
@@ -226,12 +226,12 @@ YUI.add('deployment-bar', function() {
             <div className="deployment-bar__deploy">
               <juju.components.GenericButton
                 action={this._deployAction}
-                type="blue"
+                type="inline-deployment"
                 disabled={changeCount === 0}
                 title={changeCount.toString()} />
               <juju.components.GenericButton
                 action={this._deployAction}
-                type="confirm"
+                type="inline-deployment"
                 disabled={changeCount === 0}
                 title={this._getDeployButtonLabel()} />
             </div>

@@ -80,7 +80,7 @@ describe('GenericButton', function() {
         <juju.components.GenericButton
           title="My action" />);
     assert.deepEqual(output,
-      <button className="generic-button"
+      <button className="button--neutral"
         onClick={output.props.onClick}
         type="button">
         My action
@@ -92,7 +92,7 @@ describe('GenericButton', function() {
         <juju.components.GenericButton
           icon="plus_1" />);
     assert.deepEqual(output,
-      <button className="generic-button"
+      <button className="button--neutral"
         onClick={output.props.onClick}
         type="button">
         <juju.components.SvgIcon name="plus_1"
@@ -104,9 +104,9 @@ describe('GenericButton', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.GenericButton
           title="My action"
-          type="confirm" />);
+          type="neutral" />);
     assert.deepEqual(output,
-      <button className="generic-button generic-button--type-confirm"
+      <button className="button--neutral"
        onClick={output.props.onClick}
        type="button">
         My action
@@ -119,7 +119,7 @@ describe('GenericButton', function() {
           title="My action"
           disabled="true" />);
     assert.deepEqual(output,
-      <button className="generic-button generic-button--disabled"
+      <button className="button--neutral button--disabled"
        onClick={output.props.onClick}
        type="button">
         My action

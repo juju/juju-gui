@@ -137,11 +137,12 @@ YUI.add('deployment-summary', function() {
           'deployment-summary__list-header';
       var buttons = [{
         title: 'Clear changes',
-        action: this._handleClear
+        action: this._handleClear,
+        type: 'inline-neutral'
       }, {
         title: 'Deploy',
         action: this._handleDeploy,
-        type: 'confirm'
+        type: 'inline-positive'
       }];
       return (
         <div className="deployment-panel__child">

@@ -62,11 +62,12 @@ describe('DeploymentSummary', function() {
     var output = renderer.getRenderOutput();
     var buttons = [{
       title: 'Clear changes',
-      action: instance._handleClear
+      action: instance._handleClear,
+      type: 'inline-neutral'
     }, {
       title: 'Deploy',
       action: instance._handleDeploy,
-      type: 'confirm'
+      type: 'inline-positive'
     }];
     var expected = (
       <div className="deployment-panel__child">

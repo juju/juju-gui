@@ -71,4 +71,13 @@
         border-top: 1px solid $light-mid-grey;
         text-align: right;
     }
+
+    .button--inline-neutral {
+      float: left;
+    }
+
+    .generic-button {
+      padding-left: 60px;
+      padding-right: 60px;
+    }
 }
