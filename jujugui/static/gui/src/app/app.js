@@ -833,10 +833,11 @@ YUI.add('juju-gui', function(Y) {
       var changeDescriptions = changesUtils.generateAllChangeDescriptions(
           currentChangeSet, services, units);
       var metadata = metadata || {};
-      if (!window.flags || !window.flags.sax) {
+      var activeComponent = metadata.activeComponent;
+      if (!window.flags || !window.flags.blues) {
         // Display the old deploy summary if we're not using the feature flag
         // for the new deployment flow.
-        if (!metadata.activeComponent) {
+        if (!activeComponent) {
           return;
         }
         ReactDOM.render(
@@ -852,9 +853,27 @@ YUI.add('juju-gui', function(Y) {
           document.getElementById('deployment-container'));
         return;
       }
+      if (!activeComponent) {
+        // If an active component (a specific step in the flow) has not been
+        // provided then the user is starting the deployment flow so we need to
+        // figure out what the first step in the deployment flow should be and
+        // take the user to that first step. e.g. if this user has signed up
+        // then skip to choosing credentials.
+        // For now the first step will be choosing a cloud.
+        activeComponent = 'choose-cloud';
+        this.changeState({
+          sectionC: {
+            component: 'deploy',
+            metadata: {
+              activeComponent: activeComponent
+            }
+          }
+        });
+        return;
+      }
       ReactDOM.render(
         <window.juju.components.Deployment
-          activeComponent={metadata.activeComponent}
+          activeComponent={activeComponent}
           autoPlaceUnits={this._autoPlaceUnits.bind(this)}
           changeDescriptions={changeDescriptions}
           changeState={this.changeState.bind(this)}

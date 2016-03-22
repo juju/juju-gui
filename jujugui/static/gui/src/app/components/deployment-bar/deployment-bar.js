@@ -192,7 +192,7 @@ YUI.add('deployment-bar', function() {
     */
     _deployAction: function() {
       var activeComponent = 'summary';
-      if (window.flags && window.flags.sax) {
+      if (window.flags && window.flags.blues) {
         // For the new deployment flow we want the deployment component to
         // figure out where in the flow the user should start.
         activeComponent = null;

@@ -31,39 +31,6 @@ YUI.add('deployment-component', function() {
       getUnplacedUnitCount: React.PropTypes.func.isRequired,
     },
 
-    componentDidMount: function() {
-      this._navigateToStart(this.props.activeComponent);
-    },
-
-    componentWillReceiveProps: function(nextProps) {
-      this._navigateToStart(this.props.activeComponent);
-    },
-
-    /**
-      Figure out what the first step in the deployment flow should be for the
-      current user. e.g. if this user has signed up the skip to choosing
-      credentials.
-
-      @method _navigateToStart
-      @param {String} activeComponent The current active component to display.
-    */
-    _navigateToStart: function(activeComponent) {
-      // If an active component has been provided then that screen will be
-      // displayed.
-      if (!activeComponent) {
-        // For now the first step will be choosing a cloud.
-        var activeComponent = 'choose-cloud';
-        this.props.changeState({
-          sectionC: {
-            component: 'deploy',
-            metadata: {
-              activeComponent: activeComponent
-            }
-          }
-        });
-      }
-    },
-
     /**
       Generate the content for the active panel.
 

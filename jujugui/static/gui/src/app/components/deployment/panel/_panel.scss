@@ -71,18 +71,19 @@
         border-top: 1px solid $light-mid-grey;
         text-align: right;
 
-        .button-row {
-            padding: 0;
+        .button--inline-neutral,
+        .button--inline-positive {
+            width: auto;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
 
-            &--multiple .generic-button {
-                width: auto;
-                padding-left: 20px;
-                padding-right: 20px;
+        .button--inline-neutral {
+            float: left;
+        }
 
-                &:first-child {
-                    float: left;
-                }
-            }
+        .button--inline-positive {
+            float: right;
         }
     }
 }

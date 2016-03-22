@@ -60,12 +60,13 @@ YUI.add('deployment-add-credentials', function() {
 
     render: function() {
       var buttons = [{
+        action: this._handleChangeCloud,
         title: 'Change cloud',
-        action: this._handleChangeCloud
+        type: 'inline-neutral'
       }, {
         title: 'Add credentials',
         action: this._handleAddCredentials,
-        type: 'confirm'
+        type: 'inline-positive'
       }];
       return (
         <div className="deployment-panel__child">
