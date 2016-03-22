@@ -32,13 +32,17 @@ describe('DeploymentPanelContent', function() {
 
   it('can render', function() {
     var output = jsTestUtils.shallowRender(
-      <juju.components.DeploymentPanelContent>
+      <juju.components.DeploymentPanelContent
+        title="Title">
         <span>Content</span>
       </juju.components.DeploymentPanelContent>);
     var expected = (
       <div className="deployment-panel__content">
         <div className="twelve-col">
           <div className="inner-wrapper">
+            <h2 className="deployment-panel__title">
+              Title
+            </h2>
             <span>Content</span>
           </div>
         </div>

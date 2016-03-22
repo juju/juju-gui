@@ -30,6 +30,35 @@ describe('Deployment', function() {
     YUI().use('deployment-component', function() { done(); });
   });
 
+  it('can navigate to the first step if none is provided', function() {
+    var autoPlaceUnits = sinon.stub();
+    var changeState = sinon.stub();
+    var getUnplacedUnitCount = sinon.stub();
+    var ecsClear = sinon.stub();
+    var ecsCommit = sinon.stub();
+    var changeDescriptions = [];
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Deployment
+        activeComponent={null}
+        autoPlaceUnits={autoPlaceUnits}
+        changeDescriptions={changeDescriptions}
+        changeState={changeState}
+        ecsClear={ecsClear}
+        ecsCommit={ecsCommit}
+        getUnplacedUnitCount={getUnplacedUnitCount}  />, true);
+    var instance = renderer.getMountedInstance();
+    instance.componentDidMount();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionC: {
+        component: 'deploy',
+        metadata: {
+          activeComponent: 'choose-cloud'
+        }
+      }
+    });
+  });
+
   it('can display the deployment summary', function() {
     var autoPlaceUnits = sinon.stub();
     var changeState = sinon.stub();
@@ -55,6 +84,29 @@ describe('Deployment', function() {
         ecsClear={ecsClear}
         ecsCommit={ecsCommit}
         getUnplacedUnitCount={getUnplacedUnitCount} />);
+    assert.deepEqual(output.props.children, expected);
+  });
+
+  it('can display the choose cloud step', function() {
+    var autoPlaceUnits = sinon.stub();
+    var changeState = sinon.stub();
+    var getUnplacedUnitCount = sinon.stub();
+    var ecsClear = sinon.stub();
+    var ecsCommit = sinon.stub();
+    var changeDescriptions = [];
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Deployment
+        activeComponent="choose-cloud"
+        autoPlaceUnits={autoPlaceUnits}
+        changeDescriptions={changeDescriptions}
+        changeState={changeState}
+        ecsClear={ecsClear}
+        ecsCommit={ecsCommit}
+        getUnplacedUnitCount={getUnplacedUnitCount}  />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.DeploymentChooseCloud
+        changeState={changeState} />);
     assert.deepEqual(output.props.children, expected);
   });
 });

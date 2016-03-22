@@ -191,11 +191,17 @@ YUI.add('deployment-bar', function() {
       @method _deployAction
     */
     _deployAction: function() {
+      var activeComponent = 'summary';
+      if (window.flags && window.flags.sax) {
+        // For the new deployment flow we want the deployment component to
+        // figure out where in the flow the user should start.
+        activeComponent = null;
+      }
       this.props.changeState({
         sectionC: {
           component: 'deploy',
           metadata: {
-            activeComponent: 'summary'
+            activeComponent: activeComponent
           }
         }
       });

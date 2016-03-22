@@ -1,0 +1,48 @@
+.deployment-choose-cloud {
+    &__notice {
+        padding: 10px 20px;
+        border: 1px solid $uncommitted;
+        border-radius: $border-radius;
+
+        .svg-icon {
+            margin-right: 10px;
+            vertical-align: text-bottom;
+        }
+    }
+
+    &__title {
+        margin: 20px 0;
+        font-size: 20px;
+    }
+
+    &__cloud-option {
+        padding: 20px;
+        border: 1px solid $light-mid-grey;
+        border-radius: $border-radius;
+        text-align: center;
+        cursor: pointer;
+
+        &--credential {
+            text-align: left;
+        }
+
+        &-title {
+            font-size: 20px;
+        }
+
+        &-logo {
+            float: right;
+            width: 60px;
+            margin-top: 10px;
+        }
+    }
+
+    &__list {
+        @extend %list-style;
+    }
+
+    &__link {
+        @extend %link;
+        color: $cool-grey;
+    }
+}

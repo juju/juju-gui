@@ -57,6 +57,22 @@ YUI.add('deployment-summary', function() {
     },
 
     /**
+      Navigate to the choose cloud step.
+
+      @method _handleChangeCloud
+    */
+    _handleChangeCloud: function() {
+      this.props.changeState({
+        sectionC: {
+          component: 'deploy',
+          metadata: {
+            activeComponent: 'choose-cloud'
+          }
+        }
+      });
+    },
+
+    /**
       Handle committing when the deploy button in the summary is clicked.
 
       @method _handleDeploy
@@ -136,8 +152,8 @@ YUI.add('deployment-summary', function() {
       var listHeaderClassName = 'deployment-summary-change-item ' +
           'deployment-summary__list-header';
       var buttons = [{
-        title: 'Clear changes',
-        action: this._handleClear,
+        action: this._handleChangeCloud,
+        title: 'Change cloud',
         type: 'inline-neutral'
       }, {
         title: 'Deploy',
@@ -146,10 +162,8 @@ YUI.add('deployment-summary', function() {
       }];
       return (
         <div className="deployment-panel__child">
-          <juju.components.DeploymentPanelContent>
-            <h2 className="deployment-panel__title">
-              Deployment summary
-            </h2>
+          <juju.components.DeploymentPanelContent
+            title="Deployment summary">
             {this._generatePlacement()}
             <ul className="deployment-summary__list">
               <li className={listHeaderClassName}>

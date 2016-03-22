@@ -832,13 +832,13 @@ YUI.add('juju-gui', function(Y) {
       var currentChangeSet = ecs.getCurrentChangeSet();
       var changeDescriptions = changesUtils.generateAllChangeDescriptions(
           currentChangeSet, services, units);
-      if (!metadata) {
-        // A deployment step was not provided in the URL.
-        return;
-      }
+      var metadata = metadata || {};
       if (!window.flags || !window.flags.sax) {
         // Display the old deploy summary if we're not using the feature flag
         // for the new deployment flow.
+        if (!metadata.activeComponent) {
+          return;
+        }
         ReactDOM.render(
           <window.juju.components.DeploymentSummaryClassic
             autoPlaceDefault={!localStorage.getItem('disable-auto-place')}

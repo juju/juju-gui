@@ -61,8 +61,8 @@ describe('DeploymentSummary', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var buttons = [{
-      title: 'Clear changes',
-      action: instance._handleClear,
+      action: instance._handleChangeCloud,
+      title: 'Change cloud',
       type: 'inline-neutral'
     }, {
       title: 'Deploy',
@@ -71,10 +71,8 @@ describe('DeploymentSummary', function() {
     }];
     var expected = (
       <div className="deployment-panel__child">
-        <juju.components.DeploymentPanelContent>
-          <h2 className="deployment-panel__title">
-            Deployment summary
-          </h2>
+        <juju.components.DeploymentPanelContent
+          title="Deployment summary">
           {undefined}
           <ul className="deployment-summary__list">
             <li className={className}>
@@ -117,7 +115,7 @@ describe('DeploymentSummary', function() {
           View machines
         </span>
       </div>);
-    assert.deepEqual(output.props.children[0].props.children[1], expected);
+    assert.deepEqual(output.props.children[0].props.children[0], expected);
   });
 
   it('can navigate to the machine view', function() {
@@ -131,7 +129,7 @@ describe('DeploymentSummary', function() {
         ecsClear={sinon.stub()}
         ecsCommit={sinon.stub()}
         getUnplacedUnitCount={getUnplacedUnitCount} />);
-    output.props.children[0].props.children[1].props.children[1]
+    output.props.children[0].props.children[0].props.children[1]
       .props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -146,25 +144,25 @@ describe('DeploymentSummary', function() {
     });
   });
 
-  it('can cancel the changes', function() {
+  it('can navigate to change the cloud', function() {
     var getUnplacedUnitCount = sinon.stub().returns(0);
-    var ecsClear = sinon.stub();
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
         autoPlaceUnits={sinon.stub()}
         changeDescriptions={[]}
         changeState={changeState}
-        ecsClear={ecsClear}
+        ecsClear={sinon.stub()}
         ecsCommit={sinon.stub()}
         getUnplacedUnitCount={getUnplacedUnitCount} />);
     output.props.children[1].props.buttons[0].action();
-    assert.equal(ecsClear.callCount, 1);
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionC: {
-        component: null,
-        metadata: {}
+        component: 'deploy',
+        metadata: {
+          activeComponent: 'choose-cloud'
+        }
       }
     });
   });
