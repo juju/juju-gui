@@ -107,6 +107,7 @@ describe('EntityFiles', function() {
     mockEntity.set('files', []);
     var output = testUtils.renderIntoDocument(
       <juju.components.EntityFiles
+        apiUrl="http://example.com/"
         entityModel={mockEntity}
         pluralize={sinon.spy()} />
     );
@@ -117,6 +118,7 @@ describe('EntityFiles', function() {
     mockEntity.set('code_source', null);
     var output = testUtils.renderIntoDocument(
       <juju.components.EntityFiles
+        apiUrl="http://example.com/"
         entityModel={mockEntity}
         pluralize={sinon.spy()} />
     );

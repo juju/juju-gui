@@ -661,7 +661,7 @@ describe('UserProfile', () => {
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         switchModel={sinon.stub()}
-        username={users.charmstore.user} />, true);
+        user={users.charmstore} />, true);
     renderer.unmount();
     assert.equal(charmstoreAbort.callCount, 2);
     assert.equal(listEnvsAbort.callCount, 1);

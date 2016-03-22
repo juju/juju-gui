@@ -43,6 +43,7 @@ describe('EntityDetails', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         addNotification={sinon.stub()}
+        apiUrl="http://example.com/"
         id="test"
         deployService={sinon.spy()}
         changeState={sinon.spy()}
@@ -130,6 +131,7 @@ describe('EntityDetails', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           addNotification={sinon.stub()}
+          apiUrl="http://example.com/"
           deployService={deployService}
           changeState={changeState}
           importBundleYAML={importBundleYAML}
@@ -236,6 +238,7 @@ describe('EntityDetails', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           addNotification={sinon.stub()}
+          apiUrl="http://example.com/"
           deployService={deployService}
           changeState={changeState}
           importBundleYAML={importBundleYAML}

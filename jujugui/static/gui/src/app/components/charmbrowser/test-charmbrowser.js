@@ -56,6 +56,7 @@ describe('Charmbrowser', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         addNotification={sinon.stub()}
+        apiUrl="http://example.com/"
         appState={appState}
         changeState={changeState}
         charmstoreSearch={charmstoreSearch}
@@ -108,6 +109,7 @@ describe('Charmbrowser', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         addNotification={sinon.stub()}
+        apiUrl="http://example.com/"
         appState={appState}
         changeState={changeState}
         charmstoreSearch={sinon.stub()}
@@ -153,6 +155,7 @@ describe('Charmbrowser', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         addNotification={sinon.stub()}
+        apiUrl="http://example.com/"
         appState={appState}
         changeState={changeState}
         charmstoreSearch={charmstoreSearch}
