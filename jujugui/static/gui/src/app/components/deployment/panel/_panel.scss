@@ -26,21 +26,25 @@
         &-steps {
             @extend %list-style;
             display: inline-block;
-            margin-bottom: -1px;
-            border-bottom: 1px solid $ubuntu-orange;
         }
 
         &-step {
             display: inline-block;
-            margin: 0 10px 0 0;
+            margin-bottom: -1px;
             padding: 10px 20px;
+            border-bottom: 1px solid $warm-grey;
 
             &:last-child {
                 margin-right: 0;
             }
 
             &--active {
-                border-bottom: 2px solid $ubuntu-orange;
+                padding-bottom: 8px;
+                border-bottom: 3px solid $ubuntu-orange;
+            }
+
+            &--completed {
+                border-bottom-color: $ubuntu-orange;
             }
         }
     }

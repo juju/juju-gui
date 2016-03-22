@@ -35,12 +35,15 @@ describe('DeploymentPanel', function() {
       title: 'Start',
       component: 'start',
     }, {
+      title: 'Cloud',
+      component: 'cloud',
+    }, {
       title: 'Deploy',
-      active: 'deploy',
+      component: 'deploy',
     }];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentPanel
-        activeComponent="start"
+        activeComponent="cloud"
         changeState={sinon.stub()}
         steps={steps}>
         <span>content</span>
@@ -59,9 +62,14 @@ describe('DeploymentPanel', function() {
               width="75" />
             <ul className="deployment-panel__header-steps">
               <li className={'deployment-panel__header-step ' +
-                'deployment-panel__header-step--active'}
+                'deployment-panel__header-step--completed'}
                 key="Start">
                 Start
+              </li>
+              <li className={'deployment-panel__header-step ' +
+                'deployment-panel__header-step--active'}
+                key="Cloud">
+                Cloud
               </li>
               <li className="deployment-panel__header-step"
                 key="Deploy">
