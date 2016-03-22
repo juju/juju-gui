@@ -37,12 +37,13 @@ describe('DeploymentAddCredentials', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var buttons = [{
+      action: instance._handleChangeCloud,
       title: 'Change cloud',
-      action: instance._handleChangeCloud
+      type: 'inline-neutral'
     }, {
       title: 'Add credentials',
       action: instance._handleAddCredentials,
-      type: 'confirm'
+      type: 'inline-positive'
     }];
     var expected = (
       <div className="deployment-panel__child">

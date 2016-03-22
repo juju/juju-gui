@@ -22,7 +22,7 @@ YUI.add('deployment-component', function() {
 
   juju.components.Deployment = React.createClass({
     propTypes: {
-      activeComponent: React.PropTypes.string,
+      activeComponent: React.PropTypes.string.isRequired,
       autoPlaceUnits: React.PropTypes.func.isRequired,
       changeDescriptions: React.PropTypes.array.isRequired,
       changeState: React.PropTypes.func.isRequired,
