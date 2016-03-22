@@ -210,7 +210,7 @@ describe('DeploymentChooseCloud', function() {
       sectionC: {
         component: 'deploy',
         metadata: {
-          activeComponent: 'summary'
+          activeComponent: 'add-credentials'
         }
       }
     });

@@ -57,7 +57,7 @@ YUI.add('deployment-choose-cloud', function() {
         components.push(
           <li className={className}
             key={credential.id}
-            onClick={this._handleCloudClick.bind(this, credential.id)}>
+            onClick={this._handleCredentialClick.bind(this, credential.id)}>
             <img alt={credential.cloud}
               className="deployment-choose-cloud__cloud-option-logo"
               src={src} />
@@ -116,6 +116,22 @@ YUI.add('deployment-choose-cloud', function() {
       @method _handleCloudClick
     */
     _handleCloudClick: function(id) {
+      this.props.changeState({
+        sectionC: {
+          component: 'deploy',
+          metadata: {
+            activeComponent: 'add-credentials'
+          }
+        }
+      });
+    },
+
+    /**
+      Handling clicking on an existing credential option.
+
+      @method _handleCredentialClick
+    */
+    _handleCredentialClick: function(id) {
       this.props.changeState({
         sectionC: {
           component: 'deploy',

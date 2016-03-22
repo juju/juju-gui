@@ -85,6 +85,10 @@ YUI.add('deployment-component', function() {
           return (
             <juju.components.DeploymentChooseCloud
               changeState={this.props.changeState} />);
+        case 'add-credentials':
+          return (
+            <juju.components.DeploymentAddCredentials
+              changeState={this.props.changeState} />);
       }
     },
 
@@ -94,6 +98,9 @@ YUI.add('deployment-component', function() {
       var steps = [{
         title: 'Choose cloud',
         component: 'choose-cloud'
+      }, {
+        title: 'Add credentials',
+        component: 'add-credentials'
       }, {
         title: 'Deploy',
         component: 'summary'
@@ -112,6 +119,7 @@ YUI.add('deployment-component', function() {
 
 }, '0.1.0', {
   requires: [
+    'deployment-add-credentials',
     'deployment-choose-cloud',
     'deployment-panel',
     'deployment-summary'
