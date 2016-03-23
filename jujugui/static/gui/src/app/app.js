@@ -561,7 +561,11 @@ YUI.add('juju-gui', function(Y) {
       // arrive with successful authentication), and redispatch.
       this.env.after('connectedChange', function(ev) {
         if (ev.newVal === true) {
-          this.db.reset();
+          // If we're in gisf we do not want to empty the db when we connect
+          // because the user may have made changes to the temporary model.
+          if (!this.get('gisf')) {
+            this.db.reset();
+          }
           this.env.userIsAuthenticated = false;
           // Do not attempt environment login without credentials.
           var credentials = this.env.getCredentials();
@@ -641,8 +645,10 @@ YUI.add('juju-gui', function(Y) {
 
       // We are now ready to connect the environment and bootstrap the app.
       this.once('ready', function(e) {
-        if (this.get('socket_url') || this.get('sandbox')) {
-          // Connect to the environment.
+        // We only want to connect to the model on application load if we are
+        // in a sandbox or real model and not in gisf.
+        if (!this.get('gisf') &&
+            (this.get('socket_url') || this.get('sandbox'))) {
           this.env.connect();
         }
         this.dispatch();
@@ -1679,6 +1685,15 @@ YUI.add('juju-gui', function(Y) {
      *
      */
     checkUserCredentials: function(req, res, next) {
+      if (this.get('gisf')) {
+        // If we're in gisf then we want to fake out that we're logged in for
+        // the GUI to continue to work as normal even if we haven't yet
+        // logged in and connected to a real model.
+        this.set('loggedIn', true);
+        this.maskVisibility(false);
+        app._emptySectionApp();
+        next();
+      }
       // If the Juju environment is not connected, exit without letting the
       // route dispatch proceed. On env connection change, the app will
       // re-dispatch and this route callback will be executed again.
