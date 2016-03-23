@@ -37,22 +37,6 @@ YUI.add('inspector-header', function() {
     },
 
     /**
-      Returns the supplied classes with the 'hidden' class applied if the
-      count is falsey.
-
-      @method _countClasses
-      @returns {String} The collection of class names.
-    */
-    _countClasses: function() {
-      return classNames(
-        'inspector-header__count',
-        {
-          hidden: !this.props.count
-        }
-      );
-    },
-
-    /**
       Use the post update call to animate the header on change.
 
       @param {Object} prevProps The props which were sent to the component.
@@ -84,8 +68,9 @@ YUI.add('inspector-header', function() {
           <span className="inspector-header__title">
             {this.props.title}
           </span>
-          <span className={this._countClasses()}>
-            {this.props.count}
+          <span className="inspector-header__icon-container">
+            <img src={this.props.icon}
+              className="inspector-header__service-icon" />
           </span>
         </div>
       );
