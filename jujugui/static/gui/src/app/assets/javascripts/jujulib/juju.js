@@ -208,7 +208,8 @@ var module = module;
     },
 
     /**
-      Lists all the templates for cloud credentials for a specific user.
+      Lists all the templates for cloud credentials for the currently
+      authenticated user.
 
       @method listTemplates
       @param callback {Function} A callback to handle errors or accept the data
@@ -217,7 +218,13 @@ var module = module;
     */
     listTemplates: function(callback) {
       var url = this.jemURL + '/template';
-      return _makeRequest(this.bakery, url, 'GET', null, callback, true);
+      var _listTemplates = function(error, data) {
+        if (error === null) {
+          data = data.templates;
+        }
+        callback(error, data);
+      };
+      return _makeRequest(this.bakery, url, 'GET', null, _listTemplates, true);
     }
   };
 
