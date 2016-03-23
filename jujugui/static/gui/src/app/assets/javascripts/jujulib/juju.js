@@ -670,28 +670,6 @@ var module = module;
         });
         callback(null, truncatedList);
       }
-    },
-
-    /**
-      Lists all the templates for cloud credentials for a specific user.
-
-      @method listTemplates
-      @param callback {Function} A callback to handle errors or accept the data
-          from the request. Must accept an error message or null as its first
-          parameter and the response data as its second.
-    */
-    listTemplates: function(callback) {
-      var path = this._generatePath('template');
-      var transformData = function(error, data) {
-        console.log('templates listed.');
-        if (error !== null) {
-          callback(error, data);
-        } else {
-          // XXX Figure out what data munging actually needs to happen here.
-          callback(error, []);
-        }
-      };
-      return _makeRequest(this.bakery, path, 'GET', null, transformData, true);
     }
   };
 
