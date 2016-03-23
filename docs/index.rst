@@ -26,6 +26,7 @@ Juju GUI documentation
 |   `D3 Component Framework`_
 |   `Style Guide`_
 |   `Process`_
+|   `GUI Embedded in Juju`_
 |   `Browser Testing`_
 |   `Unit Testing`_
 |   `Continuous Integration`_
@@ -40,6 +41,7 @@ Juju GUI documentation
 .. _D3 Component Framework: https://github.com/juju/juju-gui/blob/develop/docs/d3-component-framework.rst
 .. _Style Guide: https://github.com/juju/juju-gui/blob/develop/docs/style-guide.rst
 .. _Process: https://github.com/juju/juju-gui/blob/develop/docs/process.rst
+.. _GUI Embedded in Juju: https://github.com/juju/juju-gui/blob/develop/docs/gui-in-juju.rst
 .. _Browser Testing: https://github.com/juju/juju-gui/blob/develop/docs/browser-testing.rst
 .. _Unit Testing: https://github.com/juju/juju-gui/blob/develop/docs/unit-testing.rst
 .. _Continuous Integration: https://github.com/juju/juju-gui/blob/develop/docs/continuous-integration.rst
