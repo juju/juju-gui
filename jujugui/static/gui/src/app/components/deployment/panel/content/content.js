@@ -22,11 +22,18 @@ YUI.add('deployment-panel-content', function() {
 
   juju.components.DeploymentPanelContent = React.createClass({
 
+    propTypes: {
+      title: React.PropTypes.string.isRequired
+    },
+
     render: function() {
       return (
         <div className="deployment-panel__content">
           <div className="twelve-col">
             <div className="inner-wrapper">
+              <h2 className="deployment-panel__title">
+                {this.props.title}
+              </h2>
               {this.props.children}
             </div>
           </div>

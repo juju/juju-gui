@@ -57,4 +57,27 @@ describe('Deployment', function() {
         getUnplacedUnitCount={getUnplacedUnitCount} />);
     assert.deepEqual(output.props.children, expected);
   });
+
+  it('can display the choose cloud step', function() {
+    var autoPlaceUnits = sinon.stub();
+    var changeState = sinon.stub();
+    var getUnplacedUnitCount = sinon.stub();
+    var ecsClear = sinon.stub();
+    var ecsCommit = sinon.stub();
+    var changeDescriptions = [];
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Deployment
+        activeComponent="choose-cloud"
+        autoPlaceUnits={autoPlaceUnits}
+        changeDescriptions={changeDescriptions}
+        changeState={changeState}
+        ecsClear={ecsClear}
+        ecsCommit={ecsCommit}
+        getUnplacedUnitCount={getUnplacedUnitCount}  />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.DeploymentChooseCloud
+        changeState={changeState} />);
+    assert.deepEqual(output.props.children, expected);
+  });
 });

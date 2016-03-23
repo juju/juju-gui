@@ -37,11 +37,18 @@ YUI.add('deployment-panel', function() {
     _generateSteps: function() {
       var components = [];
       var activeComponent = this.props.activeComponent;
+      var stepCompleted = true;
       this.props.steps.forEach(function(step) {
+        var active = step.component === activeComponent;
+        if (active) {
+          // We've hit the current point in the flow. The following steps are
+          // all uncompleted.
+          stepCompleted = false;
+        }
         var className = classNames(
           'deployment-panel__header-step', {
-            'deployment-panel__header-step--active':
-              step.component === activeComponent
+            'deployment-panel__header-step--active': active,
+            'deployment-panel__header-step--completed': stepCompleted
           }
         );
         components.push(
