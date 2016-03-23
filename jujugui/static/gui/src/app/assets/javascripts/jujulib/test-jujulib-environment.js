@@ -206,4 +206,27 @@ describe('jujulib environment manager', function() {
       }
     );
   });
+
+  it('lists the current user\'s templates', function(done) {
+    var templates = [{path: 'rose/template'}];
+    var bakery = {
+      sendGetRequest: function(path, success, failure, redirect) {
+        assert.equal(path, 'http://example.com/v1/template');
+        var xhr = _makeXHRRequest(templates);
+        success(xhr);
+      },
+    };
+
+    env = new window.jujulib.environment('http://example.com/', 'v1', bakery);
+    env.listTemplates(
+      function(error, data) {
+        if (error) {
+          assert.fail('callback should be successful');
+        } else {
+          assert.deepEqual(data, templates);
+        }
+        done();
+      }
+    );
+  });
 });
