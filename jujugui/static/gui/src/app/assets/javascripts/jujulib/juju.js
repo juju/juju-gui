@@ -205,6 +205,26 @@ var module = module;
         // if the macaroon is valid.
         false
       );
+    },
+
+    /**
+      Lists all the templates for cloud credentials for the currently
+      authenticated user.
+
+      @method listTemplates
+      @param callback {Function} A callback to handle errors or accept the data
+          from the request. Must accept an error message or null as its first
+          parameter and the response data as its second.
+    */
+    listTemplates: function(callback) {
+      var url = this.jemURL + '/template';
+      var _listTemplates = function(error, data) {
+        if (error === null) {
+          data = data.templates;
+        }
+        callback(error, data);
+      };
+      return _makeRequest(this.bakery, url, 'GET', null, _listTemplates, true);
     }
   };
 
