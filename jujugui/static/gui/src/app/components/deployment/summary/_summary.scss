@@ -29,4 +29,12 @@
         list-style: none;
     }
 
+    &__title {
+        font-size: 20px;
+
+        &-link {
+            margin-left: 20px;
+            font-size: 16px;
+        }
+    }
 }

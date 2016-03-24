@@ -13,8 +13,11 @@
     }
 
     &__header {
+        // Need to set a height for the case that the steps are
+        // not displayed.
+        height: 45px;
         margin: 0 20px;
-        padding: 10px 10px 0 0;
+        padding: 15px 10px 0 0;
         border-bottom: 1px solid $light-mid-grey;
         text-align: center;
 
@@ -30,8 +33,8 @@
 
         &-step {
             display: inline-block;
-            margin-bottom: -1px;
-            padding: 10px 20px;
+            // margin-bottom: -1px;
+            padding: 10px 20px 14px 20px;
             border-bottom: 1px solid $warm-grey;
 
             &:last-child {
@@ -39,12 +42,13 @@
             }
 
             &--active {
-                padding-bottom: 8px;
+                padding-bottom: 12px;
                 border-bottom: 3px solid $ubuntu-orange;
             }
 
             &--completed {
                 border-bottom-color: $ubuntu-orange;
+                color: $warm-grey;
             }
         }
     }
@@ -70,6 +74,10 @@
         padding: 20px;
         border-top: 1px solid $light-mid-grey;
         text-align: right;
+
+        .button-row {
+            padding: 0;
+        }
 
         .button--inline-neutral,
         .button--inline-positive {

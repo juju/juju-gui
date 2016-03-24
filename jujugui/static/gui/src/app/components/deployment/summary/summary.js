@@ -28,7 +28,9 @@ YUI.add('deployment-summary', function() {
       changeState: React.PropTypes.func.isRequired,
       ecsClear: React.PropTypes.func.isRequired,
       ecsCommit: React.PropTypes.func.isRequired,
-      getUnplacedUnitCount: React.PropTypes.func.isRequired
+      getUnplacedUnitCount: React.PropTypes.func.isRequired,
+      modelCommitted: React.PropTypes.bool.isRequired,
+      numberOfChanges: React.PropTypes.number.isRequired
     },
 
     /**
@@ -148,23 +150,54 @@ YUI.add('deployment-summary', function() {
         </div>);
     },
 
+    /**
+      Generate a clear changes control when showing the commit flow.
+
+      @method _generateClearChanges
+      @returns {Object} The clear changes control.
+    */
+    _generateClearChanges: function() {
+      var modelCommitted = this.props.modelCommitted;
+      // Don't show the clear changes control if we're deploying the model for
+      // the first time.
+      if (!modelCommitted) {
+        return;
+      }
+      return (
+        <span className="link deployment-summary__title-link"
+          onClick={this._handleClear}
+          role="button"
+          tabIndex="0">
+          Clear all changes&nbsp;&rsaquo;
+        </span>);
+    },
+
     render: function() {
       var listHeaderClassName = 'deployment-summary-change-item ' +
           'deployment-summary__list-header';
-      var buttons = [{
-        action: this._handleChangeCloud,
-        title: 'Change cloud',
-        type: 'inline-neutral'
-      }, {
-        title: 'Deploy',
+      var buttons = [];
+      var modelCommitted = this.props.modelCommitted;
+      if (!modelCommitted) {
+        buttons.push({
+          action: this._handleChangeCloud,
+          title: 'Change cloud',
+          type: 'inline-neutral'
+        });
+      }
+      buttons.push({
+        title: modelCommitted ? 'Commit' : 'Deploy',
         action: this._handleDeploy,
         type: 'inline-positive'
-      }];
+      });
       return (
         <div className="deployment-panel__child">
           <juju.components.DeploymentPanelContent
             title="Deployment summary">
             {this._generatePlacement()}
+            <h3 className="deployment-summary__title">
+              Change log ({this.props.numberOfChanges})
+              {this._generateClearChanges()}
+            </h3>
             <ul className="deployment-summary__list">
               <li className={listHeaderClassName}>
                 <span className="deployment-summary-change-item__change">

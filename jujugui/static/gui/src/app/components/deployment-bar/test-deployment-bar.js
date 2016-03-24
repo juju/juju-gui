@@ -53,9 +53,8 @@ describe('DeploymentBar', function() {
         hasEntities={true}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        machines={[]}
+        modelCommitted={false}
         renderDragOverNotification={sinon.stub()}
-        services={[]}
         showInstall={true} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -118,9 +117,8 @@ describe('DeploymentBar', function() {
         hasEntities={false}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        machines={[]}
+        modelCommitted={false}
         renderDragOverNotification={sinon.stub()}
-        services={[]}
         showInstall={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -147,9 +145,8 @@ describe('DeploymentBar', function() {
         hasEntities={true}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        machines={[]}
+        modelCommitted={false}
         renderDragOverNotification={sinon.stub()}
-        services={[]}
         showInstall={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -176,9 +173,8 @@ describe('DeploymentBar', function() {
         hasEntities={false}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        machines={[]}
+        modelCommitted={false}
         renderDragOverNotification={sinon.stub()}
-        services={[]}
         showInstall={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -205,9 +201,8 @@ describe('DeploymentBar', function() {
         hasEntities={false}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        machines={[]}
+        modelCommitted={false}
         renderDragOverNotification={sinon.stub()}
-        services={[]}
         showInstall={false} />);
     assert.isUndefined(output.props.children.props.children[2]);
   });
@@ -225,9 +220,8 @@ describe('DeploymentBar', function() {
         hasEntities={false}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        machines={[]}
+        modelCommitted={false}
         renderDragOverNotification={sinon.stub()}
-        services={[]}
         showInstall={true} />);
     assert.isFalse(
       output.props.children.props.children[4].props.children[1].props.disabled);
@@ -247,9 +241,8 @@ describe('DeploymentBar', function() {
         hasEntities={false}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        machines={[]}
+        modelCommitted={false}
         renderDragOverNotification={sinon.stub()}
-        services={[]}
         showInstall={true} />);
     output.props.children.props.children[1].props.onClick();
     assert.equal(exportEnvironmentFile.callCount, 1);
@@ -275,8 +268,7 @@ describe('DeploymentBar', function() {
         hideDragOverNotification={hideDragOverNotification}
         generateChangeDescription={generateChangeDescription}
         currentChangeSet={currentChangeSet}
-        machines={[]}
-        services={[]}
+        modelCommitted={false}
         showInstall={true} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {'file-input': {click: fileClick}};
@@ -304,8 +296,7 @@ describe('DeploymentBar', function() {
         hideDragOverNotification={hideDragOverNotification}
         generateChangeDescription={generateChangeDescription}
         currentChangeSet={currentChangeSet}
-        machines={[]}
-        services={[]}
+        modelCommitted={false}
         showInstall={true} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {
@@ -330,9 +321,8 @@ describe('DeploymentBar', function() {
         hasEntities={false}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        machines={[]}
+        modelCommitted={false}
         renderDragOverNotification={sinon.stub()}
-        services={[]}
         showInstall={true} />);
     assert.isTrue(
       output.props.children.props.children[4].props.children[1].props.disabled);
@@ -341,9 +331,6 @@ describe('DeploymentBar', function() {
   it('passes the button the correct title if there are commits', function() {
     var currentChangeSet = {};
     var deployButtonAction = sinon.stub();
-    var services = [{
-      get: sinon.stub().returns(false)
-    }];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
         changeState={sinon.stub()}
@@ -354,12 +341,9 @@ describe('DeploymentBar', function() {
         generateChangeDescription={sinon.stub()}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        machines={[]}
+        modelCommitted={true}
         renderDragOverNotification={sinon.stub()}
-        services={services}
         showInstall={true} />, true);
-    var instance = renderer.getMountedInstance();
-    instance.componentDidMount();
     var output = renderer.getRenderOutput();
     assert.equal(
       output.props.children.props.children[4].props.children[1].props.title,
@@ -381,9 +365,8 @@ describe('DeploymentBar', function() {
         hideDragOverNotification={sinon.stub()}
         deployButtonAction={deployButtonAction}
         importBundleFile={sinon.stub()}
-        machines={[]}
+        modelCommitted={false}
         renderDragOverNotification={sinon.stub()}
-        services={[]}
         showInstall={true} />, true);
     var output = renderer.getRenderOutput();
     // Re-render the component so that componentWillReceiveProps is called.
@@ -397,9 +380,8 @@ describe('DeploymentBar', function() {
         deployButtonAction={deployButtonAction}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        machines={[]}
+        modelCommitted={false}
         renderDragOverNotification={sinon.stub()}
-        services={[]}
         showInstall={true} />);
     output = renderer.getRenderOutput();
     assert.deepEqual(output.props.children.props.children[3],
@@ -424,9 +406,8 @@ describe('DeploymentBar', function() {
         hideDragOverNotification={sinon.stub()}
         deployButtonAction={deployButtonAction}
         importBundleFile={sinon.stub()}
-        machines={[]}
+        modelCommitted={false}
         renderDragOverNotification={sinon.stub()}
-        services={[]}
         showInstall={true} />, true);
     var output = renderer.getRenderOutput();
     // Re-render the component so that componentWillReceiveProps is called.
@@ -440,9 +421,8 @@ describe('DeploymentBar', function() {
         hideDragOverNotification={sinon.stub()}
         deployButtonAction={deployButtonAction}
         importBundleFile={sinon.stub()}
-        machines={[]}
+        modelCommitted={false}
         renderDragOverNotification={sinon.stub()}
-        services={[]}
         showInstall={true} />);
     output = renderer.getRenderOutput();
     assert.deepEqual(output.props.children.props.children[3],
@@ -462,9 +442,8 @@ describe('DeploymentBar', function() {
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         deployButtonAction={deployButtonAction}
-        machines={[]}
+        modelCommitted={false}
         renderDragOverNotification={sinon.stub()}
-        services={[]}
         showInstall={true} />);
     output = renderer.getRenderOutput();
     assert.deepEqual(output.props.children.props.children[3],
@@ -487,9 +466,8 @@ describe('DeploymentBar', function() {
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         deployButtonAction={deployButtonAction}
-        machines={[]}
+        modelCommitted={false}
         renderDragOverNotification={sinon.stub()}
-        services={[]}
         showInstall={true} />, true);
     var output = renderer.getRenderOutput();
     // Re-render the component so that componentWillReceiveProps is called.
@@ -503,9 +481,8 @@ describe('DeploymentBar', function() {
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         deployButtonAction={deployButtonAction}
-        machines={[]}
+        modelCommitted={false}
         renderDragOverNotification={sinon.stub()}
-        services={[]}
         showInstall={true} />);
     output = renderer.getRenderOutput();
     assert.deepEqual(output.props.children.props.children[3],
@@ -525,9 +502,8 @@ describe('DeploymentBar', function() {
         hideDragOverNotification={sinon.stub()}
         deployButtonAction={deployButtonAction}
         importBundleFile={sinon.stub()}
-        machines={[]}
+        modelCommitted={false}
         renderDragOverNotification={sinon.stub()}
-        services={[]}
         showInstall={true} />);
     output = renderer.getRenderOutput();
     assert.deepEqual(output.props.children.props.children[3],
@@ -546,7 +522,7 @@ describe('DeploymentBar', function() {
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         deployButtonAction={deployButtonAction}
-        machines={[]}
+        modelCommitted={false}
         renderDragOverNotification={sinon.stub()}
         services={[]}
         showInstall={true} />);

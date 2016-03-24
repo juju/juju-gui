@@ -834,6 +834,7 @@ YUI.add('juju-gui', function(Y) {
           currentChangeSet, services, units);
       var metadata = metadata || {};
       var activeComponent = metadata.activeComponent;
+      var modelCommitted = this._getModelCommitted();
       if (!window.flags || !window.flags.blues) {
         // Display the old deploy summary if we're not using the feature flag
         // for the new deployment flow.
@@ -859,8 +860,11 @@ YUI.add('juju-gui', function(Y) {
         // figure out what the first step in the deployment flow should be and
         // take the user to that first step. e.g. if this user has signed up
         // then skip to choosing credentials.
-        // For now the first step will be choosing a cloud.
-        activeComponent = 'choose-cloud';
+        if (modelCommitted) {
+          activeComponent = 'summary';
+        } else {
+          activeComponent = 'choose-cloud';
+        }
         this.changeState({
           sectionC: {
             component: 'deploy',
@@ -880,7 +884,9 @@ YUI.add('juju-gui', function(Y) {
           ecsClear={ecs.clear.bind(ecs)}
           ecsCommit={ecs.commit.bind(ecs, env)}
           getUnplacedUnitCount={
-            utils.getUnplacedUnitCount.bind(this, db.units)} />,
+            utils.getUnplacedUnitCount.bind(this, db.units)}
+          modelCommitted={modelCommitted}
+          numberOfChanges={Object.keys(ecs.getCurrentChangeSet()).length} />,
         document.getElementById('deployment-container'));
     },
 
@@ -914,11 +920,42 @@ YUI.add('juju-gui', function(Y) {
           importBundleFile={this.bundleImporter.importBundleFile.bind(
             this.bundleImporter)}
           machines={machines}
+          modelCommitted={this._getModelCommitted()}
           renderDragOverNotification={
             this._renderDragOverNotification.bind(this)}
           services={servicesArray}
           showInstall={this.get('sandbox')} />,
         document.getElementById('deployment-bar-container'));
+    },
+
+    /**
+      This is a bodge to check if the model has ever been deployed by checking
+      if there is anything deployed in the db, a flag for whether we have a
+      committed model will need to be added.
+
+      @method _getModelCommitted
+      @param {Object} props The component props.
+    */
+    _getModelCommitted: function() {
+      // XXX huwshimi 23 March 2014: this should be replaced with a proper check
+      // for whether the model is committed.
+      var db = this.db;
+      var hasDeployed = false;
+      db.services.toArray().forEach(service => {
+        if (!service.get('pending')) {
+          hasDeployed = true;
+          return false;
+        }
+      });
+      if (!hasDeployed) {
+        db.machines.toArray().forEach(machine => {
+          if (machine.commitStatus === 'committed') {
+            hasDeployed = true;
+            return false;
+          }
+        });
+      }
+      return hasDeployed;
     },
 
     /**

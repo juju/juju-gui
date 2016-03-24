@@ -29,9 +29,8 @@ YUI.add('deployment-bar', function() {
       hasEntities: React.PropTypes.bool.isRequired,
       hideDragOverNotification: React.PropTypes.func.isRequired,
       importBundleFile: React.PropTypes.func.isRequired,
-      machines: React.PropTypes.array.isRequired,
+      modelCommitted: React.PropTypes.bool.isRequired,
       renderDragOverNotification: React.PropTypes.func.isRequired,
-      services: React.PropTypes.array.isRequired,
       showInstall: React.PropTypes.bool.isRequired
     },
 
@@ -45,45 +44,12 @@ YUI.add('deployment-bar', function() {
     */
     getInitialState: function() {
       return {
-        hasDeployed: false,
         latestChangeDescription: null
       };
     },
 
-    componentDidMount: function() {
-      this._updateHasDeployed(this.props);
-    },
-
     componentWillReceiveProps: function(nextProps) {
-      this._updateHasDeployed(nextProps);
       this._updateLatestChange(nextProps.currentChangeSet);
-    },
-
-    /**
-      Check if the model has ever been deployed.
-
-      @method _updateHasDeployed
-      @param {Object} props The component props.
-    */
-    _updateHasDeployed: function(props) {
-      var hasDeployed = false;
-      if (!this.state.hasDeployed) {
-        props.services.forEach(service => {
-          if (!service.get('pending')) {
-            hasDeployed = true;
-            return false;
-          }
-        });
-        if (!hasDeployed) {
-          props.machines.forEach(machine => {
-            if (machine.commitStatus === 'committed') {
-              hasDeployed = true;
-              return false;
-            }
-          });
-        }
-        this.setState({hasDeployed: hasDeployed});
-      }
     },
 
     /**
@@ -112,7 +78,7 @@ YUI.add('deployment-bar', function() {
       @returns {String} the label for the deploy button
     */
     _getDeployButtonLabel: function() {
-      return this.state.hasDeployed ? 'Commit changes' : 'Deploy changes';
+      return this.props.modelCommitted ? 'Commit changes' : 'Deploy changes';
     },
 
     /**
