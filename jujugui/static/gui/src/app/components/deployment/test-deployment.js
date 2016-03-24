@@ -45,7 +45,9 @@ describe('Deployment', function() {
         changeState={changeState}
         ecsClear={ecsClear}
         ecsCommit={ecsCommit}
-        getUnplacedUnitCount={getUnplacedUnitCount}  />, true);
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        modelCommitted={false}
+        numberOfChanges={6} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.DeploymentSummary
@@ -54,7 +56,9 @@ describe('Deployment', function() {
         changeState={changeState}
         ecsClear={ecsClear}
         ecsCommit={ecsCommit}
-        getUnplacedUnitCount={getUnplacedUnitCount} />);
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        modelCommitted={false}
+        numberOfChanges={6} />);
     assert.deepEqual(output.props.children, expected);
   });
 
@@ -73,10 +77,37 @@ describe('Deployment', function() {
         changeState={changeState}
         ecsClear={ecsClear}
         ecsCommit={ecsCommit}
-        getUnplacedUnitCount={getUnplacedUnitCount}  />, true);
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        modelCommitted={false}
+        numberOfChanges={6} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.DeploymentChooseCloud
+        changeState={changeState} />);
+    assert.deepEqual(output.props.children, expected);
+  });
+
+  it('can display the add credentials step', function() {
+    var autoPlaceUnits = sinon.stub();
+    var changeState = sinon.stub();
+    var getUnplacedUnitCount = sinon.stub();
+    var ecsClear = sinon.stub();
+    var ecsCommit = sinon.stub();
+    var changeDescriptions = [];
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Deployment
+        activeComponent="add-credentials"
+        autoPlaceUnits={autoPlaceUnits}
+        changeDescriptions={changeDescriptions}
+        changeState={changeState}
+        ecsClear={ecsClear}
+        ecsCommit={ecsCommit}
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        modelCommitted={false}
+        numberOfChanges={6} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.DeploymentAddCredentials
         changeState={changeState} />);
     assert.deepEqual(output.props.children, expected);
   });

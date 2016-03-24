@@ -29,6 +29,7 @@ YUI.add('deployment-component', function() {
       ecsClear: React.PropTypes.func.isRequired,
       ecsCommit: React.PropTypes.func.isRequired,
       getUnplacedUnitCount: React.PropTypes.func.isRequired,
+      numberOfChanges: React.PropTypes.number.isRequired
     },
 
     /**
@@ -47,7 +48,9 @@ YUI.add('deployment-component', function() {
               changeState={this.props.changeState}
               ecsClear={this.props.ecsClear}
               ecsCommit={this.props.ecsCommit}
-              getUnplacedUnitCount={this.props.getUnplacedUnitCount} />);
+              getUnplacedUnitCount={this.props.getUnplacedUnitCount}
+              modelCommitted={this.props.modelCommitted}
+              numberOfChanges={this.props.numberOfChanges} />);
         case 'choose-cloud':
           return (
             <juju.components.DeploymentChooseCloud
@@ -72,6 +75,11 @@ YUI.add('deployment-component', function() {
         title: 'Deploy',
         component: 'summary'
       }];
+      if (this.props.modelCommitted) {
+        // If the model is committed we want to show the commit flow which
+        // doesn't have any steps in the header.
+        steps = [];
+      }
       return (
         <juju.components.DeploymentPanel
           activeComponent={activeComponent}

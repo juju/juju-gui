@@ -57,7 +57,9 @@ describe('DeploymentSummary', function() {
         changeState={sinon.stub()}
         ecsClear={sinon.stub()}
         ecsCommit={sinon.stub()}
-        getUnplacedUnitCount={getUnplacedUnitCount} />, true);
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        modelCommitted={false}
+        numberOfChanges={6} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var buttons = [{
@@ -74,6 +76,10 @@ describe('DeploymentSummary', function() {
         <juju.components.DeploymentPanelContent
           title="Deployment summary">
           {undefined}
+          <h3 className="deployment-summary__title">
+            Change log ({6})
+            {undefined}
+          </h3>
           <ul className="deployment-summary__list">
             <li className={className}>
               <span className="deployment-summary-change-item__change">
@@ -101,7 +107,9 @@ describe('DeploymentSummary', function() {
         changeState={sinon.stub()}
         ecsClear={sinon.stub()}
         ecsCommit={sinon.stub()}
-        getUnplacedUnitCount={getUnplacedUnitCount} />, true);
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        modelCommitted={false}
+        numberOfChanges={6} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -118,6 +126,33 @@ describe('DeploymentSummary', function() {
     assert.deepEqual(output.props.children[0].props.children[0], expected);
   });
 
+  it('can display a clear changes button', function() {
+    var getUnplacedUnitCount = sinon.stub().returns(1);
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentSummary
+        autoPlaceUnits={sinon.stub()}
+        changeDescriptions={[]}
+        changeState={sinon.stub()}
+        ecsClear={sinon.stub()}
+        ecsCommit={sinon.stub()}
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        modelCommitted={true}
+        numberOfChanges={6} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <h3 className="deployment-summary__title">
+        Change log ({6})
+        <span className="link deployment-summary__title-link"
+          onClick={instance._handleClear}
+          role="button"
+          tabIndex="0">
+          Clear all changes&nbsp;&rsaquo;
+        </span>
+      </h3>);
+    assert.deepEqual(output.props.children[0].props.children[1], expected);
+  });
+
   it('can navigate to the machine view', function() {
     var getUnplacedUnitCount = sinon.stub().returns(1);
     var changeState = sinon.stub();
@@ -128,7 +163,9 @@ describe('DeploymentSummary', function() {
         changeState={changeState}
         ecsClear={sinon.stub()}
         ecsCommit={sinon.stub()}
-        getUnplacedUnitCount={getUnplacedUnitCount} />);
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        modelCommitted={false}
+        numberOfChanges={6} />);
     output.props.children[0].props.children[0].props.children[1]
       .props.onClick();
     assert.equal(changeState.callCount, 1);
@@ -154,7 +191,9 @@ describe('DeploymentSummary', function() {
         changeState={changeState}
         ecsClear={sinon.stub()}
         ecsCommit={sinon.stub()}
-        getUnplacedUnitCount={getUnplacedUnitCount} />);
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        modelCommitted={false}
+        numberOfChanges={6} />);
     output.props.children[1].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -179,7 +218,9 @@ describe('DeploymentSummary', function() {
         ecsCommit={ecsCommit}
         changeDescriptions={[]}
         changeState={changeState}
-        getUnplacedUnitCount={getUnplacedUnitCount} />, true);
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        modelCommitted={false}
+        numberOfChanges={6} />, true);
     var output = renderer.getRenderOutput();
     output.props.children[1].props.buttons[1].action();
     assert.equal(autoPlaceUnits.callCount, 1);
