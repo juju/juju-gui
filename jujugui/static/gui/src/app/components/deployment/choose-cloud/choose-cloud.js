@@ -22,18 +22,28 @@ YUI.add('deployment-choose-cloud', function() {
 
   juju.components.DeploymentChooseCloud = React.createClass({
 
-    // XXX huwshimi 22 March 2016: this should be replaced with a passed in prop
-    // once the data is available.
-    CREDENTIALS: [{
-      id: 'my-cloud-credentials',
-      cloud: 'aws',
-      title: 'My cloud credentials',
-      owner: 'Me!',
-      uses: 3
-    }],
-
     propTypes: {
-      changeState: React.PropTypes.func.isRequired
+      changeState: React.PropTypes.func.isRequired,
+      jem: React.PropTypes.object.isRequired
+    },
+
+    getInitialState: function() {
+      return {
+        credentials: []
+      };
+    },
+
+    componentWillMount: function() {
+      this.props.jem.listTemplates((error, credentials) => {
+        // XXX kadams54: This is basic error handling for the initial
+        // implementation. It should be replaced with an error message for the
+        // user in subsequent UI polish work.
+        if (error) {
+          console.error('Unable to list templates', error);
+          return;
+        }
+        this.setState({credentials: credentials});
+      });
     },
 
     /**
@@ -42,39 +52,31 @@ YUI.add('deployment-choose-cloud', function() {
       @method _generateCredentials
     */
     _generateCredentials: function() {
-      var credentials = this.CREDENTIALS;
-      if (credentials.length === 0) {
+      var credentials = this.state.credentials;
+      if (!credentials || credentials.length === 0) {
         return;
       }
       var components = [];
       credentials.forEach((credential, i) => {
-        var plural = credential.uses === 1 ? '' : 's';
-        var lastCol = i % 2 === 1 ? 'last-col' : '';
-        var className = 'deployment-choose-cloud__cloud-option ' +
-          'deployment-choose-cloud__cloud-option--credential six-col ' +
-          lastCol;
-        var src = `juju-ui/assets/images/non-sprites/${credential.cloud}.png`;
+        var className = classNames(
+          'deployment-choose-cloud__cloud-option',
+          'deployment-choose-cloud__cloud-option--credential',
+          'six-col',
+          {'last-col': i % 2 === 1}
+        );
         components.push(
           <li className={className}
-            key={credential.id}
-            onClick={this._handleCredentialClick.bind(this, credential.id)}>
-            <img alt={credential.cloud}
-              className="deployment-choose-cloud__cloud-option-logo"
-              src={src} />
+            key={credential.path}
+            onClick={this._handleCredentialClick.bind(this, credential.path)}>
             <span className="deployment-choose-cloud__cloud-option-title">
-              {credential.title}
+              {credential.path}
             </span>
-            <div>
-              Owner: {credential.owner}
-              &nbsp;&bull;&nbsp;
-              Used for {credential.uses} model{plural}
-            </div>
           </li>);
       });
       return (
         <div>
           <h3 className="deployment-choose-cloud__title twelve-col">
-            Public clouds
+            Your cloud credentials
           </h3>
           <ul className="deployment-choose-cloud__list twelve-col">
             {components}
@@ -148,7 +150,8 @@ YUI.add('deployment-choose-cloud', function() {
       @method _generateOnboarding
     */
     _generateOnboarding: function() {
-      if (this.CREDENTIALS.length > 0) {
+      var credentials = this.state.credentials;
+      if (credentials && credentials.length > 0) {
         return;
       }
       return (

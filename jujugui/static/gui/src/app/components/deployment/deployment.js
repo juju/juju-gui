@@ -29,6 +29,7 @@ YUI.add('deployment-component', function() {
       ecsClear: React.PropTypes.func.isRequired,
       ecsCommit: React.PropTypes.func.isRequired,
       getUnplacedUnitCount: React.PropTypes.func.isRequired,
+      jem: React.PropTypes.object.isRequired,
       numberOfChanges: React.PropTypes.number.isRequired
     },
 
@@ -54,6 +55,7 @@ YUI.add('deployment-component', function() {
         case 'choose-cloud':
           return (
             <juju.components.DeploymentChooseCloud
+              jem={this.props.jem}
               changeState={this.props.changeState} />);
         case 'add-credentials':
           return (
