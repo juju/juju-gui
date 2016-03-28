@@ -1294,11 +1294,16 @@ YUI.add('juju-gui', function(Y) {
     */
     _generateSocketUrl: function(callback) {
       this.jem = null;
+      var existingMacaroons;
+      if (window.juju_config) {
+        existingMacaroons = window.juju_config.jemMacaroons;
+      }
       if (this.get('jemURL')) {
         var bakery = new Y.juju.environments.web.Bakery({
           webhandler: new Y.juju.environments.web.WebHandler(),
           interactive: this.get('interactiveLogin'),
-          serviceName: 'jem'
+          serviceName: 'jem',
+          macaroon: existingMacaroons
         });
         this.jem = new window.jujulib.environment(
             this.get('jemURL'), this.get('jemAPIPath'), bakery);
@@ -1353,7 +1358,7 @@ YUI.add('juju-gui', function(Y) {
     _setupCharmstore: function(Charmstore) {
       if (this.get('charmstore') === undefined) {
         var jujuConfig = window.juju_config,
-            charmstoreURL, charmstoreAPIPath;
+            charmstoreURL, charmstoreAPIPath, existingMacaroons;
         if (
             !jujuConfig ||
             !jujuConfig.charmstoreURL ||
@@ -1363,13 +1368,15 @@ YUI.add('juju-gui', function(Y) {
         } else {
           charmstoreURL = jujuConfig.charmstoreURL;
           charmstoreAPIPath = jujuConfig.charmstoreAPIPath;
+          existingMacaroons = jujuConfig.charmstoreMacaroons;
         }
         var bakery = new Y.juju.environments.web.Bakery({
           webhandler: new Y.juju.environments.web.WebHandler(),
           interactive: this.get('interactiveLogin'),
           setCookiePath: charmstoreURL + charmstoreAPIPath + '/set-auth-cookie',
           staticMacaroonPath: `${charmstoreURL}${charmstoreAPIPath}/macaroon`,
-          serviceName: 'charmstore'
+          serviceName: 'charmstore',
+          macaroon: existingMacaroons
         });
         this.set(
             'charmstore',
