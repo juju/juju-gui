@@ -37,6 +37,7 @@ describe('Deployment', function() {
     var ecsClear = sinon.stub();
     var ecsCommit = sinon.stub();
     var changeDescriptions = [];
+    var jem = {};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
         activeComponent="summary"
@@ -46,6 +47,7 @@ describe('Deployment', function() {
         ecsClear={ecsClear}
         ecsCommit={ecsCommit}
         getUnplacedUnitCount={getUnplacedUnitCount}
+        jem={jem}
         modelCommitted={false}
         numberOfChanges={6} />, true);
     var output = renderer.getRenderOutput();
@@ -68,6 +70,7 @@ describe('Deployment', function() {
     var getUnplacedUnitCount = sinon.stub();
     var ecsClear = sinon.stub();
     var ecsCommit = sinon.stub();
+    var jem = {};
     var changeDescriptions = [];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
@@ -78,11 +81,13 @@ describe('Deployment', function() {
         ecsClear={ecsClear}
         ecsCommit={ecsCommit}
         getUnplacedUnitCount={getUnplacedUnitCount}
+        jem={jem}
         modelCommitted={false}
         numberOfChanges={6} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.DeploymentChooseCloud
+        jem={jem}
         changeState={changeState} />);
     assert.deepEqual(output.props.children, expected);
   });

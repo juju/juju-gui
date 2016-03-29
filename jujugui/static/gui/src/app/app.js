@@ -877,6 +877,7 @@ YUI.add('juju-gui', function(Y) {
       }
       ReactDOM.render(
         <window.juju.components.Deployment
+          jem={this.jem}
           activeComponent={activeComponent}
           autoPlaceUnits={this._autoPlaceUnits.bind(this)}
           changeDescriptions={changeDescriptions}
