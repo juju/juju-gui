@@ -877,7 +877,6 @@ YUI.add('juju-gui', function(Y) {
       }
       ReactDOM.render(
         <window.juju.components.Deployment
-          jem={this.jem}
           activeComponent={activeComponent}
           autoPlaceUnits={this._autoPlaceUnits.bind(this)}
           changeDescriptions={changeDescriptions}
@@ -886,8 +885,10 @@ YUI.add('juju-gui', function(Y) {
           ecsCommit={ecs.commit.bind(ecs, env)}
           getUnplacedUnitCount={
             utils.getUnplacedUnitCount.bind(this, db.units)}
+          jem={this.jem}
           modelCommitted={modelCommitted}
-          numberOfChanges={Object.keys(ecs.getCurrentChangeSet()).length} />,
+          numberOfChanges={Object.keys(ecs.getCurrentChangeSet()).length}
+          users={Y.clone(this.get('users'), true)} />,
         document.getElementById('deployment-container'));
     },
 

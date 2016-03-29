@@ -54,11 +54,15 @@ var module = module;
       var error = data.Message || data.message;
       callback(error, data);
     };
-    if (method === 'GET') {
-      return bakery.sendGetRequest(path, success, failure, redirect);
-    } else if (method === 'POST') {
-      return bakery.sendPostRequest(
-          path, JSON.stringify(params), success, failure, redirect);
+    switch (method) {
+      case 'GET':
+        return bakery.sendGetRequest(path, success, failure, redirect);
+      case 'POST':
+        return bakery.sendPostRequest(
+            path, JSON.stringify(params), success, failure, redirect);
+      case 'PUT':
+        return bakery.sendPutRequest(
+            path, JSON.stringify(params), success, failure, redirect);
     }
   };
 
@@ -225,6 +229,21 @@ var module = module;
         callback(error, data);
       };
       return _makeRequest(this.bakery, url, 'GET', null, _listTemplates, true);
+    },
+
+    /**
+      Adds a new template for the currently authenticated user in JEM.
+
+      @method addTemplate
+      @param envOwnerName the owner the template.
+      @param templateName the name of the templateName
+      @param template A JavaScript object holding the information for the
+        template - a 'state-server' key, and a 'config' key with credentials.
+    */
+    addTemplate: function(envOwnerName, templateName, template, callback) {
+      var url = [
+        this.jemURL, 'template', envOwnerName, templateName].join('/');
+      return _makeRequest(this.bakery, url, 'PUT', template, callback, false);
     }
   };
 
