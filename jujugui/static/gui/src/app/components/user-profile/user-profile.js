@@ -140,7 +140,19 @@ YUI.add('user-profile', function() {
       }
       // data.envs is only populated in the JES environments, when using JEM
       // the environments are in the top level 'data' object.
-      this.setState({envList: data.envs || data});
+      var envs = data.envs || data;
+      // XXX kadams54: JEM models don't *currently* have a name or owner. They
+      // have a path which is a combination of both, but that format may change
+      // on down the road. Hence this big comment.
+      var envList = envs.map((env) => {
+        if (env.path) {
+          env.name = env.path;
+          env.owner = env.path.split('/')[0];
+          env.lastConnection = 'N/A';
+        }
+        return env;
+      });
+      this.setState({envList: envList});
     },
 
     /**
