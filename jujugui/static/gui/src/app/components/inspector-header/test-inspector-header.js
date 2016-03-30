@@ -60,22 +60,13 @@ describe('InspectorHeader', function() {
     assert.equal(output.props.className, 'inspector-header');
   });
 
-  it('displays the provided count', function() {
+  it('displays the provided icon', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.InspectorHeader
-          count="4"  />);
+          icon="icon.svg" />);
     var output = shallowRenderer.getRenderOutput();
-    assert.equal(output.props.children[2].props.children, '4');
-  });
-
-  it('hides the count if it is not provided', function() {
-    var shallowRenderer = testUtils.createRenderer();
-    shallowRenderer.render(
-        <juju.components.InspectorHeader />);
-    var output = shallowRenderer.getRenderOutput();
-    assert.isTrue(output.props.children[2].props.className.indexOf(
-        'hidden') > -1);
+    assert.equal(output.props.children[2].props.children.props.src, 'icon.svg');
   });
 
   it('calls supplied callable when clicked', function() {

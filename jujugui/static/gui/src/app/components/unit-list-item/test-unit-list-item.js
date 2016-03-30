@@ -36,6 +36,7 @@ describe('UnitListItem', () => {
           label="unit-name"
           unitId="apache/2"
           className="select-all"
+          count="3"
         />);
     assert.deepEqual(output,
         <li className="unit-list-item unit-list-item--select-all"
@@ -48,7 +49,12 @@ describe('UnitListItem', () => {
               onClick={output.props.children.props.children[0].props.onClick}
               onChange={output.props.children.props.children[0].props.onChange}
               checked={false} />
-            unit-name
+            <span className="unit-list-item__label">
+              unit-name
+            </span>
+            <span className="unit-list-item__count">
+              3
+            </span>
           </label>
         </li>);
   });
@@ -62,16 +68,7 @@ describe('UnitListItem', () => {
           action="action"
           unitId="apache/2"
         />);
-    assert.deepEqual(output.props.children,
-        <label htmlFor="">
-          <input
-            type="checkbox"
-            id="unit-name-unit"
-            onClick={output.props.children.props.children[0].props.onClick}
-            onChange={output.props.children.props.children[0].props.onChange}
-            checked={false} />
-          unit-name
-        </label>);
+    assert.equal(output.props.children.props.htmlFor, '');
   });
 
   it('has a nav class if it is a nav element', () => {
@@ -83,20 +80,8 @@ describe('UnitListItem', () => {
           action="action"
           unitId="apache/2"
         />);
-    assert.deepEqual(output,
-      <li className="unit-list-item unit-list-item--nav"
-        data-id="apache/2"
-        onClick={output.props.onClick} tabIndex="0" role="button">
-        <label htmlFor="">
-          <input
-            type="checkbox"
-            id="unit-name-unit"
-            onClick={output.props.children.props.children[0].props.onClick}
-            onChange={output.props.children.props.children[0].props.onChange}
-            checked={false} />
-          unit-name
-        </label>
-      </li>);
+    assert.isTrue(output.props.className.indexOf(
+        'unit-list-item--nav') > -1);
   });
 
   it('calls the supplied whenChanged if supplied', () => {
