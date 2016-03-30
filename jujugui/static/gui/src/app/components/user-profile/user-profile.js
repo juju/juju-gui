@@ -148,7 +148,7 @@ YUI.add('user-profile', function() {
         if (env.path) {
           env.name = env.path;
           env.owner = env.path.split('/')[0];
-          env.lastConnection = 'NA';
+          env.lastConnection = 'N/A';
         }
         return env;
       });

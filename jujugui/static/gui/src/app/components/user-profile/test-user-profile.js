@@ -513,7 +513,7 @@ describe('UserProfile', () => {
     var jemModel = jemModels[0];
     assert.equal(displayedName, jemModel.path);
     // XXX kadams54: Because we don't have a LastConnection yet for JEM models.
-    assert.equal(displayedLastConnection, 'NA');
+    assert.equal(displayedLastConnection, 'N/A');
     assert.equal(jemModel.path.indexOf(displayedOwner), 0);
   });
 
