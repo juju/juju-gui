@@ -270,7 +270,7 @@ YUI.add('user-profile', function() {
       return (
         <juju.components.UserProfileEntity
           entity={model}
-          expanded={name === this.props.currentModel}
+          expanded={model.name === this.props.currentModel}
           key={uuid}
           switchModel={this.switchEnv}
           type="model">

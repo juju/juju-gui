@@ -1872,6 +1872,9 @@ YUI.add('juju-gui', function(Y) {
     */
     switchEnv: function(socketUrl, username, password) {
       console.log('switching to new socket URL:', socketUrl);
+      if (this.get('sandbox')) {
+        console.log('switching models is not supported in sandbox');
+      }
       if (username && password) {
         // We don't always get a new username and password when switching
         // environments; only set new credentials if we've actually gotten them.
