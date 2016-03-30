@@ -475,8 +475,15 @@ describe('UserProfile', () => {
   });
 
   it('requests jem envs if jem is provided and updates state', () => {
+    // Since JEM models currently have a different data schema from JES models.
+    var jemModels = models.map((model) => {
+      return {
+        uuid: model.uuid,
+        path: `${model.owner}/${model.name}`
+      };
+    });
     var jem = {
-      listEnvironments: sinon.stub().callsArgWith(0, null, {envs: models})
+      listEnvironments: sinon.stub().callsArgWith(0, null, {envs: jemModels})
     };
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
@@ -494,7 +501,20 @@ describe('UserProfile', () => {
     var instance = component.getMountedInstance();
 
     assert.equal(jem.listEnvironments.callCount, 1);
-    assert.deepEqual(instance.state.envList, models);
+    assert.deepEqual(instance.state.envList, jemModels);
+
+    // Make sure we properly displayed the different bits within a JEM model.
+    var output = component.getRenderOutput();
+    var displayedModel = output.props.children.props.children.props.children[1].props.children[0].props.children[1].props.children[1][0]; // eslint-disable-line
+    var displayedChildren = displayedModel.props.children;
+    var displayedName = displayedChildren[0].props.children;
+    var displayedLastConnection = displayedChildren[2].props.children;
+    var displayedOwner = displayedChildren[4].props.children;
+    var jemModel = jemModels[0];
+    assert.equal(displayedName, jemModel.path);
+    // XXX kadams54: Because we don't have a LastConnection yet for JEM models.
+    assert.equal(displayedLastConnection, 'NA');
+    assert.equal(jemModel.path.indexOf(displayedOwner), 0);
   });
 
   it('requests jes envs if no jem is provided and updates state', () => {

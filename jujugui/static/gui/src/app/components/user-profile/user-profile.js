@@ -255,27 +255,39 @@ YUI.add('user-profile', function() {
     */
     _generateModelRow: function(model) {
       var uuid = model.uuid;
+      // XXX kadams54: JEM models don't *currently* have a name or owner. They
+      // have a path which is a combination of both, but that format may change
+      // on down the road. Hence this big comment.
+      var name, owner;
+      if (model.path) {
+        name = model.path;
+        owner = name.split('/')[0];
+      } else {
+        name = model.name;
+        owner = model.owner;
+      }
+      var lastConnection = model.lastConnection || 'NA';
       return (
         <juju.components.UserProfileEntity
           entity={model}
-          expanded={model.name === this.props.currentModel}
+          expanded={name === this.props.currentModel}
           key={uuid}
           switchModel={this.switchEnv}
           type="model">
           <span className="user-profile__list-col three-col">
-            {model.name}
+            {name}
           </span>
           <span className="user-profile__list-col four-col">
             --
           </span>
           <span className="user-profile__list-col two-col">
-            {model.lastConnection}
+            {lastConnection}
           </span>
           <span className="user-profile__list-col one-col">
             --
           </span>
           <span className="user-profile__list-col two-col last-col">
-            {model.owner}
+            {owner}
           </span>
         </juju.components.UserProfileEntity>);
     },
