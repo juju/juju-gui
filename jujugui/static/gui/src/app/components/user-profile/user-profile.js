@@ -140,7 +140,19 @@ YUI.add('user-profile', function() {
       }
       // data.envs is only populated in the JES environments, when using JEM
       // the environments are in the top level 'data' object.
-      this.setState({envList: data.envs || data});
+      var envs = data.envs || data;
+      // XXX kadams54: JEM models don't *currently* have a name or owner. They
+      // have a path which is a combination of both, but that format may change
+      // on down the road. Hence this big comment.
+      var envList = envs.map((env) => {
+        if (env.path) {
+          env.name = env.path;
+          env.owner = env.path.split('/')[0];
+          env.lastConnection = 'NA';
+        }
+        return env;
+      });
+      this.setState({envList: envList});
     },
 
     /**
@@ -255,18 +267,6 @@ YUI.add('user-profile', function() {
     */
     _generateModelRow: function(model) {
       var uuid = model.uuid;
-      // XXX kadams54: JEM models don't *currently* have a name or owner. They
-      // have a path which is a combination of both, but that format may change
-      // on down the road. Hence this big comment.
-      var name, owner;
-      if (model.path) {
-        name = model.path;
-        owner = name.split('/')[0];
-      } else {
-        name = model.name;
-        owner = model.owner;
-      }
-      var lastConnection = model.lastConnection || 'NA';
       return (
         <juju.components.UserProfileEntity
           entity={model}
@@ -275,19 +275,19 @@ YUI.add('user-profile', function() {
           switchModel={this.switchEnv}
           type="model">
           <span className="user-profile__list-col three-col">
-            {name}
+            {model.name}
           </span>
           <span className="user-profile__list-col four-col">
             --
           </span>
           <span className="user-profile__list-col two-col">
-            {lastConnection}
+            {model.lastConnection}
           </span>
           <span className="user-profile__list-col one-col">
             --
           </span>
           <span className="user-profile__list-col two-col last-col">
-            {owner}
+            {model.owner}
           </span>
         </juju.components.UserProfileEntity>);
     },
