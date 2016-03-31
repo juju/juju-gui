@@ -19,21 +19,33 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
+var testUtils = React.addons.TestUtils;
 
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentAddCredentials', function() {
+  var users, jem;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('deployment-add-credentials', function() { done(); });
+    users = {
+      jem: {
+        user: 'foo'
+      }
+    };
+    jem = {
+      addTemplate: sinon.stub()
+    };
   });
 
   it('can render with credentials', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentAddCredentials
-        changeState={sinon.stub()} />, true);
+        changeState={sinon.stub()}
+        jem={jem}
+        users={users} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var buttons = [{
@@ -51,11 +63,13 @@ describe('DeploymentAddCredentials', function() {
           title="Configure Amazon Web Services">
           <form>
             <input className="deployment-add-credentials__input"
-                placeholder="Credential name"
-               type="text" />
+              placeholder="Credential name"
+              type="text"
+              ref="templateName" />
             <input className="deployment-add-credentials__input"
-                placeholder="Specify region"
-               type="text" />
+              placeholder="Specify region"
+              type="text"
+              ref="templateRegion" />
             <h3 className="deployment-add-credentials__title twelve-col">
               Enter credentials
             </h3>
@@ -70,11 +84,13 @@ describe('DeploymentAddCredentials', function() {
               </a>
             </p>
             <input className="deployment-add-credentials__input"
-                placeholder="Access-key"
-               type="text" />
+              placeholder="Access-key"
+              type="text"
+              ref="templateAccessKey" />
             <input className="deployment-add-credentials__input"
-                placeholder="Secret-key"
-               type="text" />
+              placeholder="Secret-key"
+              type="text"
+              ref="templateSecretKey" />
           </form>
         </juju.components.DeploymentPanelContent>
         <juju.components.DeploymentPanelFooter
@@ -84,28 +100,37 @@ describe('DeploymentAddCredentials', function() {
   });
 
   it('can add the credentials', function() {
-    var changeState = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentAddCredentials
-        changeState={changeState} />, true);
-    var output = renderer.getRenderOutput();
-    output.props.children[1].props.buttons[1].action();
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'deploy',
-        metadata: {
-          activeComponent: 'summary'
-        }
+    users = {
+      jem: {
+        user: 'foo'
       }
-    });
+    };
+    jem = {
+      addTemplate: sinon.stub()
+    };
+    var output = testUtils.renderIntoDocument(
+      <juju.components.DeploymentAddCredentials
+        changeState={sinon.stub()}
+        jem={jem}
+        setDeploymentInfo={sinon.stub()}
+        users={users} />, true);
+    var templateName = output.refs.templateName;
+    templateName.value = 'foo';
+    var templateAccessKey = output.refs.templateAccessKey;
+    templateAccessKey.value = 'bar';
+    var templateSecretKey = output.refs.templateSecretKey;
+    templateSecretKey.value = 'baz';
+    output._handleAddCredentials();
+    assert.equal(jem.addTemplate.callCount, 1);
   });
 
   it('can select a new cloud', function() {
     var changeState = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentAddCredentials
-        changeState={changeState} />, true);
+        changeState={changeState}
+        jem={jem}
+        users={users} />, true);
     var output = renderer.getRenderOutput();
     output.props.children[1].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);

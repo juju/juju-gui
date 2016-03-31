@@ -23,7 +23,10 @@ YUI.add('deployment-add-credentials', function() {
   juju.components.DeploymentAddCredentials = React.createClass({
 
     propTypes: {
-      changeState: React.PropTypes.func.isRequired
+      changeState: React.PropTypes.func.isRequired,
+      jem: React.PropTypes.object.isRequired,
+      setDeploymentInfo: React.PropTypes.func.isRequired,
+      users: React.PropTypes.object.isRequired
     },
 
     /**
@@ -32,14 +35,39 @@ YUI.add('deployment-add-credentials', function() {
       @method _handleCloudClick
     */
     _handleAddCredentials: function(id) {
-      this.props.changeState({
-        sectionC: {
-          component: 'deploy',
-          metadata: {
-            activeComponent: 'summary'
+      // Add template
+      var user = this.props.users.jem.user,
+          templateName = this.refs.templateName.value,
+          template = {
+            // XXX The controllers need to exist first; for now use a known good
+            // controller with work to come to generate a controller name.  Also
+            // this key will change from 'state-server' to 'controller'.
+            // Makyo 2016-03-30
+            'state-server': 'yellow/aws-eu-central-1',
+            //'state-server': 'yellow/aws-' + this.refs.templateRegion.value,
+            // XXX This applies only to AWS (for first release).
+            'config': {
+              'access-key': this.refs.templateAccessKey.value,
+              'secret-key': this.refs.templateSecretKey.value
+            }
+          };
+      this.props.jem.addTemplate(
+        user, templateName, template, (error, data) => {
+          if (error) {
+            console.error('Unable to add template', error);
           }
-        }
-      });
+          this.props.setDeploymentInfo('templateName',
+            [user, templateName].join('/'));
+          this.props.setDeploymentInfo('template', template);
+          this.props.changeState({
+            sectionC: {
+              component: 'deploy',
+              metadata: {
+                activeComponent: 'summary'
+              }
+            }
+          });
+        });
     },
 
     /**
@@ -74,11 +102,13 @@ YUI.add('deployment-add-credentials', function() {
             title="Configure Amazon Web Services">
             <form>
               <input className="deployment-add-credentials__input"
-                  placeholder="Credential name"
-                 type="text" />
+                placeholder="Credential name"
+                type="text"
+                ref="templateName" />
               <input className="deployment-add-credentials__input"
-                  placeholder="Specify region"
-                 type="text" />
+                placeholder="Specify region"
+                type="text"
+                ref="templateRegion" />
               <h3 className="deployment-add-credentials__title twelve-col">
                 Enter credentials
               </h3>
@@ -93,11 +123,13 @@ YUI.add('deployment-add-credentials', function() {
                 </a>
               </p>
               <input className="deployment-add-credentials__input"
-                  placeholder="Access-key"
-                 type="text" />
+                placeholder="Access-key"
+                type="text"
+                ref="templateAccessKey" />
               <input className="deployment-add-credentials__input"
-                  placeholder="Secret-key"
-                 type="text" />
+                placeholder="Secret-key"
+                type="text"
+                ref="templateSecretKey" />
             </form>
           </juju.components.DeploymentPanelContent>
           <juju.components.DeploymentPanelFooter
@@ -109,5 +141,6 @@ YUI.add('deployment-add-credentials', function() {
 
 }, '0.1.0', { requires: [
   'deployment-panel-content',
+  'deployment-panel-footer',
   'svg-icon'
 ]});

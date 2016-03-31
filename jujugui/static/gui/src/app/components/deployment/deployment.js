@@ -30,7 +30,30 @@ YUI.add('deployment-component', function() {
       ecsCommit: React.PropTypes.func.isRequired,
       getUnplacedUnitCount: React.PropTypes.func.isRequired,
       jem: React.PropTypes.object.isRequired,
-      numberOfChanges: React.PropTypes.number.isRequired
+      numberOfChanges: React.PropTypes.number.isRequired,
+      users: React.PropTypes.object.isRequired
+    },
+
+    /**
+      Store information from portions of the deployment for use later down the
+      line.
+
+      @method setDeploymentInfo
+      @param key The key to store.
+      @param value The data to store.
+    */
+    setDeploymentInfo: function(key, value) {
+      this.deploymentStorage[key] = value;
+    },
+
+    /**
+      Retrieve stored deployment info.
+
+      @method getDeploymentInfo
+      @param key The key to retrieve.
+    */
+    getDeploymentInfo: function(key) {
+      return this.deploymentStorage[key];
     },
 
     /**
@@ -60,11 +83,15 @@ YUI.add('deployment-component', function() {
         case 'add-credentials':
           return (
             <juju.components.DeploymentAddCredentials
-              changeState={this.props.changeState} />);
+              changeState={this.props.changeState}
+              setDeploymentInfo={this.setDeploymentInfo}
+              jem={this.props.jem}
+              users={this.props.users} />);
       }
     },
 
     render: function() {
+      this.deploymentStorage = this.deploymentStorage || {};
       var activeComponent = this.props.activeComponent;
       var activeChild = this._generateActivePanel();
       var steps = [{

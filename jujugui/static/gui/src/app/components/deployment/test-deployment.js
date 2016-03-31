@@ -38,6 +38,11 @@ describe('Deployment', function() {
     var ecsCommit = sinon.stub();
     var changeDescriptions = [];
     var jem = {};
+    var users = {
+      jem: {
+        user: 'foo'
+      }
+    };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
         activeComponent="summary"
@@ -49,7 +54,8 @@ describe('Deployment', function() {
         getUnplacedUnitCount={getUnplacedUnitCount}
         jem={jem}
         modelCommitted={false}
-        numberOfChanges={6} />, true);
+        numberOfChanges={6}
+        users={users} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.DeploymentSummary
@@ -98,6 +104,14 @@ describe('Deployment', function() {
     var getUnplacedUnitCount = sinon.stub();
     var ecsClear = sinon.stub();
     var ecsCommit = sinon.stub();
+    var jem = {
+      addTemplate: sinon.stub()
+    };
+    var users = {
+      jem: {
+        user: 'foo'
+      }
+    };
     var changeDescriptions = [];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
@@ -108,12 +122,18 @@ describe('Deployment', function() {
         ecsClear={ecsClear}
         ecsCommit={ecsCommit}
         getUnplacedUnitCount={getUnplacedUnitCount}
+        jem={jem}
         modelCommitted={false}
-        numberOfChanges={6} />, true);
+        numberOfChanges={6}
+        users={users} />, true);
+    var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.DeploymentAddCredentials
-        changeState={changeState} />);
+        changeState={changeState}
+        jem={jem}
+        setDeploymentInfo={instance.setDeploymentInfo}
+        users={users} />);
     assert.deepEqual(output.props.children, expected);
   });
 });
