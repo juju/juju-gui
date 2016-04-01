@@ -34,4 +34,23 @@
             border-top: none;
         }
     }
+
+    &__count {
+        @include notification(transparent);
+        float: right;
+        margin-top: -3px;
+        color: $text-colour;
+        position: relative;
+        top: 4px;
+    }
+
+    &__label {
+      width: 170px;
+      overflow: hidden;
+      display: inline-block;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      position: relative;
+      top: 4px;
+    }
 }

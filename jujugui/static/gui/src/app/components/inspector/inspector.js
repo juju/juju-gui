@@ -97,6 +97,7 @@ YUI.add('inspector-component', function() {
           }
           state.activeChild = {
             title: service.get('name'),
+            icon: service.get('icon'),
             component: <juju.components.ServiceOverview
               destroyService={this.props.destroyService}
               clearState={this.props.clearState}
@@ -118,6 +119,7 @@ YUI.add('inspector-component', function() {
           var units = service.get('units').filterByStatus(unitStatus);
           state.activeChild = {
             title: 'Units',
+            icon: service.get('icon'),
             count: units.length,
             headerType: unitStatus,
             component:
@@ -190,6 +192,7 @@ YUI.add('inspector-component', function() {
         case 'scale':
           state.activeChild = {
             title: 'Scale',
+            icon: service.get('icon'),
             component:
               <juju.components.ScaleService
                 serviceId={serviceId}
@@ -207,6 +210,7 @@ YUI.add('inspector-component', function() {
         case 'config':
           state.activeChild = {
             title: 'Configure',
+            icon: service.get('icon'),
             component:
               <juju.components.Configuration
                 service={service}
@@ -230,6 +234,7 @@ YUI.add('inspector-component', function() {
         case 'expose':
           state.activeChild = {
             title: 'Expose',
+            icon: service.get('icon'),
             component:
               <juju.components.InspectorExpose
                 changeState={this.props.changeState}
@@ -249,6 +254,7 @@ YUI.add('inspector-component', function() {
         case 'relations':
           state.activeChild = {
             title: 'Relations',
+            icon: service.get('icon'),
             component:
               <juju.components.InspectorRelations
                 service={service}
@@ -265,6 +271,7 @@ YUI.add('inspector-component', function() {
         case 'change-version':
           state.activeChild = {
             title: 'Change version',
+            icon: service.get('icon'),
             component:
               <juju.components.InspectorChangeVersion
                 changeState={this.props.changeState}
@@ -300,7 +307,8 @@ YUI.add('inspector-component', function() {
             activeComponent={this.state.activeComponent}
             type={this.state.activeChild.headerType}
             count={this.state.activeChild.count}
-            title={this.state.activeChild.title} />
+            title={this.state.activeChild.title}
+            icon={this.state.activeChild.icon} />
           <div className="inspector-content">
             {this.state.activeChild.component}
           </div>

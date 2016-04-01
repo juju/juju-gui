@@ -15,6 +15,7 @@
 
     &__versions {
         @extend %collapse-children;
+        border-bottom: 1px solid $mid-grey;
         margin: 0;
         list-style: none;
     }

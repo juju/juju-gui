@@ -154,6 +154,7 @@ YUI.add('unit-list', function() {
           key={key}
           ref={key}
           label={group.label}
+          count={group.count}
           className='select-all'
           whenChanged={this._selectAllUnits.bind(this, key)}/>
       ];
@@ -194,6 +195,7 @@ YUI.add('unit-list', function() {
           groups[key] = {
             label: error,
             units: errors[error],
+            count: errors[error].length,
             key: key
           };
         });
@@ -202,6 +204,7 @@ YUI.add('unit-list', function() {
         groups[key] = {
           label: 'Select all units',
           units: units,
+          count: units.length,
           key: key
         };
       }

@@ -9,6 +9,7 @@
 
     &__units {
         @extend %collapse-children;
+        border-bottom: 1px solid $mid-grey;
     }
 
     &__actions {

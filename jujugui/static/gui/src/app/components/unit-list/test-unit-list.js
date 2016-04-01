@@ -88,6 +88,7 @@ describe('UnitList', () => {
         key="select-all"
         className="select-all"
         label="Select all units"
+        count={2}
         whenChanged={children[0].props.whenChanged}/>,
       <juju.components.UnitListItem
         key={units[0].displayName}
@@ -133,6 +134,7 @@ describe('UnitList', () => {
         key="select-all-0"
         className="select-all"
         label="hook failed: install"
+        count={1}
         whenChanged={children[0].props.whenChanged}/>,
       <juju.components.UnitListItem
         key={units[0].displayName}
@@ -146,6 +148,7 @@ describe('UnitList', () => {
         key="select-all-1"
         className="select-all"
         label="hook failed: config-changed"
+        count={1}
         whenChanged={children[2].props.whenChanged}/>,
       <juju.components.UnitListItem
         key={units[1].displayName}
@@ -155,6 +158,15 @@ describe('UnitList', () => {
         unitId="mysql/1"
         whenChanged={instance._updateActiveCount} />
     ]);
+  });
+
+  it('displays the provided count', function() {
+    var shallowRenderer = testUtils.createRenderer();
+    shallowRenderer.render(
+      <juju.components.UnitListItem
+        count={5}/>);
+    var output = shallowRenderer.getRenderOutput();
+    assert.equal(output.props.children.props.children[2].props.children, 5);
   });
 
   it('renders the Scale Service action component', () => {

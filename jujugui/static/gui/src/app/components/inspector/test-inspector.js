@@ -669,13 +669,7 @@ describe('Inspector', function() {
           linkify={sinon.stub()}
           service={service} />);
     var output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children[0],
-      <juju.components.InspectorHeader
-        backCallback={output.props.children[0].props.backCallback}
-        activeComponent={undefined}
-        count={undefined}
-        type={undefined}
-        title="demo"/>);
+    assert.equal(output.props.children[0].props.title, 'demo');
   });
 
   it('passes the type to the header component', function() {
@@ -703,13 +697,7 @@ describe('Inspector', function() {
           linkify={sinon.stub()}
           service={service} />);
     var output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children[0],
-      <juju.components.InspectorHeader
-        backCallback={output.props.children[0].props.backCallback}
-        count={0}
-        activeComponent="units"
-        type="error"
-        title="Units"/>);
+    assert.deepEqual(output.props.children[0].props.type, 'error');
   });
 
   it('displays the service overview when switching services', function() {
