@@ -699,7 +699,7 @@ YUI.add('juju-gui', function(Y) {
       document.getElementById('loading-message').style.display = 'none';
       ReactDOM.render(
         <window.juju.components.Login
-          envName={this.db.environment.get('name') || 'Sandbox'}
+          envName={this.get('jujuEnvUUID') || this.db.environment.get('name')}
           helpMessage={msg}
           setCredentials={this.env.setCredentials.bind(this.env)}
           login={this.env.login.bind(this.env)}
