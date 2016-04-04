@@ -351,7 +351,7 @@ describe('DeploymentBar', function() {
   });
 
   it('can display a notification', function() {
-    var change = 'add-services-1';
+    var change = {change: 'add-services-1'};
     var currentChangeSet = {'add-services-1': 'add-services-change'};
     var deployButtonAction = sinon.stub();
     var generateChangeDescription = sinon.stub().returns(change);
@@ -392,7 +392,7 @@ describe('DeploymentBar', function() {
 
 
   it('can display a new notification', function() {
-    var change = 'add-services-1';
+    var change = {change: 'add-services-1'};
     var currentChangeSet = {'add-services-1': 'add-services-change'};
     var deployButtonAction = sinon.stub();
     var generateChangeDescription = sinon.stub().returns(change);
@@ -429,7 +429,7 @@ describe('DeploymentBar', function() {
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Re-render with the new props.
-    change = 'added-unit-1';
+    change = {change: 'added-unit-1'};
     currentChangeSet['added-unit-1'] = 'added-unit-change';
     generateChangeDescription.returns(change);
     renderer.render(
@@ -452,7 +452,7 @@ describe('DeploymentBar', function() {
   });
 
   it('does not display a previously displayed notification', function() {
-    var change = 'add-services-1';
+    var change = {change: 'add-services-1'};
     var currentChangeSet = {'add-services-1': 'add-services-change'};
     var deployButtonAction = sinon.stub();
     var generateChangeDescription = sinon.stub().returns(change);
@@ -489,7 +489,7 @@ describe('DeploymentBar', function() {
       <juju.components.DeploymentBarNotification
         change={change} />);
     // Re-render with the new props.
-    change = 'added-unit-1';
+    change = {change: 'added-unit-1'};
     currentChangeSet['added-unit-1'] = 'added-unit-change';
     generateChangeDescription.returns(change);
     renderer.render(

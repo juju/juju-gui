@@ -21,6 +21,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('boolean-config', function() {
 
   juju.components.BooleanConfig = React.createClass({
+    propTypes: {
+      config: React.PropTypes.any.isRequired,
+      label: React.PropTypes.string.isRequired,
+      onChange: React.PropTypes.func,
+      option: React.PropTypes.object.isRequired
+    },
 
     getInitialState: function() {
       return { value: this._cleanConfig(this.props.config) };

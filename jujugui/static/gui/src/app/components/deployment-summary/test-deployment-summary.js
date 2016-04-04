@@ -52,6 +52,10 @@ describe('DeploymentSummaryClassic', function() {
         'deployment-summary-classic__list-header';
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummaryClassic
+        autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
+        ecsClear={sinon.stub()}
+        ecsCommit={sinon.stub()}
         getUnplacedUnitCount={getUnplacedUnitCount}
         changeDescriptions={changeDescriptions}
         autoPlaceDefault={false} />, true);

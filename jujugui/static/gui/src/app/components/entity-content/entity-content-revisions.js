@@ -22,6 +22,10 @@ YUI.add('entity-content-revisions', function() {
 
   juju.components.EntityContentRevisions = React.createClass({
 
+    propTypes: {
+      revisions: React.PropTypes.array.isRequired
+    },
+
     /**
       Get the current state of the revisions panel.
 

@@ -85,7 +85,6 @@ describe('AddedServicesList', () => {
             service={allServices[2]} />
         </ul>
       </div>);
-
     assert.deepEqual(output, expected);
   });
 });

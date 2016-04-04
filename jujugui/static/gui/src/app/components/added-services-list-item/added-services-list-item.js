@@ -24,6 +24,11 @@ YUI.add('added-services-list-item', function() {
 
     propTypes: {
       getUnitStatusCounts: React.PropTypes.func.isRequired,
+      hovered: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.bool
+      ]),
+      hoverService: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       panToService: React.PropTypes.func.isRequired,
       service: React.PropTypes.object.isRequired
