@@ -187,6 +187,7 @@ YUI.add('deployment-summary', function() {
       buttons.push({
         title: modelCommitted ? 'Commit' : 'Deploy',
         action: this._handleDeploy,
+        disabled: this.props.numberOfChanges === 0,
         type: 'inline-positive'
       });
       return (
