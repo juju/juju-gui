@@ -216,21 +216,22 @@ YUI.add('user-profile', function() {
         this.setState({bundleList: data});
       }
     },
-
     /**
-      Take the supplied UUID, fetch the username and password then call the
-      passed in switchModel method.
 
-      @method switchEnv
-      @param {String} uuid The env UUID.
-      @param {String} name The env name.
+      Take the supplied UUID, fetch the username and password then call the
+      passed in switchModel method. If the UUID and name are null, simply
+      disconnect without reconnecting to a new model.
+
+      @method switchModel
+      @param {String} uuid The model UUID.
+      @param {String} name The model name.
     */
-    switchEnv: function(uuid, name) {
+    switchModel: function(uuid, name) {
       var props = this.props;
       props.showConnectingMask();
-      props.switchModel(uuid, this.state.envList);
-      props.dbEnvironmentSet('name', name);
       this.close();
+      props.switchModel(uuid, this.state.envList);
+      props.dbEnvironmentSet('name', name || 'untitled_model');
     },
 
     close: function() {
@@ -281,7 +282,7 @@ YUI.add('user-profile', function() {
           entity={model}
           expanded={model.name === this.props.currentModel}
           key={uuid}
-          switchModel={this.switchEnv}
+          switchModel={this.switchModel}
           type="model">
           <span className="user-profile__list-col three-col">
             {model.name || '--'}
@@ -551,10 +552,19 @@ YUI.add('user-profile', function() {
       var header;
       var rows = [];
       var title;
+      var actions;
       if (type === 'models') {
         generateRow = this._generateModelRow;
         header = this._generateModelHeader();
         title = 'Models';
+        actions = (
+          <div className="user-profile__create-new">
+            <juju.components.GenericButton
+              action={this.switchModel}
+              type='inline-neutral'
+              title='Create new' />
+          </div>
+        );
       } else if (type === 'bundles') {
         generateRow = this._generateBundleRow;
         header = this._generateBundleHeader();
@@ -574,6 +584,7 @@ YUI.add('user-profile', function() {
             <span className="user-profile__size">
               ({list.length})
             </span>
+            {actions}
           </div>
           <ul className="user-profile__list twelve-col">
             {header}

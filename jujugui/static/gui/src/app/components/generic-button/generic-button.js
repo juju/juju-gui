@@ -42,7 +42,7 @@ YUI.add('generic-button', function() {
     },
 
     /**
-      Call the action if not disabled.  
+      Call the action if not disabled.
 
       @method _handleClick
       @param {Object} e The click event.

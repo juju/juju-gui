@@ -1913,23 +1913,28 @@ YUI.add('juju-view-utils', function(Y) {
   */
   utils.switchModel = function(createSocketURL, switchEnv, uuid, modelList) {
     var username, password, address, port;
-    var found = modelList.some((model) => {
-      if (model.uuid === uuid) {
-        username = model.user;
-        password = model.password;
-        if (model['host-ports']) {
-          var hostport = model['host-ports'][0].split(':');
-          address = hostport[0];
-          port = hostport[1];
+    if (uuid && modelList) {
+      var found = modelList.some((model) => {
+        if (model.uuid === uuid) {
+          username = model.user;
+          password = model.password;
+          if (model['host-ports']) {
+            var hostport = model['host-ports'][0].split(':');
+            address = hostport[0];
+            port = hostport[1];
+          }
+          return true;
         }
-        return true;
+      });
+      if (!found) {
+        console.log('No user credentials for model: ', uuid);
       }
-    });
-    if (!found) {
-      console.log('No user credentials for model: ', uuid);
+      var socketUrl = createSocketURL(address, port, uuid);
+      switchEnv(socketUrl, username, password);
+    } else {
+      // Just reset without reconnecting to an env.
+      switchEnv();
     }
-    var socketUrl = createSocketURL(address, port, uuid);
-    switchEnv(socketUrl, username, password);
   };
 
 }, '0.1.0', {

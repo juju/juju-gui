@@ -1106,7 +1106,7 @@ describe('App', function() {
   });
 
   describe('switchEnv', function() {
-    var Y, app;
+    var Y, app, testUtils;
     var _generateMockedApp = function(sandbox, socketUrl) {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
@@ -1180,6 +1180,7 @@ describe('App', function() {
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
@@ -1224,6 +1225,17 @@ describe('App', function() {
       assert.equal(
           app.env.setPassword, 'new-password',
           'Credentials should have been set.');
+    });
+
+    it('skips the reconnect when necessary', function() {
+      app = _generateMockedApp(false);
+      var connect = testUtils.makeStubMethod(app.env, 'connect');
+      this._cleanups.push(connect);
+      // Try calling switchEnv both with explicit false and with socketUrl not
+      // set (implicit).
+      app.switchEnv('', '', '', false);
+      app.switchEnv();
+      assert.equal(connect.callCount(), 0);
     });
   });
 
@@ -1563,4 +1575,44 @@ describe('App', function() {
     });
   });
 
+  describe('checkUserCredentials', function() {
+    var Y, app, testUtils;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use([
+        'juju-gui',
+        'juju-tests-utils'
+      ],
+      function(Y) {
+        testUtils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      app = new Y.juju.App({
+        consoleEnabled: true,
+        jujuCoreVersion: '2.0.0',
+        viewContainer: container
+      });
+    });
+
+    afterEach(function() {
+      app.destroy();
+    });
+
+    it('should proceed to next if disconnected but jem is set', function() {
+      var req = {}, res = {};
+      var next = testUtils.makeStubFunction();
+      var maskVisibility = testUtils.makeStubMethod(app, 'maskVisibility');
+      this._cleanups.push(maskVisibility.reset);
+      // Ensure jem is set.
+      app.jem = true;
+      app.checkUserCredentials(req, res, next);
+      var args = maskVisibility.allArguments();
+      assert.equal(args[0][0], false);
+      assert.equal(maskVisibility.callCount(), 1, 'Visibility mask not hidden');
+      assert.equal(next.callCount(), 1, 'Next not invoked.');
+    });
+  });
 });
