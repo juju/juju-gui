@@ -24,6 +24,7 @@ YUI.add('deployment-choose-cloud', function() {
 
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
+      setDeploymentInfo: React.PropTypes.func.isRequired,
       jem: React.PropTypes.object.isRequired
     },
 
@@ -134,6 +135,7 @@ YUI.add('deployment-choose-cloud', function() {
       @method _handleCredentialClick
     */
     _handleCredentialClick: function(id) {
+      this.props.setDeploymentInfo('templateName', id);
       this.props.changeState({
         sectionC: {
           component: 'deploy',

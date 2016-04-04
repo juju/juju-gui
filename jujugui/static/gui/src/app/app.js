@@ -892,6 +892,7 @@ YUI.add('juju-gui', function(Y) {
           getUnplacedUnitCount={
             utils.getUnplacedUnitCount.bind(this, db.units)}
           jem={this.jem}
+          createSocketURL={this.createSocketURL.bind(this)}
           modelCommitted={modelCommitted}
           numberOfChanges={Object.keys(ecs.getCurrentChangeSet()).length}
           users={Y.clone(this.get('users'), true)} />,

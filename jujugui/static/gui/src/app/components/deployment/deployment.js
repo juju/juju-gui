@@ -30,9 +30,12 @@ YUI.add('deployment-component', function() {
       ecsCommit: React.PropTypes.func.isRequired,
       getUnplacedUnitCount: React.PropTypes.func.isRequired,
       jem: React.PropTypes.object.isRequired,
+      createSocketURL: React.PropTypes.func.isRequired,
       numberOfChanges: React.PropTypes.number.isRequired,
       users: React.PropTypes.object.isRequired
     },
+
+    _deploymentStorage: {},
 
     /**
       Store information from portions of the deployment for use later down the
@@ -43,17 +46,7 @@ YUI.add('deployment-component', function() {
       @param value The data to store.
     */
     setDeploymentInfo: function(key, value) {
-      this.deploymentStorage[key] = value;
-    },
-
-    /**
-      Retrieve stored deployment info.
-
-      @method getDeploymentInfo
-      @param key The key to retrieve.
-    */
-    getDeploymentInfo: function(key) {
-      return this.deploymentStorage[key];
+      this._deploymentStorage[key] = value;
     },
 
     /**
@@ -67,6 +60,10 @@ YUI.add('deployment-component', function() {
         case 'summary':
           return (
             <juju.components.DeploymentSummary
+              jem={this.props.jem}
+              createSocketURL={this.props.createSocketURL}
+              deploymentStorage={this._deploymentStorage}
+              users={this.props.users}
               autoPlaceUnits={this.props.autoPlaceUnits}
               changeDescriptions={this.props.changeDescriptions}
               changeState={this.props.changeState}
@@ -79,19 +76,19 @@ YUI.add('deployment-component', function() {
           return (
             <juju.components.DeploymentChooseCloud
               jem={this.props.jem}
+              setDeploymentInfo={this.setDeploymentInfo.bind(this)}
               changeState={this.props.changeState} />);
         case 'add-credentials':
           return (
             <juju.components.DeploymentAddCredentials
               changeState={this.props.changeState}
-              setDeploymentInfo={this.setDeploymentInfo}
+              setDeploymentInfo={this.setDeploymentInfo.bind(this)}
               jem={this.props.jem}
               users={this.props.users} />);
       }
     },
 
     render: function() {
-      this.deploymentStorage = this.deploymentStorage || {};
       var activeComponent = this.props.activeComponent;
       var activeChild = this._generateActivePanel();
       var steps = [{
