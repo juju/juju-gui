@@ -892,6 +892,8 @@ YUI.add('juju-gui', function(Y) {
           getUnplacedUnitCount={
             utils.getUnplacedUnitCount.bind(this, db.units)}
           jem={this.jem}
+          env={this.env}
+          appSet={this.set.bind(this)}
           createSocketURL={this.createSocketURL.bind(this)}
           modelCommitted={modelCommitted}
           numberOfChanges={Object.keys(ecs.getCurrentChangeSet()).length}

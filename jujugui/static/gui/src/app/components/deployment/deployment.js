@@ -30,6 +30,8 @@ YUI.add('deployment-component', function() {
       ecsCommit: React.PropTypes.func.isRequired,
       getUnplacedUnitCount: React.PropTypes.func.isRequired,
       jem: React.PropTypes.object.isRequired,
+      env: React.PropTypes.object.isRequired,
+      appSet: React.PropTypes.func.isRequired,
       createSocketURL: React.PropTypes.func.isRequired,
       numberOfChanges: React.PropTypes.number.isRequired,
       users: React.PropTypes.object.isRequired
@@ -61,6 +63,8 @@ YUI.add('deployment-component', function() {
           return (
             <juju.components.DeploymentSummary
               jem={this.props.jem}
+              env={this.props.env}
+              appSet={this.props.appSet}
               createSocketURL={this.props.createSocketURL}
               deploymentStorage={this._deploymentStorage}
               users={this.props.users}
