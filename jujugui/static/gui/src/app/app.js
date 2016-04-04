@@ -1990,6 +1990,8 @@ YUI.add('juju-gui', function(Y) {
       this.db.environment.set('name', environmentName);
       // Update the breadcrumb with the new model name.
       this._renderBreadcrumb();
+      // Update the page title.
+      document.title = `${environmentName} - Juju GUI`;
     },
 
     /**

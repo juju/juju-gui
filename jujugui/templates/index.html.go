@@ -9,7 +9,7 @@ if (/*@cc_on!@*/false) {
 }
 </script><!--<![endif]-->
 <head>
-    <title>Juju Admin</title>
+    <title>Juju GUI</title>
     <!-- Disable backwards compatible mode for IE on an intranet.
          For an explanation see http://bit.ly/14VytlD
          Also note this must be the first <meta> to appear. -->
