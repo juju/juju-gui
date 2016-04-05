@@ -43,12 +43,15 @@ YUI.add('deployment-add-credentials', function() {
             // controller with work to come to generate a controller name.  Also
             // this key will change from 'state-server' to 'controller'.
             // Makyo 2016-03-30
-            'state-server': 'yellow/aws-eu-central-1',
+            'state-server': 'yellow/aws-eu-central',
             //'state-server': 'yellow/aws-' + this.refs.templateRegion.value,
             // XXX This applies only to AWS (for first release).
             'config': {
               'access-key': this.refs.templateAccessKey.value,
-              'secret-key': this.refs.templateSecretKey.value
+              'secret-key': this.refs.templateSecretKey.value,
+              // XXX This is a 'hack' to make Juju not complain about being
+              // able to find ssh keys.
+              'authorized-keys': 'fake'
             }
           };
       this.props.jem.addTemplate(

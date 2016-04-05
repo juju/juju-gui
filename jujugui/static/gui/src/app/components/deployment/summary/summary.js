@@ -23,6 +23,12 @@ YUI.add('deployment-summary', function() {
   juju.components.DeploymentSummary = React.createClass({
 
     propTypes: {
+      jem: React.PropTypes.object.isRequired,
+      env: React.PropTypes.object.isRequired,
+      appSet: React.PropTypes.func.isRequired,
+      createSocketURL: React.PropTypes.func.isRequired,
+      deploymentStorage: React.PropTypes.object.isRequired,
+      users: React.PropTypes.object.isRequired,
       autoPlaceUnits: React.PropTypes.func.isRequired,
       changeDescriptions: React.PropTypes.array.isRequired,
       changeState: React.PropTypes.func.isRequired,
@@ -82,10 +88,46 @@ YUI.add('deployment-summary', function() {
     _handleDeploy: function() {
       this.props.autoPlaceUnits();
       // The env is already bound to ecsCommit in app.js.
-      this.props.ecsCommit();
-      this.setState({hasCommits: true}, () => {
-        this._close();
-      });
+      // Generates an alphanumeric string
+      var randomString = () => Math.random().toString(36).slice(2);
+      var password = randomString() + randomString();
+      this.props.jem.newEnvironment(
+        this.props.users.jem.user,
+        // XXX Hardcoding the model name because we don't yet have a field
+        // for it to be inputted.
+        'my-test-model',
+        this.props.deploymentStorage.templateName,
+        // XXX Hardcoding the controller for now but it will be provided on load
+        'yellow/aws-eu-central',
+        password,
+        (error, data) => {
+          if (error) throw error;
+          var pathParts = data['host-ports'][0].split(':');
+          // Set the credentials in the env so that the GUI
+          // is able to connect to the new model.
+          this.props.env.setCredentials({
+            user: 'user-' + data.user,
+            password: data.password
+          });
+          var socketURL = this.props.createSocketURL(
+            pathParts[0], // server
+            pathParts[1], // port
+            data.uuid
+          );
+          // Set the socket url in both the app and the env so we don't end
+          // up with any confusion later on about which is which.
+          this.props.appSet('socket_url', socketURL);
+          this.props.env.set('socket_url', socketURL);
+          this.props.env.connect();
+          // After the model connects it will emit a login event, listen
+          // for that event so that we know when to commit the changeset.
+          this.props.env.on('login', (data) => {
+            this.props.ecsCommit();
+            this.setState({hasCommits: true}, () => {
+              this._close();
+            });
+          });
+        });
     },
 
     /**

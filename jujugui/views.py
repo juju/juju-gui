@@ -125,6 +125,7 @@ def config(request):
         'jujuCoreVersion': settings.get('jujugui.jujuCoreVersion', ''),
         'apiAddress': settings.get('jujugui.apiAddress', ''),
         'socketTemplate': settings['jujugui.socketTemplate'],
+        'gisf': settings['jujugui.gisf'],
     }
     return 'var juju_config = {};'.format(json.dumps(options))
 

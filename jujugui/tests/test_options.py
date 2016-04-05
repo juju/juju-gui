@@ -26,6 +26,7 @@ class TestUpdate(unittest.TestCase):
         'jujugui.socketTemplate': '/environment/$uuid/api',
         'jujugui.user': None,
         'jujugui.insecure': False,
+        'jujugui.gisf': False,
     }
 
     def test_default_values(self):
@@ -52,6 +53,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.socketTemplate': '/juju/api/$host/$port/$uuid',
             'jujugui.user': 'who',
             'jujugui.insecure': True,
+            'jujugui.gisf': True,
         }
         settings = {
             'jujugui.charmstore_api_path': 'v4',
@@ -70,6 +72,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.socketTemplate': '/juju/api/$host/$port/$uuid',
             'jujugui.user': 'who',
             'jujugui.insecure': True,
+            'jujugui.gisf': True,
         }
         options.update(settings)
         self.assertEqual(expected_settings, settings)
