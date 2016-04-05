@@ -37,6 +37,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <meta name="viewport" content="width=device-width,initial-scale=1.0 maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="Juju team">
+    <script type="text/javascript">
+      // This is used as part of Juju GUI automated QA.
+      window.jsErrors = [];
+      window.onerror = function(msg, source, line) {
+        window.jsErrors.push(msg + ' (' + source + ' at line ' + line + ')');
+      }
+    </script>
+
     <!-- Make sure the config is loaded before other JS for use in the page
          below.
     -->
