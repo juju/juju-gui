@@ -25,6 +25,7 @@ YUI.add('deployment-summary', function() {
     propTypes: {
       jem: React.PropTypes.object.isRequired,
       env: React.PropTypes.object.isRequired,
+      appSet: React.PropTypes.func.isRequired,
       createSocketURL: React.PropTypes.func.isRequired,
       deploymentStorage: React.PropTypes.object.isRequired,
       users: React.PropTypes.object.isRequired,
@@ -102,7 +103,8 @@ YUI.add('deployment-summary', function() {
         (error, data) => {
           if (error) throw error;
           var pathParts = data['host-ports'][0].split(':');
-          // Set the credentials to the new model.
+          // Set the credentials in the env so that the GUI
+          // is able to connect to the new model.
           this.props.env.setCredentials({
             user: 'user-' + data.user,
             password: data.password
@@ -112,9 +114,13 @@ YUI.add('deployment-summary', function() {
             pathParts[1], // port
             data.uuid
           );
-          appSet('socket_url', socketURL);
+          // Set the socket url in both the app and the env so we don't end
+          // up with any confusion later on about which is which.
+          this.props.appSet('socket_url', socketURL);
           this.props.env.set('socket_url', socketURL);
           this.props.env.connect();
+          // After the model connects it will emit a login event, listen
+          // for that event so that we know when to commit the changeset.
           this.props.env.on('login', (data) => {
             this.props.ecsCommit();
             this.setState({hasCommits: true}, () => {

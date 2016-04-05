@@ -52,6 +52,12 @@ describe('DeploymentSummary', function() {
         'deployment-summary__list-header';
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        jem={{}}
+        env={{}}
+        appSet={sinon.stub()}
+        createSocketURL={sinon.stub()}
+        deploymentStorage={{}}
+        users={{}}
         autoPlaceUnits={sinon.stub()}
         changeDescriptions={changeDescriptions}
         changeState={sinon.stub()}
@@ -102,6 +108,12 @@ describe('DeploymentSummary', function() {
     var getUnplacedUnitCount = sinon.stub().returns(1);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        jem={{}}
+        env={{}}
+        appSet={sinon.stub()}
+        createSocketURL={sinon.stub()}
+        deploymentStorage={{}}
+        users={{}}
         autoPlaceUnits={sinon.stub()}
         changeDescriptions={[]}
         changeState={sinon.stub()}
@@ -130,6 +142,12 @@ describe('DeploymentSummary', function() {
     var getUnplacedUnitCount = sinon.stub().returns(1);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        jem={{}}
+        env={{}}
+        appSet={sinon.stub()}
+        createSocketURL={sinon.stub()}
+        deploymentStorage={{}}
+        users={{}}
         autoPlaceUnits={sinon.stub()}
         changeDescriptions={[]}
         changeState={sinon.stub()}
@@ -158,6 +176,12 @@ describe('DeploymentSummary', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        jem={{}}
+        env={{}}
+        appSet={sinon.stub()}
+        createSocketURL={sinon.stub()}
+        deploymentStorage={{}}
+        users={{}}
         autoPlaceUnits={sinon.stub()}
         changeDescriptions={[]}
         changeState={changeState}
@@ -186,6 +210,12 @@ describe('DeploymentSummary', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        jem={{}}
+        env={{}}
+        appSet={sinon.stub()}
+        createSocketURL={sinon.stub()}
+        deploymentStorage={{}}
+        users={{}}
         autoPlaceUnits={sinon.stub()}
         changeDescriptions={[]}
         changeState={changeState}
@@ -206,13 +236,30 @@ describe('DeploymentSummary', function() {
     });
   });
 
-  it('can deploy', function() {
+  it('creates a new model on deploy', function() {
     var autoPlaceUnits = sinon.stub();
     var changeState = sinon.stub();
     var ecsCommit = sinon.stub();
     var getUnplacedUnitCount = sinon.stub().returns(0);
+    var appSet = sinon.stub();
+    var createSocketURL = sinon.stub().returns('newurl');
+    var jem = {
+      newEnvironment: sinon.stub(),
+    };
+    var env = {
+      setCredentials: sinon.stub(),
+      set: sinon.stub(),
+      connect: sinon.stub(),
+      on: sinon.stub()
+    };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        jem={jem}
+        env={env}
+        appSet={appSet}
+        createSocketURL={createSocketURL}
+        deploymentStorage={{ templateName: 'secureTemplate' }}
+        users={{ jem: { user: 'joecoder' }}}
         autoPlaceUnits={autoPlaceUnits}
         ecsClear={sinon.stub()}
         ecsCommit={ecsCommit}
@@ -223,9 +270,50 @@ describe('DeploymentSummary', function() {
         numberOfChanges={6} />, true);
     var output = renderer.getRenderOutput();
     output.props.children[1].props.buttons[1].action();
-    assert.equal(autoPlaceUnits.callCount, 1);
+    // We automatically autoplace units on deploy in this workflow.
+    assert.equal(autoPlaceUnits.callCount, 1, 'autoplace not called');
+    // We first need to create a new model to deploy our changes into.
+    assert.equal(jem.newEnvironment.callCount, 1);
+    assert.equal(jem.newEnvironment.args[0][0], 'joecoder');
+    assert.equal(jem.newEnvironment.args[0][1], 'my-test-model');
+    assert.equal(jem.newEnvironment.args[0][2], 'secureTemplate');
+    assert.equal(jem.newEnvironment.args[0][3], 'yellow/aws-eu-central');
+    // This password is randomly generated so it can be of varying lengths.
+    assert.equal(jem.newEnvironment.args[0][4].length > 10, true);
+    // Call the callback from creating a new model to make sure it performs
+    // the approriate calls.
+    jem.newEnvironment.args[0][5](null, {
+      'host-ports': ['1.1.1.1:1234'],
+      user: 'joecoder',
+      password: 'abc123',
+      uuid: '1qaz2wsx3edc'
+    });
+    // The credentials need to be set in the app so that it can log into the
+    // newly created model.
+    assert.equal(env.setCredentials.callCount, 1);
+    // The user prefix is important when setting the credentials here or else
+    // It will fail when trying to connect with a warning from Juju which
+    // will be of no help.
+    assert.deepEqual(env.setCredentials.args[0][0], {
+      user: 'user-joecoder',
+      password: 'abc123'
+    });
+    assert.equal(createSocketURL.callCount, 1);
+    assert.deepEqual(createSocketURL.args[0], [
+      '1.1.1.1', '1234', '1qaz2wsx3edc'
+    ]);
+    assert.equal(appSet.callCount, 1);
+    assert.deepEqual(appSet.args[0], ['socket_url', 'newurl']);
+    assert.equal(env.set.callCount, 1);
+    assert.deepEqual(env.set.args[0], ['socket_url', 'newurl']);
+    assert.equal(env.connect.callCount, 1);
+    assert.equal(env.on.callCount, 1);
+    assert.equal(env.on.args[0][0], 'login');
+    // Make sure that it commits after the login call
+    env.on.args[0][1]();
     assert.equal(ecsCommit.callCount, 1);
-    assert.equal(changeState.callCount, 1);
+    assert.equal(ecsCommit.callCount, 1, 'ecs commit not called');
+    assert.equal(changeState.callCount, 1, 'change state not called');
     assert.deepEqual(changeState.args[0][0], {
       sectionC: {
         component: null,

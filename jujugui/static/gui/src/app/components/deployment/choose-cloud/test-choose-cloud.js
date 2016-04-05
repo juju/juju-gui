@@ -50,6 +50,7 @@ describe('DeploymentChooseCloud', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentChooseCloud
         changeState={sinon.stub()}
+        setDeploymentInfo={sinon.stub()}
         jem={jem} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -111,6 +112,7 @@ describe('DeploymentChooseCloud', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentChooseCloud
         changeState={sinon.stub()}
+        setDeploymentInfo={sinon.stub()}
         jem={jem} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -179,14 +181,21 @@ describe('DeploymentChooseCloud', function() {
 
   it('can navigate from a credential', function() {
     var changeState = sinon.stub();
+    var setDeploymentInfo = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentChooseCloud
         changeState={changeState}
+        setDeploymentInfo={setDeploymentInfo}
         jem={jem} />, true);
     var output = renderer.getRenderOutput();
     output.props.children.props.children[0].props.children[1].props.children[0]
       .props.onClick();
     assert.equal(changeState.callCount, 1);
+    // It should store the template name in the parentId
+    assert.equal(setDeploymentInfo.callCount, 1);
+    assert.deepEqual(
+      setDeploymentInfo.args[0],
+      ['templateName', 'test-owner/test']);
     assert.deepEqual(changeState.args[0][0], {
       sectionC: {
         component: 'deploy',
@@ -202,6 +211,7 @@ describe('DeploymentChooseCloud', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentChooseCloud
         changeState={changeState}
+        setDeploymentInfo={sinon.stub()}
         jem={jem} />, true);
     var output = renderer.getRenderOutput();
     output.props.children.props.children[3].props.children[0].props.onClick();
@@ -223,6 +233,7 @@ describe('DeploymentChooseCloud', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentChooseCloud
         changeState={sinon.stub()}
+        setDeploymentInfo={sinon.stub()}
         jem={jem} />, true);
     var output = renderer.getRenderOutput();
     var credentials = output.props.children.props.children[0];
