@@ -41,7 +41,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // This is used as part of Juju GUI automated QA.
       window.jsErrors = [];
       window.onerror = function(msg, source, line) {
-        window.jsErrors[window.jsErrors.length] = msg + ' (' + source + ' at line ' + line + ')';
+        window.jsErrors.push(msg + ' (' + source + ' at line ' + line + ')');
       }
     </script>
 
