@@ -38,6 +38,9 @@ describe('Deployment', function() {
     var ecsCommit = sinon.stub();
     var changeDescriptions = [];
     var jem = {};
+    var env = {};
+    var appSet = sinon.stub();
+    var createSocketURL = sinon.stub();
     var users = {
       jem: {
         user: 'foo'
@@ -53,12 +56,22 @@ describe('Deployment', function() {
         ecsCommit={ecsCommit}
         getUnplacedUnitCount={getUnplacedUnitCount}
         jem={jem}
+        env={env}
+        appSet={appSet}
+        createSocketURL={createSocketURL}
         modelCommitted={false}
         numberOfChanges={6}
         users={users} />, true);
     var output = renderer.getRenderOutput();
+    var instance = renderer.getMountedInstance();
     var expected = (
       <juju.components.DeploymentSummary
+        jem={jem}
+        env={env}
+        appSet={appSet}
+        createSocketURL={createSocketURL}
+        deploymentStorage={instance._deploymentStorage}
+        users={users}
         autoPlaceUnits={autoPlaceUnits}
         changeDescriptions={changeDescriptions}
         changeState={changeState}
@@ -78,6 +91,9 @@ describe('Deployment', function() {
     var ecsCommit = sinon.stub();
     var jem = {};
     var changeDescriptions = [];
+    var env = {};
+    var appSet = sinon.stub();
+    var createSocketURL = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
         activeComponent="choose-cloud"
@@ -88,12 +104,17 @@ describe('Deployment', function() {
         ecsCommit={ecsCommit}
         getUnplacedUnitCount={getUnplacedUnitCount}
         jem={jem}
+        env={env}
+        appSet={appSet}
+        createSocketURL={createSocketURL}
         modelCommitted={false}
         numberOfChanges={6} />, true);
     var output = renderer.getRenderOutput();
+    var instance = renderer.getMountedInstance();
     var expected = (
       <juju.components.DeploymentChooseCloud
         jem={jem}
+        setDeploymentInfo={instance.setDeploymentInfo}
         changeState={changeState} />);
     assert.deepEqual(output.props.children, expected);
   });
