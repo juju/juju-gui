@@ -69,6 +69,7 @@ describe('DeploymentSummary', function() {
     }, {
       title: 'Deploy',
       action: instance._handleDeploy,
+      disabled: false,
       type: 'inline-positive'
     }];
     var expected = (

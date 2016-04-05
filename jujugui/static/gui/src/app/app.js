@@ -686,20 +686,20 @@ YUI.add('juju-gui', function(Y) {
       var msg = (
         <p>
           Find your username and password with<br />
-          <code>`juju show-controller --show-passwords`</code>
+          <code>juju show-controller --show-passwords</code>
         </p>);
       if (this.get('jujuCoreVersion').lastIndexOf('1.', 0) === 0) {
         // Use old command to retrieve the password.
         msg = (
           <p>
             Find your password with<br />
-            <code>`juju api-info --password password`</code>
+            <code>juju api-info --password password</code>
           </p>);
       }
       document.getElementById('loading-message').style.display = 'none';
       ReactDOM.render(
         <window.juju.components.Login
-          envName={this.db.environment.get('name') || 'Sandbox'}
+          envName={this.get('jujuEnvUUID') || this.db.environment.get('name')}
           helpMessage={msg}
           setCredentials={this.env.setCredentials.bind(this.env)}
           login={this.env.login.bind(this.env)}
@@ -1990,6 +1990,8 @@ YUI.add('juju-gui', function(Y) {
       this.db.environment.set('name', environmentName);
       // Update the breadcrumb with the new model name.
       this._renderBreadcrumb();
+      // Update the page title.
+      document.title = `${environmentName} - Juju GUI`;
     },
 
     /**

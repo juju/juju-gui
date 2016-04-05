@@ -181,7 +181,8 @@ YUI.add('unit-list', function() {
     _generateGroups: function() {
       var units = this.props.units;
       var groups = {};
-      if (this.props.unitStatus === 'error') {
+      var unitStatus = this.props.unitStatus;
+      if (unitStatus === 'error') {
         var errors = {};
         units.forEach(function(unit) {
           var agentState = unit.agent_state_info;
@@ -201,8 +202,9 @@ YUI.add('unit-list', function() {
         });
       } else {
         var key = 'select-all';
+        var status = unitStatus || 'all';
         groups[key] = {
-          label: 'Select all units',
+          label: `Select ${status} units`,
           units: units,
           count: units.length,
           key: key
