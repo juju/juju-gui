@@ -35,7 +35,7 @@ YUI.add('charmbrowser-component', function() {
       importBundleYAML: React.PropTypes.func.isRequired,
       makeEntityModel: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
-      series: React.PropTypes.array.isRequired,
+      series: React.PropTypes.object.isRequired,
       utils: React.PropTypes.object.isRequired
     },
 
