@@ -23,9 +23,13 @@ YUI.add('deployment-choose-cloud', function() {
   juju.components.DeploymentChooseCloud = React.createClass({
 
     propTypes: {
+      changeCounts: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
+      jem: React.PropTypes.object.isRequired,
+      pluralize: React.PropTypes.func.isRequired,
+      services: React.PropTypes.array.isRequired,
       setDeploymentInfo: React.PropTypes.func.isRequired,
-      jem: React.PropTypes.object.isRequired
+      user: React.PropTypes.object.isRequired
     },
 
     getInitialState: function() {
@@ -166,11 +170,66 @@ YUI.add('deployment-choose-cloud', function() {
         </div>);
     },
 
+    /**
+      Generate the list of services.
+
+      @method _generateServices
+    */
+    _generateServices: function() {
+      var services = this.props.services;
+      if (services.length === 0) {
+        return;
+      }
+      var components = [];
+      services.forEach((service, i) => {
+        var className = classNames(
+          'two-col',
+          {'last-col': i % 3 === 1}
+        );
+        var name = service.get('name');
+        components.push(
+          <li className={className}
+            key={service.get('id')}>
+            <img alt={name}
+              className="deployment-choose-cloud__services-icon"
+              src={service.get('icon')} />
+            {name}
+          </li>);
+      });
+      return (
+        <ul className="deployment-choose-cloud__services twelve-col">
+          {components}
+        </ul>);
+    },
+
     render: function() {
+      var username = this.props.user && this.props.user.usernameDisplay;
+      var title = `Welcome back, ${username}`;
+      var pluralize = this.props.pluralize;
+      var changeCounts = this.props.changeCounts;
+      var serviceCount = changeCounts['_deploy'] || 0;
+      var machineCount = changeCounts['_addMachines'] || 0;
       return (
         <div className="deployment-panel__child">
           <juju.components.DeploymentPanelContent
-            title="Choose your cloud">
+            title={title}>
+            <div className="six-col">
+              <h3 className="deployment-choose-cloud__title">
+                Deployment summary&nbsp;
+                <span className="deployment-choose-cloud__title-count">
+                  ({serviceCount} {pluralize('service', serviceCount)},&nbsp;
+                  {machineCount} {pluralize('machine', machineCount)})
+                </span>
+              </h3>
+              {this._generateServices()}
+            </div>
+            <div className="six-col last-col">
+              <h3 className="deployment-choose-cloud__title">
+                Unplaced units
+              </h3>
+              <div className="deployment-choose-cloud__box">
+              </div>
+            </div>
             {this._generateCredentials()}
             {this._generateOnboarding()}
             <h3 className="deployment-choose-cloud__title twelve-col">
@@ -182,7 +241,7 @@ YUI.add('deployment-choose-cloud', function() {
             <h3 className="deployment-choose-cloud__title twelve-col">
               Get credentials by signing up with your favoured public cloud
             </h3>
-            <ul className="deployment-choose-cloud__list">
+            <ul className="deployment-choose-cloud__list twelve-col">
               <li>
                 <a className="deployment-choose-cloud__link"
                   href="https://cloud.google.com/compute/"

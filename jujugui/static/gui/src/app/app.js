@@ -885,6 +885,7 @@ YUI.add('juju-gui', function(Y) {
         <window.juju.components.Deployment
           activeComponent={activeComponent}
           autoPlaceUnits={this._autoPlaceUnits.bind(this)}
+          changeCounts={changesUtils.getChangeCounts(currentChangeSet)}
           changeDescriptions={changeDescriptions}
           changeState={this.changeState.bind(this)}
           ecsClear={ecs.clear.bind(ecs)}
@@ -897,6 +898,9 @@ YUI.add('juju-gui', function(Y) {
           createSocketURL={this.createSocketURL.bind(this)}
           modelCommitted={modelCommitted}
           numberOfChanges={Object.keys(ecs.getCurrentChangeSet()).length}
+          pluralize={utils.pluralize.bind(this)}
+          services={db.services.toArray()}
+          user={this._getAuth()}
           users={Y.clone(this.get('users'), true)} />,
         document.getElementById('deployment-container'));
     },

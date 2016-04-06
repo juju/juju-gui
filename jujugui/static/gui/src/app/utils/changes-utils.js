@@ -25,6 +25,32 @@ YUI.add('changes-utils', function(Y) {
   var removeBrackets = /^\(?(.{0,}?)\)?$/;
 
   /**
+    Return the counts for each type of ecs change.
+
+    @method getChangeCounts
+    @param {Object} services The list of services from the db.
+    @returns {Object} The ecs change counts.
+  */
+  ChangesUtils.getChangeCounts = function(changeSet) {
+    var counts = {};
+    var total = 0;
+    Object.keys(changeSet).forEach(function(key) {
+      var change = changeSet[key];
+      var method = change.command && change.command.method;
+      if (method) {
+        if (counts[method]) {
+          counts[method] = counts[method] += 1;
+        } else {
+          counts[method] = 1;
+        }
+        total += 1;
+      }
+    }, this);
+    counts.total = total;
+    return counts;
+  };
+
+  /**
     Return a list of all change descriptions.
 
     @method generateAllChangeDescriptions
