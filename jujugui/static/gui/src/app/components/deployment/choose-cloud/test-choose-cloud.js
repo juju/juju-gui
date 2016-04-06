@@ -73,9 +73,9 @@ describe('DeploymentChooseCloud', function() {
         <juju.components.DeploymentPanelContent
           title="Welcome back, Spinach">
           <div className="six-col">
-            <h3 className="deployment-choose-cloud__title">
+            <h3 className="deployment-panel__section-title">
               Deployment summary&nbsp;
-              <span className="deployment-choose-cloud__title-count">
+              <span className="deployment-panel__section-title-count">
                 ({2} {'services'},&nbsp;{1} {'machine'})
               </span>
             </h3>
@@ -90,21 +90,21 @@ describe('DeploymentChooseCloud', function() {
             </ul>
           </div>
           <div className="six-col last-col">
-            <h3 className="deployment-choose-cloud__title">
+            <h3 className="deployment-panel__section-title">
               Unplaced units
             </h3>
-            <div className="deployment-choose-cloud__box">
+            <div className="deployment-panel__box">
             </div>
           </div>
           {undefined}
-          <div className="deployment-choose-cloud__notice twelve-col">
+          <div className="deployment-panel__notice twelve-col">
             <juju.components.SvgIcon
               name="general-action-blue"
               size="16" />
             Add a public cloud credential, and we can save it as an option
             for later use
           </div>
-          <h3 className="deployment-choose-cloud__title twelve-col">
+          <h3 className="deployment-panel__section-title twelve-col">
             Public clouds
           </h3>
           <ul className="deployment-choose-cloud__list twelve-col">
@@ -116,7 +116,7 @@ describe('DeploymentChooseCloud', function() {
                   src="juju-ui/assets/images/non-sprites/aws.png" />
               </li>]}
           </ul>
-          <h3 className="deployment-choose-cloud__title twelve-col">
+          <h3 className="deployment-panel__section-title twelve-col">
             Get credentials by signing up with your favoured public cloud
           </h3>
           <ul className="deployment-choose-cloud__list twelve-col">
@@ -169,23 +169,23 @@ describe('DeploymentChooseCloud', function() {
         <juju.components.DeploymentPanelContent
           title="Welcome back, Spinach">
           <div className="six-col">
-            <h3 className="deployment-choose-cloud__title">
+            <h3 className="deployment-panel__section-title">
               Deployment summary&nbsp;
-              <span className="deployment-choose-cloud__title-count">
+              <span className="deployment-panel__section-title-count">
                 ({2} {'services'},&nbsp;{1} {'machine'})
               </span>
             </h3>
             {undefined}
           </div>
           <div className="six-col last-col">
-            <h3 className="deployment-choose-cloud__title">
+            <h3 className="deployment-panel__section-title">
               Unplaced units
             </h3>
-            <div className="deployment-choose-cloud__box">
+            <div className="deployment-panel__box">
             </div>
           </div>
           <div>
-            <h3 className="deployment-choose-cloud__title twelve-col">
+            <h3 className="deployment-panel__section-title twelve-col">
               Your cloud credentials
             </h3>
             <ul className="deployment-choose-cloud__list twelve-col">
@@ -201,7 +201,7 @@ describe('DeploymentChooseCloud', function() {
             </ul>
           </div>
           {undefined}
-          <h3 className="deployment-choose-cloud__title twelve-col">
+          <h3 className="deployment-panel__section-title twelve-col">
             Public clouds
           </h3>
           <ul className="deployment-choose-cloud__list twelve-col">
@@ -213,7 +213,7 @@ describe('DeploymentChooseCloud', function() {
                   src="juju-ui/assets/images/non-sprites/aws.png" />
               </li>]}
           </ul>
-          <h3 className="deployment-choose-cloud__title twelve-col">
+          <h3 className="deployment-panel__section-title twelve-col">
             Get credentials by signing up with your favoured public cloud
           </h3>
           <ul className="deployment-choose-cloud__list twelve-col">

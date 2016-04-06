@@ -103,3 +103,9 @@
     -webkit-clip-path: circle(($size / 2 - 1) at center);
     clip-path: circle(($size / 2 - 1) at center);
 }
+
+%deployment-box {
+    padding: 20px;
+    border: 1px solid $light-mid-grey;
+    border-radius: $border-radius;
+}

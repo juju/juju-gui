@@ -1,13 +1,7 @@
-%border-box {
-    padding: 20px;
-    border: 1px solid $light-mid-grey;
-    border-radius: $border-radius;
-}
-
 .deployment-choose-cloud {
     &__services {
         @extend %list-style;
-        @extend %border-box;
+        @extend %deployment-box;
         padding-bottom: 0;
 
         &-icon {
@@ -18,33 +12,8 @@
         }
     }
 
-    &__box {
-        @extend %border-box;
-    }
-
-    &__notice {
-        @extend %border-box;
-        border-color: $uncommitted;
-        padding-top: 10px;
-        padding-bottom: 10px;
-
-        .svg-icon {
-            margin-right: 10px;
-            vertical-align: text-bottom;
-        }
-    }
-
-    &__title {
-        margin: 20px 0;
-        font-size: 20px;
-
-        &-count {
-            color: $warm-grey;
-        }
-    }
-
     &__cloud-option {
-        @extend %border-box;
+        @extend %deployment-box;
         text-align: center;
         cursor: pointer;
 

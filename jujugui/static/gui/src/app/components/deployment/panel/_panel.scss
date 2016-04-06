@@ -64,6 +64,19 @@
         font-size: 1.375em;
         margin-bottom: 20px;
     }
+    &__section-title {
+        margin: 20px 0;
+        font-size: 20px;
+
+        &-count {
+            color: $warm-grey;
+        }
+
+        &-link {
+            margin-left: 20px;
+            font-size: 16px;
+        }
+    }
 
     &__content {
         @extend %collapse-children;
@@ -93,5 +106,32 @@
         .button--inline-positive {
             float: right;
         }
+    }
+
+    &__box {
+        @extend %deployment-box;
+    }
+
+    &__notice {
+        @extend %deployment-box;
+        border-color: $uncommitted;
+        padding-top: 10px;
+        padding-bottom: 10px;
+
+        .svg-icon {
+            margin-right: 10px;
+            vertical-align: text-bottom;
+        }
+    }
+
+    &__label {
+        margin-bottom: 0.75em;
+        line-height: 1.5;
+    }
+
+    &__input {
+        width: calc(100% - 20px);
+        margin-bottom: 20px;
+        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.07) inset;
     }
 }
