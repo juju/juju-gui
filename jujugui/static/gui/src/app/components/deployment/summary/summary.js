@@ -180,7 +180,7 @@ YUI.add('deployment-summary', function() {
       }
       var plural = unplacedCount === 1 ? '' : 's';
       return (
-        <div className="deployment-summary__placement">
+        <div className="deployment-summary__placement twelve-col">
           <span>
             You have {unplacedCount.toString()} unplaced unit{plural} which will
             be automatically placed.
@@ -206,7 +206,7 @@ YUI.add('deployment-summary', function() {
         return;
       }
       return (
-        <span className="link deployment-summary__title-link"
+        <span className="link deployment-panel__section-title-link"
           onClick={this._handleClear}
           role="button"
           tabIndex="0">
@@ -236,8 +236,30 @@ YUI.add('deployment-summary', function() {
         <div className="deployment-panel__child">
           <juju.components.DeploymentPanelContent
             title="Deployment summary">
+            <div className="deployment-panel__notice twelve-col">
+              <juju.components.SvgIcon
+                name="general-action-blue"
+                size="16" />
+              This deployment is free, you can deploy xxxxxxxxx more
+            </div>
+            <form className="six-col">
+              <label className="deployment-panel__label"
+                htmlFor="model-name">
+                Name your model
+              </label>
+              <input className="deployment-panel__input"
+                id="model-name"
+                placeholder="Model name"
+                type="text" />
+            </form>
+            <div className="six-col last-col">
+              <p>Deploying to:</p>
+              <div className="deployment-panel__box">
+                [selected credential]
+              </div>
+            </div>
             {this._generatePlacement()}
-            <h3 className="deployment-summary__title">
+            <h3 className="deployment-panel__section-title">
               Change log ({this.props.numberOfChanges})
               {this._generateClearChanges()}
             </h3>

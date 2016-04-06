@@ -24,6 +24,7 @@ YUI.add('deployment-component', function() {
     propTypes: {
       activeComponent: React.PropTypes.string.isRequired,
       autoPlaceUnits: React.PropTypes.func.isRequired,
+      changeCounts: React.PropTypes.object.isRequired,
       changeDescriptions: React.PropTypes.array.isRequired,
       changeState: React.PropTypes.func.isRequired,
       ecsClear: React.PropTypes.func.isRequired,
@@ -34,6 +35,9 @@ YUI.add('deployment-component', function() {
       appSet: React.PropTypes.func.isRequired,
       createSocketURL: React.PropTypes.func.isRequired,
       numberOfChanges: React.PropTypes.number.isRequired,
+      pluralize: React.PropTypes.func.isRequired,
+      services: React.PropTypes.array.isRequired,
+      user: React.PropTypes.object.isRequired,
       users: React.PropTypes.object.isRequired
     },
 
@@ -80,8 +84,12 @@ YUI.add('deployment-component', function() {
           return (
             <juju.components.DeploymentChooseCloud
               jem={this.props.jem}
+              changeCounts={this.props.changeCounts}
+              changeState={this.props.changeState}
+              pluralize={this.props.pluralize}
+              services={this.props.services}
               setDeploymentInfo={this.setDeploymentInfo.bind(this)}
-              changeState={this.props.changeState} />);
+              user={this.props.user} />);
         case 'add-credentials':
           return (
             <juju.components.DeploymentAddCredentials

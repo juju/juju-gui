@@ -82,8 +82,30 @@ describe('DeploymentSummary', function() {
       <div className="deployment-panel__child">
         <juju.components.DeploymentPanelContent
           title="Deployment summary">
+          <div className="deployment-panel__notice twelve-col">
+            <juju.components.SvgIcon
+              name="general-action-blue"
+              size="16" />
+            This deployment is free, you can deploy xxxxxxxxx more
+          </div>
+          <form className="six-col">
+            <label className="deployment-panel__label"
+              htmlFor="model-name">
+              Name your model
+            </label>
+            <input className="deployment-panel__input"
+              id="model-name"
+              placeholder="Model name"
+              type="text" />
+          </form>
+          <div className="six-col last-col">
+            <p>Deploying to:</p>
+            <div className="deployment-panel__box">
+              [selected credential]
+            </div>
+          </div>
           {undefined}
-          <h3 className="deployment-summary__title">
+          <h3 className="deployment-panel__section-title">
             Change log ({6})
             {undefined}
           </h3>
@@ -126,7 +148,7 @@ describe('DeploymentSummary', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="deployment-summary__placement">
+      <div className="deployment-summary__placement twelve-col">
         <span>
           You have {'1'} unplaced unit{''} which will
           be automatically placed.
@@ -136,7 +158,7 @@ describe('DeploymentSummary', function() {
           View machines
         </span>
       </div>);
-    assert.deepEqual(output.props.children[0].props.children[0], expected);
+    assert.deepEqual(output.props.children[0].props.children[3], expected);
   });
 
   it('can display a clear changes button', function() {
@@ -160,16 +182,16 @@ describe('DeploymentSummary', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <h3 className="deployment-summary__title">
+      <h3 className="deployment-panel__section-title">
         Change log ({6})
-        <span className="link deployment-summary__title-link"
+        <span className="link deployment-panel__section-title-link"
           onClick={instance._handleClear}
           role="button"
           tabIndex="0">
           Clear all changes&nbsp;&rsaquo;
         </span>
       </h3>);
-    assert.deepEqual(output.props.children[0].props.children[1], expected);
+    assert.deepEqual(output.props.children[0].props.children[4], expected);
   });
 
   it('can navigate to the machine view', function() {
@@ -191,7 +213,7 @@ describe('DeploymentSummary', function() {
         getUnplacedUnitCount={getUnplacedUnitCount}
         modelCommitted={false}
         numberOfChanges={6} />);
-    output.props.children[0].props.children[0].props.children[1]
+    output.props.children[0].props.children[3].props.children[1]
       .props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {

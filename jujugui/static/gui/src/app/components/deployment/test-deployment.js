@@ -50,6 +50,7 @@ describe('Deployment', function() {
       <juju.components.Deployment
         activeComponent="summary"
         autoPlaceUnits={autoPlaceUnits}
+        changeCounts={{}}
         changeDescriptions={changeDescriptions}
         changeState={changeState}
         ecsClear={ecsClear}
@@ -61,6 +62,9 @@ describe('Deployment', function() {
         createSocketURL={createSocketURL}
         modelCommitted={false}
         numberOfChanges={6}
+        pluralize={sinon.stub()}
+        services={[]}
+        user={{}}
         users={users} />, true);
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
@@ -94,10 +98,14 @@ describe('Deployment', function() {
     var env = {};
     var appSet = sinon.stub();
     var createSocketURL = sinon.stub();
+    var pluralize = sinon.stub();
+    var services = [];
+    var user = {};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
         activeComponent="choose-cloud"
         autoPlaceUnits={autoPlaceUnits}
+        changeCounts={{}}
         changeDescriptions={changeDescriptions}
         changeState={changeState}
         ecsClear={ecsClear}
@@ -108,14 +116,22 @@ describe('Deployment', function() {
         appSet={appSet}
         createSocketURL={createSocketURL}
         modelCommitted={false}
-        numberOfChanges={6} />, true);
+        numberOfChanges={6}
+        pluralize={pluralize}
+        services={services}
+        user={user}
+        users={{}} />, true);
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
     var expected = (
       <juju.components.DeploymentChooseCloud
         jem={jem}
+        changeCounts={{}}
+        changeState={changeState}
+        pluralize={pluralize}
+        services={services}
         setDeploymentInfo={instance.setDeploymentInfo}
-        changeState={changeState} />);
+        user={user} />);
     assert.deepEqual(output.props.children, expected);
   });
 
@@ -138,6 +154,7 @@ describe('Deployment', function() {
       <juju.components.Deployment
         activeComponent="add-credentials"
         autoPlaceUnits={autoPlaceUnits}
+        changeCounts={{}}
         changeDescriptions={changeDescriptions}
         changeState={changeState}
         ecsClear={ecsClear}
@@ -146,6 +163,9 @@ describe('Deployment', function() {
         jem={jem}
         modelCommitted={false}
         numberOfChanges={6}
+        pluralize={sinon.stub()}
+        services={[]}
+        user={{}}
         users={users} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();

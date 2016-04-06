@@ -231,4 +231,17 @@ describe('ChangesUtils', function() {
         db.units);
     assert.equal(stubDescription.callCount(), 2);
   });
+
+  it('can get the counts of each type of ecs change', function() {
+    var changeSet = {
+      one: {command: {method: 'addMachine'}},
+      two: {command: {method: 'addUnit'}},
+      three: {command: {method: 'addMachine'}}
+    };
+    assert.deepEqual(changesUtils.getChangeCounts(changeSet), {
+      addMachine: 2,
+      addUnit: 1,
+      total: 3
+    });
+  });
 });

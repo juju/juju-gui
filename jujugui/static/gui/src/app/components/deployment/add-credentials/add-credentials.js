@@ -104,15 +104,15 @@ YUI.add('deployment-add-credentials', function() {
           <juju.components.DeploymentPanelContent
             title="Configure Amazon Web Services">
             <form>
-              <input className="deployment-add-credentials__input"
+              <input className="deployment-panel__input"
                 placeholder="Credential name"
                 type="text"
                 ref="templateName" />
-              <input className="deployment-add-credentials__input"
+              <input className="deployment-panel__input"
                 placeholder="Specify region"
                 type="text"
                 ref="templateRegion" />
-              <h3 className="deployment-add-credentials__title twelve-col">
+              <h3 className="deployment-panel__section-title twelve-col">
                 Enter credentials
               </h3>
               <p className="deployment-add-credentials__p">
@@ -125,11 +125,11 @@ YUI.add('deployment-add-credentials', function() {
                   security_credential
                 </a>
               </p>
-              <input className="deployment-add-credentials__input"
+              <input className="deployment-panel__input"
                 placeholder="Access-key"
                 type="text"
                 ref="templateAccessKey" />
-              <input className="deployment-add-credentials__input"
+              <input className="deployment-panel__input"
                 placeholder="Secret-key"
                 type="text"
                 ref="templateSecretKey" />
