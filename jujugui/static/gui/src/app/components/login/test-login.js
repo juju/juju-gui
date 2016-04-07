@@ -30,7 +30,6 @@ describe('LoginComponent', function() {
   it('renders', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
-        envName="testenv"
         helpMessage={<span>Exterminate!</span>}
         setCredentials={sinon.stub()}
         login={sinon.stub()}/>, true);
@@ -43,7 +42,7 @@ describe('LoginComponent', function() {
         </div>
         <div className="login__full-form">
           <div className="login__env-name">
-            testenv
+            Login
           </div>
           {undefined}
           <form
@@ -93,7 +92,6 @@ describe('LoginComponent', function() {
   it('can display a login failure message', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.Login
-        envName="testenv"
         helpMessage={<span>Exterminate!</span>}
         setCredentials={sinon.stub()}
         login={sinon.stub()}
@@ -111,7 +109,6 @@ describe('LoginComponent', function() {
     var login = sinon.stub();
     var component = testUtils.renderIntoDocument(
       <juju.components.Login
-        envName="testenv"
         helpMessage={<span>Exterminate!</span>}
         setCredentials={setCredentials}
         login={login} />);
@@ -132,7 +129,6 @@ describe('LoginComponent', function() {
     var focus = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
-        envName="testenv"
         helpMessage={<span>Exterminate!</span>}
         setCredentials={sinon.stub()}
         login={sinon.stub()}

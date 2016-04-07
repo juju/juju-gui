@@ -23,7 +23,6 @@ YUI.add('login-component', function() {
   juju.components.Login = React.createClass({
 
     propTypes: {
-      envName: React.PropTypes.string.isRequired,
       helpMessage: React.PropTypes.object.isRequired,
       setCredentials: React.PropTypes.func.isRequired,
       login: React.PropTypes.func.isRequired,
@@ -76,7 +75,7 @@ YUI.add('login-component', function() {
           </div>
           <div className="login__full-form">
             <div className="login__env-name">
-              {this.props.envName}
+              Login
             </div>
             {this._generateFailureMessage()}
             <form
