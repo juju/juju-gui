@@ -36,7 +36,7 @@ describe('EntityContentDiagram', function() {
     assert.equal(getDiagramURL.callCount, 1);
     assert.equal(getDiagramURL.args[0][0], 'big-bundle');
     assert.deepEqual(output,
-      <div className="entity-content__diagram row">
+      <div className="entity-content__diagram row row--grey">
         <object type="image/svg+xml" data="example.com/diagram.svg"
           className="entity-content__diagram-image" />
       </div>);

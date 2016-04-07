@@ -31,7 +31,7 @@ YUI.add('entity-content-diagram', function() {
     render: function() {
       var url = this.props.getDiagramURL(this.props.id);
       return (
-        <div className="entity-content__diagram row">
+        <div className="entity-content__diagram row row--grey">
           <object type="image/svg+xml" data={url}
             className="entity-content__diagram-image" />
         </div>
