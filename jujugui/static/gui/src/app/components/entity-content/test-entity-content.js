@@ -139,7 +139,8 @@ describe('EntityContent', function() {
             </div>
           </div>
         </div>
-        <div id="configuration" className="row row--grey entity-content__configuration">
+        <div id="configuration"
+          className="row row--grey entity-content__configuration">
           <div className="inner-wrapper">
             <div className="twelve-col">
               <h2 className="entity-content__header">Configuration</h2>
