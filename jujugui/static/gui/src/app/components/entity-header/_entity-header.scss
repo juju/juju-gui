@@ -104,7 +104,7 @@
     }
 
     &__icon {
-        @include create-border-radius(14px);
+        border-radius: 14px;
         height: 96px;
         width: 96px;
         display: inline-block;

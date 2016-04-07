@@ -44,11 +44,13 @@ describe('EntityContentConfigOption', function() {
             password
           </dt>
           <dd className="entity-content__config-description">
-            <span className="entity-content__config-type">
-              ({"string"})
-            </span>
-            {' '}
-            Required password
+            <p>
+              <span className="entity-content__config-type">
+                ({"string"})
+              </span>
+              {' '}
+              Required password
+            </p>
           </dd>
           <dd className="entity-content__config-default">
             abc123
@@ -72,11 +74,13 @@ describe('EntityContentConfigOption', function() {
             password
           </dt>
           <dd className="entity-content__config-description">
-            <span className="entity-content__config-type">
-              ({"string"})
-            </span>
-            {' '}
-            Required password
+            <p>
+              <span className="entity-content__config-type">
+                ({"string"})
+              </span>
+              {' '}
+              Required password
+            </p>
           </dd>
           {undefined}
         </div>);

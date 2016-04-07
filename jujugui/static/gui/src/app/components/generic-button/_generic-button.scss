@@ -1,161 +1,8 @@
-////
-/// @author       Web Team at Canonical Ltd
-/// @link         http://ubuntudesign.github.io/vanilla-framework/docs/#mixin-gui-buttons
-/// @since        0.0.3
-////
-
-/// Default blockquote styling
+/// Button classes
 /// @group Buttons
-@mixin gui-buttons {
-  @include gui-neutral-button;
-  @include gui-positive-button;
-  @include gui-destructive-button;
-  @include gui-base-button;
-  @include gui-deployment-button;
+@mixin juju-gui-buttons {
+  @include juju-gui-deployment-button;
 }
-
-/// Neutral button styling
-/// @group Buttons
-/// @example
-/// <a class="button--neutral">
-///   ...
-/// </a>
-@mixin gui-neutral-button {
-  .button--neutral,
-  .button--inline-neutral {
-    @extend %button-pattern;
-    color: $cool-grey;
-    background-color: transparent;
-    border: 1px solid $mid-grey;
-
-    &:focus,
-    &:active,
-    &:hover {
-      background-color: rgba(0, 0, 0, .1);
-    }
-
-    &:disabled,
-    &.button--disabled {
-      &:focus,
-      &:active,
-      &:hover {
-        background-color: transparent;
-      }
-    }
-  }
-
-  .button--inline-neutral {
-    display: inline-block;
-    width: auto;
-  }
-}
-
-/// Positive button styling
-/// @group Buttons
-/// @example
-/// <a class="button--positive">
-///   ...
-/// </a>
-@mixin gui-positive-button {
-  .button--positive,
-  .button--inline-positive {
-    @extend %button-pattern;
-    color: $white;
-    background-color: $success;
-
-    &:focus,
-    &:active,
-    &:hover {
-      background-color: darken($success, 10%);
-    }
-
-    &:disabled,
-    &.button--disabled {
-      &:focus,
-      &:active,
-      &:hover {
-        background-color: $success;
-      }
-    }
-  }
-
-  .button--inline-positive {
-    display: inline-block;
-    width: auto;
-  }
-}
-
-
-/// Destructive button styling
-/// @group Buttons
-/// @example
-/// <a class="button--destructive">
-///   ...
-/// </a>
-@mixin gui-destructive-button {
-  .button--destructive,
-  .button--inline-destructive {
-    @extend %button-pattern;
-    color: $white;
-    background-color: $error;
-
-    &:focus,
-    &:active,
-    &:hover {
-      background-color: darken($error, 10%);
-    }
-
-    &:disabled,
-    &.button--disabled {
-      &:focus,
-      &:active,
-      &:hover {
-        background-color: $error;
-      }
-    }
-  }
-
-  .button--inline-destructive {
-    display: inline-block;
-    width: auto;
-  }
-}
-
-/// Base button styling
-/// @group Buttons
-/// @example
-/// <a class="button--base">
-///   ...
-/// </a>
-@mixin gui-base-button {
-  .button--base,
-  .button--inline-base {
-    @extend %button-pattern;
-    color: $cool-grey;
-    background-color: transparent;
-
-    &:focus,
-    &:active,
-    &:hover {
-      background-color: rgba(0, 0, 0, .1);
-    }
-
-    &:disabled,
-    &.button--disabled {
-      &:focus,
-      &:active,
-      &:hover {
-        background-color: transparent;
-      }
-    }
-  }
-
-  .button--inline-base {
-    display: inline-block;
-    width: auto;
-  }
-}
-
 
 /// Deployment button styling
 /// @group Buttons
@@ -163,7 +10,7 @@
 /// <a class="button--deployment">
 ///   ...
 /// </a>
-@mixin gui-deployment-button {
+@mixin juju-gui-deployment-button {
   .button--deployment,
   .button--inline-deployment {
     @extend %button-pattern;
@@ -189,29 +36,5 @@
   .button--inline-deployment {
     display: inline-block;
     width: auto;
-  }
-}
-
-/// Default button pattern styles
-/// @group Buttons
-%button-pattern {
-  font-smoothing: subpixel-antialiased;
-  font-size: 1em;
-  box-sizing: border-box;
-  width: 100%;
-  margin: 0;
-  padding: 11px 24px;
-  text-align: center;
-  text-decoration: none;
-  border-radius: 2px;
-  outline: none;
-  font-weight: 300;
-  cursor: pointer;
-  line-height: 1em;
-
-  &:disabled,
-  &.button--disabled {
-    opacity: .5;
-    cursor: default;
   }
 }

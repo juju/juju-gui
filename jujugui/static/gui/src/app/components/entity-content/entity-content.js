@@ -55,7 +55,7 @@ YUI.add('entity-content', function() {
           );
         }, this);
         return (
-          <div id="configuration" className="row entity-content__configuration">
+          <div id="configuration" className="row row--grey entity-content__configuration">
             <div className="inner-wrapper">
               <div className="twelve-col">
                 <h2 className="entity-content__header">Configuration</h2>
@@ -151,10 +151,10 @@ YUI.add('entity-content', function() {
         var contributeLink = 'https://code.launchpad.net/~charmers/charms/' +
           `trusty/${entityModel.get('name')}/trunk`;
         return (
-          <div className="row entity-content__description">
+          <div className="row row--grey entity-content__description">
             <div className="inner-wrapper">
               <div className="twelve-col">
-                <p>{entityModel.get('description')}</p>
+                <p className="intro">{entityModel.get('description')}</p>
               </div>
               {this._generateTags()}
               <div className="four-col entity-content__metadata last-col">

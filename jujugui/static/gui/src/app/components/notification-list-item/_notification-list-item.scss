@@ -4,7 +4,7 @@
     box-sizing: border-box;
     min-width: $left-panel-width;
     padding: 8px 60px 8px 20px;
-    color: $text-colour;
+    color: $cool-grey;
     margin-top: 10px;
     cursor: pointer;
     opacity: 0;
@@ -109,7 +109,7 @@
 
     &__hide .svg-icon {
         transition: stroke 0.3s;
-        stroke: $text-colour;
+        stroke: $cool-grey;
 
         &:focus,
         &:active,

@@ -135,7 +135,7 @@ describe('MachineView', function() {
             type="machine">
             {undefined}
             <div className="machine-view__column-onboarding">
-              Use machine view to:
+              <p>Use machine view to:</p>
               <ul>
                 <li>Create machines</li>
                 <li>Create containers</li>
@@ -523,7 +523,7 @@ describe('MachineView', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="machine-view__column-onboarding">
-        Use machine view to:
+        <p>Use machine view to:</p>
         <ul>
           <li>Create machines</li>
           <li>Create containers</li>
