@@ -69,6 +69,7 @@ describe('DeploymentAddCredentials', function() {
             <input className="deployment-panel__input"
               id="credential-name"
               placeholder="AWS_1"
+              required="required"
               type="text"
               ref="templateName" />
             <label className="deployment-panel__label"
@@ -78,6 +79,7 @@ describe('DeploymentAddCredentials', function() {
             <input className="deployment-panel__input"
               id="specify-region"
               placeholder="us-central1"
+              required="required"
               type="text"
               ref="templateRegion" />
             <h3 className="deployment-panel__section-title twelve-col">
@@ -99,7 +101,8 @@ describe('DeploymentAddCredentials', function() {
             </label>
             <input className="deployment-panel__input"
               id="access-key"
-              placeholder="xxxx xxxx xxxx xxxx"
+              placeholder="TDFIWNDKF7UW6DVGX98X"
+              required="required"
               type="text"
               ref="templateAccessKey" />
             <label className="deployment-panel__label"
@@ -108,7 +111,8 @@ describe('DeploymentAddCredentials', function() {
             </label>
             <input className="deployment-panel__input"
               id="secret-key"
-              placeholder="xxxx xxxx xxxx xxxx"
+              placeholder="p/hdU8TnOP5D7JNHrFiM8IO8f5GN6GhHj7tueBN9"
+              required="required"
               type="text"
               ref="templateSecretKey" />
           </form>
