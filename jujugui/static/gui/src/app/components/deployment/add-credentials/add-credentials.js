@@ -104,12 +104,22 @@ YUI.add('deployment-add-credentials', function() {
           <juju.components.DeploymentPanelContent
             title="Configure Amazon Web Services">
             <form>
+              <label className="deployment-panel__label"
+                htmlFor="credential-name">
+                Credential name
+              </label>
               <input className="deployment-panel__input"
-                placeholder="Credential name"
+                id="credential-name"
+                placeholder="AWS_1"
                 type="text"
                 ref="templateName" />
+              <label className="deployment-panel__label"
+                htmlFor="specify-region">
+                Specify region
+              </label>
               <input className="deployment-panel__input"
-                placeholder="Specify region"
+                id="specify-region"
+                placeholder="us-central1"
                 type="text"
                 ref="templateRegion" />
               <h3 className="deployment-panel__section-title twelve-col">
@@ -125,12 +135,22 @@ YUI.add('deployment-add-credentials', function() {
                   security_credential
                 </a>
               </p>
+              <label className="deployment-panel__label"
+                htmlFor="access-key">
+                Access key
+              </label>
               <input className="deployment-panel__input"
-                placeholder="Access-key"
+                id="access-key"
+                placeholder="xxxx xxxx xxxx xxxx"
                 type="text"
                 ref="templateAccessKey" />
+              <label className="deployment-panel__label"
+                htmlFor="secret-key">
+                Secret key
+              </label>
               <input className="deployment-panel__input"
-                placeholder="Secret-key"
+                id="secret-key"
+                placeholder="xxxx xxxx xxxx xxxx"
                 type="text"
                 ref="templateSecretKey" />
             </form>

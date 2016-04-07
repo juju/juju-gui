@@ -88,13 +88,13 @@ YUI.add('deployment-component', function() {
               changeState={this.props.changeState}
               pluralize={this.props.pluralize}
               services={this.props.services}
-              setDeploymentInfo={this.setDeploymentInfo.bind(this)}
+              setDeploymentInfo={this.setDeploymentInfo}
               user={this.props.user} />);
         case 'add-credentials':
           return (
             <juju.components.DeploymentAddCredentials
               changeState={this.props.changeState}
-              setDeploymentInfo={this.setDeploymentInfo.bind(this)}
+              setDeploymentInfo={this.setDeploymentInfo}
               jem={this.props.jem}
               users={this.props.users} />);
       }
