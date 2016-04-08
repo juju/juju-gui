@@ -131,6 +131,7 @@ describe('Deployment', function() {
         jem={jem}
         changeCounts={{}}
         changeState={changeState}
+        clouds={instance.clouds}
         pluralize={pluralize}
         services={services}
         setDeploymentInfo={instance.setDeploymentInfo}
@@ -155,7 +156,7 @@ describe('Deployment', function() {
     var changeDescriptions = [];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
-        activeComponent="add-credentials"
+        activeComponent="add-credentials-aws"
         appSet={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
         changeCounts={{}}
@@ -179,6 +180,7 @@ describe('Deployment', function() {
     var expected = (
       <juju.components.DeploymentAddCredentials
         changeState={changeState}
+        cloud={instance.clouds['aws']}
         jem={jem}
         setDeploymentInfo={instance.setDeploymentInfo}
         users={users} />);

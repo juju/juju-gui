@@ -40,10 +40,12 @@ describe('DeploymentPanelContent', function() {
       <div className="deployment-panel__content">
         <div className="twelve-col">
           <div className="inner-wrapper">
-            <h2 className="deployment-panel__title">
-              Title
-            </h2>
-            <span>Content</span>
+            <div className="deployment-panel__content-inner">
+              <h2 className="deployment-panel__title">
+                Title
+              </h2>
+              <span>Content</span>
+            </div>
           </div>
         </div>
       </div>);
