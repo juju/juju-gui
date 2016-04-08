@@ -17,14 +17,14 @@ GUI assuming the following is true:
   required to render the Juju GUI index file;
 - the "jujugui" directory includes a "templates/index.html.go" file which is
   used to render the Juju GUI index. The template receives at least the
-  following variables in its context: "comboURL", "configURL", "debug"
-  and "spriteContent". It might receive more variables but cannot assume them
-  to be always provided;
+  following variables in its context: "staticURL", "comboURL", "configURL",
+  "debug" and "spriteContent". It might receive more variables but cannot
+  assume them to be always provided;
 - the "jujugui" directory includes a "templates/config.js.go" file which is
   used to render the Juju GUI configuration file. The template receives at
   least the following variables in its context: "base", "host", "socket",
-  "uuid" and "version". It might receive more variables but cannot assume them
-  to be always provided.
+  "staticURL", "uuid" and "version". It might receive more variables but cannot
+  assume them to be always provided.
 
 When working on new features or reviewing changes, please ensure that all the
 assumptions above are respected, and that the template files (index and config)
