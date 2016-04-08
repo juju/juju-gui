@@ -243,13 +243,14 @@ YUI.add('deployment-summary', function() {
               This deployment is free, you can deploy xxxxxxxxx more
             </div>
             <form className="six-col">
+              <p>Name your model</p>
               <label className="deployment-panel__label"
                 htmlFor="model-name">
-                Name your model
+                Model name
               </label>
               <input className="deployment-panel__input"
                 id="model-name"
-                placeholder="Model name"
+                placeholder="test_model_01"
                 type="text" />
             </form>
             <div className="six-col last-col">
