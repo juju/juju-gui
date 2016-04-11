@@ -44,7 +44,7 @@ describe('HeaderBreadcrumb', () => {
       user: 'foo',
       usernameDisplay: 'Foo'
     };
-    var output = jsTestUtils.shallowRender(
+    var component = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
         env={env}
         envName={envName}
@@ -57,12 +57,15 @@ describe('HeaderBreadcrumb', () => {
         authDetails={authDetails}
         showEnvSwitcher={true}
         switchModel={switchModel}
-        uncommittedChanges={false} />);
+        uncommittedChanges={false} />, true);
+    var instance = component.getMountedInstance();
+    var output = component.getRenderOutput();
 
     var expected = (
       <ul className="header-breadcrumb">
         <li className="header-breadcrumb__list-item">
-          <a className="header-breadcrumb--link" href="/profile/">
+          <a className="header-breadcrumb--link"
+             onClick={instance._handleProfileClick}>
             Foo
           </a>
         </li>
@@ -139,7 +142,7 @@ describe('HeaderBreadcrumb', () => {
     assert.equal(output.props.children[1], undefined);
   });
 
-  it('doesnt render the env switcher when sectionC profile is visible', () => {
+  it('doesn\'t render the env switcher when profile is visible', () => {
     var app = {app:'app'};
     var env = {env: 'env'};
     var envName = 'bar';
@@ -167,6 +170,43 @@ describe('HeaderBreadcrumb', () => {
         uncommittedChanges={false} />);
     // There will be no third child if the envSwitcher is rendered
     assert.equal(output.props.children[1], undefined);
+  });
+
+  it('triggers a state change when profile link is clicked', () => {
+    var app = {app:'app'};
+    var env = {env: 'env'};
+    var envName = 'bar';
+    var jem = {jem: 'jem'};
+    var envList = ['envList'];
+    var changeState = sinon.stub();
+    var authDetails = {
+      user: 'foo',
+      usernameDisplay: 'Foo'
+    };
+    var component = jsTestUtils.shallowRender(
+      <juju.components.HeaderBreadcrumb
+        app={app}
+        env={env}
+        envName={envName}
+        dbEnvironmentSet={sinon.stub()}
+        jem={jem}
+        envList={envList}
+        changeState={changeState}
+        getAppState={sinon.stub()}
+        showConnectingMask={sinon.stub()}
+        authDetails={authDetails}
+        showEnvSwitcher={true}
+        switchModel={sinon.stub()}
+        uncommittedChanges={false} />, true);
+    var instance = component.getMountedInstance();
+    instance._handleProfileClick({
+      preventDefault: sinon.stub()
+    });
+    assert.equal(changeState.called, true,
+                 'changeState was not called');
+    var state = changeState.args[0][0];
+    assert.equal(state.sectionC.component, 'profile',
+                 'new state not set the the profile component');
   });
 
 });
