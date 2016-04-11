@@ -120,7 +120,9 @@ YUI.add('juju-view-environment', function(Y) {
           getModelURL: this.get('getModelURL'),
           container: container,
           endpointsController: this.get('endpointsController'),
-          nsRouter: this.get('nsRouter')});
+          nsRouter: this.get('nsRouter'),
+          staticURL: this.get('staticURL')
+        });
         // Bind all the behaviors we need as modules.
         topo.addModule(views.ServiceModule, {useTransitions: true});
         topo.addModule(views.PanZoomModule);

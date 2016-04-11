@@ -34,6 +34,7 @@ YUI.add('user-profile', function() {
       jem: React.PropTypes.object,
       listEnvs: React.PropTypes.func,
       showConnectingMask: React.PropTypes.func.isRequired,
+      staticURL: React.PropTypes.string,
       storeUser: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
       users: React.PropTypes.object.isRequired,
@@ -589,11 +590,13 @@ YUI.add('user-profile', function() {
                     && state.charmList.length === 0
                     && state.envList.length === 0;
       if (isEmpty) {
+        var staticURL = this.props.staticURL || '';
+        /* eslint-disable max-len */
         return (
           <div className="user-profile__empty twelve-col no-margin-bottom">
             <img alt="Empty profile"
               className="user-profile__empty-image"
-              src="/juju-ui/assets/images/non-sprites/empty_profile.png" />
+              src={`${staticURL}/juju-ui/assets/images/non-sprites/empty_profile.png`} />
             <h2 className="user-profile__empty-title">
               Your profile is currently empty
             </h2>
@@ -602,6 +605,7 @@ YUI.add('user-profile', function() {
               them.
             </p>
           </div>);
+        /* eslint-enable max-len */
       }
       return (
         <div>

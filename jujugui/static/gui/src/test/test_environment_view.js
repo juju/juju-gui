@@ -353,6 +353,69 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           serviceBlock.getAttribute('cx').should.equal('95');
         });
 
+    it('properly renders the create relation icon', function() {
+      // Create an instance of EnvironmentView with custom env
+      var view = new views.environment({
+        container: container,
+        db: db,
+        env: env,
+        charmstore: fakeStore
+      });
+      view.render();
+      var relationIcon = container.one('.service').one('.relation-button');
+      var line = relationIcon.one('line');
+      var circles = relationIcon.all('circle');
+      var img = relationIcon.one('image');
+
+      assert.equal(relationIcon._node.classList[0], 'relation-button');
+      assert.equal(relationIcon.getAttribute('transform'), 'translate(95,30)');
+
+      assert.equal(line.getAttribute('x1'), '0');
+      assert.equal(line.getAttribute('y1'), '0');
+      assert.equal(line.getAttribute('x2'), '0');
+      assert.equal(line.getAttribute('y2'), '30');
+      assert.equal(line.getAttribute('stroke-width'), '1');
+      assert.equal(line.getAttribute('stroke'), '#888888');
+
+      assert.equal(circles.item(0).getAttribute('cx'), '0');
+      assert.equal(circles.item(0).getAttribute('cy'), '34');
+      assert.equal(circles.item(0).getAttribute('r'), '4');
+      assert.equal(circles.item(0).getAttribute('fill'), '#888888');
+
+      assert.equal(circles.item(1)._node.classList[0], 'relation-button__link');
+      assert.equal(circles.item(1).getAttribute('cx'), '0');
+      assert.equal(circles.item(1).getAttribute('cy'), '0');
+      assert.equal(circles.item(1).getAttribute('r'), '15');
+      assert.equal(circles.item(1).getAttribute('fill'), '#f8f8f8');
+      assert.equal(circles.item(1).getAttribute('stroke'), '#888888');
+      assert.equal(circles.item(1).getAttribute('stroke-width'), '1.1');
+
+      assert.equal(img._node.classList[0], 'relation-button__image');
+      assert.equal(
+        img.getAttribute('href'),
+        'juju-ui/assets/svgs/build-relation_16.svg');
+      assert.equal(img.getAttribute('width'), '16');
+      assert.equal(img.getAttribute('height'), '16');
+      assert.equal(img.getAttribute('transform'), 'translate(-8, -8)');
+    });
+
+    it('properly renders the create relation icon using staticURL', function() {
+      // Create an instance of EnvironmentView with custom env
+      var view = new views.environment({
+        container: container,
+        db: db,
+        env: env,
+        charmstore: fakeStore,
+        staticURL: 'staticpath'
+      });
+      view.render();
+      var relationIcon = container.one('.service').one('.relation-button');
+      var img = relationIcon.one('image');
+      assert.equal(
+        img.getAttribute('href'),
+        'staticpath/juju-ui/assets/svgs/build-relation_16.svg');
+    });
+
     // Ensure the environment view loads properly
     it('must be able to render service blocks and relations',
         function() {
@@ -1169,6 +1232,34 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(reduceImages(), [
         'juju-ui/assets/svgs/relation-icon-subordinate.svg',
         'juju-ui/assets/svgs/relation-icon-error.svg'
+      ]);
+    });
+
+    it('uses staticURL config for the relation status assets', function() {
+      view.set('staticURL', 'staticpath');
+      view.render();
+      var reduceImages = function() {
+        return view.topo.vis.selectAll('.rel-indicator image')[0]
+          .map(function(image) {
+            return d3.select(image).attr('href');
+          });
+      };
+      console.log(reduceImages());
+      assert.deepEqual(reduceImages(), [
+        'staticpath/juju-ui/assets/svgs/relation-icon-subordinate.svg',
+        'staticpath/juju-ui/assets/svgs/relation-icon-healthy.svg'
+      ]);
+
+      var unit = db.services.getById('mysql').get('units').item(0);
+      unit.agent_state = 'error';
+      unit.agent_state_data = {
+        hook: 'db-relation'
+      };
+      view.update();
+      console.log(reduceImages());
+      assert.deepEqual(reduceImages(), [
+        'staticpath/juju-ui/assets/svgs/relation-icon-subordinate.svg',
+        'staticpath/juju-ui/assets/svgs/relation-icon-error.svg'
       ]);
     });
 

@@ -49,7 +49,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          below.
     -->
     <script src="{{.configURL}}"></script>
-    <link rel="shortcut icon" href="juju-ui/favicon.ico">
+    <link rel="shortcut icon" href="{{.staticURL}}/juju-ui/favicon.ico">
     <link rel="stylesheet" href="{{.comboURL}}?app/assets/stylesheets/normalize.css&app/assets/stylesheets/prettify.css&app/assets/stylesheets/cssgrids-responsive-min.css&app/assets/javascripts/yui/app-transitions-css/app-transitions-css-min.css&app/assets/javascripts/yui/panel/assets/panel-core.css&app/assets/javascripts/yui/widget-base/assets/widget-base-core.css&app/assets/javascripts/yui/widget-stack/assets/widget-stack-core.css&app/assets/juju-gui.css">
 
     <!--[if lt IE 9]>

@@ -114,6 +114,31 @@ describe('UserProfile', () => {
     assert.deepEqual(output, expected);
   });
 
+  it('displays the empty_profile asset with a staticURL provided', () => {
+    var jem = {
+      listEnvironments: sinon.stub().callsArgWith(0, null, {envs: []})
+    };
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UserProfile
+        users={users}
+        charmstore={{}}
+        dbEnvironmentSet={sinon.stub()}
+        env={env}
+        getDiagramURL={sinon.stub()}
+        jem={jem}
+        switchModel={sinon.stub()}
+        showConnectingMask={sinon.stub()}
+        interactiveLogin={true}
+        changeState={sinon.stub()}
+        staticURL='path/to/assets'
+        storeUser={sinon.stub()}
+        user={users.charmstore} />);
+    assert.equal(
+      output.props.children.props.children.props
+            .children[1].props.children[0].props.src,
+      'path/to/assets/juju-ui/assets/images/non-sprites/empty_profile.png');
+  });
+
   it('displays loading spinners for charms and bundles', () => {
     var jem = {
       listEnvironments: sinon.stub().callsArgWith(0, null, {envs: models})

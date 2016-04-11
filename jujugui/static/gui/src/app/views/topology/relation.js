@@ -313,6 +313,12 @@ YUI.add('juju-topology-relation', function(Y) {
       // Add a labelgroup.
       var self = this;
       var topo = this.get('component');
+      var staticURL = topo.get('staticURL') || '';
+      if (staticURL) {
+        // Add the trailing slash to the staticURL because it's only
+        // needed for the embedded deploy environment.
+        staticURL += '/';
+      }
       var vis = topo.vis;
       var parentId = topo._yuid;
       var imageSize = 20;
@@ -385,7 +391,7 @@ YUI.add('juju-topology-relation', function(Y) {
         .selectAll('image')
         .attr('xlink:href', function(d) {
           return (
-              'juju-ui/assets/svgs/relation-icon-' +
+              staticURL + 'juju-ui/assets/svgs/relation-icon-' +
               d.aggregatedStatus + '.svg');
         });
       return g;

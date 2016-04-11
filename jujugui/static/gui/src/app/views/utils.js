@@ -1743,7 +1743,9 @@ YUI.add('juju-view-utils', function(Y) {
       path = env.getLocalCharmFileUrl(charmId, 'icon.svg');
     } else if (localIndex === -1) {
       if (typeof isBundle === 'boolean' && isBundle) {
-        path = '/juju-ui/assets/images/non-sprites/bundle.svg';
+        var staticURL =
+          (window.juju_config && window.juju_config.staticURL) || '';
+        path = `${staticURL}/juju-ui/assets/images/non-sprites/bundle.svg`;
       } else {
         // Get the charm ID from the service.  In some cases, this will be
         // the charm URL with a protocol, which will need to be removed.

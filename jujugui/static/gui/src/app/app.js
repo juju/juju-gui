@@ -758,6 +758,7 @@ YUI.add('juju-gui', function(Y) {
           showConnectingMask={this.showConnectingMask.bind(this)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           interactiveLogin={this.get('interactiveLogin')}
+          staticURL={window.juju_config.staticURL}
           storeUser={this.storeUser.bind(this)}
           switchModel={views.utils.switchModel.bind(
             this, this.createSocketURL.bind(this), this.switchEnv.bind(this))}
@@ -2050,7 +2051,8 @@ YUI.add('juju-gui', function(Y) {
         env: this.env,
         ecs: this.env.ecs,
         charmstore: this.get('charmstore'),
-        bundleImporter: this.bundleImporter
+        bundleImporter: this.bundleImporter,
+        staticURL: window.juju_config.staticURL
       };
 
       this.showView('environment', options, {
