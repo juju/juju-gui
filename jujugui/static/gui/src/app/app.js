@@ -758,6 +758,7 @@ YUI.add('juju-gui', function(Y) {
           showConnectingMask={this.showConnectingMask.bind(this)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           interactiveLogin={this.get('interactiveLogin')}
+          staticURL={window.juju_config.staticURL}
           storeUser={this.storeUser.bind(this)}
           switchModel={views.utils.switchModel.bind(
             this, this.createSocketURL.bind(this), this.switchEnv.bind(this))}
