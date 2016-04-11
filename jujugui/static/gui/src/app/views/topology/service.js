@@ -1522,10 +1522,9 @@ YUI.add('juju-topology-service', function(Y) {
      */
     createServiceNode: function(node, self) {
       var staticURL = self.get('component').get('staticURL') || '';
+      var basePath = '/juju-ui';
       if (staticURL) {
-        // Add the trailing slash to the staticURL because it's only
-        // needed for the embedded deploy environment.
-        staticURL += '/';
+        basePath = `${staticURL}/static/gui/build/app`;
       }
       node.attr({'data-name':  function(d) { return d.name; }});
 
@@ -1576,7 +1575,7 @@ YUI.add('juju-topology-service', function(Y) {
       relationButton.append('image')
         .classed('relation-button__image', true)
         .attr({
-          'xlink:href': `${staticURL}juju-ui/assets/svgs/build-relation_16.svg`,
+          'xlink:href': `${basePath}/assets/svgs/build-relation_16.svg`,
           width: 16,
           height: 16,
           transform: 'translate(-8, -8)'

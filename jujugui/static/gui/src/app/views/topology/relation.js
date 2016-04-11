@@ -314,10 +314,9 @@ YUI.add('juju-topology-relation', function(Y) {
       var self = this;
       var topo = this.get('component');
       var staticURL = topo.get('staticURL') || '';
+      var basePath = '/juju-ui';
       if (staticURL) {
-        // Add the trailing slash to the staticURL because it's only
-        // needed for the embedded deploy environment.
-        staticURL += '/';
+        basePath = `${staticURL}/static/gui/build/app`;
       }
       var vis = topo.vis;
       var parentId = topo._yuid;
@@ -391,7 +390,7 @@ YUI.add('juju-topology-relation', function(Y) {
         .selectAll('image')
         .attr('xlink:href', function(d) {
           return (
-              staticURL + 'juju-ui/assets/svgs/relation-icon-' +
+              basePath + '/assets/svgs/relation-icon-' +
               d.aggregatedStatus + '.svg');
         });
       return g;

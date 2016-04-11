@@ -591,12 +591,15 @@ YUI.add('user-profile', function() {
                     && state.envList.length === 0;
       if (isEmpty) {
         var staticURL = this.props.staticURL || '';
-        /* eslint-disable max-len */
+        var basePath = '/juju-ui';
+        if (staticURL) {
+          basePath = `${staticURL}/static/gui/build/app`;
+        }
         return (
           <div className="user-profile__empty twelve-col no-margin-bottom">
             <img alt="Empty profile"
               className="user-profile__empty-image"
-              src={`${staticURL}/juju-ui/assets/images/non-sprites/empty_profile.png`} />
+              src={`${basePath}/assets/images/non-sprites/empty_profile.png`} />
             <h2 className="user-profile__empty-title">
               Your profile is currently empty
             </h2>
@@ -605,7 +608,6 @@ YUI.add('user-profile', function() {
               them.
             </p>
           </div>);
-        /* eslint-enable max-len */
       }
       return (
         <div>
