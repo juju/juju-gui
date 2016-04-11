@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Entity Extension', function() {
-  var Y, EntityModel, entityModel, models, utils;
+  var Y, EntityModel, entityModel, models, utils, config;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -46,10 +46,13 @@ describe('Entity Extension', function() {
       url: 'http://example.com/'
     };
     entityModel.setAttrs(attrs);
+    // Store the juju_config so that it can be reset after the test runs.
+    config = window.juju_config;
   });
 
   afterEach(function() {
     entityModel.destroy();
+    window.juju_config = config;
   });
 
   it('parses owner from the ID', function() {
@@ -115,10 +118,30 @@ describe('Entity Extension', function() {
       special: undefined,
       type: 'bundle',
       url: 'http://example.com/',
+      // no staticURL is defined on window.juju_config.staticURL so this
+      // path should not include a staticURL prefix.
       iconPath: '/juju-ui/assets/images/non-sprites/bundle.svg',
       services: []
     };
     assert.deepEqual(expected, entity,
                      'bundle POJO did not match expected object');
+  });
+
+  it('uses the staticURL for bundle asset if available', function() {
+    window.juju_config = {
+      staticURL: 'staticURLPrefix'
+    };
+    utils.makeStubMethod(entityModel, 'parseBundleServices', []);
+    var attrs = {
+      id: 'foobar',
+      owner: 'foobar-charmers',
+      entityType: 'bundle',
+      services: [],
+    };
+    entityModel.setAttrs(attrs);
+    var entity = entityModel.toEntity();
+    assert.deepEqual(
+      entity.iconPath,
+       'staticURLPrefix/juju-ui/assets/images/non-sprites/bundle.svg');
   });
 });

@@ -912,7 +912,7 @@ describe('utilities', function() {
   });
 
   describe('getIconPath', function() {
-    var utils;
+    var config, utils;
 
     before(function(done) {
       window.juju_config = {
@@ -926,9 +926,26 @@ describe('utilities', function() {
           });
     });
 
+    beforeEach(function() {
+      // Store the juju_config so that it can be reset after the test runs.
+      config = window.juju_config;
+    });
+
+    afterEach(function() {
+      window.juju_config = config;
+    });
+
     it('returns local default bundle icon location for bundles', function() {
       var path = utils.getIconPath('bundle:elasticsearch', true);
       assert.equal(path, '/juju-ui/assets/images/non-sprites/bundle.svg');
+    });
+
+    it('uses staticURL if provided for bundle icon location', function() {
+      window.juju_config = {
+        staticURL: 'static'
+      };
+      var path = utils.getIconPath('bundle:elasticsearch', true);
+      assert.equal(path, 'static/juju-ui/assets/images/non-sprites/bundle.svg');
     });
 
     it('returns a qualified charmstoreURL icon location', function() {
