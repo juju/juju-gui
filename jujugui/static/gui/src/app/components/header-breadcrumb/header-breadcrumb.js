@@ -65,6 +65,21 @@ YUI.add('header-breadcrumb', function() {
       return;
     },
 
+    /**
+      Handles clicks on the profile link.
+
+      @method _handleProfileClick
+    */
+    _handleProfileClick: function(e) {
+      e.preventDefault();
+      this.props.changeState({
+        sectionC: {
+          component: 'profile',
+          metadata: null
+        }
+      });
+    },
+
     render: function() {
       var auth = this.props.authDetails;
       var userItem;
@@ -72,7 +87,8 @@ YUI.add('header-breadcrumb', function() {
         var username = auth.loading ? '...' : auth.usernameDisplay;
         userItem = (
           <li className="header-breadcrumb__list-item">
-            <a className="header-breadcrumb--link" href="/profile/">
+            <a className="header-breadcrumb--link"
+               onClick={this._handleProfileClick}>
               {username}
             </a>
           </li>
