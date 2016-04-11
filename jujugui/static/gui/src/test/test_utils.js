@@ -945,7 +945,9 @@ describe('utilities', function() {
         staticURL: 'static'
       };
       var path = utils.getIconPath('bundle:elasticsearch', true);
-      assert.equal(path, 'static/juju-ui/assets/images/non-sprites/bundle.svg');
+      assert.equal(
+        path,
+        'static/static/gui/build/app/assets/images/non-sprites/bundle.svg');
     });
 
     it('returns a qualified charmstoreURL icon location', function() {

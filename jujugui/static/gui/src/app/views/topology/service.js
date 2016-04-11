@@ -1522,7 +1522,7 @@ YUI.add('juju-topology-service', function(Y) {
      */
     createServiceNode: function(node, self) {
       var staticURL = self.get('component').get('staticURL') || '';
-      var basePath = '/juju-ui';
+      var basePath = 'juju-ui';
       if (staticURL) {
         basePath = `${staticURL}/static/gui/build/app`;
       }

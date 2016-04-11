@@ -413,7 +413,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var img = relationIcon.one('image');
       assert.equal(
         img.getAttribute('href'),
-        'staticpath/juju-ui/assets/svgs/build-relation_16.svg');
+        'staticpath/static/gui/build/app/assets/svgs/build-relation_16.svg');
     });
 
     // Ensure the environment view loads properly
@@ -1236,7 +1236,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('uses staticURL config for the relation status assets', function() {
-      view.set('staticURL', 'staticpath');
+      view.set('staticURL', 'static');
       view.render();
       var reduceImages = function() {
         return view.topo.vis.selectAll('.rel-indicator image')[0]
@@ -1244,10 +1244,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             return d3.select(image).attr('href');
           });
       };
-      console.log(reduceImages());
       assert.deepEqual(reduceImages(), [
-        'staticpath/juju-ui/assets/svgs/relation-icon-subordinate.svg',
-        'staticpath/juju-ui/assets/svgs/relation-icon-healthy.svg'
+        'static/static/gui/build/app/assets/svgs/relation-icon-subordinate.svg',
+        'static/static/gui/build/app/assets/svgs/relation-icon-healthy.svg'
       ]);
 
       var unit = db.services.getById('mysql').get('units').item(0);
@@ -1256,10 +1255,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         hook: 'db-relation'
       };
       view.update();
-      console.log(reduceImages());
       assert.deepEqual(reduceImages(), [
-        'staticpath/juju-ui/assets/svgs/relation-icon-subordinate.svg',
-        'staticpath/juju-ui/assets/svgs/relation-icon-error.svg'
+        'static/static/gui/build/app/assets/svgs/relation-icon-subordinate.svg',
+        'static/static/gui/build/app/assets/svgs/relation-icon-error.svg'
       ]);
     });
 
