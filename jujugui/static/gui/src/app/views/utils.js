@@ -1330,7 +1330,8 @@ YUI.add('juju-view-utils', function(Y) {
         navbar = Y.one('.header-banner'),
         viewport = Y.one('#viewport'),
         result = {height: minheight || 0, width: minwidth || 0};
-    if (containerHeight && navbar && viewport) {
+    if (containerHeight && navbar && viewport &&
+      viewport.getComputedStyle('width') !== 'auto') {
       result.height = containerHeight -
           (bottomNavbar ? bottomNavbar.get('offsetHeight') : 0);
 

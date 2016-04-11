@@ -1,18 +1,22 @@
 @media only screen and (max-width: 600px) {
+  // Hide canvas on small screens
   #viewport {
     display: none;
   }
 
+  // Inspector full width
   .env-size-display,
   .inspector-view {
     left: 0;
     width: 100%;
   }
 
+  // Update to show deployment buttons at the bottom
   .inspector-view {
     max-height: calc(100% - 200px);
   }
 
+  // Only show search form when open
   .header-search__form {
     display: none;
   }
@@ -21,6 +25,7 @@
     display: inline;
   }
 
+  // Entity tweaks
   .entity-content .row,
   .row-hero {
     padding: 20px 10px;
@@ -59,10 +64,7 @@
     left: 0;
   }
 
-  /*
-   * mid-point
-   */
-
+  // Mid-point
   .mid-point__title {
     display: none;
   }
@@ -93,108 +95,104 @@
     text-align: left;
   }
 
-  /*
-   * Machine view
-   */
-   .machine-view__content {
-     display: block;
-     top: $navbar-height * 2;
-     left: 0;
-     bottom: 80px;
-     overflow-y: auto;
-     width: 100%;
-   }
+  // Machine view
+  .machine-view__content {
+    display: block;
+    top: $navbar-height * 2;
+    left: 0;
+    bottom: 80px;
+    overflow-y: auto;
+    width: 100%;
+  }
 
-   .machine-view__column {
-     overflow-y: auto;
-     display: block;
-     border-left: 0;
-   }
+  .machine-view__column {
+    overflow: visible;
+    display: block;
+    border-left: 0;
+  }
 
-   .machine-view__column-onboarding {
-     padding-bottom: 0;
-   }
+  .machine-view__column-content {
+    overflow: inherit;
+  }
 
-   /*
-    * Deployment bar
-    */
+  .machine-view__column-onboarding {
+    padding-bottom: 0;
+  }
 
-    .panel-component.deployment-bar-panel {
-      bottom: 20px;
+  .more-menu__menu {
+    margin-bottom: 20px;
+  }
 
-      .deployment-bar__export,
-      .deployment-bar__import,
-      .button--inline-neutral {
-        display: none;
-      }
+   // Deployment bar
+  .panel-component.deployment-bar-panel {
+    bottom: 20px;
+
+    .deployment-bar__export,
+    .deployment-bar__import,
+    .button--inline-neutral {
+      display: none;
     }
+  }
 
-    /*
-     * Search results
-     */
-     .search-results .list-block .list-block__filters--selects {
-       float: none;
-       margin: 0 20px;
-     }
+  // Search results
+  .search-results .list-block .list-block__filters--selects {
+    float: none;
+    margin: 0 20px;
+  }
 
-     /*
-      * User profile
-      */
-      .user-profile .inner-wrapper {
-        margin: 0 10px;
-      }
+  // User profile
+  .user-profile .inner-wrapper {
+    margin: 0 10px;
+  }
 
-      .user-profile-header {
-        padding-bottom: 40px;
-      }
+  .user-profile-header {
+    padding-bottom: 40px;
+  }
 
-      .user-profile-header .button--inline-neutral {
-        float: none;
-        margin: 0 0 20px;
-        display: block;
-        width: 100%;
-      }
+  .user-profile-header .button--inline-neutral {
+    float: none;
+    margin: 0 0 20px;
+    display: block;
+    width: 100%;
+  }
 
-      .user-profile-header__counts {
-        margin: 10px;
-      }
+  .user-profile-header__counts {
+    margin: 10px;
+  }
 
-      .user-profile-header__count {
-        margin-right: 10px;
-      }
+  .user-profile-header__count {
+    margin-right: 10px;
+  }
 
-      .user-profile__entity-details-header-action {
-        float: right;
-        position: relative;
-        top: -30px;
-      }
+  .user-profile__entity-details-header-action {
+    float: right;
+    position: relative;
+    top: -30px;
+  }
 
-      .user-profile__entity--expanded {
-        padding-left: 0;
+  .user-profile__entity--expanded {
+    padding-left: 0;
 
-        .user-profile__entity-details {
-          margin-left: 0;
-        }
-      }
+    .user-profile__entity-details {
+      margin-left: 0;
+    }
+  }
 
-      .user-profile__list-header {
-        display: none;
-      }
+  .user-profile__list-header {
+    display: none;
+  }
 
-      .user-profile__entity-details-content {
-        padding-bottom: 7px;
-      }
+  .user-profile__entity-details-content {
+    padding-bottom: 7px;
+  }
 
-      .user-profile__header {
-        padding-bottom: 0;
-      }
+  .user-profile__header {
+    padding-bottom: 0;
+  }
 
-      /*
-       * Deployment summary
-       */
-
-       .deployment-summary-classic {
-         left: 0;
-         right: 0;
-       }
+  // Deployment summary
+   .deployment-summary-classic {
+     left: 0;
+     right: 0;
+   }
 }
