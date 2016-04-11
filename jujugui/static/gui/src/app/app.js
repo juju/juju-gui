@@ -2051,7 +2051,8 @@ YUI.add('juju-gui', function(Y) {
         env: this.env,
         ecs: this.env.ecs,
         charmstore: this.get('charmstore'),
-        bundleImporter: this.bundleImporter
+        bundleImporter: this.bundleImporter,
+        staticURL: window.juju_config.staticURL
       };
 
       this.showView('environment', options, {

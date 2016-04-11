@@ -1172,6 +1172,34 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       ]);
     });
 
+    it('uses staticURL config for the relation status assets', function() {
+      view.set('staticURL', 'staticpath');
+      view.render();
+      var reduceImages = function() {
+        return view.topo.vis.selectAll('.rel-indicator image')[0]
+          .map(function(image) {
+            return d3.select(image).attr('href');
+          });
+      };
+      console.log(reduceImages());
+      assert.deepEqual(reduceImages(), [
+        'staticpath/juju-ui/assets/svgs/relation-icon-subordinate.svg',
+        'staticpath/juju-ui/assets/svgs/relation-icon-healthy.svg'
+      ]);
+
+      var unit = db.services.getById('mysql').get('units').item(0);
+      unit.agent_state = 'error';
+      unit.agent_state_data = {
+        hook: 'db-relation'
+      };
+      view.update();
+      console.log(reduceImages());
+      assert.deepEqual(reduceImages(), [
+        'staticpath/juju-ui/assets/svgs/relation-icon-subordinate.svg',
+        'staticpath/juju-ui/assets/svgs/relation-icon-error.svg'
+      ]);
+    });
+
     it('allows clicking on a relation to inspect it', function(done) {
       db.onDelta({data: additionalRelations});
       view = new views.environment({
