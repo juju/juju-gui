@@ -78,7 +78,10 @@ YUI.add('deployment-bar', function() {
       @returns {String} the label for the deploy button
     */
     _getDeployButtonLabel: function() {
-      return this.props.modelCommitted ? 'Commit changes' : 'Deploy changes';
+      var label = this.props.modelCommitted ? 'Commit changes'
+        : 'Deploy changes';
+      return label  + ' (' +
+        Object.keys(this.props.currentChangeSet).length + ')';
     },
 
     /**
@@ -175,6 +178,7 @@ YUI.add('deployment-bar', function() {
 
     render: function() {
       var changeCount = Object.keys(this.props.currentChangeSet).length;
+      var deployButton = this._getDeployButtonLabel();
       return (
         <juju.components.Panel
           instanceName="deployment-bar-panel"
@@ -200,12 +204,7 @@ YUI.add('deployment-bar', function() {
                 action={this._deployAction}
                 type="inline-deployment"
                 disabled={changeCount === 0}
-                title={changeCount.toString()} />
-              <juju.components.GenericButton
-                action={this._deployAction}
-                type="inline-deployment"
-                disabled={changeCount === 0}
-                title={this._getDeployButtonLabel()} />
+                title={deployButton} />
             </div>
             <input className="deployment-bar__file"
               type="file"

@@ -87,12 +87,7 @@ describe('DeploymentBar', function() {
               action={instance._deployAction}
               type="inline-deployment"
               disabled={false}
-              title="2" />
-            <juju.components.GenericButton
-              action={instance._deployAction}
-              type="inline-deployment"
-              disabled={false}
-              title="Deploy changes" />
+              title="Deploy changes (2)" />
           </div>
           <input className="deployment-bar__file"
             type="file"
@@ -224,7 +219,7 @@ describe('DeploymentBar', function() {
         renderDragOverNotification={sinon.stub()}
         showInstall={true} />);
     assert.isFalse(
-      output.props.children.props.children[4].props.children[1].props.disabled);
+      output.props.children.props.children[4].props.children.props.disabled);
   });
 
   it('can export the env', function() {
@@ -325,7 +320,7 @@ describe('DeploymentBar', function() {
         renderDragOverNotification={sinon.stub()}
         showInstall={true} />);
     assert.isTrue(
-      output.props.children.props.children[4].props.children[1].props.disabled);
+      output.props.children.props.children[4].props.children.props.disabled);
   });
 
   it('passes the button the correct title if there are commits', function() {
@@ -346,8 +341,8 @@ describe('DeploymentBar', function() {
         showInstall={true} />, true);
     var output = renderer.getRenderOutput();
     assert.equal(
-      output.props.children.props.children[4].props.children[1].props.title,
-      'Commit changes');
+      output.props.children.props.children[4].props.children.props.title,
+      'Commit changes (0)');
   });
 
   it('can display a notification', function() {
