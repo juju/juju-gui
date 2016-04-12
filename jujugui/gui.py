@@ -19,7 +19,8 @@ def gui(config):
     # jujugui.ui route to make sure we capture *everything* before the
     # static/gui/build/app section and get the file path as one string
     # rather than several separated by "/".
-    config.add_route('jujugui.ui', '/{prefix:.*}static/gui/build/app/{file:.*}')
+    config.add_route(
+        'jujugui.ui', '/{prefix:.*}static/gui/build/app/{file:.*}')
     config.add_route('jujugui.config', '/config.js')
     config.add_route('jujugui.version', '/version')
     config.add_route('jujugui.convoy', '/{cachebuster}/combo')
