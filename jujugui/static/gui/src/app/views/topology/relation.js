@@ -314,10 +314,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var self = this;
       var topo = this.get('component');
       var staticURL = topo.get('staticURL') || '';
-      var basePath = 'juju-ui';
-      if (staticURL) {
-        basePath = `${staticURL}/static/gui/build/app`;
-      }
+      var basePath = `${staticURL}/static/gui/build/app`;
       var vis = topo.vis;
       var parentId = topo._yuid;
       var imageSize = 20;

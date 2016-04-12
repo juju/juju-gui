@@ -591,10 +591,7 @@ YUI.add('user-profile', function() {
                     && state.envList.length === 0;
       if (isEmpty) {
         var staticURL = this.props.staticURL || '';
-        var basePath = '/juju-ui';
-        if (staticURL) {
-          basePath = `${staticURL}/static/gui/build/app`;
-        }
+        var basePath = `${staticURL}/static/gui/build/app`;
         return (
           <div className="user-profile__empty twelve-col no-margin-bottom">
             <img alt="Empty profile"
