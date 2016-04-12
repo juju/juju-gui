@@ -276,19 +276,19 @@ YUI.add('user-profile', function() {
           switchModel={this.switchEnv}
           type="model">
           <span className="user-profile__list-col three-col">
-            {model.name}
+            {model.name || '--'}
           </span>
           <span className="user-profile__list-col four-col">
             --
           </span>
           <span className="user-profile__list-col two-col">
-            {model.lastConnection}
+            {model.lastConnection || '--'}
           </span>
           <span className="user-profile__list-col one-col">
             --
           </span>
           <span className="user-profile__list-col two-col last-col">
-            {model.owner}
+            {model.owner || '--'}
           </span>
         </juju.components.UserProfileEntity>);
     },
