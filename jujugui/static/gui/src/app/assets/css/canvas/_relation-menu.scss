@@ -112,10 +112,10 @@
         line-height: $height;
         background-repeat: no-repeat;
         background-position: $gutter (($height - $icon-size) / 2);
-        background-image: url("juju-ui/assets/images/unit_running_16.png");
+        background-image: url("static/gui/build/app/assets/images/unit_running_16.png");
 
         &.error {
-            background-image: url("juju-ui/assets/images/error_16.png");
+            background-image: url("static/gui/build/app/assets/images/error_16.png");
         }
 
         .endpoint.error {

@@ -1745,10 +1745,7 @@ YUI.add('juju-view-utils', function(Y) {
       if (typeof isBundle === 'boolean' && isBundle) {
         var staticURL =
           (window.juju_config && window.juju_config.staticURL) || '';
-        var basePath = '/juju-ui';
-        if (staticURL) {
-          basePath = `${staticURL}/static/gui/build/app`;
-        }
+        var basePath = `${staticURL}/static/gui/build/app`;
         path = `${basePath}/assets/images/non-sprites/bundle.svg`;
       } else {
         // Get the charm ID from the service.  In some cases, this will be

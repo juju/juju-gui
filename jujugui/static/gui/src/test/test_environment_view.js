@@ -393,7 +393,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(img._node.classList[0], 'relation-button__image');
       assert.equal(
         img.getAttribute('href'),
-        'juju-ui/assets/svgs/build-relation_16.svg');
+        'static/gui/build/app/assets/svgs/build-relation_16.svg');
       assert.equal(img.getAttribute('width'), '16');
       assert.equal(img.getAttribute('height'), '16');
       assert.equal(img.getAttribute('transform'), 'translate(-8, -8)');
@@ -1218,8 +1218,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       assert.deepEqual(reduceData(), ['subordinate', 'healthy']);
       assert.deepEqual(reduceImages(), [
-        'juju-ui/assets/svgs/relation-icon-subordinate.svg',
-        'juju-ui/assets/svgs/relation-icon-healthy.svg'
+        'static/gui/build/app/assets/svgs/relation-icon-subordinate.svg',
+        'static/gui/build/app/assets/svgs/relation-icon-healthy.svg'
       ]);
 
       var unit = db.services.getById('mysql').get('units').item(0);
@@ -1230,8 +1230,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.update();
       assert.deepEqual(reduceData(), ['subordinate', 'error']);
       assert.deepEqual(reduceImages(), [
-        'juju-ui/assets/svgs/relation-icon-subordinate.svg',
-        'juju-ui/assets/svgs/relation-icon-error.svg'
+        'static/gui/build/app/assets/svgs/relation-icon-subordinate.svg',
+        'static/gui/build/app/assets/svgs/relation-icon-error.svg'
       ]);
     });
 

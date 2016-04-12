@@ -72,10 +72,7 @@ YUI.add('entity-extension', function(Y) {
       if (type === 'bundle') {
         var staticURL =
           (window.juju_config && window.juju_config.staticURL) || '';
-        var basePath = '/juju-ui';
-        if (staticURL) {
-          basePath = `${staticURL}/static/gui/build/app`;
-        }
+        var basePath = `${staticURL}/static/gui/build/app`;
         entity.iconPath =
           `${basePath}/assets/images/non-sprites/bundle.svg`;
         var srvcs = this.get('services');

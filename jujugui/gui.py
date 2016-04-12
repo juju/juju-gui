@@ -17,9 +17,10 @@ def gui(config):
     options.update(config.registry.settings)
     # We use regex separators for the prefix and file sections of the
     # jujugui.ui route to make sure we capture *everything* before the
-    # juju-ui section and get the file path as one string rather than
-    # several separated by "/".
-    config.add_route('jujugui.ui', '/{prefix:.*}juju-ui/{file:.*}')
+    # static/gui/build/app section and get the file path as one string
+    # rather than several separated by "/".
+    config.add_route(
+        'jujugui.ui', '/{prefix:.*}static/gui/build/app/{file:.*}')
     config.add_route('jujugui.config', '/config.js')
     config.add_route('jujugui.version', '/version')
     config.add_route('jujugui.convoy', '/{cachebuster}/combo')

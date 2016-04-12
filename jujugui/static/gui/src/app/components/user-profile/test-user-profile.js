@@ -81,6 +81,7 @@ describe('UserProfile', () => {
         user={users.charmstore} />, true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
+    /* eslint-disable max-len */
     var expected = (
       <juju.components.Panel
         instanceName="user-profile"
@@ -98,7 +99,7 @@ describe('UserProfile', () => {
             <div className="user-profile__empty twelve-col no-margin-bottom">
               <img alt="Empty profile"
                 className="user-profile__empty-image"
-                src="/juju-ui/assets/images/non-sprites/empty_profile.png" />
+                src="/static/gui/build/app/assets/images/non-sprites/empty_profile.png" />
               <h2 className="user-profile__empty-title">
                 Your profile is currently empty
               </h2>
@@ -111,6 +112,7 @@ describe('UserProfile', () => {
         </div>
       </juju.components.Panel>
     );
+    /* eslint-disable max-len */
     assert.deepEqual(output, expected);
   });
 
