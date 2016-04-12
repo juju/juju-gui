@@ -225,7 +225,7 @@ input[type="checkbox"] {
     border-radius: $border-radius;
 
     &:after {
-        background: transparent url(juju-ui/assets/images/non-sprites/tick.svg) no-repeat center 2px;
+        background: transparent url(static/gui/build/app/assets/images/non-sprites/tick.svg) no-repeat center 2px;
     }
 }
 
@@ -235,7 +235,7 @@ select {
     -moz-appearance: none;
     background: transparent;
     box-sizing: border-box;
-    background-image: url("juju-ui/assets/svgs/chevron_down_16.svg");
+    background-image: url("static/gui/build/app/assets/svgs/chevron_down_16.svg");
     background-repeat: no-repeat;
     background-position: calc(100% - 10px) center;
     background-color: $white;
