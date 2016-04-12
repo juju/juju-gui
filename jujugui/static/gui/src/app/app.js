@@ -841,6 +841,7 @@ YUI.add('juju-gui', function(Y) {
       var metadata = metadata || {};
       var activeComponent = metadata.activeComponent;
       var modelCommitted = this._getModelCommitted();
+      var modelName = this.db.environment.get('name');
       if (!window.flags || !window.flags.blues) {
         // Display the old deploy summary if we're not using the feature flag
         // for the new deployment flow.
@@ -897,6 +898,9 @@ YUI.add('juju-gui', function(Y) {
           appSet={this.set.bind(this)}
           createSocketURL={this.createSocketURL.bind(this)}
           modelCommitted={modelCommitted}
+          // Hide the fact that we're using the sandbox from the user, as far as
+          // they are concerned they do not have a model yet.
+          modelName={modelName === 'sandbox' ? '' : modelName}
           numberOfChanges={Object.keys(ecs.getCurrentChangeSet()).length}
           pluralize={utils.pluralize.bind(this)}
           services={db.services.toArray()}

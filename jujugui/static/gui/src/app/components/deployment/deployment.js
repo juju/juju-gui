@@ -34,6 +34,8 @@ YUI.add('deployment-component', function() {
       env: React.PropTypes.object.isRequired,
       appSet: React.PropTypes.func.isRequired,
       createSocketURL: React.PropTypes.func.isRequired,
+      modelCommitted: React.PropTypes.bool.isRequired,
+      modelName: React.PropTypes.string.isRequired,
       numberOfChanges: React.PropTypes.number.isRequired,
       pluralize: React.PropTypes.func.isRequired,
       services: React.PropTypes.array.isRequired,
@@ -79,6 +81,7 @@ YUI.add('deployment-component', function() {
               ecsCommit={this.props.ecsCommit}
               getUnplacedUnitCount={this.props.getUnplacedUnitCount}
               modelCommitted={this.props.modelCommitted}
+              modelName={this.props.modelName}
               numberOfChanges={this.props.numberOfChanges} />);
         case 'choose-cloud':
           return (
