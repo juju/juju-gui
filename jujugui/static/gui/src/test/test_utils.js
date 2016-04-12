@@ -937,7 +937,9 @@ describe('utilities', function() {
 
     it('returns local default bundle icon location for bundles', function() {
       var path = utils.getIconPath('bundle:elasticsearch', true);
-      assert.equal(path, '/juju-ui/assets/images/non-sprites/bundle.svg');
+      assert.equal(
+        path,
+        '/static/gui/build/app/assets/images/non-sprites/bundle.svg');
     });
 
     it('uses staticURL if provided for bundle icon location', function() {
