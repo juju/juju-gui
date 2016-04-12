@@ -697,6 +697,71 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
+      Return information about a model, such as its name, series, and provider
+      type, by performing a ModelManager.ModelInfo Juju API request.
+
+      @method modelInfo
+      @param {String} modelTag The Juju tag of the model, for instance
+        "model-5bea955d-7a43-47d3-89dd-b02c923e2447".
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred), or with the following fields if everything went well:
+        - modelTag: the original Juju model tag;
+        - name: the model name, like "admin" or "mymodel";
+        - series: the model default series, like "trusty" or "xenial";
+        - provider: the provider type, like "lxd" or "aws";
+        - uuid: the model unique identifier;
+        - serverUuid: the corresponding controller unique identifier;
+        - ownerTag: the Juju tag of the user owning the model.
+      @return {undefined} Sends a message to the server only.
+    */
+    modelInfo: function(modelTag, callback) {
+      // Decorate the user supplied callback.
+      var handler = function(userCallback, modelTag, data) {
+        if (!userCallback) {
+          console.log('data returned by model info API call:', data);
+          return;
+        }
+        var err = data.Error && data.Error.Message;
+        if (err) {
+          userCallback({err: err});
+          return;
+        }
+        var results = data.Response.results;
+        if (results.length != 1) {
+          userCallback({
+            err: 'unexpected results: ' + JSON.stringify(results)
+          });
+          return;
+        }
+        var result = results[0];
+        err = result.error && result.error.Message;
+        if (err) {
+          userCallback({err: err});
+          return;
+        }
+        result = result.result;
+        userCallback({
+          modelTag: modelTag,
+          name: result.Name,
+          series: result.DefaultSeries,
+          provider: result.ProviderType,
+          uuid: result.UUID,
+          serverUuid: result.ServerUUID,
+          ownerTag: result['owner-tag']
+        });
+      }.bind(this, callback, modelTag);
+
+      // Send the API request.
+      this._send_rpc({
+        Type: 'ModelManager',
+        Request: 'ModelInfo',
+        Params: {Entities: [{Tag: modelTag}]}
+      }, handler);
+    },
+
+    /**
       Send a client EnvironmentGet request to retrieve info about the
       environment definition.
 
