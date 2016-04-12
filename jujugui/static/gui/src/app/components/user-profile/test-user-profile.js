@@ -130,13 +130,13 @@ describe('UserProfile', () => {
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
         changeState={sinon.stub()}
-        staticURL='path/to/assets'
+        staticURL='surl'
         storeUser={sinon.stub()}
         user={users.charmstore} />);
     assert.equal(
       output.props.children.props.children.props
             .children[1].props.children[0].props.src,
-      'path/to/assets/juju-ui/assets/images/non-sprites/empty_profile.png');
+      'surl/static/gui/build/app/assets/images/non-sprites/empty_profile.png');
   });
 
   it('displays loading spinners for charms and bundles', () => {

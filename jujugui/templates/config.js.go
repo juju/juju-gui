@@ -1,5 +1,6 @@
 var juju_config = {
     "baseUrl": "{{.base}}",
+    "staticURL": "{{.staticURL}}",
     "jujuCoreVersion": "{{.version}}",
     "jujuEnvUUID": "{{.uuid}}",
     "apiAddress": "wss://{{.host}}",

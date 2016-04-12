@@ -129,7 +129,7 @@ describe('Entity Extension', function() {
 
   it('uses the staticURL for bundle asset if available', function() {
     window.juju_config = {
-      staticURL: 'staticURLPrefix'
+      staticURL: 'static'
     };
     utils.makeStubMethod(entityModel, 'parseBundleServices', []);
     var attrs = {
@@ -142,6 +142,6 @@ describe('Entity Extension', function() {
     var entity = entityModel.toEntity();
     assert.deepEqual(
       entity.iconPath,
-       'staticURLPrefix/juju-ui/assets/images/non-sprites/bundle.svg');
+       'static/static/gui/build/app/assets/images/non-sprites/bundle.svg');
   });
 });
