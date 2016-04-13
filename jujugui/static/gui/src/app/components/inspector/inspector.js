@@ -170,6 +170,7 @@ YUI.add('inspector-component', function() {
           }
           state.activeChild = {
             title: unit.displayName,
+            icon: service.get('icon'),
             headerType: unit.agent_state || 'uncommitted',
             component:
               <juju.components.UnitDetails

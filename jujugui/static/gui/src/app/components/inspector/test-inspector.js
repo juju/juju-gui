@@ -32,13 +32,15 @@ describe('Inspector', function() {
   });
 
   it('displays the service overview for the "inspector" state', function() {
+    var getStub = sinon.stub();
+    var icon = 'foo.png';
+    var title = 'demo';
+    getStub.withArgs('icon').returns(icon);
+    getStub.withArgs('id').returns('apache2');
+    getStub.withArgs('name').returns(title);
     var service = {
-      get: function(val) {
-        if (val === 'id') {
-          return 'apache2';
-        }
-        return {name: 'demo'};
-      }};
+      get: getStub
+    };
     var appState = {
       sectionA: {
         metadata: {}
@@ -48,7 +50,7 @@ describe('Inspector', function() {
     var getUnitStatusCounts = sinon.stub();
     var appPreviousState = sinon.stub();
     var serviceRelations = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    var component = jsTestUtils.shallowRender(
         <juju.components.Inspector
           service={service}
           destroyService={destroyService}
@@ -57,8 +59,22 @@ describe('Inspector', function() {
           clearState={clearState}
           appPreviousState={appPreviousState}
           appState={appState}
-          serviceRelations={serviceRelations} />);
-    var expected = (
+          serviceRelations={serviceRelations} />, true);
+    var instance = component.getMountedInstance();
+    var output = component.getRenderOutput();
+    var header = output.props.children[0];
+    var expectedHeader = (
+      <juju.components.InspectorHeader
+        backCallback={instance._backCallback}
+        activeComponent={undefined}
+        type={undefined}
+        count={undefined}
+        title={title}
+        icon={icon} />
+    );
+    assert.deepEqual(header, expectedHeader,
+                     'Header is not rendered as expected');
+    var expectedOverview = (
         <juju.components.ServiceOverview
           changeState={undefined}
           destroyService={destroyService}
@@ -66,7 +82,9 @@ describe('Inspector', function() {
           clearState={clearState}
           service={service}
           serviceRelations={serviceRelations} />);
-    assert.deepEqual(output.props.children[1].props.children, expected);
+    var overview = output.props.children[1].props.children;
+    assert.deepEqual(overview, expectedOverview,
+                     'Overview is not rendered as expected');
   });
 
   it('displays the unit list when the app state calls for it', function() {
@@ -74,7 +92,10 @@ describe('Inspector', function() {
     var changeStateStub = sinon.stub();
     var destroyUnits = sinon.stub();
     var appPreviousState = sinon.stub();
+    var unitStatus = 'error';
     var getStub = sinon.stub();
+    var icon = 'foo.png';
+    getStub.withArgs('icon').returns(icon);
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({
       filterByStatus: sinon.stub().returns([])
@@ -86,9 +107,9 @@ describe('Inspector', function() {
       sectionA: {
         metadata: {
           activeComponent: 'units',
-          units: 'error'
+          units: unitStatus
         }}};
-    var output = jsTestUtils.shallowRender(
+    var component = jsTestUtils.shallowRender(
         <juju.components.Inspector
           service={service}
           appState={appState}
@@ -97,7 +118,22 @@ describe('Inspector', function() {
           linkify={sinon.stub()}
           appPreviousState={appPreviousState}
           changeState={changeStateStub}>
-        </juju.components.Inspector>);
+        </juju.components.Inspector>, true);
+    var instance = component.getMountedInstance();
+    var output = component.getRenderOutput();
+    var header = output.props.children[0];
+    var expectedHeader = (
+      <juju.components.InspectorHeader
+        backCallback={instance._backCallback}
+        activeComponent={appState.sectionA.metadata.activeComponent}
+        type={unitStatus}
+        count={0}
+        title='Units'
+        icon={icon} />
+    );
+    assert.deepEqual(header, expectedHeader,
+                     'Header is not rendered as expected');
+
 
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
@@ -114,6 +150,8 @@ describe('Inspector', function() {
     var setConfig = sinon.stub();
     var charm = {};
     var getStub = sinon.stub();
+    var icon = 'foo.png';
+    getStub.withArgs('icon').returns(icon);
     var changeState = sinon.stub();
     var getYAMLConfig = sinon.stub();
     var appPreviousState = sinon.stub();
@@ -129,7 +167,7 @@ describe('Inspector', function() {
         metadata: {
           activeComponent: 'config'
         }}};
-    var output = jsTestUtils.shallowRender(
+    var component = jsTestUtils.shallowRender(
         <juju.components.Inspector
           appState={appState}
           service={service}
@@ -141,7 +179,21 @@ describe('Inspector', function() {
           addNotification={addNotification}
           getServiceByName={getServiceByName}
           linkify={linkify}
-          setConfig={setConfig} /> );
+          setConfig={setConfig} />, true);
+    var instance = component.getMountedInstance();
+    var output = component.getRenderOutput();
+    var header = output.props.children[0];
+    var expectedHeader = (
+      <juju.components.InspectorHeader
+        backCallback={instance._backCallback}
+        activeComponent={appState.sectionA.metadata.activeComponent}
+        type={undefined}
+        count={undefined}
+        title='Configure'
+        icon={icon} />
+    );
+    assert.deepEqual(header, expectedHeader,
+                     'Header is not rendered as expected');
 
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
@@ -161,10 +213,18 @@ describe('Inspector', function() {
     var destroyUnits = sinon.stub();
     var changeState = sinon.stub();
     var getStub = sinon.stub();
+    var title = 'demo-unit';
+    var icon = 'foo.png';
+    var headerType = 'active';
+    var unit = {
+      displayName: title,
+      agent_state: headerType
+    };
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({getById: function() {
-      return 'unit';
+      return unit;
     }});
+    getStub.withArgs('icon').returns(icon);
     var service = {
       get: getStub
     };
@@ -175,7 +235,7 @@ describe('Inspector', function() {
           unit: '5'
         }}};
     var appPreviousState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    var component = jsTestUtils.shallowRender(
         <juju.components.Inspector
           service={service}
           destroyUnits={destroyUnits}
@@ -183,16 +243,33 @@ describe('Inspector', function() {
           linkify={sinon.stub()}
           appPreviousState={appPreviousState}
           appState={appState}>
-        </juju.components.Inspector>);
+        </juju.components.Inspector>, true);
+    var instance = component.getMountedInstance();
+    var output = component.getRenderOutput();
+    var header = output.props.children[0];
+    var expectedHeader = (
+      <juju.components.InspectorHeader
+        backCallback={instance._backCallback}
+        activeComponent={appState.sectionA.metadata.activeComponent}
+        type={headerType}
+        count={undefined}
+        title={title}
+        icon={icon} />
+    );
+    assert.deepEqual(header, expectedHeader,
+                     'Header is not rendered as expected');
     var children = output.props.children[1].props.children;
-    assert.deepEqual(children,
-        <juju.components.UnitDetails
-          destroyUnits={destroyUnits}
-          service={service}
-          changeState={changeState}
-          previousComponent={undefined}
-          unitStatus={null}
-          unit="unit" />);
+    var expectedChildren = (
+      <juju.components.UnitDetails
+        destroyUnits={destroyUnits}
+        service={service}
+        changeState={changeState}
+        previousComponent={undefined}
+        unitStatus={null}
+        unit={unit} />
+    );
+    assert.deepEqual(children, expectedChildren,
+                     'Unit details not rendered as expected');
   });
 
   it('handles the unit being removed while viewing the unit', function() {
@@ -394,9 +471,10 @@ describe('Inspector', function() {
 
   it('displays the Scale Service when the app state calls for it', function() {
     var appPreviousState = sinon.stub();
+    var icon = 'foo.png';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
-
+    getStub.withArgs('icon').returns(icon);
     var service = {
       get: getStub
     };
@@ -406,12 +484,26 @@ describe('Inspector', function() {
         metadata: {
           activeComponent: 'scale',
         }}};
-    var output = jsTestUtils.shallowRender(
+    var component = jsTestUtils.shallowRender(
       <juju.components.Inspector
         linkify={sinon.stub()}
         service={service}
         appPreviousState={appPreviousState}
-        appState={appState} />);
+        appState={appState} />, true);
+    var instance = component.getMountedInstance();
+    var output = component.getRenderOutput();
+    var header = output.props.children[0];
+    var expectedHeader = (
+      <juju.components.InspectorHeader
+        backCallback={instance._backCallback}
+        activeComponent={appState.sectionA.metadata.activeComponent}
+        type={undefined}
+        count={undefined}
+        title='Scale'
+        icon={icon} />
+    );
+    assert.deepEqual(header, expectedHeader,
+                     'Header is not rendered as expected');
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
         <juju.components.ScaleService
@@ -429,8 +521,10 @@ describe('Inspector', function() {
     var service = sinon.stub();
     var units = sinon.stub();
     var appPreviousState = sinon.stub();
+    var icon = 'icon.png';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
+    getStub.withArgs('icon').returns(icon);
     getStub.withArgs('units').returns(units);
     var service = {
       get: getStub
@@ -440,7 +534,7 @@ describe('Inspector', function() {
         metadata: {
           activeComponent: 'expose',
         }}};
-    var output = jsTestUtils.shallowRender(
+    var component = jsTestUtils.shallowRender(
       <juju.components.Inspector
         addNotification={addNotification}
         changeState={changeState}
@@ -449,7 +543,21 @@ describe('Inspector', function() {
         unexposeService={unexposeService}
         service={service}
         appPreviousState={appPreviousState}
-        appState={appState} />);
+        appState={appState} />, true);
+    var instance = component.getMountedInstance();
+    var output = component.getRenderOutput();
+    var header = output.props.children[0];
+    var expectedHeader = (
+      <juju.components.InspectorHeader
+        backCallback={instance._backCallback}
+        activeComponent={appState.sectionA.metadata.activeComponent}
+        type={undefined}
+        count={undefined}
+        title='Expose'
+        icon={icon} />
+    );
+    assert.deepEqual(header, expectedHeader,
+                     'Header is not rendered as expected');
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
         <juju.components.InspectorExpose
@@ -465,8 +573,10 @@ describe('Inspector', function() {
     var changeState = sinon.stub();
     var service = sinon.stub();
     var appPreviousState = sinon.stub();
+    var icon = 'icon.png';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
+    getStub.withArgs('icon').returns(icon);
     var service = {
       get: getStub
     };
@@ -476,14 +586,28 @@ describe('Inspector', function() {
           activeComponent: 'relations',
         }}};
     var serviceRelations = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    var component = jsTestUtils.shallowRender(
       <juju.components.Inspector
         changeState={changeState}
         service={service}
         appPreviousState={appPreviousState}
         appState={appState}
         linkify={sinon.stub()}
-        serviceRelations={serviceRelations} />);
+        serviceRelations={serviceRelations} />, true);
+    var instance = component.getMountedInstance();
+    var output = component.getRenderOutput();
+    var header = output.props.children[0];
+    var expectedHeader = (
+      <juju.components.InspectorHeader
+        backCallback={instance._backCallback}
+        activeComponent={appState.sectionA.metadata.activeComponent}
+        type={undefined}
+        count={undefined}
+        title='Relations'
+        icon={icon} />
+    );
+    assert.deepEqual(header, expectedHeader,
+                     'Header is not rendered as expected');
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
         <juju.components.InspectorRelations
@@ -502,9 +626,11 @@ describe('Inspector', function() {
     var getCharm = sinon.stub();
     var getAvailableVersions = sinon.stub();
     var appPreviousState = sinon.stub();
+    var icon = 'icon.png';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('charm').returns('cs:demo');
+    getStub.withArgs('icon').returns(icon);
     var service = {
       get: getStub
     };
@@ -513,7 +639,7 @@ describe('Inspector', function() {
         metadata: {
           activeComponent: 'change-version',
         }}};
-    var output = jsTestUtils.shallowRender(
+    var component = jsTestUtils.shallowRender(
       <juju.components.Inspector
         addNotification={addNotification}
         changeState={changeState}
@@ -525,7 +651,21 @@ describe('Inspector', function() {
         linkify={sinon.stub()}
         appPreviousState={appPreviousState}
         service={service}
-        appState={appState} />);
+        appState={appState} />, true);
+    var instance = component.getMountedInstance();
+    var output = component.getRenderOutput();
+    var header = output.props.children[0];
+    var expectedHeader = (
+      <juju.components.InspectorHeader
+        backCallback={instance._backCallback}
+        activeComponent={appState.sectionA.metadata.activeComponent}
+        type={undefined}
+        count={undefined}
+        title='Change version'
+        icon={icon} />
+    );
+    assert.deepEqual(header, expectedHeader,
+                     'Header is not rendered as expected');
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
       <juju.components.InspectorChangeVersion
