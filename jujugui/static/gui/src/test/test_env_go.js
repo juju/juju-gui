@@ -678,6 +678,93 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isNull(env.get('maasServer'));
     });
 
+    it('retrieves model info', function(done) {
+      // Perform the request.
+      var modelTag = 'model-5bea955d-7a43-47d3-89dd-b02c923e2447';
+      env.modelInfo(modelTag, function(data) {
+        assert.strictEqual(data.err, undefined);
+        assert.strictEqual(data.modelTag, modelTag);
+        assert.strictEqual(data.name, 'admin');
+        assert.strictEqual(data.series, 'trusty');
+        assert.strictEqual(data.provider, 'lxd');
+        assert.strictEqual(data.uuid, '5bea955d-7a43-47d3-89dd-b02c923e2447');
+        assert.strictEqual(data.serverUuid, '5bea955d-7a43-47d3-89dd');
+        assert.strictEqual(data.ownerTag, 'user-admin@local');
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          Type: 'ModelManager',
+          Version: 2,
+          Request: 'ModelInfo',
+          Params: {Entities: [{Tag: modelTag}]},
+          RequestId: 1
+        });
+        done();
+      });
+
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          results: [{
+            result: {
+              DefaultSeries: 'trusty',
+              Name: 'admin',
+              ProviderType: 'lxd',
+              ServerUUID: '5bea955d-7a43-47d3-89dd',
+              UUID: '5bea955d-7a43-47d3-89dd-b02c923e2447',
+              'owner-tag': 'user-admin@local'
+            }
+          }]
+        }
+      });
+    });
+
+    it('handles request failures while retrieving model info', function(done) {
+      // Perform the request.
+      env.modelInfo('model-5bea955d-7a43-47d3-89dd', function(data) {
+        assert.strictEqual(data.err, 'bad wolf');
+        done();
+      });
+
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Error: {Message: 'bad wolf'}
+      });
+    });
+
+    it('handles API failures while retrieving model info', function(done) {
+      // Perform the request.
+      env.modelInfo('model-5bea955d-7a43-47d3-89dd', function(data) {
+        assert.strictEqual(data.err, 'bad wolf');
+        done();
+      });
+
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          results: [{
+            error: {Message: 'bad wolf'}
+          }]
+        }
+      });
+    });
+
+    it('handles unexpected failures while getting model info', function(done) {
+      // Perform the request.
+      env.modelInfo('model-5bea955d-7a43-47d3-89dd', function(data) {
+        assert.strictEqual(data.err, 'unexpected results: []');
+        done();
+      });
+
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {results: []}
+      });
+    });
+
     it('pings the server correctly', function() {
       env.ping();
       var expectedMessage = {
