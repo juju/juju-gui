@@ -729,7 +729,7 @@ YUI.add('juju-env-go', function(Y) {
           return;
         }
         var results = data.Response.results;
-        if (results.length != 1) {
+        if (results.length !== 1) {
           userCallback({
             err: 'unexpected results: ' + JSON.stringify(results)
           });
