@@ -1202,6 +1202,7 @@ YUI.add('juju-gui', function(Y) {
           createMachine={this._createMachine.bind(this)}
           destroyMachines={this.env.destroyMachines.bind(this.env)}
           environmentName={db.environment.get('name')}
+          jujuCoreVersion={this.get('jujuCoreVersion')}
           machines={db.machines}
           placeUnit={this.env.placeUnit.bind(this.env)}
           removeUnits={this.env.remove_units.bind(this.env)}

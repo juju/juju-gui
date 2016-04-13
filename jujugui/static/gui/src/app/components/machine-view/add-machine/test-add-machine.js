@@ -64,13 +64,14 @@ describe('MachineViewAddMachine', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('can render for creating a container', function() {
+  it('can render for creating a container with Juju 1.x', function() {
     var close = sinon.stub();
     var createMachine = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewAddMachine
         close={close}
         createMachine={createMachine}
+        jujuCoreVersion="1.4"
         parentId="new0" />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -95,6 +96,47 @@ describe('MachineViewAddMachine', function() {
           </option>
           {undefined}
           <option value="lxc">LXC</option>
+          <option value="kvm">KVM</option>
+        </select>
+        <juju.components.ButtonRow
+          buttons={buttons}
+          key="buttons" />
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render for creating a container with Juju 2.x', function() {
+    var close = sinon.stub();
+    var createMachine = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewAddMachine
+        close={close}
+        createMachine={createMachine}
+        jujuCoreVersion="2.4"
+        parentId="new0" />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var buttons = [{
+      title: 'Cancel',
+      type: 'base',
+      action: close
+    }, {
+      title: 'Create',
+      action: instance._submitForm,
+      type: 'neutral',
+      disabled: true
+    }];
+    var expected = (
+      <div className="add-machine">
+        <select className="add-machine__container"
+          defaultValue=""
+          key="containers"
+          onChange={instance._updateSelectedContainer}>
+          <option disabled={true} value="">
+            Choose container type...
+          </option>
+          {undefined}
+          <option value="lxd">LXD</option>
           <option value="kvm">KVM</option>
         </select>
         <juju.components.ButtonRow
@@ -180,6 +222,7 @@ describe('MachineViewAddMachine', function() {
       <juju.components.MachineViewAddMachine
         close={close}
         createMachine={createMachine}
+        jujuCoreVersion="1.4"
         machines={machines}
         unit={unit} />, true);
     var instance = renderer.getMountedInstance();
@@ -244,13 +287,14 @@ describe('MachineViewAddMachine', function() {
     assert.equal(createMachine.args[0][2], instance.state.constraints);
   });
 
-  it('can create a container', function() {
+  it('can create a container for Juju 1.x', function() {
     var close = sinon.stub();
     var createMachine = sinon.stub();
     var output = testUtils.renderIntoDocument(
       <juju.components.MachineViewAddMachine
         close={close}
         createMachine={createMachine}
+        jujuCoreVersion="1.4"
         parentId="new0" />);
     var outputNode = ReactDOM.findDOMNode(output);
     var selectNode = outputNode.querySelector('.add-machine__container');
@@ -260,6 +304,26 @@ describe('MachineViewAddMachine', function() {
       '.button--neutral'));
     assert.equal(createMachine.callCount, 1);
     assert.equal(createMachine.args[0][0], 'lxc');
+    assert.equal(createMachine.args[0][1], 'new0');
+  });
+
+  it('can create a container for Juju 2.x', function() {
+    var close = sinon.stub();
+    var createMachine = sinon.stub();
+    var output = testUtils.renderIntoDocument(
+      <juju.components.MachineViewAddMachine
+        close={close}
+        createMachine={createMachine}
+        jujuCoreVersion="2.4"
+        parentId="new0" />);
+    var outputNode = ReactDOM.findDOMNode(output);
+    var selectNode = outputNode.querySelector('.add-machine__container');
+    selectNode.value = 'lxd';
+    testUtils.Simulate.change(selectNode);
+    testUtils.Simulate.click(outputNode.querySelector(
+      '.button--neutral'));
+    assert.equal(createMachine.callCount, 1);
+    assert.equal(createMachine.args[0][0], 'lxd');
     assert.equal(createMachine.args[0][1], 'new0');
   });
 
