@@ -81,6 +81,10 @@
     &__content {
         @extend %collapse-children;
         padding: 40px 20px 5px 20px;
+
+        &-inner {
+            position: relative;
+        }
     }
 
     &__footer {
@@ -117,8 +121,10 @@
         border-color: $uncommitted;
         padding-top: 10px;
         padding-bottom: 10px;
+        padding-left: 46px;
 
         .svg-icon {
+            margin-left: -26px;
             margin-right: 10px;
             vertical-align: text-bottom;
         }
@@ -127,7 +133,7 @@
     &__label {
         // Needs to be relative to appear above the input.
         position: relative;
-        margin: 0 0 -25px 10px;
+        margin: 4px 0 -25px 10px;
         font-size: 12px;
     }
 
@@ -137,5 +143,10 @@
         margin-bottom: 20px;
         padding: 25px 10px 7px 10px;
         box-shadow: 0 2px 2px rgba(0, 0, 0, 0.07) inset;
+    }
+
+    &__link {
+        @extend %link;
+        color: $cool-grey;
     }
 }

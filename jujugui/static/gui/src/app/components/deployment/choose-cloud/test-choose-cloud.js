@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentChooseCloud', function() {
-  var jem;
+  var clouds, jem;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -35,6 +35,16 @@ describe('DeploymentChooseCloud', function() {
     jem = {
       listTemplates: (callback) => {
         callback(null, [{path: 'test-owner/test'}]);
+      }
+    };
+    clouds = {
+      aws: {
+        id: 'aws',
+        signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
+        'registration/index.html',
+        svgHeight: 48,
+        svgWidth: 120,
+        title: 'Amazon Web Services'
       }
     };
   });
@@ -62,6 +72,7 @@ describe('DeploymentChooseCloud', function() {
           '_addMachines': 1
         }}
         changeState={sinon.stub()}
+        clouds={clouds}
         jem={jem}
         pluralize={pluralize}
         services={[service]}
@@ -112,35 +123,13 @@ describe('DeploymentChooseCloud', function() {
                 key="aws"
                 onClick={output.props.children.props.children[5]
                   .props.children[0].props.onClick}>
-                <img alt="aws"
-                  src="juju-ui/assets/images/non-sprites/aws.png" />
+                <span className="deployment-choose-cloud__cloud-option-image">
+                  <juju.components.SvgIcon
+                    height={clouds['aws'].svgHeight}
+                    name={clouds['aws'].id}
+                    width={clouds['aws'].svgWidth} />
+                </span>
               </li>]}
-          </ul>
-          <h3 className="deployment-panel__section-title twelve-col">
-            Get credentials by signing up with your favoured public cloud
-          </h3>
-          <ul className="deployment-choose-cloud__list twelve-col">
-            <li>
-              <a className="deployment-choose-cloud__link"
-                href="https://cloud.google.com/compute/"
-                target="_blank">
-                Google Compute Engine&nbsp;&rsaquo;
-              </a>
-            </li>
-            <li>
-              <a className="deployment-choose-cloud__link"
-                href="https://azure.microsoft.com/"
-                target="_blank">
-                Windows Azure&nbsp;&rsaquo;
-              </a>
-            </li>
-            <li>
-              <a className="deployment-choose-cloud__link"
-                href="https://aws.amazon.com/"
-                target="_blank">
-                Amazon Web Services&nbsp;&rsaquo;
-              </a>
-            </li>
           </ul>
         </juju.components.DeploymentPanelContent>
       </div>);
@@ -158,6 +147,7 @@ describe('DeploymentChooseCloud', function() {
           '_addMachines': 1
         }}
         changeState={sinon.stub()}
+        clouds={clouds}
         jem={jem}
         pluralize={pluralize}
         services={[]}
@@ -209,35 +199,13 @@ describe('DeploymentChooseCloud', function() {
                 key="aws"
                 onClick={output.props.children.props.children[5]
                   .props.children[0].props.onClick}>
-                <img alt="aws"
-                  src="juju-ui/assets/images/non-sprites/aws.png" />
+                <span className="deployment-choose-cloud__cloud-option-image">
+                  <juju.components.SvgIcon
+                    height={clouds['aws'].svgHeight}
+                    name={clouds['aws'].id}
+                    width={clouds['aws'].svgWidth} />
+                </span>
               </li>]}
-          </ul>
-          <h3 className="deployment-panel__section-title twelve-col">
-            Get credentials by signing up with your favoured public cloud
-          </h3>
-          <ul className="deployment-choose-cloud__list twelve-col">
-            <li>
-              <a className="deployment-choose-cloud__link"
-                href="https://cloud.google.com/compute/"
-                target="_blank">
-                Google Compute Engine&nbsp;&rsaquo;
-              </a>
-            </li>
-            <li>
-              <a className="deployment-choose-cloud__link"
-                href="https://azure.microsoft.com/"
-                target="_blank">
-                Windows Azure&nbsp;&rsaquo;
-              </a>
-            </li>
-            <li>
-              <a className="deployment-choose-cloud__link"
-                href="https://aws.amazon.com/"
-                target="_blank">
-                Amazon Web Services&nbsp;&rsaquo;
-              </a>
-            </li>
           </ul>
         </juju.components.DeploymentPanelContent>
       </div>);
@@ -251,6 +219,7 @@ describe('DeploymentChooseCloud', function() {
       <juju.components.DeploymentChooseCloud
         changeCounts={{}}
         changeState={changeState}
+        clouds={clouds}
         jem={jem}
         pluralize={sinon.stub()}
         services={[]}
@@ -281,6 +250,7 @@ describe('DeploymentChooseCloud', function() {
       <juju.components.DeploymentChooseCloud
         changeCounts={{}}
         changeState={changeState}
+        clouds={clouds}
         jem={jem}
         pluralize={sinon.stub()}
         services={[]}
@@ -293,7 +263,7 @@ describe('DeploymentChooseCloud', function() {
       sectionC: {
         component: 'deploy',
         metadata: {
-          activeComponent: 'add-credentials'
+          activeComponent: 'add-credentials-aws'
         }
       }
     });
@@ -307,6 +277,7 @@ describe('DeploymentChooseCloud', function() {
       <juju.components.DeploymentChooseCloud
         changeCounts={{}}
         changeState={sinon.stub()}
+        clouds={clouds}
         jem={jem}
         pluralize={sinon.stub()}
         services={[]}

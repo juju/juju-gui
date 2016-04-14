@@ -17,6 +17,15 @@
         text-align: center;
         cursor: pointer;
 
+        &-image {
+            display: block;
+            line-height: 53px;
+
+            .svg-icon {
+                vertical-align: middle;
+            }
+        }
+
         &--credential {
             text-align: left;
         }
@@ -34,10 +43,5 @@
 
     &__list {
         @extend %list-style;
-    }
-
-    &__link {
-        @extend %link;
-        color: $cool-grey;
     }
 }

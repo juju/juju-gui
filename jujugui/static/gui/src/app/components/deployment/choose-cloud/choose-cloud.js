@@ -25,6 +25,7 @@ YUI.add('deployment-choose-cloud', function() {
     propTypes: {
       changeCounts: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
+      clouds: React.PropTypes.object.isRequired,
       jem: React.PropTypes.object.isRequired,
       pluralize: React.PropTypes.func.isRequired,
       services: React.PropTypes.array.isRequired,
@@ -96,22 +97,23 @@ YUI.add('deployment-choose-cloud', function() {
       @returns {Array} The collection of changes.
     */
     _generateOptions: function() {
-      var options = [{
-        id: 'aws',
-        image: 'aws.png'
-      }];
       var components = [];
-      options.forEach(function(option, i) {
+      var clouds = this.props.clouds;
+      Object.keys(clouds).forEach(function(cloud, i) {
+        var option = clouds[cloud];
         var lastCol = i % 2 === 1 ? 'last-col' : '';
         var className = 'deployment-choose-cloud__cloud-option six-col ' +
           lastCol;
-        var src = `juju-ui/assets/images/non-sprites/${option.image}`;
         components.push(
           <li className={className}
             key={option.id}
             onClick={this._handleCloudClick.bind(this, option.id)}>
-            <img alt={option.id}
-              src={src} />
+            <span className="deployment-choose-cloud__cloud-option-image">
+              <juju.components.SvgIcon
+                height={option.svgHeight}
+                name={option.id}
+                width={option.svgWidth} />
+            </span>
           </li>);
       }, this);
       return components;
@@ -127,7 +129,7 @@ YUI.add('deployment-choose-cloud', function() {
         sectionC: {
           component: 'deploy',
           metadata: {
-            activeComponent: 'add-credentials'
+            activeComponent: `add-credentials-${id}`
           }
         }
       });
@@ -237,32 +239,6 @@ YUI.add('deployment-choose-cloud', function() {
             </h3>
             <ul className="deployment-choose-cloud__list twelve-col">
               {this._generateOptions()}
-            </ul>
-            <h3 className="deployment-panel__section-title twelve-col">
-              Get credentials by signing up with your favoured public cloud
-            </h3>
-            <ul className="deployment-choose-cloud__list twelve-col">
-              <li>
-                <a className="deployment-choose-cloud__link"
-                  href="https://cloud.google.com/compute/"
-                  target="_blank">
-                  Google Compute Engine&nbsp;&rsaquo;
-                </a>
-              </li>
-              <li>
-                <a className="deployment-choose-cloud__link"
-                  href="https://azure.microsoft.com/"
-                  target="_blank">
-                  Windows Azure&nbsp;&rsaquo;
-                </a>
-              </li>
-              <li>
-                <a className="deployment-choose-cloud__link"
-                  href="https://aws.amazon.com/"
-                  target="_blank">
-                  Amazon Web Services&nbsp;&rsaquo;
-                </a>
-              </li>
             </ul>
           </juju.components.DeploymentPanelContent>
         </div>

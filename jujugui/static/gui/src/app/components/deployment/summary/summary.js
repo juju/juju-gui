@@ -288,5 +288,6 @@ YUI.add('deployment-summary', function() {
 }, '0.1.0', { requires: [
   'deployment-panel-content',
   'deployment-panel-footer',
-  'deployment-summary-change-item'
+  'deployment-summary-change-item',
+  'svg-icon'
 ]});

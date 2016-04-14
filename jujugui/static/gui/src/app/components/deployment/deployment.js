@@ -43,6 +43,31 @@ YUI.add('deployment-component', function() {
       users: React.PropTypes.object.isRequired
     },
 
+    clouds: {
+      aws: {
+        id: 'aws',
+        signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
+        'registration/index.html',
+        svgHeight: 48,
+        svgWidth: 120,
+        title: 'Amazon Web Services'
+      },
+      gcp: {
+        id: 'gcp',
+        signupUrl: 'https://console.cloud.google.com/billing/freetrial',
+        svgHeight: 33,
+        svgWidth: 256,
+        title: 'Google Compute Engine'
+      },
+      azure: {
+        id: 'azure',
+        signupUrl: 'https://azure.microsoft.com/en-us/free/',
+        svgHeight: 24,
+        svgWidth: 204,
+        title: 'Microsoft Azure'
+      }
+    },
+
     _deploymentStorage: {},
 
     /**
@@ -64,7 +89,8 @@ YUI.add('deployment-component', function() {
       @return {Object} The markup for the panel content.
     */
     _generateActivePanel: function() {
-      switch (this.props.activeComponent) {
+      var activeComponent = this.props.activeComponent;
+      switch (activeComponent) {
         case 'summary':
           return (
             <juju.components.DeploymentSummary
@@ -89,14 +115,18 @@ YUI.add('deployment-component', function() {
               jem={this.props.jem}
               changeCounts={this.props.changeCounts}
               changeState={this.props.changeState}
+              clouds={this.clouds}
               pluralize={this.props.pluralize}
               services={this.props.services}
               setDeploymentInfo={this.setDeploymentInfo}
               user={this.props.user} />);
-        case 'add-credentials':
+        case 'add-credentials-azure':
+        case 'add-credentials-aws':
+        case 'add-credentials-gcp':
           return (
             <juju.components.DeploymentAddCredentials
               changeState={this.props.changeState}
+              cloud={this.clouds[activeComponent.split('-')[2]]}
               setDeploymentInfo={this.setDeploymentInfo}
               jem={this.props.jem}
               users={this.props.users} />);
@@ -111,7 +141,7 @@ YUI.add('deployment-component', function() {
         component: 'choose-cloud'
       }, {
         title: 'Add credentials',
-        component: 'add-credentials'
+        component: 'add-credentials-aws'
       }, {
         title: 'Deploy',
         component: 'summary'
