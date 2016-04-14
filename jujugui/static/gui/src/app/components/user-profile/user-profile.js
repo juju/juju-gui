@@ -99,24 +99,26 @@ YUI.add('user-profile', function() {
         // If gisf is enabled then we won't be connected to a model to know
         // what facades are supported but we can reliably assume it'll be Juju 2
         // or higher which will support the necessary api calls.
-        if ((!env && this.props.gisf) ||
-          env.findFacadeVersion('ModelManager') === null &&
-          env.findFacadeVersion('EnvironmentManager') === null) {
-          // If we're on Juju < 2 then pass the default model to the list.
-          var environmentName = env.get('environmentName');
-          var username = this.props.user && this.props.user.usernameDisplay;
-          this._fetchEnvironmentsCallback(null, {
-            environmentCount: 1,
-            envs: [{
-              name: environmentName,
-              owner: username,
-              // Leave the UUID blank so that it navigates to the default model
-              // when selected.
-              uuid: '',
-              lastConnection: 'now'
-            }]
-          });
-          return;
+        if (! this.props.gisf) {
+          if (!env ||
+            env.findFacadeVersion('ModelManager') === null &&
+            env.findFacadeVersion('EnvironmentManager') === null) {
+            // If we're on Juju < 2 then pass the default model to the list.
+            var environmentName = env.get('environmentName');
+            var username = this.props.user && this.props.user.usernameDisplay;
+            this._fetchEnvironmentsCallback(null, {
+              environmentCount: 1,
+              envs: [{
+                name: environmentName,
+                owner: username,
+                // Leave the UUID blank so that it navigates to the default
+                // model when selected.
+                uuid: '',
+                lastConnection: 'now'
+              }]
+            });
+            return;
+          }
         }
         var xhr;
         if (jem) {
