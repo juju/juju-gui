@@ -16,6 +16,10 @@
     max-height: calc(100% - 200px);
   }
 
+  .overview-action__link:not(.hidden) {
+    display: none;
+  }
+
   // Only show search form when open
   .header-search__form {
     display: none;
@@ -23,6 +27,11 @@
 
   .header-search--active .header-search__form {
     display: inline;
+  }
+
+  // Inspector - change version
+  .inspector-current-version__item .button--inline-neutral {
+    display: inline-block;
   }
 
   // Entity tweaks
@@ -135,10 +144,21 @@
   }
 
   // Search results
-  .search-results .list-block .list-block__filters--selects {
-    float: none;
-    margin: 0 20px;
+  .search-results .list-block {
+    .list-block__filters--selects {
+      float: none;
+      margin: 0 20px;
+
+      select {
+        width: 100%;
+      }
+    }
+
+    .list-block__list--item .list-block__list--item-title {
+      margin-bottom: .5em;
+    }
   }
+
 
   // User profile
   .user-profile .inner-wrapper {
@@ -164,10 +184,30 @@
     margin-right: 10px;
   }
 
+  .user-profile__entity-details-header .ten-col {
+    width: calc(100% - 120px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .user-profile__entity-details-header-action {
     float: right;
     position: relative;
     top: -30px;
+  }
+
+  .user-profile-header__username {
+    display: inline-block;
+    position: relative;
+    top: -20px;
+    width: calc(100% - 140px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .user-profile-header__avatar--default {
+    display: inline-block;
+    float: none;
   }
 
   .user-profile__entity--expanded {
@@ -194,5 +234,23 @@
    .deployment-summary-classic {
      left: 0;
      right: 0;
+   }
+
+   .deployment-summary-classic__placement {
+     padding: 20px 0 0;
+   }
+
+   .deployment-summary-classic__placement-label {
+     padding: 10px 0;
+     display: inline;
+   }
+
+   .deployment-summary-classic__placement-radio {
+     margin-bottom: 20px;
+     margin-top: 20px;
+
+     &:first-of-type {
+       margin-left: 0;
+     }
    }
 }
