@@ -1,14 +1,4 @@
 .user-profile {
-    @extend %scroll-children;
-    z-index: index($z-indexed-elements, user-profile);
-    top: $navbar-height;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    background-color: $canvas-background;
-    border-top: 1px solid $mid-grey;
-    box-shadow: none;
-
     &__close {
         position: fixed;
         z-index: 1;

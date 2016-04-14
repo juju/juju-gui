@@ -1,0 +1,47 @@
+.expanding-row {
+    &--expanded {
+        .expanding-row {
+            &__initial {
+                height: 0;
+                opacity: 0;
+            }
+
+            &__expanded {
+                @extend %floating-panel;
+            }
+        }
+    }
+
+    &__initial {
+        // Force hardware acceleration.
+        transform: translate3d(0, 0, 0);
+        transition: all .3s;
+        height: 20px;
+        opacity: 1;
+    }
+
+    &__expanded {
+        // Force hardware acceleration.
+        transform: translate3d(0, 0, 0);
+        transition: all .3s;
+        margin: 5px 0 5px -15px;
+        overflow: hidden;
+
+        &-header {
+            padding: 20px;
+            border-bottom: 1px solid $mid-grey;
+
+            &-action {
+                text-align: right;
+
+                .generic-button {
+                    margin: -10px 0;
+                }
+            }
+        }
+
+        &-content {
+            padding: 0 20px;
+        }
+    }
+}

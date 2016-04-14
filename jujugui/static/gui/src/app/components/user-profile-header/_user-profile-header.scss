@@ -51,14 +51,21 @@
         line-height: $size;
     }
 
-    &__counts {
+    &__links {
         @extend %list-style;
     }
 
-    &__count {
-        @extend %link;
+    &__link {
         float: left;
         margin-right: 20px;
+
+        &--is-link {
+            @extend %link;
+        }
+
+        &--light {
+            color: $warm-grey;
+        }
     }
 
     .button--inline-neutral {
