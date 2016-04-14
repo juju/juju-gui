@@ -24,6 +24,7 @@ YUI.add('machine-view-add-machine', function() {
     propTypes: {
       close: React.PropTypes.func.isRequired,
       createMachine: React.PropTypes.func.isRequired,
+      jujuCoreVersion: React.PropTypes.string,
       machines: React.PropTypes.object,
       parentId: React.PropTypes.string,
       placeUnit: React.PropTypes.func,
@@ -77,7 +78,7 @@ YUI.add('machine-view-add-machine', function() {
       // If the state is set for a new machine or container then actually add
       // the machine/container.
       if (selectedMachine === 'new' || selectedContainer === 'lxc' ||
-          selectedContainer === 'kvm') {
+          selectedContainer === 'lxd' || selectedContainer === 'kvm') {
         var machine = this.props.createMachine(
           selectedContainer, machineId, constraints);
         if (this.props.selectMachine && !machineId) {
@@ -138,6 +139,8 @@ YUI.add('machine-view-add-machine', function() {
       @method _generateSelectContainer
     */
     _generateSelectContainer: function() {
+      var lxxOption = this.props.jujuCoreVersion.lastIndexOf('1.', 0) === 0 ?
+        <option value="lxc">LXC</option> : <option value="lxd">LXD</option>;
       return (
         <select className="add-machine__container"
           defaultValue=""
@@ -147,7 +150,7 @@ YUI.add('machine-view-add-machine', function() {
             Choose container type...
           </option>
           {this._generateContainerOptions()}
-          <option value="lxc">LXC</option>
+          {lxxOption}
           <option value="kvm">KVM</option>
         </select>);
     },
