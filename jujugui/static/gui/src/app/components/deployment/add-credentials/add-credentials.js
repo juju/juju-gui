@@ -244,7 +244,7 @@ YUI.add('deployment-add-credentials', function() {
                 <juju.components.SvgIcon
                   name="general-action-blue"
                   size="16" />
-                Credentials are store securely on our servers and we'll notify
+                Credentials are stored securely on our servers and we'll notify
                 you by email whenever they are used. See where they are used and
                 manage or remove them via the account page.
               </div>
