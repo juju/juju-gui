@@ -65,6 +65,7 @@ describe('DeploymentSummary', function() {
         ecsCommit={sinon.stub()}
         getUnplacedUnitCount={getUnplacedUnitCount}
         modelCommitted={false}
+        modelName="Prod"
         numberOfChanges={6} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -95,8 +96,11 @@ describe('DeploymentSummary', function() {
               Model name
             </label>
             <input className="deployment-panel__input"
+              defaultValue="Prod"
               id="model-name"
               placeholder="test_model_01"
+              ref="modelName"
+              required="required"
               type="text" />
           </form>
           <div className="six-col last-col">
@@ -145,6 +149,7 @@ describe('DeploymentSummary', function() {
         ecsCommit={sinon.stub()}
         getUnplacedUnitCount={getUnplacedUnitCount}
         modelCommitted={false}
+        modelName="Prod"
         numberOfChanges={6} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -179,6 +184,7 @@ describe('DeploymentSummary', function() {
         ecsCommit={sinon.stub()}
         getUnplacedUnitCount={getUnplacedUnitCount}
         modelCommitted={true}
+        modelName="Prod"
         numberOfChanges={6} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -213,6 +219,7 @@ describe('DeploymentSummary', function() {
         ecsCommit={sinon.stub()}
         getUnplacedUnitCount={getUnplacedUnitCount}
         modelCommitted={false}
+        modelName="Prod"
         numberOfChanges={6} />);
     output.props.children[0].props.children[3].props.children[1]
       .props.onClick();
@@ -247,6 +254,7 @@ describe('DeploymentSummary', function() {
         ecsCommit={sinon.stub()}
         getUnplacedUnitCount={getUnplacedUnitCount}
         modelCommitted={false}
+        modelName="Prod"
         numberOfChanges={6} />);
     output.props.children[1].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
@@ -291,15 +299,18 @@ describe('DeploymentSummary', function() {
         changeState={changeState}
         getUnplacedUnitCount={getUnplacedUnitCount}
         modelCommitted={false}
+        modelName="Prod"
         numberOfChanges={6} />, true);
+    var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
+    instance.refs = {modelName: {value: 'Prod'}};
     output.props.children[1].props.buttons[1].action();
     // We automatically autoplace units on deploy in this workflow.
     assert.equal(autoPlaceUnits.callCount, 1, 'autoplace not called');
     // We first need to create a new model to deploy our changes into.
     assert.equal(jem.newEnvironment.callCount, 1);
     assert.equal(jem.newEnvironment.args[0][0], 'joecoder');
-    assert.equal(jem.newEnvironment.args[0][1], 'my-test-model');
+    assert.equal(jem.newEnvironment.args[0][1], 'Prod');
     assert.equal(jem.newEnvironment.args[0][2], 'secureTemplate');
     assert.equal(jem.newEnvironment.args[0][3], 'yellow/aws-eu-central');
     // This password is randomly generated so it can be of varying lengths.

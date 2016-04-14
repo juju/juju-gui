@@ -36,6 +36,7 @@ YUI.add('deployment-summary', function() {
       ecsCommit: React.PropTypes.func.isRequired,
       getUnplacedUnitCount: React.PropTypes.func.isRequired,
       modelCommitted: React.PropTypes.bool.isRequired,
+      modelName: React.PropTypes.string.isRequired,
       numberOfChanges: React.PropTypes.number.isRequired
     },
 
@@ -93,9 +94,7 @@ YUI.add('deployment-summary', function() {
       var password = randomString() + randomString();
       this.props.jem.newEnvironment(
         this.props.users.jem.user,
-        // XXX Hardcoding the model name because we don't yet have a field
-        // for it to be inputted.
-        'my-test-model',
+        this.refs.modelName.value,
         this.props.deploymentStorage.templateName,
         // XXX Hardcoding the controller for now but it will be provided on load
         'yellow/aws-eu-central',
@@ -249,8 +248,11 @@ YUI.add('deployment-summary', function() {
                 Model name
               </label>
               <input className="deployment-panel__input"
+                defaultValue={this.props.modelName}
                 id="model-name"
                 placeholder="test_model_01"
+                ref="modelName"
+                required="required"
                 type="text" />
             </form>
             <div className="six-col last-col">

@@ -61,6 +61,7 @@ describe('Deployment', function() {
         appSet={appSet}
         createSocketURL={createSocketURL}
         modelCommitted={false}
+        modelName="Prod"
         numberOfChanges={6}
         pluralize={sinon.stub()}
         services={[]}
@@ -83,6 +84,7 @@ describe('Deployment', function() {
         ecsCommit={ecsCommit}
         getUnplacedUnitCount={getUnplacedUnitCount}
         modelCommitted={false}
+        modelName="Prod"
         numberOfChanges={6} />);
     assert.deepEqual(output.props.children, expected);
   });
@@ -116,6 +118,7 @@ describe('Deployment', function() {
         appSet={appSet}
         createSocketURL={createSocketURL}
         modelCommitted={false}
+        modelName="Prod"
         numberOfChanges={6}
         pluralize={pluralize}
         services={services}
@@ -153,15 +156,19 @@ describe('Deployment', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
         activeComponent="add-credentials"
+        appSet={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
         changeCounts={{}}
         changeDescriptions={changeDescriptions}
         changeState={changeState}
+        createSocketURL={sinon.stub()}
         ecsClear={ecsClear}
         ecsCommit={ecsCommit}
+        env={{}}
         getUnplacedUnitCount={getUnplacedUnitCount}
         jem={jem}
         modelCommitted={false}
+        modelName="Prod"
         numberOfChanges={6}
         pluralize={sinon.stub()}
         services={[]}
