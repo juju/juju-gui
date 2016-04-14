@@ -45,7 +45,10 @@ YUI.add('app-renderer-extension', function(Y) {
       // is rendered in the callback for generateSocketUrl because an env
       // has not yet been created.
       var env = this.env;
-      if(!env ||
+      // If gisf is enabled then we won't be connected to a model to know
+      // what facades are supported but we can reliably assume it'll be Juju 2
+      // or higher which will support the necessary api calls.
+      if((!env && !this.get('gisf')) ||
          env.findFacadeVersion('ModelManager') === null &&
          env.findFacadeVersion('EnvironmentManager') === null) {
         // We do not want to show the model switcher if it isn't supported as

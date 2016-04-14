@@ -30,6 +30,7 @@ YUI.add('user-profile', function() {
       dbEnvironmentSet: React.PropTypes.func.isRequired,
       env: React.PropTypes.object.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
+      gisf: React.PropTypes.bool.isRequired,
       interactiveLogin: React.PropTypes.bool,
       jem: React.PropTypes.object,
       listEnvs: React.PropTypes.func,
@@ -95,7 +96,11 @@ YUI.add('user-profile', function() {
         // Delay the call until after the state change to prevent race
         // conditions.
         var env = this.props.env;
-        if (env.findFacadeVersion('ModelManager') === null &&
+        // If gisf is enabled then we won't be connected to a model to know
+        // what facades are supported but we can reliably assume it'll be Juju 2
+        // or higher which will support the necessary api calls.
+        if ((!env && this.props.gisf) ||
+          env.findFacadeVersion('ModelManager') === null &&
           env.findFacadeVersion('EnvironmentManager') === null) {
           // If we're on Juju < 2 then pass the default model to the list.
           var environmentName = env.get('environmentName');
