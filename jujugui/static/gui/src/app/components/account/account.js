@@ -100,11 +100,11 @@ YUI.add('account', function() {
                 <div className={'expanding-row__expanded-header-action ' +
                   'three-col last-col no-margin-bottom'}>
                   <juju.components.GenericButton
-                    action={() => {}}
+                    action={this._handleDestroyCredential}
                     type='inline-base'
                     title="Destroy" />
                   <juju.components.GenericButton
-                    action={() => {}}
+                    action={this._handleEditCredential}
                     type='inline-neutral'
                     title="Edit" />
                 </div>
@@ -162,13 +162,40 @@ YUI.add('account', function() {
       return components;
     },
 
+    /**
+      Handle destroying a credential.
+
+      @method _handleDestroyCredential
+    */
+    _handleDestroyCredential: function() {
+      // To be implemented.
+    },
+
+    /**
+      Handle editing a credential.
+
+      @method _handleEditCredential
+    */
+    _handleEditCredential: function() {
+      // To be implemented.
+    },
+
+    /**
+      Handle Signing out.
+
+      @method _handleSignOut
+    */
+    _handleSignOut: function() {
+      // To be implemented.
+    },
+
     render: function() {
       var username = this.props.user && this.props.user.usernameDisplay;
       var links = [{
         label: '(Primary account)',
         type: 'light'
       }, {
-        action: () => {},
+        action: this._handleSignOut,
         label: 'Sign out'
       }];
       return (
