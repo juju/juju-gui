@@ -780,6 +780,7 @@ YUI.add('juju-gui', function(Y) {
     _renderAccount: function() {
       ReactDOM.render(
         <window.juju.components.Account
+          listTemplates={this.jem.listTemplates.bind(this.jem)}
           user={this._getAuth()}
           users={Y.clone(this.get('users'), true)} />,
         document.getElementById('charmbrowser-container'));

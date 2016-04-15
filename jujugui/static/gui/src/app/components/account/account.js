@@ -24,8 +24,28 @@ YUI.add('account', function() {
     xhrs: [],
 
     propTypes: {
-      user: React.PropTypes.object,
+      listTemplates: React.PropTypes.func.isRequired,
+      user: React.PropTypes.object.isRequired,
       users: React.PropTypes.object.isRequired
+    },
+
+    getInitialState: function() {
+      return {
+        credentials: []
+      };
+    },
+
+    componentWillMount: function() {
+      this.props.listTemplates((error, credentials) => {
+        // XXX kadams54: This is basic error handling for the initial
+        // implementation. It should be replaced with an error message for the
+        // user in subsequent UI polish work.
+        if (error) {
+          console.error('Unable to list templates', error);
+          return;
+        }
+        this.setState({credentials: credentials});
+      });
     },
 
     /**
@@ -35,33 +55,46 @@ YUI.add('account', function() {
       @returns {Array} The list of credentials.
     */
     _generateCredentials: function() {
+      var credentials = this.state.credentials;
+      if (credentials.length === 0) {
+        return (
+          <juju.components.Spinner />);
+      }
       var components = [];
-      var credentials = ['one', 'two'];
+      var classes = {
+        'user-profile__entity': true,
+        'user-profile__list-row': true
+      };
       credentials.forEach((credential) => {
+        var path = credential.path;
+        var parts = path.split('/');
+        var owner = parts[0];
+        var name = parts[1];
         components.push(
           <juju.components.ExpandingRow
-            key={credential}>
+            classes={classes}
+            key={path}>
             <div>
               <span className="user-profile__list-col three-col">
-                Google personal
+                {name}
               </span>
               <span className="user-profile__list-col three-col">
-                4
+                --
               </span>
               <span className="user-profile__list-col three-col">
-                spinach
+                {owner}
               </span>
               <span className="user-profile__list-col three-col last-col">
-                Google
+                --
               </span>
             </div>
             <div>
               <div className="expanding-row__expanded-header twelve-col">
-                <div className="ten-col no-margin-bottom">
-                  Google personal
+                <div className="nine-col no-margin-bottom">
+                  {name}
                 </div>
                 <div className={'expanding-row__expanded-header-action ' +
-                  'two-col last-col no-margin-bottom'}>
+                  'three-col last-col no-margin-bottom'}>
                   <juju.components.GenericButton
                     action={() => {}}
                     type='inline-base'
@@ -74,7 +107,50 @@ YUI.add('account', function() {
               </div>
               <div className={'expanding-row__expanded-content twelve-col ' +
                 'no-margin-bottom'}>
-                Content
+                <ul className="user-profile__list twelve-col">
+                  <li className="user-profile__list-header twelve-col">
+                    <span className="user-profile__list-col three-col">
+                      Model
+                    </span>
+                    <span className="user-profile__list-col three-col">
+                      Units
+                    </span>
+                    <span className="user-profile__list-col three-col">
+                      Owner
+                    </span>
+                    <span className="user-profile__list-col three-col last-col">
+                      Region
+                    </span>
+                  </li>
+                  <li className="user-profile__list-row twelve-col">
+                    <span className="user-profile__list-col three-col">
+                      Callisto
+                    </span>
+                    <span className="user-profile__list-col three-col">
+                      4
+                    </span>
+                    <span className="user-profile__list-col three-col">
+                      Spinach
+                    </span>
+                    <span className="user-profile__list-col three-col last-col">
+                      US (East)
+                    </span>
+                  </li>
+                  <li className="user-profile__list-row twelve-col">
+                    <span className="user-profile__list-col three-col">
+                      Callisto
+                    </span>
+                    <span className="user-profile__list-col three-col">
+                      4
+                    </span>
+                    <span className="user-profile__list-col three-col">
+                      Spinach
+                    </span>
+                    <span className="user-profile__list-col three-col last-col">
+                      US (East)
+                    </span>
+                  </li>
+                </ul>
               </div>
             </div>
           </juju.components.ExpandingRow>);
@@ -162,6 +238,7 @@ YUI.add('account', function() {
 }, '', {
   requires: [
     'expanding-row',
+    'loading-spinner',
     'panel-component',
     'svg-icon',
     'user-profile-entity',
