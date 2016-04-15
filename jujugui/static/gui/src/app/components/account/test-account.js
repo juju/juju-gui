@@ -242,7 +242,8 @@ describe('Account', () => {
           </div>
         </juju.components.ExpandingRow>]}
       </ul>);
-    assert.deepEqual(output.props.children.props.children.props.children[4], expected);
+    assert.deepEqual(
+      output.props.children.props.children.props.children[4], expected);
   });
 
   it('will abort the requests when unmounting', function() {
