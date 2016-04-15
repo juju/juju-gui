@@ -41,6 +41,28 @@ YUI.add('deployment-summary', function() {
     },
 
     /**
+      Holds the onLogin event handler which is attached when
+      creating a new model.
+
+      @property _onLoginHandler
+      @default {Object} null
+    */
+    _onLoginHandler: null,
+
+    /**
+      If there is a handler listening for the login event to be emitted from
+      the env then detach it.
+
+      @method _detachOnLoginhandler
+    */
+    _detachOnLoginhandler: function() {
+      if (this._onLoginHandler) {
+        this._onLoginHandler.detach();
+        this._onLoginHandler = null;
+      }
+    },
+
+    /**
       Close the summary.
 
       @method _close
@@ -97,7 +119,7 @@ YUI.add('deployment-summary', function() {
         this.refs.modelName.value,
         this.props.deploymentStorage.templateName,
         // XXX Hardcoding the controller for now but it will be provided on load
-        'yellow/aws-eu-central',
+        'yellow/aws-us-east',
         password,
         (error, data) => {
           if (error) throw error;
@@ -118,13 +140,14 @@ YUI.add('deployment-summary', function() {
           this.props.appSet('socket_url', socketURL);
           this.props.env.set('socket_url', socketURL);
           this.props.env.connect();
+          // If we already have a login handler attached then detach it.
+          this._detachOnLoginhandler();
           // After the model connects it will emit a login event, listen
           // for that event so that we know when to commit the changeset.
-          this.props.env.on('login', (data) => {
+          this._onLoginHandler = this.props.env.on('login', (data) => {
+            this._detachOnLoginhandler();
             this.props.ecsCommit();
-            this.setState({hasCommits: true}, () => {
-              this._close();
-            });
+            this._close();
           });
         });
     },
@@ -211,6 +234,13 @@ YUI.add('deployment-summary', function() {
           tabIndex="0">
           Clear all changes&nbsp;&rsaquo;
         </span>);
+    },
+
+    componentWillUnmount: function() {
+      // We need to be sure we detach the onlogin handler else it will be
+      // called every time the event changes trying to close a component
+      // which doesn't exist.
+      this._detachOnLoginhandler();
     },
 
     render: function() {
