@@ -43,7 +43,13 @@ describe('App Renderer Extension', function() {
 
   beforeEach(function() {
     Renderer = Y.Base.create(
-        'apprenderer', Y.Base, [juju.AppRenderer], {});
+        'apprenderer', Y.Base, [juju.AppRenderer], {}, {
+          ATTRS: {
+            gisf: {
+              value: false
+            }
+          }
+        });
     renderer = new Renderer();
     // React method stubs.
     renderStub = utils.makeStubMethod(ReactDOM, 'render');
@@ -132,6 +138,15 @@ describe('App Renderer Extension', function() {
       renderer._renderBreadcrumb();
       var props = createElementStub.lastArguments()[1];
       assert.equal(props['showEnvSwitcher'], false,
+                   'The showEnvSwitcher prop was not set properly.');
+    });
+
+    it('shows the switcher when no env and gisf is true', function() {
+      renderer.set('gisf', true);
+      renderer.env = null;
+      renderer._renderBreadcrumb();
+      var props = createElementStub.lastArguments()[1];
+      assert.equal(props['showEnvSwitcher'], true,
                    'The showEnvSwitcher prop was not set properly.');
     });
 
