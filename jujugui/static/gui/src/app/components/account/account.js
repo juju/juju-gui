@@ -178,14 +178,19 @@ YUI.add('account', function() {
                 avatar=""
                 links={links}
                 username={username} />
-              <h2>Account management</h2>
-              <h3>
+              <h2 className="account__title twelve-col">
+                Account management
+              </h2>
+              <h3 className="account__title2 twelve-col">
                 Cloud credentials
-                <ul className="">
-                  <li className="">
+                <ul className="account__title-links">
+                  <li className="account__title-link">
                     Add
                   </li>
-                  <li className="">
+                  <li className="account__title-bullet">
+                    &nbsp;&bull;&nbsp;
+                  </li>
+                  <li className="account__title-link">
                     Edit defaults
                   </li>
                 </ul>
