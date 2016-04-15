@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
-fdescribe('UserProfile', () => {
+describe('UserProfile', () => {
   var models, charmstore, charms, bundles, users, env;
 
   beforeAll((done) => {
