@@ -99,7 +99,7 @@ YUI.add('user-profile', function() {
         // If gisf is enabled then we won't be connected to a model to know
         // what facades are supported but we can reliably assume it'll be Juju 2
         // or higher which will support the necessary api calls.
-        if (! this.props.gisf) {
+        if (!this.props.gisf) {
           if (!env ||
             env.findFacadeVersion('ModelManager') === null &&
             env.findFacadeVersion('EnvironmentManager') === null) {
