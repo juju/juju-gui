@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('account', function() {
 
   juju.components.Account = React.createClass({
-    xhrs: [],
+    listTemplatesXHR: null,
 
     propTypes: {
       listTemplates: React.PropTypes.func.isRequired,
@@ -36,8 +36,8 @@ YUI.add('account', function() {
     },
 
     componentWillMount: function() {
-      this.props.listTemplates((error, credentials) => {
-        // XXX kadams54: This is basic error handling for the initial
+      this.listTemplatesXHR = this.props.listTemplates((error, credentials) => {
+        // XXX This is basic error handling for the initial
         // implementation. It should be replaced with an error message for the
         // user in subsequent UI polish work.
         if (error) {
@@ -46,6 +46,10 @@ YUI.add('account', function() {
         }
         this.setState({credentials: credentials});
       });
+    },
+
+    componentWillUnmount: function() {
+      this.listTemplatesXHR.abort();
     },
 
     /**
