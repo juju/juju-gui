@@ -56,6 +56,7 @@ describe('DeploymentSummary', function() {
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
+        controller='yellow/aws-eu-central'
         deploymentStorage={{}}
         users={{}}
         autoPlaceUnits={sinon.stub()}
@@ -145,6 +146,7 @@ describe('DeploymentSummary', function() {
         autoPlaceUnits={sinon.stub()}
         changeDescriptions={[]}
         changeState={sinon.stub()}
+        controller='yellow/aws-eu-central'
         ecsClear={sinon.stub()}
         ecsCommit={sinon.stub()}
         getUnplacedUnitCount={getUnplacedUnitCount}
@@ -175,6 +177,7 @@ describe('DeploymentSummary', function() {
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
+        controller='yellow/aws-eu-central'
         deploymentStorage={{}}
         users={{}}
         autoPlaceUnits={sinon.stub()}
@@ -210,6 +213,7 @@ describe('DeploymentSummary', function() {
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
+        controller='yellow/aws-eu-central'
         deploymentStorage={{}}
         users={{}}
         autoPlaceUnits={sinon.stub()}
@@ -245,6 +249,7 @@ describe('DeploymentSummary', function() {
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
+        controller='yellow/aws-eu-central'
         deploymentStorage={{}}
         users={{}}
         autoPlaceUnits={sinon.stub()}
@@ -278,11 +283,12 @@ describe('DeploymentSummary', function() {
     var jem = {
       newEnvironment: sinon.stub(),
     };
+    var detach = sinon.stub();
     var env = {
       setCredentials: sinon.stub(),
       set: sinon.stub(),
       connect: sinon.stub(),
-      on: sinon.stub()
+      on: sinon.stub().returns({ detach: detach })
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
@@ -290,6 +296,7 @@ describe('DeploymentSummary', function() {
         env={env}
         appSet={appSet}
         createSocketURL={createSocketURL}
+        controller='yellow/aws-eu-central'
         deploymentStorage={{ templateName: 'secureTemplate' }}
         users={{ jem: { user: 'joecoder' }}}
         autoPlaceUnits={autoPlaceUnits}
@@ -355,5 +362,8 @@ describe('DeploymentSummary', function() {
         metadata: {}
       }
     });
+    // It should detach the env on login event listener after logging in so
+    // that we don't try and commit multiple times.
+    assert.equal(detach.callCount, 1);
   });
 });
