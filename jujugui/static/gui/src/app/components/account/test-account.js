@@ -116,6 +116,7 @@ describe('Account', () => {
                 </span>
               </li>
               <juju.components.Spinner />
+              {undefined}
             </ul>
           </div>
         </div>
@@ -151,6 +152,7 @@ describe('Account', () => {
             Provider
           </span>
         </li>
+        {undefined}
         {[<juju.components.ExpandingRow
           classes={{
             'user-profile__entity': true,

@@ -21,6 +21,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('account', function() {
 
   juju.components.Account = React.createClass({
+    /**
+      Used to store the current XHR request so that it can be cancelled if the
+      component is unmounted before the request completes.
+
+      @property listTemplatesXHR
+      @type {Object}
+      @default null
+    */
     listTemplatesXHR: null,
 
     propTypes: {
@@ -31,7 +39,8 @@ YUI.add('account', function() {
 
     getInitialState: function() {
       return {
-        credentials: []
+        credentials: [],
+        loadingCredentials: true
       };
     },
 
@@ -44,7 +53,10 @@ YUI.add('account', function() {
           console.error('Unable to list templates', error);
           return;
         }
-        this.setState({credentials: credentials});
+        this.setState({
+          credentials: credentials,
+          loadingCredentials: false
+        });
       });
     },
 
@@ -56,13 +68,12 @@ YUI.add('account', function() {
       Generate the rows of credentials.
 
       @method _generateCredentials
-      @returns {Array} The list of credentials.
+      @returns {Array} The list of credential components.
     */
     _generateCredentials: function() {
       var credentials = this.state.credentials;
       if (credentials.length === 0) {
-        return (
-          <juju.components.Spinner />);
+        return;
       }
       var components = [];
       var classes = {
@@ -160,6 +171,18 @@ YUI.add('account', function() {
           </juju.components.ExpandingRow>);
       });
       return components;
+    },
+
+    /**
+      Generate the spinner if the credentials are loading.
+
+      @method _generateSpinner
+      @returns {Array} The spinner component.
+    */
+    _generateSpinner: function() {
+      if (this.state.loadingCredentials) {
+        return <juju.components.Spinner />;
+      }
     },
 
     /**
@@ -261,6 +284,7 @@ YUI.add('account', function() {
                     Provider
                   </span>
                 </li>
+                {this._generateSpinner()}
                 {this._generateCredentials()}
               </ul>
             </div>
