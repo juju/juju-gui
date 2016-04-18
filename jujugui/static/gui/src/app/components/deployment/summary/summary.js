@@ -32,6 +32,7 @@ YUI.add('deployment-summary', function() {
       autoPlaceUnits: React.PropTypes.func.isRequired,
       changeDescriptions: React.PropTypes.array.isRequired,
       changeState: React.PropTypes.func.isRequired,
+      controller: React.PropTypes.string.isRequired,
       ecsClear: React.PropTypes.func.isRequired,
       ecsCommit: React.PropTypes.func.isRequired,
       getUnplacedUnitCount: React.PropTypes.func.isRequired,
@@ -118,8 +119,7 @@ YUI.add('deployment-summary', function() {
         this.props.users.jem.user,
         this.refs.modelName.value,
         this.props.deploymentStorage.templateName,
-        // XXX Hardcoding the controller for now but it will be provided on load
-        'yellow/aws-us-east',
+        this.props.controller,
         password,
         (error, data) => {
           if (error) throw error;
