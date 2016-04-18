@@ -759,6 +759,7 @@ YUI.add('juju-gui', function(Y) {
           showConnectingMask={this.showConnectingMask.bind(this)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           interactiveLogin={this.get('interactiveLogin')}
+          pluralize={views.utils.pluralize.bind(this)}
           staticURL={window.juju_config.staticURL}
           storeUser={this.storeUser.bind(this)}
           switchModel={views.utils.switchModel.bind(
@@ -769,6 +770,20 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('charmbrowser-container'));
       // The model name should not be visible when viewing the profile.
       this._renderBreadcrumb({ showEnvSwitcher: false });
+    },
+
+    /**
+      Renders the account component.
+
+      @method _renderAccount
+    */
+    _renderAccount: function() {
+      ReactDOM.render(
+        <window.juju.components.Account
+          listTemplates={this.jem.listTemplates.bind(this.jem)}
+          user={this._getAuth()}
+          users={Y.clone(this.get('users'), true)} />,
+        document.getElementById('charmbrowser-container'));
     },
 
     /**
@@ -1254,6 +1269,7 @@ YUI.add('juju-gui', function(Y) {
       };
       dispatchers.sectionC = {
         profile: this._renderUserProfile.bind(this),
+        account: this._renderAccount.bind(this),
         charmbrowser: this._renderCharmbrowser.bind(this),
         deploy: this._renderDeployment.bind(this),
         empty: this._emptySectionC.bind(this)
@@ -2443,6 +2459,7 @@ YUI.add('juju-gui', function(Y) {
     'net-utils',
     'ns-routing-app-extension',
     // React components
+    'account',
     'added-services-list',
     'charmbrowser-component',
     'deployment-bar',

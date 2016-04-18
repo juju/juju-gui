@@ -995,6 +995,57 @@ describe('UI State object', function() {
           component: 'profile'
         }
       },
+      '/account': {
+        sectionA: {},
+        sectionB: {},
+        sectionC: {
+          component: 'account'
+        }
+      },
+      '/machine/account': {
+        sectionA: {},
+        sectionB: {
+          component: 'machine'
+        },
+        sectionC: {
+          component: 'account'
+        }
+      },
+      '/inspector/account': {
+        sectionA: {
+          component: 'inspector'
+        },
+        sectionB: {},
+        sectionC: {
+          component: 'account'
+        }
+      },
+      '/inspector/apache2/machine/account': {
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            flash: {},
+            id: 'apache2'
+          }
+        },
+        sectionB: {
+          component: 'machine'
+        },
+        sectionC: {
+          component: 'account'
+        }
+      },
+      '/services/machine/account': {
+        sectionA: {
+          component: 'services'
+        },
+        sectionB: {
+          component: 'machine'
+        },
+        sectionC: {
+          component: 'account'
+        }
+      },
       'login': {
         app: {
           component: 'login'

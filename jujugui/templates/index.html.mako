@@ -67,7 +67,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <body>
 
-      <div class="hidden">
+      <div style="display: none;">
         ## Include the svg sprite image inside the body.
         <%include file="../static/gui/build/app/assets/stack/svg/sprite.css.svg" />
       </div>

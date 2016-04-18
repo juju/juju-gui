@@ -67,7 +67,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <body>
 
-      <div class="hidden">
+      <div style="display: none;">
         {{/* Include the svg sprite image inside the body. */}}
         {{.spriteContent}}
       </div>

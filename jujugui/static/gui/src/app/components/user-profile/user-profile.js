@@ -34,12 +34,13 @@ YUI.add('user-profile', function() {
       interactiveLogin: React.PropTypes.bool,
       jem: React.PropTypes.object,
       listEnvs: React.PropTypes.func,
+      pluralize: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
       staticURL: React.PropTypes.string,
       storeUser: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
-      users: React.PropTypes.object.isRequired,
-      user: React.PropTypes.object
+      user: React.PropTypes.object,
+      users: React.PropTypes.object.isRequired
     },
 
     getInitialState: function() {
@@ -624,6 +625,17 @@ YUI.add('user-profile', function() {
 
     render: function() {
       var username = this.props.user && this.props.user.usernameDisplay;
+      var bundleCount = this.state.bundleList.length;
+      var charmCount = this.state.charmList.length;
+      var modelCount = this.state.envList.length;
+      var pluralize = this.props.pluralize;
+      var links = [{
+        label: `${modelCount} ${pluralize('model', modelCount)}`
+      }, {
+        label: `${bundleCount} ${pluralize('bundle', bundleCount)}`
+      }, {
+        label: `${charmCount} ${pluralize('charm', charmCount)}`
+      }];
       return (
         <juju.components.Panel
           instanceName="user-profile"
@@ -633,11 +645,9 @@ YUI.add('user-profile', function() {
               <juju.components.UserProfileHeader
                 users={this.props.users}
                 avatar=""
-                bundleCount={this.state.bundleList.length}
-                charmCount={this.state.charmList.length}
-                environmentCount={this.state.envList.length}
                 interactiveLogin={this.props.interactiveLogin ?
                   this._interactiveLogin : undefined}
+                links={links}
                 username={username} />
               {this._generateContent()}
             </div>

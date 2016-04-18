@@ -25,10 +25,8 @@ YUI.add('user-profile-header', function() {
     propTypes: {
       users: React.PropTypes.object.isRequired,
       avatar: React.PropTypes.string.isRequired,
-      bundleCount: React.PropTypes.number.isRequired,
-      charmCount: React.PropTypes.number.isRequired,
-      environmentCount: React.PropTypes.number.isRequired,
       interactiveLogin: React.PropTypes.func,
+      links: React.PropTypes.array.isRequired,
       username: React.PropTypes.string.isRequired
     },
 
@@ -73,15 +71,50 @@ YUI.add('user-profile-header', function() {
           src={this.props.avatar} />);
     },
 
+    /**
+      Generate the list of links.
+
+      @method _generateLinks
+      @returns {Object} The avatar component.
+    */
+    _generateLinks: function() {
+      var links = [];
+      this.props.links.forEach((link) => {
+        var action = link.action;
+        var type = link.type;
+        var classes = {
+          'user-profile-header__link--is-link': !!action
+        };
+        if (type) {
+          classes['user-profile-header__link--' + type] = true;
+        }
+        var className = classNames('user-profile-header__link', classes);
+        if (action) {
+          links.push(
+            <li className={className}
+              key={link.label}
+              onClick={action}
+              role="button"
+              tabIndex="0">
+              {link.label}
+            </li>);
+        } else {
+          links.push(
+            <li className={className}
+              key={link.label}>
+              {link.label}
+            </li>);
+        }
+      });
+      return (
+        <ul className="user-profile-header__links">
+          {links}
+        </ul>);
+    },
+
     render: function () {
       var props = this.props;
       var username = props.username;
-      var bundleCount = props.bundleCount;
-      var bundlePlural = bundleCount === 1 ? '' : 's';
-      var charmCount = props.charmCount;
-      var charmPlural = charmCount === 1 ? '' : 's';
-      var environmentCount = props.environmentCount;
-      var environmentPlural = environmentCount === 1 ? '' : 's';
       return (
         <div className="user-profile-header twelve-col">
           {this._generateLogin()}
@@ -89,17 +122,7 @@ YUI.add('user-profile-header', function() {
           <h1 className="user-profile-header__username">
             {username}
           </h1>
-          <ul className="user-profile-header__counts">
-            <li className="user-profile-header__count">
-              {environmentCount} model{environmentPlural}
-            </li>
-            <li className="user-profile-header__count">
-              {bundleCount} bundle{bundlePlural}
-            </li>
-            <li className="user-profile-header__count">
-              {charmCount} charm{charmPlural}
-            </li>
-          </ul>
+          {this._generateLinks()}
         </div>);
     }
 

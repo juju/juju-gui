@@ -473,6 +473,10 @@ YUI.add('juju-app-state', function(Y) {
           state.sectionC = this._addToSection({
             component: 'profile'
           });
+        } else if (part.indexOf('account') === 0) {
+          state.sectionC = this._addToSection({
+            component: 'account'
+          });
         } else if (part.indexOf('deploy') === 0) {
           state.sectionC = this._addToSection({
             component: 'deploy',
@@ -690,8 +694,15 @@ YUI.add('juju-app-state', function(Y) {
       @return {Array} The url split into it's sections.
     */
     _splitIntoComponents: function(url) {
-      var sections = ['services', 'machine', 'inspector', 'profile', 'deploy'],
-          parts = [],
+      var sections = [
+        'services',
+        'machine',
+        'inspector',
+        'profile',
+        'account',
+        'deploy'
+      ];
+      var parts = [],
           indexes = [];
       sections.forEach(function(section) {
         var idx = url.indexOf(section);

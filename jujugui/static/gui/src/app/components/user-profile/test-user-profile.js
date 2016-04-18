@@ -62,6 +62,17 @@ describe('UserProfile', () => {
   });
 
   it('renders the empty state', () => {
+    var pluralize = sinon.stub();
+    pluralize.withArgs('model', sinon.match.any).returns('models');
+    pluralize.withArgs('bundle', sinon.match.any).returns('bundles');
+    pluralize.withArgs('charm', sinon.match.any).returns('charms');
+    var links = [{
+      label: '0 models'
+    }, {
+      label: '0 bundles'
+    }, {
+      label: '0 charms'
+    }];
     var jem = {
       listEnvironments: sinon.stub().callsArgWith(0, null, {envs: []})
     };
@@ -78,6 +89,7 @@ describe('UserProfile', () => {
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
         changeState={sinon.stub()}
+        pluralize={pluralize}
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
     var instance = component.getMountedInstance();
@@ -92,10 +104,8 @@ describe('UserProfile', () => {
             <juju.components.UserProfileHeader
               users={users}
               avatar=""
-              bundleCount={0}
-              charmCount={0}
-              environmentCount={0}
               interactiveLogin={instance._interactiveLogin}
+              links={links}
               username={users.charmstore.usernameDisplay} />
             <div className="user-profile__empty twelve-col no-margin-bottom">
               <img alt="Empty profile"
@@ -134,6 +144,7 @@ describe('UserProfile', () => {
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
         changeState={sinon.stub()}
+        pluralize={sinon.stub()}
         staticURL='surl'
         storeUser={sinon.stub()}
         user={users.charmstore} />);
@@ -161,6 +172,7 @@ describe('UserProfile', () => {
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
         changeState={sinon.stub()}
+        pluralize={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -197,6 +209,7 @@ describe('UserProfile', () => {
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
         changeState={sinon.stub()}
+        pluralize={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -210,6 +223,17 @@ describe('UserProfile', () => {
   });
 
   it('renders lists of entities', () => {
+    var pluralize = sinon.stub();
+    pluralize.withArgs('model', sinon.match.any).returns('model');
+    pluralize.withArgs('bundle', sinon.match.any).returns('bundle');
+    pluralize.withArgs('charm', sinon.match.any).returns('charm');
+    var links = [{
+      label: '1 model'
+    }, {
+      label: '1 bundle'
+    }, {
+      label: '1 charm'
+    }];
     var jem = {
       listEnvironments: sinon.stub().callsArgWith(0, null, {envs: models})
     };
@@ -229,6 +253,7 @@ describe('UserProfile', () => {
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
         changeState={changeState}
+        pluralize={pluralize}
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
     var instance = component.getMountedInstance();
@@ -238,10 +263,8 @@ describe('UserProfile', () => {
         <juju.components.UserProfileHeader
           users={users}
           avatar=""
-          bundleCount={1}
-          charmCount={1}
-          environmentCount={1}
           interactiveLogin={instance._interactiveLogin}
+          links={links}
           username={users.charmstore.usernameDisplay} />
         <div>
           <div>
@@ -415,6 +438,17 @@ describe('UserProfile', () => {
   });
 
   it('does not pass the charmstore login if interactiveLogin is falsy', () => {
+    var pluralize = sinon.stub();
+    pluralize.withArgs('model', sinon.match.any).returns('models');
+    pluralize.withArgs('bundle', sinon.match.any).returns('bundles');
+    pluralize.withArgs('charm', sinon.match.any).returns('charms');
+    var links = [{
+      label: '0 models'
+    }, {
+      label: '0 bundles'
+    }, {
+      label: '0 charms'
+    }];
     var output = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         users={users}
@@ -428,16 +462,15 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         gisf={false}
         interactiveLogin={false}
+        pluralize={pluralize}
         storeUser={sinon.stub()}
         user={users.charmstore} />);
     var expected = (
       <juju.components.UserProfileHeader
         users={users}
         avatar=""
-        bundleCount={0}
-        charmCount={0}
-        environmentCount={0}
         interactiveLogin={undefined}
+        links={links}
         username={users.charmstore.usernameDisplay} />);
     assert.deepEqual(output.props.children.props.children.props.children[0],
       expected);
@@ -465,6 +498,7 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         gisf={false}
         interactiveLogin={true}
+        pluralize={sinon.stub()}
         storeUser={storeUser}
         user={users.charmstore} />, true);
     var instance = renderer.getMountedInstance();
@@ -489,6 +523,7 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         gisf={false}
         interactiveLogin={true}
+        pluralize={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
     assert.equal(list.callCount, 0);
@@ -505,6 +540,7 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         gisf={false}
         interactiveLogin={true}
+        pluralize={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />);
     assert.equal(list.callCount, 2);
@@ -531,6 +567,7 @@ describe('UserProfile', () => {
         env={env}
         getDiagramURL={sinon.stub()}
         gisf={false}
+        pluralize={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore}
@@ -566,6 +603,7 @@ describe('UserProfile', () => {
         env={env}
         getDiagramURL={sinon.stub()}
         gisf={false}
+        pluralize={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore}
@@ -598,6 +636,7 @@ describe('UserProfile', () => {
         env={env}
         getDiagramURL={sinon.stub()}
         gisf={false}
+        pluralize={sinon.stub()}
         showConnectingMask={showMask}
         storeUser={sinon.stub()}
         user={users.charmstore}
@@ -642,6 +681,7 @@ describe('UserProfile', () => {
         gisf={false}
         interactiveLogin={true}
         listEnvs={sinon.stub()}
+        pluralize={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         switchModel={sinon.stub()}
@@ -670,6 +710,7 @@ describe('UserProfile', () => {
         gisf={false}
         interactiveLogin={true}
         listEnvs={sinon.stub()}
+        pluralize={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         switchModel={sinon.stub()}
@@ -700,6 +741,7 @@ describe('UserProfile', () => {
         gisf={false}
         interactiveLogin={true}
         listEnvs={listEnvs}
+        pluralize={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         switchModel={sinon.stub()}

@@ -32,50 +32,6 @@ YUI.add('user-profile-entity', function() {
     },
 
     /**
-      Generate the initial state for the component.
-
-      @method getInitialState
-    */
-    getInitialState: function() {
-      return {
-        expanded: false,
-        styles: {
-          height: '0px',
-          opacity: 0
-        }
-      };
-    },
-
-    /**
-      Called once the component has initially mounted.
-
-      @method componentDidMount
-    */
-    componentDidMount: function() {
-      // If the component should initially be shown as expanded then animate it
-      // open.
-      if (this.props.expanded) {
-        this._toggle();
-      }
-    },
-
-    /**
-      Generate the base class names for the component.
-
-      @method _generateClasses
-      @returns {Object} The collection of class names.
-    */
-    _generateClasses: function() {
-      return classNames(
-        'user-profile__entity',
-        'user-profile__list-row',
-        'twelve-col',
-        {
-          'user-profile__entity--expanded': this.state.expanded
-        });
-    },
-
-    /**
       Calls to switch the env to the one the user clicked on.
 
       @method _switchEnv
@@ -103,22 +59,6 @@ YUI.add('user-profile-entity', function() {
             id: id.replace('cs:', '')
           }
         }
-      });
-    },
-
-    /**
-      Toggle between the summary and details.
-
-      @method _toggle
-    */
-    _toggle: function() {
-      var expanded = this.state.expanded;
-      this.setState({expanded: !expanded}, () => {
-        var newHeight = expanded ? '0px' : this.refs.inner.offsetHeight + 'px';
-        this.setState({styles: {
-          height: newHeight,
-          opacity: expanded ? 0 : 1
-        }});
       });
     },
 
@@ -318,50 +258,47 @@ YUI.add('user-profile-entity', function() {
         <img className="user-profile__entity-icon"
           src={entity.icon}
           title={name} />) : undefined;
+      var classes = {
+        'user-profile__entity': true,
+        'user-profile__list-row': true
+      };
       return (
-        <li className={this._generateClasses()}
-          onClick={this._toggle}>
-          <div className={
-            'user-profile__entity-summary twelve-col no-margin-bottom'}>
-            {this.props.children}
-          </div>
-          <div className="user-profile__entity-details twelve-col"
-            style={this.state.styles}>
-            <div className="twelve-col no-margin-bottom"
-              ref="inner">
-              <div className="user-profile__entity-details-header twelve-col">
-                <div className="ten-col no-margin-bottom">
-                  {icon}{name}
-                </div>
-                <div className={'user-profile__entity-details-header-action ' +
-                  'two-col last-col no-margin-bottom'}>
-                  <juju.components.GenericButton
-                    action={buttonAction}
-                    type='inline-neutral'
-                    title={isModel ? 'Manage' : 'View'} />
-
-                </div>
+        <juju.components.ExpandingRow classes={classes}
+          expanded={this.props.expanded}>
+          {this.props.children}
+          <div>
+            <div className="expanding-row__expanded-header twelve-col">
+              <div className="ten-col no-margin-bottom">
+                {icon}{name}
               </div>
-              <div className={'user-profile__entity-details-content ' +
-                'twelve-col no-margin-bottom'}>
-                {this._generateSeries()}
-                {this._generateServices()}
-                <div className="three-col last-col">
-                  Owner: {entity.owner}
-                </div>
-                {this._generateDiagram()}
-                {this._generateDescription()}
-                {this._generateTags()}
-                {this._generateCommits()}
+              <div className={'expanding-row__expanded-header-action ' +
+                'two-col last-col no-margin-bottom'}>
+                <juju.components.GenericButton
+                  action={buttonAction}
+                  type='inline-neutral'
+                  title={isModel ? 'Manage' : 'View'} />
               </div>
             </div>
+            <div className={'expanding-row__expanded-content twelve-col ' +
+              'no-margin-bottom'}>
+              {this._generateSeries()}
+              {this._generateServices()}
+              <div className="three-col last-col">
+                Owner: {entity.owner}
+              </div>
+              {this._generateDiagram()}
+              {this._generateDescription()}
+              {this._generateTags()}
+              {this._generateCommits()}
+            </div>
           </div>
-        </li>);
+        </juju.components.ExpandingRow>);
     }
   });
 
 }, '', {
   requires: [
+    'expanding-row',
     'generic-button'
   ]
 });

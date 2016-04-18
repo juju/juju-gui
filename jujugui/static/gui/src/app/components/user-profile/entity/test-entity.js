@@ -41,52 +41,46 @@ describe('UserProfileEntity', () => {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
         entity={model}
+        expanded={false}
         switchModel={sinon.stub()}
         type="model">
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
-    var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
-    var button = output.props.children[1].props.children.props.children[0]
-      .props.children[1].props.children;
+    var button = output.props.children[1].props.children[0].props.children[1]
+      .props.children;
     var expected = (
-      <li className="user-profile__entity user-profile__list-row twelve-col"
-        onClick={instance._toggle}>
-        <div className={
-          'user-profile__entity-summary twelve-col no-margin-bottom'}>
-          <span>Summary details</span>
-        </div>
-        <div className="user-profile__entity-details twelve-col"
-          style={{height: '0px', opacity: 0}}>
-          <div className="twelve-col no-margin-bottom"
-            ref="inner">
-            <div className="user-profile__entity-details-header twelve-col">
-              <div className="ten-col no-margin-bottom">
-                {undefined}{"sandbox"}
-              </div>
-              <div className={'user-profile__entity-details-header-action ' +
-                'two-col last-col no-margin-bottom'}>
-                <juju.components.GenericButton
-                  action={button.props.action}
-                  type="inline-neutral"
-                  title="Manage" />
-              </div>
+      <juju.components.ExpandingRow classes={{
+        'user-profile__entity': true, 'user-profile__list-row': true}}
+        expanded={false}>
+        <span>Summary details</span>
+        <div>
+          <div className="expanding-row__expanded-header twelve-col">
+            <div className="ten-col no-margin-bottom">
+              {undefined}{"sandbox"}
             </div>
-            <div className={'user-profile__entity-details-content twelve-col ' +
-              'no-margin-bottom'}>
-              {undefined}
-              {undefined}
-              <div className="three-col last-col">
-                Owner: {"test-owner"}
-              </div>
-              {undefined}
-              {undefined}
-              {undefined}
-              {undefined}
+            <div className={'expanding-row__expanded-header-action ' +
+              'two-col last-col no-margin-bottom'}>
+              <juju.components.GenericButton
+                action={button.props.action}
+                type="inline-neutral"
+                title="Manage" />
             </div>
           </div>
+          <div className={'expanding-row__expanded-content twelve-col ' +
+            'no-margin-bottom'}>
+            {undefined}
+            {undefined}
+            <div className="three-col last-col">
+              Owner: {"test-owner"}
+            </div>
+            {undefined}
+            {undefined}
+            {undefined}
+            {undefined}
+          </div>
         </div>
-      </li>);
+      </juju.components.ExpandingRow>);
     assert.deepEqual(output, expected);
   });
 
@@ -97,89 +91,83 @@ describe('UserProfileEntity', () => {
       <juju.components.UserProfileEntity
         changeState={sinon.stub()}
         entity={bundle}
+        expanded={false}
         getDiagramURL={getDiagramURL}
         type="bundle">
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
-    var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
-    var button = output.props.children[1].props.children.props.children[0]
+    var button = output.props.children[1].props.children[0]
       .props.children[1].props.children;
-    var tag = output.props.children[1].props.children.props.children[1]
+    var tag = output.props.children[1].props.children[1]
       .props.children[5].props.children[1].props.children[0];
     var expected = (
-      <li className="user-profile__entity user-profile__list-row twelve-col"
-        onClick={instance._toggle}>
-        <div className={
-          'user-profile__entity-summary twelve-col no-margin-bottom'}>
-          <span>Summary details</span>
-        </div>
-        <div className="user-profile__entity-details twelve-col"
-          style={{height: '0px', opacity: 0}}>
-          <div className="twelve-col no-margin-bottom"
-            ref="inner">
-            <div className="user-profile__entity-details-header twelve-col">
-              <div className="ten-col no-margin-bottom">
-                {undefined}{"django-cluster"}
-              </div>
-              <div className={'user-profile__entity-details-header-action ' +
-                'two-col last-col no-margin-bottom'}>
-                <juju.components.GenericButton
-                  action={button.props.action}
-                  type="inline-neutral"
-                  title="View" />
-              </div>
+      <juju.components.ExpandingRow classes={{
+        'user-profile__entity': true, 'user-profile__list-row': true}}
+        expanded={false}>
+        <span>Summary details</span>
+        <div>
+          <div className="expanding-row__expanded-header twelve-col">
+            <div className="ten-col no-margin-bottom">
+              {undefined}{"django-cluster"}
             </div>
-            <div className={'user-profile__entity-details-content twelve-col ' +
-              'no-margin-bottom'}>
-              {undefined}
-              <div className="nine-col">
-                Composed of:
-                <ul className="user-profile__entity-service-list">
-                  <li className="user-profile__comma-item"
-                    key="django-cluster-service-gunicorn">
-                    gunicorn
-                  </li>
-                  <li className="user-profile__comma-item"
-                    key="django-cluster-service-django">
-                    django
-                  </li>
-                </ul>
-              </div>
-              <div className="three-col last-col">
-                Owner: {"test-owner"}
-              </div>
-              <div className="user-profile__entity-diagram twelve-col">
-                <object type="image/svg+xml" data="bundle.svg"
-                  className="entity-content__diagram-image" />
-              </div>
-              <div className="twelve-col no-margin-bottom">
-                <div className="two-col">
-                  Description
-                </div>
-                <div className="ten-col last-col">
-                  HA Django cluster.
-                </div>
-              </div>
-              <div className="twelve-col no-margin-bottom">
-                <div className="two-col">
-                  Tags
-                </div>
-                <ul className="ten-col last-col">
-                  {[<li className="user-profile__comma-item link"
-                    key="django-cluster-database"
-                    onClick={tag.props.onClick}
-                    role="button"
-                    tabIndex="0">
-                    database
-                  </li>]}
-                </ul>
-              </div>
-              {undefined}
+            <div className={'expanding-row__expanded-header-action ' +
+              'two-col last-col no-margin-bottom'}>
+              <juju.components.GenericButton
+                action={button.props.action}
+                type="inline-neutral"
+                title="View" />
             </div>
           </div>
+          <div className={'expanding-row__expanded-content twelve-col ' +
+            'no-margin-bottom'}>
+            {undefined}
+            <div className="nine-col">
+              Composed of:
+              <ul className="user-profile__entity-service-list">
+                <li className="user-profile__comma-item"
+                  key="django-cluster-service-gunicorn">
+                  gunicorn
+                </li>
+                <li className="user-profile__comma-item"
+                  key="django-cluster-service-django">
+                  django
+                </li>
+              </ul>
+            </div>
+            <div className="three-col last-col">
+              Owner: {"test-owner"}
+            </div>
+            <div className="user-profile__entity-diagram twelve-col">
+              <object type="image/svg+xml" data="bundle.svg"
+                className="entity-content__diagram-image" />
+            </div>
+            <div className="twelve-col no-margin-bottom">
+              <div className="two-col">
+                Description
+              </div>
+              <div className="ten-col last-col">
+                HA Django cluster.
+              </div>
+            </div>
+            <div className="twelve-col no-margin-bottom">
+              <div className="two-col">
+                Tags
+              </div>
+              <ul className="ten-col last-col">
+                {[<li className="user-profile__comma-item link"
+                  key="django-cluster-database"
+                  onClick={tag.props.onClick}
+                  role="button"
+                  tabIndex="0">
+                  database
+                </li>]}
+              </ul>
+            </div>
+            {undefined}
+          </div>
         </div>
-      </li>);
+      </juju.components.ExpandingRow>);
     assert.deepEqual(output, expected);
   });
 
@@ -189,78 +177,72 @@ describe('UserProfileEntity', () => {
       <juju.components.UserProfileEntity
         changeState={sinon.stub()}
         entity={charm}
+        expanded={false}
         type="charm">
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
-    var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
-    var button = output.props.children[1].props.children.props.children[0]
+    var button = output.props.children[1].props.children[0]
       .props.children[1].props.children;
-    var tag = output.props.children[1].props.children.props.children[1]
+    var tag = output.props.children[1].props.children[1]
       .props.children[5].props.children[1].props.children[0];
     var expected = (
-      <li className="user-profile__entity user-profile__list-row twelve-col"
-        onClick={instance._toggle}>
-        <div className={
-          'user-profile__entity-summary twelve-col no-margin-bottom'}>
-          <span>Summary details</span>
-        </div>
-        <div className="user-profile__entity-details twelve-col"
-          style={{height: '0px', opacity: 0}}>
-          <div className="twelve-col no-margin-bottom"
-            ref="inner">
-            <div className="user-profile__entity-details-header twelve-col">
-              <div className="ten-col no-margin-bottom">
-                <img className="user-profile__entity-icon"
-                  src={undefined}
-                  title="django" />
-                django
-              </div>
-              <div className={'user-profile__entity-details-header-action ' +
-                'two-col last-col no-margin-bottom'}>
-                <juju.components.GenericButton
-                  action={button.props.action}
-                  type="inline-neutral"
-                  title="View" />
-              </div>
+      <juju.components.ExpandingRow classes={{
+        'user-profile__entity': true, 'user-profile__list-row': true}}
+        expanded={false}>
+        <span>Summary details</span>
+        <div>
+          <div className="expanding-row__expanded-header twelve-col">
+            <div className="ten-col no-margin-bottom">
+              <img className="user-profile__entity-icon"
+                src={undefined}
+                title="django" />
+              django
             </div>
-            <div className={'user-profile__entity-details-content twelve-col ' +
-              'no-margin-bottom'}>
-              <div className="nine-col">
-                Series: {"trusty"}
-              </div>
-              {undefined}
-              <div className="three-col last-col">
-                Owner: {"test-owner"}
-              </div>
-              {undefined}
-              <div className="twelve-col no-margin-bottom">
-                <div className="two-col">
-                  Description
-                </div>
-                <div className="ten-col last-col">
-                  Django framework.
-                </div>
-              </div>
-              <div className="twelve-col no-margin-bottom">
-                <div className="two-col">
-                  Tags
-                </div>
-                <ul className="ten-col last-col">
-                  {[<li className="user-profile__comma-item link"
-                    key="cs:django-database"
-                    onClick={tag.props.onClick}
-                    role="button"
-                    tabIndex="0">
-                    database
-                  </li>]}
-                </ul>
-              </div>
-              {undefined}
+            <div className={'expanding-row__expanded-header-action ' +
+              'two-col last-col no-margin-bottom'}>
+              <juju.components.GenericButton
+                action={button.props.action}
+                type="inline-neutral"
+                title="View" />
             </div>
           </div>
+          <div className={'expanding-row__expanded-content twelve-col ' +
+            'no-margin-bottom'}>
+            <div className="nine-col">
+              Series: {"trusty"}
+            </div>
+            {undefined}
+            <div className="three-col last-col">
+              Owner: {"test-owner"}
+            </div>
+            {undefined}
+            <div className="twelve-col no-margin-bottom">
+              <div className="two-col">
+                Description
+              </div>
+              <div className="ten-col last-col">
+                Django framework.
+              </div>
+            </div>
+            <div className="twelve-col no-margin-bottom">
+              <div className="two-col">
+                Tags
+              </div>
+              <ul className="ten-col last-col">
+                {[<li className="user-profile__comma-item link"
+                  key="cs:django-database"
+                  onClick={tag.props.onClick}
+                  role="button"
+                  tabIndex="0">
+                  database
+                </li>]}
+              </ul>
+            </div>
+            {undefined}
+          </div>
         </div>
-      </li>);
+      </juju.components.ExpandingRow>);
     assert.deepEqual(output, expected);
   });
 
@@ -274,7 +256,7 @@ describe('UserProfileEntity', () => {
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
     var output = renderer.getRenderOutput();
-    output.props.children[1].props.children.props.children[0].props.children[1]
+    output.props.children[1].props.children[0].props.children[1]
       .props.children.props.action();
     assert.equal(switchModel.callCount, 1);
     assert.equal(switchModel.args[0][0], 'env1');
@@ -295,7 +277,7 @@ describe('UserProfileEntity', () => {
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
     var output = renderer.getRenderOutput();
-    output.props.children[1].props.children.props.children[0].props.children[1]
+    output.props.children[1].props.children[0].props.children[1]
       .props.children.props.action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -322,7 +304,7 @@ describe('UserProfileEntity', () => {
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
     var output = renderer.getRenderOutput();
-    output.props.children[1].props.children.props.children[1].props.children[5]
+    output.props.children[1].props.children[1].props.children[5]
       .props.children[1].props.children[0].props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -335,49 +317,5 @@ describe('UserProfileEntity', () => {
         }
       }
     });
-  });
-
-  it('can toggle to the expanded view', () => {
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntity
-        entity={model}
-        switchModel={sinon.stub()}
-        type="model" />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    // Mock the ref.
-    instance.refs = {inner: {offsetHeight: 10}};
-    output.props.onClick();
-    output = renderer.getRenderOutput();
-    var expected = (
-      <li className={'user-profile__entity user-profile__list-row twelve-col ' +
-        'user-profile__entity--expanded'}
-        onClick={instance._toggle}>
-        {output.props.children}
-      </li>);
-    assert.deepEqual(output, expected);
-  });
-
-  it('can initially be expanded', () => {
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntity
-        entity={model}
-        expanded={true}
-        switchEnv={sinon.stub()}
-        type="model" />, true);
-    var instance = renderer.getMountedInstance();
-    // Mock the ref.
-    instance.refs = {inner: {offsetHeight: 10}};
-    // The shallow renderer does not call componentDidMount, so call it
-    // manually.
-    instance.componentDidMount();
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <li className={'user-profile__entity user-profile__list-row twelve-col ' +
-        'user-profile__entity--expanded'}
-        onClick={instance._toggle}>
-        {output.props.children}
-      </li>);
-    assert.deepEqual(output, expected);
   });
 });

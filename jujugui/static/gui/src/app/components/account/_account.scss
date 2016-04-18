@@ -1,0 +1,36 @@
+.account {
+    &__title {
+        font-size: 24px;
+
+        &-links {
+            @extend %list-style;
+            display: inline-block;
+            margin-left: 20px;
+            vertical-align: text-top;
+        }
+
+        &-link {
+            @extend %link;
+            float: left;
+            margin: 0;
+
+        }
+
+        &-bullet {
+            float: left;
+            color: $warm-grey;
+        }
+    }
+
+    &__title2 {
+        font-size: 20px;
+    }
+
+    .deployment-panel__label {
+        color: $warm-grey;
+    }
+
+    .deployment-panel__input {
+        background-color: $canvas-background;
+    }
+}

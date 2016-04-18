@@ -21,10 +21,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('UserProfileHeader', () => {
+  var links;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
     YUI().use('user-profile-header', () => { done(); });
+  });
+
+  beforeEach(() => {
+    var action = sinon.stub();
+    links = [{
+      action: action,
+      label: 'a link'
+    }, {
+      type: 'testClass',
+      label: 'some text'
+    }];
   });
 
   it('renders', () => {
@@ -34,10 +46,8 @@ describe('UserProfileHeader', () => {
       <juju.components.UserProfileHeader
         users={users}
         avatar="avatar.png"
-        bundleCount={5}
-        charmCount={2}
-        environmentCount={1}
         interactiveLogin={interactiveLogin}
+        links={links}
         username="spinach" />);
     var expected = (
       <div className="user-profile-header twelve-col">
@@ -51,15 +61,19 @@ describe('UserProfileHeader', () => {
         <h1 className="user-profile-header__username">
           spinach
         </h1>
-        <ul className="user-profile-header__counts">
-          <li className="user-profile-header__count">
-            {1} model{''}
+        <ul className="user-profile-header__links">
+          <li className={
+            'user-profile-header__link user-profile-header__link--is-link'}
+            key="a link"
+            onClick={links[0].action}
+            role="button"
+            tabIndex="0">
+            a link
           </li>
-          <li className="user-profile-header__count">
-            {5} bundle{'s'}
-          </li>
-          <li className="user-profile-header__count">
-            {2} charm{'s'}
+          <li className={
+            'user-profile-header__link user-profile-header__link--testClass'}
+            key="some text">
+            some text
           </li>
         </ul>
       </div>);
@@ -72,10 +86,8 @@ describe('UserProfileHeader', () => {
       <juju.components.UserProfileHeader
         users={users}
         avatar="avatar.png"
-        bundleCount={5}
-        charmCount={2}
-        environmentCount={1}
         interactiveLogin={sinon.stub()}
+        links={links}
         username="spinach" />);
     assert.isUndefined(output.props.children[0]);
   });
@@ -87,10 +99,8 @@ describe('UserProfileHeader', () => {
       <juju.components.UserProfileHeader
         users={users}
         avatar="avatar.png"
-        bundleCount={5}
-        charmCount={2}
-        environmentCount={1}
         interactiveLogin={interactiveLogin}
+        links={links}
         username="spinach" />);
     var expected = (
       <juju.components.GenericButton
@@ -107,10 +117,8 @@ describe('UserProfileHeader', () => {
       <juju.components.UserProfileHeader
         users={users}
         avatar=""
-        bundleCount={5}
-        charmCount={2}
-        environmentCount={1}
         interactiveLogin={undefined}
+        links={links}
         username="spinach" />);
     var expected = (
       <span className={
