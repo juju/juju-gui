@@ -23,7 +23,7 @@
     text-align: center;
 
     .panel {
-        @include create-border-radius($border-radius);
+        border-radius: $border-radius;
         width: 280px;
         margin: 20px 0;
         padding: 0 20px 20px 20px;

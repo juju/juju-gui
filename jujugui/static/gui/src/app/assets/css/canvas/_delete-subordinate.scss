@@ -1,9 +1,8 @@
 .yui3-panel {
-    @include create-border-radius($border-radius);
-    @include create-box-shadow(0 3px 7px rgba(0, 0, 0, 0.3));
+    border-radius: $border-radius;
     background: #fff;
     padding: 20px;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 2px rgba(0, 0, 0, .3);
 
     .yui3-widget-bd {
         margin-bottom: 20px;

@@ -77,10 +77,10 @@ describe('EntityContent', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="entity-content">
-        <div className="row entity-content__description">
+        <div className="row row--grey entity-content__description">
           <div className="inner-wrapper">
             <div className="twelve-col">
-              <p>Django framework.</p>
+              <p className="intro">Django framework.</p>
             </div>
             <div className="four-col entity-content__metadata">
               <h4>Tags</h4>
@@ -139,7 +139,8 @@ describe('EntityContent', function() {
             </div>
           </div>
         </div>
-        <div id="configuration" className="row entity-content__configuration">
+        <div id="configuration"
+          className="row row--grey entity-content__configuration">
           <div className="inner-wrapper">
             <div className="twelve-col">
               <h2 className="entity-content__header">Configuration</h2>
@@ -178,10 +179,10 @@ describe('EntityContent', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="entity-content">
-        <div className="row entity-content__description">
+        <div className="row row--grey entity-content__description">
           <div className="inner-wrapper">
             <div className="twelve-col">
-              <p>Django framework.</p>
+              <p className="intro">Django framework.</p>
             </div>
             <div className="four-col entity-content__metadata">
               <h4>Tags</h4>

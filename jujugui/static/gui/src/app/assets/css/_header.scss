@@ -20,8 +20,8 @@
     }
 
     &__link {
-        @extend .border-box;
-        color: $text-colour;
+        box-sizing: border-box;
+        color: $cool-grey;
         display: block;
 
         &:hover,

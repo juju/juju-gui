@@ -52,11 +52,13 @@ YUI.add('entity-content-config-option', function() {
             {option.name}
           </dt>
           <dd className="entity-content__config-description">
-            <span className="entity-content__config-type">
-              ({option.type})
-            </span>
-            {' '}
-            {option.description}
+            <p>
+              <span className="entity-content__config-type">
+                ({option.type})
+              </span>
+              {' '}
+              {option.description}
+            </p>
           </dd>
           {this._generateDefault(option.default)}
         </div>

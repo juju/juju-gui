@@ -57,6 +57,7 @@ YUI.add('copy-to-clipboard', function() {
           <input className={className + '__input'}
             ref="input"
             readOnly="true"
+            type="text"
             value={this.props.value}/>
           <button className={className + '__btn'}
             ref="btn" />

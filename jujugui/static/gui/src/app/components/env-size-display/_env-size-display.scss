@@ -8,7 +8,7 @@
     width: $left-panel-width;
     height: $environment-header-height;
     padding: 0 20px;
-    color: $text-colour;
+    color: $cool-grey;
     line-height: $environment-header-height;
 
     ul {
@@ -19,7 +19,7 @@
             display: inline;
 
             a {
-                color: $text-colour;
+                color: $cool-grey;
             }
 
             &.active a {

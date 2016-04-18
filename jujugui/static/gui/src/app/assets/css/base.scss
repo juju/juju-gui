@@ -1,56 +1,13 @@
-/*
-
-General CSS Notes
-=================
-
-Using fonts
-------------
-Go forth and see the typography.scss file and use those.
-
-
-Class and property ordering
----------------
-This is a general guide on how to structure your classes. We use four spaces
-for indentation.
-
-.class {
-    $vars;
-    .mixins;
-    properties: values;
-
-    &:states {
-        ...
-    }
-
-    &.additional-parent-classes {
-        ...
-    }
-
-    .sub-classes {
-        ...
-    }
-}
-
-*/
 
 /* Processed with SCSS from app/assets/css/base.scss */
-$font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-$font-family-mono: 'Ubuntu Mono', 'Ubuntu-Mono', 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace;
+$font-family-mono: 'Ubuntu Mono', 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace;
 
 /* Shades of grey */
-$black: #000;
-$white: #fff;
 $light-grey: #f5f5f5;
 $light-mid-grey: #d4d4d4;
-$mid-grey: #cdcdcd;
-$warm-grey: #888;
 $dark-grey: #9fa7aa;
-$cool-grey: #333;
 
 // Status colours.
-$error: #df382c;
-$pending: #eaa818;
-$success: #38b44a;
 $uncommitted: #19b6ee;
 
 // Brand colours.
@@ -59,10 +16,9 @@ $ubuntu-orange: #dd4814;
 // Other colous.
 $canvas-background: $light-grey;
 $hover-background: #f7f7f7;
-$text-colour: $cool-grey;
 
 // Spacing.
-$base: 16;
+$base: 16px;
 $base-line-height: 21px;
 $border-radius: 2px;
 $deployer-bar-height: 90px;
@@ -70,9 +26,6 @@ $environment-header-height: 40px;
 $left-panel-width: 290px;
 $navbar-height: 60px;
 $panel-space: 10px;
-
-// Font sizes:
-$font-size-small: 14px;
 
 // z-indexing
 $z-indexed-elements: search-results-list-block__tags,
@@ -99,16 +52,23 @@ $z-indexed-elements: search-results-list-block__tags,
     full-screen-mask,
     centered-column;
 
-// Imports vanilla from node_modules
-@import '../../../../../../../node_modules/vanilla-framework/scss/vanilla';
+// Imports cloud vanilla theme from node_modules
+@import '../../../../../../../node_modules/cloud-vanilla-theme/scss/theme';
 
 // Imports need to be after vars.
 @import "animations";
-@import "typography";
 @import "mixins";
+@import "generic";
+@import "header";
+@import "loading";
+@import "shortcuts";
+@import "tooltip";
+@import "cookies";
+@import "components";
 
-/// Include vanilla modules
-@mixin juju-gui-vanilla {
+// Include required modules from Vanilla
+@mixin required-vanilla-modules {
+  @include vf-boxes;
   @include vf-reset;
   @include vf-helpers;
   @include vf-clearfix;
@@ -118,208 +78,27 @@ $z-indexed-elements: search-results-list-block__tags,
   @include vf-typography;
   @include vf-tables;
 }
-@include juju-gui-vanilla;
 
-//XXX: Temporarily remove the focus state of interactive elements:
-// Luca says: "Can we remove it for the time being and we'll make sure we
-// explore a solution for tabbing post-ODS."
-// https://github.com/juju/juju-gui/pull/840#issuecomment-141111802
-*:focus {
-    outline: none;
+// Include required modules from cloud vanilla theme
+@mixin required-theme-modules {
+  @include cloud-base;
+  @include cloud-buttons;
+  @include cloud-instructions;
+  @include cloud-rows;
+  @include cloud-strips;
+  @include cloud-typography;
 }
 
-html {
-  overflow-y: hidden;
+// Juju GUI theme
+@mixin juju-gui-vanilla-theme {
+  @include required-vanilla-modules;
+  @include required-theme-modules;
+  @include juju-gui-buttons;
+  @include juju-gui-generic;
 }
 
-body {
-    @include customize-scrollbar($white);
-    overflow: hidden;
-    height: 100%;
-    margin-top: $navbar-height;
-    background-color: $canvas-background;
-    color: $text-colour;
-    font-size: 16px;
-    line-height: $base-line-height;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-a,
-%link,
-.link {
-    cursor: pointer;
-    color: $cool-grey;
-    text-decoration: underline;
-}
-
-input[type="text"],
-input[type="number"],
-input[type="password"] {
-    padding: 5px 10px;
-    background-color: #fff;
-    border: 1px solid $mid-grey;
-    border-radius: $border-radius;
-}
-
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    appearance: none;
-    margin: 0;
-}
-
-input[type=number] {
-  -moz-appearance: textfield;
-}
-
-input[type="radio"],
-input[type="checkbox"] {
-    $size: 14px;
-    width: $size;
-    height: $size;
-    background-color: $white;
-    border: 1px solid $mid-grey;
-    box-shadow: inset 0 1px 1px .15px rgba(0, 0, 0, .15);
-    color: $white;
-    text-align: center;
-    overflow: hidden;
-    -webkit-appearance: button;
-
-    &:checked {
-        background-color: $success;
-        border: none;
-    }
-
-    &:after {
-        content: '';
-        display: none;
-        width: $size;
-        height: $size;
-    }
-
-    &:checked:after {
-        display: inline-block;
-    }
-}
-
-input[type="radio"] {
-    border-radius: 50%;
-    vertical-align: middle;
-
-    &:after {
-        $size: 6px;
-        width: $size;
-        height: $size;
-        margin-bottom: 5px;
-        border-radius: 50%;
-        background-color: #fff;
-    }
-
-    &:checked:after {
-        display: inline-block;
-    }
-}
-
-input[type="checkbox"] {
-    border-radius: $border-radius;
-
-    &:after {
-        background: transparent url(static/gui/build/app/assets/images/non-sprites/tick.svg) no-repeat center 2px;
-    }
-}
-
-select {
-    @include create-box-shadow(inset 0 1px 2px 0 rgba(0,0,0,0.12));
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background: transparent;
-    box-sizing: border-box;
-    background-image: url("static/gui/build/app/assets/svgs/chevron_down_16.svg");
-    background-repeat: no-repeat;
-    background-position: calc(100% - 10px) center;
-    background-color: $white;
-    background-size: 12px;
-    width: 100%;
-    border: 1px solid $mid-grey;
-    border-radius: 2px;
-    padding: 9px 34px 9px 7px;
-    color: $cool-grey;
-    font-size: 16px;
-}
-
-svg {
-    stroke-width: 0;
-    overflow: hidden;
-}
-
-li {
-    line-height: $base-line-height;
-}
-
-h2 {
-    line-height: 36px;
-}
-
-h4 {
-    font-size: 14px;
-}
-
-h4, h5, h6 {
-    line-height: $base-line-height;
-}
-
-h1, h2, h3, h4, h5, h6 {
-    margin: 0;
-    font-family: inherit;
-    font-weight: 300;
-    color: inherit;
-    text-rendering: optimizelegibility;
-}
-
-ul {
-    padding: 0;
-}
-
-label {
-    display: block;
-}
-
-strong {
-    font-weight: 400;
-}
-
-.hidden {
-    display: none;
-    visibility: hidden;
-}
-
-pre {
-    margin-bottom: 10px;
-    padding: 5px;
-    background-color: #fdf6f2;
-    border: none;
-}
-
-pre,
-code {
-    font-family: $font-family-mono;
-    font-size: 14px;
-    color: $cool-grey;
-}
-
-/** Widgets **/
-@import "header";
-@import "loading";
-@import "shortcuts";
-@import "tooltip";
-
-/** Cookies **/
-@import "cookies";
-
-/** Components **/
-@import "components";
-@include gui-buttons;
+// Build the Juju GUI theme
+@include juju-gui-vanilla-theme;
 
 /** Canvas **/
 @import "canvas/canvas";

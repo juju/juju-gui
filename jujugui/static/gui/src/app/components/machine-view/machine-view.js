@@ -234,7 +234,7 @@ YUI.add('machine-view', function() {
       else if (machines.length === 0) {
         return (
           <div className="machine-view__column-onboarding">
-            Use machine view to:
+            <p>Use machine view to:</p>
             <ul>
               <li>Create machines</li>
               <li>Create containers</li>

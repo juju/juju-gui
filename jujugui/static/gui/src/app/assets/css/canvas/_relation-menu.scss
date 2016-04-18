@@ -2,11 +2,11 @@
  * The actions menu that appears next to a service block.
  */
 .environment-menu {
-    @include create-border-radius($border-radius);
-    @include create-box-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+    border-radius: $border-radius;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
     display: none;
     background-color: #fff;
-    color: $text-colour;
+    color: $cool-grey;
     top: 0;
     left: 0;
     position: absolute;
@@ -68,7 +68,7 @@
             a {
                 text-decoration: none;
                 font-size: 13px;
-                color: $text-colour;
+                color: $cool-grey;
             }
 
             &:last-child {
@@ -119,7 +119,7 @@
         }
 
         .endpoint.error {
-            color: red;
+            color: $error;
         }
 
         &:focus,

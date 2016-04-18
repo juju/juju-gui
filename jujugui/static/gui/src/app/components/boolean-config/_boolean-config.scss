@@ -37,7 +37,7 @@
     }
 
     &--label {
-        @include create-border-radius($border-radius);
+        border-radius: $border-radius;
         width: 56px;
         display: inline-block;
         position: relative;

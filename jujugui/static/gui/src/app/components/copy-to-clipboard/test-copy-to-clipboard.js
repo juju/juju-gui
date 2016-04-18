@@ -49,6 +49,7 @@ describe('CopyToClipboard', function() {
         <input className={className + '__input'}
                ref="input"
                readOnly="true"
+               type="text"
                value=""/>
         <button className={className + '__btn'}
                 ref="btn"/>
