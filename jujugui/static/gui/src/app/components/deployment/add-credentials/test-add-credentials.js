@@ -72,7 +72,7 @@ describe('DeploymentAddCredentials', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentAddCredentials
         changeState={sinon.stub()}
-        controller='my-controller'
+        controller="my-controller"
         cloud={cloud}
         jem={jem}
         users={users} />, true);
@@ -187,7 +187,7 @@ describe('DeploymentAddCredentials', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentAddCredentials
         changeState={sinon.stub()}
-        controller='my-controller'
+        controller="my-controller"
         cloud={cloud}
         jem={jem}
         users={users} />, true);
@@ -296,7 +296,7 @@ describe('DeploymentAddCredentials', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentAddCredentials
         changeState={sinon.stub()}
-        controller='my-controller'
+        controller="my-controller"
         cloud={cloud}
         jem={jem}
         users={users} />, true);
@@ -401,7 +401,7 @@ describe('DeploymentAddCredentials', function() {
     var output = testUtils.renderIntoDocument(
       <juju.components.DeploymentAddCredentials
         changeState={sinon.stub()}
-        controller='my-controller'
+        controller="my-controller"
         cloud={clouds['aws']}
         jem={jem}
         setDeploymentInfo={sinon.stub()}
@@ -421,7 +421,7 @@ describe('DeploymentAddCredentials', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentAddCredentials
         changeState={changeState}
-        controller='my-controller'
+        controller="my-controller"
         cloud={clouds['aws']}
         jem={jem}
         users={users} />, true);

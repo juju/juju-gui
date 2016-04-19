@@ -56,7 +56,7 @@ describe('DeploymentSummary', function() {
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
-        controller='yellow/aws-eu-central'
+        controller="yellow/aws-eu-central"
         deploymentStorage={{}}
         users={{}}
         autoPlaceUnits={sinon.stub()}
@@ -146,7 +146,7 @@ describe('DeploymentSummary', function() {
         autoPlaceUnits={sinon.stub()}
         changeDescriptions={[]}
         changeState={sinon.stub()}
-        controller='yellow/aws-eu-central'
+        controller="yellow/aws-eu-central"
         ecsClear={sinon.stub()}
         ecsCommit={sinon.stub()}
         getUnplacedUnitCount={getUnplacedUnitCount}
@@ -177,7 +177,7 @@ describe('DeploymentSummary', function() {
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
-        controller='yellow/aws-eu-central'
+        controller="yellow/aws-eu-central"
         deploymentStorage={{}}
         users={{}}
         autoPlaceUnits={sinon.stub()}
@@ -213,7 +213,7 @@ describe('DeploymentSummary', function() {
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
-        controller='yellow/aws-eu-central'
+        controller="yellow/aws-eu-central"
         deploymentStorage={{}}
         users={{}}
         autoPlaceUnits={sinon.stub()}
@@ -249,7 +249,7 @@ describe('DeploymentSummary', function() {
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
-        controller='yellow/aws-eu-central'
+        controller="yellow/aws-eu-central"
         deploymentStorage={{}}
         users={{}}
         autoPlaceUnits={sinon.stub()}
@@ -296,7 +296,7 @@ describe('DeploymentSummary', function() {
         env={env}
         appSet={appSet}
         createSocketURL={createSocketURL}
-        controller='yellow/aws-eu-central'
+        controller="yellow/aws-eu-central"
         deploymentStorage={{ templateName: 'secureTemplate' }}
         users={{ jem: { user: 'joecoder' }}}
         autoPlaceUnits={autoPlaceUnits}
