@@ -24,6 +24,7 @@ YUI.add('deployment-add-credentials', function() {
 
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
+      controller: React.PropTypes.string.isRequired,
       cloud: React.PropTypes.object.isRequired,
       jem: React.PropTypes.object.isRequired,
       setDeploymentInfo: React.PropTypes.func.isRequired,
@@ -44,7 +45,7 @@ YUI.add('deployment-add-credentials', function() {
             // controller with work to come to generate a controller name.  Also
             // this key will change from 'state-server' to 'controller'.
             // Makyo 2016-03-30
-            'state-server': 'yellow/aws-us-east',
+            'state-server': this.props.controller,
             //'state-server': 'yellow/aws-' + this.refs.templateRegion.value,
             // XXX This applies only to AWS (for first release).
             'config': {

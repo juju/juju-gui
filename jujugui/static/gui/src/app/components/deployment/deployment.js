@@ -69,6 +69,8 @@ YUI.add('deployment-component', function() {
     },
 
     _deploymentStorage: {},
+    // XXX Hardcoding the controller for now but it will be provided on load
+    _controller: 'yellow/aws-us-east',
 
     /**
       Store information from portions of the deployment for use later down the
@@ -103,6 +105,7 @@ YUI.add('deployment-component', function() {
               autoPlaceUnits={this.props.autoPlaceUnits}
               changeDescriptions={this.props.changeDescriptions}
               changeState={this.props.changeState}
+              controller={this._controller}
               ecsClear={this.props.ecsClear}
               ecsCommit={this.props.ecsCommit}
               getUnplacedUnitCount={this.props.getUnplacedUnitCount}
@@ -126,6 +129,7 @@ YUI.add('deployment-component', function() {
           return (
             <juju.components.DeploymentAddCredentials
               changeState={this.props.changeState}
+              controller={this._controller}
               cloud={this.clouds[activeComponent.split('-')[2]]}
               setDeploymentInfo={this.setDeploymentInfo}
               jem={this.props.jem}

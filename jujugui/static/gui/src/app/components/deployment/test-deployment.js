@@ -75,6 +75,7 @@ describe('Deployment', function() {
         env={env}
         appSet={appSet}
         createSocketURL={createSocketURL}
+        controller="yellow/aws-us-east"
         deploymentStorage={instance._deploymentStorage}
         users={users}
         autoPlaceUnits={autoPlaceUnits}
@@ -180,6 +181,7 @@ describe('Deployment', function() {
     var expected = (
       <juju.components.DeploymentAddCredentials
         changeState={changeState}
+        controller="yellow/aws-us-east"
         cloud={instance.clouds['aws']}
         jem={jem}
         setDeploymentInfo={instance.setDeploymentInfo}
