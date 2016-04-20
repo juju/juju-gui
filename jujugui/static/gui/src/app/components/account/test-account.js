@@ -33,6 +33,9 @@ describe('Account', () => {
       charmstore: {
         user: 'test-owner',
         usernameDisplay: 'test owner'
+      },
+      jem: {
+        user: 'jem-user'
       }
     };
   });
@@ -40,6 +43,7 @@ describe('Account', () => {
   it('renders the loading state', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.Account
+        deleteTemplate={sinon.stub()}
         listTemplates={sinon.stub()}
         user={users.charmstore}
         users={users} />, true);
@@ -130,12 +134,14 @@ describe('Account', () => {
       0, null, [{path: 'spinach/test-model'}]);
     var component = jsTestUtils.shallowRender(
       <juju.components.Account
+        deleteTemplate={sinon.stub()}
         listTemplates={listTemplates}
         user={users.charmstore}
         users={users} />, true);
     var instance = component.getMountedInstance();
     instance.componentWillMount();
     var output = component.getRenderOutput();
+    var credentials = output.props.children.props.children.props.children[4];
     var expected = (
       <ul className="user-profile__list twelve-col">
         <li className="user-profile__list-header twelve-col">
@@ -181,7 +187,9 @@ describe('Account', () => {
               <div className={'expanding-row__expanded-header-action ' +
                 'three-col last-col no-margin-bottom'}>
                 <juju.components.GenericButton
-                  action={instance._handleDestroyCredential}
+                  action={credentials.props.children[2][0].props.children[1]
+                    .props.children[0].props.children[1].props.children[0]
+                    .props.action}
                   type='inline-base'
                   title="Destroy" />
                 <juju.components.GenericButton
@@ -244,8 +252,7 @@ describe('Account', () => {
           </div>
         </juju.components.ExpandingRow>]}
       </ul>);
-    assert.deepEqual(
-      output.props.children.props.children.props.children[4], expected);
+    assert.deepEqual(credentials, expected);
   });
 
   it('will abort the requests when unmounting', function() {
@@ -253,10 +260,48 @@ describe('Account', () => {
     var listTemplates = sinon.stub().returns({abort: abort});
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Account
+        deleteTemplate={sinon.stub()}
         listTemplates={listTemplates}
         user={users.charmstore}
         users={users} />, true);
     renderer.unmount();
     assert.equal(abort.callCount, 1);
+  });
+
+  it('can destroy a credential', function() {
+    var listTemplates = sinon.stub().callsArgWith(
+      0, null, [{path: 'spinach/test-model'}]);
+    var deleteTemplate = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Account
+        deleteTemplate={deleteTemplate}
+        listTemplates={listTemplates}
+        user={users.charmstore}
+        users={users} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    output.props.children.props.children.props.children[4].props.children[2][0]
+      .props.children[1].props.children[0].props.children[1].props.children[0]
+      .props.action();
+    assert.equal(deleteTemplate.callCount, 1);
+    assert.deepEqual(deleteTemplate.args[0], [
+      users.jem.user, 'test-model', instance._destroyCredentialCallback]);
+  });
+
+  it('updates the credentials when one is destroyed', function() {
+    var listTemplates = sinon.stub().callsArgWith(
+      0, null, [{path: 'spinach/test-model'}]);
+    var deleteTemplate = sinon.stub().callsArg(2);
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Account
+        deleteTemplate={deleteTemplate}
+        listTemplates={listTemplates}
+        user={users.charmstore}
+        users={users} />, true);
+    var output = renderer.getRenderOutput();
+    output.props.children.props.children.props.children[4].props.children[2][0]
+      .props.children[1].props.children[0].props.children[1].props.children[0]
+      .props.action();
+    assert.equal(listTemplates.callCount, 2);
   });
 });

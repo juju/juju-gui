@@ -32,6 +32,7 @@ YUI.add('account', function() {
     listTemplatesXHR: null,
 
     propTypes: {
+      deleteTemplate: React.PropTypes.func.isRequired,
       listTemplates: React.PropTypes.func.isRequired,
       user: React.PropTypes.object.isRequired,
       users: React.PropTypes.object.isRequired
@@ -45,6 +46,19 @@ YUI.add('account', function() {
     },
 
     componentWillMount: function() {
+      this._getCredentials();
+    },
+
+    componentWillUnmount: function() {
+      this.listTemplatesXHR.abort();
+    },
+
+    /**
+      Get the credentials from the API.
+
+      @method _getCredentials
+    */
+    _getCredentials: function() {
       this.listTemplatesXHR = this.props.listTemplates((error, credentials) => {
         // XXX This is basic error handling for the initial
         // implementation. It should be replaced with an error message for the
@@ -58,10 +72,6 @@ YUI.add('account', function() {
           loadingCredentials: false
         });
       });
-    },
-
-    componentWillUnmount: function() {
-      this.listTemplatesXHR.abort();
     },
 
     /**
@@ -111,7 +121,7 @@ YUI.add('account', function() {
                 <div className={'expanding-row__expanded-header-action ' +
                   'three-col last-col no-margin-bottom'}>
                   <juju.components.GenericButton
-                    action={this._handleDestroyCredential}
+                    action={this._handleDestroyCredential.bind(this, name)}
                     type='inline-base'
                     title="Destroy" />
                   <juju.components.GenericButton
@@ -189,9 +199,27 @@ YUI.add('account', function() {
       Handle destroying a credential.
 
       @method _handleDestroyCredential
+      @param {String} name The name of the credential.
     */
-    _handleDestroyCredential: function() {
-      // To be implemented.
+    _handleDestroyCredential: function(name) {
+      this.props.deleteTemplate(
+        this.props.users.jem.user, name, this._destroyCredentialCallback);
+    },
+
+    /**
+      The method to be called once a credential has been attempted to be
+      destroyed.
+
+      @method _destroyCredentialCallback
+      @param {String} error The error from attempting to destroy a credential.
+      @param {String} data The data from destroying a credential.
+    */
+    _destroyCredentialCallback: function(error, data) {
+      if (error) {
+        console.error('Unable to delete the template', error);
+        return;
+      }
+      this._getCredentials();
     },
 
     /**

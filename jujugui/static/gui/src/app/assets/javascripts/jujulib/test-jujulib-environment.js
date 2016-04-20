@@ -230,6 +230,31 @@ describe('jujulib environment manager', function() {
     );
   });
 
+  it('can delete a template', function(done) {
+    var response = [{path: 'rose/template'}];
+    var bakery = {
+      sendDeleteRequest: function(path, success, failure, redirect) {
+        assert.equal(path, 'http://example.com/v1/template/rose/template');
+        var xhr = _makeXHRRequest(response);
+        success(xhr);
+      },
+    };
+
+    env = new window.jujulib.environment('http://example.com/', 'v1', bakery);
+    env.deleteTemplate(
+      'rose',
+      'template',
+      function(error, data) {
+        if (error) {
+          assert.fail('callback should be successful');
+        } else {
+          assert.deepEqual(data, JSON.stringify(response));
+        }
+        done();
+      }
+    );
+  });
+
   it('handles errors listing templates', function(done) {
     var err = 'bad wolf';
     var bakery = {
