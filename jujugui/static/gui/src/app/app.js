@@ -1345,7 +1345,7 @@ YUI.add('juju-gui', function(Y) {
         this.jem = new window.jujulib.environment(
             this.get('jemURL'), this.get('jemAPIPath'), bakery);
 
-        // Store away the JEM auth info.
+        // Store the JEM auth info.
         var macaroon = bakery.getMacaroon();
         if (macaroon) {
           this.storeUser('jem');
@@ -1356,6 +1356,16 @@ YUI.add('juju-gui', function(Y) {
           if (error) {
             console.log('Model listing failure: ' + error);
             return;
+          }
+
+          // It's possible that the previous getMacaroon call fails to return
+          // a macaroon. In that case when jem tries to list the models
+          // the user is forced to log into jem so we will now have a jem
+          // user and macaroon. At which point we need to store that user and
+          // re-render the breadcrumb with that information.
+          var macaroon = bakery.getMacaroon();
+          if (macaroon) {
+            this.storeUser('jem', null, true);
           }
 
           var envData = this._pickEnv(envList);
