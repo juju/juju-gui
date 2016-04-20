@@ -30,6 +30,7 @@
         &-header {
             padding: 20px;
             border-bottom: 1px solid $mid-grey;
+            box-sizing: border-box;
 
             &-action {
                 text-align: right;

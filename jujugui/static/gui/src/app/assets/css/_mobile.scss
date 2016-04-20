@@ -198,16 +198,24 @@
     margin-right: 10px;
   }
 
-  .user-profile__entity-details-header .ten-col {
-    width: calc(100% - 120px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+  .user-profile__list {
+    .expanding-row__expanded-header {
+      .ten-col {
+        width: calc(100% - 120px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
 
-  .user-profile__entity-details-header-action {
-    float: right;
-    position: relative;
-    top: -30px;
+      .expanding-row__expanded-header-action {
+        float: right;
+        position: relative;
+        top: -30px;
+      }
+    }
+
+    .expanding-row__expanded-content {
+      padding-bottom: 10px;
+    }
   }
 
   .user-profile-header__username {
