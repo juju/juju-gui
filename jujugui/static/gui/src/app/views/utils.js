@@ -1330,6 +1330,7 @@ YUI.add('juju-view-utils', function(Y) {
         navbar = Y.one('.header-banner'),
         viewport = Y.one('#viewport'),
         result = {height: minheight || 0, width: minwidth || 0};
+    // If all elements are present and the viewport is not set to display none
     if (containerHeight && navbar && viewport &&
       viewport.getComputedStyle('width') !== 'auto') {
       result.height = containerHeight -

@@ -125,7 +125,21 @@
   }
 
   .machine-view__column-onboarding {
-    padding-bottom: 0;
+    display: none;
+  }
+
+  .machine-view__machine--selected {
+    border-color: $mid-grey;
+    margin: 0;
+    padding-right: 10px;
+    border-style: dashed;
+
+    &.machine-view__machine--uncommitted {
+      border-color: $uncommitted;
+      margin: 0;
+      padding-right: 10px;
+      border-style: dashed;
+    }
   }
 
   .more-menu__menu {
