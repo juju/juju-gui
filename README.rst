@@ -19,7 +19,7 @@ Juju-GUI bugs are tracked on `on Github Issues
 
 See also:
 
-- a `stable demo <http://demo.jujucharms.com/>`_,
+- a `stable demo <https://demo.jujucharms.com/>`_,
 - the `juju quickstart plugin`_,
 - our `blog <http://jujugui.wordpress.com/>`_, and
 - the `official documentation <https://jujucharms.com/docs/stable/juju-gui-management>`_.
