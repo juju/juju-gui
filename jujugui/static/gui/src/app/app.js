@@ -780,6 +780,7 @@ YUI.add('juju-gui', function(Y) {
     _renderAccount: function() {
       ReactDOM.render(
         <window.juju.components.Account
+          deleteTemplate={this.jem.deleteTemplate.bind(this.jem)}
           listTemplates={this.jem.listTemplates.bind(this.jem)}
           user={this._getAuth()}
           users={Y.clone(this.get('users'), true)} />,

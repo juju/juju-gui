@@ -128,6 +128,31 @@ YUI.add('juju-env-web-handler', function(Y) {
     },
 
     /**
+      Send an asynchronous DELETE request to the given URL.
+
+      @method sendDeleteRequest
+      @param {String} path The remote target path/URL.
+      @param {Object} headers Additional request headers as key/value pairs.
+      @param {String} username The user name for basic HTTP authentication
+        (or null if no authentication is required).
+      @param {String} password The password for basic HTTP authentication
+        (or null if no authentication is required).
+      @param {Function} progressCallback The progress event callback.
+      @param {Function} completedCallback The load event callback.
+      @return {Object} The asynchronous request instance.
+    */
+    sendDeleteRequest: function(path, headers, username, password,
+                                withCredentials, progressCallback,
+                                completedCallback) {
+      var xhr = this._createRequest(
+          path, 'DELETE', headers, username, password, withCredentials,
+          progressCallback, completedCallback);
+      // Send the GET request.
+      xhr.send();
+      return xhr;
+    },
+
+    /**
       Given a path and credentials, return a URL including the user:password
       fragment. The current host is used.
 

@@ -163,6 +163,41 @@ YUI.add('juju-env-bakery', function(Y) {
       },
 
       /**
+       Takes the path supplied by the caller and makes a delete request to the
+       requestHandlerWithInteraction instance. If setCookiePath is set then
+       it is used to set a cookie back to the ui after authentication.
+
+       @param {String} The path to make the api request to.
+       @param {Function} successCallback Called when the api request completes
+              successfully.
+       @param {Function} failureCallback Called when the api request fails
+              with a response of >= 400 except 401 and a WWW-Authenticate
+              header will trigger authentication.
+       @param {Boolean} redirect Whether the handler should redirect if there
+              is a 401 on the request.
+       @return {Object} The asynchronous request instance.
+      */
+      sendDeleteRequest: function (
+        path, successCallback, failureCallback, redirect) {
+        var macaroons = this.getMacaroon();
+        var headers = {'Bakery-Protocol-Version': 1};
+        if (macaroons !== null) {
+          headers['Macaroons'] = macaroons;
+        }
+
+        return this.webhandler.sendDeleteRequest(
+          path, headers, null, null, false, null,
+          this._requestHandlerWithInteraction.bind(
+            this,
+            path,
+            successCallback,
+            failureCallback,
+            redirect
+          )
+        );
+      },
+
+      /**
        Takes the path supplied by the caller and makes a post request to the
        requestHandlerWithInteraction instance. If setCookiePath is set then
        it is used to set a cookie back to the ui after authentication.
@@ -241,7 +276,7 @@ YUI.add('juju-env-bakery', function(Y) {
           )
         );
       },
-      
+
       /**
        Handles the request response from the _makeRequest method, calling the
        supplied failure callback if the response status was >= 400 or passing

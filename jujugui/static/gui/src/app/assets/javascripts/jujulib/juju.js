@@ -63,6 +63,11 @@ var module = module;
       case 'PUT':
         return bakery.sendPutRequest(
             path, JSON.stringify(params), success, failure, redirect);
+      case 'DELETE':
+        return bakery.sendDeleteRequest(path, success, failure, redirect);
+      default:
+        console.error(
+          'Supplied request method "' + method + '" not supported.');
     }
   };
 
@@ -244,6 +249,22 @@ var module = module;
       var url = [
         this.jemURL, 'template', envOwnerName, templateName].join('/');
       return _makeRequest(this.bakery, url, 'PUT', template, callback, false);
+    },
+
+    /**
+      Deletes a given template for the currently authenticated user in JEM.
+
+      @method deleteTemplate
+      @param envOwnerName the owner the template.
+      @param templateName the name of the template.
+      @param callback {Function} A callback to handle errors or accept the data
+        from the request. Must accept an error message or null as its first
+        parameter and the response data as its second.
+    */
+    deleteTemplate: function(envOwnerName, templateName, callback) {
+      var url = [
+        this.jemURL, 'template', envOwnerName, templateName].join('/');
+      return _makeRequest(this.bakery, url, 'DELETE', null, callback, false);
     }
   };
 
