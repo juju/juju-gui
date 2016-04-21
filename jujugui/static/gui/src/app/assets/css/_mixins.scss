@@ -1,11 +1,12 @@
-
 @mixin customize-scrollbar($background) {
     ::-webkit-scrollbar {
         width: 10px;
     }
+
     ::-webkit-scrollbar-track {
         background-color: $background;
     }
+
     ::-webkit-scrollbar-thumb {
         background-color: #d4d4d4;
         border: 1px solid $background;
@@ -42,7 +43,7 @@
 %floating-panel {
     background-color: $white;
     border-radius: $border-radius;
-    box-shadow: 0 1px 4.85px .15px rgba(0, 0, 0, .2);
+    box-shadow: $box-shadow;
 }
 
 %list-style {
@@ -75,10 +76,4 @@
     border-radius: 50%;
     -webkit-clip-path: circle(($size / 2 - 1) at center);
     clip-path: circle(($size / 2 - 1) at center);
-}
-
-%deployment-box {
-    padding: 20px;
-    border: 1px solid $light-mid-grey;
-    border-radius: $border-radius;
 }

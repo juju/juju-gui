@@ -269,18 +269,14 @@ YUI.add('deployment-summary', function() {
         disabled: this.props.numberOfChanges === 0,
         type: 'inline-positive'
       });
+      var parts = this.props.deploymentStorage.templateName.split('/');
+      var owner = parts[0];
+      var name = parts[1];
       return (
         <div className="deployment-panel__child">
           <juju.components.DeploymentPanelContent
-            title="Deployment summary">
-            <div className="deployment-panel__notice twelve-col">
-              <juju.components.SvgIcon
-                name="general-action-blue"
-                size="16" />
-              This deployment is free, you can deploy xxxxxxxxx more
-            </div>
-            <form className="six-col">
-              <p>Name your model</p>
+            title="Review deployment">
+            <form className="six-col last-col">
               <label className="deployment-panel__label"
                 htmlFor="model-name">
                 Model name
@@ -294,12 +290,25 @@ YUI.add('deployment-summary', function() {
                 type="text"
                 disabled={!!modelCommitted} />
             </form>
-            <div className="six-col last-col">
-              <p>Deploying to:</p>
-              <div className="deployment-panel__box">
-                [selected credential]
-              </div>
-            </div>
+            <span className="deployment-choose-cloud__cloud-option-title">
+              <span className="deployment-choose-cloud__cloud-option-name">
+                {name}
+              </span>
+              <span className="deployment-choose-cloud__cloud-option-owner">
+                {owner}
+              </span>
+              <form className="six-col last-col">
+                <label className="deployment-panel__label"
+                  htmlFor="region">
+                  Region
+                </label>
+                <input className="deployment-panel__input"
+                  id="region"
+                  placeholder="us-central1"
+                  required="required"
+                  type="text" />
+              </form>
+            </span>
             {this._generatePlacement()}
             <h3 className="deployment-panel__section-title">
               Change log ({this.props.numberOfChanges})

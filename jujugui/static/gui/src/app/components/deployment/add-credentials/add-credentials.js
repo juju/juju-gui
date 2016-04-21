@@ -191,7 +191,7 @@ YUI.add('deployment-add-credentials', function() {
         title: 'Change cloud',
         type: 'inline-neutral'
       }, {
-        title: 'Add credentials',
+        title: 'Add credential',
         action: this._handleAddCredentials,
         disabled: cloud.id !== 'aws',
         type: 'inline-positive'

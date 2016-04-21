@@ -44,14 +44,6 @@ YUI.add('deployment-component', function() {
     },
 
     clouds: {
-      aws: {
-        id: 'aws',
-        signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
-        'registration/index.html',
-        svgHeight: 48,
-        svgWidth: 120,
-        title: 'Amazon Web Services'
-      },
       gcp: {
         id: 'gcp',
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',
@@ -65,6 +57,14 @@ YUI.add('deployment-component', function() {
         svgHeight: 24,
         svgWidth: 204,
         title: 'Microsoft Azure'
+      },
+      aws: {
+        id: 'aws',
+        signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
+        'registration/index.html',
+        svgHeight: 48,
+        svgWidth: 120,
+        title: 'Amazon Web Services'
       }
     },
 
@@ -116,13 +116,9 @@ YUI.add('deployment-component', function() {
           return (
             <juju.components.DeploymentChooseCloud
               jem={this.props.jem}
-              changeCounts={this.props.changeCounts}
               changeState={this.props.changeState}
               clouds={this.clouds}
-              pluralize={this.props.pluralize}
-              services={this.props.services}
-              setDeploymentInfo={this.setDeploymentInfo}
-              user={this.props.user} />);
+              setDeploymentInfo={this.setDeploymentInfo} />);
         case 'add-credentials-azure':
         case 'add-credentials-aws':
         case 'add-credentials-gcp':
@@ -171,6 +167,7 @@ YUI.add('deployment-component', function() {
   requires: [
     'deployment-add-credentials',
     'deployment-choose-cloud',
+    'deployment-finalise-account',
     'deployment-panel',
     'deployment-summary'
   ]
