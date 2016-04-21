@@ -697,28 +697,34 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Return information about a model, such as its name, series, and provider
-      type, by performing a ModelManager.ModelInfo Juju API request.
+      Return information about Juju models, such as their names, series, and
+      provider types, by performing a ModelManager.ModelInfo Juju API request.
 
       @method modelInfo
-      @param {String} modelTag The Juju tag of the model, for instance
-        "model-5bea955d-7a43-47d3-89dd-b02c923e2447".
+      @param {Array} tags The Juju tags of the models, each one being a string,
+        for instance "model-5bea955d-7a43-47d3-89dd-b02c923e2447".
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an object with an "err"
         attribute containing a string describing the problem (if an error
-        occurred), or with the following fields if everything went well:
-        - modelTag: the original Juju model tag;
+        occurred). Otherwise, if everything went well, it will receive an
+        object with a "models" attribute containing an array of model info,
+        each one with the following fields :
+        - tag: the original Juju model tag;
         - name: the model name, like "admin" or "mymodel";
         - series: the model default series, like "trusty" or "xenial";
         - provider: the provider type, like "lxd" or "aws";
         - uuid: the model unique identifier;
         - serverUuid: the corresponding controller unique identifier;
-        - ownerTag: the Juju tag of the user owning the model.
+        - ownerTag: the Juju tag of the user owning the model;
+        - life: the lifecycle status of the model: "alive", "dying" or "dead";
+        - isAlive: whether the model is alive or dying/dead;
+        - isAdmin: whether the model is an admin model;
+        - err: a message describing a specific model error, or undefined.
       @return {undefined} Sends a message to the server only.
     */
-    modelInfo: function(modelTag, callback) {
+    modelInfo: function(tags, callback) {
       // Decorate the user supplied callback.
-      var handler = function(userCallback, modelTag, data) {
+      var handler = function(userCallback, tags, data) {
         if (!userCallback) {
           console.log('data returned by model info API call:', data);
           return;
@@ -729,36 +735,127 @@ YUI.add('juju-env-go', function(Y) {
           return;
         }
         var results = data.Response.results;
-        if (results.length !== 1) {
+        if (results.length !== tags.length) {
+          // Sanity check: this should never happen.
           userCallback({
             err: 'unexpected results: ' + JSON.stringify(results)
           });
           return;
         }
-        var result = results[0];
-        err = result.error && result.error.Message;
-        if (err) {
-          userCallback({err: err});
-          return;
-        }
-        result = result.result;
-        userCallback({
-          modelTag: modelTag,
-          name: result.Name,
-          series: result.DefaultSeries,
-          provider: result.ProviderType,
-          uuid: result.UUID,
-          serverUuid: result.ServerUUID,
-          ownerTag: result['owner-tag']
+        var models = results.map(function(result, index) {
+          err = result.error && result.error.Message;
+          if (err) {
+            return {tag: tags[index], err: err};
+          }
+          result = result.result;
+          return {
+            tag: tags[index],
+            name: result.Name,
+            series: result.DefaultSeries,
+            provider: result.ProviderType,
+            uuid: result.UUID,
+            serverUuid: result.ServerUUID,
+            ownerTag: result.OwnerTag,
+            life: result.Life,
+            isAlive: result.Life === 'alive',
+            isAdmin: result.UUID === result.ServerUUID
+          };
         });
-      }.bind(this, callback, modelTag);
+        userCallback({models: models});
+      }.bind(this, callback, tags);
 
       // Send the API request.
+      var entities = tags.map(function(tag) {
+        return {Tag: tag};
+      });
       this._send_rpc({
         Type: 'ModelManager',
         Request: 'ModelInfo',
-        Params: {Entities: [{Tag: modelTag}]}
+        Params: {Entities: entities}
       }, handler);
+    },
+
+    /**
+      Return detailed information about Juju models available for current user.
+      Under the hood, this call leverages the ModelManager ListModels and
+      ModelInfo endpoints.
+
+      @method listModelsWithInfo
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred). Otherwise, if everything went well, it will receive an
+        object with a "models" attribute containing an array of model info,
+        each one with the following fields :
+        - tag: the original Juju model tag;
+        - name: the model name, like "admin" or "mymodel";
+        - series: the model default series, like "trusty" or "xenial";
+        - provider: the provider type, like "lxd" or "aws";
+        - uuid: the model unique identifier;
+        - serverUuid: the corresponding controller unique identifier;
+        - ownerTag: the Juju tag of the user owning the model;
+        - life: the lifecycle status of the model: "alive", "dying" or "dead";
+        - isAlive: whether the model is alive or dying/dead;
+        - isAdmin: whether the model is an admin model;
+        - lastConnection: the date of the last connection as a string, e.g.:
+          '2015-09-24T10:08:50Z' or null if the model was never connected to;
+        - err: a message describing a specific model error, or undefined.
+      @return {undefined} Sends a message to the server only.
+    */
+    listModelsWithInfo: function(callback) {
+      // Ensure we always have a callback.
+      if (!callback) {
+        callback = function(data) {
+          if (data.err) {
+            console.log('listModelsWithInfo API call error:', data.err);
+          } else {
+            console.log('listModelsWithInfo API call data:', data);
+          }
+        };
+      }
+
+      // Retrieve the current user tag.
+      var credentials = this.getCredentials();
+      if (!credentials || !credentials.areAvailable) {
+        callback({err: 'called without credentials'});
+        return;
+      }
+
+      // Perform the API calls.
+      this.listEnvs(credentials.user, (listData) => {
+        if (listData.err) {
+          callback({err: listData.err});
+          return;
+        }
+        var tags = listData.envs.map(function(model) {
+          return model.tag;
+        });
+        this.modelInfo(tags, (infoData) => {
+          if (infoData.err) {
+            callback({err: infoData.err});
+            return;
+          }
+          var models = infoData.models.map(function(model, index) {
+            if (model.err) {
+              return {tag: model.tag, err: model.err};
+            }
+            return {
+              tag: model.tag,
+              name: model.name,
+              series: model.series,
+              provider: model.provider,
+              uuid: model.uuid,
+              serverUuid: model.serverUuid,
+              ownerTag: model.ownerTag,
+              life: model.life,
+              isAlive: model.isAlive,
+              isAdmin: model.isAdmin,
+              lastConnection: listData.envs[index].lastConnection
+            };
+          });
+          callback({models: models});
+        });
+      });
     },
 
     /**
@@ -2921,19 +3018,55 @@ YUI.add('juju-env-go', function(Y) {
       callback(transformedData);
     },
 
+    /**
+      Destroy the current connected model.
+
+      Callers should switch the WebSocket connection to an alive model after
+      receiving a successful response in the provided callback. Keeping a
+      WebSocket connection to a zombie model could lead to a broken GUI state
+      and exotic errors difficult to debug.
+      Note that at the time the callback is called the destroyed model may
+      still be included in the list of models returned by listEnvs or
+      listModelsWithInfo calls. In the latter call, the model "isAlive"
+      attribute will be false.
+
+      @method destroyModel
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an error string if an error
+        occurred or null if the model deletion succeeded.
+      @return {undefined} Sends a message to the server only.
+    */
+    destroyModel: function(callback) {
+      // Decorate the user supplied callback.
+      var handler = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by destroy model API call:', data);
+          return;
+        }
+        userCallback(data.Error || null);
+      }.bind(this, callback);
+
+      // Send the API request.
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'DestroyModel'
+      }, handler);
+    },
+
   /**
-      List all environments the user can access on the current system.
+      List all models the user can access on the current controller.
 
       @method listEnvs
-      @param {String} userTag The name of the new environments owner, including
-        the "user-" prefix.
+      @param {String} userTag The name of the new model owner, including the
+        "user-" prefix.
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an object with an "err"
         attribute containing a string describing the problem (if an error
         occurred), or with the "envs" attribute if everything went well. The
-        "envs" field will contain a list of objects, each one representing an
-        environment with the following attributes:
+        "envs" field will contain a list of objects, each one representing a
+        model with the following attributes:
         - name: the name of the environment;
+        - tag: the model tag, like "model-de1b2c16-0151-4e63-87e9-9f0950a";
         - owner: the environment owner tag;
         - uuid: the unique identifier of the environment;
         - lastConnection: the date of the last connection as a string, e.g.:
@@ -2964,6 +3097,7 @@ YUI.add('juju-env-go', function(Y) {
           transformedData.envs = response[results].map(function(value) {
             return {
               name: value.Name,
+              tag: 'model-' + value.UUID,
               owner: value.OwnerTag,
               uuid: value.UUID,
               lastConnection: value.LastConnection
