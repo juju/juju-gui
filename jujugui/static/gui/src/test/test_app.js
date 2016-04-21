@@ -1151,7 +1151,7 @@ describe('App', function() {
         }
       };
       if (!noWebsocket) {
-         fake_env.ws = {
+        fake_env.ws = {
           onclose: function() { this.oncloseCalled = true; },
           oncloseCalled: false
         };
