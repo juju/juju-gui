@@ -110,8 +110,15 @@ YUI.add('deployment-summary', function() {
       @method _handleDeploy
     */
     _handleDeploy: function() {
+      // For now every commit will autoplace all units.
       this.props.autoPlaceUnits();
-      // The env is already bound to ecsCommit in app.js.
+      // If we're in a model which exists then just commit the ecs and return.
+      if (this.props.modelCommitted) {
+        // The env is already bound to ecsCommit in app.js.
+        this.props.ecsCommit();
+        this._close();
+        return;
+      }
       // Generates an alphanumeric string
       var randomString = () => Math.random().toString(36).slice(2);
       var password = randomString() + randomString();
@@ -146,6 +153,7 @@ YUI.add('deployment-summary', function() {
           // for that event so that we know when to commit the changeset.
           this._onLoginHandler = this.props.env.on('login', (data) => {
             this._detachOnLoginhandler();
+            // The env is already bound to ecsCommit in app.js.
             this.props.ecsCommit();
             this._close();
           });
@@ -283,7 +291,8 @@ YUI.add('deployment-summary', function() {
                 placeholder="test_model_01"
                 ref="modelName"
                 required="required"
-                type="text" />
+                type="text"
+                disabled={!!modelCommitted} />
             </form>
             <div className="six-col last-col">
               <p>Deploying to:</p>
