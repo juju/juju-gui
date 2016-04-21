@@ -831,28 +831,19 @@ describe('App', function() {
       assert.equal(app.dispatch.calledOnce(), false);
     });
 
-    it('navigates to requested url with hash on login', function() {
-      // In order to support bookmarking the current tab in the charm details
-      // we have navigateOnHash http://yuilibrary.com/yui/docs/api/classes/
-      // PjaxBase.html#attr_navigateOnHash set to false. This causes issues
-      // if the user is not yet logged in and requests a url with a hash in it
-      // becaause the router will then refuse to navigate to it. By navigating
-      // then manually dispatching it forces the application to render the
-      // proper view.
+    it('does not navigate to requested url on login with gisf', function() {
       var stubit = utils.makeStubMethod;
       var popup = utils.makeStubMethod(
-          Y.juju.App.prototype, 'popLoginRedirectPath', '/foo/bar#baz');
+          Y.juju.App.prototype, 'popLoginRedirectPath', '/foo/bar');
       this._cleanups.push(popup.reset);
       var app = makeApp(true, this);
+      app.set('gisf', true);
       stubit(app, 'maskVisibility');
       stubit(app, 'navigate');
       stubit(app, 'dispatch');
       app.onLogin({ data: { result: true } });
-      assert.equal(app.navigate.calledOnce(), true);
-      assert.deepEqual(app.navigate.lastArguments(), [
-        '/foo/bar#baz',
-        { overrideAllNamespaces: true }]);
-      assert.equal(app.dispatch.calledOnce(), true);
+      assert.equal(app.navigate.calledOnce(), false,
+        'navigate should not be called in gisf mode here');
     });
 
     // XXX This test causes intermittent cascading failures when run in CI.
