@@ -1381,6 +1381,32 @@ describe('utilities', function() {
       assert.deepEqual(switchEnvArgs[0][2], models[0].password);
     });
 
+    it('just disconnects if uuid is missing', function() {
+      var createSocketURL = testUtils.makeStubFunction();
+      var switchEnv = testUtils.makeStubFunction();
+      var models = [{
+        uuid: 'uuid1',
+        user: 'spinach',
+        password: 'hasselhoff',
+        'host-ports': [
+          'localhost:80',
+          'localhost:443'
+        ]
+      }];
+      utils.switchModel(createSocketURL, switchEnv, undefined, models);
+      assert.deepEqual(createSocketURL.callCount(), 0);
+      assert.deepEqual(switchEnv.callCount(), 1);
+      assert.equal(switchEnv.allArguments()[0].length, 0);
+    });
+
+    it('just disconnects if modelList is missing', function() {
+      var createSocketURL = testUtils.makeStubFunction();
+      var switchEnv = testUtils.makeStubFunction();
+      utils.switchModel(createSocketURL, switchEnv, 'model1', undefined);
+      assert.deepEqual(createSocketURL.callCount(), 0);
+      assert.deepEqual(switchEnv.callCount(), 1);
+      assert.equal(switchEnv.allArguments()[0].length, 0);
+    });
   });
 
 })();

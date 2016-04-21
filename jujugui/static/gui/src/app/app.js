@@ -1738,6 +1738,13 @@ YUI.add('juju-gui', function(Y) {
       // route dispatch proceed. On env connection change, the app will
       // re-dispatch and this route callback will be executed again.
       if (!this.env || !this.env.get('connected')) {
+        // If connected to a jem, we may be in a disconnected state while
+        // waiting for the new model to be defined as part of the deployment
+        // flow. In that case, carry on as normal.
+        if (this.jem) {
+          this.maskVisibility(false);
+          next();
+        }
         return;
       }
       var credentials = this.env.getCredentials();
@@ -1919,15 +1926,17 @@ YUI.add('juju-gui', function(Y) {
     /**
       Switch the application to another environment.
       Disconnect the current WebSocket connection and establish a new one
-      pointed to the environment referenced by the given unique identifier.
+      pointed to the environment referenced by the given URL.
 
       @method switchEnv
-      @param {String} uuid The environment UUID where to switch to.
+      @param {String} socketUrl The URL for the environment's websocket.
       @param {String} username The username for the new environment.
       @param {String} password The password for the new environment.
+      @param {Boolean} reconnect Whether to reconnect to a new environment; by
+                                 default, if the socketUrl is set, we assume we
+                                 want to reconnect to the provided URL.
     */
-    switchEnv: function(socketUrl, username, password) {
-      console.log('switching to new socket URL:', socketUrl);
+    switchEnv: function(socketUrl, username, password, reconnect=!!socketUrl) {
       if (this.get('sandbox')) {
         console.log('switching models is not supported in sandbox');
       }
@@ -1947,7 +1956,9 @@ YUI.add('juju-gui', function(Y) {
       // Disconnect and reconnect the environment.
       this.env.ws.onclose = function(event) {
         this.env.on_close();
-        this.env.connect();
+        if (reconnect) {
+          this.env.connect();
+        }
       }.bind(this);
       this.env.close();
       this.db.reset();

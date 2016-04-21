@@ -273,6 +273,12 @@ describe('UserProfile', () => {
               <span className="user-profile__size">
                 ({1})
               </span>
+              <div className='user-profile__create-new'>
+                <juju.components.GenericButton
+                  action={instance.switchModel}
+                  type='inline-neutral'
+                  title='Create new' />
+              </div>
             </div>
             <ul className="user-profile__list twelve-col">
               <li className="user-profile__list-header twelve-col">
@@ -297,7 +303,7 @@ describe('UserProfile', () => {
                 entity={models[0]}
                 expanded={false}
                 key="env1"
-                switchModel={instance.switchEnv}
+                switchModel={instance.switchModel}
                 type="model">
                 <span className="user-profile__list-col three-col">
                   sandbox
@@ -323,6 +329,7 @@ describe('UserProfile', () => {
               <span className="user-profile__size">
                 ({1})
               </span>
+              {undefined}
             </div>
             <ul className="user-profile__list twelve-col">
               <li className="user-profile__list-header twelve-col">
@@ -383,6 +390,7 @@ describe('UserProfile', () => {
               <span className="user-profile__size">
                 ({1})
               </span>
+              {undefined}
             </div>
             <ul className="user-profile__list twelve-col">
               <li className="user-profile__list-header twelve-col">
@@ -647,12 +655,12 @@ describe('UserProfile', () => {
     listEnvs.args[0][1](envs);
     // Call the method that's passed down. We test that this method is correctly
     // passed down in the initial 'happy path' full rendering test.
-    instance.switchEnv('abc123', 'modelname');
+    instance.switchModel('abc123', 'modelname');
     // Make sure we show the canvas loading mask when switching models.
     assert.equal(showMask.callCount, 1);
     // We need to call to generate the proper socket URL.
     // Check that switchModel is called with the proper values.
-    assert.equal(switchModel.callCount, 1, 'switchEnv not called');
+    assert.equal(switchModel.callCount, 1, 'switchModel not called');
     assert.deepEqual(switchModel.args[0], ['abc123', [{
       uuid: 'abc123', user: 'foo', password: 'bar'}]]);
     // The database needs to be updated with the new model name.
@@ -749,5 +757,48 @@ describe('UserProfile', () => {
     renderer.unmount();
     assert.equal(charmstoreAbort.callCount, 2);
     assert.equal(listEnvsAbort.callCount, 1);
+  });
+
+  it('can reset the model connection', () => {
+    var pluralize = sinon.stub();
+    pluralize.withArgs('model', sinon.match.any).returns('models');
+    pluralize.withArgs('bundle', sinon.match.any).returns('bundles');
+    pluralize.withArgs('charm', sinon.match.any).returns('charms');
+    var utilsSwitchModel = sinon.stub();
+    var dbEnvironmentSet = sinon.stub();
+    var changeState = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.UserProfile
+        switchModel={utilsSwitchModel}
+        users={users}
+        listEnvs={sinon.stub()}
+        showConnectingMask={sinon.stub()}
+        changeState={changeState}
+        charmstore={{}}
+        dbEnvironmentSet={dbEnvironmentSet}
+        env={env}
+        getDiagramURL={sinon.stub()}
+        gisf={false}
+        interactiveLogin={true}
+        storeUser={sinon.stub()}
+        pluralize={pluralize}
+        user={users.charmstore} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.switchModel();
+    assert.equal(utilsSwitchModel.callCount, 1,
+                 'Model disconnect not called');
+    var switchArgs = utilsSwitchModel.args[0];
+    assert.equal(switchArgs[0], undefined,
+                 'UUID should not be defined');
+    assert.equal(dbEnvironmentSet.callCount, 1,
+                 'Model name not set in db');
+    var dbEnvSetArgs = dbEnvironmentSet.args[0];
+    assert.equal(dbEnvSetArgs[1], 'untitled_model');
+    assert.deepEqual(changeState.getCall(0).args[0], {
+      sectionC: {
+        component: null,
+        metadata: null
+      }
+    }, 'App state not reset');
   });
 });

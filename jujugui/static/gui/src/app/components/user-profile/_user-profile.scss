@@ -1,4 +1,9 @@
 .user-profile {
+    &__create-new {
+        float: right;
+        font-size: 1rem;
+    }
+
     &__close {
         position: fixed;
         z-index: 1;
@@ -11,7 +16,9 @@
         margin-top: 10px;
         padding-bottom: 20px;
         padding-left: 15px;
+        padding-right: 15px;
         font-size: 1.375em;
+        line-height: 40px;
     }
 
     &__empty {
