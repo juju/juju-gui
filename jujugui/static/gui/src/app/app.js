@@ -1954,13 +1954,12 @@ YUI.add('juju-gui', function(Y) {
       // Clear uncommitted state.
       this.env.get('ecs').clear();
       // Disconnect and reconnect the environment.
-      var env = this.env;
       var onclose = function() {
-        env.on_close();
+        this.on_close();
         if (reconnect) {
-          env.connect();
+          this.connect();
         }
-      };
+      }.bind(this.env);
       if(this.env.ws) {
         this.env.ws.onclose = onclose;
         this.env.close();
