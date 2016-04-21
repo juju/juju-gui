@@ -1954,13 +1954,19 @@ YUI.add('juju-gui', function(Y) {
       // Clear uncommitted state.
       this.env.get('ecs').clear();
       // Disconnect and reconnect the environment.
-      this.env.ws.onclose = function(event) {
-        this.env.on_close();
+      var env = this.env;
+      var onclose = function() {
+        env.on_close();
         if (reconnect) {
-          this.env.connect();
+          env.connect();
         }
-      }.bind(this);
-      this.env.close();
+      };
+      if(this.env.ws) {
+        this.env.ws.onclose = onclose;
+        this.env.close();
+      } else {
+        this.env.close(onclose);
+      }
       this.db.reset();
       this.db.fire('update');
       // Reset canvas centering to new env will center on load.
