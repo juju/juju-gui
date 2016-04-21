@@ -102,7 +102,8 @@ describe('DeploymentSummary', function() {
               placeholder="test_model_01"
               ref="modelName"
               required="required"
-              type="text" />
+              type="text"
+              disabled={false} />
           </form>
           <div className="six-col last-col">
             <p>Deploying to:</p>
@@ -271,6 +272,56 @@ describe('DeploymentSummary', function() {
         }
       }
     });
+  });
+
+  it('only commits changes on existing models', function() {
+    var autoPlaceUnits = sinon.stub();
+    var changeState = sinon.stub();
+    var ecsCommit = sinon.stub();
+    var jem = {
+      newEnvironment: sinon.stub(),
+    };
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentSummary
+        jem={jem}
+        env={{}}
+        appSet={sinon.stub()}
+        createSocketURL={sinon.stub()}
+        controller="yellow/aws-eu-central"
+        deploymentStorage={{ templateName: 'secureTemplate' }}
+        users={{ jem: { user: 'joecoder' }}}
+        autoPlaceUnits={autoPlaceUnits}
+        ecsClear={sinon.stub()}
+        ecsCommit={ecsCommit}
+        changeDescriptions={[]}
+        changeState={changeState}
+        getUnplacedUnitCount={sinon.stub().returns(1)}
+        modelCommitted={true}
+        modelName="Prod"
+        numberOfChanges={6} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    // We need to make sure that the model name input is disabled if
+    // the user is deploying to an existing model.
+    var props = output.props;
+    assert.equal(
+      props.children[0].props.children[1].props.children[2].props.disabled,
+      true);
+    assert.equal(props.children[1].props.buttons[0].title, 'Commit');
+    instance.refs = {modelName: {value: 'Prod'}};
+    output.props.children[1].props.buttons[0].action();
+    assert.equal(autoPlaceUnits.callCount, 1);
+    assert.equal(ecsCommit.callCount, 1);
+    assert.equal(changeState.callCount , 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionC: {
+        component: null,
+        metadata: {}
+      }
+    });
+    // The deploy method should exit before trying to call to
+    // create a new model.
+    assert.equal(jem.newEnvironment.callCount, 0);
   });
 
   it('creates a new model on deploy', function() {
