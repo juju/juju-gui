@@ -1107,7 +1107,7 @@ describe('App', function() {
 
   describe('switchEnv', function() {
     var Y, app, testUtils;
-    var _generateMockedApp = function(sandbox, socketUrl) {
+    var _generateMockedApp = function(noWebsocket) {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
         charmstorestore: new window.jujulib.charmstore(),
@@ -1115,25 +1115,20 @@ describe('App', function() {
         container: container,
         jujuCoreVersion: '1.21.1.1-trusty-amd64',
         password: 'admin',
-        sandbox: sandbox,
+        sandbox: false,
         sandboxSocketURL: 'ws://host:port/ws/environment/undefined/api',
         socketTemplate: '/environment/$uuid/api',
         user: 'admin',
         viewContainer: container
       });
-      var fake_ws = {
-        onclose: function() { this.oncloseCalled = true; },
-        oncloseCalled: false
-      };
       var fake_ecs = {
         clear: function() { this.clearCalled = true; },
         clearCalled: false
       };
       var fake_env = {
         ecs: fake_ecs,
-        ws: fake_ws,
         closeCalled: false,
-        socketUrl: socketUrl || 'wss://example.com/ws',
+        socketUrl: 'wss://example.com/ws',
         setUser: 'not-called',
         setPassword: 'not-called',
         close: function() { this.closeCalled = true; },
@@ -1155,6 +1150,12 @@ describe('App', function() {
           this.setPassword = obj.password;
         }
       };
+      if (!noWebsocket) {
+        fake_env.ws = {
+          onclose: function() { this.oncloseCalled = true; },
+          oncloseCalled: false
+        };
+      }
       var fake_db = {
         resetCalled: false,
         fireSignal: null,
@@ -1195,8 +1196,20 @@ describe('App', function() {
       }
     });
 
+    it('can connect to an env even if not currently connected', function() {
+      app = _generateMockedApp(true);
+      app.switchEnv('uuid', 'user', 'password');
+      assert.isTrue(app.env.ecs.clearCalled, 'ecs was not cleared.');
+      assert.isTrue(app.env.closeCalled, 'env was not closed.');
+      assert.isTrue(app.db.resetCalled, 'db was not reset.');
+      assert.equal(app.db.fireSignal, 'update', 'db was not updated.');
+      var topo = app.views.environment.instance.topo;
+      assert.isTrue(topo.modules.ServiceModule.centerOnLoad,
+                    'canvas centering was not reset.');
+    });
+
     it('clears and resets the env, db, and ecs on change', function() {
-      app = _generateMockedApp(false);
+      app = _generateMockedApp();
       app.switchEnv('uuid', 'user', 'password');
       assert.isTrue(app.env.ecs.clearCalled, 'ecs was not cleared.');
       assert.isTrue(app.env.closeCalled, 'env was not closed.');
@@ -1208,7 +1221,7 @@ describe('App', function() {
     });
 
     it('sets credentials based on existence of jem', function() {
-      app = _generateMockedApp(false);
+      app = _generateMockedApp();
       app.jem = false;
       app.switchEnv('uuid');
       assert.equal(
