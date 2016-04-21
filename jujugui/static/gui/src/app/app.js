@@ -1834,7 +1834,6 @@ YUI.add('juju-gui', function(Y) {
         // The login was a success.
         this.maskVisibility(false);
         this._emptySectionApp();
-        var redirectPath = this.popLoginRedirectPath();
         this.set('loggedIn', true);
         // Handle token authentication.
         if (e.data.fromToken) {
@@ -1869,16 +1868,13 @@ YUI.add('juju-gui', function(Y) {
           // Try to create a bundle uncommitted state using the token.
           this.bundleImporter.importChangesToken(changesToken);
         }
-        this.navigate(redirectPath, {overrideAllNamespaces: true});
-        // If the redirectPath has a hash then it will not dispatch after log in
-        // because navigateOnHash is set to false so that we can use hash's to
-        // show the correct tab in the charm details pages. This issue only
-        // presents itself until the next delta comes in and the application
-        // hits it's double dispatch and dispatches the url again. As a
-        // workaround we check if there is a hash in the url and then dispatch
-        // manually.
-        if (redirectPath.indexOf('#') > -1) {
-          this.dispatch();
+        // If we are in GISF mode then we do not want to store and redirect
+        // on login because the user has already logged into their models
+        // and will frequently be switching between models and logging in to
+        // them. We rely exclusively on the state system to update the paths.
+        if (!this.get('gisf')) {
+          var redirectPath = this.popLoginRedirectPath();
+          this.navigate(redirectPath, {overrideAllNamespaces: true});
         }
       } else {
         this._renderLogin(true);
