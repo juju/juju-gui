@@ -335,7 +335,10 @@ $(SELENIUM): $(PY)
 # Tests
 #######
 .PHONY: lint
-lint: $(FLAKE8)
+lint: lint-python lint-js
+
+.PHONY: lint-python
+lint-python: $(FLAKE8)
 	$(FLAKE8) jujugui
 
 .PHONY: lint-js
@@ -343,7 +346,10 @@ lint-js: $(NODE_MODULES)
 	$(NODE_MODULES)/.bin/eslint --rulesdir eslint-rules/ $(GUISRC)
 
 .PHONY: test
-test: $(JUJUGUI) $(PYTEST)
+test: test-python test-js test-js-old
+
+.PHONY: test-python
+test-python: $(JUJUGUI) $(PYTEST)
 	$(PYTEST) -s jujugui/tests
 
 .PHONY: test-js
@@ -366,7 +372,7 @@ test-selenium: gui $(PY) $(SELENIUM)
 	JUJU_GUI_TEST_BROWSER="chrome" ./scripts/test-js-selenium.sh
 
 .PHONY: check
-check: clean-pyc lint lint-js test test-js-old test-js
+check: clean-pyc lint test
 
 # ci-check is the target run by CI.
 .PHONY: ci-check
