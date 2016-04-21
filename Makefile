@@ -335,7 +335,10 @@ $(SELENIUM): $(PY)
 # Tests
 #######
 .PHONY: lint
-lint: $(FLAKE8)
+lint: lint-python lint-js
+
+.PHONY: lint-python
+lint-python: $(FLAKE8)
 	$(FLAKE8) jujugui
 
 .PHONY: lint-js
