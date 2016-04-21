@@ -736,6 +736,7 @@ YUI.add('juju-env-go', function(Y) {
         }
         var results = data.Response.results;
         if (results.length !== tags.length) {
+          // Sanity check: this should never happen.
           userCallback({
             err: 'unexpected results: ' + JSON.stringify(results)
           });
@@ -3020,10 +3021,10 @@ YUI.add('juju-env-go', function(Y) {
     /**
       Destroy the current connected model.
 
-      For obvious reasons callers should switch the WebSocket connection to
-      an alive model after receiving a successful response in the provided
-      callback. Keeping a WebSocket connection to a zombie model could lead
-      to a broken GUI state and exotic errors difficult to debug.
+      Callers should switch the WebSocket connection to an alive model after
+      receiving a successful response in the provided callback. Keeping a
+      WebSocket connection to a zombie model could lead to a broken GUI state
+      and exotic errors difficult to debug.
       Note that at the time the callback is called the destroyed model may
       still be included in the list of models returned by listEnvs or
       listModelsWithInfo calls. In the latter call, the model "isAlive"
