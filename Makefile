@@ -346,7 +346,10 @@ lint-js: $(NODE_MODULES)
 	$(NODE_MODULES)/.bin/eslint --rulesdir eslint-rules/ $(GUISRC)
 
 .PHONY: test
-test: $(JUJUGUI) $(PYTEST)
+test: test-python test-js test-js-old
+
+.PHONY: test-python
+test-python: $(JUJUGUI) $(PYTEST)
 	$(PYTEST) -s jujugui/tests
 
 .PHONY: test-js
