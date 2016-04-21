@@ -274,10 +274,14 @@ YUI.add('juju-env-base', function(Y) {
       Close the WebSocket connection to the Juju API server.
 
       @method close
+      @param cb Optional callback.
     */
-    close: function() {
+    close: function(cb) {
       if (this.ws) {
         this.beforeClose(this.ws.close.bind(this.ws));
+      }
+      if (cb) {
+        cb(); 
       }
     },
 
