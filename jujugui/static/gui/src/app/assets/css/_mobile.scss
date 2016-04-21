@@ -1,0 +1,278 @@
+@media only screen and (max-width: 600px) {
+  // Hide canvas on small screens
+  #viewport {
+    display: none;
+  }
+
+  // Inspector full width
+  .env-size-display,
+  .inspector-view {
+    left: 0;
+    width: 100%;
+  }
+
+  // Update to show deployment buttons at the bottom
+  .inspector-view {
+    max-height: calc(100% - 200px);
+  }
+
+  .overview-action__link:not(.hidden) {
+    display: none;
+  }
+
+  // Only show search form when open
+  .header-search__form {
+    display: none;
+  }
+
+  .header-search--active .header-search__form {
+    display: inline;
+  }
+
+  // Inspector - change version
+  .inspector-current-version__item .button--inline-neutral {
+    display: inline-block;
+  }
+
+  // Entity tweaks
+  .entity-content .row,
+  .row-hero {
+    padding: 20px 10px;
+    margin-bottom: 0;
+  }
+
+  .entity-content__description .twelve-col {
+    margin-bottom: 20px;
+  }
+
+  .entity-content__header {
+    margin-bottom: 1em;
+  }
+
+  .entity-header {
+    padding-bottom: 0;
+  }
+
+  .entity-header__social-list {
+    margin-bottom: 20px;
+  }
+
+  .entity-content__metadata {
+    margin: 0;
+  }
+
+  .entity-header--sticky {
+    position: relative;
+  }
+
+  .entity-content .row {
+    overflow: visible;
+  }
+
+  .charmbrowser {
+    left: 0;
+  }
+
+  // Mid-point
+  .mid-point__title {
+    display: none;
+  }
+
+  .mid-point__charm,
+  .mid-point__charm-list {
+    display: block;
+    width: 100%;
+    float: none;
+    box-sizing: border-box;
+  }
+
+  .mid-point__charm-icon {
+    margin-bottom: .5em;
+  }
+
+  .mid-point__charm {
+    display: none;
+  }
+
+  .mid-point__charm:nth-child(2n) {
+    display: block;
+  }
+
+  .mid-point__tag {
+    float: left;
+    width: 49%;
+    text-align: left;
+  }
+
+  // Machine view
+  .machine-view__content {
+    display: block;
+    top: $navbar-height * 2;
+    left: 0;
+    bottom: 80px;
+    overflow-y: auto;
+    width: 100%;
+  }
+
+  .machine-view__column {
+    overflow: visible;
+    display: block;
+    border-left: 0;
+  }
+
+  .machine-view__column-content {
+    overflow: inherit;
+  }
+
+  .machine-view__column-onboarding {
+    display: none;
+  }
+
+  .machine-view__machine--selected {
+    border-color: $mid-grey;
+    margin: 0;
+    padding-right: 10px;
+    border-style: dashed;
+
+    &.machine-view__machine--uncommitted {
+      border-color: $uncommitted;
+      margin: 0;
+      padding-right: 10px;
+      border-style: dashed;
+    }
+  }
+
+  .more-menu__menu {
+    margin-bottom: 20px;
+  }
+
+   // Deployment bar
+  .panel-component.deployment-bar-panel {
+    bottom: 20px;
+
+    .deployment-bar__export,
+    .deployment-bar__import,
+    .button--inline-neutral {
+      display: none;
+    }
+  }
+
+  // Search results
+  .search-results .list-block {
+    .list-block__filters--selects {
+      float: none;
+      margin: 0 20px;
+
+      select {
+        width: 100%;
+      }
+    }
+
+    .list-block__list--item .list-block__list--item-title {
+      margin-bottom: .5em;
+    }
+  }
+
+
+  // User profile
+  .user-profile .inner-wrapper {
+    margin: 0 10px;
+  }
+
+  .user-profile-header {
+    padding-bottom: 40px;
+  }
+
+  .user-profile-header .button--inline-neutral {
+    float: none;
+    margin: 0 0 20px;
+    display: block;
+    width: 100%;
+  }
+
+  .user-profile-header__counts {
+    margin: 10px;
+  }
+
+  .user-profile-header__count {
+    margin-right: 10px;
+  }
+
+  .user-profile__list {
+    .expanding-row__expanded-header {
+      .ten-col {
+        width: calc(100% - 120px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .expanding-row__expanded-header-action {
+        float: right;
+        position: relative;
+        top: -30px;
+      }
+    }
+
+    .expanding-row__expanded-content {
+      padding-bottom: 10px;
+    }
+  }
+
+  .user-profile-header__username {
+    display: inline-block;
+    position: relative;
+    top: -20px;
+    width: calc(100% - 140px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .user-profile-header__avatar--default {
+    display: inline-block;
+    float: none;
+  }
+
+  .user-profile__entity--expanded {
+    padding-left: 0;
+
+    .user-profile__entity-details {
+      margin-left: 0;
+    }
+  }
+
+  .user-profile__list-header {
+    display: none;
+  }
+
+  .user-profile__entity-details-content {
+    padding-bottom: 7px;
+  }
+
+  .user-profile__header {
+    padding-bottom: 0;
+  }
+
+  // Deployment summary
+   .deployment-summary-classic {
+     left: 0;
+     right: 0;
+   }
+
+   .deployment-summary-classic__placement {
+     padding: 20px 0 0;
+   }
+
+   .deployment-summary-classic__placement-label {
+     padding: 10px 0;
+     display: inline;
+   }
+
+   .deployment-summary-classic__placement-radio {
+     margin-bottom: 20px;
+     margin-top: 20px;
+
+     &:first-of-type {
+       margin-left: 0;
+     }
+   }
+}
