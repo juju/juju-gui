@@ -71,9 +71,9 @@ YUI.add('env-size-display', function() {
         active = true;
       }
       return classNames(
-        'tab',
+        'env-size-display__list-item',
         {
-          active: active
+          'is-active': active
         }
       );
     },
@@ -81,15 +81,20 @@ YUI.add('env-size-display', function() {
     render: function() {
       return (
         <div className="env-size-display">
-          <ul>
+          <ul className="env-size-display__list">
               <li className={this._genClasses('service')}>
-                  <a data-view="service" onClick={this._changeEnvironmentView}>
+                  <a data-view="service" onClick={this._changeEnvironmentView}
+                    className="env-size-display__link">
+                    <juju.components.SvgIcon name="relations"
+                      className="env-size-display__icon" size="16" />
                     {this.props.serviceCount} services
                   </a>
               </li>
-              <li className="spacer">|</li>
               <li className={this._genClasses('machine')}>
-                  <a data-view="machine" onClick={this._changeEnvironmentView}>
+                  <a data-view="machine" onClick={this._changeEnvironmentView}
+                    className="env-size-display__link">
+                    <juju.components.SvgIcon name="changes-machine-created"
+                      className="env-size-display__icon" size="16" />
                     {this.props.machineCount} machines
                   </a>
               </li>

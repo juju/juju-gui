@@ -1,34 +1,67 @@
 .env-size-display {
-    @extend %floating-panel;
     box-sizing: border-box;
     position: absolute;
     z-index: index($z-indexed-elements, env-size-display);
     top: $navbar-height + $panel-space;
     left: $panel-space * 2;
     width: $left-panel-width;
-    height: $environment-header-height;
-    padding: 0 20px;
     color: $cool-grey;
-    line-height: $environment-header-height;
 
-    ul {
+    &__list {
         margin: 0;
         list-style: none;
+        display: flex;
+        margin-bottom: 10px;
+    }
 
-        li {
-            display: inline;
+    &__list-item {
+        height: $environment-header-height;
+        line-height: $environment-header-height;
+        text-align: center;
+        flex: 1;
+        border: 1px solid $light-mid-grey;
+        margin-bottom: 0;
+        background-color: transparent;
+        transition: background-color .2s;
 
-            a {
+        &:last-of-type {
+            border-left: 0;
+        }
+
+        &:hover {
+            background-color: $white;
+        }
+    }
+
+    &__link {
+        text-decoration: none;
+        display: block;
+
+        &:hover {
+            text-decoration: none;
+            color: $ubuntu-orange;
+
+            span {
                 color: $cool-grey;
             }
-
-            &.active a {
-                text-decoration: none;
-            }
         }
+    }
 
-        .spacer {
-            margin: 0 5px;
+    &__list-item.is-active {
+        background-color: $white;
+    }
+
+    &__list-item.is-active &__link {
+        color: $ubuntu-orange;
+
+        span {
+            color: $cool-grey;
         }
+    }
+
+    &__icon {
+        position: relative;
+        top: 2px;
+        margin-right: 6px;
     }
 }
