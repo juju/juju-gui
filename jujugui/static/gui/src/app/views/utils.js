@@ -57,6 +57,7 @@ YUI.add('juju-view-utils', function(Y) {
       utopic: {name: 'Utopic Unicorn 14.10'},
       vivid: {name: 'Vivid Vervet 15.04'},
       wily: {name: 'Wily Werewolf 15.10'},
+      xenial: {name: 'Xenial Xerus 16.04'},
       centos7: {name: 'CentOS 7'},
       win2012hvr2: {name: 'Windows Server 2012 R2 Hyper-V'},
       win2012hv: {name: 'Windows Server 2012 Hyper-V'},
