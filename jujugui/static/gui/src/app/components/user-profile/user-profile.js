@@ -33,7 +33,7 @@ YUI.add('user-profile', function() {
       gisf: React.PropTypes.bool.isRequired,
       interactiveLogin: React.PropTypes.bool,
       jem: React.PropTypes.object,
-      listEnvs: React.PropTypes.func,
+      listModels: React.PropTypes.func,
       pluralize: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
       staticURL: React.PropTypes.string,
@@ -108,10 +108,9 @@ YUI.add('user-profile', function() {
             var environmentName = env.get('environmentName');
             var username = this.props.user && this.props.user.usernameDisplay;
             this._fetchEnvironmentsCallback(null, {
-              environmentCount: 1,
-              envs: [{
+              models: [{
                 name: environmentName,
-                owner: username,
+                ownerTag: username,
                 // Leave the UUID blank so that it navigates to the default
                 // model when selected.
                 uuid: '',
@@ -125,8 +124,8 @@ YUI.add('user-profile', function() {
         if (jem) {
           xhr = jem.listEnvironments(this._fetchEnvironmentsCallback);
         } else {
-          xhr = props.listEnvs(
-            'user-admin', this._fetchEnvironmentsCallback.bind(this, null));
+          xhr = props.listModels(
+            this._fetchEnvironmentsCallback.bind(this, null));
         }
         this.xhrs.push(xhr);
       });
@@ -147,20 +146,29 @@ YUI.add('user-profile', function() {
         console.log(err);
         return;
       }
-      // data.envs is only populated in the JES environments, when using JEM
+      // data.models is only populated by Juju controllers, when using JEM
       // the environments are in the top level 'data' object.
-      var envs = data.envs || data;
-      // XXX kadams54: JEM models don't *currently* have a name or owner. They
-      // have a path which is a combination of both, but that format may change
-      // on down the road. Hence this big comment.
-      var envList = envs.map((env) => {
-        if (env.path) {
-          env.name = env.path;
-          env.owner = env.path.split('/')[0];
-          env.lastConnection = 'N/A';
-        }
-        return env;
-      });
+      var envList;
+      if (data.models) {
+        envList = data.models.map(function(model) {
+          // XXX frankban: owner should be the ownerTag without the 'user-'
+          // prefix here.
+          model.owner = model.ownerTag;
+          return model;
+        });
+      } else {
+        envList = data.map(function(model) {
+          // XXX kadams54: JEM models don't *currently* have a name or owner.
+          // They have a path which is a combination of both, but that format
+          // may change on down the road. Hence this big comment.
+          model.name = model.path;
+          model.owner = model.path.split('/')[0];
+          model.lastConnection = 'N/A';
+          // XXX frankban: does JEM provide lifecycle indications?
+          model.isAlive = true;
+          return model;
+        });
+      }
       this.setState({envList: envList});
     },
 

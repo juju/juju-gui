@@ -753,7 +753,7 @@ YUI.add('juju-gui', function(Y) {
           env={this.env}
           jem={this.jem}
           gisf={this.get('gisf')}
-          listEnvs={this.env.listEnvs.bind(this.env)}
+          listModels={this.env.listModelsWithInfo.bind(this.env)}
           changeState={this.changeState.bind(this)}
           dbEnvironmentSet={this.db.environment.set.bind(this.db.environment)}
           showConnectingMask={this.showConnectingMask.bind(this)}

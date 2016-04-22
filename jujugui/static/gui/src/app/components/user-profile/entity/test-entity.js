@@ -33,7 +33,8 @@ describe('UserProfileEntity', () => {
       uuid: 'env1',
       name: 'sandbox',
       lastConnection: 'today',
-      owner: 'test-owner'
+      owner: 'test-owner',
+      isAlive: true
     };
   });
 
@@ -65,6 +66,49 @@ describe('UserProfileEntity', () => {
                 action={button.props.action}
                 type="inline-neutral"
                 title="Manage" />
+            </div>
+          </div>
+          <div className={'expanding-row__expanded-content twelve-col ' +
+            'no-margin-bottom'}>
+            {undefined}
+            {undefined}
+            <div className="three-col last-col">
+              Owner: {"test-owner"}
+            </div>
+            {undefined}
+            {undefined}
+            {undefined}
+            {undefined}
+          </div>
+        </div>
+      </juju.components.ExpandingRow>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('does not render manage button for zombie models', () => {
+    model.isAlive = false;
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.UserProfileEntity
+        entity={model}
+        expanded={false}
+        switchModel={sinon.stub()}
+        type="model">
+        <span>Summary details</span>
+      </juju.components.UserProfileEntity>, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.ExpandingRow classes={{
+        'user-profile__entity': true, 'user-profile__list-row': true}}
+        expanded={false}>
+        <span>Summary details</span>
+        <div>
+          <div className="expanding-row__expanded-header twelve-col">
+            <div className="ten-col no-margin-bottom">
+              {undefined}{"sandbox"}
+            </div>
+            <div className={'expanding-row__expanded-header-action ' +
+              'two-col last-col no-margin-bottom'}>
+              {undefined}
             </div>
           </div>
           <div className={'expanding-row__expanded-content twelve-col ' +

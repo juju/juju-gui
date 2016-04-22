@@ -262,6 +262,13 @@ YUI.add('user-profile-entity', function() {
         'user-profile__entity': true,
         'user-profile__list-row': true
       };
+      var isZombieModel = isModel && !entity.isAlive;
+      // XXX frankban: add UX for zombie models in place of undefined below.
+      var button = isZombieModel ? undefined : (
+        <juju.components.GenericButton
+          action={buttonAction}
+          type='inline-neutral'
+          title={isModel ? 'Manage' : 'View'} />);
       return (
         <juju.components.ExpandingRow classes={classes}
           expanded={this.props.expanded}>
@@ -273,10 +280,7 @@ YUI.add('user-profile-entity', function() {
               </div>
               <div className={'expanding-row__expanded-header-action ' +
                 'two-col last-col no-margin-bottom'}>
-                <juju.components.GenericButton
-                  action={buttonAction}
-                  type='inline-neutral'
-                  title={isModel ? 'Manage' : 'View'} />
+                {button}
               </div>
             </div>
             <div className={'expanding-row__expanded-content twelve-col ' +

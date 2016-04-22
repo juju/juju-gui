@@ -3810,9 +3810,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('successfully creates a local environment', function(done) {
+    it('successfully creates a local model', function(done) {
       env.set('providerType', 'local');
-      env.createEnv('myenv', 'user-who', function(data) {
+      env.createModel('myenv', 'user-who', function(data) {
         assert.strictEqual(data.err, undefined);
         assert.strictEqual(data.name, 'myenv');
         assert.strictEqual(data.owner, 'user-rose');
@@ -3871,10 +3871,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('successfully creates a local environment (legacy)', function(done) {
+    it('successfully creates a local model (legacy)', function(done) {
       env.set('providerType', 'local');
       env.set('facades', {'EnvironmentManager': [1]});
-      env.createEnv('myenv', 'user-who', function(data) {
+      env.createModel('myenv', 'user-who', function(data) {
         assert.strictEqual(data.err, undefined);
         assert.strictEqual(data.name, 'myenv');
         assert.strictEqual(data.owner, 'user-rose');
@@ -3933,9 +3933,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('successfully creates an ec2 environment', function(done) {
+    it('successfully creates an ec2 model', function(done) {
       env.set('providerType', 'ec2');
-      env.createEnv('myenv', 'user-who', function(data) {
+      env.createModel('myenv', 'user-who', function(data) {
         assert.strictEqual(data.err, undefined);
         assert.strictEqual(data.name, 'my-ec2-env');
         assert.equal(conn.messages.length, 3);
@@ -3979,9 +3979,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('successfully creates an openstack environment', function(done) {
+    it('successfully creates an openstack model', function(done) {
       env.set('providerType', 'openstack');
-      env.createEnv('myenv', 'user-who', function(data) {
+      env.createModel('myenv', 'user-who', function(data) {
         assert.strictEqual(data.err, undefined);
         assert.strictEqual(data.name, 'my-openstack-env');
         assert.equal(conn.messages.length, 3);
@@ -4030,9 +4030,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('successfully creates a MAAS environment', function(done) {
+    it('successfully creates a MAAS model', function(done) {
       env.set('providerType', 'maas');
-      env.createEnv('myenv', 'user-who', function(data) {
+      env.createModel('myenv', 'user-who', function(data) {
         assert.strictEqual(data.err, undefined);
         assert.strictEqual(data.name, 'my-maas-env');
         assert.equal(conn.messages.length, 3);
@@ -4081,8 +4081,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('handles failures while retrieving env skeleton', function(done) {
-      env.createEnv('bad-env', 'user-dalek', function(data) {
+    it('handles failures while retrieving model skeleton', function(done) {
+      env.createModel('bad-env', 'user-dalek', function(data) {
         assert.strictEqual(
           data.err, 'cannot get configuration skeleton: bad wolf');
         done();
@@ -4091,8 +4091,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({RequestId: 1, Error: 'bad wolf'});
     });
 
-    it('handles failures while retrieving env config', function(done) {
-      env.createEnv('bad-env', 'user-dalek', function(data) {
+    it('handles failures while retrieving model config', function(done) {
+      env.createModel('bad-env', 'user-dalek', function(data) {
         assert.strictEqual(
           data.err, 'cannot get model configuration: bad wolf');
         done();
@@ -4106,9 +4106,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({RequestId: 2, Error: 'bad wolf'});
     });
 
-    it('handles failures while creating environments', function(done) {
+    it('handles failures while creating models', function(done) {
       env.set('providerType', 'local');
-      env.createEnv('bad-env', 'user-dalek', function(data) {
+      env.createModel('bad-env', 'user-dalek', function(data) {
         assert.strictEqual(data.err, 'bad wolf');
         done();
       });
@@ -4126,8 +4126,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({RequestId: 3, Error: 'bad wolf'});
     });
 
-    it('lists environments for a specific owner', function(done) {
-      env.listEnvs('user-who', function(data) {
+    it('lists models for a specific owner', function(done) {
+      env.listModels('user-who', function(data) {
         assert.strictEqual(data.err, undefined);
         assert.deepEqual([
           {
@@ -4177,9 +4177,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('lists environments for a specific owner (legacy)', function(done) {
+    it('lists models for a specific owner (legacy)', function(done) {
       env.set('facades', {'EnvironmentManager': [1]});
-      env.listEnvs('user-who', function(data) {
+      env.listModels('user-who', function(data) {
         assert.strictEqual(data.err, undefined);
         assert.deepEqual([
           {
@@ -4229,8 +4229,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('handles failures while listing environments', function(done) {
-      env.listEnvs('user-dalek', function(data) {
+    it('handles failures while listing models', function(done) {
+      env.listModels('user-dalek', function(data) {
         assert.strictEqual(data.err, 'bad wolf');
         done();
       });
