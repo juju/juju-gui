@@ -103,12 +103,14 @@ YUI.add('deployment-component', function() {
               deploymentStorage={this._deploymentStorage}
               users={this.props.users}
               autoPlaceUnits={this.props.autoPlaceUnits}
+              changeCounts={this.props.changeCounts}
               changeDescriptions={this.props.changeDescriptions}
               changeState={this.props.changeState}
               controller={this._controller}
               ecsClear={this.props.ecsClear}
               ecsCommit={this.props.ecsCommit}
               getUnplacedUnitCount={this.props.getUnplacedUnitCount}
+              pluralize={this.props.pluralize}
               modelCommitted={this.props.modelCommitted}
               modelName={this.props.modelName}
               numberOfChanges={this.props.numberOfChanges} />);

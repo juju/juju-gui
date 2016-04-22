@@ -26,6 +26,7 @@ YUI.add('deployment-summary', function() {
       jem: React.PropTypes.object.isRequired,
       env: React.PropTypes.object.isRequired,
       appSet: React.PropTypes.func.isRequired,
+      changeCounts: React.PropTypes.func.isRequired,
       createSocketURL: React.PropTypes.func.isRequired,
       deploymentStorage: React.PropTypes.object.isRequired,
       users: React.PropTypes.object.isRequired,
@@ -36,6 +37,7 @@ YUI.add('deployment-summary', function() {
       ecsClear: React.PropTypes.func.isRequired,
       ecsCommit: React.PropTypes.func.isRequired,
       getUnplacedUnitCount: React.PropTypes.func.isRequired,
+      pluralize: React.PropTypes.func.isRequired,
       modelCommitted: React.PropTypes.bool.isRequired,
       modelName: React.PropTypes.string.isRequired,
       numberOfChanges: React.PropTypes.number.isRequired
@@ -198,6 +200,27 @@ YUI.add('deployment-summary', function() {
     },
 
     /**
+      Generate a title if there are new services or machines.
+
+      @method _generateTitle
+      @returns {Object} The placement markup.
+    */
+    _generateTitle: function() {
+      var changeCounts = this.props.changeCounts;
+      var serviceCount = changeCounts['_deploy'] || 0;
+      var machineCount = changeCounts['_addMachines'] || 0;
+      var pluralize = this.props.pluralize;
+      if (serviceCount + machineCount === 0) {
+        return;
+      }
+      return (
+        <h3 className="deployment-panel__section-title twelve-col">
+          Deploying {serviceCount} {pluralize('service', serviceCount)} on&nbsp;
+          {machineCount} {pluralize('machine', machineCount)}
+        </h3>);
+    },
+
+    /**
       Generate a message if there are unplaced units.
 
       @method _generatePlacement
@@ -208,17 +231,20 @@ YUI.add('deployment-summary', function() {
       if (unplacedCount === 0) {
         return;
       }
-      var plural = unplacedCount === 1 ? '' : 's';
       return (
         <div className="deployment-summary__placement twelve-col">
           <span>
-            You have {unplacedCount.toString()} unplaced unit{plural} which will
-            be automatically placed.
+            You have {unplacedCount.toString()} unplaced&nbsp;
+            {this.props.pluralize('unit', unplacedCount)},&nbsp;
+            {this.props.pluralize('this', unplacedCount, 'these')} will be&nbsp;
+            placed onto {this.props.pluralize('a', unplacedCount, '')} new&nbsp;
+            {this.props.pluralize('machine', unplacedCount)}. To remove or&nbsp;
+            manually place these units use the&nbsp;
           </span>
           <span className="link" tabIndex="0" role="button"
             onClick={this._handleViewMachinesClick}>
-            View machines
-          </span>
+            machine view
+          </span>.
         </div>);
     },
 
@@ -272,6 +298,10 @@ YUI.add('deployment-summary', function() {
       var parts = this.props.deploymentStorage.templateName.split('/');
       var owner = parts[0];
       var name = parts[1];
+      var classes = {
+        'deployment-summary__changelog': true
+      };
+      var numberOfChanges = this.props.numberOfChanges;
       return (
         <div className="deployment-panel__child">
           <juju.components.DeploymentPanelContent
@@ -290,14 +320,18 @@ YUI.add('deployment-summary', function() {
                 type="text"
                 disabled={!!modelCommitted} />
             </form>
-            <span className="deployment-choose-cloud__cloud-option-title">
-              <span className="deployment-choose-cloud__cloud-option-name">
-                {name}
+            <div className={'deployment-choose-cloud__cloud-option ' +
+              'deployment-summary__cloud-option six-col last-col'}>
+              <span className={
+                'deployment-choose-cloud__cloud-option-title'}>
+                <span className="deployment-choose-cloud__cloud-option-name">
+                  {name}
+                </span>
+                <span className="deployment-choose-cloud__cloud-option-owner">
+                  {owner}
+                </span>
               </span>
-              <span className="deployment-choose-cloud__cloud-option-owner">
-                {owner}
-              </span>
-              <form className="six-col last-col">
+              <form className="deployment-summary__cloud-option-region">
                 <label className="deployment-panel__label"
                   htmlFor="region">
                   Region
@@ -308,23 +342,33 @@ YUI.add('deployment-summary', function() {
                   required="required"
                   type="text" />
               </form>
-            </span>
+            </div>
+            {this._generateTitle()}
             {this._generatePlacement()}
-            <h3 className="deployment-panel__section-title">
-              Change log ({this.props.numberOfChanges})
-              {this._generateClearChanges()}
-            </h3>
-            <ul className="deployment-summary__list">
-              <li className={listHeaderClassName}>
-                <span className="deployment-summary-change-item__change">
-                  Change
-                </span>
-                <span className="deployment-summary-change-item__time">
-                  Time
-                </span>
-              </li>
-              {this._generateChangeItems()}
-            </ul>
+            <juju.components.ExpandingRow
+              classes={classes}>
+              <div className="deployment-summary__changelog-title">
+                <div className="deployment-summary__changelog-title-chevron">
+                  <juju.components.SvgIcon
+                    name="chevron_down_16"
+                    size="16" />
+                </div>
+                View complete change log ({numberOfChanges}&nbsp;
+                {this.props.pluralize('change', numberOfChanges)})
+                {this._generateClearChanges()}
+              </div>
+              <ul className="deployment-summary__list">
+                <li className={listHeaderClassName}>
+                  <span className="deployment-summary-change-item__change">
+                    Change
+                  </span>
+                  <span className="deployment-summary-change-item__time">
+                    Time
+                  </span>
+                </li>
+                {this._generateChangeItems()}
+              </ul>
+            </juju.components.ExpandingRow>
           </juju.components.DeploymentPanelContent>
           <juju.components.DeploymentPanelFooter
             buttons={buttons} />
@@ -337,5 +381,6 @@ YUI.add('deployment-summary', function() {
   'deployment-panel-content',
   'deployment-panel-footer',
   'deployment-summary-change-item',
+  'expanding-row',
   'svg-icon'
 ]});
