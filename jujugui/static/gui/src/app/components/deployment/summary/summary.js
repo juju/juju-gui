@@ -26,7 +26,7 @@ YUI.add('deployment-summary', function() {
       jem: React.PropTypes.object.isRequired,
       env: React.PropTypes.object.isRequired,
       appSet: React.PropTypes.func.isRequired,
-      changeCounts: React.PropTypes.func.isRequired,
+      changeCounts: React.PropTypes.object.isRequired,
       createSocketURL: React.PropTypes.func.isRequired,
       deploymentStorage: React.PropTypes.object.isRequired,
       users: React.PropTypes.object.isRequired,
@@ -353,8 +353,10 @@ YUI.add('deployment-summary', function() {
                     name="chevron_down_16"
                     size="16" />
                 </div>
-                View complete change log ({numberOfChanges}&nbsp;
-                {this.props.pluralize('change', numberOfChanges)})
+                <span>
+                  View complete change log ({numberOfChanges}&nbsp;
+                  {this.props.pluralize('change', numberOfChanges)})
+                </span>
                 {this._generateClearChanges()}
               </div>
               <ul className="deployment-summary__list">

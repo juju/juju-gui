@@ -36,6 +36,7 @@ describe('Deployment', function() {
     var getUnplacedUnitCount = sinon.stub();
     var ecsClear = sinon.stub();
     var ecsCommit = sinon.stub();
+    var pluralize = sinon.stub();
     var changeDescriptions = [];
     var jem = {};
     var env = {};
@@ -46,11 +47,12 @@ describe('Deployment', function() {
         user: 'foo'
       }
     };
+    var changeCounts = {};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
         activeComponent="summary"
         autoPlaceUnits={autoPlaceUnits}
-        changeCounts={{}}
+        changeCounts={changeCounts}
         changeDescriptions={changeDescriptions}
         changeState={changeState}
         ecsClear={ecsClear}
@@ -63,7 +65,7 @@ describe('Deployment', function() {
         modelCommitted={false}
         modelName="Prod"
         numberOfChanges={6}
-        pluralize={sinon.stub()}
+        pluralize={pluralize}
         services={[]}
         user={{}}
         users={users} />, true);
@@ -79,6 +81,7 @@ describe('Deployment', function() {
         deploymentStorage={instance._deploymentStorage}
         users={users}
         autoPlaceUnits={autoPlaceUnits}
+        changeCounts={changeCounts}
         changeDescriptions={changeDescriptions}
         changeState={changeState}
         ecsClear={ecsClear}
@@ -86,7 +89,8 @@ describe('Deployment', function() {
         getUnplacedUnitCount={getUnplacedUnitCount}
         modelCommitted={false}
         modelName="Prod"
-        numberOfChanges={6} />);
+        numberOfChanges={6}
+        pluralize={pluralize} />);
     assert.deepEqual(output.props.children, expected);
   });
 
@@ -130,13 +134,9 @@ describe('Deployment', function() {
     var expected = (
       <juju.components.DeploymentChooseCloud
         jem={jem}
-        changeCounts={{}}
         changeState={changeState}
         clouds={instance.clouds}
-        pluralize={pluralize}
-        services={services}
-        setDeploymentInfo={instance.setDeploymentInfo}
-        user={user} />);
+        setDeploymentInfo={instance.setDeploymentInfo} />);
     assert.deepEqual(output.props.children, expected);
   });
 
