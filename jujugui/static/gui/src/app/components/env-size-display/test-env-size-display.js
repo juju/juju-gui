@@ -61,7 +61,9 @@ describe('EnvSizeDisplay', function() {
     assert.equal(getAppStateStub.callCount, 1);
     assert.notEqual(
         queryComponentSelector(
-            component, 'li.tab.active a[data-view=machine]'), null);
+            component,
+            '.env-size-display__list-item.is-active a[data-view=machine]'),
+            null);
   });
 
   it('calls to change state when list item is clicked', function() {
@@ -102,12 +104,16 @@ describe('EnvSizeDisplay', function() {
     testUtils.Simulate.click(machineLink);
     assert.notEqual(
         queryComponentSelector(
-            component, 'li.tab.active a[data-view=machine]'), null);
+            component,
+            '.env-size-display__list-item.is-active a[data-view=machine]'),
+            null);
 
     testUtils.Simulate.click(serviceLink);
     assert.notEqual(
         queryComponentSelector(
-            component, 'li.tab.active a[data-view=service]'), null);
+            component,
+            '.env-size-display__list-item.is-active a[data-view=service]'),
+            null);
 
     assert.equal(changeStateStub.callCount, 2);
   });
