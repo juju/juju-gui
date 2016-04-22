@@ -52,6 +52,12 @@
         }
     }
 
+    &__model-name {
+        float: left;
+        margin-left: 20px;
+        line-height: 24px;
+    }
+
     &__close {
         @extend %link;
         float: right;

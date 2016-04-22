@@ -157,6 +157,7 @@ YUI.add('deployment-component', function() {
         <juju.components.DeploymentPanel
           activeComponent={activeComponent}
           changeState={this.props.changeState}
+          modelName={this.props.modelName}
           steps={steps}>
           {activeChild}
         </juju.components.DeploymentPanel>

@@ -45,6 +45,7 @@ describe('DeploymentPanel', function() {
       <juju.components.DeploymentPanel
         activeComponent="cloud"
         changeState={sinon.stub()}
+        modelName="my-model"
         steps={steps}>
         <span>content</span>
       </juju.components.DeploymentPanel>, true);
@@ -60,6 +61,9 @@ describe('DeploymentPanel', function() {
               height="30"
               name="juju-logo"
               width="75" />
+            <span className="deployment-panel__model-name">
+              my-model
+            </span>
             <ul className="deployment-panel__header-steps">
               <li className={'deployment-panel__header-step ' +
                 'deployment-panel__header-step--completed'}
@@ -98,7 +102,7 @@ describe('DeploymentPanel', function() {
         visible={true}>
         <span>content</span>
       </juju.components.DeploymentPanel>);
-    output.props.children.props.children[0].props.children[2].props.children
+    output.props.children.props.children[0].props.children[3].props.children
       .props.action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
