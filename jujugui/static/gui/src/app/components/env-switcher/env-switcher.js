@@ -64,32 +64,39 @@ YUI.add('env-switcher', function() {
       var jem = this.props.jem;
       if (jem) {
         jem.listEnvironments(
-          this.updateEnvListCallback.bind(this, callback));
+          this._updateEnvListCallback.bind(this, callback));
       } else {
-        this.props.env.listEnvs(
-            'user-admin',
-            this.updateEnvListCallback.bind(this, callback, null));
+        this.props.env.listModelsWithInfo(
+          this._updateEnvListCallback.bind(this, callback, null));
       }
     },
 
     /**
-      Sets the state with the supplied data from the listEnvs call.
+      Sets the state with the supplied data from env.listModelsWithInfo and
+      jem.listEnvironments calls.
 
-      @method updateEnvListCallback
+      @method _updateEnvListCallback
       @param {Function} callback The callback to call after the list has been
         updated.
-      @param {Object} data The data from the listEnvs call.
+      @param {Object} data The data from the call.
     */
-    updateEnvListCallback: function(callback, error, data) {
+    _updateEnvListCallback: function(callback, error, data) {
       // We need to coerce error types returned by JES vs JEM into one error.
       var err = data.err || error;
       if (err) {
         console.log(err);
         return;
       }
-      // data.envs is only populated in the JES environments, when using JEM
-      // the environments are in the top level 'data' object.
-      this.setState({envList: data.envs || data});
+
+      // data.models is only populated by the call to the controller; when
+      // using JEM the environments are in the top level 'data' object.
+      var envList = data;
+      if (data.models) {
+        envList = data.models.filter(function(model) {
+          return model.isAlive;
+        });
+      }
+      this.setState({envList: envList});
       if (callback) {
         callback();
       }
@@ -169,7 +176,7 @@ YUI.add('env-switcher', function() {
           var baseTemplate = serverName;
           jem.newEnvironment(
             envOwnerName, envName, baseTemplate, serverName, password,
-            this.createEnvCallback);
+            this.createModelCallback);
         } else {
           console.log(
             'Cannot create a new model: No controllers found.');
@@ -179,18 +186,18 @@ YUI.add('env-switcher', function() {
       if (jem) {
         jem.listServers(srvCb);
       } else {
-        this.props.env.createEnv(
-            envName, 'user-admin', this.createEnvCallback.bind(this, null));
+        this.props.env.createModel(
+            envName, 'user-admin', this.createModelCallback.bind(this, null));
       }
     },
 
     /**
       Handle the callback for the new env creation.
 
-      @method createEnvCallback
+      @method createModelCallback
       @param {Object} data The data from the create env callback.
     */
-    createEnvCallback: function(error, data) {
+    createModelCallback: function(error, data) {
       // We need to coerce error types returned by JES vs JEM into one error.
       var err = data.err || error;
       if (err) {

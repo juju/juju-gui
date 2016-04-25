@@ -822,7 +822,7 @@ YUI.add('juju-env-go', function(Y) {
       }
 
       // Perform the API calls.
-      this.listEnvs(credentials.user, (listData) => {
+      this.listModels(credentials.user, (listData) => {
         if (listData.err) {
           callback({err: listData.err});
           return;
@@ -2919,29 +2919,29 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Create an environment within this system, using the given name.
+      Create a new model within this controller, using the given name.
 
-      @method createEnv
-      @param {String} envName The name of the new environment.
-      @param {String} userTag The name of the new environment owner, including
-        the "user-" prefix.
+      @method createModel
+      @param {String} name The name of the new model.
+      @param {String} userTag The name of the new model owner, including the
+        "user-" prefix.
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an object with an "err"
         attribute containing a string describing the problem (if an error
         occurred), or with the following attributes if everything went well:
-        - name: the name of the new environment;
-        - owner: the environment owner tag;
-        - uuid: the unique identifier of the new environment.
+        - name: the name of the new model;
+        - owner: the model owner tag;
+        - uuid: the unique identifier of the new model.
       @return {undefined} Sends a message to the server only.
     */
-    createEnv: function(envName, userTag, callback) {
+    createModel: function(name, userTag, callback) {
       var intermediateCallback;
       if (callback) {
         // Capture the callback. No context is passed.
-        intermediateCallback = this._handleCreateEnv.bind(null, callback);
+        intermediateCallback = this._handleCreateModel.bind(null, callback);
       } else {
         intermediateCallback = function(callback, data) {
-          console.log('createEnv done: err:', data.Error);
+          console.log('createModel done: err:', data.Error);
         };
       }
       var facade = 'ModelManager';
@@ -2951,7 +2951,7 @@ YUI.add('juju-env-go', function(Y) {
         facade = 'EnvironmentManager';
         request = 'CreateEnvironment';
       }
-      // In order to create a new environment, we first need to retrieve the
+      // In order to create a new model, we first need to retrieve the
       // configuration skeleton for this provider.
       this._send_rpc({
         Type: facade,
@@ -2965,7 +2965,7 @@ YUI.add('juju-env-go', function(Y) {
         };
         var config = data.Response.Config;
         // Then, having the configuration skeleton, we need configuration
-        // options for this specific environment.
+        // options for this specific model.
         this.environmentGet(data => {
           if (data.err) {
             intermediateCallback({
@@ -2973,7 +2973,7 @@ YUI.add('juju-env-go', function(Y) {
             });
             return;
           }
-          config.name = envName;
+          config.name = name;
           // XXX frankban: juju-core should not require clients to provide SSH
           // keys at this point, but only when strictly necessary. Provide an
           // invalid one for now.
@@ -2984,8 +2984,8 @@ YUI.add('juju-env-go', function(Y) {
               config[attr] = data.config[attr];
             }
           });
-          // At this point, having both skeleton and environment options, we
-          // are ready to create the new environment in this system.
+          // At this point, having both skeleton and model options, we
+          // are ready to create the new model in this system.
           this._send_rpc({
             Type: facade,
             Request: request,
@@ -2996,15 +2996,15 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Transform the data returned from the juju-core createEnv call into that
+      Transform the data returned from the juju-core createModel call into that
       suitable for the user callback.
 
-      @method _handleCreateEnv
+      @method _handleCreateModel
       @static
       @param {Function} callback The originally submitted callback.
       @param {Object} data The response returned by the server.
     */
-    _handleCreateEnv: function(callback, data) {
+    _handleCreateModel: function(callback, data) {
       var transformedData = {
         err: data.Error,
       };
@@ -3026,7 +3026,7 @@ YUI.add('juju-env-go', function(Y) {
       WebSocket connection to a zombie model could lead to a broken GUI state
       and exotic errors difficult to debug.
       Note that at the time the callback is called the destroyed model may
-      still be included in the list of models returned by listEnvs or
+      still be included in the list of models returned by listModels or
       listModelsWithInfo calls. In the latter call, the model "isAlive"
       attribute will be false.
 
@@ -3056,7 +3056,7 @@ YUI.add('juju-env-go', function(Y) {
   /**
       List all models the user can access on the current controller.
 
-      @method listEnvs
+      @method listModels
       @param {String} userTag The name of the new model owner, including the
         "user-" prefix.
       @param {Function} callback A callable that must be called once the
@@ -3065,16 +3065,16 @@ YUI.add('juju-env-go', function(Y) {
         occurred), or with the "envs" attribute if everything went well. The
         "envs" field will contain a list of objects, each one representing a
         model with the following attributes:
-        - name: the name of the environment;
+        - name: the name of the model;
         - tag: the model tag, like "model-de1b2c16-0151-4e63-87e9-9f0950a";
-        - owner: the environment owner tag;
-        - uuid: the unique identifier of the environment;
+        - owner: the model owner tag;
+        - uuid: the unique identifier of the model;
         - lastConnection: the date of the last connection as a string, e.g.:
-          '2015-09-24T10:08:50Z' or null if the environment has been never
+          '2015-09-24T10:08:50Z' or null if the model has been never
           connected to;
       @return {undefined} Sends a message to the server only.
     */
-    listEnvs: function(userTag, callback) {
+    listModels: function(userTag, callback) {
       var facade = 'ModelManager';
       var request = 'ListModels';
       var results = 'UserModels';
@@ -3084,9 +3084,9 @@ YUI.add('juju-env-go', function(Y) {
         results = 'UserEnvironments';
       }
 
-      var handleListEnvs = function(userCallback, data) {
+      var handleListModels = function(userCallback, data) {
         if (!userCallback) {
-          console.log('data returned by listEnvs API call:', data);
+          console.log('data returned by listModels API call:', data);
           return;
         }
         var transformedData = {
@@ -3112,7 +3112,7 @@ YUI.add('juju-env-go', function(Y) {
         Type: facade,
         Request: request,
         Params: {Tag: userTag}
-      }, handleListEnvs);
+      }, handleListModels);
     }
 
   });
