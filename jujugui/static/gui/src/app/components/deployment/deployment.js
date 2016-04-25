@@ -170,7 +170,6 @@ YUI.add('deployment-component', function() {
   requires: [
     'deployment-add-credentials',
     'deployment-choose-cloud',
-    'deployment-finalise-account',
     'deployment-panel',
     'deployment-summary'
   ]
