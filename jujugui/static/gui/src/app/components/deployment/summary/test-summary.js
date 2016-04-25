@@ -24,10 +24,21 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentSummary', function() {
+  var changeCounts, pluralize;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('deployment-summary', function() { done(); });
+  });
+
+  beforeEach(() => {
+    changeCounts = {
+      '_addMachines': 1,
+      '_deploy': 2
+    };
+    pluralize = (val) => {
+      return val + 's';
+    };
   });
 
   it('can display a list of changes', function() {
@@ -48,8 +59,6 @@ describe('DeploymentSummary', function() {
       <juju.components.DeploymentSummaryChangeItem
         key={1}
         change={changeDescriptions[1]} />];
-    var className = 'deployment-summary-change-item ' +
-        'deployment-summary__list-header';
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
         jem={{}}
@@ -57,9 +66,10 @@ describe('DeploymentSummary', function() {
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
         controller="yellow/aws-eu-central"
-        deploymentStorage={{}}
+        deploymentStorage={{templateName: 'spinach/my-creds'}}
         users={{}}
         autoPlaceUnits={sinon.stub()}
+        changeCounts={changeCounts}
         changeDescriptions={changeDescriptions}
         changeState={sinon.stub()}
         ecsClear={sinon.stub()}
@@ -67,7 +77,8 @@ describe('DeploymentSummary', function() {
         getUnplacedUnitCount={getUnplacedUnitCount}
         modelCommitted={false}
         modelName="Prod"
-        numberOfChanges={6} />, true);
+        numberOfChanges={6}
+        pluralize={pluralize} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var buttons = [{
@@ -83,15 +94,8 @@ describe('DeploymentSummary', function() {
     var expected = (
       <div className="deployment-panel__child">
         <juju.components.DeploymentPanelContent
-          title="Deployment summary">
-          <div className="deployment-panel__notice twelve-col">
-            <juju.components.SvgIcon
-              name="general-action-blue"
-              size="16" />
-            This deployment is free, you can deploy xxxxxxxxx more
-          </div>
-          <form className="six-col">
-            <p>Name your model</p>
+          title="Review deployment">
+          <form className="six-col last-col">
             <label className="deployment-panel__label"
               htmlFor="model-name">
               Model name
@@ -105,28 +109,61 @@ describe('DeploymentSummary', function() {
               type="text"
               disabled={false} />
           </form>
-          <div className="six-col last-col">
-            <p>Deploying to:</p>
-            <div className="deployment-panel__box">
-              [selected credential]
-            </div>
+          <div className={'deployment-choose-cloud__cloud-option ' +
+            'deployment-summary__cloud-option six-col last-col'}>
+            <span className={
+              'deployment-choose-cloud__cloud-option-title'}>
+              <span className="deployment-choose-cloud__cloud-option-name">
+                my-creds
+              </span>
+              <span className="deployment-choose-cloud__cloud-option-owner">
+                spinach
+              </span>
+            </span>
+            <form className="deployment-summary__cloud-option-region">
+              <label className="deployment-panel__label"
+                htmlFor="region">
+                Region
+              </label>
+              <input className="deployment-panel__input"
+                id="region"
+                placeholder="us-central1"
+                required="required"
+                type="text" />
+            </form>
           </div>
-          {undefined}
-          <h3 className="deployment-panel__section-title">
-            Change log ({6})
-            {undefined}
+          <h3 className="deployment-panel__section-title twelve-col">
+            Deploying {2} {'services'} on&nbsp;{1} {'machines'}
           </h3>
-          <ul className="deployment-summary__list">
-            <li className={className}>
-              <span className="deployment-summary-change-item__change">
-                Change
+          {undefined}
+          <juju.components.ExpandingRow
+            classes={{
+              'deployment-summary__changelog': true
+            }}>
+            <div className="deployment-summary__changelog-title">
+              <div className="deployment-summary__changelog-title-chevron">
+                <juju.components.SvgIcon
+                  name="chevron_down_16"
+                  size="16" />
+              </div>
+              <span>
+                View complete change log ({6}&nbsp;{'changes'})
               </span>
-              <span className="deployment-summary-change-item__time">
-                Time
-              </span>
-            </li>
-            {changeItems}
-          </ul>
+              {undefined}
+            </div>
+            <ul className="deployment-summary__list">
+              <li className={'deployment-summary-change-item ' +
+                  'deployment-summary__list-header'}>
+                <span className="deployment-summary-change-item__change">
+                  Change
+                </span>
+                <span className="deployment-summary-change-item__time">
+                  Time
+                </span>
+              </li>
+              {changeItems}
+            </ul>
+          </juju.components.ExpandingRow>
         </juju.components.DeploymentPanelContent>
         <juju.components.DeploymentPanelFooter
           buttons={buttons} />
@@ -142,9 +179,10 @@ describe('DeploymentSummary', function() {
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
-        deploymentStorage={{}}
+        deploymentStorage={{templateName: 'spinach/my-creds'}}
         users={{}}
         autoPlaceUnits={sinon.stub()}
+        changeCounts={changeCounts}
         changeDescriptions={[]}
         changeState={sinon.stub()}
         controller="yellow/aws-eu-central"
@@ -153,19 +191,21 @@ describe('DeploymentSummary', function() {
         getUnplacedUnitCount={getUnplacedUnitCount}
         modelCommitted={false}
         modelName="Prod"
-        numberOfChanges={6} />, true);
+        numberOfChanges={6}
+        pluralize={pluralize} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-summary__placement twelve-col">
         <span>
-          You have {'1'} unplaced unit{''} which will
-          be automatically placed.
+          You have {'1'}{' unplaced '}{'units'}{', '}{'thiss'}
+          {' will be  placed onto '}{'as'}{' new '}{'machines'}.
+          To remove or  manually place these units use the 
         </span>
         <span className="link" tabIndex="0" role="button"
           onClick={instance._handleViewMachinesClick}>
-          View machines
-        </span>
+          machine view
+        </span>.
       </div>);
     assert.deepEqual(output.props.children[0].props.children[3], expected);
   });
@@ -179,9 +219,10 @@ describe('DeploymentSummary', function() {
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
         controller="yellow/aws-eu-central"
-        deploymentStorage={{}}
+        deploymentStorage={{templateName: 'spinach/my-creds'}}
         users={{}}
         autoPlaceUnits={sinon.stub()}
+        changeCounts={changeCounts}
         changeDescriptions={[]}
         changeState={sinon.stub()}
         ecsClear={sinon.stub()}
@@ -189,20 +230,19 @@ describe('DeploymentSummary', function() {
         getUnplacedUnitCount={getUnplacedUnitCount}
         modelCommitted={true}
         modelName="Prod"
-        numberOfChanges={6} />, true);
+        numberOfChanges={6}
+        pluralize={pluralize} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <h3 className="deployment-panel__section-title">
-        Change log ({6})
-        <span className="link deployment-panel__section-title-link"
-          onClick={instance._handleClear}
-          role="button"
-          tabIndex="0">
-          Clear all changes&nbsp;&rsaquo;
-        </span>
-      </h3>);
-    assert.deepEqual(output.props.children[0].props.children[4], expected);
+      <span className="link deployment-panel__section-title-link"
+        onClick={instance._handleClear}
+        role="button"
+        tabIndex="0">
+        Clear all changes&nbsp;&rsaquo;
+      </span>);
+    assert.deepEqual(output.props.children[0].props.children[4]
+      .props.children[0].props.children[2], expected);
   });
 
   it('can navigate to the machine view', function() {
@@ -215,9 +255,10 @@ describe('DeploymentSummary', function() {
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
         controller="yellow/aws-eu-central"
-        deploymentStorage={{}}
+        deploymentStorage={{templateName: 'spinach/my-creds'}}
         users={{}}
         autoPlaceUnits={sinon.stub()}
+        changeCounts={changeCounts}
         changeDescriptions={[]}
         changeState={changeState}
         ecsClear={sinon.stub()}
@@ -225,7 +266,8 @@ describe('DeploymentSummary', function() {
         getUnplacedUnitCount={getUnplacedUnitCount}
         modelCommitted={false}
         modelName="Prod"
-        numberOfChanges={6} />);
+        numberOfChanges={6}
+        pluralize={pluralize} />);
     output.props.children[0].props.children[3].props.children[1]
       .props.onClick();
     assert.equal(changeState.callCount, 1);
@@ -251,9 +293,10 @@ describe('DeploymentSummary', function() {
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
         controller="yellow/aws-eu-central"
-        deploymentStorage={{}}
+        deploymentStorage={{templateName: 'spinach/my-creds'}}
         users={{}}
         autoPlaceUnits={sinon.stub()}
+        changeCounts={changeCounts}
         changeDescriptions={[]}
         changeState={changeState}
         ecsClear={sinon.stub()}
@@ -261,7 +304,8 @@ describe('DeploymentSummary', function() {
         getUnplacedUnitCount={getUnplacedUnitCount}
         modelCommitted={false}
         modelName="Prod"
-        numberOfChanges={6} />);
+        numberOfChanges={6}
+        pluralize={pluralize} />);
     output.props.children[1].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -291,6 +335,7 @@ describe('DeploymentSummary', function() {
         deploymentStorage={{ templateName: 'secureTemplate' }}
         users={{ jem: { user: 'joecoder' }}}
         autoPlaceUnits={autoPlaceUnits}
+        changeCounts={changeCounts}
         ecsClear={sinon.stub()}
         ecsCommit={ecsCommit}
         changeDescriptions={[]}
@@ -298,14 +343,15 @@ describe('DeploymentSummary', function() {
         getUnplacedUnitCount={sinon.stub().returns(1)}
         modelCommitted={true}
         modelName="Prod"
-        numberOfChanges={6} />, true);
+        numberOfChanges={6}
+        pluralize={pluralize} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     // We need to make sure that the model name input is disabled if
     // the user is deploying to an existing model.
     var props = output.props;
     assert.equal(
-      props.children[0].props.children[1].props.children[2].props.disabled,
+      props.children[0].props.children[0].props.children[1].props.disabled,
       true);
     assert.equal(props.children[1].props.buttons[0].title, 'Commit');
     instance.refs = {modelName: {value: 'Prod'}};
@@ -353,12 +399,14 @@ describe('DeploymentSummary', function() {
         autoPlaceUnits={autoPlaceUnits}
         ecsClear={sinon.stub()}
         ecsCommit={ecsCommit}
+        changeCounts={changeCounts}
         changeDescriptions={[]}
         changeState={changeState}
         getUnplacedUnitCount={getUnplacedUnitCount}
         modelCommitted={false}
         modelName="Prod"
-        numberOfChanges={6} />, true);
+        numberOfChanges={6}
+        pluralize={pluralize} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     instance.refs = {modelName: {value: 'Prod'}};

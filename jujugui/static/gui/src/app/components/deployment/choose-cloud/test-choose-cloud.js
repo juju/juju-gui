@@ -55,7 +55,7 @@ describe('DeploymentChooseCloud', function() {
 
   it('can render without credentials', function() {
     jem.listTemplates = (callback) => {
-      callback(null, null);
+      callback(null, []);
     };
     var pluralize = sinon.stub();
     pluralize.withArgs('service', sinon.match.any).returns('services');
@@ -64,49 +64,17 @@ describe('DeploymentChooseCloud', function() {
     get.withArgs('name').returns('wordpress');
     get.withArgs('icon').returns('wordpress.svg');
     get.withArgs('id').returns('wordpress1');
-    var service = {get: get};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentChooseCloud
-        changeCounts={{
-          '_deploy': 2,
-          '_addMachines': 1
-        }}
         changeState={sinon.stub()}
         clouds={clouds}
         jem={jem}
-        pluralize={pluralize}
-        services={[service]}
-        setDeploymentInfo={sinon.stub()}
-        user={{usernameDisplay: 'Spinach'}} />, true);
+        setDeploymentInfo={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-panel__child">
         <juju.components.DeploymentPanelContent
-          title="Welcome back, Spinach">
-          <div className="six-col">
-            <h3 className="deployment-panel__section-title">
-              Deployment summary&nbsp;
-              <span className="deployment-panel__section-title-count">
-                ({2} {'services'},&nbsp;{1} {'machine'})
-              </span>
-            </h3>
-            <ul className="deployment-choose-cloud__services twelve-col">
-              {[<li className="two-col"
-                key="wordpress1">
-                <img alt="wordpress"
-                  className="deployment-choose-cloud__services-icon"
-                  src="wordpress.svg" />
-                wordpress
-              </li>]}
-            </ul>
-          </div>
-          <div className="six-col last-col">
-            <h3 className="deployment-panel__section-title">
-              Unplaced units
-            </h3>
-            <div className="deployment-panel__box">
-            </div>
-          </div>
+          title="Choose cloud">
           {undefined}
           <div className="deployment-panel__notice twelve-col">
             <juju.components.SvgIcon
@@ -115,13 +83,10 @@ describe('DeploymentChooseCloud', function() {
             Add a public cloud credential, and we can save it as an option
             for later use
           </div>
-          <h3 className="deployment-panel__section-title twelve-col">
-            Public clouds
-          </h3>
           <ul className="deployment-choose-cloud__list twelve-col">
-            {[<li className="deployment-choose-cloud__cloud-option six-col "
+            {[<li className="deployment-choose-cloud__cloud-option four-col "
                 key="aws"
-                onClick={output.props.children.props.children[5]
+                onClick={output.props.children.props.children[2]
                   .props.children[0].props.onClick}>
                 <span className="deployment-choose-cloud__cloud-option-image">
                   <juju.components.SvgIcon
@@ -131,6 +96,20 @@ describe('DeploymentChooseCloud', function() {
                 </span>
               </li>]}
           </ul>
+          <div className="deployment-choose-cloud__download twelve-col">
+            <juju.components.SvgIcon
+              height="30"
+              name="juju-logo"
+              width="75" />
+            Deploy manually using Juju to OpenStack, Vmware, MAAS, Joyent or
+            locally to your computer
+            <a className={'deployment-choose-cloud__download-button ' +
+              'button--inline-neutral'}
+              href="https://jujucharms.com/docs/stable/reference-releases"
+              target="_blank">
+              Download Juju
+            </a>
+          </div>
         </juju.components.DeploymentPanelContent>
       </div>);
     assert.deepEqual(output, expected);
@@ -142,62 +121,44 @@ describe('DeploymentChooseCloud', function() {
     pluralize.withArgs('machine', sinon.match.any).returns('machine');
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentChooseCloud
-        changeCounts={{
-          '_deploy': 2,
-          '_addMachines': 1
-        }}
         changeState={sinon.stub()}
         clouds={clouds}
         jem={jem}
-        pluralize={pluralize}
-        services={[]}
-        setDeploymentInfo={sinon.stub()}
-        user={{usernameDisplay: 'Spinach'}} />, true);
+        setDeploymentInfo={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-panel__child">
         <juju.components.DeploymentPanelContent
-          title="Welcome back, Spinach">
-          <div className="six-col">
-            <h3 className="deployment-panel__section-title">
-              Deployment summary&nbsp;
-              <span className="deployment-panel__section-title-count">
-                ({2} {'services'},&nbsp;{1} {'machine'})
-              </span>
-            </h3>
-            {undefined}
-          </div>
-          <div className="six-col last-col">
-            <h3 className="deployment-panel__section-title">
-              Unplaced units
-            </h3>
-            <div className="deployment-panel__box">
-            </div>
-          </div>
+          title="Choose cloud or saved credential">
           <div>
             <h3 className="deployment-panel__section-title twelve-col">
-              Your cloud credentials
+              Saved cloud credentials
             </h3>
             <ul className="deployment-choose-cloud__list twelve-col">
               {[<li className={'deployment-choose-cloud__cloud-option ' +
                 'deployment-choose-cloud__cloud-option--credential six-col'}
                 key="test-owner/test"
-                onClick={output.props.children.props.children[2]
+                onClick={output.props.children.props.children[0]
                   .props.children[1].props.children[0].props.onClick}>
                 <span className="deployment-choose-cloud__cloud-option-title">
-                  test-owner/test
+                  <span className="deployment-choose-cloud__cloud-option-name">
+                    test
+                  </span>
+                  <span className="deployment-choose-cloud__cloud-option-owner">
+                    test-owner
+                  </span>
                 </span>
               </li>]}
             </ul>
+            <h3 className="deployment-panel__section-title twelve-col">
+              Public clouds
+            </h3>
           </div>
           {undefined}
-          <h3 className="deployment-panel__section-title twelve-col">
-            Public clouds
-          </h3>
           <ul className="deployment-choose-cloud__list twelve-col">
-            {[<li className="deployment-choose-cloud__cloud-option six-col "
+            {[<li className="deployment-choose-cloud__cloud-option four-col "
                 key="aws"
-                onClick={output.props.children.props.children[5]
+                onClick={output.props.children.props.children[2]
                   .props.children[0].props.onClick}>
                 <span className="deployment-choose-cloud__cloud-option-image">
                   <juju.components.SvgIcon
@@ -207,6 +168,20 @@ describe('DeploymentChooseCloud', function() {
                 </span>
               </li>]}
           </ul>
+          <div className="deployment-choose-cloud__download twelve-col">
+            <juju.components.SvgIcon
+              height="30"
+              name="juju-logo"
+              width="75" />
+            Deploy manually using Juju to OpenStack, Vmware, MAAS, Joyent or
+            locally to your computer
+            <a className={'deployment-choose-cloud__download-button ' +
+              'button--inline-neutral'}
+              href="https://jujucharms.com/docs/stable/reference-releases"
+              target="_blank">
+              Download Juju
+            </a>
+          </div>
         </juju.components.DeploymentPanelContent>
       </div>);
     assert.deepEqual(output, expected);
@@ -217,16 +192,12 @@ describe('DeploymentChooseCloud', function() {
     var setDeploymentInfo = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentChooseCloud
-        changeCounts={{}}
         changeState={changeState}
         clouds={clouds}
         jem={jem}
-        pluralize={sinon.stub()}
-        services={[]}
-        setDeploymentInfo={setDeploymentInfo}
-        user={{}} />, true);
+        setDeploymentInfo={setDeploymentInfo} />, true);
     var output = renderer.getRenderOutput();
-    output.props.children.props.children[2].props.children[1].props.children[0]
+    output.props.children.props.children[0].props.children[1].props.children[0]
       .props.onClick();
     assert.equal(changeState.callCount, 1);
     // It should store the template name in the parentId
@@ -248,16 +219,12 @@ describe('DeploymentChooseCloud', function() {
     var changeState = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentChooseCloud
-        changeCounts={{}}
         changeState={changeState}
         clouds={clouds}
         jem={jem}
-        pluralize={sinon.stub()}
-        services={[]}
-        setDeploymentInfo={sinon.stub()}
-        user={{}} />, true);
+        setDeploymentInfo={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
-    output.props.children.props.children[5].props.children[0].props.onClick();
+    output.props.children.props.children[2].props.children[0].props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionC: {
@@ -275,16 +242,12 @@ describe('DeploymentChooseCloud', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentChooseCloud
-        changeCounts={{}}
         changeState={sinon.stub()}
         clouds={clouds}
         jem={jem}
-        pluralize={sinon.stub()}
-        services={[]}
-        setDeploymentInfo={sinon.stub()}
-        user={{}} />, true);
+        setDeploymentInfo={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
-    var credentials = output.props.children.props.children[2];
+    var credentials = output.props.children.props.children[0];
     assert.equal(credentials, undefined);
   });
 });

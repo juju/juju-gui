@@ -30,6 +30,9 @@ describe('DeploymentAddCredentials', function() {
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('deployment-add-credentials', function() { done(); });
+  });
+
+  beforeEach(function() {
     users = {
       jem: {
         user: 'foo'
@@ -38,9 +41,6 @@ describe('DeploymentAddCredentials', function() {
     jem = {
       addTemplate: sinon.stub()
     };
-  });
-
-  beforeEach(function() {
     clouds = {
       aws: {
         id: 'aws',
@@ -75,6 +75,7 @@ describe('DeploymentAddCredentials', function() {
         controller="my-controller"
         cloud={cloud}
         jem={jem}
+        setDeploymentInfo={sinon.stub()}
         users={users} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -83,7 +84,7 @@ describe('DeploymentAddCredentials', function() {
       title: 'Change cloud',
       type: 'inline-neutral'
     }, {
-      title: 'Add credentials',
+      title: 'Add credential',
       action: instance._handleAddCredentials,
       disabled: false,
       type: 'inline-positive'
@@ -135,7 +136,7 @@ describe('DeploymentAddCredentials', function() {
               <juju.components.SvgIcon
                 name="general-action-blue"
                 size="16" />
-              Credentials are stored securely on our servers and we'll notify
+              Credentials are stored securely on our servers and we will notify
               you by email whenever they are used. See where they are used and
               manage or remove them via the account page.
             </div>
@@ -190,6 +191,7 @@ describe('DeploymentAddCredentials', function() {
         controller="my-controller"
         cloud={cloud}
         jem={jem}
+        setDeploymentInfo={sinon.stub()}
         users={users} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -198,7 +200,7 @@ describe('DeploymentAddCredentials', function() {
       title: 'Change cloud',
       type: 'inline-neutral'
     }, {
-      title: 'Add credentials',
+      title: 'Add credential',
       action: instance._handleAddCredentials,
       disabled: true,
       type: 'inline-positive'
@@ -250,7 +252,7 @@ describe('DeploymentAddCredentials', function() {
               <juju.components.SvgIcon
                 name="general-action-blue"
                 size="16" />
-              Credentials are stored securely on our servers and we'll notify
+              Credentials are stored securely on our servers and we will notify
               you by email whenever they are used. See where they are used and
               manage or remove them via the account page.
             </div>
@@ -299,6 +301,7 @@ describe('DeploymentAddCredentials', function() {
         controller="my-controller"
         cloud={cloud}
         jem={jem}
+        setDeploymentInfo={sinon.stub()}
         users={users} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -307,7 +310,7 @@ describe('DeploymentAddCredentials', function() {
       title: 'Change cloud',
       type: 'inline-neutral'
     }, {
-      title: 'Add credentials',
+      title: 'Add credential',
       action: instance._handleAddCredentials,
       disabled: true,
       type: 'inline-positive'
@@ -359,7 +362,7 @@ describe('DeploymentAddCredentials', function() {
               <juju.components.SvgIcon
                 name="general-action-blue"
                 size="16" />
-              Credentials are stored securely on our servers and we'll notify
+              Credentials are stored securely on our servers and we will notify
               you by email whenever they are used. See where they are used and
               manage or remove them via the account page.
             </div>
@@ -390,14 +393,6 @@ describe('DeploymentAddCredentials', function() {
   });
 
   it('can add the credentials', function() {
-    users = {
-      jem: {
-        user: 'foo'
-      }
-    };
-    jem = {
-      addTemplate: sinon.stub()
-    };
     var output = testUtils.renderIntoDocument(
       <juju.components.DeploymentAddCredentials
         changeState={sinon.stub()}
@@ -424,6 +419,7 @@ describe('DeploymentAddCredentials', function() {
         controller="my-controller"
         cloud={clouds['aws']}
         jem={jem}
+        setDeploymentInfo={sinon.stub()}
         users={users} />, true);
     var output = renderer.getRenderOutput();
     output.props.children[1].props.buttons[0].action();

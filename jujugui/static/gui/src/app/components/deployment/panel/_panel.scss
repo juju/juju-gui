@@ -33,8 +33,7 @@
 
         &-step {
             display: inline-block;
-            // margin-bottom: -1px;
-            padding: 10px 20px 14px 20px;
+            padding: 5px 20px 16px 20px;
             border-bottom: 1px solid $warm-grey;
 
             &:last-child {
@@ -42,7 +41,7 @@
             }
 
             &--active {
-                padding-bottom: 12px;
+                padding-bottom: 14px;
                 border-bottom: 3px solid $ubuntu-orange;
             }
 
@@ -51,6 +50,12 @@
                 color: $warm-grey;
             }
         }
+    }
+
+    &__model-name {
+        float: left;
+        margin-left: 20px;
+        line-height: 24px;
     }
 
     &__close {
@@ -112,16 +117,10 @@
         }
     }
 
-    &__box {
-        @extend %deployment-box;
-    }
-
     &__notice {
-        @extend %deployment-box;
-        border-color: $uncommitted;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        padding-left: 46px;
+        padding: 15px 20px 15px 46px;
+        background-color: $light-grey;
+        border-radius: $border-radius;
 
         .svg-icon {
             margin-left: -26px;

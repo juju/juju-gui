@@ -13,7 +13,7 @@ $uncommitted: #19b6ee;
 // Brand colours.
 $ubuntu-orange: #dd4814;
 
-// Other colous.
+// Other colours.
 $canvas-background: $light-grey;
 $hover-background: #f7f7f7;
 
@@ -26,6 +26,9 @@ $environment-header-height: 38px;
 $left-panel-width: 290px;
 $navbar-height: 60px;
 $panel-space: 10px;
+
+// Other.
+$box-shadow: 0 1px 4.85px .15px rgba(0, 0, 0, .2);
 
 // z-indexing
 $z-indexed-elements: search-results-list-block__tags,

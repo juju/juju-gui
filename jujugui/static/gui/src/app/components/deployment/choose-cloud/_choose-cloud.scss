@@ -1,25 +1,17 @@
 .deployment-choose-cloud {
-    &__services {
-        @extend %list-style;
-        @extend %deployment-box;
-        padding-bottom: 0;
-
-        &-icon {
-            width: 24px;
-            height: 24px;
-            margin-right: 10px;
-            vertical-align: middle;
-        }
-    }
-
     &__cloud-option {
-        @extend %deployment-box;
+        border-radius: $border-radius;
+        box-shadow: $box-shadow;
         text-align: center;
         cursor: pointer;
 
+        &:hover {
+            background-color: $light-grey;
+        }
+
         &-image {
             display: block;
-            line-height: 53px;
+            line-height: 120px;
 
             .svg-icon {
                 vertical-align: middle;
@@ -30,8 +22,18 @@
             text-align: left;
         }
 
+        &-name {
+            font-weight: 400;
+            margin-right: 10px;
+        }
+
         &-title {
-            font-size: 20px;
+            display: block;
+            padding: 10px 20px;
+        }
+
+        &-owner {
+            color: $warm-grey;
         }
 
         &-logo {
@@ -43,5 +45,20 @@
 
     &__list {
         @extend %list-style;
+    }
+
+    &__download {
+        margin-top: 40px;
+        padding: 20px;
+        border-top: 1px solid $mid-grey;
+
+        .svg-icon {
+            margin-right: 20px;
+            vertical-align: middle;
+        }
+
+        &-button {
+            float: right;
+        }
     }
 }

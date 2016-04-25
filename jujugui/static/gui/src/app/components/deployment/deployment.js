@@ -44,14 +44,6 @@ YUI.add('deployment-component', function() {
     },
 
     clouds: {
-      aws: {
-        id: 'aws',
-        signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
-        'registration/index.html',
-        svgHeight: 48,
-        svgWidth: 120,
-        title: 'Amazon Web Services'
-      },
       gcp: {
         id: 'gcp',
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',
@@ -65,6 +57,14 @@ YUI.add('deployment-component', function() {
         svgHeight: 24,
         svgWidth: 204,
         title: 'Microsoft Azure'
+      },
+      aws: {
+        id: 'aws',
+        signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
+        'registration/index.html',
+        svgHeight: 48,
+        svgWidth: 120,
+        title: 'Amazon Web Services'
       }
     },
 
@@ -103,12 +103,14 @@ YUI.add('deployment-component', function() {
               deploymentStorage={this._deploymentStorage}
               users={this.props.users}
               autoPlaceUnits={this.props.autoPlaceUnits}
+              changeCounts={this.props.changeCounts}
               changeDescriptions={this.props.changeDescriptions}
               changeState={this.props.changeState}
               controller={this._controller}
               ecsClear={this.props.ecsClear}
               ecsCommit={this.props.ecsCommit}
               getUnplacedUnitCount={this.props.getUnplacedUnitCount}
+              pluralize={this.props.pluralize}
               modelCommitted={this.props.modelCommitted}
               modelName={this.props.modelName}
               numberOfChanges={this.props.numberOfChanges} />);
@@ -116,13 +118,9 @@ YUI.add('deployment-component', function() {
           return (
             <juju.components.DeploymentChooseCloud
               jem={this.props.jem}
-              changeCounts={this.props.changeCounts}
               changeState={this.props.changeState}
               clouds={this.clouds}
-              pluralize={this.props.pluralize}
-              services={this.props.services}
-              setDeploymentInfo={this.setDeploymentInfo}
-              user={this.props.user} />);
+              setDeploymentInfo={this.setDeploymentInfo} />);
         case 'add-credentials-azure':
         case 'add-credentials-aws':
         case 'add-credentials-gcp':
@@ -159,6 +157,7 @@ YUI.add('deployment-component', function() {
         <juju.components.DeploymentPanel
           activeComponent={activeComponent}
           changeState={this.props.changeState}
+          modelName={this.props.modelName}
           steps={steps}>
           {activeChild}
         </juju.components.DeploymentPanel>

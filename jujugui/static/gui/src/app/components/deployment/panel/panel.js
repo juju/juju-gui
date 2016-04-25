@@ -25,6 +25,7 @@ YUI.add('deployment-panel', function() {
     propTypes: {
       activeComponent: React.PropTypes.string.isRequired,
       changeState: React.PropTypes.func.isRequired,
+      modelName: React.PropTypes.string.isRequired,
       steps: React.PropTypes.array.isRequired
     },
 
@@ -88,6 +89,9 @@ YUI.add('deployment-panel', function() {
                 height="30"
                 name="juju-logo"
                 width="75" />
+              <span className="deployment-panel__model-name">
+                {this.props.modelName}
+              </span>
               {this._generateSteps()}
               <span className="deployment-panel__close">
                 <juju.components.GenericButton
