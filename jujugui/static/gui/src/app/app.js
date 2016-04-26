@@ -2040,7 +2040,7 @@ YUI.add('juju-gui', function(Y) {
       @method onEnvironmentNameChange
     */
     onEnvironmentNameChange: function(evt) {
-      var environmentName = evt.newVal;
+      var environmentName = evt.newVal || 'untitled_model';
       this.db.environment.set('name', environmentName);
       // Update the breadcrumb with the new model name.
       this._renderBreadcrumb();

@@ -657,11 +657,7 @@ YUI.add('juju-env-go', function(Y) {
       var response = data.Response;
       this.set('defaultSeries', response.DefaultSeries);
       this.set('providerType', response.ProviderType);
-      if (localStorage.getItem('environmentName')) {
-        this.set('environmentName', localStorage.getItem('environmentName'));
-      } else {
-        this.set('environmentName', response.Name);
-      }
+      this.set('environmentName', response.Name);
       // For now we only need to call environmentGet if the provider is MAAS.
       if (response.ProviderType !== 'maas') {
         // Set the MAAS server to null, so that subscribers waiting for this
