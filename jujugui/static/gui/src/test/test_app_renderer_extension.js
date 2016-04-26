@@ -76,7 +76,8 @@ describe('App Renderer Extension', function() {
     };
     renderer.db = {
       environment: {
-        set: utils.makeStubFunction()
+        set: utils.makeStubFunction(),
+        get: utils.makeStubFunction('test-model')
       }
     };
     renderer.changeState = utils.makeStubFunction();
@@ -105,7 +106,7 @@ describe('App Renderer Extension', function() {
                    'The showEnvSwitcher prop was not set properly.');
       assert.equal(props['uncommittedChanges'], false,
                    'The uncommittedChanges prop was not set properly.');
-      assert.equal(props['envName'], renderer.get('jujuEnvUUID'),
+      assert.equal(props['envName'], 'test-model',
                    'The envName prop was not set properly.');
     });
 

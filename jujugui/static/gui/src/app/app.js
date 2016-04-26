@@ -141,7 +141,6 @@ YUI.add('juju-gui', function(Y) {
                 bindings={bindings}
                 disableCookie={localStorage.getItem('disable-cookie')}
                 disableAutoPlace={localStorage.getItem('disable-auto-place')}
-                environmentName={this.env.get('environmentName') || 'model'}
                 forceContainers={localStorage.getItem('force-containers')} />,
               target.getDOMNode());
 
@@ -2042,18 +2041,6 @@ YUI.add('juju-gui', function(Y) {
     */
     onEnvironmentNameChange: function(evt) {
       var environmentName = evt.newVal;
-      // If there's an override in the custom settings use that instead.
-      if (localStorage.getItem('environmentName')) {
-        environmentName = localStorage.getItem('environmentName');
-      }
-      // The config.js jujuEnvUUID trumps 'sandbox'; in any other
-      // situation, the provided environmentName should update the app's
-      // jujuEnvUUID.
-      if (environmentName === 'sandbox') {
-        environmentName = this.get('jujuEnvUUID');
-      } else {
-        this.set('jujuEnvUUID', environmentName);
-      }
       this.db.environment.set('name', environmentName);
       // Update the breadcrumb with the new model name.
       this._renderBreadcrumb();

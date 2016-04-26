@@ -81,10 +81,6 @@ YUI.add('shortcuts', function() {
                 Enable container control for this provider.
               </label>
             </div>
-            <div className="two-col">
-              <input type="input" name="environmentName"
-                id="environmentName" defaultValue={props.environmentName} />
-            </div>
             <div className="three-col last-col">
               <label htmlFor="environment-name">
                 Change the name of this Model in the GUI.

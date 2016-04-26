@@ -67,7 +67,7 @@ YUI.add('app-renderer-extension', function(Y) {
         uncommittedChanges = Object.keys(currentChangeSet).length > 0;
       }
       var auth = this._getAuth();
-      var envName = this.get('jujuEnvUUID') || this.db.environment.get('name');
+      var envName = this.db.environment.get('name');
       var state = this.state;
       ReactDOM.render(
         <juju.components.HeaderBreadcrumb
