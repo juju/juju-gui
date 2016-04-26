@@ -52,13 +52,14 @@ describe('SearchResultsItem', function() {
           key={item.storeId}
           item={item} />);
     var tags = output.props.children[0].props.children[1].props.children;
-    var icons = output.props.children[1].props.children.props.children;
-    var owner = output.props.children[2].props.children.props.children[1];
-    assert.deepEqual(output,
+    var series = output.props.children[1].props.children.props.children;
+    var icons = output.props.children[2].props.children.props.children;
+    var owner = output.props.children[3].props.children.props.children[1];
+    var expected = (
       <li className="list-block__list--item charm"
           tabIndex="0" role="button"
           onClick={output.props.onClick}>
-        <div className="six-col charm-name__column">
+        <div className="four-col charm-name__column">
           <h3 className="list-block__list--item-title">
             mysql
             <span className="special-flag"></span>
@@ -69,13 +70,25 @@ describe('SearchResultsItem', function() {
               role="button" tabIndex="0"
               onClick={tags[0].props.onClick}>
               tag1
-            </li>
+             </li>
             <li className="tag-list--item"
               key="tag2"
               role="button" tabIndex="0"
               onClick={tags[1].props.onClick}>
               tag2
             </li>
+          </ul>
+        </div>
+        <div className="two-col series__column">
+          <ul className="list-series">
+            {[<li className="list-series__item"
+              key="vivid">
+              <a onClick={series[0].props.children.props.onClick}>vivid</a>
+            </li>,
+            <li className="list-series__item"
+              key="wily">
+              <a onClick={series[1].props.children.props.onClick}>wily</a>
+            </li>]}
           </ul>
         </div>
         <div className="three-col charm-logos__column list-block__column">
@@ -108,7 +121,9 @@ describe('SearchResultsItem', function() {
             </span>
           </p>
         </div>
-      </li>);
+      </li>
+    );
+    assert.deepEqual(output, expected);
   });
 
   it('can render an item with defaults for missing props', function() {
@@ -131,18 +146,23 @@ describe('SearchResultsItem', function() {
           changeState={changeState}
           key={item.storeId}
           item={item} />);
-    var icons = output.props.children[1].props.children.props.children;
-    var owner = output.props.children[2].props.children.props.children[1];
-    assert.deepEqual(output,
+    var icons = output.props.children[2].props.children.props.children;
+    var owner = output.props.children[3].props.children.props.children[1];
+    var expected = (
       <li className="list-block__list--item charm"
           tabIndex="0" role="button"
           onClick={output.props.onClick}>
-        <div className="six-col charm-name__column">
+        <div className="four-col charm-name__column">
           <h3 className="list-block__list--item-title">
             mysql
             <span className="special-flag"></span>
           </h3>
           <ul className="tag-list">
+            <span>{' '}</span>
+          </ul>
+        </div>
+        <div className="two-col series__column">
+          <ul className="list-series">
             <span>{' '}</span>
           </ul>
         </div>
@@ -176,7 +196,9 @@ describe('SearchResultsItem', function() {
             </span>
           </p>
         </div>
-      </li>);
+      </li>
+    );
+    assert.deepEqual(output, expected);
   });
 
   it('can render icons for a bundle', function() {
@@ -208,18 +230,23 @@ describe('SearchResultsItem', function() {
           changeState={changeState}
           key={item.storeId}
           item={item} />);
-    var icons = output.props.children[1].props.children.props.children;
-    var owner = output.props.children[2].props.children.props.children[1];
+    var icons = output.props.children[2].props.children.props.children;
+    var owner = output.props.children[3].props.children.props.children[1];
     assert.deepEqual(output,
       <li className="list-block__list--item bundle"
           tabIndex="0" role="button"
           onClick={output.props.onClick}>
-        <div className="six-col charm-name__column">
+        <div className="four-col charm-name__column">
           <h3 className="list-block__list--item-title">
             mysql
             <span className="special-flag"></span>
           </h3>
           <ul className="tag-list">
+            <span>{' '}</span>
+          </ul>
+        </div>
+        <div className="two-col series__column">
+          <ul className="list-series">
             <span>{' '}</span>
           </ul>
         </div>
@@ -365,7 +392,7 @@ describe('SearchResultsItem', function() {
           changeState={changeState}
           key={item.storeId}
           item={item} />);
-    output.props.children[2].props.children.props.children[1]
+    output.props.children[3].props.children.props.children[1]
         .props.onClick({stopPropagation: stopPropagation});
     assert.equal(changeState.callCount, 1);
     assert.equal(stopPropagation.callCount, 1);

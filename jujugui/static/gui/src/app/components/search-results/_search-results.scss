@@ -238,6 +238,18 @@
             }
         }
 
+        .list-series {
+            list-style: none;
+            margin: 0;
+
+            .list-series__item {
+               text-transform: capitalize;
+               float: left;
+               margin-bottom: 4px;
+               margin-right: 6px;
+            }
+        }
+
         .series__column,
         .owner__column {
             margin-bottom: 0;
