@@ -275,4 +275,13 @@
        margin-left: 0;
      }
    }
+
+   // Header search
+   .header-search__submit {
+     top: 0;
+   }
+
+   .header-search__search--mobile {
+     display: inline-block;
+   }
 }
