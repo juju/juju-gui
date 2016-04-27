@@ -24,13 +24,9 @@ YUI.add('deployment-bar', function() {
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
       currentChangeSet: React.PropTypes.object.isRequired,
-      exportEnvironmentFile: React.PropTypes.func.isRequired,
       generateChangeDescription: React.PropTypes.func.isRequired,
       hasEntities: React.PropTypes.bool.isRequired,
-      hideDragOverNotification: React.PropTypes.func.isRequired,
-      importBundleFile: React.PropTypes.func.isRequired,
       modelCommitted: React.PropTypes.bool.isRequired,
-      renderDragOverNotification: React.PropTypes.func.isRequired,
       showInstall: React.PropTypes.bool.isRequired
     },
 
@@ -85,43 +81,6 @@ YUI.add('deployment-bar', function() {
     },
 
     /**
-      Export the env when the button is clicked.
-
-      @method _handleExport
-    */
-    _handleExport: function() {
-      this.props.exportEnvironmentFile();
-    },
-
-    /**
-      Open a file picker when the button is clicked.
-
-      @method _handleImportClick
-    */
-    _handleImportClick: function() {
-      var input = this.refs['file-input'];
-      if (input) {
-        input.click();
-      }
-    },
-
-    /**
-      When file is submitted the drag over animation is triggered and the file
-      is passed to the utils function.
-
-      @method _handleImportFile
-    */
-    _handleImportFile: function() {
-      var inputFile = this.refs['file-input'].files[0];
-      if(inputFile) {
-        this.props.renderDragOverNotification(false);
-        this.props.importBundleFile(inputFile);
-        setTimeout(() => {
-          this.props.hideDragOverNotification();}, 600);
-      }
-    },
-
-    /**
       Generate the install button if it should be displayed.
 
       @method _generateInstallButton
@@ -137,21 +96,6 @@ YUI.add('deployment-bar', function() {
           target="_blank">
           Install Juju
         </a>);
-    },
-
-    /**
-      Returns the classes for the button based on the provided props.
-      @method _generateClasses
-      @returns {String} The collection of class names.
-    */
-    _generateClasses: function() {
-      return classNames(
-        'deployment-bar',
-        {
-          'deployment-bar--initial': !this.props.hasEntities &&
-            Object.keys(this.props.currentChangeSet).length === 0
-        }
-      );
     },
 
     /**
@@ -183,19 +127,7 @@ YUI.add('deployment-bar', function() {
         <juju.components.Panel
           instanceName="deployment-bar-panel"
           visible={true}>
-          <div className={this._generateClasses()}>
-            <span className="deployment-bar__import link"
-              onClick={this._handleImportClick}
-              role="button"
-              tabIndex="0">
-              Import
-            </span>
-            <span className="deployment-bar__export link"
-              onClick={this._handleExport}
-              role="button"
-              tabIndex="0">
-              Export
-            </span>
+          <div className="deployment-bar">
             {this._generateInstallButton()}
             <juju.components.DeploymentBarNotification
               change={this.state.latestChangeDescription} />
@@ -206,11 +138,6 @@ YUI.add('deployment-bar', function() {
                 disabled={changeCount === 0}
                 title={deployButton} />
             </div>
-            <input className="deployment-bar__file"
-              type="file"
-              onChange={this._handleImportFile}
-              accept=".zip,.yaml,.yml"
-              ref="file-input" />
           </div>
         </juju.components.Panel>
       );

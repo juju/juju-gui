@@ -2,34 +2,6 @@
     height: 40px;
     text-align: right;
 
-    &__import,
-    &__export {
-        margin-right: 10px;
-        line-height: 40px;
-    }
-
-    &__import {
-        @extend %deployment-bar__links;
-    }
-
-    &__export {
-        @extend %fade-in;
-        @extend %deployment-bar__links;
-
-        &:before {
-            content: '';
-            border-right: 1px solid $mid-grey;
-            margin-right: 10px;
-        }
-    }
-
-    &__file {
-        @extend %deployment-bar__links;
-        display: block;
-        visibility: hidden;
-        width: 0;
-    }
-
     &__deploy {
         @extend %floating-panel;
         display: inline-block;
@@ -54,25 +26,5 @@
     .button--inline-neutral {
         padding-left: 10px;
         padding-right: 10px;
-    }
-
-    &--initial {
-        .deployment-bar {
-            &__export {
-                display: none;
-            }
-        }
-
-        .generic-button {
-            display: none;
-        }
-    }
-}
-
-%deployment-bar__links {
-    &:focus,
-    &:active,
-    &:hover {
-        text-decoration: underline;
     }
 }
