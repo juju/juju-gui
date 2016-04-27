@@ -2099,7 +2099,12 @@ YUI.add('juju-gui', function(Y) {
         },
         render: true
       });
-
+      if (!this.env.get('environmentName')) {
+        // If this is starting in an unconnected state there will not be a model
+        // name so we set it so that onEnvironmentNameChange sets and updates
+        // the name correctly.
+        this.env.set('environmentName', null);
+      }
       this._renderComponents();
       this._renderNotifications();
       this._renderLogout();
