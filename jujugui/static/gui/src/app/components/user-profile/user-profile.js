@@ -239,7 +239,6 @@ YUI.add('user-profile', function() {
       props.showConnectingMask();
       this.close();
       props.switchModel(uuid, this.state.envList);
-      props.dbEnvironmentSet('name', name || 'untitled_model');
     },
 
     close: function() {

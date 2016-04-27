@@ -1911,10 +1911,12 @@ YUI.add('juju-view-utils', function(Y) {
     @method switchModel
     @param {Function} createSocketURL The function to create a socket URL.
     @param {Function} switchEnv The function to switch models.
+    @param {Object} env Reference to the app env.
     @param {String} uuid A model UUID.
     @param {Array} modelList A list of models.
   */
-  utils.switchModel = function(createSocketURL, switchEnv, uuid, modelList) {
+  utils.switchModel = function(
+    createSocketURL, switchEnv, env, uuid, modelList) {
     var username, password, address, port;
     if (uuid && modelList) {
       var found = modelList.some((model) => {
@@ -1937,6 +1939,9 @@ YUI.add('juju-view-utils', function(Y) {
     } else {
       // Just reset without reconnecting to an env.
       switchEnv();
+      // There isn't a model name so set it to be blank so that the
+      // onEnvironmentNameChange method will update the name correctly.
+      env.set('environmentName', null);
     }
   };
 

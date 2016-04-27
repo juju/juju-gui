@@ -762,7 +762,8 @@ YUI.add('juju-gui', function(Y) {
           staticURL={window.juju_config.staticURL}
           storeUser={this.storeUser.bind(this)}
           switchModel={views.utils.switchModel.bind(
-            this, this.createSocketURL.bind(this), this.switchEnv.bind(this))}
+            this, this.createSocketURL.bind(this), this.switchEnv.bind(this),
+            this.env)}
           user={this._getAuth()}
           users={Y.clone(this.get('users'), true)}
           charmstore={this.get('charmstore')} />,
@@ -916,7 +917,7 @@ YUI.add('juju-gui', function(Y) {
           modelCommitted={modelCommitted}
           // Hide the fact that we're using the sandbox from the user, as far as
           // they are concerned they do not have a model yet.
-          modelName={modelName === 'sandbox' ? '' : modelName}
+          modelName={this.get('sandbox') ? '' : modelName}
           numberOfChanges={Object.keys(ecs.getCurrentChangeSet()).length}
           pluralize={utils.pluralize.bind(this)}
           services={db.services.toArray()}

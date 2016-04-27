@@ -71,7 +71,7 @@ YUI.add('app-renderer-extension', function(Y) {
       var state = this.state;
       ReactDOM.render(
         <juju.components.HeaderBreadcrumb
-          env={this.env}
+          env={env}
           envName={envName}
           dbEnvironmentSet={this.db.environment.set.bind(this.db.environment)}
           jem={this.jem}
@@ -83,7 +83,7 @@ YUI.add('app-renderer-extension', function(Y) {
           showEnvSwitcher={showEnvSwitcher}
           switchModel={views.utils.switchModel.bind(
             this, this.createSocketURL.bind(this),
-            this.switchEnv.bind(this))}
+            this.switchEnv.bind(this), env)}
           uncommittedChanges={uncommittedChanges} />,
         document.getElementById('header-breadcrumb'));
     },
