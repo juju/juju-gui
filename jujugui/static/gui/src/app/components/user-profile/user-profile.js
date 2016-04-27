@@ -237,7 +237,7 @@ YUI.add('user-profile', function() {
       var props = this.props;
       props.showConnectingMask();
       this.close();
-      props.switchModel(uuid, this.state.envList);
+      props.switchModel(uuid, this.state.envList, name);
     },
 
     close: function() {

@@ -139,7 +139,7 @@ YUI.add('env-switcher', function() {
       var props = this.props;
       props.showConnectingMask();
       this.setState({showEnvList: false});
-      props.switchModel(model.id, this.state.envList);
+      props.switchModel(model.id, this.state.envList, model.name);
     },
 
     /**
