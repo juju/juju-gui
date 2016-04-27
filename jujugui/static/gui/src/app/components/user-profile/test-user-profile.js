@@ -81,7 +81,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         users={users}
         charmstore={{}}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         getDiagramURL={sinon.stub()}
         gisf={false}
@@ -136,7 +135,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         users={users}
         charmstore={{}}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         getDiagramURL={sinon.stub()}
         gisf={false}
@@ -161,7 +159,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         users={users}
         charmstore={charmstore}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         getDiagramURL={sinon.stub()}
         gisf={false}
@@ -198,7 +195,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         users={users}
         charmstore={charmstore}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         getDiagramURL={sinon.stub()}
         gisf={false}
@@ -239,7 +235,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         users={users}
         charmstore={charmstore}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         getDiagramURL={getDiagramURL}
         gisf={false}
@@ -460,7 +455,6 @@ describe('UserProfile', () => {
         listModels={sinon.stub()}
         showConnectingMask={sinon.stub()}
         changeState={sinon.stub()}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         getDiagramURL={sinon.stub()}
         gisf={false}
@@ -496,7 +490,6 @@ describe('UserProfile', () => {
         showConnectingMask={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         getDiagramURL={sinon.stub()}
         gisf={false}
@@ -521,7 +514,6 @@ describe('UserProfile', () => {
         showConnectingMask={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         getDiagramURL={sinon.stub()}
         gisf={false}
@@ -538,7 +530,6 @@ describe('UserProfile', () => {
         showConnectingMask={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         getDiagramURL={sinon.stub()}
         gisf={false}
@@ -566,7 +557,6 @@ describe('UserProfile', () => {
         users={users}
         changeState={sinon.stub()}
         charmstore={{}}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         getDiagramURL={sinon.stub()}
         gisf={false}
@@ -602,7 +592,6 @@ describe('UserProfile', () => {
         users={users}
         changeState={sinon.stub()}
         charmstore={{}}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         getDiagramURL={sinon.stub()}
         gisf={false}
@@ -622,7 +611,6 @@ describe('UserProfile', () => {
     var changeState = sinon.stub();
     var listModels = sinon.stub();
     var showMask = sinon.stub();
-    var dbset = sinon.stub();
     var models = [{
       uuid: 'abc123',
       user: 'foo',
@@ -642,7 +630,6 @@ describe('UserProfile', () => {
         showConnectingMask={showMask}
         storeUser={sinon.stub()}
         user={users.charmstore}
-        dbEnvironmentSet={dbset}
         listModels={listModels} />, true);
     var instance = component.getMountedInstance();
     // Call the callback for the listModels call to populate the state.
@@ -661,10 +648,7 @@ describe('UserProfile', () => {
       password: 'bar',
       ownerTag: 'who',
       owner: 'who'
-    }]]);
-    // The database needs to be updated with the new model name.
-    assert.equal(dbset.callCount, 1);
-    assert.deepEqual(dbset.args[0], ['name', 'modelname']);
+    }], 'modelname']);
     // Make sure we close the profile page when switching envs.
     assert.equal(changeState.callCount, 1, 'changeState not called');
     assert.deepEqual(changeState.args[0][0], {
@@ -682,7 +666,6 @@ describe('UserProfile', () => {
         users={users}
         changeState={sinon.stub()}
         charmstore={charmstore}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         getDiagramURL={sinon.stub()}
         gisf={false}
@@ -711,7 +694,6 @@ describe('UserProfile', () => {
         users={users}
         changeState={sinon.stub()}
         charmstore={charmstore}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         getDiagramURL={sinon.stub()}
         gisf={false}
@@ -743,7 +725,6 @@ describe('UserProfile', () => {
         users={users}
         changeState={sinon.stub()}
         charmstore={charmstore}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         getDiagramURL={sinon.stub()}
         gisf={false}
@@ -765,7 +746,6 @@ describe('UserProfile', () => {
     pluralize.withArgs('bundle', sinon.match.any).returns('bundles');
     pluralize.withArgs('charm', sinon.match.any).returns('charms');
     var utilsSwitchModel = sinon.stub();
-    var dbEnvironmentSet = sinon.stub();
     var changeState = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfile
@@ -775,7 +755,6 @@ describe('UserProfile', () => {
         showConnectingMask={sinon.stub()}
         changeState={changeState}
         charmstore={{}}
-        dbEnvironmentSet={dbEnvironmentSet}
         env={env}
         getDiagramURL={sinon.stub()}
         gisf={false}
@@ -790,10 +769,6 @@ describe('UserProfile', () => {
     var switchArgs = utilsSwitchModel.args[0];
     assert.equal(switchArgs[0], undefined,
                  'UUID should not be defined');
-    assert.equal(dbEnvironmentSet.callCount, 1,
-                 'Model name not set in db');
-    var dbEnvSetArgs = dbEnvironmentSet.args[0];
-    assert.equal(dbEnvSetArgs[1], 'untitled_model');
     assert.deepEqual(changeState.getCall(0).args[0], {
       sectionC: {
         component: null,

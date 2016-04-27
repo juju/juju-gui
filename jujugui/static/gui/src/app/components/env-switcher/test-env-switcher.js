@@ -36,7 +36,6 @@ describe('EnvSwitcher', function() {
       // outside wrapper.
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
-        dbEnvironmentSet={sinon.stub()}
         environmentName="MyEnv"
         switchModel={sinon.stub()}
         uncommittedChanges={false} />, true);
@@ -76,7 +75,6 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         switchModel={sinon.stub()}
         uncommittedChanges={false} />, true);
@@ -89,7 +87,6 @@ describe('EnvSwitcher', function() {
     renderer.render(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         switchModel={sinon.stub()}
         uncommittedChanges={false} />);
@@ -114,7 +111,6 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
-        dbEnvironmentSet={sinon.stub()}
         jem={jem}
         switchModel={sinon.stub()}
         uncommittedChanges={false} />, true);
@@ -136,7 +132,6 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         switchModel={sinon.stub()}
         uncommittedChanges={false} />, true);
@@ -156,7 +151,6 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         switchModel={sinon.stub()}
         uncommittedChanges={false} />, true);
@@ -192,7 +186,6 @@ describe('EnvSwitcher', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        dbEnvironmentSet={sinon.stub()}
         showConnectingMask={mask}
         jem={jem}
         switchModel={switchModel}
@@ -210,7 +203,7 @@ describe('EnvSwitcher', function() {
       showEnvList: false,
       envList: envs
     });
-    assert.deepEqual(switchModel.args[0], ['abc123', envs]);
+    assert.deepEqual(switchModel.args[0], ['abc123', envs, 'abc123']);
   });
 
   // To fully test the new env creation it has to be tested accepting a custom
@@ -237,11 +230,9 @@ describe('EnvSwitcher', function() {
       newEnvironment: newEnv
     };
     var switchModel = sinon.stub();
-    var dbset = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
-        dbEnvironmentSet={dbset}
         jem={jem}
         switchModel={switchModel}
         uncommittedChanges={false} />, true);
@@ -272,10 +263,6 @@ describe('EnvSwitcher', function() {
     envs.push(createdEnv);
     listEnvironments.args[1][0](null, envs);
     assert.equal(switchModel.callCount, 1);
-    // After creating a new env it should call to update the environment name
-    // in the db.
-    assert.equal(dbset.callCount, 1);
-    assert.deepEqual(dbset.args[0], ['name', 'newname']);
   }
 
   it('can call to create a new env (JEM)', function() {
@@ -304,7 +291,6 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
-        dbEnvironmentSet={sinon.stub()}
         env={env}
         switchModel={sinon.stub()}
         uncommittedChanges={false} />, true);
@@ -328,7 +314,6 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         showConnectingMask={sinon.stub()}
-        dbEnvironmentSet={sinon.stub()}
         changeState={changeState}
         switchModel={sinon.stub()}
         uncommittedChanges={false} />, true);

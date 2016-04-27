@@ -141,7 +141,6 @@ YUI.add('juju-gui', function(Y) {
                 bindings={bindings}
                 disableCookie={localStorage.getItem('disable-cookie')}
                 disableAutoPlace={localStorage.getItem('disable-auto-place')}
-                environmentName={this.env.get('environmentName') || 'model'}
                 forceContainers={localStorage.getItem('force-containers')} />,
               target.getDOMNode());
 
@@ -430,8 +429,6 @@ YUI.add('juju-gui', function(Y) {
       ecs.on('currentCommitFinished', this._renderDeploymentBar.bind(this));
       // Instantiate the Juju environment.
       this._generateSocketUrl(function(socketUrl, user, password) {
-        // Update the breadcrumb to display the proper user and model name.
-        this._renderBreadcrumb();
         this.set('socket_url', socketUrl);
         var envOptions = {
           ecs: ecs,
@@ -755,7 +752,6 @@ YUI.add('juju-gui', function(Y) {
           gisf={this.get('gisf')}
           listModels={this.env.listModelsWithInfo.bind(this.env)}
           changeState={this.changeState.bind(this)}
-          dbEnvironmentSet={this.db.environment.set.bind(this.db.environment)}
           showConnectingMask={this.showConnectingMask.bind(this)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           interactiveLogin={this.get('interactiveLogin')}
@@ -763,7 +759,8 @@ YUI.add('juju-gui', function(Y) {
           staticURL={window.juju_config.staticURL}
           storeUser={this.storeUser.bind(this)}
           switchModel={views.utils.switchModel.bind(
-            this, this.createSocketURL.bind(this), this.switchEnv.bind(this))}
+            this, this.createSocketURL.bind(this), this.switchEnv.bind(this),
+            this.env)}
           user={this._getAuth()}
           users={Y.clone(this.get('users'), true)}
           charmstore={this.get('charmstore')} />,
@@ -917,7 +914,7 @@ YUI.add('juju-gui', function(Y) {
           modelCommitted={modelCommitted}
           // Hide the fact that we're using the sandbox from the user, as far as
           // they are concerned they do not have a model yet.
-          modelName={modelName === 'sandbox' ? '' : modelName}
+          modelName={this.get('sandbox') ? '' : modelName}
           numberOfChanges={Object.keys(ecs.getCurrentChangeSet()).length}
           pluralize={utils.pluralize.bind(this)}
           services={db.services.toArray()}
@@ -2041,19 +2038,9 @@ YUI.add('juju-gui', function(Y) {
       @method onEnvironmentNameChange
     */
     onEnvironmentNameChange: function(evt) {
-      var environmentName = evt.newVal;
-      // If there's an override in the custom settings use that instead.
-      if (localStorage.getItem('environmentName')) {
-        environmentName = localStorage.getItem('environmentName');
-      }
-      // The config.js jujuEnvUUID trumps 'sandbox'; in any other
-      // situation, the provided environmentName should update the app's
-      // jujuEnvUUID.
-      if (environmentName === 'sandbox') {
-        environmentName = this.get('jujuEnvUUID');
-      } else {
-        this.set('jujuEnvUUID', environmentName);
-      }
+      var environmentName = evt.newVal || 'untitled_model';
+      // Update the name on the current model. This is what the components use
+      // to display the model name.
       this.db.environment.set('name', environmentName);
       // Update the breadcrumb with the new model name.
       this._renderBreadcrumb();
@@ -2112,7 +2099,12 @@ YUI.add('juju-gui', function(Y) {
         },
         render: true
       });
-
+      if (!this.env.get('environmentName')) {
+        // If this is starting in an unconnected state there will not be a model
+        // name so we set it so that onEnvironmentNameChange sets and updates
+        // the name correctly.
+        this.env.set('environmentName', null);
+      }
       this._renderComponents();
       this._renderNotifications();
       this._renderLogout();

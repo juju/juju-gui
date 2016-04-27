@@ -27,7 +27,6 @@ YUI.add('user-profile', function() {
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
-      dbEnvironmentSet: React.PropTypes.func.isRequired,
       env: React.PropTypes.object.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       gisf: React.PropTypes.bool.isRequired,
@@ -238,8 +237,7 @@ YUI.add('user-profile', function() {
       var props = this.props;
       props.showConnectingMask();
       this.close();
-      props.switchModel(uuid, this.state.envList);
-      props.dbEnvironmentSet('name', name || 'untitled_model');
+      props.switchModel(uuid, this.state.envList, name);
     },
 
     close: function() {

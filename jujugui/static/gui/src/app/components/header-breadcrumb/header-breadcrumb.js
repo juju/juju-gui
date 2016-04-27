@@ -24,7 +24,6 @@ YUI.add('header-breadcrumb', function() {
     propTypes: {
       env: React.PropTypes.object,
       envName: React.PropTypes.string.isRequired,
-      dbEnvironmentSet: React.PropTypes.func.isRequired,
       jem: React.PropTypes.object,
       envList: React.PropTypes.array,
       changeState: React.PropTypes.func.isRequired,
@@ -52,7 +51,6 @@ YUI.add('header-breadcrumb', function() {
             <window.juju.components.EnvSwitcher
               env={this.props.env}
               environmentName={this.props.envName}
-              dbEnvironmentSet={this.props.dbEnvironmentSet}
               jem={this.props.jem}
               envList={this.props.envList}
               changeState={this.props.changeState}
