@@ -611,7 +611,6 @@ describe('UserProfile', () => {
     var changeState = sinon.stub();
     var listModels = sinon.stub();
     var showMask = sinon.stub();
-    var dbset = sinon.stub();
     var models = [{
       uuid: 'abc123',
       user: 'foo',
@@ -649,10 +648,7 @@ describe('UserProfile', () => {
       password: 'bar',
       ownerTag: 'who',
       owner: 'who'
-    }]]);
-    // The database needs to be updated with the new model name.
-    assert.equal(dbset.callCount, 1);
-    assert.deepEqual(dbset.args[0], ['name', 'modelname']);
+    }], 'modelname']);
     // Make sure we close the profile page when switching envs.
     assert.equal(changeState.callCount, 1, 'changeState not called');
     assert.deepEqual(changeState.args[0][0], {

@@ -203,7 +203,7 @@ describe('EnvSwitcher', function() {
       showEnvList: false,
       envList: envs
     });
-    assert.deepEqual(switchModel.args[0], ['abc123', envs]);
+    assert.deepEqual(switchModel.args[0], ['abc123', envs, 'abc123']);
   });
 
   // To fully test the new env creation it has to be tested accepting a custom

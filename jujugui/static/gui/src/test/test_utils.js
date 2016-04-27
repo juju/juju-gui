@@ -1368,7 +1368,8 @@ describe('utilities', function() {
           'localhost:443'
         ]
       }];
-      utils.switchModel(createSocketURL, switchEnv, 'uuid1', models);
+      var env = {set: testUtils.makeStubFunction()};
+      utils.switchModel(createSocketURL, switchEnv, env, 'uuid1', models, 'ev');
       assert.deepEqual(createSocketURL.callCount(), 1);
       var socketArgs = createSocketURL.allArguments();
       assert.deepEqual(socketArgs[0][0], 'localhost');
@@ -1379,6 +1380,10 @@ describe('utilities', function() {
       assert.deepEqual(switchEnvArgs[0][0], 'newaddress:80');
       assert.deepEqual(switchEnvArgs[0][1], models[0].user);
       assert.deepEqual(switchEnvArgs[0][2], models[0].password);
+      assert.deepEqual(env.set.callCount(), 1);
+      var envSet = env.set.allArguments();
+      assert.deepEqual(envSet[0][0], 'environmentName');
+      assert.deepEqual(envSet[0][1], 'ev');
     });
 
     it('just disconnects if uuid is missing', function() {
@@ -1393,7 +1398,8 @@ describe('utilities', function() {
           'localhost:443'
         ]
       }];
-      utils.switchModel(createSocketURL, switchEnv, undefined, models);
+      var env = {set: testUtils.makeStubFunction()};
+      utils.switchModel(createSocketURL, switchEnv, env, undefined, models);
       assert.deepEqual(createSocketURL.callCount(), 0);
       assert.deepEqual(switchEnv.callCount(), 1);
       assert.equal(switchEnv.allArguments()[0].length, 0);
@@ -1402,7 +1408,8 @@ describe('utilities', function() {
     it('just disconnects if modelList is missing', function() {
       var createSocketURL = testUtils.makeStubFunction();
       var switchEnv = testUtils.makeStubFunction();
-      utils.switchModel(createSocketURL, switchEnv, 'model1', undefined);
+      var env = {set: testUtils.makeStubFunction()};
+      utils.switchModel(createSocketURL, switchEnv, env, 'model1', undefined);
       assert.deepEqual(createSocketURL.callCount(), 0);
       assert.deepEqual(switchEnv.callCount(), 1);
       assert.equal(switchEnv.allArguments()[0].length, 0);
