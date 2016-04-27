@@ -429,8 +429,6 @@ YUI.add('juju-gui', function(Y) {
       ecs.on('currentCommitFinished', this._renderDeploymentBar.bind(this));
       // Instantiate the Juju environment.
       this._generateSocketUrl(function(socketUrl, user, password) {
-        // Update the breadcrumb to display the proper user and model name.
-        this._renderBreadcrumb();
         this.set('socket_url', socketUrl);
         var envOptions = {
           ecs: ecs,
@@ -754,7 +752,6 @@ YUI.add('juju-gui', function(Y) {
           gisf={this.get('gisf')}
           listModels={this.env.listModelsWithInfo.bind(this.env)}
           changeState={this.changeState.bind(this)}
-          dbEnvironmentSet={this.db.environment.set.bind(this.db.environment)}
           showConnectingMask={this.showConnectingMask.bind(this)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           interactiveLogin={this.get('interactiveLogin')}

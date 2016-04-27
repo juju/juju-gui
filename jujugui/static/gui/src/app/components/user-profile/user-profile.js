@@ -27,7 +27,6 @@ YUI.add('user-profile', function() {
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
-      dbEnvironmentSet: React.PropTypes.func.isRequired,
       env: React.PropTypes.object.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       gisf: React.PropTypes.bool.isRequired,

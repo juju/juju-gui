@@ -26,7 +26,6 @@ YUI.add('env-switcher', function() {
       env: React.PropTypes.object,
       environmentName: React.PropTypes.string,
       showConnectingMask: React.PropTypes.func.isRequired,
-      dbEnvironmentSet: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
       uncommittedChanges: React.PropTypes.bool.isRequired
     },
@@ -204,7 +203,6 @@ YUI.add('env-switcher', function() {
         console.log('error creating new model:', err);
         return;
       }
-      this.props.dbEnvironmentSet('name', data.name || data.path);
       this.updateEnvList(this.props.switchModel.bind(
         this, data.uuid, this.state.envList));
     },

@@ -73,7 +73,6 @@ YUI.add('app-renderer-extension', function(Y) {
         <juju.components.HeaderBreadcrumb
           env={env}
           envName={envName}
-          dbEnvironmentSet={this.db.environment.set.bind(this.db.environment)}
           jem={this.jem}
           envList={this.get('environmentList')}
           changeState={this.changeState.bind(this)}
