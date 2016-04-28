@@ -263,13 +263,10 @@ YUI.add('header-search', function() {
           </form>
           <span tabIndex="0" role="button"
             onClick={this._handleStoreClick}
-            className="header-search__store">
+            className="header-search__search--mobile">
             <span className="header-search__store-icon">
-              <juju.components.SvgIcon name="store_22"
-                size="20" />
-            </span>
-            <span className="header-search__store-label">
-              Store
+              <juju.components.SvgIcon name="search_16"
+                size="16" />
             </span>
           </span>
           <span tabIndex="0" role="button"
