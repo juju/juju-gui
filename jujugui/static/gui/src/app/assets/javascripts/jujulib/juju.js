@@ -338,28 +338,29 @@ var module = module;
      Provides access to the charmstore API.
    */
 
+  var charmstoreAPIVersion = 'v4';
+
   /**
      Initializer
 
      @function charmstore
-     @param url {String} The URL, including scheme and port, of the charmstore
-     @param apiVersion {String} The api version, e.g. v4
+     @param url {String} The URL of the charm store, including scheme, port and
+      the trailing slash, and excluding the API version.
      @param bakery {Object} A bakery object for communicating with the
          charmstore instance.
      @param processEnity {function} A function to massage entity data into the
         desired form (e.g. turning it into juju gui model objects.
      @returns {Object} A client object for making charmstore API calls.
    */
-  function charmstore(url, apiVersion, bakery, processEntity) {
+  function charmstore(url, bakery, processEntity) {
     this.url = url;
-    this.version = apiVersion;
     this.bakery = bakery;
 
     // XXX jcsackett 2015-11-09 Methods that return entity data should
     // accept an additional modifier function as a callback, but for now
     // we've made it an attribute of the charmstore.
     this.processEntity = processEntity;
-  }
+  };
 
   charmstore.prototype = {
 
@@ -390,7 +391,7 @@ var module = module;
       if (extension) {
         endpoint = endpoint + extension;
       }
-      return this.url + this.version + '/' + endpoint + query;
+      return this.url + charmstoreAPIVersion + '/' + endpoint + query;
     },
 
     /**
@@ -532,7 +533,7 @@ var module = module;
         }
         processed.deployerFileUrl =
             this.url +
-            this.version + '/' +
+            charmstoreAPIVersion + '/' +
             processed.id.replace('cs:', '') +
             '/archive/bundle.yaml';
       } else {
@@ -789,6 +790,7 @@ var module = module;
      The jujulib object, returned by this library.
    */
   var jujulib = {
+    charmstoreAPIVersion: charmstoreAPIVersion,
     charmstore: charmstore,
     jem: jem,
     identity: function() {}

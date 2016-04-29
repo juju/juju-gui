@@ -1399,30 +1399,23 @@ YUI.add('juju-gui', function(Y) {
     */
     _setupCharmstore: function(Charmstore) {
       if (this.get('charmstore') === undefined) {
-        var jujuConfig = window.juju_config,
-            charmstoreURL, charmstoreAPIPath, existingMacaroons;
-        if (
-            !jujuConfig ||
-            !jujuConfig.charmstoreURL ||
-            !jujuConfig.charmstoreAPIPath) {
-          console.error(
-              'No juju config for charmstoreURL or charmstoreAPIPath availble');
+        var jujuConfig = window.juju_config, charmstoreURL, existingMacaroons;
+        if (!jujuConfig || !jujuConfig.charmstoreURL) {
+          console.error('no juju config for charmstoreURL availble');
         } else {
           charmstoreURL = jujuConfig.charmstoreURL;
-          charmstoreAPIPath = jujuConfig.charmstoreAPIPath;
           existingMacaroons = jujuConfig.charmstoreMacaroons;
         }
+        var apiVersion = window.jujulib.charmstoreAPIVersion;
         var bakery = new Y.juju.environments.web.Bakery({
           webhandler: new Y.juju.environments.web.WebHandler(),
           interactive: this.get('interactiveLogin'),
-          setCookiePath: charmstoreURL + charmstoreAPIPath + '/set-auth-cookie',
-          staticMacaroonPath: `${charmstoreURL}${charmstoreAPIPath}/macaroon`,
+          setCookiePath: `${charmstoreURL}${apiVersion}/set-auth-cookie`,
+          staticMacaroonPath: `${charmstoreURL}${apiVersion}/macaroon`,
           serviceName: 'charmstore',
           macaroon: existingMacaroons
         });
-        this.set(
-            'charmstore',
-            new Charmstore(charmstoreURL, charmstoreAPIPath, bakery));
+        this.set('charmstore', new Charmstore(charmstoreURL, bakery));
         // Store away the charmstore auth info.
         var macaroon = bakery.getMacaroon();
         if (macaroon) {
