@@ -24,9 +24,11 @@ YUI.add('user-profile-entity', function() {
 
     propTypes: {
       changeState: React.PropTypes.func,
+      displayConfirmation: React.PropTypes.func,
       entity: React.PropTypes.object.isRequired,
       expanded: React.PropTypes.bool,
       getDiagramURL: React.PropTypes.func,
+      showDestroy: React.PropTypes.bool,
       switchModel: React.PropTypes.func,
       type: React.PropTypes.string.isRequired
     },
@@ -250,7 +252,7 @@ YUI.add('user-profile-entity', function() {
       var type = props.type;
       var isModel = type === 'model';
       var isCharm = type === 'charm';
-      var name = entity.name;
+      var name = isModel ? entity.name.split('/')[1] : entity.name;
       var id = isModel ? entity.uuid : entity.id;
       var buttonAction = isModel ? this._switchEnv.bind(
         this, id, name) : this._viewEntity.bind(this, id);
@@ -267,19 +269,25 @@ YUI.add('user-profile-entity', function() {
       var button = isZombieModel ? undefined : (
         <juju.components.GenericButton
           action={buttonAction}
-          type='inline-neutral'
+          type="inline-neutral"
           title={isModel ? 'Manage' : 'View'} />);
+      var destroyButton = isModel && this.props.showDestroy ? (
+        <juju.components.GenericButton
+          action={props.displayConfirmation}
+          type="inline-base"
+          title="Destroy model" />) : undefined;
       return (
         <juju.components.ExpandingRow classes={classes}
           expanded={this.props.expanded}>
           {this.props.children}
           <div>
             <div className="expanding-row__expanded-header twelve-col">
-              <div className="ten-col no-margin-bottom">
+              <div className="seven-col no-margin-bottom">
                 {icon}{name}
               </div>
               <div className={'expanding-row__expanded-header-action ' +
-                'two-col last-col no-margin-bottom'}>
+                'five-col last-col no-margin-bottom'}>
+                {destroyButton}
                 {button}
               </div>
             </div>

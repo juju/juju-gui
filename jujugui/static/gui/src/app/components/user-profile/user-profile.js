@@ -25,6 +25,7 @@ YUI.add('user-profile', function() {
 
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
+      destroyModel: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
       env: React.PropTypes.object.isRequired,
@@ -44,6 +45,7 @@ YUI.add('user-profile', function() {
 
     getInitialState: function() {
       return {
+        destroyModel: null,
         envList: [],
         charmList: [],
         bundleList: [],
@@ -283,11 +285,20 @@ YUI.add('user-profile', function() {
     */
     _generateModelRow: function(model) {
       var uuid = model.uuid;
+      var isCurrent = model.name === this.props.currentModel;
+      if (!model.isAlive) {
+        return (
+          <li className="user-profile__entity user-profile__list-row">
+            {model.name} is being destroyed.
+          </li>);
+      }
       return (
         <juju.components.UserProfileEntity
           entity={model}
-          expanded={model.name === this.props.currentModel}
+          expanded={isCurrent}
           key={uuid}
+          showDestroy={isCurrent}
+          displayConfirmation={this._displayConfirmation.bind(this, model)}
           switchModel={this.switchModel}
           type="model">
           <span className="user-profile__list-col three-col">
@@ -640,6 +651,66 @@ YUI.add('user-profile', function() {
         </div>);
     },
 
+    /**
+      Display the confirmation for destroying a model.
+
+      @method _displayConfirmation
+      @param {String} model The model to destroy.
+      @return {Object} The confirmation component.
+    */
+    _displayConfirmation: function(model) {
+      this.setState({destroyModel: model});
+    },
+
+    /**
+      Destroy a model.
+
+      @method _destroyModel
+      @param {String} uuid The model uuid to destroy.
+      @return {Object} The confirmation component.
+    */
+    _destroyModel: function(uuid) {
+      this._displayConfirmation(null);
+      this.props.destroyModel((error) => {
+        if (error) {
+          console.log(error);
+          return;
+        }
+        // Reload the models so that the destroyed model updates its status.
+        this._fetchEnvironments(this.props);
+      });
+    },
+
+    /**
+      Generate the confirmation for destroying a model.
+
+      @method _generateConfirmation
+      @return {Object} The confirmation component.
+    */
+    _generateConfirmation: function() {
+      var model = this.state.destroyModel;
+      if (!model) {
+        return;
+      }
+      var buttons = [{
+        title: 'Cancel',
+        action: this._displayConfirmation.bind(this, null),
+        type: 'base'
+      }, {
+        title: 'Destroy',
+        action: this._destroyModel.bind(this, model.uuid),
+        type: 'destructive'
+      }];
+      var name = model.name.split('/')[1];
+      var message = `Are you sure you want to destroy ${name}? This action
+        cannot be undone.`;
+      return (
+        <juju.components.ConfirmationPopup
+          buttons={buttons}
+          message={message}
+          title="Destroy model" />);
+    },
+
     render: function() {
       var username = this.props.user && this.props.user.usernameDisplay;
       var bundleCount = this.state.bundleList.length;
@@ -669,6 +740,7 @@ YUI.add('user-profile', function() {
               {this._generateContent()}
             </div>
           </div>
+          {this._generateConfirmation()}
         </juju.components.Panel>
       );
     }
@@ -677,6 +749,7 @@ YUI.add('user-profile', function() {
 
 }, '', {
   requires: [
+    'confirmation-popup',
     'loading-spinner',
     'svg-icon',
     'panel-component',

@@ -747,6 +747,7 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.UserProfile
           currentModel={this.get('jujuEnvUUID')}
+          destroyModel={this.env.destroyModel.bind(this.env)}
           env={this.env}
           jem={this.jem}
           gisf={this.get('gisf')}
