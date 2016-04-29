@@ -1,26 +1,38 @@
 .env-switcher {
-    &--toggle {
-        cursor: pointer;
-        color: $cool-grey;
-        border-bottom: 1px solid currentColor;
+  &__toggle {
+    border: 1px solid $light-mid-grey;
+    border-radius: 2px;
+    color: $cool-grey;
+    cursor: pointer;
+    margin-left: 3px;
+    padding: 6px 9px 8px;
+    transition: background-color .2s;
 
-        .environment-name {
-            position: relative;
-            font-size: 23px;
-
-            &:before {
-                content: '/';
-                position: absolute;
-                left: -13px;
-                top: 4px;
-                color: $mid-grey;
-            }
-        }
-
-        .svg-icon {
-            margin-left: 10px;
-            vertical-align: text-top;
-            fill: currentColor;
-        }
+    &:hover,
+    &.is-active {
+      background-color: $white;
     }
+  }
+
+  &__name {
+    font-size: 1em;
+    position: relative;
+
+    &:before {
+      color: $mid-grey;
+      content: '/';
+      font-size: 23px;
+      left: -25px;
+      position: absolute;
+      top: -8px;
+    }
+  }
+
+  &__chevron {
+    fill: currentColor;
+    margin-left: 20px;
+    position: relative;
+    top: -1px;
+    vertical-align: middle;
+  }
 }

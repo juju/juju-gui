@@ -20,8 +20,8 @@
         &:before {
             content: '/';
             position: absolute;
-            left: -16px;
-            top: -3px;
+            left: -14px;
+            top: -2px;
             color: $mid-grey;
 
         }
@@ -29,6 +29,6 @@
 
     &__list-item {
         float: left;
-        padding-left: 28px;
+        padding-left: 20px;
     }
 }

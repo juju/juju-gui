@@ -240,13 +240,28 @@ YUI.add('env-switcher', function() {
       return '';
     },
 
+    /**
+      Generate the toggle state classes based on the props.
+
+      @method _toggleClasses
+      @return {String} The collection of class names.
+    */
+    _toggleClasses: function() {
+      return classNames(
+        'env-switcher__toggle',
+        {
+          'is-active': this.state.showEnvList
+        }
+      );
+    },
+
     render: function() {
       return (
         <div className="env-switcher"
           role="navigation"
           aria-label="Model switcher">
           <div
-            className="env-switcher--toggle"
+            className={this._toggleClasses()}
             onClick={this.toggleEnvList}
             onKeyPress={this.handleKeyToggle}
             id="environmentSwitcherToggle"
@@ -256,10 +271,11 @@ YUI.add('env-switcher', function() {
             aria-owns="environmentSwitcherMenu"
             aria-controls="environmentSwitcherMenu"
             aria-expanded="false">
-            <span className="environment-name">
+            <span className="env-switcher__name">
               {this.props.environmentName}
             </span>
             <juju.components.SvgIcon name="chevron_down_16"
+              className="env-switcher__chevron"
               size="16" />
           </div>
           {this.environmentList()}

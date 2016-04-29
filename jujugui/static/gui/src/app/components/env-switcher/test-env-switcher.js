@@ -47,7 +47,7 @@ describe('EnvSwitcher', function() {
         role="navigation"
         aria-label="Model switcher">
         <div
-          className="env-switcher--toggle"
+          className="env-switcher__toggle"
           onClick={instance.toggleEnvList}
           onKeyPress={instance.handleKeyToggle}
           id="environmentSwitcherToggle"
@@ -57,10 +57,11 @@ describe('EnvSwitcher', function() {
           aria-owns="environmentSwitcherMenu"
           aria-controls="environmentSwitcherMenu"
           aria-expanded="false">
-          <span className="environment-name">
+          <span className="env-switcher__name">
             MyEnv
           </span>
           <juju.components.SvgIcon name="chevron_down_16"
+            className="env-switcher__chevron"
             size="16" />
         </div>
         {''}
