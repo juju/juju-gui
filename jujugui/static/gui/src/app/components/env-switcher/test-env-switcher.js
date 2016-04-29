@@ -250,13 +250,12 @@ describe('EnvSwitcher', function() {
     assert.equal(newModel.args[0][1], envName || 'new-env-1');
     assert.equal(newModel.args[0][2], 'admin/foo');
     assert.equal(newModel.args[0][3], 'admin/foo');
-    assert.equal(newModel.args[0][4].length > 10, true);
     // Check to make sure that the env creation callback switches envs.
     var createdEnv = {
       uuid: '123abc',
       name: 'newname'
     };
-    newModel.args[0][5](null, createdEnv);
+    newModel.args[0][4](null, createdEnv);
     // After creating an env it should re-list them.
     assert.equal(listModels.callCount, 2);
     // Then switch to the new one.

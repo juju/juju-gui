@@ -156,9 +156,6 @@ YUI.add('env-switcher', function() {
       }
       // Use the custom provided name or fall back to an auto-incremented one.
       var envName = customEnvName || 'new-env-' + this.state.envList.length;
-      // Generates an alphanumeric string
-      var randomString = () => Math.random().toString(36).slice(2);
-      var password = randomString() + randomString();
 
       // XXX j.c.sackett 2015-10-28 When we have the UI for template creation
       // and template selection in the GUI, this code should be updated to not
@@ -175,8 +172,7 @@ YUI.add('env-switcher', function() {
         var name = controllers[0].path;
         var baseTemplate = name;
         jem.newModel(
-          envOwnerName, envName, baseTemplate, name, password,
-          this.createModelCallback);
+          envOwnerName, envName, baseTemplate, name, this.createModelCallback);
       };
 
       if (jem) {
