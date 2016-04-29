@@ -106,7 +106,7 @@ YUI.add('user-profile', function() {
             // If we're on Juju < 2 then pass the default model to the list.
             var environmentName = env.get('environmentName');
             var username = this.props.user && this.props.user.usernameDisplay;
-            this._fetchEnvironmentsCallback(null, {
+            this._fetchModelsCallback(null, {
               models: [{
                 name: environmentName,
                 ownerTag: username,
@@ -121,23 +121,23 @@ YUI.add('user-profile', function() {
         }
         var xhr;
         if (jem) {
-          xhr = jem.listEnvironments(this._fetchEnvironmentsCallback);
+          xhr = jem.listModels(this._fetchModelsCallback);
         } else {
           xhr = props.listModels(
-            this._fetchEnvironmentsCallback.bind(this, null));
+            this._fetchModelsCallback.bind(this, null));
         }
         this.xhrs.push(xhr);
       });
     },
 
     /**
-      Callback for the JEM and JES list environments call.
+      Callback for the JEM and JES list models call.
 
-      @method _fetchEnvironmentsCallback
+      @method _fetchModelsCallback
       @param {String} error The error from the request, or null.
       @param {Object} data The data from the request.
     */
-    _fetchEnvironmentsCallback: function (error, data) {
+    _fetchModelsCallback: function (error, data) {
       this.setState({loadingModels: false});
       // We need to coerce error types returned by JES vs JEM into one error.
       var err = data.err || error;
@@ -146,17 +146,17 @@ YUI.add('user-profile', function() {
         return;
       }
       // data.models is only populated by Juju controllers, when using JEM
-      // the environments are in the top level 'data' object.
-      var envList;
+      // the models are in the top level 'data' object.
+      var modelList;
       if (data.models) {
-        envList = data.models.map(function(model) {
+        modelList = data.models.map(function(model) {
           // XXX frankban: owner should be the ownerTag without the 'user-'
           // prefix here.
           model.owner = model.ownerTag;
           return model;
         });
       } else {
-        envList = data.map(function(model) {
+        modelList = data.map(function(model) {
           // XXX kadams54: JEM models don't *currently* have a name or owner.
           // They have a path which is a combination of both, but that format
           // may change on down the road. Hence this big comment.
@@ -168,7 +168,7 @@ YUI.add('user-profile', function() {
           return model;
         });
       }
-      this.setState({envList: envList});
+      this.setState({envList: modelList});
     },
 
     /**

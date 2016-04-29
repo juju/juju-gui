@@ -212,9 +212,8 @@ YUI.add('account', function() {
 
       @method _destroyCredentialCallback
       @param {String} error The error from attempting to destroy a credential.
-      @param {String} data The data from destroying a credential.
     */
-    _destroyCredentialCallback: function(error, data) {
+    _destroyCredentialCallback: function(error) {
       if (error) {
         console.error('Unable to delete the template', error);
         return;

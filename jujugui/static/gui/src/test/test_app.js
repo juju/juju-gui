@@ -1529,7 +1529,7 @@ describe('App', function() {
           }, {
             path: 'rose/tardis'
           }];
-          var envData = app._pickEnv(fakeEnvList);
+          var envData = app._pickModel(fakeEnvList);
           assert.equal('rose/tardis', envData.path);
         });
 
@@ -1552,7 +1552,7 @@ describe('App', function() {
           }, {
             path: 'rose/tardis'
           }];
-          var envData = app._pickEnv(fakeEnvList);
+          var envData = app._pickModel(fakeEnvList);
           assert.equal('dalek/exterminate', envData.path);
         });
 

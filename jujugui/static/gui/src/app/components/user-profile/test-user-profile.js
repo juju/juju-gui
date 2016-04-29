@@ -75,7 +75,7 @@ describe('UserProfile', () => {
       label: '0 charms'
     }];
     var jem = {
-      listEnvironments: sinon.stub().callsArgWith(0, null, [])
+      listModels: sinon.stub().callsArgWith(0, null, [])
     };
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
@@ -129,7 +129,7 @@ describe('UserProfile', () => {
 
   it('displays the empty_profile asset with a staticURL provided', () => {
     var jem = {
-      listEnvironments: sinon.stub().callsArgWith(0, null, [])
+      listModels: sinon.stub().callsArgWith(0, null, [])
     };
     var output = jsTestUtils.shallowRender(
       <juju.components.UserProfile
@@ -189,7 +189,7 @@ describe('UserProfile', () => {
 
   it('displays loading spinners for models', () => {
     var jem = {
-      listEnvironments: sinon.stub()
+      listModels: sinon.stub()
     };
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
@@ -549,7 +549,7 @@ describe('UserProfile', () => {
       };
     });
     var jem = {
-      listEnvironments: sinon.stub().callsArgWith(0, null, jemModels)
+      listModels: sinon.stub().callsArgWith(0, null, jemModels)
     };
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
@@ -567,7 +567,7 @@ describe('UserProfile', () => {
         jem={jem} />, true);
     var instance = component.getMountedInstance();
 
-    assert.equal(jem.listEnvironments.callCount, 1);
+    assert.equal(jem.listModels.callCount, 1);
     assert.deepEqual(instance.state.envList, jemModels);
 
     // Make sure we properly displayed the different bits within a JEM model.

@@ -1927,8 +1927,8 @@ YUI.add('juju-view-utils', function(Y) {
         if (model.uuid === uuid) {
           username = model.user;
           password = model.password;
-          if (model['host-ports']) {
-            var hostport = model['host-ports'][0].split(':');
+          if (model.hostPorts.length) {
+            var hostport = model.hostPorts[0].split(':');
             address = hostport[0];
             port = hostport[1];
           }

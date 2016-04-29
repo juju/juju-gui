@@ -62,24 +62,23 @@ YUI.add('env-switcher', function() {
     updateEnvList: function(callback) {
       var jem = this.props.jem;
       if (jem) {
-        jem.listEnvironments(
-          this._updateEnvListCallback.bind(this, callback));
+        jem.listModels(this._updateModelListCallback.bind(this, callback));
       } else {
         this.props.env.listModelsWithInfo(
-          this._updateEnvListCallback.bind(this, callback, null));
+          this._updateModelListCallback.bind(this, callback, null));
       }
     },
 
     /**
       Sets the state with the supplied data from env.listModelsWithInfo and
-      jem.listEnvironments calls.
+      jem.listModels calls.
 
-      @method _updateEnvListCallback
+      @method _updateModelListCallback
       @param {Function} callback The callback to call after the list has been
         updated.
       @param {Object} data The data from the call.
     */
-    _updateEnvListCallback: function(callback, error, data) {
+    _updateModelListCallback: function(callback, error, data) {
       // We need to coerce error types returned by JES vs JEM into one error.
       var err = data.err || error;
       if (err) {
@@ -88,14 +87,14 @@ YUI.add('env-switcher', function() {
       }
 
       // data.models is only populated by the call to the controller; when
-      // using JEM the environments are in the top level 'data' object.
-      var envList = data;
+      // using JEM the models are in the top level 'data' object.
+      var modelList = data;
       if (data.models) {
-        envList = data.models.filter(function(model) {
+        modelList = data.models.filter(function(model) {
           return model.isAlive;
         });
       }
-      this.setState({envList: envList});
+      this.setState({envList: modelList});
       if (callback) {
         callback();
       }
@@ -164,25 +163,24 @@ YUI.add('env-switcher', function() {
       // XXX j.c.sackett 2015-10-28 When we have the UI for template creation
       // and template selection in the GUI, this code should be updated to not
       // select template based on state server.
-      var srvCb = (error, servers) => {
+      var listControllersCallback = (error, controllers) => {
         if (error) {
-          console.log(error);
+          console.error(error);
           return;
         }
-        if (servers && servers.length > 0 && servers[0].path) {
-          var serverName = servers[0].path;
-          var baseTemplate = serverName;
-          jem.newEnvironment(
-            envOwnerName, envName, baseTemplate, serverName, password,
-            this.createModelCallback);
-        } else {
-          console.log(
-            'Cannot create a new model: No controllers found.');
+        if (!controllers.length) {
+          console.log('Cannot create a new model: no controllers found.');
+          return;
         }
+        var name = controllers[0].path;
+        var baseTemplate = name;
+        jem.newModel(
+          envOwnerName, envName, baseTemplate, name, password,
+          this.createModelCallback);
       };
 
       if (jem) {
-        jem.listServers(srvCb);
+        jem.listControllers(listControllersCallback);
       } else {
         this.props.env.createModel(
             envName, 'user-admin', this.createModelCallback.bind(this, null));

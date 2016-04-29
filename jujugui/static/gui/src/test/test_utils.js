@@ -1363,10 +1363,7 @@ describe('utilities', function() {
         uuid: 'uuid1',
         user: 'spinach',
         password: 'hasselhoff',
-        'host-ports': [
-          'localhost:80',
-          'localhost:443'
-        ]
+        hostPorts: ['localhost:80', 'localhost:443']
       }];
       var env = {set: testUtils.makeStubFunction()};
       utils.switchModel(createSocketURL, switchEnv, env, 'uuid1', models, 'ev');
@@ -1393,10 +1390,7 @@ describe('utilities', function() {
         uuid: 'uuid1',
         user: 'spinach',
         password: 'hasselhoff',
-        'host-ports': [
-          'localhost:80',
-          'localhost:443'
-        ]
+        hostPorts: ['localhost:80', 'localhost:443']
       }];
       var env = {set: testUtils.makeStubFunction()};
       utils.switchModel(createSocketURL, switchEnv, env, undefined, models);

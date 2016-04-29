@@ -57,7 +57,7 @@ YUI.add('deployment-add-credentials', function() {
             }
           };
       this.props.jem.addTemplate(
-        user, templateName, template, (error, data) => {
+        user, templateName, template, error => {
           if (error) {
             console.error('Unable to add template', error);
           }
