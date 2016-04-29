@@ -557,8 +557,13 @@ describe('utilities', function() {
       });
     });
 
-    it('returns the name of a charmstore charm', function() {
+    it('returns the name of a charm', function() {
       var name = utils.getName('cs:~uros/precise/rails-server-47');
+      assert.strictEqual(name, 'rails-server');
+    });
+
+    it('returns the name of a charm when version is missing', function() {
+      var name = utils.getName('cs:~uros/precise/rails-server');
       assert.strictEqual(name, 'rails-server');
     });
 

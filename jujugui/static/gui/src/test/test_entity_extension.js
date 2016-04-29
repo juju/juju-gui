@@ -38,6 +38,7 @@ describe('Entity Extension', function() {
     entityModel = new EntityModel();
     var attrs = {
       id: '~owner/foobar',
+      storeId: 'cs:~owner/foobar-132',
       name: 'foo-bar',
       description: 'A test description.',
       downloads: '0',
@@ -81,6 +82,7 @@ describe('Entity Extension', function() {
       displayName: 'foo bar',
       downloads: '0',
       id: '~owner/foobar',
+      storeId: 'cs:~owner/foobar-132',
       name: 'foo-bar',
       owner: 'owner',
       promulgated: false,
@@ -92,7 +94,6 @@ describe('Entity Extension', function() {
       series: 'trusty',
       tags: ['database', 'application']
     };
-    console.log(entity);
     assert.deepEqual(expected, entity,
                      'charm POJO did not match expected object');
   });
@@ -112,6 +113,7 @@ describe('Entity Extension', function() {
       displayName: 'foo bar',
       downloads: '0',
       id: 'foobar',
+      storeId: 'cs:~owner/foobar-132',
       name: 'foo-bar',
       owner: 'foobar-charmers',
       promulgated: false,

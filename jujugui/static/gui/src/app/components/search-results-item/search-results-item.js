@@ -104,13 +104,13 @@ YUI.add('search-results-item', function(Y) {
       var components = [];
       // Prevent layouts from collapsing due to empty content.
       if (series.length === 0) {
-        return <span>{' '}</span>;
+        return <li>&nbsp;</li>;
       }
       series.forEach(function(s) {
         components.push(
           <li className="list-series__item"
             key={s.name}>
-            <a onClick={this._handleItemClick.bind(this, item.id)}>
+            <a onClick={this._handleItemClick.bind(this, s.storeId)}>
               {s.name}
             </a>
           </li>
@@ -135,7 +135,7 @@ YUI.add('search-results-item', function(Y) {
     /**
       Show the entity details when clicked.
 
-      @method _handleEntityClick
+      @method _handleItemClick
       @param {String} id The entity id.
       @param {Object} e The click event.
     */

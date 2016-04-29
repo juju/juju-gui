@@ -341,7 +341,7 @@ describe('SearchResults', function() {
 
     it('collapses identical charms with different series', function() {
       var getName = (val) => {
-        return val;
+        return val.split('/').pop();
       };
       var entities = [
         {id: 'foo', name: 'foo', owner: 'bar', type: 'charm', series: 'trusty'},
@@ -357,17 +357,17 @@ describe('SearchResults', function() {
         name: first.name,
         owner: first.owner,
         type: first.type,
+        series: [{name: 'trusty', storeId: ''}, {name: 'precise', storeId: ''}],
         downloads: 0,
-        url: '',
-        series: [{name: 'trusty', url: ''}, {name: 'precise', url: ''}]
+        storeId: ''
       }, {
         id: 'vivid/' + last.name,
         name: last.name,
         owner: last.owner,
         type: last.type,
+        series: [{name: 'vivid', storeId: ''}],
         downloads: 0,
-        url: '',
-        series: [{name: 'vivid', url: ''}]
+        storeId: ''
       }];
       assert.deepEqual(actual, expected);
     });

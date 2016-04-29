@@ -163,7 +163,7 @@ describe('SearchResultsItem', function() {
         </div>
         <div className="two-col series__column">
           <ul className="list-series">
-            <span>{' '}</span>
+            <li>&nbsp;</li>
           </ul>
         </div>
         <div className="three-col charm-logos__column list-block__column">
@@ -232,7 +232,7 @@ describe('SearchResultsItem', function() {
           item={item} />);
     var icons = output.props.children[2].props.children.props.children;
     var owner = output.props.children[3].props.children.props.children[1];
-    assert.deepEqual(output,
+    var expected = (
       <li className="list-block__list--item bundle"
           tabIndex="0" role="button"
           onClick={output.props.onClick}>
@@ -247,7 +247,7 @@ describe('SearchResultsItem', function() {
         </div>
         <div className="two-col series__column">
           <ul className="list-series">
-            <span>{' '}</span>
+            <li>&nbsp;</li>
           </ul>
         </div>
         <div className="three-col charm-logos__column list-block__column">
@@ -293,7 +293,9 @@ describe('SearchResultsItem', function() {
             </span>
           </p>
         </div>
-      </li>);
+      </li>
+    );
+    assert.deepEqual(output, expected);
   });
 
   it('can handle clicking on an item', function() {
@@ -327,6 +329,58 @@ describe('SearchResultsItem', function() {
         metadata: {
           activeComponent: 'entity-details',
           id: '~test-owner/mysql'
+        }
+      }
+    });
+  });
+
+  it('can handle clicking on a series', function() {
+    var changeState = sinon.stub();
+    var stopPropagation = sinon.stub();
+    var item = {
+      name: 'mysql',
+      displayName: 'mysql',
+      special: true,
+      url: 'http://example.com/mysql',
+      downloads: 1000,
+      owner: 'test-owner',
+      promulgated: true,
+      id: 'mysql',
+      storeId: '~test-owner/vivid/mysql',
+      type: 'charm',
+      tags: ['tag1', 'tag2'],
+      series: [
+        {name: 'vivid', storeId: '~test-owner/vivid/mysql'},
+        {name: 'wily', storeId: '~test-owner/wily/mysql'}
+      ]
+    };
+    var output = jsTestUtils.shallowRender(
+        <juju.components.SearchResultsItem
+          changeState={changeState}
+          key={item.storeId}
+          item={item} />);
+    var series = output.props.children[1].props.children.props.children;
+    series[0].props.children.props.onClick({stopPropagation: stopPropagation});
+    assert.equal(changeState.callCount, 1);
+    assert.equal(stopPropagation.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionC: {
+        component: 'charmbrowser',
+        metadata: {
+          activeComponent: 'entity-details',
+          id: '~test-owner/vivid/mysql'
+        }
+      }
+    });
+    series[1].props.children.props.onClick({stopPropagation: stopPropagation});
+    assert.equal(changeState.callCount, 2);
+    assert.equal(stopPropagation.callCount, 2);
+    assert.deepEqual(changeState.args[1][0], {
+      sectionC: {
+        component: 'charmbrowser',
+        metadata: {
+          activeComponent: 'entity-details',
+          id: '~test-owner/wily/mysql'
         }
       }
     });
