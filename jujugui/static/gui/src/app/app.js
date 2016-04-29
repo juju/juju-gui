@@ -1295,29 +1295,27 @@ YUI.add('juju-gui', function(Y) {
 
     /** Chooses an env to connect to from the env list based on config.
 
-      @method _pickEnv
-      @param {Array} envList The list of environments to pick from.
-      @return {Object} The selected environment.
+      @method _pickModel
+      @param {Array} modelList The list of models to pick from.
+      @return {Object} The selected model.
      */
-    _pickEnv: function(envList) {
+    _pickModel: function(modelList) {
       // XXX This picks the first environment if one is not provided by
       // config, but we'll want to default to sandbox mode then allow the
-      // user to choose an env if one isn't provided in config.
-      var envName = this.get('jujuEnvUUID'),
-          user = this.get('user'),
-          envData = [];
+      // user to choose a model if one isn't provided in config.
+      var envName = this.get('jujuEnvUUID');
+      var user = this.get('user');
+      var matchingModels = [];
       if (envName && user) {
         var path = user + '/' + envName;
-        envData = envList.filter(function(env) {
-          return env.path === path;
+        matchingModels = modelList.filter(function(model) {
+          return model.path === path;
         });
       }
-      if (envData.length !== 0) {
-        envData = envData[0];  // Filter returns a list a of one.
-      } else {
-        envData = envList[0];
+      if (matchingModels.length !== 0) {
+        return matchingModels[0];
       }
-      return envData;
+      return modelList[0];
     },
 
     /**
@@ -1340,8 +1338,7 @@ YUI.add('juju-gui', function(Y) {
           serviceName: 'jem',
           macaroon: existingMacaroons
         });
-        this.jem = new window.jujulib.environment(
-            this.get('jemURL'), this.get('jemAPIPath'), bakery);
+        this.jem = new window.jujulib.jem(this.get('jemURL'), bakery);
 
         // Store the JEM auth info.
         var macaroon = bakery.getMacaroon();
@@ -1350,7 +1347,7 @@ YUI.add('juju-gui', function(Y) {
         }
 
         // Setup environment listing.
-        this.jem.listEnvironments((error, envList) => {
+        this.jem.listModels((error, modelList) => {
           if (error) {
             console.log('Model listing failure: ' + error);
             return;
@@ -1366,23 +1363,23 @@ YUI.add('juju-gui', function(Y) {
             this.storeUser('jem', null, true);
           }
 
-          var envData = this._pickEnv(envList);
-          this.set('environmentList', envList);
+          var modelData = this._pickModel(modelList);
+          this.set('environmentList', modelList);
 
           // XXX frankban: we should try to connect to all the addresses in
           // parallel instead of assuming private addresses must be excluded.
           // The same logic will be then reused for handling HA controllers.
-          var address = window.juju.chooseAddress(envData['host-ports']);
+          var address = window.juju.chooseAddress(modelData.hostPorts);
           if (address === null) {
             console.error(
               'no valid controller address returned by JEM:',
-              envData['host-ports']);
+              modelData.hostPorts);
             return;
           }
           var hostAndPort = address.split(':');
           socketUrl = this.createSocketURL(
-            hostAndPort[0], hostAndPort[1], envData.uuid);
-          callback.call(this, socketUrl, envData.user, envData.password);
+            hostAndPort[0], hostAndPort[1], modelData.uuid);
+          callback.call(this, socketUrl, modelData.user, modelData.password);
         });
         return;
       }
@@ -1402,30 +1399,23 @@ YUI.add('juju-gui', function(Y) {
     */
     _setupCharmstore: function(Charmstore) {
       if (this.get('charmstore') === undefined) {
-        var jujuConfig = window.juju_config,
-            charmstoreURL, charmstoreAPIPath, existingMacaroons;
-        if (
-            !jujuConfig ||
-            !jujuConfig.charmstoreURL ||
-            !jujuConfig.charmstoreAPIPath) {
-          console.error(
-              'No juju config for charmstoreURL or charmstoreAPIPath availble');
+        var jujuConfig = window.juju_config, charmstoreURL, existingMacaroons;
+        if (!jujuConfig || !jujuConfig.charmstoreURL) {
+          console.error('no juju config for charmstoreURL availble');
         } else {
           charmstoreURL = jujuConfig.charmstoreURL;
-          charmstoreAPIPath = jujuConfig.charmstoreAPIPath;
           existingMacaroons = jujuConfig.charmstoreMacaroons;
         }
+        var apiVersion = window.jujulib.charmstoreAPIVersion;
         var bakery = new Y.juju.environments.web.Bakery({
           webhandler: new Y.juju.environments.web.WebHandler(),
           interactive: this.get('interactiveLogin'),
-          setCookiePath: charmstoreURL + charmstoreAPIPath + '/set-auth-cookie',
-          staticMacaroonPath: `${charmstoreURL}${charmstoreAPIPath}/macaroon`,
+          setCookiePath: `${charmstoreURL}${apiVersion}/set-auth-cookie`,
+          staticMacaroonPath: `${charmstoreURL}${apiVersion}/macaroon`,
           serviceName: 'charmstore',
           macaroon: existingMacaroons
         });
-        this.set(
-            'charmstore',
-            new Charmstore(charmstoreURL, charmstoreAPIPath, bakery));
+        this.set('charmstore', new Charmstore(charmstoreURL, bakery));
         // Store away the charmstore auth info.
         var macaroon = bakery.getMacaroon();
         if (macaroon) {
@@ -2362,14 +2352,6 @@ YUI.add('juju-gui', function(Y) {
         @default undefined
        */
       jemURL: {},
-
-      /**
-        Store the version of the jem API to use.
-        @attribute jemAPIPath
-        @type {String}
-        @default undefined
-       */
-      jemAPIPath: {},
 
       /**
        Whether or not to use interactive login for the IdM/JEM connection.

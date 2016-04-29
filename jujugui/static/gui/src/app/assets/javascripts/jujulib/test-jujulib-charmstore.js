@@ -9,7 +9,7 @@ describe('jujulib charmstore', function() {
     var bakery = {
       sendGetRequest: sinon.stub()
     }
-    charmstore = new window.jujulib.charmstore('local/', 'v4', bakery);
+    charmstore = new window.jujulib.charmstore('local/', bakery);
   });
 
   afterEach(function() {
@@ -18,7 +18,6 @@ describe('jujulib charmstore', function() {
 
   it('can be instantiated with the proper config values', function() {
     assert.equal(charmstore.url, 'local/');
-    assert.equal(charmstore.version, 'v4');
   });
 
   describe('_generatePath', function() {

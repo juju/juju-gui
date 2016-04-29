@@ -67,8 +67,7 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
           }
         }
       };
-      var fakeCharmstore = new window.jujulib.charmstore(
-          'local/', 'v4', fakeBakery);
+      var fakeCharmstore = new window.jujulib.charmstore('local/', fakeBakery);
       // We need to stub out the _makeRequest method so that we can simulate
       // api responses from the server.
       return fakeCharmstore;

@@ -124,7 +124,7 @@ YUI.add('deployment-summary', function() {
       // Generates an alphanumeric string
       var randomString = () => Math.random().toString(36).slice(2);
       var password = randomString() + randomString();
-      this.props.jem.newEnvironment(
+      this.props.jem.newModel(
         this.props.users.jem.user,
         this.refs.modelName.value,
         this.props.deploymentStorage.templateName,
@@ -132,7 +132,7 @@ YUI.add('deployment-summary', function() {
         password,
         (error, data) => {
           if (error) throw error;
-          var pathParts = data['host-ports'][0].split(':');
+          var pathParts = data.hostPorts[0].split(':');
           // Set the credentials in the env so that the GUI
           // is able to connect to the new model.
           this.props.env.setCredentials({
