@@ -288,7 +288,8 @@ YUI.add('user-profile', function() {
       var isCurrent = model.name === this.props.currentModel;
       if (!model.isAlive) {
         return (
-          <li className="user-profile__entity user-profile__list-row">
+          <li className="user-profile__entity user-profile__list-row"
+            key={uuid}>
             {model.name} is being destroyed.
           </li>);
       }
@@ -702,8 +703,8 @@ YUI.add('user-profile', function() {
         type: 'destructive'
       }];
       var name = model.name.split('/')[1];
-      var message = `Are you sure you want to destroy ${name}? This action
-        cannot be undone.`;
+      var message = `Are you sure you want to destroy ${name}? This action ` +
+        'cannot be undone.';
       return (
         <juju.components.ConfirmationPopup
           buttons={buttons}

@@ -38,8 +38,7 @@ YUI.add('confirmation-popup', function() {
             </h3>
             <p>{this.props.message}</p>
             <juju.components.ButtonRow
-              buttons={this.props.buttons}
-              key="buttons" />
+              buttons={this.props.buttons} />
           </div>
         </juju.components.Panel>
       );
