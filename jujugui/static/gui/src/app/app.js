@@ -1964,6 +1964,16 @@ YUI.add('juju-gui', function(Y) {
       if (this.get('sandbox')) {
         console.log('switching models is not supported in sandbox');
       }
+      // Optionally update to the new base URL.
+      if (this.get('gisf')) {
+        var state = this.state;
+        var baseUrl = state.get('baseUrl');
+        var unsavedModelUrl = 'sandbox';
+        // Make sure we're not already in an unsaved model.
+        if (baseUrl.indexOf(unsavedModelUrl) < 0) {
+          state.set('baseUrl', `${baseUrl}/${unsavedModelUrl}`);
+        }
+      }
       if (username && password) {
         // We don't always get a new username and password when switching
         // environments; only set new credentials if we've actually gotten them.

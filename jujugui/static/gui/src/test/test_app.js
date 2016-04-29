@@ -1237,6 +1237,29 @@ describe('App', function() {
       app.switchEnv();
       assert.equal(connect.callCount(), 0);
     });
+
+    it('updates the base URL when necessary', function() {
+      app = _generateMockedApp(false);
+      app.state = {
+        _state: {
+          baseUrl: ''
+        },
+        get: function(key) {
+          return this._state[key];
+        },
+        set: function(key, value) {
+          this._state[key] = value;
+        }
+      };
+      app.set('gisf', true);
+      app.switchEnv();
+      assert.equal(app.state.get('baseUrl'), '/sandbox',
+                   'Base url not updated');
+      app.switchEnv();
+      // Make sure base URL isn't updated unecessarily.
+      assert.equal(app.state.get('baseUrl'), '/sandbox',
+                   'Base URL is not retained properly');
+    });
   });
 
   describe('getUser', function() {
