@@ -1379,7 +1379,19 @@ YUI.add('juju-gui', function(Y) {
           var hostAndPort = address.split(':');
           socketUrl = this.createSocketURL(
             hostAndPort[0], hostAndPort[1], modelData.uuid);
-          callback.call(this, socketUrl, modelData.user, modelData.password);
+          // Fetch the username and password for this model because it is not
+          // included in the listModels request.
+          var modelDataParts = modelData.path.split('/');
+          var ownerName = modelDataParts[0];
+          var modelName = modelDataParts[1];
+          this.jem.getModel(ownerName, modelName, (err, result) => {
+            if (err) {
+              console.error(
+                `Unable to fetch model details for ${modelData.path}`);
+              return;
+            }
+            callback.call(this, socketUrl, result.user, result.password);
+          });
         });
         return;
       }

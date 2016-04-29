@@ -121,15 +121,11 @@ YUI.add('deployment-summary', function() {
         this._close();
         return;
       }
-      // Generates an alphanumeric string
-      var randomString = () => Math.random().toString(36).slice(2);
-      var password = randomString() + randomString();
       this.props.jem.newModel(
         this.props.users.jem.user,
         this.refs.modelName.value,
         this.props.deploymentStorage.templateName,
         this.props.controller,
-        password,
         (error, data) => {
           if (error) throw error;
           var pathParts = data.hostPorts[0].split(':');
