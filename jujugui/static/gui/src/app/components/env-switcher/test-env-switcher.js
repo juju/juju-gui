@@ -105,9 +105,9 @@ describe('EnvSwitcher', function() {
   });
 
   it('fetches a list of environments on mount (JEM)', function() {
-    var listEnvironments = sinon.stub();
+    var listModels = sinon.stub();
     var jem = {
-      listEnvironments: listEnvironments
+      listModels: listModels
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
@@ -117,11 +117,11 @@ describe('EnvSwitcher', function() {
         uncommittedChanges={false} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
-    assert.equal(listEnvironments.callCount, 1);
+    assert.equal(listModels.callCount, 1);
     var envData = {
       env: 'env'
     };
-    listEnvironments.args[0][0](null, envData);
+    listModels.args[0][0](null, envData);
     assert.deepEqual(instance.state.envList, envData);
   });
 
@@ -179,11 +179,11 @@ describe('EnvSwitcher', function() {
       user: 'The Dr.',
       password: 'buffalo'
     }];
-    var listEnvironments = sinon.stub();
+    var listModels = sinon.stub();
     var switchModel = sinon.stub();
     var mask = sinon.stub();
     var jem = {
-      listEnvironments: listEnvironments
+      listModels: listModels
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
@@ -193,7 +193,7 @@ describe('EnvSwitcher', function() {
         uncommittedChanges={false} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
-    listEnvironments.args[0][0](null, envs);
+    listModels.args[0][0](null, envs);
     instance.handleEnvClick({
       name: 'abc123',
       id: 'abc123'
@@ -219,16 +219,16 @@ describe('EnvSwitcher', function() {
       user: 'The Dr.',
       password: 'buffalo'
     }];
-    var listEnvironments = sinon.stub();
-    var listSrv = sinon.stub();
-    var newEnv = sinon.stub();
+    var listModels = sinon.stub();
+    var listControllers = sinon.stub();
+    var newModel = sinon.stub();
 
-    listSrv.callsArgWith(0, null, [{path: 'admin/foo'}]);
+    listControllers.callsArgWith(0, null, [{path: 'admin/foo'}]);
 
     var jem = {
-      listEnvironments: listEnvironments,
-      listServers: listSrv,
-      newEnvironment: newEnv
+      listModels: listModels,
+      listControllers: listControllers,
+      newModel: newModel
     };
     var switchModel = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
@@ -239,30 +239,29 @@ describe('EnvSwitcher', function() {
         uncommittedChanges={false} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
-    listEnvironments.args[0][0](null, envs);
+    listModels.args[0][0](null, envs);
     // Previous code is to set up the state of the component.
     instance.createNewEnv(envName);
-    assert.equal(newEnv.callCount, 1);
-    assert.equal(newEnv.args[0][0], 'admin');
+    assert.equal(newModel.callCount, 1);
+    assert.equal(newModel.args[0][0], 'admin');
     // First we check that the env name is not undefined.
-    assert.notEqual(newEnv.args[0][1], undefined);
+    assert.notEqual(newModel.args[0][1], undefined);
     // Then we check to see if it matches either the name passed in, or what
     // it shoudl generate if it was passed in.
-    assert.equal(newEnv.args[0][1], envName || 'new-env-1');
-    assert.equal(newEnv.args[0][2], 'admin/foo');
-    assert.equal(newEnv.args[0][3], 'admin/foo');
-    assert.equal(newEnv.args[0][4].length > 10, true);
+    assert.equal(newModel.args[0][1], envName || 'new-env-1');
+    assert.equal(newModel.args[0][2], 'admin/foo');
+    assert.equal(newModel.args[0][3], 'admin/foo');
     // Check to make sure that the env creation callback switches envs.
     var createdEnv = {
       uuid: '123abc',
       name: 'newname'
     };
-    newEnv.args[0][5](null, createdEnv);
+    newModel.args[0][4](null, createdEnv);
     // After creating an env it should re-list them.
-    assert.equal(listEnvironments.callCount, 2);
+    assert.equal(listModels.callCount, 2);
     // Then switch to the new one.
     envs.push(createdEnv);
-    listEnvironments.args[1][0](null, envs);
+    listModels.args[1][0](null, envs);
     assert.equal(switchModel.callCount, 1);
   }
 

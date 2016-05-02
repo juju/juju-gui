@@ -348,10 +348,7 @@ describe('App', function() {
       });
 
       it('is idempotent', function() {
-        window.juju_config = {
-          charmstoreURL: 'charmurl',
-          charmstoreAPIPath: 'v4'
-        };
+        window.juju_config = {charmstoreURL: 'charmurl'};
         constructAppInstance({
           env: new juju.environments.GoEnvironment({
             conn: new utils.SocketStub(),
@@ -361,7 +358,6 @@ describe('App', function() {
         // The charmstore attribute is undefined by default
         assert.equal(typeof app.get('charmstore'), 'object');
         assert.equal(app.get('charmstore').url, 'charmurl');
-        assert.equal(app.get('charmstore').version, 'v4');
         window.juju_config.charmstoreURL = 'it broke';
         assert.equal(
             app.get('charmstore').url,
@@ -1529,7 +1525,7 @@ describe('App', function() {
           }, {
             path: 'rose/tardis'
           }];
-          var envData = app._pickEnv(fakeEnvList);
+          var envData = app._pickModel(fakeEnvList);
           assert.equal('rose/tardis', envData.path);
         });
 
@@ -1552,7 +1548,7 @@ describe('App', function() {
           }, {
             path: 'rose/tardis'
           }];
-          var envData = app._pickEnv(fakeEnvList);
+          var envData = app._pickModel(fakeEnvList);
           assert.equal('dalek/exterminate', envData.path);
         });
 

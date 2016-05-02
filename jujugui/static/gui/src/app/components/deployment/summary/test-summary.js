@@ -323,7 +323,7 @@ describe('DeploymentSummary', function() {
     var changeState = sinon.stub();
     var ecsCommit = sinon.stub();
     var jem = {
-      newEnvironment: sinon.stub(),
+      newModel: sinon.stub(),
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
@@ -367,7 +367,7 @@ describe('DeploymentSummary', function() {
     });
     // The deploy method should exit before trying to call to
     // create a new model.
-    assert.equal(jem.newEnvironment.callCount, 0);
+    assert.equal(jem.newModel.callCount, 0);
   });
 
   it('creates a new model on deploy', function() {
@@ -378,7 +378,7 @@ describe('DeploymentSummary', function() {
     var appSet = sinon.stub();
     var createSocketURL = sinon.stub().returns('newurl');
     var jem = {
-      newEnvironment: sinon.stub(),
+      newModel: sinon.stub(),
     };
     var detach = sinon.stub();
     var env = {
@@ -414,17 +414,15 @@ describe('DeploymentSummary', function() {
     // We automatically autoplace units on deploy in this workflow.
     assert.equal(autoPlaceUnits.callCount, 1, 'autoplace not called');
     // We first need to create a new model to deploy our changes into.
-    assert.equal(jem.newEnvironment.callCount, 1);
-    assert.equal(jem.newEnvironment.args[0][0], 'joecoder');
-    assert.equal(jem.newEnvironment.args[0][1], 'Prod');
-    assert.equal(jem.newEnvironment.args[0][2], 'secureTemplate');
-    assert.equal(jem.newEnvironment.args[0][3], 'yellow/aws-eu-central');
-    // This password is randomly generated so it can be of varying lengths.
-    assert.equal(jem.newEnvironment.args[0][4].length > 10, true);
+    assert.equal(jem.newModel.callCount, 1);
+    assert.equal(jem.newModel.args[0][0], 'joecoder');
+    assert.equal(jem.newModel.args[0][1], 'Prod');
+    assert.equal(jem.newModel.args[0][2], 'secureTemplate');
+    assert.equal(jem.newModel.args[0][3], 'yellow/aws-eu-central');
     // Call the callback from creating a new model to make sure it performs
     // the approriate calls.
-    jem.newEnvironment.args[0][5](null, {
-      'host-ports': ['1.1.1.1:1234'],
+    jem.newModel.args[0][4](null, {
+      hostPorts: ['1.1.1.1:1234'],
       user: 'joecoder',
       password: 'abc123',
       uuid: '1qaz2wsx3edc'

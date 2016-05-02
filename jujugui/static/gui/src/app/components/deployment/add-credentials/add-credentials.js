@@ -42,12 +42,9 @@ YUI.add('deployment-add-credentials', function() {
           templateName = this.refs.templateName.value,
           template = {
             // XXX The controllers need to exist first; for now use a known good
-            // controller with work to come to generate a controller name.  Also
-            // this key will change from 'state-server' to 'controller'.
+            // controller with work to come to generate a controller name.
             // Makyo 2016-03-30
-            'state-server': this.props.controller,
-            //'state-server': 'yellow/aws-' + this.refs.templateRegion.value,
-            // XXX This applies only to AWS (for first release).
+            'controller': this.props.controller,
             'config': {
               'access-key': this.refs.templateAccessKey.value,
               'secret-key': this.refs.templateSecretKey.value,
@@ -57,7 +54,7 @@ YUI.add('deployment-add-credentials', function() {
             }
           };
       this.props.jem.addTemplate(
-        user, templateName, template, (error, data) => {
+        user, templateName, template, error => {
           if (error) {
             console.error('Unable to add template', error);
           }

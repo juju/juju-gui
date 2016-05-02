@@ -1739,7 +1739,6 @@ YUI.add('juju-view-utils', function(Y) {
   utils.getIconPath = function(charmId, isBundle, env) {
     var cfg = window.juju_config,
         charmstoreURL = (cfg && cfg.charmstoreURL) || '',
-        apiPath = (cfg && cfg.charmstoreAPIPath) || '',
         localIndex = charmId.indexOf('local:'),
         path;
     if (localIndex > -1 && env) {
@@ -1762,7 +1761,8 @@ YUI.add('juju-view-utils', function(Y) {
         // normal use to default to the charm version, but if it's a boolean,
         // then check that boolean because the author cares specifically if
         // it's a bundle or not.
-        path = charmstoreURL + [apiPath, charmId, 'icon.svg'].join('/');
+        path = charmstoreURL + [
+          window.jujulib.charmstoreAPIVersion, charmId, 'icon.svg'].join('/');
       }
     } else {
       // If no env is provided as necessary then return the default icon.
@@ -1927,8 +1927,8 @@ YUI.add('juju-view-utils', function(Y) {
         if (model.uuid === uuid) {
           username = model.user;
           password = model.password;
-          if (model['host-ports']) {
-            var hostport = model['host-ports'][0].split(':');
+          if (model.hostPorts.length) {
+            var hostport = model.hostPorts[0].split(':');
             address = hostport[0];
             port = hostport[1];
           }

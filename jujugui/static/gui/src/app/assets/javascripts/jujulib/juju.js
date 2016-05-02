@@ -24,7 +24,7 @@ var module = module;
      _makeRequest
      @param bakery {Object} The bakery object to use.
      @param path {String} The JEM endpoint to make the request from,
-         e.g. '/env'
+         e.g. '/model'
      @param method {String} The type of http method to use, e.g. GET or POST.
      @param params {Object} Optional data object to sent with e.g. POST commands.
      @param callback {Function} A callback to handle errors or accept the data
@@ -89,108 +89,159 @@ var module = module;
 
 
   /**
-     Environment object for jujulib.
+    JEM object for jujulib.
 
-     Provides access to the JEM API.
-   */
+    Provides access to the JEM API.
+  */
 
   /**
-     Initializer
+    Initializer
 
-     @function environment
-     @param url {String} The URL, including scheme and port, of the JEM instance.
-     @param bakery {Object} A bakery object for communicating with the JEM instance.
-     @returns {Object} A client object for making JEM API calls.
-   */
-  function environment(url, apiVersion, bakery) {
+    @function jem
+    @param url {String} The URL of the JEM instance, including scheme, port
+      and the trailing slash, and excluding the API version.
+    @param bakery {Object} A bakery object for communicating with the JEM
+      instance.
+    @returns {Object} A client object for making JEM API calls.
+  */
+  function jem(url, bakery) {
     // XXX j.c.sackett 2016-03-16 We should probably adopt the generate query
     // mechanism from charmstore but that's a larger rewrite. For now we're
-    // making sure we can take the same initialization data for the jem url as
+    // making sure we can take the same initialization data for the JEM URL as
     // we do for the charmstore url.
-    this.jemURL = url + apiVersion;
+    this.url = url + 'v2';
     this.bakery = bakery;
   };
 
 
-  environment.prototype = {
-    /**
-       Lists the available environments on the JEM.
+  /**
+    Build a model from the response to model related JEM API calls.
 
-       @public listEnvironments
-       @params callback {Function} A callback to handle errors or accept the data
-           from the request. Must accept an error message or null as its first
-           parameter and the response data as its second.
-     */
-    listEnvironments: function(callback) {
-      var _listEnvironments = function(error, data) {
-        if (error === null) {
-          data = data.environments;
+    @private _handleModel
+    @params model {Object} The model object included in the JEM response.
+  */
+  function _handleModel(model) {
+    return {
+      path: model.path,
+      user: model.user,
+      password: model.password,
+      uuid: model.uuid,
+      controllerPath: model['controller-path'],
+      controllerUuid: model['controller-uuid'],
+      caCert: model['ca-cert'],
+      hostPorts: model['host-ports']
+    };
+  };
+
+
+  /**
+    Build a controller from the response to controller related JEM API calls.
+
+    @private _handleController
+    @params controller {Object} The controller object included in the response.
+  */
+  function _handleController(controller) {
+    return {
+      path: controller.path,
+      providerType: controller['provider-type'],
+      schema: controller.schema,
+      location: controller.location
+    };
+  };
+
+
+  jem.prototype = {
+    /**
+      Lists the available models on the JEM.
+
+      @public listModels
+      @params callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and the response data as its second.
+    */
+    listModels: function(callback) {
+      var handler = function(error, response) {
+        if (error !== null) {
+          callback(error, null);
+          return;
         }
-        callback(error, data);
+        callback(null, response.models.map(_handleModel));
       };
-      return _makeRequest(
-          this.bakery, this.jemURL + '/env', 'GET', null, _listEnvironments);
+      var url = this.url + '/model';
+      return _makeRequest(this.bakery, url, 'GET', null, handler);
     },
 
     /**
-       Lists the available state servers on the JEM.
+      Lists the available controllers on the JEM.
 
-       @public listServers
-       @params callback {Function} A callback to handle errors or accept the data
-           from the request. Must accept an error message or null as its first
-           parameter and the response data as its second.
-     */
-    listServers: function(callback) {
-      var _listServers = function(error, data) {
-        if (error === null) {
-          data = data['state-servers'];
+      @public listControllers
+      @params callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and the response data as its second.
+    */
+    listControllers: function(callback) {
+      var handler = function(error, response) {
+        if (error !== null) {
+          callback(error, null);
+          return;
         }
-        callback(error, data);
+        callback(null, response.controllers.map(_handleController));
       };
-      _makeRequest(
-          this.bakery, this.jemURL + '/server', 'GET', null, _listServers);
-    },
-    /**
-       Provides the data for a particular environment.
-
-       @public getEnvironment
-       @param envOwnerName {String} The user name of the given environment's owner.
-       @param envName {String} The name of the given environment.
-       @params callback {Function} A callback to handle errors or accept the data
-           from the request. Must accept an error message or null as its first
-           parameter and the response data as its second.
-     */
-    getEnvironment: function (
-        envOwnerName, envName, callback) {
-      var url = [this.jemURL, 'env', envOwnerName, envName].join('/');
-      _makeRequest(this.bakery, url, 'GET', null, callback);
+      var url = this.url + '/controller';
+      _makeRequest(this.bakery, url, 'GET', null, handler);
     },
 
     /**
-       Create a new environment.
+      Retrieve info on a model.
 
-       @public newEnvironment
-       @param envOwnerName {String} The name of the given environment's owner.
-       @param envName {String} The name of the given environment.
-       @param baseTemplate {String} The name of the config template to be used
-           for creating the environment.
-       @param stateServer {String} The entityPath name of the state server to
-           create the environment with.
-       @param password {String} The password for the new environment.
-       @params callback {Function} A callback to handle errors or accept the data
-           from the request. Must accept an error message or null as its first
-           parameter and the response data as its second.
-     */
-    newEnvironment: function (
-        envOwnerName, envName, baseTemplate, stateServer, password, callback) {
+      @public getModel
+      @param ownerName {String} The user name of the given model's owner.
+      @param name {String} The name of the model.
+      @params callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and the response data as its second.
+    */
+    getModel: function (ownerName, name, callback) {
+      var handler = function(error, response) {
+        if (error !== null) {
+          callback(error, null);
+          return;
+        }
+        callback(null, _handleModel(response));
+      };
+      var url = [this.url, 'model', ownerName, name].join('/');
+      _makeRequest(this.bakery, url, 'GET', null, handler);
+    },
+
+    /**
+      Create a new model.
+
+      @public newModel
+      @param ownerName {String} The name of the given environment's owner.
+      @param name {String} The name of the given environment.
+      @param baseTemplate {String} The name of the config template to be used
+          for creating the environment.
+      @param controller {String} The entityPath name of the controller to
+          create the environment with.
+      @params callback {Function} A callback to handle errors or accept the data
+          from the request. Must accept an error message or null as its first
+          parameter and the response data as its second.
+    */
+    newModel: function (ownerName, name, baseTemplate, controller, callback) {
+      var handler = function(error, response) {
+        if (error !== null) {
+          callback(error, null);
+          return;
+        }
+        callback(null, _handleModel(response));
+      };
       var body = {
-        name: envName,
-        password: password,
-        templates: [baseTemplate],
-        'state-server': stateServer
+        name: name,
+        controller: controller,
+        templates: [baseTemplate]
       };
-      var url = [this.jemURL, 'env', envOwnerName].join('/');
-      _makeRequest(this.bakery, url, 'POST', body, callback);
+      var url = [this.url, 'model', ownerName].join('/');
+      _makeRequest(this.bakery, url, 'POST', body, handler);
     },
 
     /**
@@ -202,7 +253,7 @@ var module = module;
           parameter and the response data as its second.
     */
     whoami: function(callback) {
-      var url = this.jemURL + '/whoami';
+      var url = this.url + '/whoami';
       _makeRequest(
         this.bakery,
         url,
@@ -222,49 +273,62 @@ var module = module;
 
       @method listTemplates
       @param callback {Function} A callback to handle errors or accept the data
-          from the request. Must accept an error message or null as its first
-          parameter and the response data as its second.
+        from the request. Must accept an error message or null as its first
+        parameter and the response data as its second.
     */
     listTemplates: function(callback) {
-      var url = this.jemURL + '/template';
-      var _listTemplates = function(error, data) {
-        if (error === null) {
-          data = data.templates;
+      var handler = function(error, response) {
+        if (error !== null) {
+          callback(error, null);
+          return;
         }
-        callback(error, data);
+        var data = response.templates.map(function(template) {
+          return {
+            path: template.path,
+            schema: template.schema,
+            config: template.config
+          };
+        });
+        callback(null, data);
       };
-      return _makeRequest(this.bakery, url, 'GET', null, _listTemplates, true);
+      var url = this.url + '/template';
+      return _makeRequest(this.bakery, url, 'GET', null, handler, true);
     },
 
     /**
       Adds a new template for the currently authenticated user in JEM.
 
       @method addTemplate
-      @param envOwnerName the owner the template.
-      @param templateName the name of the templateName
+      @param ownerName the owner the template.
+      @param templateName the name of the template.
       @param template A JavaScript object holding the information for the
-        template - a 'state-server' key, and a 'config' key with credentials.
+        template - a 'controller' key, and a 'config' key with credentials.
+      @param callback {Function} A callback to handle errors. Must accept an
+        error message or null as its first parameter.
     */
-    addTemplate: function(envOwnerName, templateName, template, callback) {
-      var url = [
-        this.jemURL, 'template', envOwnerName, templateName].join('/');
-      return _makeRequest(this.bakery, url, 'PUT', template, callback, false);
+    addTemplate: function(ownerName, templateName, template, callback) {
+      var handler = function(error, response) {
+        callback(error || null);
+      };
+      var url = [this.url, 'template', ownerName, templateName].join('/');
+      return _makeRequest(this.bakery, url, 'PUT', template, handler, false);
     },
 
     /**
       Deletes a given template for the currently authenticated user in JEM.
 
       @method deleteTemplate
-      @param envOwnerName the owner the template.
+      @param ownerName the owner the template.
       @param templateName the name of the template.
-      @param callback {Function} A callback to handle errors or accept the data
-        from the request. Must accept an error message or null as its first
-        parameter and the response data as its second.
+      @param callback {Function} A callback to handle errors. Must accept an
+        error message or null as its first parameter.
     */
-    deleteTemplate: function(envOwnerName, templateName, callback) {
-      var url = [
-        this.jemURL, 'template', envOwnerName, templateName].join('/');
-      return _makeRequest(this.bakery, url, 'DELETE', null, callback, false);
+    deleteTemplate: function(ownerName, templateName, callback) {
+      var handler = function(error, response) {
+        callback(error || null);
+      };
+      var url = [this.url, 'template', ownerName, templateName].join('/');
+      return _makeRequest(this.bakery, url, 'DELETE', null, handler, false);
     }
   };
 
@@ -274,28 +338,29 @@ var module = module;
      Provides access to the charmstore API.
    */
 
+  var charmstoreAPIVersion = 'v4';
+
   /**
      Initializer
 
      @function charmstore
-     @param url {String} The URL, including scheme and port, of the charmstore
-     @param apiVersion {String} The api version, e.g. v4
+     @param url {String} The URL of the charm store, including scheme, port and
+      the trailing slash, and excluding the API version.
      @param bakery {Object} A bakery object for communicating with the
          charmstore instance.
      @param processEnity {function} A function to massage entity data into the
         desired form (e.g. turning it into juju gui model objects.
      @returns {Object} A client object for making charmstore API calls.
    */
-  function charmstore(url, apiVersion, bakery, processEntity) {
+  function charmstore(url, bakery, processEntity) {
     this.url = url;
-    this.version = apiVersion;
     this.bakery = bakery;
 
     // XXX jcsackett 2015-11-09 Methods that return entity data should
     // accept an additional modifier function as a callback, but for now
     // we've made it an attribute of the charmstore.
     this.processEntity = processEntity;
-  }
+  };
 
   charmstore.prototype = {
 
@@ -326,7 +391,7 @@ var module = module;
       if (extension) {
         endpoint = endpoint + extension;
       }
-      return this.url + this.version + '/' + endpoint + query;
+      return this.url + charmstoreAPIVersion + '/' + endpoint + query;
     },
 
     /**
@@ -468,7 +533,7 @@ var module = module;
         }
         processed.deployerFileUrl =
             this.url +
-            this.version + '/' +
+            charmstoreAPIVersion + '/' +
             processed.id.replace('cs:', '') +
             '/archive/bundle.yaml';
       } else {
@@ -725,8 +790,9 @@ var module = module;
      The jujulib object, returned by this library.
    */
   var jujulib = {
+    charmstoreAPIVersion: charmstoreAPIVersion,
     charmstore: charmstore,
-    environment: environment,
+    jem: jem,
     identity: function() {}
   };
 
