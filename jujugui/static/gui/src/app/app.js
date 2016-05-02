@@ -746,6 +746,7 @@ YUI.add('juju-gui', function(Y) {
       // nextProps on the lifecycle methods.
       ReactDOM.render(
         <window.juju.components.UserProfile
+          addNotification={this.db.notifications.add.bind(this)}
           currentModel={this.get('jujuEnvUUID')}
           destroyModel={this.env.destroyModel.bind(this.env)}
           env={this.env}

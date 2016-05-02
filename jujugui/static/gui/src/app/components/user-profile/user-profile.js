@@ -24,6 +24,7 @@ YUI.add('user-profile', function() {
     xhrs: [],
 
     propTypes: {
+      addNotification: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       destroyModel: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
@@ -298,6 +299,9 @@ YUI.add('user-profile', function() {
           entity={model}
           expanded={isCurrent}
           key={uuid}
+          // TODO huwshimi 2 May 2016: This will need to be updated to allow
+          // disconnected models to be destroyed as well (e.g. clicking destroy
+          // would switch to the model and then call destroyModel.)
           showDestroy={isCurrent}
           displayConfirmation={this._displayConfirmation.bind(this, model)}
           switchModel={this.switchModel}
@@ -667,18 +671,20 @@ YUI.add('user-profile', function() {
       Destroy a model.
 
       @method _destroyModel
-      @param {String} uuid The model uuid to destroy.
       @return {Object} The confirmation component.
     */
-    _destroyModel: function(uuid) {
+    _destroyModel: function() {
       this._displayConfirmation(null);
       this.props.destroyModel((error) => {
         if (error) {
-          console.log(error);
+          this.props.addNotification({
+            title: 'Model destruction failed',
+            message: 'The model failed to be destroyed: ' + error,
+            level: 'error'
+          });
           return;
         }
-        // Reload the models so that the destroyed model updates its status.
-        this._fetchEnvironments(this.props);
+        this.switchModel(null, null);
       });
     },
 
@@ -699,12 +705,13 @@ YUI.add('user-profile', function() {
         type: 'base'
       }, {
         title: 'Destroy',
-        action: this._destroyModel.bind(this, model.uuid),
+        action: this._destroyModel,
         type: 'destructive'
       }];
       var name = model.name.split('/')[1];
-      var message = `Are you sure you want to destroy ${name}? This action ` +
-        'cannot be undone.';
+      var message = `Are you sure you want to destroy ${name}? All the ` +
+        'services and units included in the model will be destroyed. This ' +
+        'action cannot be undone.';
       return (
         <juju.components.ConfirmationPopup
           buttons={buttons}

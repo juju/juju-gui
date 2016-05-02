@@ -1,7 +1,7 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
+Copyright (C) 2016 Canonical Ltd.
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3, as published by
@@ -20,6 +20,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('confirmation-popup', function() {
 
+  /**
+    ConfirmationPopup provides a React component for modal confirmation of an
+    action.
+  */
   juju.components.ConfirmationPopup = React.createClass({
     propTypes: {
       buttons: React.PropTypes.array.isRequired,
