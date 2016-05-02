@@ -563,18 +563,6 @@ YUI.add('juju-gui', function(Y) {
           if (!this.get('gisf')) {
             this.db.reset();
           }
-          // Optionally update to the new base URL.
-          if (this.get('gisf')) {
-            // XXX I'm not sure this is the right place to get user info for
-            // gisf deploys. Will need to verify on QA.
-            var auth = this._getAuth();
-            // XXX Are we sure that auth and auth.user will never be null?
-            // If not, or if we just want to code for failure, what should
-            // be the fallback default?
-            var newBaseUrl = `/u/${auth.user}/sandbox`;
-            this.state.set('baseUrl', newBaseUrl);
-            // TODO Need to trigger a navigate to the new base URL.
-          }
           this.env.userIsAuthenticated = false;
           // Do not attempt environment login without credentials.
           var credentials = this.env.getCredentials();
@@ -1975,6 +1963,18 @@ YUI.add('juju-gui', function(Y) {
     switchEnv: function(socketUrl, username, password, reconnect=!!socketUrl) {
       if (this.get('sandbox')) {
         console.log('switching models is not supported in sandbox');
+      }
+      // Optionally update to the new base URL.
+      if (this.get('gisf')) {
+        // XXX I'm not sure this is the right place to get user info for
+        // gisf deploys. Will need to verify on QA.
+        var auth = this._getAuth();
+        // XXX Are we sure that auth and auth.user will never be null?
+        // If not, or if we just want to code for failure, what should
+        // be the fallback default?
+        var newBaseUrl = `/u/${auth.user}/sandbox`;
+        this.state.set('baseUrl', newBaseUrl);
+        this.navigate(newBaseUrl);
       }
       if (username && password) {
         // We don't always get a new username and password when switching
