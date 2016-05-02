@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Bakery', function() {
-  var bakery, macaroon, utils, Y;
+  var bakery, fakeLocalStorage, macaroon, utils, Y;
 
   before(function (done) {
     var modules = ['juju-env-bakery', 'juju-env-web-handler',
@@ -36,6 +36,15 @@ describe('Bakery', function() {
       webhandler: new Y.juju.environments.web.WebHandler(),
       serviceName: 'test'
     });
+    fakeLocalStorage = {
+      store: {},
+      getItem: function(item) {
+        return this.store[item];
+      },
+      setItem: function(item, value) {
+        this.store[item] = value;
+      }
+    };
   });
 
   afterEach(function () {
@@ -64,6 +73,36 @@ describe('Bakery', function() {
       visitMethod: newVisitMethod
     });
     assert.equal(bakery.visitMethod, newVisitMethod);
+  });
+
+  it('can accept an already baked macaroon', function() {
+    bakery = new Y.juju.environments.web.Bakery({
+      webhandler: new Y.juju.environments.web.WebHandler(),
+      serviceName: 'test',
+      macaroon: 'foo-bar'
+    });
+    assert.equal(bakery.getMacaroon(), 'foo-bar');
+  });
+
+  it('can be configured to use localStorage', function() {
+    bakery = new Y.juju.environments.web.Bakery({
+      webhandler: new Y.juju.environments.web.WebHandler(),
+      serviceName: 'test',
+      macaroon: 'foo-bar',
+      cookieStore: fakeLocalStorage
+    });
+    assert.equal(fakeLocalStorage.getItem('Macaroons-test'), 'foo-bar');
+  });
+
+  it('can be configured to use a specified cookie name', function() {
+    bakery = new Y.juju.environments.web.Bakery({
+      webhandler: new Y.juju.environments.web.WebHandler(),
+      serviceName: 'test',
+      existingCookie: 'existing-cookie',
+      macaroon: 'foo-bar',
+      cookieStore: fakeLocalStorage
+    });
+    assert.equal(fakeLocalStorage.getItem('existing-cookie'), 'foo-bar');
   });
 
   describe('_fetchMacaroonFromStaticPath', function() {

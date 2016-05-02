@@ -68,13 +68,25 @@ YUI.add('juju-env-bakery', function(Y) {
         } else {
           this.visitMethod = this._defaultVisitMethod;
         }
-        this.macaroonName = 'Macaroons-' + cfg.serviceName;
+        // If there is a cookie that may already be set, such as when coming
+        // from the storefront, use that cookie name instead of the generated
+        // one.
+        if (cfg.existingCookie) {
+          this.macaroonName = cfg.existingCookie;
+        } else {
+          this.macaroonName = 'Macaroons-' + cfg.serviceName;
+        }
         this.staticMacaroonPath = cfg.staticMacaroonPath;
         this.setCookiePath = cfg.setCookiePath;
         this.nonceLen = 24;
+        this.cookieStore = cfg.cookieStore;
         if (cfg.macaroon) {
-          var prefix = this.macaroonName + '=';
-          document.cookie = prefix + cfg.macaroon;
+          if (this.cookieStore) {
+            this.cookieStore.setItem(this.macaroonName, cfg.macaroon);
+          } else {
+            var prefix = this.macaroonName + '=';
+            document.cookie = prefix + cfg.macaroon + ';path=/';
+          }
         }
       },
 
@@ -299,6 +311,8 @@ YUI.add('juju-env-bakery', function(Y) {
         path, successCallback, failureCallback, redirect=true, response) {
 
         var target = response.target;
+        // XXX I reliably recieve a 401 when signing in for the first time.
+        // This may not be the best path forward. Makyo 2016-04-25
         if (target.status === 401 &&
           target.getResponseHeader('Www-Authenticate') === 'Macaroon' &&
           redirect === true) {
@@ -438,8 +452,14 @@ YUI.add('juju-env-bakery', function(Y) {
        @return {undefined} Nothing.
        */
       _successfulDischarges: function (originalRequest, jsonMacaroon) {
-        var prefix = this.macaroonName + '=';
-        document.cookie = prefix + btoa(JSON.stringify(jsonMacaroon));
+        if (this.cookieStore) {
+          this.cookieStore.setItem(this.macaroonName,
+            btoa(JSON.stringify(jsonMacaroon)));
+        } else {
+          var prefix = this.macaroonName + '=';
+          document.cookie = prefix + btoa(JSON.stringify(jsonMacaroon))
+            + ';path=/';
+        }
         originalRequest();
       },
 
@@ -650,18 +670,21 @@ YUI.add('juju-env-bakery', function(Y) {
        @return {String} Macaroon that was set in local cookie.
        */
       getMacaroon: function() {
-        var name = this.macaroonName + '=';
-        var ca = document.cookie.split(';');
-        for(var i=0; i<ca.length; i++) {
-          var c = ca[i];
-          while (c.charAt(0) === ' ') {
-            c = c.substring(1);
-          }
-          if (c.indexOf(name) === 0) {
-            return c.substring(name.length,c.length);
-          }
+        if (this.cookieStore) {
+          return this.cookieStore.getItem(this.macaroonName);
+        } else {
+          var name = this.macaroonName + '=',
+              macaroon = null;
+          document.cookie.split(';').some(cookie => {
+            cookie = cookie.trim();
+            if (cookie.indexOf(name) === 0) {
+              macaroon = cookie.substring(name.length, cookie.length);
+              return true;
+            }
+            return false;
+          });
+          return macaroon;
         }
-        return null;
       },
 
       /**
