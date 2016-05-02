@@ -286,7 +286,7 @@ YUI.add('user-profile', function() {
     */
     _generateModelRow: function(model) {
       var uuid = model.uuid;
-      var isCurrent = model.name === this.props.currentModel;
+      var isCurrent = uuid === this.props.currentModel;
       if (!model.isAlive) {
         return (
           <li className="user-profile__entity user-profile__list-row"
