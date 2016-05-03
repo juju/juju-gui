@@ -1921,6 +1921,7 @@ YUI.add('juju-view-utils', function(Y) {
     // Update the model name. The onEnvironmentNameChange in app.js method will
     // update the name correctly accross components.
     env.set('environmentName', name);
+    this.set('jujuEnvUUID', uuid);
     var username, password, address, port;
     if (uuid && modelList) {
       var found = modelList.some((model) => {

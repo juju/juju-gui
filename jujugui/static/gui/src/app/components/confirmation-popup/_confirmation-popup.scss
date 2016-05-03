@@ -1,0 +1,22 @@
+.confirmation-popup {
+    &__panel {
+        $width: 420px;
+        @extend %floating-panel;
+        position: absolute;
+        top: calc(50% - 150px);
+        left: calc(50% - (#{$width} / 2));
+        width: $width - 40px;
+        padding: 20px;
+        box-shadow: 0 7px 20px 0.15px rgba(0,0,0,0.2)
+    }
+
+    &__title {
+        margin-bottom: 10px;
+    }
+
+    .button-row {
+        float: right;
+        width: 60%;
+        margin: 0 -10px -10px 0;
+    }
+}

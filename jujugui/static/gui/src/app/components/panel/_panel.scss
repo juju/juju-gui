@@ -70,3 +70,14 @@
     border-top: 1px solid $mid-grey;
     box-shadow: none;
 }
+
+.panel-component.confirmation-popup {
+    z-index: index($z-indexed-elements, confirmation-popup);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: transparent;
+    border-radius: none;
+    box-shadow: none;
+}

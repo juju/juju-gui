@@ -36,7 +36,11 @@
                 text-align: right;
 
                 .generic-button {
-                    margin: -10px 0;
+                    margin: 0 -10px 0 0;
+                }
+
+                .button--inline-neutral {
+                    margin-left: 20px;
                 }
             }
         }

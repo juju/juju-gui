@@ -31,7 +31,7 @@ describe('UserProfileEntity', () => {
   beforeEach(() => {
     model = {
       uuid: 'env1',
-      name: 'sandbox',
+      name: 'spinach/sandbox',
       lastConnection: 'today',
       owner: 'test-owner',
       isAlive: true
@@ -49,7 +49,7 @@ describe('UserProfileEntity', () => {
       </juju.components.UserProfileEntity>, true);
     var output = renderer.getRenderOutput();
     var button = output.props.children[1].props.children[0].props.children[1]
-      .props.children;
+      .props.children[1];
     var expected = (
       <juju.components.ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
@@ -57,11 +57,12 @@ describe('UserProfileEntity', () => {
         <span>Summary details</span>
         <div>
           <div className="expanding-row__expanded-header twelve-col">
-            <div className="ten-col no-margin-bottom">
+            <div className="seven-col no-margin-bottom">
               {undefined}{"sandbox"}
             </div>
             <div className={'expanding-row__expanded-header-action ' +
-              'two-col last-col no-margin-bottom'}>
+              'five-col last-col no-margin-bottom'}>
+              {undefined}
               <juju.components.GenericButton
                 action={button.props.action}
                 type="inline-neutral"
@@ -85,47 +86,27 @@ describe('UserProfileEntity', () => {
     assert.deepEqual(output, expected);
   });
 
-  it('does not render manage button for zombie models', () => {
-    model.isAlive = false;
+  it('can display a destroy button on a model', () => {
+    var displayConfirmation = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
+        displayConfirmation={displayConfirmation}
         entity={model}
         expanded={false}
+        showDestroy={true}
         switchModel={sinon.stub()}
         type="model">
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
     var output = renderer.getRenderOutput();
+    var button = output.props.children[1].props.children[0].props.children[1]
+      .props.children[0];
     var expected = (
-      <juju.components.ExpandingRow classes={{
-        'user-profile__entity': true, 'user-profile__list-row': true}}
-        expanded={false}>
-        <span>Summary details</span>
-        <div>
-          <div className="expanding-row__expanded-header twelve-col">
-            <div className="ten-col no-margin-bottom">
-              {undefined}{"sandbox"}
-            </div>
-            <div className={'expanding-row__expanded-header-action ' +
-              'two-col last-col no-margin-bottom'}>
-              {undefined}
-            </div>
-          </div>
-          <div className={'expanding-row__expanded-content twelve-col ' +
-            'no-margin-bottom'}>
-            {undefined}
-            {undefined}
-            <div className="three-col last-col">
-              Owner: {"test-owner"}
-            </div>
-            {undefined}
-            {undefined}
-            {undefined}
-            {undefined}
-          </div>
-        </div>
-      </juju.components.ExpandingRow>);
-    assert.deepEqual(output, expected);
+      <juju.components.GenericButton
+        action={displayConfirmation}
+        type="inline-base"
+        title="Destroy model" />);
+    assert.deepEqual(button, expected);
   });
 
   it('can render a bundle', () => {
@@ -141,8 +122,8 @@ describe('UserProfileEntity', () => {
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
     var output = renderer.getRenderOutput();
-    var button = output.props.children[1].props.children[0]
-      .props.children[1].props.children;
+    var viewButton = output.props.children[1].props.children[0]
+      .props.children[1].props.children[1];
     var tag = output.props.children[1].props.children[1]
       .props.children[5].props.children[1].props.children[0];
     var expected = (
@@ -152,13 +133,14 @@ describe('UserProfileEntity', () => {
         <span>Summary details</span>
         <div>
           <div className="expanding-row__expanded-header twelve-col">
-            <div className="ten-col no-margin-bottom">
+            <div className="seven-col no-margin-bottom">
               {undefined}{"django-cluster"}
             </div>
             <div className={'expanding-row__expanded-header-action ' +
-              'two-col last-col no-margin-bottom'}>
+              'five-col last-col no-margin-bottom'}>
+              {undefined}
               <juju.components.GenericButton
-                action={button.props.action}
+                action={viewButton.props.action}
                 type="inline-neutral"
                 title="View" />
             </div>
@@ -226,8 +208,8 @@ describe('UserProfileEntity', () => {
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
     var output = renderer.getRenderOutput();
-    var button = output.props.children[1].props.children[0]
-      .props.children[1].props.children;
+    var viewButton = output.props.children[1].props.children[0]
+      .props.children[1].props.children[1];
     var tag = output.props.children[1].props.children[1]
       .props.children[5].props.children[1].props.children[0];
     var expected = (
@@ -237,16 +219,17 @@ describe('UserProfileEntity', () => {
         <span>Summary details</span>
         <div>
           <div className="expanding-row__expanded-header twelve-col">
-            <div className="ten-col no-margin-bottom">
+            <div className="seven-col no-margin-bottom">
               <img className="user-profile__entity-icon"
                 src={undefined}
                 title="django" />
               django
             </div>
             <div className={'expanding-row__expanded-header-action ' +
-              'two-col last-col no-margin-bottom'}>
+              'five-col last-col no-margin-bottom'}>
+              {undefined}
               <juju.components.GenericButton
-                action={button.props.action}
+                action={viewButton.props.action}
                 type="inline-neutral"
                 title="View" />
             </div>
@@ -301,7 +284,7 @@ describe('UserProfileEntity', () => {
       </juju.components.UserProfileEntity>, true);
     var output = renderer.getRenderOutput();
     output.props.children[1].props.children[0].props.children[1]
-      .props.children.props.action();
+      .props.children[1].props.action();
     assert.equal(switchModel.callCount, 1);
     assert.equal(switchModel.args[0][0], 'env1');
     assert.equal(switchModel.args[0][1], 'sandbox');
@@ -322,7 +305,7 @@ describe('UserProfileEntity', () => {
       </juju.components.UserProfileEntity>, true);
     var output = renderer.getRenderOutput();
     output.props.children[1].props.children[0].props.children[1]
-      .props.children.props.action();
+      .props.children[1].props.action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionC: {

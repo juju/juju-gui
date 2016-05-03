@@ -1363,6 +1363,7 @@ describe('utilities', function() {
         hostPorts: ['localhost:80', 'localhost:443']
       }];
       var env = {set: testUtils.makeStubFunction()};
+      utils.set = testUtils.makeStubFunction();
       utils.switchModel(createSocketURL, switchEnv, env, 'uuid1', models, 'ev');
       assert.deepEqual(createSocketURL.callCount(), 1);
       var socketArgs = createSocketURL.allArguments();

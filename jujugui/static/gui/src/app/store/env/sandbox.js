@@ -263,8 +263,16 @@ YUI.add('juju-env-sandbox', function(Y) {
     receive: function(data) {
       if (this.connected) {
         var client = this.get('client');
-        this['handle' + data.Type + data.Request](data,
-            client, this.get('state'));
+        var key = 'handle' + data.Type + data.Request;
+        if (!this[key]) {
+          // If the sandbox method has not been implemented show a helpful
+          // message to the poor developer who has to figure out why things are
+          // not working.
+          console.error(`${key} has not yet been implemented in the sandbox.
+            You can add the method in sandbox.js.`);
+          return;
+        }
+        this[key](data, client, this.get('state'));
       } else {
         throw CLOSEDERROR;
       }
@@ -376,6 +384,19 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleModelManagerCreateModel: function(data, client, state) {
       console.log('Creating models is not supported in the sandbox.');
+    },
+
+    /**
+    Handle DestroyModel messages.
+
+    @method handleClientDestroyModel
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientDestroyModel: function(data, client, state) {
+      console.log('Destroying models is not supported in the sandbox.');
     },
 
     /**
