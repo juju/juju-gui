@@ -252,6 +252,8 @@ YUI.add('user-profile-entity', function() {
       var type = props.type;
       var isModel = type === 'model';
       var isCharm = type === 'charm';
+      // Model names will be in the format "username/model-name" so we have to
+      // extract the part we need.
       var name = isModel ? entity.name.split('/')[1] : entity.name;
       var id = isModel ? entity.uuid : entity.id;
       var buttonAction = isModel ? this._switchEnv.bind(
