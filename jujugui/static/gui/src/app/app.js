@@ -929,7 +929,7 @@ YUI.add('juju-gui', function(Y) {
       Renders the Deployment component to the page in the
       designated element.
 
-      @method _renderDeployment
+      @method _renderDeploymentBar
     */
     _renderDeploymentBar: function() {
       var env = this.env;
@@ -939,28 +939,47 @@ YUI.add('juju-gui', function(Y) {
       var servicesArray = services.toArray();
       var machines = db.machines.toArray();
       var units = db.units;
-      var utils = views.utils;
       var changesUtils = this.changesUtils;
       ReactDOM.render(
         <window.juju.components.DeploymentBar
           changeState={this.changeState.bind(this)}
           currentChangeSet={ecs.getCurrentChangeSet()}
-          exportEnvironmentFile={
-            utils.exportEnvironmentFile.bind(utils, db)}
           generateChangeDescription={
             changesUtils.generateChangeDescription.bind(
               changesUtils, services, units)}
           hasEntities={servicesArray.length > 0 || machines.length > 0}
+          modelCommitted={this._getModelCommitted()}
+          showInstall={this.get('sandbox')} />,
+        document.getElementById('deployment-bar-container'));
+    },
+
+    /**
+      Renders the import and export component to the page in the
+      designated element.
+
+      @method _renderImportExport
+    */
+    _renderImportExport: function() {
+      var env = this.env;
+      var ecs = env.get('ecs');
+      var db = this.db;
+      var services = db.services;
+      var servicesArray = services.toArray();
+      var machines = db.machines.toArray();
+      var utils = views.utils;
+      ReactDOM.render(
+        <window.juju.components.ImportExport
+          changeState={this.changeState.bind(this)}
+          currentChangeSet={ecs.getCurrentChangeSet()}
+          exportEnvironmentFile={
+            utils.exportEnvironmentFile.bind(utils, db)}
+          hasEntities={servicesArray.length > 0 || machines.length > 0}
           hideDragOverNotification={this._hideDragOverNotification.bind(this)}
           importBundleFile={this.bundleImporter.importBundleFile.bind(
             this.bundleImporter)}
-          machines={machines}
-          modelCommitted={this._getModelCommitted()}
           renderDragOverNotification={
-            this._renderDragOverNotification.bind(this)}
-          services={servicesArray}
-          showInstall={this.get('sandbox')} />,
-        document.getElementById('deployment-bar-container'));
+            this._renderDragOverNotification.bind(this)} />,
+        document.getElementById('import-export-container'));
     },
 
     /**
@@ -2072,6 +2091,7 @@ YUI.add('juju-gui', function(Y) {
         this.db.machines.filterByParent().length
       );
       this._renderDeploymentBar();
+      this._renderImportExport();
       this._renderBreadcrumb();
       this._renderHeaderSearch();
       // When we render the components we also want to trigger the rest of
@@ -2486,6 +2506,7 @@ YUI.add('juju-gui', function(Y) {
     'deployment-summary-classic',
     'env-size-display',
     'header-breadcrumb',
+    'import-export',
     'expanding-progress',
     'header-search',
     'inspector-component',
