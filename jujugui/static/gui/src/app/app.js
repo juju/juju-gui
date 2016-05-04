@@ -594,7 +594,7 @@ YUI.add('juju-gui', function(Y) {
               // Try a token login.
               this.env.tokenLogin(authtoken);
             } else {
-              this.checkUserCredentials();
+              this._displayLogin();
             }
           }
         }
@@ -1715,6 +1715,26 @@ YUI.add('juju-gui', function(Y) {
       this._renderComponents();
     },
 
+    /**
+      Display the login page.
+
+      @method _displayLogin
+    */
+    _displayLogin: function() {
+      this.set('loggedIn', false);
+      var component = this.state.getState('current', 'app', 'component');
+      if (!component && component !== 'login') {
+        this.state.dispatch({
+          app: {
+            component: 'login',
+            metadata: {
+              redirectPath: this.get('currentUrl')
+            }
+          }
+        });
+      }
+    },
+
     // Route handlers
 
     /**
@@ -1782,19 +1802,8 @@ YUI.add('juju-gui', function(Y) {
       // form was never shown - this handles that edge case.
       var noCredentials = !(credentials && credentials.areAvailable);
       if (noCredentials) {
-        this.set('loggedIn', false);
-        // If there are no stored credentials redirect to the login page
-        var component = this.state.getState('current', 'app', 'component');
-        if (!component && component !== 'login') {
-          this.state.dispatch({
-            app: {
-              component: 'login',
-              metadata: {
-                redirectPath: this.get('currentUrl')
-              }
-            }
-          });
-        }
+        // If there are no stored credentials redirect to the login page.
+        this._displayLogin();
         return;
       } else if (!this.get('loggedIn')) {
         return;
