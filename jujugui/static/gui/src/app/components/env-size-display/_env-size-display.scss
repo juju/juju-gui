@@ -21,7 +21,7 @@
         flex: 1;
         border: 1px solid $light-mid-grey;
         margin-bottom: 0;
-        background-color: transparent;
+        background-color: $canvas-background;
         transition: background-color .2s;
 
         &:last-of-type {

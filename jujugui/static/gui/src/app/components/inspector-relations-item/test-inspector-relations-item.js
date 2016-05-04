@@ -29,90 +29,39 @@ describe('InspectorRelationsItem', function() {
     YUI().use('inspector-relations-item', function() { done(); });
   });
 
-  it('can render the relation', function() {
-    var relation = {
-      near: {
-        name: 'pgsql',
-        role: 'primary'
-      },
-      far: {
-        serviceName: 'django'
-      },
-      interface: 'postgresql',
-      scope: 'global'
-    };
-    var output = jsTestUtils.shallowRender(
-        <juju.components.InspectorRelationsItem
-          relation={relation} />);
-    assert.deepEqual(output,
-      <li className="inspector-relations-item">
-        <span className="inspector-relations-item__service"
-          role="button" tabIndex="0"
-          onClick={output.props.children[0].props.onClick}>
-          <span className="inspector-relations-item__status">
-            <juju.components.SvgIcon name="unit-running"
-              size="16" />
-          </span>
-          django
-        </span>
-        <span className="inspector-relations-item__details">
-          <p className="inspector-relations-item__property">
-            Interface: {"postgresql"}
-          </p>
-          <p className="inspector-relations-item__property">
-            Name: {"pgsql"}
-          </p>
-          <p className="inspector-relations-item__property">
-            Role: {"primary"}
-          </p>
-          <p className="inspector-relations-item__property">
-            Scope: {"global"}
-          </p>
-        </span>
-      </li>);
-  });
-
   it('can render peer relations', function() {
     var relation = {
-      near: {
-        name: 'wordpress',
-        role: 'peer'
-      },
-      interface: 'reversenginx',
-      scope: 'global'
+      far: {
+        name: 'db',
+        serviceName: 'wordpress'
+      }
     };
-    var output = jsTestUtils.shallowRender(
+
+    var renderer = jsTestUtils.shallowRender(
         <juju.components.InspectorRelationsItem
-          relation={relation} />);
-    assert.deepEqual(output,
-      <li className="inspector-relations-item">
-        <span />
-        <span className="inspector-relations-item__details">
-          <p className="inspector-relations-item__property">
-            Interface: {"reversenginx"}
-          </p>
-          <p className="inspector-relations-item__property">
-            Name: {"wordpress"}
-          </p>
-          <p className="inspector-relations-item__property">
-            Role: {"peer"}
-          </p>
-          <p className="inspector-relations-item__property">
-            Scope: {"global"}
-          </p>
-        </span>
-      </li>);
+          relation={relation} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (<li className="inspector-relations-item">
+      <span className="inspector-relations-item__service"
+        onClick={instance._handleRelationClick}
+        tabIndex="0" role="button">
+        {"wordpress"}:{"db"}
+      </span>
+    </li>);
+    assert.deepEqual(output, expected);
   });
 
-  it('navigates to the service when it is clicked', function() {
+  it('navigates to the details when it is clicked', function() {
     var changeState = sinon.stub();
+    var index = 0;
     var relation = {
       near: {
         name: 'pgsql',
         role: 'primary'
       },
       far: {
-        service: 'django',
+        name: 'django',
         serviceName: 'django'
       },
       interface: 'postgresql',
@@ -121,15 +70,16 @@ describe('InspectorRelationsItem', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorRelationsItem
           changeState={changeState}
-          relation={relation} />);
-    output.props.children[0].props.onClick();
+          relation={relation}
+          index={index} />);
+    output.props.children.props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionA: {
         component: 'inspector',
         metadata: {
-          id: 'django',
-          activeComponent: undefined
+          activeComponent: 'relation',
+          unit: '0'
         }}});
   });
 });

@@ -269,6 +269,25 @@ YUI.add('inspector-component', function() {
                   activeComponent: undefined
                 }}}};
           break;
+        case 'relation':
+          var relationIndex = metadata.relation;
+          var relation = this.props.serviceRelations[relationIndex];
+          var serviceName = relation.far.serviceName;
+          var relationName = relation.far.name;
+          state.activeChild = {
+            title: (serviceName + ':' + relationName),
+            icon: service.get('icon'),
+            component:
+              <juju.components.InspectorRelationDetails
+                relation={relation} />,
+            backState: {
+              sectionA: {
+                component: 'inspector',
+                metadata: {
+                  id: serviceId,
+                  activeComponent: 'relations'
+                }}}};
+          break;
         case 'change-version':
           state.activeChild = {
             title: 'Change version',
@@ -326,6 +345,7 @@ YUI.add('inspector-component', function() {
     'inspector-header',
     'inspector-config',
     'inspector-relations',
+    'inspector-relation-details',
     'scale-service',
     'service-overview',
     'unit-details',

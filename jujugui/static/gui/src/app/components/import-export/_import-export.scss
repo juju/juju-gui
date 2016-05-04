@@ -12,6 +12,7 @@
     position: relative;
     top: 20px;
     transition: background-color .2s;
+    background-color: $canvas-background;
 
     &:hover {
         background-color: $white;
@@ -29,6 +30,8 @@
   }
 
   &__file {
+      position: absolute;
+      top: -99999;
       display: block;
       visibility: hidden;
       width: 0;
