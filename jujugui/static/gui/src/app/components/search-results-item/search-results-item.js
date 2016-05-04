@@ -93,6 +93,33 @@ YUI.add('search-results-item', function(Y) {
     },
 
     /**
+      Generate the elements for the series list.
+
+      @method _generateSeriesList
+      @returns {String} The generated elements.
+    */
+    _generateSeriesList: function() {
+      var item = this.props.item;
+      var series = item.series;
+      var components = [];
+      // Prevent layouts from collapsing due to empty content.
+      if (series.length === 0) {
+        return <li>&nbsp;</li>;
+      }
+      series.forEach(function(s) {
+        components.push(
+          <li className="list-series__item"
+            key={s.name}>
+            <a onClick={this._handleItemClick.bind(this, s.storeId)}>
+              {s.name}
+            </a>
+          </li>
+        );
+      }, this);
+      return components;
+    },
+
+    /**
       Generate the base classes from the props.
 
       @method _generateClasses
@@ -108,7 +135,7 @@ YUI.add('search-results-item', function(Y) {
     /**
       Show the entity details when clicked.
 
-      @method _handleEntityClick
+      @method _handleItemClick
       @param {String} id The entity id.
       @param {Object} e The click event.
     */
@@ -173,13 +200,18 @@ YUI.add('search-results-item', function(Y) {
         <li className={'list-block__list--item ' + item.type}
             tabIndex="0" role="button"
             onClick={this._handleItemClick.bind(this, item.storeId)}>
-          <div className="six-col charm-name__column">
+          <div className="four-col charm-name__column">
             <h3 className="list-block__list--item-title">
               {item.displayName}
               {this._generateSpecialFlag()}
             </h3>
             <ul className="tag-list">
               {this._generateTagList()}
+            </ul>
+          </div>
+          <div className="two-col series__column">
+            <ul className="list-series">
+              {this._generateSeriesList()}
             </ul>
           </div>
           <div className="three-col charm-logos__column list-block__column">

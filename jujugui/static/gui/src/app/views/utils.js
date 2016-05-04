@@ -1377,8 +1377,11 @@ YUI.add('juju-view-utils', function(Y) {
     var parts = id.split('/');
     // The last part will be the name and version number e.g. juju-gui-0.
     var idParts = parts[parts.length - 1].split('-');
-    // Remove the version number from the end.
-    return idParts.splice(0, idParts.length - 1).join('-');
+    // If the last part is numeric, it's the version number; remove it.
+    if (!isNaN(idParts[idParts.length - 1])) {
+      idParts.pop();
+    }
+    return idParts.join('-');
   };
 
   /*

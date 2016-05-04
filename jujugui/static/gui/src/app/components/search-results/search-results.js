@@ -55,8 +55,8 @@ YUI.add('search-results', function(Y) {
         var entity = entities[i],
             key = entityKey(entity, getName),
             series = entity.series,
-            url = entity.url || '',
-            value = {name: series, url: url};
+            storeId = entity.storeId || '',
+            value = {name: series, storeId: storeId};
         // If the key already exists, append the series to the existing list.
         if (collapsedEntities[key]) {
           var collapsed = collapsedEntities[key];
@@ -79,8 +79,6 @@ YUI.add('search-results', function(Y) {
           collapsed.series = collapsed.series.filter(function(s, pos, arry) {
             return !pos || s.name != arry[pos - 1].name;
           });
-          // And that its URL is used for the entity.
-          collapsed.url = collapsed.series[0].url;
         } else {
           // Convert all series attributes in the entities to lists.
           if (series) {
@@ -88,15 +86,18 @@ YUI.add('search-results', function(Y) {
           } else {
             entity.series = [];
           }
-          // Ensure downloads and URL are present.
+          // Ensure downloads are present.
           entity.downloads = entity.downloads || 0;
-          entity.url = entity.url || '';
-          var name = getName(entity.id);
-          entity.id = entity.series.length > 0 ?
-              entity.series[0].name + '/' + name : name;
           collapsedEntities[key] = entity;
           // Save the key so we can preserve sort order.
           orderedKeys.push(key);
+        }
+        // Ensure that the IDs are properly set.
+        var e = collapsedEntities[key];
+        var defaultSeries = e.series[0];
+        if (defaultSeries) {
+          e.storeId = defaultSeries.storeId;
+          e.id = `${defaultSeries.name}/${getName(e.id)}`;
         }
       }
       // Now convert that object back to an ordered list and return it.
