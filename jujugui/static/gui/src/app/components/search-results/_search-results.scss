@@ -243,10 +243,19 @@
             margin: 0;
 
             .list-series__item {
-               text-transform: capitalize;
-               float: left;
-               margin-bottom: 4px;
-               margin-right: 6px;
+                text-transform: capitalize;
+                float: left;
+                margin-bottom: 4px;
+                margin-right: 4px;
+                color: $warm-grey;
+
+                &:after {
+                    content: ' \2022';
+                }
+
+                &:last-child:after {
+                    content: '';
+                }
             }
         }
 
