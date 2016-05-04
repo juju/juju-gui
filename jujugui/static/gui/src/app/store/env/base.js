@@ -281,7 +281,7 @@ YUI.add('juju-env-base', function(Y) {
         this.beforeClose(this.ws.close.bind(this.ws));
       }
       if (cb) {
-        cb(); 
+        cb();
       }
     },
 
@@ -404,7 +404,9 @@ YUI.add('juju-env-base', function(Y) {
     logout: function() {
       this.userIsAuthenticated = false;
       this.setCredentials(null);
-      this.ws.close();
+      if (this.ws) {
+        this.ws.close();
+      }
       this.connect();
     }
 
