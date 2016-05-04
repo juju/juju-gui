@@ -50,6 +50,10 @@ STATIC_CSS_FILES = \
 
 LSB_RELEASE = $(shell lsb_release -cs)
 
+# The nodejs must be versioned in order to get the correct one from the PPA.
+# libfontconfig1 is required by phantom.
+SYSDEPS = nodejs=0.10.37-1chl1~utopic1 python-virtualenv g++ inotify-tools libfontconfig1
+
 .PHONY: help
 help:
 	@echo "bumpversion - bump version."
@@ -83,7 +87,7 @@ sysdeps:
 	sudo apt-get install -y software-properties-common
 	sudo add-apt-repository -y ppa:yellow/ppa
 	sudo apt-get update
-	sudo apt-get install -y nodejs python-virtualenv g++ inotify-tools
+	sudo apt-get install -y $(SYSDEPS)
 	# The yellow/ppa doesn't contain this version of npm, it will be pulled
 	# from npm instead. The next step will be to update node which will include
 	# the more recent npm version.

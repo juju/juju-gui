@@ -8,6 +8,7 @@ build-debug
 build-prod
 build-shared
 classnames.js
+collected-requirements
 dist
 docs/_build/doctrees
 docs/_build/html
@@ -27,6 +28,7 @@ libpeerconnection.log
 local/
 node_modules
 npm-debug.log
+pip-selfcheck.json
 *.pyc
 python-shelltoolbox
 releases
@@ -41,4 +43,3 @@ upload_release.py
 virtualenv
 yuidoc
 yui-macaroon.js
-collected-requirements
