@@ -557,6 +557,14 @@ YUI.add('juju-gui', function(Y) {
       // When the connection resets, reset the db, re-login (a delta will
       // arrive with successful authentication), and redispatch.
       this.env.after('connectedChange', function(ev) {
+        if (ev.newVal === false && this.get('gisf')) {
+          // Update to the new base URL.
+          var auth = this._getAuth();
+          var envName = this.env.get('environmentName');
+          var newBaseUrl = `/u/${auth.user}/${envName}`;
+          this.state.set('baseUrl', newBaseUrl);
+          this.navigate(newBaseUrl);
+        }
         if (ev.newVal === true) {
           // If we're in gisf we do not want to empty the db when we connect
           // because the user may have made changes to the temporary model.
@@ -1995,18 +2003,6 @@ YUI.add('juju-gui', function(Y) {
       // Reset canvas centering to new env will center on load.
       var topo = this.views.environment.instance.topo;
       topo.modules.ServiceModule.centerOnLoad = true;
-      // Optionally update to the new base URL.
-      if (!reconnect && this.get('gisf')) {
-        // XXX I'm not sure this is the right place to get user info for
-        // gisf deploys. Will need to verify on QA.
-        var auth = this._getAuth();
-        // XXX Are we sure that auth and auth.user will never be null?
-        // If not, or if we just want to code for failure, what should
-        // be the fallback default?
-        var newBaseUrl = `/u/${auth.user}/sandbox`;
-        this.state.set('baseUrl', newBaseUrl);
-        this.navigate(newBaseUrl);
-      }
     },
 
     /**
