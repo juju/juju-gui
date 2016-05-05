@@ -378,7 +378,8 @@ class TestCase(unittest.TestCase):
         Fail printing the provided error if timeout is exceeded.
         Otherwise, return the value returned by the script.
         """
-        config_url = urlparse.urljoin(cls.app_url, '/static/gui/build/app/assets/config.js')
+        config_url = urlparse.urljoin(
+            cls.app_url, '/static/gui/build/app/assets/config.js')
 
         def condition(driver):
             """Return True if contents are found in the given URL."""
