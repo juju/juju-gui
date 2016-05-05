@@ -747,7 +747,7 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.UserProfile
           addNotification={this.db.notifications.add.bind(this)}
-          canCreateNew={this.get('modelConnected')}
+          canCreateNew={this.env.get('connected')}
           currentModel={this.get('jujuEnvUUID')}
           destroyModel={this.env.destroyModel.bind(this.env)}
           env={this.env}
@@ -857,7 +857,7 @@ YUI.add('juju-gui', function(Y) {
           currentChangeSet, services, units);
       var metadata = metadata || {};
       var activeComponent = metadata.activeComponent;
-      var modelCommitted = this.get('modelConnected');
+      var modelCommitted = this.env.get('connected');
       var modelName = this.db.environment.get('name');
       if (!window.flags || !window.flags.blues) {
         // Display the old deploy summary if we're not using the feature flag
@@ -1961,8 +1961,6 @@ YUI.add('juju-gui', function(Y) {
       } else {
         this.env.close(onclose);
       }
-      // Set the flag for whether we're connected to a model or not.
-      this.set('modelConnected', !!socketUrl);
       this.db.reset();
       this.db.fire('update');
       // Reset canvas centering to new env will center on load.
@@ -2312,16 +2310,6 @@ YUI.add('juju-gui', function(Y) {
         @type {Boolean}
       */
       loggedIn: {
-        value: false
-      },
-      /**
-        A flag to indicate if the GUI is connected to a model.
-
-        @attribute modelConnected
-        @default false
-        @type {Boolean}
-      */
-      modelConnected: {
         value: false
       },
       /**
