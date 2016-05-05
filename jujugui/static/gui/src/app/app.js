@@ -747,6 +747,7 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.UserProfile
           addNotification={this.db.notifications.add.bind(this)}
+          canCreateNew={this.env.get('connected')}
           currentModel={this.get('jujuEnvUUID')}
           destroyModel={this.env.destroyModel.bind(this.env)}
           env={this.env}
@@ -856,7 +857,7 @@ YUI.add('juju-gui', function(Y) {
           currentChangeSet, services, units);
       var metadata = metadata || {};
       var activeComponent = metadata.activeComponent;
-      var modelCommitted = this._getModelCommitted();
+      var modelCommitted = this.env.get('connected');
       var modelName = this.db.environment.get('name');
       if (!window.flags || !window.flags.blues) {
         // Display the old deploy summary if we're not using the feature flag
@@ -948,7 +949,7 @@ YUI.add('juju-gui', function(Y) {
             changesUtils.generateChangeDescription.bind(
               changesUtils, services, units)}
           hasEntities={servicesArray.length > 0 || machines.length > 0}
-          modelCommitted={this._getModelCommitted()}
+          modelCommitted={this.env.get('connected')}
           showInstall={this.get('sandbox')} />,
         document.getElementById('deployment-bar-container'));
     },
@@ -980,36 +981,6 @@ YUI.add('juju-gui', function(Y) {
           renderDragOverNotification={
             this._renderDragOverNotification.bind(this)} />,
         document.getElementById('import-export-container'));
-    },
-
-    /**
-      This is a bodge to check if the model has ever been deployed by checking
-      if there is anything deployed in the db, a flag for whether we have a
-      committed model will need to be added.
-
-      @method _getModelCommitted
-      @param {Object} props The component props.
-    */
-    _getModelCommitted: function() {
-      // XXX huwshimi 23 March 2014: this should be replaced with a proper check
-      // for whether the model is committed.
-      var db = this.db;
-      var hasDeployed = false;
-      db.services.toArray().forEach(service => {
-        if (!service.get('pending')) {
-          hasDeployed = true;
-          return false;
-        }
-      });
-      if (!hasDeployed) {
-        db.machines.toArray().forEach(machine => {
-          if (machine.commitStatus === 'committed') {
-            hasDeployed = true;
-            return false;
-          }
-        });
-      }
-      return hasDeployed;
     },
 
     /**
@@ -1984,7 +1955,7 @@ YUI.add('juju-gui', function(Y) {
           this.connect();
         }
       }.bind(this.env);
-      if(this.env.ws) {
+      if (this.env.ws) {
         this.env.ws.onclose = onclose;
         this.env.close();
       } else {
