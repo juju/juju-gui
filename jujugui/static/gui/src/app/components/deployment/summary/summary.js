@@ -125,7 +125,8 @@ YUI.add('deployment-summary', function() {
         this.props.users.jem.user,
         this.refs.modelName.value,
         this.props.deploymentStorage.templateName,
-        this.props.controller,
+        null, // TODO frankban: use a location here.
+        this.props.controller, // TODO frankban: remove the controller here.
         (error, data) => {
           if (error) throw error;
           var pathParts = data.hostPorts[0].split(':');

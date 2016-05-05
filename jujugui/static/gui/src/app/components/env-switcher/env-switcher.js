@@ -171,8 +171,11 @@ YUI.add('env-switcher', function() {
         }
         var name = controllers[0].path;
         var baseTemplate = name;
+        // TODO frankban: define a location, do not use a controller.
+        var location = null;
         jem.newModel(
-          envOwnerName, envName, baseTemplate, name, this.createModelCallback);
+          envOwnerName, envName, baseTemplate, location, name,
+          this.createModelCallback);
       };
 
       if (jem) {

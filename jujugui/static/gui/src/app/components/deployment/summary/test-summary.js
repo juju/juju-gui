@@ -418,10 +418,11 @@ describe('DeploymentSummary', function() {
     assert.equal(jem.newModel.args[0][0], 'joecoder');
     assert.equal(jem.newModel.args[0][1], 'Prod');
     assert.equal(jem.newModel.args[0][2], 'secureTemplate');
-    assert.equal(jem.newModel.args[0][3], 'yellow/aws-eu-central');
+    assert.equal(jem.newModel.args[0][3], null);
+    assert.equal(jem.newModel.args[0][4], 'yellow/aws-eu-central');
     // Call the callback from creating a new model to make sure it performs
     // the approriate calls.
-    jem.newModel.args[0][4](null, {
+    jem.newModel.args[0][5](null, {
       hostPorts: ['1.1.1.1:1234'],
       user: 'joecoder',
       password: 'abc123',

@@ -94,6 +94,8 @@ var module = module;
     Provides access to the JEM API.
   */
 
+  var jemAPIVersion = 'v2';
+
   /**
     Initializer
 
@@ -109,7 +111,7 @@ var module = module;
     // mechanism from charmstore but that's a larger rewrite. For now we're
     // making sure we can take the same initialization data for the JEM URL as
     // we do for the charmstore url.
-    this.url = url + 'v2';
+    this.url = url.replace(/\/?$/, '/') + jemAPIVersion;
     this.bakery = bakery;
   };
 
@@ -221,13 +223,19 @@ var module = module;
       @param name {String} The name of the given environment.
       @param baseTemplate {String} The name of the config template to be used
           for creating the environment.
+      @param location {Object} Key/value pairs describing the target
+        controller, for instance "{'region': 'us-east-1', 'cloud': 'aws'}".
+        This is used to narrow down the range of possible controllers to be
+        used for the model.
       @param controller {String} The entityPath name of the controller to
-          create the environment with.
-      @params callback {Function} A callback to handle errors or accept the data
-          from the request. Must accept an error message or null as its first
-          parameter and the response data as its second.
+          create the environment with. This is optional and may not be
+          available to all users: when in doubt, use location above instead.
+      @params callback {Function} A callback to handle errors or accept the
+          data from the request. Must accept an error message or null as its
+          first parameter and the response data as its second.
     */
-    newModel: function (ownerName, name, baseTemplate, controller, callback) {
+    newModel: function (
+        ownerName, name, baseTemplate, location, controller, callback) {
       var handler = function(error, response) {
         if (error !== null) {
           callback(error, null);
@@ -237,11 +245,41 @@ var module = module;
       };
       var body = {
         name: name,
-        controller: controller,
         templates: [baseTemplate]
       };
+      if (location) {
+        body.Location = location;
+      }
+      if (controller) {
+        body.controller = controller;
+      }
       var url = [this.url, 'model', ownerName].join('/');
       _makeRequest(this.bakery, url, 'POST', body, handler);
+    },
+
+    /**
+      List regions available in the given cloud.
+
+      @public listRegions
+      @param cloud {String} The name of the cloud (for instance "aws");
+      @params callback {Function} A callback to handle errors or accept the
+          data from the request. Must accept an error message or null as its
+          first parameter and an array of regions as its second.
+    */
+    listRegions: function (cloud, callback) {
+      var handler = function(error, response) {
+        if (error !== null) {
+          callback(error, null);
+          return;
+        }
+        var regions = [];
+        if (response.Values && response.Values.length) {
+          regions = response.Values;
+        }
+        callback(null, regions);
+      };
+      var url = this.url + '/location/region?cloud=' + cloud;
+      _makeRequest(this.bakery, url, 'GET', null, handler);
     },
 
     /**
@@ -353,7 +391,7 @@ var module = module;
      @returns {Object} A client object for making charmstore API calls.
    */
   function charmstore(url, bakery, processEntity) {
-    this.url = url;
+    this.url = url.replace(/\/?$/, '/') + charmstoreAPIVersion;
     this.bakery = bakery;
 
     // XXX jcsackett 2015-11-09 Methods that return entity data should
@@ -391,7 +429,7 @@ var module = module;
       if (extension) {
         endpoint = endpoint + extension;
       }
-      return this.url + charmstoreAPIVersion + '/' + endpoint + query;
+      return this.url + '/' + endpoint + query;
     },
 
     /**
@@ -533,7 +571,7 @@ var module = module;
         }
         processed.deployerFileUrl =
             this.url +
-            charmstoreAPIVersion + '/' +
+            '/' +
             processed.id.replace('cs:', '') +
             '/archive/bundle.yaml';
       } else {
@@ -792,6 +830,7 @@ var module = module;
   var jujulib = {
     charmstoreAPIVersion: charmstoreAPIVersion,
     charmstore: charmstore,
+    jemAPIVersion: jemAPIVersion,
     jem: jem,
     identity: function() {}
   };
