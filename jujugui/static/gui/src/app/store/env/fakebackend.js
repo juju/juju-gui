@@ -2139,7 +2139,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (filename === 'icon.svg') {
         // This is a request for a local charm icon URL. Just return the
         // fallback icon.
-        return '/juju-ui/assets/images/non-sprites/charm_160.svg';
+        return '/static/gui/build/app/assets/images/non-sprites/charm_160.svg';
       }
       // This is in theory unreachable: with the exception of the icon, other
       // file URLs are not currently requested.

@@ -219,7 +219,7 @@ Utopic) will run into problems with running the functional tests.
   string that combines the value in the branch's ``CHANGES.yaml`` with the
   branch's revno.
 - While still in the directory where you extracted the tar file, change
-  build-prod/juju-ui/assets/config.js to specify simulateEvents: false
+  build-prod/static/gui/build/app/assets/config.js to specify simulateEvents: false
   and hideLoginButton: false.
 - Serve the app with a python module.
 

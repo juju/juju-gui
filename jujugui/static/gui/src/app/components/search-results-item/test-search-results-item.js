@@ -97,7 +97,8 @@ describe('SearchResultsItem', function() {
               key="mysql"
               role="button" tabIndex="0"
               onClick={icons[0].props.onClick}>
-              <img src="juju-ui/assets/images/non-sprites/charm_160.svg"
+              <img src=
+                {'static/gui/build/app/assets/images/non-sprites/charm_160.svg'}
                 className="list-icons__image"
                 alt="mysql" />
               <span className="tooltip__tooltip">
@@ -172,7 +173,8 @@ describe('SearchResultsItem', function() {
               key="mysql"
               role="button" tabIndex="0"
               onClick={icons[0].props.onClick}>
-              <img src="juju-ui/assets/images/non-sprites/charm_160.svg"
+              <img src={
+                'static/gui/build/app/assets/images/non-sprites/charm_160.svg'}
                 className="list-icons__image"
                 alt="mysql" />
               <span className="tooltip__tooltip">

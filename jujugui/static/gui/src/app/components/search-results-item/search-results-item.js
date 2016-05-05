@@ -72,7 +72,7 @@ YUI.add('search-results-item', function(Y) {
       var components = [];
       services.forEach(function(service) {
         var src = service.iconPath ||
-            'juju-ui/assets/images/non-sprites/charm_160.svg';
+            'static/gui/build/app/assets/images/non-sprites/charm_160.svg';
         components.push(
           <li className="list-icons__item tooltip"
             key={service.displayName}

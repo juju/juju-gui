@@ -1769,7 +1769,7 @@ YUI.add('juju-view-utils', function(Y) {
       }
     } else {
       // If no env is provided as necessary then return the default icon.
-      path = 'juju-ui/assets/images/non-sprites/charm_160.svg';
+      path = 'static/gui/build/app/assets/images/non-sprites/charm_160.svg';
     }
     return path;
   };
