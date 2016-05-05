@@ -1404,12 +1404,11 @@ YUI.add('juju-gui', function(Y) {
     */
     _setupCharmstore: function(Charmstore) {
       if (this.get('charmstore') === undefined) {
-
-        var jujuConfig = window.juju_config, charmstoreURL, existingMacaroons,
-            existingCookie;
+        var jujuConfig = window.juju_config;
+        var charmstoreURL = '';
+        var existingMacaroons, existingCookie;
         if (!jujuConfig || !jujuConfig.charmstoreURL) {
           console.error('no juju config for charmstoreURL availble');
-
         } else {
           charmstoreURL = jujuConfig.charmstoreURL;
           existingMacaroons = jujuConfig.charmstoreMacaroons;
