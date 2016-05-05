@@ -232,8 +232,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state.logout();
       env.after('login', function() {
         assert.isTrue(env.userIsAuthenticated);
-        assert.deepEqual(env.getCredentials(),
-                         {user: 'user-admin', password: 'password'});
+        assert.deepEqual(env.getCredentials(), {
+          user: 'user-admin', password: 'password', macaroons: null});
         done();
       });
       env.connect();

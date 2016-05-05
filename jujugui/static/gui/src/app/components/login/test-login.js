@@ -48,7 +48,7 @@ describe('LoginComponent', function() {
           <form
             className="login__form"
             ref="form"
-            onSubmit={instance._handleSubmit}>
+            onSubmit={instance._handleLoginSubmit}>
             <label
               className="login__label">
               Username
@@ -68,18 +68,17 @@ describe('LoginComponent', function() {
                 ref="password" />
             </label>
             <juju.components.GenericButton
-              action={instance._handleSubmit}
+              action={instance._handleLoginSubmit}
               submit={true}
               type="positive"
               title="Login" />
+            {undefined}
           </form>
         </div>
         <div className="login__message">
           <span>Exterminate!</span>
           <div className="login__message-link">
-            <a
-              href="https://jujucharms.com"
-              target="_blank">
+            <a href="https://jujucharms.com" target="_blank">
               jujucharms.com
             </a>
           </div>
@@ -89,19 +88,81 @@ describe('LoginComponent', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('can display a login failure message', function() {
+  it('renders including a "Login with USSO" button', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Login
+        helpMessage={<span>Exterminate!</span>}
+        setCredentials={sinon.stub()}
+        loginWithMacaroon={sinon.stub()}
+        login={sinon.stub()}/>, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="login">
+        <div className="login__logo">
+          <juju.components.SvgIcon width="75" height="30" name="juju-logo" />
+        </div>
+        <div className="login__full-form">
+          <div className="login__env-name">
+            Login
+          </div>
+          {undefined}
+          <form
+            className="login__form"
+            ref="form"
+            onSubmit={instance._handleLoginSubmit}>
+            <label
+              className="login__label">
+              Username
+              <input
+                className="login__input"
+                type="text"
+                name="username"
+                ref="username" />
+            </label>
+            <label
+              className="login__label">
+              Password
+              <input
+                className="login__input"
+                type="password"
+                name="password"
+                ref="password" />
+            </label>
+            <juju.components.GenericButton
+              action={instance._handleLoginSubmit}
+              submit={true}
+              type="positive"
+              title="Login" />
+            <juju.components.GenericButton
+              action={instance._handleLoginWithMacaroonSubmit}
+              submit={true}
+              type="positive"
+              title="Login with USSO" />
+          </form>
+        </div>
+        <div className="login__message">
+          <span>Exterminate!</span>
+          <div className="login__message-link">
+            <a href="https://jujucharms.com" target="_blank">
+              jujucharms.com
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+    assert.deepEqual(output, expected);
+  });
+
+  it('can display a login error message', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.Login
         helpMessage={<span>Exterminate!</span>}
         setCredentials={sinon.stub()}
         login={sinon.stub()}
-        loginFailure={true} />);
-    var expected = (
-      <div className="login__failure-message">
-        The supplied username or password was incorrect.
-      </div>);
-    assert.deepEqual(
-      output.props.children[1].props.children[1], expected);
+        errorMessage='bad wolf' />);
+    var expected = <div className="login__failure-message">bad wolf</div>;
+    assert.deepEqual(output.props.children[1].props.children[1], expected);
   });
 
   it('calls to log the user in on submit', function() {
@@ -123,6 +184,20 @@ describe('LoginComponent', function() {
       password: 'bar'
     });
     assert.equal(login.callCount, 1, 'login never called');
+  });
+
+  it('calls to log the user in with USSO', function() {
+    var loginWithMacaroon = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Login
+        helpMessage={<span>Exterminate!</span>}
+        setCredentials={sinon.stub()}
+        loginWithMacaroon={loginWithMacaroon}
+        login={sinon.stub()}/>, true);
+    var output = renderer.getRenderOutput();
+    var button = output.props.children[1].props.children[2].props.children[3];
+    button.props.action();
+    assert.equal(loginWithMacaroon.callCount, 1, 'login never called');
   });
 
   it('can focus on the username field', function() {

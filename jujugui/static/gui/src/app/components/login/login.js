@@ -26,7 +26,8 @@ YUI.add('login-component', function() {
       helpMessage: React.PropTypes.object.isRequired,
       setCredentials: React.PropTypes.func.isRequired,
       login: React.PropTypes.func.isRequired,
-      loginFailure: React.PropTypes.bool
+      loginWithMacaroon: React.PropTypes.func,
+      errorMessage: React.PropTypes.string
     },
 
     componentDidMount: function () {
@@ -34,15 +35,16 @@ YUI.add('login-component', function() {
     },
 
     /**
-      Handles the form submit by calling the set credentials and login
-      methods with the appropriate values.
+      Handle the form submit in the case traditional user/password credentials
+      are provided by the user. Call the set credentials and login methods with
+      the appropriate values.
 
-      @method _handleSubmit
-      @param {Object} e The submit event.
+      @method _handleLoginSubmit
+      @param {Object} evt The submit event.
     */
-    _handleSubmit: function(e) {
-      if (e && e.preventDefault){
-        e.preventDefault();
+    _handleLoginSubmit: function(evt) {
+      if (evt && evt.preventDefault){
+        evt.preventDefault();
       }
       var props = this.props;
       props.setCredentials({
@@ -53,18 +55,46 @@ YUI.add('login-component', function() {
     },
 
     /**
+      Handle the form submit in the case macaroons based authentication is
+      attempted.
+
+      @method _handleLoginWithMacaroonSubmit
+      @param {Object} evt The submit event.
+    */
+    _handleLoginWithMacaroonSubmit: function(evt) {
+      if (evt && evt.preventDefault){
+        evt.preventDefault();
+      }
+      this.props.loginWithMacaroon();
+    },
+
+    /**
+      Display a button for starting the macaroons based authentication if
+      available.
+
+      @method _generateLoginWithMacaroonButton
+    */
+    _generateLoginWithMacaroonButton: function() {
+      if (this.props.loginWithMacaroon) {
+        return (
+          <juju.components.GenericButton
+            action={this._handleLoginWithMacaroonSubmit}
+            submit={true}
+            type="positive"
+            title="Login with USSO" />);
+      }
+    },
+
+    /**
       Display a message if the login failed.
 
-      @method _generateFailureMessage
+      @method _generateErrorMessage
     */
-    _generateFailureMessage: function() {
-      if (!this.props.loginFailure) {
-        return;
+    _generateErrorMessage: function() {
+      var msg = this.props.errorMessage;
+      if (msg) {
+        return <div className="login__failure-message">{msg}</div>;
       }
-      return (
-        <div className="login__failure-message">
-          The supplied username or password was incorrect.
-        </div>);
     },
 
     render: function() {
@@ -77,11 +107,11 @@ YUI.add('login-component', function() {
             <div className="login__env-name">
               Login
             </div>
-            {this._generateFailureMessage()}
+            {this._generateErrorMessage()}
             <form
               className="login__form"
               ref="form"
-              onSubmit={this._handleSubmit}>
+              onSubmit={this._handleLoginSubmit}>
               <label
                 className="login__label">
                 Username
@@ -101,18 +131,17 @@ YUI.add('login-component', function() {
                   ref="password" />
               </label>
               <juju.components.GenericButton
-                action={this._handleSubmit}
+                action={this._handleLoginSubmit}
                 submit={true}
                 type="positive"
                 title="Login" />
+              {this._generateLoginWithMacaroonButton()}
             </form>
           </div>
           <div className="login__message">
             {this.props.helpMessage}
             <div className="login__message-link">
-              <a
-                href="https://jujucharms.com"
-                target="_blank">
+              <a href="https://jujucharms.com" target="_blank">
                 jujucharms.com
               </a>
             </div>

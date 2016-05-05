@@ -714,7 +714,8 @@ describe('App', function() {
       env.setCredentials(null);
       app.navigate = function() { return; };
       app.after('ready', function() {
-        assert.equal(app.env.getCredentials(), null);
+        assert.deepEqual(
+          app.env.getCredentials(), {user: '', password: '', macaroons: null});
         assert.equal(conn.messages.length, 0);
         done();
       });
@@ -779,10 +780,11 @@ describe('App', function() {
       app.after('ready', function() {
         app.env.login();
         // Mimic a login failed response assuming login is the first request.
-        conn.msg({RequestId: 1, Error: 'Invalid user or password'});
+        conn.msg({RequestId: 1, Error: 'bad wolf'});
         assert.equal(1, conn.messages.length);
         assertIsLogin(conn.last_message());
         assert.equal(loginStub.callCount(), 1);
+        assert.deepEqual(loginStub.lastArguments(), ['bad wolf']);
         done();
       });
     });
@@ -909,8 +911,26 @@ describe('App', function() {
         // Disconnect and reconnect the WebSocket.
         conn.transient_close();
         conn.open();
-        assert.equal(1, conn.messages.length);
+        assert.equal(1, conn.messages.length, 'no login messages sent');
         assertIsLogin(conn.last_message());
+        done();
+      });
+    });
+
+    it('tries to re-login with macaroons on disconnections', function(done) {
+      sessionStorage.clear();
+      env.setAttrs({user: null, password: null, jujuCoreVersion: '2.0.0'});
+      var app = makeApp(true, this); // Create a connected app.
+      app.after('ready', function() {
+        env.setCredentials({macaroons: ['macaroon']});
+        // Disconnect and reconnect the WebSocket.
+        conn.transient_close();
+        conn.open();
+        assert.equal(1, conn.messages.length, 'no login messages sent');
+        var msg = conn.last_message();
+        assert.strictEqual(msg.Type, 'Admin');
+        assert.strictEqual(msg.Request, 'Login');
+        assert.deepEqual(msg.Params, {macaroons: [['macaroon']]});
         done();
       });
     });
@@ -919,8 +939,9 @@ describe('App', function() {
       env.connect();
       this._cleanups.push(env.close.bind(env));
       env.logout();
-      assert.equal(false, env.userIsAuthenticated);
-      assert.equal(null, env.getCredentials());
+      assert.equal(env.userIsAuthenticated, false);
+      assert.deepEqual(
+        env.getCredentials(), {user: '', password: '', macaroons: null});
     });
 
     it('normally uses window.location', function() {
@@ -1363,7 +1384,7 @@ describe('App', function() {
         viewContainer: container,
         consoleEnabled: true
       });
-      credStub = utils.makeStubMethod(app.env, 'getCredentials');
+      credStub = utils.makeStubMethod(app.env, 'getCredentials', {user: ''});
       this._cleanups.push(credStub.reset);
     });
 

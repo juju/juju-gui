@@ -1931,7 +1931,9 @@ YUI.add('juju-view-utils', function(Y) {
         if (model.uuid === uuid) {
           username = model.user;
           password = model.password;
-          if (model.hostPorts.length) {
+          // Note that the hostPorts attribute is only present in models
+          // returned by JEM.
+          if (model.hostPorts && model.hostPorts.length) {
             var hostport = model.hostPorts[0].split(':');
             address = hostport[0];
             port = hostport[1];
