@@ -1747,9 +1747,9 @@ YUI.add('juju-topology-service', function(Y) {
       var image, href;
       selection.each(function(d) {
         image = d3.select(this).select('.service-block-image');
-        href = 'juju-ui/assets/svgs/service_module.svg';
+        href = 'static/gui/build/app/assets/svgs/service_module.svg';
         if (d.pending || d.deleted) {
-          href = 'juju-ui/assets/svgs/service_module_pending.svg';
+          href = 'static/gui/build/app/assets/svgs/service_module_pending.svg';
         }
         image.attr('href', href);
       });
