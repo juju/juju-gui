@@ -222,6 +222,8 @@ YUI.add('juju-env-go', function(Y) {
       this.defaultUser = 'admin';
       this._allWatcherId = null;
       this._pinger = null;
+      // pendingLoginResponse is set to true when the login process is running.
+      this.pendingLoginResponse = false;
       this.on('_rpc_response', this._handleRpcResponse);
     },
 
@@ -594,7 +596,7 @@ YUI.add('juju-env-go', function(Y) {
       Log into the Juju API using macaroon authentication if provided.
 
       @method loginWithMacaroon
-      @param {Object} bakery: the bakery client to use to handle macaroons.
+      @param {Object} bakery The bakery client to use to handle macaroons.
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an error string if an error
         occurred or null if authentication succeeded.

@@ -485,6 +485,8 @@ YUI.add('juju-gui', function(Y) {
       var password = env.get('password');
       var macaroons = null;
       if (!user || !password) {
+        // No user and password credentials provided in config: proceed with
+        // usual credentials handling.
         var credentials = env.getCredentials();
         if (credentials.areAvailable) {
           user = credentials.user;
