@@ -175,13 +175,12 @@ describe('jujulib environment manager', function() {
   });
 
   it('can create a new model providing a location', function(done) {
-    var location = {'region': 'us-east-1', 'cloud': 'aws'};
     var bakery = {
       sendPostRequest: function(path, data, success, failure) {
         assert.equal(path, 'http://example.com/v2/model/rose');
         assert.deepEqual(JSON.parse(data), {
           name: 'fnord',
-          Location: location,
+          Location: {'region': 'us-east-1', 'cloud': 'aws'},
           templates: ['rose/template']
         });
         var xhr = _makeXHRRequest({
@@ -199,7 +198,7 @@ describe('jujulib environment manager', function() {
     };
 
     env = new window.jujulib.jem('http://example.com/', bakery);
-
+    var location = {'region': 'us-east-1', 'cloud': 'aws'};
     env.newModel('rose', 'fnord', 'rose/template', location, null,
       function(error, data) {
         assert.strictEqual(error, null);
@@ -278,6 +277,38 @@ describe('jujulib environment manager', function() {
         done();
       }
     );
+  });
+
+  it('retrieves clouds', function(done) {
+    var bakery = {
+      sendGetRequest: function(path, success, failure) {
+        assert.equal(path, 'http://example.com/v2/location/cloud')
+        var xhr = _makeXHRRequest({Values: ['aws', 'ec2']});
+        success(xhr);
+      }
+    };
+    env = new window.jujulib.jem('http://example.com/', bakery);
+    env.listClouds(function(error, data) {
+      assert.strictEqual(error, null);
+      assert.deepEqual(data, ['aws', 'ec2']);
+      done();
+    });
+  });
+
+  it('handles errors retrieving clouds', function(done) {
+    var bakery = {
+      sendGetRequest: function(path, success, failure) {
+        assert.equal(path, 'http://example.com/v2/location/cloud')
+        var xhr = _makeXHRRequest({Message: 'bad wolf'});
+        failure(xhr);
+      }
+    };
+    env = new window.jujulib.jem('http://example.com/', bakery);
+    env.listClouds(function(error, data) {
+      assert.equal(error, 'bad wolf');
+      assert.strictEqual(data, null);
+      done();
+    });
   });
 
   it('retrieves regions for a cloud', function(done) {

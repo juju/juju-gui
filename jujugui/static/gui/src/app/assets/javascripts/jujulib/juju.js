@@ -111,6 +111,7 @@ var module = module;
     // mechanism from charmstore but that's a larger rewrite. For now we're
     // making sure we can take the same initialization data for the JEM URL as
     // we do for the charmstore url.
+    // Store the API URL (including version) handling missing trailing slash.
     this.url = url.replace(/\/?$/, '/') + jemAPIVersion;
     this.bakery = bakery;
   };
@@ -148,6 +149,26 @@ var module = module;
       providerType: controller['provider-type'],
       schema: controller.schema,
       location: controller.location
+    };
+  };
+
+  /**
+    Decorate callbacks provided for "/location/*" based API calls.
+
+    @private _handleLocation
+    @params callback {Function} The user provided callback.
+  */
+  function _handleLocation(callback) {
+    return function(error, response) {
+      if (error !== null) {
+        callback(error, null);
+        return;
+      }
+      var values = [];
+      if (response.Values && response.Values.length) {
+        values = response.Values;
+      }
+      callback(null, values);
     };
   };
 
@@ -258,28 +279,31 @@ var module = module;
     },
 
     /**
+      List available clouds in JEM.
+
+      @public listClouds
+      @params callback {Function} A callback to handle errors or accept the
+          data from the request. Must accept an error message or null as its
+          first parameter and an array of clouds as its second.
+    */
+    listClouds: function (callback) {
+      var url = this.url + '/location/cloud';
+      _makeRequest(this.bakery, url, 'GET', null, _handleLocation(callback));
+    },
+
+    /**
       List regions available in the given cloud.
 
       @public listRegions
-      @param cloud {String} The name of the cloud (for instance "aws");
+      @param cloud {String} The name of the cloud (for instance "aws").
+        This can be one of the values retrieved by calling listClouds above.
       @params callback {Function} A callback to handle errors or accept the
           data from the request. Must accept an error message or null as its
           first parameter and an array of regions as its second.
     */
     listRegions: function (cloud, callback) {
-      var handler = function(error, response) {
-        if (error !== null) {
-          callback(error, null);
-          return;
-        }
-        var regions = [];
-        if (response.Values && response.Values.length) {
-          regions = response.Values;
-        }
-        callback(null, regions);
-      };
       var url = this.url + '/location/region?cloud=' + cloud;
-      _makeRequest(this.bakery, url, 'GET', null, handler);
+      _makeRequest(this.bakery, url, 'GET', null, _handleLocation(callback));
     },
 
     /**
@@ -391,6 +415,7 @@ var module = module;
      @returns {Object} A client object for making charmstore API calls.
    */
   function charmstore(url, bakery, processEntity) {
+    // Store the API URL (including version) handling missing trailing slash.
     this.url = url.replace(/\/?$/, '/') + charmstoreAPIVersion;
     this.bakery = bakery;
 
