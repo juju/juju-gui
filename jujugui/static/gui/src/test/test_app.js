@@ -348,7 +348,7 @@ describe('App', function() {
       });
 
       it('is idempotent', function() {
-        window.juju_config = {charmstoreURL: 'charmurl'};
+        window.juju_config = {charmstoreURL: 'http://1.2.3.4/'};
         constructAppInstance({
           env: new juju.environments.GoEnvironment({
             conn: new utils.SocketStub(),
@@ -357,11 +357,11 @@ describe('App', function() {
         }, this);
         // The charmstore attribute is undefined by default
         assert.equal(typeof app.get('charmstore'), 'object');
-        assert.equal(app.get('charmstore').url, 'charmurl');
+        assert.equal(app.get('charmstore').url, 'http://1.2.3.4/v4');
         window.juju_config.charmstoreURL = 'it broke';
         assert.equal(
             app.get('charmstore').url,
-            'charmurl',
+            'http://1.2.3.4/v4',
             'It should only ever create a single instance of the charmstore');
       });
 
@@ -1097,7 +1097,7 @@ describe('App', function() {
     var _generateMockedApp = function(noWebsocket) {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
-        charmstorestore: new window.jujulib.charmstore(),
+        charmstorestore: new window.jujulib.charmstore('http://1.2.3.4/'),
         consoleEnabled: true,
         container: container,
         jujuCoreVersion: '1.21.1.1-trusty-amd64',
@@ -1418,7 +1418,7 @@ describe('App', function() {
     it('instantiates correctly', function() {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
-        charmstorestore: new window.jujulib.charmstore(),
+        charmstorestore: new window.jujulib.charmstore('http://1.2.3.4/'),
         consoleEnabled: true,
         container: container,
         jujuCoreVersion: '1.21.1.1-trusty-amd64',
@@ -1442,7 +1442,7 @@ describe('App', function() {
     it('passes a fake web handler to the environment', function() {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
-        charmstore: new window.jujulib.charmstore(),
+        charmstore: new window.jujulib.charmstore('http://1.2.3.4/'),
         container: container,
         jujuCoreVersion: '1.21.1.1-trusty-amd64',
         sandbox: true,
@@ -1457,7 +1457,7 @@ describe('App', function() {
     it('creates a placeholder socketUrl', function() {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
-        charmstore: new window.jujulib.charmstore(),
+        charmstore: new window.jujulib.charmstore('http://1.2.3.4/'),
         container: container,
         jujuCoreVersion: '1.21.1.1-trusty-amd64',
         sandbox: true,

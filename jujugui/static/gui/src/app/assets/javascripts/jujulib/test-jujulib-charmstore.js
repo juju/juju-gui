@@ -17,7 +17,13 @@ describe('jujulib charmstore', function() {
   });
 
   it('can be instantiated with the proper config values', function() {
-    assert.equal(charmstore.url, 'local/');
+    assert.strictEqual(charmstore.url, 'local/v4');
+  });
+
+  it('is smart enough to handle missing trailing slash in URL', function() {
+    var bakery = {};
+    charmstore = new window.jujulib.charmstore('http://example.com', bakery);
+    assert.strictEqual(charmstore.url, 'http://example.com/v4');
   });
 
   describe('_generatePath', function() {

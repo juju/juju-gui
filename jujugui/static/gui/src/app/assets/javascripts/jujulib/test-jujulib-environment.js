@@ -19,7 +19,14 @@ describe('jujulib environment manager', function() {
   it('exists', function() {
     var bakery = {};
     env = new window.jujulib.jem('http://example.com/', bakery);
-    assert.isTrue(env instanceof window.jujulib.jem);
+    assert.strictEqual(env instanceof window.jujulib.jem, true);
+    assert.strictEqual(env.url, 'http://example.com/v2');
+  });
+
+  it('is smart enough to handle missing trailing slash in URL', function() {
+    var bakery = {};
+    env = new window.jujulib.jem('http://example.com', bakery);
+    assert.strictEqual(env.url, 'http://example.com/v2');
   });
 
   it('lists models', function(done) {
@@ -167,13 +174,13 @@ describe('jujulib environment manager', function() {
     });
   });
 
-  it('can create a new model', function(done) {
+  it('can create a new model providing a location', function(done) {
     var bakery = {
       sendPostRequest: function(path, data, success, failure) {
         assert.equal(path, 'http://example.com/v2/model/rose');
         assert.deepEqual(JSON.parse(data), {
           name: 'fnord',
-          controller: 'foo',
+          Location: {'region': 'us-east-1', 'cloud': 'aws'},
           templates: ['rose/template']
         });
         var xhr = _makeXHRRequest({
@@ -191,7 +198,50 @@ describe('jujulib environment manager', function() {
     };
 
     env = new window.jujulib.jem('http://example.com/', bakery);
-    env.newModel('rose', 'fnord', 'rose/template', 'foo',
+    var location = {'region': 'us-east-1', 'cloud': 'aws'};
+    env.newModel('rose', 'fnord', 'rose/template', location, null,
+      function(error, data) {
+        assert.strictEqual(error, null);
+        assert.deepEqual(data, {
+          path: 'path',
+          user: 'usr',
+          password: 'passwd',
+          uuid: 'unique',
+          controllerPath: 'ctl-path',
+          controllerUuid: 'ctl-unique',
+          caCert: 'cert',
+          hostPorts: ['http://1.2.3.4', 'http://localhost:17070']
+        });
+        done();
+      }
+    );
+  });
+
+  it('can create a new model providing a controller', function(done) {
+    var bakery = {
+      sendPostRequest: function(path, data, success, failure) {
+        assert.equal(path, 'http://example.com/v2/model/rose');
+        assert.deepEqual(JSON.parse(data), {
+          name: 'fnord',
+          controller: 'ctl',
+          templates: ['rose/template']
+        });
+        var xhr = _makeXHRRequest({
+          path: 'path',
+          user: 'usr',
+          password: 'passwd',
+          uuid: 'unique',
+          'controller-path': 'ctl-path',
+          'controller-uuid': 'ctl-unique',
+          'ca-cert': 'cert',
+          'host-ports': ['http://1.2.3.4', 'http://localhost:17070']
+        });
+        success(xhr);
+      }
+    };
+
+    env = new window.jujulib.jem('http://example.com/', bakery);
+    env.newModel('rose', 'fnord', 'rose/template', null, 'ctl',
       function(error, data) {
         assert.strictEqual(error, null);
         assert.deepEqual(data, {
@@ -220,13 +270,79 @@ describe('jujulib environment manager', function() {
     };
 
     env = new window.jujulib.jem('http://example.com/', bakery);
-    env.newModel('rose', 'fnord', 'rose/template', 'foo',
+    env.newModel('rose', 'fnord', 'rose/template', {}, null,
       function(error, data) {
         assert.equal(error, err);
         assert.strictEqual(data, null);
         done();
       }
     );
+  });
+
+  it('retrieves clouds', function(done) {
+    var bakery = {
+      sendGetRequest: function(path, success, failure) {
+        assert.equal(path, 'http://example.com/v2/location/cloud')
+        var xhr = _makeXHRRequest({Values: ['aws', 'ec2']});
+        success(xhr);
+      }
+    };
+    env = new window.jujulib.jem('http://example.com/', bakery);
+    env.listClouds(function(error, data) {
+      assert.strictEqual(error, null);
+      assert.deepEqual(data, ['aws', 'ec2']);
+      done();
+    });
+  });
+
+  it('handles errors retrieving clouds', function(done) {
+    var bakery = {
+      sendGetRequest: function(path, success, failure) {
+        assert.equal(path, 'http://example.com/v2/location/cloud')
+        var xhr = _makeXHRRequest({Message: 'bad wolf'});
+        failure(xhr);
+      }
+    };
+    env = new window.jujulib.jem('http://example.com/', bakery);
+    env.listClouds(function(error, data) {
+      assert.equal(error, 'bad wolf');
+      assert.strictEqual(data, null);
+      done();
+    });
+  });
+
+  it('retrieves regions for a cloud', function(done) {
+    var bakery = {
+      sendGetRequest: function(path, success, failure) {
+        assert.equal(path, 'http://example.com/v2/location/region?cloud=aws')
+        var xhr = _makeXHRRequest({
+          Values: ['eu-east-1', 'moon-serenity-42']
+        });
+        success(xhr);
+      }
+    };
+    env = new window.jujulib.jem('http://example.com/', bakery);
+    env.listRegions('aws', function(error, data) {
+      assert.strictEqual(error, null);
+      assert.deepEqual(data, ['eu-east-1', 'moon-serenity-42']);
+      done();
+    });
+  });
+
+  it('handles errors retrieving regions', function(done) {
+    var bakery = {
+      sendGetRequest: function(path, success, failure) {
+        assert.equal(path, 'http://example.com/v2/location/region?cloud=lxd')
+        var xhr = _makeXHRRequest({Message: 'bad wolf'});
+        failure(xhr);
+      }
+    };
+    env = new window.jujulib.jem('http://example.com/', bakery);
+    env.listRegions('lxd', function(error, data) {
+      assert.equal(error, 'bad wolf');
+      assert.strictEqual(data, null);
+      done();
+    });
   });
 
   it('identifies the current user', function(done) {
