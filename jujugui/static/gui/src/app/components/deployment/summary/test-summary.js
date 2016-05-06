@@ -441,8 +441,9 @@ describe('DeploymentSummary', function() {
     assert.deepEqual(createSocketURL.args[0], [
       '1.1.1.1', '1234', '1qaz2wsx3edc'
     ]);
-    assert.equal(appSet.callCount, 1);
-    assert.deepEqual(appSet.args[0], ['socket_url', 'newurl']);
+    assert.equal(appSet.callCount, 2);
+    assert.deepEqual(appSet.args[0], ['jujuEnvUUID', '1qaz2wsx3edc']);
+    assert.deepEqual(appSet.args[1], ['socket_url', 'newurl']);
     assert.equal(env.set.callCount, 1);
     assert.deepEqual(env.set.args[0], ['socket_url', 'newurl']);
     assert.equal(env.connect.callCount, 1);
