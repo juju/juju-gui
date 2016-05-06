@@ -222,7 +222,7 @@ YUI.add('juju-env-base', function(Y) {
       this.userIsAuthenticated = false;
       this.failedAuthentication = false;
       // Populate our credentials if they don't already exist.
-      var credentials = this.getCredentials() || {};
+      var credentials = this.getCredentials();
       if (Y.Lang.isValue(this.get('user'))) {
         credentials.user = credentials.user ||
             API_USER_TAG + this.get('user');
@@ -353,8 +353,9 @@ YUI.add('juju-env-base', function(Y) {
      * Store the user's credentials in session storage.
      *
      * @method setCredentials
-     * @param {Object} The credentials to store, with a 'user' and a 'password'
-     *                 attribute included.
+     * @param {Object} The credentials to store, with a "user" and a "password"
+     *   attribute included, or with a "macaroons" attribute, depending on the
+     *   method used to log in.
      * @return {undefined} Stores data only.
      */
     setCredentials: function(credentials) {
@@ -366,32 +367,46 @@ YUI.add('juju-env-base', function(Y) {
      * Retrieve the stored user credentials.
      *
      * @method getCredentials
-     * @return {Object} The stored user credentials with a 'user' and a
-     *                   'password' attribute.
+     * @return {Object} The stored user credentials with "user", "password" and
+     *   "macaroons" attributes. This object also exposes the "areAvailable"
+     *   property holding whether either user/password or macaroons credentials
+     *   are actually available.
      */
     getCredentials: function() {
       var credentials = JSON.parse(
-          module.sessionStorage.getItem('credentials'));
-      if (credentials) {
-        // All juju-core interactions require the 'user-' prefix on the username
-        // but we hide that from the user so we prefix that here instead.
-        if (credentials.user && credentials.user.indexOf(API_USER_TAG) !== 0) {
+        module.sessionStorage.getItem('credentials'));
+      if (!credentials) {
+        credentials = {};
+      }
+      if (credentials.user) {
+        // All Juju interactions require the 'user-' prefix on the username but
+        // we hide that from the user so we prefix that here instead.
+        if (credentials.user.indexOf(API_USER_TAG) !== 0) {
           credentials.user = API_USER_TAG + credentials.user;
         }
-        Object.defineProperties(credentials, {
-          areAvailable: {
-            /**
-             * Returns whether or not credentials are populated.
-             *
-             * @method get
-             * @return {Boolean} Whether or not user and password are set.
-             */
-            get: function() {
-              return !!this.user && !!this.password;
-            }
-          }
-        });
+      } else {
+        credentials.user = '';
       }
+      if (!credentials.password) {
+        credentials.password = '';
+      }
+      if (!credentials.macaroons) {
+        credentials.macaroons = null;
+      }
+      Object.defineProperties(credentials, {
+        areAvailable: {
+          /**
+           * Reports whether or not credentials are populated.
+           *
+           * @method get
+           * @return {Boolean} Whether or not either user and password or
+           *   macaroons are set.
+           */
+          get: function() {
+            return !!((this.user && this.password) || this.macaroons);
+          }
+        }
+      });
       return credentials;
     },
 

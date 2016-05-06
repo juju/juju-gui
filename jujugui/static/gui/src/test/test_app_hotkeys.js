@@ -31,7 +31,9 @@ describe('application hotkeys', function() {
             once: function() {},
             set: function() {},
             setCredentials: function() {},
-            getCredentials: function() {}
+            getCredentials: function() {
+              return {areAvailable: false};
+            }
           };
           windowNode = Y.one(window);
           done();

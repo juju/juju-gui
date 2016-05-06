@@ -387,20 +387,34 @@ YUI.add('juju-env-bakery', function(Y) {
        @param {Function} The callback failure in case of wrong authentication.
        @return {undefined} Nothing.
        */
-      _authenticate: function (m, requestFunction, failureCallback) {
+      _authenticate: function (m, requestFunc, failureCallback) {
+        var successCallback = this._processDischarges.bind(
+          this, requestFunc, failureCallback);
+        this.discharge(m, successCallback, failureCallback);
+      },
+
+      /**
+        Discharge the macaroon.
+
+        @method discharge
+        @param {Macaroon} m The macaroon to be discharged.
+        @param {Function} successCallback The callable to be called if the
+          discharge succeeds. It receives the resulting macaroons array.
+        @param {Function} failureCallback The callable to be called if the
+          discharge fails. It receives an error message.
+      */
+      discharge: function(m, successCallback, failureCallback) {
         try {
           macaroon.discharge(
             macaroon.import(m),
             this._obtainThirdPartyDischarge.bind(this),
-            this._processDischarges.bind(
-              this,
-              requestFunction,
-              failureCallback
-            ),
+            function(discharges) {
+              successCallback(macaroon.export(discharges));
+            },
             failureCallback
           );
-        } catch (ex) {
-          failureCallback(ex.message);
+        } catch (exc) {
+          failureCallback(exc.message);
         }
       },
 
@@ -416,17 +430,10 @@ YUI.add('juju-env-bakery', function(Y) {
        @param {[Macaroon]} The macaroons being discharged.
        @return {Object} The asynchronous request instance.
        */
-      _processDischarges: function (requestFunction, failureCallback,
-                                    discharges) {
-        var jsonMacaroon;
-        try {
-          jsonMacaroon = macaroon.export(discharges);
-        } catch (ex) {
-          failureCallback(ex.message);
-        }
-        var content = JSON.stringify({'Macaroons': jsonMacaroon});
+      _processDischarges: function (requestFunc, failureCallback, macaroons) {
+        var content = JSON.stringify({'Macaroons': macaroons});
         if (this.setCookiePath === undefined) {
-          this._successfulDischarges(requestFunction, jsonMacaroon);
+          this._successfulDischarges(requestFunc, macaroons);
           return;
         }
         return this.webhandler.sendPutRequest(
@@ -434,8 +441,7 @@ YUI.add('juju-env-bakery', function(Y) {
           null, content, null, null, true, null,
           this._requestHandler.bind(
             this,
-            this._successfulDischarges.bind(
-                this, requestFunction, jsonMacaroon),
+            this._successfulDischarges.bind(this, requestFunc, macaroons),
             failureCallback
           )
         );

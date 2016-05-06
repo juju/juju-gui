@@ -30,6 +30,10 @@ YUI.add('juju-env-go', function(Y) {
   // Define the pinger interval in seconds.
   var PING_INTERVAL = 10;
 
+  // Define the Admin API facade versions for Juju 1 and 2.
+  var ADMIN_FACADE_VERSION_JUJU1 = 0;
+  var ADMIN_FACADE_VERSION_JUJU2 = 3;
+
   var environments = Y.namespace('juju.environments');
   var utils = Y.namespace('juju.views.utils');
 
@@ -218,6 +222,8 @@ YUI.add('juju-env-go', function(Y) {
       this.defaultUser = 'admin';
       this._allWatcherId = null;
       this._pinger = null;
+      // pendingLoginResponse is set to true when the login process is running.
+      this.pendingLoginResponse = false;
       this.on('_rpc_response', this._handleRpcResponse);
     },
 
@@ -494,10 +500,11 @@ YUI.add('juju-env-go', function(Y) {
         this.failedAuthentication = !fromToken;
         this.failedTokenAuthentication = fromToken;
       }
-      this.fire(
-          'login',
-          {data: {result: this.userIsAuthenticated,
-                  fromToken: fromToken}});
+      this.fire('login', {data: {
+        result: this.userIsAuthenticated,
+        error: data.Error || null,
+        fromToken: fromToken
+      }});
     },
 
     /**
@@ -555,36 +562,131 @@ YUI.add('juju-env-go', function(Y) {
         return;
       }
       var credentials = this.getCredentials();
-      if (credentials && credentials.areAvailable) {
-        var user = credentials.user;
-        var password = credentials.password;
-        var version = 0;
-        var params = {
-          AuthTag: credentials.user,
-          Password: credentials.password
+      if (!credentials.user || !credentials.password) {
+        console.warn('attempted login without providing credentials');
+        this.fire('login', {data: {result: false}});
+        return;
+      }
+      var version = ADMIN_FACADE_VERSION_JUJU1;
+      var params = {
+        AuthTag: credentials.user,
+        Password: credentials.password
+      };
+      // If the user is connecting to juju-core 2.0 or higher then we need
+      // to use the new params arguments. This is comparing against '2'
+      // because Juju doesn't properly stick to semver and sometimes returns
+      // versions that do not properly validate as semver.
+      if (utils.compareSemver(this.get('jujuCoreVersion'), '2') > -1) {
+        version = ADMIN_FACADE_VERSION_JUJU2;
+        params = {
+          'auth-tag': credentials.user,
+          credentials: credentials.password
         };
-        // If the user is connecting to juju-core 2.0 or higher then we need
-        // to use the new params arguments. This is comparing against '2'
-        // because Juju doesn't properly stick to semver and sometimes returns
-        // versions that do not properly validate as semver.
-        if (utils.compareSemver(this.get('jujuCoreVersion'), '2') > -1) {
-          params = {
-            'auth-tag': user,
-            credentials: password
-          };
-          version = 3;
+      }
+      this._send_rpc({
+        Type: 'Admin',
+        Request: 'Login',
+        Params: params,
+        Version: version
+      }, this.handleLogin);
+      this.pendingLoginResponse = true;
+    },
+
+    /**
+      Log into the Juju API using macaroon authentication if provided.
+
+      @method loginWithMacaroon
+      @param {Object} bakery The bakery client to use to handle macaroons.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an error string if an error
+        occurred or null if authentication succeeded.
+      @return {undefined} Sends a message to the server only.
+    */
+    loginWithMacaroon: function(bakery, callback) {
+      if (this.pendingLoginResponse) {
+        return;
+      }
+
+      // Ensure we always have a callback.
+      var cback = function(err, response) {
+        this.handleLogin({Error: err, Response: response});
+        if (callback) {
+          callback(err);
+          return;
         }
-        this._send_rpc({
+        if (err) {
+          console.warn('macaroon authentication failed:', err);
+          return;
+        }
+        console.debug('macaroon authentication succeeded');
+      }.bind(this);
+
+      // Ensure this type of login is supported.
+      if (utils.compareSemver(this.get('jujuCoreVersion'), '2') === -1) {
+        cback('macaroon auth requires Juju 2');
+        return;
+      }
+
+      // Define the handler reacting to Juju controller login responses.
+      var handleResponse = function(bakery, macaroons, cback, data) {
+        if (data.Error) {
+          // Macaroon authentication failed or macaroons based authentication
+          // not supported by this controller. In the latter case, the
+          // controller was probably not bootstrapped with an identity manager,
+          // for instance by providing the following parameter to bootstrap:
+          // "--config identity-url=https://api.jujucharms.com/identity".
+          cback('authentication failed: ' + data.Error);
+          return;
+        }
+
+        var response = data.Response;
+        var macaroon = response['discharge-required'];
+        if (macaroon) {
+          // This is a discharge required response.
+          bakery.discharge(macaroon, (macaroons) => {
+            // Send the login request again including the discharge macaroon.
+            sendLoginRequest(
+              macaroons, handleResponse.bind(this, bakery, macaroons, cback));
+          }, (msg) => {
+            cback('macaroon discharge failed: ' + msg);
+          });
+          return;
+        }
+
+        // Macaroon authentication succeeded!
+        var user = response['user-info'] && response['user-info'].identity;
+        if (!user) {
+          // This is a beta version of Juju 2 which does not include user info
+          // in the macaroons based login response. Unfortunately, we did all
+          // of this for nothing.
+          cback('authentication failed: use a proper Juju 2 release');
+          return;
+        }
+        this.setCredentials({macaroons: macaroons, user: user});
+        cback(null, response);
+      };
+
+
+      // Define the function used to send the login request.
+      var sendLoginRequest = function(macaroons, callback) {
+        var request = {
           Type: 'Admin',
           Request: 'Login',
-          Params: params,
-          Version: version
-        }, this.handleLogin);
-        this.pendingLoginResponse = true;
-      } else {
-        console.warn('Attempted login without providing credentials.');
-        this.fire('login', {data: {result: false}});
-      }
+          Version: ADMIN_FACADE_VERSION_JUJU2
+        };
+        if (macaroons) {
+          request.Params = {macaroons: [macaroons]};
+        }
+        this._send_rpc(request, callback);
+      }.bind(this);
+
+      // Perform the API call.
+      var macaroons = this.getCredentials().macaroons;
+      sendLoginRequest(
+        macaroons,
+        handleResponse.bind(this, bakery, macaroons, cback)
+      );
+      this.pendingLoginResponse = true;
     },
 
     /**
@@ -812,7 +914,7 @@ YUI.add('juju-env-go', function(Y) {
 
       // Retrieve the current user tag.
       var credentials = this.getCredentials();
-      if (!credentials || !credentials.areAvailable) {
+      if (!credentials.user) {
         callback({err: 'called without credentials'});
         return;
       }
@@ -930,6 +1032,7 @@ YUI.add('juju-env-go', function(Y) {
       // sandbox mode, a fake handler is used, in which no HTTP requests are
       // involved: see app/store/web-sandbox.js:WebSandbox.
       var webHandler = this.get('webHandler');
+      // TODO frankban: allow macaroons based auth here.
       webHandler.sendPostRequest(
           path, headers, file, credentials.user, credentials.password,
           progress, callback);
@@ -950,6 +1053,7 @@ YUI.add('juju-env-go', function(Y) {
       var credentials = this.getCredentials();
       var path = '/juju-core/charms?url=' + charmUrl + '&file=' + filename;
       var webHandler = this.get('webHandler');
+      // TODO frankban: allow macaroons based auth here.
       return webHandler.getUrl(path, credentials.user, credentials.password);
     },
 
@@ -966,6 +1070,7 @@ YUI.add('juju-env-go', function(Y) {
       var credentials = this.getCredentials();
       var webHandler = this.get('webHandler');
       var headers = Object.create(null);
+      // TODO frankban: allow macaroons based auth here.
       webHandler.sendGetRequest(
           path, headers, credentials.user, credentials.password,
           progress, callback);

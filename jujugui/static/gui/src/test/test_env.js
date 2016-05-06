@@ -79,21 +79,37 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var conn = new ClientConnection({juju: {open: function() {}}});
       var env = new environments.BaseEnvironment({conn: conn});
       var original = environments.sessionStorage;
-      var setItemValue;
+      var setItemValue = {};
       environments.sessionStorage = {
-        getItem: function() {
-          return Y.JSON.stringify({user: 'foo', password: 'kumquat'});
+        getItem: function(key) {
+          return setItemValue[key];
         },
         setItem: function(key, value) {
-          setItemValue = {key: key, value: value};
+          setItemValue[key] = value;
         }
       };
-      env.setCredentials(null);
-      assert.deepEqual(setItemValue, {key: 'credentials', value: 'null'});
+      // Try with a valid value.
+      var value = {user: 'foo', password: 'kumquat', macaroons: ['macaroon']};
+      env.setCredentials(value);
+      assert.deepEqual(setItemValue, {credentials: Y.JSON.stringify(value)});
       var creds = env.getCredentials();
-      assert.isTrue(creds.areAvailable);
-      assert.equal(creds.user, 'user-foo');
-      assert.equal(creds.password, 'kumquat');
+      assert.strictEqual(creds.areAvailable, true);
+      assert.strictEqual(creds.user, 'user-foo');
+      assert.strictEqual(creds.password, 'kumquat');
+      assert.deepEqual(creds.macaroons, ['macaroon']);
+      // Try with null value.
+      env.setCredentials(null);
+      assert.deepEqual(setItemValue, {credentials: 'null'});
+      creds = env.getCredentials();
+      assert.strictEqual(creds.areAvailable, false);
+      assert.strictEqual(creds.user, '');
+      assert.strictEqual(creds.password, '');
+      assert.strictEqual(creds.macaroons, null);
+      // Credentials are available with macaroons only or user/password only.
+      env.setCredentials({macaroons: ['macaroon']});
+      assert.strictEqual(env.getCredentials().areAvailable, true);
+      env.setCredentials({user: 'foo', password: 'kumquat'});
+      assert.strictEqual(env.getCredentials().areAvailable, true);
       // Clean up.
       environments.sessionStorage = original;
     });

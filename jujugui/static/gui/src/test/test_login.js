@@ -66,7 +66,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     test('bad credentials are removed', function() {
       var data = {Error: 'who are you?'};
       env.handleLogin(data);
-      assert.isNull(env.getCredentials());
+      assert.deepEqual(
+        env.getCredentials(), {user: '', password: '', macaroons: null});
     });
 
     test('credentials passed to the constructor are stored', function() {
@@ -84,7 +85,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(credentials.password, password);
       assert.equal(JSON.stringify({
         user: 'user-' + user,
-        password: password
+        password: password,
+        macaroons: null
       }), sessionStorage.getItem('credentials'));
     });
 

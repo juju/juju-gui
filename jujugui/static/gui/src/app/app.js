@@ -483,16 +483,21 @@ YUI.add('juju-gui', function(Y) {
       // initially.
       var user = env.get('user');
       var password = env.get('password');
-      var credentials = env.getCredentials();
+      var macaroons = null;
       if (!user || !password) {
-        if (credentials && credentials.areAvailable) {
+        // No user and password credentials provided in config: proceed with
+        // usual credentials handling.
+        var credentials = env.getCredentials();
+        if (credentials.areAvailable) {
           user = credentials.user;
           password = credentials.password;
+          macaroons = credentials.macaroons;
         }
       }
       env.setCredentials({
         user: user,
-        password: password
+        password: password,
+        macaroons: macaroons
       });
       this.env = env;
 
@@ -566,8 +571,17 @@ YUI.add('juju-gui', function(Y) {
           this.env.userIsAuthenticated = false;
           // Do not attempt environment login without credentials.
           var credentials = this.env.getCredentials();
-          if (credentials && credentials.areAvailable) {
-            this.env.login();
+          if (credentials.areAvailable) {
+            if (credentials.macaroons) {
+              var bakery = new Y.juju.environments.web.Bakery({
+                webhandler: new Y.juju.environments.web.WebHandler(),
+                interactive: true,
+                serviceName: 'juju'
+              });
+              this.env.loginWithMacaroon(bakery);
+            } else {
+              this.env.login();
+            }
           } else {
             // The user can also try to log in with an authentication token.
             // This will look like ?authtoken=AUTHTOKEN.  For instance,
@@ -683,21 +697,30 @@ YUI.add('juju-gui', function(Y) {
       Renders the login component.
 
       @method _renderLogin
-      @param {Boolean} failure Whether the login failed.
+      @param {String} err Possible authentication error, or null if no error
+        message must be displayed.
     */
-    _renderLogin: function(failure) {
+    _renderLogin: function(err) {
       var msg = (
         <p>
-          Find your username and password with<br />
-          <code>juju show-controller --show-passwords</code>
+          Find your password with<br />
+          <code>juju api-info --password password</code>
         </p>);
-      if (this.get('jujuCoreVersion').lastIndexOf('1.', 0) === 0) {
-        // Use old command to retrieve the password.
+      var loginWithMacaroon = null;
+      if (views.utils.compareSemver(this.get('jujuCoreVersion'), '2') > -1) {
+        // Use the new Juju 2 command to retrieve credentials.
         msg = (
           <p>
-            Find your password with<br />
-            <code>juju api-info --password password</code>
+            Find your username and password with<br />
+            <code>juju show-controller --show-passwords</code>
           </p>);
+        // In Juju 2 logging in with macaroons could also be available.
+        var bakery = new Y.juju.environments.web.Bakery({
+          webhandler: new Y.juju.environments.web.WebHandler(),
+          interactive: true,
+          serviceName: 'juju'
+        });
+        loginWithMacaroon = this.env.loginWithMacaroon.bind(this.env, bakery);
       }
       document.getElementById('loading-message').style.display = 'none';
       ReactDOM.render(
@@ -705,7 +728,8 @@ YUI.add('juju-gui', function(Y) {
           helpMessage={msg}
           setCredentials={this.env.setCredentials.bind(this.env)}
           login={this.env.login.bind(this.env)}
-          loginFailure={failure} />,
+          loginWithMacaroon={loginWithMacaroon}
+          errorMessage={err} />,
         document.getElementById('login-container'));
     },
 
@@ -1265,7 +1289,7 @@ YUI.add('juju-gui', function(Y) {
         empty: this._emptySectionC.bind(this)
       };
       dispatchers.app = {
-        login: this._renderLogin.bind(this, false),
+        login: this._renderLogin.bind(this, null),
         deployTarget: views.utils.deployTargetDispatcher.bind(this),
         empty: this._emptySectionApp.bind(this)
       };
@@ -1323,75 +1347,77 @@ YUI.add('juju-gui', function(Y) {
       if (window.juju_config) {
         existingMacaroons = window.juju_config.jemMacaroons;
       }
-      if (this.get('jemURL')) {
-        var bakery = new Y.juju.environments.web.Bakery({
-          webhandler: new Y.juju.environments.web.WebHandler(),
-          interactive: this.get('interactiveLogin'),
-          cookieStore: window.localStorage,
-          serviceName: 'jem',
-          macaroon: existingMacaroons
-        });
-        this.jem = new window.jujulib.jem(this.get('jemURL'), bakery);
-
-        // Store the JEM auth info.
-        var macaroon = bakery.getMacaroon();
-        if (macaroon) {
-          this.storeUser('jem');
-        }
-
-        // Setup environment listing.
-        this.jem.listModels((error, modelList) => {
-          if (error) {
-            console.log('Model listing failure: ' + error);
-            return;
-          }
-
-          // It's possible that the previous getMacaroon call fails to return
-          // a macaroon. In that case when jem tries to list the models
-          // the user is forced to log into jem so we will now have a jem
-          // user and macaroon. At which point we need to store that user and
-          // re-render the breadcrumb with that information.
-          var macaroon = bakery.getMacaroon();
-          if (macaroon) {
-            this.storeUser('jem', null, true);
-          }
-
-          var modelData = this._pickModel(modelList);
-          this.set('environmentList', modelList);
-
-          // XXX frankban: we should try to connect to all the addresses in
-          // parallel instead of assuming private addresses must be excluded.
-          // The same logic will be then reused for handling HA controllers.
-          var address = window.juju.chooseAddress(modelData.hostPorts);
-          if (address === null) {
-            console.error(
-              'no valid controller address returned by JEM:',
-              modelData.hostPorts);
-            return;
-          }
-          var hostAndPort = address.split(':');
-          socketUrl = this.createSocketURL(
-            hostAndPort[0], hostAndPort[1], modelData.uuid);
-          // Fetch the username and password for this model because it is not
-          // included in the listModels request.
-          var modelDataParts = modelData.path.split('/');
-          var ownerName = modelDataParts[0];
-          var modelName = modelDataParts[1];
-          this.jem.getModel(ownerName, modelName, (err, result) => {
-            if (err) {
-              console.error(
-                `Unable to fetch model details for ${modelData.path}`);
-              return;
-            }
-            callback.call(this, socketUrl, result.user, result.password);
-          });
-        });
+      if (!this.get('jemURL')) {
+        // JEM is not available.
+        var socketUrl = this.createSocketURL(
+          null, null, this.get('jujuEnvUUID'));
+        callback.call(this, socketUrl, this.get('user'), this.get('password'));
         return;
       }
+      var bakery = new Y.juju.environments.web.Bakery({
+        webhandler: new Y.juju.environments.web.WebHandler(),
+        interactive: this.get('interactiveLogin'),
+        cookieStore: window.localStorage,
+        serviceName: 'jem',
+        macaroon: existingMacaroons
+      });
+      this.jem = new window.jujulib.jem(this.get('jemURL'), bakery);
 
-      var socketUrl = this.createSocketURL(
-          null, null, this.get('jujuEnvUUID'));
-      callback.call(this, socketUrl, this.get('user'), this.get('password'));
+      // Store the JEM auth info.
+      var macaroon = bakery.getMacaroon();
+      if (macaroon) {
+        this.storeUser('jem');
+      }
+
+      // Setup environment listing.
+      this.jem.listModels((error, modelList) => {
+        if (error) {
+          console.error('jem.listModels failure: ' + error);
+          return;
+        }
+
+        // It's possible that the previous getMacaroon call fails to return
+        // a macaroon. In that case when jem tries to list the models
+        // the user is forced to log into jem so we will now have a jem
+        // user and macaroon. At which point we need to store that user and
+        // re-render the breadcrumb with that information.
+        var macaroon = bakery.getMacaroon();
+        if (macaroon) {
+          this.storeUser('jem', null, true);
+        }
+
+        var modelData = this._pickModel(modelList);
+        this.set('environmentList', modelList);
+
+        // XXX frankban: we should try to connect to all the addresses in
+        // parallel instead of assuming private addresses must be excluded.
+        // The same logic will be then reused for handling HA controllers.
+        var address = window.juju.chooseAddress(modelData.hostPorts);
+        if (address === null) {
+          console.error(
+            'no valid controller address returned by JEM:',
+            modelData.hostPorts);
+          return;
+        }
+        var hostAndPort = address.split(':');
+        socketUrl = this.createSocketURL(
+          hostAndPort[0], hostAndPort[1], modelData.uuid);
+        // TODO frankban: use macaroon authentication will be used to connect
+        // to JEM models, hence avoiding the getModel call below.
+        // Fetch the username and password for this model because it is not
+        // included in the listModels request.
+        var modelDataParts = modelData.path.split('/');
+        var ownerName = modelDataParts[0];
+        var modelName = modelDataParts[1];
+        this.jem.getModel(ownerName, modelName, (err, result) => {
+          if (err) {
+            console.error(
+              `Unable to fetch model details for ${modelData.path}`);
+            return;
+          }
+          callback.call(this, socketUrl, result.user, result.password);
+        });
+      });
     },
 
     /**
@@ -1693,7 +1719,7 @@ YUI.add('juju-gui', function(Y) {
     _displayLogin: function() {
       this.set('loggedIn', false);
       var component = this.state.getState('current', 'app', 'component');
-      if (!component && component !== 'login') {
+      if (!component || component !== 'login') {
         this.state.dispatch({
           app: {
             component: 'login',
@@ -1727,7 +1753,7 @@ YUI.add('juju-gui', function(Y) {
       this.set('loggedIn', false);
       this.env.logout();
       this.maskVisibility(true);
-      this._renderLogin();
+      this._renderLogin(null);
       return;
     },
 
@@ -1765,20 +1791,23 @@ YUI.add('juju-gui', function(Y) {
         }
         return;
       }
-      var credentials = this.env.getCredentials();
       // After re-arranging the execution order of our routes to support the
       // new :gui: namespace we were unable to log out on prod build in Ubuntu
       // chrome. It appeared to be because credentials was null so the log in
       // form was never shown - this handles that edge case.
-      var noCredentials = !(credentials && credentials.areAvailable);
-      if (noCredentials) {
-        // If there are no stored credentials redirect to the login page.
-        this._displayLogin();
-        return;
-      } else if (!this.get('loggedIn')) {
+      if (this.env.getCredentials().areAvailable) {
+        if (this.get('loggedIn')) {
+          next();
+        }
         return;
       }
-      next();
+
+      // If there are no stored credentials the GUI needs to provide a way to
+      // log into Juju. Show the login mask, from which it is possible to:
+      // 1) perform a macaroon authentication;
+      // 2) perform a traditional username/password authentication.
+      // The former is not always available.
+      this._displayLogin();
     },
 
     /**
@@ -1884,7 +1913,7 @@ YUI.add('juju-gui', function(Y) {
           this.navigate(redirectPath, {overrideAllNamespaces: true});
         }
       } else {
-        this._renderLogin(true);
+        this._renderLogin(e.data.error);
       }
     },
 
@@ -2289,7 +2318,7 @@ YUI.add('juju-gui', function(Y) {
         // established, particularly when the app is being initialized.
         if (this.env) {
           var credentials = this.env.getCredentials();
-          if (credentials && credentials.user) {
+          if (credentials.user) {
             controllerUser = {
               user: credentials.user
             };

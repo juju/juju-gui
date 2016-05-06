@@ -314,7 +314,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.login();
         // Assume login to be the first request.
         conn.msg({RequestId: 1, Error: 'Invalid user or password'});
-        assert.isNull(env.getCredentials());
+        assert.deepEqual(
+          env.getCredentials(), {user: '', password: '', macaroons: null});
         assert.isTrue(env.failedAuthentication);
         assert.isFalse(env.failedTokenAuthentication);
       });
@@ -395,6 +396,165 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    describe('login with macaroons', function() {
+      var error;
+
+      // Create a callback to use when handling responses.
+      var callback = function(err) {
+        error = err;
+      };
+
+      // Create a fake bakery object with the given discharge fuction.
+      var makeBakery = function(dischargeFunc) {
+        return {discharge: dischargeFunc};
+      };
+
+      // Check that the given message sent to the WebSocket is what we expect.
+      // Return the request id.
+      var assertRequest = function(msg, macaroons) {
+        assert.strictEqual(msg.Type, 'Admin');
+        assert.strictEqual(msg.Request, 'Login');
+        assert.strictEqual(msg.Version, 3);
+        if (macaroons) {
+          assert.deepEqual(msg.Params, {macaroons: [macaroons]});
+        } else {
+          assert.deepEqual(msg.Params, {});
+        }
+        return msg.RequestId;
+      };
+
+      beforeEach(function() {
+        env.set('jujuCoreVersion', '2.0.0');
+        error = '';
+      });
+
+      it('does not proceed if a login is pending', function() {
+        env.pendingLoginResponse = true;
+        env.loginWithMacaroon();
+        assert.strictEqual(conn.messages.length, 0, 'unexpected messages');
+      });
+
+      it('does not work on Juju < 2', function() {
+        env.set('jujuCoreVersion', '1.25');
+        env.loginWithMacaroon(makeBakery(), callback);
+        assert.strictEqual(conn.messages.length, 0, 'unexpected messages');
+        assert.strictEqual(error, 'macaroon auth requires Juju 2');
+      });
+
+      it('sends an initial login request without macaroons', function() {
+        env.loginWithMacaroon(makeBakery());
+        assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
+        assertRequest(conn.last_message());
+      });
+
+      it('sends an initial login request with macaroons', function() {
+        env.setCredentials({macaroons: ['macaroon']});
+        env.loginWithMacaroon(makeBakery());
+        assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
+        assertRequest(conn.last_message(), ['macaroon']);
+      });
+
+      it('handles initial response errors', function() {
+        env.loginWithMacaroon(makeBakery(), callback);
+        assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
+        var requestId = assertRequest(conn.last_message());
+        conn.msg({RequestId: requestId, Error: 'bad wolf'});
+        assert.strictEqual(error, 'authentication failed: bad wolf');
+      });
+
+      it('sends a second message after discharge', function() {
+        var bakery = makeBakery(function(macaroon, success, fail) {
+          assert.strictEqual(macaroon, 'discharge-required-macaroon');
+          success(['macaroon', 'discharge']);
+        });
+        env.loginWithMacaroon(bakery, callback);
+        assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
+        var requestId = assertRequest(conn.last_message());
+        conn.msg({
+          RequestId: requestId,
+          Response: {'discharge-required': 'discharge-required-macaroon'}
+        });
+        assert.strictEqual(conn.messages.length, 2, 'unexpected msg number');
+        assertRequest(conn.last_message(), ['macaroon', 'discharge']);
+      });
+
+      it('handles discharge failures', function() {
+        var bakery = makeBakery(function(macaroon, success, fail) {
+          fail('bad wolf');
+        });
+        env.loginWithMacaroon(bakery, callback);
+        assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
+        var requestId = assertRequest(conn.last_message());
+        conn.msg({
+          RequestId: requestId,
+          Response: {'discharge-required': 'discharge-required-macaroon'}
+        });
+        assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
+        assert.strictEqual(error, 'macaroon discharge failed: bad wolf');
+      });
+
+      it('fails if user info is not provided in response', function() {
+        env.loginWithMacaroon(makeBakery(), callback);
+        assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
+        var requestId = assertRequest(conn.last_message());
+        conn.msg({RequestId: requestId, Response: {}});
+        assert.strictEqual(
+          error, 'authentication failed: use a proper Juju 2 release');
+      });
+
+      it('succeeds after discharge', function() {
+        var bakery = makeBakery(function(macaroon, success, fail) {
+          assert.strictEqual(macaroon, 'discharge-required-macaroon');
+          success(['macaroon', 'discharge']);
+        });
+        env.loginWithMacaroon(bakery, callback);
+        assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
+        var requestId = assertRequest(conn.last_message());
+        conn.msg({
+          RequestId: requestId,
+          Response: {'discharge-required': 'discharge-required-macaroon'}
+        });
+        assert.strictEqual(conn.messages.length, 2, 'unexpected msg number');
+        requestId = assertRequest(
+          conn.last_message(), ['macaroon', 'discharge']);
+        conn.msg({
+          RequestId: requestId,
+          Response: {
+            'user-info': {identity: 'who'},
+            'facades': [{Name: 'Client', Versions: [42, 47]}]
+          }
+        });
+        assert.strictEqual(error, null);
+        var creds = env.getCredentials();
+        assert.strictEqual(creds.user, 'user-who');
+        assert.strictEqual(creds.password, '');
+        assert.deepEqual(creds.macaroons, ['macaroon', 'discharge']);
+        assert.deepEqual(env.get('facades'), {Client: [42, 47]});
+      });
+
+      it('succeeds with already stored macaroons', function() {
+        env.setCredentials({macaroons: ['already stored', 'macaroons']});
+        env.loginWithMacaroon(makeBakery(), callback);
+        assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
+        var requestId = assertRequest(
+          conn.last_message(), ['already stored', 'macaroons']);
+        conn.msg({
+          RequestId: requestId,
+          Response: {
+            'user-info': {identity: 'dalek'},
+            'facades': [{Name: 'Client', Versions: [0]}]
+          }
+        });
+        assert.strictEqual(error, null);
+        var creds = env.getCredentials();
+        assert.strictEqual(creds.user, 'user-dalek');
+        assert.strictEqual(creds.password, '');
+        assert.deepEqual(creds.macaroons, ['already stored', 'macaroons']);
+        assert.deepEqual(env.get('facades'), {Client: [0]});
+      });
+
+    });
+
     describe('tokenLogin', function() {
       it('sends the correct tokenLogin message', function() {
         noopHandleLogin();
@@ -418,7 +578,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Error: 'unknown, fulfilled, or expired token',
           ErrorCode: 'unauthorized access'
         });
-        assert.isNull(env.getCredentials());
+        assert.deepEqual(
+          env.getCredentials(), {user: '', password: '', macaroons: null});
         assert.isTrue(env.failedTokenAuthentication);
         assert.isFalse(env.failedAuthentication);
       });
