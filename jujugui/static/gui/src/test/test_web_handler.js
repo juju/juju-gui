@@ -131,6 +131,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assertProgressHandled(progressCallback);
       });
 
+      it('handles request errors', function() {
+        var progressCallback = utils.makeStubFunction();
+        // Make a POST request.
+        webHandler.sendPostRequest(
+            '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
+        assertProgressHandled(progressCallback);
+      });
+
       it('handles request completion', function() {
         var completedCallback = utils.makeStubFunction();
         // Make a POST request.

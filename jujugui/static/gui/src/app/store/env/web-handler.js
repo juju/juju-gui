@@ -247,6 +247,7 @@ YUI.add('juju-env-web-handler', function(Y) {
       var completedHandler = this._createCompletedHandler(
           completedCallback, progressHandler, xhr);
       xhr.addEventListener('progress', progressHandler, false);
+      xhr.addEventListener('error', progressHandler, false);
       xhr.addEventListener('load', completedHandler, false);
       // Set up the request.
       xhr.open(method, path, true);
