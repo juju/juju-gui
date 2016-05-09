@@ -44,8 +44,8 @@ YUI.add('deployment-component', function() {
     },
 
     clouds: {
-      gcp: {
-        id: 'gcp',
+      google: {
+        id: 'google',
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',
         svgHeight: 33,
         svgWidth: 256,
@@ -141,7 +141,7 @@ YUI.add('deployment-component', function() {
             <juju.components.DeploymentChooseCloud
               jem={this.props.jem}
               changeState={this.props.changeState}
-              clouds={this.clouds}
+              cloudData={this.clouds}
               setDeploymentInfo={this.setDeploymentInfo} />);
         case 'add-credentials-azure':
         case 'add-credentials-aws':
