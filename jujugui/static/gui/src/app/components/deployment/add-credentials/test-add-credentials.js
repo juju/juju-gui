@@ -38,7 +38,8 @@ describe('DeploymentAddCredentials', function() {
       }
     };
     jem = {
-      addTemplate: sinon.stub()
+      addTemplate: sinon.stub(),
+      listRegions: (cloud, cb) => cb(null, ['us-east-1'])
     };
     clouds = {
       aws: {
@@ -152,6 +153,10 @@ describe('DeploymentAddCredentials', function() {
                   regex: /\S+/,
                   error: 'This field is required.'
                 }]} />
+              <select ref="selectRegion">
+                <option>Choose a region</option>
+                {[<option key="us-east-1" value="us-east-1">us-east-1</option>]}
+              </select>
             </div>
             <div className="deployment-panel__notice six-col last-col">
               <p className="deployment-panel__notice-content">
@@ -272,6 +277,10 @@ describe('DeploymentAddCredentials', function() {
                   regex: /\S+/,
                   error: 'This field is required.'
                 }]} />
+              <select ref="selectRegion">
+                <option>Choose a region</option>
+                {[<option key="us-east-1" value="us-east-1">us-east-1</option>]}
+              </select>
             </div>
             <div className="deployment-panel__notice six-col last-col">
               <p className="deployment-panel__notice-content">
@@ -388,6 +397,10 @@ describe('DeploymentAddCredentials', function() {
                   regex: /\S+/,
                   error: 'This field is required.'
                 }]} />
+              <select ref="selectRegion">
+                <option>Choose a region</option>
+                {[<option key="us-east-1" value="us-east-1">us-east-1</option>]}
+              </select>
             </div>
             <div className="deployment-panel__notice six-col last-col">
               <p className="deployment-panel__notice-content">
@@ -425,7 +438,31 @@ describe('DeploymentAddCredentials', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('shows loading message while requesting regions', function() {
+    var cloud = clouds['aws'];
+    jem.listRegions = (c, cb) => cb(null, []);
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentAddCredentials
+        changeState={sinon.stub()}
+        controller="my-controller"
+        cloud={cloud}
+        jem={jem}
+        setDeploymentInfo={sinon.stub()}
+        users={users} />, true);
+    var output = renderer.getRenderOutput();
+    var props = output.props;
+    var emptySelect = (
+      <select ref="selectRegion">
+        <option>Loading available regions</option>
+        {null}
+      </select>);
+    assert.deepEqual(
+      props.children[0].props.children[2].props.children[0].props.children[2],
+      emptySelect);
+  });
+
   it('can add the credentials', function() {
+    jem.listControllers = cb => cb(null, ['my-controller']);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentAddCredentials
         changeState={sinon.stub()}

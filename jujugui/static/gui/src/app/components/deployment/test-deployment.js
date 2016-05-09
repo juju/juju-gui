@@ -182,7 +182,6 @@ describe('Deployment', function() {
     var expected = (
       <juju.components.DeploymentAddCredentials
         changeState={changeState}
-        controller="yellow/aws-us-east"
         cloud={instance.clouds['aws']}
         jem={jem}
         setDeploymentInfo={instance.setDeploymentInfo}

@@ -69,6 +69,8 @@ YUI.add('deployment-component', function() {
     },
 
     _deploymentStorage: {},
+    // XXX Hardcoding the controller for now but it will be provided on load
+    _controller: 'yellow/aws-us-east',
 
     /**
       Store information from portions of the deployment for use later down the

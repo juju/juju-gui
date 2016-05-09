@@ -221,7 +221,7 @@ YUI.add('deployment-add-credentials', function() {
     _generateRegionList: function() {
       var regions = this.state.regions;
       var options = null;
-      var defaultMessage = 'Loading available regions.';
+      var defaultMessage = 'Loading available regions';
       if (regions.length > 0) {
         defaultMessage = 'Choose a region';
         options = [];
