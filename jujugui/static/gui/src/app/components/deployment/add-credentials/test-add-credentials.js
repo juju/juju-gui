@@ -49,8 +49,8 @@ describe('DeploymentAddCredentials', function() {
         svgWidth: 120,
         title: 'Amazon Web Services'
       },
-      gcp: {
-        id: 'gcp',
+      google: {
+        id: 'google',
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',
         svgHeight: 33,
         svgWidth: 256,
@@ -204,8 +204,8 @@ describe('DeploymentAddCredentials', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('can render for gcp', function() {
-    var cloud = clouds['gcp'];
+  it('can render for google', function() {
+    var cloud = clouds['google'];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentAddCredentials
         changeState={sinon.stub()}

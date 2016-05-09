@@ -145,7 +145,7 @@ YUI.add('deployment-component', function() {
               setDeploymentInfo={this.setDeploymentInfo} />);
         case 'add-credentials-azure':
         case 'add-credentials-aws':
-        case 'add-credentials-gcp':
+        case 'add-credentials-google':
           return (
             <juju.components.DeploymentAddCredentials
               changeState={this.props.changeState}

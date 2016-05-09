@@ -140,7 +140,7 @@ YUI.add('deployment-add-credentials', function() {
                 }]} />
             </div>);
           break;
-        case 'gcp':
+        case 'google':
           return (
             <div className="twelve-col">
               <p className="deployment-add-credentials__p six-col last-col">
@@ -203,7 +203,7 @@ YUI.add('deployment-add-credentials', function() {
         disabled: cloud.id !== 'aws',
         type: 'inline-positive'
       }];
-      var credentialName = cloud.id === 'gcp' ?
+      var credentialName = cloud.id === 'google' ?
         'Project ID (credential name)' : 'Credential name';
       return (
         <div className="deployment-panel__child">
