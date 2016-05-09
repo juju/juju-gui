@@ -24,7 +24,7 @@ YUI.add('deployment-choose-cloud', function() {
 
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
-      clouds: React.PropTypes.object.isRequired,
+      cloudData: React.PropTypes.object.isRequired,
       jem: React.PropTypes.object.isRequired,
       setDeploymentInfo: React.PropTypes.func.isRequired
     },

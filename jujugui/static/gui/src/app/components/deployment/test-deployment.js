@@ -136,7 +136,7 @@ describe('Deployment', function() {
       <juju.components.DeploymentChooseCloud
         jem={jem}
         changeState={changeState}
-        clouds={instance.clouds}
+        cloudData={instance.clouds}
         setDeploymentInfo={instance.setDeploymentInfo} />);
     assert.deepEqual(output.props.children, expected);
   });
