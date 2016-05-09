@@ -32,22 +32,53 @@ YUI.add('deployment-add-credentials', function() {
     },
 
     /**
+      Validate the form fields.
+
+      @method _validate
+      @returns {Boolean} Whether the form is valid.
+    */
+    _validate: function() {
+      var refs = this.refs;
+      var fields = [
+        'templateAccessKey',
+        'templateName',
+        'templateRegion',
+        'templateSecretKey'
+      ];
+      var formValid = true;
+      fields.forEach(field => {
+        var valid = refs[field].validate();
+        // If there is an error then mark that. We don't want to exit the loop
+        // at this point so that each field gets validated.
+        if (!valid) {
+          formValid = false;
+        }
+      });
+      return formValid;
+    },
+
+    /**
       Handling clicking on a cloud option.
 
       @method _handleCloudClick
     */
     _handleAddCredentials: function(id) {
+      if (!this._validate()) {
+        // If there are any form validation errors then stop adding the
+        // credentials.
+        return;
+      }
       // Add template
       var user = this.props.users.jem.user,
-          templateName = this.refs.templateName.value,
+          templateName = this.refs.templateName.getValue(),
           template = {
             // XXX The controllers need to exist first; for now use a known good
             // controller with work to come to generate a controller name.
             // Makyo 2016-03-30
             'controller': this.props.controller,
             'config': {
-              'access-key': this.refs.templateAccessKey.value,
-              'secret-key': this.refs.templateSecretKey.value,
+              'access-key': this.refs.templateAccessKey.getValue(),
+              'secret-key': this.refs.templateSecretKey.getValue(),
               // XXX This is a 'hack' to make Juju not complain about being
               // able to find ssh keys.
               'authorized-keys': 'fake'
@@ -108,26 +139,24 @@ YUI.add('deployment-add-credentials', function() {
                   security_credential
                 </a>
               </p>
-              <label className="deployment-panel__label"
-                htmlFor="access-key">
-                Access key
-              </label>
-              <input className="deployment-panel__input"
-                id="access-key"
+              <juju.components.DeploymentInput
+                label="Access key"
                 placeholder="TDFIWNDKF7UW6DVGX98X"
-                required="required"
-                type="text"
-                ref="templateAccessKey" />
-              <label className="deployment-panel__label"
-                htmlFor="secret-key">
-                Secret key
-              </label>
-              <input className="deployment-panel__input"
-                id="secret-key"
+                required={true}
+                ref="templateAccessKey"
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }]} />
+              <juju.components.DeploymentInput
+                label="Secret key"
                 placeholder="p/hdU8TnOP5D7JNHrFiM8IO8f5GN6GhHj7tueBN9"
-                required="required"
-                type="text"
-                ref="templateSecretKey" />
+                required={true}
+                ref="templateSecretKey"
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }]} />
             </div>);
           break;
         case 'gcp':
@@ -215,36 +244,41 @@ YUI.add('deployment-add-credentials', function() {
                   size="12" />
               </a>
             </div>
-            <form className="twelve-col-col">
+            <form className="twelve-col">
               <div className="six-col">
-                <label className="deployment-panel__label"
-                  htmlFor="credential-name">
-                  {credentialName}
-                </label>
-                <input className="deployment-panel__input"
-                  id="credential-name"
-                  placeholder="AWS_1"
-                  required="required"
-                  type="text"
-                  ref="templateName" />
-                <label className="deployment-panel__label"
-                  htmlFor="specify-region">
-                  Region
-                </label>
-                <input className="deployment-panel__input"
-                  id="specify-region"
+                <juju.components.DeploymentInput
+                  label={credentialName}
+                  placeholder="AWS-1"
+                  required={true}
+                  ref="templateName"
+                  validate={[{
+                    regex: /\S+/,
+                    error: 'This field is required.'
+                  }, {
+                    regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
+                    error: 'This field must only contain upper and lowercase' +
+                      'letters, numbers, and hyphens. It must not start or ' +
+                      'end with a hyphen.'
+                  }]} />
+                <juju.components.DeploymentInput
+                  label="Region"
                   placeholder="us-central1"
-                  required="required"
-                  type="text"
-                  ref="templateRegion" />
+                  required={true}
+                  ref="templateRegion"
+                  validate={[{
+                    regex: /\S+/,
+                    error: 'This field is required.'
+                  }]} />
               </div>
               <div className="deployment-panel__notice six-col last-col">
-                <juju.components.SvgIcon
-                  name="general-action-blue"
-                  size="16" />
-                Credentials are stored securely on our servers and we will
-                notify you by email whenever they are used. See where they are
-                used and manage or remove them via the account page.
+                <div className="deployment-panel__notice-content">
+                  <juju.components.SvgIcon
+                    name="general-action-blue"
+                    size="16" />
+                  Credentials are stored securely on our servers and we will
+                  notify you by email whenever they are used. See where they are
+                  used and manage or remove them via the account page.
+                </div>
               </div>
               <h3 className="deployment-panel__section-title twelve-col">
                 Enter credentials
@@ -260,6 +294,7 @@ YUI.add('deployment-add-credentials', function() {
   });
 
 }, '0.1.0', { requires: [
+  'deployment-input',
   'deployment-panel-content',
   'deployment-panel-footer',
   'svg-icon'
