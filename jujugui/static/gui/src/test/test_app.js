@@ -1573,7 +1573,7 @@ describe('App', function() {
           assert.equal('dalek/exterminate', envData.path);
         });
 
-    it('should honor socket_protocol and uuid', function() {
+    it('honors socket_protocol and uuid', function() {
       var expected = [
         'ws://',
         window.location.hostname,
@@ -1593,6 +1593,23 @@ describe('App', function() {
       });
       app.showView(new Y.View());
       assert.equal(app.env.get('socket_url'), expected);
+    });
+
+    it('honors a fully qualified provided socket URL', function() {
+      app = new Y.juju.App({
+        apiAddress: 'example.com:17070',
+        conn: {close: function() {}},
+        container: container,
+        jujuCoreVersion: '1.21.1.1-trusty-amd64',
+        jujuEnvUUID: '1234-1234',
+        socket_protocol: 'ws',
+        socketTemplate: 'wss://my.$server:$port/model/$uuid/api',
+        viewContainer: container
+      });
+      app.showView(new Y.View());
+      assert.equal(
+        app.env.get('socket_url'),
+        'wss://my.example.com:17070/model/1234-1234/api');
     });
   });
 

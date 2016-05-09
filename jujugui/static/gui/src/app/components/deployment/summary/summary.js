@@ -137,10 +137,7 @@ YUI.add('deployment-summary', function() {
             password: data.password
           });
           var socketURL = this.props.createSocketURL(
-            pathParts[0], // server
-            pathParts[1], // port
-            data.uuid
-          );
+            data.uuid, pathParts[0], pathParts[1]);
           this.props.appSet('jujuEnvUUID', data.uuid);
           // Set the socket url in both the app and the env so we don't end
           // up with any confusion later on about which is which.

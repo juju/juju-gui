@@ -440,7 +440,7 @@ describe('DeploymentSummary', function() {
     });
     assert.equal(createSocketURL.callCount, 1);
     assert.deepEqual(createSocketURL.args[0], [
-      '1.1.1.1', '1234', '1qaz2wsx3edc'
+      '1qaz2wsx3edc', '1.1.1.1', '1234'
     ]);
     assert.equal(appSet.callCount, 2);
     assert.deepEqual(appSet.args[0], ['jujuEnvUUID', '1qaz2wsx3edc']);

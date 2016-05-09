@@ -1349,8 +1349,7 @@ YUI.add('juju-gui', function(Y) {
       }
       if (!this.get('jemURL')) {
         // JEM is not available.
-        var socketUrl = this.createSocketURL(
-          null, null, this.get('jujuEnvUUID'));
+        var socketUrl = this.createSocketURL(this.get('jujuEnvUUID'));
         callback.call(this, socketUrl, this.get('user'), this.get('password'));
         return;
       }
@@ -1401,7 +1400,7 @@ YUI.add('juju-gui', function(Y) {
         }
         var hostAndPort = address.split(':');
         socketUrl = this.createSocketURL(
-          hostAndPort[0], hostAndPort[1], modelData.uuid);
+          modelData.uuid, hostAndPort[0], hostAndPort[1]);
         // TODO frankban: use macaroon authentication will be used to connect
         // to JEM models, hence avoiding the getModel call below.
         // Fetch the username and password for this model because it is not
@@ -1918,41 +1917,39 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Create the new socket url based on the socket template and the new
-      environment details.
+      Create the new socket URL based on the socket template and model details.
 
       @method createSocketURL
-      @param {String} server The state-server host address for the environment.
-      @param {String} port The state-server port for the environment.
-      @param {String} uuid The uuid for the environment.
+      @param {String} uuid The unique identifier for the model.
+      @param {String} server The optional API server host address for the
+        model. If not provided, defaults to the host name included in the
+        provided apiAddress option.
+      @param {String} port The optional API server port for the model. If not
+        provided, defaults to the host name included in the provided apiAddress
+        option.
+      @return {String} The resulting fully qualified WebSocket URL.
     */
-    createSocketURL: function(server, port, uuid) {
-      var currentHost = window.location.hostname,
-          currentPort = window.location.port;
-
-      var protocol = this.get('socket_protocol') || 'wss';
-      var baseUrl = protocol + '://' + currentHost;
-      if (currentPort !== '') {
-        baseUrl += ':' + currentPort;
+    createSocketURL: function(uuid, server, port) {
+      var baseUrl = '';
+      var url = this.get('socketTemplate');
+      var sandbox = this.get('sandbox');
+      if (url[0] === '/' || sandbox) {
+        var schema = this.get('socket_protocol') || 'wss';
+        baseUrl = schema + '://' + window.location.hostname;
+        if (window.location.port !== '') {
+          baseUrl += ':' + window.location.port;
+        }
+        if (sandbox) {
+          // We don't actually use a WebSocket in sandbox mode; create a
+          // placeholder that makes it reasonably clear that this isn't real.
+          return baseUrl + '/sandbox';
+        }
       }
-
-      if (this.get('sandbox')) {
-        // We don't actually use a websocket in sandbox mode; create a
-        // placeholder that makes it reasonably clear that this isn't real.
-        return baseUrl + '/sandbox';
-      }
-
-      if (!server || !port) {
-        var apiAddress = this.get('apiAddress').replace('wss://', '');
-        apiAddress = apiAddress.split(':');
-        server = apiAddress[0];
-        port = apiAddress[1];
-      }
-
-      var path = this.get('socketTemplate').replace('$server', server);
-      path = path.replace('$port', port);
-      path = path.replace('$uuid', uuid);
-      return baseUrl + path;
+      var defaults = this.get('apiAddress').replace('wss://', '').split(':');
+      url = url.replace('$uuid', uuid);
+      url = url.replace('$server', server || defaults[0]);
+      url = url.replace('$port', port || defaults[1]);
+      return baseUrl + url;
     },
 
     /**
@@ -2423,7 +2420,13 @@ YUI.add('juju-gui', function(Y) {
       apiAddress: {value: ''},
 
       /**
-       The template to use to create websockets.
+       The template to use to create websockets. It can include these vars:
+         - $server: the WebSocket server, like "1.2.3.4";
+         - $port: the WebSocket port, like "17070";
+         - $uuid: the target model unique identifier.
+       If the provided value starts with a "/" it is considered to be a path
+       and not a full URL. In this case, the system assumes current host,
+       current port and this.get('socket_protocol') (defaulting to 'wss').
 
        @attribute socketTemplate
        @type {String}

@@ -1370,20 +1370,23 @@ describe('utilities', function() {
       var env = {set: testUtils.makeStubFunction()};
       utils.set = testUtils.makeStubFunction();
       utils.switchModel(createSocketURL, switchEnv, env, 'uuid1', models, 'ev');
+
       assert.deepEqual(createSocketURL.callCount(), 1);
-      var socketArgs = createSocketURL.allArguments();
-      assert.deepEqual(socketArgs[0][0], 'localhost');
-      assert.deepEqual(socketArgs[0][1], '80');
-      assert.deepEqual(socketArgs[0][2], models[0].uuid);
+      var socketArgs = createSocketURL.lastArguments();
+      assert.deepEqual(socketArgs[0], models[0].uuid);
+      assert.deepEqual(socketArgs[1], 'localhost');
+      assert.deepEqual(socketArgs[2], '80');
+
       assert.deepEqual(switchEnv.callCount(), 1);
-      var switchEnvArgs = switchEnv.allArguments();
-      assert.deepEqual(switchEnvArgs[0][0], 'newaddress:80');
-      assert.deepEqual(switchEnvArgs[0][1], models[0].user);
-      assert.deepEqual(switchEnvArgs[0][2], models[0].password);
+      var switchEnvArgs = switchEnv.lastArguments();
+      assert.deepEqual(switchEnvArgs[0], 'newaddress:80');
+      assert.deepEqual(switchEnvArgs[1], models[0].user);
+      assert.deepEqual(switchEnvArgs[2], models[0].password);
+
       assert.deepEqual(env.set.callCount(), 1);
-      var envSet = env.set.allArguments();
-      assert.deepEqual(envSet[0][0], 'environmentName');
-      assert.deepEqual(envSet[0][1], 'ev');
+      var envSet = env.set.lastArguments();
+      assert.deepEqual(envSet[0], 'environmentName');
+      assert.deepEqual(envSet[1], 'ev');
     });
 
     it('just disconnects if uuid is missing', function() {
