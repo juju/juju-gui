@@ -1934,6 +1934,8 @@ YUI.add('juju-gui', function(Y) {
       var url = this.get('socketTemplate');
       var sandbox = this.get('sandbox');
       if (url[0] === '/' || sandbox) {
+        // We either are in sandbox mode or only the WebSocket path is passed.
+        // In both cases, we need to calculate the base URL.
         var schema = this.get('socket_protocol') || 'wss';
         baseUrl = schema + '://' + window.location.hostname;
         if (window.location.port !== '') {
