@@ -28,9 +28,16 @@ YUI.add('inspector-relations', function() {
     _generateRelations: function() {
       var relations = this.props.serviceRelations;
       var components = [];
-      relations.forEach(function(relation) {
+      if (relations.length === 0) {
+        return (
+          <div className="inspector-relations__message">
+            No relations for this service.
+          </div>);
+      }
+      relations.forEach(function(relation, index) {
         components.push(
         <juju.components.InspectorRelationsItem
+          index={index}
           key={relation.id}
           relation={relation}
           changeState={this.props.changeState} />);

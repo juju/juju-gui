@@ -20,70 +20,38 @@ YUI.add('inspector-relations-item', function() {
   juju.components.InspectorRelationsItem = React.createClass({
 
     /**
-      Handle navigating to a service when it is clicked.
+      Handle navigating to a relation details when it is clicked.
 
-      @method _handleServiceClick
+      @method _handleRelationClick
     */
-    _handleServiceClick: function() {
+    _handleRelationClick: function() {
+      // Cast to string to pass state null check
+      var index = this.props.index + '';
       this.props.changeState({
         sectionA: {
           component: 'inspector',
           metadata: {
-            id: this.props.relation.far.service,
-            activeComponent: undefined
-          }}});
-    },
-
-    /**
-      Get the correct icon for the status.
-
-      @method _getIcon
-      @param {Boolean} pending The pending status.
-      @returns {String} The sprite name for the icon.
-    */
-    _getIcon: function(pending) {
-      return pending ? 'uncommitted' : 'unit-running';
+            activeComponent: 'relation',
+            unit: index
+          }
+        }
+      });
     },
 
     render: function() {
       var relation = this.props.relation;
-      var farEndpoint;
       if (relation.far) {
-        farEndpoint = (
-         <span className="inspector-relations-item__service"
-          role="button" tabIndex="0"
-          onClick={this._handleServiceClick}>
-            <span className="inspector-relations-item__status">
-              <juju.components.SvgIcon name={this._getIcon(relation.pending)}
-                size="16" />
+        return (
+          <li className="inspector-relations-item">
+            <span className="inspector-relations-item__service"
+              onClick={this._handleRelationClick}
+              tabIndex="0" role="button">
+              {relation.far.serviceName}:{relation.far.name}
             </span>
-            {relation.far.serviceName}
-          </span>
+          </li>
         );
-      } else {
-        farEndpoint = <span />;
       }
-      return (
-        <li className="inspector-relations-item">
-          {farEndpoint}
-          <span className="inspector-relations-item__details">
-            <p className="inspector-relations-item__property">
-              Interface: {relation.interface}
-            </p>
-            <p className="inspector-relations-item__property">
-              Name: {relation.near.name}
-            </p>
-            <p className="inspector-relations-item__property">
-              Role: {relation.near.role || 'None'}
-            </p>
-            <p className="inspector-relations-item__property">
-              Scope: {relation.scope}
-            </p>
-          </span>
-        </li>
-      );
     }
-
   });
 
 }, '0.1.0', { requires: [

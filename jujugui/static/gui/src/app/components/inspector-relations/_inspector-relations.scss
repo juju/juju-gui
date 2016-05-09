@@ -9,7 +9,8 @@
         }
     }
 
-    &__list {
+    &__list,
+    &__actions {
         margin: 0;
         list-style: none;
     }

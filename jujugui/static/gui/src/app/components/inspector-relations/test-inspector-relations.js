@@ -40,18 +40,20 @@ describe('InspectorRelations', function() {
         <juju.components.InspectorRelations
           changeState={changeState}
           serviceRelations={relations} />);
-    assert.deepEqual(output,
-        <div className="inspector-relations">
-          <ul className="inspector-relations__list">
-            <juju.components.InspectorRelationsItem
-              key={relations[0].id}
-              relation={relations[0]}
-              changeState={changeState} />
-            <juju.components.InspectorRelationsItem
-              key={relations[1].id}
-              relation={relations[1]}
-              changeState={changeState} />
-          </ul>
-        </div>);
+    var expected = (<div className="inspector-relations">
+      <ul className="inspector-relations__list">
+        <juju.components.InspectorRelationsItem
+          key={relations[0].id}
+          relation={relations[0]}
+          changeState={changeState}
+          index={0} />
+        <juju.components.InspectorRelationsItem
+          key={relations[1].id}
+          relation={relations[1]}
+          changeState={changeState}
+          index={1} />
+      </ul>
+    </div>);
+    assert.deepEqual(output, expected);
   });
 });

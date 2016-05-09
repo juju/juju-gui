@@ -26,5 +26,10 @@
     .button--inline-neutral {
         padding-left: 10px;
         padding-right: 10px;
+        background-color: $canvas-background;
+
+        &:hover {
+            background-color: darken($canvas-background, 10%);
+        }
     }
 }
