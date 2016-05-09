@@ -2427,9 +2427,9 @@ YUI.add('juju-gui', function(Y) {
 
        @attribute socketTemplate
        @type {String}
-       @default '/environment/$uuid/api'
+       @default '/model/$uuid/api'
        */
-      socketTemplate: {value: '/environment/$uuid/api'},
+      socketTemplate: {value: '/model/$uuid/api'},
 
       /**
        The users associated with various services that the GUI uses. The users
@@ -2439,7 +2439,6 @@ YUI.add('juju-gui', function(Y) {
 
        @attribute users
        @type {Object}
-       @default '/environment/$uuid/api'
        */
       users: {
         value: {}
