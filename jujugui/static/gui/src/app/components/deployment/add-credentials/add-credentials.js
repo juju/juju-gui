@@ -24,12 +24,28 @@ YUI.add('deployment-add-credentials', function() {
 
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
-      controller: React.PropTypes.string.isRequired,
       cloud: React.PropTypes.object.isRequired,
       jem: React.PropTypes.object.isRequired,
       setDeploymentInfo: React.PropTypes.func.isRequired,
       users: React.PropTypes.object.isRequired,
       validateForm: React.PropTypes.func.isRequired
+    },
+
+    getInitialState: function() {
+      return {
+        regions: []
+      };
+    },
+
+    componentWillMount: function() {
+      var props = this.props;
+      props.jem.listRegions(props.cloud.id, (error, regions) => {
+        if (error) {
+          console.error(error);
+          return;
+        }
+        this.setState({regions: regions});
+      });
     },
 
     /**
@@ -50,23 +66,28 @@ YUI.add('deployment-add-credentials', function() {
         return;
       }
       // Add template
-      var user = this.props.users.jem.user,
-          templateName = this.refs.templateName.getValue(),
-          template = {
-            // XXX The controllers need to exist first; for now use a known good
-            // controller with work to come to generate a controller name.
-            // Makyo 2016-03-30
-            'controller': this.props.controller,
-            'config': {
-              'access-key': this.refs.templateAccessKey.getValue(),
-              'secret-key': this.refs.templateSecretKey.getValue(),
-              // XXX This is a 'hack' to make Juju not complain about being
-              // able to find ssh keys.
-              'authorized-keys': 'fake'
-            }
-          };
-      this.props.jem.addTemplate(
-        user, templateName, template, error => {
+      var props = this.props;
+      // XXX At the moment the listControllers method doesn't yet allow us to
+      // filter the results to the users slected region so we just select
+      // the first available controller.
+
+      // var selectRegion = this.refs.selectRegion;
+      // var region = selectRegion.options[selectRegion.selectedIndex].value;
+      // var cloudLabel = props.cloud.id;
+      props.jem.listControllers((error, controllers) => {
+        var user = props.users.jem.user,
+            templateName = this.refs.templateName.value,
+            template = {
+              'controller': controllers[0].path,
+              'config': {
+                'access-key': this.refs.templateAccessKey.value,
+                'secret-key': this.refs.templateSecretKey.value,
+                // XXX This is a 'hack' to make Juju not complain about being
+                // able to find ssh keys.
+                'authorized-keys': 'fake'
+              }
+            };
+        this.props.jem.addTemplate(user, templateName, template, error => {
           if (error) {
             console.error('Unable to add template', error);
           }
@@ -82,6 +103,7 @@ YUI.add('deployment-add-credentials', function() {
             }
           });
         });
+      });
     },
 
     /**
@@ -190,6 +212,30 @@ YUI.add('deployment-add-credentials', function() {
       }
     },
 
+    /**
+      Generate the list of Regions.
+
+      @method _generateRegionList
+      @returns {Object} The list of regions in a select.
+    */
+    _generateRegionList: function() {
+      var regions = this.state.regions;
+      var options = null;
+      var defaultMessage = 'Loading available regions.';
+      if (regions.length > 0) {
+        defaultMessage = 'Choose a region';
+        options = [];
+        regions.forEach(region => {
+          options.push(<option key={region} value={region}>{region}</option>);
+        });
+      }
+      return (
+        <select ref="selectRegion">
+          <option>{defaultMessage}</option>
+          {options}
+        </select>);
+    },
+
     render: function() {
       var cloud = this.props.cloud;
       var title = cloud.title;
@@ -250,6 +296,7 @@ YUI.add('deployment-add-credentials', function() {
                     regex: /\S+/,
                     error: 'This field is required.'
                   }]} />
+                {this._generateRegionList()}
               </div>
               <div className="deployment-panel__notice six-col last-col">
                 <p className="deployment-panel__notice-content">
