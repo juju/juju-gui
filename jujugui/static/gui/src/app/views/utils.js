@@ -1944,7 +1944,7 @@ YUI.add('juju-view-utils', function(Y) {
       if (!found) {
         console.log('No user credentials for model: ', uuid);
       }
-      var socketUrl = createSocketURL(address, port, uuid);
+      var socketUrl = createSocketURL(uuid, address, port);
       switchEnv(socketUrl, username, password);
     } else {
       // Just reset without reconnecting to an env.
