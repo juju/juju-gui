@@ -216,6 +216,7 @@ YUI.add('juju-env-web-handler', function(Y) {
         }
         // The request has been completed: detach all the handlers.
         xhr.removeEventListener('progress', progressHandler);
+        xhr.removeEventListener('error', progressHandler);
         xhr.removeEventListener('load', handler);
       };
       return handler;
