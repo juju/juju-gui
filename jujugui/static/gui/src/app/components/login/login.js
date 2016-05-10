@@ -76,12 +76,11 @@ YUI.add('login-component', function() {
     */
     _generateLoginWithMacaroonButton: function() {
       if (this.props.loginWithMacaroon) {
-        return (
-          <juju.components.GenericButton
-            action={this._handleLoginWithMacaroonSubmit}
-            submit={true}
-            type="positive"
-            title="Login with USSO" />);
+        return ({
+          action: this._handleLoginWithMacaroonSubmit,
+          title: 'Login with USSO',
+          type: 'neutral'
+        });
       }
     },
 
@@ -98,6 +97,17 @@ YUI.add('login-component', function() {
     },
 
     render: function() {
+      var buttons = [];
+      var MacaroonButton = this._generateLoginWithMacaroonButton();
+      if (MacaroonButton) {
+        buttons.push(MacaroonButton);
+      }
+      buttons.push({
+        action: this._handleLoginSubmit,
+        submit: true,
+        title: 'Login',
+        type: 'positive'
+      });
       return (
         <div className="login">
           <div className="login__logo">
@@ -130,12 +140,8 @@ YUI.add('login-component', function() {
                   name="password"
                   ref="password" />
               </label>
-              <juju.components.GenericButton
-                action={this._handleLoginSubmit}
-                submit={true}
-                type="positive"
-                title="Login" />
-              {this._generateLoginWithMacaroonButton()}
+              <juju.components.ButtonRow
+                buttons={buttons} />
             </form>
           </div>
           <div className="login__message">
@@ -153,7 +159,7 @@ YUI.add('login-component', function() {
 
 }, '0.1.0', {
   requires: [
-    'svg-icon',
-    'generic-button'
+    'button-row',
+    'svg-icon'
   ]
 });

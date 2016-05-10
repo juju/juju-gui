@@ -67,12 +67,13 @@ describe('LoginComponent', function() {
                 name="password"
                 ref="password" />
             </label>
-            <juju.components.GenericButton
-              action={instance._handleLoginSubmit}
-              submit={true}
-              type="positive"
-              title="Login" />
-            {undefined}
+            <juju.components.ButtonRow
+              buttons={[{
+                action: instance._handleLoginSubmit,
+                submit: true,
+                title: 'Login',
+                type: 'positive'
+              }]} />
           </form>
         </div>
         <div className="login__message">
@@ -129,16 +130,17 @@ describe('LoginComponent', function() {
                 name="password"
                 ref="password" />
             </label>
-            <juju.components.GenericButton
-              action={instance._handleLoginSubmit}
-              submit={true}
-              type="positive"
-              title="Login" />
-            <juju.components.GenericButton
-              action={instance._handleLoginWithMacaroonSubmit}
-              submit={true}
-              type="positive"
-              title="Login with USSO" />
+            <juju.components.ButtonRow
+              buttons={[{
+                action: instance._handleLoginWithMacaroonSubmit,
+                title: 'Login with USSO',
+                type: 'neutral'
+              }, {
+                action: instance._handleLoginSubmit,
+                submit: true,
+                title: 'Login',
+                type: 'positive'
+              }]} />
           </form>
         </div>
         <div className="login__message">
@@ -195,8 +197,8 @@ describe('LoginComponent', function() {
         loginWithMacaroon={loginWithMacaroon}
         login={sinon.stub()}/>, true);
     var output = renderer.getRenderOutput();
-    var button = output.props.children[1].props.children[2].props.children[3];
-    button.props.action();
+    var buttons = output.props.children[1].props.children[2].props.children[2];
+    buttons.props.buttons[0].action();
     assert.equal(loginWithMacaroon.callCount, 1, 'login never called');
   });
 
