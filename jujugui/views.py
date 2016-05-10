@@ -98,12 +98,9 @@ def config(request):
         # Debugging options.
         'consoleEnabled': True,
         'simulateEvents': False,
-        # The charm store URL and path.
+        # The charm store and JEM URLs.
         'charmstoreURL': settings['jujugui.charmstore_url'],
-        'charmstoreAPIPath': settings['jujugui.charmstore_api_path'],
-        # The jem url and path.
         'jemURL': settings['jujugui.jem_url'],
-        'jemAPIPath': settings['jujugui.jem_api_path'],
         # Any provided macaroons.
         'charmstoreMacaroons': charmstore_macaroons,
         'jemMacaroons': jem_macaroons,
