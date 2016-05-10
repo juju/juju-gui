@@ -391,6 +391,26 @@ describe('jujulib environment manager', function() {
     );
   });
 
+  it('handles zero templates', function(done) {
+    var response = {templates: null};
+    var bakery = {
+      sendGetRequest: function(path, success, failure, redirect) {
+        assert.equal(path, 'http://example.com/v2/template');
+        var xhr = _makeXHRRequest(response);
+        success(xhr);
+      },
+    };
+
+    env = new window.jujulib.jem('http://example.com/', bakery);
+    env.listTemplates(
+      function(error, data) {
+        assert.strictEqual(error, null);
+        assert.deepEqual(data, []);
+        done();
+      }
+    );
+  });
+
   it('handles errors listing templates', function(done) {
     var err = 'bad wolf';
     var bakery = {
