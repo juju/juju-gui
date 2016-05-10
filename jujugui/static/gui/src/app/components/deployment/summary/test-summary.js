@@ -519,8 +519,8 @@ describe('DeploymentSummary', function() {
         pluralize={pluralize} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
-    refs.modelName.validate = sinon.stub().returns('');
-    refs.templateRegion.validate = sinon.stub().returns('');
+    refs.modelName.validate = sinon.stub().returns(false);
+    refs.templateRegion.validate = sinon.stub().returns(false);
     instance.refs = refs;
     output.props.children[1].props.buttons[1].action();
     assert.equal(jem.newModel.callCount, 0);

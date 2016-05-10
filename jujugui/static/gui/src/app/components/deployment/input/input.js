@@ -48,7 +48,7 @@ YUI.add('deployment-input', function() {
       @method validate
     */
     validate: function() {
-      var value = this.refs.field.value;
+      var value = this.getValue();
       var errors = [];
       var components;
       this.props.validate.forEach((validator) => {

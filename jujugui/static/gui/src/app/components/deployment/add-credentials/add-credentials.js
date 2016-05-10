@@ -271,14 +271,14 @@ YUI.add('deployment-add-credentials', function() {
                   }]} />
               </div>
               <div className="deployment-panel__notice six-col last-col">
-                <div className="deployment-panel__notice-content">
+                <p className="deployment-panel__notice-content">
                   <juju.components.SvgIcon
                     name="general-action-blue"
                     size="16" />
                   Credentials are stored securely on our servers and we will
                   notify you by email whenever they are used. See where they are
                   used and manage or remove them via the account page.
-                </div>
+                </p>
               </div>
               <h3 className="deployment-panel__section-title twelve-col">
                 Enter credentials
