@@ -84,10 +84,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.strictEqual(completedCallback.callCount(), 1);
       assert.deepEqual(completedCallback.lastArguments(), [evt]);
       // The event listeners have been removed.
-      assert.strictEqual(mockXhr.removeEventListener.callCount(), 2);
+      assert.strictEqual(mockXhr.removeEventListener.callCount(), 3);
       args = mockXhr.removeEventListener.allArguments();
       assert.deepEqual(args[0], ['progress', progressHandler]);
-      assert.deepEqual(args[1], ['load', completedHandler]);
+      assert.deepEqual(args[1], ['error', completedHandler]);
+      assert.deepEqual(args[2], ['load', completedHandler]);
     };
 
     describe('sendPostRequest', function() {
@@ -101,12 +102,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             path, headers, data, 'user', 'passwd', false,
             function() {return 'progress';}, function() {return 'completed';});
         // Ensure the xhr instance has been used properly.
-        assert.strictEqual(mockXhr.addEventListener.callCount(), 2);
+        assert.strictEqual(mockXhr.addEventListener.callCount(), 3);
         // Two events listeners are added, one for request's progress and one
         // for request's completion.
         var args = mockXhr.addEventListener.allArguments();
         assert.strictEqual(args[0][0], 'progress');
-        assert.strictEqual(args[1][0], 'load');
+        assert.strictEqual(args[1][0], 'error');
+        assert.strictEqual(args[2][0], 'load');
         // The xhr is then asynchronously opened.
         assert.strictEqual(mockXhr.open.callCount(), 1);
         assert.deepEqual(mockXhr.open.lastArguments(), ['POST', path, true]);
@@ -153,12 +155,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             path, headers, data, 'user', 'passwd', false,
             function() {return 'progress';}, function() {return 'completed';});
         // Ensure the xhr instance has been used properly.
-        assert.strictEqual(mockXhr.addEventListener.callCount(), 2);
+        assert.strictEqual(mockXhr.addEventListener.callCount(), 3);
         // Two events listeners are added, one for request's progress and one
         // for request's completion.
         var args = mockXhr.addEventListener.allArguments();
         assert.strictEqual(args[0][0], 'progress');
-        assert.strictEqual(args[1][0], 'load');
+        assert.strictEqual(args[1][0], 'error');
+        assert.strictEqual(args[2][0], 'load');
         // The xhr is then asynchronously opened.
         assert.strictEqual(mockXhr.open.callCount(), 1);
         assert.deepEqual(mockXhr.open.lastArguments(), ['PUT', path, true]);
@@ -203,12 +206,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             path, null, 'user', 'passwd', false,
             function() {return 'progress';}, function() {return 'completed';});
         // Ensure the xhr instance has been used properly.
-        assert.strictEqual(mockXhr.addEventListener.callCount(), 2);
+        assert.strictEqual(mockXhr.addEventListener.callCount(), 3);
         // Two events listeners are added, one for request's progress and one
         // for request's completion.
         var args = mockXhr.addEventListener.allArguments();
         assert.strictEqual(args[0][0], 'progress');
-        assert.strictEqual(args[1][0], 'load');
+        assert.strictEqual(args[1][0], 'error');
+        assert.strictEqual(args[2][0], 'load');
         // The xhr is then asynchronously opened.
         assert.strictEqual(mockXhr.open.callCount(), 1);
         assert.deepEqual(mockXhr.open.lastArguments(), ['GET', path, true]);
