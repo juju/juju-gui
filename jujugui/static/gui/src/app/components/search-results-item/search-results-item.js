@@ -194,6 +194,44 @@ YUI.add('search-results-item', function(Y) {
       });
     },
 
+    /**
+      Generate the series list item class based on entity type
+
+      @method _generateSeriesClass
+      @returns {String} The generated class name.
+    */
+    _generateSeriesClass: function() {
+      var item = this.props.item.type;
+      return classNames(
+        'series__column',
+        {
+          'two-col': item === 'bundle'
+        },
+        {
+          'four-col': item === 'charm'
+        }
+      );
+    },
+
+    /**
+      Generate the charms column class based on entity type
+
+      @method _generateCharmsClass
+      @returns {String} The generated class name.
+    */
+    _generateCharmsClass: function() {
+      var item = this.props.item.type;
+      return classNames(
+        'charm-logos__column list-block__column',
+        {
+          'three-col': item === 'bundle'
+        },
+        {
+          'one-col': item === 'charm'
+        }
+      );
+    },
+
     render: function() {
       var item = this.props.item;
       return (
@@ -209,12 +247,12 @@ YUI.add('search-results-item', function(Y) {
               {this._generateTagList()}
             </ul>
           </div>
-          <div className="two-col series__column">
+          <div className={this._generateSeriesClass()}>
             <ul className="list-series">
               {this._generateSeriesList()}
             </ul>
           </div>
-          <div className="three-col charm-logos__column list-block__column">
+          <div className={this._generateCharmsClass()}>
             <ul className="list-icons clearfix">
               {this._generateIconList()}
             </ul>

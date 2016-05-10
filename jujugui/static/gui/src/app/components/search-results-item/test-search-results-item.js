@@ -79,7 +79,7 @@ describe('SearchResultsItem', function() {
             </li>
           </ul>
         </div>
-        <div className="two-col series__column">
+        <div className="series__column four-col">
           <ul className="list-series">
             {[<li className="list-series__item"
               key="vivid">
@@ -91,7 +91,7 @@ describe('SearchResultsItem', function() {
             </li>]}
           </ul>
         </div>
-        <div className="three-col charm-logos__column list-block__column">
+        <div className="charm-logos__column list-block__column one-col">
           <ul className="list-icons clearfix">
             {[<li className="list-icons__item tooltip"
               key="mysql"
@@ -162,12 +162,12 @@ describe('SearchResultsItem', function() {
             <span>{' '}</span>
           </ul>
         </div>
-        <div className="two-col series__column">
+        <div className="series__column four-col">
           <ul className="list-series">
             <li>&nbsp;</li>
           </ul>
         </div>
-        <div className="three-col charm-logos__column list-block__column">
+        <div className="charm-logos__column list-block__column one-col">
           <ul className="list-icons clearfix">
             {[<li className="list-icons__item tooltip"
               key="mysql"
@@ -247,12 +247,12 @@ describe('SearchResultsItem', function() {
             <span>{' '}</span>
           </ul>
         </div>
-        <div className="two-col series__column">
+        <div className="series__column two-col">
           <ul className="list-series">
             <li>&nbsp;</li>
           </ul>
         </div>
-        <div className="three-col charm-logos__column list-block__column">
+        <div className="charm-logos__column list-block__column three-col">
           <ul className="list-icons clearfix">
             <li className="list-icons__item tooltip"
               key="wordpress"
@@ -462,5 +462,65 @@ describe('SearchResultsItem', function() {
         }
       }
     });
+  });
+
+  it('gives the correct class names for charm list item', function() {
+    var item = {
+      name: 'mysql',
+      displayName: 'mysql',
+      special: true,
+      url: 'http://example.com/mysql',
+      downloads: 1000,
+      owner: 'test-owner',
+      promulgated: true,
+      id: 'mysql',
+      storeId: '~test-owner/mysql',
+      type: 'charm',
+      tags: ['tag1', 'tag2'],
+      series: [{name: 'vivid'}, {name: 'wily'}]
+    };
+    var output = jsTestUtils.shallowRender(
+        <juju.components.SearchResultsItem
+          item={item} />);
+
+    var seriesClass = output.props.children[1].props.className;
+    var iconsClass = output.props.children[2].props.className;
+    assert.equal(seriesClass, 'series__column four-col');
+    assert.equal(iconsClass,
+      'charm-logos__column list-block__column one-col');
+  });
+
+  it('gives the correct class names for bundle list item', function() {
+    var item = {
+      name: 'mysql',
+      displayName: 'mysql',
+      special: true,
+      url: 'http://example.com/mysql',
+      downloads: 1000,
+      owner: 'test-owner',
+      promulgated: true,
+      id: 'mysql',
+      storeId: '~test-owner/mysql',
+      type: 'bundle',
+      series: [],
+      services: [{
+        displayName: 'wordpress',
+        id: 'cs:wordpress',
+        iconPath: 'wordpress.svg'
+      }, {
+        displayName: 'apache2',
+        id: 'cs:apache2',
+        iconPath: 'apache2.svg'
+      }]
+    };
+    var output = jsTestUtils.shallowRender(
+        <juju.components.SearchResultsItem
+          item={item} />);
+
+    var seriesClass = output.props.children[1].props.className;
+    var iconsClass = output.props.children[2].props.className;
+    assert.equal(seriesClass, 'series__column two-col');
+    assert.equal(iconsClass,
+      'charm-logos__column list-block__column three-col');
   });
 });
