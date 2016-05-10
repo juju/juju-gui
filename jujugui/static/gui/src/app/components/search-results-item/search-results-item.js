@@ -48,10 +48,10 @@ YUI.add('search-results-item', function(Y) {
       if (tags.length === 0) {
         return <span>{' '}</span>;
       }
-      tags.forEach(function(tag) {
+      tags.forEach(function(tag, i) {
         components.push(
           <li className="tag-list--item"
-            key={tag}
+            key={tag + i}
             role="button" tabIndex="0"
             onClick={this._handleTagClick.bind(this, tag)}>
             {tag}
