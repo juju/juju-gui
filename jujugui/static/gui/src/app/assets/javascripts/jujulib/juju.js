@@ -344,7 +344,8 @@ var module = module;
           callback(error, null);
           return;
         }
-        var data = response.templates.map(function(template) {
+        var templates = response.templates || [];
+        var data = templates.map(function(template) {
           return {
             path: template.path,
             schema: template.schema,
