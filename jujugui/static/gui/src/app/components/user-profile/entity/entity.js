@@ -254,7 +254,10 @@ YUI.add('user-profile-entity', function() {
       var isCharm = type === 'charm';
       // Model names will be in the format "username/model-name" so we have to
       // extract the part we need.
-      var name = isModel ? entity.name.split('/')[1] : entity.name;
+      var name = entity.name;
+      if (isModel && entity.name.indexOf('/') !== -1) {
+        name = name.split('/')[1];
+      }
       var id = isModel ? entity.uuid : entity.id;
       var buttonAction = isModel ? this._switchEnv.bind(
         this, id, name) : this._viewEntity.bind(this, id);
