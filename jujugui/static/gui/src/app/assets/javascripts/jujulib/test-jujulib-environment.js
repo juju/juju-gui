@@ -391,24 +391,6 @@ describe('jujulib environment manager', function() {
     );
   });
 
-  it('handles errors listing templates', function(done) {
-    var err = 'bad wolf';
-    var bakery = {
-      sendGetRequest: function(path, success, failure, redirect) {
-        assert.equal(path, 'http://example.com/v2/template')
-        var xhr = _makeXHRRequest({Message: err});
-        failure(xhr);
-      }
-    };
-
-    env = new window.jujulib.jem('http://example.com/', bakery);
-    env.listTemplates(function(error, data) {
-      assert.equal(error, err);
-      assert.strictEqual(data, null);
-      done();
-    });
-  });
-
   it('can add a template', function(done) {
     var bakery = {
       sendPutRequest: function(path, data, success, failure, redirect) {
