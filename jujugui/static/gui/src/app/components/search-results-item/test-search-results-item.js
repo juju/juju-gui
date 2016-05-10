@@ -66,13 +66,13 @@ describe('SearchResultsItem', function() {
           </h3>
           <ul className="tag-list">
             <li className="tag-list--item"
-              key="tag1"
+              key="tag10"
               role="button" tabIndex="0"
               onClick={tags[0].props.onClick}>
               tag1
              </li>
             <li className="tag-list--item"
-              key="tag2"
+              key="tag21"
               role="button" tabIndex="0"
               onClick={tags[1].props.onClick}>
               tag2
