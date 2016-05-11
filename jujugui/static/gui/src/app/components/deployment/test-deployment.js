@@ -90,7 +90,8 @@ describe('Deployment', function() {
         modelCommitted={false}
         modelName="Prod"
         numberOfChanges={6}
-        pluralize={pluralize} />);
+        pluralize={pluralize}
+        validateForm={instance._validateForm} />);
     assert.deepEqual(output.props.children, expected);
   });
 
@@ -185,7 +186,8 @@ describe('Deployment', function() {
         cloud={instance.clouds['aws']}
         jem={jem}
         setDeploymentInfo={instance.setDeploymentInfo}
-        users={users} />);
+        users={users}
+        validateForm={instance._validateForm} />);
     assert.deepEqual(output.props.children, expected);
   });
 });

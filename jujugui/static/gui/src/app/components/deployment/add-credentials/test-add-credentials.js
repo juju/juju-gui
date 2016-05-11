@@ -93,7 +93,8 @@ describe('DeploymentAddCredentials', function() {
         cloud={cloud}
         jem={jem}
         setDeploymentInfo={sinon.stub()}
-        users={users} />, true);
+        users={users}
+        validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var buttons = [{
@@ -138,7 +139,7 @@ describe('DeploymentAddCredentials', function() {
                   error: 'This field is required.'
                 }, {
                   regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
-                  error: 'This field must only contain upper and lowercase' +
+                  error: 'This field must only contain upper and lowercase ' +
                     'letters, numbers, and hyphens. It must not start or ' +
                     'end with a hyphen.'
                 }]} />
@@ -212,7 +213,8 @@ describe('DeploymentAddCredentials', function() {
         cloud={cloud}
         jem={jem}
         setDeploymentInfo={sinon.stub()}
-        users={users} />, true);
+        users={users}
+        validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var buttons = [{
@@ -257,7 +259,7 @@ describe('DeploymentAddCredentials', function() {
                   error: 'This field is required.'
                 }, {
                   regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
-                  error: 'This field must only contain upper and lowercase' +
+                  error: 'This field must only contain upper and lowercase ' +
                     'letters, numbers, and hyphens. It must not start or ' +
                     'end with a hyphen.'
                 }]} />
@@ -327,7 +329,8 @@ describe('DeploymentAddCredentials', function() {
         cloud={cloud}
         jem={jem}
         setDeploymentInfo={sinon.stub()}
-        users={users} />, true);
+        users={users}
+        validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var buttons = [{
@@ -372,7 +375,7 @@ describe('DeploymentAddCredentials', function() {
                   error: 'This field is required.'
                 }, {
                   regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
-                  error: 'This field must only contain upper and lowercase' +
+                  error: 'This field must only contain upper and lowercase ' +
                     'letters, numbers, and hyphens. It must not start or ' +
                     'end with a hyphen.'
                 }]} />
@@ -430,7 +433,8 @@ describe('DeploymentAddCredentials', function() {
         cloud={clouds['aws']}
         jem={jem}
         setDeploymentInfo={sinon.stub()}
-        users={users} />, true);
+        users={users}
+        validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
     instance.refs = refs;
     instance._handleAddCredentials();
@@ -446,7 +450,8 @@ describe('DeploymentAddCredentials', function() {
         cloud={clouds['aws']}
         jem={jem}
         setDeploymentInfo={sinon.stub()}
-        users={users} />, true);
+        users={users}
+        validateForm={sinon.stub().returns(true)} />, true);
     var output = renderer.getRenderOutput();
     output.props.children[1].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
@@ -468,13 +473,9 @@ describe('DeploymentAddCredentials', function() {
         cloud={clouds['aws']}
         jem={jem}
         setDeploymentInfo={sinon.stub()}
-        users={users} />, true);
+        users={users}
+        validateForm={sinon.stub().returns(false)} />, true);
     var instance = renderer.getMountedInstance();
-    refs.templateAccessKey.validate = sinon.stub().returns(false);
-    refs.templateName.validate = sinon.stub().returns(false);
-    refs.templateRegion.validate = sinon.stub().returns(false);
-    refs.templateSecretKey.validate = sinon.stub().returns(false);
-    instance.refs = refs;
     instance._handleAddCredentials();
     assert.equal(jem.addTemplate.callCount, 0);
   });

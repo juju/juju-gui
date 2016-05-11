@@ -40,7 +40,8 @@ YUI.add('deployment-summary', function() {
       pluralize: React.PropTypes.func.isRequired,
       modelCommitted: React.PropTypes.bool.isRequired,
       modelName: React.PropTypes.string.isRequired,
-      numberOfChanges: React.PropTypes.number.isRequired
+      numberOfChanges: React.PropTypes.number.isRequired,
+      validateForm: React.PropTypes.func.isRequired
     },
 
     /**
@@ -107,36 +108,16 @@ YUI.add('deployment-summary', function() {
     },
 
     /**
-      Validate the form fields.
-
-      @method _validate
-      @returns {Boolean} Whether the form is valid.
-    */
-    _validate: function() {
-      var refs = this.refs;
-      var fields = [
-        'modelName',
-        'templateRegion'
-      ];
-      var formValid = true;
-      fields.forEach(field => {
-        var valid = refs[field].validate();
-        // If there is an error then mark that. We don't want to exit the loop
-        // at this point so that each field gets validated.
-        if (!valid) {
-          formValid = false;
-        }
-      });
-      return formValid;
-    },
-
-    /**
       Handle committing when the deploy button in the summary is clicked.
 
       @method _handleDeploy
     */
     _handleDeploy: function() {
-      if (!this._validate()) {
+      var valid = this.props.validateForm([
+        'modelName',
+        'templateRegion'
+      ], this.refs);
+      if (!valid) {
         // If there are any form validation errors then stop the deploy.
         return;
       }
@@ -341,7 +322,7 @@ YUI.add('deployment-summary', function() {
                   error: 'This field is required.'
                 }, {
                   regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
-                  error: 'This field must only contain upper and lowercase' +
+                  error: 'This field must only contain upper and lowercase ' +
                     'letters, numbers, and hyphens. It must not start or ' +
                     'end with a hyphen.'
                 }]}

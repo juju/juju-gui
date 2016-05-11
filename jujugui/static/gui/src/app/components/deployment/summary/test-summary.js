@@ -88,7 +88,8 @@ describe('DeploymentSummary', function() {
         modelCommitted={false}
         modelName="Prod"
         numberOfChanges={6}
-        pluralize={pluralize} />, true);
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var buttons = [{
@@ -117,7 +118,7 @@ describe('DeploymentSummary', function() {
                 error: 'This field is required.'
               }, {
                 regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
-                error: 'This field must only contain upper and lowercase' +
+                error: 'This field must only contain upper and lowercase ' +
                   'letters, numbers, and hyphens. It must not start or ' +
                   'end with a hyphen.'
               }]}
@@ -206,7 +207,8 @@ describe('DeploymentSummary', function() {
         modelCommitted={false}
         modelName="Prod"
         numberOfChanges={6}
-        pluralize={pluralize} />, true);
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -245,7 +247,8 @@ describe('DeploymentSummary', function() {
         modelCommitted={true}
         modelName="Prod"
         numberOfChanges={6}
-        pluralize={pluralize} />, true);
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -281,7 +284,8 @@ describe('DeploymentSummary', function() {
         modelCommitted={false}
         modelName="Prod"
         numberOfChanges={6}
-        pluralize={pluralize} />);
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(true)} />);
     output.props.children[0].props.children[3].props.children[1]
       .props.onClick();
     assert.equal(changeState.callCount, 1);
@@ -319,7 +323,8 @@ describe('DeploymentSummary', function() {
         modelCommitted={false}
         modelName="Prod"
         numberOfChanges={6}
-        pluralize={pluralize} />);
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(true)} />);
     output.props.children[1].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -358,7 +363,8 @@ describe('DeploymentSummary', function() {
         modelCommitted={true}
         modelName="Prod"
         numberOfChanges={6}
-        pluralize={pluralize} />, true);
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     // We need to make sure that the model name input is disabled if
@@ -420,7 +426,8 @@ describe('DeploymentSummary', function() {
         modelCommitted={false}
         modelName="Prod"
         numberOfChanges={6}
-        pluralize={pluralize} />, true);
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     instance.refs = refs;
@@ -516,12 +523,9 @@ describe('DeploymentSummary', function() {
         modelCommitted={false}
         modelName="Prod"
         numberOfChanges={6}
-        pluralize={pluralize} />, true);
-    var instance = renderer.getMountedInstance();
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(false)} />, true);
     var output = renderer.getRenderOutput();
-    refs.modelName.validate = sinon.stub().returns(false);
-    refs.templateRegion.validate = sinon.stub().returns(false);
-    instance.refs = refs;
     output.props.children[1].props.buttons[1].action();
     assert.equal(jem.newModel.callCount, 0);
   });
