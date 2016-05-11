@@ -1168,10 +1168,9 @@ YUI.add('juju-gui', function(Y) {
           }
         }
       });
-      var apiUrl = `${charmstore.url}${charmstore.version}`;
       ReactDOM.render(
         <components.Charmbrowser
-          apiUrl={apiUrl}
+          apiUrl={charmstore.url}
           charmstoreSearch={charmstore.search.bind(charmstore)}
           series={utils.getSeriesList()}
           importBundleYAML={this.bundleImporter.importBundleYAML.bind(
