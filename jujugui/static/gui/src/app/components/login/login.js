@@ -97,17 +97,16 @@ YUI.add('login-component', function() {
     },
 
     render: function() {
-      var buttons = [];
-      var MacaroonButton = this._generateLoginWithMacaroonButton();
-      if (MacaroonButton) {
-        buttons.push(MacaroonButton);
-      }
-      buttons.push({
+      var buttons = [{
         action: this._handleLoginSubmit,
         submit: true,
         title: 'Login',
         type: 'positive'
-      });
+      }];
+      var macaroonButton = this._generateLoginWithMacaroonButton();
+      if (macaroonButton) {
+        buttons.push(macaroonButton);
+      }
       return (
         <div className="login">
           <div className="login__logo">

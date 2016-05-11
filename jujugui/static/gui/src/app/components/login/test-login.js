@@ -132,14 +132,14 @@ describe('LoginComponent', function() {
             </label>
             <juju.components.ButtonRow
               buttons={[{
-                action: instance._handleLoginWithMacaroonSubmit,
-                title: 'Login with USSO',
-                type: 'neutral'
-              }, {
                 action: instance._handleLoginSubmit,
                 submit: true,
                 title: 'Login',
                 type: 'positive'
+              }, {
+                action: instance._handleLoginWithMacaroonSubmit,
+                title: 'Login with USSO',
+                type: 'neutral'
               }]} />
           </form>
         </div>
@@ -198,7 +198,7 @@ describe('LoginComponent', function() {
         login={sinon.stub()}/>, true);
     var output = renderer.getRenderOutput();
     var buttons = output.props.children[1].props.children[2].props.children[2];
-    buttons.props.buttons[0].action();
+    buttons.props.buttons[1].action();
     assert.equal(loginWithMacaroon.callCount, 1, 'login never called');
   });
 
