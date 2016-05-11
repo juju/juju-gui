@@ -40,7 +40,8 @@ YUI.add('deployment-summary', function() {
       pluralize: React.PropTypes.func.isRequired,
       modelCommitted: React.PropTypes.bool.isRequired,
       modelName: React.PropTypes.string.isRequired,
-      numberOfChanges: React.PropTypes.number.isRequired
+      numberOfChanges: React.PropTypes.number.isRequired,
+      validateForm: React.PropTypes.func.isRequired
     },
 
     /**
@@ -112,6 +113,14 @@ YUI.add('deployment-summary', function() {
       @method _handleDeploy
     */
     _handleDeploy: function() {
+      var valid = this.props.validateForm([
+        'modelName',
+        'templateRegion'
+      ], this.refs);
+      if (!valid) {
+        // If there are any form validation errors then stop the deploy.
+        return;
+      }
       // For now every commit will autoplace all units.
       this.props.autoPlaceUnits();
       // If we're in a model which exists then just commit the ecs and return.
@@ -123,7 +132,7 @@ YUI.add('deployment-summary', function() {
       }
       this.props.jem.newModel(
         this.props.users.jem.user,
-        this.refs.modelName.value,
+        this.refs.modelName.getValue(),
         this.props.deploymentStorage.templateName,
         null, // TODO frankban: use a location here.
         this.props.controller, // TODO frankban: remove the controller here.
@@ -302,18 +311,22 @@ YUI.add('deployment-summary', function() {
           <juju.components.DeploymentPanelContent
             title="Review deployment">
             <form className="six-col last-col">
-              <label className="deployment-panel__label"
-                htmlFor="model-name">
-                Model name
-              </label>
-              <input className="deployment-panel__input"
-                defaultValue={this.props.modelName}
-                id="model-name"
-                placeholder="test_model_01"
+              <juju.components.DeploymentInput
+                disabled={!!modelCommitted}
+                label="Model name"
+                placeholder="test-model-01"
+                required={true}
                 ref="modelName"
-                required="required"
-                type="text"
-                disabled={!!modelCommitted} />
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }, {
+                  regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
+                  error: 'This field must only contain upper and lowercase ' +
+                    'letters, numbers, and hyphens. It must not start or ' +
+                    'end with a hyphen.'
+                }]}
+                value={this.props.modelName} />
             </form>
             <div className={'deployment-choose-cloud__cloud-option ' +
               'deployment-summary__cloud-option six-col last-col'}>
@@ -327,15 +340,15 @@ YUI.add('deployment-summary', function() {
                 </span>
               </span>
               <form className="deployment-summary__cloud-option-region">
-                <label className="deployment-panel__label"
-                  htmlFor="region">
-                  Region
-                </label>
-                <input className="deployment-panel__input"
-                  id="region"
-                  placeholder="us-central1"
-                  required="required"
-                  type="text" />
+                <juju.components.DeploymentInput
+                  label="Region"
+                  placeholder="us-central-1"
+                  required={true}
+                  ref="templateRegion"
+                  validate={[{
+                    regex: /\S+/,
+                    error: 'This field is required.'
+                  }]} />
               </form>
             </div>
             {this._generateTitle()}
@@ -375,6 +388,7 @@ YUI.add('deployment-summary', function() {
   });
 
 }, '0.1.0', { requires: [
+  'deployment-input',
   'deployment-panel-content',
   'deployment-panel-footer',
   'deployment-summary-change-item',

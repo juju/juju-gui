@@ -85,6 +85,27 @@ YUI.add('deployment-component', function() {
     },
 
     /**
+      Validate the form fields.
+
+      @method _validateForm
+      @param {Array} fields A list of field ref names.
+      @param {Object} refs The refs for a component.
+      @returns {Boolean} Whether the form is valid.
+    */
+    _validateForm: function(fields, refs) {
+      var formValid = true;
+      fields.forEach(field => {
+        var valid = refs[field].validate();
+        // If there is an error then mark that. We don't want to exit the loop
+        // at this point so that each field gets validated.
+        if (!valid) {
+          formValid = false;
+        }
+      });
+      return formValid;
+    },
+
+    /**
       Generate the content for the active panel.
 
       @method _generateActivePanel
@@ -113,7 +134,8 @@ YUI.add('deployment-component', function() {
               pluralize={this.props.pluralize}
               modelCommitted={this.props.modelCommitted}
               modelName={this.props.modelName}
-              numberOfChanges={this.props.numberOfChanges} />);
+              numberOfChanges={this.props.numberOfChanges}
+              validateForm={this._validateForm} />);
         case 'choose-cloud':
           return (
             <juju.components.DeploymentChooseCloud
@@ -131,7 +153,8 @@ YUI.add('deployment-component', function() {
               cloud={this.clouds[activeComponent.split('-')[2]]}
               setDeploymentInfo={this.setDeploymentInfo}
               jem={this.props.jem}
-              users={this.props.users} />);
+              users={this.props.users}
+              validateForm={this._validateForm} />);
       }
     },
 

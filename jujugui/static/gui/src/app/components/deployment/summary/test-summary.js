@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentSummary', function() {
-  var changeCounts, pluralize;
+  var changeCounts, pluralize, refs;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -38,6 +38,16 @@ describe('DeploymentSummary', function() {
     };
     pluralize = (val) => {
       return val + 's';
+    };
+    refs = {
+      modelName: {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('Prod')
+      },
+      templateRegion: {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('us-test-1')
+      }
     };
   });
 
@@ -78,7 +88,8 @@ describe('DeploymentSummary', function() {
         modelCommitted={false}
         modelName="Prod"
         numberOfChanges={6}
-        pluralize={pluralize} />, true);
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var buttons = [{
@@ -96,18 +107,22 @@ describe('DeploymentSummary', function() {
         <juju.components.DeploymentPanelContent
           title="Review deployment">
           <form className="six-col last-col">
-            <label className="deployment-panel__label"
-              htmlFor="model-name">
-              Model name
-            </label>
-            <input className="deployment-panel__input"
-              defaultValue="Prod"
-              id="model-name"
-              placeholder="test_model_01"
+            <juju.components.DeploymentInput
+              disabled={false}
+              label="Model name"
+              placeholder="test-model-01"
+              required={true}
               ref="modelName"
-              required="required"
-              type="text"
-              disabled={false} />
+              validate={[{
+                regex: /\S+/,
+                error: 'This field is required.'
+              }, {
+                regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
+                error: 'This field must only contain upper and lowercase ' +
+                  'letters, numbers, and hyphens. It must not start or ' +
+                  'end with a hyphen.'
+              }]}
+              value="Prod" />
           </form>
           <div className={'deployment-choose-cloud__cloud-option ' +
             'deployment-summary__cloud-option six-col last-col'}>
@@ -121,15 +136,15 @@ describe('DeploymentSummary', function() {
               </span>
             </span>
             <form className="deployment-summary__cloud-option-region">
-              <label className="deployment-panel__label"
-                htmlFor="region">
-                Region
-              </label>
-              <input className="deployment-panel__input"
-                id="region"
-                placeholder="us-central1"
-                required="required"
-                type="text" />
+              <juju.components.DeploymentInput
+                label="Region"
+                placeholder="us-central-1"
+                required={true}
+                ref="templateRegion"
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }]} />
             </form>
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
@@ -192,7 +207,8 @@ describe('DeploymentSummary', function() {
         modelCommitted={false}
         modelName="Prod"
         numberOfChanges={6}
-        pluralize={pluralize} />, true);
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -231,7 +247,8 @@ describe('DeploymentSummary', function() {
         modelCommitted={true}
         modelName="Prod"
         numberOfChanges={6}
-        pluralize={pluralize} />, true);
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -267,7 +284,8 @@ describe('DeploymentSummary', function() {
         modelCommitted={false}
         modelName="Prod"
         numberOfChanges={6}
-        pluralize={pluralize} />);
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(true)} />);
     output.props.children[0].props.children[3].props.children[1]
       .props.onClick();
     assert.equal(changeState.callCount, 1);
@@ -305,7 +323,8 @@ describe('DeploymentSummary', function() {
         modelCommitted={false}
         modelName="Prod"
         numberOfChanges={6}
-        pluralize={pluralize} />);
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(true)} />);
     output.props.children[1].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -344,17 +363,18 @@ describe('DeploymentSummary', function() {
         modelCommitted={true}
         modelName="Prod"
         numberOfChanges={6}
-        pluralize={pluralize} />, true);
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     // We need to make sure that the model name input is disabled if
     // the user is deploying to an existing model.
     var props = output.props;
     assert.equal(
-      props.children[0].props.children[0].props.children[1].props.disabled,
+      props.children[0].props.children[0].props.children.props.disabled,
       true);
     assert.equal(props.children[1].props.buttons[0].title, 'Commit');
-    instance.refs = {modelName: {value: 'Prod'}};
+    instance.refs = refs;
     output.props.children[1].props.buttons[0].action();
     assert.equal(autoPlaceUnits.callCount, 1);
     assert.equal(ecsCommit.callCount, 1);
@@ -406,10 +426,11 @@ describe('DeploymentSummary', function() {
         modelCommitted={false}
         modelName="Prod"
         numberOfChanges={6}
-        pluralize={pluralize} />, true);
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
-    instance.refs = {modelName: {value: 'Prod'}};
+    instance.refs = refs;
     output.props.children[1].props.buttons[1].action();
     // We automatically autoplace units on deploy in this workflow.
     assert.equal(autoPlaceUnits.callCount, 1, 'autoplace not called');
@@ -464,5 +485,48 @@ describe('DeploymentSummary', function() {
     // It should detach the env on login event listener after logging in so
     // that we don't try and commit multiple times.
     assert.equal(detach.callCount, 1);
+  });
+
+  it('does not submit the form if there are validation errors', function() {
+    var autoPlaceUnits = sinon.stub();
+    var changeState = sinon.stub();
+    var ecsCommit = sinon.stub();
+    var getUnplacedUnitCount = sinon.stub().returns(0);
+    var appSet = sinon.stub();
+    var createSocketURL = sinon.stub().returns('newurl');
+    var jem = {
+      newModel: sinon.stub(),
+    };
+    var detach = sinon.stub();
+    var env = {
+      setCredentials: sinon.stub(),
+      set: sinon.stub(),
+      connect: sinon.stub(),
+      on: sinon.stub().returns({ detach: detach })
+    };
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentSummary
+        jem={jem}
+        env={env}
+        appSet={appSet}
+        createSocketURL={createSocketURL}
+        controller="yellow/aws-eu-central"
+        deploymentStorage={{ templateName: 'secureTemplate' }}
+        users={{ jem: { user: 'joecoder' }}}
+        autoPlaceUnits={autoPlaceUnits}
+        ecsClear={sinon.stub()}
+        ecsCommit={ecsCommit}
+        changeCounts={changeCounts}
+        changeDescriptions={[]}
+        changeState={changeState}
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        modelCommitted={false}
+        modelName="Prod"
+        numberOfChanges={6}
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(false)} />, true);
+    var output = renderer.getRenderOutput();
+    output.props.children[1].props.buttons[1].action();
+    assert.equal(jem.newModel.callCount, 0);
   });
 });

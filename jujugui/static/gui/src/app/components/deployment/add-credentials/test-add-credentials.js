@@ -19,13 +19,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
-var testUtils = React.addons.TestUtils;
 
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentAddCredentials', function() {
-  var clouds, users, jem;
+  var clouds, users, jem, refs;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -65,6 +64,24 @@ describe('DeploymentAddCredentials', function() {
         title: 'Microsoft Azure'
       }
     };
+    refs = {
+      templateAccessKey: {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('templateAccessKey')
+      },
+      templateName: {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('templateName')
+      },
+      templateRegion: {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('templateRegion')
+      },
+      templateSecretKey: {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('templateSecretKey')
+      }
+    };
   });
 
   it('can render for aws', function() {
@@ -76,7 +93,8 @@ describe('DeploymentAddCredentials', function() {
         cloud={cloud}
         jem={jem}
         setDeploymentInfo={sinon.stub()}
-        users={users} />, true);
+        users={users}
+        validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var buttons = [{
@@ -109,36 +127,41 @@ describe('DeploymentAddCredentials', function() {
                 size="12" />
             </a>
           </div>
-          <form className="twelve-col-col">
+          <form className="twelve-col">
             <div className="six-col">
-              <label className="deployment-panel__label"
-                htmlFor="credential-name">
-                Credential name
-              </label>
-              <input className="deployment-panel__input"
-                id="credential-name"
-                placeholder="AWS_1"
-                required="required"
-                type="text"
-                ref="templateName" />
-              <label className="deployment-panel__label"
-                htmlFor="specify-region">
-                Region
-              </label>
-              <input className="deployment-panel__input"
-                id="specify-region"
+              <juju.components.DeploymentInput
+                label="Credential name"
+                placeholder="AWS-1"
+                required={true}
+                ref="templateName"
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }, {
+                  regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
+                  error: 'This field must only contain upper and lowercase ' +
+                    'letters, numbers, and hyphens. It must not start or ' +
+                    'end with a hyphen.'
+                }]} />
+              <juju.components.DeploymentInput
+                label="Region"
                 placeholder="us-central1"
-                required="required"
-                type="text"
-                ref="templateRegion" />
+                required={true}
+                ref="templateRegion"
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }]} />
             </div>
             <div className="deployment-panel__notice six-col last-col">
-              <juju.components.SvgIcon
-                name="general-action-blue"
-                size="16" />
-              Credentials are stored securely on our servers and we will notify
-              you by email whenever they are used. See where they are used and
-              manage or remove them via the account page.
+              <p className="deployment-panel__notice-content">
+                <juju.components.SvgIcon
+                  name="general-action-blue"
+                  size="16" />
+                Credentials are stored securely on our servers and we will
+                notify you by email whenever they are used. See where they are
+                used and manage or remove them via the account page.
+              </p>
             </div>
             <h3 className="deployment-panel__section-title twelve-col">
               Enter credentials
@@ -154,26 +177,24 @@ describe('DeploymentAddCredentials', function() {
                   security_credential
                 </a>
               </p>
-              <label className="deployment-panel__label"
-                htmlFor="access-key">
-                Access key
-              </label>
-              <input className="deployment-panel__input"
-                id="access-key"
+              <juju.components.DeploymentInput
+                label="Access key"
                 placeholder="TDFIWNDKF7UW6DVGX98X"
-                required="required"
-                type="text"
-                ref="templateAccessKey" />
-              <label className="deployment-panel__label"
-                htmlFor="secret-key">
-                Secret key
-              </label>
-              <input className="deployment-panel__input"
-                id="secret-key"
+                required={true}
+                ref="templateAccessKey"
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }]} />
+              <juju.components.DeploymentInput
+                label="Secret key"
                 placeholder="p/hdU8TnOP5D7JNHrFiM8IO8f5GN6GhHj7tueBN9"
-                required="required"
-                type="text"
-                ref="templateSecretKey" />
+                required={true}
+                ref="templateSecretKey"
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }]} />
             </div>
           </form>
         </juju.components.DeploymentPanelContent>
@@ -192,7 +213,8 @@ describe('DeploymentAddCredentials', function() {
         cloud={cloud}
         jem={jem}
         setDeploymentInfo={sinon.stub()}
-        users={users} />, true);
+        users={users}
+        validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var buttons = [{
@@ -225,36 +247,41 @@ describe('DeploymentAddCredentials', function() {
                 size="12" />
             </a>
           </div>
-          <form className="twelve-col-col">
+          <form className="twelve-col">
             <div className="six-col">
-              <label className="deployment-panel__label"
-                htmlFor="credential-name">
-                Project ID (credential name)
-              </label>
-              <input className="deployment-panel__input"
-                id="credential-name"
-                placeholder="AWS_1"
-                required="required"
-                type="text"
-                ref="templateName" />
-              <label className="deployment-panel__label"
-                htmlFor="specify-region">
-                Region
-              </label>
-              <input className="deployment-panel__input"
-                id="specify-region"
+              <juju.components.DeploymentInput
+                label="Project ID (credential name)"
+                placeholder="AWS-1"
+                required={true}
+                ref="templateName"
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }, {
+                  regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
+                  error: 'This field must only contain upper and lowercase ' +
+                    'letters, numbers, and hyphens. It must not start or ' +
+                    'end with a hyphen.'
+                }]} />
+              <juju.components.DeploymentInput
+                label="Region"
                 placeholder="us-central1"
-                required="required"
-                type="text"
-                ref="templateRegion" />
+                required={true}
+                ref="templateRegion"
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }]} />
             </div>
             <div className="deployment-panel__notice six-col last-col">
-              <juju.components.SvgIcon
-                name="general-action-blue"
-                size="16" />
-              Credentials are stored securely on our servers and we will notify
-              you by email whenever they are used. See where they are used and
-              manage or remove them via the account page.
+              <p className="deployment-panel__notice-content">
+                <juju.components.SvgIcon
+                  name="general-action-blue"
+                  size="16" />
+                Credentials are stored securely on our servers and we will
+                notify you by email whenever they are used. See where they are
+                used and manage or remove them via the account page.
+              </p>
             </div>
             <h3 className="deployment-panel__section-title twelve-col">
               Enter credentials
@@ -302,7 +329,8 @@ describe('DeploymentAddCredentials', function() {
         cloud={cloud}
         jem={jem}
         setDeploymentInfo={sinon.stub()}
-        users={users} />, true);
+        users={users}
+        validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var buttons = [{
@@ -335,36 +363,41 @@ describe('DeploymentAddCredentials', function() {
                 size="12" />
             </a>
           </div>
-          <form className="twelve-col-col">
+          <form className="twelve-col">
             <div className="six-col">
-              <label className="deployment-panel__label"
-                htmlFor="credential-name">
-                Credential name
-              </label>
-              <input className="deployment-panel__input"
-                id="credential-name"
-                placeholder="AWS_1"
-                required="required"
-                type="text"
-                ref="templateName" />
-              <label className="deployment-panel__label"
-                htmlFor="specify-region">
-                Region
-              </label>
-              <input className="deployment-panel__input"
-                id="specify-region"
+              <juju.components.DeploymentInput
+                label="Credential name"
+                placeholder="AWS-1"
+                required={true}
+                ref="templateName"
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }, {
+                  regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
+                  error: 'This field must only contain upper and lowercase ' +
+                    'letters, numbers, and hyphens. It must not start or ' +
+                    'end with a hyphen.'
+                }]} />
+              <juju.components.DeploymentInput
+                label="Region"
                 placeholder="us-central1"
-                required="required"
-                type="text"
-                ref="templateRegion" />
+                required={true}
+                ref="templateRegion"
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }]} />
             </div>
             <div className="deployment-panel__notice six-col last-col">
-              <juju.components.SvgIcon
-                name="general-action-blue"
-                size="16" />
-              Credentials are stored securely on our servers and we will notify
-              you by email whenever they are used. See where they are used and
-              manage or remove them via the account page.
+              <p className="deployment-panel__notice-content">
+                <juju.components.SvgIcon
+                  name="general-action-blue"
+                  size="16" />
+                Credentials are stored securely on our servers and we will
+                notify you by email whenever they are used. See where they are
+                used and manage or remove them via the account page.
+              </p>
             </div>
             <h3 className="deployment-panel__section-title twelve-col">
               Enter credentials
@@ -393,21 +426,18 @@ describe('DeploymentAddCredentials', function() {
   });
 
   it('can add the credentials', function() {
-    var output = testUtils.renderIntoDocument(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentAddCredentials
         changeState={sinon.stub()}
         controller="my-controller"
         cloud={clouds['aws']}
         jem={jem}
         setDeploymentInfo={sinon.stub()}
-        users={users} />, true);
-    var templateName = output.refs.templateName;
-    templateName.value = 'foo';
-    var templateAccessKey = output.refs.templateAccessKey;
-    templateAccessKey.value = 'bar';
-    var templateSecretKey = output.refs.templateSecretKey;
-    templateSecretKey.value = 'baz';
-    output._handleAddCredentials();
+        users={users}
+        validateForm={sinon.stub().returns(true)} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = refs;
+    instance._handleAddCredentials();
     assert.equal(jem.addTemplate.callCount, 1);
   });
 
@@ -420,7 +450,8 @@ describe('DeploymentAddCredentials', function() {
         cloud={clouds['aws']}
         jem={jem}
         setDeploymentInfo={sinon.stub()}
-        users={users} />, true);
+        users={users}
+        validateForm={sinon.stub().returns(true)} />, true);
     var output = renderer.getRenderOutput();
     output.props.children[1].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
@@ -432,5 +463,20 @@ describe('DeploymentAddCredentials', function() {
         }
       }
     });
+  });
+
+  it('does not submit the form if there are validation errors', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentAddCredentials
+        changeState={sinon.stub()}
+        controller="my-controller"
+        cloud={clouds['aws']}
+        jem={jem}
+        setDeploymentInfo={sinon.stub()}
+        users={users}
+        validateForm={sinon.stub().returns(false)} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._handleAddCredentials();
+    assert.equal(jem.addTemplate.callCount, 0);
   });
 });
