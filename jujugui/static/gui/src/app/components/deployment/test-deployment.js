@@ -77,7 +77,6 @@ describe('Deployment', function() {
         env={env}
         appSet={appSet}
         createSocketURL={createSocketURL}
-        controller="yellow/aws-us-east"
         deploymentStorage={instance._deploymentStorage}
         users={users}
         autoPlaceUnits={autoPlaceUnits}

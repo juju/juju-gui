@@ -259,15 +259,17 @@ describe('DeploymentChooseCloud', function() {
 
   it('can select a new cloud', function() {
     var changeState = sinon.stub();
+    var setDeploymentInfo = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentChooseCloud
         changeState={changeState}
         cloudData={clouds}
         jem={jem}
-        setDeploymentInfo={sinon.stub()} />, true);
+        setDeploymentInfo={setDeploymentInfo} />, true);
     var output = renderer.getRenderOutput();
     output.props.children.props.children[1].props.children[0].props.onClick();
     assert.equal(changeState.callCount, 1);
+    assert.deepEqual(setDeploymentInfo.args[0], ['cloud', 'aws']);
     assert.deepEqual(changeState.args[0][0], {
       sectionC: {
         component: 'deploy',

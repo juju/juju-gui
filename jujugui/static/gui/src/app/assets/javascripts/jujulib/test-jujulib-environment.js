@@ -180,7 +180,7 @@ describe('jujulib environment manager', function() {
         assert.equal(path, 'http://example.com/v2/model/rose');
         assert.deepEqual(JSON.parse(data), {
           name: 'fnord',
-          Location: {'region': 'us-east-1', 'cloud': 'aws'},
+          location: {'region': 'us-east-1', 'cloud': 'aws'},
           templates: ['rose/template']
         });
         var xhr = _makeXHRRequest({

@@ -74,13 +74,13 @@ describe('DeploymentAddCredentials', function() {
         validate: sinon.stub().returns(true),
         getValue: sinon.stub().returns('templateName')
       },
-      templateRegion: {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('templateRegion')
-      },
       templateSecretKey: {
         validate: sinon.stub().returns(true),
         getValue: sinon.stub().returns('templateSecretKey')
+      },
+      selectRegion: {
+        selectedIndex: 0,
+        options: [{value:'us-east-1'}]
       }
     };
   });
@@ -143,15 +143,6 @@ describe('DeploymentAddCredentials', function() {
                   error: 'This field must only contain upper and lowercase ' +
                     'letters, numbers, and hyphens. It must not start or ' +
                     'end with a hyphen.'
-                }]} />
-              <juju.components.DeploymentInput
-                label="Region"
-                placeholder="us-central1"
-                required={true}
-                ref="templateRegion"
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
                 }]} />
               <select ref="selectRegion">
                 <option>Choose a region</option>
@@ -268,15 +259,6 @@ describe('DeploymentAddCredentials', function() {
                     'letters, numbers, and hyphens. It must not start or ' +
                     'end with a hyphen.'
                 }]} />
-              <juju.components.DeploymentInput
-                label="Region"
-                placeholder="us-central1"
-                required={true}
-                ref="templateRegion"
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />
               <select ref="selectRegion">
                 <option>Choose a region</option>
                 {[<option key="us-east-1" value="us-east-1">us-east-1</option>]}
@@ -388,15 +370,6 @@ describe('DeploymentAddCredentials', function() {
                     'letters, numbers, and hyphens. It must not start or ' +
                     'end with a hyphen.'
                 }]} />
-              <juju.components.DeploymentInput
-                label="Region"
-                placeholder="us-central1"
-                required={true}
-                ref="templateRegion"
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />
               <select ref="selectRegion">
                 <option>Choose a region</option>
                 {[<option key="us-east-1" value="us-east-1">us-east-1</option>]}
@@ -435,6 +408,7 @@ describe('DeploymentAddCredentials', function() {
         <juju.components.DeploymentPanelFooter
           buttons={buttons} />
       </div>);
+    jsTestUtils.compare(output, expected)
     assert.deepEqual(output, expected);
   });
 
@@ -457,7 +431,7 @@ describe('DeploymentAddCredentials', function() {
         {null}
       </select>);
     assert.deepEqual(
-      props.children[0].props.children[2].props.children[0].props.children[2],
+      props.children[0].props.children[2].props.children[0].props.children[1],
       emptySelect);
   });
 
