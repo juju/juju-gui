@@ -659,8 +659,7 @@ YUI.add('juju-gui', function(Y) {
         // We only want to connect to the model on application load if we are
         // in a sandbox or real model and not in gisf.
         var envUUID = this.get('jujuEnvUUID').toLowerCase();
-        var isNotGISFSandbox = (this.get('gisf') &&
-                                envUUID.indexOf('sandbox') < 0);
+        var isNotGISFSandbox = this.get('gisf') && envUUID !== 'sandbox';
         var isNotConnected = (!this.get('gisf') &&
                               (this.get('socket_url') || this.get('sandbox')));
         if (isNotGISFSandbox || isNotConnected) {
