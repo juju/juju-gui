@@ -408,7 +408,6 @@ describe('DeploymentAddCredentials', function() {
         <juju.components.DeploymentPanelFooter
           buttons={buttons} />
       </div>);
-    jsTestUtils.compare(output, expected)
     assert.deepEqual(output, expected);
   });
 

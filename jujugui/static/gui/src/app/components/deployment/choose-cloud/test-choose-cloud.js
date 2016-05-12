@@ -44,6 +44,20 @@ describe('DeploymentChooseCloud', function() {
         svgHeight: 48,
         svgWidth: 120,
         title: 'Amazon Web Services'
+      },
+      azure: {
+        id: 'azure',
+        signupUrl: 'https://azure.microsoft.com/en-us/free/',
+        svgHeight: 24,
+        svgWidth: 204,
+        title: 'Microsoft Azure'
+      },
+      google: {
+        id: 'google',
+        signupUrl: 'https://console.cloud.google.com/billing/freetrial',
+        svgHeight: 33,
+        svgWidth: 256,
+        title: 'Google Compute Engine'
       }
     };
   });
@@ -207,6 +221,29 @@ describe('DeploymentChooseCloud', function() {
                   height={clouds['aws'].svgHeight}
                   name={clouds['aws'].id}
                   width={clouds['aws'].svgWidth} />
+              </span>
+            </li>,
+            <li className="deployment-choose-cloud__cloud-option four-col "
+              key="azure"
+              onClick={output.props.children.props.children[1]
+                  .props.children[1].props.onClick}>
+              <span className="deployment-choose-cloud__cloud-option-image">
+                <juju.components.SvgIcon
+                  height={clouds['azure'].svgHeight}
+                  name={clouds['azure'].id}
+                  width={clouds['azure'].svgWidth} />
+              </span>
+            </li>,
+            <li className=
+                    "deployment-choose-cloud__cloud-option four-col last-col"
+              key="google"
+              onClick={output.props.children.props.children[1]
+                  .props.children[2].props.onClick}>
+              <span className="deployment-choose-cloud__cloud-option-image">
+                <juju.components.SvgIcon
+                  height={clouds['google'].svgHeight}
+                  name={clouds['google'].id}
+                  width={clouds['google'].svgWidth} />
               </span>
             </li>]}
           </ul>

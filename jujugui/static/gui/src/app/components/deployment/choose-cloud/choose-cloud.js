@@ -111,7 +111,11 @@ YUI.add('deployment-choose-cloud', function() {
     */
     _generateCloudOptions: function() {
       var components = [];
-      this.state.clouds.forEach((cloud, i) => {
+      // XXX This is commented out here only for the DEMO and should be
+      // removedshortly thereafter so we only display the clouds which we
+      // have controllers for.
+      //this.state.clouds.forEach((cloud, i) => {
+      ['aws', 'azure', 'google'].forEach((cloud, i) => {
         var option = this.props.cloudData[cloud];
         var lastCol = i % 3 === 2 ? 'last-col' : '';
         var className = 'deployment-choose-cloud__cloud-option four-col ' +
