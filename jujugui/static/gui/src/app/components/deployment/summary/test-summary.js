@@ -391,8 +391,8 @@ describe('DeploymentSummary', function() {
     // the user is deploying to an existing model.
     var props = output.props;
     assert.equal(
-      props.children[0].props.children[0].props.children.props.disabled,
-      true);
+      props.children[0].props.children[0].props.children,
+      'Prod');
     assert.equal(props.children[1].props.buttons[0].title, 'Commit');
     instance.refs = refs;
     output.props.children[1].props.buttons[0].action();

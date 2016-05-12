@@ -352,6 +352,8 @@ YUI.add('deployment-summary', function() {
           <juju.components.DeploymentPanelContent
             title="Review deployment">
             <form className="six-col last-col">
+            { !!modelCommitted ?
+              this.props.modelName :
               <juju.components.DeploymentInput
                 disabled={!!modelCommitted}
                 label="Model name"
@@ -367,7 +369,7 @@ YUI.add('deployment-summary', function() {
                     'letters, numbers, and hyphens. It must not start or ' +
                     'end with a hyphen.'
                 }]}
-                value={this.props.modelName} />
+                value={this.props.modelName} />}
             </form>
             {this._generateCredential()}
             {this._generateTitle()}
