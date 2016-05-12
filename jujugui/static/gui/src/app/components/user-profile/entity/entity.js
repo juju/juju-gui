@@ -28,7 +28,6 @@ YUI.add('user-profile-entity', function() {
       entity: React.PropTypes.object.isRequired,
       expanded: React.PropTypes.bool,
       getDiagramURL: React.PropTypes.func,
-      showDestroy: React.PropTypes.bool,
       switchModel: React.PropTypes.func,
       type: React.PropTypes.string.isRequired
     },
@@ -269,7 +268,7 @@ YUI.add('user-profile-entity', function() {
         'user-profile__entity': true,
         'user-profile__list-row': true
       };
-      var destroyButton = isModel && this.props.showDestroy ? (
+      var destroyButton = isModel ? (
         <juju.components.GenericButton
           action={props.displayConfirmation}
           type="inline-base"

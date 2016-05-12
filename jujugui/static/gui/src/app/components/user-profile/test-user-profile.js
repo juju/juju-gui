@@ -312,7 +312,6 @@ describe('UserProfile', () => {
                 entity={models[0]}
                 expanded={false}
                 key="env1"
-                showDestroy={false}
                 switchModel={instance.switchModel}
                 type="model">
                 <span className="user-profile__list-col three-col">

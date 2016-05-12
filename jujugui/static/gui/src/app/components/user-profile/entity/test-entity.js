@@ -93,7 +93,6 @@ describe('UserProfileEntity', () => {
         displayConfirmation={displayConfirmation}
         entity={model}
         expanded={false}
-        showDestroy={true}
         switchModel={sinon.stub()}
         type="model">
         <span>Summary details</span>

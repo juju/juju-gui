@@ -774,7 +774,8 @@ YUI.add('juju-gui', function(Y) {
       // nextProps on the lifecycle methods.
       ReactDOM.render(
         <window.juju.components.UserProfile
-          addNotification={this.db.notifications.add.bind(this)}
+          addNotification={
+            this.db.notifications.add.bind(this.db.notifications)}
           canCreateNew={this.env.get('connected')}
           currentModel={this.get('jujuEnvUUID')}
           destroyModel={this.env.destroyModel.bind(this.env)}
@@ -1188,7 +1189,8 @@ YUI.add('juju-gui', function(Y) {
           appState={state.get('current')}
           changeState={this.changeState.bind(this)}
           utils={utils}
-          addNotification={this.db.notifications.add.bind(this)}
+          addNotification={
+            this.db.notifications.add.bind(this.db.notifications)}
           makeEntityModel={Y.juju.makeEntityModel} />,
         document.getElementById('charmbrowser-container'));
     },
@@ -1970,7 +1972,8 @@ YUI.add('juju-gui', function(Y) {
                                  default, if the socketUrl is set, we assume we
                                  want to reconnect to the provided URL.
     */
-    switchEnv: function(socketUrl, username, password, reconnect=!!socketUrl) {
+    switchEnv: function(
+      socketUrl, username, password, callback, reconnect=!!socketUrl) {
       if (this.get('sandbox')) {
         console.log('switching models is not supported in sandbox');
       }
@@ -1991,7 +1994,7 @@ YUI.add('juju-gui', function(Y) {
       var onclose = function() {
         this.on_close();
         if (reconnect) {
-          this.connect();
+          this.connect(callback);
         }
       }.bind(this.env);
       if (this.env.ws) {
