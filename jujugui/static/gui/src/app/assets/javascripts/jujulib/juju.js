@@ -269,7 +269,7 @@ var module = module;
         templates: [baseTemplate]
       };
       if (location) {
-        body.Location = location;
+        body.location = location;
       }
       if (controller) {
         body.controller = controller;

@@ -69,8 +69,6 @@ YUI.add('deployment-component', function() {
     },
 
     _deploymentStorage: {},
-    // XXX Hardcoding the controller for now but it will be provided on load
-    _controller: 'yellow/aws-us-east',
 
     /**
       Store information from portions of the deployment for use later down the
@@ -127,7 +125,6 @@ YUI.add('deployment-component', function() {
               changeCounts={this.props.changeCounts}
               changeDescriptions={this.props.changeDescriptions}
               changeState={this.props.changeState}
-              controller={this._controller}
               ecsClear={this.props.ecsClear}
               ecsCommit={this.props.ecsCommit}
               getUnplacedUnitCount={this.props.getUnplacedUnitCount}

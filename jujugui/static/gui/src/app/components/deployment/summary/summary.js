@@ -33,7 +33,6 @@ YUI.add('deployment-summary', function() {
       autoPlaceUnits: React.PropTypes.func.isRequired,
       changeDescriptions: React.PropTypes.array.isRequired,
       changeState: React.PropTypes.func.isRequired,
-      controller: React.PropTypes.string.isRequired,
       ecsClear: React.PropTypes.func.isRequired,
       ecsCommit: React.PropTypes.func.isRequired,
       getUnplacedUnitCount: React.PropTypes.func.isRequired,
@@ -130,12 +129,16 @@ YUI.add('deployment-summary', function() {
         this._close();
         return;
       }
+      var deploymentStorage = this.props.deploymentStorage;
       this.props.jem.newModel(
         this.props.users.jem.user,
         this.refs.modelName.getValue(),
-        this.props.deploymentStorage.templateName,
-        null, // TODO frankban: use a location here.
-        this.props.controller, // TODO frankban: remove the controller here.
+        deploymentStorage.templateName,
+        {
+          cloud: deploymentStorage.cloud,
+          region: deploymentStorage.region
+        },
+        null, // Controller, using the location argument instead.
         (error, data) => {
           if (error) throw error;
           var pathParts = data.hostPorts[0].split(':');

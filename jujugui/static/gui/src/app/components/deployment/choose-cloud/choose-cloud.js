@@ -156,6 +156,7 @@ YUI.add('deployment-choose-cloud', function() {
       @method _handleCloudClick
     */
     _handleCloudClick: function(id) {
+      this.props.setDeploymentInfo('cloud', id);
       this.props.changeState({
         sectionC: {
           component: 'deploy',

@@ -57,7 +57,6 @@ YUI.add('deployment-add-credentials', function() {
       var valid = this.props.validateForm([
         'templateAccessKey',
         'templateName',
-        'templateRegion',
         'templateSecretKey'
       ], this.refs);
       if (!valid) {
@@ -67,41 +66,37 @@ YUI.add('deployment-add-credentials', function() {
       }
       // Add template
       var props = this.props;
-      // XXX At the moment the listControllers method doesn't yet allow us to
-      // filter the results to the users slected region so we just select
-      // the first available controller.
-
-      // var selectRegion = this.refs.selectRegion;
-      // var region = selectRegion.options[selectRegion.selectedIndex].value;
-      // var cloudLabel = props.cloud.id;
-      props.jem.listControllers((error, controllers) => {
-        var user = props.users.jem.user,
-            templateName = this.refs.templateName.value,
-            template = {
-              'controller': controllers[0].path,
-              'config': {
-                'access-key': this.refs.templateAccessKey.value,
-                'secret-key': this.refs.templateSecretKey.value,
-                // XXX This is a 'hack' to make Juju not complain about being
-                // able to find ssh keys.
-                'authorized-keys': 'fake'
-              }
-            };
-        this.props.jem.addTemplate(user, templateName, template, error => {
-          if (error) {
-            console.error('Unable to add template', error);
-          }
-          this.props.setDeploymentInfo('templateName',
-            [user, templateName].join('/'));
-          this.props.setDeploymentInfo('template', template);
-          this.props.changeState({
-            sectionC: {
-              component: 'deploy',
-              metadata: {
-                activeComponent: 'summary'
-              }
+      var selectRegion = this.refs.selectRegion;
+      var region = selectRegion.options[selectRegion.selectedIndex].value;
+      var cloud = props.cloud.id;
+      var user = props.users.jem.user;
+      var templateName = this.refs.templateName.getValue();
+      var template = {
+        location: { region, cloud },
+        config: {
+          'access-key': this.refs.templateAccessKey.getValue(),
+          'secret-key': this.refs.templateSecretKey.getValue(),
+          // XXX This is a 'hack' to make Juju not complain about being
+          // able to find ssh keys.
+          'authorized-keys': 'fake'
+        }
+      };
+      props.jem.addTemplate(user, templateName, template, error => {
+        if (error) {
+          console.error('Unable to add template', error);
+        }
+        var setDeploymentInfo = props.setDeploymentInfo;
+        setDeploymentInfo('templateName',
+          [user, templateName].join('/'));
+        setDeploymentInfo('region', region);
+        setDeploymentInfo('template', template);
+        props.changeState({
+          sectionC: {
+            component: 'deploy',
+            metadata: {
+              activeComponent: 'summary'
             }
-          });
+          }
         });
       });
     },
@@ -286,15 +281,6 @@ YUI.add('deployment-add-credentials', function() {
                     error: 'This field must only contain upper and lowercase ' +
                       'letters, numbers, and hyphens. It must not start or ' +
                       'end with a hyphen.'
-                  }]} />
-                <juju.components.DeploymentInput
-                  label="Region"
-                  placeholder="us-central1"
-                  required={true}
-                  ref="templateRegion"
-                  validate={[{
-                    regex: /\S+/,
-                    error: 'This field is required.'
                   }]} />
                 {this._generateRegionList()}
               </div>
