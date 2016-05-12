@@ -242,7 +242,7 @@ YUI.add('juju-env-base', function(Y) {
       this._txn_callbacks = {};
     },
 
-    connect: function(callback) {
+    connect: function() {
       // Allow an external websocket to be passed in.
       var conn = this.get('conn');
       if (conn) {
@@ -252,7 +252,7 @@ YUI.add('juju-env-base', function(Y) {
       }
       this.ws.debug = this.get('debug');
       this.ws.onmessage = Y.bind(this.on_message, this);
-      this.ws.onopen = Y.bind(this.on_open, this, callback);
+      this.ws.onopen = Y.bind(this.on_open, this);
       this.ws.onclose = Y.bind(this.on_close, this);
       // Our fake backends have "open" methods.  Call them, now that we have
       // set our listeners up.
@@ -262,11 +262,8 @@ YUI.add('juju-env-base', function(Y) {
       return this;
     },
 
-    on_open: function(callback, data) {
+    on_open: function(data) {
       this.set('connected', true);
-      if (callback) {
-        callback(this);
-      }
     },
 
     on_close: function(data) {

@@ -1959,6 +1959,18 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      This method is called after the env has been logged into and calls a
+      callback for when the model has been switched.
+
+      @method _onSwitchLogin
+      @param {Object} callback The callback to call once the env has been.
+        logged into.
+    */
+    _onSwitchLogin: function(callback) {
+      callback(this.env);
+    },
+
+    /**
       Switch the application to another environment.
       Disconnect the current WebSocket connection and establish a new one
       pointed to the environment referenced by the given URL.
@@ -1985,6 +1997,11 @@ YUI.add('juju-gui', function(Y) {
           password: password
         });
       };
+      if (callback) {
+        // Delay the callback until after the env login as everything should be
+        // set up by then.
+        this.env.onceAfter('login', this._onSwitchLogin.bind(this, callback), this);
+      }
       // Tell the environment to use the new socket URL when reconnecting.
       this.env.set('socket_url', socketUrl);
       // Clear uncommitted state.
@@ -1993,7 +2010,7 @@ YUI.add('juju-gui', function(Y) {
       var onclose = function() {
         this.on_close();
         if (reconnect) {
-          this.connect(callback);
+          this.connect();
         }
       }.bind(this.env);
       if (this.env.ws) {
