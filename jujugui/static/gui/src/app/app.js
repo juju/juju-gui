@@ -2000,7 +2000,8 @@ YUI.add('juju-gui', function(Y) {
       if (callback) {
         // Delay the callback until after the env login as everything should be
         // set up by then.
-        this.env.onceAfter('login', this._onSwitchLogin.bind(this, callback), this);
+        this.env.onceAfter(
+          'login', this._onSwitchLogin.bind(this, callback), this);
       }
       // Tell the environment to use the new socket URL when reconnecting.
       this.env.set('socket_url', socketUrl);
