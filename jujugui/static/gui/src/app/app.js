@@ -778,7 +778,6 @@ YUI.add('juju-gui', function(Y) {
             this.db.notifications.add.bind(this.db.notifications)}
           canCreateNew={this.env.get('connected')}
           currentModel={this.get('jujuEnvUUID')}
-          destroyModel={this.env.destroyModel.bind(this.env)}
           env={this.env}
           jem={this.jem}
           gisf={this.get('gisf')}

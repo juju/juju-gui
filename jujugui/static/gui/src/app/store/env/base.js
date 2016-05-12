@@ -265,7 +265,7 @@ YUI.add('juju-env-base', function(Y) {
     on_open: function(callback, data) {
       this.set('connected', true);
       if (callback) {
-        callback();
+        callback(this);
       }
     },
 

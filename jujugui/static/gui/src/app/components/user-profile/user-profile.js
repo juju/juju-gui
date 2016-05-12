@@ -27,7 +27,6 @@ YUI.add('user-profile', function() {
       addNotification: React.PropTypes.func.isRequired,
       canCreateNew: React.PropTypes.bool.isRequired,
       changeState: React.PropTypes.func.isRequired,
-      destroyModel: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
       env: React.PropTypes.object.isRequired,
@@ -671,7 +670,6 @@ YUI.add('user-profile', function() {
       Handle the destroy model button being clicked.
 
       @method _handleDestroyModel
-      @return {Object} The confirmation component.
     */
     _handleDestroyModel: function() {
       var model = this.state.destroyModel;
@@ -681,7 +679,7 @@ YUI.add('user-profile', function() {
       // If the model to be distroyed is active then we can destroy it
       // immediately.
       if (uuid === this.props.currentModel) {
-        this._destroyModel();
+        this._destroyModel(this.props.env);
       } else {
         // Switch to the selected model, then destroy it.
         this.switchModel(uuid, model.name, this._destroyModel);
@@ -692,10 +690,10 @@ YUI.add('user-profile', function() {
       Destroy a model.
 
       @method _destroyModel
-      @return {Object} The confirmation component.
+      @param {Object} env The current env.
     */
-    _destroyModel: function() {
-      this.props.destroyModel((error) => {
+    _destroyModel: function(env) {
+      env.destroyModel((error) => {
         if (error) {
           this.props.addNotification({
             title: 'Model destruction failed',
