@@ -112,14 +112,6 @@ YUI.add('deployment-summary', function() {
       @method _handleDeploy
     */
     _handleDeploy: function() {
-      var valid = this.props.validateForm([
-        'modelName',
-        'templateRegion'
-      ], this.refs);
-      if (!valid) {
-        // If there are any form validation errors then stop the deploy.
-        return;
-      }
       // For now every commit will autoplace all units.
       this.props.autoPlaceUnits();
       // If we're in a model which exists then just commit the ecs and return.
@@ -129,6 +121,12 @@ YUI.add('deployment-summary', function() {
         this._close();
         return;
       }
+      // Validate both fields if we are creating a new model
+      if (!this.props.validateForm([
+        'modelName',
+        'templateRegion'
+      ], this.refs)) { return; }
+
       var deploymentStorage = this.props.deploymentStorage;
       this.props.jem.newModel(
         this.props.users.jem.user,
