@@ -225,6 +225,47 @@ YUI.add('deployment-summary', function() {
     },
 
     /**
+      Generate the credential details.
+
+      @method _generateCredential
+      @returns {Object} The placement markup.
+    */
+    _generateCredential: function() {
+      // If the model has already been deployed the the credential details have
+      // been provided.
+      if (this.props.modelCommitted) {
+        return;
+      }
+      var parts = this.props.deploymentStorage.templateName.split('/');
+      var owner = parts[0];
+      var credentialName = parts[1];
+      return (
+        <div className={'deployment-choose-cloud__cloud-option ' +
+          'deployment-summary__cloud-option six-col last-col'}>
+          <span className={
+            'deployment-choose-cloud__cloud-option-title'}>
+            <span className="deployment-choose-cloud__cloud-option-name">
+              {credentialName}
+            </span>
+            <span className="deployment-choose-cloud__cloud-option-owner">
+              {owner}
+            </span>
+          </span>
+          <form className="deployment-summary__cloud-option-region">
+            <juju.components.DeploymentInput
+              label="Region"
+              placeholder="us-central-1"
+              required={true}
+              ref="templateRegion"
+              validate={[{
+                regex: /\S+/,
+                error: 'This field is required.'
+              }]} />
+          </form>
+        </div>);
+    },
+
+    /**
       Generate a message if there are unplaced units.
 
       @method _generatePlacement
@@ -299,9 +340,6 @@ YUI.add('deployment-summary', function() {
         disabled: this.props.numberOfChanges === 0,
         type: 'inline-positive'
       });
-      var parts = this.props.deploymentStorage.templateName.split('/');
-      var owner = parts[0];
-      var name = parts[1];
       var classes = {
         'deployment-summary__changelog': true
       };
@@ -328,29 +366,7 @@ YUI.add('deployment-summary', function() {
                 }]}
                 value={this.props.modelName} />
             </form>
-            <div className={'deployment-choose-cloud__cloud-option ' +
-              'deployment-summary__cloud-option six-col last-col'}>
-              <span className={
-                'deployment-choose-cloud__cloud-option-title'}>
-                <span className="deployment-choose-cloud__cloud-option-name">
-                  {name}
-                </span>
-                <span className="deployment-choose-cloud__cloud-option-owner">
-                  {owner}
-                </span>
-              </span>
-              <form className="deployment-summary__cloud-option-region">
-                <juju.components.DeploymentInput
-                  label="Region"
-                  placeholder="us-central-1"
-                  required={true}
-                  ref="templateRegion"
-                  validate={[{
-                    regex: /\S+/,
-                    error: 'This field is required.'
-                  }]} />
-              </form>
-            </div>
+            {this._generateCredential()}
             {this._generateTitle()}
             {this._generatePlacement()}
             <juju.components.ExpandingRow

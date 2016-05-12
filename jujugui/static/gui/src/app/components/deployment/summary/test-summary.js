@@ -226,6 +226,32 @@ describe('DeploymentSummary', function() {
     assert.deepEqual(output.props.children[0].props.children[3], expected);
   });
 
+  it('hides credentials if the model has been committed', function() {
+    var getUnplacedUnitCount = sinon.stub().returns(1);
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentSummary
+        jem={{}}
+        env={{}}
+        appSet={sinon.stub()}
+        createSocketURL={sinon.stub()}
+        deploymentStorage={{templateName: 'spinach/my-creds'}}
+        users={{}}
+        autoPlaceUnits={sinon.stub()}
+        changeCounts={changeCounts}
+        changeDescriptions={[]}
+        changeState={sinon.stub()}
+        controller="yellow/aws-eu-central"
+        ecsClear={sinon.stub()}
+        ecsCommit={sinon.stub()}
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        modelCommitted={true}
+        modelName="Prod"
+        numberOfChanges={6}
+        pluralize={pluralize} />, true);
+    var output = renderer.getRenderOutput();
+    assert.isUndefined(output.props.children[0].props.children[1]);
+  });
+
   it('can display a clear changes button', function() {
     var getUnplacedUnitCount = sinon.stub().returns(1);
     var renderer = jsTestUtils.shallowRender(
