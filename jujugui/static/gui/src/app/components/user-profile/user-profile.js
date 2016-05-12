@@ -145,7 +145,7 @@ YUI.add('user-profile', function() {
       // We need to coerce error types returned by JES vs JEM into one error.
       var err = data.err || error;
       if (err) {
-        console.log(err);
+        console.error(err);
         return;
       }
       // data.models is only populated by Juju controllers, when using JEM

@@ -1368,8 +1368,10 @@ describe('utilities', function() {
         hostPorts: ['localhost:80', 'localhost:443']
       }];
       var env = {set: testUtils.makeStubFunction()};
+      var callback = testUtils.makeStubFunction();
       utils.set = testUtils.makeStubFunction();
-      utils.switchModel(createSocketURL, switchEnv, env, 'uuid1', models, 'ev');
+      utils.switchModel(
+        createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
 
       assert.deepEqual(createSocketURL.callCount(), 1);
       var socketArgs = createSocketURL.lastArguments();
@@ -1382,6 +1384,7 @@ describe('utilities', function() {
       assert.deepEqual(switchEnvArgs[0], 'newaddress:80');
       assert.deepEqual(switchEnvArgs[1], models[0].user);
       assert.deepEqual(switchEnvArgs[2], models[0].password);
+      assert.deepEqual(switchEnvArgs[3], callback);
 
       assert.deepEqual(env.set.callCount(), 1);
       var envSet = env.set.lastArguments();
@@ -1402,7 +1405,8 @@ describe('utilities', function() {
       utils.switchModel(createSocketURL, switchEnv, env, undefined, models);
       assert.deepEqual(createSocketURL.callCount(), 0);
       assert.deepEqual(switchEnv.callCount(), 1);
-      assert.equal(switchEnv.allArguments()[0].length, 0);
+      assert.deepEqual(
+        switchEnv.lastArguments(), [null, null, null, undefined]);
     });
 
     it('just disconnects if modelList is missing', function() {
@@ -1412,7 +1416,8 @@ describe('utilities', function() {
       utils.switchModel(createSocketURL, switchEnv, env, 'model1', undefined);
       assert.deepEqual(createSocketURL.callCount(), 0);
       assert.deepEqual(switchEnv.callCount(), 1);
-      assert.equal(switchEnv.allArguments()[0].length, 0);
+      assert.deepEqual(
+        switchEnv.lastArguments(), [null, null, null, undefined]);
     });
   });
 

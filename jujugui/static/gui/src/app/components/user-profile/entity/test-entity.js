@@ -39,8 +39,10 @@ describe('UserProfileEntity', () => {
   });
 
   it('can render a model', () => {
+    var displayConfirmation = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
+        displayConfirmation={displayConfirmation}
         entity={model}
         expanded={false}
         switchModel={sinon.stub()}
@@ -62,7 +64,10 @@ describe('UserProfileEntity', () => {
             </div>
             <div className={'expanding-row__expanded-header-action ' +
               'five-col last-col no-margin-bottom'}>
-              {undefined}
+              <juju.components.GenericButton
+                action={displayConfirmation}
+                type="inline-base"
+                title="Destroy model" />
               <juju.components.GenericButton
                 action={button.props.action}
                 type="inline-neutral"
@@ -84,28 +89,6 @@ describe('UserProfileEntity', () => {
         </div>
       </juju.components.ExpandingRow>);
     assert.deepEqual(output, expected);
-  });
-
-  it('can display a destroy button on a model', () => {
-    var displayConfirmation = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileEntity
-        displayConfirmation={displayConfirmation}
-        entity={model}
-        expanded={false}
-        switchModel={sinon.stub()}
-        type="model">
-        <span>Summary details</span>
-      </juju.components.UserProfileEntity>, true);
-    var output = renderer.getRenderOutput();
-    var button = output.props.children[1].props.children[0].props.children[1]
-      .props.children[0];
-    var expected = (
-      <juju.components.GenericButton
-        action={displayConfirmation}
-        type="inline-base"
-        title="Destroy model" />);
-    assert.deepEqual(button, expected);
   });
 
   it('can render a bundle', () => {
