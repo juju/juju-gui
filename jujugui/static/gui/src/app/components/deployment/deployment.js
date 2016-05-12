@@ -44,8 +44,8 @@ YUI.add('deployment-component', function() {
     },
 
     clouds: {
-      gcp: {
-        id: 'gcp',
+      google: {
+        id: 'google',
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',
         svgHeight: 33,
         svgWidth: 256,
@@ -69,8 +69,6 @@ YUI.add('deployment-component', function() {
     },
 
     _deploymentStorage: {},
-    // XXX Hardcoding the controller for now but it will be provided on load
-    _controller: 'yellow/aws-us-east',
 
     /**
       Store information from portions of the deployment for use later down the
@@ -127,7 +125,6 @@ YUI.add('deployment-component', function() {
               changeCounts={this.props.changeCounts}
               changeDescriptions={this.props.changeDescriptions}
               changeState={this.props.changeState}
-              controller={this._controller}
               ecsClear={this.props.ecsClear}
               ecsCommit={this.props.ecsCommit}
               getUnplacedUnitCount={this.props.getUnplacedUnitCount}
@@ -141,15 +138,14 @@ YUI.add('deployment-component', function() {
             <juju.components.DeploymentChooseCloud
               jem={this.props.jem}
               changeState={this.props.changeState}
-              clouds={this.clouds}
+              cloudData={this.clouds}
               setDeploymentInfo={this.setDeploymentInfo} />);
         case 'add-credentials-azure':
         case 'add-credentials-aws':
-        case 'add-credentials-gcp':
+        case 'add-credentials-google':
           return (
             <juju.components.DeploymentAddCredentials
               changeState={this.props.changeState}
-              controller={this._controller}
               cloud={this.clouds[activeComponent.split('-')[2]]}
               setDeploymentInfo={this.setDeploymentInfo}
               jem={this.props.jem}

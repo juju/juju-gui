@@ -77,7 +77,6 @@ describe('Deployment', function() {
         env={env}
         appSet={appSet}
         createSocketURL={createSocketURL}
-        controller="yellow/aws-us-east"
         deploymentStorage={instance._deploymentStorage}
         users={users}
         autoPlaceUnits={autoPlaceUnits}
@@ -136,7 +135,7 @@ describe('Deployment', function() {
       <juju.components.DeploymentChooseCloud
         jem={jem}
         changeState={changeState}
-        clouds={instance.clouds}
+        cloudData={instance.clouds}
         setDeploymentInfo={instance.setDeploymentInfo} />);
     assert.deepEqual(output.props.children, expected);
   });
@@ -182,7 +181,6 @@ describe('Deployment', function() {
     var expected = (
       <juju.components.DeploymentAddCredentials
         changeState={changeState}
-        controller="yellow/aws-us-east"
         cloud={instance.clouds['aws']}
         jem={jem}
         setDeploymentInfo={instance.setDeploymentInfo}

@@ -75,7 +75,6 @@ describe('DeploymentSummary', function() {
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
-        controller="yellow/aws-eu-central"
         deploymentStorage={{templateName: 'spinach/my-creds'}}
         users={{}}
         autoPlaceUnits={sinon.stub()}
@@ -200,7 +199,6 @@ describe('DeploymentSummary', function() {
         changeCounts={changeCounts}
         changeDescriptions={[]}
         changeState={sinon.stub()}
-        controller="yellow/aws-eu-central"
         ecsClear={sinon.stub()}
         ecsCommit={sinon.stub()}
         getUnplacedUnitCount={getUnplacedUnitCount}
@@ -260,7 +258,6 @@ describe('DeploymentSummary', function() {
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
-        controller="yellow/aws-eu-central"
         deploymentStorage={{templateName: 'spinach/my-creds'}}
         users={{}}
         autoPlaceUnits={sinon.stub()}
@@ -297,7 +294,6 @@ describe('DeploymentSummary', function() {
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
-        controller="yellow/aws-eu-central"
         deploymentStorage={{templateName: 'spinach/my-creds'}}
         users={{}}
         autoPlaceUnits={sinon.stub()}
@@ -336,7 +332,6 @@ describe('DeploymentSummary', function() {
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
-        controller="yellow/aws-eu-central"
         deploymentStorage={{templateName: 'spinach/my-creds'}}
         users={{}}
         autoPlaceUnits={sinon.stub()}
@@ -376,7 +371,6 @@ describe('DeploymentSummary', function() {
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
-        controller="yellow/aws-eu-central"
         deploymentStorage={{ templateName: 'secureTemplate' }}
         users={{ jem: { user: 'joecoder' }}}
         autoPlaceUnits={autoPlaceUnits}
@@ -397,8 +391,8 @@ describe('DeploymentSummary', function() {
     // the user is deploying to an existing model.
     var props = output.props;
     assert.equal(
-      props.children[0].props.children[0].props.children.props.disabled,
-      true);
+      props.children[0].props.children[0].props.children,
+      'Prod');
     assert.equal(props.children[1].props.buttons[0].title, 'Commit');
     instance.refs = refs;
     output.props.children[1].props.buttons[0].action();
@@ -439,8 +433,11 @@ describe('DeploymentSummary', function() {
         env={env}
         appSet={appSet}
         createSocketURL={createSocketURL}
-        controller="yellow/aws-eu-central"
-        deploymentStorage={{ templateName: 'secureTemplate' }}
+        deploymentStorage={{
+          templateName: 'secureTemplate',
+          cloud: 'aws',
+          region: 'us-east-1'
+        }}
         users={{ jem: { user: 'joecoder' }}}
         autoPlaceUnits={autoPlaceUnits}
         ecsClear={sinon.stub()}
@@ -465,8 +462,11 @@ describe('DeploymentSummary', function() {
     assert.equal(jem.newModel.args[0][0], 'joecoder');
     assert.equal(jem.newModel.args[0][1], 'Prod');
     assert.equal(jem.newModel.args[0][2], 'secureTemplate');
-    assert.equal(jem.newModel.args[0][3], null);
-    assert.equal(jem.newModel.args[0][4], 'yellow/aws-eu-central');
+    assert.deepEqual(jem.newModel.args[0][3], {
+      cloud: 'aws',
+      region: 'us-east-1'
+    });
+    assert.equal(jem.newModel.args[0][4], null);
     // Call the callback from creating a new model to make sure it performs
     // the approriate calls.
     jem.newModel.args[0][5](null, {
@@ -536,7 +536,6 @@ describe('DeploymentSummary', function() {
         env={env}
         appSet={appSet}
         createSocketURL={createSocketURL}
-        controller="yellow/aws-eu-central"
         deploymentStorage={{ templateName: 'secureTemplate' }}
         users={{ jem: { user: 'joecoder' }}}
         autoPlaceUnits={autoPlaceUnits}

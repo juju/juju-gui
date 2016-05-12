@@ -33,9 +33,8 @@ describe('DeploymentChooseCloud', function() {
 
   beforeEach(function() {
     jem = {
-      listTemplates: (callback) => {
-        callback(null, [{path: 'test-owner/test'}]);
-      }
+      listTemplates: cb => cb(null, [{path: 'test-owner/test'}]),
+      listClouds: cb => cb(null, ['aws'])
     };
     clouds = {
       aws: {
@@ -45,6 +44,20 @@ describe('DeploymentChooseCloud', function() {
         svgHeight: 48,
         svgWidth: 120,
         title: 'Amazon Web Services'
+      },
+      azure: {
+        id: 'azure',
+        signupUrl: 'https://azure.microsoft.com/en-us/free/',
+        svgHeight: 24,
+        svgWidth: 204,
+        title: 'Microsoft Azure'
+      },
+      google: {
+        id: 'google',
+        signupUrl: 'https://console.cloud.google.com/billing/freetrial',
+        svgHeight: 33,
+        svgWidth: 256,
+        title: 'Google Compute Engine'
       }
     };
   });
@@ -53,10 +66,9 @@ describe('DeploymentChooseCloud', function() {
     jem = null;
   });
 
-  it('can render without credentials', function() {
-    jem.listTemplates = (callback) => {
-      callback(null, []);
-    };
+  it('can render without credentials without clouds', function() {
+    jem.listTemplates = cb => cb(null, []);
+    jem.listClouds = cb => cb(null, []);
     var pluralize = sinon.stub();
     pluralize.withArgs('service', sinon.match.any).returns('services');
     pluralize.withArgs('machine', sinon.match.any).returns('machine');
@@ -67,7 +79,7 @@ describe('DeploymentChooseCloud', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentChooseCloud
         changeState={sinon.stub()}
-        clouds={clouds}
+        cloudData={clouds}
         jem={jem}
         setDeploymentInfo={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -75,7 +87,6 @@ describe('DeploymentChooseCloud', function() {
       <div className="deployment-panel__child">
         <juju.components.DeploymentPanelContent
           title="Choose cloud">
-          {undefined}
           <div className="deployment-panel__notice twelve-col">
             <juju.components.SvgIcon
               name="general-action-blue"
@@ -83,19 +94,12 @@ describe('DeploymentChooseCloud', function() {
             Add a public cloud credential, and we can save it as an option
             for later use
           </div>
-          <ul className="deployment-choose-cloud__list twelve-col">
-            {[<li className="deployment-choose-cloud__cloud-option four-col "
-                key="aws"
-                onClick={output.props.children.props.children[2]
-                  .props.children[0].props.onClick}>
-                <span className="deployment-choose-cloud__cloud-option-image">
-                  <juju.components.SvgIcon
-                    height={clouds['aws'].svgHeight}
-                    name={clouds['aws'].id}
-                    width={clouds['aws'].svgWidth} />
-                </span>
-              </li>]}
-          </ul>
+          <div className="deployment-panel__notice twelve-col">
+            <juju.components.SvgIcon
+              name="general-action-blue"
+              size="16" />
+            Fetching available clouds...
+          </div>
           <div className="deployment-choose-cloud__download twelve-col">
             <juju.components.SvgIcon
               height="30"
@@ -115,14 +119,15 @@ describe('DeploymentChooseCloud', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('can render with credentials', function() {
+  it('can render with credentials without clouds', function() {
+    jem.listClouds = cb => cb(null, []);
     var pluralize = sinon.stub();
     pluralize.withArgs('service', sinon.match.any).returns('services');
     pluralize.withArgs('machine', sinon.match.any).returns('machine');
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentChooseCloud
         changeState={sinon.stub()}
-        clouds={clouds}
+        cloudData={clouds}
         jem={jem}
         setDeploymentInfo={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -154,19 +159,93 @@ describe('DeploymentChooseCloud', function() {
               Public clouds
             </h3>
           </div>
-          {undefined}
+          <div className="deployment-panel__notice twelve-col">
+            <juju.components.SvgIcon
+              name="general-action-blue"
+              size="16" />
+            Fetching available clouds...
+          </div>
+          <div className="deployment-choose-cloud__download twelve-col">
+            <juju.components.SvgIcon
+              height="30"
+              name="juju-logo"
+              width="75" />
+            Deploy manually using Juju to OpenStack, Vmware, MAAS, Joyent or
+            locally to your computer
+            <a className={'deployment-choose-cloud__download-button ' +
+              'button--inline-neutral'}
+              href="https://jujucharms.com/docs/stable/reference-releases"
+              target="_blank">
+              Download Juju
+            </a>
+          </div>
+        </juju.components.DeploymentPanelContent>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render without credentials and with clouds', function() {
+    jem.listTemplates = cb => cb(null, []);
+    var pluralize = sinon.stub();
+    pluralize.withArgs('service', sinon.match.any).returns('services');
+    pluralize.withArgs('machine', sinon.match.any).returns('machine');
+    var get = sinon.stub();
+    get.withArgs('name').returns('wordpress');
+    get.withArgs('icon').returns('wordpress.svg');
+    get.withArgs('id').returns('wordpress1');
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentChooseCloud
+        changeState={sinon.stub()}
+        cloudData={clouds}
+        jem={jem}
+        setDeploymentInfo={sinon.stub()} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="deployment-panel__child">
+        <juju.components.DeploymentPanelContent
+          title="Choose cloud">
+          <div className="deployment-panel__notice twelve-col">
+            <juju.components.SvgIcon
+              name="general-action-blue"
+              size="16" />
+            Add a public cloud credential, and we can save it as an option
+            for later use
+          </div>
           <ul className="deployment-choose-cloud__list twelve-col">
             {[<li className="deployment-choose-cloud__cloud-option four-col "
-                key="aws"
-                onClick={output.props.children.props.children[2]
+              key="aws"
+              onClick={output.props.children.props.children[1]
                   .props.children[0].props.onClick}>
-                <span className="deployment-choose-cloud__cloud-option-image">
-                  <juju.components.SvgIcon
-                    height={clouds['aws'].svgHeight}
-                    name={clouds['aws'].id}
-                    width={clouds['aws'].svgWidth} />
-                </span>
-              </li>]}
+              <span className="deployment-choose-cloud__cloud-option-image">
+                <juju.components.SvgIcon
+                  height={clouds['aws'].svgHeight}
+                  name={clouds['aws'].id}
+                  width={clouds['aws'].svgWidth} />
+              </span>
+            </li>,
+            <li className="deployment-choose-cloud__cloud-option four-col "
+              key="azure"
+              onClick={output.props.children.props.children[1]
+                  .props.children[1].props.onClick}>
+              <span className="deployment-choose-cloud__cloud-option-image">
+                <juju.components.SvgIcon
+                  height={clouds['azure'].svgHeight}
+                  name={clouds['azure'].id}
+                  width={clouds['azure'].svgWidth} />
+              </span>
+            </li>,
+            <li className=
+                    "deployment-choose-cloud__cloud-option four-col last-col"
+              key="google"
+              onClick={output.props.children.props.children[1]
+                  .props.children[2].props.onClick}>
+              <span className="deployment-choose-cloud__cloud-option-image">
+                <juju.components.SvgIcon
+                  height={clouds['google'].svgHeight}
+                  name={clouds['google'].id}
+                  width={clouds['google'].svgWidth} />
+              </span>
+            </li>]}
           </ul>
           <div className="deployment-choose-cloud__download twelve-col">
             <juju.components.SvgIcon
@@ -193,7 +272,7 @@ describe('DeploymentChooseCloud', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentChooseCloud
         changeState={changeState}
-        clouds={clouds}
+        cloudData={clouds}
         jem={jem}
         setDeploymentInfo={setDeploymentInfo} />, true);
     var output = renderer.getRenderOutput();
@@ -217,15 +296,17 @@ describe('DeploymentChooseCloud', function() {
 
   it('can select a new cloud', function() {
     var changeState = sinon.stub();
+    var setDeploymentInfo = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentChooseCloud
         changeState={changeState}
-        clouds={clouds}
+        cloudData={clouds}
         jem={jem}
-        setDeploymentInfo={sinon.stub()} />, true);
+        setDeploymentInfo={setDeploymentInfo} />, true);
     var output = renderer.getRenderOutput();
-    output.props.children.props.children[2].props.children[0].props.onClick();
+    output.props.children.props.children[1].props.children[0].props.onClick();
     assert.equal(changeState.callCount, 1);
+    assert.deepEqual(setDeploymentInfo.args[0], ['cloud', 'aws']);
     assert.deepEqual(changeState.args[0][0], {
       sectionC: {
         component: 'deploy',
@@ -236,18 +317,4 @@ describe('DeploymentChooseCloud', function() {
     });
   });
 
-  it('handles errors gracefully', function() {
-    jem.listTemplates = (callback) => {
-      callback(true, null);
-    };
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentChooseCloud
-        changeState={sinon.stub()}
-        clouds={clouds}
-        jem={jem}
-        setDeploymentInfo={sinon.stub()} />, true);
-    var output = renderer.getRenderOutput();
-    var credentials = output.props.children.props.children[0];
-    assert.equal(credentials, undefined);
-  });
 });

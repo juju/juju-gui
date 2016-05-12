@@ -24,12 +24,28 @@ YUI.add('deployment-add-credentials', function() {
 
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
-      controller: React.PropTypes.string.isRequired,
       cloud: React.PropTypes.object.isRequired,
       jem: React.PropTypes.object.isRequired,
       setDeploymentInfo: React.PropTypes.func.isRequired,
       users: React.PropTypes.object.isRequired,
       validateForm: React.PropTypes.func.isRequired
+    },
+
+    getInitialState: function() {
+      return {
+        regions: []
+      };
+    },
+
+    componentWillMount: function() {
+      var props = this.props;
+      props.jem.listRegions(props.cloud.id, (error, regions) => {
+        if (error) {
+          console.error(error);
+          return;
+        }
+        this.setState({regions: regions});
+      });
     },
 
     /**
@@ -41,7 +57,6 @@ YUI.add('deployment-add-credentials', function() {
       var valid = this.props.validateForm([
         'templateAccessKey',
         'templateName',
-        'templateRegion',
         'templateSecretKey'
       ], this.refs);
       if (!valid) {
@@ -50,38 +65,40 @@ YUI.add('deployment-add-credentials', function() {
         return;
       }
       // Add template
-      var user = this.props.users.jem.user,
-          templateName = this.refs.templateName.getValue(),
-          template = {
-            // XXX The controllers need to exist first; for now use a known good
-            // controller with work to come to generate a controller name.
-            // Makyo 2016-03-30
-            'controller': this.props.controller,
-            'config': {
-              'access-key': this.refs.templateAccessKey.getValue(),
-              'secret-key': this.refs.templateSecretKey.getValue(),
-              // XXX This is a 'hack' to make Juju not complain about being
-              // able to find ssh keys.
-              'authorized-keys': 'fake'
+      var props = this.props;
+      var selectRegion = this.refs.selectRegion;
+      var region = selectRegion.options[selectRegion.selectedIndex].value;
+      var cloud = props.cloud.id;
+      var user = props.users.jem.user;
+      var templateName = this.refs.templateName.getValue();
+      var template = {
+        location: { region, cloud },
+        config: {
+          'access-key': this.refs.templateAccessKey.getValue(),
+          'secret-key': this.refs.templateSecretKey.getValue(),
+          // XXX This is a 'hack' to make Juju not complain about being
+          // able to find ssh keys.
+          'authorized-keys': 'fake'
+        }
+      };
+      props.jem.addTemplate(user, templateName, template, error => {
+        if (error) {
+          console.error('Unable to add template', error);
+        }
+        var setDeploymentInfo = props.setDeploymentInfo;
+        setDeploymentInfo('templateName',
+          [user, templateName].join('/'));
+        setDeploymentInfo('region', region);
+        setDeploymentInfo('template', template);
+        props.changeState({
+          sectionC: {
+            component: 'deploy',
+            metadata: {
+              activeComponent: 'summary'
             }
-          };
-      this.props.jem.addTemplate(
-        user, templateName, template, error => {
-          if (error) {
-            console.error('Unable to add template', error);
           }
-          this.props.setDeploymentInfo('templateName',
-            [user, templateName].join('/'));
-          this.props.setDeploymentInfo('template', template);
-          this.props.changeState({
-            sectionC: {
-              component: 'deploy',
-              metadata: {
-                activeComponent: 'summary'
-              }
-            }
-          });
         });
+      });
     },
 
     /**
@@ -140,7 +157,7 @@ YUI.add('deployment-add-credentials', function() {
                 }]} />
             </div>);
           break;
-        case 'gcp':
+        case 'google':
           return (
             <div className="twelve-col">
               <p className="deployment-add-credentials__p six-col last-col">
@@ -190,6 +207,30 @@ YUI.add('deployment-add-credentials', function() {
       }
     },
 
+    /**
+      Generate the list of Regions.
+
+      @method _generateRegionList
+      @returns {Object} The list of regions in a select.
+    */
+    _generateRegionList: function() {
+      var regions = this.state.regions;
+      var options = null;
+      var defaultMessage = 'Loading available regions';
+      if (regions.length > 0) {
+        defaultMessage = 'Choose a region';
+        options = [];
+        regions.forEach(region => {
+          options.push(<option key={region} value={region}>{region}</option>);
+        });
+      }
+      return (
+        <select ref="selectRegion">
+          <option>{defaultMessage}</option>
+          {options}
+        </select>);
+    },
+
     render: function() {
       var cloud = this.props.cloud;
       var title = cloud.title;
@@ -203,7 +244,7 @@ YUI.add('deployment-add-credentials', function() {
         disabled: cloud.id !== 'aws',
         type: 'inline-positive'
       }];
-      var credentialName = cloud.id === 'gcp' ?
+      var credentialName = cloud.id === 'google' ?
         'Project ID (credential name)' : 'Credential name';
       return (
         <div className="deployment-panel__child">
@@ -241,15 +282,7 @@ YUI.add('deployment-add-credentials', function() {
                       'letters, numbers, and hyphens. It must not start or ' +
                       'end with a hyphen.'
                   }]} />
-                <juju.components.DeploymentInput
-                  label="Region"
-                  placeholder="us-central1"
-                  required={true}
-                  ref="templateRegion"
-                  validate={[{
-                    regex: /\S+/,
-                    error: 'This field is required.'
-                  }]} />
+                {this._generateRegionList()}
               </div>
               <div className="deployment-panel__notice six-col last-col">
                 <p className="deployment-panel__notice-content">

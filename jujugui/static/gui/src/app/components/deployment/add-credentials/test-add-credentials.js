@@ -38,7 +38,8 @@ describe('DeploymentAddCredentials', function() {
       }
     };
     jem = {
-      addTemplate: sinon.stub()
+      addTemplate: sinon.stub(),
+      listRegions: (cloud, cb) => cb(null, ['us-east-1'])
     };
     clouds = {
       aws: {
@@ -49,8 +50,8 @@ describe('DeploymentAddCredentials', function() {
         svgWidth: 120,
         title: 'Amazon Web Services'
       },
-      gcp: {
-        id: 'gcp',
+      google: {
+        id: 'google',
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',
         svgHeight: 33,
         svgWidth: 256,
@@ -73,13 +74,13 @@ describe('DeploymentAddCredentials', function() {
         validate: sinon.stub().returns(true),
         getValue: sinon.stub().returns('templateName')
       },
-      templateRegion: {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('templateRegion')
-      },
       templateSecretKey: {
         validate: sinon.stub().returns(true),
         getValue: sinon.stub().returns('templateSecretKey')
+      },
+      selectRegion: {
+        selectedIndex: 0,
+        options: [{value:'us-east-1'}]
       }
     };
   });
@@ -143,15 +144,10 @@ describe('DeploymentAddCredentials', function() {
                     'letters, numbers, and hyphens. It must not start or ' +
                     'end with a hyphen.'
                 }]} />
-              <juju.components.DeploymentInput
-                label="Region"
-                placeholder="us-central1"
-                required={true}
-                ref="templateRegion"
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />
+              <select ref="selectRegion">
+                <option>Choose a region</option>
+                {[<option key="us-east-1" value="us-east-1">us-east-1</option>]}
+              </select>
             </div>
             <div className="deployment-panel__notice six-col last-col">
               <p className="deployment-panel__notice-content">
@@ -204,8 +200,8 @@ describe('DeploymentAddCredentials', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('can render for gcp', function() {
-    var cloud = clouds['gcp'];
+  it('can render for google', function() {
+    var cloud = clouds['google'];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentAddCredentials
         changeState={sinon.stub()}
@@ -263,15 +259,10 @@ describe('DeploymentAddCredentials', function() {
                     'letters, numbers, and hyphens. It must not start or ' +
                     'end with a hyphen.'
                 }]} />
-              <juju.components.DeploymentInput
-                label="Region"
-                placeholder="us-central1"
-                required={true}
-                ref="templateRegion"
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />
+              <select ref="selectRegion">
+                <option>Choose a region</option>
+                {[<option key="us-east-1" value="us-east-1">us-east-1</option>]}
+              </select>
             </div>
             <div className="deployment-panel__notice six-col last-col">
               <p className="deployment-panel__notice-content">
@@ -379,15 +370,10 @@ describe('DeploymentAddCredentials', function() {
                     'letters, numbers, and hyphens. It must not start or ' +
                     'end with a hyphen.'
                 }]} />
-              <juju.components.DeploymentInput
-                label="Region"
-                placeholder="us-central1"
-                required={true}
-                ref="templateRegion"
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />
+              <select ref="selectRegion">
+                <option>Choose a region</option>
+                {[<option key="us-east-1" value="us-east-1">us-east-1</option>]}
+              </select>
             </div>
             <div className="deployment-panel__notice six-col last-col">
               <p className="deployment-panel__notice-content">
@@ -425,7 +411,31 @@ describe('DeploymentAddCredentials', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('shows loading message while requesting regions', function() {
+    var cloud = clouds['aws'];
+    jem.listRegions = (c, cb) => cb(null, []);
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentAddCredentials
+        changeState={sinon.stub()}
+        controller="my-controller"
+        cloud={cloud}
+        jem={jem}
+        setDeploymentInfo={sinon.stub()}
+        users={users} />, true);
+    var output = renderer.getRenderOutput();
+    var props = output.props;
+    var emptySelect = (
+      <select ref="selectRegion">
+        <option>Loading available regions</option>
+        {null}
+      </select>);
+    assert.deepEqual(
+      props.children[0].props.children[2].props.children[0].props.children[1],
+      emptySelect);
+  });
+
   it('can add the credentials', function() {
+    jem.listControllers = cb => cb(null, ['my-controller']);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentAddCredentials
         changeState={sinon.stub()}

@@ -24,14 +24,15 @@ YUI.add('deployment-choose-cloud', function() {
 
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
-      clouds: React.PropTypes.object.isRequired,
+      cloudData: React.PropTypes.object.isRequired,
       jem: React.PropTypes.object.isRequired,
       setDeploymentInfo: React.PropTypes.func.isRequired
     },
 
     getInitialState: function() {
       return {
-        credentials: []
+        credentials: [],
+        clouds: []
       };
     },
 
@@ -46,6 +47,13 @@ YUI.add('deployment-choose-cloud', function() {
         }
         this.setState({credentials: credentials});
       });
+      this.props.jem.listClouds((error, clouds) => {
+        if (error) {
+          console.error('Unable to list clouds', error);
+          return;
+        }
+        this.setState({clouds: clouds});
+      });
     },
 
     /**
@@ -55,9 +63,6 @@ YUI.add('deployment-choose-cloud', function() {
     */
     _generateCredentials: function() {
       var credentials = this.state.credentials;
-      if (!credentials || credentials.length === 0) {
-        return;
-      }
       var components = [];
       credentials.forEach((credential, i) => {
         var path = credential.path;
@@ -101,14 +106,17 @@ YUI.add('deployment-choose-cloud', function() {
     /**
       Generate a list of cloud options.
 
-      @method _generateChangeItems
+      @method _generateCloudOptions
       @returns {Array} The collection of changes.
     */
-    _generateOptions: function() {
+    _generateCloudOptions: function() {
       var components = [];
-      var clouds = this.props.clouds;
-      Object.keys(clouds).forEach(function(cloud, i) {
-        var option = clouds[cloud];
+      // XXX This is commented out here only for the DEMO and should be
+      // removedshortly thereafter so we only display the clouds which we
+      // have controllers for.
+      //this.state.clouds.forEach((cloud, i) => {
+      ['aws', 'azure', 'google'].forEach((cloud, i) => {
+        var option = this.props.cloudData[cloud];
         var lastCol = i % 3 === 2 ? 'last-col' : '';
         var className = 'deployment-choose-cloud__cloud-option four-col ' +
           lastCol;
@@ -123,8 +131,27 @@ YUI.add('deployment-choose-cloud', function() {
                 width={option.svgWidth} />
             </span>
           </li>);
-      }, this);
-      return components;
+      });
+      return (
+        <ul className="deployment-choose-cloud__list twelve-col">
+          {components}
+        </ul>);
+    },
+
+    /**
+      Generate the onboarding message for loading the available clouds.
+
+      @method _generateCloudOnboarding
+      @returns {Object} The onboarding message.
+    */
+    _generateCloudOnboarding: function() {
+      return (
+        <div className="deployment-panel__notice twelve-col">
+          <juju.components.SvgIcon
+            name="general-action-blue"
+            size="16" />
+          Fetching available clouds...
+        </div>);
     },
 
     /**
@@ -133,6 +160,7 @@ YUI.add('deployment-choose-cloud', function() {
       @method _handleCloudClick
     */
     _handleCloudClick: function(id) {
+      this.props.setDeploymentInfo('cloud', id);
       this.props.changeState({
         sectionC: {
           component: 'deploy',
@@ -163,13 +191,9 @@ YUI.add('deployment-choose-cloud', function() {
     /**
       Generate the onboarding if there are no credentials.
 
-      @method _generateOnboarding
+      @method _generateCredentialsOnboarding
     */
-    _generateOnboarding: function() {
-      var credentials = this.state.credentials;
-      if (credentials && credentials.length > 0) {
-        return;
-      }
+    _generateCredentialsOnboarding: function() {
       return (
         <div className="deployment-panel__notice twelve-col">
           <juju.components.SvgIcon
@@ -181,17 +205,20 @@ YUI.add('deployment-choose-cloud', function() {
     },
 
     render: function() {
-      var title = this.state.credentials.length === 0 ?
+      var credentialsLength = this.state.credentials.length;
+      var cloudsLength = this.state.clouds.length;
+      var title = credentialsLength === 0 ?
         'Choose cloud' : 'Choose cloud or saved credential';
       return (
         <div className="deployment-panel__child">
           <juju.components.DeploymentPanelContent
             title={title}>
-            {this._generateCredentials()}
-            {this._generateOnboarding()}
-            <ul className="deployment-choose-cloud__list twelve-col">
-              {this._generateOptions()}
-            </ul>
+            {(credentialsLength) ?
+              this._generateCredentials() :
+              this._generateCredentialsOnboarding()}
+            {(cloudsLength) ?
+              this._generateCloudOptions() :
+              this._generateCloudOnboarding()}
             <div className="deployment-choose-cloud__download twelve-col">
               <juju.components.SvgIcon
                 height="30"

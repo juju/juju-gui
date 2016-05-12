@@ -33,7 +33,6 @@ YUI.add('deployment-summary', function() {
       autoPlaceUnits: React.PropTypes.func.isRequired,
       changeDescriptions: React.PropTypes.array.isRequired,
       changeState: React.PropTypes.func.isRequired,
-      controller: React.PropTypes.string.isRequired,
       ecsClear: React.PropTypes.func.isRequired,
       ecsCommit: React.PropTypes.func.isRequired,
       getUnplacedUnitCount: React.PropTypes.func.isRequired,
@@ -113,14 +112,6 @@ YUI.add('deployment-summary', function() {
       @method _handleDeploy
     */
     _handleDeploy: function() {
-      var valid = this.props.validateForm([
-        'modelName',
-        'templateRegion'
-      ], this.refs);
-      if (!valid) {
-        // If there are any form validation errors then stop the deploy.
-        return;
-      }
       // For now every commit will autoplace all units.
       this.props.autoPlaceUnits();
       // If we're in a model which exists then just commit the ecs and return.
@@ -130,12 +121,22 @@ YUI.add('deployment-summary', function() {
         this._close();
         return;
       }
+      // Validate both fields if we are creating a new model
+      if (!this.props.validateForm([
+        'modelName',
+        'templateRegion'
+      ], this.refs)) { return; }
+
+      var deploymentStorage = this.props.deploymentStorage;
       this.props.jem.newModel(
         this.props.users.jem.user,
         this.refs.modelName.getValue(),
-        this.props.deploymentStorage.templateName,
-        null, // TODO frankban: use a location here.
-        this.props.controller, // TODO frankban: remove the controller here.
+        deploymentStorage.templateName,
+        {
+          cloud: deploymentStorage.cloud,
+          region: deploymentStorage.region
+        },
+        null, // Controller, using the location argument instead.
         (error, data) => {
           if (error) throw error;
           var pathParts = data.hostPorts[0].split(':');
@@ -349,6 +350,8 @@ YUI.add('deployment-summary', function() {
           <juju.components.DeploymentPanelContent
             title="Review deployment">
             <form className="six-col last-col">
+            { !!modelCommitted ?
+              this.props.modelName :
               <juju.components.DeploymentInput
                 disabled={!!modelCommitted}
                 label="Model name"
@@ -364,7 +367,7 @@ YUI.add('deployment-summary', function() {
                     'letters, numbers, and hyphens. It must not start or ' +
                     'end with a hyphen.'
                 }]}
-                value={this.props.modelName} />
+                value={this.props.modelName} />}
             </form>
             {this._generateCredential()}
             {this._generateTitle()}
