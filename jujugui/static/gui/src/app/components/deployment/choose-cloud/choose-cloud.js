@@ -147,10 +147,12 @@ YUI.add('deployment-choose-cloud', function() {
     _generateCloudOnboarding: function() {
       return (
         <div className="deployment-panel__notice twelve-col">
-          <juju.components.SvgIcon
-            name="general-action-blue"
-            size="16" />
-          Fetching available clouds...
+          <p className="deployment-panel__notice-content">
+            <juju.components.SvgIcon
+              name="general-action-blue"
+              size="16" />
+            Fetching available clouds...
+          </p>
         </div>);
     },
 
@@ -196,11 +198,13 @@ YUI.add('deployment-choose-cloud', function() {
     _generateCredentialsOnboarding: function() {
       return (
         <div className="deployment-panel__notice twelve-col">
-          <juju.components.SvgIcon
-            name="general-action-blue"
-            size="16" />
-          Add a public cloud credential, and we can save it as an option
-          for later use
+          <p className="deployment-panel__notice-content">
+            <juju.components.SvgIcon
+              name="general-action-blue"
+              size="16" />
+            Add a public cloud credential, and we can save it as an option
+            for later use
+          </p>
         </div>);
     },
 
