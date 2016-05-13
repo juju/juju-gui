@@ -72,6 +72,7 @@
 }
 
 .panel-component.confirmation-popup {
+    position: fixed;
     z-index: index($z-indexed-elements, confirmation-popup);
     top: 0;
     bottom: 0;
