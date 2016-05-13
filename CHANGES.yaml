@@ -1,3 +1,91 @@
+- 2.1.3:
+    - Choose controller by the cloud and region
+    - Connect when gisf and not using a sandbox model.
+    - Fix deployed commit summary
+    - Move notification list up in z-index.
+    - Fix entity file links.
+    - Deployment form validation
+    - Fix display of login buttons.
+    - Handle zero templates
+    - Fix some rendering issues with the header and profile
+    - Handle webhandler errors
+    - Give series move room on search results
+    - WSGI app: remove API path leftovers.
+    - Fixed duplicate tag ids
+    - Improve socket template handling.
+    - Added inspector relation details view
+    - Implement macaroon authentication.
+    - Implement missing, location related, JEM client API calls.
+    - Set UUID on model create
+    - Fix logout when disconnected
+    - Disconnected flag
+    - Update static urls
+    - Add series to the search results.
+    - Update sysdeps for xenial
+    - Moved the import and export buttons to the top of the canvas
+    - Allow models to be destroyed
+    - Avoid duplicating cookies, use localStorage when possible
+    - Updated juju.js jem commands and tests for v2.
+    - Update styling for environment switcher
+    - Get Vanilla assets to load locally
+    - Update search style in masthead
+    - Set the model names correctly
+    - Deployment flow updates again
+    - Replace calls to listEnvs with listModelsWithInfo.
+    - Add Xenial to list of supported series.
+    - Restyle the services/machines switcher
+    - Do not re-open deployment flow after initial commit
+    - Allow switching to a model from the unconnected state.
+    - Only commit changes when in existing model with gisf
+    - Mobile spike
+    - Create a new model from the profile page.
+    - Improve env layer handling of models.
+    - Saner lint and test targets.
+    - Allow for three digit unit counts.
+    - Allow credentials to be deleted
+    - Update the link to the demo in the README
+    - Save jem user after listing models on load
+    - Get deployment flow back up and running
+    - Add account page
+    - Apply cloud vanilla theme
+    - The breadcrumb should be shown in gisf mode
+    - Added credentials forms for more clouds.
+    - Use LXD with Juju 2.0
+    - Hook up the model name field to the deploy command
+    - Add service icon to unit inspector header.
+    - Implement the ModelManager.ModelInfo client API call.
+- 2.1.2:
+    - Set the base asset path in the GUI to match Juju 2
+    - Provide defaults when model information is missing.
+    - Fix env switcher layout in Firefox.
+    - Update config.js.go for new staticURL and fix broken paths
+    - Combine the two deploy buttons into one
+    - Add assets staticURL
+    - Change profile link to use a click handler.
+    - Mention staticURL in GUI in Juju docs.
+    - Style the deployment form inputs to appear like the latest designs
+    - Fix the buttons on the model switcher
+    - Don't try and display the env name when logging in.
+    - Updates to the deployment flow to match the latest designs
+    - Skip connecting to a model on load
+    - Index templates: collect JavaScript errors.
+    - UI cleanups and fixes
+    - Add more prop types
+    - Inspector updates
+    - Store templates in JEM
+    - Handle differences between JEM and JES models.
+    - List templates in the deployment flow via the API.
+    - Add macaroons to config if provided
+    - Add commit flow
+    - Add listTemplates API call to juju.js.
+    - Fix react registration problem in embedded GUI.
+    - Add choose cloud and add credentials deploy steps
+    - Fix Makefile typo
+    - Update and standardise buttons and links
+    - Add panel component for deployment flow
+    - Remove related charms from entity data request.
+    - Remove hardcoded charmstore URL.
+    - Wrap test logic around rendering the breadcrumb.
 - 2.1.1:
     - Add support for new Juju 2.0 unit info delta structure.
     - Confirm switching models if there are uncommitted changes to the model.
