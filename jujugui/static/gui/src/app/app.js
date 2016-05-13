@@ -774,10 +774,10 @@ YUI.add('juju-gui', function(Y) {
       // nextProps on the lifecycle methods.
       ReactDOM.render(
         <window.juju.components.UserProfile
-          addNotification={this.db.notifications.add.bind(this)}
+          addNotification={
+            this.db.notifications.add.bind(this.db.notifications)}
           canCreateNew={this.env.get('connected')}
           currentModel={this.get('jujuEnvUUID')}
-          destroyModel={this.env.destroyModel.bind(this.env)}
           env={this.env}
           jem={this.jem}
           gisf={this.get('gisf')}
@@ -1188,7 +1188,8 @@ YUI.add('juju-gui', function(Y) {
           appState={state.get('current')}
           changeState={this.changeState.bind(this)}
           utils={utils}
-          addNotification={this.db.notifications.add.bind(this)}
+          addNotification={
+            this.db.notifications.add.bind(this.db.notifications)}
           makeEntityModel={Y.juju.makeEntityModel} />,
         document.getElementById('charmbrowser-container'));
     },
@@ -1966,11 +1967,14 @@ YUI.add('juju-gui', function(Y) {
       @param {String} socketUrl The URL for the environment's websocket.
       @param {String} username The username for the new environment.
       @param {String} password The password for the new environment.
+      @param {Function} callback A callback to be called after the env has been
+        switched and logged into.
       @param {Boolean} reconnect Whether to reconnect to a new environment; by
                                  default, if the socketUrl is set, we assume we
                                  want to reconnect to the provided URL.
     */
-    switchEnv: function(socketUrl, username, password, reconnect=!!socketUrl) {
+    switchEnv: function(
+      socketUrl, username, password, callback, reconnect=!!socketUrl) {
       if (this.get('sandbox')) {
         console.log('switching models is not supported in sandbox');
       }
@@ -1983,6 +1987,15 @@ YUI.add('juju-gui', function(Y) {
           password: password
         });
       };
+      if (callback) {
+        var onLogin = function(callback) {
+          callback(this.env);
+        };
+        // Delay the callback until after the env login as everything should be
+        // set up by then.
+        this.env.onceAfter(
+          'login', onLogin.bind(this, callback), this);
+      }
       // Tell the environment to use the new socket URL when reconnecting.
       this.env.set('socket_url', socketUrl);
       // Clear uncommitted state.

@@ -1918,9 +1918,12 @@ YUI.add('juju-view-utils', function(Y) {
     @param {String} uuid A model UUID.
     @param {Array} modelList A list of models.
     @param {String} name A model name.
+    @param {Function} callback The function to be called once the model has
+      been switched and logged into. Takes the following parameters:
+      {Object} env The env that has been switched to.
   */
   utils.switchModel = function(
-    createSocketURL, switchEnv, env, uuid, modelList, name) {
+    createSocketURL, switchEnv, env, uuid, modelList, name, callback) {
     // Update the model name. The onEnvironmentNameChange in app.js method will
     // update the name correctly accross components.
     env.set('environmentName', name);
@@ -1945,10 +1948,10 @@ YUI.add('juju-view-utils', function(Y) {
         console.log('No user credentials for model: ', uuid);
       }
       var socketUrl = createSocketURL(uuid, address, port);
-      switchEnv(socketUrl, username, password);
+      switchEnv(socketUrl, username, password, callback);
     } else {
       // Just reset without reconnecting to an env.
-      switchEnv();
+      switchEnv(null, null, null, callback);
     }
   };
 

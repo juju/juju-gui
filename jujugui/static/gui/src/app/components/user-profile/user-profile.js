@@ -27,7 +27,6 @@ YUI.add('user-profile', function() {
       addNotification: React.PropTypes.func.isRequired,
       canCreateNew: React.PropTypes.bool.isRequired,
       changeState: React.PropTypes.func.isRequired,
-      destroyModel: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
       env: React.PropTypes.object.isRequired,
@@ -146,7 +145,7 @@ YUI.add('user-profile', function() {
       // We need to coerce error types returned by JES vs JEM into one error.
       var err = data.err || error;
       if (err) {
-        console.log(err);
+        console.error(err);
         return;
       }
       // data.models is only populated by Juju controllers, when using JEM
@@ -236,12 +235,15 @@ YUI.add('user-profile', function() {
       @method switchModel
       @param {String} uuid The model UUID.
       @param {String} name The model name.
+      @param {Function} callback The function to be called once the model has
+        been switched and logged into. Takes the following parameters:
+        {Object} env The env that has been switched to.
     */
-    switchModel: function(uuid, name) {
+    switchModel: function(uuid, name, callback) {
       var props = this.props;
       props.showConnectingMask();
       this.close();
-      props.switchModel(uuid, this.state.envList, name);
+      props.switchModel(uuid, this.state.envList, name, callback);
     },
 
     close: function() {
@@ -300,10 +302,6 @@ YUI.add('user-profile', function() {
           entity={model}
           expanded={isCurrent}
           key={uuid}
-          // TODO huwshimi 2 May 2016: This will need to be updated to allow
-          // disconnected models to be destroyed as well (e.g. clicking destroy
-          // would switch to the model and then call destroyModel.)
-          showDestroy={isCurrent}
           displayConfirmation={this._displayConfirmation.bind(this, model)}
           switchModel={this.switchModel}
           type="model">
@@ -670,14 +668,36 @@ YUI.add('user-profile', function() {
     },
 
     /**
+      Handle the destroy model button being clicked.
+
+      @method _handleDestroyModel
+    */
+    _handleDestroyModel: function() {
+      var model = this.state.destroyModel;
+      var uuid = model.uuid;
+      // Hide the confirmation popup.
+      this._displayConfirmation(null);
+      // If the model to be distroyed is active then we can destroy it
+      // immediately.
+      if (uuid === this.props.currentModel) {
+        this._destroyModel(this.props.env);
+      } else {
+        // Switch to the selected model, then destroy it.
+        // TODO: investigate how to handle situations where the
+        // switchModel/switchEnv fails and so the callback to destroy the model
+        // is never called.
+        this.switchModel(uuid, model.name, this._destroyModel);
+      }
+    },
+
+    /**
       Destroy a model.
 
       @method _destroyModel
-      @return {Object} The confirmation component.
+      @param {Object} env The current env.
     */
-    _destroyModel: function() {
-      this._displayConfirmation(null);
-      this.props.destroyModel((error) => {
+    _destroyModel: function(env) {
+      env.destroyModel((error) => {
         if (error) {
           this.props.addNotification({
             title: 'Model destruction failed',
@@ -686,6 +706,11 @@ YUI.add('user-profile', function() {
           });
           return;
         }
+        this.props.addNotification({
+          title: 'Model destroyed',
+          message: 'The model is currently being destroyed.',
+          level: 'important'
+        });
         this.switchModel(null, null);
       });
     },
@@ -707,7 +732,7 @@ YUI.add('user-profile', function() {
         type: 'base'
       }, {
         title: 'Destroy',
-        action: this._destroyModel,
+        action: this._handleDestroyModel,
         type: 'destructive'
       }];
       var name = model.name.split('/')[1];
