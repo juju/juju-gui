@@ -88,17 +88,21 @@ describe('DeploymentChooseCloud', function() {
         <juju.components.DeploymentPanelContent
           title="Choose cloud">
           <div className="deployment-panel__notice twelve-col">
-            <juju.components.SvgIcon
-              name="general-action-blue"
-              size="16" />
-            Add a public cloud credential, and we can save it as an option
-            for later use
+            <p className="deployment-panel__notice-content">
+              <juju.components.SvgIcon
+                name="general-action-blue"
+                size="16" />
+              Add a public cloud credential, and we can save it as an option
+              for later use
+            </p>
           </div>
           <div className="deployment-panel__notice twelve-col">
-            <juju.components.SvgIcon
-              name="general-action-blue"
-              size="16" />
-            Fetching available clouds...
+            <p className="deployment-panel__notice-content">
+              <juju.components.SvgIcon
+                name="general-action-blue"
+                size="16" />
+              Fetching available clouds...
+            </p>
           </div>
           <div className="deployment-choose-cloud__download twelve-col">
             <juju.components.SvgIcon
@@ -160,10 +164,12 @@ describe('DeploymentChooseCloud', function() {
             </h3>
           </div>
           <div className="deployment-panel__notice twelve-col">
-            <juju.components.SvgIcon
-              name="general-action-blue"
-              size="16" />
-            Fetching available clouds...
+            <p className="deployment-panel__notice-content">
+              <juju.components.SvgIcon
+                name="general-action-blue"
+                size="16" />
+              Fetching available clouds...
+              </p>
           </div>
           <div className="deployment-choose-cloud__download twelve-col">
             <juju.components.SvgIcon
@@ -205,11 +211,13 @@ describe('DeploymentChooseCloud', function() {
         <juju.components.DeploymentPanelContent
           title="Choose cloud">
           <div className="deployment-panel__notice twelve-col">
-            <juju.components.SvgIcon
-              name="general-action-blue"
-              size="16" />
-            Add a public cloud credential, and we can save it as an option
-            for later use
+            <p className="deployment-panel__notice-content">
+              <juju.components.SvgIcon
+                name="general-action-blue"
+                size="16" />
+              Add a public cloud credential, and we can save it as an option
+              for later use
+            </p>
           </div>
           <ul className="deployment-choose-cloud__list twelve-col">
             {[<li className="deployment-choose-cloud__cloud-option four-col "
