@@ -105,6 +105,10 @@
   }
 
   // Machine view
+  .machine-view {
+    z-index: index($z-indexed-elements, inspector-view);
+  }
+
   .machine-view__content {
     display: block;
     top: $navbar-height * 2;
