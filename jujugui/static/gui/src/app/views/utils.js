@@ -1919,7 +1919,8 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Array} modelList A list of models.
     @param {String} name A model name.
     @param {Function} callback The function to be called once the model has
-      been switched to.
+      been switched and logged into. Takes the following parameters:
+      {Object} env The env that has been switched to.
   */
   utils.switchModel = function(
     createSocketURL, switchEnv, env, uuid, modelList, name, callback) {

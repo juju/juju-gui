@@ -878,10 +878,11 @@ describe('UserProfile', () => {
   });
 
   it('can destroy a model', () => {
+    var addNotification = sinon.stub();
     var switchModel = sinon.stub();
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         users={users}
         canCreateNew={true}
         charmstore={charmstore}
@@ -907,6 +908,12 @@ describe('UserProfile', () => {
     output = component.getRenderOutput();
     // The confirmation should now be hidden.
     assert.isUndefined(output.props.children[1]);
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Model destroyed',
+      message: 'The model is currently being destroyed.',
+      level: 'important'
+    });
   });
 
   it('can destroy a model that is not the current one', () => {

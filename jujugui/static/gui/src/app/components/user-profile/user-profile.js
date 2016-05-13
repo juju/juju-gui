@@ -236,7 +236,8 @@ YUI.add('user-profile', function() {
       @param {String} uuid The model UUID.
       @param {String} name The model name.
       @param {Function} callback The function to be called once the model has
-        been switched to.
+        been switched and logged into. Takes the following parameters:
+        {Object} env The env that has been switched to.
     */
     switchModel: function(uuid, name, callback) {
       var props = this.props;
@@ -682,6 +683,9 @@ YUI.add('user-profile', function() {
         this._destroyModel(this.props.env);
       } else {
         // Switch to the selected model, then destroy it.
+        // TODO: investigate how to handle situations where the
+        // switchModel/switchEnv fails and so the callback to destroy the model
+        // is never called.
         this.switchModel(uuid, model.name, this._destroyModel);
       }
     },
@@ -702,6 +706,11 @@ YUI.add('user-profile', function() {
           });
           return;
         }
+        this.props.addNotification({
+          title: 'Model destroyed',
+          message: 'The model is currently being destroyed.',
+          level: 'important'
+        });
         this.switchModel(null, null);
       });
     },
