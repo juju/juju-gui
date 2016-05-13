@@ -417,7 +417,7 @@ YUI.add('user-profile', function() {
       }
       var cs = this.props.charmstore;
       var path = id.replace('cs:', '');
-      return `${cs.url}${cs.version}/${path}/icon.svg`;
+      return `${cs.url}/${path}/icon.svg`;
     },
 
     /**
