@@ -49,8 +49,7 @@ describe('UserProfile', () => {
       1, null, bundles);
     charmstore = {
       list: list,
-      version: '9',
-      url: 'example.com/'
+      url: 'example.com/9'
     };
     users = {charmstore: {
       user: 'test-owner',
