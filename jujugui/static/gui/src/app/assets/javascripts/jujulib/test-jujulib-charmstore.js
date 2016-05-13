@@ -479,4 +479,13 @@ describe('jujulib charmstore', function() {
           {target: { responseText: '[notvalidjson]'}});
     });
   });
+
+  describe('getEntity', function() {
+    it('strips cs from bundle IDs', function() {
+      charmstore.getEntity('cs:foobar', sinon.stub());
+      var path = charmstore.bakery.sendGetRequest.lastCall.args[0];
+      assert.equal(path.indexOf('cs:'), -1,
+                   'The string "cs:" should not be found in the path');
+    });
+  });
 });

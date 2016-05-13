@@ -655,6 +655,8 @@ var module = module;
           parameter and the response data as its second.
     */
     getEntity: function(entityId, callback) {
+      // Make sure we strip the ID of any extraneous strings.
+      entityId = entityId.replace('cs:', '');
       var filters = 'include=bundle-metadata&include=charm-metadata' +
                     '&include=charm-config&include=manifest&include=stats' +
                     '&include=extra-info&include=tags';
