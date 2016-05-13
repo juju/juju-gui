@@ -134,7 +134,15 @@ YUI.add('search-results', function(Y) {
           normalResults = [];
       results.forEach(function(obj) {
         // Pass in a full id including the owner to allow looking up the entity.
-        obj.storeId = '~' + obj.owner + '/' + obj.id;
+        var ownerPath = `~${obj.owner}`,
+            storeId = obj.storeId;
+        if (!storeId || storeId.indexOf(ownerPath) < 0) {
+          if (obj.id.indexOf(ownerPath) < 0) {
+            obj.storeId = `${ownerPath}/${obj.id}`;
+          } else {
+            obj.storeId = obj.id;
+          }
+        }
         if (obj.promulgated) {
           promulgatedResults.push(obj);
         } else {
