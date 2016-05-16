@@ -2,9 +2,10 @@
     clear: both;
     padding: 60px;
     background-color: $canvas-background;
-    box-shadow: inset 0px -1px 3px 0px rgba(0,0,0,0.35);
+    // Unfortunately this needs to use !important to override the .row and
+    // .row--grey styles.
+    border-bottom: 1px solid #cdcdcd !important;
     text-align: center;
-    border-bottom: 0;
 
     &-image {
         height: 350px;

@@ -26,11 +26,7 @@
   input[type="text"],
   input[type="number"],
   input[type="password"] {
-      padding: 5px 10px;
-      background-color: #fff;
-      border: 1px solid $mid-grey;
-      border-radius: $border-radius;
-      font-weight: 300;
+        @extend %input;
   }
 
   input[type=number]::-webkit-inner-spin-button,

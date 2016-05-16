@@ -19,7 +19,7 @@
         vertical-align: bottom;
     }
 
-    &-unit-input {
+    &-unit-input[type="number"] {
         float: right;
         width: 35px;
         margin-top: -2px;
