@@ -1389,8 +1389,14 @@ YUI.add('juju-gui', function(Y) {
           this.storeUser('jem', null, true);
         }
 
-        var modelData = this._pickModel(modelList);
         this.set('environmentList', modelList);
+        if (modelList.length === 0) {
+          var socketUrl = this.createSocketURL(this.get('jujuEnvUUID'));
+          callback.call(
+            this, socketUrl, this.get('user'), this.get('password'));
+          return;
+        }
+        var modelData = this._pickModel(modelList);
 
         // XXX frankban: we should try to connect to all the addresses in
         // parallel instead of assuming private addresses must be excluded.
