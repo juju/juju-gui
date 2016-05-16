@@ -136,7 +136,8 @@ YUI.add('search-results', function(Y) {
         // Pass in a full id including the owner to allow looking up the entity.
         var ownerPath = `~${obj.owner}`,
             storeId = obj.storeId;
-        // If the store ID is not set, or if it does not already have the owner...
+        // If the store ID is not set, or if it does not already have the
+        // owner...
         if (!storeId || storeId.indexOf(ownerPath) < 0) {
           // And if the ID does not also have an owner...
           if (obj.id.indexOf(ownerPath) < 0) {
