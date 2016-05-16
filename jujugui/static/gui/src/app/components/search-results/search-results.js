@@ -138,7 +138,8 @@ YUI.add('search-results', function(Y) {
             storeId = obj.storeId;
         if (!storeId || storeId.indexOf(ownerPath) < 0) {
           if (obj.id.indexOf(ownerPath) < 0) {
-            obj.storeId = `${ownerPath}/${obj.id}`;
+            var strippedId = obj.id.replace('cs:', '');
+            obj.storeId = `cs:${ownerPath}/${strippedId}`;
           } else {
             obj.storeId = obj.id;
           }
