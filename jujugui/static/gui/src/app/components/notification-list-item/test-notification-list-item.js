@@ -43,11 +43,11 @@ describe('NotificationListItem', function() {
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
     var expected = (
-      <li className={classes}
-        onClick={instance.hide}>
+      <li className={classes}>
         <span>{message}</span>
         <span tabIndex="0" role="button"
-          className="notification-list-item__hide">
+          className="notification-list-item__hide"
+          onClick={instance.hide}>
           <juju.components.SvgIcon name="close_16"
             size="16" />
         </span>
@@ -88,7 +88,8 @@ describe('NotificationListItem', function() {
       element.classList.contains('notification-list-item--visible'));
     assert.isFalse(
       element.classList.contains('notification-list-item--hidden'));
-    testUtils.Simulate.click(element);
+    testUtils.Simulate.click(
+      element.querySelector('.notification-list-item__hide'));
     // After a click it should have the classes updated.
     assert.isFalse(
       element.classList.contains('notification-list-item--visible'));

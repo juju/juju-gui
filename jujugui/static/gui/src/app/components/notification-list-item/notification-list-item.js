@@ -73,10 +73,11 @@ YUI.add('notification-list-item', function() {
 
     render: function() {
       return (
-        <li className={this._generateClasses()} onClick={this.hide}>
+        <li className={this._generateClasses()}>
           <span>{this.props.message}</span>
           <span tabIndex="0" role="button"
-            className="notification-list-item__hide">
+            className="notification-list-item__hide"
+            onClick={this.hide}>
             <juju.components.SvgIcon name="close_16"
               size="16" />
           </span>
