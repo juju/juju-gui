@@ -5,7 +5,6 @@
     &__inner {
         display: flex;
         flex-direction: column;
-        height: 100%;
     }
 }
 
@@ -42,6 +41,10 @@
     z-index: index($z-indexed-elements, deployment-panel);
     border-radius: 0;
     box-shadow: none;
+
+    .panel-component__inner {
+        height: 100%;
+    }
 }
 
 .panel-component.deployment-bar-panel {
