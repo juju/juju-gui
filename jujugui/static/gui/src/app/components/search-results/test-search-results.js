@@ -663,10 +663,14 @@ describe('SearchResults', function() {
       searchResults.setState = setState;
       searchResults.searchCallback(null, rawResults);
       var actualResults = setState.getCall(1).args[0].data.promulgatedResults;
-      assert.deepEqual(actualResults[0].storeId, 'cs:~charmers/trusty/mysql-38');
-      assert.deepEqual(actualResults[1].storeId, 'cs:~stub/precise/postgresql-psql-9');
-      assert.deepEqual(actualResults[2].storeId, 'cs:~charmers/precise/nova-volume-6');
-      assert.deepEqual(actualResults[3].storeId, 'cs:~cloudbaseit/win2012r2/mssql-express-1');
+      assert.deepEqual(actualResults[0].storeId,
+                       'cs:~charmers/trusty/mysql-38');
+      assert.deepEqual(actualResults[1].storeId,
+                       'cs:~stub/precise/postgresql-psql-9');
+      assert.deepEqual(actualResults[2].storeId,
+                       'cs:~charmers/precise/nova-volume-6');
+      assert.deepEqual(actualResults[3].storeId,
+                       'cs:~cloudbaseit/win2012r2/mssql-express-1');
       searchResults._changeActiveComponent = _changeActiveComponent;
     });
   });
