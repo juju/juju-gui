@@ -623,6 +623,35 @@ describe('SearchResults', function() {
         promulgated: true,
         id: 'mysql',
         type: 'charm'
+      }, {
+        name: 'wordpress',
+        displayName: 'wordpress',
+        url: 'http://example.com/wordpress',
+        downloads: 1000,
+        owner: 'charmers',
+        promulgated: true,
+        id: '~charmers/wordpress',
+        type: 'charm'
+      }, {
+        name: 'apache',
+        displayName: 'apache',
+        url: 'http://example.com/apache',
+        downloads: 1000,
+        owner: 'charmers',
+        promulgated: true,
+        id: 'apache',
+        type: 'charm',
+        storeId: 'apache'
+      }, {
+        name: 'postgresql',
+        displayName: 'postgresql',
+        url: 'http://example.com/postgresql',
+        downloads: 1000,
+        owner: 'charmers',
+        promulgated: true,
+        id: 'postgresql',
+        type: 'charm',
+        storeId: '~charmers/postgresql'
       }];
       var rawResults = results.map(function(obj) {
         var m = {};
@@ -633,8 +662,11 @@ describe('SearchResults', function() {
       var setState = sinon.stub();
       searchResults.setState = setState;
       searchResults.searchCallback(null, rawResults);
-      var result = setState.getCall(1).args[0].data.promulgatedResults[0];
-      assert.deepEqual(result.storeId, '~charmers/mysql');
+      var actualResults = setState.getCall(1).args[0].data.promulgatedResults;
+      assert.deepEqual(actualResults[0].storeId, '~charmers/mysql');
+      assert.deepEqual(actualResults[1].storeId, '~charmers/wordpress');
+      assert.deepEqual(actualResults[2].storeId, '~charmers/apache');
+      assert.deepEqual(actualResults[3].storeId, '~charmers/postgresql');
       searchResults._changeActiveComponent = _changeActiveComponent;
     });
   });
