@@ -61,7 +61,7 @@
 .panel-component.account,
 .panel-component.user-profile {
     @extend %scroll-children;
-    z-index: index($z-indexed-elements, user-profile);
+    z-index: index($z-indexed-elements, top-page);
     top: $navbar-height;
     bottom: 0;
     right: 0;

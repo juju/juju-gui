@@ -470,11 +470,11 @@ YUI.add('juju-app-state', function(Y) {
             component: 'login'
           });
         } else if (part.indexOf('profile') === 0) {
-          state.sectionC = this._addToSection({
+          state.sectionB = this._addToSection({
             component: 'profile'
           });
         } else if (part.indexOf('account') === 0) {
-          state.sectionC = this._addToSection({
+          state.sectionB = this._addToSection({
             component: 'account'
           });
         } else if (part.indexOf('deploy') === 0) {
