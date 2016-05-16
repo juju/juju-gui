@@ -795,7 +795,7 @@ YUI.add('juju-gui', function(Y) {
           user={this._getAuth()}
           users={Y.clone(this.get('users'), true)}
           charmstore={this.get('charmstore')} />,
-        document.getElementById('charmbrowser-container'));
+        document.getElementById('top-page-container'));
       // The model name should not be visible when viewing the profile.
       this._renderBreadcrumb({ showEnvSwitcher: false });
     },
@@ -812,7 +812,7 @@ YUI.add('juju-gui', function(Y) {
           listTemplates={this.jem.listTemplates.bind(this.jem)}
           user={this._getAuth()}
           users={Y.clone(this.get('users'), true)} />,
-        document.getElementById('charmbrowser-container'));
+        document.getElementById('top-page-container'));
     },
 
     /**
@@ -1212,6 +1212,8 @@ YUI.add('juju-gui', function(Y) {
     emptySectionB: function() {
       ReactDOM.unmountComponentAtNode(
         document.getElementById('machine-view'));
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('top-page-container'));
     },
 
     _emptySectionC: function() {
@@ -1282,12 +1284,12 @@ YUI.add('juju-gui', function(Y) {
         empty: this._emptySectionA.bind(this)
       };
       dispatchers.sectionB = {
+        account: this._renderAccount.bind(this),
         machine: this._renderMachineView.bind(this),
+        profile: this._renderUserProfile.bind(this),
         empty: this.emptySectionB.bind(this)
       };
       dispatchers.sectionC = {
-        profile: this._renderUserProfile.bind(this),
-        account: this._renderAccount.bind(this),
         charmbrowser: this._renderCharmbrowser.bind(this),
         deploy: this._renderDeployment.bind(this),
         empty: this._emptySectionC.bind(this)

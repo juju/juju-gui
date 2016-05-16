@@ -946,28 +946,26 @@ describe('UI State object', function() {
       },
       '/profile': {
         sectionA: {},
-        sectionB: {},
-        sectionC: {
+        sectionB: {
           component: 'profile'
-        }
+        },
+        sectionC: {}
       },
       '/machine/profile': {
         sectionA: {},
         sectionB: {
-          component: 'machine'
-        },
-        sectionC: {
           component: 'profile'
-        }
+        },
+        sectionC: {}
       },
       '/inspector/profile': {
         sectionA: {
           component: 'inspector'
         },
-        sectionB: {},
-        sectionC: {
+        sectionB: {
           component: 'profile'
-        }
+        },
+        sectionC: {}
       },
       '/inspector/apache2/machine/profile': {
         sectionA: {
@@ -978,47 +976,41 @@ describe('UI State object', function() {
           }
         },
         sectionB: {
-          component: 'machine'
-        },
-        sectionC: {
           component: 'profile'
-        }
+        },
+        sectionC: {}
       },
       '/services/machine/profile': {
         sectionA: {
           component: 'services'
         },
         sectionB: {
-          component: 'machine'
-        },
-        sectionC: {
           component: 'profile'
-        }
+        },
+        sectionC: {}
       },
       '/account': {
         sectionA: {},
-        sectionB: {},
-        sectionC: {
+        sectionB: {
           component: 'account'
-        }
+        },
+        sectionC: {}
       },
       '/machine/account': {
         sectionA: {},
         sectionB: {
-          component: 'machine'
-        },
-        sectionC: {
           component: 'account'
-        }
+        },
+        sectionC: {}
       },
       '/inspector/account': {
         sectionA: {
           component: 'inspector'
         },
-        sectionB: {},
-        sectionC: {
+        sectionB: {
           component: 'account'
-        }
+        },
+        sectionC: {}
       },
       '/inspector/apache2/machine/account': {
         sectionA: {
@@ -1029,22 +1021,18 @@ describe('UI State object', function() {
           }
         },
         sectionB: {
-          component: 'machine'
-        },
-        sectionC: {
           component: 'account'
-        }
+        },
+        sectionC: {}
       },
       '/services/machine/account': {
         sectionA: {
           component: 'services'
         },
         sectionB: {
-          component: 'machine'
-        },
-        sectionC: {
           component: 'account'
-        }
+        },
+        sectionC: {}
       },
       'login': {
         app: {
