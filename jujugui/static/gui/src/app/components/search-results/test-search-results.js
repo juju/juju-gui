@@ -621,37 +621,37 @@ describe('SearchResults', function() {
         downloads: 1000,
         owner: 'charmers',
         promulgated: true,
-        id: 'mysql',
+        id: 'cs:trusty/mysql-38',
         type: 'charm'
       }, {
-        name: 'wordpress',
-        displayName: 'wordpress',
-        url: 'http://example.com/wordpress',
-        downloads: 1000,
-        owner: 'charmers',
-        promulgated: true,
-        id: '~charmers/wordpress',
-        type: 'charm'
-      }, {
-        name: 'apache',
-        displayName: 'apache',
-        url: 'http://example.com/apache',
-        downloads: 1000,
-        owner: 'charmers',
-        promulgated: true,
-        id: 'apache',
-        type: 'charm',
-        storeId: 'apache'
-      }, {
-        name: 'postgresql',
-        displayName: 'postgresql',
+        name: 'postgresql-psql',
+        displayName: 'postgresql-psql',
         url: 'http://example.com/postgresql',
         downloads: 1000,
+        owner: 'stub',
+        promulgated: true,
+        id: 'cs:~stub/precise/postgresql-psql-9',
+        type: 'charm'
+      }, {
+        name: 'nova-volume',
+        displayName: 'nova-volume',
+        url: 'http://example.com/nova-volume',
+        downloads: 1000,
         owner: 'charmers',
         promulgated: true,
-        id: 'postgresql',
+        id: 'cs:precise/nova-volume-6',
         type: 'charm',
-        storeId: '~charmers/postgresql'
+        storeId: 'cs:precise/nova-volume-6'
+      }, {
+        name: 'mssql-express',
+        displayName: 'mssql-express',
+        url: 'http://example.com/mssql-express',
+        downloads: 1000,
+        owner: 'cloudbaseit',
+        promulgated: true,
+        id: 'cs:~cloudbaseit/win2012r2/mssql-express-1',
+        type: 'charm',
+        storeId: 'cs:~cloudbaseit/win2012r2/mssql-express-1'
       }];
       var rawResults = results.map(function(obj) {
         var m = {};
@@ -663,10 +663,14 @@ describe('SearchResults', function() {
       searchResults.setState = setState;
       searchResults.searchCallback(null, rawResults);
       var actualResults = setState.getCall(1).args[0].data.promulgatedResults;
-      assert.deepEqual(actualResults[0].storeId, '~charmers/mysql');
-      assert.deepEqual(actualResults[1].storeId, '~charmers/wordpress');
-      assert.deepEqual(actualResults[2].storeId, '~charmers/apache');
-      assert.deepEqual(actualResults[3].storeId, '~charmers/postgresql');
+      assert.deepEqual(actualResults[0].storeId,
+                       'cs:~charmers/trusty/mysql-38');
+      assert.deepEqual(actualResults[1].storeId,
+                       'cs:~stub/precise/postgresql-psql-9');
+      assert.deepEqual(actualResults[2].storeId,
+                       'cs:~charmers/precise/nova-volume-6');
+      assert.deepEqual(actualResults[3].storeId,
+                       'cs:~cloudbaseit/win2012r2/mssql-express-1');
       searchResults._changeActiveComponent = _changeActiveComponent;
     });
   });
