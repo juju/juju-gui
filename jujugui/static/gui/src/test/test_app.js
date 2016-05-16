@@ -1051,31 +1051,12 @@ describe('App', function() {
 
 
   describe('Application Connection State', function() {
-    var Y;
+    var Y, app, conn, env, juju, testUtils;
 
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'],
-          function(Y) {
-            container = Y.Node.create(
-                '<div id="test" class="container"></div>');
-            done();
-          });
-    });
-
-    it('should be able to handle env connection status changes', function() {
-      var juju = Y.namespace('juju'),
-          conn = new Y['juju-tests'].utils.SocketStub(),
-          env = new juju.environments.GoEnvironment({
-            conn: conn,
-            user: 'user',
-            password: 'password'
-          }),
-          app = new Y.juju.App({env: env, container: container}),
-          reset_called = false,
-          login_called = false,
-          noop = function() {return this;};
+    function constructAppInstance() {
+      var noop = function() {return this;};
+      var app = new juju.App({env: env, container: container});
       app.showView(new Y.View());
-
       // Mock the database.
       app.db = {
         // Mock out notifications, so the application can start normally.
@@ -1087,30 +1068,109 @@ describe('App', function() {
           on: noop,
           size: function() {return 0;}
         },
-        reset: function() {
-          reset_called = true;
-        }
+        reset: testUtils.makeStubFunction()
       };
       app.dispatch = function() {};
-      env.login = function() {
-        login_called = true;
-      };
-      env.connect();
-      conn.open();
-      // We need to fake the connection event.
-      reset_called.should.equal(true);
-      login_called.should.equal(true);
+      return app;
+    };
 
-      // Trigger a second time and verify.
-      conn.transient_close();
-      reset_called = false;
-      login_called = false;
-      conn.open();
-      reset_called.should.equal(true);
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'],
+          function(Y) {
+            juju = Y.namespace('juju');
+            testUtils = Y.namespace('juju-tests.utils');
+            container = Y.Node.create(
+                '<div id="test" class="container"></div>');
+            done();
+          });
+    });
+
+    beforeEach(function() {
+      conn = new testUtils.SocketStub(),
+      env = new juju.environments.GoEnvironment({
+        conn: conn,
+        user: 'user',
+        password: 'password'
+      }),
+      env.login = testUtils.makeStubFunction();
+    });
+
+    afterEach(function() {
       env.close();
       app.destroy();
     });
 
+    it('should be able to handle env connection status changes', function() {
+      app = constructAppInstance();
+      env.connect();
+      conn.open();
+      // We need to fake the connection event.
+      assert.equal(app.db.reset.callCount(), 1);
+      assert.equal(env.login.calledOnce(), true);
+
+      // Trigger a second time and verify.
+      conn.transient_close();
+      conn.open();
+      assert.equal(app.db.reset.callCount(), 2);
+    });
+
+    it('should connect to model when GISF', function(done) {
+      env.connect = testUtils.makeStubFunction();
+      app = constructAppInstance();
+      app.set('gisf', true);
+      app.set('jujuEnvUUID', 'foobar');
+      app.after('ready', function() {
+        assert.equal(env.connect.callCount(), 1);
+        done();
+      });
+    });
+
+    it('should not connect to model when GISF sandbox', function(done) {
+      env.connect = testUtils.makeStubFunction();
+      app = constructAppInstance();
+      app.set('gisf', true);
+      app.set('jujuEnvUUID', 'sandbox');
+      app.after('ready', function() {
+        assert.equal(env.connect.callCount(), 0);
+        done();
+      });
+    });
+
+    it('should connect to model when URL is present', function(done) {
+      env.connect = testUtils.makeStubFunction();
+      app = constructAppInstance();
+      app.set('gisf', false);
+      app.set('socket_url', 'http://example.org');
+      app.set('sandbox', false);
+      app.after('ready', function() {
+        assert.equal(env.connect.callCount(), 1);
+        done();
+      });
+    });
+
+    it('should connect to model when in sandbox', function(done) {
+      env.connect = testUtils.makeStubFunction();
+      app = constructAppInstance();
+      app.set('gisf', false);
+      app.set('socket_url', '');
+      app.set('sandbox', true);
+      app.after('ready', function() {
+        assert.equal(env.connect.callCount(), 1);
+        done();
+      });
+    });
+
+    it('should not connect to model w/o URL or fake backend', function(done) {
+      env.connect = testUtils.makeStubFunction();
+      app = constructAppInstance();
+      app.set('gisf', false);
+      app.set('socket_url', '');
+      app.set('sandbox', false);
+      app.after('ready', function() {
+        assert.equal(env.connect.callCount(), 0);
+        done();
+      });
+    });
   });
 
   describe('switchEnv', function() {
