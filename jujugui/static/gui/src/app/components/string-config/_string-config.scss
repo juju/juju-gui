@@ -3,14 +3,13 @@
     margin: 10px 20px 14px 20px;
 
     &--value {
-        min-height: $base + px;
-        border: 1px solid $mid-grey;
+        @extend %input;
+        min-height: $base;
         margin: 10px 0;
-        padding: 8px 10px;
     }
 
     &--description {
-      color: $cool-grey;
-      font-size: 0.875em;
+        color: $cool-grey;
+        font-size: 0.875em;
     }
 }
