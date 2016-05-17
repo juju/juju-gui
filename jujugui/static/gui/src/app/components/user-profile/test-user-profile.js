@@ -74,9 +74,6 @@ describe('UserProfile', () => {
     }, {
       label: '0 charms'
     }];
-    var jem = {
-      listModels: sinon.stub().callsArgWith(0, null, [])
-    };
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         addNotification={sinon.stub()}
@@ -85,8 +82,7 @@ describe('UserProfile', () => {
         charmstore={{}}
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
-        jem={jem}
+        listModels={sinon.stub().callsArgWith(0, null, {models: []})}
         switchModel={sinon.stub()}
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
@@ -131,9 +127,6 @@ describe('UserProfile', () => {
   });
 
   it('displays the empty_profile asset with a staticURL provided', () => {
-    var jem = {
-      listModels: sinon.stub().callsArgWith(0, null, [])
-    };
     var output = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         addNotification={sinon.stub()}
@@ -142,8 +135,7 @@ describe('UserProfile', () => {
         charmstore={{}}
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
-        jem={jem}
+        listModels={sinon.stub().callsArgWith(0, null, [])}
         switchModel={sinon.stub()}
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
@@ -168,8 +160,7 @@ describe('UserProfile', () => {
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
-        listModels={sinon.stub().callsArgWith(0, {models: models})}
+        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         switchModel={sinon.stub()}
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
@@ -195,9 +186,6 @@ describe('UserProfile', () => {
   });
 
   it('displays loading spinners for models', () => {
-    var jem = {
-      listModels: sinon.stub()
-    };
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         addNotification={sinon.stub()}
@@ -206,8 +194,7 @@ describe('UserProfile', () => {
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
-        jem={jem}
+        listModels={sinon.stub()}
         switchModel={sinon.stub()}
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
@@ -248,8 +235,7 @@ describe('UserProfile', () => {
         charmstore={charmstore}
         env={env}
         getDiagramURL={getDiagramURL}
-        gisf={false}
-        listModels={sinon.stub().callsArgWith(0, {models: models})}
+        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         switchModel={switchModel}
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
@@ -459,8 +445,7 @@ describe('UserProfile', () => {
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
-        listModels={sinon.stub().callsArgWith(0, {models: models})}
+        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         switchModel={sinon.stub()}
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
@@ -503,7 +488,6 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
         interactiveLogin={false}
         pluralize={pluralize}
         storeUser={sinon.stub()}
@@ -540,7 +524,6 @@ describe('UserProfile', () => {
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
         interactiveLogin={true}
         pluralize={sinon.stub()}
         storeUser={storeUser}
@@ -566,7 +549,6 @@ describe('UserProfile', () => {
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
         interactiveLogin={true}
         pluralize={sinon.stub()}
         storeUser={sinon.stub()}
@@ -584,7 +566,6 @@ describe('UserProfile', () => {
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
         interactiveLogin={true}
         pluralize={sinon.stub()}
         storeUser={sinon.stub()}
@@ -592,87 +573,13 @@ describe('UserProfile', () => {
     assert.equal(list.callCount, 2);
   });
 
-  it('requests jem envs if jem is provided and updates state', () => {
-    // Since JEM models currently have a different data schema from JES models.
-    var jemModels = models.map(function(model) {
-      return {
-        uuid: model.uuid,
-        path: `${model.ownerTag}/${model.name}`
-      };
-    });
-    var jem = {
-      listModels: sinon.stub().callsArgWith(0, null, jemModels)
-    };
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfile
-        addNotification={sinon.stub()}
-        switchModel={sinon.stub()}
-        users={users}
-        canCreateNew={true}
-        changeState={sinon.stub()}
-        charmstore={{}}
-        env={env}
-        getDiagramURL={sinon.stub()}
-        gisf={false}
-        pluralize={sinon.stub()}
-        showConnectingMask={sinon.stub()}
-        storeUser={sinon.stub()}
-        user={users.charmstore}
-        jem={jem} />, true);
-    var instance = component.getMountedInstance();
-
-    assert.equal(jem.listModels.callCount, 1);
-    assert.deepEqual(instance.state.envList, jemModels);
-
-    // Make sure we properly displayed the different bits within a JEM model.
-    var output = component.getRenderOutput();
-    var displayedModel = output.props.children[0].props.children.props.children[1].props.children[0].props.children[1].props.children[1][0]; // eslint-disable-line
-    var displayedChildren = displayedModel.props.children;
-    var displayedName = displayedChildren[0].props.children;
-    var displayedLastConnection = displayedChildren[2].props.children;
-    var displayedOwner = displayedChildren[4].props.children;
-    var jemModel = jemModels[0];
-    assert.equal(displayedName, jemModel.path);
-    // XXX kadams54: Because we don't have a LastConnection yet for JEM models.
-    assert.equal(displayedLastConnection, 'N/A');
-    assert.equal(jemModel.path.indexOf(displayedOwner), 0);
-  });
-
-  it('requests controller models if no jem is passed (updates state)', () => {
-    var listModels = sinon.stub().callsArgWith(0, {models: models});
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfile
-        addNotification={sinon.stub()}
-        switchModel={sinon.stub()}
-        users={users}
-        canCreateNew={true}
-        changeState={sinon.stub()}
-        charmstore={{}}
-        env={env}
-        getDiagramURL={sinon.stub()}
-        gisf={false}
-        pluralize={sinon.stub()}
-        showConnectingMask={sinon.stub()}
-        storeUser={sinon.stub()}
-        user={users.charmstore}
-        listModels={listModels} />, true);
-    var instance = component.getMountedInstance();
-    assert.deepEqual(instance.state.envList, models);
-  });
-
   it('switches env when calling switchModel method passed to list', () => {
     // This method is passed down to child components and called from there.
     // We are just calling it directly here to unit test the method.
     var switchModel = sinon.stub();
     var changeState = sinon.stub();
-    var listModels = sinon.stub();
+    var listModels = sinon.stub().callsArgWith(0, null, {models: models});
     var showMask = sinon.stub();
-    var models = [{
-      uuid: 'abc123',
-      user: 'foo',
-      password: 'bar',
-      ownerTag: 'who'
-    }];
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         addNotification={sinon.stub()}
@@ -683,15 +590,12 @@ describe('UserProfile', () => {
         charmstore={{}}
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
         pluralize={sinon.stub()}
         showConnectingMask={showMask}
         storeUser={sinon.stub()}
         user={users.charmstore}
         listModels={listModels} />, true);
     var instance = component.getMountedInstance();
-    // Call the callback for the listModels call to populate the state.
-    listModels.args[0][0]({models: models});
     // Call the method that's passed down. We test that this method is
     // correctly passed down in the initial 'happy path' full rendering test.
     instance.switchModel('abc123', 'modelname');
@@ -701,11 +605,12 @@ describe('UserProfile', () => {
     // Check that switchModel is called with the proper values.
     assert.equal(switchModel.callCount, 1, 'switchModel not called');
     assert.deepEqual(switchModel.args[0], ['abc123', [{
-      uuid: 'abc123',
-      user: 'foo',
-      password: 'bar',
-      ownerTag: 'who',
-      owner: 'who'
+      uuid: 'env1',
+      name: 'spinach/sandbox',
+      lastConnection: 'today',
+      ownerTag: 'test-owner',
+      isAlive: true,
+      owner: 'test-owner'
     }], 'modelname', undefined]);
     // Make sure we close the profile page when switching envs.
     assert.equal(changeState.callCount, 1, 'changeState not called');
@@ -728,7 +633,6 @@ describe('UserProfile', () => {
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
         interactiveLogin={true}
         listModels={sinon.stub()}
         pluralize={sinon.stub()}
@@ -747,36 +651,6 @@ describe('UserProfile', () => {
                      'callback does not properly set bundle state');
   });
 
-  it('gets the default model for older versions of Juju', () => {
-    env.findFacadeVersion = sinon.stub().returns(null);
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfile
-        addNotification={sinon.stub()}
-        users={users}
-        canCreateNew={true}
-        changeState={sinon.stub()}
-        charmstore={charmstore}
-        env={env}
-        getDiagramURL={sinon.stub()}
-        gisf={false}
-        interactiveLogin={true}
-        listModels={sinon.stub()}
-        pluralize={sinon.stub()}
-        showConnectingMask={sinon.stub()}
-        storeUser={sinon.stub()}
-        switchModel={sinon.stub()}
-        user={users.charmstore} />, true);
-    var instance = component.getMountedInstance();
-    component.getRenderOutput();
-    assert.deepEqual(instance.state.envList, [{
-      name: 'default',
-      owner: 'test owner',
-      ownerTag: 'test owner',
-      uuid: '',
-      lastConnection: 'now'
-    }]);
-  });
-
   it('will abort the requests when unmounting', function() {
     var charmstoreAbort = sinon.stub();
     var listModelsAbort = sinon.stub();
@@ -791,7 +665,6 @@ describe('UserProfile', () => {
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
         interactiveLogin={true}
         listModels={listModels}
         pluralize={sinon.stub()}
@@ -823,7 +696,6 @@ describe('UserProfile', () => {
         charmstore={{}}
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
         interactiveLogin={true}
         storeUser={sinon.stub()}
         pluralize={pluralize}
@@ -852,8 +724,7 @@ describe('UserProfile', () => {
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
-        listModels={sinon.stub().callsArgWith(0, {models: models})}
+        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         switchModel={sinon.stub()}
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
@@ -887,8 +758,7 @@ describe('UserProfile', () => {
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
-        listModels={sinon.stub().callsArgWith(0, {models: models})}
+        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         switchModel={switchModel}
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
@@ -926,8 +796,7 @@ describe('UserProfile', () => {
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
-        listModels={sinon.stub().callsArgWith(0, {models: models})}
+        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         switchModel={switchModel}
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
@@ -964,8 +833,7 @@ describe('UserProfile', () => {
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
-        listModels={sinon.stub().callsArgWith(0, {models: models})}
+        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         switchModel={sinon.stub()}
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
@@ -995,8 +863,7 @@ describe('UserProfile', () => {
         currentModel="mymodel"
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
-        listModels={sinon.stub().callsArgWith(0, {models: models})}
+        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         switchModel={sinon.stub()}
         showConnectingMask={sinon.stub()}
         interactiveLogin={true}
@@ -1026,8 +893,7 @@ describe('UserProfile', () => {
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
-        gisf={false}
-        listModels={sinon.stub().callsArgWith(0, {models: models})}
+        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         pluralize={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
