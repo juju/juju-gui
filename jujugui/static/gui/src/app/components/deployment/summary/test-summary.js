@@ -72,12 +72,25 @@ describe('DeploymentSummary', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
         jem={{
-          listTemplates: sinon.stub()
+          listTemplates: cb => {
+            cb(null, [{
+              path: 'spinach/my-creds',
+              location: { cloud: 'aws', region: 'us-west-1' }
+            }]);
+          },
+          listRegions: (cloud, cb) => {
+            assert.equal(cloud, 'aws');
+            cb(null, ['us-west-1', 'us-east-1']);
+          }
         }}
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
-        deploymentStorage={{templateName: 'spinach/my-creds'}}
+        deploymentStorage={{
+          templateName: 'spinach/my-creds',
+          cloud: 'aws',
+          region: 'us-west-1'
+        }}
         users={{}}
         autoPlaceUnits={sinon.stub()}
         changeCounts={changeCounts}
@@ -140,13 +153,14 @@ describe('DeploymentSummary', function() {
             <form className="deployment-summary__cloud-option-region">
             <select
               ref="selectRegion"
-              value={undefined}
+              value="us-west-1"
               onChange={instance._storeRegion}
               disabled={true}>
-              {[
-                <option key="default">Loading available regions</option>,
-                null
-              ]}
+                {[
+                  <option key="default">Choose a region</option>,
+                  [<option key="us-west-1" value="us-west-1">us-west-1</option>,
+                  <option key="us-east-1" value="us-east-1">us-east-1</option>]
+                ]}
             </select>
             </form>
           </div>
