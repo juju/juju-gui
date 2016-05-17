@@ -211,7 +211,7 @@ YUI.add('env-switcher', function() {
     */
     showUserProfile: function() {
       this.props.changeState({
-        sectionC: {
+        sectionB: {
           component: 'profile',
           metadata: {}
         }

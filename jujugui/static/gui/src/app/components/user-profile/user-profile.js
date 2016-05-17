@@ -248,7 +248,7 @@ YUI.add('user-profile', function() {
 
     close: function() {
       this.props.changeState({
-        sectionC: {
+        sectionB: {
           component: null,
           metadata: null
         }
