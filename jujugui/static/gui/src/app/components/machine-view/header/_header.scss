@@ -32,12 +32,12 @@
     &--drop &-drop-target {
         background-color: rgba(255, 255, 255, 0.9);
     }
-    
+
     .button--inline-positive {
         float: right;
         width: 24px;
         height: 24px;
-        margin-top: 11px;
-        padding: 4px 0 0 0;
+        margin: 11px -10px 0 0;
+        padding: 2px 0 0 0;
     }
 }
