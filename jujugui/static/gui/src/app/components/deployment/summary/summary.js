@@ -317,7 +317,7 @@ YUI.add('deployment-summary', function() {
           value={this.state.activeRegion}
           onChange={this._storeRegion}
           disabled={true}>
-          <option>{defaultMessage}</option>
+          <option key="default">{defaultMessage}</option>
           {options}
         </select>);
     },

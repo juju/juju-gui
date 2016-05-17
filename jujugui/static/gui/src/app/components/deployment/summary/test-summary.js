@@ -71,7 +71,9 @@ describe('DeploymentSummary', function() {
         change={changeDescriptions[1]} />];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        jem={{}}
+        jem={{
+          listTemplates: sinon.stub()
+        }}
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
@@ -104,6 +106,7 @@ describe('DeploymentSummary', function() {
     var expected = (
       <div className="deployment-panel__child">
         <juju.components.DeploymentPanelContent
+          className="deployment-summary"
           title="Review deployment">
           <form className="six-col last-col">
             <juju.components.DeploymentInput
@@ -135,15 +138,16 @@ describe('DeploymentSummary', function() {
               </span>
             </span>
             <form className="deployment-summary__cloud-option-region">
-              <juju.components.DeploymentInput
-                label="Region"
-                placeholder="us-central-1"
-                required={true}
-                ref="templateRegion"
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />
+            <select
+              ref="selectRegion"
+              value={undefined}
+              onChange={instance._storeRegion}
+              disabled={true}>
+              {[
+                <option key="default">Loading available regions</option>,
+                null
+              ]}
+            </select>
             </form>
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
@@ -189,7 +193,9 @@ describe('DeploymentSummary', function() {
     var getUnplacedUnitCount = sinon.stub().returns(1);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        jem={{}}
+        jem={{
+          listTemplates: sinon.stub()
+        }}
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
@@ -290,7 +296,9 @@ describe('DeploymentSummary', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        jem={{}}
+        jem={{
+          listTemplates: sinon.stub()
+        }}
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
@@ -328,7 +336,9 @@ describe('DeploymentSummary', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        jem={{}}
+        jem={{
+          listTemplates: sinon.stub()
+        }}
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
@@ -419,6 +429,7 @@ describe('DeploymentSummary', function() {
     var createSocketURL = sinon.stub().returns('newurl');
     var jem = {
       newModel: sinon.stub(),
+      listTemplates: sinon.stub()
     };
     var detach = sinon.stub();
     var env = {
@@ -522,6 +533,7 @@ describe('DeploymentSummary', function() {
     var createSocketURL = sinon.stub().returns('newurl');
     var jem = {
       newModel: sinon.stub(),
+      listTemplates: sinon.stub()
     };
     var detach = sinon.stub();
     var env = {
