@@ -28,8 +28,9 @@ YUI.add('deployment-panel-content', function() {
 
     render: function() {
       var props = this.props;
+      var className = props.className || '';
       return (
-        <div className={'deployment-panel__content ' + props.className || ''}>
+        <div className={'deployment-panel__content ' + className}>
           <div className="twelve-col">
             <div className="inner-wrapper">
               <div className="deployment-panel__content-inner">
