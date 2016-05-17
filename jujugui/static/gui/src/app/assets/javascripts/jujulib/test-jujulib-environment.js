@@ -371,7 +371,8 @@ describe('jujulib environment manager', function() {
     var response = {templates: [{
       path: 'rose/template',
       schema: 'schema',
-      config: 'config'
+      config: 'config',
+      location: 'location'
     }]};
     var bakery = {
       sendGetRequest: function(path, success, failure, redirect) {
