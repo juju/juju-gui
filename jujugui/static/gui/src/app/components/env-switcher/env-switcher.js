@@ -26,7 +26,6 @@ YUI.add('env-switcher', function() {
       env: React.PropTypes.object,
       environmentName: React.PropTypes.string,
       switchModel: React.PropTypes.func.isRequired,
-      uncommittedChanges: React.PropTypes.bool.isRequired
     },
 
     getInitialState: function() {
@@ -229,7 +228,6 @@ YUI.add('env-switcher', function() {
           handleEnvClick={this.handleEnvClick}
           createNewEnv={this.createNewEnv}
           showUserProfile={this.showUserProfile}
-          uncommittedChanges={this.props.uncommittedChanges}
           envs={this.state.envList} />;
       }
       return '';

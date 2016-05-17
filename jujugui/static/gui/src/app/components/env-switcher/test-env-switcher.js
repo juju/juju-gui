@@ -36,8 +36,7 @@ describe('EnvSwitcher', function() {
       // outside wrapper.
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         environmentName="MyEnv"
-        switchModel={sinon.stub()}
-        uncommittedChanges={false} />, true);
+        switchModel={sinon.stub()} />, true);
 
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -75,8 +74,7 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         env={env}
-        switchModel={sinon.stub()}
-        uncommittedChanges={false} />, true);
+        switchModel={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     // Click the toggler
     output.props.children[0].props.onClick({
@@ -86,8 +84,7 @@ describe('EnvSwitcher', function() {
     renderer.render(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         env={env}
-        switchModel={sinon.stub()}
-        uncommittedChanges={false} />);
+        switchModel={sinon.stub()} />);
 
     var instance = renderer.getMountedInstance();
     output = renderer.getRenderOutput();
@@ -97,8 +94,7 @@ describe('EnvSwitcher', function() {
         handleEnvClick={instance.handleEnvClick}
         createNewEnv={instance.createNewEnv}
         showUserProfile={instance.showUserProfile}
-        envs={[]}
-        uncommittedChanges={false} />);
+        envs={[]} />);
   });
 
   it('fetches a list of environments on mount (JEM)', function() {
@@ -109,8 +105,7 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         jem={jem}
-        switchModel={sinon.stub()}
-        uncommittedChanges={false} />, true);
+        switchModel={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
     assert.equal(listModels.callCount, 1);
@@ -129,8 +124,7 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         env={env}
-        switchModel={sinon.stub()}
-        uncommittedChanges={false} />, true);
+        switchModel={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
     assert.equal(listModelsWithInfo.callCount, 1);
@@ -147,8 +141,7 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         env={env}
-        switchModel={sinon.stub()}
-        uncommittedChanges={false} />, true);
+        switchModel={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
     // Click the toggler
@@ -181,8 +174,7 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         jem={jem}
-        switchModel={switchModel}
-        uncommittedChanges={false} />, true);
+        switchModel={switchModel} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
     listModels.args[0][0](null, envs);
@@ -225,8 +217,7 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         jem={jem}
-        switchModel={switchModel}
-        uncommittedChanges={false} />, true);
+        switchModel={switchModel} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
     listModels.args[0][0](null, envs);
@@ -282,8 +273,7 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         env={env}
-        switchModel={sinon.stub()}
-        uncommittedChanges={false} />, true);
+        switchModel={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
     listModelsWithInfo.args[0][0](envs);
@@ -304,8 +294,7 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         changeState={changeState}
-        switchModel={sinon.stub()}
-        uncommittedChanges={false} />, true);
+        switchModel={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     instance.showUserProfile();
     assert.equal(changeState.callCount, 1);
