@@ -1348,7 +1348,8 @@ describe('utilities', function() {
   });
 
   describe('switchModel', function() {
-    var utils, testUtils;
+    var utils, testUtils, _showSwitchModelConfirm, _hideSwitchModelConfirm,
+        models;
 
     before(function(done) {
       YUI(GlobalConfig).use('juju-view-utils', 'juju-tests-utils', function(Y) {
@@ -1358,22 +1359,73 @@ describe('utilities', function() {
       });
     });
 
-    it('can switch models', function() {
-      var createSocketURL = testUtils.makeStubFunction('newaddress:80');
-      var switchEnv = testUtils.makeStubFunction();
-      var models = [{
+    beforeEach(function() {
+      _hideSwitchModelConfirm = utils._hideSwitchModelConfirm;
+      utils._hideSwitchModelConfirm = testUtils.makeStubFunction();
+      _showSwitchModelConfirm = utils._showSwitchModelConfirm;
+      utils._showSwitchModelConfirm = testUtils.makeStubFunction();
+      models = [{
         uuid: 'uuid1',
         user: 'spinach',
         password: 'hasselhoff',
         hostPorts: ['localhost:80', 'localhost:443']
       }];
+    });
+
+    afterEach(function() {
+      utils._hideSwitchModelConfirm = _hideSwitchModelConfirm;
+      utils._showSwitchModelConfirm = _showSwitchModelConfirm;
+    });
+
+    it('can switch directly if there are no uncommitted changes', function() {
+      var createSocketURL = testUtils.makeStubFunction('newaddress:80');
+      var switchEnv = testUtils.makeStubFunction();
+      var env = {
+        get: testUtils.makeStubFunction({
+          getCurrentChangeSet: testUtils.makeStubFunction({})
+        })
+      };
+      var callback = testUtils.makeStubFunction();
+      var _switchModel = utils._switchModel;
+      utils._switchModel = testUtils.makeStubFunction();
+      utils.switchModel(
+        createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
+      assert.deepEqual(utils._switchModel.callCount(), 1);
+      var switchArgs = utils._switchModel.lastArguments();
+      assert.deepEqual(switchArgs, [
+        createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback]);
+      utils._switchModel = _switchModel;
+    });
+
+    it('can show a confirmation if there are uncommitted changes', function() {
+      var createSocketURL = testUtils.makeStubFunction('newaddress:80');
+      var switchEnv = testUtils.makeStubFunction();
+      var env = {
+        get: testUtils.makeStubFunction({
+          getCurrentChangeSet: testUtils.makeStubFunction({change: 'a change'})
+        })
+      };
+      var callback = testUtils.makeStubFunction();
+      var _switchModel = utils._switchModel;
+      utils._switchModel = testUtils.makeStubFunction();
+      utils.switchModel(
+        createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
+      assert.deepEqual(utils._showSwitchModelConfirm.callCount(), 1);
+      assert.deepEqual(utils._switchModel.callCount(), 0);
+      utils._switchModel = _switchModel;
+    });
+
+    it('can switch models', function() {
+      var createSocketURL = testUtils.makeStubFunction('newaddress:80');
+      var switchEnv = testUtils.makeStubFunction();
       var env = {set: testUtils.makeStubFunction()};
       var callback = testUtils.makeStubFunction();
       utils.set = testUtils.makeStubFunction();
       utils.showConnectingMask = testUtils.makeStubFunction();
-      utils.switchModel(
+      utils._switchModel(
         createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
 
+      assert.deepEqual(utils._hideSwitchModelConfirm.callCount(), 1);
       assert.deepEqual(createSocketURL.callCount(), 1);
       var socketArgs = createSocketURL.lastArguments();
       assert.deepEqual(socketArgs[0], models[0].uuid);
@@ -1398,14 +1450,8 @@ describe('utilities', function() {
     it('just disconnects if uuid is missing', function() {
       var createSocketURL = testUtils.makeStubFunction();
       var switchEnv = testUtils.makeStubFunction();
-      var models = [{
-        uuid: 'uuid1',
-        user: 'spinach',
-        password: 'hasselhoff',
-        hostPorts: ['localhost:80', 'localhost:443']
-      }];
       var env = {set: testUtils.makeStubFunction()};
-      utils.switchModel(createSocketURL, switchEnv, env, undefined, models);
+      utils._switchModel(createSocketURL, switchEnv, env, undefined, models);
       assert.deepEqual(createSocketURL.callCount(), 0);
       assert.deepEqual(switchEnv.callCount(), 1);
       assert.deepEqual(
@@ -1416,7 +1462,7 @@ describe('utilities', function() {
       var createSocketURL = testUtils.makeStubFunction();
       var switchEnv = testUtils.makeStubFunction();
       var env = {set: testUtils.makeStubFunction()};
-      utils.switchModel(createSocketURL, switchEnv, env, 'model1', undefined);
+      utils._switchModel(createSocketURL, switchEnv, env, 'model1', undefined);
       assert.deepEqual(createSocketURL.callCount(), 0);
       assert.deepEqual(switchEnv.callCount(), 1);
       assert.deepEqual(
