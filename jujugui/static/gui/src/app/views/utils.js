@@ -1742,8 +1742,7 @@ YUI.add('juju-view-utils', function(Y) {
   utils.getIconPath = function(charmId, isBundle, env) {
     var cfg = window.juju_config,
         charmstoreURL = (cfg && cfg.charmstoreURL) || '',
-        // charmId won't necessarily be provided if it is a bundle.
-        localIndex = (charmId && charmId.indexOf('local:')) || -1,
+        localIndex = charmId.indexOf('local:'),
         path;
     if (localIndex > -1 && env) {
       path = env.getLocalCharmFileUrl(charmId, 'icon.svg');

@@ -123,7 +123,7 @@ describe('Entity Extension', function() {
       url: 'http://example.com/',
       // no staticURL is defined on window.juju_config.staticURL so this
       // path should not include a staticURL prefix.
-      iconPath: '/static/gui/build/app/assets/images/non-sprites/bundle.svg',
+      iconPath: 'static/gui/build/app/assets/images/non-sprites/bundle.svg',
       services: []
     };
     assert.deepEqual(expected, entity,

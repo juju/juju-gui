@@ -71,10 +71,10 @@ YUI.add('entity-extension', function(Y) {
         url: attrs.url
       };
       if (type === 'bundle') {
-        entity.iconPath = utils.getIconPath(null, true);
+        entity.iconPath = utils.getIconPath(entity.id, true);
         entity.services = this.parseBundleServices(this.get('services'));
       } else {
-        entity.iconPath = utils.getIconPath(attrs.id, false);
+        entity.iconPath = utils.getIconPath(entity.id, false);
         entity.series = attrs.series;
         entity.tags = attrs.tags || [];
       }
