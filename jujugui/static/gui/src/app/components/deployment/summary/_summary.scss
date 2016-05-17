@@ -4,12 +4,16 @@
         list-style: none;
     }
 
-    &__cloud-option {
-        clear: left;
-        text-align: left;
+    .deployment-choose-cloud {
+        &__cloud-option {
+            clear: left;
+            text-align: left;
+            padding: 10px;
+            box-sizing: border-box;
 
-        &-region {
-            padding: 20px 20px 0 20px;
+            &-title {
+                padding: 0 0 10px 20px;
+            }
         }
     }
 
