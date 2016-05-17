@@ -52,8 +52,7 @@ describe('HeaderBreadcrumb', () => {
         getAppState={getAppState}
         authDetails={authDetails}
         showEnvSwitcher={true}
-        switchModel={switchModel}
-        uncommittedChanges={false} />, true);
+        switchModel={switchModel} />, true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
 
@@ -73,8 +72,7 @@ describe('HeaderBreadcrumb', () => {
             envList={envList}
             changeState={changeState}
             authDetails={authDetails}
-            switchModel={switchModel}
-            uncommittedChanges={false} />
+            switchModel={switchModel} />
         </li>
       </ul>
     );
@@ -99,8 +97,7 @@ describe('HeaderBreadcrumb', () => {
         changeState={changeState}
         getAppState={getAppState}
         showEnvSwitcher={true}
-        switchModel={sinon.stub()}
-        uncommittedChanges={false} />);
+        switchModel={sinon.stub()} />);
     assert.equal(output.props.children[0], undefined);
   });
 
@@ -122,8 +119,7 @@ describe('HeaderBreadcrumb', () => {
         changeState={changeState}
         getAppState={getAppState}
         showEnvSwitcher={false}
-        switchModel={sinon.stub()}
-        uncommittedChanges={false} />);
+        switchModel={sinon.stub()} />);
     // There will be no third child if the envSwitcher is rendered
     assert.equal(output.props.children[1], undefined);
   });
@@ -148,8 +144,7 @@ describe('HeaderBreadcrumb', () => {
         // Even though showEnvSwitcher is true, because the profile is visibile
         // it shouldn't render the env switcher.
         showEnvSwitcher={true}
-        switchModel={sinon.stub()}
-        uncommittedChanges={false} />);
+        switchModel={sinon.stub()} />);
     // There will be no third child if the envSwitcher is rendered
     assert.equal(output.props.children[1], undefined);
   });
@@ -176,8 +171,7 @@ describe('HeaderBreadcrumb', () => {
         getAppState={sinon.stub()}
         authDetails={authDetails}
         showEnvSwitcher={true}
-        switchModel={sinon.stub()}
-        uncommittedChanges={false} />, true);
+        switchModel={sinon.stub()} />, true);
     var instance = component.getMountedInstance();
     instance._handleProfileClick({
       preventDefault: sinon.stub()
