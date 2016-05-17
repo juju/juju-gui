@@ -1370,6 +1370,7 @@ describe('utilities', function() {
       var env = {set: testUtils.makeStubFunction()};
       var callback = testUtils.makeStubFunction();
       utils.set = testUtils.makeStubFunction();
+      utils.showConnectingMask = testUtils.makeStubFunction();
       utils.switchModel(
         createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
 
@@ -1390,6 +1391,8 @@ describe('utilities', function() {
       var envSet = env.set.lastArguments();
       assert.deepEqual(envSet[0], 'environmentName');
       assert.deepEqual(envSet[1], 'ev');
+
+      assert.deepEqual(utils.showConnectingMask.callCount(), 1);
     });
 
     it('just disconnects if uuid is missing', function() {

@@ -77,7 +77,6 @@ YUI.add('app-renderer-extension', function(Y) {
           envList={this.get('environmentList')}
           changeState={this.changeState.bind(this)}
           getAppState={state.getState.bind(state)}
-          showConnectingMask={this.showConnectingMask.bind(this)}
           authDetails={auth}
           showEnvSwitcher={showEnvSwitcher}
           switchModel={views.utils.switchModel.bind(

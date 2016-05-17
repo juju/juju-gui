@@ -81,7 +81,6 @@ describe('App Renderer Extension', function() {
       }
     };
     renderer.changeState = utils.makeStubFunction();
-    renderer.showConnectingMask = utils.makeStubFunction();
     renderer.switchEnv = utils.makeStubFunction();
     renderer.createSocketURL = utils.makeStubFunction();
   });

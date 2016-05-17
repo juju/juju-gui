@@ -1928,6 +1928,7 @@ YUI.add('juju-view-utils', function(Y) {
   */
   utils.switchModel = function(
     createSocketURL, switchEnv, env, uuid, modelList, name, callback) {
+    this.showConnectingMask();
     // Update the model name. The onEnvironmentNameChange in app.js method will
     // update the name correctly accross components.
     env.set('environmentName', name);

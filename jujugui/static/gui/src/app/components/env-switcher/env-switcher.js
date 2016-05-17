@@ -25,7 +25,6 @@ YUI.add('env-switcher', function() {
       jem: React.PropTypes.object,
       env: React.PropTypes.object,
       environmentName: React.PropTypes.string,
-      showConnectingMask: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
       uncommittedChanges: React.PropTypes.bool.isRequired
     },
@@ -136,7 +135,6 @@ YUI.add('env-switcher', function() {
     */
     handleEnvClick: function(model) {
       var props = this.props;
-      props.showConnectingMask();
       this.setState({showEnvList: false});
       props.switchModel(model.id, this.state.envList, model.name);
     },

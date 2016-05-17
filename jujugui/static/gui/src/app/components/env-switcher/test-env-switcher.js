@@ -35,7 +35,6 @@ describe('EnvSwitcher', function() {
       // Have to access the wrapped component as we don't want to test the click
       // outside wrapper.
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        showConnectingMask={sinon.stub()}
         environmentName="MyEnv"
         switchModel={sinon.stub()}
         uncommittedChanges={false} />, true);
@@ -75,7 +74,6 @@ describe('EnvSwitcher', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        showConnectingMask={sinon.stub()}
         env={env}
         switchModel={sinon.stub()}
         uncommittedChanges={false} />, true);
@@ -87,7 +85,6 @@ describe('EnvSwitcher', function() {
 
     renderer.render(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        showConnectingMask={sinon.stub()}
         env={env}
         switchModel={sinon.stub()}
         uncommittedChanges={false} />);
@@ -111,7 +108,6 @@ describe('EnvSwitcher', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        showConnectingMask={sinon.stub()}
         jem={jem}
         switchModel={sinon.stub()}
         uncommittedChanges={false} />, true);
@@ -132,7 +128,6 @@ describe('EnvSwitcher', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        showConnectingMask={sinon.stub()}
         env={env}
         switchModel={sinon.stub()}
         uncommittedChanges={false} />, true);
@@ -151,7 +146,6 @@ describe('EnvSwitcher', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        showConnectingMask={sinon.stub()}
         env={env}
         switchModel={sinon.stub()}
         uncommittedChanges={false} />, true);
@@ -181,13 +175,11 @@ describe('EnvSwitcher', function() {
     }];
     var listModels = sinon.stub();
     var switchModel = sinon.stub();
-    var mask = sinon.stub();
     var jem = {
       listModels: listModels
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        showConnectingMask={mask}
         jem={jem}
         switchModel={switchModel}
         uncommittedChanges={false} />, true);
@@ -198,7 +190,6 @@ describe('EnvSwitcher', function() {
       name: 'abc123',
       id: 'abc123'
     });
-    assert.equal(mask.callCount, 1);
     assert.equal(switchModel.callCount, 1);
     assert.deepEqual(instance.state, {
       showEnvList: false,
@@ -233,7 +224,6 @@ describe('EnvSwitcher', function() {
     var switchModel = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        showConnectingMask={sinon.stub()}
         jem={jem}
         switchModel={switchModel}
         uncommittedChanges={false} />, true);
@@ -291,7 +281,6 @@ describe('EnvSwitcher', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        showConnectingMask={sinon.stub()}
         env={env}
         switchModel={sinon.stub()}
         uncommittedChanges={false} />, true);
@@ -314,7 +303,6 @@ describe('EnvSwitcher', function() {
     var changeState = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        showConnectingMask={sinon.stub()}
         changeState={changeState}
         switchModel={sinon.stub()}
         uncommittedChanges={false} />, true);

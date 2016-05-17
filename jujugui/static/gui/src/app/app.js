@@ -784,7 +784,6 @@ YUI.add('juju-gui', function(Y) {
           listModels={utils.listModels.bind(
             this, this.env, this.jem, user, this.get('gisf'))}
           changeState={this.changeState.bind(this)}
-          showConnectingMask={this.showConnectingMask.bind(this)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           interactiveLogin={this.get('interactiveLogin')}
           pluralize={utils.pluralize.bind(this)}
