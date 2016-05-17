@@ -1748,9 +1748,13 @@ YUI.add('juju-view-utils', function(Y) {
       path = env.getLocalCharmFileUrl(charmId, 'icon.svg');
     } else if (localIndex === -1) {
       if (typeof isBundle === 'boolean' && isBundle) {
-        var staticURL =
-          (window.juju_config && window.juju_config.staticURL) || '';
-        var basePath = `${staticURL}/static/gui/build/app`;
+        var staticURL = '';
+        if (window.juju_config && window.juju_config.staticURL) {
+          // The missing slash is important because we need to use an
+          // associated path for GISF but a root path for GiJoe.
+          staticURL = window.juju_config.staticURL + '/';
+        }
+        var basePath = `${staticURL}static/gui/build/app`;
         path = `${basePath}/assets/images/non-sprites/bundle.svg`;
       } else {
         // Get the charm ID from the service.  In some cases, this will be
