@@ -102,41 +102,13 @@ YUI.add('user-profile', function() {
       Callback for the JEM and JES list models call.
 
       @method _fetchModelsCallback
-      @param {String} error The error from the request, or null.
-      @param {Object} data The data from the request.
+      @param {Object} models The list of models.
     */
-    _fetchModelsCallback: function(error, data) {
-      this.setState({loadingModels: false});
-      // We need to coerce error types returned by JES vs JEM into one error.
-      var err = data.err || error;
-      if (err) {
-        console.error(err);
-        return;
-      }
-      // data.models is only populated by Juju controllers, when using JEM
-      // the models are in the top level 'data' object.
-      var modelList;
-      if (data.models) {
-        modelList = data.models.map(function(model) {
-          // XXX frankban: owner should be the ownerTag without the 'user-'
-          // prefix here.
-          model.owner = model.ownerTag;
-          return model;
-        });
-      } else {
-        modelList = data.map(function(model) {
-          // XXX kadams54: JEM models don't *currently* have a name or owner.
-          // They have a path which is a combination of both, but that format
-          // may change on down the road. Hence this big comment.
-          model.name = model.path;
-          model.owner = model.path.split('/')[0];
-          model.lastConnection = 'N/A';
-          // XXX frankban: does JEM provide lifecycle indications?
-          model.isAlive = true;
-          return model;
-        });
-      }
-      this.setState({envList: modelList});
+    _fetchModelsCallback: function(models) {
+      this.setState({
+        envList: models,
+        loadingModels: false
+      });
     },
 
     /**

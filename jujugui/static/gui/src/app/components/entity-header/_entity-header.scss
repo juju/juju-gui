@@ -4,7 +4,16 @@
     padding: 50px 0;
     background-color: $white;
     color: $cool-grey;
-    overflow: hidden;
+
+    // Clearfix:
+    &:after {
+        visibility: hidden;
+        display: block;
+        font-size: 0;
+        content: " ";
+        clear: both;
+        height: 0;
+    }
 
     @keyframes slideIn {
         0% {

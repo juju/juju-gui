@@ -28,16 +28,21 @@ YUI.add('entity-details', function() {
       addNotification: React.PropTypes.func.isRequired,
       apiUrl: React.PropTypes.string.isRequired,
       changeState: React.PropTypes.func.isRequired,
+      currentModel: React.PropTypes.string,
       deployService: React.PropTypes.func.isRequired,
+      environmentName: React.PropTypes.string.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       getEntity: React.PropTypes.func.isRequired,
       getFile: React.PropTypes.func.isRequired,
       id: React.PropTypes.string.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
+      listModels: React.PropTypes.func.isRequired,
+      makeEntityModel: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
       scrollPosition: React.PropTypes.number.isRequired,
-      makeEntityModel: React.PropTypes.func.isRequired
+      switchModel: React.PropTypes.func.isRequired,
+      user: React.PropTypes.object.isRequired
     },
 
     /**
@@ -74,14 +79,19 @@ YUI.add('entity-details', function() {
           activeChild = (
               <div>
                 <juju.components.EntityHeader
-                  entityModel={entityModel}
                   addNotification={this.props.addNotification}
+                  changeState={this.props.changeState}
+                  currentModel={this.props.currentModel}
+                  deployService={this.props.deployService}
+                  entityModel={entityModel}
+                  environmentName={this.props.environmentName}
                   importBundleYAML={this.props.importBundleYAML}
                   getBundleYAML={this.props.getBundleYAML}
-                  changeState={this.props.changeState}
-                  deployService={this.props.deployService}
+                  listModels={this.props.listModels}
                   pluralize={this.props.pluralize}
-                  scrollPosition={this.props.scrollPosition} />
+                  scrollPosition={this.props.scrollPosition}
+                  switchModel={this.props.switchModel}
+                  user={this.props.user} />
                 {this._generateDiagram(entityModel)}
                 <juju.components.EntityContent
                   apiUrl={this.props.apiUrl}

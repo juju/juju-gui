@@ -21,16 +21,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('entity-header', function() {
 
   juju.components.EntityHeader = React.createClass({
+    xhrs: [],
     /* Define and validate the properites available on this component. */
     propTypes: {
       addNotification: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
+      currentModel: React.PropTypes.string,
       deployService: React.PropTypes.func.isRequired,
-      getBundleYAML: React.PropTypes.func.isRequired,
       entityModel: React.PropTypes.object.isRequired,
+      environmentName: React.PropTypes.string.isRequired,
+      getBundleYAML: React.PropTypes.func.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
+      listModels: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
-      scrollPosition: React.PropTypes.number.isRequired
+      scrollPosition: React.PropTypes.number.isRequired,
+      switchModel: React.PropTypes.func.isRequired,
+      user: React.PropTypes.object.isRequired
     },
 
     /**
@@ -40,20 +46,82 @@ YUI.add('entity-header', function() {
       @returns {String} The intial state.
     */
     getInitialState: function() {
-      return {headerHeight: 0};
+      return {
+        headerHeight: 0,
+        modelList: []
+      };
+    },
+
+    componentWillMount: function() {
+      this._fetchModels();
     },
 
     componentDidMount: function() {
       this.setState({headerHeight: this.refs.headerWrapper.clientHeight});
     },
 
+    componentWillUnmount: function() {
+      this.xhrs.forEach((xhr) => {
+        xhr && xhr.abort && xhr.abort();
+      });
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      // If the user has changed then update the data.
+      if (nextProps.user.user !== this.props.user.user) {
+        this._fetchModels();
+      }
+    },
+
+    /**
+      Makes a request of JEM or JES to fetch the users availble environments.
+
+      @method _fetchModels
+    */
+    _fetchModels: function() {
+      // Delay the call until after the state change to prevent race
+      // conditions.
+      this.setState({loadingModels: true}, () => {
+        var xhr = this.props.listModels(this._fetchModelsCallback);
+        this.xhrs.push(xhr);
+      });
+    },
+
+    /**
+      Callback for the JEM and JES list models call.
+
+      @method _fetchModelsCallback
+      @param {Object} models The list of models.
+    */
+    _fetchModelsCallback: function(models) {
+      this.setState({
+        modelList: models
+      });
+    },
+
+    /**
+      Add a service for this charm to the selected model.
+
+      @method _handleDeploy
+      @param {Object} model The model to deploy to.
+    */
+    _handleDeploy: function(model) {
+      // If the selected model is the one we're connected to then deploy the
+      // entity directly.
+      if (model.uuid == this.props.currentModel) {
+        this._deployEntity();
+      } else {
+        this.props.switchModel(
+          model.uuid, this.state.modelList, model.name, this._deployEntity);
+      }
+    },
+
     /**
       Add a service for this charm to the canvas.
 
-      @method _handleDeployClick
-      @param {Object} e The click event
+      @method _deployEntity
     */
-    _handleDeployClick: function(e) {
+    _deployEntity: function() {
       var entityModel = this.props.entityModel;
       var entity = entityModel.toEntity();
       if (entity.type === 'charm') {
@@ -161,12 +229,30 @@ YUI.add('entity-header', function() {
       // If the entity is not a charm OR it is a charm and has the series set,
       // display a button. Otherwise display a "not supported" message.
       if (entity.type !== 'charm' || entity.series) {
+        var options = [];
+        this.state.modelList.forEach((model) => {
+          options.push({
+            label: model.name,
+            value: model
+          });
+        });
+        options.push({
+          label: 'Add to new',
+          value: {
+            name: null,
+            uuid: null
+          }
+        });
         deployAction = (
-          <juju.components.GenericButton
-            ref="deployAction"
-            action={this._handleDeployClick}
+          <juju.components.MultiButton
+            action={this._handleDeploy}
+            defaultValue={{
+              name: this.props.environmentName,
+              uuid: this.props.currentModel
+            }}
+            options={options}
             type="positive"
-            title="Add to canvas" />
+            label={`Add to ${this.props.environmentName}`} />
         );
       } else {
         deployAction = (
@@ -272,6 +358,6 @@ YUI.add('entity-header', function() {
 }, '0.1.0', {
   requires: [
     'copy-to-clipboard',
-    'generic-button'
+    'multi-button'
   ]
 });

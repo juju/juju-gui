@@ -2094,11 +2094,55 @@ YUI.add('juju-view-utils', function(Y) {
     }
     var xhr;
     if (jem) {
-      xhr = jem.listModels(callback);
+      xhr = jem.listModels(utils._listModelsCallback.bind(this, callback));
     } else {
-      xhr = env.listModelsWithInfo(callback.bind(null));
+      xhr = env.listModelsWithInfo(
+        utils._listModelsCallback.bind(this, callback.bind(null)));
     }
     return xhr;
+  };
+
+  /**
+    Callback for the JEM and JES list models call. Transforms the returned data
+    into a consistent format.
+
+    @method _listModelsCallback
+    @param {Function} callback The function to be called once the model list
+      list has been received.
+    @param {String} error The error from the request, or null.
+    @param {Object} data The data from the request.
+  */
+  utils._listModelsCallback = function(callback, error, data) {
+    // We need to coerce error types returned by JES vs JEM into one error.
+    var err = data.err || error;
+    if (err) {
+      console.error(err);
+      return;
+    }
+    // data.models is only populated by Juju controllers, when using JEM
+    // the models are in the top level 'data' object.
+    var modelList;
+    if (data.models) {
+      modelList = data.models.map(function(model) {
+        // XXX frankban: owner should be the ownerTag without the 'user-'
+        // prefix here.
+        model.owner = model.ownerTag;
+        return model;
+      });
+    } else {
+      modelList = data.map(function(model) {
+        // XXX kadams54: JEM models don't *currently* have a name or owner.
+        // They have a path which is a combination of both, but that format
+        // may change on down the road. Hence this big comment.
+        model.name = model.path;
+        model.owner = model.path.split('/')[0];
+        model.lastConnection = 'N/A';
+        // XXX frankban: does JEM provide lifecycle indications?
+        model.isAlive = true;
+        return model;
+      });
+    }
+    callback(modelList);
   };
 
 }, '0.1.0', {

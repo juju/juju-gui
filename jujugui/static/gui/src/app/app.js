@@ -1163,6 +1163,7 @@ YUI.add('juju-gui', function(Y) {
       var state = this.state;
       var utils = views.utils;
       var charmstore = this.get('charmstore');
+      var user = this._getAuth();
       // Configure syntax highlighting for the markdown renderer.
       marked.setOptions({
         highlight: function(code, lang) {
@@ -1176,6 +1177,8 @@ YUI.add('juju-gui', function(Y) {
         <components.Charmbrowser
           apiUrl={charmstore.url}
           charmstoreSearch={charmstore.search.bind(charmstore)}
+          currentModel={this.get('jujuEnvUUID')}
+          environmentName={this.db.environment.get('name')}
           series={utils.getSeriesList()}
           importBundleYAML={this.bundleImporter.importBundleYAML.bind(
               this.bundleImporter)}
@@ -1183,10 +1186,16 @@ YUI.add('juju-gui', function(Y) {
           getEntity={charmstore.getEntity.bind(charmstore)}
           getFile={charmstore.getFile.bind(charmstore)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
+          listModels={utils.listModels.bind(
+            this, this.env, this.jem, user, this.get('gisf'))}
           renderMarkdown={marked.bind(this)}
           deployService={this.deployService.bind(this)}
           appState={state.get('current')}
           changeState={this.changeState.bind(this)}
+          switchModel={utils.switchModel.bind(
+            this, this.createSocketURL.bind(this), this.switchEnv.bind(this),
+            this.env)}
+          user={user}
           utils={utils}
           addNotification={
             this.db.notifications.add.bind(this.db.notifications)}
@@ -1995,12 +2004,12 @@ YUI.add('juju-gui', function(Y) {
           password: password
         });
       };
-      if (callback) {
+      if (callback && reconnect) {
         var onLogin = function(callback) {
           callback(this.env);
         };
-        // Delay the callback until after the env login as everything should be
-        // set up by then.
+        // Delay the callback until after the env login as everything should
+        // be set up by then.
         this.env.onceAfter(
           'login', onLogin.bind(this, callback), this);
       }
@@ -2013,6 +2022,11 @@ YUI.add('juju-gui', function(Y) {
         this.on_close();
         if (reconnect) {
           this.connect();
+        } else if (callback) {
+          // If we're not connecting to a new model (i.e. ending up in the new
+          // model/disconnected state) then call the callback immediately as
+          // there will be no login event to hook into.
+          callback(this.env);
         }
       }.bind(this.env);
       if (this.env.ws) {
