@@ -34,7 +34,6 @@ YUI.add('user-profile', function() {
       interactiveLogin: React.PropTypes.bool,
       listModels: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
-      showConnectingMask: React.PropTypes.func.isRequired,
       staticURL: React.PropTypes.string,
       storeUser: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
@@ -207,7 +206,6 @@ YUI.add('user-profile', function() {
     */
     switchModel: function(uuid, name, callback) {
       var props = this.props;
-      props.showConnectingMask();
       this.close();
       props.switchModel(uuid, this.state.envList, name, callback);
     },

@@ -38,7 +38,6 @@ describe('HeaderBreadcrumb', () => {
     var envList = ['envList'];
     var changeState = sinon.stub();
     var getAppState = sinon.stub();
-    var showConnectingMask = sinon.stub();
     var authDetails = {
       user: 'foo',
       usernameDisplay: 'Foo'
@@ -51,11 +50,9 @@ describe('HeaderBreadcrumb', () => {
         envList={envList}
         changeState={changeState}
         getAppState={getAppState}
-        showConnectingMask={showConnectingMask}
         authDetails={authDetails}
         showEnvSwitcher={true}
-        switchModel={switchModel}
-        uncommittedChanges={false} />, true);
+        switchModel={switchModel} />, true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
 
@@ -74,10 +71,8 @@ describe('HeaderBreadcrumb', () => {
             jem={jem}
             envList={envList}
             changeState={changeState}
-            showConnectingMask={showConnectingMask}
             authDetails={authDetails}
-            switchModel={switchModel}
-            uncommittedChanges={false} />
+            switchModel={switchModel} />
         </li>
       </ul>
     );
@@ -92,7 +87,6 @@ describe('HeaderBreadcrumb', () => {
     var envList = ['envList'];
     var changeState = sinon.stub();
     var getAppState = sinon.stub();
-    var showConnectingMask = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
         app={app}
@@ -102,10 +96,8 @@ describe('HeaderBreadcrumb', () => {
         envList={envList}
         changeState={changeState}
         getAppState={getAppState}
-        showConnectingMask={showConnectingMask}
         showEnvSwitcher={true}
-        switchModel={sinon.stub()}
-        uncommittedChanges={false} />);
+        switchModel={sinon.stub()} />);
     assert.equal(output.props.children[0], undefined);
   });
 
@@ -117,7 +109,6 @@ describe('HeaderBreadcrumb', () => {
     var envList = ['envList'];
     var changeState = sinon.stub();
     var getAppState = sinon.stub();
-    var showConnectingMask = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
         app={app}
@@ -127,10 +118,8 @@ describe('HeaderBreadcrumb', () => {
         envList={envList}
         changeState={changeState}
         getAppState={getAppState}
-        showConnectingMask={showConnectingMask}
         showEnvSwitcher={false}
-        switchModel={sinon.stub()}
-        uncommittedChanges={false} />);
+        switchModel={sinon.stub()} />);
     // There will be no third child if the envSwitcher is rendered
     assert.equal(output.props.children[1], undefined);
   });
@@ -143,7 +132,6 @@ describe('HeaderBreadcrumb', () => {
     var envList = ['envList'];
     var changeState = sinon.stub();
     var getAppState = sinon.stub().returns('profile');
-    var showConnectingMask = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
         app={app}
@@ -153,12 +141,10 @@ describe('HeaderBreadcrumb', () => {
         envList={envList}
         changeState={changeState}
         getAppState={getAppState}
-        showConnectingMask={showConnectingMask}
         // Even though showEnvSwitcher is true, because the profile is visibile
         // it shouldn't render the env switcher.
         showEnvSwitcher={true}
-        switchModel={sinon.stub()}
-        uncommittedChanges={false} />);
+        switchModel={sinon.stub()} />);
     // There will be no third child if the envSwitcher is rendered
     assert.equal(output.props.children[1], undefined);
   });
@@ -183,11 +169,9 @@ describe('HeaderBreadcrumb', () => {
         envList={envList}
         changeState={changeState}
         getAppState={sinon.stub()}
-        showConnectingMask={sinon.stub()}
         authDetails={authDetails}
         showEnvSwitcher={true}
-        switchModel={sinon.stub()}
-        uncommittedChanges={false} />, true);
+        switchModel={sinon.stub()} />, true);
     var instance = component.getMountedInstance();
     instance._handleProfileClick({
       preventDefault: sinon.stub()

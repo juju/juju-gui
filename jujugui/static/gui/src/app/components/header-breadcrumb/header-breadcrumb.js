@@ -28,11 +28,9 @@ YUI.add('header-breadcrumb', function() {
       envList: React.PropTypes.array,
       changeState: React.PropTypes.func.isRequired,
       getAppState: React.PropTypes.func.isRequired,
-      showConnectingMask: React.PropTypes.func.isRequired,
       authDetails: React.PropTypes.object,
       showEnvSwitcher: React.PropTypes.bool.isRequired,
       switchModel: React.PropTypes.func.isRequired,
-      uncommittedChanges: React.PropTypes.bool.isRequired,
       userName: React.PropTypes.string
     },
 
@@ -54,10 +52,8 @@ YUI.add('header-breadcrumb', function() {
               jem={this.props.jem}
               envList={this.props.envList}
               changeState={this.props.changeState}
-              showConnectingMask={this.props.showConnectingMask}
               switchModel={this.props.switchModel}
-              authDetails={this.props.authDetails}
-              uncommittedChanges={this.props.uncommittedChanges} />
+              authDetails={this.props.authDetails} />
           </li>);
       }
       return;

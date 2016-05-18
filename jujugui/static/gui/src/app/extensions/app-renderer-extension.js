@@ -61,11 +61,6 @@ YUI.add('app-renderer-extension', function(Y) {
       if (this.get('sandbox')) {
         showEnvSwitcher = false;
       }
-      var uncommittedChanges = false;
-      if (env) {
-        var currentChangeSet = env.get('ecs').getCurrentChangeSet();
-        uncommittedChanges = Object.keys(currentChangeSet).length > 0;
-      }
       var auth = this._getAuth();
       var envName = this.db.environment.get('name');
       var state = this.state;
@@ -77,13 +72,11 @@ YUI.add('app-renderer-extension', function(Y) {
           envList={this.get('environmentList')}
           changeState={this.changeState.bind(this)}
           getAppState={state.getState.bind(state)}
-          showConnectingMask={this.showConnectingMask.bind(this)}
           authDetails={auth}
           showEnvSwitcher={showEnvSwitcher}
           switchModel={views.utils.switchModel.bind(
             this, this.createSocketURL.bind(this),
-            this.switchEnv.bind(this), env)}
-          uncommittedChanges={uncommittedChanges} />,
+            this.switchEnv.bind(this), env)} />,
         document.getElementById('header-breadcrumb'));
     },
 

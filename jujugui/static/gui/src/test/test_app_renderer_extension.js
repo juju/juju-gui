@@ -81,7 +81,6 @@ describe('App Renderer Extension', function() {
       }
     };
     renderer.changeState = utils.makeStubFunction();
-    renderer.showConnectingMask = utils.makeStubFunction();
     renderer.switchEnv = utils.makeStubFunction();
     renderer.createSocketURL = utils.makeStubFunction();
   });
@@ -104,8 +103,6 @@ describe('App Renderer Extension', function() {
       var props = createElementStub.lastArguments()[1];
       assert.equal(props['showEnvSwitcher'], true,
                    'The showEnvSwitcher prop was not set properly.');
-      assert.equal(props['uncommittedChanges'], false,
-                   'The uncommittedChanges prop was not set properly.');
       assert.equal(props['envName'], 'test-model',
                    'The envName prop was not set properly.');
     });
@@ -149,15 +146,6 @@ describe('App Renderer Extension', function() {
       var props = createElementStub.lastArguments()[1];
       assert.equal(props['showEnvSwitcher'], true,
                    'The showEnvSwitcher prop was not set properly.');
-    });
-
-    it('recognizes when uncommitted changes are present', function() {
-      var ecs = renderer.env.get('ecs');
-      ecs.getCurrentChangeSet = utils.makeStubFunction({foo: 'bar'});
-      renderer._renderBreadcrumb();
-      var props = createElementStub.lastArguments()[1];
-      assert.equal(props['uncommittedChanges'], true,
-                   'The uncommittedChanges prop was not set properly.');
     });
   });
 });

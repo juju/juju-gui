@@ -26,15 +26,13 @@ YUI.add('env-list', function() {
       envs: React.PropTypes.array,
       handleEnvClick: React.PropTypes.func,
       createNewEnv: React.PropTypes.func,
-      uncommittedChanges: React.PropTypes.bool.isRequired
     },
 
     getInitialState: function() {
       return {
         envs: this.props.envs,
         envName: '',
-        selectedModel: null,
-        showConfirm: false
+        selectedModel: null
       };
     },
 
@@ -70,45 +68,17 @@ YUI.add('env-list', function() {
     */
     _handleModelClick: function(e) {
       var currentTarget = e.currentTarget;
-      var uncommittedChanges = this.props.uncommittedChanges;
       var state = {
         selectedModel: {
           id: currentTarget.getAttribute('data-id'),
           name: currentTarget.getAttribute('data-name')
         }
       };
-      // If there are uncommitted changes then get the user to confirm the
-      // switch.
-      if (uncommittedChanges) {
-        state.showConfirm = true;
-      }
       this.setState(state, () => {
         // Delay switching the model so that the state will have been update
         // with the selected model.
-        if (!uncommittedChanges) {
-          // If there are no uncommitted changes then we're OK to go ahead and
-          // switch models.
-          this._switchModel();
-        }
+        this.props.handleEnvClick(this.state.selectedModel);
       });
-    },
-
-    /**
-      Handle switching models.
-
-      @method _switchModel
-    */
-    _switchModel: function() {
-      this.props.handleEnvClick(this.state.selectedModel);
-    },
-
-    /**
-      Handle cancelling switching models.
-
-      @method _cancelSwitchModel
-    */
-    _cancelSwitchModel: function() {
-      this.setState({showConfirm: false});
     },
 
     /**
@@ -167,51 +137,21 @@ YUI.add('env-list', function() {
       );
     },
 
-    /**
-      Generate the list of models.
-
-      @method _generateConfirm
-    */
-    _generateConfirm: function() {
-      return (
-        <div className="env-list__message">
-          You have uncommitted changes to your model. You will lose these
-          changes if you switch models.
-        </div>
-      );
-    },
-
     render: function() {
-      var buttons;
-      var content;
-      if (this.state.showConfirm) {
-        buttons = [{
-          title: 'Cancel',
-          type: 'base',
-          action: this._cancelSwitchModel
-        }, {
-          title: 'Switch',
-          type: 'neutral',
-          action: this._switchModel
-        }];
-        content = this._generateConfirm();
-      } else {
-        buttons = [{
-          title: 'More',
-          type: 'base',
-          action: this.showProfile
-        }, {
-          title: 'New',
-          type: 'neutral',
-          action: this.createNewEnv
-        }];
-        content = this._generateModels();
-      }
+      var buttons = [{
+        title: 'More',
+        type: 'base',
+        action: this.showProfile
+      }, {
+        title: 'New',
+        type: 'neutral',
+        action: this.createNewEnv
+      }];
       return (
         <juju.components.Panel
           instanceName="env-list-panel"
           visible={true}>
-          {content}
+          {this._generateModels()}
           <juju.components.ButtonRow buttons={buttons} />
         </juju.components.Panel>
       );
