@@ -44,7 +44,7 @@ YUI.add('header-breadcrumb', function() {
     */
     _renderEnvSwitcher: function() {
       var component = this.props.getAppState(
-        'current', 'sectionC', 'component');
+        'current', 'sectionB', 'component');
       if (this.props.showEnvSwitcher && component !== 'profile') {
         return (
           <li className="header-breadcrumb__list-item">
@@ -71,7 +71,7 @@ YUI.add('header-breadcrumb', function() {
     _handleProfileClick: function(e) {
       e.preventDefault();
       this.props.changeState({
-        sectionC: {
+        sectionB: {
           component: 'profile',
           metadata: null
         }

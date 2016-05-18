@@ -195,7 +195,7 @@ describe('HeaderBreadcrumb', () => {
     assert.equal(changeState.called, true,
                  'changeState was not called');
     var state = changeState.args[0][0];
-    assert.equal(state.sectionC.component, 'profile',
+    assert.equal(state.sectionB.component, 'profile',
                  'new state not set the the profile component');
   });
 

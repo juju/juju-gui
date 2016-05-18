@@ -710,7 +710,7 @@ describe('UserProfile', () => {
     // Make sure we close the profile page when switching envs.
     assert.equal(changeState.callCount, 1, 'changeState not called');
     assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
+      sectionB: {
         component: null,
         metadata: null
       }
@@ -836,7 +836,7 @@ describe('UserProfile', () => {
     assert.equal(switchArgs[0], undefined,
                  'UUID should not be defined');
     assert.deepEqual(changeState.getCall(0).args[0], {
-      sectionC: {
+      sectionB: {
         component: null,
         metadata: null
       }
