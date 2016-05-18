@@ -1500,8 +1500,8 @@ describe('utilities', function() {
       utils.set = testUtils.makeStubFunction();
       utils.listModels(env, null, user, true, callback);
       assert.equal(listModelsWithInfo.callCount(), 1);
+      assert.equal(listModelsWithInfo.lastArguments().length, 1);
       assert.equal(typeof listModelsWithInfo.lastArguments()[0], 'function');
-      assert.strictEqual(listModelsWithInfo.lastArguments()[1], undefined);
     });
 
     it('gets the default model for older versions of Juju', function() {
