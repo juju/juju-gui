@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" dir="ltr">
 <!-- !IE will be true for all non-IE browsers and IE10 since it does not
  recognize conditional flags. -->
 <!--[if !IE]><!--><script>
