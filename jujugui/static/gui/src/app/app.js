@@ -769,6 +769,8 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderUserProfile: function() {
       var charmstore = this.get('charmstore');
+      var utils = views.utils;
+      var user = this._getAuth();
       // NOTE: we need to clone this.get('users') below; passing in without
       // cloning breaks React's ability to distinguish between this.props and
       // nextProps on the lifecycle methods.
@@ -779,20 +781,19 @@ YUI.add('juju-gui', function(Y) {
           canCreateNew={this.env.get('connected')}
           currentModel={this.get('jujuEnvUUID')}
           env={this.env}
-          jem={this.jem}
-          gisf={this.get('gisf')}
-          listModels={this.env.listModelsWithInfo.bind(this.env)}
+          listModels={utils.listModels.bind(
+            this, this.env, this.jem, user, this.get('gisf'))}
           changeState={this.changeState.bind(this)}
           showConnectingMask={this.showConnectingMask.bind(this)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           interactiveLogin={this.get('interactiveLogin')}
-          pluralize={views.utils.pluralize.bind(this)}
+          pluralize={utils.pluralize.bind(this)}
           staticURL={window.juju_config.staticURL}
           storeUser={this.storeUser.bind(this)}
-          switchModel={views.utils.switchModel.bind(
+          switchModel={utils.switchModel.bind(
             this, this.createSocketURL.bind(this), this.switchEnv.bind(this),
             this.env)}
-          user={this._getAuth()}
+          user={user}
           users={Y.clone(this.get('users'), true)}
           charmstore={this.get('charmstore')} />,
         document.getElementById('top-page-container'));

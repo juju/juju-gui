@@ -31,10 +31,8 @@ YUI.add('user-profile', function() {
       currentModel: React.PropTypes.string,
       env: React.PropTypes.object.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
-      gisf: React.PropTypes.bool.isRequired,
       interactiveLogin: React.PropTypes.bool,
-      jem: React.PropTypes.object,
-      listModels: React.PropTypes.func,
+      listModels: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
       staticURL: React.PropTypes.string,
@@ -59,7 +57,7 @@ YUI.add('user-profile', function() {
     componentWillMount: function() {
       var props = this.props,
           users = props.users;
-      this._fetchEnvironments(props);
+      this._fetchEnvironments();
       if (users.charmstore && users.charmstore.user) {
         this._fetchEntities('charm', props);
         this._fetchEntities('bundle', props);
@@ -76,7 +74,7 @@ YUI.add('user-profile', function() {
       // If the user has changed then update the data.
       var props = this.props;
       if (nextProps.user.user !== props.user.user) {
-        this._fetchEnvironments(nextProps);
+        this._fetchEnvironments();
       }
       // Compare next and previous charmstore users in a data-safe manner.
       var prevCSUser = props.users.charmstore || {};
@@ -91,44 +89,12 @@ YUI.add('user-profile', function() {
       Makes a request of JEM or JES to fetch the users availble environments.
 
       @method _fetchEnvironments
-      @param {Object} props the properties to use when connection to JEM/JES
     */
-    _fetchEnvironments:  function(props) {
-      var jem = props.jem;
+    _fetchEnvironments: function() {
+      // Delay the call until after the state change to prevent race
+      // conditions.
       this.setState({loadingModels: true}, () => {
-        // Delay the call until after the state change to prevent race
-        // conditions.
-        var env = this.props.env;
-        // If gisf is enabled then we won't be connected to a model to know
-        // what facades are supported but we can reliably assume it'll be Juju 2
-        // or higher which will support the necessary api calls.
-        if (!this.props.gisf) {
-          if (!env ||
-            env.findFacadeVersion('ModelManager') === null &&
-            env.findFacadeVersion('EnvironmentManager') === null) {
-            // If we're on Juju < 2 then pass the default model to the list.
-            var environmentName = env.get('environmentName');
-            var username = this.props.user && this.props.user.usernameDisplay;
-            this._fetchModelsCallback(null, {
-              models: [{
-                name: environmentName,
-                ownerTag: username,
-                // Leave the UUID blank so that it navigates to the default
-                // model when selected.
-                uuid: '',
-                lastConnection: 'now'
-              }]
-            });
-            return;
-          }
-        }
-        var xhr;
-        if (jem) {
-          xhr = jem.listModels(this._fetchModelsCallback);
-        } else {
-          xhr = props.listModels(
-            this._fetchModelsCallback.bind(this, null));
-        }
+        var xhr = this.props.listModels(this._fetchModelsCallback);
         this.xhrs.push(xhr);
       });
     },
@@ -140,7 +106,7 @@ YUI.add('user-profile', function() {
       @param {String} error The error from the request, or null.
       @param {Object} data The data from the request.
     */
-    _fetchModelsCallback: function (error, data) {
+    _fetchModelsCallback: function(error, data) {
       this.setState({loadingModels: false});
       // We need to coerce error types returned by JES vs JEM into one error.
       var err = data.err || error;
