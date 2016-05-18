@@ -2065,7 +2065,7 @@ YUI.add('juju-view-utils', function(Y) {
     if (jem) {
       xhr = jem.listModels(callback);
     } else {
-      xhr = env.listModelsWithInfo(env, callback.bind(null));
+      xhr = env.listModelsWithInfo(callback.bind(null));
     }
     return xhr;
   };
