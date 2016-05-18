@@ -1207,7 +1207,23 @@ YUI.add('juju-view-utils', function(Y) {
     // to be text/plain instead of it's actual type of application/yaml.
     var exportBlob = new Blob([exportData],
         {type: 'text/plain;charset=utf-8'});
-    saveAs(exportBlob, 'bundle.yaml');
+    var envName = db.environment.get('name');
+    saveAs(exportBlob, this._genereateBundleExportFileName(envName));
+  },
+
+  /**
+    Get the export file name
+
+    @method _genereateBundleExportFileName
+    @param {String} Enviroment name
+    @param {Date} date object
+  */
+  utils._genereateBundleExportFileName = function(envName, date=new Date()) {
+    var fileExtension = '.yaml';
+    return [envName,
+        date.getFullYear(),
+        ('0' + (date.getMonth() + 1)).slice(-2),
+        ('0' + date.getDate()).slice(-2)].join('-') + fileExtension;
   },
 
   /**
