@@ -2013,6 +2013,11 @@ YUI.add('juju-gui', function(Y) {
         this.on_close();
         if (reconnect) {
           this.connect();
+        } else if (callback) {
+          // If we're not connecting to a new model (i.e. ending up in the new
+          // model/disconnected state) then call the callback immediately as
+          // there will be no login event to hook into.
+          callback(this.env);
         }
       }.bind(this.env);
       if (this.env.ws) {

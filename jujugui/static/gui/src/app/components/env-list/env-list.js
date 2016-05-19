@@ -23,9 +23,10 @@ YUI.add('env-list', function() {
   juju.components.EnvList = React.createClass({
 
     propTypes: {
+      displayProfile: React.PropTypes.func.isRequired,
       envs: React.PropTypes.array,
       handleEnvClick: React.PropTypes.func,
-      createNewEnv: React.PropTypes.func,
+      createNewEnv: React.PropTypes.func
     },
 
     getInitialState: function() {
@@ -102,15 +103,6 @@ YUI.add('env-list', function() {
     },
 
     /**
-      Calls the showUserProfile prop.
-
-      @method showProfile
-    */
-    showProfile: function() {
-      this.props.showUserProfile();
-    },
-
-    /**
       Generate the list of models.
 
       @method _generateModelList
@@ -141,7 +133,7 @@ YUI.add('env-list', function() {
       var buttons = [{
         title: 'More',
         type: 'base',
-        action: this.showProfile
+        action: this.props.displayProfile
       }, {
         title: 'New',
         type: 'neutral',

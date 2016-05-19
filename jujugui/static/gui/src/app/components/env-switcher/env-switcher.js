@@ -22,6 +22,7 @@ YUI.add('env-switcher', function() {
 
   var EnvSwitcher = React.createClass({
     propTypes: {
+      displayProfile: React.PropTypes.func.isRequired,
       jem: React.PropTypes.object,
       env: React.PropTypes.object,
       environmentName: React.PropTypes.string,
@@ -202,20 +203,6 @@ YUI.add('env-switcher', function() {
     },
 
     /**
-      Calls changestate to show the user profile.
-
-      @method showUserProfile
-    */
-    showUserProfile: function() {
-      this.props.changeState({
-        sectionB: {
-          component: 'profile',
-          metadata: {}
-        }
-      });
-    },
-
-    /**
       Returns the environment list components if the showEnvList state property
       is truthy.
 
@@ -227,7 +214,7 @@ YUI.add('env-switcher', function() {
         return <juju.components.EnvList
           handleEnvClick={this.handleEnvClick}
           createNewEnv={this.createNewEnv}
-          showUserProfile={this.showUserProfile}
+          displayProfile={this.props.displayProfile}
           envs={this.state.envList} />;
       }
       return '';
