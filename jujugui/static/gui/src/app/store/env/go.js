@@ -903,11 +903,12 @@ YUI.add('juju-env-go', function(Y) {
     listModelsWithInfo: function(callback) {
       // Ensure we always have a callback.
       if (!callback) {
-        callback = function(data) {
-          if (data.err) {
-            console.log('listModelsWithInfo API call error:', data.err);
+        callback = function(err, data) {
+          console.log('listModelsWithInfo: No callback provided');
+          if (err) {
+            console.log('listModelsWithInfo: API call error:', err);
           } else {
-            console.log('listModelsWithInfo API call data:', data);
+            console.log('listModelsWithInfo: API call data:', data);
           }
         };
       }
@@ -915,14 +916,14 @@ YUI.add('juju-env-go', function(Y) {
       // Retrieve the current user tag.
       var credentials = this.getCredentials();
       if (!credentials.user) {
-        callback({err: 'called without credentials'});
+        callback('called without credentials', null);
         return;
       }
 
       // Perform the API calls.
       this.listModels(credentials.user, (listData) => {
         if (listData.err) {
-          callback({err: listData.err});
+          callback(listData.err, null);
           return;
         }
         var tags = listData.envs.map(function(model) {
@@ -930,7 +931,7 @@ YUI.add('juju-env-go', function(Y) {
         });
         this.modelInfo(tags, (infoData) => {
           if (infoData.err) {
-            callback({err: infoData.err});
+            callback(infoData.err, null);
             return;
           }
           var models = infoData.models.map(function(model, index) {
@@ -951,7 +952,7 @@ YUI.add('juju-env-go', function(Y) {
               lastConnection: listData.envs[index].lastConnection
             };
           });
-          callback({models: models});
+          callback(null, {models: models});
         });
       });
     },

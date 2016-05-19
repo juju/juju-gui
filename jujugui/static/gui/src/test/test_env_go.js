@@ -1036,282 +1036,284 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('listModelsWithInfo: info for a single model', function(done) {
-      env.setCredentials({user: 'user-who', password: 'tardis'});
-      // Perform the request.
-      env.listModelsWithInfo(function(data) {
-        assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.models.length, 1);
-        var result = data.models[0];
-        assert.strictEqual(result.err, undefined);
-        assert.strictEqual(result.tag, 'model-5bea955d-1');
-        assert.strictEqual(result.name, 'admin');
-        assert.strictEqual(result.series, 'trusty');
-        assert.strictEqual(result.provider, 'lxd');
-        assert.strictEqual(result.uuid, '5bea955d-1');
-        assert.strictEqual(result.serverUuid, '5bea955d-c');
-        assert.strictEqual(result.life, 'alive');
-        assert.strictEqual(result.ownerTag, 'user-admin@local');
-        assert.strictEqual(result.isAlive, true, 'unexpected zombie model');
-        assert.strictEqual(result.isAdmin, false, 'unexpected admin model');
-        assert.strictEqual(result.lastConnection, 'today');
-        assert.equal(conn.messages.length, 2);
-        assert.deepEqual(conn.messages[0], {
-          Type: 'ModelManager',
-          Version: 2,
-          Request: 'ListModels',
-          Params: {Tag: 'user-who'},
-          RequestId: 1
+    describe('listModelsWithInfo', function() {
+      it('listModelsWithInfo: info for a single model', function(done) {
+        env.setCredentials({user: 'user-who', password: 'tardis'});
+        // Perform the request.
+        env.listModelsWithInfo(function(err, data) {
+          assert.strictEqual(err, null);
+          assert.strictEqual(data.models.length, 1);
+          var result = data.models[0];
+          assert.strictEqual(result.err, undefined);
+          assert.strictEqual(result.tag, 'model-5bea955d-1');
+          assert.strictEqual(result.name, 'admin');
+          assert.strictEqual(result.series, 'trusty');
+          assert.strictEqual(result.provider, 'lxd');
+          assert.strictEqual(result.uuid, '5bea955d-1');
+          assert.strictEqual(result.serverUuid, '5bea955d-c');
+          assert.strictEqual(result.life, 'alive');
+          assert.strictEqual(result.ownerTag, 'user-admin@local');
+          assert.strictEqual(result.isAlive, true, 'unexpected zombie model');
+          assert.strictEqual(result.isAdmin, false, 'unexpected admin model');
+          assert.strictEqual(result.lastConnection, 'today');
+          assert.equal(conn.messages.length, 2);
+          assert.deepEqual(conn.messages[0], {
+            Type: 'ModelManager',
+            Version: 2,
+            Request: 'ListModels',
+            Params: {Tag: 'user-who'},
+            RequestId: 1
+          });
+          assert.deepEqual(conn.messages[1], {
+            Type: 'ModelManager',
+            Version: 2,
+            Request: 'ModelInfo',
+            Params: {Entities: [{Tag: 'model-5bea955d-1'}]},
+            RequestId: 2
+          });
+          done();
         });
-        assert.deepEqual(conn.messages[1], {
-          Type: 'ModelManager',
-          Version: 2,
-          Request: 'ModelInfo',
-          Params: {Entities: [{Tag: 'model-5bea955d-1'}]},
-          RequestId: 2
-        });
-        done();
-      });
 
-      // Mimic first response to ModelManager.ListModels.
-      conn.msg({
-        RequestId: 1,
-        Response: {
-          UserModels: [{
-            Name: 'admin',
-            OwnerTag: 'user-who',
-            UUID: '5bea955d-1',
-            LastConnection: 'today'
-          }]
-        }
-      });
-      // Mimic second response to ModelManager.ModelInfo.
-      conn.msg({
-        RequestId: 2,
-        Response: {
-          results: [{
-            result: {
-              DefaultSeries: 'trusty',
+        // Mimic first response to ModelManager.ListModels.
+        conn.msg({
+          RequestId: 1,
+          Response: {
+            UserModels: [{
               Name: 'admin',
-              ProviderType: 'lxd',
+              OwnerTag: 'user-who',
               UUID: '5bea955d-1',
-              ServerUUID: '5bea955d-c',
-              Life: 'alive',
-              OwnerTag: 'user-admin@local'
-            }
-          }]
-        }
-      });
-    });
-
-    it('listModelsWithInfo: info for multiple models', function(done) {
-      env.setCredentials({user: 'user-dalek', password: 'exterminate'});
-      // Perform the request.
-      env.listModelsWithInfo(function(data) {
-        assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.models.length, 3);
-        var result1 = data.models[0];
-        assert.strictEqual(result1.err, undefined);
-        assert.strictEqual(result1.tag, 'model-5bea955d-1');
-        assert.strictEqual(result1.name, 'default');
-        assert.strictEqual(result1.series, 'xenial');
-        assert.strictEqual(result1.provider, 'lxd');
-        assert.strictEqual(result1.uuid, '5bea955d-1');
-        assert.strictEqual(result1.serverUuid, '5bea955d-c');
-        assert.strictEqual(result1.life, 'dead');
-        assert.strictEqual(result1.ownerTag, 'user-dalek@local');
-        assert.strictEqual(result1.isAlive, false, 'unexpected alive model');
-        assert.strictEqual(result1.isAdmin, false, 'unexpected admin model');
-        assert.strictEqual(result1.lastConnection, 'today');
-        var result2 = data.models[1];
-        assert.strictEqual(result2.err, undefined);
-        assert.strictEqual(result2.tag, 'model-5bea955d-c');
-        assert.strictEqual(result2.name, 'admin');
-        assert.strictEqual(result2.series, 'trusty');
-        assert.strictEqual(result2.provider, 'lxd');
-        assert.strictEqual(result2.uuid, '5bea955d-c');
-        assert.strictEqual(result2.serverUuid, '5bea955d-c');
-        assert.strictEqual(result2.life, 'alive');
-        assert.strictEqual(result2.ownerTag, 'user-who@local');
-        assert.strictEqual(result2.isAlive, true, 'unexpected zombie model');
-        assert.strictEqual(result2.isAdmin, true, 'unexpected regular model');
-        assert.strictEqual(result2.lastConnection, 'yesterday');
-        var result3 = data.models[2];
-        assert.strictEqual(result3.err, undefined);
-        assert.strictEqual(result3.tag, 'model-5bea955d-3');
-        assert.strictEqual(result3.name, 'mymodel');
-        assert.strictEqual(result3.series, 'precise');
-        assert.strictEqual(result3.provider, 'aws');
-        assert.strictEqual(result3.uuid, '5bea955d-3');
-        assert.strictEqual(result3.serverUuid, '5bea955d-c');
-        assert.strictEqual(result3.life, 'alive');
-        assert.strictEqual(result3.ownerTag, 'user-cyberman@local');
-        assert.strictEqual(result3.isAlive, true, 'unexpected zombie model');
-        assert.strictEqual(result3.isAdmin, false, 'unexpected admin model');
-        assert.strictEqual(result3.lastConnection, 'tomorrow');
-        assert.equal(conn.messages.length, 2);
-        assert.deepEqual(conn.messages[0], {
-          Type: 'ModelManager',
-          Version: 2,
-          Request: 'ListModels',
-          Params: {Tag: 'user-dalek'},
-          RequestId: 1
+              LastConnection: 'today'
+            }]
+          }
         });
-        assert.deepEqual(conn.messages[1], {
-          Type: 'ModelManager',
-          Version: 2,
-          Request: 'ModelInfo',
-          Params: {Entities: [
-            {Tag: 'model-5bea955d-1'},
-            {Tag: 'model-5bea955d-c'},
-            {Tag: 'model-5bea955d-3'}
-          ]},
-          RequestId: 2
+        // Mimic second response to ModelManager.ModelInfo.
+        conn.msg({
+          RequestId: 2,
+          Response: {
+            results: [{
+              result: {
+                DefaultSeries: 'trusty',
+                Name: 'admin',
+                ProviderType: 'lxd',
+                UUID: '5bea955d-1',
+                ServerUUID: '5bea955d-c',
+                Life: 'alive',
+                OwnerTag: 'user-admin@local'
+              }
+            }]
+          }
         });
-        done();
       });
 
-      // Mimic first response to ModelManager.ListModels.
-      conn.msg({
-        RequestId: 1,
-        Response: {
-          UserModels: [{
-            Name: 'default',
-            OwnerTag: 'user-dalek',
-            UUID: '5bea955d-1',
-            LastConnection: 'today'
-          }, {
-            Name: 'admin',
-            OwnerTag: 'user-who',
-            UUID: '5bea955d-c',
-            LastConnection: 'yesterday'
-          }, {
-            Name: 'mymodel',
-            OwnerTag: 'user-cyberman',
-            UUID: '5bea955d-3',
-            LastConnection: 'tomorrow'
-          }]
-        }
-      });
-      // Mimic second response to ModelManager.ModelInfo.
-      conn.msg({
-        RequestId: 2,
-        Response: {
-          results: [{
-            result: {
-              DefaultSeries: 'xenial',
+      it('listModelsWithInfo: info for multiple models', function(done) {
+        env.setCredentials({user: 'user-dalek', password: 'exterminate'});
+        // Perform the request.
+        env.listModelsWithInfo(function(err, data) {
+          assert.strictEqual(err, null);
+          assert.strictEqual(data.models.length, 3);
+          var result1 = data.models[0];
+          assert.strictEqual(result1.err, undefined);
+          assert.strictEqual(result1.tag, 'model-5bea955d-1');
+          assert.strictEqual(result1.name, 'default');
+          assert.strictEqual(result1.series, 'xenial');
+          assert.strictEqual(result1.provider, 'lxd');
+          assert.strictEqual(result1.uuid, '5bea955d-1');
+          assert.strictEqual(result1.serverUuid, '5bea955d-c');
+          assert.strictEqual(result1.life, 'dead');
+          assert.strictEqual(result1.ownerTag, 'user-dalek@local');
+          assert.strictEqual(result1.isAlive, false, 'unexpected alive model');
+          assert.strictEqual(result1.isAdmin, false, 'unexpected admin model');
+          assert.strictEqual(result1.lastConnection, 'today');
+          var result2 = data.models[1];
+          assert.strictEqual(result2.err, undefined);
+          assert.strictEqual(result2.tag, 'model-5bea955d-c');
+          assert.strictEqual(result2.name, 'admin');
+          assert.strictEqual(result2.series, 'trusty');
+          assert.strictEqual(result2.provider, 'lxd');
+          assert.strictEqual(result2.uuid, '5bea955d-c');
+          assert.strictEqual(result2.serverUuid, '5bea955d-c');
+          assert.strictEqual(result2.life, 'alive');
+          assert.strictEqual(result2.ownerTag, 'user-who@local');
+          assert.strictEqual(result2.isAlive, true, 'unexpected zombie model');
+          assert.strictEqual(result2.isAdmin, true, 'unexpected regular model');
+          assert.strictEqual(result2.lastConnection, 'yesterday');
+          var result3 = data.models[2];
+          assert.strictEqual(result3.err, undefined);
+          assert.strictEqual(result3.tag, 'model-5bea955d-3');
+          assert.strictEqual(result3.name, 'mymodel');
+          assert.strictEqual(result3.series, 'precise');
+          assert.strictEqual(result3.provider, 'aws');
+          assert.strictEqual(result3.uuid, '5bea955d-3');
+          assert.strictEqual(result3.serverUuid, '5bea955d-c');
+          assert.strictEqual(result3.life, 'alive');
+          assert.strictEqual(result3.ownerTag, 'user-cyberman@local');
+          assert.strictEqual(result3.isAlive, true, 'unexpected zombie model');
+          assert.strictEqual(result3.isAdmin, false, 'unexpected admin model');
+          assert.strictEqual(result3.lastConnection, 'tomorrow');
+          assert.equal(conn.messages.length, 2);
+          assert.deepEqual(conn.messages[0], {
+            Type: 'ModelManager',
+            Version: 2,
+            Request: 'ListModels',
+            Params: {Tag: 'user-dalek'},
+            RequestId: 1
+          });
+          assert.deepEqual(conn.messages[1], {
+            Type: 'ModelManager',
+            Version: 2,
+            Request: 'ModelInfo',
+            Params: {Entities: [
+              {Tag: 'model-5bea955d-1'},
+              {Tag: 'model-5bea955d-c'},
+              {Tag: 'model-5bea955d-3'}
+            ]},
+            RequestId: 2
+          });
+          done();
+        });
+
+        // Mimic first response to ModelManager.ListModels.
+        conn.msg({
+          RequestId: 1,
+          Response: {
+            UserModels: [{
               Name: 'default',
-              ProviderType: 'lxd',
+              OwnerTag: 'user-dalek',
               UUID: '5bea955d-1',
-              ServerUUID: '5bea955d-c',
-              Life: 'dead',
-              OwnerTag: 'user-dalek@local'
-            }
-          }, {
-            result: {
-              DefaultSeries: 'trusty',
+              LastConnection: 'today'
+            }, {
               Name: 'admin',
-              ProviderType: 'lxd',
+              OwnerTag: 'user-who',
               UUID: '5bea955d-c',
-              ServerUUID: '5bea955d-c',
-              Life: 'alive',
-              OwnerTag: 'user-who@local'
-            }
-          }, {
-            result: {
-              DefaultSeries: 'precise',
+              LastConnection: 'yesterday'
+            }, {
               Name: 'mymodel',
-              ProviderType: 'aws',
+              OwnerTag: 'user-cyberman',
               UUID: '5bea955d-3',
-              ServerUUID: '5bea955d-c',
-              Life: 'alive',
-              OwnerTag: 'user-cyberman@local'
-            }
-          }]
-        }
-      });
-    });
-
-    it('listModelsWithInfo: credentials error', function(done) {
-      env.setCredentials(null);
-      // Perform the request.
-      env.listModelsWithInfo(function(data) {
-        assert.strictEqual(data.err, 'called without credentials');
-        done();
-      });
-    });
-
-    it('listModelsWithInfo: list models error', function(done) {
-      // Perform the request.
-      env.listModelsWithInfo(function(data) {
-        assert.strictEqual(data.err, 'bad wolf');
-        done();
-      });
-
-      // Mimic response.
-      conn.msg({
-        RequestId: 1,
-        Error: 'bad wolf'
-      });
-    });
-
-    it('listModelsWithInfo: model info error', function(done) {
-      // Perform the request.
-      env.listModelsWithInfo(function(data) {
-        assert.strictEqual(data.err, 'bad wolf');
-        done();
-      });
-
-      // Mimic first response to ModelManager.ListModels.
-      conn.msg({
-        RequestId: 1,
-        Response: {
-          UserModels: [{
-            Name: 'default',
-            OwnerTag: 'user-dalek',
-            UUID: '5bea955d-1',
-            LastConnection: 'today'
-          }]
-        }
-      });
-      // Mimic second response to ModelManager.ModelInfo.
-      conn.msg({
-        RequestId: 2,
-        Error: {Message: 'bad wolf'}
-      });
-    });
-
-    it('listModelsWithInfo: specific model response error', function(done) {
-      // Perform the request.
-      env.listModelsWithInfo(function(data) {
-        assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.models.length, 1);
-        var result = data.models[0];
-        assert.strictEqual(result.tag, 'model-5bea955d-1');
-        assert.strictEqual(result.err, 'bad wolf');
-        done();
+              LastConnection: 'tomorrow'
+            }]
+          }
+        });
+        // Mimic second response to ModelManager.ModelInfo.
+        conn.msg({
+          RequestId: 2,
+          Response: {
+            results: [{
+              result: {
+                DefaultSeries: 'xenial',
+                Name: 'default',
+                ProviderType: 'lxd',
+                UUID: '5bea955d-1',
+                ServerUUID: '5bea955d-c',
+                Life: 'dead',
+                OwnerTag: 'user-dalek@local'
+              }
+            }, {
+              result: {
+                DefaultSeries: 'trusty',
+                Name: 'admin',
+                ProviderType: 'lxd',
+                UUID: '5bea955d-c',
+                ServerUUID: '5bea955d-c',
+                Life: 'alive',
+                OwnerTag: 'user-who@local'
+              }
+            }, {
+              result: {
+                DefaultSeries: 'precise',
+                Name: 'mymodel',
+                ProviderType: 'aws',
+                UUID: '5bea955d-3',
+                ServerUUID: '5bea955d-c',
+                Life: 'alive',
+                OwnerTag: 'user-cyberman@local'
+              }
+            }]
+          }
+        });
       });
 
-      // Mimic first response to ModelManager.ListModels.
-      conn.msg({
-        RequestId: 1,
-        Response: {
-          UserModels: [{
-            Name: 'default',
-            OwnerTag: 'user-dalek',
-            UUID: '5bea955d-1',
-            LastConnection: 'today'
-          }]
-        }
+      it('listModelsWithInfo: credentials error', function(done) {
+        env.setCredentials(null);
+        // Perform the request.
+        env.listModelsWithInfo(function(err, data) {
+          assert.equal(err, 'called without credentials');
+          done();
+        });
       });
-      // Mimic second response to ModelManager.ModelInfo.
-      conn.msg({
-        RequestId: 2,
-        Response: {
-          results: [{
-            error: {Message: 'bad wolf'}
-          }]
-        }
+
+      it('listModelsWithInfo: list models error', function(done) {
+        // Perform the request.
+        env.listModelsWithInfo(function(err, data) {
+          assert.strictEqual(err, 'bad wolf');
+          done();
+        });
+
+        // Mimic response.
+        conn.msg({
+          RequestId: 1,
+          Error: 'bad wolf'
+        });
+      });
+
+      it('listModelsWithInfo: model info error', function(done) {
+        // Perform the request.
+        env.listModelsWithInfo(function(err, data) {
+          assert.strictEqual(err, 'bad wolf');
+          done();
+        });
+
+        // Mimic first response to ModelManager.ListModels.
+        conn.msg({
+          RequestId: 1,
+          Response: {
+            UserModels: [{
+              Name: 'default',
+              OwnerTag: 'user-dalek',
+              UUID: '5bea955d-1',
+              LastConnection: 'today'
+            }]
+          }
+        });
+        // Mimic second response to ModelManager.ModelInfo.
+        conn.msg({
+          RequestId: 2,
+          Error: {Message: 'bad wolf'}
+        });
+      });
+
+      it('listModelsWithInfo: specific model response error', function(done) {
+        // Perform the request.
+        env.listModelsWithInfo(function(err, data) {
+          assert.strictEqual(err, null);
+          assert.strictEqual(data.models.length, 1);
+          var result = data.models[0];
+          assert.strictEqual(result.tag, 'model-5bea955d-1');
+          assert.strictEqual(result.err, 'bad wolf');
+          done();
+        });
+
+        // Mimic first response to ModelManager.ListModels.
+        conn.msg({
+          RequestId: 1,
+          Response: {
+            UserModels: [{
+              Name: 'default',
+              OwnerTag: 'user-dalek',
+              UUID: '5bea955d-1',
+              LastConnection: 'today'
+            }]
+          }
+        });
+        // Mimic second response to ModelManager.ModelInfo.
+        conn.msg({
+          RequestId: 2,
+          Response: {
+            results: [{
+              error: {Message: 'bad wolf'}
+            }]
+          }
+        });
       });
     });
 
