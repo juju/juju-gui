@@ -256,7 +256,7 @@ YUI.add('entity-header', function() {
         );
       } else {
         deployAction = (
-          <div ref="deployAction">
+          <div>
             This type of charm can only be deployed from the command line.
           </div>
         );

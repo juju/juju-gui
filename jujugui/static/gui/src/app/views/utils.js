@@ -2117,6 +2117,7 @@ YUI.add('juju-view-utils', function(Y) {
     var err = data.err || error;
     if (err) {
       console.error(err);
+      callback(null);
       return;
     }
     // data.models is only populated by Juju controllers, when using JEM

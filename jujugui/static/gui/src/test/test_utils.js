@@ -1532,6 +1532,56 @@ describe('utilities', function() {
       });
     });
 
+    it('dies with an error if there is a problem getting models', function() {
+      var callback = testUtils.makeStubFunction();
+      utils._listModelsCallback(callback, 'error', {});
+      assert.equal(callback.callCount(), 1);
+      var callbackArgs = callback.lastArguments();
+      assert.isNull(callbackArgs[0]);
+    });
+
+    it('can format and return models from a Juju controller', function() {
+      var callback = testUtils.makeStubFunction();
+      utils._listModelsCallback(callback, null, {
+        models: [{
+          ownerTag: 'owner tag'
+        }]
+      });
+      assert.equal(callback.callCount(), 1);
+      var callbackArgs = callback.lastArguments();
+      assert.deepEqual(callbackArgs[0], [{
+        owner: 'owner tag',
+        ownerTag: 'owner tag'
+      }]);
+    });
+
+    it('can format and return models from JEM', function() {
+      var callback = testUtils.makeStubFunction();
+      utils._listModelsCallback(callback, null, [{
+        path: 'spinach/my-model'
+      }]);
+      assert.equal(callback.callCount(), 1);
+      var callbackArgs = callback.lastArguments();
+      assert.deepEqual(callbackArgs[0], [{
+        isAlive: true,
+        lastConnection: 'N/A',
+        name: 'spinach/my-model',
+        owner: 'spinach',
+        path: 'spinach/my-model'
+      }]);
+    });
+  });
+
+  describe('_genereateBundleExportFileName', function() {
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', 'juju-tests-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        testUtils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
     it('generates the correct export file name', function() {
       var envName = 'foobar';
       var date = new Date('October 13, 2014 11:13:00');

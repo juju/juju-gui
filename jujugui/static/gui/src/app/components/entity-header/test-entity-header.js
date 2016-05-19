@@ -19,7 +19,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
-var testUtils = React.addons.TestUtils;
 
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
@@ -44,13 +43,18 @@ describe('EntityHeader', function() {
     var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityHeader
           addNotification={sinon.stub()}
-          deployService={sinon.spy()}
           changeState={sinon.spy()}
+          currentModel="uuid123"
+          deployService={sinon.spy()}
           entityModel={mockEntity}
+          environmentName="my-env"
           getBundleYAML={sinon.stub()}
           importBundleYAML={sinon.stub()}
+          listModels={sinon.stub()}
           pluralize={sinon.stub()}
-          scrollPosition={0} />, true);
+          scrollPosition={0}
+          switchModel={sinon.stub()}
+          user={{}} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -106,11 +110,21 @@ describe('EntityHeader', function() {
             <div className="four-col last-col no-margin-bottom">
               <juju.components.CopyToClipboard
                 value="juju deploy cs:django" />
-              <juju.components.GenericButton
-                ref="deployAction"
-                action={instance._handleDeployClick}
+              <juju.components.MultiButton
+                action={instance._handleDeploy}
+                defaultValue={{
+                  name: 'my-env',
+                  uuid: 'uuid123'
+                }}
+                options={[{
+                  label: 'Add to new',
+                  value: {
+                    name: null,
+                    uuid: null
+                  }
+                }]}
                 type="positive"
-                title="Add to canvas" />
+                label="Add to my-env" />
             </div>
           </div>
         </header>
@@ -146,80 +160,82 @@ describe('EntityHeader', function() {
         .props.children[2].props.children[2], expected);
   });
 
-  it('displays an add to canvas button', function() {
-    var output = testUtils.renderIntoDocument(
-      <juju.components.EntityHeader
-        addNotification={sinon.stub()}
-        entityModel={mockEntity}
-        changeState={sinon.spy()}
-        deployService={sinon.spy()}
-        getBundleYAML={sinon.stub()}
-        importBundleYAML={sinon.stub()}
-        pluralize={sinon.stub()}
-        scrollPosition={0} />);
-    var deployAction = output.refs.deployAction;
-    assert.equal(deployAction.props.type, 'positive');
-    assert.equal(deployAction.props.title, 'Add to canvas');
-  });
-
   it('displays an unsupported message for multi-series charms', function() {
     mockEntity.set('series', undefined);
-    var output = testUtils.renderIntoDocument(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityHeader
         addNotification={sinon.stub()}
-        entityModel={mockEntity}
         changeState={sinon.spy()}
+        currentModel="uuid123"
         deployService={sinon.spy()}
+        entityModel={mockEntity}
+        environmentName="my-env"
         getBundleYAML={sinon.stub()}
         importBundleYAML={sinon.stub()}
+        listModels={sinon.stub()}
         pluralize={sinon.stub()}
-        scrollPosition={0} />);
-    var textContent = output.refs.deployAction.innerText;
-    assert.equal(textContent, 'This type of charm can only be deployed from ' +
-      'the command line.');
+        scrollPosition={0}
+        switchModel={sinon.stub()}
+        user={{}} />, true);
+    var output = renderer.getRenderOutput();
+    assert.deepEqual(
+      output.props.children.props.children.props.children[1].props.children[1],
+        <div>
+          This type of charm can only be deployed from the command line.
+        </div>);
   });
 
-  it('adds a charm when the add button is clicked', function() {
+  it('can add a charm to the current model', function() {
     var deployService = sinon.stub();
     var changeState = sinon.stub();
     var importBundleYAML = sinon.stub();
     var getBundleYAML = sinon.stub();
-    var output = testUtils.renderIntoDocument(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityHeader
         addNotification={sinon.stub()}
-        importBundleYAML={importBundleYAML}
-        getBundleYAML={getBundleYAML}
-        deployService={deployService}
         changeState={changeState}
+        currentModel="uuid123"
+        deployService={deployService}
         entityModel={mockEntity}
+        environmentName="my-env"
+        getBundleYAML={getBundleYAML}
+        importBundleYAML={importBundleYAML}
+        listModels={sinon.stub()}
         pluralize={sinon.stub()}
-        scrollPosition={0}/>);
-    var deployAction = output.refs.deployAction;
+        scrollPosition={0}
+        switchModel={sinon.stub()}
+        user={{}} />, true);
+    var instance = renderer.getMountedInstance();
     // Simulate a click.
-    deployAction.props.action();
+    instance._handleDeploy({uuid: 'uuid123', name: 'my-env'});
     assert.equal(deployService.callCount, 1);
     assert.equal(deployService.args[0][0], mockEntity);
   });
 
-  it('adds a bundle when the add button is clicked', function() {
+  it('can add a bundle to the current model', function() {
     var deployService = sinon.stub();
     var changeState = sinon.stub();
     var getBundleYAML = sinon.stub().callsArgWith(1, null, 'mock yaml');
     var importBundleYAML = sinon.stub();
     var entity = jsTestUtils.makeEntity(true);
-    var output = testUtils.renderIntoDocument(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityHeader
         addNotification={sinon.stub()}
-        importBundleYAML={importBundleYAML}
-        getBundleYAML={getBundleYAML}
-        deployService={deployService}
         changeState={changeState}
+        currentModel="uuid123"
+        deployService={deployService}
         entityModel={entity}
+        environmentName="my-env"
+        getBundleYAML={getBundleYAML}
+        importBundleYAML={importBundleYAML}
+        listModels={sinon.stub()}
         pluralize={sinon.stub()}
-        scrollPosition={0} />);
-    var deployAction = output.refs.deployAction;
+        scrollPosition={0}
+        switchModel={sinon.stub()}
+        user={{}} />, true);
+    var instance = renderer.getMountedInstance();
     // Simulate a click.
-    deployAction.props.action();
+    instance._handleDeploy({uuid: 'uuid123', name: 'my-env'});
     assert.equal(getBundleYAML.callCount, 1);
     assert.equal(getBundleYAML.args[0][0], 'django-cluster');
     assert.equal(importBundleYAML.callCount, 1);
@@ -233,19 +249,24 @@ describe('EntityHeader', function() {
     var importBundleYAML = sinon.stub();
     var addNotification = sinon.stub();
     var entity = jsTestUtils.makeEntity(true);
-    var output = testUtils.renderIntoDocument(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityHeader
-        importBundleYAML={importBundleYAML}
-        getBundleYAML={getBundleYAML}
-        deployService={deployService}
-        changeState={changeState}
-        entityModel={entity}
         addNotification={addNotification}
+        changeState={changeState}
+        currentModel="uuid123"
+        deployService={deployService}
+        entityModel={entity}
+        environmentName="my-env"
+        getBundleYAML={getBundleYAML}
+        importBundleYAML={importBundleYAML}
+        listModels={sinon.stub()}
         pluralize={sinon.stub()}
-        scrollPosition={0} />);
-    var deployAction = output.refs.deployAction;
+        scrollPosition={0}
+        switchModel={sinon.stub()}
+        user={{}} />, true);
+    var instance = renderer.getMountedInstance();
     // Simulate a click.
-    deployAction.props.action();
+    instance._handleDeploy({uuid: 'uuid123', name: 'my-env'});
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(
       addNotification.args[0][0].title, 'Bundle failed to deploy');
@@ -260,14 +281,19 @@ describe('EntityHeader', function() {
     var entity = jsTestUtils.makeEntity(true);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityHeader
-        importBundleYAML={importBundleYAML}
-        getBundleYAML={getBundleYAML}
-        deployService={deployService}
-        changeState={changeState}
-        entityModel={entity}
         addNotification={addNotification}
+        changeState={changeState}
+        currentModel="uuid123"
+        deployService={deployService}
+        entityModel={entity}
+        environmentName="my-env"
+        getBundleYAML={getBundleYAML}
+        importBundleYAML={importBundleYAML}
+        listModels={sinon.stub()}
         pluralize={sinon.stub()}
-        scrollPosition={100} />, true);
+        scrollPosition={100}
+        switchModel={sinon.stub()}
+        user={{}} />, true);
     var instance = renderer.getMountedInstance();
     instance.refs = {
       headerWrapper: {
@@ -285,5 +311,140 @@ describe('EntityHeader', function() {
             {output.props.children.props.children}
           </header>
         </div>);
+  });
+
+  it('can fetch and display model options', function() {
+    var models = [{
+      name: 'model-1',
+      uuid: 'uuid1'
+    }];
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.EntityHeader
+        addNotification={sinon.stub()}
+        changeState={sinon.spy()}
+        currentModel="uuid123"
+        deployService={sinon.spy()}
+        entityModel={mockEntity}
+        environmentName="my-env"
+        getBundleYAML={sinon.stub()}
+        importBundleYAML={sinon.stub()}
+        listModels={sinon.stub().callsArgWith(0, models)}
+        scrollPosition={0}
+        switchModel={sinon.stub()}
+        user={{}} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var button = output.props.children.props.children.props.children[1]
+      .props.children[1];
+    var expected = (
+      <juju.components.MultiButton
+        action={instance._handleDeploy}
+        defaultValue={{
+          name: 'my-env',
+          uuid: 'uuid123'
+        }}
+        options={[{
+          label: 'model-1',
+          value: {
+            name: 'model-1',
+            uuid: 'uuid1'
+          }
+        }, {
+          label: 'Add to new',
+          value: {
+            name: null,
+            uuid: null
+          }
+        }]}
+        type="positive"
+        label="Add to my-env" />);
+    assert.deepEqual(button, expected);
+  });
+
+  it('can update the models if the user changes', function() {
+    var listModels = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.EntityHeader
+        addNotification={sinon.stub()}
+        changeState={sinon.spy()}
+        currentModel="uuid123"
+        deployService={sinon.spy()}
+        entityModel={mockEntity}
+        environmentName="my-env"
+        getBundleYAML={sinon.stub()}
+        importBundleYAML={sinon.stub()}
+        listModels={listModels}
+        scrollPosition={0}
+        switchModel={sinon.stub()}
+        user={{user: 'user1'}} />, true);
+    assert.deepEqual(listModels.callCount, 1);
+    renderer.render(
+      <juju.components.EntityHeader
+      addNotification={sinon.stub()}
+      changeState={sinon.spy()}
+      currentModel="uuid123"
+      deployService={sinon.spy()}
+      entityModel={mockEntity}
+      environmentName="my-env"
+      getBundleYAML={sinon.stub()}
+      importBundleYAML={sinon.stub()}
+      listModels={listModels}
+      scrollPosition={0}
+      switchModel={sinon.stub()}
+      user={{user: 'user2'}} />);
+    assert.deepEqual(listModels.callCount, 2);
+  });
+
+  it('can switch models and deploy the entity', function() {
+    var deployService = sinon.stub();
+    var switchModel = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.EntityHeader
+        addNotification={sinon.stub()}
+        changeState={ sinon.stub()}
+        currentModel="uuid123"
+        deployService={deployService}
+        entityModel={mockEntity}
+        environmentName="my-env"
+        getBundleYAML={sinon.stub()}
+        importBundleYAML={sinon.stub()}
+        listModels={sinon.stub()}
+        scrollPosition={0}
+        switchModel={switchModel}
+        user={{}} />, true);
+    var instance = renderer.getMountedInstance();
+    // Simulate a click.
+    instance._handleDeploy({uuid: 'anotheruuid', name: 'my-env'});
+    assert.equal(deployService.callCount, 0);
+    assert.equal(switchModel.callCount, 1);
+    assert.equal(switchModel.args[0][0], 'anotheruuid');
+    assert.equal(switchModel.args[0][1], instance.state.modelList);
+    assert.equal(switchModel.args[0][2], 'my-env');
+    assert.equal(switchModel.args[0][3], instance._deployEntity);
+  });
+
+  it('can cancel requests when the component is unmounted', function() {
+    var abort = sinon.stub();
+    var listModels = sinon.stub().returns({abort: abort});
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.EntityHeader
+        addNotification={sinon.stub()}
+        changeState={ sinon.stub()}
+        currentModel="uuid123"
+        deployService={sinon.stub()}
+        entityModel={mockEntity}
+        environmentName="my-env"
+        getBundleYAML={sinon.stub()}
+        importBundleYAML={sinon.stub()}
+        listModels={listModels}
+        scrollPosition={0}
+        switchModel={sinon.stub()}
+        user={{}} />, true);
+    var instance = renderer.getMountedInstance();
+    // Using renderer.unmount() gives an error as shallowRender does not seem to
+    // like unmounting a component with a ref on the wrapping element. Instead,
+    // call the componentWillUnmount directly.
+    instance.componentWillUnmount();
+    assert.equal(abort.callCount, 1);
   });
 });
