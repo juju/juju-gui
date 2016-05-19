@@ -61,7 +61,8 @@ YUI.add('deployment-summary', function() {
       // drop down list.
       var deploymentStorage = props.deploymentStorage;
       var templateName = deploymentStorage.templateName;
-      props.jem.listTemplates((error, credentials) => {
+      this._listTemplatesXHR = props.jem.listTemplates((error, credentials) => {
+        this._abortXHR('_listTemplatesXHR');
         if (error) {
           console.error('Unable to list templates', error);
           return;
@@ -69,23 +70,25 @@ YUI.add('deployment-summary', function() {
         // The credentials are returned in an array so we need to loop through
         // the list to find the one with the proper path.
         credentials.some(credential => {
-          if (credential.path === templateName) {
+          if (credential.path === templateName && credential.location) {
             deploymentStorage.cloud = credential.location.cloud;
             deploymentStorage.region = credential.location.region;
             return true;
           }
         });
         if (deploymentStorage.cloud && deploymentStorage.region) {
-          props.jem.listRegions(deploymentStorage.cloud, (error, regions) => {
-            if (error) {
-              console.error('Unable to list regions', error);
-              return;
-            }
-            this.setState({
-              regions: regions,
-              activeRegion: deploymentStorage.region
+          this._listRegionsXHR = props.jem.listRegions(
+            deploymentStorage.cloud, (error, regions) => {
+              this._abortXHR('_listRegionsXHR');
+              if (error) {
+                console.error('Unable to list regions', error);
+                return;
+              }
+              this.setState({
+                regions: regions,
+                activeRegion: deploymentStorage.region
+              });
             });
-          });
         } else {
           console.log(
             'No matching credential found', templateName, credentials);
@@ -103,6 +106,22 @@ YUI.add('deployment-summary', function() {
     _onLoginHandler: null,
 
     /**
+      The xhr object returned from requesting a listTemplates call from JEM.
+
+      @property _listTemplatesXHR
+      @default {Object} null
+    */
+    _listTemplatesXHR: null,
+
+    /**
+      The xhr object returned from requesting a listRegions call from JEM.
+
+      @property _listTemplatesXHR
+      @default {Object} null
+    */
+    _listRegionsXHR: null,
+
+    /**
       If there is a handler listening for the login event to be emitted from
       the env then detach it.
 
@@ -112,6 +131,20 @@ YUI.add('deployment-summary', function() {
       if (this._onLoginHandler) {
         this._onLoginHandler.detach();
         this._onLoginHandler = null;
+      }
+    },
+
+    /**
+      Calls abort on the property name passed in.
+
+      @method _abortXHR
+      @param {String} xhrHandler The name of the property holding the active
+        xhr request.
+    */
+    _abortXHR: function(xhrHandler) {
+      if (this[xhrHandler]) {
+        this[xhrHandler].abort();
+        this[xhrHandler] = null;
       }
     },
 
@@ -411,6 +444,8 @@ YUI.add('deployment-summary', function() {
       // called every time the event changes trying to close a component
       // which doesn't exist.
       this._detachOnLoginhandler();
+      // Abort all active XHR requests.
+      ['_listTemplatesXHR', '_listRegionsXHR'].forEach(this._abortXHR);
     },
 
     render: function() {
