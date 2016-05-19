@@ -63,7 +63,7 @@ YUI.add('env-switcher', function() {
         jem.listModels(this._updateModelListCallback.bind(this, callback));
       } else {
         this.props.env.listModelsWithInfo(
-          this._updateModelListCallback.bind(this, callback, null));
+          this._updateModelListCallback.bind(this, callback));
       }
     },
 

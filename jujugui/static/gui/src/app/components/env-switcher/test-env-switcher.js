@@ -128,7 +128,7 @@ describe('EnvSwitcher', function() {
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
     assert.equal(listModelsWithInfo.callCount, 1);
-    listModelsWithInfo.args[0][0]({
+    listModelsWithInfo.args[0][0](null, {
       models: [{name: 'm1', isAlive: true}, {name: 'm2', isAlive: false}]
     });
     assert.deepEqual(instance.state.envList, [{name: 'm1', isAlive: true}]);
@@ -152,7 +152,7 @@ describe('EnvSwitcher', function() {
     var envData = {
       models: [{name: 'm1', isAlive: true}]
     };
-    env.listModelsWithInfo.args[0][0](envData);
+    env.listModelsWithInfo.args[0][0](null, envData);
     assert.deepEqual(instance.state.envList, envData.models);
   });
 
@@ -276,7 +276,7 @@ describe('EnvSwitcher', function() {
         switchModel={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
-    listModelsWithInfo.args[0][0](envs);
+    listModelsWithInfo.args[0][0](null, envs);
     // Previous code is to set up the state of the component.
     instance.createNewEnv();
     assert.equal(createModel.callCount, 1);
