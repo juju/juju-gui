@@ -30,6 +30,11 @@ YUI.add('string-config', function() {
       this.setState({ value: nextProps.config });
     },
 
+    shouldComponentUpdate: function(nextProps, nextState) {
+      return nextState.value !==
+        this.getDOMNode().querySelector('.string-config--value').innerText;
+    },
+
     /**
       When the value is updated in the input element then update the state
       with its innerText.
