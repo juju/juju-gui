@@ -1529,6 +1529,23 @@ describe('utilities', function() {
         lastConnection: 'now'
       });
     });
+
+    it('generates the correct export file name', function() {
+      var envName = 'foobar';
+      var date = new Date('October 13, 2014 11:13:00');
+      var exportFilename = utils._genereateBundleExportFileName(envName, date);
+      assert.equal(exportFilename, 'foobar-2014-10-13.yaml');
+
+      var envName = 'foo-bar';
+      var date = new Date('January 13, 2014 11:13:00');
+      var exportFilename = utils._genereateBundleExportFileName(envName, date);
+      assert.equal(exportFilename, 'foo-bar-2014-01-13.yaml');
+
+      var envName = 'sandbox';
+      var date = new Date('October 1, 2014 11:13:00');
+      var exportFilename = utils._genereateBundleExportFileName(envName, date);
+      assert.equal(exportFilename, 'sandbox-2014-10-01.yaml');
+    });
   });
 
 })();
