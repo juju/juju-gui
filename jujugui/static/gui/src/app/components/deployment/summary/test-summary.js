@@ -69,20 +69,21 @@ describe('DeploymentSummary', function() {
       <juju.components.DeploymentSummaryChangeItem
         key={1}
         change={changeDescriptions[1]} />];
+    var jem = {
+      listTemplates: cb => {
+        cb(null, [{
+          path: 'spinach/my-creds',
+          location: { cloud: 'aws', region: 'us-west-1' }
+        }]);
+      },
+      listRegions: (cloud, cb) => {
+        assert.equal(cloud, 'aws');
+        cb(null, ['us-west-1', 'us-east-1']);
+      }
+    };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        jem={{
-          listTemplates: cb => {
-            cb(null, [{
-              path: 'spinach/my-creds',
-              location: { cloud: 'aws', region: 'us-west-1' }
-            }]);
-          },
-          listRegions: (cloud, cb) => {
-            assert.equal(cloud, 'aws');
-            cb(null, ['us-west-1', 'us-east-1']);
-          }
-        }}
+        jem={jem}
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
@@ -117,9 +118,8 @@ describe('DeploymentSummary', function() {
       type: 'inline-positive'
     }];
     var expected = (
-      <div className="deployment-panel__child">
+      <div className="deployment-panel__child deployment-summary">
         <juju.components.DeploymentPanelContent
-          className="deployment-summary"
           title="Review deployment">
           <form className="six-col last-col">
             <juju.components.DeploymentInput

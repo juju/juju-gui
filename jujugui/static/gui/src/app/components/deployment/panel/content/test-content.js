@@ -37,30 +37,7 @@ describe('DeploymentPanelContent', function() {
         <span>Content</span>
       </juju.components.DeploymentPanelContent>);
     var expected = (
-      <div className="deployment-panel__content ">
-        <div className="twelve-col">
-          <div className="inner-wrapper">
-            <div className="deployment-panel__content-inner">
-              <h2 className="deployment-panel__title">
-                Title
-              </h2>
-              <span>Content</span>
-            </div>
-          </div>
-        </div>
-      </div>);
-    assert.deepEqual(output, expected);
-  });
-
-  it('can be passed a custom class', function() {
-    var output = jsTestUtils.shallowRender(
-      <juju.components.DeploymentPanelContent
-        className='testclass'
-        title="Title">
-        <span>Content</span>
-      </juju.components.DeploymentPanelContent>);
-    var expected = (
-      <div className="deployment-panel__content testclass">
+      <div className="deployment-panel__content">
         <div className="twelve-col">
           <div className="inner-wrapper">
             <div className="deployment-panel__content-inner">

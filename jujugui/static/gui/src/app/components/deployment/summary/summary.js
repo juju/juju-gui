@@ -68,10 +68,11 @@ YUI.add('deployment-summary', function() {
         }
         // The credentials are returned in an array so we need to loop through
         // the list to find the one with the proper path.
-        credentials.forEach(credential => {
+        credentials.some(credential => {
           if (credential.path === templateName) {
             deploymentStorage.cloud = credential.location.cloud;
             deploymentStorage.region = credential.location.region;
+            return true;
           }
         });
         if (deploymentStorage.cloud && deploymentStorage.region) {
@@ -435,9 +436,8 @@ YUI.add('deployment-summary', function() {
       };
       var numberOfChanges = this.props.numberOfChanges;
       return (
-        <div className="deployment-panel__child">
+        <div className="deployment-panel__child deployment-summary">
           <juju.components.DeploymentPanelContent
-            className="deployment-summary"
             title="Review deployment">
             <form className="six-col last-col">
             { !!modelCommitted ?
