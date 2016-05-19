@@ -880,11 +880,9 @@ YUI.add('juju-env-go', function(Y) {
 
       @method listModelsWithInfo
       @param {Function} callback A callable that must be called once the
-        operation is performed. It will receive an object with an "err"
-        attribute containing a string describing the problem (if an error
-        occurred). Otherwise, if everything went well, it will receive an
-        object with a "models" attribute containing an array of model info,
-        each one with the following fields :
+        operation is performed. It will receive two arguments, the first
+        an error or null and the second an object with a "models" attribute
+        containing an array of model info, each one with the following fields:
         - tag: the original Juju model tag;
         - name: the model name, like "admin" or "mymodel";
         - series: the model default series, like "trusty" or "xenial";
