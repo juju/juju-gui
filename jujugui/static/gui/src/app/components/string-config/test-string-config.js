@@ -60,6 +60,16 @@ describe('StringConfig', function() {
     assert.deepEqual(output, expected);
   });
 
+  function stubGetDomNode(instance) {
+    instance.getDOMNode = _ => {
+      return {
+        querySelector: _ => {
+          return { innerText: 'initial' };
+        }
+      };
+    };
+  }
+
   it('can update when new config is provided', function() {
     var option = {
       key: 'testconfig',
@@ -71,12 +81,45 @@ describe('StringConfig', function() {
         config="initial"
         option={option} />, true);
     var instance = shallowRenderer.getMountedInstance();
+    // Overwrtiting the getDOMNode method because this is shallowRendered
+    stubGetDomNode(instance);
     assert.equal(instance.state.value, 'initial');
     shallowRenderer.render(
       <juju.components.StringConfig
         config="updated"
         option={option} />);
     assert.equal(instance.state.value, 'updated');
+  });
+
+  it('only updates the input on state change if values differ', function() {
+    var option = {
+      key: 'testconfig',
+      type: 'text',
+      description: 'test config for strings'
+    };
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.StringConfig
+        config="initial"
+        option={option} />, true);
+    var instance = renderer.getMountedInstance();
+    // Overwrtiting the getDOMNode method because this is shallowRendered
+    stubGetDomNode(instance);
+    // It should update if state and the value differ
+    assert.equal(
+      instance.shouldComponentUpdate(null, {
+        value: 'not initial'
+      }),
+      true,
+      'Component should have updated');
+    // It should not update if the state and the value are the same. This is
+    // bedcause in FireFox it does not maintain the cursor position when
+    // re-rendering the content editable field.
+    assert.equal(
+      instance.shouldComponentUpdate(null, {
+        value: 'initial'
+      }),
+      false,
+      'Component should not have updated');
   });
 
   it('does not show a type if none is provided', function() {
