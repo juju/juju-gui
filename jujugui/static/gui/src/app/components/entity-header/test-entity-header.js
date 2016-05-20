@@ -239,7 +239,7 @@ describe('EntityHeader', function() {
     assert.equal(getBundleYAML.callCount, 1);
     assert.equal(getBundleYAML.args[0][0], 'django-cluster');
     assert.equal(importBundleYAML.callCount, 1);
-    assert.deepEqual(importBundleYAML.args[0][0], 'mock yaml');
+    assert.equal(importBundleYAML.args[0][0], 'mock yaml');
   });
 
   it('displays a notification if there is a bundle deploy error', function() {
@@ -268,7 +268,7 @@ describe('EntityHeader', function() {
     // Simulate a click.
     instance._handleDeploy({uuid: 'uuid123', name: 'my-env'});
     assert.equal(addNotification.callCount, 1);
-    assert.deepEqual(
+    assert.equal(
       addNotification.args[0][0].title, 'Bundle failed to deploy');
   });
 
@@ -377,7 +377,7 @@ describe('EntityHeader', function() {
         scrollPosition={0}
         switchModel={sinon.stub()}
         user={{user: 'user1'}} />, true);
-    assert.deepEqual(listModels.callCount, 1);
+    assert.equal(listModels.callCount, 1);
     renderer.render(
       <juju.components.EntityHeader
       addNotification={sinon.stub()}
@@ -392,7 +392,7 @@ describe('EntityHeader', function() {
       scrollPosition={0}
       switchModel={sinon.stub()}
       user={{user: 'user2'}} />);
-    assert.deepEqual(listModels.callCount, 2);
+    assert.equal(listModels.callCount, 2);
   });
 
   it('can update the models if the user logs out', function() {

@@ -115,7 +115,7 @@ YUI.add('entity-header', function() {
     _handleDeploy: function(model) {
       // If the selected model is the one we're connected to then deploy the
       // entity directly.
-      if (model.uuid == this.props.currentModel) {
+      if (model.uuid === this.props.currentModel) {
         this._deployEntity();
       } else {
         this.props.switchModel(
