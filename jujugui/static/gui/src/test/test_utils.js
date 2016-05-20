@@ -1573,11 +1573,11 @@ describe('utilities', function() {
   });
 
   describe('_genereateBundleExportFileName', function() {
+    var utils;
 
     before(function(done) {
       YUI(GlobalConfig).use('juju-view-utils', 'juju-tests-utils', function(Y) {
         utils = Y.namespace('juju.views.utils');
-        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
