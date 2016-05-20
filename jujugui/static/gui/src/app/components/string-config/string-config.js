@@ -30,6 +30,10 @@ YUI.add('string-config', function() {
       this.setState({ value: nextProps.config });
     },
 
+    shouldComponentUpdate: function(nextProps, nextState) {
+      return nextState.value !== this.refs.editableInput.innerText;
+    },
+
     /**
       When the value is updated in the input element then update the state
       with its innerText.
@@ -50,6 +54,7 @@ YUI.add('string-config', function() {
           <div
             className="string-config--value"
             contentEditable="true"
+            ref="editableInput"
             onInput={this._updateValue}
             onBlur={this._updateValue}
             dangerouslySetInnerHTML={{__html: this.state.value}}>
