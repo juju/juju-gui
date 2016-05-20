@@ -48,6 +48,7 @@ describe('StringConfig', function() {
         <div
           className="string-config--value"
           contentEditable="true"
+          ref="editableInput"
           onInput={output.props.children[1].props.onInput}
           onBlur={output.props.children[1].props.onBlur}
           dangerouslySetInnerHTML={{__html: config}}>
@@ -56,17 +57,16 @@ describe('StringConfig', function() {
           dangerouslySetInnerHTML={{__html: option.description}}>
         </span>
       </div>);
-
     assert.deepEqual(output, expected);
   });
 
-  function stubGetDomNode(instance) {
-    instance.getDOMNode = _ => {
-      return {
-        querySelector: _ => {
-          return { innerText: 'initial' };
-        }
-      };
+  function stubRef(instance, output) {
+    // Because shallow render doesn't support refs we have to fake it.
+    // Should be 'editableInput'.
+    var inputRef = output.props.children[1].ref;
+    instance.refs = {};
+    instance.refs[inputRef] = {
+      innerText: 'initial'
     };
   }
 
@@ -80,9 +80,9 @@ describe('StringConfig', function() {
       <juju.components.StringConfig
         config="initial"
         option={option} />, true);
+    var output = shallowRenderer.getRenderOutput();
     var instance = shallowRenderer.getMountedInstance();
-    // Overwrtiting the getDOMNode method because this is shallowRendered
-    stubGetDomNode(instance);
+    stubRef(instance, output);
     assert.equal(instance.state.value, 'initial');
     shallowRenderer.render(
       <juju.components.StringConfig
@@ -101,9 +101,9 @@ describe('StringConfig', function() {
       <juju.components.StringConfig
         config="initial"
         option={option} />, true);
+    var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
-    // Overwrtiting the getDOMNode method because this is shallowRendered
-    stubGetDomNode(instance);
+    stubRef(instance, output);
     // It should update if state and the value differ
     assert.equal(
       instance.shouldComponentUpdate(null, {
