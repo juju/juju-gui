@@ -331,7 +331,7 @@ describe('EntityHeader', function() {
         listModels={sinon.stub().callsArgWith(0, models)}
         scrollPosition={0}
         switchModel={sinon.stub()}
-        user={{}} />, true);
+        user={{user: 'spinach'}} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var button = output.props.children.props.children.props.children[1]
@@ -395,6 +395,42 @@ describe('EntityHeader', function() {
     assert.deepEqual(listModels.callCount, 2);
   });
 
+  it('can update the models if the user logs out', function() {
+    var listModels = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.EntityHeader
+        addNotification={sinon.stub()}
+        changeState={sinon.spy()}
+        currentModel="uuid123"
+        deployService={sinon.spy()}
+        entityModel={mockEntity}
+        environmentName="my-env"
+        getBundleYAML={sinon.stub()}
+        importBundleYAML={sinon.stub()}
+        listModels={listModels}
+        scrollPosition={0}
+        switchModel={sinon.stub()}
+        user={{user: 'user1'}} />, true);
+    var instance = renderer.getMountedInstance();
+    assert.equal(listModels.callCount, 1);
+    renderer.render(
+      <juju.components.EntityHeader
+      addNotification={sinon.stub()}
+      changeState={sinon.spy()}
+      currentModel="uuid123"
+      deployService={sinon.spy()}
+      entityModel={mockEntity}
+      environmentName="my-env"
+      getBundleYAML={sinon.stub()}
+      importBundleYAML={sinon.stub()}
+      listModels={listModels}
+      scrollPosition={0}
+      switchModel={sinon.stub()}
+      user={{}} />);
+    assert.equal(listModels.callCount, 1);
+    assert.deepEqual(instance.state.modelList, []);
+  });
+
   it('can switch models and deploy the entity', function() {
     var deployService = sinon.stub();
     var switchModel = sinon.stub();
@@ -439,7 +475,7 @@ describe('EntityHeader', function() {
         listModels={listModels}
         scrollPosition={0}
         switchModel={sinon.stub()}
-        user={{}} />, true);
+        user={{user: 'spinach'}} />, true);
     var instance = renderer.getMountedInstance();
     // Using renderer.unmount() gives an error as shallowRender does not seem to
     // like unmounting a component with a ref on the wrapping element. Instead,

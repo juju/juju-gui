@@ -56,7 +56,9 @@ YUI.add('user-profile', function() {
     componentWillMount: function() {
       var props = this.props,
           users = props.users;
-      this._fetchEnvironments();
+      if (props.user.user) {
+        this._fetchEnvironments();
+      }
       if (users.charmstore && users.charmstore.user) {
         this._fetchEntities('charm', props);
         this._fetchEntities('bundle', props);
@@ -72,13 +74,15 @@ YUI.add('user-profile', function() {
     componentWillReceiveProps: function(nextProps) {
       // If the user has changed then update the data.
       var props = this.props;
-      if (nextProps.user.user !== props.user.user) {
+      var previousUser = this.props.user.user;
+      var newUser = nextProps.user.user;
+      if (newUser && newUser !== previousUser) {
         this._fetchEnvironments();
       }
       // Compare next and previous charmstore users in a data-safe manner.
       var prevCSUser = props.users.charmstore || {};
       var nextCSUser = nextProps.users.charmstore || {};
-      if (nextCSUser.user !== prevCSUser.user) {
+      if (nextCSUser.user && nextCSUser.user !== prevCSUser.user) {
         this._fetchEntities('charm', nextProps);
         this._fetchEntities('bundle', nextProps);
       }

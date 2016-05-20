@@ -53,7 +53,9 @@ YUI.add('entity-header', function() {
     },
 
     componentWillMount: function() {
-      this._fetchModels();
+      if (this.props.user.user) {
+        this._fetchModels();
+      }
     },
 
     componentDidMount: function() {
@@ -68,7 +70,12 @@ YUI.add('entity-header', function() {
 
     componentWillReceiveProps: function(nextProps) {
       // If the user has changed then update the data.
-      if (nextProps.user.user !== this.props.user.user) {
+      var previousUser = this.props.user.user;
+      var newUser = nextProps.user.user;
+      // If the user logs out then reset the modelList
+      if (previousUser && !newUser) {
+        this.setState({modelList: []});
+      } else if (newUser !== previousUser) {
         this._fetchModels();
       }
     },
