@@ -87,14 +87,18 @@ describe('EntityDetails', function() {
           pluralize={pluralize}
           addNotification={addNotification}
           makeEntityModel={makeEntityModel} />, true);
-    shallowRenderer.getMountedInstance().componentDidMount();
+    var instance = shallowRenderer.getMountedInstance();
+    instance.refs = {content: {focus: sinon.stub()}};
+    instance.componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     assert.isTrue(getEntity.calledOnce,
                   'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
                  'getEntity not called with the entity ID');
     var expected = (
-      <div className={'entity-details charm'}>
+      <div className={'entity-details charm'}
+        ref="content"
+        tabIndex="0">
         <div>
           <juju.components.EntityHeader
             entityModel={mockEntity}
@@ -145,10 +149,13 @@ describe('EntityDetails', function() {
           pluralize={pluralize}
           scrollPosition={0} />, true);
     var instance = shallowRenderer.getMountedInstance();
+    instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     var expected = (
-      <div className="entity-details">
+      <div className="entity-details"
+        ref="content"
+        tabIndex="0">
         <p className="error">
           There was a problem while loading the entity details.
           You could try searching for another charm or bundle or go{' '}
@@ -192,14 +199,18 @@ describe('EntityDetails', function() {
           pluralize={pluralize}
           addNotification={addNotification}
           makeEntityModel={makeEntityModel} />, true);
-    shallowRenderer.getMountedInstance().componentDidMount();
+    var instance = shallowRenderer.getMountedInstance();
+    instance.refs = {content: {focus: sinon.stub()}};
+    instance.componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     assert.isTrue(getEntity.calledOnce,
                   'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
                  'getEntity not called with the entity ID');
     var expected = (
-      <div className={'entity-details bundle'}>
+      <div className={'entity-details bundle'}
+        ref="content"
+        tabIndex="0">
         <div>
           <juju.components.EntityHeader
             entityModel={mockEntity}
@@ -251,8 +262,33 @@ describe('EntityDetails', function() {
           id={id}
           pluralize={pluralize}
           scrollPosition={0} />, true);
-    shallowRenderer.getMountedInstance().componentDidMount();
-    shallowRenderer.unmount();
+    var instance = shallowRenderer.getMountedInstance();
+    instance.refs = {content: {focus: sinon.stub()}};
+    instance.componentDidMount();
+    instance.componentWillUnmount();
     assert.equal(abort.callCount, 1);
+  });
+
+  it('sets the focus when rendered', function() {
+    var focus = sinon.stub();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.EntityDetails
+        addNotification={sinon.stub()}
+        apiUrl="http://example.com/"
+        id="test"
+        deployService={sinon.spy()}
+        changeState={sinon.spy()}
+        getDiagramURL={sinon.stub()}
+        getEntity={sinon.spy()}
+        getFile={sinon.stub()}
+        importBundleYAML={sinon.stub()}
+        makeEntityModel={sinon.spy()}
+        pluralize={sinon.spy()}
+        renderMarkdown={sinon.stub()}
+        scrollPosition={0} />, true);
+    var instance = shallowRenderer.getMountedInstance();
+    instance.refs = {content: {focus: focus}};
+    instance.componentDidMount();
+    assert.equal(focus.callCount, 1);
   });
 });

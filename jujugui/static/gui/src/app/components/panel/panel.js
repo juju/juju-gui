@@ -22,6 +22,12 @@ YUI.add('panel-component', function() {
 
   juju.components.Panel = React.createClass({
 
+    componentDidMount: function() {
+      // Set the keyboard focus on the component so it can be scrolled with the
+      // keyboard. Requires tabIndex to be set on the element.
+      this.refs.content.focus();
+    },
+
     /**
       Returns the supplied classes with the 'active' class applied if the
       component is the one which is active.
@@ -68,7 +74,9 @@ YUI.add('panel-component', function() {
     render: function() {
       return (
         <div className={this._genClasses()}
-          onClick={this._handleClick}>
+          onClick={this._handleClick}
+          ref="content"
+          tabIndex="0">
           <div className="panel-component__inner"
             onClick={this._stopBubble}>
             {this.props.children}
