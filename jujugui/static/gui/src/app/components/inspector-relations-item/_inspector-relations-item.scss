@@ -1,34 +1,50 @@
 .inspector-relations-item {
     @extend %stagger-fade-in;
 
-    &__service {
-        display: block;
-        padding: 10px 20px;
-        line-height: 1.5;
+    &:focus,
+    &:active,
+    &:hover {
+        background-color: $hover-background;
         cursor: pointer;
 
-        &:focus,
-        &:active,
-        &:hover {
-            background-color: $hover-background;
+        label {
+            cursor: pointer;
         }
     }
 
-    &__status {
-        float: right;
+    input[type=checkbox] {
+        margin-right: 15px;
+        cursor: pointer;
+    }
 
-        svg {
-            vertical-align: text-bottom;
+    label {
+        padding: 11px 20px;
+    }
+
+    &--nav:hover {
+        label {
+            text-decoration: underline;
         }
     }
 
-    &__details {
-        margin-top: .75em;
-        display: block;
-        padding: 0 20px;
+    &--select-all {
+        border-top: 1px solid $mid-grey;
+
+        &:first-child {
+            border-top: none;
+        }
+    }
+
+    &__label {
+      width: 165px;
+      overflow: hidden;
+      display: inline-block;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      position: relative;
+      top: 4px;
     }
 }
-
 
 .inspector-relations__onboarding .inspector-relations-item {
     color: $light-mid-grey;

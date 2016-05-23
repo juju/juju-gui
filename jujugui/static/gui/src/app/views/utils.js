@@ -1735,6 +1735,24 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
+    Destory a list of relations.
+
+    @method destroyRelations
+    @param {Database} db to resolve relations on.
+    @param {Object} env The current environment.
+    @param {Array} relations A list of relation ids.
+    @param {Function} callback A function to call after removal.
+  */
+  utils.destroyRelations = function(db, env, relations, callback) {
+    for (var i = 0; relations.length > i; i++) {
+      var relationId = relations[i];
+      var relation = db.relations.getById(relationId);
+      var endpoints = relation.get('endpoints');
+      env.remove_relation(endpoints[0], endpoints[1], callback);
+    }
+  };
+
+  /**
     Destroy a list of units.
 
     @method destroyUnits

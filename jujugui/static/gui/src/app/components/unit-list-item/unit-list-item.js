@@ -103,7 +103,7 @@ YUI.add('unit-list-item', function() {
               id={id}
               onClick={this._stopBubble}
               onChange={this._handleChange}
-              checked={this.state.checked} /> 
+              checked={this.state.checked} />
             <span className="unit-list-item__label">
               {this.props.label}
             </span>

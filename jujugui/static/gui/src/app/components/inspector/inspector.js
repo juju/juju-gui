@@ -259,6 +259,7 @@ YUI.add('inspector-component', function() {
             component:
               <juju.components.InspectorRelations
                 service={service}
+                destroyRelations={this.props.destroyRelations}
                 serviceRelations={this.props.serviceRelations}
                 changeState={this.props.changeState} />,
             backState: {

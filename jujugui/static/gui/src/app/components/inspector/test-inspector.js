@@ -571,6 +571,7 @@ describe('Inspector', function() {
 
   it('displays Relations when the app state calls for it', function() {
     var changeState = sinon.stub();
+    var destroyRelations = sinon.stub();
     var service = sinon.stub();
     var appPreviousState = sinon.stub();
     var icon = 'icon.png';
@@ -590,6 +591,7 @@ describe('Inspector', function() {
       <juju.components.Inspector
         changeState={changeState}
         service={service}
+        destroyRelations={destroyRelations}
         appPreviousState={appPreviousState}
         appState={appState}
         linkify={sinon.stub()}
@@ -612,6 +614,7 @@ describe('Inspector', function() {
     assert.deepEqual(children,
         <juju.components.InspectorRelations
           changeState={changeState}
+          destroyRelations={destroyRelations}
           service={service}
           serviceRelations={serviceRelations} />);
   });
