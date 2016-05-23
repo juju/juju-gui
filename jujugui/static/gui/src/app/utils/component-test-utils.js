@@ -150,6 +150,31 @@ var jsTestUtils = {
    */
   makeEntity: function(isBundle=false, files=[]) {
     var pojo;
+    var revisions = [{
+      authors: [{
+        email: 'charles.butler@canonical.com',
+        name: 'Charles Butler'
+      }],
+      date: '2015-06-16T17:09:35Z',
+      message: 'Fix the django 1.8 with postgresql test.',
+      revno: 40
+    }, {
+      authors: [{
+        email: 'tim.van.steenburgh@canonical.com',
+        name: 'Tim Van Steenburgh'
+      }],
+      date: '2015-06-12T14:02:06Z',
+      message: 'Remove charmhelpers.contrib (not used)',
+      revno: 39
+    }, {
+      authors: [{
+        email: 'charles.butler@canonical.com',
+        name: 'Charles Butler'
+      }],
+      date: '2015-05-22T19:35:18Z',
+      message: 'Run migrate if django is modern enough.',
+      revno: 38
+    }];
     if (isBundle) {
       pojo = {
         name: 'django-cluster',
@@ -159,6 +184,7 @@ var jsTestUtils = {
         url: 'http://example.com/django-cluster',
         code_source: {location: 'lp:django-cluster/code'},
         downloads: 1000,
+        machineCount: 2,
         owner: 'test-owner',
         promulgated: true,
         id: 'django-cluster',
@@ -167,8 +193,10 @@ var jsTestUtils = {
         iconPath: 'data:image/gif;base64,',
         tags: ['database'],
         options: {},
+        revisions: revisions,
         series: 'trusty',
         files: files,
+        serviceCount: 3,
         services: {
           gunicorn: {charm: 'gunicorn'},
           django: {charm: 'django'}
@@ -219,31 +247,7 @@ var jsTestUtils = {
             }
           }
         },
-        revisions: [{
-          authors: [{
-            email: 'charles.butler@canonical.com',
-            name: 'Charles Butler'
-          }],
-          date: '2015-06-16T17:09:35Z',
-          message: 'Fix the django 1.8 with postgresql test.',
-          revno: 40
-        }, {
-          authors: [{
-            email: 'tim.van.steenburgh@canonical.com',
-            name: 'Tim Van Steenburgh'
-          }],
-          date: '2015-06-12T14:02:06Z',
-          message: 'Remove charmhelpers.contrib (not used)',
-          revno: 39
-        }, {
-          authors: [{
-            email: 'charles.butler@canonical.com',
-            name: 'Charles Butler'
-          }],
-          date: '2015-05-22T19:35:18Z',
-          message: 'Run migrate if django is modern enough.',
-          revno: 38
-        }]
+        revisions: revisions
       };
     }
     var mockEntity = {};

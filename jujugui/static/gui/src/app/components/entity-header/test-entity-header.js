@@ -49,6 +49,7 @@ describe('EntityHeader', function() {
           entityModel={mockEntity}
           getBundleYAML={sinon.stub()}
           importBundleYAML={sinon.stub()}
+          pluralize={sinon.stub()}
           scrollPosition={0} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -76,6 +77,7 @@ describe('EntityHeader', function() {
                 <li className="entity-header__series">
                   trusty
                 </li>
+                {undefined}
               </ul>
               <ul className="entity-header__social-list">
                 <li>
@@ -116,6 +118,34 @@ describe('EntityHeader', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('displays the counts for a bundle', function() {
+    var pluralize = sinon.stub();
+    pluralize.withArgs('service').returns('services');
+    pluralize.withArgs('machine').returns('machines');
+    pluralize.withArgs('unit').returns('units');
+    var entity = jsTestUtils.makeEntity(true);
+    var renderer = jsTestUtils.shallowRender(
+        <juju.components.EntityHeader
+          addNotification={sinon.stub()}
+          deployService={sinon.spy()}
+          changeState={sinon.spy()}
+          entityModel={entity}
+          getBundleYAML={sinon.stub()}
+          importBundleYAML={sinon.stub()}
+          pluralize={pluralize}
+          scrollPosition={0} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <li>
+        {3} {"services"},&nbsp;
+        {2} {"machines"},&nbsp;
+        {5} {"units"}
+      </li>);
+    assert.deepEqual(
+      output.props.children.props.children.props.children[0]
+        .props.children[2].props.children[2], expected);
+  });
+
   it('displays an add to canvas button', function() {
     var output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
@@ -125,6 +155,7 @@ describe('EntityHeader', function() {
         deployService={sinon.spy()}
         getBundleYAML={sinon.stub()}
         importBundleYAML={sinon.stub()}
+        pluralize={sinon.stub()}
         scrollPosition={0} />);
     var deployAction = output.refs.deployAction;
     assert.equal(deployAction.props.type, 'positive');
@@ -141,6 +172,7 @@ describe('EntityHeader', function() {
         deployService={sinon.spy()}
         getBundleYAML={sinon.stub()}
         importBundleYAML={sinon.stub()}
+        pluralize={sinon.stub()}
         scrollPosition={0} />);
     var textContent = output.refs.deployAction.innerText;
     assert.equal(textContent, 'This type of charm can only be deployed from ' +
@@ -160,6 +192,7 @@ describe('EntityHeader', function() {
         deployService={deployService}
         changeState={changeState}
         entityModel={mockEntity}
+        pluralize={sinon.stub()}
         scrollPosition={0}/>);
     var deployAction = output.refs.deployAction;
     // Simulate a click.
@@ -182,6 +215,7 @@ describe('EntityHeader', function() {
         deployService={deployService}
         changeState={changeState}
         entityModel={entity}
+        pluralize={sinon.stub()}
         scrollPosition={0} />);
     var deployAction = output.refs.deployAction;
     // Simulate a click.
@@ -207,6 +241,7 @@ describe('EntityHeader', function() {
         changeState={changeState}
         entityModel={entity}
         addNotification={addNotification}
+        pluralize={sinon.stub()}
         scrollPosition={0} />);
     var deployAction = output.refs.deployAction;
     // Simulate a click.
@@ -231,6 +266,7 @@ describe('EntityHeader', function() {
         changeState={changeState}
         entityModel={entity}
         addNotification={addNotification}
+        pluralize={sinon.stub()}
         scrollPosition={100} />, true);
     var instance = renderer.getMountedInstance();
     instance.refs = {

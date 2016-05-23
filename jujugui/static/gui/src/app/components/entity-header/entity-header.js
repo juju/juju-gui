@@ -29,6 +29,7 @@ YUI.add('entity-header', function() {
       getBundleYAML: React.PropTypes.func.isRequired,
       entityModel: React.PropTypes.object.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
+      pluralize: React.PropTypes.func.isRequired,
       scrollPosition: React.PropTypes.number.isRequired
     },
 
@@ -147,23 +148,15 @@ YUI.add('entity-header', function() {
       );
     },
 
-    render: function() {
+    /**
+      Generate the deploy action or a notice if deployment is not supported.
+      XXX kadams54, 2016-01-04: the deployAction var will need to be removed
+      once we fully support multi-series charms.
+
+      @method _generateDeployAction
+    */
+    _generateDeployAction: function() {
       var entity = this.props.entityModel.toEntity();
-      var ownerUrl = 'https://launchpad.net/~' + entity.owner;
-      var series = entity.series ?
-        <li className="entity-header__series">{entity.series}</li> : null;
-      var twitterUrl = [
-        'https://twitter.com/intent/tweet?text=',
-        entity.displayName,
-        '%20charm&via=ubuntu_cloud&url=',
-        this._getStoreURL(entity)
-      ].join('');
-      var googlePlusUrl = [
-        'https://plus.google.com/share?url=',
-        this._getStoreURL(entity)
-      ].join('');
-      // XXX kadams54, 2016-01-04: the deployAction var will need to be removed
-      // once we fully support multi-series charms.
       var deployAction;
       // If the entity is not a charm OR it is a charm and has the series set,
       // display a button. Otherwise display a "not supported" message.
@@ -182,7 +175,43 @@ YUI.add('entity-header', function() {
           </div>
         );
       }
+      return deployAction;
+    },
 
+    /**
+      Generate the service, machine counts etc. for a bundle.
+    */
+    _generateCounts: function() {
+      var entity = this.props.entityModel.toEntity();
+      if (entity.type !== 'bundle') {
+        return;
+      }
+      var serviceCount = entity.serviceCount;
+      var unitCount = entity.unitCount;
+      var machineCount = entity.machineCount;
+      return (
+        <li>
+          {serviceCount} {this.props.pluralize('service', serviceCount)},&nbsp;
+          {machineCount} {this.props.pluralize('machine', machineCount)},&nbsp;
+          {unitCount} {this.props.pluralize('unit', unitCount)}
+        </li>);
+    },
+
+    render: function() {
+      var entity = this.props.entityModel.toEntity();
+      var ownerUrl = 'https://launchpad.net/~' + entity.owner;
+      var series = entity.series ?
+        <li className="entity-header__series">{entity.series}</li> : null;
+      var twitterUrl = [
+        'https://twitter.com/intent/tweet?text=',
+        entity.displayName,
+        '%20charm&via=ubuntu_cloud&url=',
+        this._getStoreURL(entity)
+      ].join('');
+      var googlePlusUrl = [
+        'https://plus.google.com/share?url=',
+        this._getStoreURL(entity)
+      ].join('');
       return (
         <div className="row-hero"
           ref="headerWrapper"
@@ -205,6 +234,7 @@ YUI.add('entity-header', function() {
                       target="_blank">{entity.owner}</a>
                   </li>
                   {series}
+                  {this._generateCounts()}
                 </ul>
                 <ul className="entity-header__social-list">
                   <li>
@@ -230,7 +260,7 @@ YUI.add('entity-header', function() {
               <div className="four-col last-col no-margin-bottom">
                 <juju.components.CopyToClipboard
                   value={'juju deploy ' + entity.id} />
-                {deployAction}
+                {this._generateDeployAction()}
               </div>
             </div>
           </header>

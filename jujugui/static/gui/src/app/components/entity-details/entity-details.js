@@ -80,6 +80,7 @@ YUI.add('entity-details', function() {
                   getBundleYAML={this.props.getBundleYAML}
                   changeState={this.props.changeState}
                   deployService={this.props.deployService}
+                  pluralize={this.props.pluralize}
                   scrollPosition={this.props.scrollPosition} />
                 {this._generateDiagram(entityModel)}
                 <juju.components.EntityContent
