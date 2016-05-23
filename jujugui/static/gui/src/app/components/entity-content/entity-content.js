@@ -208,13 +208,11 @@ YUI.add('entity-content', function() {
     */
     _showEntityRevisions: function() {
       var entityModel = this.props.entityModel;
-      if (entityModel.get('entityType') === 'charm') {
-        return (
-          <div className="four-col">
-            <juju.components.EntityContentRevisions
-              revisions={entityModel.get('revisions')} />
-          </div>);
-      }
+      return (
+        <div className="four-col">
+          <juju.components.EntityContentRevisions
+            revisions={entityModel.get('revisions')} />
+        </div>);
     },
 
     render: function() {

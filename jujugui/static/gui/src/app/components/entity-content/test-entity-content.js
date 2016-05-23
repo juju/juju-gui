@@ -280,7 +280,10 @@ describe('EntityContent', function() {
                 entityModel={mockEntity}
                 pluralize={pluralize} />
             </div>
-            {undefined}
+            <div className="four-col">
+              <juju.components.EntityContentRevisions
+                revisions={mockEntity.get('revisions')} />
+            </div>
           </div>
         </div>
         {undefined}
