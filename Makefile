@@ -59,7 +59,6 @@ help:
 	@echo "bumpversion - bump version."
 	@echo "  By default bumps patch level. 'VPART=[major|minor|patch] make bumpversion' to specify."
 	@echo "check - run tests and check lint."
-	@echo "clean - remove build and python artifacts"
 	@echo "clean-downloadcache - remove the downloadcache"
 	@echo "clean-gui - clean the built gui js code"
 	@echo "deps - install the dependencies"
