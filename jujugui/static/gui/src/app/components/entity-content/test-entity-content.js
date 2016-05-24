@@ -123,21 +123,15 @@ describe('EntityContent', function() {
                 getFile={getFile} />
             </div>
             <div className="four-col">
-              <div className="four-col">
-                <juju.components.EntityContentRelations
-                  changeState={changeState}
-                  relations={mockEntity.get('relations')} />
-              </div>
-              <div className="four-col">
-                <juju.components.EntityFiles
-                  apiUrl={apiUrl}
-                  entityModel={mockEntity}
-                  pluralize={pluralize} />
-              </div>
-              <div className="four-col">
-                <juju.components.EntityContentRevisions
-                  revisions={mockEntity.get('revisions')} />
-              </div>
+              <juju.components.EntityContentRelations
+                changeState={changeState}
+                relations={mockEntity.get('relations')} />
+              <juju.components.EntityFiles
+                apiUrl={apiUrl}
+                entityModel={mockEntity}
+                pluralize={pluralize} />
+              <juju.components.EntityContentRevisions
+                revisions={mockEntity.get('revisions')} />
               {undefined}
             </div>
           </div>
@@ -228,21 +222,15 @@ describe('EntityContent', function() {
                 getFile={getFile} />
             </div>
             <div className="four-col">
-              <div className="four-col">
-                <juju.components.EntityContentRelations
-                  changeState={changeState}
-                  relations={mockEntity.get('relations')} />
-              </div>
-              <div className="four-col">
-                <juju.components.EntityFiles
-                  apiUrl={apiUrl}
-                  entityModel={mockEntity}
-                  pluralize={pluralize} />
-              </div>
-              <div className="four-col">
-                <juju.components.EntityContentRevisions
-                  revisions={mockEntity.get('revisions')} />
-              </div>
+              <juju.components.EntityContentRelations
+                changeState={changeState}
+                relations={mockEntity.get('relations')} />
+              <juju.components.EntityFiles
+                apiUrl={apiUrl}
+                entityModel={mockEntity}
+                pluralize={pluralize} />
+              <juju.components.EntityContentRevisions
+                revisions={mockEntity.get('revisions')} />
               {undefined}
             </div>
           </div>
@@ -281,27 +269,21 @@ describe('EntityContent', function() {
             </div>
             <div className="four-col">
               {undefined}
-              <div className="four-col">
-                <juju.components.EntityFiles
-                  apiUrl={apiUrl}
-                  entityModel={mockEntity}
-                  pluralize={pluralize} />
-              </div>
-              <div className="four-col">
-                <juju.components.EntityContentRevisions
-                  revisions={mockEntity.get('revisions')} />
-              </div>
-              <div className="four-col">
-                <div className="section">
-                  <h3 className="section__title">
-                    Actions
-                  </h3>
-                  <a href={'https://code.launchpad.net/~charmers/charms/'+
-                    'bundles/django-cluster/bundle'}
-                    target="_blank">
-                    Contribute
-                  </a>
-                </div>
+              <juju.components.EntityFiles
+                apiUrl={apiUrl}
+                entityModel={mockEntity}
+                pluralize={pluralize} />
+              <juju.components.EntityContentRevisions
+                revisions={mockEntity.get('revisions')} />
+              <div className="section">
+                <h3 className="section__title">
+                  Actions
+                </h3>
+                <a href={'https://code.launchpad.net/~charmers/charms/'+
+                  'bundles/django-cluster/bundle'}
+                  target="_blank">
+                  Contribute
+                </a>
               </div>
             </div>
           </div>

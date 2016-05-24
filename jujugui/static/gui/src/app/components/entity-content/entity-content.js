@@ -193,11 +193,9 @@ YUI.add('entity-content', function() {
       var entityModel = this.props.entityModel;
       if (entityModel.get('entityType') === 'charm') {
         return (
-          <div className="four-col">
-            <juju.components.EntityContentRelations
-              changeState={this.props.changeState}
-              relations={entityModel.get('relations')} />
-          </div>);
+          <juju.components.EntityContentRelations
+            changeState={this.props.changeState}
+            relations={entityModel.get('relations')} />);
       }
     },
 
@@ -214,16 +212,14 @@ YUI.add('entity-content', function() {
       var contributeLink = 'https://code.launchpad.net/~charmers/charms/' +
         `bundles/${entityModel.get('name')}/bundle`;
       return (
-        <div className="four-col">
-          <div className="section">
-            <h3 className="section__title">
-              Actions
-            </h3>
-            <a href={contributeLink}
-              target="_blank">
-              Contribute
-            </a>
-          </div>
+        <div className="section">
+          <h3 className="section__title">
+            Actions
+          </h3>
+          <a href={contributeLink}
+            target="_blank">
+            Contribute
+          </a>
         </div>);
     },
 
@@ -242,16 +238,12 @@ YUI.add('entity-content', function() {
               </div>
               <div className="four-col">
                 {this._showEntityRelations()}
-                <div className="four-col">
-                  <juju.components.EntityFiles
-                    apiUrl={this.props.apiUrl}
-                    entityModel={entityModel}
-                    pluralize={this.props.pluralize} />
-                </div>
-                <div className="four-col">
-                  <juju.components.EntityContentRevisions
-                    revisions={entityModel.get('revisions')} />
-                </div>
+                <juju.components.EntityFiles
+                  apiUrl={this.props.apiUrl}
+                  entityModel={entityModel}
+                  pluralize={this.props.pluralize} />
+                <juju.components.EntityContentRevisions
+                  revisions={entityModel.get('revisions')} />
                 {this._generateActions()}
               </div>
             </div>
