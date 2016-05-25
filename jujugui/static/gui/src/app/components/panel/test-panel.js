@@ -40,7 +40,9 @@ describe('PanelComponent', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="panel-component custom-instance-name"
-        onClick={instance._handleClick}>
+        onClick={instance._handleClick}
+        ref="content"
+        tabIndex="0">
         <div className="panel-component__inner"
           onClick={instance._stopBubble}>
           {undefined}
@@ -58,7 +60,9 @@ describe('PanelComponent', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="panel-component custom-instance-name hidden"
-        onClick={instance._handleClick}>
+        onClick={instance._handleClick}
+        ref="content"
+        tabIndex="0">
         <div className="panel-component__inner"
           onClick={instance._stopBubble}>
           {undefined}
@@ -79,7 +83,9 @@ describe('PanelComponent', function() {
     var output = renderer.getRenderOutput();
     assert.deepEqual(output,
       <div className="panel-component custom-instance-name"
-        onClick={instance._handleClick}>
+        onClick={instance._handleClick}
+        ref="content"
+        tabIndex="0">
         <div className="panel-component__inner"
           onClick={instance._stopBubble}>
           <div>child</div>
@@ -113,5 +119,16 @@ describe('PanelComponent', function() {
     output.props.children.props.onClick({stopPropagation: stopPropagation});
     assert.equal(stopPropagation.callCount, 1);
     assert.equal(clickAction.callCount, 0);
+  });
+
+  it('sets the keyboard focus when it loads', function() {
+    var focus = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+        <juju.components.Panel
+          visible={true} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {content: {focus: focus}};
+    instance.componentDidMount();
+    assert.equal(focus.callCount, 1);
   });
 });

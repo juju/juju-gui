@@ -149,6 +149,9 @@ YUI.add('entity-details', function() {
     },
 
     componentDidMount: function() {
+      // Set the keyboard focus on the component so it can be scrolled with the
+      // keyboard. Requires tabIndex to be set on the element.
+      this.refs.content.focus();
       this.detailsXhr = this.props.getEntity(
           this.props.id, this.fetchCallback);
     },
@@ -202,10 +205,12 @@ YUI.add('entity-details', function() {
 
     render: function() {
       return (
-        <div className={this._generateClasses()}>
+        <div className={this._generateClasses()}
+          ref="content"
+          tabIndex="0">
           {this._generateContent()}
         </div>
-      );;
+      );
     }
   });
 
