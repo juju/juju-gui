@@ -146,8 +146,10 @@ describe('EntityHeader', function() {
           entityModel={entity}
           getBundleYAML={sinon.stub()}
           importBundleYAML={sinon.stub()}
+          listModels={sinon.stub()}
           pluralize={pluralize}
-          scrollPosition={0} />, true);
+          scrollPosition={0}
+          user={{user: 'spinach'}} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <li>
