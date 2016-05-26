@@ -288,7 +288,63 @@ describe('EntityContent', function() {
             </div>
           </div>
         </div>
-        {undefined}
+        <div id="configuration"
+          className="row row--grey entity-content__configuration">
+          <div className="inner-wrapper">
+            <div className="twelve-col">
+              <h2 className="entity-content__header">Configuration</h2>
+              <ul>
+                <juju.components.ExpandingRow
+                  classes={{
+                    'entity-content__bundle-config': true
+                  }}
+                  key="gunicorn">
+                  <div className="entity-content__bundle-config-title">
+                    gunicorn
+                  </div>
+                  <dl className="entity-content__bundle-config-options">
+                    <div className="entity-content__config-option"
+                      key="name0">
+                      <dt className="entity-content__config-name">
+                        name
+                      </dt>
+                      <dd className="entity-content__config-description">
+                        <p>
+                          title
+                        </p>
+                      </dd>
+                    </div>
+                    <div className="entity-content__config-option"
+                      key="active1">
+                      <dt className="entity-content__config-name">
+                        active
+                      </dt>
+                      <dd className="entity-content__config-description">
+                        <p>
+                          {true}
+                        </p>
+                      </dd>
+                    </div>
+                  </dl>
+                </juju.components.ExpandingRow>
+                <juju.components.ExpandingRow
+                  classes={{
+                    'entity-content__bundle-config': true
+                  }}
+                  key="django">
+                  <div className="entity-content__bundle-config-title">
+                    django
+                  </div>
+                  <dl className="entity-content__bundle-config-options">
+                    {[<div key="none">
+                      No config options for this service.
+                    </div>]}
+                  </dl>
+                </juju.components.ExpandingRow>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     );
     assert.deepEqual(output, expected);

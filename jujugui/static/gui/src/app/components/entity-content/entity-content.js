@@ -32,6 +32,91 @@ YUI.add('entity-content', function() {
     },
 
     /**
+      Generate the list of configuration options for a charm.
+
+      @method _generateCharmConfig
+      @param {Object} entityModel The entity model.
+      @return {Object} The options markup.
+    */
+    _generateCharmConfig: function(entityModel) {
+      var options = entityModel.get('options');
+      if (!options) {
+        return;
+      }
+      var optionsList = [];
+      Object.keys(options).forEach(function(name) {
+        var option = options[name];
+        option.name = name;
+        optionsList.push(
+          <juju.components.EntityContentConfigOption
+            key={name}
+            option={option} />
+        );
+      }, this);
+      return (
+        <dl>
+          {optionsList}
+        </dl>);
+    },
+
+    /**
+      Generate the list of configuration options for a bundle.
+
+      @method _generateBundleConfig
+      @param {Object} entityModel The entity model.
+      @return {Object} The options markup.
+    */
+    _generateBundleConfig: function(entityModel) {
+      var services = entityModel.get('services');
+      if (!services) {
+        return;
+      }
+      // Generate the options for each service in this bundle.
+      var servicesList = Object.keys(services).map((service) => {
+        var options = services[service].options || {};
+        // Generate the list of options for this service.
+        var optionsList = Object.keys(options).map((name, i) => {
+          return (
+            <div className="entity-content__config-option"
+              key={name + i}>
+              <dt className="entity-content__config-name">
+                {name}
+              </dt>
+              <dd className="entity-content__config-description">
+                <p>
+                  {options[name]}
+                </p>
+              </dd>
+            </div>);
+        });
+        var classes = {
+          'entity-content__bundle-config': true
+        };
+        if (optionsList.length === 0) {
+          optionsList.push(
+            <div key="none">
+              No config options for this service.
+            </div>);
+        }
+        return (
+          <juju.components.ExpandingRow
+            classes={classes}
+            key={service}>
+            <div className="entity-content__bundle-config-title">
+              {service}
+            </div>
+            <dl className="entity-content__bundle-config-options">
+              {optionsList}
+            </dl>
+          </juju.components.ExpandingRow>);
+      });
+      return (
+        <ul>
+          {servicesList}
+        </ul>);
+    },
+
+    /**
       Generate the list of configuration options.
 
       @method _generateOptionsList
@@ -39,30 +124,20 @@ YUI.add('entity-content', function() {
       @return {Object} The options markup.
     */
     _generateOptionsList: function(entityModel) {
-      if (entityModel.get('entityType') === 'bundle') {
-        return;
+      var optionsList;
+      if (entityModel.get('entityType') === 'charm') {
+        optionsList = this._generateCharmConfig(entityModel);
+      } else {
+        optionsList = this._generateBundleConfig(entityModel);
       }
-      var options = entityModel.get('options');
-      if (options) {
-        var optionsList = [];
-        Object.keys(options).forEach(function(name) {
-          var option = options[name];
-          option.name = name;
-          optionsList.push(
-            <juju.components.EntityContentConfigOption
-              key={name}
-              option={option} />
-          );
-        }, this);
+      if (optionsList) {
         return (
           <div id="configuration"
             className="row row--grey entity-content__configuration">
             <div className="inner-wrapper">
               <div className="twelve-col">
                 <h2 className="entity-content__header">Configuration</h2>
-                <dl>
-                  {optionsList}
-                </dl>
+                {optionsList}
               </div>
             </div>
           </div>
@@ -260,6 +335,7 @@ YUI.add('entity-content', function() {
     'entity-content-readme',
     'entity-content-relations',
     'entity-content-revisions',
-    'entity-files'
+    'entity-files',
+    'expanding-row'
   ]
 });

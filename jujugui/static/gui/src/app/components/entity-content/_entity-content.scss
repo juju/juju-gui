@@ -145,7 +145,7 @@
 
     .btn__see--more,
     .btn__see--less {
-      @extend .button--inline-neutral;
+        @extend .button--inline-neutral;
     }
 
     .list__controls {
@@ -177,6 +177,21 @@
 
         .btn__see--less {
             display: none;
+        }
+    }
+
+    &__bundle-config {
+        @extend %list-style;
+        margin-top: 20px;
+        cursor: pointer;
+
+        &-title {
+            padding: 15px 20px;
+            border-top: 1px solid $mid-grey;
+        }
+
+        &-options {
+            padding: 20px;
         }
     }
 }
