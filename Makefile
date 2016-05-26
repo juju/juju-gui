@@ -162,38 +162,6 @@ $(YUI): $(NODE_MODULES)
 $(REACT_ASSETS): $(NODE_MODULES)
 	cp $(NODE_MODULES)/react/dist/react-with-addons.js $(BUILT_JS_ASSETS)/react-with-addons.js
 	cp $(NODE_MODULES)/react/dist/react-with-addons.min.js $(BUILT_JS_ASSETS)/react-with-addons.min.js
-	# There is a bug in how the React shadow renderer renders the owner property
-	# in 0.14. Below is the workaround code which gets replaced into the 'built'
-	# React release. Hopefully the PR will make it into the next release.
-	# https://github.com/facebook/react/issues/5292
-	sed	-i -e '/var NoopInternalComponent = function (element) {/,/^};/c\
-	var NoopInternalComponent = function (element) {\
-	  var type = element.type.name || element.type;\
-	  var props = {};\
-	  if (element.props.children) {\
-	    props.children = NoopInternalChildren(element.props.children);\
-	  }\
-	  var props = assign({}, element.props, props);\
-	\
-	  this._renderedOutput = assign({}, element, { type: type, props: props });\
-	  this._currentElement = element;\
-	};\
-	\
-	var NoopInternalChildren = function (children) {\
-	  if (Array.isArray(children)) {\
-	    return children.map(NoopInternalChildren);\
-	  } else if (children === Object(children)) {\
-	    return NoopInternalChild(children);\
-	  }\
-	  return children;\
-	};\
-	\
-	var NoopInternalChild = function (child) {\
-	  var props = child.props && child.props.children ? assign({}, child.props, {\
-	    children: NoopInternalChildren(child.props.children)\
-	  }) : child.props;\
-	  return assign({}, child, { _owner: null }, { props: props });\
-	};' $(BUILT_JS_ASSETS)/react-with-addons.js
 	cp $(NODE_MODULES)/react-dom/dist/react-dom.js $(BUILT_JS_ASSETS)/react-dom.js
 	cp $(NODE_MODULES)/react-dom/dist/react-dom.min.js $(BUILT_JS_ASSETS)/react-dom.min.js
 	cp $(NODE_MODULES)/classnames/index.js $(BUILT_JS_ASSETS)/classnames.js
