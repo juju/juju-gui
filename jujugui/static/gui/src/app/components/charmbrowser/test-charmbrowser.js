@@ -76,6 +76,7 @@ describe('Charmbrowser', function() {
         <juju.components.Panel
           instanceName="white-box"
           clickAction={instance._close}
+          focus={true}
           visible={true}>
           <div className="charmbrowser"
             ref="charmbrowser">
@@ -129,6 +130,7 @@ describe('Charmbrowser', function() {
         <juju.components.Panel
           instanceName="white-box"
           clickAction={instance._close}
+          focus={false}
           visible={true}>
           <div className="charmbrowser"
             ref="charmbrowser">
@@ -175,6 +177,7 @@ describe('Charmbrowser', function() {
         <juju.components.Panel
           instanceName="white-box"
           clickAction={instance._close}
+          focus={true}
           visible={true}>
           <div className="charmbrowser"
             ref="charmbrowser">
@@ -235,6 +238,7 @@ describe('Charmbrowser', function() {
         <juju.components.Panel
           instanceName="white-box"
           clickAction={instance._close}
+          focus={true}
           visible={true}>
           <div className="charmbrowser"
             ref="charmbrowser">

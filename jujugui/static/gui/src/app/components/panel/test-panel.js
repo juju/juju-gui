@@ -131,4 +131,16 @@ describe('PanelComponent', function() {
     instance.componentDidMount();
     assert.equal(focus.callCount, 1);
   });
+
+  it('can not set the keyboard focus on load', function() {
+    var focus = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+        <juju.components.Panel
+          focus={false}
+          visible={true} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {content: {focus: focus}};
+    instance.componentDidMount();
+    assert.equal(focus.callCount, 0);
+  });
 });

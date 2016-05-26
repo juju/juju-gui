@@ -181,10 +181,14 @@ YUI.add('charmbrowser-component', function() {
     },
 
     render: function() {
+      // Do not focus on the panel when the midpoint is opened so that the focus
+      // remains on the search box.
+      var focus = this.state.activeComponent !== 'mid-point';
       return (
         <juju.components.Panel
           clickAction={this._close}
           instanceName="white-box"
+          focus={focus}
           visible={true}>
           <div className="charmbrowser"
             ref="charmbrowser">
