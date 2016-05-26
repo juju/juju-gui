@@ -106,6 +106,9 @@ YUI.add('entity-content', function() {
               {service}
             </div>
             <dl className="entity-content__bundle-config-options">
+              <h4 className="entity-content__bundle-config-options-title">
+                {service}
+              </h4>
               {optionsList}
             </dl>
           </juju.components.ExpandingRow>);

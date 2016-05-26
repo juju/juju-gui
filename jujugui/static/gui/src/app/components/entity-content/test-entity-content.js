@@ -303,7 +303,10 @@ describe('EntityContent', function() {
                     gunicorn
                   </div>
                   <dl className="entity-content__bundle-config-options">
-                    <div className="entity-content__config-option"
+                    <h4 className="entity-content__bundle-config-options-title">
+                      gunicorn
+                    </h4>
+                    {[<div className="entity-content__config-option"
                       key="name0">
                       <dt className="entity-content__config-name">
                         name
@@ -313,7 +316,7 @@ describe('EntityContent', function() {
                           title
                         </p>
                       </dd>
-                    </div>
+                    </div>,
                     <div className="entity-content__config-option"
                       key="active1">
                       <dt className="entity-content__config-name">
@@ -324,7 +327,7 @@ describe('EntityContent', function() {
                           {true}
                         </p>
                       </dd>
-                    </div>
+                    </div>]}
                   </dl>
                 </juju.components.ExpandingRow>
                 <juju.components.ExpandingRow
@@ -336,6 +339,9 @@ describe('EntityContent', function() {
                     django
                   </div>
                   <dl className="entity-content__bundle-config-options">
+                    <h4 className="entity-content__bundle-config-options-title">
+                      django
+                    </h4>
                     {[<div key="none">
                       No config options for this service.
                     </div>]}
