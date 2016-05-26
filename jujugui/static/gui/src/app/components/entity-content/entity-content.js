@@ -150,7 +150,7 @@ YUI.add('entity-content', function() {
         var submitLink = 'https://bugs.launchpad.net/charms/+source/' +
           `${entityModel.get('name')}/+filebug`;
         var contributeLink = 'https://code.launchpad.net/~charmers/charms/' +
-          `trusty/${entityModel.get('name')}/trunk`;
+          `${entityModel.get('series')}/${entityModel.get('name')}/trunk`;
         return (
           <div className="row row--grey entity-content__description">
             <div className="inner-wrapper">
@@ -193,28 +193,34 @@ YUI.add('entity-content', function() {
       var entityModel = this.props.entityModel;
       if (entityModel.get('entityType') === 'charm') {
         return (
-          <div className="four-col">
-            <juju.components.EntityContentRelations
-              changeState={this.props.changeState}
-              relations={entityModel.get('relations')} />
-          </div>);
+          <juju.components.EntityContentRelations
+            changeState={this.props.changeState}
+            relations={entityModel.get('relations')} />);
       }
     },
 
     /**
-      We only show the revisions when it's a charm, but not a bundle.
+      Generate the actions links.
 
-      @method _showEntityRevisions
+      @method _generateActions
     */
-    _showEntityRevisions: function() {
+    _generateActions: function() {
       var entityModel = this.props.entityModel;
-      if (entityModel.get('entityType') === 'charm') {
-        return (
-          <div className="four-col">
-            <juju.components.EntityContentRevisions
-              revisions={entityModel.get('revisions')} />
-          </div>);
+      if (entityModel.get('entityType') !== 'bundle') {
+        return;
       }
+      var contributeLink = 'https://code.launchpad.net/~charmers/charms/' +
+        `bundles/${entityModel.get('name')}/bundle`;
+      return (
+        <div className="section">
+          <h3 className="section__title">
+            Actions
+          </h3>
+          <a href={contributeLink}
+            target="_blank">
+            Contribute
+          </a>
+        </div>);
     },
 
     render: function() {
@@ -230,14 +236,16 @@ YUI.add('entity-content', function() {
                   renderMarkdown={this.props.renderMarkdown}
                   getFile={this.props.getFile} />
               </div>
-              {this._showEntityRelations()}
               <div className="four-col">
+                {this._showEntityRelations()}
                 <juju.components.EntityFiles
                   apiUrl={this.props.apiUrl}
                   entityModel={entityModel}
                   pluralize={this.props.pluralize} />
+                <juju.components.EntityContentRevisions
+                  revisions={entityModel.get('revisions')} />
+                {this._generateActions()}
               </div>
-              {this._showEntityRevisions()}
             </div>
           </div>
           {this._generateOptionsList(entityModel)}

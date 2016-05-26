@@ -102,9 +102,12 @@ describe('Entity Extension', function() {
     utils.makeStubMethod(entityModel, 'parseBundleServices', []);
     var attrs = {
       id: 'foobar',
+      machines: {machine1: 1, machine2: 2},
       owner: 'foobar-charmers',
       entityType: 'bundle',
+      serviceCount: 3,
       services: [],
+      unitCount: 5
     };
     entityModel.setAttrs(attrs);
     var entity = entityModel.toEntity();
@@ -114,6 +117,7 @@ describe('Entity Extension', function() {
       downloads: '0',
       id: 'foobar',
       storeId: 'cs:~owner/foobar-132',
+      machineCount: 2,
       name: 'foo-bar',
       owner: 'foobar-charmers',
       promulgated: false,
@@ -124,7 +128,9 @@ describe('Entity Extension', function() {
       // no staticURL is defined on window.juju_config.staticURL so this
       // path should not include a staticURL prefix.
       iconPath: 'static/gui/build/app/assets/images/non-sprites/bundle.svg',
-      services: []
+      serviceCount: 3,
+      services: [],
+      unitCount: 5
     };
     assert.deepEqual(expected, entity,
                      'bundle POJO did not match expected object');

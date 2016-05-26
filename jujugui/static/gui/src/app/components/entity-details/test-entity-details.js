@@ -107,6 +107,7 @@ describe('EntityDetails', function() {
             changeState={changeState}
             addNotification={addNotification}
             deployService={deployService}
+            pluralize={pluralize}
             scrollPosition={100} />
           {undefined}
           <juju.components.EntityContent
@@ -219,6 +220,7 @@ describe('EntityDetails', function() {
             changeState={changeState}
             deployService={deployService}
             addNotification={addNotification}
+            pluralize={pluralize}
             scrollPosition={100} />
           <juju.components.EntityContentDiagram
             getDiagramURL={getDiagramURL}
