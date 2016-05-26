@@ -69,13 +69,29 @@ describe('DeploymentSummary', function() {
       <juju.components.DeploymentSummaryChangeItem
         key={1}
         change={changeDescriptions[1]} />];
+    var jem = {
+      listTemplates: cb => {
+        cb(null, [{
+          path: 'spinach/my-creds',
+          location: { cloud: 'aws', region: 'us-west-1' }
+        }]);
+      },
+      listRegions: (cloud, cb) => {
+        assert.equal(cloud, 'aws');
+        cb(null, ['us-west-1', 'us-east-1']);
+      }
+    };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        jem={{}}
+        jem={jem}
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
-        deploymentStorage={{templateName: 'spinach/my-creds'}}
+        deploymentStorage={{
+          templateName: 'spinach/my-creds',
+          cloud: 'aws',
+          region: 'us-west-1'
+        }}
         users={{}}
         autoPlaceUnits={sinon.stub()}
         changeCounts={changeCounts}
@@ -102,7 +118,7 @@ describe('DeploymentSummary', function() {
       type: 'inline-positive'
     }];
     var expected = (
-      <div className="deployment-panel__child">
+      <div className="deployment-panel__child deployment-summary">
         <juju.components.DeploymentPanelContent
           title="Review deployment">
           <form className="six-col last-col">
@@ -135,15 +151,17 @@ describe('DeploymentSummary', function() {
               </span>
             </span>
             <form className="deployment-summary__cloud-option-region">
-              <juju.components.DeploymentInput
-                label="Region"
-                placeholder="us-central-1"
-                required={true}
-                ref="templateRegion"
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />
+            <select
+              ref="selectRegion"
+              value="us-west-1"
+              onChange={instance._storeRegion}
+              disabled={true}>
+                {[
+                  <option key="default">Choose a region</option>,
+                  [<option key="us-west-1" value="us-west-1">us-west-1</option>,
+                  <option key="us-east-1" value="us-east-1">us-east-1</option>]
+                ]}
+            </select>
             </form>
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
@@ -189,7 +207,9 @@ describe('DeploymentSummary', function() {
     var getUnplacedUnitCount = sinon.stub().returns(1);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        jem={{}}
+        jem={{
+          listTemplates: sinon.stub()
+        }}
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
@@ -290,7 +310,9 @@ describe('DeploymentSummary', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        jem={{}}
+        jem={{
+          listTemplates: sinon.stub()
+        }}
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
@@ -328,7 +350,9 @@ describe('DeploymentSummary', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        jem={{}}
+        jem={{
+          listTemplates: sinon.stub()
+        }}
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
@@ -419,6 +443,7 @@ describe('DeploymentSummary', function() {
     var createSocketURL = sinon.stub().returns('newurl');
     var jem = {
       newModel: sinon.stub(),
+      listTemplates: sinon.stub()
     };
     var detach = sinon.stub();
     var env = {
@@ -522,6 +547,7 @@ describe('DeploymentSummary', function() {
     var createSocketURL = sinon.stub().returns('newurl');
     var jem = {
       newModel: sinon.stub(),
+      listTemplates: sinon.stub()
     };
     var detach = sinon.stub();
     var env = {

@@ -349,7 +349,8 @@ var module = module;
           return {
             path: template.path,
             schema: template.schema,
-            config: template.config
+            config: template.config,
+            location: template.location
           };
         });
         callback(null, data);

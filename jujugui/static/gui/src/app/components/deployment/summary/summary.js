@@ -43,6 +43,59 @@ YUI.add('deployment-summary', function() {
       validateForm: React.PropTypes.func.isRequired
     },
 
+    getInitialState: function() {
+      return {
+        regions: [],
+        activeRegion: this.props.deploymentStorage.region
+      };
+    },
+
+    componentWillMount: function() {
+      // If the model has already been deployed then we already
+      // have all the information we need.
+      var props = this.props;
+      if (props.modelCommitted) { return; }
+      // Because the user may have selected a template from the choose-cloud
+      // component we won't have any of the location data for the template
+      // to be able to properly select the correct region or cloud from the
+      // drop down list.
+      var deploymentStorage = props.deploymentStorage;
+      var templateName = deploymentStorage.templateName;
+      this._listTemplatesXHR = props.jem.listTemplates((error, credentials) => {
+        this._abortXHR('_listTemplatesXHR');
+        if (error) {
+          console.error('Unable to list templates', error);
+          return;
+        }
+        // The credentials are returned in an array so we need to loop through
+        // the list to find the one with the proper path.
+        credentials.some(credential => {
+          if (credential.path === templateName && credential.location) {
+            deploymentStorage.cloud = credential.location.cloud;
+            deploymentStorage.region = credential.location.region;
+            return true;
+          }
+        });
+        if (deploymentStorage.cloud && deploymentStorage.region) {
+          this._listRegionsXHR = props.jem.listRegions(
+            deploymentStorage.cloud, (error, regions) => {
+              this._abortXHR('_listRegionsXHR');
+              if (error) {
+                console.error('Unable to list regions', error);
+                return;
+              }
+              this.setState({
+                regions: regions,
+                activeRegion: deploymentStorage.region
+              });
+            });
+        } else {
+          console.log(
+            'No matching credential found', templateName, credentials);
+        }
+      });
+    },
+
     /**
       Holds the onLogin event handler which is attached when
       creating a new model.
@@ -51,6 +104,22 @@ YUI.add('deployment-summary', function() {
       @default {Object} null
     */
     _onLoginHandler: null,
+
+    /**
+      The xhr object returned from requesting a listTemplates call from JEM.
+
+      @property _listTemplatesXHR
+      @default {Object} null
+    */
+    _listTemplatesXHR: null,
+
+    /**
+      The xhr object returned from requesting a listRegions call from JEM.
+
+      @property _listTemplatesXHR
+      @default {Object} null
+    */
+    _listRegionsXHR: null,
 
     /**
       If there is a handler listening for the login event to be emitted from
@@ -62,6 +131,20 @@ YUI.add('deployment-summary', function() {
       if (this._onLoginHandler) {
         this._onLoginHandler.detach();
         this._onLoginHandler = null;
+      }
+    },
+
+    /**
+      Calls abort on the property name passed in.
+
+      @method _abortXHR
+      @param {String} xhrHandler The name of the property holding the active
+        xhr request.
+    */
+    _abortXHR: function(xhrHandler) {
+      if (this[xhrHandler]) {
+        this[xhrHandler].abort();
+        this[xhrHandler] = null;
       }
     },
 
@@ -122,10 +205,7 @@ YUI.add('deployment-summary', function() {
         return;
       }
       // Validate both fields if we are creating a new model
-      if (!this.props.validateForm([
-        'modelName',
-        'templateRegion'
-      ], this.refs)) { return; }
+      if (!this.props.validateForm(['modelName'], this.refs)) { return; }
 
       var deploymentStorage = this.props.deploymentStorage;
       this.props.jem.newModel(
@@ -134,7 +214,7 @@ YUI.add('deployment-summary', function() {
         deploymentStorage.templateName,
         {
           cloud: deploymentStorage.cloud,
-          region: deploymentStorage.region
+          region: this.state.activeRegion
         },
         null, // Controller, using the location argument instead.
         (error, data) => {
@@ -185,6 +265,20 @@ YUI.add('deployment-summary', function() {
       });
     },
 
+    /*
+      Stores the region in state on select change.
+      @method _storeRegion
+      @param {Object} e The change event.
+    */
+    _storeRegion: function(e) {
+      var selectRegion = this.refs.selectRegion;
+      var region = selectRegion.options[selectRegion.selectedIndex].value;
+      if (region) {
+        this.props.deploymentStorage.region = region;
+        this.setState({activeRegion: region});
+      }
+    },
+
     /**
       Generate the list of change items.
 
@@ -226,6 +320,43 @@ YUI.add('deployment-summary', function() {
     },
 
     /**
+      Generate the list of Regions.
+
+      @method _generateRegionList
+      @returns {Object} The list of regions in a select.
+    */
+    _generateRegionList: function() {
+      var regions = this.state.regions;
+      var options = null;
+      var defaultMessage = 'Loading available regions';
+      if (regions.length > 0) {
+        defaultMessage = 'Choose a region';
+        options = [];
+        regions.forEach(region => {
+          options.push(
+            <option
+              key={region}
+              value={region}>
+            {region}
+            </option>);
+        });
+      }
+      // XXX The following select is disabled because of an existing limitation
+      // in JEM which doesn't allow us to override the region of a credential.
+      // This will change in the near future and at that time the disabled
+      // can be removed and the updating has been already implemented.
+      return (
+        <select
+          ref="selectRegion"
+          value={this.state.activeRegion}
+          onChange={this._storeRegion}
+          disabled={true}>
+          <option key="default">{defaultMessage}</option>
+          {options}
+        </select>);
+    },
+
+    /**
       Generate the credential details.
 
       @method _generateCredential
@@ -253,15 +384,7 @@ YUI.add('deployment-summary', function() {
             </span>
           </span>
           <form className="deployment-summary__cloud-option-region">
-            <juju.components.DeploymentInput
-              label="Region"
-              placeholder="us-central-1"
-              required={true}
-              ref="templateRegion"
-              validate={[{
-                regex: /\S+/,
-                error: 'This field is required.'
-              }]} />
+            {this._generateRegionList()}
           </form>
         </div>);
     },
@@ -321,6 +444,8 @@ YUI.add('deployment-summary', function() {
       // called every time the event changes trying to close a component
       // which doesn't exist.
       this._detachOnLoginhandler();
+      // Abort all active XHR requests.
+      ['_listTemplatesXHR', '_listRegionsXHR'].forEach(this._abortXHR);
     },
 
     render: function() {
@@ -346,7 +471,7 @@ YUI.add('deployment-summary', function() {
       };
       var numberOfChanges = this.props.numberOfChanges;
       return (
-        <div className="deployment-panel__child">
+        <div className="deployment-panel__child deployment-summary">
           <juju.components.DeploymentPanelContent
             title="Review deployment">
             <form className="six-col last-col">
