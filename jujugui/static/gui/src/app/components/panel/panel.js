@@ -21,11 +21,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('panel-component', function() {
 
   juju.components.Panel = React.createClass({
+    propTypes: {
+      clickAction: React.PropTypes.func,
+      focus: React.PropTypes.bool,
+      instanceName: React.PropTypes.string.isRequired,
+      visible: React.PropTypes.bool.isRequired
+    },
+
+    getDefaultProps: function() {
+      return {focus: true};
+    },
 
     componentDidMount: function() {
       // Set the keyboard focus on the component so it can be scrolled with the
       // keyboard. Requires tabIndex to be set on the element.
-      this.refs.content.focus();
+      if (this.props.focus) {
+        this.refs.content.focus();
+      }
     },
 
     /**
