@@ -191,10 +191,40 @@
         }
 
         &-options {
-            padding: 20px;
+            padding: 0 30px;
+        }
 
-            &-title {
-                margin-bottom: 20px;
+        &-chevron {
+            float: right;
+
+            .entity-content__bundle-config-contract {
+                display: none;
+            }
+        }
+
+        &.expanding-row--expanded {
+            .expanding-row {
+                &__initial {
+                    opacity: 1;
+                    height: 50px;
+                }
+
+                &__expanded {
+                    background-color: transparent;
+                    box-shadow: none;
+                }
+            }
+
+            .entity-content__bundle-config-chevron {
+                .entity-content__bundle-config {
+                    &-expand {
+                        display: none;
+                    }
+
+                    &-contract {
+                        display: inline-block;
+                    }
+                }
             }
         }
     }

@@ -301,11 +301,20 @@ describe('EntityContent', function() {
                   key="gunicorn">
                   <div className="entity-content__bundle-config-title">
                     gunicorn
+                    <div className="entity-content__bundle-config-chevron">
+                      <div className="entity-content__bundle-config-expand">
+                        <juju.components.SvgIcon
+                          name="chevron_down_16"
+                          size="16" />
+                      </div>
+                      <div className="entity-content__bundle-config-contract">
+                        <juju.components.SvgIcon
+                          name="chevron_up_16"
+                          size="16" />
+                      </div>
+                    </div>
                   </div>
                   <dl className="entity-content__bundle-config-options">
-                    <h4 className="entity-content__bundle-config-options-title">
-                      gunicorn
-                    </h4>
                     {[<div className="entity-content__config-option"
                       key="name0">
                       <dt className="entity-content__config-name">
@@ -337,11 +346,20 @@ describe('EntityContent', function() {
                   key="django">
                   <div className="entity-content__bundle-config-title">
                     django
+                    <div className="entity-content__bundle-config-chevron">
+                      <div className="entity-content__bundle-config-expand">
+                        <juju.components.SvgIcon
+                          name="chevron_down_16"
+                          size="16" />
+                      </div>
+                      <div className="entity-content__bundle-config-contract">
+                        <juju.components.SvgIcon
+                          name="chevron_up_16"
+                          size="16" />
+                      </div>
+                    </div>
                   </div>
                   <dl className="entity-content__bundle-config-options">
-                    <h4 className="entity-content__bundle-config-options-title">
-                      django
-                    </h4>
                     {[<div key="none">
                       No config options for this service.
                     </div>]}

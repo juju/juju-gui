@@ -104,11 +104,20 @@ YUI.add('entity-content', function() {
             key={service}>
             <div className="entity-content__bundle-config-title">
               {service}
+              <div className="entity-content__bundle-config-chevron">
+                <div className="entity-content__bundle-config-expand">
+                  <juju.components.SvgIcon
+                    name="chevron_down_16"
+                    size="16" />
+                </div>
+                <div className="entity-content__bundle-config-contract">
+                  <juju.components.SvgIcon
+                    name="chevron_up_16"
+                    size="16" />
+                </div>
+              </div>
             </div>
             <dl className="entity-content__bundle-config-options">
-              <h4 className="entity-content__bundle-config-options-title">
-                {service}
-              </h4>
               {optionsList}
             </dl>
           </juju.components.ExpandingRow>);
