@@ -267,6 +267,8 @@ YUI.add('juju-env-base', function(Y) {
     },
 
     on_close: function(data) {
+      // Clean up the old websocket.
+      this.ws = null;
       this.set('connected', false);
     },
 
