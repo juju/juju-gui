@@ -778,7 +778,6 @@ YUI.add('juju-gui', function(Y) {
         <window.juju.components.UserProfile
           addNotification={
             this.db.notifications.add.bind(this.db.notifications)}
-          canCreateNew={this.env.get('connected')}
           currentModel={this.get('jujuEnvUUID')}
           env={this.env}
           listModels={utils.listModels.bind(

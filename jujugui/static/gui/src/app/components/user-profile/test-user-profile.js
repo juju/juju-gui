@@ -78,7 +78,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         addNotification={sinon.stub()}
         users={users}
-        canCreateNew={true}
         charmstore={{}}
         env={env}
         getDiagramURL={sinon.stub()}
@@ -130,7 +129,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         addNotification={sinon.stub()}
         users={users}
-        canCreateNew={true}
         charmstore={{}}
         env={env}
         getDiagramURL={sinon.stub()}
@@ -154,7 +152,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         addNotification={sinon.stub()}
         users={users}
-        canCreateNew={true}
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
@@ -187,7 +184,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         addNotification={sinon.stub()}
         users={users}
-        canCreateNew={true}
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
@@ -227,7 +223,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         addNotification={sinon.stub()}
         users={users}
-        canCreateNew={true}
         charmstore={charmstore}
         env={env}
         getDiagramURL={getDiagramURL}
@@ -436,7 +431,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         addNotification={sinon.stub()}
         users={users}
-        canCreateNew={true}
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
@@ -474,7 +468,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         addNotification={sinon.stub()}
         users={users}
-        canCreateNew={true}
         charmstore={{}}
         switchModel={sinon.stub()}
         listModels={sinon.stub()}
@@ -511,7 +504,6 @@ describe('UserProfile', () => {
         switchModel={sinon.stub()}
         users={users}
         listModels={sinon.stub()}
-        canCreateNew={true}
         changeState={sinon.stub()}
         charmstore={charmstore}
         env={env}
@@ -535,7 +527,6 @@ describe('UserProfile', () => {
         switchModel={sinon.stub()}
         users={{}}
         listModels={sinon.stub()}
-        canCreateNew={true}
         changeState={sinon.stub()}
         charmstore={charmstore}
         env={env}
@@ -551,7 +542,6 @@ describe('UserProfile', () => {
         switchModel={sinon.stub()}
         users={users}
         listModels={sinon.stub()}
-        canCreateNew={true}
         changeState={sinon.stub()}
         charmstore={charmstore}
         env={env}
@@ -573,7 +563,6 @@ describe('UserProfile', () => {
         addNotification={sinon.stub()}
         switchModel={switchModel}
         users={users}
-        canCreateNew={true}
         changeState={sinon.stub()}
         charmstore={{}}
         env={env}
@@ -604,7 +593,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         addNotification={sinon.stub()}
         users={users}
-        canCreateNew={true}
         changeState={sinon.stub()}
         charmstore={charmstore}
         env={env}
@@ -635,7 +623,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         addNotification={sinon.stub()}
         users={users}
-        canCreateNew={true}
         changeState={sinon.stub()}
         charmstore={charmstore}
         env={env}
@@ -663,7 +650,6 @@ describe('UserProfile', () => {
         switchModel={utilsSwitchModel}
         users={users}
         listModels={sinon.stub()}
-        canCreateNew={true}
         changeState={sinon.stub()}
         charmstore={{}}
         env={env}
@@ -686,7 +672,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         addNotification={sinon.stub()}
         users={users}
-        canCreateNew={true}
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
@@ -719,7 +704,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         addNotification={addNotification}
         users={users}
-        canCreateNew={true}
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
@@ -756,7 +740,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         addNotification={sinon.stub()}
         users={users}
-        canCreateNew={true}
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
@@ -792,7 +775,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         addNotification={sinon.stub()}
         users={users}
-        canCreateNew={true}
         charmstore={charmstore}
         env={env}
         getDiagramURL={sinon.stub()}
@@ -820,7 +802,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         addNotification={addNotification}
         users={users}
-        canCreateNew={true}
         charmstore={charmstore}
         currentModel="mymodel"
         env={env}
@@ -842,25 +823,5 @@ describe('UserProfile', () => {
       message: 'The model failed to be destroyed: error',
       level: 'error'
     });
-  });
-
-  it('can hide the create new model button', () => {
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfile
-        addNotification={sinon.stub()}
-        users={users}
-        canCreateNew={false}
-        changeState={sinon.stub()}
-        charmstore={charmstore}
-        env={env}
-        getDiagramURL={sinon.stub()}
-        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
-        pluralize={sinon.stub()}
-        storeUser={sinon.stub()}
-        switchModel={sinon.stub()}
-        user={users.charmstore} />, true);
-    var output = component.getRenderOutput();
-    assert.isUndefined(output.props.children[0].props.children.props.children[1]
-      .props.children[0].props.children[0].props.children[2]);
   });
 });
