@@ -23,7 +23,6 @@ MODULESMIN := $(GUIBUILD)/modules-min.js
 YUI := $(NODE_MODULES)/yui
 JS_MACAROON := $(NODE_MODULES)/js-macaroon/build/yui-macaroon.js
 BUILT_YUI := $(BUILT_JS_ASSETS)/yui
-D3_DEPS := $(GUIBUILD)/node_modules/d3
 BUILT_D3 := $(BUILT_JS_ASSETS)/d3-min.js
 SELENIUM := lib/python2.7/site-packages/selenium-2.47.3-py2.7.egg/selenium/selenium.py
 REACT_ASSETS := $(BUILT_JS_ASSETS)/react-with-addons.js $(BUILT_JS_ASSETS)/react-with-addons.min.js
@@ -153,7 +152,6 @@ $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	cp -Lr $(JS_ASSETS) $(GUIBUILD)/app/assets/
 	find $(BUILT_JS_ASSETS) -type f -name "*.js" \
 		-not -name "react*" \
-		-not -name "*d3-wrapper*" | \
 		sed s/\.js$$//g | \
 		xargs -I {} node_modules/.bin/uglifyjs --screw-ie8 {}.js -o {}-min.js
 
@@ -178,25 +176,6 @@ $(REACT_ASSETS): $(NODE_MODULES)
 
 $(BUILT_YUI): $(YUI) $(BUILT_JS_ASSETS)
 	cp -r $(YUI) $(BUILT_YUI)
-
-$(BUILT_D3):
-	mkdir -p $(GUIBUILD)/app/assets/javascripts
-	$(NODE_MODULES)/.bin/smash $(shell $(NODE_MODULES)/.bin/smash --list \
-	  $(GUISRC)/app/assets/javascripts/d3-wrapper-start.js \
-	  node_modules/d3/src/compat/index.js \
-	  node_modules/d3/src/selection/* \
-	  node_modules/d3/src/behavior/* \
-	  node_modules/d3/src/geom/hull.js \
-	  node_modules/d3/src/geom/polygon.js \
-	  node_modules/d3/src/scale/linear.js \
-	  node_modules/d3/src/scale/log.js \
-	  node_modules/d3/src/transition/* \
-	  node_modules/d3/src/svg/line.js \
-	  node_modules/d3/src/svg/arc.js \
-	  node_modules/d3/src/event/drag.js \
-	  node_modules/d3/src/layout/pack.js \
-	  $(GUISRC)/app/assets/javascripts/d3-wrapper-end.js) > $(GUIBUILD)/app/assets/javascripts/d3.js
-	$(NODE_MODULES)/.bin/uglifyjs $(GUIBUILD)/app/assets/javascripts/d3.js -c -m -o $(GUIBUILD)/app/assets/javascripts/d3-min.js
 
 $(STATIC_CSS_FILES):
 	mkdir -p $(GUIBUILD)/app/assets/stylesheets

@@ -16,7 +16,6 @@
     "clipboard": "^1.5.8",
     "cloud-vanilla-theme": "0.0.22",
     "cryptojs": ">= 2.5.3",
-    "d3": "^3.5.17",
     "graceful-fs": "^4.1.4",
     "js-macaroon": "1.0.1",
     "marked": "^0.3.5",
@@ -26,7 +25,6 @@
     "react-dnd": "^2.1.4",
     "react-dnd-html5-backend": "^2.1.2",
     "react-dom": "^15.1.0",
-    "smash": "0.0.15",
     "svg-sprite": "^1.3.1",
     "uglify-js": "^2.6.1",
     "yui": "3.11.0"
