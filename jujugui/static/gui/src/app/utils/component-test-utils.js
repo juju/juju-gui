@@ -198,8 +198,16 @@ var jsTestUtils = {
         files: files,
         serviceCount: 3,
         services: {
-          gunicorn: {charm: 'gunicorn'},
-          django: {charm: 'django'}
+          gunicorn: {
+            charm: 'gunicorn',
+            options: {
+              name: 'title',
+              active: true
+            }
+          },
+          django: {
+            charm: 'django'
+          }
         },
         unitCount: 5
       };

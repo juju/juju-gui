@@ -145,7 +145,7 @@
 
     .btn__see--more,
     .btn__see--less {
-      @extend .button--inline-neutral;
+        @extend .button--inline-neutral;
     }
 
     .list__controls {
@@ -177,6 +177,55 @@
 
         .btn__see--less {
             display: none;
+        }
+    }
+
+    &__bundle-config {
+        @extend %list-style;
+        margin-top: 20px;
+        cursor: pointer;
+
+        &-title {
+            padding: 15px 20px;
+            border-top: 1px solid $mid-grey;
+        }
+
+        &-options {
+            padding: 0 30px;
+        }
+
+        &-chevron {
+            float: right;
+
+            .entity-content__bundle-config-contract {
+                display: none;
+            }
+        }
+
+        &.expanding-row--expanded {
+            .expanding-row {
+                &__initial {
+                    opacity: 1;
+                    height: 50px;
+                }
+
+                &__expanded {
+                    background-color: transparent;
+                    box-shadow: none;
+                }
+            }
+
+            .entity-content__bundle-config-chevron {
+                .entity-content__bundle-config {
+                    &-expand {
+                        display: none;
+                    }
+
+                    &-contract {
+                        display: inline-block;
+                    }
+                }
+            }
         }
     }
 }
