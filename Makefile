@@ -146,7 +146,7 @@ $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	cp $(JS_MACAROON) $(JS_ASSETS)
 	cp -Lr $(JS_ASSETS) $(GUIBUILD)/app/assets/
 	find $(BUILT_JS_ASSETS) -type f -name "*.js" \
-		-not -name "react*" \
+		-not -name "react*" | \
 		sed s/\.js$$//g | \
 		xargs -I {} node_modules/.bin/uglifyjs --screw-ie8 {}.js -o {}-min.js
 
