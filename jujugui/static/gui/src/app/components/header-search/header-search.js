@@ -255,7 +255,7 @@ YUI.add('header-search', function() {
             <input type="search" name="query"
               className="header-search__input"
               placeholder="Search the store"
-              value={this.state.query}
+              defaultValue={this.state.query}
               onChange={this._handleQueryChange}
               onFocus={this._handleSearchFocus}
               style={this.state.inputStyles}
