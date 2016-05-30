@@ -118,6 +118,7 @@ YUI.add('entity-header', function() {
       if (model.uuid === this.props.currentModel) {
         this._deployEntity();
       } else {
+        this._closeEntityDetails();
         this.props.switchModel(
           model.uuid, this.state.modelList, model.name, this._deployEntity);
       }

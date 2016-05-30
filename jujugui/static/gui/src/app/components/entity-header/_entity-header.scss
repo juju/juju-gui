@@ -74,7 +74,7 @@
             display: none;
         }
 
-        .generic-button {
+        .multi-button {
             margin-top: 10px;
         }
     }
@@ -172,5 +172,9 @@
         .svg-icon {
             fill: #dc4a38;
         }
+    }
+
+    .multi-button .button--positive:first-child {
+        white-space: nowrap;
     }
 }
