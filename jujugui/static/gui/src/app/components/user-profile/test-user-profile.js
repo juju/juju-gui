@@ -567,7 +567,6 @@ describe('UserProfile', () => {
     // This method is passed down to child components and called from there.
     // We are just calling it directly here to unit test the method.
     var switchModel = sinon.stub();
-    var changeState = sinon.stub();
     var listModels = sinon.stub().callsArgWith(0, null, {models: models});
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
@@ -575,7 +574,7 @@ describe('UserProfile', () => {
         switchModel={switchModel}
         users={users}
         canCreateNew={true}
-        changeState={changeState}
+        changeState={sinon.stub()}
         charmstore={{}}
         env={env}
         getDiagramURL={sinon.stub()}
@@ -598,14 +597,6 @@ describe('UserProfile', () => {
       isAlive: true,
       owner: 'test-owner'
     }], 'modelname', undefined]);
-    // Make sure we close the profile page when switching envs.
-    assert.equal(changeState.callCount, 1, 'changeState not called');
-    assert.deepEqual(changeState.args[0][0], {
-      sectionB: {
-        component: null,
-        metadata: null
-      }
-    });
   });
 
   it('requests entities and updates state', () => {
@@ -666,7 +657,6 @@ describe('UserProfile', () => {
     pluralize.withArgs('bundle', sinon.match.any).returns('bundles');
     pluralize.withArgs('charm', sinon.match.any).returns('charms');
     var utilsSwitchModel = sinon.stub();
-    var changeState = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         addNotification={sinon.stub()}
@@ -674,7 +664,7 @@ describe('UserProfile', () => {
         users={users}
         listModels={sinon.stub()}
         canCreateNew={true}
-        changeState={changeState}
+        changeState={sinon.stub()}
         charmstore={{}}
         env={env}
         getDiagramURL={sinon.stub()}
@@ -689,12 +679,6 @@ describe('UserProfile', () => {
     var switchArgs = utilsSwitchModel.args[0];
     assert.equal(switchArgs[0], undefined,
                  'UUID should not be defined');
-    assert.deepEqual(changeState.getCall(0).args[0], {
-      sectionB: {
-        component: null,
-        metadata: null
-      }
-    }, 'App state not reset');
   });
 
   it('can display a confirmation when models are to be destroyed', () => {

@@ -206,17 +206,7 @@ YUI.add('user-profile', function() {
     */
     switchModel: function(uuid, name, callback) {
       var props = this.props;
-      this.close();
       props.switchModel(uuid, this.state.envList, name, callback);
-    },
-
-    close: function() {
-      this.props.changeState({
-        sectionB: {
-          component: null,
-          metadata: null
-        }
-      });
     },
 
     /**
