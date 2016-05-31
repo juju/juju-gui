@@ -2019,7 +2019,7 @@ YUI.add('juju-gui', function(Y) {
           callback(this.env);
         }
       }.bind(this.env);
-      if (this.env.ws && this.env.ws.connected) {
+      if (this.env.ws) {
         this.env.ws.onclose = onclose;
         this.env.close();
       } else {
