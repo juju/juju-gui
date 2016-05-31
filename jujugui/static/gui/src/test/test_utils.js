@@ -1364,6 +1364,9 @@ describe('utilities', function() {
       utils._hideSwitchModelConfirm = testUtils.makeStubFunction();
       _showSwitchModelConfirm = utils._showSwitchModelConfirm;
       utils._showSwitchModelConfirm = testUtils.makeStubFunction();
+      utils.changeState = testUtils.makeStubFunction();
+      utils.set = testUtils.makeStubFunction();
+      utils.showConnectingMask = testUtils.makeStubFunction();
       models = [{
         uuid: 'uuid1',
         user: 'spinach',
@@ -1420,8 +1423,6 @@ describe('utilities', function() {
       var switchEnv = testUtils.makeStubFunction();
       var env = {set: testUtils.makeStubFunction()};
       var callback = testUtils.makeStubFunction();
-      utils.set = testUtils.makeStubFunction();
-      utils.showConnectingMask = testUtils.makeStubFunction();
       utils._switchModel(
         createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
 
@@ -1445,6 +1446,7 @@ describe('utilities', function() {
       assert.deepEqual(envSet[1], 'ev');
 
       assert.deepEqual(utils.showConnectingMask.callCount(), 1);
+      assert.deepEqual(utils.changeState.callCount(), 1);
     });
 
     it('just disconnects if uuid is missing', function() {

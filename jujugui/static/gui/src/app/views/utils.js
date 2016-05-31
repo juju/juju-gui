@@ -2012,6 +2012,21 @@ YUI.add('juju-view-utils', function(Y) {
     utils._hideSwitchModelConfirm();
     // Show the model connection mask.
     this.showConnectingMask();
+    // Reset the state of the GUI ready for displaying the new model.
+    this.changeState({
+      sectionA: {
+        component: null,
+        metadata: null
+      },
+      sectionB: {
+        component: null,
+        metadata: null
+      },
+      sectionC: {
+        component: null,
+        metadata: null
+      }
+    });
     // Update the model name. The onEnvironmentNameChange in app.js method will
     // update the name correctly accross components.
     env.set('environmentName', name);

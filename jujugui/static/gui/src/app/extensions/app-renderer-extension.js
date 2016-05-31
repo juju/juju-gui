@@ -58,7 +58,7 @@ YUI.add('app-renderer-extension', function(Y) {
         }
       }
       // If we're in sandbox we don't want to display the switcher.
-      if (this.get('sandbox')) {
+      if (this.get('sandbox') && !this.jem) {
         showEnvSwitcher = false;
       }
       var auth = this._getAuth();
