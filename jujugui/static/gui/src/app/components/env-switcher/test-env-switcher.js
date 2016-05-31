@@ -36,6 +36,7 @@ describe('EnvSwitcher', function() {
       // outside wrapper.
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         environmentName="MyEnv"
+        listModels={sinon.stub()}
         switchModel={sinon.stub()} />, true);
 
     var instance = renderer.getMountedInstance();
@@ -62,18 +63,15 @@ describe('EnvSwitcher', function() {
             className="env-switcher__chevron"
             size="16" />
         </div>
-        {''}
+        {undefined}
       </div>;
     assert.deepEqual(output, expected);
   });
 
   it('open the list on click', function() {
-    var env = {
-      listModelsWithInfo: sinon.stub()
-    };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        env={env}
+        listModels={sinon.stub()}
         switchModel={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     // Click the toggler
@@ -83,7 +81,7 @@ describe('EnvSwitcher', function() {
 
     renderer.render(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        env={env}
+        listModels={sinon.stub()}
         switchModel={sinon.stub()} />);
 
     var instance = renderer.getMountedInstance();
@@ -97,14 +95,11 @@ describe('EnvSwitcher', function() {
         envs={[]} />);
   });
 
-  it('fetches a list of environments on mount (JEM)', function() {
+  it('fetches a list of environments on mount', function() {
     var listModels = sinon.stub();
-    var jem = {
-      listModels: listModels
-    };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        jem={jem}
+        listModels={listModels}
         switchModel={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
@@ -116,31 +111,11 @@ describe('EnvSwitcher', function() {
     assert.deepEqual(instance.state.envList, envData);
   });
 
-  it('fetches a list of environments on mount (controller)', function() {
-    var listModelsWithInfo = sinon.stub();
-    var env = {
-      listModelsWithInfo: listModelsWithInfo
-    };
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
-        env={env}
-        switchModel={sinon.stub()} />, true);
-    var instance = renderer.getMountedInstance();
-    instance.componentDidMount();
-    assert.equal(listModelsWithInfo.callCount, 1);
-    listModelsWithInfo.args[0][0](null, {
-      models: [{name: 'm1', isAlive: true}, {name: 'm2', isAlive: false}]
-    });
-    assert.deepEqual(instance.state.envList, [{name: 'm1', isAlive: true}]);
-  });
-
   it('fetches the env list when opening', function() {
-    var env = {
-      listModelsWithInfo: sinon.stub()
-    };
+    var listModels = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        env={env}
+        listModels={listModels}
         switchModel={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
@@ -148,11 +123,11 @@ describe('EnvSwitcher', function() {
     output.props.children[0].props.onClick({
       preventDefault: () => null
     });
-    assert.equal(env.listModelsWithInfo.callCount, 1);
+    assert.equal(listModels.callCount, 1);
     var envData = {
       models: [{name: 'm1', isAlive: true}]
     };
-    env.listModelsWithInfo.args[0][0](null, envData);
+    listModels.args[0][0](null, envData);
     assert.deepEqual(instance.state.envList, envData.models);
   });
 
@@ -168,12 +143,9 @@ describe('EnvSwitcher', function() {
     }];
     var listModels = sinon.stub();
     var switchModel = sinon.stub();
-    var jem = {
-      listModels: listModels
-    };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        jem={jem}
+        listModels={listModels}
         switchModel={switchModel} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
@@ -190,103 +162,6 @@ describe('EnvSwitcher', function() {
     assert.deepEqual(switchModel.args[0], ['abc123', envs, 'abc123']);
   });
 
-  // To fully test the new env creation it has to be tested accepting a custom
-  // name as well. So there are two tests which call this method passing it
-  // different data.
-  function createNewJEMEnvTest(envName) {
-    // To create a new environment you click a button in a sub component. this
-    // excersizes the method that gets passed down.
-    var envs = [{
-      uuid: 'abc123',
-      name: 'Tardis',
-      user: 'The Dr.',
-      password: 'buffalo'
-    }];
-    var listModels = sinon.stub();
-    var listControllers = sinon.stub();
-    var newModel = sinon.stub();
-
-    listControllers.callsArgWith(0, null, [{path: 'admin/foo'}]);
-
-    var jem = {
-      listModels: listModels,
-      listControllers: listControllers,
-      newModel: newModel
-    };
-    var switchModel = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
-        jem={jem}
-        switchModel={switchModel} />, true);
-    var instance = renderer.getMountedInstance();
-    instance.componentDidMount();
-    listModels.args[0][0](null, envs);
-    // Previous code is to set up the state of the component.
-    instance.createNewEnv(envName);
-    assert.equal(newModel.callCount, 1);
-    assert.equal(newModel.args[0][0], 'admin');
-    // First we check that the env name is not undefined.
-    assert.notEqual(newModel.args[0][1], undefined);
-    // Then we check to see if it matches either the name passed in, or what
-    // it shoudl generate if it was passed in.
-    assert.equal(newModel.args[0][1], envName || 'new-env-1');
-    assert.equal(newModel.args[0][2], 'admin/foo');
-    assert.equal(newModel.args[0][3], null);
-    assert.equal(newModel.args[0][4], 'admin/foo');
-    // Check to make sure that the env creation callback switches envs.
-    var createdEnv = {
-      uuid: '123abc',
-      name: 'newname'
-    };
-    newModel.args[0][5](null, createdEnv);
-    // After creating an env it should re-list them.
-    assert.equal(listModels.callCount, 2);
-    // Then switch to the new one.
-    envs.push(createdEnv);
-    listModels.args[1][0](null, envs);
-    assert.equal(switchModel.callCount, 1);
-  }
-
-  it('can call to create a new env (JEM)', function() {
-    createNewJEMEnvTest();
-  });
-
-  it('can use a custom env name if provided (JEM)', function() {
-    createNewJEMEnvTest('custom-env-name');
-  });
-
-  it('can call to create a new env (controller)', function() {
-    // To create a new environment you click a button in a sub component. This
-    // excersizes the method that gets passed down.
-    var envs = [{
-      uuid: 'abc123',
-      name: 'Tardis',
-      user: 'The Dr.',
-      password: 'buffalo'
-    }];
-    var listModelsWithInfo = sinon.stub();
-    var createModel = sinon.stub();
-    var env = {
-      createModel: createModel,
-      listModelsWithInfo: listModelsWithInfo
-    };
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
-        env={env}
-        switchModel={sinon.stub()} />, true);
-    var instance = renderer.getMountedInstance();
-    instance.componentDidMount();
-    listModelsWithInfo.args[0][0](null, envs);
-    // Previous code is to set up the state of the component.
-    instance.createNewEnv();
-    assert.equal(createModel.callCount, 1);
-    assert.equal(createModel.args[0][0], 'new-env-1');
-    assert.equal(createModel.args[0][1], 'user-admin');
-    // Because the callbacks are identical for JEM and JES we do not need
-    // to test that it switches envs past this point as long as the previous
-    // test passes.
-  });
-
   it('can call to change the state to the profile', function() {
     // To view the user profile you click a button in a sub component. This
     // excersizes the method that gets passed down.
@@ -294,6 +169,7 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         changeState={changeState}
+        listModels={sinon.stub()}
         switchModel={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     instance.showUserProfile();

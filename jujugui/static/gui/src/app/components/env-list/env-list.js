@@ -87,16 +87,14 @@ YUI.add('env-list', function() {
     */
     _generateModels: function() {
       return (
-        <div>
-          <ul className="env-list"
-            role="menubar"
-            id="environmentSwitcherMenu"
-            aria-expanded="true"
-            aria-hidden="false"
-            aria-labelledby="environmentSwitcherToggle">
-            {this.generateEnvList()}
-          </ul>
-        </div>
+        <ul className="env-list"
+          role="menubar"
+          id="environmentSwitcherMenu"
+          aria-expanded="true"
+          aria-hidden="false"
+          aria-labelledby="environmentSwitcherToggle">
+          {this.generateEnvList()}
+        </ul>
       );
     },
 

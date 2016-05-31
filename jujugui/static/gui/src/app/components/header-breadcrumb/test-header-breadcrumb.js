@@ -32,25 +32,23 @@ describe('HeaderBreadcrumb', () => {
 
   it('Renders properly', () => {
     var switchModel = sinon.stub();
-    var env = {env: 'env'};
     var envName = 'bar';
-    var jem = {jem: 'jem'};
     var envList = ['envList'];
     var changeState = sinon.stub();
     var getAppState = sinon.stub();
+    var listModels = sinon.stub();
     var authDetails = {
       user: 'foo',
       usernameDisplay: 'Foo'
     };
     var component = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
-        env={env}
         envName={envName}
-        jem={jem}
         envList={envList}
         changeState={changeState}
         getAppState={getAppState}
         authDetails={authDetails}
+        listModels={listModels}
         showEnvSwitcher={true}
         switchModel={switchModel} />, true);
     var instance = component.getMountedInstance();
@@ -66,12 +64,11 @@ describe('HeaderBreadcrumb', () => {
         </li>
         <li className="header-breadcrumb__list-item">
           <window.juju.components.EnvSwitcher
-            env={env}
             environmentName={envName}
-            jem={jem}
             envList={envList}
             changeState={changeState}
             authDetails={authDetails}
+            listModels={listModels}
             switchModel={switchModel} />
         </li>
       </ul>
@@ -81,21 +78,18 @@ describe('HeaderBreadcrumb', () => {
 
   it('removes username from breadcrumbs if none is provided', () => {
     var app = {app:'app'};
-    var env = {env: 'env'};
     var envName = 'bar';
-    var jem = {jem: 'jem'};
     var envList = ['envList'];
     var changeState = sinon.stub();
     var getAppState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
         app={app}
-        env={env}
         envName={envName}
-        jem={jem}
         envList={envList}
         changeState={changeState}
         getAppState={getAppState}
+        listModels={sinon.stub()}
         showEnvSwitcher={true}
         switchModel={sinon.stub()} />);
     assert.equal(output.props.children[0], undefined);
@@ -103,21 +97,18 @@ describe('HeaderBreadcrumb', () => {
 
   it('does not render the env switcher if told not to', () => {
     var app = {app:'app'};
-    var env = {env: 'env'};
     var envName = 'bar';
-    var jem = {jem: 'jem'};
     var envList = ['envList'];
     var changeState = sinon.stub();
     var getAppState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
         app={app}
-        env={env}
         envName={envName}
-        jem={jem}
         envList={envList}
         changeState={changeState}
         getAppState={getAppState}
+        listModels={sinon.stub()}
         showEnvSwitcher={false}
         switchModel={sinon.stub()} />);
     // There will be no third child if the envSwitcher is rendered
@@ -126,21 +117,18 @@ describe('HeaderBreadcrumb', () => {
 
   it('doesn\'t render the env switcher when profile is visible', () => {
     var app = {app:'app'};
-    var env = {env: 'env'};
     var envName = 'bar';
-    var jem = {jem: 'jem'};
     var envList = ['envList'];
     var changeState = sinon.stub();
     var getAppState = sinon.stub().returns('profile');
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
         app={app}
-        env={env}
         envName={envName}
-        jem={jem}
         envList={envList}
         changeState={changeState}
         getAppState={getAppState}
+        listModels={sinon.stub()}
         // Even though showEnvSwitcher is true, because the profile is visibile
         // it shouldn't render the env switcher.
         showEnvSwitcher={true}
@@ -151,9 +139,7 @@ describe('HeaderBreadcrumb', () => {
 
   it('triggers a state change when profile link is clicked', () => {
     var app = {app:'app'};
-    var env = {env: 'env'};
     var envName = 'bar';
-    var jem = {jem: 'jem'};
     var envList = ['envList'];
     var changeState = sinon.stub();
     var authDetails = {
@@ -163,13 +149,12 @@ describe('HeaderBreadcrumb', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
         app={app}
-        env={env}
         envName={envName}
-        jem={jem}
         envList={envList}
         changeState={changeState}
         getAppState={sinon.stub()}
         authDetails={authDetails}
+        listModels={sinon.stub()}
         showEnvSwitcher={true}
         switchModel={sinon.stub()} />, true);
     var instance = component.getMountedInstance();
