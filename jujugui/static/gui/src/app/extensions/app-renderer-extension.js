@@ -45,6 +45,7 @@ YUI.add('app-renderer-extension', function(Y) {
       // is rendered in the callback for generateSocketUrl because an env
       // has not yet been created.
       var env = this.env;
+      var jem = this.jem;
       // If gisf is enabled then we won't be connected to a model to know
       // what facades are supported but we can reliably assume it'll be Juju 2
       // or higher which will support the necessary API calls.
@@ -58,21 +59,22 @@ YUI.add('app-renderer-extension', function(Y) {
         }
       }
       // If we're in sandbox we don't want to display the switcher.
-      if (this.get('sandbox') && !this.jem) {
+      if (this.get('sandbox') && !jem) {
         showEnvSwitcher = false;
       }
       var auth = this._getAuth();
       var envName = this.db.environment.get('name');
       var state = this.state;
+      var listModels = jem && jem.listModels.bind(jem) ||
+        env.listModelsWithInfo.bind(env);
       ReactDOM.render(
         <juju.components.HeaderBreadcrumb
-          env={env}
           envName={envName}
-          jem={this.jem}
           envList={this.get('environmentList')}
           changeState={this.changeState.bind(this)}
           getAppState={state.getState.bind(state)}
           authDetails={auth}
+          listModels={listModels}
           showEnvSwitcher={showEnvSwitcher}
           switchModel={views.utils.switchModel.bind(
             this, this.createSocketURL.bind(this),

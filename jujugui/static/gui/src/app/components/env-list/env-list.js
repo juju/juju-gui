@@ -24,15 +24,12 @@ YUI.add('env-list', function() {
 
     propTypes: {
       envs: React.PropTypes.array,
-      handleEnvClick: React.PropTypes.func,
-      createNewEnv: React.PropTypes.func,
+      handleEnvClick: React.PropTypes.func
     },
 
     getInitialState: function() {
       return {
-        envs: this.props.envs,
-        envName: '',
-        selectedModel: null
+        envs: this.props.envs
       };
     },
 
@@ -68,37 +65,10 @@ YUI.add('env-list', function() {
     */
     _handleModelClick: function(e) {
       var currentTarget = e.currentTarget;
-      var state = {
-        selectedModel: {
-          id: currentTarget.getAttribute('data-id'),
-          name: currentTarget.getAttribute('data-name')
-        }
-      };
-      this.setState(state, () => {
-        // Delay switching the model so that the state will have been update
-        // with the selected model.
-        this.props.handleEnvClick(this.state.selectedModel);
+      this.props.handleEnvClick({
+        id: currentTarget.getAttribute('data-id'),
+        name: currentTarget.getAttribute('data-name')
       });
-    },
-
-    /**
-      Environment name input change handler. Sets the envName state value
-      with the value of the input.
-
-      @method envNameChange
-      @param {Object} e The change event.
-    */
-    envNameChange: function(e) {
-      this.setState({envName: e.target.value});
-    },
-
-    /**
-      Calls the createNewEnv prop passing it the current envName state value.
-
-      @method createNewEnv
-    */
-    createNewEnv: function() {
-      this.props.createNewEnv(this.state.envName);
     },
 
     /**
@@ -117,35 +87,22 @@ YUI.add('env-list', function() {
     */
     _generateModels: function() {
       return (
-        <div>
-          <ul className="env-list"
-            role="menubar"
-            id="environmentSwitcherMenu"
-            aria-expanded="true"
-            aria-hidden="false"
-            aria-labelledby="environmentSwitcherToggle">
-            {this.generateEnvList()}
-          </ul>
-          <input
-            type="text"
-            name="envName"
-            placeholder="New model name"
-            onChange={this.envNameChange}
-            className="env-list__input"
-            ref="envName"/>
-        </div>
+        <ul className="env-list"
+          role="menubar"
+          id="environmentSwitcherMenu"
+          aria-expanded="true"
+          aria-hidden="false"
+          aria-labelledby="environmentSwitcherToggle">
+          {this.generateEnvList()}
+        </ul>
       );
     },
 
     render: function() {
       var buttons = [{
-        title: 'More',
-        type: 'base',
-        action: this.showProfile
-      }, {
-        title: 'New',
+        title: 'Profile',
         type: 'neutral',
-        action: this.createNewEnv
+        action: this.showProfile
       }];
       return (
         <juju.components.Panel

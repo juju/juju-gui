@@ -41,7 +41,7 @@ describe('EnvList', function() {
         envs={envs} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[0].props.children[0].props.children,
+    assert.deepEqual(output.props.children[0].props.children,
       [<li className="env-list__environment"
         role="menuitem"
         tabIndex="0"
@@ -72,31 +72,12 @@ describe('EnvList', function() {
       <juju.components.EnvList
         envs={envs}
         handleEnvClick={handleEnvClick} />);
-    output.props.children[0].props.children[0].props.children[0].props.onClick({
+    output.props.children[0].props.children[0].props.onClick({
       currentTarget: {
         getAttribute: getAttribute
       }
     });
     assert.equal(handleEnvClick.callCount, 1);
-  });
-
-  it('createNewEnv prop passed to buttonRow passes envName', function() {
-    var envs = [{ uuid: 'abc123', name: 'the name' }];
-    var createNewEnv = sinon.stub();
-    var component = testUtils.renderIntoDocument(
-      <juju.components.EnvList
-        envs={envs}
-        createNewEnv={createNewEnv} />);
-    // Set the new environment name
-    component.refs.envName.value = 'new env name';
-    testUtils.Simulate.change(component.refs.envName);
-
-    testUtils.Simulate.click(
-        ReactDOM.findDOMNode(component)
-                .querySelector('.button--neutral'));
-
-    assert.equal(createNewEnv.callCount, 1);
-    assert.equal(createNewEnv.args[0][0], 'new env name');
   });
 
   it('showProfile call is made when clicking on buttonRow button', function() {
@@ -109,7 +90,7 @@ describe('EnvList', function() {
 
     testUtils.Simulate.click(
         ReactDOM.findDOMNode(component)
-                .querySelector('.button--base'));
+                .querySelector('.button--neutral'));
 
     assert.equal(showUserProfile.callCount, 1);
   });

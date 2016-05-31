@@ -22,13 +22,12 @@ YUI.add('header-breadcrumb', function() {
 
   juju.components.HeaderBreadcrumb = React.createClass({
     propTypes: {
-      env: React.PropTypes.object,
       envName: React.PropTypes.string.isRequired,
-      jem: React.PropTypes.object,
       envList: React.PropTypes.array,
       changeState: React.PropTypes.func.isRequired,
       getAppState: React.PropTypes.func.isRequired,
       authDetails: React.PropTypes.object,
+      listModels: React.PropTypes.func.isRequired,
       showEnvSwitcher: React.PropTypes.bool.isRequired,
       switchModel: React.PropTypes.func.isRequired,
       userName: React.PropTypes.string
@@ -47,11 +46,10 @@ YUI.add('header-breadcrumb', function() {
         return (
           <li className="header-breadcrumb__list-item">
             <window.juju.components.EnvSwitcher
-              env={this.props.env}
               environmentName={this.props.envName}
-              jem={this.props.jem}
               envList={this.props.envList}
               changeState={this.props.changeState}
+              listModels={this.props.listModels}
               switchModel={this.props.switchModel}
               authDetails={this.props.authDetails} />
           </li>);
