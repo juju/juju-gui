@@ -22,9 +22,8 @@ YUI.add('env-switcher', function() {
 
   var EnvSwitcher = React.createClass({
     propTypes: {
-      jem: React.PropTypes.object,
-      env: React.PropTypes.object,
       environmentName: React.PropTypes.string,
+      listModels: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
     },
 
@@ -54,17 +53,9 @@ YUI.add('env-switcher', function() {
       Calls to the environment to list the active environments.
 
       @method updateEnvList
-      @param {Function} callback The callback to call after the list has been
-        updated.
     */
-    updateEnvList: function(callback) {
-      var jem = this.props.jem;
-      if (jem) {
-        jem.listModels(this._updateModelListCallback.bind(this, callback));
-      } else {
-        this.props.env.listModelsWithInfo(
-          this._updateModelListCallback.bind(this, callback));
-      }
+    updateEnvList: function() {
+      this.props.listModels(this._updateModelListCallback);
     },
 
     /**
@@ -72,15 +63,13 @@ YUI.add('env-switcher', function() {
       jem.listModels calls.
 
       @method _updateModelListCallback
-      @param {Function} callback The callback to call after the list has been
-        updated.
       @param {Object} data The data from the call.
     */
-    _updateModelListCallback: function(callback, error, data) {
+    _updateModelListCallback: function(error, data) {
       // We need to coerce error types returned by JES vs JEM into one error.
       var err = data.err || error;
       if (err) {
-        console.log(err);
+        console.error(err);
         return;
       }
 
@@ -93,9 +82,6 @@ YUI.add('env-switcher', function() {
         });
       }
       this.setState({envList: modelList});
-      if (callback) {
-        callback();
-      }
     },
 
     /**
@@ -139,69 +125,6 @@ YUI.add('env-switcher', function() {
     },
 
     /**
-      Create a new environment.
-
-      @method createNewEnv
-    */
-    createNewEnv: function(customEnvName) {
-      this.setState({showEnvList: false});
-      var jem = this.props.jem;
-      var envOwnerName = 'admin';
-      var auth = this.props.authDetails;
-      if (auth && auth.user) {
-        envOwnerName = auth.user;
-      }
-      // Use the custom provided name or fall back to an auto-incremented one.
-      var envName = customEnvName || 'new-env-' + this.state.envList.length;
-
-      // XXX j.c.sackett 2015-10-28 When we have the UI for template creation
-      // and template selection in the GUI, this code should be updated to not
-      // select template based on state server.
-      var listControllersCallback = (error, controllers) => {
-        if (error) {
-          console.error(error);
-          return;
-        }
-        if (!controllers.length) {
-          console.log('Cannot create a new model: no controllers found.');
-          return;
-        }
-        var name = controllers[0].path;
-        var baseTemplate = name;
-        // TODO frankban: define a location, do not use a controller.
-        var location = null;
-        jem.newModel(
-          envOwnerName, envName, baseTemplate, location, name,
-          this.createModelCallback);
-      };
-
-      if (jem) {
-        jem.listControllers(listControllersCallback);
-      } else {
-        this.props.env.createModel(
-            envName, 'user-admin', this.createModelCallback.bind(this, null));
-      }
-    },
-
-    /**
-      Handle the callback for the new env creation.
-
-      @method createModelCallback
-      @param {Object} data The data from the create env callback.
-    */
-    createModelCallback: function(error, data) {
-      // We need to coerce error types returned by JES vs JEM into one error.
-      var err = data.err || error;
-      if (err) {
-        // XXX frankban: the error should be surfaced to the user.
-        console.log('error creating new model:', err);
-        return;
-      }
-      this.updateEnvList(this.props.switchModel.bind(
-        this, data.uuid, this.state.envList));
-    },
-
-    /**
       Calls changestate to show the user profile.
 
       @method showUserProfile
@@ -230,7 +153,6 @@ YUI.add('env-switcher', function() {
           showUserProfile={this.showUserProfile}
           envs={this.state.envList} />;
       }
-      return '';
     },
 
     /**

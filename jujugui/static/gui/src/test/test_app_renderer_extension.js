@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe('App Renderer Extension', function() {
+describe.only('App Renderer Extension', function() {
 
   var createElementStub,
       juju,
@@ -68,6 +68,10 @@ describe('App Renderer Extension', function() {
       }
     });
     renderer.env = new Env({ecs: ecs});
+    renderer.env.listModelsWithInfo = utils.makeStubFunction();
+    renderer.jem = {
+      listModels: utils.makeStubFunction()
+    };
     renderer.set('sandbox', false);
     renderer._getAuth = utils.makeStubFunction({user: 'test'});
     renderer.set('jujuEnvUUID', 'test');
@@ -133,6 +137,7 @@ describe('App Renderer Extension', function() {
 
     it('hides the switcher when in sandbox mode', function() {
       renderer.set('sandbox', true);
+      renderer.jem = null;
       renderer._renderBreadcrumb();
       var props = createElementStub.lastArguments()[1];
       assert.equal(props['showEnvSwitcher'], false,
@@ -141,11 +146,24 @@ describe('App Renderer Extension', function() {
 
     it('shows the switcher when no env and gisf is true', function() {
       renderer.set('gisf', true);
-      renderer.env = null;
+      renderer.jem = null;
       renderer._renderBreadcrumb();
       var props = createElementStub.lastArguments()[1];
       assert.equal(props['showEnvSwitcher'], true,
                    'The showEnvSwitcher prop was not set properly.');
+    });
+
+    it('uses the correct model listing method if JEM is available', function() {
+      renderer._renderBreadcrumb();
+      var props = createElementStub.lastArguments()[1];
+      assert.equal(props['listModels'], renderer.jem.listModels);
+    });
+
+    it('uses the env model listing method if JEM is unavailable', function() {
+      renderer._renderBreadcrumb();
+      renderer.jem = null;
+      var props = createElementStub.lastArguments()[1];
+      assert.equal(props['listModels'], renderer.env.listModelsWithInfo);
     });
   });
 });
