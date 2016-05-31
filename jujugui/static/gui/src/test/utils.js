@@ -131,6 +131,10 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
     },
 
     SocketStub: function() {
+      // The readyState needs to be defined because we check for its value
+      // before sending any requests to avoid errors.
+      this.readyState = 1;
+
       this.messages = [];
 
       this.close = function() {
