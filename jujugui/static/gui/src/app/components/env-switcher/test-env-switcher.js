@@ -35,6 +35,7 @@ describe('EnvSwitcher', function() {
       // Have to access the wrapped component as we don't want to test the click
       // outside wrapper.
       <juju.components.EnvSwitcher.prototype.wrappedComponent
+        displayProfile={sinon.stub()}
         environmentName="MyEnv"
         switchModel={sinon.stub()} />, true);
 
@@ -71,8 +72,10 @@ describe('EnvSwitcher', function() {
     var env = {
       listModelsWithInfo: sinon.stub()
     };
+    var displayProfile = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
+        displayProfile={displayProfile}
         env={env}
         switchModel={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -83,6 +86,7 @@ describe('EnvSwitcher', function() {
 
     renderer.render(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
+        displayProfile={displayProfile}
         env={env}
         switchModel={sinon.stub()} />);
 
@@ -93,7 +97,7 @@ describe('EnvSwitcher', function() {
       <juju.components.EnvList
         handleEnvClick={instance.handleEnvClick}
         createNewEnv={instance.createNewEnv}
-        showUserProfile={instance.showUserProfile}
+        displayProfile={displayProfile}
         envs={[]} />);
   });
 
@@ -104,6 +108,7 @@ describe('EnvSwitcher', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
+        displayProfile={sinon.stub()}
         jem={jem}
         switchModel={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
@@ -123,6 +128,7 @@ describe('EnvSwitcher', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
+        displayProfile={sinon.stub()}
         env={env}
         switchModel={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
@@ -140,6 +146,7 @@ describe('EnvSwitcher', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
+        displayProfile={sinon.stub()}
         env={env}
         switchModel={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -173,6 +180,7 @@ describe('EnvSwitcher', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
+        displayProfile={sinon.stub()}
         jem={jem}
         switchModel={switchModel} />, true);
     var instance = renderer.getMountedInstance();
@@ -216,6 +224,7 @@ describe('EnvSwitcher', function() {
     var switchModel = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
+        displayProfile={sinon.stub()}
         jem={jem}
         switchModel={switchModel} />, true);
     var instance = renderer.getMountedInstance();
@@ -272,6 +281,7 @@ describe('EnvSwitcher', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
+        displayProfile={sinon.stub()}
         env={env}
         switchModel={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
@@ -285,25 +295,6 @@ describe('EnvSwitcher', function() {
     // Because the callbacks are identical for JEM and JES we do not need
     // to test that it switches envs past this point as long as the previous
     // test passes.
-  });
-
-  it('can call to change the state to the profile', function() {
-    // To view the user profile you click a button in a sub component. This
-    // excersizes the method that gets passed down.
-    var changeState = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.EnvSwitcher.prototype.wrappedComponent
-        changeState={changeState}
-        switchModel={sinon.stub()} />, true);
-    var instance = renderer.getMountedInstance();
-    instance.showUserProfile();
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      sectionB: {
-        component: 'profile',
-        metadata: {}
-      }
-    });
   });
 
 });

@@ -25,7 +25,6 @@ YUI.add('user-profile', function() {
 
     propTypes: {
       addNotification: React.PropTypes.func.isRequired,
-      canCreateNew: React.PropTypes.bool.isRequired,
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
@@ -532,15 +531,13 @@ YUI.add('user-profile', function() {
         generateRow = this._generateModelRow;
         header = this._generateModelHeader();
         title = 'Models';
-        if (this.props.canCreateNew) {
-          actions = (
-            <div className="user-profile__create-new">
-              <juju.components.GenericButton
-                action={this.switchModel}
-                type='inline-neutral'
-                title='Create new' />
-            </div>);
-        }
+        actions = (
+          <div className="user-profile__create-new">
+            <juju.components.GenericButton
+              action={this.switchModel}
+              type='inline-neutral'
+              title='Create new' />
+          </div>);
       } else if (type === 'bundles') {
         generateRow = this._generateBundleRow;
         header = this._generateBundleHeader();

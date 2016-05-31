@@ -47,11 +47,11 @@ YUI.add('header-breadcrumb', function() {
         return (
           <li className="header-breadcrumb__list-item">
             <window.juju.components.EnvSwitcher
+              displayProfile={this._displayProfile}
               env={this.props.env}
               environmentName={this.props.envName}
               jem={this.props.jem}
               envList={this.props.envList}
-              changeState={this.props.changeState}
               switchModel={this.props.switchModel}
               authDetails={this.props.authDetails} />
           </li>);
@@ -60,17 +60,22 @@ YUI.add('header-breadcrumb', function() {
     },
 
     /**
-      Handles clicks on the profile link.
+      Navigates to the profile.
 
-      @method _handleProfileClick
+      @method _displayProfile
+      @param {Object} e The click event.
     */
-    _handleProfileClick: function(e) {
-      e.preventDefault();
-      this.props.changeState({
-        sectionB: {
-          component: 'profile',
-          metadata: null
-        }
+    _displayProfile: function(e) {
+      if (e) {
+        e.preventDefault();
+      }
+      this.props.switchModel(null, null, null, () => {
+        this.props.changeState({
+          sectionB: {
+            component: 'profile',
+            metadata: null
+          }
+        });
       });
     },
 
@@ -82,7 +87,7 @@ YUI.add('header-breadcrumb', function() {
         userItem = (
           <li className="header-breadcrumb__list-item">
             <a className="header-breadcrumb--link"
-               onClick={this._handleProfileClick}>
+               onClick={this._displayProfile}>
               {username}
             </a>
           </li>

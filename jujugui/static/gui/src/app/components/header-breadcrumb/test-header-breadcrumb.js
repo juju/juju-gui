@@ -60,17 +60,17 @@ describe('HeaderBreadcrumb', () => {
       <ul className="header-breadcrumb">
         <li className="header-breadcrumb__list-item">
           <a className="header-breadcrumb--link"
-             onClick={instance._handleProfileClick}>
+             onClick={instance._displayProfile}>
             Foo
           </a>
         </li>
         <li className="header-breadcrumb__list-item">
           <window.juju.components.EnvSwitcher
+            displayProfile={instance._displayProfile}
             env={env}
             environmentName={envName}
             jem={jem}
             envList={envList}
-            changeState={changeState}
             authDetails={authDetails}
             switchModel={switchModel} />
         </li>
@@ -149,7 +149,7 @@ describe('HeaderBreadcrumb', () => {
     assert.equal(output.props.children[1], undefined);
   });
 
-  it('triggers a state change when profile link is clicked', () => {
+  it('can open the profile and disconnect the model', () => {
     var app = {app:'app'};
     var env = {env: 'env'};
     var envName = 'bar';
@@ -171,9 +171,9 @@ describe('HeaderBreadcrumb', () => {
         getAppState={sinon.stub()}
         authDetails={authDetails}
         showEnvSwitcher={true}
-        switchModel={sinon.stub()} />, true);
+        switchModel={sinon.stub().callsArg(3)} />, true);
     var instance = component.getMountedInstance();
-    instance._handleProfileClick({
+    instance._displayProfile({
       preventDefault: sinon.stub()
     });
     assert.equal(changeState.called, true,
