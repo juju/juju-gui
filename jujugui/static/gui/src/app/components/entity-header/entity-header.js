@@ -118,10 +118,6 @@ YUI.add('entity-header', function() {
       if (model.uuid === this.props.currentModel) {
         this._deployEntity();
       } else {
-        // The charmbrowser needs to be closed before switching models otherwise
-        // the charmbrowser somehow gets into a broken state after the model has
-        // been switched.
-        this._closeEntityDetails();
         this.props.switchModel(
           model.uuid, this.state.modelList, model.name, this._deployEntity);
       }

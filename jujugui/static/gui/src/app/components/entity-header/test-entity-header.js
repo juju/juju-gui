@@ -434,13 +434,12 @@ describe('EntityHeader', function() {
   });
 
   it('can switch models and deploy the entity', function() {
-    var changeState = sinon.stub();
     var deployService = sinon.stub();
     var switchModel = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityHeader
         addNotification={sinon.stub()}
-        changeState={changeState}
+        changeState={sinon.stub()}
         currentModel="uuid123"
         deployService={deployService}
         entityModel={mockEntity}
@@ -455,13 +454,6 @@ describe('EntityHeader', function() {
     // Simulate a click.
     instance._handleDeploy({uuid: 'anotheruuid', name: 'my-env'});
     assert.equal(deployService.callCount, 0);
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: null,
-        metadata: null
-      }
-    });
     assert.equal(switchModel.callCount, 1);
     assert.equal(switchModel.args[0][0], 'anotheruuid');
     assert.equal(switchModel.args[0][1], instance.state.modelList);
