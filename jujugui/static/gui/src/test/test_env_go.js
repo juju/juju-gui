@@ -663,6 +663,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    it('ignores rpc requests when websocket is not connected', function() {
+      // Set the readyState to 2 for CLOSING.
+      conn.readyState = 2;
+      env._send_rpc({
+        Type: 'Client',
+        Request: 'ModelInfo',
+        Version: 1,
+        RequestId: 1,
+        Params: {}
+      });
+      // No calls should be made.
+      assert.equal(conn.messages.length, 0);
+    });
+
     it('sends the correct request for model info', function() {
       env.environmentInfo();
       var last_message = conn.last_message();
