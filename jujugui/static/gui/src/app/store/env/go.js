@@ -270,6 +270,12 @@ YUI.add('juju-env-go', function(Y) {
         });
         return;
       }
+      if (this.ws.readyState !== 1) {
+        console.log(
+          'Websocket is not open, dropping request. ' +
+          'readyState: ' + this.ws.readyState, msg);
+        return;
+      }
       op.Version = version;
       var tid = this._counter += 1;
       if (callback) {
