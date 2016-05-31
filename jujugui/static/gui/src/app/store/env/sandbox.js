@@ -55,6 +55,9 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     initializer: function() {
       this.connected = false;
+      // The readyState needs to be defined because we check for its value
+      // before sending any requests to avoid errors.
+      this.readyState = 1;
     },
 
     /**
