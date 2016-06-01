@@ -11,6 +11,7 @@ uitest=$uitest_dir/devenv/bin/uitest
 # Define default parameters.
 cloud="lxd"
 archive=`ls $root_dir/dist/jujugui-*.tar.bz2`
+filter="TestGUI"
 args=""
 
 # Parse the arguments.
@@ -26,14 +27,18 @@ case $key in
     shift
     ;;
     *)
-    args="$args $key"
+    if [[ $key == -* ]]; then
+        args="$args $key"
+    else
+        filter=$key
+    fi
     ;;
 esac
 shift
 done
 
 # Clone the juju-uitest project if not already done.
-if [ ! -d "$uitest_dir" ]; then
+if [[ ! -d "$uitest_dir" ]]; then
   git clone git@github.com:CanonicalLtd/juju-uitest.git $uitest_dir
 fi
 
@@ -41,14 +46,11 @@ fi
 pushd $uitest_dir
 git checkout master
 git pull origin master
-popd
-
 # Install uitest system and Python dependencies.
-pushd $uitest_dir
 make sysdeps setup
 popd
 
 # Run the uitests.
 echo -e "\nrunning the following:"
-echo "$uitest -c $cloud --gui-archive $archive $args TestGUI"
-$uitest -c $cloud --gui-archive $archive $args TestGUI
+echo "$uitest -c $cloud --gui-archive $archive $args $filter"
+$uitest -c $cloud --gui-archive $archive $args $filter

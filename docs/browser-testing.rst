@@ -67,3 +67,12 @@ Parameters used by default are only overridden if specified in ARGS.
 To see all possible uitest parameters, run the following::
 
   make uitest ARGS="--help"
+
+Running a specific test or suite
+--------------------------------
+
+By default all tests matching *TestGUI* are run by the suite. If you want to
+customize filtering or narrow down the number of tests actually run, you can
+use the ARGS environment variable as described above. For instance::
+
+  make uitest ARGS="test_login"

@@ -74,7 +74,8 @@ help:
 	@echo "test-js - run newer js tests in terminal; primarily for CI build"
 	@echo "test-js-old - run older js tests that have transitioned to karma in the terminal"
 	@echo "update-downloadcache - update the download cache"
-	@echo "uitest - run functional tests"
+	@echo "uitest - run functional tests;"
+	@echo "  use the ARGS environment variable to append/override uitest arguments"
 
 
 #########
@@ -374,4 +375,4 @@ uitest: sudo dist
 .PHONY: sudo
 sudo:
 	@# Pre-cache sudo permissions, so that the process is not stopped later.
-	@sudo true
+	@sudo -v
