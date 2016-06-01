@@ -148,6 +148,9 @@ function ReconnectingWebSocket(url, protocols) {
             self.reconnect = false;
             if (close) {
                 ws.close();
+                // When we call to close the websocket propagate the CLOSING
+                // state up to the reconnecting websocket instance.
+                self.readyState = WebSocket.CLOSING;
             }
 
         }
