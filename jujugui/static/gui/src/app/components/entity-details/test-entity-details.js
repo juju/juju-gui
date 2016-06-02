@@ -47,14 +47,19 @@ describe('EntityDetails', function() {
         id="test"
         deployService={sinon.spy()}
         changeState={sinon.spy()}
+        currentModel="uuid123"
+        environmentName="my-env"
         getDiagramURL={sinon.stub()}
         getEntity={sinon.spy()}
         getFile={sinon.stub()}
         importBundleYAML={sinon.stub()}
+        listModels={sinon.stub()}
         makeEntityModel={sinon.spy()}
         pluralize={sinon.spy()}
         renderMarkdown={sinon.stub()}
-        scrollPosition={0} />);
+        scrollPosition={0}
+        switchModel={sinon.stub()}
+        user={{}} />);
     assert.equal(output.props.className, 'entity-details');
   });
 
@@ -71,11 +76,15 @@ describe('EntityDetails', function() {
     var getFile = sinon.spy();
     var renderMarkdown = sinon.spy();
     var addNotification = sinon.spy();
+    var listModels = sinon.spy();
+    var switchModel = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           apiUrl={apiUrl}
           deployService={deployService}
           changeState={changeState}
+          currentModel="uuid123"
+          environmentName="my-env"
           importBundleYAML={importBundleYAML}
           getBundleYAML={getBundleYAML}
           getDiagramURL={sinon.stub()}
@@ -86,7 +95,10 @@ describe('EntityDetails', function() {
           id={id}
           pluralize={pluralize}
           addNotification={addNotification}
-          makeEntityModel={makeEntityModel} />, true);
+          listModels={listModels}
+          makeEntityModel={makeEntityModel}
+          switchModel={switchModel}
+          user={{}} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
@@ -105,10 +117,15 @@ describe('EntityDetails', function() {
             importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
             changeState={changeState}
+            currentModel="uuid123"
             addNotification={addNotification}
             deployService={deployService}
+            environmentName="my-env"
+            listModels={listModels}
             pluralize={pluralize}
-            scrollPosition={100} />
+            scrollPosition={100}
+            switchModel={switchModel}
+            user={{}} />
           {undefined}
           <juju.components.EntityContent
             apiUrl={apiUrl}
@@ -139,16 +156,21 @@ describe('EntityDetails', function() {
           apiUrl="http://example.com/"
           deployService={deployService}
           changeState={changeState}
+          currentModel="uuid123"
+          environmentName="my-env"
           importBundleYAML={importBundleYAML}
           getBundleYAML={getBundleYAML}
           getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
+          listModels={sinon.stub()}
           makeEntityModel={sinon.spy()}
           renderMarkdown={renderMarkdown}
+          switchModel={sinon.stub()}
           id={id}
           pluralize={pluralize}
-          scrollPosition={0} />, true);
+          scrollPosition={0}
+          user={{}} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
@@ -184,11 +206,15 @@ describe('EntityDetails', function() {
     var renderMarkdown = sinon.spy();
     var getDiagramURL = sinon.spy();
     var addNotification = sinon.spy();
+    var listModels = sinon.spy();
+    var switchModel = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           apiUrl={apiUrl}
           deployService={deployService}
           changeState={changeState}
+          currentModel="uuid123"
+          environmentName="my-env"
           importBundleYAML={importBundleYAML}
           getBundleYAML={getBundleYAML}
           getEntity={getEntity}
@@ -199,7 +225,10 @@ describe('EntityDetails', function() {
           id={id}
           pluralize={pluralize}
           addNotification={addNotification}
-          makeEntityModel={makeEntityModel} />, true);
+          listModels={listModels}
+          makeEntityModel={makeEntityModel}
+          switchModel={switchModel}
+          user={{}} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
@@ -218,10 +247,15 @@ describe('EntityDetails', function() {
             importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
             changeState={changeState}
+            currentModel="uuid123"
             deployService={deployService}
+            environmentName="my-env"
             addNotification={addNotification}
+            listModels={listModels}
             pluralize={pluralize}
-            scrollPosition={100} />
+            scrollPosition={100}
+            switchModel={switchModel}
+            user={{}} />
           <juju.components.EntityContentDiagram
             getDiagramURL={getDiagramURL}
             id={id} />
@@ -254,16 +288,21 @@ describe('EntityDetails', function() {
           apiUrl="http://example.com/"
           deployService={deployService}
           changeState={changeState}
+          currentModel="uuid123"
+          environmentName="my-env"
           importBundleYAML={importBundleYAML}
           getBundleYAML={getBundleYAML}
           getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
+          listModels={sinon.stub()}
           makeEntityModel={sinon.spy()}
           renderMarkdown={renderMarkdown}
           id={id}
           pluralize={pluralize}
-          scrollPosition={0} />, true);
+          scrollPosition={0}
+          switchModel={sinon.stub()}
+          user={{}} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();

@@ -4,7 +4,16 @@
     padding: 50px 0;
     background-color: $white;
     color: $cool-grey;
-    overflow: hidden;
+
+    // Clearfix:
+    &:after {
+        visibility: hidden;
+        display: block;
+        font-size: 0;
+        content: " ";
+        clear: both;
+        height: 0;
+    }
 
     @keyframes slideIn {
         0% {
@@ -65,7 +74,7 @@
             display: none;
         }
 
-        .generic-button {
+        .multi-button {
             margin-top: 10px;
         }
     }
@@ -163,5 +172,9 @@
         .svg-icon {
             fill: #dc4a38;
         }
+    }
+
+    .multi-button .button--positive:first-child {
+        white-space: nowrap;
     }
 }

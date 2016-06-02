@@ -27,15 +27,20 @@ YUI.add('charmbrowser-component', function() {
       appState: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       charmstoreSearch: React.PropTypes.func.isRequired,
+      currentModel: React.PropTypes.string,
       deployService: React.PropTypes.func.isRequired,
+      environmentName: React.PropTypes.string.isRequired,
       getBundleYAML: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       getEntity: React.PropTypes.func.isRequired,
       getFile: React.PropTypes.func.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
+      listModels: React.PropTypes.func.isRequired,
       makeEntityModel: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
       series: React.PropTypes.object.isRequired,
+      switchModel: React.PropTypes.func.isRequired,
+      user: React.PropTypes.object.isRequired,
       utils: React.PropTypes.object.isRequired
     },
 
@@ -156,20 +161,25 @@ YUI.add('charmbrowser-component', function() {
         case 'entity-details':
           activeChild = (
               <juju.components.EntityDetails
+                addNotification={this.props.addNotification}
                 apiUrl={this.props.apiUrl}
                 changeState={this.props.changeState}
-                addNotification={this.props.addNotification}
+                currentModel={this.props.currentModel}
+                environmentName={this.props.environmentName}
                 importBundleYAML={this.props.importBundleYAML}
                 getBundleYAML={this.props.getBundleYAML}
                 getEntity={this.props.getEntity}
                 getDiagramURL={this.props.getDiagramURL}
                 deployService={this.props.deployService}
                 getFile={this.props.getFile}
-                scrollPosition={this.state.scrollPosition}
-                renderMarkdown={this.props.renderMarkdown}
                 id={metadata.id}
+                listModels={this.props.listModels}
+                makeEntityModel={this.props.makeEntityModel}
+                scrollPosition={this.state.scrollPosition}
+                user={this.props.user}
+                renderMarkdown={this.props.renderMarkdown}
                 pluralize={utils.pluralize}
-                makeEntityModel={this.props.makeEntityModel} />
+                switchModel={this.props.switchModel} />
           );
           break;
       }

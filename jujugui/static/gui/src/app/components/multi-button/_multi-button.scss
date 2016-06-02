@@ -1,0 +1,42 @@
+.multi-button {
+    position: relative;
+
+    button {
+        &:first-of-type {
+            width: calc(100% - 40px);
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        &:last-of-type {
+            box-sizing: border-box;
+            width: 40px;
+            padding: 10px 0;
+            vertical-align: bottom;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+    }
+
+    &__list {
+        @extend %list-style;
+        position: absolute;
+        z-index: index($z-indexed-elements, multi-button-menu);
+        box-shadow: $box-shadow;
+        left: 0;
+        right: 0;
+        background: $white;
+
+        &-item {
+            margin: 0;
+            padding: 10px;
+            cursor: pointer;
+
+            &:hover,
+            &:focus,
+            &:active {
+                background-color: $hover-background;
+            }
+        }
+    }
+}
