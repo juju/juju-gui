@@ -243,12 +243,12 @@ describe('UnitList', () => {
     var refs = component.refs;
     // We want to make sure that they are not checked first.
     assert.deepEqual(refs['UnitListItem-mysql/0'].state, {checked: false});
-    assert.deepEqual(refs['UnitListItem-mysql/0'].state, {checked: false});
+    assert.deepEqual(refs['UnitListItem-mysql/1'].state, {checked: false});
     // Activate the select all toggle.
     refs['select-all'].props.whenChanged(true);
     // Now check that they are all checked.
     assert.deepEqual(refs['UnitListItem-mysql/0'].state, {checked: true});
-    assert.deepEqual(refs['UnitListItem-mysql/0'].state, {checked: true});
+    assert.deepEqual(refs['UnitListItem-mysql/1'].state, {checked: true});
   });
 
   it('navigates to the unit when a list item is clicked', function() {

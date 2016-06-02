@@ -1093,6 +1093,8 @@ YUI.add('juju-gui', function(Y) {
             destroyService={utils.destroyService.bind(
                 this, this.db, this.env, service)}
             destroyUnits={utils.destroyUnits.bind(this, this.env)}
+            destroyRelations={utils.destroyRelations.bind(
+              this, this.db, this.env)}
             clearState={utils.clearState.bind(this, topo)}
             getYAMLConfig={utils.getYAMLConfig.bind(this)}
             changeState={this.changeState.bind(this)}

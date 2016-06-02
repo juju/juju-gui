@@ -37,18 +37,27 @@ describe('InspectorRelationsItem', function() {
       }
     };
 
-    var renderer = jsTestUtils.shallowRender(
+    var output = jsTestUtils.shallowRender(
         <juju.components.InspectorRelationsItem
-          relation={relation} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (<li className="inspector-relations-item">
-      <span className="inspector-relations-item__service"
-        onClick={instance._handleRelationClick}
+          key="unique"
+          relation={relation}
+          label="relation-name"
+        />);
+    var expected = (<li className="inspector-relations-item"
+        onClick={output.props.onClick}
         tabIndex="0" role="button">
-        {"wordpress"}:{"db"}
-      </span>
-    </li>);
+        <label htmlFor="">
+          <input
+            type="checkbox"
+            id="relation-name-relation"
+            onClick={output.props.children.props.children[0].props.onClick}
+            onChange={output.props.children.props.children[0].props.onChange}
+            checked={false} />
+          <span className="inspector-relations-item__label">
+            relation-name
+          </span>
+        </label>
+      </li>);
     assert.deepEqual(output, expected);
   });
 
@@ -72,7 +81,7 @@ describe('InspectorRelationsItem', function() {
           changeState={changeState}
           relation={relation}
           index={index} />);
-    output.props.children.props.onClick();
+    output.props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionA: {
@@ -81,5 +90,39 @@ describe('InspectorRelationsItem', function() {
           activeComponent: 'relation',
           unit: '0'
         }}});
+  });
+
+  it('calls the supplied whenChanged if supplied', () => {
+    var whenChanged = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.InspectorRelationsItem
+        key="unique"
+        checked={false}
+        whenChanged={whenChanged}
+        label="relation-name"
+      />);
+    output.props.children.props.children[0].props.onChange({
+      currentTarget: {
+        checked: true
+      }
+    });
+    assert.equal(whenChanged.callCount, 1);
+    assert.equal(whenChanged.args[0][0], true);
+  });
+
+  it('does not bubble the click event when clicking a checkbox', () => {
+    var actionStub = sinon.stub();
+    // Need to render the full component here as shallowRenderer does not yet
+    // support simulating click events.
+    var output = testUtils.renderIntoDocument(
+        <juju.components.InspectorRelationsItem
+          key="unique"
+          checked={false}
+          label="relation-name"
+          action={actionStub}
+        />);
+    var checkbox = testUtils.findRenderedDOMComponentWithTag(output, 'input');
+    testUtils.Simulate.click(checkbox);
+    assert.equal(actionStub.callCount, 0);
   });
 });
