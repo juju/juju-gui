@@ -599,6 +599,12 @@ YUI.add('user-profile', function() {
               Your models, bundles and charms will appear here when you create
               them.
             </p>
+            <p className="user-profile__empty-button">
+              <juju.components.GenericButton
+                action={this.switchModel}
+                type='inline-neutral'
+                title='Create new model' />
+            </p>
           </div>);
       }
       return (
