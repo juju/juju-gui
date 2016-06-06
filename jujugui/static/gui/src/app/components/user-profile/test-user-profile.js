@@ -124,7 +124,6 @@ describe('UserProfile', () => {
             </div>
           </div>
         </div>
-        {undefined}
       </juju.components.Panel>
     );
     /* eslint-disable max-len */
@@ -149,7 +148,7 @@ describe('UserProfile', () => {
         storeUser={sinon.stub()}
         user={users.charmstore} />);
     assert.equal(
-      output.props.children[0].props.children.props
+      output.props.children.props.children.props
             .children[1].props.children[0].props.src,
       'surl/static/gui/build/app/assets/images/non-sprites/empty_profile.png');
   });
@@ -173,14 +172,14 @@ describe('UserProfile', () => {
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
     assert.deepEqual(
-      output.props.children[0].props.children.props.children[1]
+      output.props.children.props.children.props.children[1]
         .props.children[1], (
           <div className="twelve-col">
           <juju.components.Spinner />
           </div>
         ));
     assert.deepEqual(
-      output.props.children[0].props.children.props.children[1].props
+      output.props.children.props.children.props.children[1].props
         .children[2], (
           <div className="twelve-col">
           <juju.components.Spinner />
@@ -206,7 +205,7 @@ describe('UserProfile', () => {
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
     assert.deepEqual(
-      output.props.children[0].props.children.props.children[1]
+      output.props.children.props.children.props.children[1]
         .props.children[0], (
           <div className="twelve-col">
           <juju.components.Spinner />
@@ -246,7 +245,7 @@ describe('UserProfile', () => {
         user={users.charmstore} />, true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
-    var content = output.props.children[0].props.children;
+    var content = output.props.children.props.children;
     var expected = (
       <div className="inner-wrapper">
         <juju.components.UserProfileHeader
@@ -289,8 +288,6 @@ describe('UserProfile', () => {
                 </span>
               </li>
               {[<juju.components.UserProfileEntity
-                displayConfirmation={content.props.children[1].props
-                  .children[0].props.children[1].props.children[1][0].props.displayConfirmation}
                 entity={models[0]}
                 expanded={false}
                 key="env1"
@@ -454,7 +451,7 @@ describe('UserProfile', () => {
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
-    var content = output.props.children[0].props.children.props.children[1]
+    var content = output.props.children.props.children.props.children[1]
       .props.children[0].props.children[1].props.children[1][0];
     var expected = (
       <li className="user-profile__entity user-profile__list-row"
@@ -498,7 +495,7 @@ describe('UserProfile', () => {
         interactiveLogin={undefined}
         links={links}
         username={users.charmstore.usernameDisplay} />);
-    assert.deepEqual(output.props.children[0].props.children.props.children[0],
+    assert.deepEqual(output.props.children.props.children.props.children[0],
       expected);
   });
 
@@ -687,169 +684,6 @@ describe('UserProfile', () => {
                  'UUID should not be defined');
   });
 
-  it('can display a confirmation when models are to be destroyed', () => {
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfile
-        addNotification={sinon.stub()}
-        users={users}
-        canCreateNew={true}
-        charmstore={charmstore}
-        env={env}
-        getDiagramURL={sinon.stub()}
-        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
-        switchModel={sinon.stub()}
-        interactiveLogin={true}
-        changeState={sinon.stub()}
-        pluralize={sinon.stub()}
-        storeUser={sinon.stub()}
-        user={users.charmstore} />, true);
-    var output = component.getRenderOutput();
-    output.props.children[0].props.children.props.children[1].props
-      .children[0].props.children[1].props.children[1][0]
-      .props.displayConfirmation();
-    output = component.getRenderOutput();
-    var expected = (
-      <juju.components.ConfirmationPopup
-        buttons={output.props.children[1].props.buttons}
-        message={'Are you sure you want to destroy sandbox? All the services ' +
-          'and units included in the model will be destroyed. This action ' +
-          'cannot be undone.'}
-        title="Destroy model" />);
-    assert.deepEqual(output.props.children[1], expected);
-  });
-
-  it('can destroy a model', () => {
-    var addNotification = sinon.stub();
-    var switchModel = sinon.stub();
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfile
-        addNotification={addNotification}
-        users={users}
-        canCreateNew={true}
-        charmstore={charmstore}
-        env={env}
-        getDiagramURL={sinon.stub()}
-        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
-        switchModel={switchModel}
-        interactiveLogin={true}
-        changeState={sinon.stub()}
-        pluralize={sinon.stub()}
-        storeUser={sinon.stub()}
-        user={users.charmstore} />, true);
-    var instance = component.getMountedInstance();
-    instance._displayConfirmation({name: 'spinach/my-model'});
-    var output = component.getRenderOutput();
-    output.props.children[1].props.buttons[1].action();
-    assert.equal(env.destroyModel.callCount, 1);
-    assert.equal(switchModel.callCount, 1);
-    assert.isNull(switchModel.args[0][0]);
-    assert.isNull(switchModel.args[0][2]);
-    output = component.getRenderOutput();
-    // The confirmation should now be hidden.
-    assert.isUndefined(output.props.children[1]);
-    assert.equal(addNotification.callCount, 1);
-    assert.deepEqual(addNotification.args[0][0], {
-      title: 'Model destroyed',
-      message: 'The model is currently being destroyed.',
-      level: 'important'
-    });
-  });
-
-  it('can destroy a model that is not the current one', () => {
-    var switchModel = sinon.stub();
-    switchModel.onFirstCall().callsArgWith(3, env);
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfile
-        addNotification={sinon.stub()}
-        users={users}
-        canCreateNew={true}
-        charmstore={charmstore}
-        env={env}
-        getDiagramURL={sinon.stub()}
-        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
-        switchModel={switchModel}
-        interactiveLogin={true}
-        changeState={sinon.stub()}
-        pluralize={sinon.stub()}
-        storeUser={sinon.stub()}
-        user={users.charmstore} />, true);
-    var instance = component.getMountedInstance();
-    instance._displayConfirmation(
-      {name: 'spinach/a-different-model', uuid: 'a-different-model'});
-    var output = component.getRenderOutput();
-    output.props.children[1].props.buttons[1].action();
-    assert.equal(env.destroyModel.callCount, 1);
-    assert.equal(switchModel.callCount, 2);
-    // The first switchModel should be to the model to be destroyed.
-    assert.equal(switchModel.args[0][0], 'a-different-model');
-    assert.deepEqual(switchModel.args[0][1], models);
-    assert.equal(switchModel.args[0][2], 'spinach/a-different-model');
-    assert.equal(switchModel.args[0][3], instance._destroyModel);
-    // The second switchModel should be to a new model.
-    assert.isNull(switchModel.args[1][0]);
-    assert.isNull(switchModel.args[1][2]);
-    output = component.getRenderOutput();
-    // The confirmation should now be hidden.
-    assert.isUndefined(output.props.children[1]);
-  });
-
-  it('can cancel destroying a model', () => {
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfile
-        addNotification={sinon.stub()}
-        users={users}
-        canCreateNew={true}
-        charmstore={charmstore}
-        env={env}
-        getDiagramURL={sinon.stub()}
-        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
-        switchModel={sinon.stub()}
-        interactiveLogin={true}
-        changeState={sinon.stub()}
-        pluralize={sinon.stub()}
-        storeUser={sinon.stub()}
-        user={users.charmstore} />, true);
-    var instance = component.getMountedInstance();
-    instance._displayConfirmation({name: 'spinach/my-model'});
-    var output = component.getRenderOutput();
-    output.props.children[1].props.buttons[0].action();
-    assert.equal(env.destroyModel.callCount, 0);
-    output = component.getRenderOutput();
-    // The confirmation should now be hidden.
-    assert.isUndefined(output.props.children[1]);
-  });
-
-  it('can display an error if the model fails to destroy', () => {
-    var addNotification = sinon.stub();
-    env.destroyModel = sinon.stub().callsArgWith(0, 'error');
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfile
-        addNotification={addNotification}
-        users={users}
-        canCreateNew={true}
-        charmstore={charmstore}
-        currentModel="mymodel"
-        env={env}
-        getDiagramURL={sinon.stub()}
-        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
-        switchModel={sinon.stub()}
-        interactiveLogin={true}
-        changeState={sinon.stub()}
-        pluralize={sinon.stub()}
-        storeUser={sinon.stub()}
-        user={users.charmstore} />, true);
-    var instance = component.getMountedInstance();
-    component.getRenderOutput();
-    instance._displayConfirmation({name: 'spinach/mymodel', uuid: 'mymodel'});
-    instance._handleDestroyModel();
-    assert.equal(addNotification.callCount, 1);
-    assert.deepEqual(addNotification.args[0][0], {
-      title: 'Model destruction failed',
-      message: 'The model failed to be destroyed: error',
-      level: 'error'
-    });
-  });
-
   it('can hide the create new model button', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
@@ -866,7 +700,7 @@ describe('UserProfile', () => {
         switchModel={sinon.stub()}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
-    assert.isUndefined(output.props.children[0].props.children.props.children[1]
+    assert.isUndefined(output.props.children.props.children.props.children[1]
       .props.children[0].props.children[0].props.children[2]);
   });
 });

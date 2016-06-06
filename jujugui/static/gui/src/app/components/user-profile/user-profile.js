@@ -43,7 +43,6 @@ YUI.add('user-profile', function() {
 
     getInitialState: function() {
       return {
-        destroyModel: null,
         envList: [],
         charmList: [],
         bundleList: [],
@@ -256,7 +255,6 @@ YUI.add('user-profile', function() {
           entity={model}
           expanded={isCurrent}
           key={uuid}
-          displayConfirmation={this._displayConfirmation.bind(this, model)}
           switchModel={this.switchModel}
           type="model">
           <span className="user-profile__list-col three-col">
@@ -616,96 +614,6 @@ YUI.add('user-profile', function() {
         </div>);
     },
 
-    /**
-      Display the confirmation for destroying a model.
-
-      @method _displayConfirmation
-      @param {String} model The model to destroy.
-      @return {Object} The confirmation component.
-    */
-    _displayConfirmation: function(model) {
-      this.setState({destroyModel: model});
-    },
-
-    /**
-      Handle the destroy model button being clicked.
-
-      @method _handleDestroyModel
-    */
-    _handleDestroyModel: function() {
-      var model = this.state.destroyModel;
-      var uuid = model.uuid;
-      // Hide the confirmation popup.
-      this._displayConfirmation(null);
-      // If the model to be distroyed is active then we can destroy it
-      // immediately.
-      if (uuid === this.props.currentModel) {
-        this._destroyModel(this.props.env);
-      } else {
-        // Switch to the selected model, then destroy it.
-        // TODO: investigate how to handle situations where the
-        // switchModel/switchEnv fails and so the callback to destroy the model
-        // is never called.
-        this.switchModel(uuid, model.name, this._destroyModel);
-      }
-    },
-
-    /**
-      Destroy a model.
-
-      @method _destroyModel
-      @param {Object} env The current env.
-    */
-    _destroyModel: function(env) {
-      env.destroyModel((error) => {
-        if (error) {
-          this.props.addNotification({
-            title: 'Model destruction failed',
-            message: 'The model failed to be destroyed: ' + error,
-            level: 'error'
-          });
-          return;
-        }
-        this.props.addNotification({
-          title: 'Model destroyed',
-          message: 'The model is currently being destroyed.',
-          level: 'important'
-        });
-        this.switchModel(null, null);
-      });
-    },
-
-    /**
-      Generate the confirmation for destroying a model.
-
-      @method _generateConfirmation
-      @return {Object} The confirmation component.
-    */
-    _generateConfirmation: function() {
-      var model = this.state.destroyModel;
-      if (!model) {
-        return;
-      }
-      var buttons = [{
-        title: 'Cancel',
-        action: this._displayConfirmation.bind(this, null),
-        type: 'base'
-      }, {
-        title: 'Destroy',
-        action: this._handleDestroyModel,
-        type: 'destructive'
-      }];
-      var name = model.name.split('/')[1];
-      var message = `Are you sure you want to destroy ${name}? All the ` +
-        'services and units included in the model will be destroyed. This ' +
-        'action cannot be undone.';
-      return (
-        <juju.components.ConfirmationPopup
-          buttons={buttons}
-          message={message}
-          title="Destroy model" />);
-    },
-
     render: function() {
       var username = this.props.user && this.props.user.usernameDisplay;
       var bundleCount = this.state.bundleList.length;
@@ -735,7 +643,6 @@ YUI.add('user-profile', function() {
               {this._generateContent()}
             </div>
           </div>
-          {this._generateConfirmation()}
         </juju.components.Panel>
       );
     }
@@ -744,7 +651,6 @@ YUI.add('user-profile', function() {
 
 }, '', {
   requires: [
-    'confirmation-popup',
     'loading-spinner',
     'svg-icon',
     'panel-component',
