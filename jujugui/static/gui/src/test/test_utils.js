@@ -1348,7 +1348,7 @@ describe('utilities', function() {
   });
 
   describe('switchModel', function() {
-    var utils, testUtils, _showSwitchModelConfirm, _hideSwitchModelConfirm,
+    var utils, testUtils, _showUncommittedConfirm, _hidePopup,
         models;
 
     before(function(done) {
@@ -1360,10 +1360,10 @@ describe('utilities', function() {
     });
 
     beforeEach(function() {
-      _hideSwitchModelConfirm = utils._hideSwitchModelConfirm;
-      utils._hideSwitchModelConfirm = testUtils.makeStubFunction();
-      _showSwitchModelConfirm = utils._showSwitchModelConfirm;
-      utils._showSwitchModelConfirm = testUtils.makeStubFunction();
+      _hidePopup = utils._hidePopup;
+      utils._hidePopup = testUtils.makeStubFunction();
+      _showUncommittedConfirm = utils._showUncommittedConfirm;
+      utils._showUncommittedConfirm = testUtils.makeStubFunction();
       utils.changeState = testUtils.makeStubFunction();
       utils.set = testUtils.makeStubFunction();
       utils.showConnectingMask = testUtils.makeStubFunction();
@@ -1376,8 +1376,8 @@ describe('utilities', function() {
     });
 
     afterEach(function() {
-      utils._hideSwitchModelConfirm = _hideSwitchModelConfirm;
-      utils._showSwitchModelConfirm = _showSwitchModelConfirm;
+      utils._hidePopup = _hidePopup;
+      utils._showUncommittedConfirm = _showUncommittedConfirm;
     });
 
     it('can switch directly if there are no uncommitted changes', function() {
@@ -1413,7 +1413,7 @@ describe('utilities', function() {
       utils._switchModel = testUtils.makeStubFunction();
       utils.switchModel(
         createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
-      assert.deepEqual(utils._showSwitchModelConfirm.callCount(), 1);
+      assert.deepEqual(utils._showUncommittedConfirm.callCount(), 1);
       assert.deepEqual(utils._switchModel.callCount(), 0);
       utils._switchModel = _switchModel;
     });
@@ -1426,7 +1426,7 @@ describe('utilities', function() {
       utils._switchModel(
         createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
 
-      assert.deepEqual(utils._hideSwitchModelConfirm.callCount(), 1);
+      assert.deepEqual(utils._hidePopup.callCount(), 1);
       assert.deepEqual(createSocketURL.callCount(), 1);
       var socketArgs = createSocketURL.lastArguments();
       assert.deepEqual(socketArgs[0], models[0].uuid);
