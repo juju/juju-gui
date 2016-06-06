@@ -24,7 +24,6 @@ YUI.add('user-profile-entity', function() {
 
     propTypes: {
       changeState: React.PropTypes.func,
-      displayConfirmation: React.PropTypes.func,
       entity: React.PropTypes.object.isRequired,
       expanded: React.PropTypes.bool,
       getDiagramURL: React.PropTypes.func,
@@ -268,11 +267,6 @@ YUI.add('user-profile-entity', function() {
         'user-profile__entity': true,
         'user-profile__list-row': true
       };
-      var destroyButton = isModel ? (
-        <juju.components.GenericButton
-          action={props.displayConfirmation}
-          type="inline-base"
-          title="Destroy model" />) : undefined;
       return (
         <juju.components.ExpandingRow classes={classes}
           expanded={this.props.expanded}>
@@ -284,7 +278,6 @@ YUI.add('user-profile-entity', function() {
               </div>
               <div className={'expanding-row__expanded-header-action ' +
                 'five-col last-col no-margin-bottom'}>
-                {destroyButton}
                 <juju.components.GenericButton
                   action={buttonAction}
                   type="inline-neutral"
