@@ -120,6 +120,202 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       panel.destroy();
     });
   });
+
+  describe('Utilities for handling relations', function() {
+    var endpoints, utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use(
+          'juju-view-utils', 'node-event-simulate',
+          function(Y) {
+            utils = Y.namespace('juju.views.utils');
+            done();
+          });
+    });
+
+    beforeEach(function() {
+      var MockCharm = function(attrs) {
+        var _attrs = attrs;
+
+        return {
+          set: function(key, value) {
+            _attrs[key] = value;
+          },
+
+          get: function(key) {
+            return _attrs[key];
+          }
+        };
+      };
+      var wordpressProvides = {
+        website: {
+          'interface': 'http',
+          scope: 'global'
+        }
+      };
+      var wordpressRequires = {
+        cache: {
+          'interface': 'memcache',
+          scope: 'global'
+        },
+        db: {
+          'interface': 'mysql',
+          scope: 'global'
+        },
+        nfs: {
+          'interface': 'mount',
+          scope: 'global'
+        }
+      };
+      var mysqlProvides = {
+        db: {
+          'interface': 'mysql',
+          scope: 'global'
+        },
+        'db-admin': {
+          'interface': 'mysql-root',
+          scope: 'global'
+        },
+        'local-monitors': {
+          'interface': 'local-monitors',
+          scope: 'container'
+        },
+        master: {
+          'interface': 'mysql-oneway-replication',
+          scope: 'global'
+        },
+        monitors: {
+          'interface': 'monitors',
+          scope: 'global'
+        },
+        munin: {
+          'interface': 'munin-node',
+          scope: 'global'
+        },
+        'shared-db': {
+          'interface': 'mysql-shared',
+          scope: 'global'
+        }
+      };
+      var mysqlRequires = {
+        ceph: {
+          'interface': 'ceph-client',
+          scope: 'global'
+        },
+        ha: {
+          'interface': 'hacluster',
+          scope: 'global'
+        },
+        slave: {
+          'interface': 'mysql-oneway-replication',
+          scope: 'global'
+        }
+      };
+      endpoints = [
+        {
+          charm: MockCharm({
+            provides: wordpressProvides,
+            requires: wordpressRequires
+          }),
+          name: 'wordpress',
+          service: {},
+          type: 'db'
+        },
+        {
+          charm: MockCharm({
+            provides: mysqlProvides,
+            requires: mysqlRequires
+          }),
+          name: 'mysql',
+          service: {},
+          type: 'db'
+        }
+      ];
+    });
+
+    it('finds endpoint matches for relations', function() {
+      var actual = utils.findEndpointMatch(endpoints);
+      var expected = {
+        'interface': 'mysql',
+        scope: 'global',
+        provides: endpoints[1],
+        requires: endpoints[0],
+        provideType: 'db',
+        requireType: 'db'
+      };
+      assert.deepEqual(actual, expected);
+    });
+
+    it('errors when no endpoint matches exist', function() {
+      endpoints[1].charm.set('provides', {});
+      var actual = utils.findEndpointMatch(endpoints);
+      assert.equal(actual.error, 'Specified relation is unavailable.');
+    });
+
+    it('errors when multiple explicit endpoint matches exist', function() {
+      // In order to force an ambiguous relation, we need to null these out.
+      endpoints[0].type = null;
+      endpoints[1].type = null;
+      endpoints[0].charm.set('requires', {
+        db: {
+          'interface': 'mysql',
+          scope: 'global'
+        },
+        'db-admin': {
+          'interface': 'mysql',
+          scope: 'global'
+        },
+      });
+      endpoints[1].charm.set('provides', {
+        db: {
+          'interface': 'mysql',
+          scope: 'global'
+        },
+        'db-admin': {
+          'interface': 'mysql',
+          scope: 'global'
+        },
+      });
+      var actual = utils.findEndpointMatch(endpoints);
+      assert.equal(actual.error, 'Ambiguous relationship is not allowed.');
+    });
+
+    it('chooses the explicit relation over matching implicit', function() {
+      // In order to force an ambiguous relation, we need to null these out.
+      endpoints[0].type = null;
+      endpoints[1].type = null;
+      endpoints[0].charm.set('requires', {
+        db: {
+          'interface': 'mysql',
+          scope: 'global'
+        },
+        'juju-info': {
+          'interface': 'juju-info',
+          scope: 'container'
+        },
+      });
+      endpoints[1].charm.set('provides', {
+        db: {
+          'interface': 'mysql',
+          scope: 'global'
+        },
+        'juju-info': {
+          'interface': 'juju-info',
+          scope: 'container'
+        },
+      });
+      var actual = utils.findEndpointMatch(endpoints);
+      var expected = {
+        'interface': 'mysql',
+        scope: 'global',
+        provides: endpoints[1],
+        requires: endpoints[0],
+        provideType: 'db',
+        requireType: 'db'
+      };
+      assert.deepEqual(actual, expected);
+    });
+  });
 }) ();
 
 describe('utilities', function() {

@@ -570,7 +570,19 @@ YUI.add('juju-view-utils', function(Y) {
       console.log(endpoints);
       result = {error: 'Specified relation is unavailable.'};
     } else if (matches.length > 1) {
-      result = {error: 'Ambiguous relationship is not allowed.'};
+      // It's only a problem if there's more than one explicit relation.
+      // Otherwise, filter out the implicit relations and just return the
+      // explicit relation.
+      var explicitRelations = matches.filter(
+        rel => rel['provideType'] !== 'juju-info');
+      if (explicitRelations.length === 0) {
+        console.log(endpoints);
+        result = {error: 'No explicitly specified relations are available.'};
+      } else if (explicitRelations.length > 1) {
+        result = {error: 'Ambiguous relationship is not allowed.'};
+      } else {
+        result = explicitRelations[0];
+      }
     } else {
       result = matches[0];
       // Specify the type for implicit relations.
