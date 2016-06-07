@@ -138,4 +138,55 @@ describe('DeploymentInput', function() {
     );
     assert.deepEqual(output.props.children[2], expected);
   });
+
+  it('allows the label to be optional', () => {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentInput
+        disabled={false}
+        placeholder="us-central-1"
+        required={true}
+        ref="templateRegion"
+        validate={[{
+          regex: /\S+/,
+          error: 'This field is required.'
+        }]}
+        value="default" />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="deployment-input">
+        {undefined}
+        <input className="deployment-input__field"
+          defaultValue="default"
+          disabled={false}
+          id={undefined}
+          placeholder="us-central-1"
+          required={true}
+          onChange={instance.validate}
+          ref="field"
+          type="text" />
+        {null}
+      </div>
+    );
+    assert.deepEqual(output, expected);
+  });
+
+  it('adds a class to the wrapper element on error', () => {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentInput
+        disabled={false}
+        placeholder="us-central-1"
+        required={true}
+        ref="templateRegion"
+        validate={[{
+          regex: /\S+/,
+          error: 'This field is required.'
+        }]} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {field: {value: ''}};
+    var output = renderer.getRenderOutput();
+    output.props.children[1].props.onChange();
+    output = renderer.getRenderOutput();
+    assert.deepEqual(output.props.className, 'deployment-input error');
+  });
 });
