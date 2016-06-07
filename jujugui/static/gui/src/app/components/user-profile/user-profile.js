@@ -206,17 +206,33 @@ YUI.add('user-profile', function() {
     */
     switchModel: function(uuid, name, callback) {
       var props = this.props;
-      // If no uuid is specified then this is switching to create a new model
-      // and we need to grab the new name and validate it.
-      if (!uuid) {
-        var modelName = this.refs.modelName;
-        if (!modelName.validate()) {
-          // Only continue if the validation passes.
-          return;
-        }
-        name = modelName.getValue();
-      }
       props.switchModel(uuid, this.state.envList, name, callback);
+    },
+
+    /**
+      Fetches the model name from the modelName ref and then creates a model
+      then switches to it.
+      @method createAndSwitch
+    */
+    createAndSwitch: function() {
+      // The supplied new model name needs to be valid.
+      var modelName = this.refs.modelName;
+      if (!modelName.validate()) {
+        // Only continue if the validation passes.
+        return;
+      }
+      // XXX This is only for the JIMM flow.
+      this.props.env.createModel(
+        modelName.getValue(),
+        this.props.user.user,
+        data => {
+          if (data.err) {
+            // XXX Throw notification
+            console.log(err);
+            return;
+          }
+          this.switchModel(data.uuid, data.name);
+        });
     },
 
     /**
@@ -386,7 +402,9 @@ YUI.add('user-profile', function() {
       @method _toggleNameInput
     */
     _toggleNameInput: function() {
-      this.setState({ createNewModelActive: true });
+      this.setState({ createNewModelActive: true }, _ => {
+        this.refs.modelName.refs.field.focus();
+      });
     },
 
     /**
@@ -421,7 +439,7 @@ YUI.add('user-profile', function() {
                 'end with a hyphen.'
             }]} />
           <juju.components.GenericButton
-            action={this.switchModel}
+            action={this.createAndSwitch}
             type='inline-neutral second'
             title='Submit' />
         </div>
