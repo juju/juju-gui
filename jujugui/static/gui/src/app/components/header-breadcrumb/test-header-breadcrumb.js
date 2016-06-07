@@ -34,7 +34,7 @@ describe('HeaderBreadcrumb', () => {
     var switchModel = sinon.stub();
     var envName = 'bar';
     var envList = ['envList'];
-    var changeState = sinon.stub();
+    var showProfile = sinon.stub();
     var getAppState = sinon.stub();
     var listModels = sinon.stub();
     var authDetails = {
@@ -45,10 +45,10 @@ describe('HeaderBreadcrumb', () => {
       <juju.components.HeaderBreadcrumb
         envName={envName}
         envList={envList}
-        changeState={changeState}
         getAppState={getAppState}
         authDetails={authDetails}
         listModels={listModels}
+        showProfile={showProfile}
         showEnvSwitcher={true}
         switchModel={switchModel} />, true);
     var instance = component.getMountedInstance();
@@ -66,9 +66,9 @@ describe('HeaderBreadcrumb', () => {
           <window.juju.components.EnvSwitcher
             environmentName={envName}
             envList={envList}
-            changeState={changeState}
             authDetails={authDetails}
             listModels={listModels}
+            showProfile={showProfile}
             switchModel={switchModel} />
         </li>
       </ul>
@@ -80,17 +80,16 @@ describe('HeaderBreadcrumb', () => {
     var app = {app:'app'};
     var envName = 'bar';
     var envList = ['envList'];
-    var changeState = sinon.stub();
     var getAppState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
         app={app}
         envName={envName}
         envList={envList}
-        changeState={changeState}
         getAppState={getAppState}
         listModels={sinon.stub()}
         showEnvSwitcher={true}
+        showProfile={sinon.stub()}
         switchModel={sinon.stub()} />);
     assert.equal(output.props.children[0], undefined);
   });
@@ -99,17 +98,16 @@ describe('HeaderBreadcrumb', () => {
     var app = {app:'app'};
     var envName = 'bar';
     var envList = ['envList'];
-    var changeState = sinon.stub();
     var getAppState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
         app={app}
         envName={envName}
         envList={envList}
-        changeState={changeState}
         getAppState={getAppState}
         listModels={sinon.stub()}
         showEnvSwitcher={false}
+        showProfile={sinon.stub()}
         switchModel={sinon.stub()} />);
     // There will be no third child if the envSwitcher is rendered
     assert.equal(output.props.children[1], undefined);
@@ -119,29 +117,28 @@ describe('HeaderBreadcrumb', () => {
     var app = {app:'app'};
     var envName = 'bar';
     var envList = ['envList'];
-    var changeState = sinon.stub();
     var getAppState = sinon.stub().returns('profile');
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
         app={app}
         envName={envName}
         envList={envList}
-        changeState={changeState}
         getAppState={getAppState}
         listModels={sinon.stub()}
         // Even though showEnvSwitcher is true, because the profile is visibile
         // it shouldn't render the env switcher.
         showEnvSwitcher={true}
+        showProfile={sinon.stub()}
         switchModel={sinon.stub()} />);
     // There will be no third child if the envSwitcher is rendered
     assert.equal(output.props.children[1], undefined);
   });
 
-  it('triggers a state change when profile link is clicked', () => {
+  it('can display the profile when the profile link is clicked', () => {
     var app = {app:'app'};
     var envName = 'bar';
     var envList = ['envList'];
-    var changeState = sinon.stub();
+    var showProfile = sinon.stub();
     var authDetails = {
       user: 'foo',
       usernameDisplay: 'Foo'
@@ -151,21 +148,18 @@ describe('HeaderBreadcrumb', () => {
         app={app}
         envName={envName}
         envList={envList}
-        changeState={changeState}
         getAppState={sinon.stub()}
         authDetails={authDetails}
         listModels={sinon.stub()}
         showEnvSwitcher={true}
+        showProfile={showProfile}
         switchModel={sinon.stub()} />, true);
     var instance = component.getMountedInstance();
     instance._handleProfileClick({
       preventDefault: sinon.stub()
     });
-    assert.equal(changeState.called, true,
-                 'changeState was not called');
-    var state = changeState.args[0][0];
-    assert.equal(state.sectionB.component, 'profile',
-                 'new state not set the the profile component');
+    assert.equal(showProfile.called, true,
+                 'showProfile was not called');
   });
 
 });

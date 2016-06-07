@@ -46,6 +46,7 @@ YUI.add('app-renderer-extension', function(Y) {
       // has not yet been created.
       var env = this.env;
       var jem = this.jem;
+      var utils = views.utils;
       // If gisf is enabled then we won't be connected to a model to know
       // what facades are supported but we can reliably assume it'll be Juju 2
       // or higher which will support the necessary API calls.
@@ -71,12 +72,13 @@ YUI.add('app-renderer-extension', function(Y) {
         <juju.components.HeaderBreadcrumb
           envName={envName}
           envList={this.get('environmentList')}
-          changeState={this.changeState.bind(this)}
           getAppState={state.getState.bind(state)}
           authDetails={auth}
           listModels={listModels}
           showEnvSwitcher={showEnvSwitcher}
-          switchModel={views.utils.switchModel.bind(
+          showProfile={utils.showProfile.bind(
+            this, env && env.get('ecs'), this.changeState.bind(this))}
+          switchModel={utils.switchModel.bind(
             this, this.createSocketURL.bind(this),
             this.switchEnv.bind(this), env)} />,
         document.getElementById('header-breadcrumb'));

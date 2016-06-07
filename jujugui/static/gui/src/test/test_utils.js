@@ -1472,6 +1472,68 @@ describe('utilities', function() {
     });
   });
 
+  describe('showProfile', function() {
+    var utils, testUtils, _showUncommittedConfirm, _hidePopup;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', 'juju-tests-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        testUtils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      _hidePopup = utils._hidePopup;
+      utils._hidePopup = testUtils.makeStubFunction();
+      _showUncommittedConfirm = utils._showUncommittedConfirm;
+      utils._showUncommittedConfirm = testUtils.makeStubFunction();
+    });
+
+    afterEach(function() {
+      utils._hidePopup = _hidePopup;
+      utils._showUncommittedConfirm = _showUncommittedConfirm;
+    });
+
+    it('can show the profile if there are no uncommitted changes', function() {
+      var ecs = {
+        getCurrentChangeSet: testUtils.makeStubFunction({})
+      };
+      var changeState = testUtils.makeStubFunction();
+      utils.showProfile(ecs, changeState);
+      assert.deepEqual(changeState.callCount(), 1);
+      assert.deepEqual(utils._showUncommittedConfirm.callCount(), 0);
+    });
+
+    it('can show a confirmation if there are uncommitted changes', function() {
+      var ecs = {
+        getCurrentChangeSet: testUtils.makeStubFunction({change: 'one'})
+      };
+      var changeState = testUtils.makeStubFunction();
+      utils.showProfile(ecs, changeState);
+      assert.deepEqual(changeState.callCount(), 0);
+      assert.deepEqual(utils._showUncommittedConfirm.callCount(), 1);
+    });
+
+    it('can show a confirmation and clear changes', function() {
+      var ecs = {
+        clear: testUtils.makeStubFunction(),
+        getCurrentChangeSet: testUtils.makeStubFunction({change: 'one'})
+      };
+      var changeState = testUtils.makeStubFunction();
+      utils._showProfile(ecs, changeState, true);
+      assert.deepEqual(changeState.callCount(), 1);
+      assert.deepEqual(changeState.lastArguments()[0], {
+        sectionB: {
+          component: 'profile',
+          metadata: null
+        }
+      });
+      assert.deepEqual(utils._hidePopup.callCount(), 1);
+      assert.deepEqual(ecs.clear.callCount(), 1);
+    });
+  });
+
   describe('listModels', function() {
     var utils, testUtils;
 

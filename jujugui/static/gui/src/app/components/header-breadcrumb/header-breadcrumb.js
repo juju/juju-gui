@@ -24,11 +24,11 @@ YUI.add('header-breadcrumb', function() {
     propTypes: {
       envName: React.PropTypes.string.isRequired,
       envList: React.PropTypes.array,
-      changeState: React.PropTypes.func.isRequired,
       getAppState: React.PropTypes.func.isRequired,
       authDetails: React.PropTypes.object,
       listModels: React.PropTypes.func.isRequired,
       showEnvSwitcher: React.PropTypes.bool.isRequired,
+      showProfile: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
       userName: React.PropTypes.string
     },
@@ -48,8 +48,8 @@ YUI.add('header-breadcrumb', function() {
             <window.juju.components.EnvSwitcher
               environmentName={this.props.envName}
               envList={this.props.envList}
-              changeState={this.props.changeState}
               listModels={this.props.listModels}
+              showProfile={this.props.showProfile}
               switchModel={this.props.switchModel}
               authDetails={this.props.authDetails} />
           </li>);
@@ -64,12 +64,7 @@ YUI.add('header-breadcrumb', function() {
     */
     _handleProfileClick: function(e) {
       e.preventDefault();
-      this.props.changeState({
-        sectionB: {
-          component: 'profile',
-          metadata: null
-        }
-      });
+      this.props.showProfile();
     },
 
     render: function() {

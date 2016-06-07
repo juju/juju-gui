@@ -2077,6 +2077,49 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
+    Navigate to the profile, displaying a confirmation if there are
+    uncommitted changes.
+
+    @method showProfile
+    @param {Object} ecs Reference to the ecs.
+    @param {Function} changeState The method for changing the app state.
+  */
+  utils.showProfile = function(ecs, changeState) {
+    var currentChangeSet = ecs.getCurrentChangeSet();
+    // If there are uncommitted changes then show a confirmation popup.
+    if (Object.keys(currentChangeSet).length > 0) {
+      utils._showUncommittedConfirm(
+        utils._showProfile.bind(this, ecs, changeState, true));
+      return;
+    }
+    // If there are no uncommitted changes then switch right away.
+    utils._showProfile(ecs, changeState, false);
+  };
+
+  /**
+    Navigate to the profile, displaying a confirmation if there are
+    uncommitted changes.
+
+    @method _showProfile
+    @param {Object} ecs Reference to the ecs.
+    @param {Function} changeState The method for changing the app state.
+  */
+  utils._showProfile = function(ecs, changeState, clear=false) {
+    utils._hidePopup();
+    if (clear) {
+      // Have to go ahead and clear the ECS otherwise future navigation will
+      // pop up the uncommitted changes confirmation again.
+      ecs.clear();
+    }
+    changeState({
+      sectionB: {
+        component: 'profile',
+        metadata: null
+      }
+    });
+  };
+
+  /**
     Makes a request of JEM or JES to fetch the users available models.
 
     @method listModels

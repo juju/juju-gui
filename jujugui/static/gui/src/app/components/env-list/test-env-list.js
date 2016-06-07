@@ -38,7 +38,8 @@ describe('EnvList', function() {
                 { uuid: '123abc', path: 'the path' }];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvList
-        envs={envs} />, true);
+        envs={envs}
+        showProfile={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     assert.deepEqual(output.props.children[0].props.children,
@@ -71,7 +72,8 @@ describe('EnvList', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.EnvList
         envs={envs}
-        handleEnvClick={handleEnvClick} />);
+        handleEnvClick={handleEnvClick}
+        showProfile={sinon.stub()} />);
     output.props.children[0].props.children[0].props.onClick({
       currentTarget: {
         getAttribute: getAttribute
@@ -81,18 +83,18 @@ describe('EnvList', function() {
   });
 
   it('showProfile call is made when clicking on buttonRow button', function() {
-    var showUserProfile = sinon.stub();
+    var showProfile = sinon.stub();
     var envs = [{ uuid: 'abc123', name: 'the name' }];
     var component = testUtils.renderIntoDocument(
       <juju.components.EnvList
         envs={envs}
-        showUserProfile={showUserProfile} />);
+        showProfile={showProfile} />);
 
     testUtils.Simulate.click(
         ReactDOM.findDOMNode(component)
                 .querySelector('.button--neutral'));
 
-    assert.equal(showUserProfile.callCount, 1);
+    assert.equal(showProfile.callCount, 1);
   });
 
 });
