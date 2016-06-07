@@ -51,7 +51,7 @@ LSB_RELEASE = $(shell lsb_release -cs)
 
 # libfontconfig1 is required by phantom.
 SYSDEPS = coreutils g++ git inotify-tools libfontconfig1 nodejs \
-	python-virtualenv
+	python-virtualenv realpath
 
 .PHONY: help
 help:
