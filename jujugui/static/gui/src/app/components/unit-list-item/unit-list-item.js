@@ -23,11 +23,11 @@ YUI.add('unit-list-item', function() {
   juju.components.UnitListItem = React.createClass({
 
     propTypes: {
-      action: React.PropTypes.func.isRequired,
-      className: React.PropTypes.string.isRequired,
-      count: React.PropTypes.number.isRequired,
+      action: React.PropTypes.func,
+      className: React.PropTypes.string,
+      count: React.PropTypes.number,
       label: React.PropTypes.string.isRequired,
-      unitId: React.PropTypes.string.isRequired,
+      unitId: React.PropTypes.string,
       whenChanged: React.PropTypes.func.isRequired
     },
 

@@ -23,11 +23,11 @@ YUI.add('inspector-header', function() {
   juju.components.InspectorHeader = React.createClass({
 
     propTypes: {
-      activeComponent: React.PropTypes.string.isRequired,
+      activeComponent: React.PropTypes.string,
       backCallback: React.PropTypes.func.isRequired,
-      icon: React.PropTypes.string.isRequired,
+      icon: React.PropTypes.string,
       title: React.PropTypes.string.isRequired,
-      type: React.PropTypes.string.isRequired
+      type: React.PropTypes.string
     },
 
     /**

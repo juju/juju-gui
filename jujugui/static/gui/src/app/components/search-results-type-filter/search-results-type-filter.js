@@ -24,7 +24,7 @@ YUI.add('search-results-type-filter', function(Y) {
 
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
-      currentType: React.PropTypes.string.isRequired
+      currentType: React.PropTypes.string
     },
 
     /**

@@ -25,7 +25,6 @@ YUI.add('service-overview', function() {
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
       clearState: React.PropTypes.func.isRequired,
-      confirmationOpen: React.PropTypes.bool.isRequired,
       destroyService: React.PropTypes.func.isRequired,
       getUnitStatusCounts: React.PropTypes.func.isRequired,
       service: React.PropTypes.object.isRequired,
@@ -41,7 +40,7 @@ YUI.add('service-overview', function() {
     getInitialState: function() {
       // Setting a default state object.
       return {
-        confirmationOpen: this.props.confirmationOpen
+        confirmationOpen: false
       };
     },
 

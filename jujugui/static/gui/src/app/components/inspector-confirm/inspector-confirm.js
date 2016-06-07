@@ -25,7 +25,7 @@ YUI.add('inspector-confirm', function() {
     propTypes: {
       buttons: React.PropTypes.array.isRequired,
       message: React.PropTypes.string.isRequired,
-      open: React.PropTypes.bool.isRequired,
+      open: React.PropTypes.bool,
     },
 
     /**

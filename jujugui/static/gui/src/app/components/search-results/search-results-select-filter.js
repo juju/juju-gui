@@ -24,7 +24,7 @@ YUI.add('search-results-select-filter', function(Y) {
 
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
-      currentValue: React.PropTypes.string.isRequired,
+      currentValue: React.PropTypes.string,
       filter: React.PropTypes.string.isRequired,
       items: React.PropTypes.array.isRequired,
       label: React.PropTypes.string.isRequired

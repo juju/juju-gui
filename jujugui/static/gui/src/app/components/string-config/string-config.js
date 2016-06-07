@@ -23,7 +23,10 @@ YUI.add('string-config', function() {
   juju.components.StringConfig = React.createClass({
 
     propTypes: {
-      config: React.PropTypes.string.isRequired,
+      config: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.number
+      ]),
       option: React.PropTypes.object.isRequired
     },
 

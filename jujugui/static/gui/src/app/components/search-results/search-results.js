@@ -26,15 +26,15 @@ YUI.add('search-results', function(Y) {
       charmstoreSearch: React.PropTypes.func.isRequired,
       getName: React.PropTypes.func.isRequired,
       makeEntityModel: React.PropTypes.func.isRequired,
-      owner: React.PropTypes.string.isRequired,
-      provides: React.PropTypes.string.isRequired,
+      owner: React.PropTypes.string,
+      provides: React.PropTypes.string,
       query: React.PropTypes.string.isRequired,
-      requires: React.PropTypes.string.isRequired,
-      series: React.PropTypes.string.isRequired,
+      requires: React.PropTypes.string,
+      series: React.PropTypes.string,
       seriesList: React.PropTypes.object.isRequired,
-      sort: React.PropTypes.string.isRequired,
-      tags: React.PropTypes.string.isRequired,
-      type: React.PropTypes.string.isRequired
+      sort: React.PropTypes.string,
+      tags: React.PropTypes.string,
+      type: React.PropTypes.string
     },
 
     searchXhr: null,

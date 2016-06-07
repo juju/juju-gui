@@ -24,12 +24,15 @@ YUI.add('overview-action', function() {
 
     propTypes: {
       action: React.PropTypes.func.isRequired,
-      icon: React.PropTypes.string.isRequired,
-      linkAction: React.PropTypes.func.isRequired,
-      linkTitle: React.PropTypes.string.isRequired,
+      icon: React.PropTypes.string,
+      linkAction: React.PropTypes.func,
+      linkTitle: React.PropTypes.string,
       title: React.PropTypes.string.isRequired,
-      value: React.PropTypes.string.isRequired,
-      valueType: React.PropTypes.string.isRequired
+      value: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.number
+      ]),
+      valueType: React.PropTypes.string
     },
 
     baseClass: 'overview-action',

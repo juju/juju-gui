@@ -72,7 +72,10 @@ YUI.add('machine-view-column', function() {
     propTypes: {
       activeMenuItem: React.PropTypes.string,
       canDrop: React.PropTypes.bool.isRequired,
-      children: React.PropTypes.object.isRequired,
+      children: React.PropTypes.oneOfType([
+        React.PropTypes.object,
+        React.PropTypes.array
+      ]),
       connectDropTarget: React.PropTypes.func.isRequired,
       dropUnit: React.PropTypes.func,
       droppable: React.PropTypes.bool.isRequired,

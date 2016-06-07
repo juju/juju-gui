@@ -42,7 +42,7 @@ YUI.add('inspector-component', function() {
       getYAMLConfig: React.PropTypes.func.isRequired,
       linkify: React.PropTypes.func.isRequired,
       service: React.PropTypes.object.isRequired,
-      serviceRelations: React.PropTypes.object.isRequired,
+      serviceRelations: React.PropTypes.array.isRequired,
       setCharm: React.PropTypes.func.isRequired,
       unexposeService: React.PropTypes.func.isRequired,
       updateServiceUnitsDisplayname: React.PropTypes.func.isRequired

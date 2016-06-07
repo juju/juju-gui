@@ -27,7 +27,7 @@ YUI.add('unit-list', function() {
       destroyUnits: React.PropTypes.func.isRequired,
       envResolved: React.PropTypes.func.isRequired,
       service: React.PropTypes.object.isRequired,
-      unitStatus: React.PropTypes.string.isRequired,
+      unitStatus: React.PropTypes.string,
       units: React.PropTypes.array.isRequired
     },
 
