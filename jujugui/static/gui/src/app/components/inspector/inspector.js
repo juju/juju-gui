@@ -22,7 +22,30 @@ YUI.add('inspector-component', function() {
 
   juju.components.Inspector = React.createClass({
     propTypes: {
-      linkify: React.PropTypes.func.isRequired
+      addCharm: React.PropTypes.func.isRequired,
+      addGhostAndEcsUnits: React.PropTypes.func.isRequired,
+      addNotification: React.PropTypes.func.isRequired,
+      appPreviousState: React.PropTypes.object.isRequired,
+      changeState: React.PropTypes.func.isRequired,
+      clearState: React.PropTypes.func.isRequired,
+      createMachinesPlaceUnits: React.PropTypes.func.isRequired,
+      destroyRelations: React.PropTypes.func.isRequired,
+      destroyService: React.PropTypes.func.isRequired,
+      destroyUnits: React.PropTypes.func.isRequired,
+      envResolved: React.PropTypes.func.isRequired,
+      exposeService: React.PropTypes.func.isRequired,
+      getAvailableVersions: React.PropTypes.func.isRequired,
+      getCharm: React.PropTypes.func.isRequired,
+      getMacaroon: React.PropTypes.func.isRequired,
+      getServiceByName: React.PropTypes.func.isRequired,
+      getUnitStatusCounts: React.PropTypes.func.isRequired,
+      getYAMLConfig: React.PropTypes.func.isRequired,
+      linkify: React.PropTypes.func.isRequired,
+      service: React.PropTypes.object.isRequired,
+      serviceRelations: React.PropTypes.object.isRequired,
+      setCharm: React.PropTypes.func.isRequired,
+      unexposeService: React.PropTypes.func.isRequired,
+      updateServiceUnitsDisplayname: React.PropTypes.func.isRequired
     },
 
     /**

@@ -22,6 +22,14 @@ YUI.add('inspector-header', function() {
 
   juju.components.InspectorHeader = React.createClass({
 
+    propTypes: {
+      activeComponent: React.PropTypes.string.isRequired,
+      backCallback: React.PropTypes.func.isRequired,
+      icon: React.PropTypes.string.isRequired,
+      title: React.PropTypes.string.isRequired,
+      type: React.PropTypes.string.isRequired
+    },
+
     /**
       Returns the supplied classes with the type class applied if it
       is truthy.

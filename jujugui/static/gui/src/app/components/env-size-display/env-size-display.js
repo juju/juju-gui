@@ -22,6 +22,13 @@ YUI.add('env-size-display', function() {
 
   juju.components.EnvSizeDisplay = React.createClass({
 
+    propTypes: {
+      changeState: React.PropTypes.func.isRequired,
+      getAppState: React.PropTypes.func.isRequired,
+      machineCount: React.PropTypes.number.isRequired,
+      serviceCount: React.PropTypes.number.isRequired,
+    },
+
     getInitialState: function() {
       return {
         activeComponent: this.props.getAppState(

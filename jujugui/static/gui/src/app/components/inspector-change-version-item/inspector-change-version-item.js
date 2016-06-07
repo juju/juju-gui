@@ -22,6 +22,13 @@ YUI.add('inspector-change-version-item', function() {
 
   juju.components.InspectorChangeVersionItem = React.createClass({
 
+    propTypes: {
+      buttonAction: React.PropTypes.func.isRequired,
+      downgrade: React.PropTypes.bool.isRequired,
+      id: React.PropTypes.string.isRequired,
+      itemAction: React.PropTypes.func.isRequired
+    },
+
     /**
       Generate the button label for a downgrade or upgrade.
 

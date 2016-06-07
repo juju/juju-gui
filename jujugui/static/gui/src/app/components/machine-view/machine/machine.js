@@ -64,14 +64,17 @@ YUI.add('machine-view-machine', function() {
 
   var MachineViewMachine = React.createClass({
     propTypes: {
+      canDrop: React.PropTypes.bool.isRequired,
+      connectDropTarget: React.PropTypes.func.isRequired,
       destroyMachines: React.PropTypes.func.isRequired,
+      dropUnit: React.PropTypes.func.isRequired,
+      isOver: React.PropTypes.bool.isRequired,
       machine: React.PropTypes.object.isRequired,
       removeUnit: React.PropTypes.func,
-      dropUnit: React.PropTypes.func.isRequired,
-      selected: React.PropTypes.bool,
       selectMachine: React.PropTypes.func,
-      showConstraints: React.PropTypes.bool,
+      selected: React.PropTypes.bool,
       services: React.PropTypes.object.isRequired,
+      showConstraints: React.PropTypes.bool,
       type: React.PropTypes.string.isRequired,
       units: React.PropTypes.object.isRequired
     },

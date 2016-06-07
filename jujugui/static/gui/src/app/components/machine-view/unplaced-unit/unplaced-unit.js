@@ -48,8 +48,10 @@ YUI.add('machine-view-unplaced-unit', function() {
 
   var MachineViewUnplacedUnit = React.createClass({
     propTypes: {
+      connectDragSource: React.PropTypes.func.isRequired,
       createMachine: React.PropTypes.func.isRequired,
       icon: React.PropTypes.string.isRequired,
+      isDragging: React.PropTypes.bool.isRequired,
       machines: React.PropTypes.object.isRequired,
       placeUnit: React.PropTypes.func.isRequired,
       removeUnit: React.PropTypes.func.isRequired,

@@ -24,11 +24,11 @@ YUI.add('entity-content', function() {
     /* Define and validate the properites available on this component. */
     propTypes: {
       apiUrl: React.PropTypes.string.isRequired,
-      entityModel: React.PropTypes.object.isRequired,
-      renderMarkdown: React.PropTypes.func.isRequired,
-      getFile: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
-      pluralize: React.PropTypes.func.isRequired
+      entityModel: React.PropTypes.object.isRequired,
+      getFile: React.PropTypes.func.isRequired,
+      pluralize: React.PropTypes.func.isRequired,
+      renderMarkdown: React.PropTypes.func.isRequired,
     },
 
     /**

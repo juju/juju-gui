@@ -21,6 +21,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('local-inspector', function() {
 
   juju.components.LocalInspector = React.createClass({
+
+    propTypes: {
+      changeState: React.PropTypes.func.isRequired,
+      file: React.PropTypes.object.isRequired,
+      localType: React.PropTypes.string.isRequired,
+      series: React.PropTypes.object.isRequired,
+      services: React.PropTypes.array.isRequired,
+      upgradeServiceUsingLocalCharm: React.PropTypes.func.isRequired,
+      uploadLocalCharm: React.PropTypes.func.isRequired
+    },
+
     /**
       Get the current state of the local inspector.
 

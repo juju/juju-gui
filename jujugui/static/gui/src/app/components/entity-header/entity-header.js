@@ -26,8 +26,8 @@ YUI.add('entity-header', function() {
       addNotification: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       deployService: React.PropTypes.func.isRequired,
-      getBundleYAML: React.PropTypes.func.isRequired,
       entityModel: React.PropTypes.object.isRequired,
+      getBundleYAML: React.PropTypes.func.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
       scrollPosition: React.PropTypes.number.isRequired

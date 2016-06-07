@@ -25,6 +25,7 @@ YUI.add('deployment-panel', function() {
     propTypes: {
       activeComponent: React.PropTypes.string.isRequired,
       changeState: React.PropTypes.func.isRequired,
+      children: React.PropTypes.object.isRequired,
       modelName: React.PropTypes.string.isRequired,
       steps: React.PropTypes.array.isRequired
     },

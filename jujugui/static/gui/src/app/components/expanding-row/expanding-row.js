@@ -23,8 +23,9 @@ YUI.add('expanding-row', function() {
   juju.components.ExpandingRow = React.createClass({
 
     propTypes: {
-      expanded: React.PropTypes.bool,
+      children: React.PropTypes.object.isRequired,
       classes: React.PropTypes.object,
+      expanded: React.PropTypes.bool
     },
 
     /**
