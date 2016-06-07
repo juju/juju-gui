@@ -193,8 +193,13 @@ YUI.add('deployment-summary', function() {
       Handle committing when the deploy button in the summary is clicked.
 
       @method _handleDeploy
+      @param {Object} e The click or submit event.
     */
-    _handleDeploy: function() {
+    _handleDeploy: function(e) {
+      if (e && e.preventDefault) {
+        // Stop the form from submitting.
+        e.preventDefault();
+      }
       // For now every commit will autoplace all units.
       this.props.autoPlaceUnits();
       // If we're in a model which exists then just commit the ecs and return.
@@ -474,7 +479,8 @@ YUI.add('deployment-summary', function() {
         <div className="deployment-panel__child deployment-summary">
           <juju.components.DeploymentPanelContent
             title="Review deployment">
-            <form className="six-col last-col">
+            <form className="six-col last-col"
+              onSubmit={this._handleDeploy}>
             { !!modelCommitted ?
               this.props.modelName :
               <juju.components.DeploymentInput

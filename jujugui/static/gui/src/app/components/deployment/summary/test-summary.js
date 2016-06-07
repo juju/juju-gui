@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentSummary', function() {
-  var changeCounts, pluralize, refs;
+  var changeCounts, env, jem, pluralize, refs;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -38,6 +38,16 @@ describe('DeploymentSummary', function() {
     };
     pluralize = (val) => {
       return val + 's';
+    };
+    env = {
+      setCredentials: sinon.stub(),
+      set: sinon.stub(),
+      connect: sinon.stub(),
+      on: sinon.stub().returns({ detach: sinon.stub() })
+    };
+    jem = {
+      newModel: sinon.stub(),
+      listTemplates: sinon.stub()
     };
     refs = {
       modelName: {
@@ -69,7 +79,7 @@ describe('DeploymentSummary', function() {
       <juju.components.DeploymentSummaryChangeItem
         key={1}
         change={changeDescriptions[1]} />];
-    var jem = {
+    jem = {
       listTemplates: cb => {
         cb(null, [{
           path: 'spinach/my-creds',
@@ -121,7 +131,8 @@ describe('DeploymentSummary', function() {
       <div className="deployment-panel__child deployment-summary">
         <juju.components.DeploymentPanelContent
           title="Review deployment">
-          <form className="six-col last-col">
+          <form className="six-col last-col"
+            onSubmit={instance._handleDeploy}>
             <juju.components.DeploymentInput
               disabled={false}
               label="Model name"
@@ -207,9 +218,7 @@ describe('DeploymentSummary', function() {
     var getUnplacedUnitCount = sinon.stub().returns(1);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        jem={{
-          listTemplates: sinon.stub()
-        }}
+        jem={jem}
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
@@ -310,9 +319,7 @@ describe('DeploymentSummary', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        jem={{
-          listTemplates: sinon.stub()
-        }}
+        jem={jem}
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
@@ -350,9 +357,7 @@ describe('DeploymentSummary', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
-        jem={{
-          listTemplates: sinon.stub()
-        }}
+        jem={jem}
         env={{}}
         appSet={sinon.stub()}
         createSocketURL={sinon.stub()}
@@ -386,9 +391,6 @@ describe('DeploymentSummary', function() {
     var autoPlaceUnits = sinon.stub();
     var changeState = sinon.stub();
     var ecsCommit = sinon.stub();
-    var jem = {
-      newModel: sinon.stub(),
-    };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
         jem={jem}
@@ -441,17 +443,8 @@ describe('DeploymentSummary', function() {
     var getUnplacedUnitCount = sinon.stub().returns(0);
     var appSet = sinon.stub();
     var createSocketURL = sinon.stub().returns('newurl');
-    var jem = {
-      newModel: sinon.stub(),
-      listTemplates: sinon.stub()
-    };
     var detach = sinon.stub();
-    var env = {
-      setCredentials: sinon.stub(),
-      set: sinon.stub(),
-      connect: sinon.stub(),
-      on: sinon.stub().returns({ detach: detach })
-    };
+    env.on = sinon.stub().returns({ detach: detach });
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
         jem={jem}
@@ -545,17 +538,6 @@ describe('DeploymentSummary', function() {
     var getUnplacedUnitCount = sinon.stub().returns(0);
     var appSet = sinon.stub();
     var createSocketURL = sinon.stub().returns('newurl');
-    var jem = {
-      newModel: sinon.stub(),
-      listTemplates: sinon.stub()
-    };
-    var detach = sinon.stub();
-    var env = {
-      setCredentials: sinon.stub(),
-      set: sinon.stub(),
-      connect: sinon.stub(),
-      on: sinon.stub().returns({ detach: detach })
-    };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
         jem={jem}
@@ -579,5 +561,40 @@ describe('DeploymentSummary', function() {
     var output = renderer.getRenderOutput();
     output.props.children[1].props.buttons[1].action();
     assert.equal(jem.newModel.callCount, 0);
+  });
+
+  it('can deploy if the form is submitted', function() {
+    var preventDefault = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentSummary
+        jem={jem}
+        env={env}
+        appSet={sinon.stub()}
+        createSocketURL={sinon.stub().returns('newurl')}
+        deploymentStorage={{
+          templateName: 'secureTemplate',
+          cloud: 'aws',
+          region: 'us-east-1'
+        }}
+        users={{ jem: { user: 'joecoder' }}}
+        autoPlaceUnits={sinon.stub()}
+        ecsClear={sinon.stub()}
+        ecsCommit={sinon.stub()}
+        changeCounts={changeCounts}
+        changeDescriptions={[]}
+        changeState={sinon.stub()}
+        getUnplacedUnitCount={sinon.stub().returns(0)}
+        modelCommitted={false}
+        modelName="Prod"
+        numberOfChanges={6}
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(true)} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = refs;
+    var output = renderer.getRenderOutput();
+    output.props.children[0].props.children[0].props.onSubmit(
+      {preventDefault: preventDefault});
+    assert.equal(preventDefault.callCount, 1);
+    assert.equal(jem.newModel.callCount, 1, 'here');
   });
 });
