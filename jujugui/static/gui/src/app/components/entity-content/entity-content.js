@@ -279,10 +279,21 @@ YUI.add('entity-content', function() {
     _showEntityRelations: function() {
       var entityModel = this.props.entityModel;
       if (entityModel.get('entityType') === 'charm') {
-        return (
-          <juju.components.EntityContentRelations
-            changeState={this.props.changeState}
-            relations={entityModel.get('relations')} />);
+        // Need to flatten out the relations to determine if we have any.
+        var relations = entityModel.get('relations');
+        // Normal behavior when there are no relations is to provide an empty
+        // object. That said, in the interest of defensively protecting against
+        // unexpected data, make sure these variables are at least empty
+        // objects.
+        var requires = relations.requires || {};
+        var provides = relations.provides || {};
+        var relationsList = Object.keys(requires).concat(Object.keys(provides));
+        if (relationsList.length > 0) {
+          return (
+            <juju.components.EntityContentRelations
+              changeState={this.props.changeState}
+              relations={relations} />);
+        }
       }
     },
 
