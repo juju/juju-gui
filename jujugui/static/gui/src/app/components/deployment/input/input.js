@@ -24,7 +24,7 @@ YUI.add('deployment-input', function() {
 
     propTypes: {
       disabled: React.PropTypes.bool,
-      label: React.PropTypes.string.isRequired,
+      label: React.PropTypes.string,
       placeholder: React.PropTypes.string.isRequired,
       required: React.PropTypes.bool,
       validate: React.PropTypes.array,
@@ -82,16 +82,33 @@ YUI.add('deployment-input', function() {
       return this.refs.field.value;
     },
 
-
-    render: function() {
+    /**
+      Generates a label for the input if the prop is provided.
+      @method _generateLabel
+    */
+    _generateLabel: function() {
       var label = this.props.label;
-      var id = label.replace(' ', '-');
-      return (
-        <div className="deployment-input">
+      var element, id;
+      if (label) {
+        id = label.replace(' ', '-');
+        element =
           <label className="deployment-input__label"
             htmlFor={id}>
             {label}
-          </label>
+          </label>;
+      }
+      return {
+        labelElement: element,
+        id: id
+      };
+    },
+
+
+    render: function() {
+      var {labelElement, id} = this._generateLabel();
+      return (
+        <div className="deployment-input">
+          {labelElement}
           <input className="deployment-input__field"
             defaultValue={this.props.value}
             disabled={this.props.disabled}
