@@ -330,6 +330,31 @@ YUI.add('inspector-component', function() {
                   activeComponent: 'relations'
                 }}}};
           break;
+        case 'relate-to':
+          var relationId = metadata.id;
+          var relation = this.props.serviceRelations[relationId];
+          state.activeChild = {
+            title: 'Relate to',
+            icon: service.get('icon'),
+            component:
+              <juju.components.AddedServicesList
+                services={db.services}
+                hoveredId={hoveredId}
+                updateUnitFlags={db.updateUnitFlags.bind(db)}
+                findRelatedServices={db.findRelatedServices.bind(db)}
+                findUnrelatedServices={db.findUnrelatedServices.bind(db)}
+                getUnitStatusCounts={utils.getUnitStatusCounts}
+                hoverService={ServiceModule.hoverService.bind(ServiceModule)}
+                panToService={ServiceModule.panToService.bind(ServiceModule)}
+                changeState={this.changeState.bind(this)} />,
+            backState: {
+              sectionA: {
+                component: 'inspector',
+                metadata: {
+                  id: serviceId,
+                  activeComponent: 'relations'
+                }}}};
+          break;
         case 'change-version':
           state.activeChild = {
             title: 'Change version',
