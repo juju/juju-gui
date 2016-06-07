@@ -1,7 +1,53 @@
 .user-profile {
+
     &__create-new {
         float: right;
         font-size: 1rem;
+        width: 400px;
+        text-align: right;
+
+        &.collapsed {
+            .deployment-input__field,
+            .button--inline-neutral.second {
+                width: 0;
+                border-width: 0;
+            }
+            .deployment-input__field {
+              padding: 0;
+            }
+            .button--inline-neutral.first {
+                width: 150px;
+                border-width: 1px;
+            }
+        }
+
+        .button--inline-neutral.first {
+            width: 0;
+            border-width: 0;
+        }
+
+        .button--inline-neutral {
+            overflow: hidden;
+            white-space: nowrap;
+            transition: all 0.5s ease-in;
+            width: 150px;
+            outline: none;
+            padding: 10px 0;
+            display: inline-block;
+        }
+
+        .deployment-input {
+            display: inline-block;
+        }
+
+        .deployment-input__field {
+            padding: 8px;
+            width: 200px;
+            transition: all 0.5s ease-in;
+            margin-bottom: 0;
+            box-sizing: border-box;
+            height: 38px;
+        }
     }
 
     &__close {
