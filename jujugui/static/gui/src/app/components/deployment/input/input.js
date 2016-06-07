@@ -106,8 +106,13 @@ YUI.add('deployment-input', function() {
 
     render: function() {
       var {labelElement, id} = this._generateLabel();
+      var classes = classNames(
+        'deployment-input', {
+          error: !!this.state.errors
+        }
+      );
       return (
-        <div className="deployment-input">
+        <div className={classes}>
           {labelElement}
           <input className="deployment-input__field"
             defaultValue={this.props.value}

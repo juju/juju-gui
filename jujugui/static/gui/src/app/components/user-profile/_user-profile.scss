@@ -38,6 +38,20 @@
 
         .deployment-input {
             display: inline-block;
+
+            &.error {
+                .deployment-input__field {
+                    border: 1px solid #df382c;
+                }
+            }
+        }
+
+        .deployment-input__errors {
+            position: absolute;
+            z-index: 600;
+            top: 60px;
+            width: 350px;
+            text-align: left;
         }
 
         .deployment-input__field {
