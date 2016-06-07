@@ -48,7 +48,8 @@ YUI.add('user-profile', function() {
         bundleList: [],
         loadingBundles: false,
         loadingCharms: false,
-        loadingModels: false
+        loadingModels: false,
+        createNewModelActive: false
       };
     },
 
@@ -205,6 +206,16 @@ YUI.add('user-profile', function() {
     */
     switchModel: function(uuid, name, callback) {
       var props = this.props;
+      // If no uuid is specified then this is switching to create a new model
+      // and we need to grab the new name and validate it.
+      if (!uuid) {
+        var modelname = this.refs.modelname;
+        if (!modelName.validate()) {
+          // Only continue if the validation passes.
+          return;
+        }
+        name = modelname.getValue();
+      }
       props.switchModel(uuid, this.state.envList, name, callback);
     },
 
@@ -371,6 +382,55 @@ YUI.add('user-profile', function() {
     },
 
     /**
+      Toggles the class on the necessary elements for the create new interaction
+      @method _toggleNameInput
+    */
+    _toggleNameInput: function() {
+      this.setState({ createNewModelActive: true });
+    },
+
+    /**
+      Generates the elements required for the create new button
+      @method _generateCreateNew
+      @param {String} className The class you'd like to have applied to the
+        container.
+    */
+    _generateCreateNew: function(className) {
+      var classes = classNames(
+        'user-profile__create-new', {
+          className: !!className,
+          collapsed: !this.state.createNewModelActive
+        });
+      return (
+        <div className={classes}>
+          <juju.components.GenericButton
+            action={this._toggleNameInput}
+            ref="createNewFirstBtn"
+            type='inline-neutral first'
+            title='Create new' />
+          <juju.components.DeploymentInput
+            placeholder="untitled_model"
+            required={true}
+            ref="modelName"
+            validate={[{
+              regex: /\S+/,
+              error: 'This field is required.'
+            }, {
+              regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
+              error: 'This field must only contain upper and lowercase ' +
+                'letters, numbers, and hyphens. It must not start or ' +
+                'end with a hyphen.'
+            }]} />
+          <juju.components.GenericButton
+            action={this.switchModel}
+            ref="createNewSecondBtn"
+            type='inline-neutral second'
+            title='Submit' />
+        </div>
+      );
+    },
+
+    /**
       Generate the details for the provided bundle.
 
       @method _generateBundleRow
@@ -525,19 +585,13 @@ YUI.add('user-profile', function() {
       var header;
       var rows = [];
       var title;
-      var actions;
+      var createNewButton;
       if (type === 'models') {
         generateRow = this._generateModelRow;
         header = this._generateModelHeader();
         title = 'Models';
         if (this.props.canCreateNew) {
-          actions = (
-            <div className="user-profile__create-new">
-              <juju.components.GenericButton
-                action={this.switchModel}
-                type='inline-neutral'
-                title='Create new' />
-            </div>);
+          createNewButton = this._generateCreateNew();
         }
       } else if (type === 'bundles') {
         generateRow = this._generateBundleRow;
@@ -558,7 +612,7 @@ YUI.add('user-profile', function() {
             <span className="user-profile__size">
               ({list.length})
             </span>
-            {actions}
+            {createNewButton}
           </div>
           <ul className="user-profile__list twelve-col">
             {header}
@@ -597,12 +651,7 @@ YUI.add('user-profile', function() {
               Your models, bundles and charms will appear here when you create
               them.
             </p>
-            <p className="user-profile__empty-button">
-              <juju.components.GenericButton
-                action={this.switchModel}
-                type='inline-neutral'
-                title='Create new model' />
-            </p>
+            {this._generateCreateNew('user-profile__empty-button')}
           </div>);
       }
       return (
@@ -655,6 +704,7 @@ YUI.add('user-profile', function() {
     'svg-icon',
     'panel-component',
     'user-profile-entity',
-    'user-profile-header'
+    'user-profile-header',
+    'deployment-input'
   ]
 });
