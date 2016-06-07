@@ -148,22 +148,20 @@ YUI.add('service-overview', function() {
           }
         }
       });
-      if (this.props.serviceRelations.length > 0) {
-        actions.push({
-          title: 'Relations',
-          icon: 'relations',
-          action: this._navigate,
-          state: {
-            sectionA: {
-              component: 'inspector',
-              metadata: {
-                id: serviceId,
-                activeComponent: 'relations'
-              }
+      actions.push({
+        title: 'Relations',
+        icon: 'relations',
+        action: this._navigate,
+        state: {
+          sectionA: {
+            component: 'inspector',
+            metadata: {
+              id: serviceId,
+              activeComponent: 'relations'
             }
           }
-        });
-      }
+        }
+      });
       actions.push({
         title: 'Expose',
         value: service.get('exposed') ? 'On' : 'Off',

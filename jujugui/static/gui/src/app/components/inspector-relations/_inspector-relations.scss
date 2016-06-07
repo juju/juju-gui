@@ -18,4 +18,8 @@
     &__message {
         padding: 10px 20px;
     }
+
+    &__actions {
+        border-bottom: 1px solid $mid-grey;
+    }
 }
