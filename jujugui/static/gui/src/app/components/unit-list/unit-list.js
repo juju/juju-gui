@@ -22,6 +22,15 @@ YUI.add('unit-list', function() {
 
   juju.components.UnitList = React.createClass({
 
+    propTypes: {
+      changeState: React.PropTypes.func.isRequired,
+      destroyUnits: React.PropTypes.func.isRequired,
+      envResolved: React.PropTypes.func.isRequired,
+      service: React.PropTypes.object.isRequired,
+      unitStatus: React.PropTypes.string.isRequired,
+      units: React.PropTypes.array.isRequired
+    },
+
     /**
       Generate the initial state.
 

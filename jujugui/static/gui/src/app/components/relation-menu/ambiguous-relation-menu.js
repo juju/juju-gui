@@ -45,7 +45,7 @@ YUI.add('ambiguous-relation-menu', function() {
     return components;
   }
 
-  juju.components.AmbiguousRelationMenu = function(props) {
+  var AmbiguousRelationMenu = function(props) {
     return (
       <div className="menu">
         <ul>
@@ -58,6 +58,12 @@ YUI.add('ambiguous-relation-menu', function() {
       </div>
     );
   };
+
+  AmbiguousRelationMenu.propTypes = {
+    endpoints: React.PropTypes.array.isRequired
+  };
+
+  juju.components.AmbiguousRelationMenu = AmbiguousRelationMenu;
 
 }, '0.1.0', { requires: [
   'svg-icon'

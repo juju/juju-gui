@@ -83,7 +83,7 @@ YUI.add('relation-menu', function() {
     return components;
   }
 
-  juju.components.RelationMenu = function(props) {
+  var RelationMenu = function(props) {
     return (
       <div className="menu">
         <div className="triangle">&nbsp;</div>
@@ -93,6 +93,12 @@ YUI.add('relation-menu', function() {
       </div>
     );
   };
+
+  RelationMenu.propTypes = {
+    relations: React.PropTypes.array.isRequired
+  };
+
+  juju.components.RelationMenu = RelationMenu;
 
 }, '0.1.0', { requires: [
   'svg-icon'

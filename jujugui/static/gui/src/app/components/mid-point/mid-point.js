@@ -21,6 +21,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('mid-point', function() {
 
   juju.components.MidPoint = React.createClass({
+
+    propTypes: {
+      changeState: React.PropTypes.func.isRequired,
+      storeOpen: React.PropTypes.bool.isRequired
+    },
+
     charms: [{
       id: 'trusty/mariadb',
       icon: 'https://api.jujucharms.com/charmstore/v4/trusty/mariadb/icon.svg', // eslint-disable-line max-len

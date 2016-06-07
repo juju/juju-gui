@@ -21,6 +21,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('search-results-type-filter', function(Y) {
 
   juju.components.SearchResultsTypeFilter = React.createClass({
+
+    propTypes: {
+      changeState: React.PropTypes.func.isRequired,
+      currentType: React.PropTypes.string.isRequired
+    },
+
     /**
       Generate the base classes from the props.
 

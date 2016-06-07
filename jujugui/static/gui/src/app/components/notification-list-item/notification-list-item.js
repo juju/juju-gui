@@ -23,11 +23,11 @@ YUI.add('notification-list-item', function() {
   juju.components.NotificationListItem = React.createClass({
 
     propTypes: {
-      removeNotification: React.PropTypes.func.isRequired,
-      timestamp: React.PropTypes.string.isRequired,
       message: React.PropTypes.string.isRequired,
-      type: React.PropTypes.string,
-      timeout: React.PropTypes.number
+      removeNotification: React.PropTypes.func.isRequired,
+      timeout: React.PropTypes.number,
+      timestamp: React.PropTypes.string.isRequired,
+      type: React.PropTypes.string
     },
 
     getInitialState: function() {

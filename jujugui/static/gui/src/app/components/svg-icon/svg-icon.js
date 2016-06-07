@@ -22,6 +22,14 @@ YUI.add('svg-icon', function() {
 
   juju.components.SvgIcon = React.createClass({
 
+    propTypes: {
+      className: React.PropTypes.string.isRequired,
+      height: React.PropTypes.number.isRequired,
+      name: React.PropTypes.string.isRequired,
+      size: React.PropTypes.number.isRequired,
+      width: React.PropTypes.number.isRequired
+    },
+
     getInitialState: function() {
       return this._generateDimensions(this.props);
     },
