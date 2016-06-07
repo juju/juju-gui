@@ -58,7 +58,17 @@ describe('UserProfile', () => {
     env = {
       destroyModel: sinon.stub().callsArg(0),
       findFacadeVersion: sinon.stub(),
-      get: sinon.stub().returns('default')
+      get: sinon.stub().returns('default'),
+      createModel: (modelName, userName, callback) => {
+        assert.equal(modelName, 'newmodelname', 'model name not set properly');
+        assert.equal(userName, 'test-owner', 'user name not set properly');
+        // Simulate the model being created.
+        callback({
+          err: null,
+          uuid: 'abc123',
+          name: modelName
+        });
+      }
     };
   });
 
@@ -87,6 +97,7 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         changeState={sinon.stub()}
         pluralize={pluralize}
+        showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
     var instance = component.getMountedInstance();
@@ -115,12 +126,31 @@ describe('UserProfile', () => {
                 Your models, bundles and charms will appear here when you create
                 them.
               </p>
-              <p className="user-profile__empty-button">
-                <juju.components.GenericButton
-                  action={instance.switchModel}
-                  type='inline-neutral'
-                  title='Create new model' />
-              </p>
+              <div className="user-profile__create-new user-profile__empty-button collapsed">
+                <form onSubmit={instance.createAndSwitch}>
+                  <juju.components.GenericButton
+                    action={instance._toggleNameInput}
+                    type='inline-neutral first'
+                    title='Create new' />
+                  <juju.components.DeploymentInput
+                    placeholder="untitled_model"
+                    required={true}
+                    ref="modelName"
+                    validate={[{
+                      regex: /\S+/,
+                      error: 'This field is required.'
+                    }, {
+                      regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
+                      error: 'This field must only contain upper and lowercase ' +
+                        'letters, numbers, and hyphens. It must not start or ' +
+                        'end with a hyphen.'
+                    }]} />
+                  <juju.components.GenericButton
+                    action={instance.createAndSwitch}
+                    type='inline-neutral second'
+                    title='Submit' />
+                </form>
+              </div>
             </div>
           </div>
         </div>
@@ -145,6 +175,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         pluralize={sinon.stub()}
         staticURL='surl'
+        showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />);
     assert.equal(
@@ -168,6 +199,7 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         changeState={sinon.stub()}
         pluralize={sinon.stub()}
+        showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -201,6 +233,7 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         changeState={sinon.stub()}
         pluralize={sinon.stub()}
+        showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -241,6 +274,7 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         changeState={changeState}
         pluralize={pluralize}
+        showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
     var instance = component.getMountedInstance();
@@ -261,11 +295,30 @@ describe('UserProfile', () => {
               <span className="user-profile__size">
                 ({1})
               </span>
-              <div className='user-profile__create-new'>
-                <juju.components.GenericButton
-                  action={instance.switchModel}
-                  type='inline-neutral'
-                  title='Create new' />
+              <div className="user-profile__create-new collapsed">
+                <form onSubmit={instance.createAndSwitch}>
+                  <juju.components.GenericButton
+                    action={instance._toggleNameInput}
+                    type='inline-neutral first'
+                    title='Create new' />
+                  <juju.components.DeploymentInput
+                    placeholder="untitled_model"
+                    required={true}
+                    ref="modelName"
+                    validate={[{
+                      regex: /\S+/,
+                      error: 'This field is required.'
+                    }, {
+                      regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
+                      error: 'This field must only contain upper and lowercase ' +
+                        'letters, numbers, and hyphens. It must not start or ' +
+                        'end with a hyphen.'
+                    }]} />
+                  <juju.components.GenericButton
+                    action={instance.createAndSwitch}
+                    type='inline-neutral second'
+                    title='Submit' />
+                </form>
               </div>
             </div>
             <ul className="user-profile__list twelve-col">
@@ -448,6 +501,7 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         changeState={sinon.stub()}
         pluralize={sinon.stub()}
+        showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -486,6 +540,7 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         interactiveLogin={false}
         pluralize={pluralize}
+        showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />);
     var expected = (
@@ -521,6 +576,7 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         pluralize={sinon.stub()}
+        showConnectingMask={sinon.stub()}
         storeUser={storeUser}
         user={users.charmstore} />, true);
     var instance = renderer.getMountedInstance();
@@ -545,6 +601,7 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         pluralize={sinon.stub()}
+        showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
     assert.equal(list.callCount, 0);
@@ -561,6 +618,7 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         pluralize={sinon.stub()}
+        showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />);
     assert.equal(list.callCount, 2);
@@ -581,6 +639,7 @@ describe('UserProfile', () => {
         charmstore={{}}
         env={env}
         getDiagramURL={sinon.stub()}
+        showConnectingMask={sinon.stub()}
         pluralize={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore}
@@ -615,6 +674,7 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         listModels={sinon.stub()}
         pluralize={sinon.stub()}
+        showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         switchModel={sinon.stub()}
         user={users.charmstore} />, true);
@@ -646,6 +706,7 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         listModels={listModels}
         pluralize={sinon.stub()}
+        showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         switchModel={sinon.stub()}
         user={users.charmstore} />, true);
@@ -672,6 +733,7 @@ describe('UserProfile', () => {
         env={env}
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
+        showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         pluralize={pluralize}
         user={users.charmstore} />, true);
@@ -696,11 +758,94 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         pluralize={sinon.stub()}
+        showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         switchModel={sinon.stub()}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
     assert.isUndefined(output.props.children.props.children.props.children[1]
       .props.children[0].props.children[0].props.children[2]);
+  });
+
+  it('creates then switches to newly created models', () => {
+    // This test doesn't check the user interactions and animations, that
+    // will need to be done with the uitest suite.
+    var showConnectingMask = sinon.stub();
+    var switchModel = sinon.stub();
+    var component = jsTestUtils.shallowRender(
+      <juju.components.UserProfile
+        addNotification={sinon.stub()}
+        users={users}
+        canCreateNew={true}
+        changeState={sinon.stub()}
+        charmstore={charmstore}
+        env={env}
+        getDiagramURL={sinon.stub()}
+        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
+        pluralize={sinon.stub()}
+        showConnectingMask={showConnectingMask}
+        storeUser={sinon.stub()}
+        switchModel={switchModel}
+        user={users.charmstore} />, true);
+    var output = component.getRenderOutput();
+    var instance = component.getMountedInstance();
+    // Set up the component to simulate user action.
+    instance.refs = {
+      modelName: {
+        validate: _ => true,
+        getValue: _ => 'newmodelname'
+      }
+    };
+    var preventable = { preventDefault: sinon.stub() };
+    // Call the action method in the proper element.
+    output.props.children.props.children.props.children[1].props.children[0]
+      .props.children[0].props.children[2].props.children.props.children[2]
+      .props.action(preventable);
+    assert.equal(preventable.preventDefault.callCount, 1, 'default not prevented');
+    assert.equal(showConnectingMask.callCount, 1, 'mask not shown');
+    // Make sure that it switches to the model after it's created.
+    assert.equal(switchModel.callCount, 1, 'model not switched to');
+    assert.equal(switchModel.args[0][0], 'abc123', 'uuid not passed through');
+    assert.equal(switchModel.args[0][2], 'newmodelname', 'model name not set');
+  });
+
+  it('does not submit to create new if name does not validate', () => {
+    // This test doesn't check the user interactions and animations, that
+    // will need to be done with the uitest suite.
+    var showConnectingMask = sinon.stub();
+    var switchModel = sinon.stub();
+    var component = jsTestUtils.shallowRender(
+      <juju.components.UserProfile
+        addNotification={sinon.stub()}
+        users={users}
+        canCreateNew={true}
+        changeState={sinon.stub()}
+        charmstore={charmstore}
+        env={env}
+        getDiagramURL={sinon.stub()}
+        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
+        pluralize={sinon.stub()}
+        showConnectingMask={showConnectingMask}
+        storeUser={sinon.stub()}
+        switchModel={switchModel}
+        user={users.charmstore} />, true);
+    var output = component.getRenderOutput();
+    var instance = component.getMountedInstance();
+    // Set up the component to simulate user action.
+    instance.refs = {
+      modelName: {
+        validate: _ => false
+      }
+    };
+    var preventable = { preventDefault: sinon.stub() };
+    // Call the action method in the proper element.
+    output.props.children.props.children.props.children[1].props.children[0]
+      .props.children[0].props.children[2].props.children.props.children[2]
+      .props.action(preventable);
+    assert.equal(
+      preventable.preventDefault.callCount, 1, 'default not prevented');
+    assert.equal(showConnectingMask.callCount, 0, 'mask shown');
+    // Make sure that it switches to the model after it's created.
+    assert.equal(switchModel.callCount, 0, 'model should not be switched to');
   });
 });

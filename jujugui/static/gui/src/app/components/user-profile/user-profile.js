@@ -37,6 +37,7 @@ YUI.add('user-profile', function() {
       staticURL: React.PropTypes.string,
       storeUser: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
+      showConnectingMask: React.PropTypes.func.isRequired,
       user: React.PropTypes.object,
       users: React.PropTypes.object.isRequired
     },
@@ -422,8 +423,9 @@ YUI.add('user-profile', function() {
     */
     _generateCreateNew: function(className) {
       var classes = classNames(
-        'user-profile__create-new', {
-          className: !!className,
+        'user-profile__create-new',
+        className,
+        {
           collapsed: !this.state.createNewModelActive
         });
       return (
