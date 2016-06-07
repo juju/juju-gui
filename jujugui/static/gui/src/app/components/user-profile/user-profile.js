@@ -209,12 +209,12 @@ YUI.add('user-profile', function() {
       // If no uuid is specified then this is switching to create a new model
       // and we need to grab the new name and validate it.
       if (!uuid) {
-        var modelname = this.refs.modelname;
+        var modelName = this.refs.modelName;
         if (!modelName.validate()) {
           // Only continue if the validation passes.
           return;
         }
-        name = modelname.getValue();
+        name = modelName.getValue();
       }
       props.switchModel(uuid, this.state.envList, name, callback);
     },
@@ -405,7 +405,6 @@ YUI.add('user-profile', function() {
         <div className={classes}>
           <juju.components.GenericButton
             action={this._toggleNameInput}
-            ref="createNewFirstBtn"
             type='inline-neutral first'
             title='Create new' />
           <juju.components.DeploymentInput
@@ -423,7 +422,6 @@ YUI.add('user-profile', function() {
             }]} />
           <juju.components.GenericButton
             action={this.switchModel}
-            ref="createNewSecondBtn"
             type='inline-neutral second'
             title='Submit' />
         </div>
