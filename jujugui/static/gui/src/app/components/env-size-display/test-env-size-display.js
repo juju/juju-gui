@@ -37,9 +37,10 @@ describe('EnvSizeDisplay', function() {
   it('shows applications and machines count', function() {
     var component = renderIntoDocument(
         <juju.components.EnvSizeDisplay
-          serviceCount="3"
-          machineCount="4"
-          getAppState={function() {}} />);
+          changeState={sinon.stub()}
+          getAppState={function() {}}
+          machineCount={4}
+          serviceCount={3} />);
     assert.equal(
         queryComponentSelector(
             component, 'a[data-view=service]').innerText, '3 applications');
@@ -54,8 +55,9 @@ describe('EnvSizeDisplay', function() {
 
     var component = renderIntoDocument(
         <juju.components.EnvSizeDisplay
-          serviceCount="3"
-          machineCount="4"
+          changeState={sinon.stub()}
+          serviceCount={3}
+          machineCount={4}
           getAppState={getAppStateStub} />);
 
     assert.equal(getAppStateStub.callCount, 1);
@@ -71,8 +73,8 @@ describe('EnvSizeDisplay', function() {
 
     var component = renderIntoDocument(
         <juju.components.EnvSizeDisplay
-          serviceCount="3"
-          machineCount="4"
+          serviceCount={3}
+          machineCount={4}
           getAppState={function() {}}
           changeState={changeStateStub} />);
     var serviceLink = queryComponentSelector(component, 'a[data-view=service]');
@@ -94,8 +96,8 @@ describe('EnvSizeDisplay', function() {
 
     var component = renderIntoDocument(
         <juju.components.EnvSizeDisplay
-          serviceCount="3"
-          machineCount="4"
+          serviceCount={3}
+          machineCount={4}
           getAppState={function() {}}
           changeState={changeStateStub} />);
     var serviceLink = queryComponentSelector(component, 'a[data-view=service]');

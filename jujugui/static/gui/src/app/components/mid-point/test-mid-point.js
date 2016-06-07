@@ -229,7 +229,6 @@ describe('MidPoint', function() {
       <juju.components.MidPoint
         changeState={changeState} />);
     var node = queryComponentSelector(component, '.button--inline-neutral');
-    console.log(node);
     testUtils.Simulate.click(node);
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {

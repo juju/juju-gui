@@ -26,7 +26,7 @@ YUI.add('env-size-display', function() {
       changeState: React.PropTypes.func.isRequired,
       getAppState: React.PropTypes.func.isRequired,
       machineCount: React.PropTypes.number.isRequired,
-      serviceCount: React.PropTypes.number.isRequired,
+      serviceCount: React.PropTypes.number.isRequired
     },
 
     getInitialState: function() {
@@ -111,4 +111,6 @@ YUI.add('env-size-display', function() {
     }
   });
 
-}, '0.1.0', {requires: []});
+}, '0.1.0', {requires: [
+  'svg-icon'
+]});

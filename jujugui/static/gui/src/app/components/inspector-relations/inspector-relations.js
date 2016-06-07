@@ -22,7 +22,7 @@ YUI.add('inspector-relations', function() {
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
       destroyRelations: React.PropTypes.func.isRequired,
-      serviceRelations: React.PropTypes.object.isRequired
+      serviceRelations: React.PropTypes.array.isRequired
     },
 
     /**

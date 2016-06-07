@@ -117,7 +117,7 @@ describe('GenericButton', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.GenericButton
           title="My action"
-          disabled="true" />);
+          disabled={true} />);
     assert.deepEqual(output,
       <button className="button--neutral button--disabled"
        onClick={output.props.onClick}

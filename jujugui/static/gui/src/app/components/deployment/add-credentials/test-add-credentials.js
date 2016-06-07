@@ -421,7 +421,8 @@ describe('DeploymentAddCredentials', function() {
         cloud={cloud}
         jem={jem}
         setDeploymentInfo={sinon.stub()}
-        users={users} />, true);
+        users={users}
+        validateForm={sinon.stub().returns(true)} />, true);
     var output = renderer.getRenderOutput();
     var props = output.props;
     var emptySelect = (

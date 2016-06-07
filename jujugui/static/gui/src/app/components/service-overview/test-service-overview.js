@@ -436,7 +436,7 @@ describe('ServiceOverview', function() {
     assert.deepEqual(output.props.children[2],
       <juju.components.InspectorConfirm
         message={confirmMessage}
-        open={undefined}
+        open={false}
         buttons={buttons} />);
   });
 
