@@ -792,6 +792,7 @@ YUI.add('juju-gui', function(Y) {
           switchModel={utils.switchModel.bind(
             this, this.createSocketURL.bind(this), this.switchEnv.bind(this),
             this.env)}
+          showConnectingMask={this.showConnectingMask.bind(this)}
           user={user}
           users={Y.clone(this.get('users'), true)}
           charmstore={this.get('charmstore')} />,

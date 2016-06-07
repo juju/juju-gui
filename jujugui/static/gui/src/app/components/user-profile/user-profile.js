@@ -213,14 +213,21 @@ YUI.add('user-profile', function() {
       Fetches the model name from the modelName ref and then creates a model
       then switches to it.
       @method createAndSwitch
+      @param {Object} e The event handler from a form submission.
     */
-    createAndSwitch: function() {
+    createAndSwitch: function(e) {
+      if (e && e.preventDefault) {
+        e.preventDefault();
+      }
       // The supplied new model name needs to be valid.
       var modelName = this.refs.modelName;
       if (!modelName.validate()) {
         // Only continue if the validation passes.
         return;
       }
+      // Because this will automatically connect to the model lets show
+      // the connecting mask right now.
+      this.props.showConnectingMask();
       // XXX This is only for the JIMM flow.
       this.props.env.createModel(
         modelName.getValue(),
@@ -421,27 +428,29 @@ YUI.add('user-profile', function() {
         });
       return (
         <div className={classes}>
-          <juju.components.GenericButton
-            action={this._toggleNameInput}
-            type='inline-neutral first'
-            title='Create new' />
-          <juju.components.DeploymentInput
-            placeholder="untitled_model"
-            required={true}
-            ref="modelName"
-            validate={[{
-              regex: /\S+/,
-              error: 'This field is required.'
-            }, {
-              regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
-              error: 'This field must only contain upper and lowercase ' +
-                'letters, numbers, and hyphens. It must not start or ' +
-                'end with a hyphen.'
-            }]} />
-          <juju.components.GenericButton
-            action={this.createAndSwitch}
-            type='inline-neutral second'
-            title='Submit' />
+          <form onSubmit={this.createAndSwitch}>
+            <juju.components.GenericButton
+              action={this._toggleNameInput}
+              type='inline-neutral first'
+              title='Create new' />
+            <juju.components.DeploymentInput
+              placeholder="untitled_model"
+              required={true}
+              ref="modelName"
+              validate={[{
+                regex: /\S+/,
+                error: 'This field is required.'
+              }, {
+                regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
+                error: 'This field must only contain upper and lowercase ' +
+                  'letters, numbers, and hyphens. It must not start or ' +
+                  'end with a hyphen.'
+              }]} />
+            <juju.components.GenericButton
+              action={this.createAndSwitch}
+              type='inline-neutral second'
+              title='Submit' />
+          </form>
         </div>
       );
     },
