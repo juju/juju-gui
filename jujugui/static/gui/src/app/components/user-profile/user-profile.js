@@ -236,7 +236,7 @@ YUI.add('user-profile', function() {
         data => {
           if (data.err) {
             // XXX Throw notification
-            console.log(err);
+            console.error(err);
             return;
           }
           this.switchModel(data.uuid, data.name);
@@ -433,8 +433,8 @@ YUI.add('user-profile', function() {
           <form onSubmit={this.createAndSwitch}>
             <juju.components.GenericButton
               action={this._toggleNameInput}
-              type='inline-neutral first'
-              title='Create new' />
+              type="inline-neutral first"
+              title="Create new" />
             <juju.components.DeploymentInput
               placeholder="untitled_model"
               required={true}
@@ -450,8 +450,8 @@ YUI.add('user-profile', function() {
               }]} />
             <juju.components.GenericButton
               action={this.createAndSwitch}
-              type='inline-neutral second'
-              title='Submit' />
+              type="inline-neutral second"
+              title="Submit" />
           </form>
         </div>
       );
@@ -668,17 +668,20 @@ YUI.add('user-profile', function() {
         var basePath = `${staticURL}/static/gui/build/app`;
         return (
           <div className="user-profile__empty twelve-col no-margin-bottom">
-            <img alt="Empty profile"
-              className="user-profile__empty-image"
-              src={`${basePath}/assets/images/non-sprites/empty_profile.png`} />
-            <h2 className="user-profile__empty-title">
-              Your profile is currently empty
-            </h2>
-            <p className="user-profile__empty-text">
-              Your models, bundles and charms will appear here when you create
-              them.
-            </p>
             {this._generateCreateNew('user-profile__empty-button')}
+            <div className="clearfix">
+              <img alt="Empty profile"
+                className="user-profile__empty-image"
+                src=
+                  {`${basePath}/assets/images/non-sprites/empty_profile.png`} />
+              <h2 className="user-profile__empty-title">
+                Your profile is currently empty
+              </h2>
+              <p className="user-profile__empty-text">
+                Your models, bundles and charms will appear here when you create
+                them.
+              </p>
+            </div>
           </div>);
       }
       return (

@@ -116,16 +116,6 @@ describe('UserProfile', () => {
               links={links}
               username={users.charmstore.usernameDisplay} />
             <div className="user-profile__empty twelve-col no-margin-bottom">
-              <img alt="Empty profile"
-                className="user-profile__empty-image"
-                src="/static/gui/build/app/assets/images/non-sprites/empty_profile.png" />
-              <h2 className="user-profile__empty-title">
-                Your profile is currently empty
-              </h2>
-              <p className="user-profile__empty-text">
-                Your models, bundles and charms will appear here when you create
-                them.
-              </p>
               <div className="user-profile__create-new user-profile__empty-button collapsed">
                 <form onSubmit={instance.createAndSwitch}>
                   <juju.components.GenericButton
@@ -150,6 +140,18 @@ describe('UserProfile', () => {
                     type='inline-neutral second'
                     title='Submit' />
                 </form>
+              </div>
+              <div className="clearfix">
+                <img alt="Empty profile"
+                  className="user-profile__empty-image"
+                  src="/static/gui/build/app/assets/images/non-sprites/empty_profile.png" />
+                <h2 className="user-profile__empty-title">
+                  Your profile is currently empty
+                </h2>
+                <p className="user-profile__empty-text">
+                  Your models, bundles and charms will appear here when you create
+                  them.
+                </p>
               </div>
             </div>
           </div>
@@ -179,8 +181,8 @@ describe('UserProfile', () => {
         storeUser={sinon.stub()}
         user={users.charmstore} />);
     assert.equal(
-      output.props.children.props.children.props
-            .children[1].props.children[0].props.src,
+      output.props.children.props.children.props.children[1].props
+        .children[1].props.children[0].props.src,
       'surl/static/gui/build/app/assets/images/non-sprites/empty_profile.png');
   });
 

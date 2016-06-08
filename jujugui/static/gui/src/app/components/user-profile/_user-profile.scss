@@ -13,7 +13,7 @@
                 border-width: 0;
             }
             .deployment-input__field {
-              padding: 0;
+                padding: 0;
             }
             .button--inline-neutral.first {
                 width: 150px;
@@ -31,9 +31,9 @@
             white-space: nowrap;
             transition: all 0.5s ease-in;
             width: 150px;
-            outline: none;
-            padding: 10px 0;
             display: inline-block;
+            padding-right: 0;
+            padding-left: 0;
         }
 
         .deployment-input {
@@ -41,14 +41,14 @@
 
             &.error {
                 .deployment-input__field {
-                    border: 1px solid #df382c;
+                    border: 1px solid $error;
                 }
             }
         }
 
         .deployment-input__errors {
             position: absolute;
-            z-index: 600;
+            z-index: index($z-indexed-elements, more-menu);
             top: 60px;
             width: 350px;
             text-align: left;
@@ -60,7 +60,7 @@
             transition: all 0.5s ease-in;
             margin-bottom: 0;
             box-sizing: border-box;
-            height: 38px;
+            height: 40px;
         }
     }
 
@@ -84,8 +84,12 @@
     &__empty {
         text-align: center;
 
+        .clearfix {
+            clear: both;
+        }
+
         &-image {
-            margin: 40px 0;
+            margin: 0 0 40px 0;
         }
 
         &-title {
@@ -96,10 +100,6 @@
             max-width: 360px;
             margin: 0 auto;
             color: $warm-grey;
-        }
-
-        &-button {
-            margin-top: 40px;
         }
     }
 
