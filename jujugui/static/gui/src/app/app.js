@@ -793,6 +793,7 @@ YUI.add('juju-gui', function(Y) {
             this, this.createSocketURL.bind(this), this.switchEnv.bind(this),
             this.env)}
           showConnectingMask={this.showConnectingMask.bind(this)}
+          hideConnectingMask={this.hideConnectingMask.bind(this)}
           user={user}
           users={Y.clone(this.get('users'), true)}
           charmstore={this.get('charmstore')} />,
@@ -2077,6 +2078,18 @@ YUI.add('juju-gui', function(Y) {
       var msg = document.getElementById('loading-message');
       if (msg) {
         msg.style.display = 'block';
+      }
+    },
+
+    /**
+      Hides the connecting to Juju model mask.
+      @method hideConnectingMask
+    */
+    hideConnectingMask: function() {
+      this.maskVisibility(false);
+      var msg = document.getElementById('loading-message');
+      if (msg) {
+        msg.style.display = 'none';
       }
     },
 

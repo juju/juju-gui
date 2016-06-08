@@ -38,6 +38,7 @@ YUI.add('user-profile', function() {
       storeUser: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
+      hideConnectingMask: React.PropTypes.func.isRequired,
       user: React.PropTypes.object,
       users: React.PropTypes.object.isRequired
     },
@@ -234,9 +235,15 @@ YUI.add('user-profile', function() {
         modelName.getValue(),
         this.props.user.user,
         data => {
-          if (data.err) {
-            // XXX Throw notification
+          var err = data.err;
+          if (err) {
+            this.props.addNotification({
+              title: 'Failed to create new Model',
+              message: err,
+              level: 'error'
+            });
             console.error(err);
+            this.props.hideConnectingMask(false);
             return;
           }
           this.switchModel(data.uuid, data.name);

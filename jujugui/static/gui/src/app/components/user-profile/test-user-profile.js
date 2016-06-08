@@ -97,6 +97,7 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         changeState={sinon.stub()}
         pluralize={pluralize}
+        hideConnectingMask={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
@@ -177,6 +178,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         pluralize={sinon.stub()}
         staticURL='surl'
+        hideConnectingMask={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />);
@@ -201,6 +203,7 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         changeState={sinon.stub()}
         pluralize={sinon.stub()}
+        hideConnectingMask={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
@@ -235,6 +238,7 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         changeState={sinon.stub()}
         pluralize={sinon.stub()}
+        hideConnectingMask={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
@@ -276,6 +280,7 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         changeState={changeState}
         pluralize={pluralize}
+        hideConnectingMask={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
@@ -503,6 +508,7 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         changeState={sinon.stub()}
         pluralize={sinon.stub()}
+        hideConnectingMask={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
@@ -542,6 +548,7 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         interactiveLogin={false}
         pluralize={pluralize}
+        hideConnectingMask={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />);
@@ -578,6 +585,7 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         pluralize={sinon.stub()}
+        hideConnectingMask={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={storeUser}
         user={users.charmstore} />, true);
@@ -603,6 +611,7 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         pluralize={sinon.stub()}
+        hideConnectingMask={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />, true);
@@ -620,6 +629,7 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         pluralize={sinon.stub()}
+        hideConnectingMask={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />);
@@ -641,6 +651,7 @@ describe('UserProfile', () => {
         charmstore={{}}
         env={env}
         getDiagramURL={sinon.stub()}
+        hideConnectingMask={sinon.stub()}
         showConnectingMask={sinon.stub()}
         pluralize={sinon.stub()}
         storeUser={sinon.stub()}
@@ -676,6 +687,7 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         listModels={sinon.stub()}
         pluralize={sinon.stub()}
+        hideConnectingMask={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         switchModel={sinon.stub()}
@@ -708,6 +720,7 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         listModels={listModels}
         pluralize={sinon.stub()}
+        hideConnectingMask={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         switchModel={sinon.stub()}
@@ -735,6 +748,7 @@ describe('UserProfile', () => {
         env={env}
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
+        hideConnectingMask={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         pluralize={pluralize}
@@ -760,6 +774,7 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         pluralize={sinon.stub()}
+        hideConnectingMask={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         switchModel={sinon.stub()}
@@ -785,6 +800,7 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         pluralize={sinon.stub()}
+        hideConnectingMask={sinon.stub()}
         showConnectingMask={showConnectingMask}
         storeUser={sinon.stub()}
         switchModel={switchModel}
@@ -827,6 +843,7 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         pluralize={sinon.stub()}
+        hideConnectingMask={sinon.stub()}
         showConnectingMask={showConnectingMask}
         storeUser={sinon.stub()}
         switchModel={switchModel}
@@ -849,5 +866,61 @@ describe('UserProfile', () => {
     assert.equal(showConnectingMask.callCount, 0, 'mask shown');
     // Make sure that it switches to the model after it's created.
     assert.equal(switchModel.callCount, 0, 'model should not be switched to');
+  });
+
+  it('gracefully handles errors when creating new model', () => {
+    // This test doesn't check the user interactions and animations, that
+    // will need to be done with the uitest suite.
+    env.createModel = (modelName, userName, callback) => {
+      assert.equal(modelName, 'newmodelname', 'model name not set properly');
+      assert.equal(userName, 'test-owner', 'user name not set properly');
+      // Simulate the model being created.
+      callback({
+        err: 'this is an error',
+        uuid: 'abc123',
+        name: modelName
+      });
+    };
+    var hideConnectingMask = sinon.stub();
+    var addNotification = sinon.stub();
+    var component = jsTestUtils.shallowRender(
+      <juju.components.UserProfile
+        addNotification={addNotification}
+        users={users}
+        canCreateNew={true}
+        changeState={sinon.stub()}
+        charmstore={charmstore}
+        env={env}
+        getDiagramURL={sinon.stub()}
+        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
+        pluralize={sinon.stub()}
+        hideConnectingMask={hideConnectingMask}
+        showConnectingMask={sinon.stub()}
+        storeUser={sinon.stub()}
+        switchModel={sinon.stub()}
+        user={users.charmstore} />, true);
+    var output = component.getRenderOutput();
+    var instance = component.getMountedInstance();
+    // Set up the component to simulate user action.
+    instance.refs = {
+      modelName: {
+        validate: _ => true,
+        getValue: _ => 'newmodelname'
+      }
+    };
+    var preventable = { preventDefault: sinon.stub() };
+    // Call the action method in the proper element.
+    output.props.children.props.children.props.children[1].props.children[0]
+      .props.children[0].props.children[2].props.children.props.children[2]
+      .props.action(preventable);
+    // Make sure that the mask is hidden and that a notification was added
+    // with the error message.
+    assert.equal(hideConnectingMask.callCount, 1, 'mask not hidden');
+    assert.equal(addNotification.callCount, 1, 'notification not added');
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Failed to create new Model',
+      message: 'this is an error',
+      level: 'error'
+    });
   });
 });
