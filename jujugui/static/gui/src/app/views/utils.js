@@ -1765,6 +1765,27 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
+    Returns a list of relatible applications
+
+    @method getRelatableApplications
+    @param {Object} topo The topology object.
+    @param {Object} service A BoxModel-wrapped application.
+    @param {Function} callback A function to call after removal.
+  */
+  utils.getRelatableApplications = function(topo, models, application) {
+    var endpointsController = topo.get('endpointsController');
+    var endpoints = models.getEndpoints(application, endpointsController);
+
+    // Transform endpoints into a list of relatable applications (to the
+    // service).
+    var possibleRelations = Y.Array.map(
+        Y.Array.flatten(Y.Object.values(endpoints)),
+        function(ep) {return ep});
+
+    return possibleRelations;
+  };
+
+  /**
     Destroy a list of units.
 
     @method destroyUnits
