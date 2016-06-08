@@ -786,6 +786,7 @@ YUI.add('juju-gui', function(Y) {
           changeState={this.changeState.bind(this)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           interactiveLogin={this.get('interactiveLogin')}
+          jem={this.jem}
           pluralize={utils.pluralize.bind(this)}
           staticURL={window.juju_config.staticURL}
           storeUser={this.storeUser.bind(this)}

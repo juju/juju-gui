@@ -120,7 +120,7 @@ describe('UserProfile', () => {
               <div className="user-profile__create-new user-profile__empty-button collapsed">
                 <form onSubmit={instance.createAndSwitch}>
                   <juju.components.GenericButton
-                    action={instance._toggleNameInput}
+                    action={instance._nextCreateStep}
                     type='inline-neutral first'
                     title='Create new' />
                   <juju.components.DeploymentInput
@@ -305,7 +305,7 @@ describe('UserProfile', () => {
               <div className="user-profile__create-new collapsed">
                 <form onSubmit={instance.createAndSwitch}>
                   <juju.components.GenericButton
-                    action={instance._toggleNameInput}
+                    action={instance._nextCreateStep}
                     type='inline-neutral first'
                     title='Create new' />
                   <juju.components.DeploymentInput
@@ -922,5 +922,52 @@ describe('UserProfile', () => {
       message: 'this is an error',
       level: 'error'
     });
+  });
+
+  it('swtches models by switching to disconnected with JIMM', () => {
+    var switchModel = sinon.stub();
+    var showConnectingMask = sinon.stub();
+    env.createModel = sinon.stub();
+    var component = jsTestUtils.shallowRender(
+      <juju.components.UserProfile
+        addNotification={sinon.stub()}
+        users={users}
+        canCreateNew={true}
+        changeState={sinon.stub()}
+        charmstore={charmstore}
+        env={env}
+        getDiagramURL={sinon.stub()}
+        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
+        jem={{}}
+        pluralize={sinon.stub()}
+        hideConnectingMask={sinon.stub()}
+        showConnectingMask={showConnectingMask}
+        storeUser={sinon.stub()}
+        switchModel={switchModel}
+        user={users.charmstore} />, true);
+    var output = component.getRenderOutput();
+    // Click the button.
+    output.props.children.props.children.props.children[1].props.children[0]
+      .props.children[0].props.children[2].props.children.props.children[0]
+      .props.action();
+    // It should not try to create a model.
+    assert.equal(showConnectingMask.callCount, 0, 'should not show mask');
+    assert.equal(env.createModel.callCount, 0, 'it should not create model');
+    // Switching models.
+    assert.equal(switchModel.callCount, 1, 'it should have called switchModel');
+    assert.deepEqual(
+      switchModel.args[0], [
+        undefined,
+        [{
+          uuid: 'env1',
+          name: 'spinach/sandbox',
+          lastConnection: 'today',
+          ownerTag: 'test-owner',
+          isAlive: true,
+          owner: 'test-owner'
+        }],
+        undefined,
+        undefined
+      ]);
   });
 });

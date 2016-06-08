@@ -32,6 +32,7 @@ YUI.add('user-profile', function() {
       env: React.PropTypes.object.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       interactiveLogin: React.PropTypes.bool,
+      jem: React.PropTypes.object,
       listModels: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
       staticURL: React.PropTypes.string,
@@ -413,13 +414,21 @@ YUI.add('user-profile', function() {
     },
 
     /**
-      Toggles the class on the necessary elements for the create new interaction
-      @method _toggleNameInput
+      Depending on the existance of jem this will either switch to a
+      disconnected model or open up the UI to allow the user to create a
+      new model.
+      @method _nextCreateStep
     */
-    _toggleNameInput: function() {
-      this.setState({ createNewModelActive: true }, _ => {
-        this.refs.modelName.refs.field.focus();
-      });
+    _nextCreateStep: function() {
+      if (this.props.jem) {
+        // Switch to a disconnected model
+        this.switchModel();
+      } else {
+        // Open up the UI to specify a model name for the Controller.
+        this.setState({ createNewModelActive: true }, _ => {
+          this.refs.modelName.refs.field.focus();
+        });
+      }
     },
 
     /**
@@ -439,7 +448,7 @@ YUI.add('user-profile', function() {
         <div className={classes}>
           <form onSubmit={this.createAndSwitch}>
             <juju.components.GenericButton
-              action={this._toggleNameInput}
+              action={this._nextCreateStep}
               type="inline-neutral first"
               title="Create new" />
             <juju.components.DeploymentInput
