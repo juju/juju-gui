@@ -1,7 +1,67 @@
 .user-profile {
+
     &__create-new {
         float: right;
         font-size: 1rem;
+        width: 400px;
+        text-align: right;
+
+        &.collapsed {
+            .deployment-input__field,
+            .button--inline-neutral.second {
+                width: 0;
+                border-width: 0;
+            }
+            .deployment-input__field {
+                padding: 0;
+            }
+            .button--inline-neutral.first {
+                width: 150px;
+                border-width: 1px;
+            }
+        }
+
+        .button--inline-neutral.first {
+            width: 0;
+            border-width: 0;
+        }
+
+        .button--inline-neutral {
+            overflow: hidden;
+            white-space: nowrap;
+            transition: width 0.5s ease-in, padding 0.5s ease-in;
+            width: 150px;
+            display: inline-block;
+            padding-right: 0;
+            padding-left: 0;
+        }
+
+        .deployment-input {
+            display: inline-block;
+
+            &.error {
+                .deployment-input__field {
+                    border: 1px solid $error;
+                }
+            }
+        }
+
+        .deployment-input__errors {
+            position: absolute;
+            z-index: index($z-indexed-elements, more-menu);
+            top: 60px;
+            width: 350px;
+            text-align: left;
+        }
+
+        .deployment-input__field {
+            padding: 8px;
+            width: 200px;
+            transition: all 0.5s ease-in;
+            margin-bottom: 0;
+            box-sizing: border-box;
+            height: 40px;
+        }
     }
 
     &__close {
@@ -24,8 +84,12 @@
     &__empty {
         text-align: center;
 
+        .clearfix {
+            clear: both;
+        }
+
         &-image {
-            margin: 40px 0;
+            margin: 0 0 40px 0;
         }
 
         &-title {
@@ -36,10 +100,6 @@
             max-width: 360px;
             margin: 0 auto;
             color: $warm-grey;
-        }
-
-        &-button {
-            margin-top: 40px;
         }
     }
 

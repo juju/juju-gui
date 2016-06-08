@@ -32,11 +32,14 @@ YUI.add('user-profile', function() {
       env: React.PropTypes.object.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       interactiveLogin: React.PropTypes.bool,
+      jem: React.PropTypes.object,
       listModels: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
       staticURL: React.PropTypes.string,
       storeUser: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
+      showConnectingMask: React.PropTypes.func.isRequired,
+      hideConnectingMask: React.PropTypes.func.isRequired,
       user: React.PropTypes.object,
       users: React.PropTypes.object.isRequired
     },
@@ -48,7 +51,8 @@ YUI.add('user-profile', function() {
         bundleList: [],
         loadingBundles: false,
         loadingCharms: false,
-        loadingModels: false
+        loadingModels: false,
+        createNewModelActive: false
       };
     },
 
@@ -206,6 +210,45 @@ YUI.add('user-profile', function() {
     switchModel: function(uuid, name, callback) {
       var props = this.props;
       props.switchModel(uuid, this.state.envList, name, callback);
+    },
+
+    /**
+      Fetches the model name from the modelName ref and then creates a model
+      then switches to it.
+      @method createAndSwitch
+      @param {Object} e The event handler from a form submission.
+    */
+    createAndSwitch: function(e) {
+      if (e && e.preventDefault) {
+        e.preventDefault();
+      }
+      // The supplied new model name needs to be valid.
+      var modelName = this.refs.modelName;
+      if (!modelName.validate()) {
+        // Only continue if the validation passes.
+        return;
+      }
+      // Because this will automatically connect to the model lets show
+      // the connecting mask right now.
+      this.props.showConnectingMask();
+      // XXX This is only for the JIMM flow.
+      this.props.env.createModel(
+        modelName.getValue(),
+        this.props.user.user,
+        data => {
+          var err = data.err;
+          if (err) {
+            this.props.addNotification({
+              title: 'Failed to create new Model',
+              message: err,
+              level: 'error'
+            });
+            console.error(err);
+            this.props.hideConnectingMask(false);
+            return;
+          }
+          this.switchModel(data.uuid, data.name);
+        });
     },
 
     /**
@@ -371,6 +414,66 @@ YUI.add('user-profile', function() {
     },
 
     /**
+      Depending on the existance of jem this will either switch to a
+      disconnected model or open up the UI to allow the user to create a
+      new model.
+      @method _nextCreateStep
+    */
+    _nextCreateStep: function() {
+      if (this.props.jem) {
+        // Switch to a disconnected model
+        this.switchModel();
+      } else {
+        // Open up the UI to specify a model name for the Controller.
+        this.setState({ createNewModelActive: true }, _ => {
+          this.refs.modelName.refs.field.focus();
+        });
+      }
+    },
+
+    /**
+      Generates the elements required for the create new button
+      @method _generateCreateNew
+      @param {String} className The class you'd like to have applied to the
+        container.
+    */
+    _generateCreateNew: function(className) {
+      var classes = classNames(
+        'user-profile__create-new',
+        className,
+        {
+          collapsed: !this.state.createNewModelActive
+        });
+      return (
+        <div className={classes}>
+          <form onSubmit={this.createAndSwitch}>
+            <juju.components.GenericButton
+              action={this._nextCreateStep}
+              type="inline-neutral first"
+              title="Create new" />
+            <juju.components.DeploymentInput
+              placeholder="untitled_model"
+              required={true}
+              ref="modelName"
+              validate={[{
+                regex: /\S+/,
+                error: 'This field is required.'
+              }, {
+                regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
+                error: 'This field must only contain upper and lowercase ' +
+                  'letters, numbers, and hyphens. It must not start or ' +
+                  'end with a hyphen.'
+              }]} />
+            <juju.components.GenericButton
+              action={this.createAndSwitch}
+              type="inline-neutral second"
+              title="Submit" />
+          </form>
+        </div>
+      );
+    },
+
+    /**
       Generate the details for the provided bundle.
 
       @method _generateBundleRow
@@ -525,19 +628,13 @@ YUI.add('user-profile', function() {
       var header;
       var rows = [];
       var title;
-      var actions;
+      var createNewButton;
       if (type === 'models') {
         generateRow = this._generateModelRow;
         header = this._generateModelHeader();
         title = 'Models';
         if (this.props.canCreateNew) {
-          actions = (
-            <div className="user-profile__create-new">
-              <juju.components.GenericButton
-                action={this.switchModel}
-                type='inline-neutral'
-                title='Create new' />
-            </div>);
+          createNewButton = this._generateCreateNew();
         }
       } else if (type === 'bundles') {
         generateRow = this._generateBundleRow;
@@ -558,7 +655,7 @@ YUI.add('user-profile', function() {
             <span className="user-profile__size">
               ({list.length})
             </span>
-            {actions}
+            {createNewButton}
           </div>
           <ul className="user-profile__list twelve-col">
             {header}
@@ -587,22 +684,20 @@ YUI.add('user-profile', function() {
         var basePath = `${staticURL}/static/gui/build/app`;
         return (
           <div className="user-profile__empty twelve-col no-margin-bottom">
-            <img alt="Empty profile"
-              className="user-profile__empty-image"
-              src={`${basePath}/assets/images/non-sprites/empty_profile.png`} />
-            <h2 className="user-profile__empty-title">
-              Your profile is currently empty
-            </h2>
-            <p className="user-profile__empty-text">
-              Your models, bundles and charms will appear here when you create
-              them.
-            </p>
-            <p className="user-profile__empty-button">
-              <juju.components.GenericButton
-                action={this.switchModel}
-                type='inline-neutral'
-                title='Create new model' />
-            </p>
+            {this._generateCreateNew('user-profile__empty-button')}
+            <div className="clearfix">
+              <img alt="Empty profile"
+                className="user-profile__empty-image"
+                src=
+                  {`${basePath}/assets/images/non-sprites/empty_profile.png`} />
+              <h2 className="user-profile__empty-title">
+                Your profile is currently empty
+              </h2>
+              <p className="user-profile__empty-text">
+                Your models, bundles and charms will appear here when you create
+                them.
+              </p>
+            </div>
           </div>);
       }
       return (
@@ -655,6 +750,7 @@ YUI.add('user-profile', function() {
     'svg-icon',
     'panel-component',
     'user-profile-entity',
-    'user-profile-header'
+    'user-profile-header',
+    'deployment-input'
   ]
 });
