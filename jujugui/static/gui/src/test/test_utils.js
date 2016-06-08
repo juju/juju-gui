@@ -1544,7 +1544,7 @@ describe('utilities', function() {
   });
 
   describe('switchModel', function() {
-    var utils, testUtils, _showSwitchModelConfirm, _hideSwitchModelConfirm,
+    var utils, testUtils, _showUncommittedConfirm, _hidePopup,
         models;
 
     before(function(done) {
@@ -1556,10 +1556,10 @@ describe('utilities', function() {
     });
 
     beforeEach(function() {
-      _hideSwitchModelConfirm = utils._hideSwitchModelConfirm;
-      utils._hideSwitchModelConfirm = testUtils.makeStubFunction();
-      _showSwitchModelConfirm = utils._showSwitchModelConfirm;
-      utils._showSwitchModelConfirm = testUtils.makeStubFunction();
+      _hidePopup = utils._hidePopup;
+      utils._hidePopup = testUtils.makeStubFunction();
+      _showUncommittedConfirm = utils._showUncommittedConfirm;
+      utils._showUncommittedConfirm = testUtils.makeStubFunction();
       utils.changeState = testUtils.makeStubFunction();
       utils.set = testUtils.makeStubFunction();
       utils.showConnectingMask = testUtils.makeStubFunction();
@@ -1572,8 +1572,8 @@ describe('utilities', function() {
     });
 
     afterEach(function() {
-      utils._hideSwitchModelConfirm = _hideSwitchModelConfirm;
-      utils._showSwitchModelConfirm = _showSwitchModelConfirm;
+      utils._hidePopup = _hidePopup;
+      utils._showUncommittedConfirm = _showUncommittedConfirm;
     });
 
     it('can switch directly if there are no uncommitted changes', function() {
@@ -1609,7 +1609,7 @@ describe('utilities', function() {
       utils._switchModel = testUtils.makeStubFunction();
       utils.switchModel(
         createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
-      assert.deepEqual(utils._showSwitchModelConfirm.callCount(), 1);
+      assert.deepEqual(utils._showUncommittedConfirm.callCount(), 1);
       assert.deepEqual(utils._switchModel.callCount(), 0);
       utils._switchModel = _switchModel;
     });
@@ -1622,7 +1622,7 @@ describe('utilities', function() {
       utils._switchModel(
         createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
 
-      assert.deepEqual(utils._hideSwitchModelConfirm.callCount(), 1);
+      assert.deepEqual(utils._hidePopup.callCount(), 1);
       assert.deepEqual(createSocketURL.callCount(), 1);
       var socketArgs = createSocketURL.lastArguments();
       assert.deepEqual(socketArgs[0], models[0].uuid);
@@ -1665,6 +1665,68 @@ describe('utilities', function() {
       assert.deepEqual(switchEnv.callCount(), 1);
       assert.deepEqual(
         switchEnv.lastArguments(), [null, null, null, undefined]);
+    });
+  });
+
+  describe('showProfile', function() {
+    var utils, testUtils, _showUncommittedConfirm, _hidePopup;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', 'juju-tests-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        testUtils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      _hidePopup = utils._hidePopup;
+      utils._hidePopup = testUtils.makeStubFunction();
+      _showUncommittedConfirm = utils._showUncommittedConfirm;
+      utils._showUncommittedConfirm = testUtils.makeStubFunction();
+    });
+
+    afterEach(function() {
+      utils._hidePopup = _hidePopup;
+      utils._showUncommittedConfirm = _showUncommittedConfirm;
+    });
+
+    it('can show the profile if there are no uncommitted changes', function() {
+      var ecs = {
+        getCurrentChangeSet: testUtils.makeStubFunction({})
+      };
+      var changeState = testUtils.makeStubFunction();
+      utils.showProfile(ecs, changeState);
+      assert.deepEqual(changeState.callCount(), 1);
+      assert.deepEqual(utils._showUncommittedConfirm.callCount(), 0);
+    });
+
+    it('can show a confirmation if there are uncommitted changes', function() {
+      var ecs = {
+        getCurrentChangeSet: testUtils.makeStubFunction({change: 'one'})
+      };
+      var changeState = testUtils.makeStubFunction();
+      utils.showProfile(ecs, changeState);
+      assert.deepEqual(changeState.callCount(), 0);
+      assert.deepEqual(utils._showUncommittedConfirm.callCount(), 1);
+    });
+
+    it('can show a confirmation and clear changes', function() {
+      var ecs = {
+        clear: testUtils.makeStubFunction(),
+        getCurrentChangeSet: testUtils.makeStubFunction({change: 'one'})
+      };
+      var changeState = testUtils.makeStubFunction();
+      utils._showProfile(ecs, changeState, true);
+      assert.deepEqual(changeState.callCount(), 1);
+      assert.deepEqual(changeState.lastArguments()[0], {
+        sectionB: {
+          component: 'profile',
+          metadata: null
+        }
+      });
+      assert.deepEqual(utils._hidePopup.callCount(), 1);
+      assert.deepEqual(ecs.clear.callCount(), 1);
     });
   });
 

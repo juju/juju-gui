@@ -373,4 +373,25 @@ describe('EntityContent', function() {
     );
     assert.deepEqual(output, expected);
   });
+
+  it('doesn\'t show relations when they don\'t exist', function() {
+    var apiUrl = 'http://example.com';
+    var renderMarkdown = sinon.spy();
+    var getFile = sinon.spy();
+    var changeState = sinon.spy();
+    var pluralize = sinon.spy();
+    mockEntity.set('relations', {requires: {}, provides: {}});
+    var renderer = jsTestUtils.shallowRender(
+        <juju.components.EntityContent
+          apiUrl={apiUrl}
+          changeState={changeState}
+          entityModel={mockEntity}
+          getFile={getFile}
+          pluralize={pluralize}
+          renderMarkdown={renderMarkdown} />, true);
+    var output = renderer.getRenderOutput();
+    var parent = output.props.children[1].props.children.props.children[1];
+    var relationsComponent = parent.props.children[0];
+    assert.equal(relationsComponent, undefined);
+  });
 });

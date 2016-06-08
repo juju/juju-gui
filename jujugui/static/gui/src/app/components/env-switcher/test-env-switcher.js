@@ -37,6 +37,7 @@ describe('EnvSwitcher', function() {
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         environmentName="MyEnv"
         listModels={sinon.stub()}
+        showProfile={sinon.stub()}
         switchModel={sinon.stub()} />, true);
 
     var instance = renderer.getMountedInstance();
@@ -69,9 +70,11 @@ describe('EnvSwitcher', function() {
   });
 
   it('open the list on click', function() {
+    var showProfile = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         listModels={sinon.stub()}
+        showProfile={showProfile}
         switchModel={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     // Click the toggler
@@ -82,6 +85,7 @@ describe('EnvSwitcher', function() {
     renderer.render(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         listModels={sinon.stub()}
+        showProfile={showProfile}
         switchModel={sinon.stub()} />);
 
     var instance = renderer.getMountedInstance();
@@ -91,7 +95,7 @@ describe('EnvSwitcher', function() {
       <juju.components.EnvList
         handleEnvClick={instance.handleEnvClick}
         createNewEnv={instance.createNewEnv}
-        showUserProfile={instance.showUserProfile}
+        showProfile={showProfile}
         envs={[]} />);
   });
 
@@ -100,6 +104,7 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         listModels={listModels}
+        showProfile={sinon.stub()}
         switchModel={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
@@ -116,6 +121,7 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         listModels={listModels}
+        showProfile={sinon.stub()}
         switchModel={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
@@ -146,6 +152,7 @@ describe('EnvSwitcher', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         listModels={listModels}
+        showProfile={sinon.stub()}
         switchModel={switchModel} />, true);
     var instance = renderer.getMountedInstance();
     instance.componentDidMount();
@@ -162,24 +169,19 @@ describe('EnvSwitcher', function() {
     assert.deepEqual(switchModel.args[0], ['abc123', envs, 'abc123']);
   });
 
-  it('can call to change the state to the profile', function() {
+  it('can show the profile', function() {
     // To view the user profile you click a button in a sub component. This
     // excersizes the method that gets passed down.
-    var changeState = sinon.stub();
+    var showProfile = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        changeState={changeState}
         listModels={sinon.stub()}
+        showProfile={showProfile}
         switchModel={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
-    instance.showUserProfile();
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      sectionB: {
-        component: 'profile',
-        metadata: {}
-      }
-    });
+    instance.toggleEnvList({preventDefault: sinon.stub()});
+    var output = renderer.getRenderOutput();
+    output.props.children[1].props.showProfile();
+    assert.equal(showProfile.callCount, 1);
   });
-
 });

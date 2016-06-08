@@ -1979,7 +1979,7 @@ YUI.add('juju-view-utils', function(Y) {
     var currentChangeSet = env.get('ecs').getCurrentChangeSet();
     // If there are uncommitted changes then show a confirmation popup.
     if (Object.keys(currentChangeSet).length > 0) {
-      utils._showSwitchModelConfirm(switchModel);
+      utils._showUncommittedConfirm(switchModel);
       return;
     }
     // If there are no uncommitted changes then switch right away.
@@ -1987,36 +1987,36 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
-    Show the switch model confirmation popup.
+    Show the a confirmation popup for when there are uncommitted changes.
 
-    @method _showSwitchModelConfirm
-    @param {Function} switchModel The switch model method to call.
+    @method _showUncommittedConfirm
+    @param {Function} action The method to call if the user continues.
   */
-  utils._showSwitchModelConfirm = function(switchModel) {
+  utils._showUncommittedConfirm = function(action) {
     var buttons = [{
       title: 'Cancel',
-      action: utils._hideSwitchModelConfirm.bind(this),
+      action: utils._hidePopup.bind(this),
       type: 'base'
     }, {
-      title: 'Switch',
-      action: switchModel,
+      title: 'Continue',
+      action: action,
       type: 'destructive'
     }];
     ReactDOM.render(
       <window.juju.components.ConfirmationPopup
         buttons={buttons}
         message={'You have uncommitted changes to your model. You will ' +
-          'lose these changes if you switch models.'}
+          'lose these changes if you continue.'}
         title="Uncommitted changes" />,
       document.getElementById('popup-container'));
   };
 
   /**
-    Hide the switch model confirmation popup.
+    Hide the confirmation popup.
 
-    @method _hideSwitchModelConfirm
+    @method _hidePopup
   */
-  utils._hideSwitchModelConfirm = function() {
+  utils._hidePopup = function() {
     ReactDOM.unmountComponentAtNode(
       document.getElementById('popup-container'));
   };
@@ -2039,7 +2039,7 @@ YUI.add('juju-view-utils', function(Y) {
     createSocketURL, switchEnv, env, uuid, modelList, name, callback) {
     // Remove the switch model confirmation popup if it has been displayed to
     // the user.
-    utils._hideSwitchModelConfirm();
+    utils._hidePopup();
     // Show the model connection mask.
     this.showConnectingMask();
     // Reset the state of the GUI ready for displaying the new model.
@@ -2089,6 +2089,49 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
+    Navigate to the profile, displaying a confirmation if there are
+    uncommitted changes.
+
+    @method showProfile
+    @param {Object} ecs Reference to the ecs.
+    @param {Function} changeState The method for changing the app state.
+  */
+  utils.showProfile = function(ecs, changeState) {
+    var currentChangeSet = ecs.getCurrentChangeSet();
+    // If there are uncommitted changes then show a confirmation popup.
+    if (Object.keys(currentChangeSet).length > 0) {
+      utils._showUncommittedConfirm(
+        utils._showProfile.bind(this, ecs, changeState, true));
+      return;
+    }
+    // If there are no uncommitted changes then switch right away.
+    utils._showProfile(ecs, changeState, false);
+  };
+
+  /**
+    Navigate to the profile, displaying a confirmation if there are
+    uncommitted changes.
+
+    @method _showProfile
+    @param {Object} ecs Reference to the ecs.
+    @param {Function} changeState The method for changing the app state.
+  */
+  utils._showProfile = function(ecs, changeState, clear=false) {
+    utils._hidePopup();
+    if (clear) {
+      // Have to go ahead and clear the ECS otherwise future navigation will
+      // pop up the uncommitted changes confirmation again.
+      ecs.clear();
+    }
+    changeState({
+      sectionB: {
+        component: 'profile',
+        metadata: null
+      }
+    });
+  };
+
+  /**
     Makes a request of JEM or JES to fetch the users available models.
 
     @method listModels
@@ -2134,6 +2177,7 @@ YUI.add('juju-view-utils', function(Y) {
 }, '0.1.0', {
   requires: [
     'base-build',
+    'confirmation-popup',
     'escape',
     'node',
     'view',

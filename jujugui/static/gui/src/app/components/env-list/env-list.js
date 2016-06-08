@@ -24,7 +24,8 @@ YUI.add('env-list', function() {
 
     propTypes: {
       envs: React.PropTypes.array,
-      handleEnvClick: React.PropTypes.func
+      handleEnvClick: React.PropTypes.func,
+      showProfile: React.PropTypes.func.isRequired
     },
 
     getInitialState: function() {
@@ -72,15 +73,6 @@ YUI.add('env-list', function() {
     },
 
     /**
-      Calls the showUserProfile prop.
-
-      @method showProfile
-    */
-    showProfile: function() {
-      this.props.showUserProfile();
-    },
-
-    /**
       Generate the list of models.
 
       @method _generateModelList
@@ -102,7 +94,7 @@ YUI.add('env-list', function() {
       var buttons = [{
         title: 'Profile',
         type: 'neutral',
-        action: this.showProfile
+        action: this.props.showProfile
       }];
       return (
         <juju.components.Panel
