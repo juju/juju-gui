@@ -58,29 +58,47 @@ YUI.add('header-breadcrumb', function() {
     },
 
     /**
-      Handles clicks on the profile link.
-
+      Handles clicks on the profile link. Does not navigate to the profile
+      if we aren't showing the model switcher.
       @method _handleProfileClick
     */
     _handleProfileClick: function(e) {
       e.preventDefault();
+      if (!this.props.showEnvSwitcher) {
+        return;
+      }
       this.props.showProfile();
     },
 
-    render: function() {
+    /**
+      Generate the user link. If we aren't showing the model switcher then the
+      link to the profile does not turn the users cursor to a pointer because
+      we disable the profile functionality in that case.
+      @method _generateUserLink
+    */
+    _generateUserLink: function() {
       var auth = this.props.authDetails;
-      var userItem;
       if (auth && (auth.user || auth.loading)) {
         var username = auth.loading ? '...' : auth.usernameDisplay;
-        userItem = (
+        var linkClasses = classNames(
+          'header-breadcrumb--link',
+          {
+            'profile-disabled': !this.props.showEnvSwitcher
+          }
+        );
+        return (
           <li className="header-breadcrumb__list-item">
-            <a className="header-breadcrumb--link"
+            <a className={linkClasses}
                onClick={this._handleProfileClick}>
               {username}
             </a>
-          </li>
-        );
+          </li>);
       }
+      return;
+    },
+
+    render: function() {
+      var userItem = this._generateUserLink();
       return (
         <ul className="header-breadcrumb">
           {userItem}

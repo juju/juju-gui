@@ -25,6 +25,11 @@
             top: -2px;
             color: $mid-grey;
         }
+
+        &.profile-disabled {
+            cursor: default;
+            border-bottom: none;
+        }
     }
 
     &__list-item {

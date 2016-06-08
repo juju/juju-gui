@@ -134,6 +134,37 @@ describe('HeaderBreadcrumb', () => {
     assert.equal(output.props.children[1], undefined);
   });
 
+  it('doesn\'t make the username linkable if we hide model switcher', () => {
+    var app = {app:'app'};
+    var envName = 'bar';
+    var envList = ['envList'];
+    var getAppState = sinon.stub();
+    var showProfile = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.HeaderBreadcrumb
+        app={app}
+        authDetails={{
+          user: 'foo',
+          usernameDisplay: 'foo'
+        }}
+        envName={envName}
+        envList={envList}
+        getAppState={getAppState}
+        listModels={sinon.stub()}
+        showEnvSwitcher={false}
+        showProfile={showProfile}
+        switchModel={sinon.stub()} />);
+    assert.equal(
+      output.props.children[0].props.children.props.className,
+      'header-breadcrumb--link profile-disabled');
+    // Manually call the onClick handler and make sure it doesn't navigate
+    // to show the profile.
+    output.props.children[0].props.children.props.onClick({
+      preventDefault: sinon.stub()
+    });
+    assert.equal(showProfile.callCount, 0, 'profile should not have navigated');
+  });
+
   it('can display the profile when the profile link is clicked', () => {
     var app = {app:'app'};
     var envName = 'bar';
