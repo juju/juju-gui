@@ -311,6 +311,9 @@ YUI.add('juju-app-state', function(Y) {
             if (metadata.activeComponent === 'units' && metadata.unitStatus) {
               urlParts.push(metadata.unitStatus);
             }
+            if (metadata.spouse) {
+              urlParts.push(metadata.spouse);
+            }
             if (metadata.unit) {
               urlParts.push(metadata.unit);
             }
