@@ -23,11 +23,20 @@ YUI.add('inspector-relate-to', function() {
   juju.components.InspectorRelateTo = React.createClass({
 
     propTypes: {
-      applications: React.PropTypes.object.isRequired,
       application: React.PropTypes.object.isRequired,
       getRelatableApplications: React.PropTypes.func.isRequired,
     },
 
+    /**
+      The callable to be passed to the relate to items for navigating to the
+      relation type list.
+
+      @method _relateToItemAction
+      @param {Object} e The click event.
+    */
+    _relateToItemAction: function(e) {
+      console.log('_relateToItemAction');
+    },
 
     /**
       Generate the list items from a set of services
@@ -44,15 +53,15 @@ YUI.add('inspector-relate-to', function() {
           </div>);
       }
       var items = [];
-      console.log(applications);
       for (var i = 0; i < applications.length; i++ ) {
-        console.log(applications[i]);
         var application = applications[i].getAttrs();
-        items.push(
-          <li className="inspector-view__list-item">
-            <img src={application.icon} className="inspector-view__item-icon" />
-            {application.name}
-          </li>);
+        items.push(<li className="inspector-view__list-item"
+          data-id={application.id}
+          key={application.id}
+          onClick={this._relateToItemAction} tabIndex="0" role="button">
+          <img src={application.icon} className="inspector-view__item-icon" />
+          {application.name}
+        </li>);
       }
       return items;
     },
@@ -68,5 +77,4 @@ YUI.add('inspector-relate-to', function() {
     }
   });
 
-}, '0.1.0', { requires: [
-]});
+}, '0.1.0', { requires: []});
