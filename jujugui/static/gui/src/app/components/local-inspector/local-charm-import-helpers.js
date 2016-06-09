@@ -198,8 +198,8 @@ YUI.add('local-charm-import-helpers', function(Y) {
       }
       db.notifications.add({
         title: 'Charm upgrade accepted',
-        message: 'Upgrade for "' + result.service_name + '" from "' +
-            result.charm_url + '" accepted.',
+        message: 'Upgrade for "' + result.applicationName + '" from "' +
+            result.charmUrl + '" accepted.',
         level: 'important'
       });
     },

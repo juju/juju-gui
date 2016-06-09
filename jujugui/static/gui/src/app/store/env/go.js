@@ -330,11 +330,13 @@ YUI.add('juju-env-go', function(Y) {
       // for the sort function below.
       var deltas = [],
           cmp = {
+            applicationInfo: 1,
             serviceInfo: 1,
             relationInfo: 2,
             unitInfo: 3,
             machineInfo: 4,
             annotationInfo: 5,
+            remoteapplicationInfo: 100,
             remoteserviceInfo: 100
           };
       data.Response.Deltas.forEach(function(delta) {
@@ -405,9 +407,9 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Prepare the service constraints by type converting integer constraints,
-      removing the ones which do not have valid values, and turning tags into
-      an array as expected by the juju-core API backend.
+      Prepare the application constraints by type converting integer
+      constraints, removing the ones which do not have valid values, and
+      turning tags into an array as expected by the juju-core API backend.
 
       @method prepareConstraints
       @param {Object} constraints key:value pairs.
@@ -521,7 +523,7 @@ YUI.add('juju-env-go', function(Y) {
       the most recent supported version or null if the facade is not found.
 
       @method findFacadeVersion
-      @param {String} name The facade name (for instance "Service").
+      @param {String} name The facade name (for instance "Application").
       @param {Int} version The optional facade version (for instance 1 or 2).
       @return {Int} The facade version or null if facade is not supported.
     */
@@ -1340,7 +1342,7 @@ YUI.add('juju-env-go', function(Y) {
 
       @method deploy
     */
-    deploy: function(charmUrl, serviceName, config, configRaw, numUnits,
+    deploy: function(charmUrl, applicationName, config, configRaw, numUnits,
                      constraints, toMachine, callback, options) {
       var ecs = this.get('ecs');
       var args = ecs._getArgs(arguments);
@@ -1357,7 +1359,7 @@ YUI.add('juju-env-go', function(Y) {
 
       @method _deploy
       @param {String} charmUrl The URL of the charm.
-      @param {String} serviceName The name of the service to be deployed.
+      @param {String} applicationName The name of the app to be deployed.
       @param {Object} config The charm configuration options.
       @param {String} configRaw The YAML representation of the charm
         configuration options. Only one of `config` and `configRaw` should be
@@ -1366,7 +1368,7 @@ YUI.add('juju-env-go', function(Y) {
       @param {Object} constraints The machine constraints to use in the
         object format key: value.
       @param {String} toMachine The machine/container name where to deploy the
-        service unit (e.g. top level machine "42" or container "2/lxc/0").
+        application unit (e.g. top level machine "42" or container "2/lxc/0").
         If the value is null or undefined, the default juju-core unit placement
         policy is used. This currently means that clean and empty machines are
         used if available, otherwise new top level machines are created.
@@ -1376,25 +1378,25 @@ YUI.add('juju-env-go', function(Y) {
         operation is performed.
       @return {undefined} Sends a message to the server only.
     */
-    _deploy: function(charmUrl, serviceName, config, configRaw, numUnits,
+    _deploy: function(charmUrl, applicationName, config, configRaw, numUnits,
         constraints, toMachine, callback) {
-      var serviceFacadeVersion = this.findFacadeVersion('Service');
+      var facadeVersion = this.findFacadeVersion('Application');
 
       // Define the API callback.
-      var handleDeploy = function(userCallback, serviceName, charmUrl, data) {
+      var handler = function(userCallback, applicationName, charmUrl, data) {
         if (!userCallback) {
           console.log('data returned by deploy API call:', data);
           return;
         }
-        if (serviceFacadeVersion !== null) {
+        if (facadeVersion !== null) {
           data = data.Response.Results[0];
         }
         userCallback({
           err: data.Error,
-          service_name: serviceName,
-          charm_url: charmUrl
+          applicationName: applicationName,
+          charmUrl: charmUrl
         });
-      }.bind(this, callback, serviceName, charmUrl);
+      }.bind(this, callback, applicationName, charmUrl);
 
       // Build the API call parameters.
       if (constraints) {
@@ -1408,8 +1410,7 @@ YUI.add('juju-env-go', function(Y) {
       } else {
         constraints = {};
       }
-      var serviceParams = {
-        ServiceName: serviceName,
+      var params = {
         Config: stringifyObjectValues(config),
         ConfigYAML: configRaw,
         Constraints: constraints,
@@ -1419,32 +1420,23 @@ YUI.add('juju-env-go', function(Y) {
       };
 
       // Perform the API call.
-      switch (serviceFacadeVersion) {
-        case 0:
-        case 1:
-        // Intentionally falling through.
-        case 2:
-          this._send_rpc({
-            Type: 'Service',
-            Request: 'ServicesDeploy',
-            Params: {Services: [serviceParams]}
-          }, handleDeploy);
-          break;
-        case 3:
-          this._send_rpc({
-            Type: 'Service',
-            Request: 'Deploy',
-            Params: {Services: [serviceParams]}
-          }, handleDeploy);
-          break;
-        default:
-          // Fall back to legacy deployment.
-          this._send_rpc({
-            Type: 'Client',
-            Request: 'ServiceDeploy',
-            Params: serviceParams
-          }, handleDeploy);
+      if (facadeVersion !== null) {
+        // This is the new Juju 2 application deployment.
+        params.ApplicationName = applicationName;
+        this._send_rpc({
+          Type: 'Application',
+          Request: 'Deploy',
+          Params: {Applications: [params]}
+        }, handler);
+        return;
       }
+      // Fall back to legacy Juju 1 service deployment.
+      params.ServiceName = applicationName;
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'ServiceDeploy',
+        Params: params
+      }, handler);
     },
 
     /*
@@ -1463,9 +1455,9 @@ YUI.add('juju-env-go', function(Y) {
     parameters and return values.
 
     The API is completed by the ToMachineSpec parameter that can be passed to
-    the ServiceDeploy and AddServiceUnits API calls: in both cases, if a
-    machine/container name is specified, then the unit(s) will be deployed in
-    the specified machine/container.
+    the Application.Deploy and Application.AddUnits API calls: in both cases,
+    if a machine/container name is specified, then the unit(s) will be deployed
+    in the specified machine/container.
     */
 
     /**
@@ -1688,51 +1680,51 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Update an existing service in the Juju model.
+      Update an existing application in the Juju model.
       By using this API call, it is possible to update any or all of the
-      following service attributes:
+      following application attributes:
         - its charm URL;
         - its settings (charm configuration options);
         - its constraints;
         - its minimum number of units.
 
-      @method updateService
-      @param {String} service The name of the service to be updated.
+      @method updateApplication
+      @param {String} applicationName The name of the Juju app to be updated.
       @param {Object} args An object with any or all of the following fields:
         - url (String): the charm URL;
         - forceUnits (Bool): whether to force units when upgrading the URL;
         - forceSeries (Bool): whether to force series when upgrading the URL;
         - settings (Object): the configuration key/value pairs;
         - constraints (Object): the constraints;
-        - minUnits (Integer): the minimum number of units for this service.
+        - minUnits (Integer): the minimum number of units for this application.
       @param {Function} callback A callable that must be called once the
         operation is performed. The callback receives an object with all the
         attributes in args with two additional fields:
-        - service: the name of the service;
+        - applicationName: the name of the application;
         - err: optional error encountered in the process.
     */
-    updateService: function(service, args, callback) {
+    updateApplication: function(applicationName, args, callback) {
       // Decorate the user supplied callback.
-      var handler = function(userCallback, service, args, data) {
+      var handler = function(userCallback, applicationName, args, data) {
         if (!userCallback) {
-          console.log('data returned by service update API call:', data);
+          console.log('data returned by application update API call:', data);
           return;
         }
-        var response = {service: service, err: data.Error};
+        var response = {applicationName: applicationName, err: data.Error};
         Object.keys(args).forEach((key) => {
           response[key] = args[key];
         });
         userCallback(response);
-      }.bind(this, callback, service, args);
+      }.bind(this, callback, applicationName, args);
 
       // Prepare the request parameters.
-      var version = this.findFacadeVersion('Service') || 0;
-      var params = {ServiceName: service};
+      var facadeVersion = this.findFacadeVersion('Application');
+      var params = {};
       if (args.url) {
         params.CharmUrl = args.url;
         var forceUnits = !!args.forceUnits;
         var forceSeries = !!args.forceSeries;
-        if (version >= 3) {
+        if (facadeVersion !== null) {
           params.ForceCharmUrl = forceUnits;
           params.ForceSeries = forceSeries;
         } else {
@@ -1752,37 +1744,44 @@ YUI.add('juju-env-go', function(Y) {
         params.MinUnits = args.minUnits;
       }
 
-      // Perform the API call.
-      var request = {Type: 'Service', Request: 'Update', Params: params};
-      if (version < 3) {
-        // Use legacy Juju API on the CLient facade for updating services.
+      // Prepare the request and perform the API call.
+      var request;
+      if (facadeVersion !== null) {
+        // This is the new Juju 2 application update call.
+        params.ApplicationName = applicationName;
+        request = {Type: 'Application', Request: 'Update', Params: params};
+      } else {
+        // This is the legacy Juju 1 service update call.
+        params.ServiceName = applicationName;
         request = {Type: 'Client', Request: 'ServiceUpdate', Params: params};
       }
       this._send_rpc(request, handler);
     },
 
     /**
-       Set a service's charm.
+      Set an application's charm.
 
-       @method setCharm
-       @param {String} service The name of the service to be upgraded.
-       @param {String} url The URL of the charm.
-       @param {Boolean} forceUnits Force the units when upgrading.
-       @param {Boolean} forceSeries Force the series when upgrading.
-       @param {Function} callback A callable that must be called once the
-         operation is performed.
-       @return {undefined} Sends a message to the server only.
+      @method setCharm
+      @param {String} applicationName The name of the application whose charm
+        must be updated.
+      @param {String} url The URL of the charm.
+      @param {Boolean} forceUnits Force the units when upgrading.
+      @param {Boolean} forceSeries Force the series when upgrading.
+      @param {Function} callback A callable that must be called once the
+        operation is performed.
+      @return {undefined} Sends a message to the server only.
     */
-    setCharm: function(service, url, forceUnits, forceSeries, callback) {
+    setCharm: function(applicationName, url, forceUnits, forceSeries,
+                       callback) {
       var args = {url: url, forceUnits: forceUnits, forceSeries: forceSeries};
-      this.updateService(service, args, function(data) {
+      this.updateApplication(applicationName, args, function(data) {
         if (!callback) {
           return;
         }
         callback({
           err: data.err,
-          service_name: data.service,
-          charm_url: data.url
+          applicationName: data.applicationName,
+          charmUrl: data.url
         });
       });
     },
@@ -1796,7 +1795,8 @@ YUI.add('juju-env-go', function(Y) {
 
       @method add_unit
     */
-    add_unit: function(service, numUnits, toMachine, callback, options) {
+    add_unit: function(applicationName, numUnits, toMachine,
+                       callback, options) {
       var ecs = this.get('ecs');
       var args = ecs._getArgs(arguments);
       if (options && options.immediate) {
@@ -1807,13 +1807,13 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Add units to the provided service.
+      Add units to the provided application.
 
       @method _add_unit
-      @param {String} service The service to be scaled up.
+      @param {String} applicationName The name of the app to be scaled up.
       @param {Integer} numUnits The number of units to be added.
       @param {String} toMachine The machine/container name where to deploy the
-        service unit (e.g. top level machine "42" or container "2/lxc/0").
+        application unit (e.g. top level machine "42" or container "2/lxc/0").
         If the value is null or undefined, the default juju-core unit placement
         policy is used. This currently means that clean and empty machines are
         used if available, otherwise new top level machines are created.
@@ -1823,12 +1823,12 @@ YUI.add('juju-env-go', function(Y) {
         operation is performed. It will receive an object with an "err"
         attribute containing a string describing the problem (if an error
         occurred), or with the following attributes if everything went well:
-        - service_name: the name of the service;
-        - num_units: the number of units added;
+        - applicationName: the name of the application;
+        - numUnits: the number of units added;
         - result: a list containing the names of the added units.
       @return {undefined} Sends a message to the server only.
     */
-    _add_unit: function(service, numUnits, toMachine, callback) {
+    _add_unit: function(applicationName, numUnits, toMachine, callback) {
       // Define the API callback.
       var handleAddUnit = function(userCallback, data) {
         if (!userCallback) {
@@ -1837,28 +1837,27 @@ YUI.add('juju-env-go', function(Y) {
         }
         var transformedData = {
           err: data.Error,
-          service_name: service
+          applicationName: applicationName
         };
         if (data.Error) {
-          transformedData.num_units = numUnits;
+          transformedData.numUnits = numUnits;
         } else {
           var units = data.Response.Units;
           transformedData.result = units;
-          transformedData.num_units = units.length;
+          transformedData.numUnits = units.length;
         }
         // Call the original user callback.
         userCallback(transformedData);
       }.bind(this, callback);
 
       // Make the call.
-      var version = this.findFacadeVersion('Service');
-      if (version === null || version < 3) {
+      if (this.findFacadeVersion('Application') === null) {
         // Use legacy Juju API for adding units.
         this._send_rpc({
           Type: 'Client',
           Request: 'AddServiceUnits',
           Params: {
-            ServiceName: service,
+            ServiceName: applicationName,
             NumUnits: numUnits,
             ToMachineSpec: toMachine
           }
@@ -1866,10 +1865,10 @@ YUI.add('juju-env-go', function(Y) {
         return;
       }
       this._send_rpc({
-        Type: 'Service',
+        Type: 'Application',
         Request: 'AddUnits',
         Params: {
-          ServiceName: service,
+          ApplicationName: applicationName,
           NumUnits: numUnits,
           Placement: [parsePlacement(toMachine)]
         }
@@ -1913,12 +1912,12 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-     * Remove units from a service.
+     * Remove units from an application.
      *
      * @method _remove_units
      * @param {Array} unitNames The units to be removed.
      * @param {Function} callback A callable that must be called once the
-     *   operation is performed. Normalized data, including the unitNames
+     *   operation is performed. Normalized data, including the unit_names
      *   is passed to the callback.
      */
     _remove_units: function(unitNames, callback) {
@@ -1932,8 +1931,7 @@ YUI.add('juju-env-go', function(Y) {
       }.bind(this, callback, unitNames);
 
       // Perform the API call.
-      var version = this.findFacadeVersion('Service');
-      if (version === null || version < 3) {
+      if (this.findFacadeVersion('Application') === null) {
         // Use legacy Juju API for destroying units.
         this._send_rpc({
           Type: 'Client',
@@ -1943,7 +1941,7 @@ YUI.add('juju-env-go', function(Y) {
         return;
       }
       this._send_rpc({
-        Type: 'Service',
+        Type: 'Application',
         Request: 'DestroyUnits',
         Params: {UnitNames: unitNames}
       }, handleRemoveUnits);
@@ -1958,7 +1956,7 @@ YUI.add('juju-env-go', function(Y) {
 
       @method expose
     */
-    expose: function(service, callback, options) {
+    expose: function(applicationName, callback, options) {
       var ecs = this.get('ecs'),
           args = ecs._getArgs(arguments);
       if (options.immediate) {
@@ -1969,38 +1967,37 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-     * Expose the given service.
+     * Expose the application with the given name.
      *
      * @method _expose
-     * @param {String} service The service name.
+     * @param {String} applicationName The application name.
      * @param {Function} callback A callable that must be called once the
      *  operation is performed. It will receive an object with an "err"
      *  attribute containing a string describing the problem (if an error
-     *  occurred), and with a "service_name" attribute containing the name of
-     *  the service.
+     *  occurred), and with a "applicationName" attribute containing the name
+     *  of the application.
      * @return {undefined} Sends a message to the server only.
      */
-    _expose: function(service, callback) {
+    _expose: function(applicationName, callback) {
       var intermediateCallback;
       if (callback) {
-        // Capture the callback and service.  No context is passed.
-        intermediateCallback = Y.bind(this.handleServiceCalls, null,
-            callback, service);
+        // Capture the callback and applicationName. No context is passed.
+        intermediateCallback = Y.bind(this.handleSimpleApplicationCalls, null,
+            callback, applicationName);
       }
-      var version = this.findFacadeVersion('Service');
-      if (version === null || version < 3) {
+      if (this.findFacadeVersion('Application') === null) {
         // Use the legacy API call (Juju < 2.0).
         this._send_rpc({
           Type: 'Client',
           Request: 'ServiceExpose',
-          Params: {ServiceName: service}
+          Params: {ServiceName: applicationName}
         }, intermediateCallback);
         return;
       }
       this._send_rpc({
-        Type: 'Service',
+        Type: 'Application',
         Request: 'Expose',
-        Params: {ServiceName: service}
+        Params: {ApplicationName: applicationName}
       }, intermediateCallback);
     },
 
@@ -2013,7 +2010,7 @@ YUI.add('juju-env-go', function(Y) {
 
       @method unexpose
     */
-    unexpose: function(service, callback, options) {
+    unexpose: function(applicationName, callback, options) {
       var ecs = this.get('ecs'),
           args = ecs._getArgs(arguments);
       if (options.immediate) {
@@ -2024,76 +2021,67 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-     * Unexpose the given service.
-     *
-     * @method _unexpose
-     * @param {String} service The service name.
-     * @param {Function} callback A callable that must be called once the
-     *  operation is performed. It will receive an object with an "err"
-     *  attribute containing a string describing the problem (if an error
-     *  occurred), and with a "service_name" attribute containing the name of
-     *  the service.
-     * @return {undefined} Sends a message to the server only.
-     */
-    _unexpose: function(service, callback) {
+      Unexpose the application with the given name.
+
+      @method _unexpose
+      @param {String} applicationName The application name.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred), and with a "applicationName" attribute containing the name
+        of the application.
+      @return {undefined} Sends a message to the server only.
+    */
+    _unexpose: function(applicationName, callback) {
       var intermediateCallback;
       if (callback) {
-        // Capture the callback and service.  No context is passed.
-        intermediateCallback = Y.bind(
-            this.handleServiceCalls, null, callback, service);
+        // Capture the callback and applicationName. No context is passed.
+        intermediateCallback = Y.bind(this.handleSimpleApplicationCalls, null,
+          callback, applicationName);
       }
-      var version = this.findFacadeVersion('Service');
-      if (version === null || version < 3) {
+      if (this.findFacadeVersion('Application') === null) {
         // Use the legacy API call (Juju < 2.0).
         this._send_rpc({
           Type: 'Client',
           Request: 'ServiceUnexpose',
-          Params: {ServiceName: service}
+          Params: {ServiceName: applicationName}
         }, intermediateCallback);
         return;
       }
       this._send_rpc({
-        Type: 'Service',
+        Type: 'Application',
         Request: 'Unexpose',
-        Params: {ServiceName: service}
+        Params: {ApplicationName: applicationName}
       }, intermediateCallback);
     },
 
     /**
-     * Transform the data returned from juju-core calls related to a service
-     * (e.g. 'ServiceExpose', 'ServiceUnexpose') into that suitable for the
-     * user callback.
-     *
-     * @method handleServiceCalls
-     * @param {Function} userCallback The callback originally submitted by the
-     * call site.
-     * @param {String} service The name of the service.  Passed in since it
-     * is not part of the response.
-     * @param {Object} data The response returned by the server.
-     * @return {undefined} Nothing.
-     */
-    handleServiceCalls: function(userCallback, service, data) {
-      var transformedData = {
-        err: data.Error,
-        service_name: service
-      };
-      // Call the original user callback.
-      userCallback(transformedData);
+      Transform the data returned from juju-core calls related to an
+      application (e.g. 'Application.Expose', 'Application.Unexpose' or
+      'Application.Destroy') into that suitable for the user callback.
+
+      @method handleSimpleApplicationCalls
+      @param {Function} callback The callback originally submitted by the
+        call site.
+      @param {String} applicationName The name of the application.
+      @param {Object} data The response returned by the server.
+    */
+    handleSimpleApplicationCalls: function(callback, applicationName, data) {
+      callback({err: data.Error, applicationName: applicationName});
     },
 
     /**
      * Update the annotations for an entity by name.
      *
-     * @param {Object} entity The name of a machine, unit, service, or
-     *   environment, e.g. '0', 'mysql-0', or 'mysql'.
-     * @param {String} type The type of entity that is being annotated
-     *   (e.g.: 'service', 'unit', 'machine', 'environment').
-     * @param {Object} data A dictionary of key, value pairs.
-     * @return {undefined} Nothing.
      * @method update_annotations
+     * @param {String} entity The name of a machine, unit, application, or
+     *   model, e.g. '0', 'mysql-0', or 'mysql'.
+     * @param {String} type The type of entity that is being annotated
+     *   (e.g.: 'application', 'unit', 'machine', 'model').
+     * @param {Object} data A dictionary of key, value pairs.
      */
     update_annotations: function(entity, type, data, callback) {
-      var version = this.findFacadeVersion('Annotations') || 0;
+      var facadeVersion = this.findFacadeVersion('Annotations') || 0;
 
       // Decorate the user supplied callback.
       var handler = function(userCallback, entity, data) {
@@ -2106,7 +2094,7 @@ YUI.add('juju-env-go', function(Y) {
           userCallback(response);
           return;
         }
-        if (version >= 2) {
+        if (facadeVersion >= 2) {
           // New API allows setting annotations in bulk, so we can have an
           // error for each entity result.
           var result = data.Response.Results[0];
@@ -2118,11 +2106,11 @@ YUI.add('juju-env-go', function(Y) {
       }.bind(this, callback, entity);
 
       // Prepare the API request.
-      var tag = type + '-' + entity;
+      var tag = this.generateTag(entity, type);
       data = stringifyObjectValues(data);
 
       // Perform the request to set annotations.
-      if (version < 2) {
+      if (facadeVersion < 2) {
         // Use legacy Juju API on the Client facade for setting annotations.
         this._send_rpc({
           Type: 'Client',
@@ -2143,14 +2131,14 @@ YUI.add('juju-env-go', function(Y) {
     /**
      * Remove the annotations for an entity by name.
      *
-     * @param {Object} entity The name of a machine, unit, service, or
-     *   environment, e.g. '0', 'mysql-0', or 'mysql'.
+     * @method remove_annotations
+     * @param {String} entity The name of a machine, unit, application, or
+     *   model, e.g. '0', 'mysql-0', or 'mysql'.
      * @param {String} type The type of entity that is being annotated
-     *   (e.g.: 'service', 'unit', 'machine', 'environment').
+     *   (e.g.: 'application', 'unit', 'machine', 'model').
      * @param {Object} keys A list of annotation key names for the
      *   annotations to be deleted.
      * @return {undefined} Nothing.
-     * @method remove_annotations
      */
     remove_annotations: function(entity, type, keys, callback) {
       var data = keys.reduce(function(collected, key) {
@@ -2166,20 +2154,20 @@ YUI.add('juju-env-go', function(Y) {
      * Note that the annotations are returned as part of the delta stream, so
      * the explicit use of this command should rarely be needed.
      *
-     * @param {Object} entity The name of a machine, unit, service, or
-     *   environment, e.g. '0', 'mysql-0', or 'mysql'.
+     * @method get_annotations
+     * @param {String} entity The name of a machine, unit, application, or
+     *   model, e.g. '0', 'mysql-0', or 'mysql'.
      * @param {String} type The type of entity that is being annotated
-     *   (e.g.: 'service', 'unit', 'machine', 'environment').
+     *   (e.g.: 'application', 'unit', 'machine', 'model').
      * @return {Object} A dictionary of key,value pairs is returned in the
      *   callback.  The invocation of this command returns nothing.
-     * @method get_annotations
      */
     get_annotations: function(entity, type, callback) {
       var handler;
-      var tag = type + '-' + entity;
-      var version = this.findFacadeVersion('Annotations');
+      var tag = this.generateTag(entity, type);
+      var facadeVersion = this.findFacadeVersion('Annotations') || 0;
 
-      if (version === null || version < 2) {
+      if (facadeVersion < 2) {
         // Use legacy Juju API on the Client facade for getting annotations.
         handler = function(userCallback, entity, data) {
           if (!userCallback) {
@@ -2228,66 +2216,82 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-     * Get the configuration for the given service.
+      Generate the tag for the given entity and entity type.
+
+      @method generateTag
+      @param {String} entity The name of a machine, unit, application, or
+        model, e.g. '0', 'mysql-0', or 'mysql'.
+      @param {String} type The type of entity that is being annotated
+        (e.g.: 'application', 'unit', 'machine', 'model').
+      @return {String} The entity tag.
+    */
+    generateTag: function(entity, type) {
+      if (utils.compareSemver(this.get('jujuCoreVersion'), '2') === -1) {
+        // The GUI is connected to an old Juju 1 environment. So we need to
+        // convert entity types to legacy ones.
+        if (type === 'application') {
+          type = 'service';
+        }
+        if (type === 'model') {
+          type = 'environment';
+        }
+      }
+      return type + '-' + entity;
+    },
+
+    /**
+     * Get the configuration for the given application.
      *
-     * @method get_service
-     * @param {String} serviceName The service name.
+     * @method getApplicationConfig
+     * @param {String} applicationName The application name.
      * @param {Function} callback A callable that must be called once the
      *  operation is performed. It will receive an object containing:
-     *    err - a string describing the problem (if an error occurred),
-     *    service_name - the name of the service,
-     *    result: an object containing all of the configuration data for
-     *      the service.
+     *    err - a string describing the problem (if an error occurred);
+     *    applicationName - the name of the application;
+     *    result: an object containing all of the app configuration data.
      * @return {undefined} Sends a message to the server only.
      */
-    get_service: function(serviceName, callback) {
+    getApplicationConfig: function(applicationName, callback) {
       var intermediateCallback;
       if (callback) {
-        // Capture the callback and serviceName.  No context is passed.
-        intermediateCallback = Y.bind(this.handleGetService, null,
-            callback, serviceName);
+        // Capture the callback and applicationName. No context is passed.
+        intermediateCallback = Y.bind(this._handleGetApplicationConfig, null,
+            callback, applicationName);
       }
-      var version = this.findFacadeVersion('Service');
-      if (version === null || version < 3) {
+      if (this.findFacadeVersion('Application') === null) {
         // Use legacy call on the Client facade.
         this._send_rpc({
           Type: 'Client',
           Request: 'ServiceGet',
-          Params: {ServiceName: serviceName}
+          Params: {ServiceName: applicationName}
         }, intermediateCallback);
         return;
       }
       this._send_rpc({
-        Type: 'Service',
+        Type: 'Application',
         Request: 'Get',
-        Params: {ServiceName: serviceName}
+        Params: {ApplicationName: applicationName}
       }, intermediateCallback);
     },
 
     /**
-     * Transform the data returned from juju-core call to get_service into
+     * Transform the data returned from juju-core call to Application.Get into
      * that suitable for the user callback.
      *
-     * @method handleGetService
-     * @param {Function} userCallback The callback originally submitted by the
-     * call site.
-     * @param {String} serviceName The name of the service.  Passed in since it
-     * is not part of the response.
+     * @method _handleGetApplicationConfig
+     * @param {Function} callback The originally submitted callback.
+     * @param {String} applicationName The name of the application.
      * @param {Object} data The response returned by the server.
-     * @return {undefined} Nothing.
      */
-    handleGetService: function(userCallback, serviceName, data) {
-      // Set the service name to 'name' for compatibility with other
-      // Juju environments.
-      data.Response.name = data.Response.Service;
+    _handleGetApplicationConfig: function(callback, applicationName, data) {
       var config = (data.Response || {}).Config;
       var transformedConfig = {};
       Y.each(config, function(value, key) {
         transformedConfig[key] = value.value;
       });
-      userCallback({
+      callback({
         err: data.Error,
-        service_name: serviceName,
+        applicationName: applicationName,
         result: {
           config: transformedConfig,
           constraints: (data.Response || {}).Constraints
@@ -2299,19 +2303,18 @@ YUI.add('juju-env-go', function(Y) {
       Calls the environments set_config method or creates a new set_config
       record in the queue.
 
-      The parameters match the parameters for the public env deploy method in
-      go.js.
+      The parameters match the parameters for the _set_config method below.
 
       @method set_config
     */
-    set_config: function(serviceName, config, callback, options) {
+    set_config: function(applicationName, config, callback, options) {
       var ecs = this.get('ecs');
       var args = ecs._getArgs(arguments);
       if (options && options.immediate) {
-        // Need to check that the serviceName is a real service name and not
-        // a queued service id before allowing immediate or not.
-        if (ecs.changeSet[serviceName]) {
-          throw 'You cannot immediately setConfig on a queued service';
+        // Need to check that the applicationName is a real application name
+        // and not a queued application id before allowing immediate or not.
+        if (ecs.changeSet[applicationName]) {
+          throw 'You cannot immediately set config on a queued application';
         } else {
           this._set_config.apply(this, args);
         }
@@ -2321,81 +2324,81 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Change the configuration of the given service.
+      Change the configuration of the application with the given name.
 
       @method _set_config
-      @param {String} serviceName The service name.
+      @param {String} applicationName The application name.
       @param {Object} config The charm configuration options.
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an object containing:
         - err: a string describing the problem (if an error occurred);
-        - service_name: the name of the service;
+        - applicationName: the name of the application;
         - newValues: the new configuration options.
     */
-    _set_config: function(serviceName, config, callback) {
-      this.updateService(serviceName, {settings: config}, function(data) {
+    _set_config: function(applicationName, config, callback) {
+      var args = {settings: config};
+      this.updateApplication(applicationName, args, function(data) {
         if (!callback) {
           return;
         }
         callback({
           err: data.err,
-          service_name: serviceName,
+          applicationName: applicationName,
           newValues: config
         });
       });
     },
 
     /**
-      Calls the environments destroyService method or creates a new
-      destroyService record in the queue.
+      Calls the environments _destroyApplication method or creates a new
+      destroyApplication record in the queue.
 
-      The parameters match the parameters for the public env destroy_service
-      method in go.js.
+      The parameters match the parameters for the _destroyApplication method
+      below.
 
-      @method destroy_service
+      @method destroyApplication
     */
-    destroy_service: function(service, callback, options) {
+    destroyApplication: function(applicationName, callback, options) {
       var ecs = this.get('ecs');
       var args = ecs._getArgs(arguments);
       if (options && options.immediate) {
-        this._destroyService.apply(this, args);
+        this._destroyApplication.apply(this, args);
       } else {
-        ecs._lazyDestroyService(args);
+        ecs.lazyDestroyApplication(args);
       }
     },
 
     /**
-       Destroy the given service.
+       Destroy the application with the given name.
 
-       @method _destroyService
-       @param {String} serviceName The service name.
+       @method _destroyApplication
+       @param {String} applicationName The application name.
        @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an object containing:
-          err - a string describing the problem (if an error occurred),
-          service_name - the name of the service.
+          err - a string describing the problem (if an error occurred);
+          applicationName - the name of the application.
        @return {undefined} Sends a message to the server only.
      */
-    _destroyService: function(service, callback) {
+    _destroyApplication: function(applicationName, callback) {
       var intermediateCallback;
       if (callback) {
-        // Capture the callback and service.  No context is passed.
-        intermediateCallback = Y.bind(this.handleServiceCalls, null,
-            callback, service);
+        // Capture the callback and applicationName. No context is passed.
+        intermediateCallback = Y.bind(this.handleSimpleApplicationCalls, null,
+            callback, applicationName);
       }
-      var version = this.findFacadeVersion('Service');
-      if (version === null || version < 3) {
-        // Use legacy Juju API for destroying services.
+      if (this.findFacadeVersion('Application') === null) {
+        // Use legacy Juju API for destroying applications.
         this._send_rpc({
           Type: 'Client',
           Request: 'ServiceDestroy',
-          Params: {ServiceName: service}
+          Params: {ServiceName: applicationName}
         }, intermediateCallback);
         return;
       }
       this._send_rpc({
-        Type: 'Service',
+        Type: 'Application',
         Request: 'Destroy',
-        Params: {ServiceName: service}
+        Params: {ApplicationName: applicationName}
       }, intermediateCallback);
     },
 
@@ -2476,12 +2479,12 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-       Add a relation between two services.
+       Add a relation between two applications.
 
        @method _add_relation
-       @param {Object} endpointA An array of [service, interface]
+       @param {Object} endpointA An array of [application, interface]
          representing one of the endpoints to connect.
-       @param {Object} endpointB An array of [service, interface]
+       @param {Object} endpointB An array of [application, interface]
          representing the other endpoint to connect.
        @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an object with an "err"
@@ -2504,19 +2507,19 @@ YUI.add('juju-env-go', function(Y) {
         var result = {};
         var response = data.Response;
         if (response && response.Endpoints) {
-          var serviceNameA = epA.split(':')[0];
-          var serviceNameB = epB.split(':')[0];
+          var applicationNameA = epA.split(':')[0];
+          var applicationNameB = epB.split(':')[0];
           result.endpoints = [];
-          Y.each([serviceNameA, serviceNameB], function(serviceName) {
-            var jujuEndpoint = response.Endpoints[serviceName];
+          Y.each([applicationNameA, applicationNameB], function(name) {
+            var jujuEndpoint = response.Endpoints[name];
             var guiEndpoint = {};
-            guiEndpoint[serviceName] = {'name': jujuEndpoint.Name};
+            guiEndpoint[name] = {'name': jujuEndpoint.Name};
             result.endpoints.push(guiEndpoint);
           });
           result.id = createRelationKey(response.Endpoints);
           // The interface and scope should be the same for both endpoints.
-          result['interface'] = response.Endpoints[serviceNameA].Interface;
-          result.scope = response.Endpoints[serviceNameA].Scope;
+          result['interface'] = response.Endpoints[applicationNameA].Interface;
+          result.scope = response.Endpoints[applicationNameA].Scope;
         }
         userCallback({
           request_id: data.RequestId,
@@ -2529,14 +2532,13 @@ YUI.add('juju-env-go', function(Y) {
 
       // Send the API request.
       var request = {
-        Type: 'Service',
+        Type: 'Application',
         Request: 'AddRelation',
         Params: {
           Endpoints: [epA, epB]
         }
       };
-      var version = this.findFacadeVersion('Service');
-      if (version === null || version < 3) {
+      if (this.findFacadeVersion('Application') === null) {
         // Use legacy Juju API for adding relations.
         request.Type = 'Client';
       }
@@ -2563,11 +2565,12 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-     * Remove the relationship between two services.
+     * Remove the relationship between two applications.
      *
-     * @param {Object} endpointA An array of [service, interface]
+     * @method _remove_relation
+     * @param {Object} endpointA An array of [application, interface]
      *   representing one of the endpoints to connect.
-     * @param {Object} endpointB An array of [service, interface]
+     * @param {Object} endpointB An array of [application, interface]
      *   representing the other endpoint to connect.
      * @param {Function} callback A callable that must be called once the
      *  operation is performed. It will receive an object with an "err"
@@ -2575,7 +2578,7 @@ YUI.add('juju-env-go', function(Y) {
      *  occurred), and with a "endpoint_a" and "endpoint_b" attributes
      *  containing the names of the endpoints.
      * @return {undefined} Nothing.
-     * @method _remove_relation
+
      */
     _remove_relation: function(endpointA, endpointB, callback) {
       // Define relation endpoints.
@@ -2593,14 +2596,11 @@ YUI.add('juju-env-go', function(Y) {
 
       // Send the API request.
       var request = {
-        Type: 'Service',
+        Type: 'Application',
         Request: 'DestroyRelation',
-        Params: {
-          Endpoints: [epA, epB]
-        }
+        Params: {Endpoints: [epA, epB]}
       };
-      var version = this.findFacadeVersion('Service');
-      if (version === null || version < 3) {
+      if (this.findFacadeVersion('Application') === null) {
         // Use legacy Juju API for removing relations.
         request.Type = 'Client';
       }
@@ -2625,7 +2625,7 @@ YUI.add('juju-env-go', function(Y) {
       // callback is not provided, we can leave intermediateCallback undefined.
       var intermediateCallback;
       if (callback) {
-        // Capture the callback and service.  No context is passed.
+        // Capture the callback. No context is passed.
         intermediateCallback = Y.bind(this.handleCharmInfo, null, callback);
       }
       this._send_rpc({
@@ -2809,39 +2809,42 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Make service endpoints available for consumption.
+      Make application endpoints available for consumption.
 
       @method offer
-      @param {String} service The name of the service being offered.
+      @param {String} applicationName The name of the application being
+        offered.
       @param {Array of strings} endpoints The offered endpoint names.
       @param {String} url The URL to use to reference the resulting remote
-        service. For instance "local:/u/admin/ec2/django".
+        application. For instance "local:/u/admin/ec2/django".
         If empty, a URL is automatically generated using the
-        "local:/u/$user/$env-name/$service" pattern.
+        "local:/u/$user/$model-name/$application" pattern.
       @param {Array of strings} users Users that these endpoints are offered
         to. If left empty, the offer is considered public.
-      @param {String} description Description for the offered service. It
+      @param {String} description Description for the offered application. It
         defaults to the description provided in the charm.
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an object with the following
         attributes:
         - err: optional error, only defined if something went wrong;
-        - service: the provided name of the offered service;
+        - applicationName: the provided name of the offered application;
         - endpoints: the provided offered endpoints;
-        - url: the offered service URL.
+        - url: the offered application URL.
     */
-    offer: function(service, endpoints, url, users, description, callback) {
+    offer: function(
+      applicationName, endpoints, url, users, description, callback) {
       // Generate the URL if an empty one has been provided.
       // XXX frankban 2015/12/15: this will be done automatically by the
       // server, and the URL will be returned as part of the API response.
       if (!url) {
         var user = this.getCredentials().user.replace(/^user-/, '');
         var envName = this.get('environmentName');
-        url = 'local:/u/' + user + '/' + envName + '/' + service;
+        url = 'local:/u/' + user + '/' + envName + '/' + applicationName;
       }
 
       // Define the API callback.
-      var handleOffer = function(userCallback, service, endpoints, url, data) {
+      var handleOffer = function(
+        userCallback, applicationName, endpoints, url, data) {
         if (!userCallback) {
           console.log('data returned by offer API call:', data);
           return;
@@ -2853,11 +2856,11 @@ YUI.add('juju-env-go', function(Y) {
         }
         userCallback({
           err: err,
-          service: service,
+          applicationName: applicationName,
           endpoints: endpoints,
           url: url
         });
-      }.bind(this, callback, service, endpoints, url);
+      }.bind(this, callback, applicationName, endpoints, url);
 
       // Build the API call parameters.
       if (users && users.length) {
@@ -2868,11 +2871,11 @@ YUI.add('juju-env-go', function(Y) {
         users = ['user-public'];
       }
       var offer = {
-        servicename: service,
+        applicationname: applicationName,
         endpoints: endpoints,
-        serviceurl: url,
+        applicationurl: url,
         allowedusers: users,
-        servicedescription: description
+        applicationdescription: description
       };
 
       // Perform the API call.
@@ -2884,8 +2887,8 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Get all remote services that have been offered from this Juju model.
-      Each returned service satisfies at least one of the the specified
+      Get all remote applications that have been offered from this Juju model.
+      Each returned application satisfies at least one of the the specified
       filters.
 
       @method listOffers
@@ -2894,12 +2897,12 @@ YUI.add('juju-env-go', function(Y) {
         operation is performed. It will receive an object with the following
         attributes:
         - err: optional error, only defined if something went wrong;
-        - results: an array of objects representing a remote service, only
+        - results: an array of objects representing a remote application, only
           present if the request succeeded.
           Each result has the following attributes:
           - err: possible error occurred while retrieving offer;
-          - service: the offered service name;
-          - url: the URL used to reference the remote service;
+          - applicationName: the offered application name;
+          - url: the URL used to reference the remote application;
           - charm: the charm name;
           - endpoints: the list of offered endpoints.
           Each endpoint has the following attributes:
@@ -2926,8 +2929,8 @@ YUI.add('juju-env-go', function(Y) {
           }
           var result = apiResult.result;
           return {
-            service: result.servicename,
-            url: result.serviceurl,
+            applicationName: result.applicationname,
+            url: result.applicationurl,
             charm: result.charmname,
             endpoints: result.endpoints.map(function(endpoint) {
               // Note that we are not really changing values or field names
@@ -2958,18 +2961,18 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Retrieve offered remote service details for a given URL.
+      Retrieve offered remote application details for a given URL.
 
       @method getOffer
-      @param {String} url The URL to the remote service.
+      @param {String} url The URL to the remote application.
         For instance "local:/u/admin/ec2/django".
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an object with the following
         attributes:
         - err: optional error, only defined if something went wrong;
-        - service: the offered service name;
-        - url: the URL used to reference the remote service;
-        - description: the human friendly description for the remote service;
+        - applicationName: the offered application name;
+        - url: the URL used to reference the remote application;
+        - description: the human friendly description for the application;
         - sourceName: the label assigned to the source Juju model;
         - sourceId: the UUID of the source Juju model;
         - endpoints: the list of offered endpoints.
@@ -2997,9 +3000,9 @@ YUI.add('juju-env-go', function(Y) {
         }
         var result = response.result;
         userCallback({
-          service: result.servicename,
-          url: result.serviceurl,
-          description: result.servicedescription,
+          applicationName: result.applicationname,
+          url: result.applicationurl,
+          description: result.applicationdescription,
           sourceName: result.sourcelabel,
           sourceId: result.sourceenviron.replace(/^environment-/, ''),
           endpoints: result.endpoints.map(function(endpoint) {
@@ -3019,8 +3022,8 @@ YUI.add('juju-env-go', function(Y) {
       // Perform the API call.
       this._send_rpc({
         Type: 'CrossModelRelations',
-        Request: 'ServiceOffers',
-        Params: {serviceurls: [url]}
+        Request: 'ApplicationOffers',
+        Params: {applicationurls: [url]}
       }, handleGetOffer);
     },
 

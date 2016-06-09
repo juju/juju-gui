@@ -211,7 +211,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
       });
       // Remove the ghost unit: the real unit will be re-added by the
       // mega-watcher handlers.
-      ghostUnit.service = evt.service_name;
+      ghostUnit.service = evt.applicationName;
       db.removeUnits(ghostUnit);
     }
   };

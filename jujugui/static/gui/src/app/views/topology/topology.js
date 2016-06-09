@@ -314,7 +314,7 @@ YUI.add('juju-topology', function(Y) {
         service.set('annotations', annotations);
       } else {
         this.get('env').update_annotations(
-            box.id, 'service', {'gui-x': box.x, 'gui-y': box.y});
+            box.id, 'application', {'gui-x': box.x, 'gui-y': box.y});
         box.inDrag = views.DRAG_ENDING;
       }
     }

@@ -483,7 +483,7 @@ YUI.add('bundle-importer', function(Y) {
                   constraints: constraints
                 });
                 this.env.update_annotations(
-                    name, 'service', ghostService.get('annotations'));
+                    name, 'application', ghostService.get('annotations'));
               }.bind(this, ghostService),
               // Options used by ECS, ignored by environment.
               {modelId: ghostService.get('id')});
@@ -599,7 +599,7 @@ YUI.add('bundle-importer', function(Y) {
         @param {Object} e The commit object.
       */
       function removeGhostCallback(ghostUnit, db, e) {
-        ghostUnit.service = e.service_name;
+        ghostUnit.service = e.applicationName;
         db.removeUnits(ghostUnit);
       }
       record.args[3] = removeGhostCallback.bind(this, ghostUnit, this.db);

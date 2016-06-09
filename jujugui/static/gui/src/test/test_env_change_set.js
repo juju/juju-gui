@@ -615,7 +615,7 @@ describe('Environment Change Set', function() {
           };
         }
       };
-      ecs._clearFromDB({method: '_destroyService', args: [1]});
+      ecs._clearFromDB({method: '_destroyApplication', args: [1]});
       assert.deepEqual(stubSet.lastArguments(), ['deleted', false]);
     });
 
@@ -823,7 +823,7 @@ describe('Environment Change Set', function() {
       });
     });
 
-    describe('_lazyDestroyService', function() {
+    describe('lazyDestroyApplication', function() {
       it('creates a new destroy record', function(done) {
         var args = ['foo', done, {modelId: 'baz'}];
         var setStub = testUtils.makeStubFunction();
@@ -839,12 +839,12 @@ describe('Environment Change Set', function() {
               };
             }}
         });
-        var key = ecs._lazyDestroyService(args);
+        var key = ecs.lazyDestroyApplication(args);
         var record = ecs.changeSet[key];
         assert.isObject(record);
         assert.isObject(record.command);
         assert.equal(record.executed, false);
-        assert.equal(record.command.method, '_destroyService');
+        assert.equal(record.command.method, '_destroyApplication');
         assert.equal(setStub.calledOnce(), true);
         assert.equal(setStub.lastArguments()[0], 'deleted');
         assert.equal(setStub.lastArguments()[1], true);
@@ -884,7 +884,7 @@ describe('Environment Change Set', function() {
         this._cleanups.push(stubRemoveUnits.reset);
 
         ecs._lazyDeploy([1, 2, 'foo', 'bar', function() {}, {modelId: 'baz'}]);
-        ecs._lazyDestroyService(['baz']);
+        ecs.lazyDestroyApplication(['baz']);
         assert.equal(stubRemove.calledOnce(), true, 'remove not called');
         assert.equal(stubDestroy.calledOnce(), true, 'destroy not called');
         assert.equal(
@@ -915,7 +915,7 @@ describe('Environment Change Set', function() {
         });
         var removeStub = testUtils.makeStubMethod(ecs, '_lazyRemoveUnit');
         this._cleanups.push(removeStub.reset);
-        ecs._lazyDestroyService(args);
+        ecs.lazyDestroyApplication(args);
         assert.equal(removeStub.calledOnce(), true);
         assert.deepEqual(removeStub.lastArguments()[0], [unitIds]);
         done();
@@ -1681,7 +1681,7 @@ describe('Environment Change Set', function() {
         assert.equal(lazySetConfig.callCount(), 0);
       });
 
-      it('throws if immediately setting config to queued service', function() {
+      it('throws if immediately setting config to queued app', function() {
         var lazySetConfig = testUtils.makeStubMethod(ecs, '_lazySetConfig');
         this._cleanups.push(lazySetConfig.reset);
         var callback = testUtils.makeStubFunction();
@@ -1691,7 +1691,7 @@ describe('Environment Change Set', function() {
             // assert.throws assertion operates.
             envObj.set_config.bind(
                 envObj, 'foo', {}, callback, { immediate: true}),
-            'You cannot immediately setConfig on a queued service');
+            'You cannot immediately set config on a queued application');
         assert.equal(envObj._set_config.callCount(), 0);
         // make sure that we don't add it to the changeSet.
         assert.equal(lazySetConfig.callCount(), 0);

@@ -303,7 +303,7 @@ describe('Ghost Deployer Extension', function() {
 
   it('notifies add_unit failures', function() {
     var ghostUnit = {displayName: 'django/42'};
-    var evt = {service_name: 'django'};
+    var evt = {applicationName: 'django'};
     ghostDeployer._addUnitCallback(ghostUnit, evt);
     var notifications = ghostDeployer.db.notifications;
     assert.strictEqual(notifications.add.calledOnce(), true);
@@ -317,7 +317,7 @@ describe('Ghost Deployer Extension', function() {
 
   it('removes the ghost unit on add_unit success', function() {
     var ghostUnit = {displayName: 'django/42'};
-    var evt = {service_name: 'django'};
+    var evt = {applicationName: 'django'};
     ghostDeployer._addUnitCallback(ghostUnit, evt);
     var db = ghostDeployer.db;
     assert.strictEqual(db.removeUnits.calledOnce(), true);

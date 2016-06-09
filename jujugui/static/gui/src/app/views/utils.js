@@ -427,14 +427,14 @@ YUI.add('juju-view-utils', function(Y) {
     // Return a list of objects representing the `near` and `far`
     // endpoints for all of the relationships `rels`.  If it is a peer
     // relationship, then `far` will be undefined.
-    var service_name = service.get('id');
+    var applicationName = service.get('id');
     return Y.Array.map(
         db.relations.get_relations_for_service(service),
         function(relation) {
           var rel = relation.getAttrs(),
               near,
               far;
-          if (rel.endpoints[0][0] === service_name) {
+          if (rel.endpoints[0][0] === applicationName) {
             near = rel.endpoints[0];
             far = rel.endpoints[1]; // undefined if a peer relationship.
           } else {
@@ -1634,7 +1634,7 @@ YUI.add('juju-view-utils', function(Y) {
   function removeGhostAddUnitCallback(ghostUnit, db, callback, e) {
     // Remove the ghost unit: the real unit will be re-added by the
     // mega-watcher handlers.
-    ghostUnit.service = e.service_name;
+    ghostUnit.service = e.applicationName;
     db.removeUnits(ghostUnit);
     if (typeof callback === 'function') {
       callback(e, db, ghostUnit);
@@ -1653,7 +1653,7 @@ YUI.add('juju-view-utils', function(Y) {
   */
   utils.destroyService = function(db, env, service, callback) {
     if (service.name === 'service') {
-      env.destroy_service(service.get('id'),
+      env.destroyApplication(service.get('id'),
           Y.bind(utils._destroyServiceCallback, this, service, db, callback),
           {modelId: null});
     } else if (service.get('pending')) {
@@ -1678,7 +1678,7 @@ YUI.add('juju-view-utils', function(Y) {
       // If something bad happend we need to alert the user.
       db.notifications.add({
         title: 'Error destroying service',
-        message: 'Service name: ' + evt.service_name,
+        message: 'Service name: ' + evt.applicationName,
         level: 'error',
         link: undefined,
         modelId: service
@@ -1689,7 +1689,7 @@ YUI.add('juju-view-utils', function(Y) {
       db.relations.remove(service.get('relations'));
       db.notifications.add({
         title: 'Destroying service',
-        message: 'Service: ' + evt.service_name + ' is being destroyed.',
+        message: 'Service: ' + evt.applicationName + ' is being destroyed.',
         level: 'important'
       });
     }

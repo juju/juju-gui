@@ -502,7 +502,7 @@ YUI.add('environment-change-set', function(Y) {
         case '_deploy':
           services.remove(services.getById(command.options.modelId));
           break;
-        case '_destroyService':
+        case '_destroyApplication':
           services.getById(command.args[0]).set('deleted', false);
           break;
         case '_destroyMachines':
@@ -618,18 +618,18 @@ YUI.add('environment-change-set', function(Y) {
     },
 
     /**
-      Creates a new entry in the queue for destroying a service; or, if the
-      service is in the queue already, removes it.
+      Creates a new entry in the queue for destroying an application; or, if
+      the service is in the queue already, removes it.
 
-      Receives all parameters received by the environment's 'destroy_service'
-      method with the exception of the ECS options object.
+      Receives all parameters received by the environment's
+      'destroyApplication' method with the exception of the ECS options object.
 
-      @method _lazyDestroyService
+      @method lazyDestroyApplication
       @param {Array} args The arguments used for destroying.
     */
-    _lazyDestroyService: function(args) {
+    lazyDestroyApplication: function(args) {
       var command = {
-        method: '_destroyService',
+        method: '_destroyApplication',
         args: this._getArgs(args)
       };
       if (command.args.length !== args.length) {
@@ -655,7 +655,7 @@ YUI.add('environment-change-set', function(Y) {
         }, this);
         this._lazyRemoveUnit([units]);
         service.set('deleted', true);
-        return this._createNewRecord('destroyService', command, []);
+        return this._createNewRecord('destroyApplication', command, []);
       }
     },
 
@@ -832,7 +832,7 @@ YUI.add('environment-change-set', function(Y) {
             var tempId = this.args[0];
             if (tempId.indexOf('$') > -1 &&
                 record.command.options.modelId === tempId) {
-              this.args[0] = results[0].service_name;
+              this.args[0] = results[0].applicationName;
             }
           }
         }
@@ -906,7 +906,7 @@ YUI.add('environment-change-set', function(Y) {
             this.args.forEach(function(arg, index) {
               if (Y.Lang.isArray(arg) &&
                   record.command.options.modelId === arg[0]) {
-                this.args[index][0] = results[0].service_name;
+                this.args[index][0] = results[0].applicationName;
               }
             }, this);
           }
@@ -1061,7 +1061,7 @@ YUI.add('environment-change-set', function(Y) {
             var tempId = this.args[0];
             if (tempId.indexOf('$') > -1 &&
                 record.command.options.modelId === tempId) {
-              this.args[0] = results[0].service_name;
+              this.args[0] = results[0].applicationName;
             }
           }
         }

@@ -1173,22 +1173,22 @@ describe('utilities', function() {
       });
     });
 
-    function testScaleUp(serviceName) {
+    function testScaleUp(applicationName) {
       var service = {
         get: function(key) {
           var returnVal;
           switch (key) {
             case 'id':
-              returnVal = serviceName;
+              returnVal = applicationName;
               break;
             case 'units':
               returnVal = { size: function() { return 2; } };
               break;
             case 'displayName':
-              if (serviceName.indexOf('$') > 0) {
-                returnVal = '(' + serviceName + ')';
+              if (applicationName.indexOf('$') > 0) {
+                returnVal = '(' + applicationName + ')';
               } else {
-                returnVal = serviceName;
+                returnVal = applicationName;
               }
               break;
             case 'charm':
@@ -1217,33 +1217,33 @@ describe('utilities', function() {
       assert.equal(db.addUnits.callCount(), 2);
       var addUnitsArgs = db.addUnits.allArguments();
       assert.deepEqual(addUnitsArgs[0][0], {
-        id: serviceName + '/' + 2,
-        displayName: serviceName + '/' + 2,
+        id: applicationName + '/' + 2,
+        displayName: applicationName + '/' + 2,
         charmUrl: 'I am a charm url',
         subordinate: false
       });
       assert.deepEqual(addUnitsArgs[1][0], {
-        id: serviceName + '/' + 3,
-        displayName: serviceName + '/' + 3,
+        id: applicationName + '/' + 3,
+        displayName: applicationName + '/' + 3,
         charmUrl: 'I am a charm url',
         subordinate: false
       });
       // Test the env.add_unit call.
       assert.equal(env.add_unit.callCount(), 2);
       var add_unit_args = env.add_unit.allArguments();
-      assert.equal(add_unit_args[0][0], serviceName);
+      assert.equal(add_unit_args[0][0], applicationName);
       assert.equal(add_unit_args[0][1], 1);
       assert.strictEqual(add_unit_args[0][2], null);
       assert.equal(typeof add_unit_args[0][3], 'function');
       assert.deepEqual(add_unit_args[0][4], {
-        modelId: serviceName + '/' + 2
+        modelId: applicationName + '/' + 2
       });
-      assert.equal(add_unit_args[1][0], serviceName);
+      assert.equal(add_unit_args[1][0], applicationName);
       assert.equal(add_unit_args[1][1], 1);
       assert.strictEqual(add_unit_args[1][2], null);
       assert.equal(typeof add_unit_args[1][3], 'function');
       assert.deepEqual(add_unit_args[1][4], {
-        modelId: serviceName + '/' + 3
+        modelId: applicationName + '/' + 3
       });
       assert.equal(units.length, 2);
     }
@@ -1267,11 +1267,11 @@ describe('utilities', function() {
       };
       var callback = testUtils.makeStubFunction();
       var e = {
-        service_name: 'serviceName'
+        applicationName: 'appName'
       };
       utils.removeGhostAddUnitCallback(ghostUnit, db, callback, e);
       assert.equal(db.removeUnits.calledOnce(), true);
-      assert.equal(db.removeUnits.lastArguments()[0].service, 'serviceName');
+      assert.equal(db.removeUnits.lastArguments()[0].service, 'appName');
       assert.equal(callback.calledOnce(), true);
       assert.deepEqual(callback.lastArguments(), [e, db, ghostUnit]);
     });
@@ -1291,10 +1291,10 @@ describe('utilities', function() {
 
     it('responds to service removal failure by alerting the user', function() {
       var notificationAdded;
-      var SERVICE_NAME = 'the name of the service being removed';
+      var APPNAME = 'the name of the application being removed';
       var evt = {
         err: true,
-        service_name: SERVICE_NAME
+        applicationName: APPNAME
       };
       var service = ['service', 'mediawiki'];
 
@@ -1305,7 +1305,7 @@ describe('utilities', function() {
             assert.isOk(notification.title);
             assert.isOk(notification.message);
             // The service name is mentioned in the error message.
-            assert.notEqual(notification.message.indexOf(SERVICE_NAME, -1));
+            assert.notEqual(notification.message.indexOf(APPNAME, -1));
             assert.equal(notification.level, 'error');
             assert.deepEqual(notification.modelId, ['service', 'mediawiki']);
             notificationAdded = true;
@@ -1319,10 +1319,10 @@ describe('utilities', function() {
 
     it('removes the relations when the service is destroyed', function() {
       var notificationAdded = false;
-      var SERVICE_NAME = 'the name of the service being removed';
+      var APPNAME = 'the name of the application being removed';
       var evt = {
         err: false,
-        service_name: SERVICE_NAME
+        applicationName: APPNAME
       };
       var service = {
         get: function () {
@@ -1339,7 +1339,7 @@ describe('utilities', function() {
             assert.equal(attrs.hasOwnProperty('message'), true,
                 'Does not have a message');
             // The service name is mentioned in the error message.
-            assert.notEqual(attrs.message.indexOf(SERVICE_NAME, -1));
+            assert.notEqual(attrs.message.indexOf(APPNAME, -1));
             assert.equal(attrs.level, 'important');
             notificationAdded = true;
           }

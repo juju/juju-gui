@@ -117,12 +117,12 @@ YUI.add('model-controller', function(Y) {
             }
 
             if (!service || !service.get('loaded')) {
-              env.get_service(serviceId, function(result) {
+              env.getApplicationConfig(serviceId, function(result) {
                 if (result.err) {
                   // The service doesn't exist
                   reject(result);
                 } else {
-                  var service = db.services.getById(result.service_name);
+                  var service = db.services.getById(result.applicationName);
                   service.setAttrs({
                     'config': result.result.config,
                     'constraints': result.result.constraints,

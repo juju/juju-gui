@@ -26,7 +26,7 @@ Commit the changes to the changelog.
 ::
 
     git commit -am "Updating changelog."
-   
+
 
 Now checkout master and merge in develop.
 
@@ -129,6 +129,10 @@ Update the release on github
 You can find the release on github at https://github.com/juju/juju-gui/releases/tag/<the newest tag>. Update the
 release notes with the entry from CHANGES.yaml. Upload the dist/jujugui-$RELEASE.tar.bz2 package as a binary.
 
-Congratulations! You've created a release of the juju gui. Depending on the reason for doing so, you may
-now need to update the charm as well. You can find it at https://github.com/juju/juju-gui-charm; read through
-its release notes for the process to update it.
+Congratulations! You've created a release of the juju gui. Depending on the reason for doing so,
+you may now need to update the charm as well. You can find it at
+https://github.com/juju/juju-gui-charm; read through its release notes for the process to update it.
+
+Also, you may need to request a simplestreams update so that the new GUI release is made available
+to Juju 2 users by default. To do so, ping the QA team asking to include a new GUI release
+in the GUI simplestreams, and point them to the archive uploaded to github.

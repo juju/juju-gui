@@ -317,7 +317,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(deltas.length, 3);
         assert.deepEqual(deltas.map(function(delta) {
           return delta[0];
-        }), ['service', 'machine', 'unit']);
+        }), ['application', 'machine', 'unit']);
         done();
       };
       client.open();
@@ -337,11 +337,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var receivedData = Y.JSON.parse(received.data);
         var deltas = receivedData.Response.Deltas;
         assert.equal(deltas.length, 3);
-        var serviceChange = deltas[0];
+        var applicationChange = deltas[0];
         var machineChange = deltas[1];
         var unitChange = deltas[2];
-        assert.deepEqual(serviceChange, [
-          'service', 'change', {
+        assert.deepEqual(applicationChange, [
+          'application', 'change', {
             'Name': 'wordpress',
             'Exposed': false,
             'CharmURL': 'cs:precise/wordpress-27',
@@ -354,7 +354,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             },
             'Constraints': {},
             'Subordinate': false
-          }], 'serviceChange'
+          }], 'applicationChange'
         );
         assert.deepEqual(machineChange, [
           'machine', 'change', {
@@ -379,7 +379,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(unitChange, [
           'unit', 'change', {
             'Name': 'wordpress/0',
-            'Service': 'wordpress',
+            'Application': 'wordpress',
             'Series': 'precise',
             'CharmURL': 'cs:precise/wordpress-27',
             'MachineId': '0',
@@ -396,12 +396,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can deploy', function(done) {
       // We begin logged in.  See utils.makeFakeBackend.
       var data = {
-        Type: 'Service',
+        Type: 'Application',
         Request: 'Deploy',
         Version: 2,
-        Params: {Services: [{
+        Params: {Applications: [{
           CharmUrl: 'cs:precise/wordpress-27',
-          ServiceName: 'kumquat',
+          ApplicationName: 'kumquat',
           ConfigYAML: 'engine: apache',
           NumUnits: 2
         }]},
@@ -413,16 +413,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.isUndefined(receivedData.Error);
         assert.isObject(
             state.db.charms.getById('cs:precise/wordpress-27'));
-        var service = state.db.services.getById('kumquat');
-        assert.isObject(service);
-        assert.equal(service.get('charm'), 'cs:precise/wordpress-27');
-        assert.deepEqual(service.get('config'), {
+        var application = state.db.services.getById('kumquat');
+        assert.isObject(application);
+        assert.equal(application.get('charm'), 'cs:precise/wordpress-27');
+        assert.deepEqual(application.get('config'), {
           debug: 'no',
           engine: 'apache',
           tuning: 'single',
           'wp-content': ''
         });
-        var units = service.get('units').toArray();
+        var units = application.get('units').toArray();
         assert.lengthOf(units, 2);
         done();
       };
@@ -435,11 +435,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We begin logged in.  See utils.makeFakeBackend.
       var callback = function(result) {
         assert.isUndefined(result.err);
-        assert.equal(result.charm_url, 'cs:precise/mediawiki-18');
-        var service = state.db.services.getById('kumquat');
-        assert.equal(service.get('charm'), 'cs:precise/mediawiki-18');
+        assert.equal(result.charmUrl, 'cs:precise/mediawiki-18');
+        var application = state.db.services.getById('kumquat');
+        assert.equal(application.get('charm'), 'cs:precise/mediawiki-18');
         assert.deepEqual(
-            service.get('config'), {
+            application.get('config'), {
               admins: '',
               debug: false,
               logo: 'test logo',
@@ -474,8 +474,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.connect();
       // We begin logged in.  See utils.makeFakeBackend.
       var callback = function(result) {
-        var service = state.db.services.getById('kumquat');
-        assert.deepEqual(service.get('constraints'), {
+        var application = state.db.services.getById('kumquat');
+        assert.deepEqual(application.get('constraints'), {
           'cpu-cores': 1,
           'cpu-power': 0,
           mem: 512,
@@ -500,7 +500,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state.deploy('cs:precise/wordpress-27', function() {});
       var callback = function(result) {
         assert.equal(
-            result.err, 'A service with this name already exists (wordpress).');
+            result.err,
+            'An application with this name already exists (wordpress).');
         done();
       };
       env.deploy('cs:precise/wordpress-27', undefined, undefined, undefined,
@@ -610,13 +611,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.destroyMachines(['42'], false, callback, {immediate: true});
     });
 
-    it('can destroy a service', function(done) {
+    it('can destroy an application', function(done) {
       state.deploy('cs:precise/wordpress-27', function() {
         var data = {
-          Type: 'Service',
+          Type: 'Application',
           Request: 'Destroy',
           Params: {
-            ServiceName: 'wordpress'
+            ApplicationName: 'wordpress'
           },
           RequestId: 42
         };
@@ -633,7 +634,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('can destroy a service (environment integration)', function(done) {
+    it('can destroy an application (environment integration)', function(done) {
       env.connect();
       state.deploy('cs:precise/wordpress-27', function() {
         var callback = function(result) {
@@ -642,14 +643,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.isNull(state.db.services.getById('wordpress'));
           done();
         };
-        env.destroy_service('wordpress', callback, {immediate: true});
+        env.destroyApplication('wordpress', callback, {immediate: true});
       });
     });
 
     it('can remove a unit', function(done) {
       state.deploy('cs:precise/wordpress-27', function() {
         var data = {
-          Type: 'Service',
+          Type: 'Application',
           Request: 'DestroyUnits',
           Params: {
             UnitNames: 'wordpress/0'
@@ -704,13 +705,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can set annotations', function(done) {
-      generateServices(function() {
+      generateApplications(function() {
         var data = {
           Type: 'Annotations',
           Request: 'Set',
           Params: {
             Annotations: [{
-              EntityTag: 'service-wordpress',
+              EntityTag: 'application-wordpress',
               Annotations: {'foo': 'bar'}
             }]
           },
@@ -747,7 +748,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.get_charm('cs:precise/notarealcharm-15', callback);
     });
 
-    it('can successfully get a service and its config', function(done) {
+    it('can successfully get an application and its config', function(done) {
       env.connect();
       state.deploy('cs:precise/mediawiki-15', function() {});
       var callback = function(result) {
@@ -766,16 +767,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(result.result.constraints, {});
         done();
       };
-      env.get_service('mediawiki', callback);
+      env.getApplicationConfig('mediawiki', callback);
     });
 
     it('can set constraints', function(done) {
       state.deploy('cs:precise/wordpress-27', function() {
         var data = {
-          Type: 'Service',
+          Type: 'Application',
           Request: 'Update',
           Params: {
-            ServiceName: 'wordpress',
+            ApplicationName: 'wordpress',
             Constraints: {mem: '2'}
           },
           RequestId: 42
@@ -783,9 +784,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         client.onmessage = function(received) {
           var receivedData = Y.JSON.parse(received.data);
           assert.isUndefined(receivedData.Error);
-          var service = state.db.services.getById('wordpress');
-          assert.equal(service.get('constraintsStr'), 'mem=2');
-          assert.equal(service.get('constraints').mem, 2);
+          var application = state.db.services.getById('wordpress');
+          assert.equal(application.get('constraintsStr'), 'mem=2');
+          assert.equal(application.get('constraints').mem, 2);
           done();
         };
         client.open();
@@ -798,22 +799,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state.deploy('cs:precise/wordpress-27', function() {
         var callback = function(result) {
           assert.isUndefined(result.err);
-          var service = state.db.services.getById('wordpress');
-          assert.equal(service.get('constraintsStr'), 'mem=2');
-          assert.equal(service.get('constraints').mem, 2);
+          var application = state.db.services.getById('wordpress');
+          assert.equal(application.get('constraintsStr'), 'mem=2');
+          assert.equal(application.get('constraints').mem, 2);
           done();
         };
-        env.updateService('wordpress', {constraints: {mem: '2'}}, callback);
+        env.updateApplication(
+          'wordpress', {constraints: {mem: '2'}}, callback);
       });
     });
 
     it('can set config', function(done) {
       state.deploy('cs:precise/wordpress-27', function() {
         var data = {
-          Type: 'Service',
+          Type: 'Application',
           Request: 'Update',
           Params: {
-            ServiceName: 'wordpress',
+            ApplicationName: 'wordpress',
             SettingsStrings: {engine: 'apache'}
           },
           RequestId: 42
@@ -821,8 +823,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         client.onmessage = function(received) {
           var receivedData = Y.JSON.parse(received.data);
           assert.isUndefined(receivedData.Error);
-          var service = state.db.services.getById('wordpress');
-          assert.deepEqual(service.get('config'), {
+          var application = state.db.services.getById('wordpress');
+          assert.deepEqual(application.get('config'), {
             debug: 'no',
             engine: 'apache',
             tuning: 'single',
@@ -840,8 +842,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state.deploy('cs:precise/wordpress-27', function() {
         var callback = function(result) {
           assert.isUndefined(result.err);
-          var service = state.db.services.getById('wordpress');
-          assert.deepEqual(service.get('config'), {
+          var application = state.db.services.getById('wordpress');
+          assert.deepEqual(application.get('config'), {
             debug: 'no',
             engine: 'apache',
             tuning: 'single',
@@ -900,10 +902,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can set a charm.', function(done) {
       state.deploy('cs:precise/wordpress-27', function() {});
       var data = {
-        Type: 'Service',
+        Type: 'Application',
         Request: 'Update',
         Params: {
-          ServiceName: 'wordpress',
+          ApplicationName: 'wordpress',
           CharmUrl: 'cs:precise/mediawiki-18',
         },
         RequestId: 42
@@ -911,8 +913,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client.onmessage = function(received) {
         var receivedData = Y.JSON.parse(received.data);
         assert.isUndefined(receivedData.err);
-        var service = state.db.services.getById('wordpress');
-        assert.equal(service.get('charm'), 'cs:precise/mediawiki-18');
+        var application = state.db.services.getById('wordpress');
+        assert.equal(application.get('charm'), 'cs:precise/mediawiki-18');
         done();
       };
       client.open();
@@ -924,38 +926,38 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state.deploy('cs:precise/wordpress-27', function() {});
       var cb = function(result) {
         assert.isUndefined(result.err);
-        var service = state.db.services.getById('wordpress');
-        assert.equal(service.get('charm'), 'cs:precise/mediawiki-18');
+        var application = state.db.services.getById('wordpress');
+        assert.equal(application.get('charm'), 'cs:precise/mediawiki-18');
         done();
       };
       env.setCharm('wordpress', 'cs:precise/mediawiki-18', false, false, cb);
     });
 
     /**
-      Generates the services required for some tests. After the services have
-      been generated it will call the supplied callback.
+      Generates the applications required for some tests. After the
+      applications have been generated it will call the supplied callback.
 
       This interacts directly with the fakebackend bypassing the environment.
       The test "can add additional units" tests this code directly so as long
       as it passes you can consider this method valid.
 
-      @method generateServices
-      @param {Function} callback The callback to call after the services have
-        been generated.
+      @method generateApplications
+      @param {Function} callback The callback to call after the applications
+        have been generated.
     */
-    function generateServices(callback) {
-      state.deploy('cs:precise/wordpress-27', function(service) {
+    function generateApplications(callback) {
+      state.deploy('cs:precise/wordpress-27', function(application) {
         var data = {
-          Type: 'Service',
+          Type: 'Application',
           Request: 'AddUnits',
           Params: {
-            ServiceName: 'wordpress',
+            ApplicationName: 'wordpress',
             NumUnits: 2
           }
         };
         state.nextChanges();
         client.onmessage = function(received) {
-          // After done generating the services
+          // After done generating the applications...
           callback(received);
         };
         client.open();
@@ -964,18 +966,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     }
 
     /**
-      Same as generateServices but uses the environment integration methods.
-      Should be considered valid if "can add additional units (integration)"
-      test passes.
+      Same as generateApplications but uses the environment integration
+      methods. Should be considered valid if "can add additional units
+      (integration)" test passes.
 
-      @method generateIntegrationServices
-      @param {Function} callback The callback to call after the services have
-        been generated.
+      @method generateIntegrationApplications
+      @param {Function} callback The callback to call after the applications
+        have been generated.
     */
-    function generateIntegrationServices(callback) {
+    function generateIntegrationApplications(callback) {
       var localCb = function(result) {
         env.add_unit('kumquat', 2, null, function(data) {
-          // After finished generating integrated services.
+          // After finished generating integrated applications.
           callback(data);
         }, {immediate: true});
       };
@@ -993,22 +995,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     }
 
     /**
-      Generates the services and then exposes them for the un/expose tests.
+      Generates the applications and then exposes them for the un/expose tests.
       After they have been exposed it calls the supplied callback.
 
-      This interacts directly with the fakebackend bypassing the environment and
-      should be considered valid if "can expose a service" test passes.
+      This interacts directly with the fakebackend bypassing the environment
+      and should be considered valid if "can expose an application" test
+      passes.
 
-      @method generateAndExposeService
-      @param {Function} callback The callback to call after the services have
-        been generated.
+      @method generateAndExposeApplication
+      @param {Function} callback The callback to call after the applications
+        have been generated.
     */
-    function generateAndExposeService(callback) {
+    function generateAndExposeApplication(callback) {
       state.deploy('cs:precise/wordpress-27', function(data) {
         var command = {
-          Type: 'Service',
+          Type: 'Application',
           Request: 'Expose',
-          Params: {ServiceName: data.service.get('name')}
+          Params: {ApplicationName: data.application.get('name')}
         };
         state.nextChanges();
         client.onmessage = function(rec) {
@@ -1020,17 +1023,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     }
 
     /**
-      Same as generateAndExposeService but uses the environment integration
-      methods. Should be considered valid if "can expose a service
+      Same as generateAndExposeApplication but uses the environment integration
+      methods. Should be considered valid if "can expose an application
       (integration)" test passes.
 
-      @method generateAndExposeIntegrationService
-      @param {Function} callback The callback to call after the services have
-        been generated.
+      @method generateAndExposeIntegrationApplication
+      @param {Function} callback The callback to call after the applications
+        have been generated.
     */
-    function generateAndExposeIntegrationService(callback) {
+    function generateAndExposeIntegrationApplication(callback) {
       var localCb = function(result) {
-        env.expose(result.service_name, function(rec) {
+        env.expose(result.applicationName, function(rec) {
           callback(rec);
         }, {immediate: true});
       };
@@ -1049,8 +1052,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can add additional units', function(done) {
       function testForAddedUnits(received) {
-        var service = state.db.services.getById('wordpress'),
-            units = service.get('units').toArray(),
+        var application = state.db.services.getById('wordpress'),
+            units = application.get('units').toArray(),
             data = Y.JSON.parse(received.data),
             mock = {
               Response: {
@@ -1059,24 +1062,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             };
         // Do we have enough total units?
         assert.lengthOf(units, 3);
-        // Does the response object contain the proper data
+        // Does the response object contain the proper data?
         assert.deepEqual(data, mock);
-        // Error is undefined
+        // Error is undefined.
         assert.isUndefined(data.Error);
         done();
       }
-      // Generate the default services and add units
-      generateServices(testForAddedUnits);
+      // Generate the default applications and add units.
+      generateApplications(testForAddedUnits);
     });
 
-    it('throws an error when adding units to an invalid service',
+    it('throws an error when adding units to an invalid application',
         function(done) {
-          state.deploy('cs:precise/wordpress-27', function(service) {
+          state.deploy('cs:precise/wordpress-27', function(application) {
             var data = {
-              Type: 'Service',
+              Type: 'Application',
               Request: 'AddUnits',
               Params: {
-                ServiceName: 'noservice',
+                ApplicationName: 'no-application',
                 NumUnits: 2
               }
             };
@@ -1099,73 +1102,73 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can add additional units (integration)', function(done) {
       function testForAddedUnits(data) {
-        var service = state.db.services.getById('kumquat'),
-            units = service.get('units').toArray();
+        var application = state.db.services.getById('kumquat'),
+            units = application.get('units').toArray();
         assert.lengthOf(units, 3);
         done();
       }
-      generateIntegrationServices(testForAddedUnits);
+      generateIntegrationApplications(testForAddedUnits);
     });
 
-    it('can expose a service', function(done) {
-      function checkExposedService(rec) {
-        var serviceName = 'wordpress';
+    it('can expose an application', function(done) {
+      function checkExposedApplication(rec) {
+        var applicationName = 'wordpress';
         var data = Y.JSON.parse(rec.data),
             mock = {Response: {}};
-        var service = state.db.services.getById(serviceName);
-        assert.equal(service.get('exposed'), true);
+        var application = state.db.services.getById(applicationName);
+        assert.equal(application.get('exposed'), true);
         assert.deepEqual(data, mock);
         done();
       }
-      generateAndExposeService(checkExposedService);
+      generateAndExposeApplication(checkExposedApplication);
     });
 
-    it('can expose a service (integration)', function(done) {
-      function checkExposedService(rec) {
-        var service = state.db.services.getById('kumquat');
-        assert.equal(service.get('exposed'), true);
+    it('can expose an application (integration)', function(done) {
+      function checkExposedApplication(rec) {
+        var application = state.db.services.getById('kumquat');
+        assert.equal(application.get('exposed'), true);
         // The Go API does not set a result value.  That is OK as
         // it is never used.
         assert.isUndefined(rec.result);
         done();
       }
-      generateAndExposeIntegrationService(checkExposedService);
+      generateAndExposeIntegrationApplication(checkExposedApplication);
     });
 
-    it('fails silently when exposing an exposed service', function(done) {
-      function checkExposedService(rec) {
-        var service_name = 'wordpress',
+    it('fails silently when exposing an exposed application', function(done) {
+      function checkExposedApplication(rec) {
+        var applicationName = 'wordpress',
             data = Y.JSON.parse(rec.data),
-            service = state.db.services.getById(service_name),
+            application = state.db.services.getById(applicationName),
             command = {
-              Type: 'Service',
+              Type: 'Application',
               Request: 'Expose',
-              Params: {ServiceName: service_name}
+              Params: {ApplicationName: applicationName}
             };
         state.nextChanges();
         client.onmessage = function(rec) {
           assert.equal(data.err, undefined);
-          assert.equal(service.get('exposed'), true);
+          assert.equal(application.get('exposed'), true);
           done();
         };
         client.send(Y.JSON.stringify(command));
       }
-      generateAndExposeService(checkExposedService);
+      generateAndExposeApplication(checkExposedApplication);
     });
 
-    it('fails with error when exposing an invalid service name',
+    it('fails with error when exposing an invalid application name',
         function(done) {
           state.deploy('cs:precise/wordpress-27', function(data) {
             var command = {
-              Type: 'Service',
+              Type: 'Application',
               Request: 'Expose',
-              Params: {ServiceName: 'foobar'}
+              Params: {ApplicationName: 'foobar'}
             };
             state.nextChanges();
             client.onmessage = function(rec) {
               var data = Y.JSON.parse(rec.data);
               assert.equal(data.Error,
-                 '"foobar" is an invalid service name.');
+                 '"foobar" is an invalid application name.');
               done();
             };
             client.open();
@@ -1174,57 +1177,57 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
     );
 
-    it('can unexpose a service', function(done) {
-      function unexposeService(rec) {
-        var service_name = 'wordpress',
+    it('can unexpose an application', function(done) {
+      function unexposeApplication(rec) {
+        var applicationName = 'wordpress',
             command = {
-              Type: 'Service',
+              Type: 'Application',
               Request: 'Unexpose',
-              Params: {ServiceName: service_name}
+              Params: {ApplicationName: applicationName}
             };
         state.nextChanges();
         client.onmessage = function(rec) {
           var data = Y.JSON.parse(rec.data),
-              service = state.db.services.getById('wordpress'),
+              application = state.db.services.getById('wordpress'),
               mock = {Response: {}};
-          assert.equal(service.get('exposed'), false);
+          assert.equal(application.get('exposed'), false);
           assert.deepEqual(data, mock);
           done();
         };
         client.send(Y.JSON.stringify(command));
       }
-      generateAndExposeService(unexposeService);
+      generateAndExposeApplication(unexposeApplication);
     });
 
-    it('can unexpose a service (integration)', function(done) {
-      var service_name = 'kumquat';
-      function unexposeService(rec) {
+    it('can unexpose an application (integration)', function(done) {
+      var applicationName = 'kumquat';
+      function unexposeApplication(rec) {
         function localCb(rec) {
-          var service = state.db.services.getById(service_name);
-          assert.equal(service.get('exposed'), false);
+          var application = state.db.services.getById(applicationName);
+          assert.equal(application.get('exposed'), false);
           // No result from Go unexpose.
           assert.isUndefined(rec.result);
           done();
         }
-        env.unexpose(service_name, localCb, {immediate: true});
+        env.unexpose(applicationName, localCb, {immediate: true});
       }
-      generateAndExposeIntegrationService(unexposeService);
+      generateAndExposeIntegrationApplication(unexposeApplication);
     });
 
-    it('fails silently when unexposing a not exposed service',
+    it('fails silently when unexposing a not exposed application',
         function(done) {
-          var service_name = 'wordpress';
+          var applicationName = 'wordpress';
           state.deploy('cs:precise/wordpress-27', function(data) {
             var command = {
-              Type: 'Service',
+              Type: 'Application',
               Request: 'Unexpose',
-              Params: {ServiceName: service_name}
+              Params: {ApplicationName: applicationName}
             };
             state.nextChanges();
             client.onmessage = function(rec) {
               var data = Y.JSON.parse(rec.data),
-                  service = state.db.services.getById(service_name);
-              assert.equal(service.get('exposed'), false);
+                  application = state.db.services.getById(applicationName);
+              assert.equal(application.get('exposed'), false);
               assert.equal(data.err, undefined);
               done();
             };
@@ -1234,23 +1237,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
     );
 
-    it('fails with error when unexposing an invalid service name',
+    it('fails with error when unexposing an invalid application name',
         function(done) {
-          function unexposeService(rec) {
+          function unexposeApplication(rec) {
             var command = {
-              Type: 'Service',
+              Type: 'Application',
               Request: 'Unexpose',
-              Params: {ServiceName: 'foobar'}
+              Params: {ApplicationName: 'foobar'}
             };
             state.nextChanges();
             client.onmessage = function(rec) {
               var data = Y.JSON.parse(rec.data);
-              assert.equal(data.Error, '"foobar" is an invalid service name.');
+              assert.equal(
+                data.Error, '"foobar" is an invalid application name.');
               done();
             };
             client.send(Y.JSON.stringify(command));
           }
-          generateAndExposeService(unexposeService);
+          generateAndExposeApplication(unexposeApplication);
         }
     );
 
@@ -1260,7 +1264,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         state.deploy('cs:precise/mysql-26', function() {
           var data = {
             RequestId: 42,
-            Type: 'Service',
+            Type: 'Application',
             Request: 'AddRelation',
             Params: {
               Endpoints: ['wordpress:db', 'mysql:db']
@@ -1308,12 +1312,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }, {immediate: true});
     });
 
-    it('is able to add a relation with a subordinate service', function(done) {
+    it('is able to add a relation with a subordinate app', function(done) {
       state.deploy('cs:precise/wordpress-27', function() {
-        state.deploy('cs:precise/puppet-5', function(service) {
+        state.deploy('cs:precise/puppet-5', function(application) {
           var data = {
             RequestId: 42,
-            Type: 'Service',
+            Type: 'Application',
             Request: 'AddRelation',
             Params: {
               Endpoints: ['wordpress:juju-info', 'puppet:juju-info']
@@ -1341,7 +1345,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state.deploy('cs:precise/wordpress-27', function() {
         var data = {
           RequestId: 42,
-          Type: 'Service',
+          Type: 'Application',
           Request: 'AddRelation',
           Params: {
             Endpoints: ['wordpress:db']
@@ -1364,7 +1368,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state.deploy('cs:precise/wordpress-27', function() {
         var data = {
           RequestId: 42,
-          Type: 'Service',
+          Type: 'Application',
           Request: 'AddRelation',
           Params: {
             Endpoints: ['wordpress:db', 'mysql:foo']
@@ -1389,7 +1393,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           state.addRelation(relation[0], relation[1]);
           var data = {
             RequestId: 42,
-            Type: 'Service',
+            Type: 'Application',
             Request: 'DestroyRelation',
             Params: {
               Endpoints: relation

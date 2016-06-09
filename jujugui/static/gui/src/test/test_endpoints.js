@@ -383,10 +383,10 @@ describe('Endpoints map handlers', function() {
 
   it('should update endpoints map when pending services are added',
      function(done) {
-       var service_name = 'wordpress';
-       var charm_id = 'cs:precise/wordpress-2';
-       app.db.charms.add({id: charm_id});
-       var charm = app.db.charms.getById(charm_id);
+       var applicationName = 'wordpress';
+       var charmUrl = 'cs:precise/wordpress-2';
+       app.db.charms.add({id: charmUrl});
+       var charm = app.db.charms.getById(charmUrl);
        destroyMe.push(charm);
        charm.loaded = true;
 
@@ -398,20 +398,20 @@ describe('Endpoints map handlers', function() {
          done();
        });
        app.db.services.add({
-         id: service_name,
+         id: applicationName,
          pending: true,
          loaded: true,
          charmstore: factory.makeFakeCharmstore(),
-         charm: charm_id
+         charm: charmUrl
        });
      });
 
   it('should update endpoints map when non-pending services are added',
      function(done) {
-       var service_name = 'wordpress';
-       var charm_id = 'cs:precise/wordpress-2';
-       app.db.charms.add({id: charm_id});
-       var charm = app.db.charms.getById(charm_id);
+       var applicationName = 'wordpress';
+       var charmUrl = 'cs:precise/wordpress-2';
+       app.db.charms.add({id: charmUrl});
+       var charm = app.db.charms.getById(charmUrl);
        destroyMe.push(charm);
        charm.loaded = true;
 
@@ -423,61 +423,61 @@ describe('Endpoints map handlers', function() {
          done();
        });
        app.db.services.add({
-         id: service_name,
+         id: applicationName,
          pending: false,
          loaded: true,
          charmstore: factory.makeFakeCharmstore(),
-         charm: charm_id
+         charm: charmUrl
        });
      });
 
   it('updates subordinate value when non-pending services are added',
       function(done) {
-        var service_name = 'puppet';
-        var charm_id = 'cs:precise/puppet-2';
-        app.db.charms.add({id: charm_id, is_subordinate: true});
-        var charm = app.db.charms.getById(charm_id);
+        var applicationName = 'puppet';
+        var charmUrl = 'cs:precise/puppet-2';
+        app.db.charms.add({id: charmUrl, is_subordinate: true});
+        var charm = app.db.charms.getById(charmUrl);
         destroyMe.push(charm);
         charm.loaded = true;
 
         controller.on('endpointMapAdded', function() {
-          var svc = app.db.services.getById(service_name);
+          var svc = app.db.services.getById(applicationName);
           assert.isTrue(svc.get('subordinate'));
           destroyMe.push(svc);
           done();
         });
 
         app.db.services.add({
-          id: service_name,
+          id: applicationName,
           pending: false,
           loaded: true,
-          charm: charm_id
+          charm: charmUrl
         });
 
       });
 
   it('should update endpoints map when a service\'s charm changes', function() {
-    var service_name = 'wordpress';
-    var charm_id = 'cs:precise/wordpress-2';
-    app.db.charms.add({id: charm_id});
-    var charm = app.db.charms.getById(charm_id);
+    var applicationName = 'wordpress';
+    var charmUrl = 'cs:precise/wordpress-2';
+    app.db.charms.add({id: charmUrl});
+    var charm = app.db.charms.getById(charmUrl);
     destroyMe.push(charm);
     charm.loaded = true;
     app.db.services.add({
-      id: service_name,
+      id: applicationName,
       pending: true,
       loaded: true,
-      charm: charm_id});
-    var svc = app.db.services.getById(service_name);
+      charm: charmUrl});
+    var svc = app.db.services.getById(applicationName);
     svc.set('pending', false);
     controller.on('endpointMapAdded', function() {
       controller.endpointsMap.should.eql({wordpress: {
         requires: [],
         provides: []}});
 
-      charm_id = 'cs:precise/wordpress-3';
-      app.db.charms.add({id: charm_id});
-      var charm2 = app.db.charms.getById(charm_id);
+      charmUrl = 'cs:precise/wordpress-3';
+      app.db.charms.add({id: charmUrl});
+      var charm2 = app.db.charms.getById(charmUrl);
       destroyMe.push(charm2);
       charm2.set('provides', {
         url: {
@@ -486,7 +486,7 @@ describe('Endpoints map handlers', function() {
       });
 
       charm2.loaded = true;
-      svc.set('charm', charm_id);
+      svc.set('charm', charmUrl);
       controller.endpointsMap.should.eql({wordpress: {
         requires: [],
         provides: [
@@ -498,29 +498,29 @@ describe('Endpoints map handlers', function() {
   });
 
   it('should remove service from endpoints map when it is deleted', function() {
-    var service_name = 'wordpress';
-    var charm_id = 'cs:precise/wordpress-2';
-    var charm = app.db.charms.add({id: charm_id});
+    var applicationName = 'wordpress';
+    var charmUrl = 'cs:precise/wordpress-2';
+    var charm = app.db.charms.add({id: charmUrl});
     destroyMe.push(charm);
     app.db.services.add({
-      id: service_name,
+      id: applicationName,
       loaded: true,
-      charm: charm_id});
+      charm: charmUrl});
     controller.endpointsMap = {wordpress: 'foo'};
-    var service = app.db.services.getById(service_name);
+    var service = app.db.services.getById(applicationName);
     app.db.services.remove(service);
     controller.endpointsMap.should.eql({});
   });
 
   it('should reset the map when the services reset', function() {
-    var service_name = 'wordpress';
-    var charm_id = 'cs:precise/wordpress-2';
-    var charm = app.db.charms.add({id: charm_id});
+    var applicationName = 'wordpress';
+    var charmUrl = 'cs:precise/wordpress-2';
+    var charm = app.db.charms.add({id: charmUrl});
     destroyMe.push(charm);
     app.db.services.add({
-      id: service_name,
+      id: applicationName,
       loaded: true,
-      charm: charm_id});
+      charm: charmUrl});
     controller.endpointsMap = {wordpress: 'foo'};
     app.db.services.reset();
     controller.endpointsMap.should.eql({});
@@ -580,44 +580,44 @@ describe('Service config handlers', function() {
 
   it('should not call ServiceGet when a pending service is added',
      function() {
-       var charm_id = 'cs:precise/wordpress-2';
+       var charmUrl = 'cs:precise/wordpress-2';
        app.db.services.add({
          id: 'wordpress',
          pending: true,
-         charm: charm_id});
+         charm: charmUrl});
        assert.equal(0, conn.messages.length);
      });
 
   it('should call ServiceGet when non-pending services are added',
      function() {
-       var service_name = 'wordpress';
-       var charm_id = 'cs:precise/wordpress-2';
-       var charm = app.db.charms.add({id: charm_id});
+       var applicationName = 'wordpress';
+       var charmUrl = 'cs:precise/wordpress-2';
+       var charm = app.db.charms.add({id: charmUrl});
        destroyMe.push(charm);
        charm.loaded = true;
        app.db.services.add({
-         id: service_name,
+         id: applicationName,
          pending: false,
-         charm: charm_id});
+         charm: charmUrl});
        assertServiceGetCalled();
      });
 
   it('should call ServiceGet when a service\'s charm changes', function() {
-    var service_name = 'wordpress';
-    var charm_id = 'cs:precise/wordpress-2';
-    var charm = app.db.charms.add({id: charm_id});
+    var applicationName = 'wordpress';
+    var charmUrl = 'cs:precise/wordpress-2';
+    var charm = app.db.charms.add({id: charmUrl});
     destroyMe.push(charm);
     charm.loaded = true;
     app.db.services.add({
-      id: service_name,
+      id: applicationName,
       pending: false,
-      charm: charm_id});
+      charm: charmUrl});
     assertServiceGetCalled();
-    var svc = app.db.services.getById(service_name);
-    charm_id = 'cs:precise/wordpress-3';
-    var charm2 = app.db.charms.add({id: charm_id, loaded: true});
+    var svc = app.db.services.getById(applicationName);
+    charmUrl = 'cs:precise/wordpress-3';
+    var charm2 = app.db.charms.add({id: charmUrl, loaded: true});
     destroyMe.push(charm2);
-    svc.set('charm', charm_id);
+    svc.set('charm', charmUrl);
     assertServiceGetCalled();
   });
 

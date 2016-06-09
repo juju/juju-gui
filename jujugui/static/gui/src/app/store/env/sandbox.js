@@ -179,9 +179,9 @@ YUI.add('juju-env-sandbox', function(Y) {
   // Define sandbox API facades: please keep these in alphabetical order.
   sandboxModule.Facades = [
     {Name: 'Annotations', Versions: [2]},
+    {Name: 'Application', Versions: [1]},
     {Name: 'Client', Versions: [1]},
-    {Name: 'ModelManager', Versions: [2]},
-    {Name: 'Service', Versions: [3]}
+    {Name: 'ModelManager', Versions: [2]}
   ];
 
   /**
@@ -459,7 +459,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @type {Object}
     */
     _deltaWhitelist: {
-      service: {
+      application: {
         Name: 'id',
         Exposed: 'exposed',
         CharmURL: 'charm',
@@ -504,24 +504,24 @@ YUI.add('juju-env-sandbox', function(Y) {
       },
       unit: {
         Name: 'id',
-        'Service': 'service',
+        Application: 'service',
         'Series': function(attrs, self) {
           var db = self.get('state').db;
-          var service = db.services.getById(attrs.service);
-          if (service) {
-            var charm = db.charms.getById(service.get('charm'));
+          var application = db.services.getById(attrs.service);
+          if (application) {
+            var charm = db.charms.getById(application.get('charm'));
             return charm.get('series');
           } else {
-            return null; // Probably unit/service was deleted.
+            return null; // Probably unit/application was deleted.
           }
         },
         'CharmURL': function(attrs, self) {
           var db = self.get('state').db;
-          var service = db.services.getById(attrs.service);
-          if (service) {
-            return service.get('charm');
+          var application = db.services.getById(attrs.service);
+          if (application) {
+            return application.get('charm');
           } else {
-            return null; // Probably unit/service was deleted.
+            return null; // Probably unit/application was deleted.
           }
         },
         PublicAddress: 'public_address',
@@ -548,7 +548,7 @@ YUI.add('juju-env-sandbox', function(Y) {
                 Interface: relation.type,
                 Scope: relation.scope
               },
-              ServiceName: endpoint[0]
+              ApplicationName: endpoint[0]
             });
           });
           return result;
@@ -617,9 +617,6 @@ YUI.add('juju-env-sandbox', function(Y) {
             Y.each(changes[collectionName], function(change) {
               var attrs = self._getDeltaAttrs(change[0], whitelist);
               var action = change[1] ? 'change' : 'remove';
-              // The unit changeType is actually "serviceUnit" in the Python
-              // stream.  Our model code handles either, so we're not modifying
-              // it for now.
               var delta = [changeType, action, attrs];
               deltas.push(delta);
             });
@@ -798,15 +795,15 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle Service.Deploy messages.
+    Handle Application.Deploy messages.
 
-    @method handleServiceDeploy
+    @method handleApplicationDeploy
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleServiceDeploy: function(data, client, state) {
+    handleApplicationDeploy: function(data, client, state) {
       var callback = function(result) {
         var res = {};
         if (result.error) {
@@ -817,9 +814,9 @@ YUI.add('juju-env-sandbox', function(Y) {
           Response: {Results: [res]}
         });
       };
-      var params = data.Params.Services[0];
+      var params = data.Params.Applications[0];
       state.deploy(params.CharmUrl, callback, {
-        name: params.ServiceName,
+        name: params.ApplicationName,
         config: params.Config,
         configYAML: params.ConfigYAML,
         constraints: params.Constraints,
@@ -879,29 +876,29 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle Service.Destroy messages
+    Handle Application.Destroy messages
 
-    @method handleServiceDestroy
+    @method handleApplicationDestroy
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleServiceDestroy: function(data, client, state) {
-      var result = state.destroyService(data.Params.ServiceName);
+    handleApplicationDestroy: function(data, client, state) {
+      var result = state.destroyApplication(data.Params.ApplicationName);
       this._basicReceive(data, client, result);
     },
 
     /**
-      Handle Service.DestroyUnits messages
+      Handle Application.DestroyUnits messages
 
-      @method handleServiceDestroyUnits
+      @method handleApplicationDestroyUnits
       @param {Object} data The contents of the API arguments.
       @param {Object} client The active ClientConnection.
       @param {Object} state An instance of FakeBackend.
       @return {undefined} Side effects only.
      */
-    handleServiceDestroyUnits: function(data, client, state) {
+    handleApplicationDestroyUnits: function(data, client, state) {
       var res = state.removeUnits(data.Params.UnitNames);
       this._basicReceive(data, client, res);
     },
@@ -949,33 +946,33 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-      Handle Service.Update messages
+      Handle Application.Update messages
 
-      @method handleServiceUpdate
+      @method handleApplicationUpdate
       @param {Object} data The contents of the API arguments.
       @param {Object} client The active ClientConnection.
       @param {Object} state An instance of FakeBackend.
       @return {undefined} Side effects only.
     */
-    handleServiceUpdate: function(data, client, state) {
+    handleApplicationUpdate: function(data, client, state) {
       var result;
       var params = data.Params;
-      var service = params.ServiceName;
+      var application = params.ApplicationName;
       var callback = function(result) {
         this._basicReceive(data, client, result);
       }.bind(this);
 
-      // Handle service settings.
+      // Handle application settings.
       if (params.SettingsStrings) {
-        result = state.setConfig(service, params.SettingsStrings);
+        result = state.setConfig(application, params.SettingsStrings);
         if (result.error) {
           callback(result);
         }
       }
 
-      // Handle service constraints.
+      // Handle application constraints.
       if (params.Constraints) {
-        result = state.setConstraints(service, params.Constraints);
+        result = state.setConstraints(application, params.Constraints);
         if (result.error) {
           callback(result);
         }
@@ -986,8 +983,8 @@ YUI.add('juju-env-sandbox', function(Y) {
       // This is kept as last step as it is asynchronous.
       if (params.CharmUrl) {
         state.setCharm(
-          service, params.CharmUrl, params.ForceCharmUrl, params.ForceSeries,
-          callback);
+          application, params.CharmUrl, params.ForceCharmUrl,
+          params.ForceSeries, callback);
         return;
       }
       callback({});
@@ -1073,23 +1070,23 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleAnnotationsSet: function(data, client, state) {
       var args = data.Params.Annotations[0];
-      var entityId = /^(service|unit|machine|environment)-([^ ]*)$/.
+      var entityId = /^(application|unit|machine|model|environment)-([^ ]*)$/.
           exec(args.EntityTag)[2];
       var result = state.updateAnnotations(entityId, args.Annotations);
       this._basicReceive(data, client, result);
     },
 
     /**
-    Handle Service Get messages
+    Handle Application Get messages
 
-    @method handleServiceGet
+    @method handleApplicationGet
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleServiceGet: function(data, client, state) {
-      var reply = state.getService(data.Params.ServiceName);
+    handleApplicationGet: function(data, client, state) {
+      var reply = state.getApplication(data.Params.ApplicationName);
       var response = {
         RequestId: data.RequestId
       };
@@ -1099,8 +1096,8 @@ YUI.add('juju-env-sandbox', function(Y) {
       } else {
         var charmName = reply.result.charm;
 
-        // Get the charm to load the full options data as the service config
-        // format.
+        // Get the charm to load the full options data as the application
+        // config format.
         state.getCharm(charmName, function(payload) {
           var charmData = payload.result;
           var formattedConfig = {};
@@ -1116,7 +1113,7 @@ YUI.add('juju-env-sandbox', function(Y) {
           });
 
           response.Response = {
-            Service: data.Params.ServiceName,
+            Application: data.Params.ApplicationName,
             Charm: charmName,
             Config: formattedConfig,
             Constraints: reply.result.constraints
@@ -1128,21 +1125,22 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle Service.AddUnits messages
+    Handle Application.AddUnits messages
 
-    @method handleServiceAddUnits
+    @method handleApplicationAddUnits
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleServiceAddUnits: function(data, client, state) {
+    handleApplicationAddUnits: function(data, client, state) {
       var args = data.Params;
       var toMachine;
       if (args.Placement && args.Placement[0]) {
         toMachine = args.Placement[0].Directive;
       }
-      var reply = state.addUnit(args.ServiceName, args.NumUnits, toMachine);
+      var reply = state.addUnit(
+        args.ApplicationName, args.NumUnits, toMachine);
       var units = [];
       if (!reply.error) {
         units = reply.units.map(function(u) {return u.id;});
@@ -1155,43 +1153,43 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle Service.Expose messages
+    Handle Application.Expose messages
 
-    @method handleServiceExpose
+    @method handleApplicationExpose
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleServiceExpose: function(data, client, state) {
-      var result = state.expose(data.Params.ServiceName);
+    handleApplicationExpose: function(data, client, state) {
+      var result = state.expose(data.Params.ApplicationName);
       this._basicReceive(data, client, result);
     },
 
     /**
-    Handle Service.Unexpose messages
+    Handle Application.Unexpose messages
 
-    @method handleServiceUnexpose
+    @method handleApplicationUnexpose
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleServiceUnexpose: function(data, client, state) {
-      var result = state.unexpose(data.Params.ServiceName);
+    handleApplicationUnexpose: function(data, client, state) {
+      var result = state.unexpose(data.Params.ApplicationName);
       this._basicReceive(data, client, result);
     },
 
     /**
     Handle AddRelation messages
 
-    @method handleServiceAddRelation
+    @method handleApplicationAddRelation
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleServiceAddRelation: function(data, client, state) {
+    handleApplicationAddRelation: function(data, client, state) {
       var stateData = state.addRelation(
           data.Params.Endpoints[0], data.Params.Endpoints[1], false);
       var resp = {RequestId: data.RequestId};
@@ -1232,13 +1230,13 @@ YUI.add('juju-env-sandbox', function(Y) {
     /**
     Handle DestroyRelation messages
 
-    @method handleServiceDestroyRelation
+    @method handleApplicationDestroyRelation
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleServiceDestroyRelation: function(data, client, state) {
+    handleApplicationDestroyRelation: function(data, client, state) {
       var result = state.removeRelation(data.Params.Endpoints[0],
           data.Params.Endpoints[1]);
       this._basicReceive(data, client, result);
