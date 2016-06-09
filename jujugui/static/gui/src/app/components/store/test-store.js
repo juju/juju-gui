@@ -35,7 +35,7 @@ describe('Store', function() {
     var charmstoreSearch = sinon.stub();
     var getName = sinon.stub();
     var makeEntityModel = sinon.stub();
-    var seriesList = sinon.stub();
+    var seriesList = {};
     var output = jsTestUtils.shallowRender(
       <juju.components.Store
         charmstoreSearch={charmstoreSearch}

@@ -34,6 +34,9 @@ describe('ScaleService', function() {
   it('hides the constraints on initial rendering', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.ScaleService
+        addGhostAndEcsUnits={sinon.stub()}
+        changeState={sinon.stub()}
+        createMachinesPlaceUnits={sinon.stub()}
         serviceId="123" />);
 
     var child = output.props.children[2];
@@ -45,6 +48,9 @@ describe('ScaleService', function() {
     // does not yet support simulating change events.
     var output = testUtils.renderIntoDocument(
       <juju.components.ScaleService
+        addGhostAndEcsUnits={sinon.stub()}
+        changeState={sinon.stub()}
+        createMachinesPlaceUnits={sinon.stub()}
         serviceId="123" />);
 
     var autoToggle = output.refs.autoPlaceUnitsToggle;

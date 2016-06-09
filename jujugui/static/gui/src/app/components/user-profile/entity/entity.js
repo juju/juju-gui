@@ -24,7 +24,10 @@ YUI.add('user-profile-entity', function() {
 
     propTypes: {
       changeState: React.PropTypes.func,
-      children: React.PropTypes.object,
+      children: React.PropTypes.oneOfType([
+        React.PropTypes.object,
+        React.PropTypes.array
+      ]),
       entity: React.PropTypes.object.isRequired,
       expanded: React.PropTypes.bool,
       getDiagramURL: React.PropTypes.func,

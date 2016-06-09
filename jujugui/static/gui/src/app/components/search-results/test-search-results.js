@@ -43,8 +43,12 @@ describe('SearchResults', function() {
       var query = 'spinach';
       var output = jsTestUtils.shallowRender(
           <juju.components.SearchResults
+            changeState={sinon.stub()}
+            charmstoreSearch={sinon.stub()}
             getName={sinon.stub()}
-            query={query} />);
+            makeEntityModel={sinon.stub()}
+            query={query}
+            seriesList={{}} />);
       assert.deepEqual(output,
         <div className="search-results">
           <div className="twelve-col initial-load-container last-col">
@@ -57,9 +61,12 @@ describe('SearchResults', function() {
       var charmstoreSearch = sinon.stub().callsArgWith(1, null, []);
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
+            changeState={sinon.stub()}
             query="nothing here"
             charmstoreSearch={charmstoreSearch}
-            getName={sinon.stub()} />, true);
+            getName={sinon.stub()}
+            makeEntityModel={sinon.stub()}
+            seriesList={{}} />, true);
       shallowRenderer.getMountedInstance().componentDidMount();
       var output = shallowRenderer.getRenderOutput();
       assert.deepEqual(output,
@@ -86,9 +93,12 @@ describe('SearchResults', function() {
       var charmstoreSearch = sinon.stub().callsArgWith(1, 'bad wolf', []);
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
+            changeState={sinon.stub()}
             query="nothing here"
             charmstoreSearch={charmstoreSearch}
-            getName={sinon.stub()} />, true);
+            getName={sinon.stub()}
+            makeEntityModel={sinon.stub()}
+            seriesList={{}} />, true);
       var instance = shallowRenderer.getMountedInstance();
       instance.componentDidMount();
       var output = shallowRenderer.getRenderOutput();
@@ -134,6 +144,7 @@ describe('SearchResults', function() {
 
       var shallowRenderer = jsTestUtils.shallowRender(
           <juju.components.SearchResults
+            changeState={sinon.stub()}
             query={query}
             seriesList={series}
             charmstoreSearch={charmstoreSearch}
@@ -601,7 +612,9 @@ describe('SearchResults', function() {
             changeState={changeState}
             query={query}
             charmstoreSearch={charmstoreSearch}
-            getName={sinon.stub()} />, true);
+            getName={sinon.stub()}
+            makeEntityModel={sinon.stub()}
+            seriesList={{}} />, true);
       shallowRenderer.getMountedInstance().componentDidMount();
       shallowRenderer.unmount();
       assert.equal(abort.callCount, 1);

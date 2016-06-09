@@ -27,7 +27,7 @@ YUI.add('local-inspector', function() {
       file: React.PropTypes.object.isRequired,
       localType: React.PropTypes.string.isRequired,
       series: React.PropTypes.object.isRequired,
-      services: React.PropTypes.array.isRequired,
+      services: React.PropTypes.object.isRequired,
       upgradeServiceUsingLocalCharm: React.PropTypes.func.isRequired,
       uploadLocalCharm: React.PropTypes.func.isRequired
     },
@@ -238,5 +238,6 @@ YUI.add('local-inspector', function() {
   });
 
 }, '0.1.0', {requires: [
-  'button-row'
+  'button-row',
+  'inspector-header'
 ]});

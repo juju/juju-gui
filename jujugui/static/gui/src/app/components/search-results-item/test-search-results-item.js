@@ -481,6 +481,7 @@ describe('SearchResultsItem', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
+          changeState={sinon.stub()}
           item={item} />);
 
     var seriesClass = output.props.children[1].props.className;
@@ -515,6 +516,7 @@ describe('SearchResultsItem', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.SearchResultsItem
+          changeState={sinon.stub()}
           item={item} />);
 
     var seriesClass = output.props.children[1].props.className;

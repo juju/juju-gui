@@ -59,6 +59,9 @@ describe('ServiceOverview', function() {
 
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
+            changeState={sinon.stub()}
+            clearState={sinon.stub()}
+            destroyService={sinon.stub()}
             getUnitStatusCounts={getUnitStatusCounts()}
             service={service}
             serviceRelations={[1]} />);
@@ -86,6 +89,9 @@ describe('ServiceOverview', function() {
 
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
+            changeState={sinon.stub()}
+            clearState={sinon.stub()}
+            destroyService={sinon.stub()}
             getUnitStatusCounts={getUnitStatusCounts()}
             service={service}
             serviceRelations={[1]} />);
@@ -114,6 +120,8 @@ describe('ServiceOverview', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
+            clearState={sinon.stub()}
+            destroyService={sinon.stub()}
             getUnitStatusCounts={getUnitStatusCounts()}
             changeState={changeState}
             service={service}
@@ -153,6 +161,9 @@ describe('ServiceOverview', function() {
       }};
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
+            changeState={sinon.stub()}
+            clearState={sinon.stub()}
+            destroyService={sinon.stub()}
             getUnitStatusCounts={getUnitStatusCounts(0, 0, 2)}
             service={service}
             serviceRelations={[1]} />);
@@ -179,6 +190,9 @@ describe('ServiceOverview', function() {
       }};
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
+            changeState={sinon.stub()}
+            clearState={sinon.stub()}
+            destroyService={sinon.stub()}
             getUnitStatusCounts={getUnitStatusCounts(0, 1, 0)}
             service={service}
             serviceRelations={[1]} />);
@@ -205,6 +219,9 @@ describe('ServiceOverview', function() {
       }};
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
+            changeState={sinon.stub()}
+            clearState={sinon.stub()}
+            destroyService={sinon.stub()}
             getUnitStatusCounts={getUnitStatusCounts(1, 0, 0)}
             service={service}
             serviceRelations={[1]} />);
@@ -231,6 +248,9 @@ describe('ServiceOverview', function() {
       }};
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
+            changeState={sinon.stub()}
+            clearState={sinon.stub()}
+            destroyService={sinon.stub()}
             getUnitStatusCounts={getUnitStatusCounts()}
             service={service}
             serviceRelations={[1]} />);
@@ -257,6 +277,9 @@ describe('ServiceOverview', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
+          changeState={sinon.stub()}
+          clearState={sinon.stub()}
+          destroyService={sinon.stub()}
           getUnitStatusCounts={getUnitStatusCounts()}
           service={service}
           serviceRelations={[1, 2, 3]} />);
@@ -286,6 +309,9 @@ describe('ServiceOverview', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
+          changeState={sinon.stub()}
+          clearState={sinon.stub()}
+          destroyService={sinon.stub()}
           getUnitStatusCounts={getUnitStatusCounts()}
           service={service}
           serviceRelations={[1]} />);
@@ -316,6 +342,9 @@ describe('ServiceOverview', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
+          changeState={sinon.stub()}
+          clearState={sinon.stub()}
+          destroyService={sinon.stub()}
           getUnitStatusCounts={getUnitStatusCounts()}
           service={service}
           serviceRelations={[1]} />);
@@ -347,6 +376,8 @@ describe('ServiceOverview', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
+          clearState={sinon.stub()}
+          destroyService={sinon.stub()}
           changeState={changeState}
           getUnitStatusCounts={getUnitStatusCounts()}
           service={service}
@@ -377,6 +408,9 @@ describe('ServiceOverview', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
+          changeState={sinon.stub()}
+          clearState={sinon.stub()}
+          destroyService={sinon.stub()}
           getUnitStatusCounts={getUnitStatusCounts()}
           service={service}
           serviceRelations={[1, 2, 3]} />);
@@ -396,6 +430,9 @@ describe('ServiceOverview', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
+          changeState={sinon.stub()}
+          clearState={sinon.stub()}
+          destroyService={sinon.stub()}
           getUnitStatusCounts={getUnitStatusCounts()}
           service={service}
           serviceRelations={[]} />);
@@ -405,6 +442,9 @@ describe('ServiceOverview', function() {
   it('renders the delete button', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
+        changeState={sinon.stub()}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
         getUnitStatusCounts={getUnitStatusCounts()}
         service={fakeService}
         serviceRelations={[]} />);
@@ -420,6 +460,9 @@ describe('ServiceOverview', function() {
   it('renders the delete confirmation', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
+        changeState={sinon.stub()}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
         getUnitStatusCounts={getUnitStatusCounts()}
         service={fakeService}
         serviceRelations={[]} />);
@@ -445,6 +488,9 @@ describe('ServiceOverview', function() {
         'This cannot be undone.';
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
+        changeState={sinon.stub()}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
         getUnitStatusCounts={getUnitStatusCounts()}
         service={fakeService}
         serviceRelations={[]} />, true);
@@ -461,6 +507,9 @@ describe('ServiceOverview', function() {
     output.props.children[1].props.buttons[0].action();
     shallowRenderer.render(
       <juju.components.ServiceOverview
+        changeState={sinon.stub()}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
         getUnitStatusCounts={getUnitStatusCounts()}
         service={fakeService}
         serviceRelations={[]} />);
@@ -477,6 +526,9 @@ describe('ServiceOverview', function() {
         'This cannot be undone.';
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
+        changeState={sinon.stub()}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
         getUnitStatusCounts={getUnitStatusCounts()}
         service={fakeService}
         serviceRelations={[]} />, true);
@@ -495,6 +547,9 @@ describe('ServiceOverview', function() {
     output.props.children[2].props.buttons[0].action();
     shallowRenderer.render(
       <juju.components.ServiceOverview
+        changeState={sinon.stub()}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
         getUnitStatusCounts={getUnitStatusCounts()}
         service={fakeService}
         serviceRelations={[]} />);
