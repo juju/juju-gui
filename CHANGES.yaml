@@ -1,3 +1,12 @@
+- 2.1.6:
+    - Moved model creation into the User Profile.
+    - Bundle export files now have the model name and date.
+    - Switching between models with uncommitted changes now displays a confirmation dialogue.
+    - (Fix) Bundle icons are now properly displayed.
+    - (Fix) Focus on header search input when opening midpoint.
+    - (Fix) Focus on charm details content when opening.
+    - (Fix) Reset panels when switching between models.
+    - (Fix) Do not send RPC calls when websocket is closing.
 - 2.1.5:
     - Add tests for when env should/should not connect.
     - Improve testing around search result IDs.
