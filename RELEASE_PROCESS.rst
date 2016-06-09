@@ -8,7 +8,7 @@ Make the clone using:
 ::
 
     git clone git@github.com:juju/juju-gui.git gui-release
-    cd juju-gui
+    cd gui-release
 
 Next you'll want to generate the list of changes for CHANGES.yaml.
 
@@ -126,7 +126,7 @@ Merge changes to develop
 Update the release on github
 ----------------------------
 
-You can find the release on github at https://github.com/juju/juju-gui/tag/<the newest tag>. Update the
+You can find the release on github at https://github.com/juju/juju-gui/releases/tag/<the newest tag>. Update the
 release notes with the entry from CHANGES.yaml. Upload the dist/jujugui-$RELEASE.tar.bz2 package as a binary.
 
 Congratulations! You've created a release of the juju gui. Depending on the reason for doing so, you may
