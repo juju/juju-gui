@@ -331,11 +331,14 @@ YUI.add('inspector-component', function() {
                 }}}};
           break;
         case 'relate-to':
+          var spouse = metadata['relate-to'];
+          console.log(serviceId, spouse);
           state.activeChild = {
             title: 'Relate to',
             icon: service.get('icon'),
             component:
               <juju.components.InspectorRelateTo
+                changeState={this.props.changeState}
                 application={service}
                 getRelatableApplications={this.props.getRelatableApplications}
                 />,

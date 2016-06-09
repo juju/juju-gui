@@ -35,7 +35,19 @@ YUI.add('inspector-relate-to', function() {
       @param {Object} e The click event.
     */
     _relateToItemAction: function(e) {
-      console.log('_relateToItemAction');
+      var applicationFrom = this.props.application.get('id')
+      var applicationTo = e.currentTarget.getAttribute('data-id');
+
+      this.props.changeState({
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            id: applicationFrom, // Application from Id
+            spouse: applicationTo, // Application to Id
+            activeComponent: 'relate-to'
+          }
+        }
+      });
     },
 
     /**
