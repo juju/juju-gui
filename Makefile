@@ -171,6 +171,9 @@ $(REACT_ASSETS): $(NODE_MODULES)
 
 $(BUILT_YUI): $(YUI) $(BUILT_JS_ASSETS)
 	cp -r $(YUI) $(BUILT_YUI)
+	# With the update to npm3 YUI now has nested dependencies which bloats the
+	# dist. Because we do not run YUI in node we can safely delete this folder.
+	rm -rf $(BUILT_YUI)/node_modules
 
 $(STATIC_CSS_FILES):
 	mkdir -p $(GUIBUILD)/app/assets/stylesheets
