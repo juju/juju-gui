@@ -1769,19 +1769,23 @@ YUI.add('juju-view-utils', function(Y) {
 
     @method getRelatableApplications
     @param {Object} topo The topology object.
+    @param {Database} db to resolve relations on.
     @param {Object} service A BoxModel-wrapped application.
     @param {Function} callback A function to call after removal.
+    @returns {Array} The service objects that can related to the application.
   */
-  utils.getRelatableApplications = function(topo, models, application) {
+  utils.getRelatableApplications = function(topo, db, models, application) {
     var endpointsController = topo.get('endpointsController');
     var endpoints = models.getEndpoints(application, endpointsController);
-
     // Transform endpoints into a list of relatable applications (to the
-    // service).
+    // application).
     var possibleRelations = Y.Array.map(
         Y.Array.flatten(Y.Object.values(endpoints)),
-        function(ep) {return ep});
-
+        function(ep) {
+          return db.services.getById(ep.service);
+        }).filter(function(match) {
+          return match.get('id') !== application.get('id');
+        });
     return possibleRelations;
   };
 

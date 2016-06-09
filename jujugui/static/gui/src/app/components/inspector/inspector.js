@@ -336,7 +336,6 @@ YUI.add('inspector-component', function() {
             icon: service.get('icon'),
             component:
               <juju.components.InspectorRelateTo
-                applications={services}
                 application={service}
                 getRelatableApplications={this.props.getRelatableApplications}
                 />,
