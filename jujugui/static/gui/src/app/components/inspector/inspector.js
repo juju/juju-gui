@@ -26,7 +26,9 @@ YUI.add('inspector-component', function() {
       addGhostAndEcsUnits: React.PropTypes.func.isRequired,
       addNotification: React.PropTypes.func.isRequired,
       appPreviousState: React.PropTypes.object.isRequired,
+      appState: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
+      charm: React.PropTypes.object.isRequired,
       clearState: React.PropTypes.func.isRequired,
       createMachinesPlaceUnits: React.PropTypes.func.isRequired,
       destroyRelations: React.PropTypes.func.isRequired,
@@ -44,6 +46,7 @@ YUI.add('inspector-component', function() {
       service: React.PropTypes.object.isRequired,
       serviceRelations: React.PropTypes.array.isRequired,
       setCharm: React.PropTypes.func.isRequired,
+      setConfig: React.PropTypes.func.isRequired,
       unexposeService: React.PropTypes.func.isRequired,
       updateServiceUnitsDisplayname: React.PropTypes.func.isRequired
     },

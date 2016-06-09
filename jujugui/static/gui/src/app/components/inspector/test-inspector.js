@@ -24,7 +24,7 @@ var testUtils = React.addons.TestUtils;
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('Inspector', function() {
+fdescribe('Inspector', function() {
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -45,21 +45,40 @@ describe('Inspector', function() {
       sectionA: {
         metadata: {}
       }};
+    var changeState = sinon.stub();
     var clearState = sinon.stub();
     var destroyService = sinon.stub();
     var getUnitStatusCounts = sinon.stub();
-    var appPreviousState = sinon.stub();
-    var serviceRelations = sinon.stub();
+    var serviceRelations = ['relations'];
     var component = jsTestUtils.shallowRender(
         <juju.components.Inspector
-          service={service}
-          destroyService={destroyService}
-          getUnitStatusCounts={getUnitStatusCounts}
-          linkify={sinon.stub()}
-          clearState={clearState}
-          appPreviousState={appPreviousState}
           appState={appState}
-          serviceRelations={serviceRelations} />, true);
+          addCharm={sinon.stub()}
+          addGhostAndEcsUnits={sinon.stub()}
+          addNotification={sinon.stub()}
+          appPreviousState={{}}
+          changeState={changeState}
+          charm={{}}
+          clearState={clearState}
+          createMachinesPlaceUnits={sinon.stub()}
+          destroyRelations={sinon.stub()}
+          destroyService={destroyService}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
+          exposeService={sinon.stub()}
+          getAvailableVersions={sinon.stub()}
+          getCharm={sinon.stub()}
+          getMacaroon={sinon.stub()}
+          getServiceByName={sinon.stub()}
+          getUnitStatusCounts={getUnitStatusCounts}
+          getYAMLConfig={sinon.stub()}
+          linkify={sinon.stub()}
+          service={service}
+          serviceRelations={serviceRelations}
+          setCharm={sinon.stub()}
+          setConfig={sinon.stub()}
+          unexposeService={sinon.stub()}
+          updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
     var header = output.props.children[0];
@@ -76,7 +95,7 @@ describe('Inspector', function() {
                      'Header is not rendered as expected');
     var expectedOverview = (
         <juju.components.ServiceOverview
-          changeState={undefined}
+          changeState={changeState}
           destroyService={destroyService}
           getUnitStatusCounts={getUnitStatusCounts}
           clearState={clearState}
@@ -91,7 +110,6 @@ describe('Inspector', function() {
     var envResolved = sinon.stub();
     var changeStateStub = sinon.stub();
     var destroyUnits = sinon.stub();
-    var appPreviousState = sinon.stub();
     var unitStatus = 'error';
     var getStub = sinon.stub();
     var icon = 'foo.png';
@@ -111,13 +129,33 @@ describe('Inspector', function() {
         }}};
     var component = jsTestUtils.shallowRender(
         <juju.components.Inspector
-          service={service}
+          addCharm={sinon.stub()}
+          addGhostAndEcsUnits={sinon.stub()}
+          addNotification={sinon.stub()}
+          appPreviousState={{}}
           appState={appState}
+          changeState={changeStateStub}
+          charm={{}}
+          clearState={sinon.stub()}
+          createMachinesPlaceUnits={sinon.stub()}
+          destroyRelations={sinon.stub()}
+          destroyService={sinon.stub()}
           destroyUnits={destroyUnits}
           envResolved={envResolved}
+          exposeService={sinon.stub()}
+          getAvailableVersions={sinon.stub()}
+          getCharm={sinon.stub()}
+          getMacaroon={sinon.stub()}
+          getServiceByName={sinon.stub()}
+          getUnitStatusCounts={sinon.stub()}
+          getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          appPreviousState={appPreviousState}
-          changeState={changeStateStub}>
+          service={service}
+          serviceRelations={[]}
+          setCharm={sinon.stub()}
+          setConfig={sinon.stub()}
+          unexposeService={sinon.stub()}
+          updateServiceUnitsDisplayname={sinon.stub()}>
         </juju.components.Inspector>, true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
@@ -148,13 +186,11 @@ describe('Inspector', function() {
 
   it('displays the configuration when the app state calls for it', function() {
     var setConfig = sinon.stub();
-    var charm = {};
     var getStub = sinon.stub();
     var icon = 'foo.png';
     getStub.withArgs('icon').returns(icon);
     var changeState = sinon.stub();
     var getYAMLConfig = sinon.stub();
-    var appPreviousState = sinon.stub();
     var updateServiceUnitsDisplayname = sinon.stub();
     var getServiceByName = sinon.stub();
     var addNotification = sinon.stub();
@@ -167,19 +203,37 @@ describe('Inspector', function() {
         metadata: {
           activeComponent: 'config'
         }}};
+    var charm = {};
     var component = jsTestUtils.shallowRender(
         <juju.components.Inspector
-          appState={appState}
-          service={service}
-          changeState={changeState}
-          getYAMLConfig={getYAMLConfig}
-          charm={charm}
-          appPreviousState={appPreviousState}
-          updateServiceUnitsDisplayname={updateServiceUnitsDisplayname}
+          addCharm={sinon.stub()}
+          addGhostAndEcsUnits={sinon.stub()}
           addNotification={addNotification}
+          appPreviousState={{}}
+          appState={appState}
+          changeState={changeState}
+          charm={charm}
+          clearState={sinon.stub()}
+          createMachinesPlaceUnits={sinon.stub()}
+          destroyRelations={sinon.stub()}
+          destroyService={sinon.stub()}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
+          exposeService={sinon.stub()}
+          getAvailableVersions={sinon.stub()}
+          getCharm={sinon.stub()}
+          getMacaroon={sinon.stub()}
           getServiceByName={getServiceByName}
+          getUnitStatusCounts={sinon.stub()}
+          getYAMLConfig={getYAMLConfig}
           linkify={linkify}
-          setConfig={setConfig} />, true);
+          service={service}
+          serviceRelations={[]}
+          setCharm={sinon.stub()}
+          setConfig={setConfig}
+          unexposeService={sinon.stub()}
+          updateServiceUnitsDisplayname={updateServiceUnitsDisplayname} />,
+          true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
     var header = output.props.children[0];
@@ -234,15 +288,35 @@ describe('Inspector', function() {
           activeComponent: 'unit',
           unit: '5'
         }}};
-    var appPreviousState = sinon.stub();
     var component = jsTestUtils.shallowRender(
         <juju.components.Inspector
-          service={service}
-          destroyUnits={destroyUnits}
+          addCharm={sinon.stub()}
+          addGhostAndEcsUnits={sinon.stub()}
+          addNotification={sinon.stub()}
+          appPreviousState={{}}
+          appState={appState}
           changeState={changeState}
+          charm={{}}
+          clearState={sinon.stub()}
+          createMachinesPlaceUnits={sinon.stub()}
+          destroyRelations={sinon.stub()}
+          destroyService={sinon.stub()}
+          destroyUnits={destroyUnits}
+          envResolved={sinon.stub()}
+          exposeService={sinon.stub()}
+          getAvailableVersions={sinon.stub()}
+          getCharm={sinon.stub()}
+          getMacaroon={sinon.stub()}
+          getServiceByName={sinon.stub()}
+          getUnitStatusCounts={sinon.stub()}
+          getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          appPreviousState={appPreviousState}
-          appState={appState}>
+          service={service}
+          serviceRelations={[]}
+          setCharm={sinon.stub()}
+          setConfig={sinon.stub()}
+          unexposeService={sinon.stub()}
+          updateServiceUnitsDisplayname={sinon.stub()}>
         </juju.components.Inspector>, true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
@@ -290,13 +364,33 @@ describe('Inspector', function() {
         }}};
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Inspector
-        service={service}
+        addCharm={sinon.stub()}
+        addGhostAndEcsUnits={sinon.stub()}
+        addNotification={sinon.stub()}
+        appPreviousState={{}}
         appState={appState}
+        changeState={changeState}
+        charm={{}}
+        clearState={sinon.stub()}
+        createMachinesPlaceUnits={sinon.stub()}
+        destroyRelations={sinon.stub()}
+        destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
         envResolved={sinon.stub()}
+        exposeService={sinon.stub()}
+        getAvailableVersions={sinon.stub()}
+        getCharm={sinon.stub()}
+        getMacaroon={sinon.stub()}
+        getServiceByName={sinon.stub()}
+        getUnitStatusCounts={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
-        appPreviousState={sinon.stub()}
-        changeState={changeState} />, true);
+        service={service}
+        serviceRelations={[]}
+        setCharm={sinon.stub()}
+        setConfig={sinon.stub()}
+        unexposeService={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = shallowRenderer.getMountedInstance();
     assert.equal(instance.state.activeComponent, 'units');
     getStub.withArgs('units').returns({getById: function() {
@@ -313,13 +407,33 @@ describe('Inspector', function() {
         }}};
     shallowRenderer.render(
       <juju.components.Inspector
-        service={service}
+        addCharm={sinon.stub()}
+        addGhostAndEcsUnits={sinon.stub()}
+        addNotification={sinon.stub()}
+        appPreviousState={{}}
         appState={appState}
+        changeState={sinon.stub()}
+        charm={{}}
+        clearState={sinon.stub()}
+        createMachinesPlaceUnits={sinon.stub()}
+        destroyRelations={sinon.stub()}
+        destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
         envResolved={sinon.stub()}
+        exposeService={sinon.stub()}
+        getAvailableVersions={sinon.stub()}
+        getCharm={sinon.stub()}
+        getMacaroon={sinon.stub()}
+        getServiceByName={sinon.stub()}
+        getUnitStatusCounts={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
-        appPreviousState={sinon.stub()}
-        changeState={sinon.stub()} />);
+        service={service}
+        serviceRelations={[]}
+        setCharm={sinon.stub()}
+        setConfig={sinon.stub()}
+        unexposeService={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()} />);
     // The displayed component should not have been updated.
     assert.equal(instance.state.activeComponent, 'units');
     assert.equal(changeState.callCount, 1);
@@ -340,7 +454,7 @@ describe('Inspector', function() {
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({getById: function() {
-      return 'unit';
+      return {displayName: 'spinach'};
     }});
     var service = {
       get: getStub
@@ -360,12 +474,33 @@ describe('Inspector', function() {
         }}};
     var output = jsTestUtils.shallowRender(
         <juju.components.Inspector
-          service={service}
-          destroyUnits={destroyUnits}
-          changeState={changeState}
-          linkify={sinon.stub()}
+          addCharm={sinon.stub()}
+          addGhostAndEcsUnits={sinon.stub()}
+          addNotification={sinon.stub()}
           appPreviousState={appPreviousState}
-          appState={appState}>
+          appState={appState}
+          changeState={changeState}
+          charm={{}}
+          clearState={sinon.stub()}
+          createMachinesPlaceUnits={sinon.stub()}
+          destroyRelations={sinon.stub()}
+          destroyService={sinon.stub()}
+          destroyUnits={destroyUnits}
+          envResolved={sinon.stub()}
+          exposeService={sinon.stub()}
+          getAvailableVersions={sinon.stub()}
+          getCharm={sinon.stub()}
+          getMacaroon={sinon.stub()}
+          getServiceByName={sinon.stub()}
+          getUnitStatusCounts={sinon.stub()}
+          getYAMLConfig={sinon.stub()}
+          linkify={sinon.stub()}
+          service={service}
+          serviceRelations={[]}
+          setCharm={sinon.stub()}
+          setConfig={sinon.stub()}
+          unexposeService={sinon.stub()}
+          updateServiceUnitsDisplayname={sinon.stub()}>
         </juju.components.Inspector>);
     output.props.children[0].props.backCallback();
     assert.equal(changeState.callCount, 1);
@@ -386,7 +521,7 @@ describe('Inspector', function() {
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({getById: function() {
-      return 'unit';
+      return {displayName: 'spinache'};
     }});
     var service = {
       get: getStub
@@ -397,15 +532,35 @@ describe('Inspector', function() {
           activeComponent: 'unit',
           unit: '5'
         }}};
-    var appPreviousState = {};
     var output = jsTestUtils.shallowRender(
         <juju.components.Inspector
-          service={service}
-          destroyUnits={destroyUnits}
+          addCharm={sinon.stub()}
+          addGhostAndEcsUnits={sinon.stub()}
+          addNotification={sinon.stub()}
+          appPreviousState={{}}
+          appState={appState}
           changeState={changeState}
+          charm={{}}
+          clearState={sinon.stub()}
+          createMachinesPlaceUnits={sinon.stub()}
+          destroyRelations={sinon.stub()}
+          destroyService={sinon.stub()}
+          destroyUnits={destroyUnits}
+          envResolved={sinon.stub()}
+          exposeService={sinon.stub()}
+          getAvailableVersions={sinon.stub()}
+          getCharm={sinon.stub()}
+          getMacaroon={sinon.stub()}
+          getServiceByName={sinon.stub()}
+          getUnitStatusCounts={sinon.stub()}
+          getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          appPreviousState={appPreviousState}
-          appState={appState}>
+          service={service}
+          serviceRelations={[]}
+          setCharm={sinon.stub()}
+          setConfig={sinon.stub()}
+          unexposeService={sinon.stub()}
+          updateServiceUnitsDisplayname={sinon.stub()}>
         </juju.components.Inspector>);
     output.props.children[0].props.backCallback();
     assert.equal(changeState.callCount, 1);
@@ -430,7 +585,7 @@ describe('Inspector', function() {
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({getById: function() {
-      return 'unit';
+      return {displayName: 'spinache'};
     }});
     var service = {
       get: getStub
@@ -449,12 +604,33 @@ describe('Inspector', function() {
         }}};
     var output = jsTestUtils.shallowRender(
         <juju.components.Inspector
-          service={service}
-          destroyUnits={destroyUnits}
-          changeState={changeState}
-          linkify={sinon.stub()}
+          addCharm={sinon.stub()}
+          addGhostAndEcsUnits={sinon.stub()}
+          addNotification={sinon.stub()}
           appPreviousState={appPreviousState}
-          appState={appState}>
+          appState={appState}
+          changeState={changeState}
+          charm={{}}
+          clearState={sinon.stub()}
+          createMachinesPlaceUnits={sinon.stub()}
+          destroyRelations={sinon.stub()}
+          destroyService={sinon.stub()}
+          destroyUnits={destroyUnits}
+          envResolved={sinon.stub()}
+          exposeService={sinon.stub()}
+          getAvailableVersions={sinon.stub()}
+          getCharm={sinon.stub()}
+          getMacaroon={sinon.stub()}
+          getServiceByName={sinon.stub()}
+          getUnitStatusCounts={sinon.stub()}
+          getYAMLConfig={sinon.stub()}
+          linkify={sinon.stub()}
+          service={service}
+          serviceRelations={[]}
+          setCharm={sinon.stub()}
+          setConfig={sinon.stub()}
+          unexposeService={sinon.stub()}
+          updateServiceUnitsDisplayname={sinon.stub()}>
         </juju.components.Inspector>);
     output.props.children[0].props.backCallback();
     assert.equal(changeState.callCount, 1);
@@ -469,8 +645,7 @@ describe('Inspector', function() {
         }}});
   });
 
-  it('displays the Scale header when the app state calls for it', function() {
-    var appPreviousState = sinon.stub();
+  it('displays Scale Service when the app state calls for it', function() {
     var icon = 'foo.png';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
@@ -486,10 +661,33 @@ describe('Inspector', function() {
         }}};
     var component = jsTestUtils.shallowRender(
       <juju.components.Inspector
+        addCharm={sinon.stub()}
+        addGhostAndEcsUnits={sinon.stub()}
+        addNotification={sinon.stub()}
+        appPreviousState={{}}
+        appState={appState}
+        changeState={sinon.stub()}
+        charm={{}}
+        clearState={sinon.stub()}
+        createMachinesPlaceUnits={sinon.stub()}
+        destroyRelations={sinon.stub()}
+        destroyService={sinon.stub()}
+        destroyUnits={sinon.stub()}
+        envResolved={sinon.stub()}
+        exposeService={sinon.stub()}
+        getAvailableVersions={sinon.stub()}
+        getCharm={sinon.stub()}
+        getMacaroon={sinon.stub()}
+        getServiceByName={sinon.stub()}
+        getUnitStatusCounts={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
         service={service}
-        appPreviousState={appPreviousState}
-        appState={appState} />, true);
+        serviceRelations={[]}
+        setCharm={sinon.stub()}
+        setConfig={sinon.stub()}
+        unexposeService={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
     var header = output.props.children[0];
@@ -519,8 +717,7 @@ describe('Inspector', function() {
     var exposeService = sinon.stub();
     var unexposeService = sinon.stub();
     var service = sinon.stub();
-    var units = sinon.stub();
-    var appPreviousState = sinon.stub();
+    var units = {};
     var icon = 'icon.png';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
@@ -536,14 +733,33 @@ describe('Inspector', function() {
         }}};
     var component = jsTestUtils.shallowRender(
       <juju.components.Inspector
+        addCharm={sinon.stub()}
+        addGhostAndEcsUnits={sinon.stub()}
         addNotification={addNotification}
+        appPreviousState={{}}
+        appState={appState}
         changeState={changeState}
+        charm={{}}
+        clearState={sinon.stub()}
+        createMachinesPlaceUnits={sinon.stub()}
+        destroyRelations={sinon.stub()}
+        destroyService={sinon.stub()}
+        destroyUnits={sinon.stub()}
+        envResolved={sinon.stub()}
         exposeService={exposeService}
+        getAvailableVersions={sinon.stub()}
+        getCharm={sinon.stub()}
+        getMacaroon={sinon.stub()}
+        getServiceByName={sinon.stub()}
+        getUnitStatusCounts={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
-        unexposeService={unexposeService}
         service={service}
-        appPreviousState={appPreviousState}
-        appState={appState} />, true);
+        serviceRelations={[]}
+        setCharm={sinon.stub()}
+        setConfig={sinon.stub()}
+        unexposeService={unexposeService}
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
     var header = output.props.children[0];
@@ -573,7 +789,6 @@ describe('Inspector', function() {
     var changeState = sinon.stub();
     var destroyRelations = sinon.stub();
     var service = sinon.stub();
-    var appPreviousState = sinon.stub();
     var icon = 'icon.png';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
@@ -586,16 +801,36 @@ describe('Inspector', function() {
         metadata: {
           activeComponent: 'relations',
         }}};
-    var serviceRelations = sinon.stub();
+    var serviceRelations = ['relatons'];
     var component = jsTestUtils.shallowRender(
       <juju.components.Inspector
-        changeState={changeState}
-        service={service}
-        destroyRelations={destroyRelations}
-        appPreviousState={appPreviousState}
+        addCharm={sinon.stub()}
+        addGhostAndEcsUnits={sinon.stub()}
+        addNotification={sinon.stub()}
+        appPreviousState={{}}
         appState={appState}
+        changeState={changeState}
+        charm={{}}
+        clearState={sinon.stub()}
+        createMachinesPlaceUnits={sinon.stub()}
+        destroyRelations={destroyRelations}
+        destroyService={sinon.stub()}
+        destroyUnits={sinon.stub()}
+        envResolved={sinon.stub()}
+        exposeService={sinon.stub()}
+        getAvailableVersions={sinon.stub()}
+        getCharm={sinon.stub()}
+        getMacaroon={sinon.stub()}
+        getServiceByName={sinon.stub()}
+        getUnitStatusCounts={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
-        serviceRelations={serviceRelations} />, true);
+        service={service}
+        serviceRelations={serviceRelations}
+        setCharm={sinon.stub()}
+        setConfig={sinon.stub()}
+        unexposeService={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
     var header = output.props.children[0];
@@ -628,7 +863,6 @@ describe('Inspector', function() {
     var setCharm = sinon.stub();
     var getCharm = sinon.stub();
     var getAvailableVersions = sinon.stub();
-    var appPreviousState = sinon.stub();
     var icon = 'icon.png';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
@@ -644,17 +878,33 @@ describe('Inspector', function() {
         }}};
     var component = jsTestUtils.shallowRender(
       <juju.components.Inspector
-        addNotification={addNotification}
-        changeState={changeState}
-        getMacaroon={getMacaroon}
         addCharm={addCharm}
-        setCharm={setCharm}
-        getCharm={getCharm}
+        addGhostAndEcsUnits={sinon.stub()}
+        addNotification={addNotification}
+        appPreviousState={{}}
+        appState={appState}
+        changeState={changeState}
+        charm={{}}
+        clearState={sinon.stub()}
+        createMachinesPlaceUnits={sinon.stub()}
+        destroyRelations={sinon.stub()}
+        destroyService={sinon.stub()}
+        destroyUnits={sinon.stub()}
+        envResolved={sinon.stub()}
+        exposeService={sinon.stub()}
         getAvailableVersions={getAvailableVersions}
+        getCharm={getCharm}
+        getMacaroon={getMacaroon}
+        getServiceByName={sinon.stub()}
+        getUnitStatusCounts={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
-        appPreviousState={appPreviousState}
         service={service}
-        appState={appState} />, true);
+        serviceRelations={[]}
+        setCharm={setCharm}
+        setConfig={sinon.stub()}
+        unexposeService={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
     var header = output.props.children[0];
@@ -684,11 +934,14 @@ describe('Inspector', function() {
   });
 
   it('passes changeState callable to header component', function() {
-    var appPreviousState = sinon.stub();
     var service = {
       get: function(val) {
         if (val === 'id') {
           return 'apache2';
+        } else if (val === 'icon') {
+          return 'icon.png';
+        } else if (val === 'name') {
+          return 'spinach';
         }
         return {name: 'demo'};
       }};
@@ -700,11 +953,33 @@ describe('Inspector', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.Inspector
-          changeState={changeStub}
+          addCharm={sinon.stub()}
+          addGhostAndEcsUnits={sinon.stub()}
+          addNotification={sinon.stub()}
+          appPreviousState={{}}
           appState={appState}
-          appPreviousState={appPreviousState}
+          changeState={changeStub}
+          charm={{}}
+          clearState={sinon.stub()}
+          createMachinesPlaceUnits={sinon.stub()}
+          destroyRelations={sinon.stub()}
+          destroyService={sinon.stub()}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
+          exposeService={sinon.stub()}
+          getAvailableVersions={sinon.stub()}
+          getCharm={sinon.stub()}
+          getMacaroon={sinon.stub()}
+          getServiceByName={sinon.stub()}
+          getUnitStatusCounts={sinon.stub()}
+          getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          service={service} />);
+          service={service}
+          serviceRelations={[]}
+          setCharm={sinon.stub()}
+          setConfig={sinon.stub()}
+          unexposeService={sinon.stub()}
+          updateServiceUnitsDisplayname={sinon.stub()} />);
     var output = shallowRenderer.getRenderOutput();
     output.props.children[0].props.backCallback();
     assert.equal(changeStub.callCount, 1);
@@ -727,6 +1002,10 @@ describe('Inspector', function() {
       get: function(val) {
         if (val === 'id') {
           return 'apache2';
+        } else if (val === 'icon') {
+          return 'icon.png';
+        } else if (val === 'name') {
+          return 'spinach';
         }
         return {name: 'demo'};
       }};
@@ -738,11 +1017,33 @@ describe('Inspector', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.Inspector
-          changeState={changeStub}
-          appState={appState}
+          addCharm={sinon.stub()}
+          addGhostAndEcsUnits={sinon.stub()}
+          addNotification={sinon.stub()}
           appPreviousState={appPreviousState}
+          appState={appState}
+          changeState={changeStub}
+          charm={{}}
+          clearState={sinon.stub()}
+          createMachinesPlaceUnits={sinon.stub()}
+          destroyRelations={sinon.stub()}
+          destroyService={sinon.stub()}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
+          exposeService={sinon.stub()}
+          getAvailableVersions={sinon.stub()}
+          getCharm={sinon.stub()}
+          getMacaroon={sinon.stub()}
+          getServiceByName={sinon.stub()}
+          getUnitStatusCounts={sinon.stub()}
+          getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          service={service} />);
+          service={service}
+          serviceRelations={[]}
+          setCharm={sinon.stub()}
+          setConfig={sinon.stub()}
+          unexposeService={sinon.stub()}
+          updateServiceUnitsDisplayname={sinon.stub()} />);
     var output = shallowRenderer.getRenderOutput();
     output.props.children[0].props.backCallback();
     assert.equal(changeStub.callCount, 1);
@@ -776,11 +1077,33 @@ describe('Inspector', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.Inspector
-          changeState={changeStub}
-          appState={appState}
+          addCharm={sinon.stub()}
+          addGhostAndEcsUnits={sinon.stub()}
+          addNotification={sinon.stub()}
           appPreviousState={appPreviousState}
+          appState={appState}
+          changeState={changeStub}
+          charm={{}}
+          clearState={sinon.stub()}
+          createMachinesPlaceUnits={sinon.stub()}
+          destroyRelations={sinon.stub()}
+          destroyService={sinon.stub()}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
+          exposeService={sinon.stub()}
+          getAvailableVersions={sinon.stub()}
+          getCharm={sinon.stub()}
+          getMacaroon={sinon.stub()}
+          getServiceByName={sinon.stub()}
+          getUnitStatusCounts={sinon.stub()}
+          getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          service={service} />);
+          service={service}
+          serviceRelations={[]}
+          setCharm={sinon.stub()}
+          setConfig={sinon.stub()}
+          unexposeService={sinon.stub()}
+          updateServiceUnitsDisplayname={sinon.stub()} />);
     var output = shallowRenderer.getRenderOutput();
     output.props.children[0].props.backCallback();
     assert.equal(changeStub.callCount, 1);
@@ -793,7 +1116,6 @@ describe('Inspector', function() {
   });
 
   it('passes a title to the header component', function() {
-    var appPreviousState = sinon.stub();
     var service = {
       get: function() {
         return 'demo';
@@ -806,22 +1128,45 @@ describe('Inspector', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.Inspector
-          changeState={changeStub}
+          addCharm={sinon.stub()}
+          addGhostAndEcsUnits={sinon.stub()}
+          addNotification={sinon.stub()}
+          appPreviousState={{}}
           appState={appState}
-          appPreviousState={appPreviousState}
+          changeState={changeStub}
+          charm={{}}
+          clearState={sinon.stub()}
+          createMachinesPlaceUnits={sinon.stub()}
+          destroyRelations={sinon.stub()}
+          destroyService={sinon.stub()}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
+          exposeService={sinon.stub()}
+          getAvailableVersions={sinon.stub()}
+          getCharm={sinon.stub()}
+          getMacaroon={sinon.stub()}
+          getServiceByName={sinon.stub()}
+          getUnitStatusCounts={sinon.stub()}
+          getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          service={service} />);
+          service={service}
+          serviceRelations={[]}
+          setCharm={sinon.stub()}
+          setConfig={sinon.stub()}
+          unexposeService={sinon.stub()}
+          updateServiceUnitsDisplayname={sinon.stub()} />);
     var output = shallowRenderer.getRenderOutput();
     assert.equal(output.props.children[0].props.title, 'demo');
   });
 
   it('passes the type to the header component', function() {
-    var appPreviousState = sinon.stub();
-    var service = {
-      get: sinon.stub().returns({
-        filterByStatus: sinon.stub().returns([])
-      })
-    };
+    var getStub = sinon.stub();
+    getStub.withArgs('icon').returns('icon.svg');
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('units').returns({
+      filterByStatus: sinon.stub().returns([])
+    });
+    var service = {get: getStub};
     var appState = {
       sectionA: {
         metadata: {
@@ -834,11 +1179,33 @@ describe('Inspector', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.Inspector
-          changeState={changeStub}
+          addCharm={sinon.stub()}
+          addGhostAndEcsUnits={sinon.stub()}
+          addNotification={sinon.stub()}
+          appPreviousState={{}}
           appState={appState}
-          appPreviousState={appPreviousState}
+          changeState={changeStub}
+          charm={{}}
+          clearState={sinon.stub()}
+          createMachinesPlaceUnits={sinon.stub()}
+          destroyRelations={sinon.stub()}
+          destroyService={sinon.stub()}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
+          exposeService={sinon.stub()}
+          getAvailableVersions={sinon.stub()}
+          getCharm={sinon.stub()}
+          getMacaroon={sinon.stub()}
+          getServiceByName={sinon.stub()}
+          getUnitStatusCounts={sinon.stub()}
+          getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          service={service} />);
+          service={service}
+          serviceRelations={[]}
+          setCharm={sinon.stub()}
+          setConfig={sinon.stub()}
+          unexposeService={sinon.stub()}
+          updateServiceUnitsDisplayname={sinon.stub()} />);
     var output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children[0].props.type, 'error');
   });
@@ -854,6 +1221,10 @@ describe('Inspector', function() {
       get: function(val) {
         if (val === 'id') {
           return 'apache2';
+        } else if (val === 'icon') {
+          return 'icon.svg';
+        } else if (val === 'name') {
+          return 'apache2';
         }
         return {name: 'demo'};
       }};
@@ -865,11 +1236,33 @@ describe('Inspector', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.Inspector
-          changeState={changeStub}
-          appState={appState}
+          addCharm={sinon.stub()}
+          addGhostAndEcsUnits={sinon.stub()}
+          addNotification={sinon.stub()}
           appPreviousState={appPreviousState}
+          appState={appState}
+          changeState={changeStub}
+          charm={{}}
+          clearState={sinon.stub()}
+          createMachinesPlaceUnits={sinon.stub()}
+          destroyRelations={sinon.stub()}
+          destroyService={sinon.stub()}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
+          exposeService={sinon.stub()}
+          getAvailableVersions={sinon.stub()}
+          getCharm={sinon.stub()}
+          getMacaroon={sinon.stub()}
+          getServiceByName={sinon.stub()}
+          getUnitStatusCounts={sinon.stub()}
+          getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          service={service} />);
+          service={service}
+          serviceRelations={[]}
+          setCharm={sinon.stub()}
+          setConfig={sinon.stub()}
+          unexposeService={sinon.stub()}
+          updateServiceUnitsDisplayname={sinon.stub()} />);
     shallowRenderer.getRenderOutput();
     assert.equal(changeStub.callCount, 0);
     service = {
@@ -881,11 +1274,33 @@ describe('Inspector', function() {
       }};
     shallowRenderer.render(
         <juju.components.Inspector
-          changeState={changeStub}
-          appState={appState}
+          addCharm={sinon.stub()}
+          addGhostAndEcsUnits={sinon.stub()}
+          addNotification={sinon.stub()}
           appPreviousState={appPreviousState}
+          appState={appState}
+          changeState={changeStub}
+          charm={{}}
+          clearState={sinon.stub()}
+          createMachinesPlaceUnits={sinon.stub()}
+          destroyRelations={sinon.stub()}
+          destroyService={sinon.stub()}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
+          exposeService={sinon.stub()}
+          getAvailableVersions={sinon.stub()}
+          getCharm={sinon.stub()}
+          getMacaroon={sinon.stub()}
+          getServiceByName={sinon.stub()}
+          getUnitStatusCounts={sinon.stub()}
+          getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          service={service} />);
+          service={service}
+          serviceRelations={[]}
+          setCharm={sinon.stub()}
+          setConfig={sinon.stub()}
+          unexposeService={sinon.stub()}
+          updateServiceUnitsDisplayname={sinon.stub()} />);
     shallowRenderer.getRenderOutput();
     assert.equal(changeStub.callCount, 1);
     assert.deepEqual(changeStub.args[0][0], {

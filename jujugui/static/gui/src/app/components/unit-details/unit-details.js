@@ -24,10 +24,10 @@ YUI.add('unit-details', function() {
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
       destroyUnits: React.PropTypes.func.isRequired,
-      previousComponent: React.PropTypes.string.isRequired,
+      previousComponent: React.PropTypes.string,
       service: React.PropTypes.object.isRequired,
       unit: React.PropTypes.object.isRequired,
-      unitStatus: React.PropTypes.string.isRequired
+      unitStatus: React.PropTypes.string
     },
 
     /**

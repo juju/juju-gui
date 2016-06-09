@@ -90,7 +90,7 @@ describe('EnvList', function() {
       <juju.components.EnvList
         envs={envs}
         handleEnvClick={sinon.stub()}
-        showProfile={showUserProfile} />);
+        showProfile={showProfile} />);
 
     testUtils.Simulate.click(
         ReactDOM.findDOMNode(component)

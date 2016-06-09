@@ -35,7 +35,6 @@ describe('EnvSwitcher', function() {
       // Have to access the wrapped component as we don't want to test the click
       // outside wrapper.
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        changeState={sinon.stub()}
         environmentName="MyEnv"
         listModels={sinon.stub()}
         showProfile={sinon.stub()}
@@ -74,7 +73,6 @@ describe('EnvSwitcher', function() {
     var showProfile = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        changeState={sinon.stub()}
         listModels={sinon.stub()}
         showProfile={showProfile}
         switchModel={sinon.stub()} />, true);
@@ -86,7 +84,6 @@ describe('EnvSwitcher', function() {
 
     renderer.render(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        changeState={sinon.stub()}
         listModels={sinon.stub()}
         showProfile={showProfile}
         switchModel={sinon.stub()} />);
@@ -106,7 +103,6 @@ describe('EnvSwitcher', function() {
     var listModels = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        changeState={sinon.stub()}
         listModels={listModels}
         showProfile={sinon.stub()}
         switchModel={sinon.stub()} />, true);
@@ -124,7 +120,6 @@ describe('EnvSwitcher', function() {
     var listModels = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        changeState={sinon.stub()}
         listModels={listModels}
         showProfile={sinon.stub()}
         switchModel={sinon.stub()} />, true);
@@ -156,7 +151,6 @@ describe('EnvSwitcher', function() {
     var switchModel = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
-        changeState={sinon.stub()}
         listModels={listModels}
         showProfile={sinon.stub()}
         switchModel={switchModel} />, true);
