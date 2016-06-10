@@ -17,27 +17,27 @@ describe('jujulib charmstore', function() {
   });
 
   it('can be instantiated with the proper config values', function() {
-    assert.strictEqual(charmstore.url, 'local/v4');
+    assert.strictEqual(charmstore.url, 'local/v5');
   });
 
   it('is smart enough to handle missing trailing slash in URL', function() {
     var bakery = {};
     charmstore = new window.jujulib.charmstore('http://example.com', bakery);
-    assert.strictEqual(charmstore.url, 'http://example.com/v4');
+    assert.strictEqual(charmstore.url, 'http://example.com/v5');
   });
 
   describe('_generatePath', function() {
 
     it('generates a valid url using provided args', function() {
       var path = charmstore._generatePath('search/', 'text=foo');
-      assert.equal(path, 'local/v4/search/?text=foo');
+      assert.equal(path, 'local/v5/search/?text=foo');
     });
   });
 
   describe('getLogoutUrl', function() {
     it('returns a valid logout url', function() {
       var path = charmstore.getLogoutUrl();
-      assert.equal(path, 'local/v4/logout');
+      assert.equal(path, 'local/v5/logout');
     });
   });
 
@@ -112,7 +112,7 @@ describe('jujulib charmstore', function() {
 
   describe('_processEntityQueryData', function() {
 
-    it('can properly transform v4 charm data to v3', function() {
+    it('can properly transform v5 charm data to v3', function() {
       var data = {
         Id: 'cs:trusty/mongodb-9',
         Meta: {
@@ -220,7 +220,7 @@ describe('jujulib charmstore', function() {
       assert.deepEqual(processed.revisions, []);
     });
 
-    it('can properly transform v4 bundle data to v3', function() {
+    it('can properly transform v5 bundle data to v3', function() {
       var data = {
         Id: 'cs:~charmers/bundle/mongodb-cluster-4',
         Meta: {
@@ -245,7 +245,7 @@ describe('jujulib charmstore', function() {
         code_source: {
           location: 'lp:~charmers/charms/bundles/mongodb-cluster/bundle'
         },
-        deployerFileUrl: 'local/v4/~charmers/bundle/mongodb-cluster-4/' +
+        deployerFileUrl: 'local/v5/~charmers/bundle/mongodb-cluster-4/' +
             'archive/bundle.yaml',
         downloads: 10,
         entityType: 'bundle',
@@ -359,7 +359,7 @@ describe('jujulib charmstore', function() {
   describe('getDiagramURL', function() {
     it('can generate a URL for a bundle diagram', function() {
       assert.equal(charmstore.getDiagramURL('apache2'),
-          'local/v4/apache2/diagram.svg');
+          'local/v5/apache2/diagram.svg');
     });
   });
 
@@ -419,7 +419,7 @@ describe('jujulib charmstore', function() {
       charmstore.getAvailableVersions('cs:precise/ghost-5', cb);
       var requestArgs = charmstore.bakery.sendGetRequest.lastCall.args;
       // The path should not have cs: in it.
-      assert.equal(requestArgs[0], 'local/v4/precise/ghost-5/expand-id');
+      assert.equal(requestArgs[0], 'local/v5/precise/ghost-5/expand-id');
       // Call the makeRequest success handler simulating a response object;
       requestArgs[1](
           {target: { responseText: '[{"Id": "cs:precise/ghost-4"}]'}});
@@ -457,7 +457,7 @@ describe('jujulib charmstore', function() {
       };
       charmstore.whoami(cb);
       var requestArgs = charmstore.bakery.sendGetRequest.lastCall.args;
-      assert.equal(requestArgs[0], 'local/v4/whoami');
+      assert.equal(requestArgs[0], 'local/v5/whoami');
       // Make sure that we have disabled redirect on 401
       assert.strictEqual(requestArgs[3], false);
       // Call the makeRequest success handler simulating a response object;
