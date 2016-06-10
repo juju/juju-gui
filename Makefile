@@ -50,7 +50,8 @@ STATIC_CSS_FILES = \
 LSB_RELEASE = $(shell lsb_release -cs)
 
 # libfontconfig1 is required by phantom.
-SYSDEPS = nodejs python-virtualenv g++ inotify-tools libfontconfig1
+SYSDEPS = coreutils g++ git inotify-tools libfontconfig1 nodejs \
+	python-virtualenv realpath
 
 .PHONY: help
 help:
@@ -74,6 +75,8 @@ help:
 	@echo "test-js - run newer js tests in terminal; primarily for CI build"
 	@echo "test-js-old - run older js tests that have transitioned to karma in the terminal"
 	@echo "update-downloadcache - update the download cache"
+	@echo "uitest - run functional tests;"
+	@echo "  use the ARGS environment variable to append/override uitest arguments"
 
 
 #########
@@ -362,5 +365,18 @@ clean-gui:
 	- rm -rf jujugui/static/gui/build
 
 .PHONY: clean-all
-clean-all: clean-venv clean-pyc clean-gui clean-dist
+clean-all: clean-venv clean-pyc clean-gui clean-dist clean-uitest
 	- rm -rf *.egg-info
+
+.PHONY: clean-uitest
+clean-uitest:
+	- rm -rf uitest
+
+.PHONY: uitest
+uitest: sudo dist
+	@scripts/uitest.sh $(ARGS)
+
+.PHONY: sudo
+sudo:
+	@# Pre-cache sudo permissions, so that the process is not stopped later.
+	@sudo -v

@@ -37,6 +37,7 @@ tags
 test/extracted_startup_code
 test/test_startup.js
 .tern-project
+uitest/
 upload_release.py
 .vagrant
 virtualenv
