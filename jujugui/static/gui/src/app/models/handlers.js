@@ -75,7 +75,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       if (!ports) {
         return [];
       }
-      return Y.Array.map(ports, function(port) {
+      return ports.map(port => {
         return port.Number + '/' + port.Protocol;
       });
     },
@@ -89,7 +89,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       @return {Array} The converted list of endpoints.
     */
     createEndpoints: function(endpoints) {
-      return Y.Array.map(endpoints, function(endpoint) {
+      return endpoints.map(endpoint => {
         var relation = endpoint.Relation;
         var data = {role: relation.Role, name: relation.Name};
         var applicationName = endpoint.ApplicationName || endpoint.ServiceName;

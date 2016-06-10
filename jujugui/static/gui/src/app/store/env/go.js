@@ -978,8 +978,7 @@ YUI.add('juju-env-go', function(Y) {
       var intermediateCallback;
       if (callback) {
         // Capture the callback. No context is passed.
-        intermediateCallback = Y.bind(
-            this._handleEnvironmentGet, null, callback);
+        intermediateCallback = this._handleEnvironmentGet.bind(null, callback);
       }
       var facade = 'Client';
       var version = this.findFacadeVersion(facade);
@@ -1145,8 +1144,7 @@ YUI.add('juju-env-go', function(Y) {
     deployerStatus: function(callback) {
       var intermediateCallback;
       if (callback) {
-        intermediateCallback = Y.bind(
-            this._handleDeployerStatus, this, callback);
+        intermediateCallback = this._handleDeployerStatus.bind(this, callback);
       }
       this._send_rpc({
         Type: 'Deployer',
@@ -1193,8 +1191,7 @@ YUI.add('juju-env-go', function(Y) {
     deployerWatch: function(deploymentId, callback) {
       var intermediateCallback;
       if (callback) {
-        intermediateCallback = Y.bind(this.handleDeployerWatch,
-                                      this, callback);
+        intermediateCallback = this.handleDeployerWatch.bind(this, callback);
       }
       this._send_rpc({
         Type: 'Deployer',
@@ -1240,10 +1237,8 @@ YUI.add('juju-env-go', function(Y) {
     deployerNext: function(watchId, callback) {
       var intermediateCallback;
       if (callback) {
-        intermediateCallback = Y.bind(this.handleDeployerNext,
-                                      this, callback);
+        intermediateCallback = this.handleDeployerNext.bind(this, callback);
       }
-
       this._send_rpc({
         Type: 'Deployer',
         Request: 'Next',
@@ -1532,7 +1527,7 @@ YUI.add('juju-env-go', function(Y) {
       }
       var intermediateCallback = null;
       if (callback) {
-        intermediateCallback = Y.bind(self._handleAddMachines, self, callback);
+        intermediateCallback = self._handleAddMachines.bind(self, callback);
       }
       var machineParams = params.map(function(param) {
         var machineParam = {
@@ -1644,8 +1639,8 @@ YUI.add('juju-env-go', function(Y) {
       }
       var intermediateCallback = null;
       if (callback) {
-        intermediateCallback = Y.bind(
-            this._handleDestroyMachines, this, callback, names);
+        intermediateCallback = this._handleDestroyMachines.bind(
+          this, callback, names);
       }
       var request = {
         Type: 'Client',
@@ -1982,8 +1977,8 @@ YUI.add('juju-env-go', function(Y) {
       var intermediateCallback;
       if (callback) {
         // Capture the callback and applicationName. No context is passed.
-        intermediateCallback = Y.bind(this.handleSimpleApplicationCalls, null,
-            callback, applicationName);
+        intermediateCallback = this.handleSimpleApplicationCalls.bind(
+          null, callback, applicationName);
       }
       if (this.findFacadeVersion('Application') === null) {
         // Use the legacy API call (Juju < 2.0).
@@ -2036,8 +2031,8 @@ YUI.add('juju-env-go', function(Y) {
       var intermediateCallback;
       if (callback) {
         // Capture the callback and applicationName. No context is passed.
-        intermediateCallback = Y.bind(this.handleSimpleApplicationCalls, null,
-          callback, applicationName);
+        intermediateCallback = this.handleSimpleApplicationCalls.bind(
+          null, callback, applicationName);
       }
       if (this.findFacadeVersion('Application') === null) {
         // Use the legacy API call (Juju < 2.0).
@@ -2255,8 +2250,8 @@ YUI.add('juju-env-go', function(Y) {
       var intermediateCallback;
       if (callback) {
         // Capture the callback and applicationName. No context is passed.
-        intermediateCallback = Y.bind(this._handleGetApplicationConfig, null,
-            callback, applicationName);
+        intermediateCallback = this._handleGetApplicationConfig.bind(
+          null, callback, applicationName);
       }
       if (this.findFacadeVersion('Application') === null) {
         // Use legacy call on the Client facade.
@@ -2383,8 +2378,8 @@ YUI.add('juju-env-go', function(Y) {
       var intermediateCallback;
       if (callback) {
         // Capture the callback and applicationName. No context is passed.
-        intermediateCallback = Y.bind(this.handleSimpleApplicationCalls, null,
-            callback, applicationName);
+        intermediateCallback = this.handleSimpleApplicationCalls.bind(
+          null, callback, applicationName);
       }
       if (this.findFacadeVersion('Application') === null) {
         // Use legacy Juju API for destroying applications.
@@ -2423,8 +2418,8 @@ YUI.add('juju-env-go', function(Y) {
       var intermediateCallback, sendData;
       if (callback) {
         // Capture the callback and relationName.  No context is passed.
-        intermediateCallback = Y.bind(this.handleResolved, null, callback,
-            unitName);
+        intermediateCallback = this.handleResolved.bind(
+          null, callback, unitName);
       }
       sendData = {
         Type: 'Client',
@@ -2626,7 +2621,7 @@ YUI.add('juju-env-go', function(Y) {
       var intermediateCallback;
       if (callback) {
         // Capture the callback. No context is passed.
-        intermediateCallback = Y.bind(this.handleCharmInfo, null, callback);
+        intermediateCallback = this.handleCharmInfo.bind(null, callback);
       }
       this._send_rpc({
         Type: 'Client',

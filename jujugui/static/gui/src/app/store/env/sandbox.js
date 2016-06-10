@@ -612,14 +612,13 @@ YUI.add('juju-env-sandbox', function(Y) {
       }
       if (changes) {
         Y.each(this._deltaWhitelist, function(whitelist, changeType) {
-          var collectionName = changeType + 's';
-          if (changes) {
-            Y.each(changes[collectionName], function(change) {
-              var attrs = self._getDeltaAttrs(change[0], whitelist);
-              var action = change[1] ? 'change' : 'remove';
-              var delta = [changeType, action, attrs];
-              deltas.push(delta);
-            });
+          var collectionChanges = changes[changeType + 's'];
+          for (var key in collectionChanges) {
+            var change = collectionChanges[key];
+            var attrs = self._getDeltaAttrs(change[0], whitelist);
+            var action = change[1] ? 'change' : 'remove';
+            var delta = [changeType, action, attrs];
+            deltas.push(delta);
           }
         });
       }
@@ -913,7 +912,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientCharmInfo: function(data, client, state) {
-      state.getCharm(data.Params.CharmURL, Y.bind(function(result) {
+      state.getCharm(data.Params.CharmURL, function(result) {
         if (result.error) {
           this._basicReceive(data, client, result);
         } else {
@@ -942,7 +941,7 @@ YUI.add('juju-env-sandbox', function(Y) {
           };
           client.receive(convertedData);
         }
-      }, this));
+      }.bind(this));
     },
 
     /**
@@ -1027,7 +1026,7 @@ YUI.add('juju-env-sandbox', function(Y) {
         };
         client.receive(response);
       };
-      state.statusDeployer(Y.bind(callback, this));
+      state.statusDeployer(callback.bind(this));
     },
 
     /**

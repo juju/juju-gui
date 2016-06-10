@@ -454,7 +454,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         }
         constraints = pairs;
       }
-      if (Y.Lang.isArray(constraints)) {
+      if (Array.isArray(constraints)) {
         constraints.forEach(function(cons) {
           vals = cons.split('=');
           constraintsMap[vals[0].trim()] = vals[1].trim();
@@ -470,7 +470,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // result of this processing.
       var config = {};
       var explicitConfig = options.config || {};
-      Object.keys(charmOptions).forEach(function(key) {
+      for (var key in charmOptions) {
         var opt = charmOptions[key],
             value = explicitConfig[key] || opt['default'],
             type = opt.type;
@@ -486,7 +486,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         } else {
           config[key] = value;
         }
-      });
+      };
 
       var application = this.db.services.add({
         id: options.name,
@@ -843,7 +843,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       // Remove all relations for this application.
       var relations = this.db.relations.get_relations_for_service(application);
-      Y.Array.each(relations, function(rel) {
+      relations.forEach(rel => {
         this.db.relations.remove(rel);
         this.changes.relations[rel.get('relation_id')] = [rel, false];
       }, this);
@@ -1068,10 +1068,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (typeof unitNames === 'string') {
         unitNames = [unitNames];
       }
-      Y.Array.each(unitNames, function(unitName) {
+      unitNames.forEach(unitName => {
         application = this.db.services.getById(unitName.split('/')[0]);
         if (application && application.get('subordinate')) {
-          if (!Y.Lang.isArray(error)) { error = []; }
+          if (!Array.isArray(error)) { error = []; }
           error.push(unitName + ' is a subordinate, cannot remove.');
         } else {
           // For now we also need to clean up the applications unit list but
@@ -1084,7 +1084,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
               return;
             }
           }
-          if (!Y.Lang.isArray(warning)) { warning = []; }
+          if (!Array.isArray(warning)) { warning = []; }
           warning.push(unitName + ' does not exist, cannot remove.');
         }
       }, this);
@@ -1190,7 +1190,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       // If the endpoints provided is an array then loop through them creating
       // the relations.
-      if (Y.Lang.isArray(endpoints) === true) {
+      if (Array.isArray(endpoints) === true) {
         var result = [];
         endpoints.forEach(function(ep) {
           result.push(this.addRelation(endpointA, ep, useRelationCount));
@@ -1458,9 +1458,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       if (keys) {
-        Y.each(keys, function(k) {
-          if (Y.Object.owns(annotations, k)) {
-            delete annotations[k];
+        keys.forEach(key => {
+          if (Y.Object.owns(annotations, key)) {
+            delete annotations[key];
           }
         });
       } else {
@@ -1535,8 +1535,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
           error: 'Application "' + applicationName + '" does not exist.'};
       }
       // Retrieve the application constraints.
-      if (Y.Lang.isArray(data)) {
-        Y.Array.each(data, function(i) {
+      if (Array.isArray(data)) {
+        data.forEach(i => {
           var kv = i.split('=');
           constraints[kv[0]] = kv[1];
         });
@@ -1658,7 +1658,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         if (applicationData.pending === true) {
           return;
         }
-        Y.each(blackLists.application, function(key) {
+        blackLists.application.forEach(key => {
           if (key in applicationData) {
             delete applicationData[key];
           }
@@ -1674,7 +1674,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         if (relationData.pending === true) {
           return;
         }
-        Y.each(blackLists.relation, function(key) {
+        blackLists.relation.forEach(key => {
           if (key in relationData) {
             delete relationData[key];
           }
@@ -1739,7 +1739,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         baseList.unshift(base);
         // Normalize to array when present.
         if (!base.inherits) { return; }
-        if (base.inherits && !Y.Lang.isArray(base.inherits)) {
+        if (base.inherits && !Array.isArray(base.inherits)) {
           base.inherits = [base.inherits];
         }
 
@@ -1764,7 +1764,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       });
 
       var error = '';
-      Object.keys(source.applications).forEach(function(applicationName) {
+      for (var applicationName in source.applications) {
         var existing = db.services.getById(applicationName);
         if (existing) {
           console.log(source);
@@ -1772,7 +1772,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
               ' Change application name and try again.';
         }
         source.applications[applicationName].name = applicationName;
-      });
+      };
 
       if (error) {
         return { error: error };
@@ -1824,7 +1824,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
         callback(ingestedData);
         return;
       }
-      Y.each(ingestedData.applications, function(applicationData) {
+      for (var appName in ingestedData.applications) {
+        var applicationData = ingestedData.applications[appName];
         // Map the argument name from the deployer format
         // name for unit count.
         if (!applicationData.unitCount) {
@@ -1837,8 +1838,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         }
         applicationPromises.push(
             self.promiseDeploy(applicationData.charm, applicationData));
-      });
-
+      }
 
       self._deploymentId += 1;
       var deployStatus = {
@@ -1870,7 +1870,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
             // If the bungle provides a list of endpoints to relate to a
             // single endpoint then we need to add each relation to the
             // result list.
-            if (!Y.Lang.isArray(relResult)) {
+            if (!Array.isArray(relResult)) {
               relResult = [relResult];
             }
             relResult.forEach(function(result) {

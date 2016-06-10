@@ -1654,7 +1654,7 @@ YUI.add('juju-view-utils', function(Y) {
   utils.destroyService = function(db, env, service, callback) {
     if (service.name === 'service') {
       env.destroyApplication(service.get('id'),
-          Y.bind(utils._destroyServiceCallback, this, service, db, callback),
+          utils._destroyServiceCallback.bind(this, service, db, callback),
           {modelId: null});
     } else if (service.get('pending')) {
       db.services.remove(service);
