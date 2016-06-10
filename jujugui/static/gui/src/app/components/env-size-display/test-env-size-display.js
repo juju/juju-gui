@@ -34,7 +34,7 @@ describe('EnvSizeDisplay', function() {
     YUI().use('env-size-display', function() { done(); });
   });
 
-  it('shows services and machines count', function() {
+  it('shows applications and machines count', function() {
     var component = renderIntoDocument(
         <juju.components.EnvSizeDisplay
           serviceCount="3"
@@ -42,7 +42,7 @@ describe('EnvSizeDisplay', function() {
           getAppState={function() {}} />);
     assert.equal(
         queryComponentSelector(
-            component, 'a[data-view=service]').innerText, '3 services');
+            component, 'a[data-view=service]').innerText, '3 applications');
     assert.equal(
         queryComponentSelector(
             component, 'a[data-view=machine]').innerText, '4 machines');

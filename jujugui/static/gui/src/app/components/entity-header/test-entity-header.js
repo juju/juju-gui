@@ -120,7 +120,7 @@ describe('EntityHeader', function() {
 
   it('displays the counts for a bundle', function() {
     var pluralize = sinon.stub();
-    pluralize.withArgs('service').returns('services');
+    pluralize.withArgs('application').returns('applications');
     pluralize.withArgs('machine').returns('machines');
     pluralize.withArgs('unit').returns('units');
     var entity = jsTestUtils.makeEntity(true);
@@ -137,8 +137,10 @@ describe('EntityHeader', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <li>
-        {3} {"services"},&nbsp;
-        {2} {"machines"},&nbsp;
+        {3} {"applications"},
+        &nbsp;
+        {2} {"machines"},
+        &nbsp;
         {5} {"units"}
       </li>);
     assert.deepEqual(

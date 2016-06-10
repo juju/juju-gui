@@ -87,7 +87,7 @@ YUI.add('env-size-display', function() {
                     className="env-size-display__link">
                     <juju.components.SvgIcon name="relations"
                       className="env-size-display__icon" size="16" />
-                    {this.props.serviceCount} services
+                    {this.props.serviceCount} applications
                   </a>
               </li>
               <li className={this._genClasses('machine')}>

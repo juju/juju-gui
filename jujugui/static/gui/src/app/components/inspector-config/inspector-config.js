@@ -162,8 +162,9 @@ YUI.add('inspector-config', function() {
         if (service.get('name') !== nameValue && serviceExists !== null) {
           // The service already exists so bail out.
           props.addNotification({
-            title: 'Invalid service name',
-            message: `A service with the name "${nameValue}" already exists.`,
+            title: 'Invalid application name',
+            message: `An application with the name "${nameValue}" already ` +
+              'exists.',
             level: 'error'
           });
           return;
@@ -272,8 +273,8 @@ YUI.add('inspector-config', function() {
         return (<juju.components.StringConfig
           ref="ServiceName"
           option={{
-            key: 'Service name',
-            description: 'Specify a custom service name. The service' +
+            key: 'Application name',
+            description: 'Specify a custom application name. The application' +
               ' name cannot be changed once it has been deployed.'
           }}
           config={this.props.service.get('name')}/>);

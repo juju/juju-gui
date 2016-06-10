@@ -142,7 +142,7 @@ YUI.add('machine-view', function() {
         var content;
         if (this.props.services.size() === 0) {
           icon = 'add_16';
-          content = 'Add services to get started';
+          content = 'Add applications to get started';
         } else {
           icon = 'task-done_16';
           content = 'You have placed all of your units';
@@ -241,7 +241,7 @@ YUI.add('machine-view', function() {
               <li>Customise placement</li>
               <li>Scale up your model</li>
               <li>Manually place new units</li>
-              <li>Collocate services</li>
+              <li>Collocate applications</li>
             </ul>
             <span className="link"
               onClick={this._addMachine}
@@ -619,7 +619,7 @@ YUI.add('machine-view', function() {
         id: 'name',
         action: this._setSortMethod.bind(this, 'name')
       }, {
-        label: 'No. services',
+        label: 'No. applications',
         id: 'services',
         action: this._setSortMethod.bind(this, 'services')
       }, {
@@ -653,7 +653,7 @@ YUI.add('machine-view', function() {
         id: 'units',
         action: this._setSortMethod.bind(this, 'units', true)
       }, {
-        label: 'Services',
+        label: 'Applications',
         id: 'services',
         action: this._setSortMethod.bind(this, 'service', true)
       }];
