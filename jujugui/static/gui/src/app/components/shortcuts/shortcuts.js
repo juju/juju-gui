@@ -107,16 +107,16 @@ YUI.add('shortcuts', function() {
         </div>
       </div>
     );
-
-    Shortcuts.propTypes = {
-      bindings: React.PropTypes.array.isRequired,
-      disableAutoPlace: React.PropTypes.bool.isRequired,
-      disableCookie: React.PropTypes.bool.isRequired,
-      forceContainers: React.PropTypes.bool.isRequired
-    };
-
-    juju.components.Shortcuts = Shortcuts;
   };
+
+  Shortcuts.propTypes = {
+    bindings: React.PropTypes.array.isRequired,
+    disableAutoPlace: React.PropTypes.bool,
+    disableCookie: React.PropTypes.bool,
+    forceContainers: React.PropTypes.bool
+  };
+
+  juju.components.Shortcuts = Shortcuts;
 
 }, '0.1.0', { requires: [
   'svg-icon'
