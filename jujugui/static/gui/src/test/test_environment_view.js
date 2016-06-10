@@ -486,7 +486,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           view.render();
           var service = container.one('.service');
           assert.equal(service.one('.service-icon').getAttribute('href'),
-            'v4/precise/wordpress-6/icon.svg');
+            'v5/precise/wordpress-6/icon.svg');
 
           done();
         }
@@ -1740,7 +1740,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(boxes['local:ceph-1'].icon, 'local charm icon');
 
       // The mysql charm has an icon from on the server.
-      assert.equal(boxes['cs:mysql-1'].icon, 'v4/mysql-1/icon.svg');
+      assert.equal(boxes['cs:mysql-1'].icon, 'v5/mysql-1/icon.svg');
     });
   });
 })();
