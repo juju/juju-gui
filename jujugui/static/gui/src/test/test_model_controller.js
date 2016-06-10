@@ -19,18 +19,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Model Controller Promises', function() {
-  var aEach, cleanups, conn, db, env, environment, factory, getService,
-      load, modelController, serviceError, utils, yui;
+  var aEach, cleanups, conn, db, env, environment, factory,
+      getApplicationConfig, load, modelController, serviceError, utils, yui;
 
   before(function(done) {
     YUI(GlobalConfig).use(
         'juju-charm-models', 'juju-models', 'juju-tests-factory',
         'juju-tests-utils', 'juju-view-environment', 'model-controller',
         function(Y) {
-          var environments = Y.juju.environments;
+          var goenv = Y.juju.environments.GoEnvironment;
           yui = Y;
           load = Y.juju.models.Charm.prototype.load;
-          getService = environments.GoEnvironment.prototype.get_service;
+          getApplicationConfig = goenv.prototype.getApplicationConfig;
           aEach = Y.Array.each;
           utils = Y.namespace('juju-tests.utils');
           factory = Y.namespace('juju-tests.factory');
@@ -89,41 +89,42 @@ describe('Model Controller Promises', function() {
   }
 
   /**
-    Monkeypatching the python environments get_service method to allow
-    the get_service calls to execute successfully.
+    Monkeypatching the environments getApplicationConfig method to allow the
+    getApplicationConfig calls to execute successfully.
 
-    @method clobberGetService
+    @method clobberGetApplicationConfig
     @static
   */
-  function clobberGetService() {
-    yui.juju.environments.GoEnvironment.prototype.get_service = function(
-        serviceName, callback) {
-      assert(typeof serviceName, 'string');
+  function clobberGetApplicationConfig() {
+    var genv = yui.juju.environments.GoEnvironment;
+    genv.prototype.getApplicationConfig = function(applicationName, callback) {
+      assert(typeof applicationName, 'string');
       // This is to test the error reject path of the getService tests
       if (serviceError === true) {
         callback({err: true});
       }
       // This adds the service for the getService success path
-      db.services.add({id: serviceName});
+      db.services.add({id: applicationName});
       callback({
-        service_name: serviceName,
+        applicationName: applicationName,
         result: {
           config: '',
           constraints: ''
         }
       });
     };
-    cleanups.push(restoreGetService);
+    cleanups.push(restoreGetApplicationConfig);
   }
 
   /**
-    Restores the Services model's load get_service to its original value.
+    Restores env.getApplicationConfig to its original value.
 
-    @method restireGetService
+    @method restoreGetApplicationConfig
     @static
   */
-  function restoreGetService() {
-    yui.juju.environments.GoEnvironment.prototype.get_service = getService;
+  function restoreGetApplicationConfig() {
+    var genv = yui.juju.environments.GoEnvironment;
+    genv.prototype.getApplicationConfig = getApplicationConfig;
   }
 
   it('will return a promise with a stored loaded charm', function(done) {
@@ -188,7 +189,7 @@ describe('Model Controller Promises', function() {
 
   it('will return a promise with a loaded service', function(done) {
     // This tests the second resolve path
-    clobberGetService();
+    clobberGetApplicationConfig();
     var serviceId = 'wordpress',
         promise = modelController.getService(serviceId);
     assert(yui.Promise.isPromise(promise), true);
@@ -207,7 +208,7 @@ describe('Model Controller Promises', function() {
 
   it('will reject the promise if the service does not exist', function(done) {
     serviceError = true;
-    clobberGetService();
+    clobberGetApplicationConfig();
     var serviceId = 'wordpress',
         promise = modelController.getService(serviceId);
     assert(yui.Promise.isPromise(promise), true);
@@ -226,7 +227,7 @@ describe('Model Controller Promises', function() {
   it('will return a promise with a loaded charm and service',
       function(done) {
         clobberLoad();
-        clobberGetService();
+        clobberGetApplicationConfig();
         var serviceId = 'wordpress',
             charmId = 'cs:precise/wordpress-7';
         db.services.add({

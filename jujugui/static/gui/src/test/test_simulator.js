@@ -192,7 +192,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         agent.destroy();
       });
 
-      it('should start by annotating environment and services', function() {
+      it('should start by annotating environment and apps', function() {
         agent.start();
         var anno = state.db.environment.get('annotations');
         var expected_environment_annotations = {
@@ -210,7 +210,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // They were recorded as changed.
         anno = state.nextAnnotations();
         assert.strictEqual(anno.annotations.env, state.db.environment);
-        assert.strictEqual(anno.services.wordpress, wordpress);
+        assert.strictEqual(anno.applications.wordpress, wordpress);
       });
 
       it('should annotate units when running', function() {

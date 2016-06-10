@@ -1,6 +1,6 @@
 [
   [
-    "serviceInfo",
+    "applicationInfo",
     "add",
     {
       "subordinate": true,
@@ -9,7 +9,7 @@
     }
   ],
   [
-    "serviceInfo",
+    "applicationInfo",
     "add",
     {
       "CharmURL": "cs:precise/mediawiki-3",
@@ -17,7 +17,7 @@
     }
   ],
   [
-    "serviceInfo",
+    "applicationInfo",
     "add",
     {
       "CharmURL": "cs:precise/wordpress-7",
@@ -25,7 +25,7 @@
     }
   ],
   [
-    "serviceInfo",
+    "applicationInfo",
     "add",
     {
       "CharmURL": "cs:precise/rsyslog-6",
@@ -33,7 +33,7 @@
     }
   ],
   [
-    "serviceInfo",
+    "applicationInfo",
     "add",
     {
       "CharmURL": "cs:precise/mysql-6",
@@ -41,7 +41,7 @@
     }
   ],
   [
-    "serviceInfo",
+    "applicationInfo",
     "add",
     {
       "subordinate": true,
@@ -50,7 +50,7 @@
     }
   ],
   [
-    "serviceInfo",
+    "applicationInfo",
     "add",
     {
       "CharmURL": "cs:precise/memcached-1",
@@ -58,7 +58,7 @@
     }
   ],
   [
-    "serviceInfo",
+    "applicationInfo",
     "add",
     {
       "CharmURL": "cs:precise/puppetmaster-2",
@@ -78,7 +78,7 @@
                         "Interface": "reversenginx",
                         "Scope": "container"
                     },
-                    "ServiceName": "wordpress"
+                    "ApplicationName": "wordpress"
                 }
             ]
         }
@@ -96,7 +96,7 @@
                         "Interface": "juju-info",
                         "Scope": "container"
                     },
-                    "ServiceName": "puppet"
+                    "ApplicationName": "puppet"
                 },
                 {
                     "Relation": {
@@ -105,7 +105,7 @@
                         "Interface": "juju-info",
                         "Scope": "container"
                     },
-                    "ServiceName": "mediawiki"
+                    "ApplicationName": "mediawiki"
                 }
             ]
         }
@@ -123,7 +123,7 @@
                         "Interface": "puppet",
                         "Scope": "global"
                     },
-                    "ServiceName": "puppet"
+                    "ApplicationName": "puppet"
                 },
                 {
                     "Relation": {
@@ -132,7 +132,7 @@
                         "Interface": "puppet",
                         "Scope": "global"
                     },
-                    "ServiceName": "puppetmaster"
+                    "ApplicationName": "puppetmaster"
                 }
             ]
         }
@@ -150,7 +150,7 @@
                         "Interface": "juju-info",
                         "Scope": "container"
                     },
-                    "ServiceName": "rsyslog-forwarder-ha"
+                    "ApplicationName": "rsyslog-forwarder-ha"
                 },
                 {
                     "Relation": {
@@ -159,7 +159,7 @@
                         "Interface": "juju-info",
                         "Scope": "container"
                     },
-                    "ServiceName": "mysql"
+                    "ApplicationName": "mysql"
                 }
             ]
         }
@@ -177,7 +177,7 @@
                         "Interface": "juju-info",
                         "Scope": "container"
                     },
-                    "ServiceName": "puppet"
+                    "ApplicationName": "puppet"
                 },
                 {
                     "Relation": {
@@ -186,7 +186,7 @@
                         "Interface": "juju-info",
                         "Scope": "container"
                     },
-                    "ServiceName": "wordpress"
+                    "ApplicationName": "wordpress"
                 }
             ]
         }
@@ -204,7 +204,7 @@
                         "Interface": "syslog",
                         "Scope": "global"
                     },
-                    "ServiceName": "rsyslog-forwarder-ha"
+                    "ApplicationName": "rsyslog-forwarder-ha"
                 },
                 {
                     "Relation": {
@@ -213,7 +213,7 @@
                         "Interface": "syslog",
                         "Scope": "global"
                     },
-                    "ServiceName": "rsyslog"
+                    "ApplicationName": "rsyslog"
                 }
             ]
         }
@@ -231,7 +231,7 @@
                         "Interface": "juju-info",
                         "Scope": "container"
                     },
-                    "ServiceName": "rsyslog-forwarder-ha"
+                    "ApplicationName": "rsyslog-forwarder-ha"
                 },
                 {
                     "Relation": {
@@ -240,7 +240,7 @@
                         "Interface": "juju-info",
                         "Scope": "container"
                     },
-                    "ServiceName": "mediawiki"
+                    "ApplicationName": "mediawiki"
                 }
             ]
         }
@@ -258,7 +258,7 @@
                         "Interface": "memcache",
                         "Scope": "global"
                     },
-                    "ServiceName": "mediawiki"
+                    "ApplicationName": "mediawiki"
                 },
                 {
                     "Relation": {
@@ -267,7 +267,7 @@
                         "Interface": "memcache",
                         "Scope": "global"
                     },
-                    "ServiceName": "memcached"
+                    "ApplicationName": "memcached"
                 }
             ]
         }
@@ -285,7 +285,7 @@
                         "Interface": "mysql",
                         "Scope": "global"
                     },
-                    "ServiceName": "wordpress"
+                    "ApplicationName": "wordpress"
                 },
                 {
                     "Relation": {
@@ -294,7 +294,7 @@
                         "Interface": "mysql",
                         "Scope": "global"
                     },
-                    "ServiceName": "mysql"
+                    "ApplicationName": "mysql"
                 }
             ]
         }
@@ -312,7 +312,7 @@
                         "Interface": "juju-info",
                         "Scope": "container"
                     },
-                    "ServiceName": "puppet"
+                    "ApplicationName": "puppet"
                 },
                 {
                     "Relation": {
@@ -321,7 +321,7 @@
                         "Interface": "juju-info",
                         "Scope": "container"
                     },
-                    "ServiceName": "mysql"
+                    "ApplicationName": "mysql"
                 }
             ]
         }

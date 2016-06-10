@@ -483,7 +483,7 @@ YUI.add('bundle-importer', function(Y) {
                   constraints: constraints
                 });
                 this.env.update_annotations(
-                    name, 'service', ghostService.get('annotations'));
+                    name, 'application', ghostService.get('annotations'));
               }.bind(this, ghostService),
               // Options used by ECS, ignored by environment.
               {modelId: ghostService.get('id')});
@@ -599,7 +599,7 @@ YUI.add('bundle-importer', function(Y) {
         @param {Object} e The commit object.
       */
       function removeGhostCallback(ghostUnit, db, e) {
-        ghostUnit.service = e.service_name;
+        ghostUnit.service = e.applicationName;
         db.removeUnits(ghostUnit);
       }
       record.args[3] = removeGhostCallback.bind(this, ghostUnit, this.db);
@@ -670,7 +670,7 @@ YUI.add('bundle-importer', function(Y) {
     },
 
     /**
-      Executes the setAnnotations method call
+      Executes the setAnnotations method call.
 
       @method _execute_setAnnotations
       @param {Object} record The setAnnotations record.
@@ -678,11 +678,11 @@ YUI.add('bundle-importer', function(Y) {
         on to the next record.
     */
     _execute_setAnnotations: function(record, next) {
-      if (record.args[1] === 'service') {
-        // We currently only support the setting of service annotations.
+      if (record.args[1] === 'application' || record.args[1] === 'service') {
+        // We currently only support the setting of app annotations.
         var entityName = record[record.args[0].replace(/^\$/, '')].get('id');
-        var service = this.db.services.getById(entityName);
-        service.set('annotations', record.args[2]);
+        var application = this.db.services.getById(entityName);
+        application.set('annotations', record.args[2]);
       }
       next();
     }

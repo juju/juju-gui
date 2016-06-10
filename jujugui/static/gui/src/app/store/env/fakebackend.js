@@ -91,7 +91,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       this.changes = {
         // These are hashes of identifier: [object, boolean], where a true
         // boolean means added or changed and a false value means removed.
-        services: {},
+        applications: {},
         machines: {},
         units: {},
         relations: {}
@@ -102,7 +102,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     Return all of the recently changed objects.
 
     @method nextChanges
-    @return {Object} A hash of the keys 'services', 'machines', 'units' and
+    @return {Object} A hash of the keys 'applications', 'machines', 'units' and
       'relations'.  Each of those are hashes from entity identifier to
       [entity, boolean] where the boolean means either active (true) or
       removed (false).
@@ -112,7 +112,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         return UNAUTHENTICATED_ERROR;
       }
       var result;
-      if (Y.Object.isEmpty(this.changes.services) &&
+      if (Y.Object.isEmpty(this.changes.applications) &&
           Y.Object.isEmpty(this.changes.machines) &&
           Y.Object.isEmpty(this.changes.units) &&
           Y.Object.isEmpty(this.changes.relations)) {
@@ -133,7 +133,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     _resetAnnotations: function() {
       this.annotations = {
         // These are hashes of identifier: object.
-        services: {},
+        applications: {},
         machines: {},
         units: {},
         relations: {},
@@ -145,7 +145,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       Return all of the recently annotated objects.
 
       @method nextAnnotations
-      @return {Object} A hash of the keys 'services', 'machines', 'units',
+      @return {Object} A hash of the keys 'applications', 'machines', 'units',
       'relations' and 'annotations'.  Each of those are hashes from entity
       identifier to entity.
     */
@@ -154,7 +154,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         return UNAUTHENTICATED_ERROR;
       }
       var result;
-      if (Y.Object.isEmpty(this.annotations.services) &&
+      if (Y.Object.isEmpty(this.annotations.applications) &&
           Y.Object.isEmpty(this.annotations.machines) &&
           Y.Object.isEmpty(this.annotations.units) &&
           Y.Object.isEmpty(this.annotations.relations) &&
@@ -212,24 +212,24 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-    Deploy a service from a charm.  Uses a callback for response!
+    Deploy an application from a charm.  Uses a callback for response!
 
     @method deploy
     @param {String} charmUrl The URL of the charm.
     @param {Function} callback A call that will receive an object either
       with an "error" attribute containing a string describing the problem,
-      or with a "service" attribute containing the new service, a "charm"
-      attribute containing the charm used, and a "units" attribute
+      or with a "application" attribute containing the new application, a
+      "charm" attribute containing the charm used, and a "units" attribute
       containing a list of the added units.  This is asynchronous because we
       often must go over the network to the charm store.
     @param {Object} options An options object.
-      name: The name of the service to be deployed, defaulting to the charm
+      name: The name of the application to be deployed, defaulting to the charm
         name.
       config: The charm configuration options, defaulting to none.
       configYAML: The charm configuration options, expressed as a YAML
         string.  You may provide only one of config or configYAML.
       unitCount: The number of units to be deployed.
-      toMachine: The machine/container specification to which the service
+      toMachine: The machine/container specification to which the application
         should be deployed.
     @return {undefined} All results are passed to the callback.
     */
@@ -275,11 +275,11 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-    Set the given service to use the given charm, optionally forcing units in
-    error state to use the charm.
+    Set the given application to use the given charm, optionally forcing units
+    in error state to use the charm.
 
     @method setCharm
-    @param {String} serviceName The name of the service to set.
+    @param {String} applicationName The name of the application to set.
     @param {String} charmId The charm to use.
     @param {Boolean} forceUnits Whether or not to force the issue.
     @param {Boolean} forceSeries Whether or not to force the issue.
@@ -287,27 +287,28 @@ YUI.add('juju-env-fakebackend', function(Y) {
       with an "error" attribute containing a string describing the problem.
     @return {undefined} All results are passed to the callback.
     */
-    setCharm: function(serviceName, charmId, forceUnits, forceSeries, cb) {
+    setCharm: function(applicationName, charmId, forceUnits, forceSeries, cb) {
       if (!this.get('authenticated')) {
         return cb(UNAUTHENTICATED_ERROR);
       }
       var self = this;
-      var service = this.db.services.getById(serviceName);
-      if (!service) {
-        return cb({error: 'Service "' + serviceName + '" not found.'});
+      var application = this.db.services.getById(applicationName);
+      if (!application) {
+        return cb({error: 'Application "' + applicationName + '" not found.'});
       }
-      var unitsInError = service.get('units')
+      var unitsInError = application.get('units')
         .some(function(unit) {
           return (/error/).test(unit.agent_state);
         });
       if (unitsInError && (!forceUnits || !forceSeries)) {
-        return cb({error: 'Cannot set charm on a service with units in ' +
+        return cb({error: 'Cannot set charm on an application with units in ' +
               'error without the force flag.'});
       }
       this._loadCharm(charmId, {
         success: function(charm) {
-          service.set('charm', charm.get('id'));
-          self.changes.services[service.get('id')] = [service, true];
+          application.set('charm', charm.get('id'));
+          self.changes.applications[
+            application.get('id')] = [application, true];
           cb({});
         },
         failure: cb
@@ -383,18 +384,18 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @param {Object} charm The charm to be deployed, from the db.
     @param {Function} callback A call that will receive an object either
       with an "error" attribute containing a string describing the problem,
-      or with a "service" attribute containing the new service, a "charm"
-      attribute containing the charm used, and a "units" attribute
+      or with a "application" attribute containing the new application, a
+      "charm" attribute containing the charm used, and a "units" attribute
       containing a list of the added units.  This is asynchronous because we
       often must go over the network to the charm store.
     @param {Object} options An options object.
-      name: The name of the service to be deployed, defaulting to the charm
+      name: The name of the application to be deployed, defaulting to the charm
         name.
       config: The charm configuration options, defaulting to none.
       configYAML: The charm configuration options, expressed as a YAML
         string.  You may provide only one of config or configYAML.
       unitCount: The number of units to be deployed.
-      toMachine: The machine/container specification to which the service
+      toMachine: The machine/container specification to which the application
         should be deployed.
     @return {undefined} Get the result from the callback.
     */
@@ -407,8 +408,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       if (this.db.services.getById(options.name)) {
         console.log(options);
-        return callback({error: 'A service with this name already exists (' +
-              options.name + ').'});
+        return callback({
+          error: 'An application with this name already exists (' +
+          options.name + ').'});
       }
       if (options.configYAML) {
         if (!Y.Lang.isString(options.configYAML)) {
@@ -452,7 +454,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         }
         constraints = pairs;
       }
-      if (Y.Lang.isArray(constraints)) {
+      if (Array.isArray(constraints)) {
         constraints.forEach(function(cons) {
           vals = cons.split('=');
           constraintsMap[vals[0].trim()] = vals[1].trim();
@@ -464,11 +466,11 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // We need to set charm default values for the options that have not
       // been explicitly provided.
       var charmOptions = charm.get('options') || {};
-      // "config" will hold the service's config values--it will be the
+      // "config" will hold the application's config values--it will be the
       // result of this processing.
       var config = {};
       var explicitConfig = options.config || {};
-      Object.keys(charmOptions).forEach(function(key) {
+      for (var key in charmOptions) {
         var opt = charmOptions[key],
             value = explicitConfig[key] || opt['default'],
             type = opt.type;
@@ -484,9 +486,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
         } else {
           config[key] = value;
         }
-      });
+      };
 
-      var service = this.db.services.add({
+      var application = this.db.services.add({
         id: options.name,
         name: options.name,
         charm: charm.get('id'),
@@ -496,9 +498,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
         annotations: annotations,
         config: config
       });
-      this.changes.services[service.get('id')] = [service, true];
+      this.changes.applications[application.get('id')] = [application, true];
       if (Object.keys(annotations).length) {
-        this.annotations.services[service.get('id')] = service;
+        this.annotations.applications[application.get('id')] = application;
       }
 
       var unitCount = options.unitCount;
@@ -511,7 +513,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (unitCount !== 0) {
         response = this.addUnit(options.name, unitCount, options.toMachine);
       }
-      response.service = service;
+      response.application = application;
       callback(response);
     },
 
@@ -825,78 +827,78 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-     Destroy the named service.
+     Destroy the named application.
 
-     @method destroyService
-     @param {String} serviceName to destroy.
-     @return {Object} results With err and service_name.
+     @method destroyApplication
+     @param {String} applicationName to destroy.
+     @return {Object} results With err and applicationName.
      */
-    destroyService: function(serviceName) {
+    destroyApplication: function(applicationName) {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATED_ERROR;
       }
-      var service = this.db.services.getById(serviceName);
-      if (!service) {
-        return {error: 'Invalid service id: ' + serviceName};
+      var application = this.db.services.getById(applicationName);
+      if (!application) {
+        return {error: 'Invalid application id: ' + applicationName};
       }
-      // Remove all relations for this service.
-      var relations = this.db.relations.get_relations_for_service(service);
-      Y.Array.each(relations, function(rel) {
+      // Remove all relations for this application.
+      var relations = this.db.relations.get_relations_for_service(application);
+      relations.forEach(rel => {
         this.db.relations.remove(rel);
         this.changes.relations[rel.get('relation_id')] = [rel, false];
       }, this);
-      // Remove units for this service.
+      // Remove units for this application.
       // get() on modelList returns the array of values for all children by
       // default.
-      var unitNames = service.get('units').get('id');
+      var unitNames = application.get('units').get('id');
       var result = this.removeUnits(unitNames);
       if (result.error && result.error.length > 0) {
         console.log(result, result.error);
         return {
           error: 'Error removing units [' + unitNames.join(', ') +
-              '] of ' + serviceName
+              '] of ' + applicationName
         };
       } else if (result.warning && result.warning.length > 0) {
         console.log(result, result.warning);
         return {
           error: 'Warning removing units [' + unitNames.join(', ') +
-              '] of ' + serviceName
+              '] of ' + applicationName
         };
       }
-      // And finally destroy and remove the service.
-      this.db.services.remove(service);
-      this.changes.services[serviceName] = [service, false];
-      service.destroy();
-      return {result: serviceName};
+      // And finally destroy and remove the application.
+      this.db.services.remove(application);
+      this.changes.applications[applicationName] = [application, false];
+      application.destroy();
+      return {result: applicationName};
     },
 
     /**
-     * Get service attributes.
+     * Get application attributes.
      *
-     * @method getService
-     * @param {String} serviceName to get.
-     * @return {Object} Service Attributes..
+     * @method getApplication
+     * @param {String} applicationName to get.
+     * @return {Object} Application Attributes..
      */
-    getService: function(serviceName) {
+    getApplication: function(applicationName) {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATED_ERROR;
       }
-      var service = this.db.services.getById(serviceName);
-      if (!service) {
-        return {error: 'Invalid service id: ' + serviceName};
+      var application = this.db.services.getById(applicationName);
+      if (!application) {
+        return {error: 'Invalid application id: ' + applicationName};
       }
-      var serviceData = service.getAttrs();
-      if (!serviceData.constraints) {
-        serviceData.constraints = {};
+      var applicationData = application.getAttrs();
+      if (!applicationData.constraints) {
+        applicationData.constraints = {};
       }
 
-      var relations = this.db.relations.get_relations_for_service(service);
+      var relations = this.db.relations.get_relations_for_service(application);
       var rels = relations.map(function(r) {return r.getAttrs();});
       // TODO: properly map relations to expected format rather
       // than this passthrough. Pending on the add/remove relations
       // branches that will need the same helper code.
-      serviceData.rels = rels;
-      return {result: serviceData};
+      applicationData.rels = rels;
+      return {result: applicationData};
     },
 
     /**
@@ -926,10 +928,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-    Add units to the given service.
+    Add units to the given application.
 
     @method addUnit
-    @param {String} serviceName The name of the service to be scaled up.
+    @param {String} applicationName The name of the app to be scaled up.
     @param {Integer} numUnits The number of units to be added, defaulting
       to 1.
     @param {String} toMachine The machine/container where the unit will be
@@ -938,15 +940,16 @@ YUI.add('juju-env-fakebackend', function(Y) {
       containing a string describing the problem, or with a "units"
       attribute containing a list of the added units.
     */
-    addUnit: function(serviceName, numUnits, toMachine) {
+    addUnit: function(applicationName, numUnits, toMachine) {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATED_ERROR;
       }
-      var service = this.db.services.getById(serviceName);
-      if (!service) {
-        return {error: 'Service "' + serviceName + '" does not exist.'};
+      var application = this.db.services.getById(applicationName);
+      if (!application) {
+        return {
+          error: 'Application "' + applicationName + '" does not exist.'};
       }
-      var isSubordinate = service.get('subordinate');
+      var isSubordinate = application.get('subordinate');
       if (Y.Lang.isUndefined(numUnits)) {
         numUnits = isSubordinate ? 0 : 1;
       }
@@ -955,11 +958,11 @@ YUI.add('juju-env-fakebackend', function(Y) {
           (isSubordinate && numUnits !== 0))) {
         return {
           error: 'Invalid number of units [' + numUnits +
-              '] for service: ' + serviceName
+              '] for application: ' + applicationName
         };
       }
-      if (!Y.Lang.isValue(service.unitSequence)) {
-        service.unitSequence = 0;
+      if (!Y.Lang.isValue(application.unitSequence)) {
+        application.unitSequence = 0;
       }
       var unit, machine, machines;
       if (Y.Lang.isValue(toMachine)) {
@@ -981,10 +984,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var units = [];
 
       for (var i = 0; i < numUnits; i += 1) {
-        var unitId = service.unitSequence;
+        var unitId = application.unitSequence;
         machine = machines[i];
         unit = this.db.addUnits({
-          'id': serviceName + '/' + unitId,
+          'id': applicationName + '/' + unitId,
           'machine': machine.id,
           // The models use underlines, not hyphens (see
           // app/models/models.js in _process_delta.)
@@ -992,7 +995,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           subordinate: isSubordinate
         });
         units.push(unit);
-        service.unitSequence += 1;
+        application.unitSequence += 1;
         this.changes.units[unit.id] = [unit, true];
       }
       return {units: units, machines: machines};
@@ -1008,8 +1011,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
     _getAvailableMachines: function() {
       var machines = [];
       var usedMachineIds = {};
-      this.db.services.each(function(service) {
-        service.get('units').each(function(unit) {
+      this.db.services.each(function(application) {
+        application.get('units').each(function(unit) {
           if (unit.machine) {
             usedMachineIds[unit.machine] = true;
           }
@@ -1057,7 +1060,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       @param {Array} unitNames a list of unit names to be removed.
     */
     removeUnits: function(unitNames) {
-      var service,
+      var application,
           warning, error;
 
       // XXX: BradCrittenden 2013-04-15: Remove units should optionally remove
@@ -1065,15 +1068,15 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (typeof unitNames === 'string') {
         unitNames = [unitNames];
       }
-      Y.Array.each(unitNames, function(unitName) {
-        service = this.db.services.getById(unitName.split('/')[0]);
-        if (service && service.get('subordinate')) {
-          if (!Y.Lang.isArray(error)) { error = []; }
+      unitNames.forEach(unitName => {
+        application = this.db.services.getById(unitName.split('/')[0]);
+        if (application && application.get('subordinate')) {
+          if (!Array.isArray(error)) { error = []; }
           error.push(unitName + ' is a subordinate, cannot remove.');
         } else {
-          // For now we also need to clean up the services unit list but the
-          // above should go away soon when below becomes the default.
-          if (service) {
+          // For now we also need to clean up the applications unit list but
+          // the above should go away soon when below becomes the default.
+          if (application) {
             var unit = this.db.units.getById(unitName);
             if (unit) {
               this.db.removeUnits(unit);
@@ -1081,7 +1084,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
               return;
             }
           }
-          if (!Y.Lang.isArray(warning)) { warning = []; }
+          if (!Array.isArray(warning)) { warning = []; }
           warning.push(unitName + ' does not exist, cannot remove.');
         }
       }, this);
@@ -1094,30 +1097,31 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-      Exposes a service from the supplied string.
+      Exposes an application from the supplied string.
 
       @method expose
-      @param {String} serviceName The service name.
+      @param {String} applicationName The application name.
       @return {Object} An object containing an `error` and `warning` properties
         which will be undefined if there were no warnings or errors.
     */
-    expose: function(serviceName) {
-      var service = this.db.services.getById(serviceName),
+    expose: function(applicationName) {
+      var application = this.db.services.getById(applicationName),
           warning, error;
 
       if (!this.get('authenticated')) {
         return UNAUTHENTICATED_ERROR;
       }
 
-      if (service) {
-        if (!service.get('exposed')) {
-          service.set('exposed', true);
-          this.changes.services[service.get('id')] = [service, true];
+      if (application) {
+        if (!application.get('exposed')) {
+          application.set('exposed', true);
+          this.changes.applications[application.get('id')] = [
+            application, true];
         } else {
-          warning = 'Service "' + serviceName + '" was already exposed.';
+          warning = 'Application "' + applicationName + '" already exposed.';
         }
       } else {
-        error = '"' + serviceName + '" is an invalid service name.';
+        error = '"' + applicationName + '" is an invalid application name.';
       }
 
       return {
@@ -1127,29 +1131,30 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-      Unexposes a service from the supplied string.
+      Unexposes an application from the supplied string.
 
       @method unexpose
-      @param {String} serviceName The service name.
+      @param {String} applicationName The application name.
       @return {Object} An object containing an `error` and `warning` properties
         which will be undefined if there were no warnings or errors.
     */
-    unexpose: function(serviceName) {
-      var service = this.db.services.getById(serviceName),
+    unexpose: function(applicationName) {
+      var application = this.db.services.getById(applicationName),
           warning, error;
 
       if (!this.get('authenticated')) {
         return UNAUTHENTICATED_ERROR;
       }
-      if (service) {
-        if (service.get('exposed')) {
-          service.set('exposed', false);
-          this.changes.services[service.get('id')] = [service, true];
+      if (application) {
+        if (application.get('exposed')) {
+          application.set('exposed', false);
+          this.changes.applications[application.get('id')] = [
+            application, true];
         } else {
-          warning = 'Service "' + serviceName + '" is not exposed.';
+          warning = 'Application "' + applicationName + '" is not exposed.';
         }
       } else {
-        error = '"' + serviceName + '" is an invalid service name.';
+        error = '"' + applicationName + '" is an invalid application name.';
       }
 
       return {
@@ -1185,7 +1190,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       // If the endpoints provided is an array then loop through them creating
       // the relations.
-      if (Y.Lang.isArray(endpoints) === true) {
+      if (Array.isArray(endpoints) === true) {
         var result = [];
         endpoints.forEach(function(ep) {
           result.push(this.addRelation(endpointA, ep, useRelationCount));
@@ -1198,12 +1203,12 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-      Add a relation between two services.
+      Add a relation between two applications.
 
       @method addRelation
-      @param {String} endpointA A string representation of the service name
+      @param {String} endpointA A string representation of the application name
         and endpoint connection type ie) wordpress:db.
-      @param {String} endpointB A string representation of the service name
+      @param {String} endpointB A string representation of the application name
         and endpoint connection type ie) wordpress:db.
       @param {Boolean} useRelationCount whether or not to generate and
         incremented relation id or to just use the name and types of the
@@ -1292,12 +1297,12 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-      Removes a relation between two services.
+      Removes a relation between two applications.
 
       @method removeRelation
-      @param {String} endpointA A string representation of the service name
+      @param {String} endpointA A string representation of the application name
         and endpoint connection type ie) wordpress:db.
-      @param {String} endpointB A string representation of the service name
+      @param {String} endpointB A string representation of the application name
         and endpoint connection type ie) wordpress:db.
     */
     removeRelation: function(endpointA, endpointB) {
@@ -1323,10 +1328,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
       this.db.relations.some(function(rel) {
         var endpoints = rel.getAttrs().endpoints;
         return [0, 1].some(function(index) {
-          // Check to see if the service names match an existing relation
+          // Check to see if the application names match an existing relation.
           if ((endpoints[index][0] === endpointData[0].name) &&
               (endpoints[!index + 0][0] === endpointData[1].name)) {
-            // Check to see if the interface names match
+            // Check to see if the interface names match.
             if ((endpoints[index][1].name === endpointData[0].type) &&
                 (endpoints[!index + 0][1].name === endpointData[1].type)) {
               relation = rel;
@@ -1357,8 +1362,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
      */
     _getAnnotationGroup: function(entity) {
       var annotationGroup = {
-        serviceUnit: 'units',
-        environment: 'annotations'
+        environment: 'annotations',
+        service: 'applications',
+        serviceUnit: 'units'
       }[entity.name];
       if (!annotationGroup) {
         annotationGroup = entity.name + 's';
@@ -1394,9 +1400,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // If this is a unit, also update annotations in the unit instance
       // included in the service model list.
       if (entity.name === 'serviceUnit') {
-        var serviceUnits = this.db.services.getById(
+        var applicationUnits = this.db.services.getById(
             entity.service).get('units');
-        var nestedEntity = serviceUnits.getById(entityName);
+        var nestedEntity = applicationUnits.getById(entityName);
         models.setAnnotations(nestedEntity, annotations, true);
       }
       // Arrange delta stream updates.
@@ -1452,9 +1458,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       if (keys) {
-        Y.each(keys, function(k) {
-          if (Y.Object.owns(annotations, k)) {
-            delete annotations[k];
+        keys.forEach(key => {
+          if (Y.Object.owns(annotations, key)) {
+            delete annotations[key];
           }
         });
       } else {
@@ -1471,24 +1477,25 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-      Sets the configuration settings on the supplied service to the supplied
-      config object while leaving the settings untouched if they are not in the
-      supplied config.
+      Sets the configuration settings on the supplied application to the
+      supplied config object while leaving the settings untouched if they are
+      not in the supplied config.
 
       @method setConfig
-      @param {String} serviceName the service id.
+      @param {String} applicationName the application id.
       @param {Object} config properties to set.
     */
-    setConfig: function(serviceName, config) {
+    setConfig: function(applicationName, config) {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATED_ERROR;
       }
-      var service = this.db.services.getById(serviceName);
-      if (!service) {
-        return {error: 'Service "' + serviceName + '" does not exist.'};
+      var application = this.db.services.getById(applicationName);
+      if (!application) {
+        return {
+          error: 'Application "' + applicationName + '" does not exist.'};
       }
 
-      var existing = service.get('config');
+      var existing = application.get('config');
       if (!existing) {
         existing = {};
       }
@@ -1500,35 +1507,36 @@ YUI.add('juju-env-fakebackend', function(Y) {
       existing = Y.mix(existing, config, true, undefined, 0, true);
       //TODO: validate the config.
       // Reassign the attr.
-      service.set('config', existing);
+      application.set('config', existing);
       // The callback indicates done, we can pass anything back.
-      this.changes.services[service.get('id')] = [service, true];
+      this.changes.applications[application.get('id')] = [application, true];
       return {result: existing};
     },
 
     /**
-      Sets the constraints on a service to restrict the type of machine to be
-      used for the service.
+      Sets the constraints on an application to restrict the type of machine to
+      be used for the application.
 
       @method setConstraints
-      @param {String} serviceName the service id.
+      @param {String} applicationName the application id.
       @param {Object | Array} data either an array of strings "foo=bar" or an
       object {foo: 'bar'}.
     */
-    setConstraints: function(serviceName, data) {
+    setConstraints: function(applicationName, data) {
       var constraints = {};
       // Do not allow calls for unauthenticated users.
       if (!this.get('authenticated')) {
         return UNAUTHENTICATED_ERROR;
       }
-      // Retrieve the service.
-      var service = this.db.services.getById(serviceName);
-      if (!service) {
-        return {error: 'Service "' + serviceName + '" does not exist.'};
+      // Retrieve the application.
+      var application = this.db.services.getById(applicationName);
+      if (!application) {
+        return {
+          error: 'Application "' + applicationName + '" does not exist.'};
       }
-      // Retrieve the service constraints.
-      if (Y.Lang.isArray(data)) {
-        Y.Array.each(data, function(i) {
+      // Retrieve the application constraints.
+      if (Array.isArray(data)) {
+        data.forEach(i => {
           var kv = i.split('=');
           constraints[kv[0]] = kv[1];
         });
@@ -1542,10 +1550,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       // For the fakebackend purposes, there is no need to validate the
       // constraints. Moreover, since we are always setting all the constraints
-      // from the service inspector, merging existing and new constraints is
-      // not necessary.
-      service.set('constraints', constraints);
-      this.changes.services[service.get('id')] = [service, true];
+      // from the application inspector, merging existing and new constraints
+      // is not necessary.
+      application.set('constraints', constraints);
+      this.changes.applications[application.get('id')] = [application, true];
       return {result: true};
     },
 
@@ -1562,19 +1570,19 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATED_ERROR;
       }
-      var serviceName = unitName.split('/', 1)[0];
-      var service = this.db.services.getById(serviceName);
+      var applicationName = unitName.split('/', 1)[0];
+      var application = this.db.services.getById(applicationName);
       var unit;
-      if (service) {
-        unit = service.get('units').getById(unitName);
+      if (application) {
+        unit = application.get('units').getById(unitName);
       }
-      if (!service || !unit) {
+      if (!application || !unit) {
         return {error: 'Unit "' + unitName + '" does not exist.'};
       }
 
       if (relationName) {
         var relation = this.db.relations.get_relations_for_service(
-            service).filter(function(rel) {
+            application).filter(function(rel) {
               return (rel.endpoints[0].name === relationName ||
                   rel.endpoints[1].name === relationName);
             });
@@ -1592,28 +1600,28 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-     * Utility to promise to load a charm for serviceData.
-     * @method _promiseCharmForService
-     * @param {Object} serviceData to load charm for. seviceData is the
-     *        imported service attributes, so .charm should be the charm
-     *        url.
-     * @return {Promise} resolving with [charm model, serviceData].
+     * Utility to promise to load a charm for applicationData.
+     * @method _promiseCharmForApplication
+     * @param {Object} applicationData to load charm for. applicationData is
+     *        the imported application attributes, so .charm should be the
+     *        charm url.
+     * @return {Promise} resolving with [charm model, applicationData].
      */
-    _promiseCharmForService: function(serviceData) {
+    _promiseCharmForApplication: function(applicationData) {
       var self = this,
-          charmId = serviceData.charm;
+          charmId = applicationData.charm;
 
       return Y.Promise(function(resolve, reject) {
         self._loadCharm(charmId, {
           /**
            * Callback to return resolved charm
-           * as associated serviceData (so it can
+           * as associated applicationData (so it can
            * be updated if version changed).
            *
            * @method success
            */
           success: function(charm) {
-            resolve([charm, serviceData]);
+            resolve([charm, applicationData]);
           },
           failure: reject
         });
@@ -1628,14 +1636,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
      * @return {String} JSON description of env data.
      */
     exportEnvironment: function() {
-      var serviceList = this.db.services,
+      var applicationList = this.db.services,
           relationList = this.db.relations,
           result = {meta: {
             exportFormat: 1.0
           },
-          services: [], relations: []},
+          applications: [], relations: []},
           blackLists = {
-            service: ['id', 'aggregated_status', 'clientId', 'initialized',
+            application: ['id', 'aggregated_status', 'clientId', 'initialized',
               'constraintsStr', 'destroyed', 'pending'],
             relation: ['id', 'relation_id', 'clientId', 'initialized',
               'destroyed', 'pending']
@@ -1645,20 +1653,20 @@ YUI.add('juju-env-fakebackend', function(Y) {
         return UNAUTHENTICATED_ERROR;
       }
 
-      serviceList.each(function(s) {
-        var serviceData = s.getAttrs();
-        if (serviceData.pending === true) {
+      applicationList.each(function(s) {
+        var applicationData = s.getAttrs();
+        if (applicationData.pending === true) {
           return;
         }
-        Y.each(blackLists.service, function(key) {
-          if (key in serviceData) {
-            delete serviceData[key];
+        blackLists.application.forEach(key => {
+          if (key in applicationData) {
+            delete applicationData[key];
           }
           // Add in initial unit count.
           var units = s.get('units');
-          serviceData.unit_count = units.size() || 1;
+          applicationData.unit_count = units.size() || 1;
         });
-        result.services.push(serviceData);
+        result.applications.push(applicationData);
       });
 
       relationList.each(function(r) {
@@ -1666,7 +1674,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         if (relationData.pending === true) {
           return;
         }
-        Y.each(blackLists.relation, function(key) {
+        blackLists.relation.forEach(key => {
           if (key in relationData) {
             delete relationData[key];
           }
@@ -1698,7 +1706,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       var source;
       // Check whether this is a raw bundle or a basket of bundles.
-      if (data.services && !data.services.services) {
+      if (data.applications && !data.applications.applications) {
         source = data;
       } else {
         if (!targetBundle && Object.keys(data).length > 1) {
@@ -1731,7 +1739,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         baseList.unshift(base);
         // Normalize to array when present.
         if (!base.inherits) { return; }
-        if (base.inherits && !Y.Lang.isArray(base.inherits)) {
+        if (base.inherits && !Array.isArray(base.inherits)) {
           base.inherits = [base.inherits];
         }
 
@@ -1756,21 +1764,21 @@ YUI.add('juju-env-fakebackend', function(Y) {
       });
 
       var error = '';
-      Object.keys(source.services).forEach(function(serviceName) {
-        var existing = db.services.getById(serviceName);
+      for (var applicationName in source.applications) {
+        var existing = db.services.getById(applicationName);
         if (existing) {
           console.log(source);
-          error = serviceName + ' is already present in the database.' +
-              ' Change service name and try again.';
+          error = applicationName + ' is already present in the database.' +
+              ' Change application name and try again.';
         }
-        source.services[serviceName].name = serviceName;
-      });
+        source.applications[applicationName].name = applicationName;
+      };
 
       if (error) {
         return { error: error };
       } else {
         return {
-          services: source.services,
+          applications: source.applications,
           relations: source.relations
         };
       }
@@ -1810,27 +1818,27 @@ YUI.add('juju-env-fakebackend', function(Y) {
         options.targetBundle = name;
       }
       var ingestedData = this.ingestDeployer(data, options);
-      var servicePromises = [];
+      var applicationPromises = [];
       // If there is an error in the ingestedData then return with the error.
       if (ingestedData.error) {
         callback(ingestedData);
         return;
       }
-      Y.each(ingestedData.services, function(serviceData) {
+      for (var appName in ingestedData.applications) {
+        var applicationData = ingestedData.applications[appName];
         // Map the argument name from the deployer format
         // name for unit count.
-        if (!serviceData.unitCount) {
-          serviceData.unitCount = serviceData.num_units;
+        if (!applicationData.unitCount) {
+          applicationData.unitCount = applicationData.num_units;
         }
-        if (serviceData.options) {
-          // If the serviceData does not contain a config object then the
+        if (applicationData.options) {
+          // If the applicationData does not contain a config object then the
           // inspectors won't be able to render it properly.
-          serviceData.config = serviceData.options;
+          applicationData.config = applicationData.options;
         }
-        servicePromises.push(
-            self.promiseDeploy(serviceData.charm, serviceData));
-      });
-
+        applicationPromises.push(
+            self.promiseDeploy(applicationData.charm, applicationData));
+      }
 
       self._deploymentId += 1;
       var deployStatus = {
@@ -1844,14 +1852,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
         self._importChanges = self._importChanges.slice(-5);
       }
 
-      Y.batch.apply(this, servicePromises)
-        .then(function(serviceDeployResult) {
+      Y.batch.apply(this, applicationPromises)
+        .then(function(applicationDeployResult) {
           // Expose, if requested.
-          serviceDeployResult.forEach(function(sdr) {
-            var serviceId = sdr.service.get('id');
-            var serviceData = ingestedData.services[serviceId];
-            if (serviceData.expose) {
-              self.expose(serviceId);
+          applicationDeployResult.forEach(function(sdr) {
+            var applicationId = sdr.application.get('id');
+            var applicationData = ingestedData.applications[applicationId];
+            if (applicationData.expose) {
+              self.expose(applicationId);
             }
           });
 
@@ -1862,7 +1870,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
             // If the bungle provides a list of endpoints to relate to a
             // single endpoint then we need to add each relation to the
             // result list.
-            if (!Y.Lang.isArray(relResult)) {
+            if (!Array.isArray(relResult)) {
               relResult = [relResult];
             }
             relResult.forEach(function(result) {

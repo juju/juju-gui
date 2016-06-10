@@ -1,6 +1,6 @@
 wordpress-base:
     series: precise
-    services:
+    applications:
         blog:
             charm: wordpress
 
@@ -8,7 +8,7 @@ wordpress-stage:
     series: precise
     inherits:
         - wordpress-base
-    services:
+    applications:
         blog:
             constraints: instance-type=m1.small
             num_units: 3
@@ -39,7 +39,7 @@ wordpress-stage:
 wordpress-prod:
     series: precise
     inherits: wordpress-stage
-    services:
+    applications:
         blog:
             options:
                 engine: nginx

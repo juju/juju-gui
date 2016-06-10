@@ -40,16 +40,18 @@ YUI.add('juju-delta-handlers', function(Y) {
       annotations.
 
       The regular expression removes any non-hyphen characters followed by a
-      hyphen from the beginning of a string.  Thus, service-mysql becomes
-      simply mysql (as the expression matches 'service-'). This function also
-      converts the unit tag so that "unit-mysql-1" becomes "mysql/1".
+      hyphen from the beginning of a string.  Thus, application-mysql becomes
+      simply mysql (as the expression matches 'applicationName-').
+      This function also converts the unit tag so that "unit-mysql-1" becomes
+      "mysql/1".
 
       @method cleanUpEntityTags
       @param {String} tag The tag to clean up.
       @return {String} The tag without the prefix.
     */
     cleanUpEntityTags: function(tag) {
-      var result = tag.replace(/^(service|unit|machine|environment)-/, '');
+      var result = tag.replace(
+        /^(application|service|unit|machine|model|environment)-/, '');
       if (!result) {
         return tag;
       }
@@ -73,7 +75,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       if (!ports) {
         return [];
       }
-      return Y.Array.map(ports, function(port) {
+      return ports.map(port => {
         return port.Number + '/' + port.Protocol;
       });
     },
@@ -87,10 +89,11 @@ YUI.add('juju-delta-handlers', function(Y) {
       @return {Array} The converted list of endpoints.
     */
     createEndpoints: function(endpoints) {
-      return Y.Array.map(endpoints, function(endpoint) {
-        var relation = endpoint.Relation,
-            data = {role: relation.Role, name: relation.Name};
-        return [endpoint.ServiceName, data];
+      return endpoints.map(endpoint => {
+        var relation = endpoint.Relation;
+        var data = {role: relation.Role, name: relation.Name};
+        var applicationName = endpoint.ApplicationName || endpoint.ServiceName;
+        return [applicationName, data];
       });
     },
 
@@ -99,7 +102,7 @@ YUI.add('juju-delta-handlers', function(Y) {
 
       @method convertConstraints
       @param {Object} constraints The constraints included in the mega-watcher
-        for services, or null/undefined if no constraints are set.
+        for applications, or null/undefined if no constraints are set.
       @return {Object} The converted constraints.
     */
     convertConstraints: function(constraints) {
@@ -187,21 +190,22 @@ YUI.add('juju-delta-handlers', function(Y) {
   models.utils = utils; // Exported for testing purposes.
 
   /*
-    The serviceChangedHooks object maps service names to functions to be
-    executed when the next corresponding service change event arrives.
-    When a service is removed, the corresponding key is also garbage collected.
+    The applicationChangedHooks object maps application names to functions to
+    be executed when the next corresponding application change event arrives.
+    When an application is removed, the corresponding key is also garbage
+    collected.
   */
-  var serviceChangedHooks = Object.create(null);
+  var applicationChangedHooks = Object.create(null);
   // Store the hooks in the models for testing.
-  models._serviceChangedHooks = serviceChangedHooks;
+  models._applicationChangedHooks = applicationChangedHooks;
 
   /*
-     Each handler is called passing the db instance, the action to be
-     performed ("add", "change" or "remove"), the change coming from
-     the environment, and a (optional) kind identifying what will be
-     changed (e.g. "unit", "service", "unitInfo").
-     Each handler has the responsibility to update the database according to
-     the received change.
+    Each handler is called passing the db instance, the action to be
+    performed ("add", "change" or "remove"), the change coming from
+    the environment, and a (optional) kind identifying what will be
+    changed (e.g. "applicationInfo", "unitInfo").
+    Each handler has the responsibility to update the database according to
+    the received change.
   */
   models.handlers = {
 
@@ -237,7 +241,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       var unitData = {
         id: change.Name,
         charmUrl: change.CharmURL,
-        service: change.Service,
+        service: change.Application || change.Service,
         machine: change.MachineId,
         public_address: change.PublicAddress,
         private_address: change.PrivateAddress,
@@ -275,20 +279,58 @@ YUI.add('juju-delta-handlers', function(Y) {
         id: change.MachineId,
         public_address: change.PublicAddress
       };
-      // The units model list included in the corresponding service is
+      // The units model list included in the corresponding application is
       // automatically kept in sync by db.units.process_delta().
       db.units.process_delta(action, unitData, db);
-      // It's valid for a service/unit to not have a machine; for example, when
-      // a deploy fails due to an error. In that case the unit is unplaced and
-      // we don't need to process machine info.
+      // It's valid for an application/unit to not have a machine; for example,
+      // when a deploy fails due to an error. In that case the unit is unplaced
+      // and we don't need to process machine info.
       if (machineData.id) {
         db.machines.process_delta('change', machineData, db);
       }
     },
 
     /**
-      Handle service info coming from the juju-core delta, updating the
+      Handle application info coming from the juju-core delta, updating the
       relevant database models.
+
+      @method applicationInfo
+      @param {Object} db The app.models.models.Database instance.
+      @param {String} action The operation to be performed
+       ("add", "change" or "remove").
+      @param {Object} change The JSON entity information.
+      @return {undefined} Nothing.
+     */
+    applicationInfo: function(db, action, change) {
+      var data = {
+        id: change.Name,
+        // The name attribute is used to store the temporary name of ghost
+        // applications. We set it here for consistency, even if the name of a
+        // real application can never be changed.
+        name: change.Name,
+        charm: change.CharmURL,
+        exposed: change.Exposed,
+        life: change.Life,
+        constraints: utils.convertConstraints(change.Constraints),
+        subordinate: change.Subordinate
+      };
+      // Process the stream.
+      db.services.process_delta(action, data);
+      if (action !== 'remove') {
+        db.services.getById(change.Name).updateConfig(change.Config);
+        // Execute the registered application hooks.
+        var hooks = applicationChangedHooks[change.Name] || [];
+        hooks.forEach(function(hook) {
+          hook();
+        });
+      }
+      // Delete the application hooks for this application.
+      delete applicationChangedHooks[change.Name];
+    },
+
+    /**
+      Handle service info coming from the juju-core delta when using Juju 1,
+      updating the relevant database models.
 
       @method serviceInfo
       @param {Object} db The app.models.models.Database instance.
@@ -298,50 +340,24 @@ YUI.add('juju-delta-handlers', function(Y) {
       @return {undefined} Nothing.
      */
     serviceInfo: function(db, action, change) {
-      var data = {
-        id: change.Name,
-        // The name attribute is used to store the temporary name of ghost
-        // services. We set it here for consistency, even if the name of a
-        // real service can never be changed.
-        name: change.Name,
-        charm: change.CharmURL,
-        exposed: change.Exposed,
-        life: change.Life,
-        constraints: utils.convertConstraints(change.Constraints),
-        // Since less recent versions of juju-core (<= 1.20.7) do not include
-        // the Subordinate field in the mega-watcher for services, the
-        // following attribute could be undefined.
-        subordinate: change.Subordinate
-      };
-      // Process the stream.
-      db.services.process_delta(action, data);
-      if (action !== 'remove') {
-        db.services.getById(change.Name).updateConfig(change.Config);
-        // Execute the registered service hooks.
-        var hooks = serviceChangedHooks[change.Name] || [];
-        hooks.forEach(function(hook) {
-          hook();
-        });
-      }
-      // Delete the service hooks for this service.
-      delete serviceChangedHooks[change.Name];
+      models.handlers.applicationInfo(db, action, change);
     },
 
     /**
-      Handle remote service info coming from the juju-core delta, updating the
-      relevant database models.
+      Handle remote application info coming from the juju-core delta, updating
+      the relevant database models.
 
-      @method remoteserviceInfo
+      @method remoteapplicationInfo
       @param {Object} db The app.models.models.Database instance.
       @param {String} action The operation to be performed
        ("add", "change" or "remove").
       @param {Object} change The JSON entity information.
       @param {String} kind The delta event type.
      */
-    remoteserviceInfo: function(db, action, change) {
+    remoteapplicationInfo: function(db, action, change) {
       var status = change.Status || {};
       var data = {
-        id: change.ServiceURL,
+        id: change.ApplicationURL,
         service: change.Name,
         sourceId: change.EnvUUID,
         life: change.Life,
@@ -369,8 +385,8 @@ YUI.add('juju-delta-handlers', function(Y) {
      */
     relationInfo: function(db, action, change) {
       var endpoints = change.Endpoints;
-      var firstEndpoint = endpoints[0];
-      var firstRelation = firstEndpoint.Relation;
+      var firstEp = endpoints[0];
+      var firstRelation = firstEp.Relation;
       var data = {
         id: change.Key,
         // The interface and scope attrs should be the same in both relations.
@@ -383,19 +399,19 @@ YUI.add('juju-delta-handlers', function(Y) {
         db.relations.process_delta(action, data, db);
       };
 
-      var serviceName = firstEndpoint.ServiceName;
-      if (!db.services.getById(serviceName)) {
+      var applicationName = firstEp.ApplicationName || firstEp.ServiceName;
+      if (!db.services.getById(applicationName)) {
         // Sometimes (e.g. when a peer relation is immediately created on
-        // service deploy) a relation delta is sent by juju-core before the
-        // corresponding service is added to the db. In this case, wait for
-        // the service delta to arrive before adding a relation.
+        // application deploy) a relation delta is sent by juju-core before the
+        // corresponding application is added to the db. In this case, wait for
+        // the application delta to arrive before adding a relation.
         console.log(
             'relation change', change.Key,
-            'delayed, waiting for missing service',
-            serviceName);
-        var hooks = serviceChangedHooks[serviceName] || [];
+            'delayed, waiting for missing application',
+            applicationName);
+        var hooks = applicationChangedHooks[applicationName] || [];
         hooks.push(processRelation);
-        serviceChangedHooks[serviceName] = hooks;
+        applicationChangedHooks[applicationName] = hooks;
         return;
       }
       processRelation();
@@ -474,9 +490,9 @@ YUI.add('juju-delta-handlers', function(Y) {
           id = utils.cleanUpEntityTags(tag),
           instance;
       // We cannot use the process_delta methods here, because their legacy
-      // behavior is to override the service exposed and unit relation_errors
-      // attributes when they are missing in the change data.
-      if (kind === 'environment') {
+      // behavior is to override the application exposed and unit
+      // relation_errors attributes when they are missing in the change data.
+      if (kind === 'environment' || kind === 'model') {
         instance = db.environment;
       } else {
         instance = db.resolveModelByName(id);
@@ -487,13 +503,13 @@ YUI.add('juju-delta-handlers', function(Y) {
       }
       models.setAnnotations(instance, change.Annotations, true);
       // Keep in sync annotations in units present in the global units model
-      // list and service nested ones.
+      // list and application nested ones.
       if (instance.name === 'serviceUnit') {
-        var service = db.services.getById(instance.service);
-        if (service) {
-          var serviceUnits = service.get('units');
-          if (serviceUnits) {
-            var nestedInstance = serviceUnits.getById(id);
+        var application = db.services.getById(instance.service);
+        if (application) {
+          var applicationUnits = application.get('units');
+          if (applicationUnits) {
+            var nestedInstance = applicationUnits.getById(id);
             models.setAnnotations(nestedInstance, change.Annotations, true);
           }
         }

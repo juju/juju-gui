@@ -119,12 +119,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.connect();
       env.set('facades', {
         Annotations: [2],
+        Application: [7],
         Client: [1],
         CrossModelRelations: [1],
         ModelManager: [2],
         GUIToken: [46, 47],
-        Pinger: [42],
-        Service: [3]
+        Pinger: [42]
       });
       this._cleanups.push(env.close.bind(env));
       cleanups = [];
@@ -284,7 +284,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.set('jujuCoreVersion', '1.23');
         noopHandleLogin();
         env.login();
-        var last_message = conn.last_message();
+        var lastMessage = conn.last_message();
         var expected = {
           Type: 'Admin',
           Request: 'Login',
@@ -292,14 +292,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Params: {AuthTag: 'user-user', Password: 'password'},
           Version: 0
         };
-        assert.deepEqual(expected, last_message);
+        assert.deepEqual(expected, lastMessage);
       });
 
       it('sends the correct login message for juju > 2.0', function() {
         env.set('jujuCoreVersion', '2.0');
         noopHandleLogin();
         env.login();
-        var last_message = conn.last_message();
+        var lastMessage = conn.last_message();
         var expected = {
           Type: 'Admin',
           Request: 'Login',
@@ -307,7 +307,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Params: {'auth-tag': 'user-user', credentials: 'password'},
           Version: 3
         };
-        assert.deepEqual(expected, last_message);
+        assert.deepEqual(expected, lastMessage);
       });
 
       it('resets the user and password if they are not valid', function() {
@@ -559,7 +559,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('sends the correct tokenLogin message', function() {
         noopHandleLogin();
         env.tokenLogin('demoToken');
-        var last_message = conn.last_message();
+        var lastMessage = conn.last_message();
         var expected = {
           Type: 'GUIToken',
           Version: 47,
@@ -567,7 +567,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           RequestId: 1,
           Params: {Token: 'demoToken'}
         };
-        assert.deepEqual(expected, last_message);
+        assert.deepEqual(expected, lastMessage);
       });
 
       it('resets the user and password if the token is not valid', function() {
@@ -679,7 +679,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('sends the correct request for model info', function() {
       env.environmentInfo();
-      var last_message = conn.last_message();
+      var lastMessage = conn.last_message();
       var expected = {
         Type: 'Client',
         Request: 'ModelInfo',
@@ -687,13 +687,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         RequestId: 1,
         Params: {}
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
     it('sends the correct request for legacy environment info', function() {
       env.set('facades', {Client: [0]});
       env.environmentInfo();
-      var last_message = conn.last_message();
+      var lastMessage = conn.last_message();
       var expected = {
         Type: 'Client',
         Request: 'EnvironmentInfo',
@@ -701,7 +701,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         RequestId: 1,
         Params: {}
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
     it('warns on model info errors', function() {
@@ -1343,23 +1343,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(conn.last_message(), expectedMessage);
     });
 
-    it('sends the correct Service.AddUnits message', function() {
+    it('sends the correct Application.AddUnits message', function() {
       env.add_unit('django', 3, null, null, {immediate: true});
-      var last_message = conn.last_message();
+      var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Service',
+        Type: 'Application',
         Request: 'AddUnits',
-        Version: 3,
+        Version: 7,
         RequestId: 1,
-        Params: {ServiceName: 'django', NumUnits: 3, Placement: [null]}
+        Params: {ApplicationName: 'django', NumUnits: 3, Placement: [null]}
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
     it('sends the correct legacy AddServiceUnits message', function() {
       env.set('facades', {Client: [1]});
       env.add_unit('django', 3, null, null, {immediate: true});
-      var last_message = conn.last_message();
+      var lastMessage = conn.last_message();
       var expected = {
         Type: 'Client',
         Request: 'AddServiceUnits',
@@ -1367,18 +1367,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         RequestId: 1,
         Params: {ServiceName: 'django', NumUnits: 3, ToMachineSpec: null}
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
-    it('adds new service units to a specific machine', function() {
+    it('adds new units to a specific machine', function() {
       env.add_unit('django', 3, '42', null, {immediate: true});
       var expectedMessage = {
-        Type: 'Service',
+        Type: 'Application',
         Request: 'AddUnits',
-        Version: 3,
+        Version: 7,
         RequestId: 1,
         Params: {
-          ServiceName: 'django',
+          ApplicationName: 'django',
           NumUnits: 3,
           Placement: [{Scope: '#', Directive: '42'}]
         }
@@ -1386,15 +1386,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(conn.last_message(), expectedMessage);
     });
 
-    it('adds new service units to a specific container', function() {
+    it('adds new units to a specific container', function() {
       env.add_unit('haproxy', 1, 'lxc:47', null, {immediate: true});
       var expectedMessage = {
-        Type: 'Service',
+        Type: 'Application',
         Request: 'AddUnits',
-        Version: 3,
+        Version: 7,
         RequestId: 1,
         Params: {
-          ServiceName: 'haproxy',
+          ApplicationName: 'haproxy',
           NumUnits: 1,
           Placement: [{Scope: 'lxc', Directive: '47'}]
         }
@@ -1402,7 +1402,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(conn.last_message(), expectedMessage);
     });
 
-    it('adds new service units to a specific machine (legacy)', function() {
+    it('adds new units to a specific machine (legacy)', function() {
       env.set('facades', {Client: [1]});
       env.add_unit('django', 3, '42', null, {immediate: true});
       var expectedMessage = {
@@ -1415,12 +1415,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(conn.last_message(), expectedMessage);
     });
 
-    it('successfully adds units to a service', function(done) {
+    it('successfully adds units to an application', function(done) {
       env.add_unit('django', 2, null, function(data) {
-        assert.strictEqual('django', data.service_name);
-        assert.strictEqual(2, data.num_units);
-        assert.deepEqual(['django/2', 'django/3'], data.result);
-        assert.isUndefined(data.err);
+        assert.strictEqual(data.applicationName, 'django');
+        assert.strictEqual(data.numUnits, 2);
+        assert.deepEqual(data.result, ['django/2', 'django/3']);
+        assert.strictEqual(data.err, undefined);
         done();
       }, {immediate: true});
       // Mimic response.
@@ -1430,11 +1430,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('handles failures adding units to a service', function(done) {
+    it('handles failures adding units to an application', function(done) {
       env._add_unit('django', 0, null, function(data) {
-        assert.strictEqual('django', data.service_name);
-        assert.strictEqual(0, data.num_units);
-        assert.strictEqual('must add at least one unit', data.err);
+        assert.strictEqual(data.applicationName, 'django');
+        assert.strictEqual(data.numUnits, 0);
+        assert.strictEqual(data.err, 'must add at least one unit');
         done();
       });
       // Mimic response.
@@ -1444,23 +1444,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('sends the correct Service.DestroyUnits message', function() {
+    it('sends the correct Application.DestroyUnits message', function() {
       env.remove_units(['django/2', 'django/3'], null, {immediate: true});
-      var last_message = conn.last_message();
+      var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Service',
+        Type: 'Application',
         Request: 'DestroyUnits',
-        Version: 3,
+        Version: 7,
         RequestId: 1,
         Params: {UnitNames: ['django/2', 'django/3']}
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
     it('sends the correct legacy DestroyServiceUnits message', function() {
-      env.set('facades', {Service: [2]});
+      env.set('facades', {});
       env.remove_units(['django/2', 'django/3'], null, {immediate: true});
-      var last_message = conn.last_message();
+      var lastMessage = conn.last_message();
       var expected = {
         Type: 'Client',
         Request: 'DestroyServiceUnits',
@@ -1468,10 +1468,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         RequestId: 1,
         Params: {UnitNames: ['django/2', 'django/3']}
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
-    it('successfully removes units from a service', function(done) {
+    it('successfully removes units from an application', function(done) {
       env.remove_units(['django/2', 'django/3'], function(data) {
         assert.deepEqual(['django/2', 'django/3'], data.unit_names);
         assert.isUndefined(data.err);
@@ -1484,7 +1484,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('handles failures removing units from a service', function(done) {
+    it('handles failures removing units', function(done) {
       env.remove_units(['django/2'], function(data) {
         assert.deepEqual(['django/2'], data.unit_names);
         assert.strictEqual('unit django/2 does not exist', data.err);
@@ -1626,21 +1626,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('sends the correct expose message', function() {
       env.expose('apache', function() {}, {immediate: true});
-      var last_message = conn.last_message();
+      var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Service',
+        Type: 'Application',
         Request: 'Expose',
-        Version: 3,
+        Version: 7,
         RequestId: 1,
-        Params: {ServiceName: 'apache'}
+        Params: {ApplicationName: 'apache'}
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
     it('sends the correct expose message (legacy API)', function() {
       env.set('facades', {});
       env.expose('apache', function() {}, {immediate: true});
-      var last_message = conn.last_message();
+      var lastMessage = conn.last_message();
       var expected = {
         Type: 'Client',
         Request: 'ServiceExpose',
@@ -1648,55 +1648,55 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         RequestId: 1,
         Params: {ServiceName: 'apache'}
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
-    it('successfully exposes a service', function() {
-      var service_name;
+    it('successfully exposes an application', function() {
+      var applicationName;
       env.expose('mysql', function(data) {
-        service_name = data.service_name;
+        applicationName = data.applicationName;
       }, {immediate: true});
       // Mimic response.
       conn.msg({
         RequestId: 1,
         Response: {}
       });
-      assert.equal(service_name, 'mysql');
+      assert.equal(applicationName, 'mysql');
     });
 
-    it('handles failed service expose', function() {
-      var service_name;
+    it('handles failed expose calls', function() {
+      var applicationName;
       var err;
       env.expose('mysql', function(data) {
-        service_name = data.service_name;
+        applicationName = data.applicationName;
         err = data.err;
       }, {immediate: true});
       // Mimic response.
       conn.msg({
         RequestId: 1,
-        Error: 'service \"mysql\" not found'
+        Error: 'application \"mysql\" not found'
       });
-      assert.equal(service_name, 'mysql');
-      assert.equal(err, 'service "mysql" not found');
+      assert.equal(applicationName, 'mysql');
+      assert.equal(err, 'application "mysql" not found');
     });
 
     it('sends the correct unexpose message', function() {
       env.unexpose('apache', function() {}, {immediate: true});
-      var last_message = conn.last_message();
+      var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Service',
+        Type: 'Application',
         Request: 'Unexpose',
-        Version: 3,
+        Version: 7,
         RequestId: 1,
-        Params: {ServiceName: 'apache'}
+        Params: {ApplicationName: 'apache'}
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
     it('sends the correct unexpose message (legacy API)', function() {
       env.set('facades', {});
       env.unexpose('apache', function() {}, {immediate: true});
-      var last_message = conn.last_message();
+      var lastMessage = conn.last_message();
       var expected = {
         Type: 'Client',
         Request: 'ServiceUnexpose',
@@ -1704,39 +1704,39 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         RequestId: 1,
         Params: {ServiceName: 'apache'}
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
-    it('successfully unexposes a service', function() {
+    it('successfully unexposes an application', function() {
       var err;
-      var service_name;
+      var applicationName;
       env.unexpose('mysql', function(data) {
         err = data.err;
-        service_name = data.service_name;
+        applicationName = data.applicationName;
       }, {immediate: true});
-      // Mimic response, assuming ServiceUnexpose to be the first request.
+      // Mimic response, assuming Application.Unexpose to be the first request.
       conn.msg({
         RequestId: 1,
         Response: {}
       });
       assert.isUndefined(err);
-      assert.equal(service_name, 'mysql');
+      assert.equal(applicationName, 'mysql');
     });
 
-    it('handles failed service unexpose', function() {
+    it('handles failed unexpose calls', function() {
       var err;
-      var service_name;
+      var applicationName;
       env.unexpose('mysql', function(data) {
         err = data.err;
-        service_name = data.service_name;
+        applicationName = data.applicationName;
       }, {immediate: true});
-      // Mimic response, assuming ServiceUnexpose to be the first request.
+      // Mimic response, assuming Application.Unexpose to be the first request.
       conn.msg({
         RequestId: 1,
-        Error: 'service \"mysql\" not found'
+        Error: 'application \"mysql\" not found'
       });
-      assert.equal(err, 'service "mysql" not found');
-      assert.equal(service_name, 'mysql');
+      assert.equal(err, 'application "mysql" not found');
+      assert.equal(applicationName, 'mysql');
     });
 
     it('successfully adds a charm', function() {
@@ -1794,20 +1794,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('setCharm', function() {
 
       it('sends message to change the charm version', function() {
-        var serviceName = 'rethinkdb';
+        var applicationName = 'rethinkdb';
         var charmUrl = 'trusty/rethinkdb-1';
         var forceUnits = false;
         var forceSeries = true;
         var cb = utils.makeStubFunction();
-        env.setCharm(serviceName, charmUrl, forceUnits, forceSeries, cb);
+        env.setCharm(applicationName, charmUrl, forceUnits, forceSeries, cb);
         var lastMessage = conn.last_message();
         var expected = {
-          Type: 'Service',
+          Type: 'Application',
           Request: 'Update',
-          Version: 3,
+          Version: 7,
           RequestId: 1,
           Params: {
-            ServiceName: serviceName,
+            ApplicationName: applicationName,
             CharmUrl: charmUrl,
             ForceCharmUrl: forceUnits,
             ForceSeries: forceSeries
@@ -1819,19 +1819,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(cb.callCount(), 1);
         assert.deepEqual(cb.lastArguments(), [{
           err: undefined,
-          service_name: serviceName,
-          charm_url: charmUrl
+          applicationName: applicationName,
+          charmUrl: charmUrl
         }]);
       });
 
-      it('sends message to change the charm charm version(legacy)', function() {
-        var serviceName = 'rethinkdb';
+      it('sends message to change the charm version (legacy API)', function() {
+        var applicationName = 'rethinkdb';
         var charmUrl = 'trusty/rethinkdb-1';
         var forceUnits = false;
         var forceSeries = true;
         var cb = utils.makeStubFunction();
-        env.get('facades').Service = null;
-        env.setCharm(serviceName, charmUrl, forceUnits, forceSeries, cb);
+        env.get('facades').Application = null;
+        env.setCharm(applicationName, charmUrl, forceUnits, forceSeries, cb);
         var lastMessage = conn.last_message();
         var expected = {
           Type: 'Client',
@@ -1839,7 +1839,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Version: 1,
           RequestId: 1,
           Params: {
-            ServiceName: serviceName,
+            ServiceName: applicationName,
             CharmUrl: charmUrl,
             ForceCharmUrl: forceUnits || forceSeries
           }
@@ -1850,23 +1850,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(cb.callCount(), 1);
         assert.deepEqual(cb.lastArguments(), [{
           err: undefined,
-          service_name: serviceName,
-          charm_url: charmUrl
+          applicationName: applicationName,
+          charmUrl: charmUrl
         }]);
       });
 
     });
 
-    it('successfully deploys a service', function() {
+    it('successfully deploys an application', function() {
       env.deploy('precise/mysql', null, null, null, null, null, null, null,
           {immediate: true});
       msg = conn.last_message();
       var expected = {
-        Type: 'Service',
+        Type: 'Application',
         Request: 'Deploy',
-        Version: 3,
-        Params: {Services: [{
-          ServiceName: null,
+        Version: 7,
+        Params: {Applications: [{
+          ApplicationName: null,
           ConfigYAML: null,
           Config: {},
           Constraints: {},
@@ -1879,30 +1879,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(expected, msg);
     });
 
-    it('successfully deploys a service (version 2 API)', function() {
-      env.set('facades', {'Service': [2]});
-      env.deploy('precise/mysql', null, null, null, null, null, null, null,
-          {immediate: true});
-      msg = conn.last_message();
-      var expected = {
-        Type: 'Service',
-        Request: 'ServicesDeploy',
-        Version: 2,
-        Params: {Services: [{
-          ServiceName: null,
-          ConfigYAML: null,
-          Config: {},
-          Constraints: {},
-          CharmUrl: 'precise/mysql',
-          NumUnits: null,
-          ToMachineSpec: null
-        }]},
-        RequestId: 1
-      };
-      assert.deepEqual(expected, msg);
-    });
-
-    it('successfully deploys a service (legacy API)', function() {
+    it('successfully deploys an application (legacy API)', function() {
       env.set('facades', {});
       env.deploy('precise/mysql', null, null, null, null, null, null, null,
           {immediate: true});
@@ -1925,14 +1902,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(expected, msg);
     });
 
-    it('successfully deploys a service with a config object', function() {
+    it('successfully deploys an application with a config object', function() {
       var config = {debug: true, logo: 'example.com/mylogo.png'};
       var expected = {
-        Type: 'Service',
+        Type: 'Application',
         Request: 'Deploy',
-        Version: 3,
-        Params: {Services: [{
-          ServiceName: null,
+        Version: 7,
+        Params: {Applications: [{
+          ApplicationName: null,
           // Configuration values are sent as strings.
           Config: {debug: 'true', logo: 'example.com/mylogo.png'},
           ConfigYAML: null,
@@ -1949,14 +1926,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(expected, msg);
     });
 
-    it('successfully deploys a service with a config file', function() {
+    it('successfully deploys an application with a config file', function() {
       var config_raw = 'tuning-level: \nexpert-mojo';
       var expected = {
-        Type: 'Service',
+        Type: 'Application',
         Request: 'Deploy',
-        Version: 3,
-        Params: {Services: [{
-          ServiceName: null,
+        Version: 7,
+        Params: {Applications: [{
+          ApplicationName: null,
           Config: {},
           Constraints: {},
           ConfigYAML: config_raw,
@@ -1972,7 +1949,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(expected, msg);
     });
 
-    it('successfully deploys a service with constraints', function() {
+    it('successfully deploys an application with constraints', function() {
       var constraints = {
         'cpu-cores': 1,
         'cpu-power': 0,
@@ -1984,7 +1961,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.deploy('precise/mediawiki', null, null, null, 1, constraints, null,
           null, {immediate: true});
       msg = conn.last_message();
-      assert.deepEqual(msg.Params.Services[0].Constraints, {
+      assert.deepEqual(msg.Params.Applications[0].Constraints, {
         'cpu-cores': 1,
         'cpu-power': 0,
         mem: 512,
@@ -1994,13 +1971,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('successfully deploys a service to a specific machine', function() {
+    it('successfully deploys an app to a specific machine', function() {
       var expectedMessage = {
-        Type: 'Service',
+        Type: 'Application',
         Request: 'Deploy',
-        Version: 3,
-        Params: {Services: [{
-          ServiceName: null,
+        Version: 7,
+        Params: {Applications: [{
+          ApplicationName: null,
           ConfigYAML: null,
           Config: {},
           Constraints: {},
@@ -2015,50 +1992,50 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(conn.last_message(), expectedMessage);
     });
 
-    it('successfully deploys a service storing charm data', function() {
-      var charm_url;
+    it('successfully deploys an application storing charm data', function() {
+      var charmUrl;
       var err;
-      var service_name;
+      var applicationName;
       env.deploy(
           'precise/mysql', 'mysql', null, null, null, null, null,
           function(data) {
-            charm_url = data.charm_url;
+            charmUrl = data.charmUrl;
             err = data.err;
-            service_name = data.service_name;
+            applicationName = data.applicationName;
           }, {immediate: true});
       // Mimic response.
       conn.msg({
         RequestId: 1,
         Response: {Results: [{}]}
       });
-      assert.equal(charm_url, 'precise/mysql');
-      assert.isUndefined(err);
-      assert.equal(service_name, 'mysql');
+      assert.equal(charmUrl, 'precise/mysql');
+      assert.strictEqual(err, undefined);
+      assert.equal(applicationName, 'mysql');
     });
 
-    it('successfully deploys a service storing legacy charm data', function() {
+    it('successfully deploys an app storing legacy charm data', function() {
       env.set('facades', env.defaultFacades);
-      var charm_url;
+      var charmUrl;
       var err;
-      var service_name;
+      var applicationName;
       env.deploy(
           'precise/mysql', 'mysql', null, null, null, null, null,
           function(data) {
-            charm_url = data.charm_url;
+            charmUrl = data.charmUrl;
             err = data.err;
-            service_name = data.service_name;
+            applicationName = data.applicationName;
           }, {immediate: true});
       // Mimic response.
       conn.msg({
         RequestId: 1,
         Response: {}
       });
-      assert.equal(charm_url, 'precise/mysql');
-      assert.isUndefined(err);
-      assert.equal(service_name, 'mysql');
+      assert.equal(charmUrl, 'precise/mysql');
+      assert.strictEqual(err, undefined);
+      assert.equal(applicationName, 'mysql');
     });
 
-    it('handles failed service deploy', function() {
+    it('handles failed application deployments', function() {
       var err;
       env.deploy(
           'precise/mysql', 'mysql', null, null, null, null, null,
@@ -2068,12 +2045,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Mimic response.
       conn.msg({
         RequestId: 1,
-        Response: {Results: [{Error: 'service "mysql" not found'}]}
+        Response: {Results: [{Error: 'app "mysql" not found'}]}
       });
-      assert.equal(err, 'service "mysql" not found');
+      assert.equal(err, 'app "mysql" not found');
     });
 
-    it('handles failed service deploy (legacy API)', function() {
+    it('handles failed application deployments (legacy API)', function() {
       env.set('facades', env.defaultFacades);
       var err;
       env.deploy(
@@ -2311,8 +2288,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sends the correct Annotations.Get message', function() {
+      env.set('jujuCoreVersion', '2.0');
+      env.get_annotations('apache', 'application');
+      var lastMessage = conn.last_message();
+      var expected = {
+        Type: 'Annotations',
+        Version: 2,
+        Request: 'Get',
+        RequestId: 1,
+        Params: {Entities: [{Tag: 'application-apache'}]}
+      };
+      assert.deepEqual(expected, lastMessage);
+    });
+
+    it('sends the correct Annotations.Get message (for services)', function() {
       env.get_annotations('apache', 'service');
-      var last_message = conn.last_message();
+      var lastMessage = conn.last_message();
       var expected = {
         Type: 'Annotations',
         Version: 2,
@@ -2320,26 +2311,47 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         RequestId: 1,
         Params: {Entities: [{Tag: 'service-apache'}]}
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
     it('sends the correct legacy Client.GetAnnotations message', function() {
+      env.set('jujuCoreVersion', '1.26.0');
       env.set('facades', {});
-      env.get_annotations('apache', 'service');
-      var last_message = conn.last_message();
+      env.get_annotations('apache/1', 'unit');
+      var lastMessage = conn.last_message();
       var expected = {
         Type: 'Client',
         Version: 0,
         Request: 'GetAnnotations',
         RequestId: 1,
-        Params: {Tag: 'service-apache'}
+        Params: {Tag: 'unit-apache/1'}
       };
-      assert.deepEqual(expected, last_message);
+      console.log(lastMessage);
+      assert.deepEqual(expected, lastMessage);
     });
 
     it('sends the correct Annotations.Set message', function() {
+      env.set('jujuCoreVersion', '2.1.0');
+      env.update_annotations('apache', 'application', {'mykey': 'myvalue'});
+      var lastMessage = conn.last_message();
+      var expected = {
+        Type: 'Annotations',
+        Version: 2,
+        Request: 'Set',
+        RequestId: 1,
+        Params: {
+          Annotations: [{
+            EntityTag: 'application-apache',
+            Annotations: {mykey: 'myvalue'}
+          }]
+        }
+      };
+      assert.deepEqual(expected, lastMessage);
+    });
+
+    it('sends the correct Annotations.Set message (for services)', function() {
       env.update_annotations('apache', 'service', {'mykey': 'myvalue'});
-      var last_message = conn.last_message();
+      var lastMessage = conn.last_message();
       var expected = {
         Type: 'Annotations',
         Version: 2,
@@ -2352,39 +2364,41 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }]
         }
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
     it('sends the correct legacy Client.SetAnnotations message', function() {
+      env.set('jujuCoreVersion', '1.26.0');
       env.set('facades', {});
-      env.update_annotations('apache', 'service', {'mykey': 'myvalue'});
-      var last_message = conn.last_message();
+      env.update_annotations('apache/42', 'unit', {'mykey': 'myvalue'});
+      var lastMessage = conn.last_message();
       var expected = {
         Type: 'Client',
         Version: 0,
         Request: 'SetAnnotations',
         RequestId: 1,
         Params: {
-          Tag: 'service-apache',
+          Tag: 'unit-apache/42',
           Pairs: {
             mykey: 'myvalue'
           }
         }
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
     it('correctly sends all the annotation values as strings', function() {
       var annotations = {mynumber: 42, mybool: true, mystring: 'string'},
           expected = {mynumber: '42', mybool: 'true', mystring: 'string'};
-      env.update_annotations('apache', 'service', annotations);
+      env.update_annotations('apache', 'application', annotations);
       var msg = conn.last_message();
       var pairs = msg.Params.Annotations[0].Annotations;
       assert.deepEqual(expected, pairs);
     });
 
     it('sends correct multiple update_annotations messages', function() {
-      env.update_annotations('apache', 'service', {
+      env.set('jujuCoreVersion', '2');
+      env.update_annotations('apache', 'application', {
         'key1': 'value1',
         'key2': 'value2'
       });
@@ -2395,7 +2409,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         RequestId: 1,
         Params: {
           Annotations: [{
-            EntityTag: 'service-apache',
+            EntityTag: 'application-apache',
             Annotations: {'key1': 'value1', 'key2': 'value2'}
           }]
         }
@@ -2404,8 +2418,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sends the correct message to remove annotations', function() {
+      env.set('jujuCoreVersion', '2.0');
+      env.remove_annotations('apache', 'application', ['key1', 'key2']);
+      var lastMessage = conn.last_message();
+      var expected = {
+        Type: 'Annotations',
+        Version: 2,
+        Request: 'Set',
+        RequestId: 1,
+        Params: {
+          Annotations: [{
+            EntityTag: 'application-apache',
+            Annotations: {'key1': '', 'key2': ''}
+          }]
+        }
+      };
+      assert.deepEqual(expected, lastMessage);
+    });
+
+    it('sends the correct message to remove service annotations', function() {
       env.remove_annotations('apache', 'service', ['key1', 'key2']);
-      var last_message = conn.last_message();
+      var lastMessage = conn.last_message();
       var expected = {
         Type: 'Annotations',
         Version: 2,
@@ -2418,13 +2451,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }]
         }
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
     it('sends the correct message to remove annotations (legacy)', function() {
+      env.set('jujuCoreVersion', '1.26.0');
       env.set('facades', {});
-      env.remove_annotations('apache', 'service', ['key1', 'key2']);
-      var last_message = conn.last_message();
+      env.remove_annotations('apache', 'application', ['key1', 'key2']);
+      var lastMessage = conn.last_message();
       var expected = {
         Type: 'Client',
         Version: 0,
@@ -2438,9 +2472,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         }
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
-
 
     it('successfully retrieves annotations', function() {
       var annotations;
@@ -2448,7 +2481,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'key1': 'value1',
         'key2': 'value2'
       };
-      env.get_annotations('mysql', 'service', function(data) {
+      env.get_annotations('mysql', 'application', function(data) {
         annotations = data.results;
       });
       // Mimic response.
@@ -2463,7 +2496,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('successfully sets annotation', function() {
       var err;
-      env.update_annotations('mysql', 'service', {'mykey': 'myvalue'},
+      env.update_annotations('mysql', 'application', {'mykey': 'myvalue'},
           function(data) {
             err = data.err;
           });
@@ -2477,7 +2510,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('successfully sets multiple annotations', function() {
       var err;
-      env.update_annotations('mysql', 'service', {
+      env.update_annotations('mysql', 'application', {
         'key1': 'value1',
         'key2': 'value2'
       }, function(data) {
@@ -2493,7 +2526,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('successfully removes annotations', function() {
       var err;
-      env.remove_annotations('mysql', 'service', ['key1', 'key2'],
+      env.remove_annotations('mysql', 'application', ['key1', 'key2'],
           function(data) {
             err = data.err;
           });
@@ -2507,7 +2540,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles errors from getting annotations', function() {
       var err;
-      env.get_annotations('haproxy', 'service', function(data) {
+      env.get_annotations('haproxy', 'application', function(data) {
         err = data.err;
       });
       // Mimic response.
@@ -2520,7 +2553,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles internal errors from getting annotations', function() {
       var err;
-      env.get_annotations('haproxy', 'service', function(data) {
+      env.get_annotations('haproxy', 'application', function(data) {
         err = data.err;
       });
       // Mimic response.
@@ -2535,7 +2568,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles errors from setting annotations', function() {
       var err;
-      env.update_annotations('haproxy', 'service', {
+      env.update_annotations('haproxy', 'application', {
         'key': 'value'
       }, function(data) {
         err = data.err;
@@ -2550,7 +2583,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles internal errors from setting annotations', function() {
       var err;
-      env.update_annotations('haproxy', 'service', {
+      env.update_annotations('haproxy', 'application', {
         'key': 'value'
       }, function(data) {
         err = data.err;
@@ -2565,7 +2598,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('correctly handles errors from removing annotations', function() {
       var err;
-      env.remove_annotations('haproxy', 'service', ['key1', 'key2'],
+      env.remove_annotations('haproxy', 'application', ['key1', 'key2'],
           function(data) {
             err = data.err;
           });
@@ -2577,23 +2610,65 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal('This is an error.', err);
     });
 
-    it('sends the correct get_service message', function() {
-      env.get_service('mysql');
-      var last_message = conn.last_message();
-      var expected = {
-        RequestId: 1,
-        Type: 'Service',
-        Version: 3,
-        Request: 'Get',
-        Params: {ServiceName: 'mysql'}
-      };
-      assert.deepEqual(expected, last_message);
+    describe('generateTag', function() {
+
+      var tag;
+
+      it('generates an application tag with Juju 2', function() {
+        env.set('jujuCoreVersion', '2');
+        tag = env.generateTag('django', 'application');
+        assert.strictEqual('application-django', tag);
+      });
+
+      it('generates a model tag with Juju 2', function() {
+        env.set('jujuCoreVersion', '2');
+        tag = env.generateTag('default', 'model');
+        assert.strictEqual('model-default', tag);
+      });
+
+      it('generates a unit tag with Juju 2', function() {
+        env.set('jujuCoreVersion', '2');
+        tag = env.generateTag('django/1', 'unit');
+        assert.strictEqual('unit-django/1', tag);
+      });
+
+      it('generates an application tag with Juju 1', function() {
+        env.set('jujuCoreVersion', '1');
+        tag = env.generateTag('django', 'application');
+        assert.strictEqual('service-django', tag);
+      });
+
+      it('generates a model tag with Juju 1', function() {
+        env.set('jujuCoreVersion', '1');
+        tag = env.generateTag('default', 'model');
+        assert.strictEqual('environment-default', tag);
+      });
+
+      it('generates a unit tag with Juju 1', function() {
+        env.set('jujuCoreVersion', '1');
+        tag = env.generateTag('django/1', 'unit');
+        assert.strictEqual('unit-django/1', tag);
+      });
+
     });
 
-    it('sends the correct get_service message (legacy API)', function() {
+    it('sends the correct message to retrieve application config', function() {
+      env.getApplicationConfig('mysql');
+      var lastMessage = conn.last_message();
+      var expected = {
+        RequestId: 1,
+        Type: 'Application',
+        Version: 7,
+        Request: 'Get',
+        Params: {ApplicationName: 'mysql'}
+      };
+      assert.deepEqual(expected, lastMessage);
+    });
+
+    it('sends the correct Client.ServiceGet message (legacy API)', function() {
       env.set('facades', {'Client': [0]});
-      env.get_service('mysql');
-      var last_message = conn.last_message();
+      env.getApplicationConfig('mysql');
+      var lastMessage = conn.last_message();
       var expected = {
         RequestId: 1,
         Type: 'Client',
@@ -2601,20 +2676,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Request: 'ServiceGet',
         Params: {ServiceName: 'mysql'}
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
-    it('successfully gets service configuration', function() {
-      var service_name, result;
-      env.get_service('mysql', function(data) {
-        service_name = data.service_name;
+    it('successfully gets application configuration', function() {
+      var applicationName, result;
+      env.getApplicationConfig('mysql', function(data) {
+        applicationName = data.applicationName;
         result = data.result;
       });
       // Mimic response.
       conn.msg({
         RequestId: 1,
         Response: {
-          Service: 'mysql',
+          Application: 'mysql',
           Charm: 'mysql',
           Config: {
             'binlog-format': {
@@ -2625,47 +2700,47 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         }
       });
-      assert.equal(service_name, 'mysql');
+      assert.equal(applicationName, 'mysql');
       var expected = {
         config: {
           'binlog-format': 'gzip'
         },
         constraints: undefined
       };
-      assert.strictEqual('mysql', service_name);
+      assert.strictEqual(applicationName, 'mysql');
       assert.deepEqual(expected, result);
     });
 
-    it('handles failed get service', function() {
-      var service_name;
+    it('handles failures while retrieving app configuration  ', function() {
+      var applicationName;
       var err;
-      env.get_service('yoursql', function(data) {
-        service_name = data.service_name;
+      env.getApplicationConfig('yoursql', function(data) {
+        applicationName = data.applicationName;
         err = data.err;
       });
       // Mimic response.
       conn.msg({
         RequestId: 1,
-        Error: 'service \"yoursql\" not found',
+        Error: 'app \"yoursql\" not found',
         Response: {
-          Service: 'yoursql'
+          Application: 'yoursql'
         }
       });
-      assert.equal(service_name, 'yoursql');
-      assert.equal(err, 'service "yoursql" not found');
+      assert.equal(applicationName, 'yoursql');
+      assert.equal(err, 'app "yoursql" not found');
     });
 
-    it('can set a service config', function() {
+    it('can set an application config', function() {
       var settings = {'cfg-key': 'cfg-val', 'unchanged': 'bar'};
       var callback = null;
       env.set_config('mysql', settings, callback, {immediate: true});
       msg = conn.last_message();
       var expected = {
-        Type: 'Service',
+        Type: 'Application',
         Request: 'Update',
-        Version: 3,
+        Version: 7,
         Params: {
-          ServiceName: 'mysql',
+          ApplicationName: 'mysql',
           SettingsStrings: {
             'cfg-key': 'cfg-val',
             'unchanged': 'bar'
@@ -2676,7 +2751,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(expected, msg);
     });
 
-    it('can set a service config (legacy API)', function() {
+    it('can set an application config (legacy API)', function() {
       env.set('facades', {});
       var settings = {'cfg-key': 'cfg-val', 'unchanged': 'bar'};
       var callback = null;
@@ -2698,19 +2773,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(expected, msg);
     });
 
-    it('handles failed set config', function() {
-      var err, service_name;
+    it('handles failures while setting application configuration', function() {
+      var err, applicationName;
       env.set_config('yoursql', {}, function(evt) {
         err = evt.err;
-        service_name = evt.service_name;
+        applicationName = evt.applicationName;
       }, {immediate: true});
       msg = conn.last_message();
       conn.msg({
         RequestId: msg.RequestId,
-        Error: 'service "yoursql" not found'
+        Error: 'app "yoursql" not found'
       });
-      assert.equal(err, 'service "yoursql" not found');
-      assert.equal(service_name, 'yoursql');
+      assert.equal(err, 'app "yoursql" not found');
+      assert.equal(applicationName, 'yoursql');
     });
 
     it('handles successful set config', function() {
@@ -2725,87 +2800,75 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Response: {}
       });
       assert.strictEqual(dataReturned.err, undefined);
-      assert.strictEqual(dataReturned.service_name, 'django');
+      assert.strictEqual(dataReturned.applicationName, 'django');
       assert.deepEqual(dataReturned.newValues, settings);
     });
 
-    it('can destroy a service', function() {
-      var service_name = '';
-      env.destroy_service('mysql', function(evt) {
-        service_name = evt.service_name;
+    it('can destroy an application', function() {
+      var applicationName = '';
+      env.destroyApplication('mysql', function(evt) {
+        applicationName = evt.applicationName;
       }, {immediate: true});
       var expected = {
-        Type: 'Service',
-        Version: 3,
+        Type: 'Application',
+        Version: 7,
         Request: 'Destroy',
-        Params: {
-          ServiceName: 'mysql'
-        },
+        Params: {ApplicationName: 'mysql'},
         RequestId: msg.RequestId
       };
       msg = conn.last_message();
-      conn.msg({
-        RequestId: msg.RequestId,
-        Error: 'service "yoursql" not found'
-      });
+      conn.msg({RequestId: msg.RequestId});
       assert.deepEqual(expected, msg);
-      assert.equal(service_name, 'mysql');
+      assert.equal(applicationName, 'mysql');
     });
 
-    it('can destroy a service using legacy Client API', function() {
+    it('can destroy an application using legacy Client API', function() {
       env.set('facades', {Client: [2]});
-      var service_name = '';
-      env.destroy_service('mysql', function(evt) {
-        service_name = evt.service_name;
+      var applicationName = '';
+      env.destroyApplication('mysql', function(evt) {
+        applicationName = evt.applicationName;
       }, {immediate: true});
       var expected = {
         Type: 'Client',
         Version: 2,
         Request: 'ServiceDestroy',
-        Params: {
-          ServiceName: 'mysql'
-        },
+        Params: {ServiceName: 'mysql'},
         RequestId: msg.RequestId
       };
       msg = conn.last_message();
-      conn.msg({
-        RequestId: msg.RequestId,
-        Error: 'service "yoursql" not found'
-      });
+      conn.msg({RequestId: msg.RequestId,});
       assert.deepEqual(expected, msg);
-      assert.equal(service_name, 'mysql');
+      assert.equal(applicationName, 'mysql');
     });
 
-    it('handles failed destroy service', function() {
-      var err, service_name;
-      env.destroy_service('yoursql', function(evt) {
+    it('handles failures while destroying applications', function() {
+      var err, applicationName;
+      env.destroyApplication('yoursql', function(evt) {
         err = evt.err;
-        service_name = evt.service_name;
+        applicationName = evt.applicationName;
       }, {immediate: true});
       msg = conn.last_message();
       conn.msg({
         RequestId: msg.RequestId,
-        Error: 'service "yoursql" not found'
+        Error: 'app "yoursql" not found'
       });
-      assert.equal(err, 'service "yoursql" not found');
-      assert.equal(service_name, 'yoursql');
+      assert.equal(err, 'app "yoursql" not found');
+      assert.equal(applicationName, 'yoursql');
     });
 
     it('sends the correct AddRelation message', function() {
       endpointA = ['haproxy', {name: 'reverseproxy'}];
       endpointB = ['wordpress', {name: 'website'}];
       env.add_relation(endpointA, endpointB, null, {immediate: true});
-      var last_message = conn.last_message();
+      var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Service',
-        Version: 3,
+        Type: 'Application',
+        Version: 7,
         Request: 'AddRelation',
-        Params: {
-          Endpoints: ['haproxy:reverseproxy', 'wordpress:website']
-        },
+        Params: {Endpoints: ['haproxy:reverseproxy', 'wordpress:website']},
         RequestId: 1
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
     it('sends the correct AddRelation message (legacy API)', function() {
@@ -2813,7 +2876,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       endpointA = ['haproxy', {name: 'reverseproxy'}];
       endpointB = ['wordpress', {name: 'website'}];
       env.add_relation(endpointA, endpointB, null, {immediate: true});
-      var last_message = conn.last_message();
+      var lastMessage = conn.last_message();
       var expected = {
         Type: 'Client',
         Version: 0,
@@ -2823,7 +2886,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         },
         RequestId: 1
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
     it('successfully adds a relation', function() {
@@ -2882,20 +2945,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       endpointA = ['mysql', {name: 'database'}];
       endpointB = ['wordpress', {name: 'website'}];
       env.remove_relation(endpointA, endpointB, null, {immediate: true});
-      var last_message = conn.last_message();
+      var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Service',
-        Version: 3,
+        Type: 'Application',
+        Version: 7,
         Request: 'DestroyRelation',
-        Params: {
-          Endpoints: [
-            'mysql:database',
-            'wordpress:website'
-          ]
-        },
+        Params: {Endpoints: ['mysql:database', 'wordpress:website']},
         RequestId: 1
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
     it('sends the correct DestroyRelation message (legacy API)', function() {
@@ -2903,20 +2961,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       endpointA = ['mysql', {name: 'database'}];
       endpointB = ['wordpress', {name: 'website'}];
       env.remove_relation(endpointA, endpointB, null, {immediate: true});
-      var last_message = conn.last_message();
+      var lastMessage = conn.last_message();
       var expected = {
         Type: 'Client',
         Version: 0,
         Request: 'DestroyRelation',
-        Params: {
-          Endpoints: [
-            'mysql:database',
-            'wordpress:website'
-          ]
-        },
+        Params: {Endpoints: ['mysql:database', 'wordpress:website']},
         RequestId: 1
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
     it('calls the ecs remove relation', function() {
@@ -2955,11 +3008,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       msg = conn.last_message();
       conn.msg({
         RequestId: msg.RequestId,
-        Error: 'service "yoursql" not found'
+        Error: 'app "yoursql" not found'
       });
       assert.equal(endpoint_a, 'yoursql:database');
       assert.equal(endpoint_b, 'wordpress:website');
-      assert.equal(err, 'service "yoursql" not found');
+      assert.equal(err, 'app "yoursql" not found');
     });
 
     it('calls the ecs remove unit', function() {
@@ -2971,7 +3024,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('sends the correct CharmInfo message', function() {
       env.get_charm('cs:precise/wordpress-10');
-      var last_message = conn.last_message();
+      var lastMessage = conn.last_message();
       var expected = {
         Type: 'Client',
         Version: 1,
@@ -2979,7 +3032,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Params: {CharmURL: 'cs:precise/wordpress-10'},
         RequestId: 1
       };
-      assert.deepEqual(expected, last_message);
+      assert.deepEqual(expected, lastMessage);
     });
 
     it('successfully retrieves information about a charm', function(done) {
@@ -3138,19 +3191,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('updates services charm URL', function(done) {
+    it('updates an application charm URL', function(done) {
       var args = {url: 'cs:wily/django-42'};
-      env.updateService('django', args, function(data) {
+      env.updateApplication('django', args, function(data) {
         assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.service, 'django');
+        assert.strictEqual(data.applicationName, 'django');
         assert.strictEqual(data.url, args.url);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'Service',
-          Version: 3,
+          Type: 'Application',
+          Version: 7,
           Request: 'Update',
           Params: {
-            ServiceName: 'django',
+            ApplicationName: 'django',
             CharmUrl: args.url,
             ForceCharmUrl: false,
             ForceSeries: false,
@@ -3163,17 +3216,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({RequestId: 1, Response: {}});
     });
 
-    it('updates services charm URL (force units)', function(done) {
+    it('updates an application charm URL (force units)', function(done) {
       var args = {url: 'cs:wily/django-42', forceUnits: true};
-      env.updateService('django', args, function(data) {
+      env.updateApplication('django', args, function(data) {
         assert.strictEqual(data.forceUnits, true);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'Service',
-          Version: 3,
+          Type: 'Application',
+          Version: 7,
           Request: 'Update',
           Params: {
-            ServiceName: 'django',
+            ApplicationName: 'django',
             CharmUrl: args.url,
             ForceCharmUrl: true,
             ForceSeries: false,
@@ -3186,17 +3239,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({RequestId: 1, Response: {}});
     });
 
-    it('updates services charm URL (force series)', function(done) {
+    it('updates an application charm URL (force series)', function(done) {
       var args = {url: 'cs:wily/django-42', forceSeries: true};
-      env.updateService('django', args, function(data) {
+      env.updateApplication('django', args, function(data) {
         assert.strictEqual(data.forceSeries, true);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'Service',
-          Version: 3,
+          Type: 'Application',
+          Version: 7,
           Request: 'Update',
           Params: {
-            ServiceName: 'django',
+            ApplicationName: 'django',
             CharmUrl: args.url,
             ForceCharmUrl: false,
             ForceSeries: true
@@ -3209,19 +3262,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({RequestId: 1, Response: {}});
     });
 
-    it('updates services settings', function(done) {
+    it('updates an application settings', function(done) {
       var args = {settings: {'opt1': 'val1', 'opt2': 42}};
-      env.updateService('django', args, function(data) {
+      env.updateApplication('django', args, function(data) {
         assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.service, 'django');
+        assert.strictEqual(data.applicationName, 'django');
         assert.deepEqual(data.settings, args.settings);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'Service',
-          Version: 3,
+          Type: 'Application',
+          Version: 7,
           Request: 'Update',
           Params: {
-            ServiceName: 'django',
+            ApplicationName: 'django',
             SettingsStrings: {'opt1': 'val1', 'opt2': '42'}
           },
           RequestId: 1
@@ -3232,19 +3285,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({RequestId: 1, Response: {}});
     });
 
-    it('updates services constraints', function(done) {
+    it('updates an application constraints', function(done) {
       var args = {constraints: {'cpu-cores': '4', 'mem': 2000}};
-      env.updateService('django', args, function(data) {
+      env.updateApplication('django', args, function(data) {
         assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.service, 'django');
+        assert.strictEqual(data.applicationName, 'django');
         assert.deepEqual(data.constraints, args.constraints);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'Service',
-          Version: 3,
+          Type: 'Application',
+          Version: 7,
           Request: 'Update',
           Params: {
-            ServiceName: 'django',
+            ApplicationName: 'django',
             Constraints: {'cpu-cores': 4, 'mem': 2000}
           },
           RequestId: 1
@@ -3255,19 +3308,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({RequestId: 1, Response: {}});
     });
 
-    it('updates services minimum number of units', function(done) {
+    it('updates an application minimum number of units', function(done) {
       var args = {minUnits: 2};
-      env.updateService('django', args, function(data) {
+      env.updateApplication('django', args, function(data) {
         assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.service, 'django');
+        assert.strictEqual(data.applicationName, 'django');
         assert.strictEqual(data.minUnits, args.minUnits);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'Service',
-          Version: 3,
+          Type: 'Application',
+          Version: 7,
           Request: 'Update',
           Params: {
-            ServiceName: 'django',
+            ApplicationName: 'django',
             MinUnits: 2
           },
           RequestId: 1
@@ -3278,7 +3331,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({RequestId: 1, Response: {}});
     });
 
-    it('updates services (multiple properties)', function(done) {
+    it('updates applications (multiple properties)', function(done) {
       var args = {
         url: 'cs:trusty/django-47',
         forceUnits: true,
@@ -3287,9 +3340,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         constraints: {'cpu-cores': 8},
         minUnits: 3
       };
-      env.updateService('django', args, function(data) {
+      env.updateApplication('django', args, function(data) {
         assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.service, 'django');
+        assert.strictEqual(data.applicationName, 'django');
         assert.strictEqual(data.url, args.url);
         assert.strictEqual(data.forceUnits, true);
         assert.strictEqual(data.forceSeries, true);
@@ -3298,11 +3351,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(data.minUnits, 3);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'Service',
-          Version: 3,
+          Type: 'Application',
+          Version: 7,
           Request: 'Update',
           Params: {
-            ServiceName: 'django',
+            ApplicationName: 'django',
             CharmUrl: args.url,
             ForceCharmUrl: true,
             ForceSeries: true,
@@ -3318,7 +3371,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({RequestId: 1, Response: {}});
     });
 
-    it('updates services (legacy API)', function(done) {
+    it('updates applications (legacy API)', function(done) {
       env.set('facades', {});
       var args = {
         url: 'cs:trusty/django-47',
@@ -3327,9 +3380,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         constraints: {'cpu-cores': 8},
         minUnits: 3
       };
-      env.updateService('django', args, function(data) {
+      env.updateApplication('django', args, function(data) {
         assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.service, 'django');
+        assert.strictEqual(data.applicationName, 'django');
         assert.strictEqual(data.url, args.url);
         assert.strictEqual(data.forceUnits, true);
         assert.deepEqual(data.settings, args.settings);
@@ -3356,10 +3409,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({RequestId: 1, Response: {}});
     });
 
-    it('handles failures while updating services', function(done) {
-      env.updateService('django', {url: 'django-47'}, function(data) {
+    it('handles failures while updating applications', function(done) {
+      env.updateApplication('django', {url: 'django-47'}, function(data) {
         assert.strictEqual(data.err, 'bad wolf');
-        assert.strictEqual(data.service, 'django');
+        assert.strictEqual(data.applicationName, 'django');
         assert.strictEqual(data.url, 'django-47');
         done();
       });
@@ -3430,7 +3483,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('fires "delta" when handling an RPC response', function(done) {
       env.detach('delta');
-      var callbackData = {Response: {Deltas: [['service', 'deploy', {}]]}};
+      var callbackData = {Response: {Deltas: [['application', 'deploy', {}]]}};
       env.on('delta', function(evt) {
         done();
       });
@@ -3439,10 +3492,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('translates the type of each change in the delta', function(done) {
       env.detach('delta');
-      var callbackData = {Response: {Deltas: [['service', 'deploy', {}]]}};
+      var callbackData = {Response: {Deltas: [['application', 'deploy', {}]]}};
       env.on('delta', function(evt) {
         var change = evt.data.result[0];
-        assert.deepEqual(['serviceInfo', 'deploy', {}], change);
+        assert.deepEqual(['applicationInfo', 'deploy', {}], change);
         done();
       });
       env._handleRpcResponse(callbackData);
@@ -3456,10 +3509,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             ['annotation', 'change', {}],
             ['relation', 'change', {}],
             ['machine', 'change', {}],
-            ['remoteservice', 'change', {}],
+            ['remoteapplication', 'change', {}],
             ['foobar', 'fake', {}],
             ['unit', 'change', {}],
-            ['service', 'deploy', {}]
+            ['application', 'deploy', {}]
           ]
         }
       };
@@ -3468,12 +3521,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           return delta[0];
         });
         assert.deepEqual([
-          'serviceInfo',
+          'applicationInfo',
           'relationInfo',
           'unitInfo',
           'machineInfo',
           'annotationInfo',
-          'remoteserviceInfo',
+          'remoteapplicationInfo',
           'foobarInfo'
         ], change);
         done();
@@ -3513,7 +3566,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var unit_name = 'mysql/0';
       env.remove_units([unit_name], null, {immediate: true});
       msg = conn.last_message();
-      assert.equal(msg.Type, 'Service');
+      assert.equal(msg.Type, 'Application');
       assert.equal(msg.Request, 'DestroyUnits');
       assert.deepEqual(msg.Params.UnitNames, ['mysql/0']);
     });
@@ -3670,7 +3723,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Define the asynchronous callback.
       var callback = function(data) {
         assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.service, 'django');
+        assert.strictEqual(data.applicationName, 'django');
         assert.deepEqual(data.endpoints, ['web', 'cache']);
         assert.strictEqual(data.url, 'local:/u/mydjango');
         assert.equal(conn.messages.length, 1);
@@ -3680,11 +3733,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Request: 'Offer',
           Params: {
             Offers: [{
-              servicename: 'django',
+              applicationname: 'django',
               endpoints: ['web', 'cache'],
-              serviceurl: 'local:/u/mydjango',
+              applicationurl: 'local:/u/mydjango',
               allowedusers: ['user-dalek', 'user-cyberman'],
-              servicedescription: 'my description'
+              applicationdescription: 'my description'
             }]
           },
           RequestId: 1
@@ -3711,7 +3764,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.set('environmentName', 'myenv');
       var callback = function(data) {
         assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.service, 'haproxy');
+        assert.strictEqual(data.applicationName, 'haproxy');
         assert.deepEqual(data.endpoints, ['proxy']);
         assert.strictEqual(data.url, 'local:/u/user/myenv/haproxy');
         assert.equal(conn.messages.length, 1);
@@ -3721,11 +3774,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Request: 'Offer',
           Params: {
             Offers: [{
-              servicename: 'haproxy',
+              applicationname: 'haproxy',
               endpoints: ['proxy'],
-              serviceurl: 'local:/u/user/myenv/haproxy',
+              applicationurl: 'local:/u/user/myenv/haproxy',
               allowedusers: ['user-public'],
-              servicedescription: ''
+              applicationdescription: ''
             }]
           },
           RequestId: 1
@@ -3748,7 +3801,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('handles request failures while offering endpoints', function(done) {
       var callback = function(data) {
         assert.strictEqual(data.err, 'bad wolf');
-        assert.strictEqual(data.service, 'django');
+        assert.strictEqual(data.applicationName, 'django');
         assert.deepEqual(data.endpoints, ['web', 'cache']);
         assert.strictEqual(data.url, 'local:/u/mydjango');
         done();
@@ -3773,7 +3826,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('handles API failures while offering endpoints', function(done) {
       var callback = function(data) {
         assert.strictEqual(data.err, 'bad wolf');
-        assert.strictEqual(data.service, 'django');
+        assert.strictEqual(data.applicationName, 'django');
         assert.deepEqual(data.endpoints, ['web', 'cache']);
         assert.strictEqual(data.url, 'local:/u/mydjango');
         done();
@@ -3797,7 +3850,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(data.err, undefined);
         assert.deepEqual(data.results, [
           {
-            service: 'mydjango',
+            applicationName: 'mydjango',
             url: 'local:/u/who/my-env/django',
             charm: 'django',
             endpoints: [
@@ -3810,7 +3863,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           },
           {err: 'bad wolf'},
           {
-            service: 'haproxy',
+            applicationName: 'haproxy',
             url: 'local:/u/dalek/ha',
             charm: 'cs:haproxy',
             endpoints: [
@@ -3849,8 +3902,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           results: [{
             result: [
               {result: {
-                servicename: 'mydjango',
-                serviceurl: 'local:/u/who/my-env/django',
+                applicationname: 'mydjango',
+                applicationurl: 'local:/u/who/my-env/django',
                 charmname: 'django',
                 endpoints: [{
                   name: 'website',
@@ -3862,8 +3915,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               }},
               {error: 'bad wolf'},
               {result: {
-                servicename: 'haproxy',
-                serviceurl: 'local:/u/dalek/ha',
+                applicationname: 'haproxy',
+                applicationurl: 'local:/u/dalek/ha',
                 charmname: 'cs:haproxy',
                 endpoints: [{
                   name: 'cache',
@@ -3905,7 +3958,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var url = 'local:/u/admin/ec2/django';
       env.getOffer(url, function(data) {
         assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.service, 'django');
+        assert.strictEqual(data.applicationName, 'django');
         assert.strictEqual(data.url, url);
         assert.strictEqual(data.description, 'these are the voyages');
         assert.strictEqual(data.sourceName, 'aws');
@@ -3918,8 +3971,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(conn.last_message(), {
           Type: 'CrossModelRelations',
           Version: 1,
-          Request: 'ServiceOffers',
-          Params: {serviceurls: [url]},
+          Request: 'ApplicationOffers',
+          Params: {applicationurls: [url]},
           RequestId: 1
         });
         done();
@@ -3931,9 +3984,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Response: {
           results: [{
             result: {
-              servicename: 'django',
-              serviceurl: url,
-              servicedescription: 'these are the voyages',
+              applicationname: 'django',
+              applicationurl: url,
+              applicationdescription: 'these are the voyages',
               sourcelabel: 'aws',
               sourceenviron: 'environment-uuid',
               endpoints: [{

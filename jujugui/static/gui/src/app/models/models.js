@@ -35,7 +35,7 @@ YUI.add('juju-models', function(Y) {
   var ALIVE = 'alive';
   var DYING = 'dying';
   // The default Juju GUI service name.
-  var JUJU_GUI_SERVICE_NAME = 'juju-gui';
+  var JUJU_GUI_APPLICATION_NAME = 'juju-gui';
 
   // This is a helper function used by all of the process_delta methods.
   var _process_delta = function(list, action, change_data, change_base) {
@@ -1032,7 +1032,7 @@ YUI.add('juju-models', function(Y) {
       @param {Object} db The database containing the model being updated
     */
     process_delta: function(action, data, db) {
-      // If a charm_url is included in the data (that is, the Go backend
+      // If a charm URL is included in the data (that is, the Go backend
       // provides it), get the old charm so that we can compare charm URLs
       // in the future.
       var existingCharmUrl;
@@ -2439,7 +2439,7 @@ YUI.add('juju-models', function(Y) {
         // we still assume this convention since there are no other (more
         // solid) ways to exclude the Juju GUI service.
         if (service.get('pending') === true ||
-            serviceName === JUJU_GUI_SERVICE_NAME) {
+            serviceName === JUJU_GUI_APPLICATION_NAME) {
           return;
         }
 
@@ -2533,7 +2533,7 @@ YUI.add('juju-models', function(Y) {
         var serviceNames = endpoints.map(function(endpoint) {
           return endpoint[0];
         });
-        if (serviceNames.indexOf(JUJU_GUI_SERVICE_NAME) !== -1) {
+        if (serviceNames.indexOf(JUJU_GUI_APPLICATION_NAME) !== -1) {
           return;
         }
         // Export this relation.
@@ -2568,7 +2568,7 @@ YUI.add('juju-models', function(Y) {
           // Check to make sure the charm name for this service is juju-gui
           // This is in case the user has renamed the gui instance on deploy.
           var charmName = this.services.getById(serviceName).get('name');
-          if (charmName === JUJU_GUI_SERVICE_NAME) {
+          if (charmName === JUJU_GUI_APPLICATION_NAME) {
             // Don't add the GUI machine into the machine list;
             return;
           }
@@ -2609,7 +2609,7 @@ YUI.add('juju-models', function(Y) {
           }
         }, this);
         // Add the machine placement information to the services 'to' directive.
-        if (serviceName !== JUJU_GUI_SERVICE_NAME) {
+        if (serviceName !== JUJU_GUI_APPLICATION_NAME) {
           serviceList[serviceName].to = machinePlacement[serviceName].map(
               function(machineId) {
                 var parts = machineId.split(':');
