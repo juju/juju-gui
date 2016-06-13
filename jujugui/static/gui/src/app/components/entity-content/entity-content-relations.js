@@ -23,8 +23,8 @@ YUI.add('entity-content-relations', function() {
   juju.components.EntityContentRelations = React.createClass({
     /* Define and validate the properites available on this component. */
     propTypes: {
-      relations: React.PropTypes.object.isRequired,
-      changeState: React.PropTypes.func.isRequired
+      changeState: React.PropTypes.func.isRequired,
+      relations: React.PropTypes.object.isRequired
     },
 
     /**

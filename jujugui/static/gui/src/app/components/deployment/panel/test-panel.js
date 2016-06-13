@@ -98,6 +98,7 @@ describe('DeploymentPanel', function() {
       <juju.components.DeploymentPanel
         activeComponent="start"
         changeState={changeState}
+        modelName="my-model"
         steps={[]}
         visible={true}>
         <span>content</span>

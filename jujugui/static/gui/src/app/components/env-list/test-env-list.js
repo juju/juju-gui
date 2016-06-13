@@ -39,6 +39,7 @@ describe('EnvList', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EnvList
         envs={envs}
+        handleEnvClick={sinon.stub()}
         showProfile={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -88,6 +89,7 @@ describe('EnvList', function() {
     var component = testUtils.renderIntoDocument(
       <juju.components.EnvList
         envs={envs}
+        handleEnvClick={sinon.stub()}
         showProfile={showProfile} />);
 
     testUtils.Simulate.click(

@@ -22,6 +22,15 @@ YUI.add('inspector-expose', function() {
 
   juju.components.InspectorExpose = React.createClass({
 
+    propTypes: {
+      addNotification: React.PropTypes.func.isRequired,
+      changeState: React.PropTypes.func.isRequired,
+      exposeService: React.PropTypes.func.isRequired,
+      service: React.PropTypes.object.isRequired,
+      unexposeService: React.PropTypes.func.isRequired,
+      units: React.PropTypes.object.isRequired
+    },
+
     /**
       The callable to be passed to the unit items for navigating to the unit
       details.

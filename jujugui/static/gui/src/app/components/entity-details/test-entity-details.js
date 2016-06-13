@@ -47,6 +47,7 @@ describe('EntityDetails', function() {
         id="test"
         deployService={sinon.spy()}
         changeState={sinon.spy()}
+        getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.spy()}
         getFile={sinon.stub()}
@@ -280,6 +281,7 @@ describe('EntityDetails', function() {
         id="test"
         deployService={sinon.spy()}
         changeState={sinon.spy()}
+        getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.spy()}
         getFile={sinon.stub()}

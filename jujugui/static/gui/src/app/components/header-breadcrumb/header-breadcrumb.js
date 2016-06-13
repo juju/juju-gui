@@ -22,10 +22,10 @@ YUI.add('header-breadcrumb', function() {
 
   juju.components.HeaderBreadcrumb = React.createClass({
     propTypes: {
-      envName: React.PropTypes.string.isRequired,
-      envList: React.PropTypes.array,
-      getAppState: React.PropTypes.func.isRequired,
       authDetails: React.PropTypes.object,
+      envList: React.PropTypes.array,
+      envName: React.PropTypes.string.isRequired,
+      getAppState: React.PropTypes.func.isRequired,
       listModels: React.PropTypes.func.isRequired,
       showEnvSwitcher: React.PropTypes.bool.isRequired,
       showProfile: React.PropTypes.func.isRequired,

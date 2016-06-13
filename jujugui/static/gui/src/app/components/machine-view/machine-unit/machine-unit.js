@@ -60,6 +60,9 @@ YUI.add('machine-view-machine-unit', function() {
 
   var MachineViewMachineUnit = React.createClass({
     propTypes: {
+      canDrag: React.PropTypes.bool.isRequired,
+      connectDragSource: React.PropTypes.func.isRequired,
+      isDragging: React.PropTypes.bool.isRequired,
       machineType: React.PropTypes.string.isRequired,
       removeUnit: React.PropTypes.func,
       service: React.PropTypes.object.isRequired,

@@ -37,6 +37,7 @@ describe('MachineViewUnplacedUnit', function() {
         connectDragSource={jsTestUtils.connectDragSource}
         createMachine={sinon.stub()}
         icon="icon.svg"
+        isDragging={false}
         machines={{}}
         placeUnit={sinon.stub()}
         removeUnit={removeUnit}
@@ -97,6 +98,7 @@ describe('MachineViewUnplacedUnit', function() {
         connectDragSource={jsTestUtils.connectDragSource}
         createMachine={sinon.stub()}
         icon="icon.svg"
+        isDragging={false}
         machines={{}}
         placeUnit={sinon.stub()}
         removeUnit={removeUnit}

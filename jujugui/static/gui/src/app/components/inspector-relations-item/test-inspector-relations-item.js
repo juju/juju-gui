@@ -42,7 +42,7 @@ describe('InspectorRelationsItem', function() {
           key="unique"
           relation={relation}
           label="relation-name"
-        />);
+          whenChanged={sinon.stub()} />);
     var expected = (<li className="inspector-relations-item"
         onClick={output.props.onClick}
         tabIndex="0" role="button">
@@ -79,8 +79,10 @@ describe('InspectorRelationsItem', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorRelationsItem
           changeState={changeState}
+          label="relation-name"
           relation={relation}
-          index={index} />);
+          index={index}
+          whenChanged={sinon.stub()} />);
     output.props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -120,7 +122,7 @@ describe('InspectorRelationsItem', function() {
           checked={false}
           label="relation-name"
           action={actionStub}
-        />);
+          whenChanged={sinon.stub()} />);
     var checkbox = testUtils.findRenderedDOMComponentWithTag(output, 'input');
     testUtils.Simulate.click(checkbox);
     assert.equal(actionStub.callCount, 0);

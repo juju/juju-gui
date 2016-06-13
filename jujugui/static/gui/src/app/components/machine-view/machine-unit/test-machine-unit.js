@@ -56,7 +56,9 @@ describe('MachineViewMachineUnit', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachineUnit.DecoratedComponent
+        canDrag={false}
         connectDragSource={jsTestUtils.connectDragSource}
+        isDragging={false}
         machineType="machine"
         removeUnit={removeUnit}
         service={service}
@@ -82,7 +84,9 @@ describe('MachineViewMachineUnit', function() {
     var removeUnit = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewMachineUnit.DecoratedComponent
+        canDrag={false}
         connectDragSource={jsTestUtils.connectDragSource}
+        isDragging={false}
         machineType="container"
         removeUnit={removeUnit}
         service={service}
@@ -111,6 +115,7 @@ describe('MachineViewMachineUnit', function() {
     var removeUnit = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewMachineUnit.DecoratedComponent
+        canDrag={false}
         connectDragSource={jsTestUtils.connectDragSource}
         isDragging={true}
         machineType="container"
@@ -131,7 +136,9 @@ describe('MachineViewMachineUnit', function() {
     var removeUnit = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewMachineUnit.DecoratedComponent
+        canDrag={false}
         connectDragSource={jsTestUtils.connectDragSource}
+        isDragging={false}
         machineType="container"
         removeUnit={removeUnit}
         service={service}
@@ -150,6 +157,7 @@ describe('MachineViewMachineUnit', function() {
       <juju.components.MachineViewMachineUnit.DecoratedComponent
         connectDragSource={jsTestUtils.connectDragSource}
         canDrag={true}
+        isDragging={false}
         machineType="container"
         removeUnit={removeUnit}
         service={service}
@@ -167,7 +175,9 @@ describe('MachineViewMachineUnit', function() {
     var removeUnit = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewMachineUnit.DecoratedComponent
+        canDrag={false}
         connectDragSource={jsTestUtils.connectDragSource}
+        isDragging={false}
         machineType="container"
         removeUnit={removeUnit}
         service={service}

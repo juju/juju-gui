@@ -21,6 +21,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('inspector-change-version', function() {
 
   juju.components.InspectorChangeVersion = React.createClass({
+
+    propTypes: {
+      addCharm: React.PropTypes.func.isRequired,
+      addNotification: React.PropTypes.func.isRequired,
+      changeState: React.PropTypes.func.isRequired,
+      charmId: React.PropTypes.string.isRequired,
+      getAvailableVersions: React.PropTypes.func.isRequired,
+      getCharm: React.PropTypes.func.isRequired,
+      getMacaroon: React.PropTypes.func.isRequired,
+      service: React.PropTypes.object.isRequired,
+      setCharm: React.PropTypes.func.isRequired
+    },
+
     versionsXhr: null,
 
     /**

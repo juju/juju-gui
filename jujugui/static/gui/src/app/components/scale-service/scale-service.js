@@ -22,6 +22,13 @@ YUI.add('scale-service', function() {
 
   juju.components.ScaleService = React.createClass({
 
+    propTypes: {
+      addGhostAndEcsUnits: React.PropTypes.func.isRequired,
+      changeState: React.PropTypes.func.isRequired,
+      createMachinesPlaceUnits: React.PropTypes.func.isRequired,
+      serviceId: React.PropTypes.string.isRequired
+    },
+
     getInitialState: function() {
       return {
         constraints: null,

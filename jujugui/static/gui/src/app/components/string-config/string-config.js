@@ -22,6 +22,14 @@ YUI.add('string-config', function() {
 
   juju.components.StringConfig = React.createClass({
 
+    propTypes: {
+      config: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.number
+      ]),
+      option: React.PropTypes.object.isRequired
+    },
+
     getInitialState: function() {
       return { value: this.props.config };
     },

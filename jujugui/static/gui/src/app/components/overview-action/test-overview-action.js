@@ -36,7 +36,8 @@ describe('OverviewAction', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.OverviewAction
-          action={callbackStub} />);
+          action={callbackStub}
+          title="spinach" />);
     var output = shallowRenderer.getRenderOutput();
     output.props.onClick();
     assert.equal(callbackStub.callCount, 1);
@@ -46,6 +47,7 @@ describe('OverviewAction', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.OverviewAction
+          action={sinon.stub()}
           title="My action" />);
     var output = shallowRenderer.getRenderOutput();
     assert.equal(output.props.children[1].props.children, 'My action');
@@ -54,7 +56,9 @@ describe('OverviewAction', function() {
   it('sets the provided icon', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.OverviewAction
-          icon="action-icon" />);
+          action={sinon.stub()}
+          icon="action-icon"
+          title="spinach" />);
     assert.deepEqual(output.props.children[0],
         <span className="overview-action__icon">
           <juju.components.SvgIcon name="action-icon"
@@ -66,8 +70,10 @@ describe('OverviewAction', function() {
     var linkAction = sinon.stub();
     var output = jsTestUtils.shallowRender(
         <juju.components.OverviewAction
+          action={sinon.stub()}
           linkAction={linkAction}
-          linkTitle="Juju Charms" />);
+          linkTitle="Juju Charms"
+          title="spinach" />);
     var link = output.props.children[2];
     assert.deepEqual(link,
         <span className="overview-action__link"
@@ -81,8 +87,10 @@ describe('OverviewAction', function() {
     var stopPropagation = sinon.stub();
     var output = jsTestUtils.shallowRender(
         <juju.components.OverviewAction
+          action={sinon.stub()}
           linkAction={linkAction}
-          linkTitle="Juju Charms" />);
+          linkTitle="Juju Charms"
+          title="spinach" />);
     output.props.children[2].props.onClick({
       stopPropagation: stopPropagation
     });
@@ -93,7 +101,9 @@ describe('OverviewAction', function() {
   it('hides the link if it is not provided', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-        <juju.components.OverviewAction />);
+        <juju.components.OverviewAction
+          action={sinon.stub()}
+          title="spinach" />);
     var output = shallowRenderer.getRenderOutput();
     assert.isTrue(output.props.children[2].props.className.indexOf(
         'hidden') > -1);
@@ -103,6 +113,8 @@ describe('OverviewAction', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.OverviewAction
+          action={sinon.stub()}
+          title="spinach"
           value="5" />);
     var output = shallowRenderer.getRenderOutput();
     assert.equal(output.props.children[3].props.children, '5');
@@ -112,6 +124,8 @@ describe('OverviewAction', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.OverviewAction
+          action={sinon.stub()}
+          title="spinach"
           value="5"
           valueType="pending" />);
     var output = shallowRenderer.getRenderOutput();
@@ -122,7 +136,9 @@ describe('OverviewAction', function() {
   it('hides the value if it is not provided', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-        <juju.components.OverviewAction />);
+        <juju.components.OverviewAction
+          action={sinon.stub()}
+          title="spinach" />);
     var output = shallowRenderer.getRenderOutput();
     assert.isTrue(output.props.children[3].props.className.indexOf(
         'hidden') > -1);

@@ -76,7 +76,9 @@ describe('MidPoint', function() {
       name: 'Mongodb'
     }];
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.MidPoint />, true);
+      <juju.components.MidPoint
+        changeState={sinon.stub()}
+        storeOpen={false} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="mid-point">
@@ -127,7 +129,8 @@ describe('MidPoint', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MidPoint
-        changeState={changeState} />);
+        changeState={changeState}
+        storeOpen={false} />);
     output.props.children[1].props.children[0].props.onClick({
       currentTarget: {
         getAttribute: function() {
@@ -156,7 +159,9 @@ describe('MidPoint', function() {
       name: 'ops'
     }];
     var output = jsTestUtils.shallowRender(
-      <juju.components.MidPoint />);
+      <juju.components.MidPoint
+        changeState={sinon.stub()}
+        storeOpen={false} />);
     var expected = (<div className="mid-point">
       <h4 className="mid-point__title">Featured searches</h4>
       <ul className="mid-point__charm-list">
@@ -202,7 +207,8 @@ describe('MidPoint', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MidPoint
-        changeState={changeState} />);
+        changeState={changeState}
+        storeOpen={false} />);
     output.props.children[2].props.children[0].props.children[0].props.onClick({
       currentTarget: {
         getAttribute: function() {
@@ -227,9 +233,9 @@ describe('MidPoint', function() {
     var changeState = sinon.stub();
     var component = renderIntoDocument(
       <juju.components.MidPoint
-        changeState={changeState} />);
+        changeState={changeState}
+        storeOpen={false} />);
     var node = queryComponentSelector(component, '.button--inline-neutral');
-    console.log(node);
     testUtils.Simulate.click(node);
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -265,6 +271,7 @@ describe('MidPoint', function() {
     var expected = 'Show more';
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MidPoint
+        changeState={sinon.stub()}
         storeOpen={false} />);
     var output = renderer.props.children[2].props.children[1].props.title;
     assert.equal(output, expected);
@@ -274,6 +281,7 @@ describe('MidPoint', function() {
     var expected = 'Show less';
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MidPoint
+        changeState={sinon.stub()}
         storeOpen={true} />);
     var output = renderer.props.children[2].props.children[1].props.title;
     assert.equal(output, expected);

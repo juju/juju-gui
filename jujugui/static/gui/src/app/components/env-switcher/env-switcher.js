@@ -25,7 +25,7 @@ YUI.add('env-switcher', function() {
       environmentName: React.PropTypes.string,
       listModels: React.PropTypes.func.isRequired,
       showProfile: React.PropTypes.func.isRequired,
-      switchModel: React.PropTypes.func.isRequired,
+      switchModel: React.PropTypes.func.isRequired
     },
 
     getInitialState: function() {

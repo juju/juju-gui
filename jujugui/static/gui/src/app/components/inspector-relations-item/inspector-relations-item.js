@@ -19,6 +19,10 @@ YUI.add('inspector-relations-item', function() {
 
   juju.components.InspectorRelationsItem = React.createClass({
     propTypes: {
+      changeState: React.PropTypes.func,
+      index: React.PropTypes.number,
+      label: React.PropTypes.string.isRequired,
+      relation: React.PropTypes.object,
       whenChanged: React.PropTypes.func.isRequired
     },
 

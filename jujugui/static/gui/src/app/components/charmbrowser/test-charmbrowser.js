@@ -48,7 +48,7 @@ describe('Charmbrowser', function() {
           owner: 'charmers'
         }
       }};
-    var series = [];
+    var series = {};
     var changeState = sinon.stub();
     var charmstoreSearch = sinon.stub();
     var makeEntityModel = sinon.spy();
@@ -123,7 +123,7 @@ describe('Charmbrowser', function() {
         makeEntityModel={sinon.stub()}
         utils={{}}
         renderMarkdown={sinon.stub()}
-        series={[]} />, true);
+        series={{}} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     assert.deepEqual(output,
@@ -153,7 +153,7 @@ describe('Charmbrowser', function() {
     var changeState = sinon.stub();
     var utils = {getName: sinon.stub()};
     var makeEntityModel = sinon.spy();
-    var seriesList = [];
+    var seriesList = {};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
         addNotification={sinon.stub()}
@@ -231,7 +231,7 @@ describe('Charmbrowser', function() {
         makeEntityModel={makeEntityModel}
         utils={utils}
         renderMarkdown={renderMarkdown}
-        series={[]} />, true);
+        series={{}} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     assert.deepEqual(output,

@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('deployment-summary-placement-classic', function() {
 
-  juju.components.DeploymentSummaryPlacementClassic = function(props) {
+  var DeploymentSummaryPlacementClassic = function(props) {
     var unplacedCount = props.getUnplacedUnitCount();
     if (unplacedCount === 0) {
       return <div></div>;
@@ -64,5 +64,15 @@ YUI.add('deployment-summary-placement-classic', function() {
       </div>
     );
   };
+
+  DeploymentSummaryPlacementClassic.propTypes = {
+    autoPlace: React.PropTypes.bool.isRequired,
+    getUnplacedUnitCount: React.PropTypes.func.isRequired,
+    handlePlacementChange: React.PropTypes.func.isRequired,
+    handleViewMachinesClick: React.PropTypes.func.isRequired
+  };
+
+  juju.components.DeploymentSummaryPlacementClassic =
+    DeploymentSummaryPlacementClassic;
 
 }, '0.1.0', { requires: []});

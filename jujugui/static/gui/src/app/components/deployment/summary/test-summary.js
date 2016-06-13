@@ -275,7 +275,8 @@ describe('DeploymentSummary', function() {
         modelCommitted={true}
         modelName="Prod"
         numberOfChanges={6}
-        pluralize={pluralize} />, true);
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(true)} />, true);
     var output = renderer.getRenderOutput();
     assert.isUndefined(output.props.children[0].props.children[1]);
   });

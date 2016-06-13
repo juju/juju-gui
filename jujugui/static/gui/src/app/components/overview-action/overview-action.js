@@ -21,6 +21,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('overview-action', function() {
 
   juju.components.OverviewAction = React.createClass({
+
+    propTypes: {
+      action: React.PropTypes.func.isRequired,
+      icon: React.PropTypes.string,
+      linkAction: React.PropTypes.func,
+      linkTitle: React.PropTypes.string,
+      title: React.PropTypes.string.isRequired,
+      value: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.number
+      ]),
+      valueType: React.PropTypes.string
+    },
+
     baseClass: 'overview-action',
 
     /**

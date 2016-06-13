@@ -22,7 +22,19 @@ YUI.add('search-results', function(Y) {
 
   juju.components.SearchResults = React.createClass({
     propTypes: {
-      getName: React.PropTypes.func.isRequired
+      changeState: React.PropTypes.func.isRequired,
+      charmstoreSearch: React.PropTypes.func.isRequired,
+      getName: React.PropTypes.func.isRequired,
+      makeEntityModel: React.PropTypes.func.isRequired,
+      owner: React.PropTypes.string,
+      provides: React.PropTypes.string,
+      query: React.PropTypes.string.isRequired,
+      requires: React.PropTypes.string,
+      series: React.PropTypes.string,
+      seriesList: React.PropTypes.object.isRequired,
+      sort: React.PropTypes.string,
+      tags: React.PropTypes.string,
+      type: React.PropTypes.string
     },
 
     searchXhr: null,
@@ -120,7 +132,7 @@ YUI.add('search-results', function(Y) {
       // Parse the raw results.
       if (error) {
         this._changeActiveComponent('error');
-        console.log('Search request failed.');
+        console.error('Search request failed.');
         return;
       }
       var results = rawResults.map(function(result) {

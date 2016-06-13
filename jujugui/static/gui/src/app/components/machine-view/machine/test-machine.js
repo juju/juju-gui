@@ -76,9 +76,11 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        isOver={false}
         machine={machine}
         removeUnit={removeUnit}
         selected={false}
@@ -197,9 +199,11 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        isOver={false}
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
@@ -231,9 +235,11 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        isOver={false}
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
@@ -321,9 +327,11 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        isOver={false}
         machine={machine}
         removeUnit={removeUnit}
         selected={false}
@@ -376,9 +384,11 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        isOver={false}
         machine={machine}
         removeUnit={removeUnit}
         selected={false}
@@ -451,9 +461,11 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        isOver={false}
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
@@ -488,9 +500,11 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        isOver={false}
         machine={machine}
         removeUnit={removeUnit}
         services={services}
@@ -562,9 +576,11 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={destroyMachines}
         dropUnit={sinon.stub()}
+        isOver={false}
         machine={machine}
         selected={false}
         selectMachine={selectMachine}
@@ -595,9 +611,11 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
         dropUnit={sinon.stub()}
+        isOver={false}
         machine={machine}
         services={services}
         type="container"

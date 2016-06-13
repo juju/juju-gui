@@ -23,23 +23,23 @@ YUI.add('deployment-summary', function() {
   juju.components.DeploymentSummary = React.createClass({
 
     propTypes: {
-      jem: React.PropTypes.object.isRequired,
-      env: React.PropTypes.object.isRequired,
       appSet: React.PropTypes.func.isRequired,
-      changeCounts: React.PropTypes.object.isRequired,
-      createSocketURL: React.PropTypes.func.isRequired,
-      deploymentStorage: React.PropTypes.object.isRequired,
-      users: React.PropTypes.object.isRequired,
       autoPlaceUnits: React.PropTypes.func.isRequired,
+      changeCounts: React.PropTypes.object.isRequired,
       changeDescriptions: React.PropTypes.array.isRequired,
       changeState: React.PropTypes.func.isRequired,
+      createSocketURL: React.PropTypes.func.isRequired,
+      deploymentStorage: React.PropTypes.object.isRequired,
       ecsClear: React.PropTypes.func.isRequired,
       ecsCommit: React.PropTypes.func.isRequired,
+      env: React.PropTypes.object.isRequired,
       getUnplacedUnitCount: React.PropTypes.func.isRequired,
-      pluralize: React.PropTypes.func.isRequired,
+      jem: React.PropTypes.object.isRequired,
       modelCommitted: React.PropTypes.bool.isRequired,
       modelName: React.PropTypes.string.isRequired,
       numberOfChanges: React.PropTypes.number.isRequired,
+      pluralize: React.PropTypes.func.isRequired,
+      users: React.PropTypes.object.isRequired,
       validateForm: React.PropTypes.func.isRequired
     },
 

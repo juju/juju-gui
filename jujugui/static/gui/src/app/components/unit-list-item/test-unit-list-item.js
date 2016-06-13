@@ -36,7 +36,8 @@ describe('UnitListItem', () => {
           label="unit-name"
           unitId="apache/2"
           className="select-all"
-          count="3"
+          count={3}
+          whenChanged={sinon.stub()}
         />);
     assert.deepEqual(output,
         <li className="unit-list-item unit-list-item--select-all"
@@ -53,7 +54,7 @@ describe('UnitListItem', () => {
               unit-name
             </span>
             <span className="unit-list-item__count">
-              3
+              {3}
             </span>
           </label>
         </li>);
@@ -65,8 +66,9 @@ describe('UnitListItem', () => {
           key="unique"
           checked={false}
           label="unit-name"
-          action="action"
+          action={sinon.stub()}
           unitId="apache/2"
+          whenChanged={sinon.stub()}
         />);
     assert.equal(output.props.children.props.htmlFor, '');
   });
@@ -77,8 +79,9 @@ describe('UnitListItem', () => {
           key="unique"
           checked={false}
           label="unit-name"
-          action="action"
+          action={sinon.stub()}
           unitId="apache/2"
+          whenChanged={sinon.stub()}
         />);
     assert.isTrue(output.props.className.indexOf(
         'unit-list-item--nav') > -1);
@@ -113,6 +116,7 @@ describe('UnitListItem', () => {
           label="unit-name"
           unitId="apache/2"
           action={actionStub}
+          whenChanged={sinon.stub()}
         />);
     var checkbox = testUtils.findRenderedDOMComponentWithTag(output, 'input');
     testUtils.Simulate.click(checkbox);

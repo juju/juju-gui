@@ -38,7 +38,12 @@ describe('InspectorExpose', function() {
     var toggle = {key: 'expose-toggle'};
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorExpose
-          service={service} />);
+          addNotification={sinon.stub()}
+          changeState={sinon.stub()}
+          exposeService={sinon.stub()}
+          service={service}
+          unexposeService={sinon.stub()}
+          units={{}} />);
     var toggleItem = output.props.children[0].props.children;
     assert.deepEqual(output,
         <div className="inspector-expose">
@@ -60,7 +65,6 @@ describe('InspectorExpose', function() {
   });
 
   it('can render correctly if exposed', function() {
-    var changeState = sinon.stub();
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('exposed').returns(true);
@@ -73,9 +77,12 @@ describe('InspectorExpose', function() {
     var units = {toArray: sinon.stub().returns(unitList)};
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorExpose
-          changeState={changeState}
-          units={units}
-          service={service} />);
+          addNotification={sinon.stub()}
+          changeState={sinon.stub()}
+          exposeService={sinon.stub()}
+          service={service}
+          unexposeService={sinon.stub()}
+          units={units} />);
     var toggleItem = output.props.children[0].props.children;
     assert.deepEqual(output,
         <div className="inspector-expose">
@@ -115,9 +122,12 @@ describe('InspectorExpose', function() {
     var units = {toArray: sinon.stub().returns(unitList)};
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorExpose
+          addNotification={sinon.stub()}
           changeState={changeState}
-          units={units}
-          service={service} />);
+          exposeService={sinon.stub()}
+          service={service}
+          unexposeService={sinon.stub()}
+          units={units} />);
     output.props.children[2].props.children[0].props.action({
       currentTarget: {
         getAttribute: sinon.stub().returns('django/1')
@@ -145,9 +155,12 @@ describe('InspectorExpose', function() {
     var service = {get: getStub};
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorExpose
+          addNotification={sinon.stub()}
           changeState={changeState}
           exposeService={exposeService}
-          service={service} />);
+          service={service}
+          unexposeService={sinon.stub()}
+          units={{}} />);
     output.props.children[0].props.children.props.onChange();
     assert.equal(exposeService.callCount, 1);
     assert.deepEqual(exposeService.args[0][0], 'demo');
@@ -164,10 +177,12 @@ describe('InspectorExpose', function() {
     var units = {toArray: sinon.stub().returns(unitList)};
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorExpose
+          addNotification={sinon.stub()}
           changeState={changeState}
+          exposeService={sinon.stub()}
+          service={service}
           unexposeService={unexposeService}
-          units={units}
-          service={service} />);
+          units={units} />);
     output.props.children[0].props.children.props.onChange();
     assert.equal(unexposeService.callCount, 1);
     assert.deepEqual(unexposeService.args[0][0], 'demo');
@@ -183,10 +198,12 @@ describe('InspectorExpose', function() {
     var service = {get: getStub};
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorExpose
+          addNotification={addNotification}
           changeState={changeState}
           exposeService={exposeService}
-          addNotification={addNotification}
-          service={service} />);
+          service={service}
+          unexposeService={sinon.stub()}
+          units={{}} />);
     output.props.children[0].props.children.props.onChange();
     assert.equal(addNotification.callCount, 1);
     assert.equal(addNotification.args[0][0].title, 'Exposing charm failed');

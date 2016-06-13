@@ -43,7 +43,7 @@ YUI.add('shortcuts', function() {
     return components;
   }
 
-  juju.components.Shortcuts = function(props) {
+  var Shortcuts = function(props) {
     return (
       <div>
         <div className="twelve-col no-margin-bottom">
@@ -108,6 +108,15 @@ YUI.add('shortcuts', function() {
       </div>
     );
   };
+
+  Shortcuts.propTypes = {
+    bindings: React.PropTypes.array.isRequired,
+    disableAutoPlace: React.PropTypes.bool,
+    disableCookie: React.PropTypes.bool,
+    forceContainers: React.PropTypes.bool
+  };
+
+  juju.components.Shortcuts = Shortcuts;
 
 }, '0.1.0', { requires: [
   'svg-icon'

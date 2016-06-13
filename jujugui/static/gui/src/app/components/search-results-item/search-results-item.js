@@ -21,6 +21,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('search-results-item', function(Y) {
 
   juju.components.SearchResultsItem = React.createClass({
+
+    propTypes: {
+      changeState: React.PropTypes.func.isRequired,
+      item: React.PropTypes.object.isRequired
+    },
+
     /**
       Generate the element for the special flag.
 

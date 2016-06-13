@@ -55,7 +55,8 @@ describe('PanelComponent', function() {
     var instanceName = 'custom-instance-name';
     var renderer = jsTestUtils.shallowRender(
         <juju.components.Panel
-          instanceName={instanceName} />, true);
+          instanceName={instanceName}
+          visible={false} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -125,6 +126,7 @@ describe('PanelComponent', function() {
     var focus = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
         <juju.components.Panel
+          instanceName="my-panel"
           visible={true} />, true);
     var instance = renderer.getMountedInstance();
     instance.refs = {content: {focus: focus}};
@@ -136,6 +138,7 @@ describe('PanelComponent', function() {
     var focus = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
         <juju.components.Panel
+          instanceName="my-panel"
           focus={false}
           visible={true} />, true);
     var instance = renderer.getMountedInstance();

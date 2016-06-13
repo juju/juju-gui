@@ -23,11 +23,11 @@ YUI.add('user-profile-header', function() {
   juju.components.UserProfileHeader = React.createClass({
 
     propTypes: {
-      users: React.PropTypes.object.isRequired,
       avatar: React.PropTypes.string.isRequired,
       interactiveLogin: React.PropTypes.func,
       links: React.PropTypes.array.isRequired,
-      username: React.PropTypes.string.isRequired
+      username: React.PropTypes.string.isRequired,
+      users: React.PropTypes.object.isRequired
     },
 
     /**

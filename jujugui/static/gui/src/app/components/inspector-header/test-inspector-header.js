@@ -35,6 +35,7 @@ describe('InspectorHeader', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.InspectorHeader
+          backCallback={sinon.stub()}
           title="Juju GUI"  />);
     var output = shallowRenderer.getRenderOutput();
     assert.equal(output.props.children[1].props.children, 'Juju GUI');
@@ -44,6 +45,8 @@ describe('InspectorHeader', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.InspectorHeader
+          backCallback={sinon.stub()}
+          title="Juju GUI"
           type="error" />);
 
     var output = shallowRenderer.getRenderOutput();
@@ -54,7 +57,9 @@ describe('InspectorHeader', function() {
   it('does not add a type class if it is not provided', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-        <juju.components.InspectorHeader />);
+        <juju.components.InspectorHeader
+          backCallback={sinon.stub()}
+          title="Juju GUI" />);
 
     var output = shallowRenderer.getRenderOutput();
     assert.equal(output.props.className, 'inspector-header');
@@ -64,7 +69,9 @@ describe('InspectorHeader', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.InspectorHeader
-          icon="icon.svg" />);
+          backCallback={sinon.stub()}
+          icon="icon.svg"
+          title="Juju GUI" />);
     var output = shallowRenderer.getRenderOutput();
     assert.equal(output.props.children[2].props.children.props.src, 'icon.svg');
   });
@@ -74,7 +81,8 @@ describe('InspectorHeader', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.InspectorHeader
-          backCallback={callbackStub} />);
+          backCallback={callbackStub}
+          title="Juju GUI" />);
     var output = shallowRenderer.getRenderOutput();
     output.props.onClick();
     assert.equal(callbackStub.callCount, 1);

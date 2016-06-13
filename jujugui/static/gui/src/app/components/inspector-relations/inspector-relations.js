@@ -19,6 +19,12 @@ YUI.add('inspector-relations', function() {
 
   juju.components.InspectorRelations = React.createClass({
 
+    propTypes: {
+      changeState: React.PropTypes.func.isRequired,
+      destroyRelations: React.PropTypes.func.isRequired,
+      serviceRelations: React.PropTypes.array.isRequired
+    },
+
     /**
       Generate the initial state.
 

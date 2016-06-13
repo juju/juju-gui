@@ -49,8 +49,8 @@ describe('UnitDetails', function() {
   it('shows the unit properties', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
-        destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
+        destroyUnits={sinon.stub()}
         service={service}
         previousComponent='units'
         unitStatus='error'
@@ -320,6 +320,8 @@ describe('UnitDetails', function() {
   it('renders the remove button', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
+        changeState={sinon.stub()}
+        destroyUnits={sinon.stub()}
         service={service}
         unit={fakeUnit} />);
     var buttons = [{

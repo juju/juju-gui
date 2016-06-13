@@ -22,6 +22,15 @@ YUI.add('service-overview', function() {
 
   juju.components.ServiceOverview = React.createClass({
 
+    propTypes: {
+      changeState: React.PropTypes.func.isRequired,
+      clearState: React.PropTypes.func.isRequired,
+      destroyService: React.PropTypes.func.isRequired,
+      getUnitStatusCounts: React.PropTypes.func.isRequired,
+      service: React.PropTypes.object.isRequired,
+      serviceRelations: React.PropTypes.array.isRequired
+    },
+
     /**
       Get the current state of the inspector.
 
@@ -31,7 +40,7 @@ YUI.add('service-overview', function() {
     getInitialState: function() {
       // Setting a default state object.
       return {
-        confirmationOpen: this.props.confirmationOpen
+        confirmationOpen: false
       };
     },
 

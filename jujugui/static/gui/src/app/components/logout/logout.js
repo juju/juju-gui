@@ -23,12 +23,12 @@ YUI.add('logout-component', function() {
   juju.components.Logout = React.createClass({
 
     propTypes: {
-      logout: React.PropTypes.func.isRequired,
-      visible: React.PropTypes.bool.isRequired,
-      clearCookie: React.PropTypes.func.isRequired,
       charmstoreLogoutUrl: React.PropTypes.string.isRequired,
+      clearCookie: React.PropTypes.func.isRequired,
+      clearUser: React.PropTypes.func.isRequired,
       getUser: React.PropTypes.func.isRequired,
-      clearUser: React.PropTypes.func.isRequired
+      logout: React.PropTypes.func.isRequired,
+      visible: React.PropTypes.bool.isRequired
     },
 
     logout: function(e) {

@@ -43,7 +43,7 @@ describe('LocalInspector', function() {
       name: 'apache2.zip',
       size: '2048'
     };
-    var services = sinon.spy();
+    var services = {};
     var uploadLocalCharm = sinon.spy();
     var upgradeServiceUsingLocalCharm = sinon.spy();
     var changeState = sinon.spy();

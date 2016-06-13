@@ -43,8 +43,12 @@ describe('UnitList', () => {
   it('renders if there are no units', () => {
     var renderer = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          changeState={sinon.stub()}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
           service={service}
-          units={[]} />, true);
+          units={[]}
+          whenChanged={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -73,8 +77,12 @@ describe('UnitList', () => {
     }];
     var renderer = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          changeState={sinon.stub()}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
           service={service}
-          units={units} />, true);
+          units={units}
+          whenChanged={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var children = output.props.children[1].props.children;
@@ -119,8 +127,13 @@ describe('UnitList', () => {
     }];
     var renderer = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          changeState={sinon.stub()}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
+          service={{}}
           unitStatus='error'
-          units={units} />, true);
+          units={units}
+          whenChanged={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var children = output.props.children[1].props.children;
@@ -164,7 +177,9 @@ describe('UnitList', () => {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
       <juju.components.UnitListItem
-        count={5}/>);
+        count={5}
+        label="label"
+        whenChanged={sinon.stub()} />);
     var output = shallowRenderer.getRenderOutput();
     assert.equal(output.props.children.props.children[2].props.children, 5);
   });
@@ -176,8 +191,12 @@ describe('UnitList', () => {
 
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          changeState={sinon.stub()}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
           service={service}
-          units={units} />);
+          units={units}
+          whenChanged={sinon.stub()} />);
     var child = output.props.children[0].props.children;
     assert.deepEqual(child,
       <juju.components.OverviewAction
@@ -192,9 +211,13 @@ describe('UnitList', () => {
     }];
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          changeState={sinon.stub()}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
           service={service}
           unitStatus="pending"
-          units={units} />);
+          units={units}
+          whenChanged={sinon.stub()} />);
     assert.deepEqual(output,
       <div className="unit-list">
         {undefined}
@@ -217,8 +240,12 @@ describe('UnitList', () => {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          changeState={sinon.stub()}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
           service={service}
-          units={units} />);
+          units={units}
+          whenChanged={sinon.stub()} />);
     assert.deepEqual(output,
       <div className="unit-list">
         {undefined}
@@ -238,8 +265,12 @@ describe('UnitList', () => {
     // shallowRenderer doesn't support state so need to render it.
     var component = testUtils.renderIntoDocument(
       <juju.components.UnitList
+        changeState={sinon.stub()}
+        destroyUnits={sinon.stub()}
+        envResolved={sinon.stub()}
         service={service}
-        units={units} />);
+        units={units}
+        whenChanged={sinon.stub()} />);
     var refs = component.refs;
     // We want to make sure that they are not checked first.
     assert.deepEqual(refs['UnitListItem-mysql/0'].state, {checked: false});
@@ -260,9 +291,12 @@ describe('UnitList', () => {
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
           changeState={changeState}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
           service={service}
           unitStatus={null}
-          units={units} />);
+          units={units}
+          whenChanged={sinon.stub()} />);
     output.props.children[1].props.children[1].props.action({
       currentTarget: {
         getAttribute: function() {
@@ -293,9 +327,12 @@ describe('UnitList', () => {
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
           changeState={changeState}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
           service={service}
           unitStatus={null}
-          units={units} />);
+          units={units}
+          whenChanged={sinon.stub()} />);
     output.props.children[1].props.children[1].props.action({
       currentTarget: {
         getAttribute: function() {
@@ -322,8 +359,12 @@ describe('UnitList', () => {
     }];
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          changeState={sinon.stub()}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
           service={service}
-          units={units} />);
+          units={units}
+          whenChanged={sinon.stub()} />);
     var buttonItems = output.props.children[2].props.buttons;
     var buttons = [{
       title: 'Remove',
@@ -343,8 +384,13 @@ describe('UnitList', () => {
     }];
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          changeState={sinon.stub()}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
+          service={{}}
           unitStatus='error'
-          units={units} />);
+          units={units}
+          whenChanged={sinon.stub()} />);
     var buttonItems = output.props.children[2].props.buttons;
     var buttons = [{
       title: 'Resolve',
@@ -390,7 +436,8 @@ describe('UnitList', () => {
           changeState={changeState}
           envResolved={envResolved}
           service={service}
-          units={units} />);
+          units={units}
+          whenChanged={sinon.stub()} />);
     var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
       output, 'input');
     checkboxes[1].checked = true;
@@ -421,7 +468,8 @@ describe('UnitList', () => {
           changeState={changeState}
           envResolved={sinon.stub()}
           service={service}
-          units={units} />);
+          units={units}
+          whenChanged={sinon.stub()} />);
     var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
       output, 'input');
     checkboxes[1].checked = true;
@@ -447,7 +495,8 @@ describe('UnitList', () => {
           changeState={changeState}
           envResolved={sinon.stub()}
           service={service}
-          units={units} />);
+          units={units}
+          whenChanged={sinon.stub()} />);
     var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
       output, 'input');
     checkboxes[0].checked = true;
@@ -477,11 +526,13 @@ describe('UnitList', () => {
     // refs.
     var output = testUtils.renderIntoDocument(
         <juju.components.UnitList
+          destroyUnits={sinon.stub()}
           unitStatus='error'
           envResolved={envResolved}
           changeState={changeState}
           service={service}
-          units={units} />);
+          units={units}
+          whenChanged={sinon.stub()} />);
     var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
       output, 'input');
     checkboxes[1].checked = true;
@@ -515,11 +566,13 @@ describe('UnitList', () => {
     // refs.
     var output = testUtils.renderIntoDocument(
         <juju.components.UnitList
+          destroyUnits={sinon.stub()}
           unitStatus='error'
           envResolved={envResolved}
           changeState={changeState}
           service={service}
-          units={units} />);
+          units={units}
+          whenChanged={sinon.stub()} />);
     var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
       output, 'input');
     checkboxes[1].checked = true;

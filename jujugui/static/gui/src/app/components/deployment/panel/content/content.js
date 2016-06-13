@@ -23,6 +23,10 @@ YUI.add('deployment-panel-content', function() {
   juju.components.DeploymentPanelContent = React.createClass({
 
     propTypes: {
+      children: React.PropTypes.oneOfType([
+        React.PropTypes.object,
+        React.PropTypes.array
+      ]),
       title: React.PropTypes.string.isRequired
     },
 

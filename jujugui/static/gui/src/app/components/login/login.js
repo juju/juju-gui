@@ -23,11 +23,11 @@ YUI.add('login-component', function() {
   juju.components.Login = React.createClass({
 
     propTypes: {
+      errorMessage: React.PropTypes.string,
       helpMessage: React.PropTypes.object.isRequired,
-      setCredentials: React.PropTypes.func.isRequired,
       login: React.PropTypes.func.isRequired,
       loginWithMacaroon: React.PropTypes.func,
-      errorMessage: React.PropTypes.string
+      setCredentials: React.PropTypes.func.isRequired
     },
 
     componentDidMount: function () {

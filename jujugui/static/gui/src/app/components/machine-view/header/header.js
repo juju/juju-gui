@@ -67,8 +67,11 @@ YUI.add('machine-view-header', function() {
   var MachineViewHeader = React.createClass({
     propTypes: {
       activeMenuItem: React.PropTypes.string,
-      droppable: React.PropTypes.bool.isRequired,
+      canDrop: React.PropTypes.bool.isRequired,
+      connectDropTarget: React.PropTypes.func.isRequired,
       dropUnit: React.PropTypes.func,
+      droppable: React.PropTypes.bool.isRequired,
+      isOver: React.PropTypes.bool.isRequired,
       menuItems: React.PropTypes.array,
       title: React.PropTypes.string.isRequired,
       toggle: React.PropTypes.object,

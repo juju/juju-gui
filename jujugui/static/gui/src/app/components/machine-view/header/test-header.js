@@ -32,8 +32,10 @@ describe('MachineViewHeader', function() {
     // test the internal component so we access it via DecoratedComponent.
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewHeader.DecoratedComponent
+        canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}
+        isOver={false}
         title="Sandbox"
         type="machine" />);
     var expected = (
@@ -52,6 +54,7 @@ describe('MachineViewHeader', function() {
   it('can render in droppable mode', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewHeader.DecoratedComponent
+        canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}
         isOver={true}
@@ -70,6 +73,7 @@ describe('MachineViewHeader', function() {
         canDrop={true}
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}
+        isOver={false}
         title="Sandbox"
         type="machine" />);
     var expected = (
@@ -84,8 +88,10 @@ describe('MachineViewHeader', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewHeader.DecoratedComponent
         activeMenuItem="name"
+        canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}
+        isOver={false}
         menuItems={menuItems}
         title="Sandbox"
         type="machine" />);
@@ -108,8 +114,10 @@ describe('MachineViewHeader', function() {
     var action = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewHeader.DecoratedComponent
+        canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}
+        isOver={false}
         toggle={{
           action: action,
           disabled: false,

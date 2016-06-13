@@ -22,6 +22,10 @@ YUI.add('panel-component', function() {
 
   juju.components.Panel = React.createClass({
     propTypes: {
+      children: React.PropTypes.oneOfType([
+        React.PropTypes.object,
+        React.PropTypes.array
+      ]),
       clickAction: React.PropTypes.func,
       focus: React.PropTypes.bool,
       instanceName: React.PropTypes.string.isRequired,

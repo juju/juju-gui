@@ -60,6 +60,7 @@ describe('InspectorRelations', function() {
     var renderer = jsTestUtils.shallowRender(
         <juju.components.InspectorRelations
           changeState={changeState}
+          destroyRelations={sinon.stub()}
           serviceRelations={relations} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -106,6 +107,8 @@ describe('InspectorRelations', function() {
   it('renders if there are no relations', () => {
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorRelations
+          changeState={sinon.stub()}
+          destroyRelations={sinon.stub()}
           serviceRelations={[]} />);
     var expected = (<li className="inspector-relations__message">
             No active relations for this application.
@@ -143,6 +146,8 @@ describe('InspectorRelations', function() {
     // shallowRenderer doesn't support state so need to render it.
     var component = testUtils.renderIntoDocument(
       <juju.components.InspectorRelations
+        changeState={sinon.stub()}
+        destroyRelations={sinon.stub()}
         serviceRelations={relations} />);
     var refs = component.refs;
     // We want to make sure that they are not checked first.
@@ -176,6 +181,8 @@ describe('InspectorRelations', function() {
     ];
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorRelations
+          changeState={sinon.stub()}
+          destroyRelations={sinon.stub()}
           serviceRelations={relations} />);
     var buttonItems = output.props.children[1].props.buttons;
     var buttons = [{
