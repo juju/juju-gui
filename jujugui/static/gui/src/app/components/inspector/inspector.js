@@ -332,7 +332,6 @@ YUI.add('inspector-component', function() {
           break;
         case 'relate-to':
           var spouse = metadata['relate-to'];
-          console.log(typeof serviceId, typeof spouse);
           if (typeof serviceId === 'string' && typeof spouse === 'string') {
             console.log('Show relation types');
             state.activeChild = {
@@ -349,7 +348,7 @@ YUI.add('inspector-component', function() {
                   component: 'inspector',
                   metadata: {
                     id: serviceId,
-                    activeComponent: 'relations'
+                    activeComponent: 'relation'
                   }}}};
             break;
           }
