@@ -5,7 +5,7 @@
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('jujulib environment manager', function() {
+describe('jujulib intelligent model manager', function() {
   var env;
 
   var _makeXHRRequest = function(obj) {
@@ -18,14 +18,14 @@ describe('jujulib environment manager', function() {
 
   it('exists', function() {
     var bakery = {};
-    env = new window.jujulib.jem('http://example.com/', bakery);
-    assert.strictEqual(env instanceof window.jujulib.jem, true);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
+    assert.strictEqual(env instanceof window.jujulib.jimm, true);
     assert.strictEqual(env.url, 'http://example.com/v2');
   });
 
   it('is smart enough to handle missing trailing slash in URL', function() {
     var bakery = {};
-    env = new window.jujulib.jem('http://example.com', bakery);
+    env = new window.jujulib.jimm('http://example.com', bakery);
     assert.strictEqual(env.url, 'http://example.com/v2');
   });
 
@@ -46,7 +46,7 @@ describe('jujulib environment manager', function() {
         success(xhr);
       }
     };
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.listModels(function(error, data) {
       assert.strictEqual(error, null);
       assert.deepEqual(data, [{
@@ -72,7 +72,7 @@ describe('jujulib environment manager', function() {
         failure(xhr);
       }
     };
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.listModels(function(error, data) {
       assert.equal(error, err);
       assert.strictEqual(data, null);
@@ -93,7 +93,7 @@ describe('jujulib environment manager', function() {
         success(xhr);
       }
     };
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.listControllers(function(error, data) {
       assert.strictEqual(error, null);
       assert.deepEqual(data, [{
@@ -115,7 +115,7 @@ describe('jujulib environment manager', function() {
         failure(xhr);
       }
     };
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.listControllers(function(error, data) {
       assert.equal(error, err);
       assert.strictEqual(data, null);
@@ -140,7 +140,7 @@ describe('jujulib environment manager', function() {
         success(xhr);
       }
     };
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.getModel('rose', 'fnord', function(error, data) {
       assert.strictEqual(error, null);
       assert.deepEqual(data, {
@@ -166,7 +166,7 @@ describe('jujulib environment manager', function() {
         failure(xhr);
       }
     };
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.getModel('rose', 'fnord', function(error, data) {
       assert.equal(error, err);
       assert.strictEqual(data, null);
@@ -197,7 +197,7 @@ describe('jujulib environment manager', function() {
       }
     };
 
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     var location = {'region': 'us-east-1', 'cloud': 'aws'};
     env.newModel('rose', 'fnord', 'rose/template', location, null,
       function(error, data) {
@@ -240,7 +240,7 @@ describe('jujulib environment manager', function() {
       }
     };
 
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.newModel('rose', 'fnord', 'rose/template', null, 'ctl',
       function(error, data) {
         assert.strictEqual(error, null);
@@ -269,7 +269,7 @@ describe('jujulib environment manager', function() {
       },
     };
 
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.newModel('rose', 'fnord', 'rose/template', {}, null,
       function(error, data) {
         assert.equal(error, err);
@@ -287,7 +287,7 @@ describe('jujulib environment manager', function() {
         success(xhr);
       }
     };
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.listClouds(function(error, data) {
       assert.strictEqual(error, null);
       assert.deepEqual(data, ['aws', 'ec2']);
@@ -303,7 +303,7 @@ describe('jujulib environment manager', function() {
         failure(xhr);
       }
     };
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.listClouds(function(error, data) {
       assert.equal(error, 'bad wolf');
       assert.strictEqual(data, null);
@@ -321,7 +321,7 @@ describe('jujulib environment manager', function() {
         success(xhr);
       }
     };
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.listRegions('aws', function(error, data) {
       assert.strictEqual(error, null);
       assert.deepEqual(data, ['eu-east-1', 'moon-serenity-42']);
@@ -337,7 +337,7 @@ describe('jujulib environment manager', function() {
         failure(xhr);
       }
     };
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.listRegions('lxd', function(error, data) {
       assert.equal(error, 'bad wolf');
       assert.strictEqual(data, null);
@@ -357,7 +357,7 @@ describe('jujulib environment manager', function() {
       },
     };
 
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.whoami(
       function(error, data) {
         assert.strictEqual(error, null);
@@ -382,7 +382,7 @@ describe('jujulib environment manager', function() {
       },
     };
 
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.listTemplates(
       function(error, data) {
         assert.strictEqual(error, null);
@@ -402,7 +402,7 @@ describe('jujulib environment manager', function() {
       },
     };
 
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.listTemplates(
       function(error, data) {
         assert.strictEqual(error, null);
@@ -422,7 +422,7 @@ describe('jujulib environment manager', function() {
       }
     };
 
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.listTemplates(function(error, data) {
       assert.equal(error, err);
       assert.strictEqual(data, null);
@@ -439,7 +439,7 @@ describe('jujulib environment manager', function() {
       },
     };
 
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.addTemplate('rose', 'mytmpl', {controller: 'ctl'}, function(error) {
       assert.strictEqual(error, null);
       done();
@@ -457,7 +457,7 @@ describe('jujulib environment manager', function() {
       }
     };
 
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.addTemplate('rose', 'mytmpl', {controller: 'ctl'}, function(error) {
       assert.strictEqual(error, err);
       done();
@@ -472,7 +472,7 @@ describe('jujulib environment manager', function() {
       },
     };
 
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.deleteTemplate('rose', 'template', function(error) {
       assert.strictEqual(error, null);
       done();
@@ -489,7 +489,7 @@ describe('jujulib environment manager', function() {
       }
     };
 
-    env = new window.jujulib.jem('http://example.com/', bakery);
+    env = new window.jujulib.jimm('http://example.com/', bakery);
     env.deleteTemplate('rose', 'template', function(error) {
       assert.strictEqual(error, err);
       done();
