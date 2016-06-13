@@ -2395,9 +2395,9 @@ YUI.add('juju-models', function(Y) {
      * Note: When we have a selection UI in place this should honor
      * that.
      *
+     * @method exportDeployer
      * @param useApplications boolean Whether to use 'applications' or
      * 'services' as the key for the bundle.
-     * @method exportDeployer
      * @return {Object} export object suitable for serialization.
      */
     exportDeployer: function(useApplications) {
