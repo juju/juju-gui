@@ -2417,7 +2417,7 @@ YUI.add('juju-models', function(Y) {
       var machinePlacement = this._mapServicesToMachines(this.machines);
       result.relations = this._generateRelationSpec(this.relations);
       result.machines = this._generateMachineSpec(
-          machinePlacement, this.machines, result.services);
+          machinePlacement, this.machines, applications);
 
       return result;
     },
