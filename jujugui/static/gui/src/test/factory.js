@@ -49,7 +49,7 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
       var fakeBakery = {
         sendGetRequest: function(path, success, failure) {
           // Remove the includes and the charmstore path.
-          path = path.split('/meta/any')[0].replace('local/v4/', '');
+          path = path.split('/meta/any')[0].replace('local/v5/', '');
           // Get just the charm name
           path = path.split('/')[1].split('-');
           if (path.length > 1) {

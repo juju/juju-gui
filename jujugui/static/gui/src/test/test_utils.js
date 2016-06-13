@@ -1154,7 +1154,7 @@ describe('utilities', function() {
       var path = utils.getIconPath('~paulgear/precise/quassel-core-2');
       assert.equal(
           path,
-          'local/v4/~paulgear/precise/quassel-core-2/icon.svg');
+          'local/v5/~paulgear/precise/quassel-core-2/icon.svg');
     });
 
     after(function() {

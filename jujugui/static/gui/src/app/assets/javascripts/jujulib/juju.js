@@ -402,7 +402,7 @@ var module = module;
      Provides access to the charmstore API.
    */
 
-  var charmstoreAPIVersion = 'v4';
+  var charmstoreAPIVersion = 'v5';
 
   /**
      Initializer

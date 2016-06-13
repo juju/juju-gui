@@ -357,11 +357,11 @@ describe('App', function() {
         }, this);
         // The charmstore attribute is undefined by default
         assert.equal(typeof app.get('charmstore'), 'object');
-        assert.equal(app.get('charmstore').url, 'http://1.2.3.4/v4');
+        assert.equal(app.get('charmstore').url, 'http://1.2.3.4/v5');
         window.juju_config.charmstoreURL = 'it broke';
         assert.equal(
             app.get('charmstore').url,
-            'http://1.2.3.4/v4',
+            'http://1.2.3.4/v5',
             'It should only ever create a single instance of the charmstore');
       });
 
