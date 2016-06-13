@@ -16,7 +16,10 @@ module.exports = function(config) {
     // with the preprocessors, to watch the source files and serve the compiled
     // files.
     files: [
-      'jujugui/static/gui/src/app/assets/javascripts/jujulib/*.js',
+      'jujugui/static/gui/src/app/assets/javascripts/jujulib/index.js',
+      'jujugui/static/gui/src/app/assets/javascripts/jujulib/charmstore.js',
+      'jujugui/static/gui/src/app/assets/javascripts/jujulib/jimm.js',
+      'jujugui/static/gui/src/app/assets/javascripts/jujulib/test-*.js',
 
       'jujugui/static/gui/build/app/assets/javascripts/bind-function-pollyfill.js',
       'jujugui/static/gui/build/app/assets/javascripts/react-with-addons.js',

@@ -1371,7 +1371,7 @@ YUI.add('juju-gui', function(Y) {
         serviceName: 'jem',
         macaroon: existingMacaroons
       });
-      this.jem = new window.jujulib.jem(this.get('jemURL'), bakery);
+      this.jem = new window.jujulib.jimm(this.get('jemURL'), bakery);
 
       // Store the JEM auth info.
       var macaroon = bakery.getMacaroon();
