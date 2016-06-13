@@ -2395,10 +2395,12 @@ YUI.add('juju-models', function(Y) {
      * Note: When we have a selection UI in place this should honor
      * that.
      *
+     * @param useApplications boolean Whether to use 'applications' or
+     * 'services' as the key for the bundle.
      * @method exportDeployer
      * @return {Object} export object suitable for serialization.
      */
-    exportDeployer: function() {
+    exportDeployer: function(useApplications) {
       var defaultSeries = this.environment.get('defaultSeries'),
           result = {};
 
@@ -2406,7 +2408,12 @@ YUI.add('juju-models', function(Y) {
         result.series = defaultSeries;
       }
 
-      result.services = this._generateServiceList(this.services);
+      var applications = this._generateServiceList(this.services);
+      if (useApplications) {
+        result.applications = applications;
+      } else {
+        result.services = applications;
+      }
       var machinePlacement = this._mapServicesToMachines(this.machines);
       result.relations = this._generateRelationSpec(this.relations);
       result.machines = this._generateMachineSpec(

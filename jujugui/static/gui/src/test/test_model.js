@@ -1942,6 +1942,15 @@ describe('test_model.js', function() {
       assert.equal(result.services.puppet.num_units, undefined);
     });
 
+    it('exports applications for juju 2', function() {
+      // Add a subordinate.
+      db.services.add({id: 'puppet', charm: 'precise/puppet-4'});
+      db.charms.add([{id: 'precise/puppet-4', is_subordinate: true}]);
+      // Pass true for the instance when facades show Juju 2.
+      var result = db.exportDeployer(true);
+      assert.isDefined(result.applications.puppet);
+    });
+
     it('exports options preserving their types', function() {
       db.services.add({
         id: 'wordpress',

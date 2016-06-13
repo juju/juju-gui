@@ -1212,8 +1212,12 @@ YUI.add('juju-view-utils', function(Y) {
     @method _exportFile
     @param {Object} db Reference to the app db.
   */
-  utils.exportEnvironmentFile = function(db) {
-    var result = db.exportDeployer();
+  utils.exportEnvironmentFile = function(db, facadeVersion) {
+    var useApplications = false;
+    if (facadeVersion !== null) {
+      useApplications = true;
+    }
+    var result = db.exportDeployer(useApplications);
     var exportData = jsyaml.dump(result);
     // In order to support Safari 7 the type of this blob needs
     // to be text/plain instead of it's actual type of application/yaml.
