@@ -91,7 +91,7 @@ describe('MachineView', function() {
             <div className="machine-view__column-onboarding">
               <juju.components.SvgIcon name="add_16"
                 size="16" />
-              Add services to get started
+              Add applications to get started
             </div>
           </juju.components.MachineViewColumn>
           <juju.components.MachineViewColumn
@@ -111,7 +111,7 @@ describe('MachineView', function() {
               id: 'name',
               action: machineMenuItems[3].action
             }, {
-              label: 'No. services',
+              label: 'No. applications',
               id: 'services',
               action: machineMenuItems[4].action
             }, {
@@ -142,7 +142,7 @@ describe('MachineView', function() {
                 <li>Customise placement</li>
                 <li>Scale up your model</li>
                 <li>Manually place new units</li>
-                <li>Collocate services</li>
+                <li>Collocate applications</li>
               </ul>
               <span className="link"
                 onClick={instance._addMachine}
@@ -170,7 +170,7 @@ describe('MachineView', function() {
               id: 'units',
               action: containerMenuItems[3].action
             }, {
-              label: 'Services',
+              label: 'Applications',
               id: 'services',
               action: containerMenuItems[4].action
             }]}
@@ -184,7 +184,7 @@ describe('MachineView', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('can display onboarding if there are no services', function() {
+  it('can display onboarding if there are no applications', function() {
     var units = {
       filterByMachine: sinon.stub().returns([])
     };
@@ -210,7 +210,7 @@ describe('MachineView', function() {
       <div className="machine-view__column-onboarding">
         <juju.components.SvgIcon name="add_16"
           size="16" />
-        Add services to get started
+        Add applications to get started
       </div>);
     assert.deepEqual(
       output.props.children.props.children[0].props.children[1], expected);
@@ -530,7 +530,7 @@ describe('MachineView', function() {
           <li>Customise placement</li>
           <li>Scale up your model</li>
           <li>Manually place new units</li>
-          <li>Collocate services</li>
+          <li>Collocate applications</li>
         </ul>
         <span className="link"
           onClick={instance._addMachine}

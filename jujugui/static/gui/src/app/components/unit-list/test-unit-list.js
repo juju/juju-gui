@@ -53,10 +53,10 @@ describe('UnitList', () => {
           <juju.components.OverviewAction
             action={instance._navigate}
             icon="plus_box_16"
-            title="Scale service" />
+            title="Scale application" />
         </div>
         <div className="unit-list__message">
-          No units for this service. Scale to add units.
+          No units for this application. Scale to add units.
         </div>
         {undefined}
       </div>);
@@ -169,7 +169,7 @@ describe('UnitList', () => {
     assert.equal(output.props.children.props.children[2].props.children, 5);
   });
 
-  it('renders the Scale Service action component', () => {
+  it('renders the Scale Application action component', () => {
     var units = [{
       displayName: 'mysql/0'
     }];
@@ -183,7 +183,7 @@ describe('UnitList', () => {
       <juju.components.OverviewAction
         action={child.props.action}
         icon="plus_box_16"
-        title="Scale service"/>);
+        title="Scale application"/>);
   });
 
   it('does not render the actions when viewing a status list', () => {

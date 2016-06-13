@@ -179,7 +179,7 @@ YUI.add('entity-header', function() {
     },
 
     /**
-      Generate the service, machine counts etc. for a bundle.
+      Generate the application, machine counts etc. for a bundle.
     */
     _generateCounts: function() {
       var entity = this.props.entityModel.toEntity();
@@ -191,8 +191,10 @@ YUI.add('entity-header', function() {
       var machineCount = entity.machineCount;
       return (
         <li>
-          {serviceCount} {this.props.pluralize('service', serviceCount)},&nbsp;
-          {machineCount} {this.props.pluralize('machine', machineCount)},&nbsp;
+          {serviceCount} {this.props.pluralize('application', serviceCount)},
+          &nbsp;
+          {machineCount} {this.props.pluralize('machine', machineCount)},
+          &nbsp;
           {unitCount} {this.props.pluralize('unit', unitCount)}
         </li>);
     },

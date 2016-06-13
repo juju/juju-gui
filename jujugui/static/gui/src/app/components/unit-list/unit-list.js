@@ -223,7 +223,7 @@ YUI.add('unit-list', function() {
       if (this.props.units.length === 0) {
         return (
           <div className="unit-list__message">
-            No units for this service. Scale to add units.
+            No units for this application. Scale to add units.
           </div>);
       }
       var components = [];
@@ -309,7 +309,7 @@ YUI.add('unit-list', function() {
           <juju.components.OverviewAction
             action={this._navigate}
             icon="plus_box_16"
-            title="Scale service" />
+            title="Scale application" />
         </div>);
     },
 

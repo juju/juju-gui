@@ -469,7 +469,7 @@ describe('Inspector', function() {
         }}});
   });
 
-  it('displays the Scale Service when the app state calls for it', function() {
+  it('displays the Scale header when the app state calls for it', function() {
     var appPreviousState = sinon.stub();
     var icon = 'foo.png';
     var getStub = sinon.stub();

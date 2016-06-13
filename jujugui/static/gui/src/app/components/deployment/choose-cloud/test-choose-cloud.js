@@ -70,7 +70,7 @@ describe('DeploymentChooseCloud', function() {
     jem.listTemplates = cb => cb(null, []);
     jem.listClouds = cb => cb(null, []);
     var pluralize = sinon.stub();
-    pluralize.withArgs('service', sinon.match.any).returns('services');
+    pluralize.withArgs('application', sinon.match.any).returns('applications');
     pluralize.withArgs('machine', sinon.match.any).returns('machine');
     var get = sinon.stub();
     get.withArgs('name').returns('wordpress');
@@ -126,7 +126,7 @@ describe('DeploymentChooseCloud', function() {
   it('can render with credentials without clouds', function() {
     jem.listClouds = cb => cb(null, []);
     var pluralize = sinon.stub();
-    pluralize.withArgs('service', sinon.match.any).returns('services');
+    pluralize.withArgs('application', sinon.match.any).returns('applications');
     pluralize.withArgs('machine', sinon.match.any).returns('machine');
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentChooseCloud
@@ -193,7 +193,7 @@ describe('DeploymentChooseCloud', function() {
   it('can render without credentials and with clouds', function() {
     jem.listTemplates = cb => cb(null, []);
     var pluralize = sinon.stub();
-    pluralize.withArgs('service', sinon.match.any).returns('services');
+    pluralize.withArgs('application', sinon.match.any).returns('applications');
     pluralize.withArgs('machine', sinon.match.any).returns('machine');
     var get = sinon.stub();
     get.withArgs('name').returns('wordpress');

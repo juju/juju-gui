@@ -319,8 +319,8 @@ YUI.add('deployment-summary', function() {
       }
       return (
         <h3 className="deployment-panel__section-title twelve-col">
-          Deploying {serviceCount} {pluralize('service', serviceCount)} on&nbsp;
-          {machineCount} {pluralize('machine', machineCount)}
+          Deploying {serviceCount} {pluralize('application', serviceCount)} on
+          &nbsp;{machineCount} {pluralize('machine', machineCount)}
         </h3>);
     },
 

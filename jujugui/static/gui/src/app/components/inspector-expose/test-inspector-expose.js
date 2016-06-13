@@ -48,11 +48,11 @@ describe('InspectorExpose', function() {
                 ref={toggle.key}
                 option={toggle}
                 onChange={toggleItem.props.onChange}
-                label="Expose service"
+                label="Expose application"
                 config={false} />
             </div>
             <p className="inspector-expose__warning">
-              Exposing this service may make it publicly accessible from
+              Exposing this application may make it publicly accessible from
               the web
             </p>
             {undefined}
@@ -85,11 +85,11 @@ describe('InspectorExpose', function() {
                 ref={toggle.key}
                 option={toggle}
                 onChange={toggleItem.props.onChange}
-                label="Expose service"
+                label="Expose application"
                 config={true} />
             </div>
             <p className="inspector-expose__warning">
-              Exposing this service may make it publicly accessible from
+              Exposing this application may make it publicly accessible from
               the web
             </p>
             <ul className="inspector-expose__units">

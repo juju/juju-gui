@@ -44,7 +44,7 @@ YUI.add('inspector-expose', function() {
     },
 
     /**
-      Generate a list of units for the service
+      Generate a list of units for the service.
 
       @method _generateUnits
       @returns {Array} A list of units.
@@ -104,7 +104,7 @@ YUI.add('inspector-expose', function() {
         console.error(e.err);
         this.props.addNotification({
           title: 'Exposing charm failed',
-          message: 'The service' + this.props.service.get('name') +
+          message: 'The application' + this.props.service.get('name') +
             ' failed to expose:' + e.err,
           level: 'error'
         });
@@ -123,11 +123,11 @@ YUI.add('inspector-expose', function() {
                 ref={toggle.key}
                 option={toggle}
                 onChange={this._handleExposeChange}
-                label="Expose service"
+                label="Expose application"
                 config={this.props.service.get('exposed')} />
             </div>
             <p className="inspector-expose__warning">
-              Exposing this service may make it publicly accessible from
+              Exposing this application may make it publicly accessible from
               the web
             </p>
             {this._displayUnitList()}
