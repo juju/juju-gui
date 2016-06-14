@@ -52,7 +52,7 @@ describe('InspectorExposeUnit', function() {
               django/1
           </div>
           <ul className="inspector-expose__unit-list">
-            <li className="inspector-expose__unit-list-item"
+            <li className="inspector-expose__item"
               key="http://20.20.20.199:80">
               <a href="http://20.20.20.199:80"
                 onClick={instance._stopBubble}
@@ -60,7 +60,7 @@ describe('InspectorExposeUnit', function() {
                 {"20.20.20.199"}:{"80"}
               </a>
             </li>
-            <li className="inspector-expose__unit-list-item"
+            <li className="inspector-expose__item"
               key="https://20.20.20.199:443">
               <a href="https://20.20.20.199:443"
                 onClick={instance._stopBubble}

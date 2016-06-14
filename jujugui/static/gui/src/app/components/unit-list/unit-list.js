@@ -70,7 +70,7 @@ YUI.add('unit-list', function() {
       var refs = this.refs;
       var setChecked = (key, groups) => {
         groups[key].units.forEach((unit) => {
-          refs['UnitListItem-' + unit.id].setState({
+          refs['CheckListItem-' + unit.id].setState({
             checked: checked
           }, () => {
             // After the state has been updated then update the active unit
@@ -130,7 +130,7 @@ YUI.add('unit-list', function() {
       var refs = this.refs;
       var envResolved = this.props.envResolved;
       Object.keys(refs).forEach(function (ref) {
-        var isInstance = ref.split('-')[0] === 'UnitListItem';
+        var isInstance = ref.split('-')[0] === 'CheckListItem';
         if (isInstance && refs[ref].state.checked) {
           var unitName = ref.slice(ref.indexOf('-') + 1);
           units.push(unitName);
@@ -159,23 +159,23 @@ YUI.add('unit-list', function() {
     _generateUnitList: function(group) {
       var key = group.key;
       var unitList = [
-        <juju.components.UnitListItem
+        <juju.components.CheckListItem
+          aside={group.count + ''}
           key={key}
           ref={key}
           label={group.label}
-          count={group.count}
           className='select-all'
           whenChanged={this._selectAllUnits.bind(this, key)}/>
       ];
       group.units.forEach((unit) => {
-        var ref = 'UnitListItem-' + unit.id;
+        var ref = 'CheckListItem-' + unit.id;
         unitList.push(
-          <juju.components.UnitListItem
+          <juju.components.CheckListItem
             key={unit.displayName}
             ref={ref}
             label={unit.displayName}
             action={this._unitItemAction}
-            unitId={unit.id}
+            id={unit.id}
             whenChanged={this._updateActiveCount} />);
       });
       return unitList;
@@ -256,7 +256,7 @@ YUI.add('unit-list', function() {
       var activeCount = 0;
       var refs = this.refs;
       Object.keys(refs).forEach((ref) => {
-        if (ref.split('-')[0] === 'UnitListItem') {
+        if (ref.split('-')[0] === 'CheckListItem') {
           if (refs[ref].state.checked) {
             activeCount += 1;
           }
@@ -337,6 +337,6 @@ YUI.add('unit-list', function() {
 }, '0.1.0', { requires: [
   'overview-action',
   'button-row',
-  'unit-list-item',
+  'check-list-item',
   'overview-action'
 ]});

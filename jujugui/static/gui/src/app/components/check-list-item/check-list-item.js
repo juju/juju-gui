@@ -18,16 +18,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('unit-list-item', function() {
+YUI.add('check-list-item', function() {
 
-  juju.components.UnitListItem = React.createClass({
+  juju.components.CheckListItem = React.createClass({
 
     propTypes: {
       action: React.PropTypes.func,
+      aside: React.PropTypes.string,
       className: React.PropTypes.string,
-      count: React.PropTypes.number,
+      id: React.PropTypes.string,
       label: React.PropTypes.string.isRequired,
-      unitId: React.PropTypes.string,
       whenChanged: React.PropTypes.func.isRequired
     },
 
@@ -40,9 +40,9 @@ YUI.add('unit-list-item', function() {
     _generateClasses: function() {
       var className = this.props.className;
       return classNames(
-        'unit-list-item',
-        className ? 'unit-list-item--' + className : '',
-        this.props.action ? 'unit-list-item--nav' : ''
+        'check-list-item',
+        className ? 'check-list-item--' + className : '',
+        {'check-list-item--nav': this.props.action}
       );
     },
 
@@ -100,11 +100,26 @@ YUI.add('unit-list-item', function() {
       e.stopPropagation();
     },
 
+    /**
+      Display the aside if it is available.
+
+      @method _generateAside
+    */
+    _generateAside: function() {
+      var aside = this.props.aside;
+      if (aside) {
+        return (
+          <span className="check-list-item__aside">
+            {aside}
+          </span>);
+      }
+    },
+
     render: function() {
-      var id = this.props.label + '-unit';
+      var id = this.props.label + '-item';
       return (
         <li className={this._generateClasses()}
-          data-id={this.props.unitId}
+          data-id={this.props.id}
           onClick={this.props.action} tabIndex="0" role="button">
           <label htmlFor={this._generateId(id)}>
             <input
@@ -113,12 +128,10 @@ YUI.add('unit-list-item', function() {
               onClick={this._stopBubble}
               onChange={this._handleChange}
               checked={this.state.checked} />
-            <span className="unit-list-item__label">
+            <span className="check-list-item__label">
               {this.props.label}
             </span>
-            <span className="unit-list-item__count">
-              {this.props.count}
-            </span>
+            {this._generateAside()}
           </label>
         </li>
       );
