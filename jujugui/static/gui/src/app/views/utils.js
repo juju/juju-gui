@@ -1756,7 +1756,6 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Function} callback A function to call after removal.
   */
   utils.destroyRelations = function(db, env, relations, callback) {
-    console.log(relations)
     for (var i = 0; relations.length > i; i++) {
       var relationId = relations[i];
       var relation = db.relations.getById(relationId);
@@ -1765,12 +1764,24 @@ YUI.add('juju-view-utils', function(Y) {
     }
   };
 
-  utils.createRelation = function(db, env, relations, callback) {
-    console.log(relations)
-    for (var i = 0; relations.length > i; i++) {
-      var relationId = relations[i];
-      env.add_relation(endpoints[0], endpoints[1], callback);
-    }
+  /**
+    Create a list of relations.
+
+    @method createRelation
+    @param {Object} env The current environment.
+    @param {Array} relations A list of relation endpoints.
+    @param {Function} callback A function to call after removal.
+  */
+  utils.createRelation = function(env, relations, callback) {
+    var endpointB = [relations[0].service, {
+      name: relations[0].name,
+      role: "client"
+    }];
+    var endpointA = [relations[1].service, {
+      name: relations[1].name,
+      role: "server"
+    }];
+    env.add_relation(endpointA, endpointB, function() {console.log('Relation created')});
   }
 
   /**

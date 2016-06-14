@@ -1120,8 +1120,7 @@ YUI.add('juju-gui', function(Y) {
             getRelatableApplications={utils.getRelatableApplications.bind(
               this, topo, this.db, models, service)}
             clearState={utils.clearState.bind(this, topo)}
-            createRelation={utils.createRelation.bind(
-              this, this.db, this.env)}
+            createRelation={utils.createRelation.bind(this, this.env)}
             getYAMLConfig={utils.getYAMLConfig.bind(this)}
             changeState={this.changeState.bind(this)}
             exposeService={this.env.expose.bind(this.env)}
