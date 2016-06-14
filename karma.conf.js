@@ -19,6 +19,8 @@ module.exports = function(config) {
       'jujugui/static/gui/src/app/assets/javascripts/jujulib/index.js',
       'jujugui/static/gui/src/app/assets/javascripts/jujulib/charmstore.js',
       'jujugui/static/gui/src/app/assets/javascripts/jujulib/jimm.js',
+      'jujugui/static/gui/src/app/assets/javascripts/jujulib/plans.js',
+      'jujugui/static/gui/src/app/assets/javascripts/jujulib/terms.js',
       'jujugui/static/gui/src/app/assets/javascripts/jujulib/test-*.js',
 
       'jujugui/static/gui/build/app/assets/javascripts/bind-function-pollyfill.js',
