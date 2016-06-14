@@ -28,7 +28,9 @@ YUI.add('entity-header', function() {
       deployService: React.PropTypes.func.isRequired,
       entityModel: React.PropTypes.object.isRequired,
       getBundleYAML: React.PropTypes.func.isRequired,
+      hasPlans: React.PropTypes.bool.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
+      plans: React.PropTypes.array,
       pluralize: React.PropTypes.func.isRequired,
       scrollPosition: React.PropTypes.number.isRequired
     },
@@ -179,6 +181,38 @@ YUI.add('entity-header', function() {
     },
 
     /**
+      Generate the plan selector if there are plans.
+
+      @method _generateSelectPlan
+    */
+    _generateSelectPlan: function() {
+      var props = this.props;
+      if (props.entityModel.get('entityType') !== 'charm' ||
+        !this.props.hasPlans) {
+        return;
+      }
+      var plans = props.plans;
+      var options = null;
+      var defaultMessage = 'Loading plans...';
+      if (plans && plans.length > 0) {
+        defaultMessage = 'Choose a plan';
+        options = [];
+        plans.forEach(plan => {
+          options.push(
+            <option key={plan.plan}
+              value={plan.plan}>
+              {plan.plan}
+            </option>);
+        });
+      }
+      return (
+        <select className="entity-header__plan">
+          <option>{defaultMessage}</option>
+          {options}
+        </select>);
+    },
+
+    /**
       Generate the application, machine counts etc. for a bundle.
     */
     _generateCounts: function() {
@@ -259,9 +293,11 @@ YUI.add('entity-header', function() {
                   </li>
                 </ul>
               </div>
-              <div className="four-col last-col no-margin-bottom">
+              <div className={
+                'entity-header__right four-col last-col no-margin-bottom'}>
                 <juju.components.CopyToClipboard
                   value={'juju deploy ' + entity.id} />
+                {this._generateSelectPlan()}
                 {this._generateDeployAction()}
               </div>
             </div>

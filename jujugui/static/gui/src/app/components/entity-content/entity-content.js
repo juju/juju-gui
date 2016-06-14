@@ -27,6 +27,8 @@ YUI.add('entity-content', function() {
       changeState: React.PropTypes.func.isRequired,
       entityModel: React.PropTypes.object.isRequired,
       getFile: React.PropTypes.func.isRequired,
+      hasPlans: React.PropTypes.bool.isRequired,
+      plans: React.PropTypes.array,
       pluralize: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
     },
@@ -321,11 +323,61 @@ YUI.add('entity-content', function() {
         </div>);
     },
 
+    /**
+      Generate the list of plans.
+
+      @method _generatePlans
+    */
+    _generatePlans: function() {
+      var props = this.props;
+      if (props.entityModel.get('entityType') !== 'charm' ||
+        !this.props.hasPlans) {
+        return;
+      }
+      var plans = props.plans;
+      if (!plans) {
+        return <juju.components.Spinner />;
+      }
+      var plansList = [];
+      plans.forEach((plan, i) => {
+        var classes = classNames(
+          'entity-content__plan',
+          'four-col',
+          {'last-col': (i + 1) % 3 === 0});
+        plansList.push(
+          <div className={classes}
+            key={plan.plan}>
+            <div className="entity-content__plan-content">
+              <h3 className="entity-content__plan-title">
+                {plan.plan}
+              </h3>
+              <div className="entity-content__plan-price">
+                {plan.price}
+              </div>
+              <p className="entity-content__plan-description">
+                {plan.description}
+              </p>
+            </div>
+          </div>);
+      });
+      return (
+        <div id="configuration"
+          className="row entity-content__configuration">
+          <div className="inner-wrapper">
+            <div className="twelve-col">
+              <h2 className="entity-content__header">Plans</h2>
+              {plansList}
+            </div>
+          </div>
+        </div>);
+    },
+
     render: function() {
       var entityModel = this.props.entityModel;
       return (
         <div className="entity-content">
           {this._generateDescription(entityModel)}
+          {this._generatePlans()}
           <div className="row">
             <div className="inner-wrapper">
               <div className="seven-col append-one">
@@ -359,6 +411,8 @@ YUI.add('entity-content', function() {
     'entity-content-relations',
     'entity-content-revisions',
     'entity-files',
-    'expanding-row'
+    'expanding-row',
+    'loading-spinner',
+    'svg-icon'
   ]
 });
