@@ -36,7 +36,7 @@ describe('CheckListItem', () => {
           label="a-label"
           id="apache/2"
           className="select-all"
-          aside={3}
+          aside="3"
           whenChanged={sinon.stub()}
         />);
     assert.deepEqual(output,
@@ -54,7 +54,7 @@ describe('CheckListItem', () => {
               a-label
             </span>
             <span className="check-list-item__aside">
-              {3}
+              3
             </span>
           </label>
         </li>);
