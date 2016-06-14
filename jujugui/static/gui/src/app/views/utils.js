@@ -1756,12 +1756,65 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Function} callback A function to call after removal.
   */
   utils.destroyRelations = function(db, env, relations, callback) {
+    console.log(relations)
     for (var i = 0; relations.length > i; i++) {
       var relationId = relations[i];
       var relation = db.relations.getById(relationId);
       var endpoints = relation.get('endpoints');
       env.remove_relation(endpoints[0], endpoints[1], callback);
     }
+  };
+
+  utils.createRelation = function(db, env, relations, callback) {
+    console.log(relations)
+    for (var i = 0; relations.length > i; i++) {
+      var relationId = relations[i];
+      env.add_relation(endpoints[0], endpoints[1], callback);
+    }
+  }
+
+  /**
+    Return the application object that matches the ID
+
+    @method getApplicationById
+    @param {Database} db to resolve relations on.
+    @param {String} applicationId the application id.
+  */
+  utils.getApplicationById = function(db, applicationId) {
+    return db.services.getById(applicationId);
+  };
+
+  /**
+    Returns an array of relation types for the passed applications
+
+    @method getRelationTypes
+    @param {Object} applicationFrom the application to relate from.
+    @param {Object} applicationTo the application to relate to.
+    @param {Boolean} filterExisting filters exisiting relations from the
+    returned relation types
+    @returns {Array} The relations that are compatible.
+  */
+  utils.getRelationTypes = function(
+    topo, db, models, applicationFrom, applicationTo, filterExisting=true) {
+    var endpointsController = topo.get('endpointsController');
+    var applicationToEndpoints = models.getEndpoints(applicationTo,
+      endpointsController);
+    var relationTypes = applicationToEndpoints[applicationFrom.get('id')];
+    if (filterExisting) {
+      var filtered = utils.getRelationDataForService(db, applicationTo).filter(
+        function(match) {
+          return match.endpoints[0] !== applicationFrom.get('id');
+      });
+      if (filtered.length !== 0) {
+        relationTypes = relationTypes.filter(function(relation) {
+          return filtered.some(function(item) {
+            return relation[0].name !== item.near.name ||
+              relation[1].name !== item.far.name;
+          });
+        });
+      }
+    }
+    return relationTypes;
   };
 
   /**
@@ -1777,15 +1830,10 @@ YUI.add('juju-view-utils', function(Y) {
   utils.getRelatableApplications = function(topo, db, models, application) {
     var endpointsController = topo.get('endpointsController');
     var endpoints = models.getEndpoints(application, endpointsController);
-    // Transform endpoints into a list of relatable applications (to the
-    // application).
-    var possibleRelations = Y.Array.map(
-        Y.Array.flatten(Y.Object.values(endpoints)),
-        function(ep) {
-          return db.services.getById(ep.service);
-        }).filter(function(match) {
-          return match.get('id') !== application.get('id');
-        });
+    var possibleRelations = [];
+    for (endpoint in endpoints) {
+      possibleRelations.push(db.services.getById(endpoint));
+    }
     return possibleRelations;
   };
 

@@ -331,24 +331,26 @@ YUI.add('inspector-component', function() {
                 }}}};
           break;
         case 'relate-to':
-          var spouse = metadata['relate-to'];
-          if (typeof serviceId === 'string' && typeof spouse === 'string') {
-            console.log('Show relation types');
+          var spouseId = metadata['relate-to'];
+          if (typeof serviceId === 'string' && typeof spouseId === 'string') {
+            var spouseApplication = this.props.getApplicationById(spouseId);
+            var relationTypes = this.props.getRelationTypes(service, spouseApplication, false);
             state.activeChild = {
-              title: spouse,
+              title: spouseApplication.get('name'),
               icon: service.get('icon'),
               component:
                 <juju.components.InspectorRelateToType
                   service={service}
+                  spouseApplication={spouseApplication}
                   createRelation={this.props.createRelation}
-                  serviceRelations={this.props.serviceRelations}
+                  relationTypes={relationTypes}
                   changeState={this.props.changeState} />,
               backState: {
                 sectionA: {
                   component: 'inspector',
                   metadata: {
                     id: serviceId,
-                    activeComponent: 'relation'
+                    activeComponent: 'relations'
                   }}}};
             break;
           }

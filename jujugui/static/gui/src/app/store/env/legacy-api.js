@@ -2070,6 +2070,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
       @method add_relation
     */
     add_relation: function(endpointA, endpointB, callback, options) {
+      console.log(endpointA, endpointB)
       var ecs = this.get('ecs'),
           args = ecs._getArgs(arguments);
       if (options && options.immediate) {

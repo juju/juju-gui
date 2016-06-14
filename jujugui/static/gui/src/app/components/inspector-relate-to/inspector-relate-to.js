@@ -69,7 +69,7 @@ YUI.add('inspector-relate-to', function() {
         var application = applications[i].getAttrs();
         items.push(<li className="inspector-view__list-item"
           data-id={application.id}
-          key={application.id}
+          key={application.id + i}
           onClick={this._relateToItemAction} tabIndex="0" role="button">
           <img src={application.icon} className="inspector-view__item-icon" />
           {application.name}

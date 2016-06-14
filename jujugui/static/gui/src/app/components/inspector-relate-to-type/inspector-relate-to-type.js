@@ -51,13 +51,12 @@ YUI.add('inspector-relate-to-type', function() {
       Generate the relation label.
 
       @method _generateRelationLabel
-      @param {Object} The relation object.
+      @param {Object} start Start of the relation.
+      @param {Object} end Far end of the relation.
       @returns {String} The relation label.
     */
-    _generateRelationLabel: function(relation) {
-      var serviceName = relation.far.serviceName;
-      var relationName = relation.far.name;
-      return `${serviceName}:${relationName}`;
+    _generateRelationLabel: function(start, end) {
+      return <span>{end.name} &rarr; {start.name}</span>;
     },
 
     /**
@@ -67,34 +66,30 @@ YUI.add('inspector-relate-to-type', function() {
       @returns {Object} The relation components.
     */
     _generateRelations: function() {
-      var relations = this.props.serviceRelations;
-      var activeRelations = [];
-      // Remove deleted relations from the list
-      for (var i in relations) {
-        if (relations.hasOwnProperty(i) && !relations[i].deleted) {
-          activeRelations.push(relations[i]);
-        }
-      }
-      relations = activeRelations;
+      var relations = this.props.relationTypes;
+      var relationTypes = [];
       if (relations.length === 0) {
         return (
           <li className="inspector-relate-to-type__message">
             No relation types for these applications.
           </li>);
       }
-      relations.forEach(function(relation, index) {
-        var ref = 'InspectorRelateToType-' + relation.id;
-        components.push(
+      relations.forEach((relation, i) => {
+        var start = relation[0];
+        var end = relation[1];
+        var ref = 'InspectorRelateToType-' + i;
+        var key = i;
+        relationTypes.push(
         <juju.components.InspectorRelationsItem
-          index={index}
-          key={relation.id}
+          index={i}
+          key={key}
           ref={ref}
-          label={this._generateRelationLabel(relation)}
+          label={this._generateRelationLabel(start, end)}
           relation={relation}
           changeState={this.props.changeState}
           whenChanged={this._updateActiveCount} />);
       }, this);
-      return components;
+      return relationTypes;
     },
 
     /**
@@ -112,7 +107,8 @@ YUI.add('inspector-relate-to-type', function() {
           relations.push(relationName);
         }
       });
-      //this.props.createRelation(relations);
+      console.log(relations);
+      this.props.createRelation(relations);
     },
 
     /**
@@ -122,7 +118,7 @@ YUI.add('inspector-relate-to-type', function() {
       @returns {Object} The button row component.
     */
     _generateButtons: function() {
-      if (this.props.serviceRelations.length === 0) {
+      if (this.props.relationTypes.length === 0) {
         return;
       }
       var disabled = this.state.activeCount === 0;
