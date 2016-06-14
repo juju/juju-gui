@@ -147,7 +147,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
       if (evt.err) {
         db.notifications.add({
           title: 'Error deploying ' + serviceName,
-          message: 'Could not deploy the requested service. Server ' +
+          message: 'Could not deploy the requested application. Server ' +
               'responded with: ' + evt.err,
           level: 'error'
         });
@@ -156,7 +156,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
 
       db.notifications.add({
         title: 'Deployed ' + serviceName,
-        message: 'Successfully deployed the requested service.',
+        message: 'Successfully deployed the requested application.',
         level: 'info'
       });
 

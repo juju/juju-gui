@@ -332,7 +332,7 @@ describe('LocalInspector', function() {
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionA: {
-        component: 'services',
+        component: 'applications',
         metadata: null
       }});
   });
@@ -361,7 +361,7 @@ describe('LocalInspector', function() {
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionA: {
-        component: 'services',
+        component: 'applications',
         metadata: null
       }});
   });

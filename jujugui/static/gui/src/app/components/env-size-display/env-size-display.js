@@ -72,7 +72,7 @@ YUI.add('env-size-display', function() {
     */
     _genClasses: function(section) {
       var active = false;
-      if ((section === 'service') && !this.state.activeComponent) {
+      if ((section === 'application') && !this.state.activeComponent) {
         active = true;
       } else if (section === this.state.activeComponent) {
         active = true;
@@ -89,8 +89,9 @@ YUI.add('env-size-display', function() {
       return (
         <div className="env-size-display">
           <ul className="env-size-display__list">
-              <li className={this._genClasses('service')}>
-                  <a data-view="service" onClick={this._changeEnvironmentView}
+              <li className={this._genClasses('application')}>
+                  <a data-view="application"
+                    onClick={this._changeEnvironmentView}
                     className="env-size-display__link">
                     <juju.components.SvgIcon name="relations"
                       className="env-size-display__icon" size="16" />

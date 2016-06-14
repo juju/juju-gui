@@ -43,7 +43,7 @@ describe('EnvSizeDisplay', function() {
           serviceCount={3} />);
     assert.equal(
         queryComponentSelector(
-            component, 'a[data-view=service]').innerText, '3 applications');
+            component, 'a[data-view=application]').innerText, '3 applications');
     assert.equal(
         queryComponentSelector(
             component, 'a[data-view=machine]').innerText, '4 machines');
@@ -77,8 +77,10 @@ describe('EnvSizeDisplay', function() {
           machineCount={4}
           getAppState={function() {}}
           changeState={changeStateStub} />);
-    var serviceLink = queryComponentSelector(component, 'a[data-view=service]');
-    var machineLink = queryComponentSelector(component, 'a[data-view=machine]');
+    var serviceLink = queryComponentSelector(component,
+      'a[data-view=application]');
+    var machineLink = queryComponentSelector(component,
+      'a[data-view=machine]');
     testUtils.Simulate.click(machineLink);
     testUtils.Simulate.click(serviceLink);
 
@@ -100,8 +102,10 @@ describe('EnvSizeDisplay', function() {
           machineCount={4}
           getAppState={function() {}}
           changeState={changeStateStub} />);
-    var serviceLink = queryComponentSelector(component, 'a[data-view=service]');
-    var machineLink = queryComponentSelector(component, 'a[data-view=machine]');
+    var serviceLink = queryComponentSelector(component,
+      'a[data-view=application]');
+    var machineLink = queryComponentSelector(component,
+      'a[data-view=machine]');
 
     testUtils.Simulate.click(machineLink);
     assert.notEqual(
@@ -114,7 +118,7 @@ describe('EnvSizeDisplay', function() {
     assert.notEqual(
         queryComponentSelector(
             component,
-            '.env-size-display__list-item.is-active a[data-view=service]'),
+            '.env-size-display__list-item.is-active a[data-view=application]'),
             null);
 
     assert.equal(changeStateStub.callCount, 2);

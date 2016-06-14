@@ -1097,7 +1097,7 @@ YUI.add('juju-topology-service', function(Y) {
       this.unhoverServices();
       topo.fire('changeState', {
         sectionA: {
-          component: 'services',
+          component: 'applications',
           metadata: null
         },
         sectionC: {

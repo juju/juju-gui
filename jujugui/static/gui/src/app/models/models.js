@@ -1750,7 +1750,7 @@ YUI.add('juju-models', function(Y) {
             return -weight;
           };
           break;
-        case 'service':
+        case 'application':
           sortMethod = function(model) {
             if (model.units) {
               var services = {};
@@ -1762,7 +1762,7 @@ YUI.add('juju-models', function(Y) {
             return weight;
           };
           break;
-        case 'services':
+        case 'applications':
           sortMethod = function(model) {
             if (model.units) {
               var services = {};

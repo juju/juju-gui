@@ -112,7 +112,7 @@ describe('MachineView', function() {
               action: machineMenuItems[3].action
             }, {
               label: 'No. applications',
-              id: 'services',
+              id: 'applications',
               action: machineMenuItems[4].action
             }, {
               label: 'No. units',
@@ -171,7 +171,7 @@ describe('MachineView', function() {
               action: containerMenuItems[3].action
             }, {
               label: 'Applications',
-              id: 'services',
+              id: 'applications',
               action: containerMenuItems[4].action
             }]}
             title="0 containers, 0 units"

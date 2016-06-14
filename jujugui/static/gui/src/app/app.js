@@ -1142,7 +1142,7 @@ YUI.add('juju-gui', function(Y) {
       } else {
         this.changeState({
           sectionA: {
-            component: 'services',
+            component: 'applications',
             metadata: null
           }
         });
@@ -1285,7 +1285,7 @@ YUI.add('juju-gui', function(Y) {
       });
       var dispatchers = this.state.get('dispatchers');
       dispatchers.sectionA = {
-        services: this._renderAddedServices.bind(this),
+        applications: this._renderAddedServices.bind(this),
         inspector: this._renderInspector.bind(this),
         empty: this._emptySectionA.bind(this)
       };

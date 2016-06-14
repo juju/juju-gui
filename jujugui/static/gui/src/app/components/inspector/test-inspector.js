@@ -985,7 +985,7 @@ describe('Inspector', function() {
     assert.equal(changeStub.callCount, 1);
     assert.deepEqual(changeStub.args[0][0], {
       sectionA: {
-        component: 'services',
+        component: 'applications',
         metadata: null
       }
     });
@@ -1109,7 +1109,7 @@ describe('Inspector', function() {
     assert.equal(changeStub.callCount, 1);
     assert.deepEqual(changeStub.args[0][0], {
       sectionA: {
-        component: 'services',
+        component: 'applications',
         metadata: null
       }
     });
