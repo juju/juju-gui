@@ -55,7 +55,7 @@ var module = module;
     };
     var failure = function(xhr) {
       var data = JSON.parse(xhr.target.responseText);
-      var error = data.Message || data.message;
+      var error = data.Message || data.message || data.Error || data.error;
       callback(error, data);
     };
     switch (method) {
