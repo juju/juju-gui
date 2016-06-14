@@ -1004,7 +1004,8 @@ YUI.add('juju-gui', function(Y) {
           changeState={this.changeState.bind(this)}
           currentChangeSet={ecs.getCurrentChangeSet()}
           exportEnvironmentFile={
-            utils.exportEnvironmentFile.bind(utils, db)}
+            utils.exportEnvironmentFile.bind(utils, db,
+              env.findFacadeVersion('Application') === null)}
           hasEntities={servicesArray.length > 0 || machines.length > 0}
           hideDragOverNotification={this._hideDragOverNotification.bind(this)}
           importBundleFile={this.bundleImporter.importBundleFile.bind(

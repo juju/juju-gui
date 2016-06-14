@@ -2396,9 +2396,11 @@ YUI.add('juju-models', function(Y) {
      * that.
      *
      * @method exportDeployer
+     * @param legacyServicesKey boolean Whether to use 'services' or
+     * 'applications' as the key for the bundle.
      * @return {Object} export object suitable for serialization.
      */
-    exportDeployer: function() {
+    exportDeployer: function(legacyServicesKey) {
       var defaultSeries = this.environment.get('defaultSeries'),
           result = {};
 
@@ -2406,11 +2408,16 @@ YUI.add('juju-models', function(Y) {
         result.series = defaultSeries;
       }
 
-      result.services = this._generateServiceList(this.services);
+      var applications = this._generateServiceList(this.services);
+      if (legacyServicesKey) {
+        result.services = applications;
+      } else {
+        result.applications = applications;
+      }
       var machinePlacement = this._mapServicesToMachines(this.machines);
       result.relations = this._generateRelationSpec(this.relations);
       result.machines = this._generateMachineSpec(
-          machinePlacement, this.machines, result.services);
+          machinePlacement, this.machines, applications);
 
       return result;
     },
