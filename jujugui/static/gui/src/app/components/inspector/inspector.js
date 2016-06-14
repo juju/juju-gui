@@ -133,7 +133,7 @@ YUI.add('inspector-component', function() {
               serviceRelations={this.props.serviceRelations} />,
             backState: {
               sectionA: {
-                component: component || 'services',
+                component: component || 'applications',
                 metadata: newMetadata || null
               }}};
           break;

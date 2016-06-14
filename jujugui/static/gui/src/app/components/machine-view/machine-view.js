@@ -566,7 +566,7 @@ YUI.add('machine-view', function() {
             return -weight;
           };
           break;
-        case 'service':
+        case 'application':
           sortMethod = function(model) {
             var unitList = units.filterByMachine(model.id);
             if (unitList) {
@@ -579,7 +579,7 @@ YUI.add('machine-view', function() {
             return weight;
           };
           break;
-        case 'services':
+        case 'applications':
           sortMethod = function(model) {
             var unitList = units.filterByMachine(model.id);
             if (unitList) {
@@ -620,8 +620,8 @@ YUI.add('machine-view', function() {
         action: this._setSortMethod.bind(this, 'name')
       }, {
         label: 'No. applications',
-        id: 'services',
-        action: this._setSortMethod.bind(this, 'services')
+        id: 'applications',
+        action: this._setSortMethod.bind(this, 'applications')
       }, {
         label: 'No. units',
         id: 'units',
@@ -654,8 +654,8 @@ YUI.add('machine-view', function() {
         action: this._setSortMethod.bind(this, 'units', true)
       }, {
         label: 'Applications',
-        id: 'services',
-        action: this._setSortMethod.bind(this, 'service', true)
+        id: 'applications',
+        action: this._setSortMethod.bind(this, 'application', true)
       }];
       var unplacedToggle = {
         action: this._toggleScaleUp,

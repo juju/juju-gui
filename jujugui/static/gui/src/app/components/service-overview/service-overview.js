@@ -254,7 +254,7 @@ YUI.add('service-overview', function() {
       // removed.
       this.props.changeState({
         sectionA: {
-          component: 'services'
+          component: 'applications'
         }});
     },
 
@@ -264,7 +264,7 @@ YUI.add('service-overview', function() {
         title: 'Destroy',
         action: this._showConfirmation
       }];
-      var confirmMessage = 'Are you sure you want to destroy the service? ' +
+      var confirmMessage = 'Are you sure you want to destroy the application? ' +
         'This cannot be undone.';
       var confirmButtons = [{
         title: 'Cancel',

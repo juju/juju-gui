@@ -165,7 +165,7 @@ YUI.add('juju-app-state', function(Y) {
       var component = state.component;
       // The default component is the charmbrowser.
       if (!component) {
-        component = 'services';
+        component = 'applications';
       }
       this.get('dispatchers').sectionA[component](state.metadata);
     },
@@ -461,9 +461,9 @@ YUI.add('juju-app-state', function(Y) {
             component: 'machine',
             metadata: this._parseMachineUrl(part)
           });
-        } else if (part.indexOf('services') === 0) {
+        } else if (part.indexOf('applications') === 0) {
           state.sectionA = this._addToSection({
-            component: 'services'
+            component: 'applications'
           });
         } else if (part.indexOf('login') === 0) {
           state.app = this._addToSection({
@@ -695,7 +695,7 @@ YUI.add('juju-app-state', function(Y) {
     */
     _splitIntoComponents: function(url) {
       var sections = [
-        'services',
+        'applications',
         'machine',
         'inspector',
         'profile',
