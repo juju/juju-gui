@@ -107,8 +107,8 @@ YUI.add('inspector-relate-to-type', function() {
           relations.push(relationName);
         }
       });
-      console.log(relations);
-      this.props.createRelation(relations);
+      var relationTypes = this.props.relationTypes;
+      this.props.createRelation(relationTypes[relations]);
     },
 
     /**

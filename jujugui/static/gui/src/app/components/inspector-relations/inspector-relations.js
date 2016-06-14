@@ -163,7 +163,6 @@ YUI.add('inspector-relations', function() {
           relations.push(relationName);
         }
       });
-      console.log(relations);
       this.props.destroyRelations(relations);
       this._selectAllRelations(false);
     },
