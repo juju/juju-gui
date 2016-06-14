@@ -1839,7 +1839,7 @@ describe('test_model.js', function() {
               }
             }
           ]);
-      var result = db.exportDeployer();
+      var result = db.exportDeployer(true);
 
       assert.strictEqual(result.relations.length, 1);
       var relation = result.relations[0];
@@ -1881,7 +1881,7 @@ describe('test_model.js', function() {
         endpoints: [['wordpress', {name: 'loadbalancer', role: 'peer'}]],
         'interface': 'reversenginx'
       });
-      var result = db.exportDeployer();
+      var result = db.exportDeployer(true);
       // The service has been exported.
       assert.isDefined(result.services.wordpress);
       // But not its peer relation.
@@ -1894,7 +1894,7 @@ describe('test_model.js', function() {
         {id: 'django', charm: 'trusty/django-47'}
       ]);
       db.charms.add([{id: 'precise/juju-gui-42'}, {id: 'trusty/django-47'}]);
-      var result = db.exportDeployer();
+      var result = db.exportDeployer(true);
       assert.strictEqual(Y.Object.size(result.services), 1);
       assert.isDefined(result.services.django);
     });
@@ -1926,7 +1926,7 @@ describe('test_model.js', function() {
           'interface': 'mysql'
         }
       ]);
-      var result = db.exportDeployer();
+      var result = db.exportDeployer(true);
       // The juju-gui service has not been exported.
       assert.isUndefined(result.services['juju-gui']);
       // The only exported relation is between wordpress and mysql.
@@ -1938,7 +1938,7 @@ describe('test_model.js', function() {
       // Add a subordinate.
       db.services.add({id: 'puppet', charm: 'precise/puppet-4'});
       db.charms.add([{id: 'precise/puppet-4', is_subordinate: true}]);
-      var result = db.exportDeployer();
+      var result = db.exportDeployer(true);
       assert.equal(result.services.puppet.num_units, undefined);
     });
 
@@ -1946,8 +1946,8 @@ describe('test_model.js', function() {
       // Add a subordinate.
       db.services.add({id: 'puppet', charm: 'precise/puppet-4'});
       db.charms.add([{id: 'precise/puppet-4', is_subordinate: true}]);
-      // Pass true for the instance when facades show Juju 2.
-      var result = db.exportDeployer(true);
+      // Pass false for the instance when facades show Juju 2.
+      var result = db.exportDeployer(false);
       assert.isDefined(result.applications.puppet);
     });
 
@@ -1973,7 +1973,7 @@ describe('test_model.js', function() {
           five: {'default': true, type: 'boolean'}
         }
       }]);
-      var result = db.exportDeployer();
+      var result = db.exportDeployer(true);
       assert.strictEqual(result.services.wordpress.options.one, 'foo');
       assert.strictEqual(result.services.wordpress.options.two, 2);
       assert.strictEqual(result.services.wordpress.options.three, 3.14);
@@ -2003,7 +2003,7 @@ describe('test_model.js', function() {
           five: {'default': true, type: 'boolean'}
         }
       }]);
-      var result = db.exportDeployer();
+      var result = db.exportDeployer(true);
       assert.isUndefined(result.services.wordpress.options.one);
       assert.strictEqual(result.services.wordpress.options.two, 2);
       assert.isUndefined(result.services.wordpress.options.three);
@@ -2039,7 +2039,7 @@ describe('test_model.js', function() {
               }
             }
           ]);
-      var result = db.exportDeployer();
+      var result = db.exportDeployer(true);
       assert.equal(result.services.wordpress.options.one, '1');
       assert.equal(result.services.wordpress.options.two, '2');
       assert.equal(result.services.wordpress.options.three, '3');
@@ -2050,10 +2050,10 @@ describe('test_model.js', function() {
     it('exports exposed flag', function() {
       db.services.add({id: 'wordpress', charm: 'precise/wordpress-4'});
       db.charms.add([{id: 'precise/wordpress-4'}]);
-      var result = db.exportDeployer();
+      var result = db.exportDeployer(true);
       assert.isUndefined(result.services.wordpress.expose);
       db.services.getById('wordpress').set('exposed', true);
-      result = db.exportDeployer();
+      result = db.exportDeployer(true);
       assert.isTrue(result.services.wordpress.expose);
     });
 
@@ -2226,7 +2226,7 @@ describe('test_model.js', function() {
       db.services.add(services);
       db.charms.add(charms);
       db.units.add(units, true);
-      var output = db.exportDeployer();
+      var output = db.exportDeployer(true);
       var expected = {
         '0': { series: 'trusty' },
         '1': { series: 'trusty' },
@@ -2342,7 +2342,7 @@ describe('test_model.js', function() {
           }
         }
       }]);
-      var result = db.exportDeployer();
+      var result = db.exportDeployer(true);
       assert.deepEqual(result.services.mysql.to, ['0']);
     });
   });
