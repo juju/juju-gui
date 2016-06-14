@@ -474,7 +474,7 @@ describe('ServiceOverview', function() {
       type: 'destructive',
       action: output.props.children[2].props.buttons[1].action
     }];
-    var confirmMessage = 'Are you sure you want to destroy the service? ' +
+    var confirmMessage = 'Are you sure you want to destroy the application? ' +
         'This cannot be undone.';
     assert.deepEqual(output.props.children[2],
       <juju.components.InspectorConfirm
@@ -484,7 +484,7 @@ describe('ServiceOverview', function() {
   });
 
   it('shows the confirmation when the delete button is clicked', function() {
-    var confirmMessage = 'Are you sure you want to destroy the service? ' +
+    var confirmMessage = 'Are you sure you want to destroy the application? ' +
         'This cannot be undone.';
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
@@ -522,7 +522,7 @@ describe('ServiceOverview', function() {
   });
 
   it('hides the confirmation when the cancel button is clicked', function() {
-    var confirmMessage = 'Are you sure you want to destroy the service? ' +
+    var confirmMessage = 'Are you sure you want to destroy the application? ' +
         'This cannot be undone.';
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
@@ -562,7 +562,7 @@ describe('ServiceOverview', function() {
   });
 
   it('hides the confirmation when confirm button is clicked', function() {
-    var confirmMessage = 'Are you sure you want to destroy the service? ' +
+    var confirmMessage = 'Are you sure you want to destroy the application? ' +
         'This cannot be undone.';
     var clearState = sinon.stub();
     var destroyService = sinon.stub();

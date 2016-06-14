@@ -980,9 +980,9 @@ describe('UI State object', function() {
         },
         sectionC: {}
       },
-      '/services/machine/profile': {
+      '/applications/machine/profile': {
         sectionA: {
-          component: 'services'
+          component: 'applications'
         },
         sectionB: {
           component: 'profile'
@@ -1025,9 +1025,9 @@ describe('UI State object', function() {
         },
         sectionC: {}
       },
-      '/services/machine/account': {
+      '/applications/machine/account': {
         sectionA: {
-          component: 'services'
+          component: 'applications'
         },
         sectionB: {
           component: 'account'
