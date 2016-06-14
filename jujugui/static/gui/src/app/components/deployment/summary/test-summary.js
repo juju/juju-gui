@@ -275,7 +275,7 @@ describe('DeploymentSummary', function() {
           </form>
           {undefined}
           <h3 className="deployment-panel__section-title twelve-col">
-            Deploying {2} {'services'} on&nbsp;{1} {'machines'}
+            Deploying {2} {'applications'} on &nbsp;{1} {'machines'}
           </h3>
           {undefined}
           <juju.components.ExpandingRow
