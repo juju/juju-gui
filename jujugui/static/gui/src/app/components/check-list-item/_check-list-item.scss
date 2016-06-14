@@ -1,4 +1,4 @@
-.unit-list-item {
+.check-list-item {
     @extend %stagger-fade-in;
 
     &:focus,
@@ -35,7 +35,7 @@
         }
     }
 
-    &__count {
+    &__aside {
         @include notification(transparent);
         float: right;
         margin-top: -3px;

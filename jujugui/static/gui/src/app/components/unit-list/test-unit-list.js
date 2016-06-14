@@ -87,30 +87,30 @@ describe('UnitList', () => {
     var output = renderer.getRenderOutput();
     var children = output.props.children[1].props.children;
     var refs = [
-      'UnitListItem-' + units[0].id,
-      'UnitListItem-' + units[1].id
+      'CheckListItem-' + units[0].id,
+      'CheckListItem-' + units[1].id
     ];
     assert.deepEqual(children, [
-      <juju.components.UnitListItem
+      <juju.components.CheckListItem
         ref="select-all"
         key="select-all"
         className="select-all"
         label="Select all units"
-        count={2}
+        aside="2"
         whenChanged={children[0].props.whenChanged}/>,
-      <juju.components.UnitListItem
+      <juju.components.CheckListItem
         key={units[0].displayName}
         ref={refs[0]}
         label={units[0].displayName}
         action={children[1].props.action}
-        unitId="mysql/0"
+        id="mysql/0"
         whenChanged={instance._updateActiveCount} />,
-      <juju.components.UnitListItem
+      <juju.components.CheckListItem
         key={units[1].displayName}
         ref={refs[1]}
         label={units[1].displayName}
         action={children[2].props.action}
-        unitId="mysql/1"
+        id="mysql/1"
         whenChanged={instance._updateActiveCount} />
     ]);
   });
@@ -138,37 +138,37 @@ describe('UnitList', () => {
     var output = renderer.getRenderOutput();
     var children = output.props.children[1].props.children;
     var refs = [
-      'UnitListItem-' + units[0].id,
-      'UnitListItem-' + units[1].id
+      'CheckListItem-' + units[0].id,
+      'CheckListItem-' + units[1].id
     ];
     assert.deepEqual(children, [
-      <juju.components.UnitListItem
+      <juju.components.CheckListItem
         ref="select-all-0"
         key="select-all-0"
         className="select-all"
         label="hook failed: install"
-        count={1}
+        aside="1"
         whenChanged={children[0].props.whenChanged}/>,
-      <juju.components.UnitListItem
+      <juju.components.CheckListItem
         key={units[0].displayName}
         ref={refs[0]}
         label={units[0].displayName}
         action={children[1].props.action}
-        unitId="mysql/0"
+        id="mysql/0"
         whenChanged={instance._updateActiveCount} />,
-      <juju.components.UnitListItem
+      <juju.components.CheckListItem
         ref="select-all-1"
         key="select-all-1"
         className="select-all"
         label="hook failed: config-changed"
-        count={1}
+        aside="1"
         whenChanged={children[2].props.whenChanged}/>,
-      <juju.components.UnitListItem
+      <juju.components.CheckListItem
         key={units[1].displayName}
         ref={refs[1]}
         label={units[1].displayName}
         action={children[3].props.action}
-        unitId="mysql/1"
+        id="mysql/1"
         whenChanged={instance._updateActiveCount} />
     ]);
   });
@@ -176,12 +176,12 @@ describe('UnitList', () => {
   it('displays the provided count', function() {
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
-      <juju.components.UnitListItem
-        count={5}
+      <juju.components.CheckListItem
+        aside="5"
         label="label"
         whenChanged={sinon.stub()} />);
     var output = shallowRenderer.getRenderOutput();
-    assert.equal(output.props.children.props.children[2].props.children, 5);
+    assert.equal(output.props.children.props.children[2].props.children, '5');
   });
 
   it('renders the Scale Application action component', () => {
@@ -273,13 +273,13 @@ describe('UnitList', () => {
         whenChanged={sinon.stub()} />);
     var refs = component.refs;
     // We want to make sure that they are not checked first.
-    assert.deepEqual(refs['UnitListItem-mysql/0'].state, {checked: false});
-    assert.deepEqual(refs['UnitListItem-mysql/1'].state, {checked: false});
+    assert.deepEqual(refs['CheckListItem-mysql/0'].state, {checked: false});
+    assert.deepEqual(refs['CheckListItem-mysql/1'].state, {checked: false});
     // Activate the select all toggle.
     refs['select-all'].props.whenChanged(true);
     // Now check that they are all checked.
-    assert.deepEqual(refs['UnitListItem-mysql/0'].state, {checked: true});
-    assert.deepEqual(refs['UnitListItem-mysql/1'].state, {checked: true});
+    assert.deepEqual(refs['CheckListItem-mysql/0'].state, {checked: true});
+    assert.deepEqual(refs['CheckListItem-mysql/1'].state, {checked: true});
   });
 
   it('navigates to the unit when a list item is clicked', function() {
@@ -477,7 +477,7 @@ describe('UnitList', () => {
     var button = testUtils.findRenderedDOMComponentWithClass(
         output, 'button--neutral');
     testUtils.Simulate.click(button);
-    assert.isFalse(output.refs['UnitListItem-' + units[0].id].state.checked);
+    assert.isFalse(output.refs['CheckListItem-' + units[0].id].state.checked);
   });
 
   it('deselects select all after removal', function() {
@@ -505,7 +505,7 @@ describe('UnitList', () => {
     var button = testUtils.findRenderedDOMComponentWithClass(
         output, 'button--neutral');
     testUtils.Simulate.click(button);
-    assert.isFalse(output.refs['UnitListItem-' + units[0].id].state.checked);
+    assert.isFalse(output.refs['CheckListItem-' + units[0].id].state.checked);
     assert.isFalse(output.refs['select-all'].state.checked);
   });
 

@@ -73,7 +73,7 @@ describe('InspectorRelations', function() {
     });
     var expected = (<div className="inspector-relations">
       <ul className="inspector-relations__list">
-        <juju.components.InspectorRelationsItem
+        <juju.components.CheckListItem
           className='select-all'
           key='select-all1'
           ref='select-all'
@@ -81,19 +81,19 @@ describe('InspectorRelations', function() {
           whenChanged={
             output.props.children[0].props.children[0].props.whenChanged
           }/>
-        <juju.components.InspectorRelationsItem
-          index={0}
+        <juju.components.CheckListItem
+          action={output.props.children[0].props.children[1].props.action}
           label={'django:django'}
           key={relations[0].id}
-          ref='InspectorRelationsItem-mysql'
+          ref='CheckListItem-mysql'
           relation={relations[0]}
           changeState={changeState}
           whenChanged={instance._updateActiveCount} />
-        <juju.components.InspectorRelationsItem
-          index={1}
+        <juju.components.CheckListItem
+          action={output.props.children[0].props.children[2].props.action}
           label={'django:django'}
           key={relations[1].id}
-          ref='InspectorRelationsItem-postgresql'
+          ref='CheckListItem-postgresql'
           relation={relations[1]}
           changeState={changeState}
           whenChanged={instance._updateActiveCount} />
@@ -151,16 +151,16 @@ describe('InspectorRelations', function() {
         serviceRelations={relations} />);
     var refs = component.refs;
     // We want to make sure that they are not checked first.
-    assert.deepEqual(refs['InspectorRelationsItem-mysql'].state,
+    assert.deepEqual(refs['CheckListItem-mysql'].state,
       {checked: false});
-    assert.deepEqual(refs['InspectorRelationsItem-postgresql'].state,
+    assert.deepEqual(refs['CheckListItem-postgresql'].state,
       {checked: false});
     // Activate the select all toggle.
     refs['select-all'].props.whenChanged(true);
     // Now check that they are all checked.
-    assert.deepEqual(refs['InspectorRelationsItem-mysql'].state,
+    assert.deepEqual(refs['CheckListItem-mysql'].state,
       {checked: true});
-    assert.deepEqual(refs['InspectorRelationsItem-postgresql'].state,
+    assert.deepEqual(refs['CheckListItem-postgresql'].state,
       {checked: true});
   });
 
@@ -290,7 +290,7 @@ describe('InspectorRelations', function() {
         output, 'button--neutral');
     testUtils.Simulate.click(button);
     assert.isFalse(
-      output.refs['InspectorRelationsItem-' + relations[0].id].state.checked
+      output.refs['CheckListItem-' + relations[0].id].state.checked
     );
   });
 

@@ -44,7 +44,7 @@ YUI.add('inspector-relations', function() {
       var activeCount = 0;
       var refs = this.refs;
       Object.keys(refs).forEach((ref) => {
-        if (ref.split('-')[0] === 'InspectorRelationsItem') {
+        if (ref.split('-')[0] === 'CheckListItem') {
           if (refs[ref].state.checked) {
             activeCount += 1;
           }
@@ -90,7 +90,7 @@ YUI.add('inspector-relations', function() {
       }
       var ref = 'select-all';
       var components = [
-        <juju.components.InspectorRelationsItem
+        <juju.components.CheckListItem
           className='select-all'
           key={ref+'1'}
           ref={ref}
@@ -99,10 +99,10 @@ YUI.add('inspector-relations', function() {
       ];
 
       relations.forEach(function(relation, index) {
-        var ref = 'InspectorRelationsItem-' + relation.id;
+        var ref = 'CheckListItem-' + relation.id;
         components.push(
-        <juju.components.InspectorRelationsItem
-          index={index}
+        <juju.components.CheckListItem
+          action={this._handleRelationClick.bind(this, index)}
           key={relation.id}
           ref={ref}
           label={this._generateRelationLabel(relation)}
@@ -114,6 +114,25 @@ YUI.add('inspector-relations', function() {
     },
 
     /**
+      Handle navigating to a relation details when it is clicked.
+
+      @method _handleRelationClick
+    */
+    _handleRelationClick: function(index) {
+      // Cast to string to pass state null check
+      index = index + '';
+      this.props.changeState({
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            activeComponent: 'relation',
+            unit: index
+          }
+        }
+      });
+    },
+
+    /**
       Remove the selected relations
 
       @method _handleRemoveRelation
@@ -122,7 +141,7 @@ YUI.add('inspector-relations', function() {
       var relations = [];
       var refs = this.refs;
       Object.keys(refs).forEach((ref) => {
-        var isInstance = ref.split('-')[0] === 'InspectorRelationsItem';
+        var isInstance = ref.split('-')[0] === 'CheckListItem';
         if (isInstance && refs[ref].state.checked) {
           var relationName = ref.slice(ref.indexOf('-') + 1);
           relations.push(relationName);
@@ -142,7 +161,7 @@ YUI.add('inspector-relations', function() {
     _selectAllRelations: function(checked) {
       var refs = this.refs;
       Object.keys(refs).forEach((ref) => {
-        if (ref.split('-')[0] === 'InspectorRelationsItem') {
+        if (ref.split('-')[0] === 'CheckListItem') {
           refs[ref].setState({
             checked: checked
           }, () => {
@@ -191,6 +210,6 @@ YUI.add('inspector-relations', function() {
   });
 
 }, '0.1.0', { requires: [
-  'inspector-relations-item',
+  'check-list-item',
   'button-row',
 ]});

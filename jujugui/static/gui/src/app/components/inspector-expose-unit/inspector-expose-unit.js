@@ -60,7 +60,7 @@ YUI.add('inspector-expose-unit', function() {
         var protocol = port === '443' ? 'https' : 'http';
         var href = `${protocol}://${address}:${port}`;
         items.push(
-          <li className="inspector-expose__unit-list-item"
+          <li className="inspector-expose__item"
             key={href}>
             <a href={href}
               onClick={this._stopBubble}

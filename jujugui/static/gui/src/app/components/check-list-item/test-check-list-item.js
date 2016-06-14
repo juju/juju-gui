@@ -21,40 +21,40 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 var testUtils = React.addons.TestUtils;
 
-describe('UnitListItem', () => {
+describe('CheckListItem', () => {
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
-    YUI().use('unit-list-item', () => { done(); });
+    YUI().use('check-list-item', () => { done(); });
   });
 
   it('renders ui based on props', () => {
     var output = jsTestUtils.shallowRender(
-        <juju.components.UnitListItem
+        <juju.components.CheckListItem
           key="unique"
           checked={false}
-          label="unit-name"
-          unitId="apache/2"
+          label="a-label"
+          id="apache/2"
           className="select-all"
-          count={3}
+          aside="3"
           whenChanged={sinon.stub()}
         />);
     assert.deepEqual(output,
-        <li className="unit-list-item unit-list-item--select-all"
+        <li className="check-list-item check-list-item--select-all"
           data-id="apache/2"
           onClick={undefined} tabIndex="0" role="button">
-          <label htmlFor="unit-name-unit">
+          <label htmlFor="a-label-item">
             <input
               type="checkbox"
-              id="unit-name-unit"
+              id="a-label-item"
               onClick={output.props.children.props.children[0].props.onClick}
               onChange={output.props.children.props.children[0].props.onChange}
               checked={false} />
-            <span className="unit-list-item__label">
-              unit-name
+            <span className="check-list-item__label">
+              a-label
             </span>
-            <span className="unit-list-item__count">
-              {3}
+            <span className="check-list-item__aside">
+              3
             </span>
           </label>
         </li>);
@@ -62,12 +62,12 @@ describe('UnitListItem', () => {
 
   it('does not set a "for" id on the label if it is a nav element', () => {
     var output = jsTestUtils.shallowRender(
-        <juju.components.UnitListItem
+        <juju.components.CheckListItem
           key="unique"
           checked={false}
-          label="unit-name"
+          label="a-label"
           action={sinon.stub()}
-          unitId="apache/2"
+          id="apache/2"
           whenChanged={sinon.stub()}
         />);
     assert.equal(output.props.children.props.htmlFor, '');
@@ -75,26 +75,26 @@ describe('UnitListItem', () => {
 
   it('has a nav class if it is a nav element', () => {
     var output = jsTestUtils.shallowRender(
-        <juju.components.UnitListItem
+        <juju.components.CheckListItem
           key="unique"
           checked={false}
-          label="unit-name"
+          label="a-label"
           action={sinon.stub()}
-          unitId="apache/2"
+          id="apache/2"
           whenChanged={sinon.stub()}
         />);
     assert.isTrue(output.props.className.indexOf(
-        'unit-list-item--nav') > -1);
+        'check-list-item--nav') > -1);
   });
 
   it('calls the supplied whenChanged if supplied', () => {
     var whenChanged = sinon.stub();
     var output = jsTestUtils.shallowRender(
-      <juju.components.UnitListItem
+      <juju.components.CheckListItem
         key="unique"
         checked={false}
         whenChanged={whenChanged}
-        label="unit-name"
+        label="a-label"
       />);
     output.props.children.props.children[0].props.onChange({
       currentTarget: {
@@ -110,11 +110,11 @@ describe('UnitListItem', () => {
     // Need to render the full component here as shallowRenderer does not yet
     // support simulating click events.
     var output = testUtils.renderIntoDocument(
-        <juju.components.UnitListItem
+        <juju.components.CheckListItem
           key="unique"
           checked={false}
-          label="unit-name"
-          unitId="apache/2"
+          label="a-label"
+          id="apache/2"
           action={actionStub}
           whenChanged={sinon.stub()}
         />);
