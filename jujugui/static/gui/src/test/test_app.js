@@ -348,7 +348,11 @@ describe('App', function() {
       });
 
       it('is idempotent', function() {
-        window.juju_config = {charmstoreURL: 'http://1.2.3.4/'};
+        window.juju_config = {
+          charmstoreURL: 'http://1.2.3.4/',
+          plansURL: 'http://plans.example.com/',
+          termsURL: 'http://terms.example.com/'
+        };
         constructAppInstance({
           env: new juju.environments.GoEnvironment({
             conn: new utils.SocketStub(),
@@ -363,6 +367,33 @@ describe('App', function() {
             app.get('charmstore').url,
             'http://1.2.3.4/v4',
             'It should only ever create a single instance of the charmstore');
+      });
+
+    });
+
+    describe('romulus services', function() {
+
+      afterEach(function() {
+        delete window.juju_config;
+      });
+
+      it('sets up API clients', function() {
+        window.juju_config = {
+          plansURL: 'http://plans.example.com/',
+          termsURL: 'http://terms.example.com/'
+        };
+        app = constructAppInstance({
+          env: new juju.environments.GoEnvironment({
+            conn: new utils.SocketStub(),
+            ecs: new juju.EnvironmentChangeSet()
+          })
+        }, this);
+        assert.strictEqual(app.plans instanceof window.jujulib.plans, true);
+        assert.strictEqual(app.plans.url, 'http://plans.example.com/v2');
+        assert.strictEqual(app.plans.bakery.macaroonName, 'Macaroons-plans');
+        assert.strictEqual(app.terms instanceof window.jujulib.terms, true);
+        assert.strictEqual(app.terms.url, 'http://terms.example.com/v1');
+        assert.strictEqual(app.terms.bakery.macaroonName, 'Macaroons-terms');
       });
 
     });
@@ -1557,7 +1588,6 @@ describe('App', function() {
     });
 
   });
-
 
   describe('configuration parsing', function() {
 
