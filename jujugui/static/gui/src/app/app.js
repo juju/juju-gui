@@ -1485,7 +1485,6 @@ YUI.add('juju-gui', function(Y) {
     /**
       Creates new API client instances for Romulus services.
       Assign them to the "plans" and "terms" app properties.
-      This function is idempotent.
 
       @method _setupRomulusServices
       @param {Object} config The GUI application configuration.
@@ -1497,9 +1496,9 @@ YUI.add('juju-gui', function(Y) {
         // We are probably running tests.
         return;
       }
-      // If one services is already set up, then assume the other is as well.
-      if (this.plans) {
-        return;
+      if (this.plans || this.terms) {
+        console.error(
+          'romulus services are being redefined:', this.plans, this.terms);
       }
       var interactive = this.get('interactiveLogin');
       var webHandler = new Y.juju.environments.web.WebHandler();

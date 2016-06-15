@@ -388,8 +388,10 @@ describe('App', function() {
             ecs: new juju.EnvironmentChangeSet()
           })
         }, this);
+        assert.strictEqual(app.plans instanceof window.jujulib.plans, true);
         assert.strictEqual(app.plans.url, 'http://plans.example.com/v2');
         assert.strictEqual(app.plans.bakery.macaroonName, 'Macaroons-plans');
+        assert.strictEqual(app.terms instanceof window.jujulib.terms, true);
         assert.strictEqual(app.terms.url, 'http://terms.example.com/v1');
         assert.strictEqual(app.terms.bakery.macaroonName, 'Macaroons-terms');
       });
