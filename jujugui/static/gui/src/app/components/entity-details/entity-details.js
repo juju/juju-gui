@@ -35,6 +35,7 @@ YUI.add('entity-details', function() {
       getFile: React.PropTypes.func.isRequired,
       id: React.PropTypes.string.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
+      listPlansForCharm: React.PropTypes.func.isRequired,
       makeEntityModel: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
@@ -163,8 +164,8 @@ YUI.add('entity-details', function() {
         });
         if (hasMetrics) {
           this.setState({hasPlans: true}, () => {
-            // TODO: make a call to actually check if there are plans.
-            this._getPlansCallback();
+            this.props.listPlansForCharm(
+              entityModel.get('id'), this._getPlansCallback);
           });
         }
       }

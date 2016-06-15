@@ -66,6 +66,7 @@ describe('Charmbrowser', function() {
         getEntity={sinon.stub()}
         getFile={sinon.stub()}
         importBundleYAML={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
         makeEntityModel={makeEntityModel}
         utils={utils}
         renderMarkdown={sinon.stub()}
@@ -120,6 +121,7 @@ describe('Charmbrowser', function() {
         getEntity={sinon.stub()}
         getFile={sinon.stub()}
         importBundleYAML={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
         makeEntityModel={sinon.stub()}
         utils={{}}
         renderMarkdown={sinon.stub()}
@@ -167,6 +169,7 @@ describe('Charmbrowser', function() {
         getEntity={sinon.stub()}
         getFile={sinon.stub()}
         importBundleYAML={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
         makeEntityModel={makeEntityModel}
         utils={utils}
         renderMarkdown={sinon.stub()}
@@ -211,6 +214,7 @@ describe('Charmbrowser', function() {
     var getFile = sinon.spy();
     var renderMarkdown = sinon.spy();
     var getDiagramURL = sinon.spy();
+    var listPlansForCharm = sinon.spy();
     var addNotification = sinon.spy();
     var utils = {
       pluralize: sinon.spy()
@@ -228,6 +232,7 @@ describe('Charmbrowser', function() {
         getEntity={getEntity}
         getFile={getFile}
         importBundleYAML={importBundleYAML}
+        listPlansForCharm={listPlansForCharm}
         makeEntityModel={makeEntityModel}
         utils={utils}
         renderMarkdown={renderMarkdown}
@@ -249,6 +254,7 @@ describe('Charmbrowser', function() {
               changeState={changeState}
               getEntity={getEntity}
               scrollPosition={0}
+              listPlansForCharm={listPlansForCharm}
               makeEntityModel={makeEntityModel}
               getDiagramURL={getDiagramURL}
               getFile={getFile}

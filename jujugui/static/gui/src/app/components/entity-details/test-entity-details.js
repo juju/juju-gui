@@ -52,6 +52,7 @@ describe('EntityDetails', function() {
         getEntity={sinon.spy()}
         getFile={sinon.stub()}
         importBundleYAML={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
         makeEntityModel={sinon.spy()}
         pluralize={sinon.spy()}
         renderMarkdown={sinon.stub()}
@@ -82,6 +83,7 @@ describe('EntityDetails', function() {
           getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
+          listPlansForCharm={sinon.stub()}
           scrollPosition={100}
           renderMarkdown={renderMarkdown}
           id={id}
@@ -149,6 +151,7 @@ describe('EntityDetails', function() {
           getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
+          listPlansForCharm={sinon.spy()}
           makeEntityModel={sinon.spy()}
           renderMarkdown={renderMarkdown}
           id={id}
@@ -201,6 +204,7 @@ describe('EntityDetails', function() {
           scrollPosition={100}
           renderMarkdown={renderMarkdown}
           getDiagramURL={getDiagramURL}
+          listPlansForCharm={sinon.stub()}
           id={id}
           pluralize={pluralize}
           addNotification={addNotification}
@@ -268,6 +272,7 @@ describe('EntityDetails', function() {
           getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
+          listPlansForCharm={sinon.stub()}
           makeEntityModel={sinon.spy()}
           renderMarkdown={renderMarkdown}
           id={id}
@@ -294,6 +299,7 @@ describe('EntityDetails', function() {
         getEntity={sinon.spy()}
         getFile={sinon.stub()}
         importBundleYAML={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
         makeEntityModel={sinon.spy()}
         pluralize={sinon.spy()}
         renderMarkdown={sinon.stub()}
@@ -316,6 +322,7 @@ describe('EntityDetails', function() {
     var getFile = sinon.spy();
     var id = mockEntity.get('id');
     var importBundleYAML = sinon.spy();
+    var listPlansForCharm = sinon.stub().callsArgWith(1, null, plans);
     var makeEntityModel = sinon.stub().returns(mockEntity);
     var pluralize = sinon.spy();
     var renderMarkdown = sinon.spy();
@@ -331,6 +338,7 @@ describe('EntityDetails', function() {
         getFile={getFile}
         id={id}
         importBundleYAML={importBundleYAML}
+        listPlansForCharm={listPlansForCharm}
         makeEntityModel={makeEntityModel}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
