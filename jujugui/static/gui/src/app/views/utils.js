@@ -1772,16 +1772,36 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Array} relations A list of relation endpoints.
     @param {Function} callback A function to call after removal.
   */
-  utils.createRelation = function(env, relations, callback) {
-    var endpointB = [relations[0].service, {
+  utils.createRelation = function(db, env, relations, callback) {
+    var endpoints = [relations[0].service, {
       name: relations[0].name,
       role: "client"
-    }];
-    var endpointA = [relations[1].service, {
+    }, relations[1].service, {
       name: relations[1].name,
       role: "server"
     }];
-    env.add_relation(endpointA, endpointB, function() {console.log('Relation created')});
+
+    var relationId = 'pending-' + endpoints[0] + ':' + endpoints[0].name + endpoints[1] + ':' + endpoints[1].name;
+    var relation = db.relations.add({
+      relation_id: relationId,
+      'interface': endpoints[0].name,
+      endpoints: endpoints,
+      pending: true,
+      scope: 'global', // XXX check the charms to see if this is a subordinate
+      display_name: 'pending'
+    });
+    env.add_relation(
+      endpoints[0], endpoints[1],
+      function(e) {
+        this.db.relations.create({
+          relation_id: e.result.id,
+          type: e.result['interface'],
+          endpoints: endpoints,
+          pending: false,
+          scope: e.result.scope
+        });
+      }.bind(this));
+    // env.add_relation(endpointA, endpointB, function() {console.log('Relation created')});
   }
 
   /**
