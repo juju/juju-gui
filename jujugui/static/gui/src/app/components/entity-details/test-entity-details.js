@@ -380,5 +380,7 @@ describe('EntityDetails', function() {
           </div>
       </div>);
     assert.deepEqual(output, expected);
+    assert.equal(listPlansForCharm.callCount, 1);
+    assert.equal(listPlansForCharm.args[0][0], 'cs:django');
   });
 });
