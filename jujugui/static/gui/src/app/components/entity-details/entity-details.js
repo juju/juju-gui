@@ -29,6 +29,7 @@ YUI.add('entity-details', function() {
       apiUrl: React.PropTypes.string.isRequired,
       changeState: React.PropTypes.func.isRequired,
       deployService: React.PropTypes.func.isRequired,
+      displayPlans: React.PropTypes.bool.isRequired,
       getBundleYAML: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       getEntity: React.PropTypes.func.isRequired,
@@ -158,7 +159,8 @@ YUI.add('entity-details', function() {
     */
     _getPlans: function() {
       var entityModel = this.state.entityModel;
-      if (entityModel.get('entityType') === 'charm') {
+      if (this.props.displayPlans &&
+        entityModel.get('entityType') === 'charm') {
         var hasMetrics = entityModel.get('files').some((file) => {
           return file === 'metrics.yaml';
         });

@@ -61,6 +61,7 @@ describe('Charmbrowser', function() {
         changeState={changeState}
         charmstoreSearch={charmstoreSearch}
         deployService={sinon.stub()}
+        displayPlans={true}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
@@ -116,6 +117,7 @@ describe('Charmbrowser', function() {
         changeState={changeState}
         charmstoreSearch={sinon.stub()}
         deployService={sinon.stub()}
+        displayPlans={true}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
@@ -164,6 +166,7 @@ describe('Charmbrowser', function() {
         changeState={changeState}
         charmstoreSearch={charmstoreSearch}
         deployService={sinon.stub()}
+        displayPlans={true}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
@@ -227,6 +230,7 @@ describe('Charmbrowser', function() {
         changeState={changeState}
         charmstoreSearch={sinon.stub()}
         deployService={deployService}
+        displayPlans={true}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
@@ -260,6 +264,7 @@ describe('Charmbrowser', function() {
               getFile={getFile}
               renderMarkdown={renderMarkdown}
               deployService={deployService}
+              displayPlans={true}
               id={id}
               addNotification={addNotification}
               pluralize={utils.pluralize} />

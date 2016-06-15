@@ -45,8 +45,9 @@ describe('EntityDetails', function() {
         addNotification={sinon.stub()}
         apiUrl="http://example.com/"
         id="test"
-        deployService={sinon.spy()}
         changeState={sinon.spy()}
+        deployService={sinon.spy()}
+        displayPlans={true}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.spy()}
@@ -76,8 +77,9 @@ describe('EntityDetails', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           apiUrl={apiUrl}
-          deployService={deployService}
           changeState={changeState}
+          deployService={deployService}
+          displayPlans={true}
           importBundleYAML={importBundleYAML}
           getBundleYAML={getBundleYAML}
           getDiagramURL={sinon.stub()}
@@ -144,8 +146,9 @@ describe('EntityDetails', function() {
         <juju.components.EntityDetails
           addNotification={sinon.stub()}
           apiUrl="http://example.com/"
-          deployService={deployService}
           changeState={changeState}
+          deployService={deployService}
+          displayPlans={true}
           importBundleYAML={importBundleYAML}
           getBundleYAML={getBundleYAML}
           getDiagramURL={sinon.stub()}
@@ -195,8 +198,9 @@ describe('EntityDetails', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           apiUrl={apiUrl}
-          deployService={deployService}
           changeState={changeState}
+          deployService={deployService}
+          displayPlans={true}
           importBundleYAML={importBundleYAML}
           getBundleYAML={getBundleYAML}
           getEntity={getEntity}
@@ -265,8 +269,9 @@ describe('EntityDetails', function() {
         <juju.components.EntityDetails
           addNotification={sinon.stub()}
           apiUrl="http://example.com/"
-          deployService={deployService}
           changeState={changeState}
+          deployService={deployService}
+          displayPlans={true}
           importBundleYAML={importBundleYAML}
           getBundleYAML={getBundleYAML}
           getDiagramURL={sinon.stub()}
@@ -292,8 +297,9 @@ describe('EntityDetails', function() {
         addNotification={sinon.stub()}
         apiUrl="http://example.com/"
         id="test"
-        deployService={sinon.spy()}
         changeState={sinon.spy()}
+        deployService={sinon.spy()}
+        displayPlans={true}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.spy()}
@@ -332,6 +338,7 @@ describe('EntityDetails', function() {
         apiUrl={apiUrl}
         changeState={changeState}
         deployService={deployService}
+        displayPlans={true}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
@@ -382,5 +389,79 @@ describe('EntityDetails', function() {
     assert.deepEqual(output, expected);
     assert.equal(listPlansForCharm.callCount, 1);
     assert.equal(listPlansForCharm.args[0][0], 'cs:django');
+  });
+
+  it('can not display plans', function() {
+    mockEntity = jsTestUtils.makeEntity(false, ['metrics.yaml']);
+    var plans = ['plan1', 'plan2'];
+    var addNotification = sinon.spy();
+    var apiUrl = 'http://example.com';
+    var changeState = sinon.spy();
+    var deployService = sinon.spy();
+    var getBundleYAML = sinon.spy();
+    var getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
+    var getFile = sinon.spy();
+    var id = mockEntity.get('id');
+    var importBundleYAML = sinon.spy();
+    var listPlansForCharm = sinon.stub().callsArgWith(1, null, plans);
+    var makeEntityModel = sinon.stub().returns(mockEntity);
+    var pluralize = sinon.spy();
+    var renderMarkdown = sinon.spy();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.EntityDetails
+        addNotification={addNotification}
+        apiUrl={apiUrl}
+        changeState={changeState}
+        deployService={deployService}
+        displayPlans={false}
+        getBundleYAML={getBundleYAML}
+        getDiagramURL={sinon.stub()}
+        getEntity={getEntity}
+        getFile={getFile}
+        id={id}
+        importBundleYAML={importBundleYAML}
+        listPlansForCharm={listPlansForCharm}
+        makeEntityModel={makeEntityModel}
+        pluralize={pluralize}
+        renderMarkdown={renderMarkdown}
+        scrollPosition={100} />, true);
+    var instance = shallowRenderer.getMountedInstance();
+    instance.refs = {content: {focus: sinon.stub()}};
+    instance.componentDidMount();
+    var output = shallowRenderer.getRenderOutput();
+    assert.isTrue(getEntity.calledOnce,
+                  'getEntity function not called');
+    assert.equal(getEntity.args[0][0], id,
+                 'getEntity not called with the entity ID');
+    var expected = (
+      <div className={'entity-details charm'}
+        ref="content"
+        tabIndex="0">
+        <div>
+          <juju.components.EntityHeader
+            entityModel={mockEntity}
+            importBundleYAML={importBundleYAML}
+            getBundleYAML={getBundleYAML}
+            hasPlans={false}
+            changeState={changeState}
+            addNotification={addNotification}
+            deployService={deployService}
+            plans={null}
+            pluralize={pluralize}
+            scrollPosition={100} />
+          {undefined}
+          <juju.components.EntityContent
+            apiUrl={apiUrl}
+            changeState={changeState}
+            entityModel={mockEntity}
+            getFile={getFile}
+            hasPlans={false}
+            plans={null}
+            pluralize={pluralize}
+            renderMarkdown={renderMarkdown} />
+          </div>
+      </div>);
+    assert.deepEqual(output, expected);
+    assert.equal(listPlansForCharm.callCount, 0);
   });
 });

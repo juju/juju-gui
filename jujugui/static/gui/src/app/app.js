@@ -1185,6 +1185,8 @@ YUI.add('juju-gui', function(Y) {
         <components.Charmbrowser
           apiUrl={charmstore.url}
           charmstoreSearch={charmstore.search.bind(charmstore)}
+          displayPlans={
+            views.utils.compareSemver(this.get('jujuCoreVersion'), '2') > -1}
           series={utils.getSeriesList()}
           importBundleYAML={this.bundleImporter.importBundleYAML.bind(
               this.bundleImporter)}
