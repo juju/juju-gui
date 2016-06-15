@@ -75,6 +75,8 @@ def config(request):
 
     jem_macaroons = settings.get('jujugui.jem_macaroons')
     charmstore_macaroons = settings.get('jujugui.charmstore_macaroons')
+    plans_macaroons = settings.get('jujugui.plans_macaroons')
+    terms_macaroons = settings.get('jujugui.terms_macaroons')
 
     if sandbox_enabled:
         user = user if user is not None else 'admin'
@@ -98,12 +100,16 @@ def config(request):
         # Debugging options.
         'consoleEnabled': True,
         'simulateEvents': False,
-        # The charm store and JEM URLs.
+        # The external services' URLs.
         'charmstoreURL': settings['jujugui.charmstore_url'],
         'jemURL': settings['jujugui.jem_url'],
+        'plansURL': settings['jujugui.plans_url'],
+        'termsURL': settings['jujugui.terms_url'],
         # Any provided macaroons.
         'charmstoreMacaroons': charmstore_macaroons,
         'jemMacaroons': jem_macaroons,
+        'plansMacaroons': plans_macaroons,
+        'termsMacaroons': terms_macaroons,
         # WebSocket connection to the Juju API.
         'socket_protocol': socket_protocol,
         'user': user,

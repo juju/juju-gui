@@ -116,6 +116,8 @@ class ConfigTests(ViewTestCase):
         self.assertEqual('wss', config['socket_protocol'])
         self.assertEqual(
             options.DEFAULT_CHARMSTORE_URL, config['charmstoreURL'])
+        self.assertEqual(options.DEFAULT_PLANS_URL, config['plansURL'])
+        self.assertEqual(options.DEFAULT_TERMS_URL, config['termsURL'])
         self.assertFalse(config['GTM_enabled'])
         # Note that here we are testing that the value is actually True or
         # False, not that it just evaluates to True/False(like in assertTrue).
@@ -130,7 +132,9 @@ class ConfigTests(ViewTestCase):
 
     def test_customized_options(self):
         self.update_settings({
-            'jujugui.charmstore_url': '1.2.3.4/api',
+            'jujugui.charmstore_url': 'http://1.2.3.4/cs-api',
+            'jujugui.plans_url': 'http://1.2.3.4/plans-api',
+            'jujugui.terms_url': 'http://1.2.3.4/terms-api',
             'jujugui.GTM_enabled': 'true',
             'jujugui.sandbox': 'true',
             'jujugui.auth': 'blob',
@@ -141,7 +145,9 @@ class ConfigTests(ViewTestCase):
         jujugui.make_application(self.config)
         response = views.config(self.request)
         config = self.check_response(response)
-        self.assertEqual('1.2.3.4/api', config['charmstoreURL'])
+        self.assertEqual('http://1.2.3.4/cs-api', config['charmstoreURL'])
+        self.assertEqual('http://1.2.3.4/plans-api', config['plansURL'])
+        self.assertEqual('http://1.2.3.4/terms-api', config['termsURL'])
         self.assertTrue(config['GTM_enabled'])
         self.assertEqual('blob', config['auth'])
         # Note that here we are testing that the value is actually True or

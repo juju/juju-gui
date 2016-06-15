@@ -8,6 +8,8 @@ var juju_config = {
     "socket_protocol": "wss",
     "charmstoreAPIPath": "v4",
     "charmstoreURL": "https://api.jujucharms.com/charmstore/",
+    "plansURL": "https://api.jujucharms.com/omnibus/",
+    "termsURL": "https://api.jujucharms.com/terms/",
     "interactiveLogin": true,
     "html5": true,
     "container": "#main",

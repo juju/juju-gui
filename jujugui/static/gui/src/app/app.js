@@ -402,8 +402,11 @@ YUI.add('juju-gui', function(Y) {
 
       // Create a client side database to store state.
       this.db = new models.Database();
-      // Creates and sets up a new instance of the charmstore.
+      // Create and set up a new instance of the charmstore.
       this._setupCharmstore(window.jujulib.charmstore);
+      // Create Romulus API client instances.
+      this._setupRomulusServices(
+        window.juju_config, window.jujulib, window.localStorage);
 
       // Set up a new modelController instance.
       this.modelController = new juju.ModelController({
@@ -1477,6 +1480,45 @@ YUI.add('juju-gui', function(Y) {
           this.storeUser('charmstore', false, true);
         }
       }
+    },
+
+    /**
+      Creates new API client instances for Romulus services.
+      Assign them to the "plans" and "terms" app properties.
+      This function is idempotent.
+
+      @method _setupRomulusServices
+      @param {Object} config The GUI application configuration.
+      @param {Object} jujulib The Juju API client library.
+      @param {Object} storage The place where to store macaroons.
+    */
+    _setupRomulusServices: function(config, jujulib, storage) {
+      if (!config) {
+        // We are probably running tests.
+        return;
+      }
+      // If one services is already set up, then assume the other is as well.
+      if (this.plans) {
+        return;
+      }
+      var interactive = this.get('interactiveLogin');
+      var webHandler = new Y.juju.environments.web.WebHandler();
+      var bakery = new Y.juju.environments.web.Bakery({
+        serviceName: 'plans',
+        macaroon: config.plansMacaroons,
+        webhandler: webHandler,
+        interactive: interactive,
+        cookieStore: storage
+      });
+      this.plans = new window.jujulib.plans(config.plansURL, bakery);
+      var bakery = new Y.juju.environments.web.Bakery({
+        serviceName: 'terms',
+        macaroon: config.termsMacaroons,
+        webhandler: webHandler,
+        interactive: interactive,
+        cookieStore: storage
+      });
+      this.terms = new window.jujulib.terms(config.termsURL, bakery);
     },
 
     /**

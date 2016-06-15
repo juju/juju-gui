@@ -8,6 +8,8 @@ from pyramid.settings import asbool
 
 # Define default values for options.
 DEFAULT_CHARMSTORE_URL = 'https://api.jujucharms.com/charmstore/'
+DEFAULT_PLANS_URL = 'https://api.jujucharms.com/omnibus/'
+DEFAULT_TERMS_URL = 'https://api.jujucharms.com/terms/'
 
 
 def update(settings):
@@ -18,6 +20,8 @@ def update(settings):
     _update(settings, 'jujugui.auth', default=None)
     _update(settings, 'jujugui.base_url', default='')
     _update(settings, 'jujugui.charmstore_url', default=DEFAULT_CHARMSTORE_URL)
+    _update(settings, 'jujugui.plans_url', default=DEFAULT_PLANS_URL)
+    _update(settings, 'jujugui.terms_url', default=DEFAULT_TERMS_URL)
     _update(settings, 'jujugui.GTM_enabled', default=False)
     _update(settings, 'jujugui.password', default=None)
     _update(settings, 'jujugui.user', default=None)
