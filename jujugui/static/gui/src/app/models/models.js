@@ -596,7 +596,28 @@ YUI.add('juju-models', function(Y) {
       */
       fade: {
         value: false
-      }
+      },
+
+      /**
+        The list of plans if any. A value of undefined means that
+        the plans request has not been made. It should be null if
+        a request has been made and there were none.
+
+        @attribute plans
+        @type {Array}
+        @default undefined
+      */
+      plans: {},
+
+      /**
+        An object containing the active plan for this application. It should be
+        null if a request has been made and there were none.
+
+        @attribute activePlan
+        @type {Object}
+        @default undefined
+      */
+      activePlan: {}
     }
   });
   models.Service = Service;
