@@ -33,6 +33,34 @@ var module = module;
 
   plans.prototype = {
     /**
+      Get a plan authorization to deploy a charm.
+
+      @public authorizePlan
+      @params env-uuid {String} UUID of the environment the charm is being deployed on
+      @params charm-url {String} URL of the charm being deployed
+      @params service-name {String} name of the service
+      @params plan-url {String} url of the plan being deployed
+      @params budget {String} budget name for allocation
+      @params limit {String} numeric limit for allocation
+      @params callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and an authorization object as its second.
+    */
+    authorizePlan: function(envUUID, charmUrl, serviceName, planUrl, budget,
+        limit, callback) {
+      var url = this.url + '/plan/authorize';
+      var payload = {
+        'env-uuid': envUUID,
+        'charm-url': charmUrl,
+        'service-name': serviceName,
+        'plan-url': planUrl,
+        'budget': budget,
+        'limit': limit
+      }
+      return jujulib._makeRequest(this.bakery, url, 'POST', payload, callback);
+    },
+
+    /**
       Lists available plans for the given charm.
 
       @public listPlansForCharm

@@ -3249,6 +3249,33 @@ YUI.add('juju-env-go', function(Y) {
         Request: request,
         Params: {Tag: userTag}
       }, handleListModels);
+    },
+
+    /**
+      setMetricCredentials sets credentials on an application.
+
+      @method setMetricCredentials
+      @param applicationName The name of the application to set credentials
+        on.
+      @param credentials A list of macaroons retrieved from authorizePlan.
+      @param callback A function which receives an error, which may be null.
+    */
+    setMetricCredentials: function(applicationName, credentials, callback) {
+      var facade = 'Application';
+      var request = 'SetMetricCredentials';
+      var params = {
+        Creds: [
+          {
+            ApplicationName: applicationName,
+            MetricCredentials: credentials
+          }
+        ]
+      };
+      this._send_rpc({
+        Type: facade,
+        Request: request,
+        Params: params
+      }, callback);
     }
 
   });
