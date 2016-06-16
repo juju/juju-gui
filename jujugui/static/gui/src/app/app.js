@@ -1124,7 +1124,7 @@ YUI.add('juju-gui', function(Y) {
             displayPlans={utils.compareSemver(
               this.get('jujuCoreVersion'), '2') > -1}
             modelUUID={this.get('jujuEnvUUID')}
-            showActivePlan={this.plans.showActivePlan}
+            showActivePlan={this.plans.showActivePlan.bind(this.plans)}
             setCharm={this.env.setCharm.bind(this.env)}
             getCharm={this.env.get_charm.bind(this.env)}
             getUnitStatusCounts={utils.getUnitStatusCounts}
