@@ -108,6 +108,7 @@ describe('UnitList', () => {
         ref={refs[0]}
         label={units[0].displayName}
         action={children[1].props.action}
+        extraInfo={undefined}
         id="mysql/0"
         whenChanged={instance._updateActiveCount} />,
       <juju.components.CheckListItem
@@ -116,6 +117,7 @@ describe('UnitList', () => {
         ref={refs[1]}
         label={units[1].displayName}
         action={children[2].props.action}
+        extraInfo={undefined}
         id="mysql/1"
         whenChanged={instance._updateActiveCount} />
     ]);
@@ -150,12 +152,12 @@ describe('UnitList', () => {
     ];
     assert.deepEqual(children, [
       <juju.components.CheckListItem
+        aside="1"
         disabled={false}
         ref="select-all-0"
         key="select-all-0"
-        className="select-all"
         label="hook failed: install"
-        aside="1"
+        className="select-all"
         whenChanged={children[0].props.whenChanged}/>,
       <juju.components.CheckListItem
         disabled={false}
@@ -163,15 +165,16 @@ describe('UnitList', () => {
         ref={refs[0]}
         label={units[0].displayName}
         action={children[1].props.action}
+        extraInfo={undefined}
         id="mysql/0"
         whenChanged={instance._updateActiveCount} />,
       <juju.components.CheckListItem
+        aside="1"
         disabled={false}
         ref="select-all-1"
         key="select-all-1"
-        className="select-all"
         label="hook failed: config-changed"
-        aside="1"
+        className="select-all"
         whenChanged={children[2].props.whenChanged}/>,
       <juju.components.CheckListItem
         disabled={false}
@@ -179,6 +182,7 @@ describe('UnitList', () => {
         ref={refs[1]}
         label={units[1].displayName}
         action={children[3].props.action}
+        extraInfo={undefined}
         id="mysql/1"
         whenChanged={instance._updateActiveCount} />
     ]);
@@ -192,7 +196,7 @@ describe('UnitList', () => {
         label="label"
         whenChanged={sinon.stub()} />);
     var output = shallowRenderer.getRenderOutput();
-    assert.equal(output.props.children.props.children[2].props.children, '5');
+    assert.equal(output.props.children.props.children[3].props.children, '5');
   });
 
   it('renders the Scale Application action component', () => {
@@ -653,6 +657,7 @@ describe('UnitList', () => {
         ref={refs[0]}
         label={units[0].displayName}
         action={children[1].props.action}
+        extraInfo={undefined}
         id="mysql/0"
         whenChanged={instance._updateActiveCount} />,
       <juju.components.CheckListItem
@@ -661,6 +666,7 @@ describe('UnitList', () => {
         ref={refs[1]}
         label={units[1].displayName}
         action={children[2].props.action}
+        extraInfo={undefined}
         id="mysql/1"
         whenChanged={instance._updateActiveCount} />
     ]);

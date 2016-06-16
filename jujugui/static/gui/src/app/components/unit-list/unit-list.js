@@ -177,6 +177,7 @@ YUI.add('unit-list', function() {
             key={unit.displayName}
             ref={ref}
             label={unit.displayName}
+            extraInfo={unit.workloadStatusMessage}
             action={this._unitItemAction}
             id={unit.id}
             whenChanged={this._updateActiveCount} />);

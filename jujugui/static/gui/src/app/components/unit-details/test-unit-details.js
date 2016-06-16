@@ -59,19 +59,46 @@ describe('UnitDetails', function() {
         unit={fakeUnit} />);
 
     assert.deepEqual(output.props.children[0],
-      <div className='unit-details__properties'>
-        <p className='unit-details__property'>
-          Status: {fakeUnit.agent_state}
-        </p>
-        <p className='unit-details__property'>
-          IP address{''}: {"none"}
-        </p>
-        {undefined}
-        <p className='unit-details__property'>
-          Public address{''}: {"none"}
-        </p>
-        {undefined}
-      </div>);
+        <div className='unit-details__properties'>
+          <p className='unit-details__property'>
+            Status: {fakeUnit.agent_state} {undefined}
+          </p>
+          <p className='unit-details__property'>
+            IP address{''}: {"none"}
+          </p>
+          {undefined}
+          <p className='unit-details__property'>
+            Public address{''}: {"none"}
+          </p>
+          {undefined}
+        </div>);
+  });
+
+  it('renders workload status when provided', function() {
+    fakeUnit.workloadStatusMessage = 'Installing software';
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UnitDetails
+        acl={acl}
+        changeState={sinon.stub()}
+        destroyUnits={sinon.stub()}
+        service={service}
+        previousComponent='units'
+        unit={fakeUnit} />);
+
+    assert.deepEqual(output.props.children[0],
+        <div className='unit-details__properties'>
+          <p className='unit-details__property'>
+            Status: {fakeUnit.agent_state} {' - Installing software'}
+          </p>
+          <p className='unit-details__property'>
+            IP address{''}: {"none"}
+          </p>
+          {undefined}
+          <p className='unit-details__property'>
+            Public address{''}: {"none"}
+          </p>
+          {undefined}
+        </div>);
   });
 
   it('shows list of addresses correctly', function() {
@@ -96,7 +123,7 @@ describe('UnitDetails', function() {
     var expected = (
       <div className="unit-details__properties">
         <p className="unit-details__property">
-          Status: {fakeUnit.agent_state}
+          Status: {fakeUnit.agent_state} {undefined}
         </p>
         <p className="unit-details__property">
           IP address{'es'}: {null}
@@ -162,7 +189,7 @@ describe('UnitDetails', function() {
     var expected = (
       <div className="unit-details__properties">
         <p className="unit-details__property">
-          Status: {fakeUnit.agent_state}
+          Status: {fakeUnit.agent_state} {undefined}
         </p>
         <p className="unit-details__property">
           IP address{'es'}: {null}
@@ -219,7 +246,7 @@ describe('UnitDetails', function() {
     assert.deepEqual(output.props.children[0],
       <div className='unit-details__properties'>
         <p className='unit-details__property'>
-          Status: {fakeUnit.agent_state}
+          Status: {fakeUnit.agent_state} {undefined}
         </p>
         <p className='unit-details__property'>
           IP address{''}: {"none"}
@@ -253,7 +280,7 @@ describe('UnitDetails', function() {
     var expect = (
       <div className='unit-details__properties'>
         <p className='unit-details__property'>
-          Status: {fakeUnit.agent_state}
+          Status: {fakeUnit.agent_state} {undefined}
         </p>
         <p className='unit-details__property'>
           IP address{''}: {"none"}
@@ -299,7 +326,7 @@ describe('UnitDetails', function() {
     var expected = (
       <div className='unit-details__properties'>
         <p className='unit-details__property'>
-          Status: {fakeUnit.agent_state}
+          Status: {fakeUnit.agent_state} {undefined}
         </p>
         <p className="unit-details__property">
           IP address{'es'}: {null}
