@@ -439,6 +439,7 @@ describe('EntityContent', function() {
         <div className="inner-wrapper">
           <div className="twelve-col">
             <h2 className="entity-content__header">Plans</h2>
+            <div className="equal-height">
               {[<div className="entity-content__plan four-col"
                 key="plan10">
                 <div className="entity-content__plan-content">
@@ -481,6 +482,7 @@ describe('EntityContent', function() {
                   </p>
                 </div>
               </div>]}
+            </div>
           </div>
         </div>
       </div>);

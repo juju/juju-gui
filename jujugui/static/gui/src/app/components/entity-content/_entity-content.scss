@@ -34,10 +34,12 @@
     }
 
     &__plan {
+        box-sizing: border-box;
+        border: 1px solid $light-mid-grey;
+        border-radius: $border-radius;
+
         &-content {
             padding: 20px;
-            border: 1px solid $light-mid-grey;
-            border-radius: $border-radius;
         }
 
         &-price,

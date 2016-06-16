@@ -76,6 +76,7 @@ $asset-path: 'static/gui/build/app/assets/';
 // Include required modules from Vanilla
 @mixin required-vanilla-modules {
   @include vf-boxes;
+  @include vf-equal-heights;
   @include vf-reset;
   @include vf-helpers;
   @include vf-clearfix;

@@ -366,7 +366,9 @@ YUI.add('entity-content', function() {
           <div className="inner-wrapper">
             <div className="twelve-col">
               <h2 className="entity-content__header">Plans</h2>
-              {plansList}
+              <div className="equal-height">
+                {plansList}
+              </div>
             </div>
           </div>
         </div>);
