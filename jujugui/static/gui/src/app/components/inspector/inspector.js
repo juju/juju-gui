@@ -35,6 +35,7 @@ YUI.add('inspector-component', function() {
       destroyRelations: React.PropTypes.func.isRequired,
       destroyService: React.PropTypes.func.isRequired,
       destroyUnits: React.PropTypes.func.isRequired,
+      displayPlans: React.PropTypes.bool.isRequired,
       envResolved: React.PropTypes.func.isRequired,
       exposeService: React.PropTypes.func.isRequired,
       getAvailableVersions: React.PropTypes.func.isRequired,
@@ -44,10 +45,12 @@ YUI.add('inspector-component', function() {
       getUnitStatusCounts: React.PropTypes.func.isRequired,
       getYAMLConfig: React.PropTypes.func.isRequired,
       linkify: React.PropTypes.func.isRequired,
+      modelUUID: React.PropTypes.string.isRequired,
       service: React.PropTypes.object.isRequired,
       serviceRelations: React.PropTypes.array.isRequired,
       setCharm: React.PropTypes.func.isRequired,
       setConfig: React.PropTypes.func.isRequired,
+      showActivePlan: React.PropTypes.func.isRequired,
       unexposeService: React.PropTypes.func.isRequired,
       updateServiceUnitsDisplayname: React.PropTypes.func.isRequired
     },
@@ -127,12 +130,16 @@ YUI.add('inspector-component', function() {
             icon: service.get('icon'),
             component: <juju.components.ServiceOverview
               acl={this.props.acl}
-              destroyService={this.props.destroyService}
-              clearState={this.props.clearState}
               changeState={this.props.changeState}
+              charm={this.props.charm}
+              clearState={this.props.clearState}
+              destroyService={this.props.destroyService}
+              displayPlans={this.props.displayPlans}
               getUnitStatusCounts={this.props.getUnitStatusCounts}
+              modelUUID={this.props.modelUUID}
               service={service}
-              serviceRelations={this.props.serviceRelations} />,
+              serviceRelations={this.props.serviceRelations}
+              showActivePlan={this.props.showActivePlan} />,
             backState: {
               sectionA: {
                 component: component || 'applications',
@@ -339,6 +346,22 @@ YUI.add('inspector-component', function() {
                 setCharm={this.props.setCharm}
                 getCharm={this.props.getCharm}
                 getAvailableVersions={this.props.getAvailableVersions} />,
+            backState: {
+              sectionA: {
+                component: 'inspector',
+                metadata: {
+                  id: serviceId,
+                  activeComponent: undefined
+                }}}};
+          break;
+        case 'plans':
+          state.activeChild = {
+            title: 'Plans',
+            icon: '',
+            component: <juju.components.InspectorPlans
+              plans={currentPlan}
+              buttonLabel="Change Plan"
+              buttonAction=""/>,
             backState: {
               sectionA: {
                 component: 'inspector',
