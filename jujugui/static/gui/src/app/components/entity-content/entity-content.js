@@ -346,10 +346,10 @@ YUI.add('entity-content', function() {
           {'last-col': (i + 1) % 3 === 0});
         plansList.push(
           <div className={classes}
-            key={plan.plan}>
+            key={plan.url + i}>
             <div className="entity-content__plan-content">
               <h3 className="entity-content__plan-title">
-                {plan.plan}
+                {plan.url}
               </h3>
               <div className="entity-content__plan-price">
                 {plan.price}
@@ -361,8 +361,8 @@ YUI.add('entity-content', function() {
           </div>);
       });
       return (
-        <div id="configuration"
-          className="row entity-content__configuration">
+        <div id="plans"
+          className="row entity-content__plans">
           <div className="inner-wrapper">
             <div className="twelve-col">
               <h2 className="entity-content__header">Plans</h2>

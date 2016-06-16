@@ -123,7 +123,7 @@ describe('EntityHeader', function() {
 
   it('can display plans', function() {
     var plans = [{
-      plan: 'test'
+      url: 'test'
     }];
     var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityHeader
@@ -140,8 +140,8 @@ describe('EntityHeader', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <select className="entity-header__plan">
-        <option>Choose a plan</option>
-        {[<option key="test"
+        <option key="default">Choose a plan</option>
+        {[<option key="test0"
           value="test">
           test
         </option>]}
@@ -167,7 +167,7 @@ describe('EntityHeader', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <select className="entity-header__plan">
-        <option>Loading plans...</option>
+        <option key="default">Loading plans...</option>
         {null}
       </select>);
     assert.deepEqual(

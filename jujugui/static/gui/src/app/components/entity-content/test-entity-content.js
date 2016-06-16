@@ -404,15 +404,15 @@ describe('EntityContent', function() {
 
   it('can display plans', function() {
     var plans = [{
-      plan: 'plan1',
+      url: 'plan1',
       price: 'price1',
       description: 'description1'
     }, {
-      plan: 'plan2',
+      url: 'plan2',
       price: 'price2',
       description: 'description2'
     }, {
-      plan: 'plan3',
+      url: 'plan3',
       price: 'price3',
       description: 'description3'
     }];
@@ -434,13 +434,13 @@ describe('EntityContent', function() {
         renderMarkdown={renderMarkdown} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <div id="configuration"
-        className="row entity-content__configuration">
+      <div id="plans"
+        className="row entity-content__plans">
         <div className="inner-wrapper">
           <div className="twelve-col">
             <h2 className="entity-content__header">Plans</h2>
               {[<div className="entity-content__plan four-col"
-                key="plan1">
+                key="plan10">
                 <div className="entity-content__plan-content">
                   <h3 className="entity-content__plan-title">
                     plan1
@@ -454,7 +454,7 @@ describe('EntityContent', function() {
                 </div>
               </div>,
               <div className="entity-content__plan four-col"
-                key="plan2">
+                key="plan21">
                 <div className="entity-content__plan-content">
                   <h3 className="entity-content__plan-title">
                     plan2
@@ -468,7 +468,7 @@ describe('EntityContent', function() {
                 </div>
               </div>,
               <div className="entity-content__plan four-col last-col"
-                key="plan3">
+                key="plan32">
                 <div className="entity-content__plan-content">
                   <h3 className="entity-content__plan-title">
                     plan3

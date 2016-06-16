@@ -197,17 +197,17 @@ YUI.add('entity-header', function() {
       if (plans && plans.length > 0) {
         defaultMessage = 'Choose a plan';
         options = [];
-        plans.forEach(plan => {
+        plans.forEach((plan, i) => {
           options.push(
-            <option key={plan.plan}
-              value={plan.plan}>
-              {plan.plan}
+            <option key={plan.url + i}
+              value={plan.url}>
+              {plan.url}
             </option>);
         });
       }
       return (
         <select className="entity-header__plan">
-          <option>{defaultMessage}</option>
+          <option key="default">{defaultMessage}</option>
           {options}
         </select>);
     },
