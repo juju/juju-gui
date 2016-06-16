@@ -405,15 +405,15 @@ describe('EntityContent', function() {
   it('can display plans', function() {
     var plans = [{
       url: 'plan1',
-      price: 'price1',
+      price: 'test/price1',
       description: 'description1'
     }, {
       url: 'plan2',
-      price: 'price2',
+      price: 'price2;',
       description: 'description2'
     }, {
       url: 'plan3',
-      price: 'price3',
+      price: 'test/price3;price3b',
       description: 'description3'
     }];
     mockEntity.set('options', null);
@@ -446,9 +446,17 @@ describe('EntityContent', function() {
                   <h3 className="entity-content__plan-title">
                     plan1
                   </h3>
-                  <div className="entity-content__plan-price">
-                    price1
-                  </div>
+                  <ul className="entity-content__plan-price">
+                    {[<li className="entity-content__plan-price-item"
+                      key="testprice10">
+                      <span className="entity-content__plan-price-amount">
+                        test
+                      </span>
+                      <span className="entity-content__plan-price-quantity">
+                        / {'price1'}
+                      </span>
+                    </li>]}
+                  </ul>
                   <p className="entity-content__plan-description">
                     description1
                   </p>
@@ -460,9 +468,15 @@ describe('EntityContent', function() {
                   <h3 className="entity-content__plan-title">
                     plan2
                   </h3>
-                  <div className="entity-content__plan-price">
-                    price2
-                  </div>
+                  <ul className="entity-content__plan-price">
+                    {[<li className="entity-content__plan-price-item"
+                      key="price20">
+                      <span className="entity-content__plan-price-amount">
+                        price2
+                      </span>
+                      {undefined}
+                    </li>]}
+                  </ul>
                   <p className="entity-content__plan-description">
                     description2
                   </p>
@@ -474,9 +488,24 @@ describe('EntityContent', function() {
                   <h3 className="entity-content__plan-title">
                     plan3
                   </h3>
-                  <div className="entity-content__plan-price">
-                    price3
-                  </div>
+                  <ul className="entity-content__plan-price">
+                    <li className="entity-content__plan-price-item"
+                      key="testprice30">
+                      <span className="entity-content__plan-price-amount">
+                        test
+                      </span>
+                      <span className="entity-content__plan-price-quantity">
+                        / {'price3'}
+                      </span>
+                    </li>
+                    <li className="entity-content__plan-price-item"
+                      key="price3b1">
+                      <span className="entity-content__plan-price-amount">
+                        price3b
+                      </span>
+                      {undefined}
+                    </li>
+                  </ul>
                   <p className="entity-content__plan-description">
                     description3
                   </p>

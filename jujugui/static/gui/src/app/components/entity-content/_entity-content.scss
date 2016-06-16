@@ -54,6 +54,29 @@
             border-style: solid;
             border-color: $light-mid-grey;
         }
+
+        &-price {
+            @extend %list-style;
+            margin: 20px 0;
+            padding: 20px 0;
+            border-width: 1px 0;
+            border-style: solid;
+            border-color: $light-mid-grey;
+
+            &-amount {
+                font-size: 2em;
+                color: $ubuntu-orange;
+            }
+
+            &-quantity {
+                font-size: 1.1em;
+                color: $warm-grey;
+            }
+
+            &-item:last-child {
+                margin-bottom: 0;
+            }
+        }
     }
 
     &__readme-content {

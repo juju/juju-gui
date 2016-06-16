@@ -324,6 +324,41 @@ YUI.add('entity-content', function() {
     },
 
     /**
+      Transform and generate the price list from a provided string of prices.
+
+      @method _generatePriceList
+      @param {String} prices The string of prices in the format
+        'price/quantity;price/quantity'.
+      @returns {Object} The price list JSX components.
+    */
+    _generatePriceList: function(prices) {
+      var prices = prices.split(';');
+      var priceList = [];
+      prices.forEach((price, i) => {
+        if (price === '') {
+          return;
+        }
+        var [amount, quantity] = price.split('/');
+        var quantityItem;
+        if (quantity) {
+          quantityItem = (
+          <span className="entity-content__plan-price-quantity">
+            / {quantity}
+          </span>);
+        }
+        priceList.push(
+          <li className="entity-content__plan-price-item"
+            key={amount + (quantity || '') + i}>
+            <span className="entity-content__plan-price-amount">
+              {amount}
+            </span>
+            {quantityItem}
+          </li>);
+      });
+      return priceList;
+    },
+
+    /**
       Generate the list of plans.
 
       @method _generatePlans
@@ -344,6 +379,7 @@ YUI.add('entity-content', function() {
           'entity-content__plan',
           'four-col',
           {'last-col': (i + 1) % 3 === 0});
+
         plansList.push(
           <div className={classes}
             key={plan.url + i}>
@@ -351,9 +387,9 @@ YUI.add('entity-content', function() {
               <h3 className="entity-content__plan-title">
                 {plan.url}
               </h3>
-              <div className="entity-content__plan-price">
-                {plan.price}
-              </div>
+              <ul className="entity-content__plan-price">
+                {this._generatePriceList(plan.price)}
+              </ul>
               <p className="entity-content__plan-description">
                 {plan.description}
               </p>
