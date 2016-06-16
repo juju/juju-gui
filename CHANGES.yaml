@@ -1,3 +1,17 @@
+- 2.1.7:
+    - Provide API clients for Romulus services in the app object.
+    - Last user-facing clean up on text for svc2app
+    - Update the unit list item to be a reusable component.
+    - Implement initial API calls for plans and terms.
+    - Change services to applications in bundle export for Juju 2
+    - Split jujulib. Also
+    - Rename jem to jimm.
+    - Fixes and improvements to property handling
+    - User facing s/service/application/g.
+    - Implement the "make uitest" target.
+    - Services are now called applications.
+    - Remove the nested YUI node_modules folder that bloats the dist since the npm3 update
+    - Tweak release docs
 - 2.1.6:
     - Moved model creation into the User Profile.
     - Bundle export files now have the model name and date.
