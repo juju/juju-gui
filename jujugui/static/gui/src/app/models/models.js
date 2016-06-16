@@ -933,6 +933,11 @@ YUI.add('juju-models', function(Y) {
         agent_state: {},
         agent_state_info: {},
         agent_state_data: {},
+        // workloadStatusMessage is a string including the workload status
+        // message, like "installing charm software" or whatever is set using
+        // status-set in charms. This attribute is only available when using
+        // Juju 2.
+        workloadStatusMessage: {},
         // This is empty if there are no relation errors, and otherwise
         // shows only the relations with errors.  The data structure in that
         // case is a hash mapping a local relation name to a list of services

@@ -64,6 +64,7 @@ describe('Juju delta handlers', function() {
         assert.strictEqual(unit.machine, '1');
         assert.strictEqual(unit.agent_state, 'pending');
         assert.strictEqual(unit.agent_state_info, 'info');
+        assert.strictEqual(unit.workloadStatusMessage, '');
         assert.strictEqual(unit.public_address, 'example.com');
         assert.strictEqual(unit.private_address, '10.0.0.1');
         assert.strictEqual(unit.subordinate, false, 'subordinate');
@@ -186,7 +187,7 @@ describe('Juju delta handlers', function() {
             Message: 'waiting for machine',
             Data: {}
           },
-          WorkloadStatus: {},
+          WorkloadStatus: {Message: 'exterminating'},
           PublicAddress: 'example.com',
           PrivateAddress: '10.0.0.1',
           Subordinate: false,
@@ -199,6 +200,7 @@ describe('Juju delta handlers', function() {
         assert.strictEqual(unit.machine, '1');
         assert.strictEqual(unit.agent_state, 'pending');
         assert.strictEqual(unit.agent_state_info, 'waiting for machine');
+        assert.strictEqual(unit.workloadStatusMessage, 'exterminating');
         assert.strictEqual(unit.public_address, 'example.com');
         assert.strictEqual(unit.private_address, '10.0.0.1');
         assert.strictEqual(unit.subordinate, false, 'subordinate');
@@ -252,11 +254,15 @@ describe('Juju delta handlers', function() {
         var unit = list.getById('django/2');
         if (!workloadInError) {
           assert.strictEqual(unit.agent_state, 'pending');
+          assert.strictEqual(
+            unit.workloadStatusMessage, 'installing charm software');
         } else {
           assert.equal(unit.agent_state, 'error');
           assert.equal(unit.agent_state_info, 'hook run error');
           assert.deepEqual(unit.agent_state_data, {foo: 'bar'});
+          assert.strictEqual(unit.workloadStatusMessage, 'hook run error');
         }
+
         assert.strictEqual(unit.public_address, 'example.com');
         assert.strictEqual(unit.private_address, '192.168.0.1');
         assert.strictEqual(unit.subordinate, true, 'subordinate');

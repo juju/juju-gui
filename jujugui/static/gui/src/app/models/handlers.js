@@ -249,7 +249,8 @@ YUI.add('juju-delta-handlers', function(Y) {
         // Since less recent versions of juju-core (<= 1.20.7) do not include
         // the Subordinate field in the mega-watcher for units, the following
         // attribute could be undefined.
-        subordinate: change.Subordinate
+        subordinate: change.Subordinate,
+        workloadStatusMessage: ''
       };
       // Juju 2.0 changes the delta structure by removing Status, StatusInfo,
       // and StatusData in favour of JujuStatus.Message and JujuStatus.Data.
@@ -258,6 +259,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       var jujuStatus = change.JujuStatus;
       if (jujuStatus) {
         var workloadStatus = change.WorkloadStatus;
+        unitData.workloadStatusMessage = workloadStatus.Message;
         if (workloadStatus.Current === 'error') {
           unitData.agent_state = workloadStatus.Current;
           unitData.agent_state_info = workloadStatus.Message;
