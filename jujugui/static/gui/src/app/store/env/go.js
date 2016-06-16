@@ -1434,6 +1434,38 @@ YUI.add('juju-env-go', function(Y) {
       }, handler);
     },
 
+    /**
+      Set metric credentials on the application with the given name.
+
+      @method setMetricCredentials
+      @param {String} applicationName the name of the application.
+      @param {String} macaroon the serialized macaroon resulting from
+        authorizing a plan for the application.
+      @param {Function} callback An optional callable that must be called once
+        the operation is performed. It will receive an error string if an error
+        occurred or null otherwise.
+    */
+    setMetricCredentials: function(applicationName, macaroon, callback) {
+      // Decorate the user supplied callback.
+      var handler = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by SetMetricCredentials API call:', data);
+          return;
+        }
+        userCallback(data.Error || null);
+      }.bind(this, callback);
+
+      // Send the API request.
+      this._send_rpc({
+        Type: 'Application',
+        Request: 'SetMetricCredentials',
+        Params: {Creds: [{
+          ApplicationName: applicationName,
+          MetricCredentials: macaroon
+        }]}
+      }, handler);
+    },
+
     /*
     Add/destroy machines support.
 
