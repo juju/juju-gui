@@ -2066,6 +2066,37 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(err, 'service "mysql" not found');
     });
 
+    it('sets metric credentials', function(done) {
+      // Perform the request.
+      env.setMetricCredentials('django', 'macaroon-content', function(err) {
+        assert.strictEqual(err, null);
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          Type: 'Application',
+          Version: 7,
+          Request: 'SetMetricCredentials',
+          Params: {Creds: [{
+            ApplicationName: 'django',
+            MetricCredentials: 'macaroon-content'
+          }]},
+          RequestId: 1
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({RequestId: 1, Response: {}});
+    });
+
+    it('handles failures while setting metric credentials', function(done) {
+      // Perform the request.
+      env.setMetricCredentials('rails', 'macaroon-content', function(err) {
+        assert.strictEqual(err, 'bad wolf');
+        done();
+      });
+      // Mimic response.
+      conn.msg({RequestId: 1, Error: 'bad wolf'});
+    });
+
     it('adds a machine', function() {
       env.addMachines([{}], null, {immediate: true});
       var expectedMsg = {
