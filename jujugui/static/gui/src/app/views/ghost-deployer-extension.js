@@ -43,11 +43,15 @@ YUI.add('ghost-deployer-extension', function(Y) {
 
       @method deployService
       @param {Y.Model} charm model to add to the charms database.
+      @param {Object} ghostAttributes The attributes used by the ghost.
+      @param {Array} plans The list of plans available for this service.
+      @param {String} activePlan The selected plan for this service.
     */
-    deployService: function(charm, ghostAttributes) {
+    deployService: function(charm, ghostAttributes, plans, activePlan) {
       // This flag is still required because it comes fully populated from the
       // browser but won't be fully populated when coming in on the delta.
       charm.loaded = true;
+      charm.set('plans', plans);
       var db = this.db;
       db.charms.add(charm);
       var ghostService = db.services.ghostService(charm);
@@ -60,6 +64,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
         config[k] = v['default'];
       });
       ghostService.set('config', config);
+      ghostService.set('activePlan', activePlan);
       var serviceName = ghostService.get('name');
       var charmId = charm.get('id');
       var constraints = {};

@@ -139,7 +139,8 @@ describe('EntityHeader', function() {
           scrollPosition={0} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <select className="entity-header__plan">
+      <select className="entity-header__plan"
+        ref="plan">
         <option key="default">Choose a plan</option>
         {[<option key="test0"
           value="test">
@@ -166,7 +167,8 @@ describe('EntityHeader', function() {
           scrollPosition={0} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <select className="entity-header__plan">
+      <select className="entity-header__plan"
+        ref="plan">
         <option key="default">Loading plans...</option>
         {null}
       </select>);
@@ -262,6 +264,35 @@ describe('EntityHeader', function() {
     deployAction.props.action();
     assert.equal(deployService.callCount, 1);
     assert.equal(deployService.args[0][0], mockEntity);
+  });
+
+  it('can include a plan when deploying a charm', function() {
+    var deployService = sinon.stub();
+    var changeState = sinon.stub();
+    var importBundleYAML = sinon.stub();
+    var getBundleYAML = sinon.stub();
+    var plans = [{url: 'test-plan'}];
+    var output = testUtils.renderIntoDocument(
+      <juju.components.EntityHeader
+        addNotification={sinon.stub()}
+        importBundleYAML={importBundleYAML}
+        getBundleYAML={getBundleYAML}
+        hasPlans={true}
+        deployService={deployService}
+        changeState={changeState}
+        entityModel={mockEntity}
+        plans={plans}
+        pluralize={sinon.stub()}
+        scrollPosition={0}/>);
+    var refs = output.refs;
+    var deployAction = refs.deployAction;
+    // Change the select value to a plan.
+    refs.plan.value = 'test-plan';
+    // Simulate a click.
+    deployAction.props.action();
+    assert.equal(deployService.callCount, 1);
+    assert.deepEqual(deployService.args[0][2], plans);
+    assert.deepEqual(deployService.args[0][3], plans[0]);
   });
 
   it('adds a bundle when the add button is clicked', function() {
