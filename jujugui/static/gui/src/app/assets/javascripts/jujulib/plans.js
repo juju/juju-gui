@@ -36,23 +36,24 @@ var module = module;
       Get a plan authorization to deploy a charm.
 
       @public authorizePlan
-      @params env-uuid {String} UUID of the environment the charm is being deployed on
-      @params charm-url {String} URL of the charm being deployed
-      @params service-name {String} name of the service
-      @params plan-url {String} url of the plan being deployed
-      @params budget {String} budget name for allocation
-      @params limit {String} numeric limit for allocation
+      @params uuid {String} The UUID of the model the charm is being deployed
+        on.
+      @params charmUrl {String} URL of the charm being deployed.
+      @params applicationName {String} name of the application.
+      @params planUrl {String} The URL of the plan being deployed.
+      @params budget {String} The budget name for allocation.
+      @params limit {String} The numeric limit for allocation.
       @params callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
         first parameter and an authorization object as its second.
     */
-    authorizePlan: function(envUUID, charmUrl, serviceName, planUrl, budget,
+    authorizePlan: function(uuid, charmUrl, applicationName, planUrl, budget,
         limit, callback) {
       var url = this.url + '/plan/authorize';
       var payload = {
-        'env-uuid': envUUID,
+        'env-uuid': uuid,
         'charm-url': charmUrl,
-        'service-name': serviceName,
+        'service-name': applicationName,
         'plan-url': planUrl,
         'budget': budget,
         'limit': limit

@@ -223,7 +223,7 @@ describe('jujulib plans service', function() {
     plans.authorizePlan(
       'envUUID',
       'charmUrl',
-      'serviceName',
+      'applicationName',
       'planUrl',
       'budget',
       'limit',
@@ -232,7 +232,7 @@ describe('jujulib plans service', function() {
         assert.equal(authz['look ma'], 'I\'m a macaroon');
         assert.equal(authz.params,
           '{"env-uuid":"envUUID","charm-url":"charmUrl",' +
-          '"service-name":"serviceName","plan-url":"planUrl",' +
+          '"service-name":"applicationName","plan-url":"planUrl",' +
           '"budget":"budget","limit":"limit"}');
         done();
       }

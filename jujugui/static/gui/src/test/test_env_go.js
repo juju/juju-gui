@@ -4499,15 +4499,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({RequestId: 1, Error: 'bad wolf'});
     });
 
-    it('handles setting metric credentials on an application',
-      function(done) {
-        env.setMetricCredentials('foo', 'authz', function(data) {
-          assert.equal(data.Error, null);
-          done();
-        });
-        conn.msg({RequestId: 1});
-      });
-
   });
 
 })();
