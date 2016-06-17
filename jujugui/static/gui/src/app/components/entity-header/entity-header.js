@@ -59,7 +59,21 @@ YUI.add('entity-header', function() {
       var entityModel = this.props.entityModel;
       var entity = entityModel.toEntity();
       if (entity.type === 'charm') {
-        this.props.deployService(entityModel);
+        var refs = this.refs;
+        var plans = this.props.plans;
+        var plan = refs.plan && refs.plan.value;
+        var activePlan;
+        if (plan) {
+          plans.some(item => {
+            if (item.url === plan) {
+              activePlan = item;
+              return true;
+            }
+          });
+        }
+        // The second param needs to be set as undefined not null as this is the
+        // format the method expects.
+        this.props.deployService(entityModel, undefined, plans, activePlan);
       } else {
         var id = entity.id.replace('cs:', '');
         this.props.getBundleYAML(id, this._getBundleYAMLCallback);
@@ -206,7 +220,8 @@ YUI.add('entity-header', function() {
         });
       }
       return (
-        <select className="entity-header__plan">
+        <select className="entity-header__plan"
+          ref="plan">
           <option key="default">{defaultMessage}</option>
           {options}
         </select>);
