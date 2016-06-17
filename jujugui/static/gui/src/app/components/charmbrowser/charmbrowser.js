@@ -28,11 +28,13 @@ YUI.add('charmbrowser-component', function() {
       changeState: React.PropTypes.func.isRequired,
       charmstoreSearch: React.PropTypes.func.isRequired,
       deployService: React.PropTypes.func.isRequired,
+      displayPlans: React.PropTypes.bool.isRequired,
       getBundleYAML: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       getEntity: React.PropTypes.func.isRequired,
       getFile: React.PropTypes.func.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
+      listPlansForCharm: React.PropTypes.func.isRequired,
       makeEntityModel: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
       series: React.PropTypes.object.isRequired,
@@ -156,9 +158,10 @@ YUI.add('charmbrowser-component', function() {
         case 'entity-details':
           activeChild = (
               <juju.components.EntityDetails
+                addNotification={this.props.addNotification}
                 apiUrl={this.props.apiUrl}
                 changeState={this.props.changeState}
-                addNotification={this.props.addNotification}
+                displayPlans={this.props.displayPlans}
                 importBundleYAML={this.props.importBundleYAML}
                 getBundleYAML={this.props.getBundleYAML}
                 getEntity={this.props.getEntity}
@@ -169,6 +172,7 @@ YUI.add('charmbrowser-component', function() {
                 renderMarkdown={this.props.renderMarkdown}
                 id={metadata.id}
                 pluralize={utils.pluralize}
+                listPlansForCharm={this.props.listPlansForCharm}
                 makeEntityModel={this.props.makeEntityModel} />
           );
           break;

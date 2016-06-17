@@ -1185,6 +1185,8 @@ YUI.add('juju-gui', function(Y) {
         <components.Charmbrowser
           apiUrl={charmstore.url}
           charmstoreSearch={charmstore.search.bind(charmstore)}
+          displayPlans={
+            views.utils.compareSemver(this.get('jujuCoreVersion'), '2') > -1}
           series={utils.getSeriesList()}
           importBundleYAML={this.bundleImporter.importBundleYAML.bind(
               this.bundleImporter)}
@@ -1192,6 +1194,7 @@ YUI.add('juju-gui', function(Y) {
           getEntity={charmstore.getEntity.bind(charmstore)}
           getFile={charmstore.getFile.bind(charmstore)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
+          listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
           renderMarkdown={marked.bind(this)}
           deployService={this.deployService.bind(this)}
           appState={state.get('current')}

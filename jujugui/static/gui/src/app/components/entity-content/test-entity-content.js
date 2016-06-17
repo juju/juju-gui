@@ -59,6 +59,7 @@ describe('EntityContent', function() {
           changeState={changeState}
           entityModel={mockEntity}
           getFile={getFile}
+          hasPlans={false}
           pluralize={pluralize}
           renderMarkdown={renderMarkdown} />, true);
     var option1 = {
@@ -114,6 +115,7 @@ describe('EntityContent', function() {
             </div>
           </div>
         </div>
+        {undefined}
         <div className="row">
           <div className="inner-wrapper">
             <div className="seven-col append-one">
@@ -170,6 +172,7 @@ describe('EntityContent', function() {
         changeState={changeState}
         entityModel={mockEntity}
         getFile={getFile}
+        hasPlans={false}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown} />, true);
     var instance = renderer.getMountedInstance();
@@ -213,6 +216,7 @@ describe('EntityContent', function() {
             </div>
           </div>
         </div>
+        {undefined}
         <div className="row">
           <div className="inner-wrapper">
             <div className="seven-col append-one">
@@ -254,10 +258,12 @@ describe('EntityContent', function() {
           changeState={changeState}
           entityModel={mockEntity}
           getFile={getFile}
+          hasPlans={false}
           pluralize={pluralize}
           renderMarkdown={renderMarkdown} />);
     var expected = (
       <div className="entity-content">
+        {undefined}
         {undefined}
         <div className="row">
           <div className="inner-wrapper">
@@ -387,11 +393,151 @@ describe('EntityContent', function() {
           changeState={changeState}
           entityModel={mockEntity}
           getFile={getFile}
+          hasPlans={false}
           pluralize={pluralize}
           renderMarkdown={renderMarkdown} />, true);
     var output = renderer.getRenderOutput();
-    var parent = output.props.children[1].props.children.props.children[1];
+    var parent = output.props.children[2].props.children.props.children[1];
     var relationsComponent = parent.props.children[0];
     assert.equal(relationsComponent, undefined);
+  });
+
+  it('can display plans', function() {
+    var plans = [{
+      url: 'plan1',
+      price: 'test/price1',
+      description: 'description1'
+    }, {
+      url: 'plan2',
+      price: 'price2;',
+      description: 'description2'
+    }, {
+      url: 'plan3',
+      price: 'test/price3;price3b',
+      description: 'description3'
+    }];
+    mockEntity.set('options', null);
+    var apiUrl = 'http://example.com';
+    var renderMarkdown = sinon.spy();
+    var getFile = sinon.spy();
+    var pluralize = sinon.spy();
+    var changeState = sinon.spy();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.EntityContent
+        apiUrl={apiUrl}
+        changeState={changeState}
+        entityModel={mockEntity}
+        getFile={getFile}
+        hasPlans={true}
+        plans={plans}
+        pluralize={pluralize}
+        renderMarkdown={renderMarkdown} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div id="plans"
+        className="row entity-content__plans">
+        <div className="inner-wrapper">
+          <div className="twelve-col">
+            <h2 className="entity-content__header">Plans</h2>
+            <div className="equal-height">
+              {[<div className="entity-content__plan four-col"
+                key="plan10">
+                <div className="entity-content__plan-content">
+                  <h3 className="entity-content__plan-title">
+                    plan1
+                  </h3>
+                  <ul className="entity-content__plan-price">
+                    {[<li className="entity-content__plan-price-item"
+                      key="testprice10">
+                      <span className="entity-content__plan-price-amount">
+                        test
+                      </span>
+                      <span className="entity-content__plan-price-quantity">
+                        / {'price1'}
+                      </span>
+                    </li>]}
+                  </ul>
+                  <p className="entity-content__plan-description">
+                    description1
+                  </p>
+                </div>
+              </div>,
+              <div className="entity-content__plan four-col"
+                key="plan21">
+                <div className="entity-content__plan-content">
+                  <h3 className="entity-content__plan-title">
+                    plan2
+                  </h3>
+                  <ul className="entity-content__plan-price">
+                    {[<li className="entity-content__plan-price-item"
+                      key="price20">
+                      <span className="entity-content__plan-price-amount">
+                        price2
+                      </span>
+                      {undefined}
+                    </li>]}
+                  </ul>
+                  <p className="entity-content__plan-description">
+                    description2
+                  </p>
+                </div>
+              </div>,
+              <div className="entity-content__plan four-col last-col"
+                key="plan32">
+                <div className="entity-content__plan-content">
+                  <h3 className="entity-content__plan-title">
+                    plan3
+                  </h3>
+                  <ul className="entity-content__plan-price">
+                    <li className="entity-content__plan-price-item"
+                      key="testprice30">
+                      <span className="entity-content__plan-price-amount">
+                        test
+                      </span>
+                      <span className="entity-content__plan-price-quantity">
+                        / {'price3'}
+                      </span>
+                    </li>
+                    <li className="entity-content__plan-price-item"
+                      key="price3b1">
+                      <span className="entity-content__plan-price-amount">
+                        price3b
+                      </span>
+                      {undefined}
+                    </li>
+                  </ul>
+                  <p className="entity-content__plan-description">
+                    description3
+                  </p>
+                </div>
+              </div>]}
+            </div>
+          </div>
+        </div>
+      </div>);
+    assert.deepEqual(output.props.children[1], expected);
+  });
+
+  it('can display loading plans', function() {
+    mockEntity.set('options', null);
+    var apiUrl = 'http://example.com';
+    var renderMarkdown = sinon.spy();
+    var getFile = sinon.spy();
+    var pluralize = sinon.spy();
+    var changeState = sinon.spy();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.EntityContent
+        apiUrl={apiUrl}
+        changeState={changeState}
+        entityModel={mockEntity}
+        getFile={getFile}
+        hasPlans={true}
+        plans={null}
+        pluralize={pluralize}
+        renderMarkdown={renderMarkdown} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.Spinner />);
+    assert.deepEqual(output.props.children[1], expected);
   });
 });

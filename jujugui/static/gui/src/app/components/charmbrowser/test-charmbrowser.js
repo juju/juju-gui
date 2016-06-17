@@ -61,11 +61,13 @@ describe('Charmbrowser', function() {
         changeState={changeState}
         charmstoreSearch={charmstoreSearch}
         deployService={sinon.stub()}
+        displayPlans={true}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
         getFile={sinon.stub()}
         importBundleYAML={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
         makeEntityModel={makeEntityModel}
         utils={utils}
         renderMarkdown={sinon.stub()}
@@ -115,11 +117,13 @@ describe('Charmbrowser', function() {
         changeState={changeState}
         charmstoreSearch={sinon.stub()}
         deployService={sinon.stub()}
+        displayPlans={true}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
         getFile={sinon.stub()}
         importBundleYAML={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
         makeEntityModel={sinon.stub()}
         utils={{}}
         renderMarkdown={sinon.stub()}
@@ -162,11 +166,13 @@ describe('Charmbrowser', function() {
         changeState={changeState}
         charmstoreSearch={charmstoreSearch}
         deployService={sinon.stub()}
+        displayPlans={true}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
         getFile={sinon.stub()}
         importBundleYAML={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
         makeEntityModel={makeEntityModel}
         utils={utils}
         renderMarkdown={sinon.stub()}
@@ -211,6 +217,7 @@ describe('Charmbrowser', function() {
     var getFile = sinon.spy();
     var renderMarkdown = sinon.spy();
     var getDiagramURL = sinon.spy();
+    var listPlansForCharm = sinon.spy();
     var addNotification = sinon.spy();
     var utils = {
       pluralize: sinon.spy()
@@ -223,11 +230,13 @@ describe('Charmbrowser', function() {
         changeState={changeState}
         charmstoreSearch={sinon.stub()}
         deployService={deployService}
+        displayPlans={true}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
         getFile={getFile}
         importBundleYAML={importBundleYAML}
+        listPlansForCharm={listPlansForCharm}
         makeEntityModel={makeEntityModel}
         utils={utils}
         renderMarkdown={renderMarkdown}
@@ -249,11 +258,13 @@ describe('Charmbrowser', function() {
               changeState={changeState}
               getEntity={getEntity}
               scrollPosition={0}
+              listPlansForCharm={listPlansForCharm}
               makeEntityModel={makeEntityModel}
               getDiagramURL={getDiagramURL}
               getFile={getFile}
               renderMarkdown={renderMarkdown}
               deployService={deployService}
+              displayPlans={true}
               id={id}
               addNotification={addNotification}
               pluralize={utils.pluralize} />

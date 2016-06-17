@@ -48,6 +48,7 @@ describe('EntityHeader', function() {
           changeState={sinon.spy()}
           entityModel={mockEntity}
           getBundleYAML={sinon.stub()}
+          hasPlans={false}
           importBundleYAML={sinon.stub()}
           pluralize={sinon.stub()}
           scrollPosition={0} />, true);
@@ -103,9 +104,11 @@ describe('EntityHeader', function() {
                 </li>
               </ul>
             </div>
-            <div className="four-col last-col no-margin-bottom">
+            <div className={
+              'entity-header__right four-col last-col no-margin-bottom'}>
               <juju.components.CopyToClipboard
                 value="juju deploy cs:django" />
+              {undefined}
               <juju.components.GenericButton
                 ref="deployAction"
                 action={instance._handleDeployClick}
@@ -116,6 +119,60 @@ describe('EntityHeader', function() {
         </header>
       </div>);
     assert.deepEqual(output, expected);
+  });
+
+  it('can display plans', function() {
+    var plans = [{
+      url: 'test'
+    }];
+    var renderer = jsTestUtils.shallowRender(
+        <juju.components.EntityHeader
+          addNotification={sinon.stub()}
+          deployService={sinon.spy()}
+          changeState={sinon.spy()}
+          entityModel={mockEntity}
+          getBundleYAML={sinon.stub()}
+          hasPlans={true}
+          plans={plans}
+          importBundleYAML={sinon.stub()}
+          pluralize={sinon.stub()}
+          scrollPosition={0} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <select className="entity-header__plan">
+        <option key="default">Choose a plan</option>
+        {[<option key="test0"
+          value="test">
+          test
+        </option>]}
+      </select>);
+    assert.deepEqual(
+      output.props.children.props.children.props.children[1].props.children[1],
+      expected);
+  });
+
+  it('displays correctly when loading plans', function() {
+    var renderer = jsTestUtils.shallowRender(
+        <juju.components.EntityHeader
+          addNotification={sinon.stub()}
+          deployService={sinon.spy()}
+          changeState={sinon.spy()}
+          entityModel={mockEntity}
+          getBundleYAML={sinon.stub()}
+          hasPlans={true}
+          plans={null}
+          importBundleYAML={sinon.stub()}
+          pluralize={sinon.stub()}
+          scrollPosition={0} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <select className="entity-header__plan">
+        <option key="default">Loading plans...</option>
+        {null}
+      </select>);
+    assert.deepEqual(
+      output.props.children.props.children.props.children[1].props.children[1],
+      expected);
   });
 
   it('displays the counts for a bundle', function() {
@@ -131,6 +188,7 @@ describe('EntityHeader', function() {
           changeState={sinon.spy()}
           entityModel={entity}
           getBundleYAML={sinon.stub()}
+          hasPlans={false}
           importBundleYAML={sinon.stub()}
           pluralize={pluralize}
           scrollPosition={0} />, true);
@@ -156,6 +214,7 @@ describe('EntityHeader', function() {
         changeState={sinon.spy()}
         deployService={sinon.spy()}
         getBundleYAML={sinon.stub()}
+        hasPlans={false}
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0} />);
@@ -173,6 +232,7 @@ describe('EntityHeader', function() {
         changeState={sinon.spy()}
         deployService={sinon.spy()}
         getBundleYAML={sinon.stub()}
+        hasPlans={false}
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0} />);
@@ -191,6 +251,7 @@ describe('EntityHeader', function() {
         addNotification={sinon.stub()}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
+        hasPlans={false}
         deployService={deployService}
         changeState={changeState}
         entityModel={mockEntity}
@@ -214,6 +275,7 @@ describe('EntityHeader', function() {
         addNotification={sinon.stub()}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
+        hasPlans={false}
         deployService={deployService}
         changeState={changeState}
         entityModel={entity}
@@ -239,6 +301,7 @@ describe('EntityHeader', function() {
       <juju.components.EntityHeader
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
+        hasPlans={false}
         deployService={deployService}
         changeState={changeState}
         entityModel={entity}
@@ -264,6 +327,7 @@ describe('EntityHeader', function() {
       <juju.components.EntityHeader
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
+        hasPlans={false}
         deployService={deployService}
         changeState={changeState}
         entityModel={entity}

@@ -29,12 +29,14 @@ YUI.add('entity-details', function() {
       apiUrl: React.PropTypes.string.isRequired,
       changeState: React.PropTypes.func.isRequired,
       deployService: React.PropTypes.func.isRequired,
+      displayPlans: React.PropTypes.bool.isRequired,
       getBundleYAML: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       getEntity: React.PropTypes.func.isRequired,
       getFile: React.PropTypes.func.isRequired,
       id: React.PropTypes.string.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
+      listPlansForCharm: React.PropTypes.func.isRequired,
       makeEntityModel: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
@@ -79,8 +81,10 @@ YUI.add('entity-details', function() {
                   addNotification={this.props.addNotification}
                   importBundleYAML={this.props.importBundleYAML}
                   getBundleYAML={this.props.getBundleYAML}
+                  hasPlans={this.state.hasPlans}
                   changeState={this.props.changeState}
                   deployService={this.props.deployService}
+                  plans={this.state.plans}
                   pluralize={this.props.pluralize}
                   scrollPosition={this.props.scrollPosition} />
                 {this._generateDiagram(entityModel)}
@@ -88,8 +92,10 @@ YUI.add('entity-details', function() {
                   apiUrl={this.props.apiUrl}
                   changeState={this.props.changeState}
                   getFile={this.props.getFile}
+                  hasPlans={this.state.hasPlans}
                   renderMarkdown={this.props.renderMarkdown}
                   entityModel={entityModel}
+                  plans={this.state.plans}
                   pluralize={this.props.pluralize} />
               </div>
           );
@@ -139,14 +145,54 @@ YUI.add('entity-details', function() {
       if (data.length > 0) {
         var data = data[0];
         var model = this.props.makeEntityModel(data);
-        this.setState({entityModel: model});
-        this._changeActiveComponent('entity-details');
+        this.setState({entityModel: model}, () => {
+          this._changeActiveComponent('entity-details');
+          this._getPlans();
+        });
       }
+    },
+
+    /**
+      Get the list of plans available for a charm.
+
+      @method _getPlans
+    */
+    _getPlans: function() {
+      var entityModel = this.state.entityModel;
+      if (this.props.displayPlans &&
+        entityModel.get('entityType') === 'charm') {
+        var hasMetrics = entityModel.get('files').some((file) => {
+          return file === 'metrics.yaml';
+        });
+        if (hasMetrics) {
+          this.setState({hasPlans: true}, () => {
+            this.props.listPlansForCharm(
+              entityModel.get('id'), this._getPlansCallback);
+          });
+        }
+      }
+    },
+
+    /**
+      Callback for when plans for an entity have been successfully fetched.
+
+      @method _getPlansCallback
+      @param {String} error An error message, or null if there's no error.
+      @param {Array} models A list of the plans found.
+    */
+    _getPlansCallback: function(error, plans) {
+      if (error) {
+        console.error('Fetching plans failed.');
+        return;
+      }
+      this.setState({plans: plans});
     },
 
     getInitialState: function() {
       var state = this.generateState(this.props);
       state.entityModel = null;
+      state.hasPlans = false;
+      state.plans = null;
       return state;
     },
 

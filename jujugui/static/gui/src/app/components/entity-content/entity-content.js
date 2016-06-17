@@ -27,6 +27,8 @@ YUI.add('entity-content', function() {
       changeState: React.PropTypes.func.isRequired,
       entityModel: React.PropTypes.object.isRequired,
       getFile: React.PropTypes.func.isRequired,
+      hasPlans: React.PropTypes.bool.isRequired,
+      plans: React.PropTypes.array,
       pluralize: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
     },
@@ -321,11 +323,99 @@ YUI.add('entity-content', function() {
         </div>);
     },
 
+    /**
+      Transform and generate the price list from a provided string of prices.
+
+      @method _generatePriceList
+      @param {String} prices The string of prices in the format
+        'price/quantity;price/quantity'.
+      @returns {Object} The price list JSX components.
+    */
+    _generatePriceList: function(prices) {
+      var prices = prices.split(';');
+      var priceList = [];
+      prices.forEach((price, i) => {
+        if (price === '') {
+          return;
+        }
+        var [amount, quantity] = price.split('/');
+        var quantityItem;
+        if (quantity) {
+          quantityItem = (
+          <span className="entity-content__plan-price-quantity">
+            / {quantity}
+          </span>);
+        }
+        priceList.push(
+          <li className="entity-content__plan-price-item"
+            key={amount + (quantity || '') + i}>
+            <span className="entity-content__plan-price-amount">
+              {amount}
+            </span>
+            {quantityItem}
+          </li>);
+      });
+      return priceList;
+    },
+
+    /**
+      Generate the list of plans.
+
+      @method _generatePlans
+    */
+    _generatePlans: function() {
+      var props = this.props;
+      if (props.entityModel.get('entityType') !== 'charm' ||
+        !this.props.hasPlans) {
+        return;
+      }
+      var plans = props.plans;
+      if (!plans) {
+        return <juju.components.Spinner />;
+      }
+      var plansList = [];
+      plans.forEach((plan, i) => {
+        var classes = classNames(
+          'entity-content__plan',
+          'four-col',
+          {'last-col': (i + 1) % 3 === 0});
+
+        plansList.push(
+          <div className={classes}
+            key={plan.url + i}>
+            <div className="entity-content__plan-content">
+              <h3 className="entity-content__plan-title">
+                {plan.url}
+              </h3>
+              <ul className="entity-content__plan-price">
+                {this._generatePriceList(plan.price)}
+              </ul>
+              <p className="entity-content__plan-description">
+                {plan.description}
+              </p>
+            </div>
+          </div>);
+      });
+      return (
+        <div id="plans"
+          className="row entity-content__plans">
+          <div className="inner-wrapper">
+            <div className="twelve-col">
+              <h2 className="entity-content__header">Plans</h2>
+              <div className="equal-height">
+                {plansList}
+              </div>
+            </div>
+          </div>
+        </div>);
+    },
+
     render: function() {
       var entityModel = this.props.entityModel;
       return (
         <div className="entity-content">
           {this._generateDescription(entityModel)}
+          {this._generatePlans()}
           <div className="row">
             <div className="inner-wrapper">
               <div className="seven-col append-one">
@@ -359,6 +449,8 @@ YUI.add('entity-content', function() {
     'entity-content-relations',
     'entity-content-revisions',
     'entity-files',
-    'expanding-row'
+    'expanding-row',
+    'loading-spinner',
+    'svg-icon'
   ]
 });
