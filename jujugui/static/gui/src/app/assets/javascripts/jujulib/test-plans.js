@@ -204,4 +204,38 @@ describe('jujulib plans service', function() {
     });
   });
 
+  it('handles authorizing a plan', function(done) {
+    var bakery = {
+      sendPostRequest: function(path, params, success, failure) {
+        assert.equal(
+          path,
+          'http://1.2.3.4/' +
+          window.jujulib.plansAPIVersion +
+          '/plan/authorize');
+        var xhr = makeXHRRequest({
+          'look ma': 'I\'m a macaroon',
+          'params': params
+        });
+        success(xhr);
+      }
+    };
+    var plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.authorizePlan(
+      'envUUID',
+      'charmUrl',
+      'applicationName',
+      'planUrl',
+      'budget',
+      'limit',
+      function(error, authz) {
+        assert.equal(error, null);
+        assert.equal(authz['look ma'], 'I\'m a macaroon');
+        assert.equal(authz.params,
+          '{"env-uuid":"envUUID","charm-url":"charmUrl",' +
+          '"service-name":"applicationName","plan-url":"planUrl",' +
+          '"budget":"budget","limit":"limit"}');
+        done();
+      }
+    );
+  });
 });

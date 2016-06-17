@@ -47,6 +47,9 @@ var module = module;
       if (parse !== false) {
         try {
           data = JSON.parse(data);
+          if (data.error || data.Error) {
+            error = data.error || data.Error;
+          }
         } catch(e) {
           error = e;
         }
