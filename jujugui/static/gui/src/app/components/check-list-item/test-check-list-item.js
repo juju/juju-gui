@@ -33,6 +33,7 @@ describe('CheckListItem', () => {
         <juju.components.CheckListItem
           key="unique"
           checked={false}
+          disabled={false}
           label="a-label"
           id="apache/2"
           className="select-all"
@@ -45,6 +46,7 @@ describe('CheckListItem', () => {
           onClick={undefined} tabIndex="0" role="button">
           <label htmlFor="a-label-item">
             <input
+              disabled={false}
               type="checkbox"
               id="a-label-item"
               onClick={output.props.children.props.children[0].props.onClick}
@@ -65,6 +67,7 @@ describe('CheckListItem', () => {
         <juju.components.CheckListItem
           key="unique"
           checked={false}
+          disabled={false}
           label="a-label"
           action={sinon.stub()}
           id="apache/2"
@@ -78,6 +81,7 @@ describe('CheckListItem', () => {
         <juju.components.CheckListItem
           key="unique"
           checked={false}
+          disabled={false}
           label="a-label"
           action={sinon.stub()}
           id="apache/2"
@@ -93,6 +97,7 @@ describe('CheckListItem', () => {
       <juju.components.CheckListItem
         key="unique"
         checked={false}
+        disabled={false}
         whenChanged={whenChanged}
         label="a-label"
       />);
@@ -113,6 +118,7 @@ describe('CheckListItem', () => {
         <juju.components.CheckListItem
           key="unique"
           checked={false}
+          disabled={false}
           label="a-label"
           id="apache/2"
           action={actionStub}
@@ -121,5 +127,28 @@ describe('CheckListItem', () => {
     var checkbox = testUtils.findRenderedDOMComponentWithTag(output, 'input');
     testUtils.Simulate.click(checkbox);
     assert.equal(actionStub.callCount, 0);
+  });
+
+  it('can have a disabled checkbox', () => {
+    var output = jsTestUtils.shallowRender(
+        <juju.components.CheckListItem
+          key="unique"
+          checked={false}
+          disabled={true}
+          label="a-label"
+          id="apache/2"
+          className="select-all"
+          aside="3"
+          whenChanged={sinon.stub()}
+        />);
+    var expected = (
+      <input
+        disabled={true}
+        type="checkbox"
+        id="a-label-item"
+        onClick={output.props.children.props.children[0].props.onClick}
+        onChange={output.props.children.props.children[0].props.onChange}
+        checked={false} />);
+    assert.deepEqual(output.props.children.props.children[0], expected);
   });
 });
