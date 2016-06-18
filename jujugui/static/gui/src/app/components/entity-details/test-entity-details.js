@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('EntityDetails', function() {
-  var mockEntity;
+  var acl, mockEntity;
 
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
@@ -32,6 +32,7 @@ describe('EntityDetails', function() {
   });
 
   beforeEach(function() {
+    acl = {isReadOnly: sinon.stub().returns(false)};
     mockEntity = jsTestUtils.makeEntity();
   });
 
@@ -42,6 +43,7 @@ describe('EntityDetails', function() {
   it('can be rendered', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
+        acl={acl}
         addNotification={sinon.stub()}
         apiUrl="http://example.com/"
         id="test"
@@ -76,6 +78,7 @@ describe('EntityDetails', function() {
     var addNotification = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
+          acl={acl}
           apiUrl={apiUrl}
           changeState={changeState}
           deployService={deployService}
@@ -106,6 +109,7 @@ describe('EntityDetails', function() {
         tabIndex="0">
         <div>
           <juju.components.EntityHeader
+            acl={acl}
             entityModel={mockEntity}
             importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
@@ -144,6 +148,7 @@ describe('EntityDetails', function() {
     var renderMarkdown = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
+          acl={acl}
           addNotification={sinon.stub()}
           apiUrl="http://example.com/"
           changeState={changeState}
@@ -197,6 +202,7 @@ describe('EntityDetails', function() {
     var addNotification = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
+          acl={acl}
           apiUrl={apiUrl}
           changeState={changeState}
           deployService={deployService}
@@ -227,6 +233,7 @@ describe('EntityDetails', function() {
         tabIndex="0">
         <div>
           <juju.components.EntityHeader
+            acl={acl}
             entityModel={mockEntity}
             importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
@@ -267,6 +274,7 @@ describe('EntityDetails', function() {
     var renderMarkdown = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
+          acl={acl}
           addNotification={sinon.stub()}
           apiUrl="http://example.com/"
           changeState={changeState}
@@ -294,6 +302,7 @@ describe('EntityDetails', function() {
     var focus = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
+        acl={acl}
         addNotification={sinon.stub()}
         apiUrl="http://example.com/"
         id="test"
@@ -334,6 +343,7 @@ describe('EntityDetails', function() {
     var renderMarkdown = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
+        acl={acl}
         addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
@@ -364,6 +374,7 @@ describe('EntityDetails', function() {
         tabIndex="0">
         <div>
           <juju.components.EntityHeader
+            acl={acl}
             entityModel={mockEntity}
             importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
@@ -409,6 +420,7 @@ describe('EntityDetails', function() {
     var renderMarkdown = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
+        acl={acl}
         addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
@@ -439,6 +451,7 @@ describe('EntityDetails', function() {
         tabIndex="0">
         <div>
           <juju.components.EntityHeader
+            acl={acl}
             entityModel={mockEntity}
             importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
