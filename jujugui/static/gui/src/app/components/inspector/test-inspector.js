@@ -33,7 +33,7 @@ describe('Inspector', function() {
   });
 
   beforeEach(() => {
-    acl = {isReadOnly: false};
+    acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   it('displays the service overview for the "inspector" state', function() {

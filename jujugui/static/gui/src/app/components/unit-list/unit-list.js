@@ -162,6 +162,7 @@ YUI.add('unit-list', function() {
       var unitList = [
         <juju.components.CheckListItem
           aside={group.count + ''}
+          disabled={this.props.acl.isReadOnly()}
           key={key}
           ref={key}
           label={group.label}
@@ -172,6 +173,7 @@ YUI.add('unit-list', function() {
         var ref = 'CheckListItem-' + unit.id;
         unitList.push(
           <juju.components.CheckListItem
+            disabled={this.props.acl.isReadOnly()}
             key={unit.displayName}
             ref={ref}
             label={unit.displayName}
@@ -277,7 +279,8 @@ YUI.add('unit-list', function() {
         return;
       }
       var buttons = [];
-      var disabled = this.state.activeCount === 0;
+      var disabled = this.state.activeCount === 0 ||
+        this.props.acl.isReadOnly();
       if (this.props.unitStatus === 'error') {
         buttons.push({
           title: 'Resolve',

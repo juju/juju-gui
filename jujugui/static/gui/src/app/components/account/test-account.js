@@ -29,7 +29,7 @@ describe('Account', () => {
   });
 
   beforeEach(() => {
-    acl = {isReadOnly: false};
+    acl = {isReadOnly: sinon.stub().returns(false)};
     users = {
       charmstore: {
         user: 'test-owner',
@@ -263,7 +263,7 @@ describe('Account', () => {
   it('disables the buttons if in read only mode', () => {
     var listTemplates = sinon.stub().callsArgWith(
       0, null, [{path: 'spinach/test-model'}]);
-    acl.isReadOnly = true;
+    acl.isReadOnly = sinon.stub().returns(true);
     var component = jsTestUtils.shallowRender(
       <juju.components.Account
         acl={acl}

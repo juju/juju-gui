@@ -123,12 +123,12 @@ YUI.add('account', function() {
                   'three-col last-col no-margin-bottom'}>
                   <juju.components.GenericButton
                     action={this._handleDestroyCredential.bind(this, name)}
-                    disabled={this.props.acl.isReadOnly}
+                    disabled={this.props.acl.isReadOnly()}
                     type='inline-base'
                     title="Destroy" />
                   <juju.components.GenericButton
                     action={this._handleEditCredential}
-                    disabled={this.props.acl.isReadOnly}
+                    disabled={this.props.acl.isReadOnly()}
                     type='inline-neutral'
                     title="Edit" />
                 </div>

@@ -26,7 +26,7 @@ YUI.add('acl', function(Y) {
     or disable interactions in the GUI.
   */
   juju.acl = {
-    isReadOnly: () => false
+    isReadOnly: () => true
   };
 
 }, '0.1.0', {
