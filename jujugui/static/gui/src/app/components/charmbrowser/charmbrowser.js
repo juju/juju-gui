@@ -22,6 +22,7 @@ YUI.add('charmbrowser-component', function() {
 
   juju.components.Charmbrowser = React.createClass({
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
       apiUrl: React.PropTypes.string.isRequired,
       appState: React.PropTypes.object.isRequired,
@@ -158,6 +159,7 @@ YUI.add('charmbrowser-component', function() {
         case 'entity-details':
           activeChild = (
               <juju.components.EntityDetails
+                acl={this.props.acl}
                 addNotification={this.props.addNotification}
                 apiUrl={this.props.apiUrl}
                 changeState={this.props.changeState}
