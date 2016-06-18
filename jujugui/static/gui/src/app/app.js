@@ -1257,6 +1257,7 @@ YUI.add('juju-gui', function(Y) {
       var db = this.db;
       ReactDOM.render(
         <components.MachineView
+          acl={this.acl}
           addGhostAndEcsUnits={views.utils.addGhostAndEcsUnits.bind(
               this, this.db, this.env)}
           autoPlaceUnits={this._autoPlaceUnits.bind(this)}

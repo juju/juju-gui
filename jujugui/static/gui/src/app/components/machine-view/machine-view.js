@@ -22,6 +22,7 @@ YUI.add('machine-view', function() {
 
   var MachineView = React.createClass({
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       addGhostAndEcsUnits: React.PropTypes.func.isRequired,
       autoPlaceUnits: React.PropTypes.func.isRequired,
       createMachine: React.PropTypes.func.isRequired,
@@ -167,6 +168,7 @@ YUI.add('machine-view', function() {
         }
         components.push(
           <juju.components.MachineViewUnplacedUnit
+            acl={this.props.acl}
             createMachine={this.props.createMachine}
             icon={service.get('icon') || ''}
             key={unit.id}
@@ -181,6 +183,7 @@ YUI.add('machine-view', function() {
           <div className="machine-view__auto-place">
             <juju.components.GenericButton
               action={this.props.autoPlaceUnits}
+              disabled={this.props.acl.isReadOnly()}
               type="inline-neutral"
               title="Auto place" />
             or manually place
@@ -194,8 +197,8 @@ YUI.add('machine-view', function() {
     /**
       Display a list of unplaced units or onboarding.
 
-      @method _generateUnplacedUnits
-      @returns {Object} A unit list or onboarding.
+      @method _generateScaleUp
+      @returns {Object} The scale up component.
     */
     _generateScaleUp: function() {
       if (!this.state.showScaleUp) {
@@ -203,6 +206,7 @@ YUI.add('machine-view', function() {
       }
       return (
         <juju.components.MachineViewScaleUp
+          acl={this.props.acl}
           addGhostAndEcsUnits={this.props.addGhostAndEcsUnits}
           services={this.props.services}
           toggleScaleUp={this._toggleScaleUp} />);
@@ -262,6 +266,7 @@ YUI.add('machine-view', function() {
         var selectedMachine = this.state.selectedMachine;
         components.push(
           <juju.components.MachineViewMachine
+            acl={this.props.acl}
             destroyMachines={this.props.destroyMachines}
             dropUnit={this._dropUnit}
             key={machine.id}
@@ -312,6 +317,7 @@ YUI.add('machine-view', function() {
       containers.forEach((container) => {
         components.push(
           <juju.components.MachineViewMachine
+            acl={this.props.acl}
             destroyMachines={this.props.destroyMachines}
             dropUnit={this._dropUnit}
             key={container.id}
@@ -360,6 +366,7 @@ YUI.add('machine-view', function() {
       }
       return (
         <juju.components.MachineViewAddMachine
+          acl={this.props.acl}
           close={this._closeAddMachine}
           createMachine={this.props.createMachine}
           placeUnit={this.props.placeUnit}
@@ -408,6 +415,7 @@ YUI.add('machine-view', function() {
       }
       return (
         <juju.components.MachineViewAddMachine
+          acl={this.props.acl}
           close={this._closeAddContainer}
           createMachine={this.props.createMachine}
           jujuCoreVersion={this.props.jujuCoreVersion}
@@ -666,6 +674,7 @@ YUI.add('machine-view', function() {
         <div className="machine-view">
           <div className="machine-view__content">
             <juju.components.MachineViewColumn
+              acl={this.props.acl}
               droppable={false}
               title="New units"
               toggle={unplacedToggle}>
@@ -673,6 +682,7 @@ YUI.add('machine-view', function() {
               {this._generateUnplacedUnits()}
             </juju.components.MachineViewColumn>
             <juju.components.MachineViewColumn
+              acl={this.props.acl}
               activeMenuItem={this.state.machineSort}
               droppable={true}
               dropUnit={this._dropUnit}
@@ -683,6 +693,7 @@ YUI.add('machine-view', function() {
               {this._generateMachines()}
             </juju.components.MachineViewColumn>
             <juju.components.MachineViewColumn
+              acl={this.props.acl}
               activeMenuItem={this.state.containerSort}
               droppable={!!this.state.selectedMachine}
               dropUnit={this._dropUnit}

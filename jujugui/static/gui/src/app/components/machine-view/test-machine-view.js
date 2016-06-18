@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('MachineView', function() {
-  var machines;
+  var acl, machines;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -29,6 +29,7 @@ describe('MachineView', function() {
   });
 
   beforeEach(function() {
+    acl = {isReadOnly: sinon.stub().returns(false)};
     machines = {
       filterByParent: sinon.stub().returns([{
         displayName: 'new0',
@@ -59,6 +60,7 @@ describe('MachineView', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
         createMachine={sinon.stub()}
@@ -80,6 +82,7 @@ describe('MachineView', function() {
       <div className="machine-view">
         <div className="machine-view__content">
           <juju.components.MachineViewColumn
+            acl={acl}
             droppable={false}
             title="New units"
             toggle={{
@@ -95,6 +98,7 @@ describe('MachineView', function() {
             </div>
           </juju.components.MachineViewColumn>
           <juju.components.MachineViewColumn
+            acl={acl}
             activeMenuItem="name"
             droppable={true}
             dropUnit={instance._dropUnit}
@@ -153,6 +157,7 @@ describe('MachineView', function() {
             </div>
           </juju.components.MachineViewColumn>
           <juju.components.MachineViewColumn
+            acl={acl}
             activeMenuItem="name"
             droppable={false}
             dropUnit={instance._dropUnit}
@@ -195,6 +200,7 @@ describe('MachineView', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
         createMachine={sinon.stub()}
@@ -227,6 +233,7 @@ describe('MachineView', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
         createMachine={sinon.stub()}
@@ -260,6 +267,7 @@ describe('MachineView', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={addGhostAndEcsUnits}
         autoPlaceUnits={sinon.stub()}
         createMachine={sinon.stub()}
@@ -276,6 +284,7 @@ describe('MachineView', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.MachineViewScaleUp
+        acl={acl}
         addGhostAndEcsUnits={addGhostAndEcsUnits}
         services={services}
         toggleScaleUp={instance._toggleScaleUp} />);
@@ -311,6 +320,7 @@ describe('MachineView', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
         createMachine={createMachine}
@@ -327,6 +337,7 @@ describe('MachineView', function() {
     var expected = (
       <ul className="machine-view__list">
         <juju.components.MachineViewUnplacedUnit
+          acl={acl}
           createMachine={createMachine}
           icon="django.svg"
           key="django/0"
@@ -336,6 +347,7 @@ describe('MachineView', function() {
           selectMachine={instance.selectMachine}
           unit={unitList[0]} />
         <juju.components.MachineViewUnplacedUnit
+          acl={acl}
           createMachine={createMachine}
           icon="django.svg"
           key="django/1"
@@ -379,6 +391,7 @@ describe('MachineView', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
         createMachine={createMachine}
@@ -395,6 +408,7 @@ describe('MachineView', function() {
     var expected = (
       <ul className="machine-view__list">
         {[<juju.components.MachineViewUnplacedUnit
+          acl={acl}
           createMachine={createMachine}
           icon="django.svg"
           key="django/0"
@@ -433,6 +447,7 @@ describe('MachineView', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
         createMachine={sinon.stub()}
@@ -477,6 +492,7 @@ describe('MachineView', function() {
     };
     var component = renderIntoDocument(
       <juju.components.MachineView
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
         createMachine={sinon.stub()}
@@ -494,6 +510,53 @@ describe('MachineView', function() {
     assert.equal(autoPlaceUnits.callCount, 1);
   });
 
+  it('can disable auto place when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var autoPlaceUnits = sinon.stub();
+    var unitList = [{
+      id: 'django/0',
+      service: 'django'
+    }, {
+      id: 'django/1',
+      service: 'django'
+    }];
+    var units = {
+      filterByMachine: sinon.stub().returns(unitList)
+    };
+    var getStub = sinon.stub();
+    getStub.withArgs('icon').returns('django.svg');
+    getStub.withArgs('subordinate').returns(false);
+    var services = {
+      size: sinon.stub().returns(1),
+      getById: sinon.stub().returns({
+        get: getStub
+      })
+    };
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineView.DecoratedComponent
+        acl={acl}
+        addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={autoPlaceUnits}
+        createMachine={sinon.stub()}
+        destroyMachines={sinon.stub()}
+        environmentName="My Env"
+        jujuCoreVersion="2.4"
+        machines={machines}
+        placeUnit={sinon.stub()}
+        removeUnits={sinon.stub()}
+        services={services}
+        units={units} />);
+    var expected = (
+      <juju.components.GenericButton
+        action={autoPlaceUnits}
+        disabled={true}
+        type="inline-neutral"
+        title="Auto place" />);
+    assert.deepEqual(
+      output.props.children.props.children[0].props.children[1].props
+        .children[0].props.children[0], expected);
+  });
+
   it('can display onboarding if there are no machines', function() {
     var machines = {
       filterByParent: sinon.stub().returns([])
@@ -508,6 +571,7 @@ describe('MachineView', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
         createMachine={sinon.stub()}
@@ -566,6 +630,7 @@ describe('MachineView', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
         createMachine={sinon.stub()}
@@ -614,6 +679,7 @@ describe('MachineView', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
         createMachine={sinon.stub()}
@@ -630,6 +696,7 @@ describe('MachineView', function() {
     var expected = (
       <ul className="machine-view__list">
         <juju.components.MachineViewMachine
+          acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
           key="new0"
@@ -641,6 +708,7 @@ describe('MachineView', function() {
           type="machine"
           units={units} />
         <juju.components.MachineViewMachine
+          acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
           key="new1"
@@ -681,6 +749,7 @@ describe('MachineView', function() {
     var destroyMachines = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
         createMachine={sinon.stub()}
@@ -697,6 +766,7 @@ describe('MachineView', function() {
     var expected = (
       <ul className="machine-view__list">
         <juju.components.MachineViewMachine
+          acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
           key="new0"
@@ -711,6 +781,7 @@ describe('MachineView', function() {
           type="machine"
           units={units} />
         <juju.components.MachineViewMachine
+          acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
           key="new5"
@@ -756,6 +827,7 @@ describe('MachineView', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
         createMachine={sinon.stub()}
@@ -773,6 +845,7 @@ describe('MachineView', function() {
     var expected = (
       <ul className="machine-view__list">
         <juju.components.MachineViewMachine
+          acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
           key="new0"
@@ -784,6 +857,7 @@ describe('MachineView', function() {
           type="machine"
           units={units} />
         <juju.components.MachineViewMachine
+          acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
           key="new1"
@@ -816,6 +890,7 @@ describe('MachineView', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
         createMachine={createMachine}
@@ -832,6 +907,7 @@ describe('MachineView', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.MachineViewAddMachine
+        acl={acl}
         close={instance._closeAddMachine}
         createMachine={createMachine}
         placeUnit={placeUnit}
@@ -863,6 +939,7 @@ describe('MachineView', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
         createMachine={sinon.stub()}
@@ -912,6 +989,7 @@ describe('MachineView', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
         createMachine={sinon.stub()}
@@ -928,6 +1006,7 @@ describe('MachineView', function() {
     var expected = (
       <ul className="machine-view__list">
         <juju.components.MachineViewMachine
+          acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
           key="new0"
@@ -943,6 +1022,7 @@ describe('MachineView', function() {
           type="container"
           units={units} />
         <juju.components.MachineViewMachine
+          acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
           key="new0/lxc/0"
@@ -990,6 +1070,7 @@ describe('MachineView', function() {
     var removeUnits = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
         createMachine={sinon.stub()}
@@ -1006,6 +1087,7 @@ describe('MachineView', function() {
     var expected = (
       <ul className="machine-view__list">
         <juju.components.MachineViewMachine
+          acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
           key="new0"
@@ -1021,6 +1103,7 @@ describe('MachineView', function() {
           type="container"
           units={units} />
         <juju.components.MachineViewMachine
+          acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
           key="new0/lxc/0"
@@ -1033,6 +1116,7 @@ describe('MachineView', function() {
           type="container"
           units={units} />
         <juju.components.MachineViewMachine
+          acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
           key="new0/lxc/5"
@@ -1076,6 +1160,7 @@ describe('MachineView', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
         createMachine={createMachine}
@@ -1092,6 +1177,7 @@ describe('MachineView', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.MachineViewAddMachine
+        acl={acl}
         close={instance._closeAddContainer}
         createMachine={createMachine}
         jujuCoreVersion="2.4"
@@ -1129,6 +1215,7 @@ describe('MachineView', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
         createMachine={createMachine}
@@ -1146,6 +1233,7 @@ describe('MachineView', function() {
     var expected = (
       <ul className="machine-view__list">
         <juju.components.MachineViewMachine
+          acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
           key="new0"
@@ -1161,6 +1249,7 @@ describe('MachineView', function() {
           type="container"
           units={units} />
         <juju.components.MachineViewMachine
+          acl={acl}
           destroyMachines={destroyMachines}
           dropUnit={instance._dropUnit}
           key="new0/lxc/0"
@@ -1197,6 +1286,7 @@ describe('MachineView', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
         createMachine={createMachine}
@@ -1238,6 +1328,7 @@ describe('MachineView', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineView.DecoratedComponent
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         autoPlaceUnits={sinon.stub()}
         createMachine={createMachine}
