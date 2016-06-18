@@ -174,6 +174,7 @@ YUI.add('scale-service', function() {
           </div>
           <div className={this._generateClasses()} ref="constraintsContainer">
             <juju.components.Constraints
+              disabled={true}
               valuesChanged={this._updateConstraints} />
           </div>
           <juju.components.ButtonRow buttons={buttons} />

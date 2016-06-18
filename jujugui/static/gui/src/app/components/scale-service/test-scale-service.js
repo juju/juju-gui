@@ -232,6 +232,7 @@ describe('ScaleService', function() {
         <div className="scale-service--constraints hidden"
         ref="constraintsContainer">
           <juju.components.Constraints
+            disabled={true}
             valuesChanged={instance._updateConstraints} />
         </div>
         <juju.components.ButtonRow buttons={[{

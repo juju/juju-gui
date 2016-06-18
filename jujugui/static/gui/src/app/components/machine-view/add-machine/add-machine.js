@@ -22,6 +22,7 @@ YUI.add('machine-view-add-machine', function() {
 
   juju.components.MachineViewAddMachine = React.createClass({
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       close: React.PropTypes.func.isRequired,
       createMachine: React.PropTypes.func.isRequired,
       jujuCoreVersion: React.PropTypes.string,
@@ -119,6 +120,7 @@ YUI.add('machine-view-add-machine', function() {
             Define constraints
           </h4>
           <juju.components.Constraints
+            disabled={this.props.acl.isReadOnly()}
             valuesChanged={this._updateConstraints} />
         </div>);
     },
@@ -144,6 +146,7 @@ YUI.add('machine-view-add-machine', function() {
       return (
         <select className="add-machine__container"
           defaultValue=""
+          disabled={this.props.acl.isReadOnly()}
           key="containers"
           onChange={this._updateSelectedContainer}>
           <option disabled={true} value="">
@@ -174,6 +177,7 @@ YUI.add('machine-view-add-machine', function() {
       return (
         <select
           defaultValue=""
+          disabled={this.props.acl.isReadOnly()}
           key="machines"
           onChange={this._updateSelectedMachine}>
           <option disabled={true} value="">
@@ -261,8 +265,8 @@ YUI.add('machine-view-add-machine', function() {
         type: 'neutral',
         // In the add-container mode disable the Create button until a container
         // type has been selected.
-        disabled: !props.unit && !props.machines && props.parentId &&
-          !this.state.selectedContainer
+        disabled: this.props.acl.isReadOnly() || (!props.unit && !props.machines
+          && props.parentId && !this.state.selectedContainer)
       }];
       return (
         <juju.components.ButtonRow

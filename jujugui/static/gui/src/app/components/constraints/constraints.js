@@ -22,7 +22,14 @@ YUI.add('constraints', function() {
 
   juju.components.Constraints = React.createClass({
     propTypes: {
+      disabled: React.PropTypes.bool,
       valuesChanged: React.PropTypes.func.isRequired
+    },
+
+    getDefaultProps: () => {
+      return {
+        disabled: false
+      };
     },
 
     /**
@@ -51,6 +58,7 @@ YUI.add('constraints', function() {
     },
 
     render: function() {
+      var disabled = this.props.disabled;
       return (
         <div className="constraints">
           <label htmlFor="cpu-constraint"
@@ -59,6 +67,7 @@ YUI.add('constraints', function() {
           </label>
           <input type="text"
             className="constraints__input"
+            disabled={disabled}
             id="cpu-constraint"
             name="cpu-constraint"
             onChange={this._handleValueChanged}
@@ -69,6 +78,7 @@ YUI.add('constraints', function() {
           </label>
           <input type="text"
             className="constraints__input"
+            disabled={disabled}
             id="cores-constraint"
             name="cores-constraint"
             onChange={this._handleValueChanged}
@@ -79,6 +89,7 @@ YUI.add('constraints', function() {
           </label>
           <input type="text"
             className="constraints__input"
+            disabled={disabled}
             id="mem-constraint"
             name="mem-constraint"
             onChange={this._handleValueChanged}
@@ -89,6 +100,7 @@ YUI.add('constraints', function() {
           </label>
           <input type="text"
             className="constraints__input"
+            disabled={disabled}
             id="disk-constraint"
             name="disk-constraint"
             onChange={this._handleValueChanged}
