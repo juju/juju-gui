@@ -21,16 +21,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('MachineViewScaleUp', function() {
+  var acl, services;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('machine-view-scale-up', function() { done(); });
   });
 
-  it('can render', function() {
-    var addGhostAndEcsUnits = sinon.stub();
-    var toggleScaleUp = sinon.stub();
-    var services = {
+  beforeEach(() => {
+    acl = {isReadOnly: sinon.stub().returns(false)};
+    services = {
       toArray: sinon.stub().returns([{
         get: function (val) {
           switch (val) {
@@ -77,10 +77,26 @@ describe('MachineViewScaleUp', function() {
               break;
           }
         }
-      }])
+      }]),
+      getById: function (val) {
+        switch (val) {
+          case '111111$':
+            return '111111$';
+            break;
+          case '222222$':
+            return '222222$';
+            break;
+        }
+      }
     };
+  });
+
+  it('can render', function() {
+    var addGhostAndEcsUnits = sinon.stub();
+    var toggleScaleUp = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewScaleUp
+        acl={acl}
         addGhostAndEcsUnits={addGhostAndEcsUnits}
         services={services}
         toggleScaleUp={toggleScaleUp} />, true);
@@ -98,6 +114,7 @@ describe('MachineViewScaleUp', function() {
             django
             <input
               className="machine-view__scale-up-unit-input"
+              disabled={false}
               placeholder="units"
               ref="scaleUpUnit-111111$"
               type="number"
@@ -112,6 +129,7 @@ describe('MachineViewScaleUp', function() {
             mysql
             <input
               className="machine-view__scale-up-unit-input"
+              disabled={false}
               placeholder="units"
               ref="scaleUpUnit-222222$"
               type="number"
@@ -125,6 +143,68 @@ describe('MachineViewScaleUp', function() {
           type: 'base'
         }, {
           action: instance._handleAddUnits,
+          disabled: false,
+          title: 'Add units',
+          type: 'neutral'
+        }]} />
+      </form>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can disable controls when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var addGhostAndEcsUnits = sinon.stub();
+    var toggleScaleUp = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewScaleUp
+        acl={acl}
+        addGhostAndEcsUnits={addGhostAndEcsUnits}
+        services={services}
+        toggleScaleUp={toggleScaleUp} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <form className="machine-view__scale-up"
+        onSubmit={instance._handleAddUnits}>
+        <ul className="machine-view__scale-up-units">
+          <li className="machine-view__scale-up-unit"
+            key="111111$">
+            <img alt="django"
+              className="machine-view__scale-up-unit-icon"
+              src="data:image/gif;base64," />
+            django
+            <input
+              className="machine-view__scale-up-unit-input"
+              disabled={true}
+              placeholder="units"
+              ref="scaleUpUnit-111111$"
+              type="number"
+              min="0"
+              step="1" />
+          </li>
+          <li className="machine-view__scale-up-unit"
+            key="222222$">
+            <img alt="mysql"
+              className="machine-view__scale-up-unit-icon"
+              src="data:image/gif;base64," />
+            mysql
+            <input
+              className="machine-view__scale-up-unit-input"
+              disabled={true}
+              placeholder="units"
+              ref="scaleUpUnit-222222$"
+              type="number"
+              min="0"
+              step="1" />
+          </li>
+        </ul>
+        <juju.components.ButtonRow buttons={[{
+          action: toggleScaleUp,
+          title: 'Cancel',
+          type: 'base'
+        }, {
+          action: instance._handleAddUnits,
+          disabled: true,
           title: 'Add units',
           type: 'neutral'
         }]} />
@@ -135,49 +215,9 @@ describe('MachineViewScaleUp', function() {
   it('can scale services', function() {
     var addGhostAndEcsUnits = sinon.stub();
     var toggleScaleUp = sinon.stub();
-    var services = {
-      toArray: sinon.stub().returns([{
-        get: function (val) {
-          switch (val) {
-            case 'id':
-              return '111111$';
-              break;
-            case 'name':
-              return 'django';
-              break;
-            case 'icon':
-              return 'data:image/gif;base64,';
-              break;
-          }
-        }
-      }, {
-        get: function (val) {
-          switch (val) {
-            case 'id':
-              return '222222$';
-              break;
-            case 'name':
-              return 'mysql';
-              break;
-            case 'icon':
-              return 'data:image/gif;base64,';
-              break;
-          }
-        }
-      }]),
-      getById: function (val) {
-        switch (val) {
-          case '111111$':
-            return '111111$';
-            break;
-          case '222222$':
-            return '222222$';
-            break;
-        }
-      }
-    };
     var output = testUtils.renderIntoDocument(
       <juju.components.MachineViewScaleUp
+        acl={acl}
         addGhostAndEcsUnits={addGhostAndEcsUnits}
         services={services}
         toggleScaleUp={toggleScaleUp} />, true);
@@ -220,6 +260,7 @@ describe('MachineViewScaleUp', function() {
     };
     var output = testUtils.renderIntoDocument(
       <juju.components.MachineViewScaleUp
+        acl={acl}
         addGhostAndEcsUnits={addGhostAndEcsUnits}
         services={services}
         toggleScaleUp={toggleScaleUp} />, true);
