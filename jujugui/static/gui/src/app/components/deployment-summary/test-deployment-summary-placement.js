@@ -24,10 +24,15 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentSummaryPlacementClassic', function() {
+  var acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('deployment-summary-placement-classic', function() { done(); });
+  });
+
+  beforeEach(function() {
+    acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   it('can render the placement control', function() {
@@ -35,6 +40,7 @@ describe('DeploymentSummaryPlacementClassic', function() {
     var handlePlacementChange = sinon.stub();
     var handleViewMachinesClick = sinon.stub();
     var output = juju.components.DeploymentSummaryPlacementClassic({
+      acl: acl,
       autoPlace: false,
       handlePlacementChange: handlePlacementChange,
       handleViewMachinesClick: handleViewMachinesClick,
@@ -47,6 +53,7 @@ describe('DeploymentSummaryPlacementClassic', function() {
         <form>
           <input type="radio"
               defaultChecked={true}
+              disabled={false}
               onChange={handlePlacementChange}
               data-placement="unplaced"
               id="leave-unplaced" name="placement"
@@ -58,6 +65,7 @@ describe('DeploymentSummaryPlacementClassic', function() {
           </label>
           <input type="radio"
               defaultChecked={false}
+              disabled={false}
               onChange={handlePlacementChange}
               data-placement="placed"
               id="automatically-place" name="placement"
@@ -81,11 +89,54 @@ describe('DeploymentSummaryPlacementClassic', function() {
     var handlePlacementChange = sinon.stub();
     var handleViewMachinesClick = sinon.stub();
     var output = juju.components.DeploymentSummaryPlacementClassic({
+      acl: acl,
       autoPlace: false,
       handlePlacementChange: handlePlacementChange,
       handleViewMachinesClick: handleViewMachinesClick,
       getUnplacedUnitCount: getUnplacedUnitCount
     });
     assert.deepEqual(output, <div></div>);
+  });
+
+  it('can disable the controls when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var getUnplacedUnitCount = sinon.stub().returns(1);
+    var handlePlacementChange = sinon.stub();
+    var handleViewMachinesClick = sinon.stub();
+    var output = juju.components.DeploymentSummaryPlacementClassic({
+      acl: acl,
+      autoPlace: false,
+      handlePlacementChange: handlePlacementChange,
+      handleViewMachinesClick: handleViewMachinesClick,
+      getUnplacedUnitCount: getUnplacedUnitCount
+    });
+    var expected = (
+      <form>
+        <input type="radio"
+            defaultChecked={true}
+            disabled={true}
+            onChange={handlePlacementChange}
+            data-placement="unplaced"
+            id="leave-unplaced" name="placement"
+            className="deployment-summary-classic__placement-radio" />
+        {' '}
+        <label htmlFor="leave-unplaced"
+            className="deployment-summary-classic__placement-label">
+          Leave unplaced
+        </label>
+        <input type="radio"
+            defaultChecked={false}
+            disabled={true}
+            onChange={handlePlacementChange}
+            data-placement="placed"
+            id="automatically-place" name="placement"
+            className="deployment-summary-classic__placement-radio" />
+        {' '}
+        <label htmlFor="automatically-place"
+          className="deployment-summary-classic__placement-label">
+          Automatically place
+        </label>
+      </form>);
+      assert.deepEqual(output.props.children[6], expected);
   });
 });
