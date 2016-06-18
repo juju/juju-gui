@@ -22,6 +22,7 @@ YUI.add('import-export', function() {
 
   juju.components.ImportExport = React.createClass({
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       currentChangeSet: React.PropTypes.object.isRequired,
       exportEnvironmentFile: React.PropTypes.func.isRequired,
@@ -84,6 +85,7 @@ YUI.add('import-export', function() {
     },
 
     render: function() {
+      var isReadOnly = this.props.acl.isReadOnly();
       return (
         <div className={this._generateClasses()}>
           <span className="import-export__export link"
@@ -96,7 +98,7 @@ YUI.add('import-export', function() {
               size="16" />
           </span>
           <span className="import-export__import link"
-            onClick={this._handleImportClick}
+            onClick={!isReadOnly && this._handleImportClick}
             role="button"
             title="Import"
             tabIndex="0">
@@ -106,7 +108,7 @@ YUI.add('import-export', function() {
           </span>
           <input className="import-export__file"
             type="file"
-            onChange={this._handleImportFile}
+            onChange={!isReadOnly && this._handleImportFile}
             accept=".zip,.yaml,.yml"
             ref="file-input" />
         </div>
