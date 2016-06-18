@@ -27,7 +27,14 @@ YUI.add('string-config', function() {
         React.PropTypes.string,
         React.PropTypes.number
       ]),
+      disabled: React.PropTypes.bool,
       option: React.PropTypes.object.isRequired
+    },
+
+    getDefaultProps: () => {
+      return {
+        disabled: false
+      };
     },
 
     getInitialState: function() {
@@ -61,7 +68,7 @@ YUI.add('string-config', function() {
           <span>{this.props.option.key}{typeString}</span>
           <div
             className="string-config--value"
-            contentEditable="true"
+            contentEditable={!this.props.disabled}
             ref="editableInput"
             onInput={this._updateValue}
             onBlur={this._updateValue}

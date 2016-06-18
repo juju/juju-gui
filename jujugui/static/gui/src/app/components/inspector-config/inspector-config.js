@@ -22,6 +22,7 @@ YUI.add('inspector-config', function() {
 
   juju.components.Configuration = React.createClass({
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       charm: React.PropTypes.object.isRequired,
@@ -231,6 +232,7 @@ YUI.add('inspector-config', function() {
       var configElements = [];
 
       Object.keys(charmOptions).forEach((key) => {
+        var disabled = this.props.acl.isReadOnly();
         var option = charmOptions[key];
         option.key = key;
         option.description = this.props.linkify(option.description);
@@ -241,6 +243,7 @@ YUI.add('inspector-config', function() {
           var label = option.key + ':';
           configElements.push(
               <juju.components.BooleanConfig
+                disabled={disabled}
                 key={ref}
                 ref={ref}
                 option={option}
@@ -249,6 +252,7 @@ YUI.add('inspector-config', function() {
         } else {
           configElements.push(
               <juju.components.StringConfig
+                disabled={disabled}
                 key={ref}
                 ref={ref}
                 option={option}
@@ -271,6 +275,7 @@ YUI.add('inspector-config', function() {
       // to change the name.
       if (id.match(/\$$/)) {
         return (<juju.components.StringConfig
+          disabled={this.props.acl.isReadOnly()}
           ref="ServiceName"
           option={{
             key: 'Application name',
@@ -283,15 +288,19 @@ YUI.add('inspector-config', function() {
     },
 
     render: function() {
+      var disabled = this.props.acl.isReadOnly();
       var importButton = [{
+        disabled: disabled,
         title: 'Import config file',
         action: this._openFileDialog
       }];
       var actionButtons = [{
+        disabled: disabled,
         title: 'Cancel',
         type: 'base',
         action: this._showInspectorIndex
       }, {
+        disabled: disabled,
         title: 'Save changes',
         type: 'neutral',
         action: this._saveConfig
@@ -302,8 +311,12 @@ YUI.add('inspector-config', function() {
           <div className="inspector-config__fields">
             {this._customizeServiceName()}
             <form ref="file-form">
-              <input type="file" ref="file" className="hidden"
-                onChange={this._importConfig} />
+              <input
+                className="hidden"
+                disabled={disabled}
+                onChange={this._importConfig}
+                ref="file"
+                type="file"  />
             </form>
             <div className="inspector-config__config-file">
               <juju.components.ButtonRow buttons={importButton} />

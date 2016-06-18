@@ -46,6 +46,7 @@ describe('BooleanConfig', function() {
         <div className="boolean-config--title">Test</div>
         <div className="boolean-config--toggle">
           <input
+            disabled={false}
             type="checkbox"
             id={option.key}
             onClick={output.props.children[1].props.children[0].props.onClick}
@@ -82,6 +83,7 @@ describe('BooleanConfig', function() {
         <div className="boolean-config--title">Test</div>
         <div className="boolean-config--toggle">
           <input
+            disabled={false}
             type="checkbox"
             id={option.key}
             onClick={output.props.children[1].props.children[0].props.onClick}
@@ -116,6 +118,7 @@ describe('BooleanConfig', function() {
         <div className="boolean-config--title">Test</div>
         <div className="boolean-config--toggle">
           <input
+            disabled={false}
             type="checkbox"
             id={option.key}
             onClick={output.props.children[1].props.children[0].props.onClick}
@@ -150,6 +153,7 @@ describe('BooleanConfig', function() {
         <div className="boolean-config--title">Test</div>
         <div className="boolean-config--toggle">
           <input
+            disabled={false}
             type="checkbox"
             id={option.key}
             onClick={output.props.children[1].props.children[0].props.onClick}
@@ -207,5 +211,29 @@ describe('BooleanConfig', function() {
         label="Test"
         option={option} />);
     assert.isFalse(instance.state.value);
+  });
+
+  it('can be disabled', function() {
+    var option = {
+      key: 'testcheck',
+      description: 'it is a test config option',
+    };
+    var output = jsTestUtils.shallowRender(
+      <juju.components.BooleanConfig
+        config={true}
+        disabled={true}
+        label="Test"
+        option={option} />
+    );
+    var expected = (
+      <input
+        disabled={true}
+        type="checkbox"
+        id={option.key}
+        onClick={output.props.children[1].props.children[0].props.onClick}
+        onChange={output.props.children[1].props.children[0].props.onChange}
+        checked={true}
+        className="boolean-config--input" />);
+    assert.deepEqual(output.props.children[1].props.children[0], expected);
   });
 });
