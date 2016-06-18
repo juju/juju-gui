@@ -25,15 +25,21 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('ScaleService', function() {
+  var acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('scale-service', function() { done(); });
   });
 
+  beforeEach(() => {
+    acl = {isReadOnly: sinon.stub().returns(false)};
+  });
+
   it('hides the constraints on initial rendering', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.ScaleService
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         changeState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
@@ -48,6 +54,7 @@ describe('ScaleService', function() {
     // does not yet support simulating change events.
     var output = testUtils.renderIntoDocument(
       <juju.components.ScaleService
+        acl={acl}
         addGhostAndEcsUnits={sinon.stub()}
         changeState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
@@ -70,6 +77,7 @@ describe('ScaleService', function() {
     // does not yet support simulating change events.
     var output = testUtils.renderIntoDocument(
       <juju.components.ScaleService
+        acl={acl}
         serviceId="123"
         addGhostAndEcsUnits={addGhostStub}
         createMachinesPlaceUnits={createMachineStub}
@@ -137,6 +145,7 @@ describe('ScaleService', function() {
     // does not yet support simulating change events.
     var output = testUtils.renderIntoDocument(
       <juju.components.ScaleService
+        acl={acl}
         serviceId="123"
         addGhostAndEcsUnits={addGhostStub}
         createMachinesPlaceUnits={createMachineStub}
@@ -169,6 +178,69 @@ describe('ScaleService', function() {
         component: 'machine'
       }
     });
+  });
+
+  it('can disable the controls when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.ScaleService
+        acl={acl}
+        addGhostAndEcsUnits={sinon.stub()}
+        changeState={sinon.stub()}
+        createMachinesPlaceUnits={sinon.stub()}
+        serviceId="123" />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <form className="scale-service"
+        onSubmit={instance._scaleUpService}>
+        <div className="scale-service--units">
+          <input
+            className="scale-service--units__input"
+            disabled={true}
+            type="number"
+            min="0"
+            step="1"
+            autoComplete="off"
+            name="num-units"
+            onChange={instance._updateState}
+            ref="numUnitsInput"/>
+          <span className="scale-service--units__span">units</span>
+        </div>
+        <div className="scale-service--selector">
+          <div>
+            <input
+              className="scale-service--selector__radio"
+              disabled={true}
+              name="placement" type="radio"
+              onChange={instance._toggleConstraints}
+              id="auto-place-units"
+              ref="autoPlaceUnitsToggle" />
+            <label htmlFor="auto-place-units">1 unit per machine</label>
+          </div>
+          <div>
+            <input
+              className="scale-service--selector__radio"
+              disabled={true}
+              name="placement" type="radio"
+              onChange={instance._toggleConstraints}
+              defaultChecked={true}
+              id="manually-place-units" />
+            <label htmlFor="manually-place-units">Manually place</label>
+          </div>
+        </div>
+        <div className="scale-service--constraints hidden"
+        ref="constraintsContainer">
+          <juju.components.Constraints
+            valuesChanged={instance._updateConstraints} />
+        </div>
+        <juju.components.ButtonRow buttons={[{
+          disabled: true,
+          title: 'Confirm',
+          submit: true
+        }]} />
+      </form>);
+    assert.deepEqual(output, expected);
   });
 
 });

@@ -58,6 +58,9 @@ YUI.add('generic-button', function() {
       if (!this.props.disabled && this.props.action) {
         this.props.action();
       }
+      if (this.props.disabled && this.props.submit) {
+        e.preventDefault();
+      }
     },
 
     /**
