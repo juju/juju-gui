@@ -39,7 +39,7 @@ YUI.add('machine-view-machine-unit', function() {
       @param {Object} props The component props.
     */
     canDrag: function(props) {
-      return !props.unit.agent_state;
+      return !props.acl.isReadOnly() && !props.unit.agent_state;
     }
   };
 
@@ -60,6 +60,7 @@ YUI.add('machine-view-machine-unit', function() {
 
   var MachineViewMachineUnit = React.createClass({
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       canDrag: React.PropTypes.bool.isRequired,
       connectDragSource: React.PropTypes.func.isRequired,
       isDragging: React.PropTypes.bool.isRequired,
@@ -97,7 +98,8 @@ YUI.add('machine-view-machine-unit', function() {
       if (this.props.machineType === 'container') {
         var menuItems = [{
           label: 'Destroy',
-          action: this.props.removeUnit.bind(null, unit.id)
+          action: !this.props.acl.isReadOnly() &&
+            this.props.removeUnit.bind(null, unit.id)
         }];
         menu = (
           <juju.components.MoreMenu

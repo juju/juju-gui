@@ -43,7 +43,7 @@ YUI.add('machine-view-machine', function() {
       @param {Object} monitor A DropTargetMonitor.
     */
     canDrop: function (props, monitor) {
-      return props.acl.isReadOnly() && !props.machine.deleted;
+      return !props.acl.isReadOnly() && !props.machine.deleted;
     }
   };
 
