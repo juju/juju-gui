@@ -23,6 +23,7 @@ YUI.add('inspector-expose', function() {
   juju.components.InspectorExpose = React.createClass({
 
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       exposeService: React.PropTypes.func.isRequired,
@@ -128,6 +129,7 @@ YUI.add('inspector-expose', function() {
         <div className="inspector-expose">
             <div className="inspector-expose__control">
               <juju.components.BooleanConfig
+                disabled={this.props.acl.isReadOnly()}
                 key={toggle.key}
                 ref={toggle.key}
                 option={toggle}

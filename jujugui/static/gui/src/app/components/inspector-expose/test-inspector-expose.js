@@ -24,10 +24,15 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('InspectorExpose', function() {
+  var acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('inspector-expose', function() { done(); });
+  });
+
+  beforeEach(() => {
+    acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   it('can render correctly if not exposed', function() {
@@ -38,6 +43,7 @@ describe('InspectorExpose', function() {
     var toggle = {key: 'expose-toggle'};
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorExpose
+          acl={acl}
           addNotification={sinon.stub()}
           changeState={sinon.stub()}
           exposeService={sinon.stub()}
@@ -49,6 +55,7 @@ describe('InspectorExpose', function() {
         <div className="inspector-expose">
             <div className="inspector-expose__control">
               <juju.components.BooleanConfig
+                disabled={false}
                 key={toggle.key}
                 ref={toggle.key}
                 option={toggle}
@@ -77,6 +84,7 @@ describe('InspectorExpose', function() {
     var units = {toArray: sinon.stub().returns(unitList)};
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorExpose
+          acl={acl}
           addNotification={sinon.stub()}
           changeState={sinon.stub()}
           exposeService={sinon.stub()}
@@ -88,6 +96,7 @@ describe('InspectorExpose', function() {
         <div className="inspector-expose">
             <div className="inspector-expose__control">
               <juju.components.BooleanConfig
+                disabled={false}
                 key={toggle.key}
                 ref={toggle.key}
                 option={toggle}
@@ -122,6 +131,7 @@ describe('InspectorExpose', function() {
     var units = {toArray: sinon.stub().returns(unitList)};
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorExpose
+          acl={acl}
           addNotification={sinon.stub()}
           changeState={changeState}
           exposeService={sinon.stub()}
@@ -155,6 +165,7 @@ describe('InspectorExpose', function() {
     var service = {get: getStub};
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorExpose
+          acl={acl}
           addNotification={sinon.stub()}
           changeState={changeState}
           exposeService={exposeService}
@@ -177,6 +188,7 @@ describe('InspectorExpose', function() {
     var units = {toArray: sinon.stub().returns(unitList)};
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorExpose
+          acl={acl}
           addNotification={sinon.stub()}
           changeState={changeState}
           exposeService={sinon.stub()}
@@ -198,6 +210,7 @@ describe('InspectorExpose', function() {
     var service = {get: getStub};
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorExpose
+          acl={acl}
           addNotification={addNotification}
           changeState={changeState}
           exposeService={exposeService}
@@ -207,5 +220,34 @@ describe('InspectorExpose', function() {
     output.props.children[0].props.children.props.onChange();
     assert.equal(addNotification.callCount, 1);
     assert.equal(addNotification.args[0][0].title, 'Exposing charm failed');
+  });
+
+  it('can disable the toggle when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('exposed').returns(false);
+    var service = {get: getStub};
+    var toggle = {key: 'expose-toggle'};
+    var output = jsTestUtils.shallowRender(
+        <juju.components.InspectorExpose
+          acl={acl}
+          addNotification={sinon.stub()}
+          changeState={sinon.stub()}
+          exposeService={sinon.stub()}
+          service={service}
+          unexposeService={sinon.stub()}
+          units={{}} />);
+    var toggleItem = output.props.children[0].props.children;
+    var expected = (
+      <juju.components.BooleanConfig
+        disabled={true}
+        key={toggle.key}
+        ref={toggle.key}
+        option={toggle}
+        onChange={toggleItem.props.onChange}
+        label="Expose application"
+        config={false} />);
+    assert.deepEqual(output.props.children[0].props.children, expected);
   });
 });
