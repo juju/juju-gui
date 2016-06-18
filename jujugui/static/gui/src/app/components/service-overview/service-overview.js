@@ -23,6 +23,7 @@ YUI.add('service-overview', function() {
   juju.components.ServiceOverview = React.createClass({
 
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       clearState: React.PropTypes.func.isRequired,
       destroyService: React.PropTypes.func.isRequired,
@@ -259,17 +260,21 @@ YUI.add('service-overview', function() {
     },
 
     render: function() {
+      var disabled = this.props.acl.isReadOnly();
       this._generateActions(this.props.service);
       var buttons = [{
+        disabled: disabled,
         title: 'Destroy',
         action: this._showConfirmation
       }];
       var confirmMessage = 'Are you sure you want to destroy the application? '
         + 'This cannot be undone.';
       var confirmButtons = [{
+        disabled: disabled,
         title: 'Cancel',
         action: this._hideConfirmation
       }, {
+        disabled: disabled,
         title: 'Confirm',
         type: 'destructive',
         action: this._destroyService
