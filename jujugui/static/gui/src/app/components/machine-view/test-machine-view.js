@@ -1346,4 +1346,41 @@ describe('MachineView', function() {
     assert.deepEqual(placeUnit.args[0][0], 'wordpress/8');
     assert.deepEqual(placeUnit.args[0][1], 'new0');
   });
+
+  it('can disable menu actions when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var machines = {
+      filterByParent: sinon.stub().returns([])
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([])
+    };
+    var services = {
+      size: sinon.stub().returns(0)
+    };
+    var placeUnit = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineView.DecoratedComponent
+        acl={acl}
+        addGhostAndEcsUnits={sinon.stub()}
+        autoPlaceUnits={sinon.stub()}
+        createMachine={sinon.stub()}
+        destroyMachines={sinon.stub()}
+        environmentName="My Env"
+        jujuCoreVersion="2.4"
+        machines={machines}
+        placeUnit={placeUnit}
+        removeUnits={sinon.stub()}
+        services={services}
+        units={units} />, true);
+    var output = renderer.getRenderOutput();
+    var machineMenuItems = output.props.children.props.children[1]
+      .props.menuItems;
+    var containerMenuItems = output.props.children.props.children[2]
+      .props.menuItems;
+    assert.isFalse(machineMenuItems[0].action);
+    assert.isFalse(containerMenuItems[0].action);
+  });
 });

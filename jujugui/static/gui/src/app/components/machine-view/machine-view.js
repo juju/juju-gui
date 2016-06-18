@@ -613,9 +613,10 @@ YUI.add('machine-view', function() {
     },
 
     render: function() {
+      var isReadOnly = this.props.acl.isReadOnly();
       var machineMenuItems = [{
         label: 'Add machine',
-        action: this._addMachine
+        action: !isReadOnly && this._addMachine
       }, {
         label: this.state.showConstraints ?
           'Hide constraints' : 'Show constaints',
@@ -649,7 +650,8 @@ YUI.add('machine-view', function() {
       }];
       var containerMenuItems = [{
         label: 'Add container',
-        action: this.state.selectedMachine ? this._addContainer : null
+        action: !isReadOnly && (
+          this.state.selectedMachine ? this._addContainer : null)
       }, {
         label: 'Sort by:'
       }, {

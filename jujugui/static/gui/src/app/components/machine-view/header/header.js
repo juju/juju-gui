@@ -45,7 +45,7 @@ YUI.add('machine-view-header', function() {
       @param {Object} monitor A DropTargetMonitor.
     */
     canDrop: function (props, monitor) {
-      return props.droppable;
+      return !props.acl.isReadOnly() && props.droppable;
     }
   };
 
@@ -66,6 +66,7 @@ YUI.add('machine-view-header', function() {
 
   var MachineViewHeader = React.createClass({
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       activeMenuItem: React.PropTypes.string,
       canDrop: React.PropTypes.bool.isRequired,
       connectDropTarget: React.PropTypes.func.isRequired,
