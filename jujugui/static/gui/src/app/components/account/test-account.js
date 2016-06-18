@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('Account', () => {
-  var users;
+  var acl, users;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -29,6 +29,7 @@ describe('Account', () => {
   });
 
   beforeEach(() => {
+    acl = {isReadOnly: false};
     users = {
       charmstore: {
         user: 'test-owner',
@@ -43,6 +44,7 @@ describe('Account', () => {
   it('renders the loading state', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.Account
+        acl={acl}
         deleteTemplate={sinon.stub()}
         listTemplates={sinon.stub()}
         user={users.charmstore}
@@ -134,6 +136,7 @@ describe('Account', () => {
       0, null, [{path: 'spinach/test-model'}]);
     var component = jsTestUtils.shallowRender(
       <juju.components.Account
+        acl={acl}
         deleteTemplate={sinon.stub()}
         listTemplates={listTemplates}
         user={users.charmstore}
@@ -190,10 +193,12 @@ describe('Account', () => {
                   action={credentials.props.children[2][0].props.children[1]
                     .props.children[0].props.children[1].props.children[0]
                     .props.action}
+                  disabled={false}
                   type='inline-base'
                   title="Destroy" />
                 <juju.components.GenericButton
                   action={instance._handleEditCredential}
+                  disabled={false}
                   type='inline-neutral'
                   title="Edit" />
               </div>
@@ -255,11 +260,47 @@ describe('Account', () => {
     assert.deepEqual(credentials, expected);
   });
 
+  it('disables the buttons if in read only mode', () => {
+    var listTemplates = sinon.stub().callsArgWith(
+      0, null, [{path: 'spinach/test-model'}]);
+    acl.isReadOnly = true;
+    var component = jsTestUtils.shallowRender(
+      <juju.components.Account
+        acl={acl}
+        deleteTemplate={sinon.stub()}
+        listTemplates={listTemplates}
+        user={users.charmstore}
+        users={users} />, true);
+    var instance = component.getMountedInstance();
+    instance.componentWillMount();
+    var output = component.getRenderOutput();
+    var buttons = output.props.children.props.children.props.children[4]
+      .props.children[2][0].props.children[1].props.children[0]
+      .props.children[1];
+    var expected = (
+      <div className={'expanding-row__expanded-header-action ' +
+        'three-col last-col no-margin-bottom'}>
+        <juju.components.GenericButton
+          action={buttons.props.children[0]
+            .props.action}
+          disabled={true}
+          type='inline-base'
+          title="Destroy" />
+        <juju.components.GenericButton
+          action={instance._handleEditCredential}
+          disabled={true}
+          type='inline-neutral'
+          title="Edit" />
+      </div>);
+    assert.deepEqual(buttons, expected);
+  });
+
   it('will abort the requests when unmounting', function() {
     var abort = sinon.stub();
     var listTemplates = sinon.stub().returns({abort: abort});
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Account
+        acl={acl}
         deleteTemplate={sinon.stub()}
         listTemplates={listTemplates}
         user={users.charmstore}
@@ -274,6 +315,7 @@ describe('Account', () => {
     var deleteTemplate = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Account
+        acl={acl}
         deleteTemplate={deleteTemplate}
         listTemplates={listTemplates}
         user={users.charmstore}
@@ -294,6 +336,7 @@ describe('Account', () => {
     var deleteTemplate = sinon.stub().callsArg(2);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Account
+        acl={acl}
         deleteTemplate={deleteTemplate}
         listTemplates={listTemplates}
         user={users.charmstore}

@@ -30,5 +30,5 @@ YUI.add('acl', function(Y) {
   };
 
 }, '0.1.0', {
-  requires: ['base']
+  requires: []
 });
