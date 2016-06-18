@@ -23,6 +23,7 @@ YUI.add('unit-list', function() {
   juju.components.UnitList = React.createClass({
 
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       destroyUnits: React.PropTypes.func.isRequired,
       envResolved: React.PropTypes.func.isRequired,

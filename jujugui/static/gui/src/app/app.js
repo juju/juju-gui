@@ -782,6 +782,7 @@ YUI.add('juju-gui', function(Y) {
       // nextProps on the lifecycle methods.
       ReactDOM.render(
         <window.juju.components.UserProfile
+          acl={this.acl}
           addNotification={
             this.db.notifications.add.bind(this.db.notifications)}
           canCreateNew={this.env.get('connected')}
@@ -981,6 +982,7 @@ YUI.add('juju-gui', function(Y) {
       var changesUtils = this.changesUtils;
       ReactDOM.render(
         <window.juju.components.DeploymentBar
+          acl={this.acl}
           changeState={this.changeState.bind(this)}
           currentChangeSet={ecs.getCurrentChangeSet()}
           generateChangeDescription={
@@ -1008,6 +1010,7 @@ YUI.add('juju-gui', function(Y) {
       var utils = views.utils;
       ReactDOM.render(
         <window.juju.components.ImportExport
+          acl={this.acl}
           changeState={this.changeState.bind(this)}
           currentChangeSet={ecs.getCurrentChangeSet()}
           exportEnvironmentFile={
@@ -1090,6 +1093,7 @@ YUI.add('juju-gui', function(Y) {
         var charm = app.db.charms.getById(service.get('charm'));
         inspector = (
           <components.Inspector
+            acl={this.acl}
             service={service}
             charm={charm}
             addNotification=
@@ -1187,6 +1191,7 @@ YUI.add('juju-gui', function(Y) {
       });
       ReactDOM.render(
         <components.Charmbrowser
+          acl={this.acl}
           apiUrl={charmstore.url}
           charmstoreSearch={charmstore.search.bind(charmstore)}
           displayPlans={
