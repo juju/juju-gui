@@ -23,6 +23,7 @@ YUI.add('deployment-summary-classic', function() {
   juju.components.DeploymentSummaryClassic = React.createClass({
 
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       autoPlaceDefault: React.PropTypes.bool.isRequired,
       autoPlaceUnits: React.PropTypes.func.isRequired,
       changeDescriptions: React.PropTypes.array.isRequired,
@@ -134,6 +135,7 @@ YUI.add('deployment-summary-classic', function() {
     },
 
     render: function() {
+      var isReadOnly = this.props.acl.isReadOnly();
       var listHeaderClassName = 'deployment-summary-change-item-classic ' +
           'deployment-summary-classic__list-header';
       return (
@@ -152,6 +154,7 @@ YUI.add('deployment-summary-classic', function() {
                 Deployment summary
               </h2>
               <juju.components.DeploymentSummaryPlacementClassic
+                acl={this.props.acl}
                 handleViewMachinesClick={this._handleViewMachinesClick}
                 handlePlacementChange={this._handlePlacementChange}
                 autoPlace={this.props.autoPlaceDefault}
@@ -176,9 +179,11 @@ YUI.add('deployment-summary-classic', function() {
               <juju.components.GenericButton
                 type="inline-neutral"
                 action={this._handleClear}
+                disabled={isReadOnly}
                 title="Clear changes" />
               <juju.components.GenericButton
                 action={this._handleDeploy}
+                disabled={isReadOnly}
                 type="inline-positive"
                 title="Deploy" />
             </div>

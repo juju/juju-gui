@@ -906,6 +906,7 @@ YUI.add('juju-gui', function(Y) {
         }
         ReactDOM.render(
           <window.juju.components.DeploymentSummaryClassic
+            acl={this.acl}
             autoPlaceDefault={!localStorage.getItem('disable-auto-place')}
             autoPlaceUnits={this._autoPlaceUnits.bind(this)}
             changeDescriptions={changeDescriptions}
@@ -940,6 +941,7 @@ YUI.add('juju-gui', function(Y) {
       }
       ReactDOM.render(
         <window.juju.components.Deployment
+          acl={this.acl}
           activeComponent={activeComponent}
           autoPlaceUnits={this._autoPlaceUnits.bind(this)}
           changeCounts={changesUtils.getChangeCounts(currentChangeSet)}
