@@ -24,10 +24,15 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('InspectorRelations', function() {
+  var acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('inspector-relations', function() { done(); });
+  });
+
+  beforeEach(() => {
+    acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   it('can render the relations list', function() {
@@ -59,6 +64,7 @@ describe('InspectorRelations', function() {
     ];
     var renderer = jsTestUtils.shallowRender(
         <juju.components.InspectorRelations
+          acl={acl}
           changeState={changeState}
           destroyRelations={sinon.stub()}
           serviceRelations={relations} />, true);
@@ -75,6 +81,7 @@ describe('InspectorRelations', function() {
       <ul className="inspector-relations__list">
         <juju.components.CheckListItem
           className='select-all'
+          disabled={false}
           key='select-all1'
           ref='select-all'
           label='Select all relations'
@@ -83,6 +90,7 @@ describe('InspectorRelations', function() {
           }/>
         <juju.components.CheckListItem
           action={output.props.children[0].props.children[1].props.action}
+          disabled={false}
           label={'django:django'}
           key={relations[0].id}
           ref='CheckListItem-mysql'
@@ -91,6 +99,86 @@ describe('InspectorRelations', function() {
           whenChanged={instance._updateActiveCount} />
         <juju.components.CheckListItem
           action={output.props.children[0].props.children[2].props.action}
+          disabled={false}
+          label={'django:django'}
+          key={relations[1].id}
+          ref='CheckListItem-postgresql'
+          relation={relations[1]}
+          changeState={changeState}
+          whenChanged={instance._updateActiveCount} />
+      </ul>
+      <juju.components.ButtonRow
+        buttons={buttons} />
+    </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can disable the controls when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var changeState = sinon.stub();
+    var relations = [
+      {id: 'mysql',
+        near: {
+          name: 'mysql',
+          role: 'primary'
+        },
+        far: {
+          name: 'django',
+          serviceName: 'django'
+        },
+        interface: 'postgresql',
+        scope: 'global'
+      },
+      {id: 'postgresql',
+        near: {
+          name: 'pgsql',
+          role: 'primary'
+        },
+        far: {
+          name: 'django',
+          serviceName: 'django'
+        },
+        interface: 'postgresql',
+        scope: 'global'}
+    ];
+    var renderer = jsTestUtils.shallowRender(
+        <juju.components.InspectorRelations
+          acl={acl}
+          changeState={changeState}
+          destroyRelations={sinon.stub()}
+          serviceRelations={relations} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var buttons = [];
+    buttons.push({
+      title: 'Remove',
+      type: 'neutral',
+      action: instance._handleRemoveRelation,
+      disabled: true
+    });
+    var expected = (<div className="inspector-relations">
+      <ul className="inspector-relations__list">
+        <juju.components.CheckListItem
+          className='select-all'
+          disabled={true}
+          key='select-all1'
+          ref='select-all'
+          label='Select all relations'
+          whenChanged={
+            output.props.children[0].props.children[0].props.whenChanged
+          }/>
+        <juju.components.CheckListItem
+          action={output.props.children[0].props.children[1].props.action}
+          disabled={true}
+          label={'django:django'}
+          key={relations[0].id}
+          ref='CheckListItem-mysql'
+          relation={relations[0]}
+          changeState={changeState}
+          whenChanged={instance._updateActiveCount} />
+        <juju.components.CheckListItem
+          action={output.props.children[0].props.children[2].props.action}
+          disabled={true}
           label={'django:django'}
           key={relations[1].id}
           ref='CheckListItem-postgresql'
@@ -107,6 +195,7 @@ describe('InspectorRelations', function() {
   it('renders if there are no relations', () => {
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorRelations
+          acl={acl}
           changeState={sinon.stub()}
           destroyRelations={sinon.stub()}
           serviceRelations={[]} />);
@@ -146,6 +235,7 @@ describe('InspectorRelations', function() {
     // shallowRenderer doesn't support state so need to render it.
     var component = testUtils.renderIntoDocument(
       <juju.components.InspectorRelations
+        acl={acl}
         changeState={sinon.stub()}
         destroyRelations={sinon.stub()}
         serviceRelations={relations} />);
@@ -181,6 +271,7 @@ describe('InspectorRelations', function() {
     ];
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorRelations
+          acl={acl}
           changeState={sinon.stub()}
           destroyRelations={sinon.stub()}
           serviceRelations={relations} />);
@@ -241,6 +332,7 @@ describe('InspectorRelations', function() {
     // refs.
     var output = testUtils.renderIntoDocument(
         <juju.components.InspectorRelations
+          acl={acl}
           destroyRelations={destroyRelations}
           serviceRelations={relations}
           changeState={changeState} />);
@@ -279,6 +371,7 @@ describe('InspectorRelations', function() {
     // refs.
     var output = testUtils.renderIntoDocument(
       <juju.components.InspectorRelations
+        acl={acl}
         destroyRelations={destroyRelations}
         serviceRelations={relations}
         changeState={changeState} />);
