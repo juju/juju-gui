@@ -24,10 +24,15 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('InspectorChangeVersionItem', function() {
+  var acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('inspector-change-version-item', function() { done(); });
+  });
+
+  beforeEach(() => {
+    acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   it('can display the version item with a short name', function() {
@@ -35,6 +40,7 @@ describe('InspectorChangeVersionItem', function() {
     var itemAction = sinon.stub();
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersionItem
+          acl={acl}
           key="cs:django-5"
           downgrade={false}
           itemAction={itemAction}
@@ -49,6 +55,7 @@ describe('InspectorChangeVersionItem', function() {
             django-5
           </span>
           <juju.components.GenericButton
+            disabled={false}
             key="cs:django-5"
             type="inline-neutral"
             title="Upgrade"
@@ -61,6 +68,7 @@ describe('InspectorChangeVersionItem', function() {
     var itemAction = sinon.stub();
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersionItem
+          acl={acl}
           key="cs:django-django-pango-pongo-5"
           downgrade={false}
           itemAction={itemAction}
@@ -75,6 +83,7 @@ describe('InspectorChangeVersionItem', function() {
             djan...o-pongo-5
           </span>
           <juju.components.GenericButton
+            disabled={false}
             key="cs:django-django-pango-pongo-5"
             type="inline-neutral"
             title="Upgrade"
@@ -87,6 +96,7 @@ describe('InspectorChangeVersionItem', function() {
     var itemAction = sinon.stub();
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersionItem
+          acl={acl}
           key="cs:django-5"
           downgrade={true}
           itemAction={itemAction}
@@ -101,10 +111,33 @@ describe('InspectorChangeVersionItem', function() {
             django-5
           </span>
           <juju.components.GenericButton
+            disabled={false}
             key="cs:django-5"
             type="inline-neutral"
             title="Downgrade"
             action={buttonAction} />
         </li>);
+  });
+
+  it('can disable the button when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var buttonAction = sinon.stub();
+    var itemAction = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+        <juju.components.InspectorChangeVersionItem
+          acl={acl}
+          key="cs:django-5"
+          downgrade={false}
+          itemAction={itemAction}
+          buttonAction={buttonAction}
+          id="cs:django-5" />);
+    var expected = (
+      <juju.components.GenericButton
+        disabled={true}
+        key="cs:django-5"
+        type="inline-neutral"
+        title="Upgrade"
+        action={buttonAction} />);
+    assert.deepEqual(output.props.children[1], expected);
   });
 });
