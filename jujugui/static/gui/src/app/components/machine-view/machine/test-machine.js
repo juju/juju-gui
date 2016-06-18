@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('MachineViewMachine', function() {
-  var services;
+  var acl, services;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -29,6 +29,7 @@ describe('MachineViewMachine', function() {
   });
 
   beforeEach(function () {
+    acl = {isReadOnly: sinon.stub().returns(false)};
     services = {
       getById: sinon.stub().returns({
         get: function(val) {
@@ -76,6 +77,7 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
@@ -109,6 +111,7 @@ describe('MachineViewMachine', function() {
         </div>
         <ul className="machine-view__machine-units">
           <juju.components.MachineViewMachineUnit
+            acl={acl}
             key="wordpress/0"
             machineType="machine"
             removeUnit={removeUnit}
@@ -118,6 +121,7 @@ describe('MachineViewMachine', function() {
               'displayName': 'wordpress/0',
               'id': 'wordpress/0'}} />
           <juju.components.MachineViewMachineUnit
+            acl={acl}
             key="wordpress/1"
             machineType="machine"
             removeUnit={removeUnit}
@@ -162,6 +166,7 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        acl={acl}
         canDrop={true}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
@@ -199,6 +204,7 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
@@ -235,6 +241,7 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
@@ -327,6 +334,7 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
@@ -343,6 +351,7 @@ describe('MachineViewMachine', function() {
       <ul className="machine-view__machine-units">
         {[
           <juju.components.MachineViewMachineUnit
+            acl={acl}
             key="wordpress/1"
             machineType="machine"
             removeUnit={removeUnit}
@@ -384,6 +393,7 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
@@ -415,6 +425,7 @@ describe('MachineViewMachine', function() {
         {undefined}
         <ul className="machine-view__machine-units">
           <juju.components.MachineViewMachineUnit
+            acl={acl}
             key="wordpress/0"
             machineType="machine"
             removeUnit={removeUnit}
@@ -424,6 +435,7 @@ describe('MachineViewMachine', function() {
               'displayName': 'wordpress/0',
               'id': 'wordpress/0'}} />
           <juju.components.MachineViewMachineUnit
+            acl={acl}
             key="wordpress/1"
             machineType="machine"
             removeUnit={removeUnit}
@@ -461,6 +473,7 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
@@ -500,6 +513,7 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
@@ -529,6 +543,7 @@ describe('MachineViewMachine', function() {
         {undefined}
         <ul className="machine-view__machine-units">
           <juju.components.MachineViewMachineUnit
+            acl={acl}
             key="wordpress/0"
             machineType="container"
             removeUnit={removeUnit}
@@ -538,6 +553,7 @@ describe('MachineViewMachine', function() {
               'displayName': 'wordpress/0',
               'id': 'wordpress/0'}} />
           <juju.components.MachineViewMachineUnit
+            acl={acl}
             key="wordpress/1"
             machineType="container"
             removeUnit={removeUnit}
@@ -576,6 +592,7 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={destroyMachines}
@@ -611,6 +628,7 @@ describe('MachineViewMachine', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachine.DecoratedComponent
+        acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         destroyMachines={sinon.stub()}
@@ -625,5 +643,58 @@ describe('MachineViewMachine', function() {
     var output = renderer.getRenderOutput();
     output.props.children[3].props.children[0].props.removeUnit();
     assert.equal(removeUnit.callCount, 1);
+  });
+
+  it('can disable the destroy when ready only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var removeUnit = sinon.stub();
+    var selectMachine = sinon.stub();
+    var machine = {
+      displayName: 'new0',
+      hardware: {
+        cpuCores: 2,
+        cpuPower: 200,
+        disk: 2048,
+        mem: 4096,
+      },
+      series: 'wily'
+    };
+    var units = {
+      filterByMachine: sinon.stub().returns([{
+        agent_state: 'started',
+        displayName: 'wordpress/0',
+        id: 'wordpress/0'
+      }, {
+        agent_state: 'started',
+        displayName: 'wordpress/1',
+        id: 'wordpress/1'
+      }])
+    };
+    var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineViewMachine.DecoratedComponent
+        acl={acl}
+        canDrop={false}
+        connectDropTarget={jsTestUtils.connectDropTarget}
+        destroyMachines={sinon.stub()}
+        dropUnit={sinon.stub()}
+        isOver={false}
+        machine={machine}
+        removeUnit={removeUnit}
+        selected={false}
+        selectMachine={selectMachine}
+        services={services}
+        showConstraints={true}
+        type="machine"
+        units={units}/>, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.MoreMenu
+        items={[{
+          label: 'Destroy',
+          action: false
+        }]} />);
+    assert.deepEqual(output.props.children[0], expected);
   });
 });

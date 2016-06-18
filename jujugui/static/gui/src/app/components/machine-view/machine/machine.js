@@ -43,7 +43,7 @@ YUI.add('machine-view-machine', function() {
       @param {Object} monitor A DropTargetMonitor.
     */
     canDrop: function (props, monitor) {
-      return !props.machine.deleted;
+      return props.acl.isReadOnly() && !props.machine.deleted;
     }
   };
 
@@ -64,6 +64,7 @@ YUI.add('machine-view-machine', function() {
 
   var MachineViewMachine = React.createClass({
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       canDrop: React.PropTypes.bool.isRequired,
       connectDropTarget: React.PropTypes.func.isRequired,
       destroyMachines: React.PropTypes.func.isRequired,
@@ -139,6 +140,7 @@ YUI.add('machine-view-machine', function() {
         }
         components.push(
           <juju.components.MachineViewMachineUnit
+            acl={this.props.acl}
             key={unit.id}
             machineType={this.props.type}
             removeUnit={this.props.removeUnit}
@@ -199,7 +201,7 @@ YUI.add('machine-view-machine', function() {
       var units = this.props.units.filterByMachine(machine.id, true);
       var menuItems = [{
         label: 'Destroy',
-        action: this._destroyMachine
+        action: !this.props.acl.isReadOnly() && this._destroyMachine
       }];
       // Wrap the returned components in the drop target method.
       return this.props.connectDropTarget(
