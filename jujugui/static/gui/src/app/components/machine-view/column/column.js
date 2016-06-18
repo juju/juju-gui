@@ -49,7 +49,7 @@ YUI.add('machine-view-column', function() {
       @param {Object} monitor A DropTargetMonitor.
     */
     canDrop: function (props, monitor) {
-      return props.droppable;
+      return !props.acl.isReadOnly() && props.droppable;
     }
   };
 
@@ -70,6 +70,7 @@ YUI.add('machine-view-column', function() {
 
   var MachineViewColumn = React.createClass({
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       activeMenuItem: React.PropTypes.string,
       canDrop: React.PropTypes.bool.isRequired,
       children: React.PropTypes.oneOfType([
@@ -106,6 +107,7 @@ YUI.add('machine-view-column', function() {
       return this.props.connectDropTarget(
         <div className={this._generateClasses()}>
           <juju.components.MachineViewHeader
+            acl={this.props.acl}
             activeMenuItem={props.activeMenuItem}
             droppable={props.droppable}
             dropUnit={props.dropUnit}
