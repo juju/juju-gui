@@ -29,6 +29,17 @@ YUI.add('machine-view-unplaced-unit', function() {
     */
     beginDrag: function(props) {
       return {unit: props.unit};
+    },
+
+    /**
+      Called to check if the component is allowed to be dragged.
+      See: http://gaearon.github.io/react-dnd/docs-drag-source.html
+
+      @method canDrag
+      @param {Object} props The component props.
+    */
+    canDrag: function(props) {
+      return !props.acl.isReadOnly();
     }
   };
 
@@ -48,6 +59,7 @@ YUI.add('machine-view-unplaced-unit', function() {
 
   var MachineViewUnplacedUnit = React.createClass({
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       connectDragSource: React.PropTypes.func.isRequired,
       createMachine: React.PropTypes.func.isRequired,
       icon: React.PropTypes.string.isRequired,
@@ -89,6 +101,7 @@ YUI.add('machine-view-unplaced-unit', function() {
       }
       return (
         <juju.components.MachineViewAddMachine
+          acl={this.props.acl}
           close={this._togglePlaceUnit}
           createMachine={this.props.createMachine}
           machines={this.props.machines}
@@ -111,13 +124,14 @@ YUI.add('machine-view-unplaced-unit', function() {
     },
 
     render: function() {
+      var isReadOnly = this.props.acl.isReadOnly();
       var unit = this.props.unit;
       var menuItems = [{
         label: 'Deploy to...',
-        action: this._togglePlaceUnit
+        action: !isReadOnly && this._togglePlaceUnit
       }, {
         label: 'Destroy',
-        action: this.props.removeUnit.bind(null, unit.id)
+        action: !isReadOnly && this.props.removeUnit.bind(null, unit.id)
       }];
       // Wrap the returned components in the drag source method.
       return this.props.connectDragSource(
