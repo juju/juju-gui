@@ -371,6 +371,9 @@ YUI.add('juju-gui', function(Y) {
         this.websocketLogging = new Y.juju.WebsocketLogging();
       }
 
+      // Provide the ACL object.
+      this.acl = Y.juju.acl;
+
       /**
         Reference to the juju.Cookies instance.
 
@@ -2578,6 +2581,7 @@ YUI.add('juju-gui', function(Y) {
 
 }, '0.5.3', {
   requires: [
+    'acl',
     'changes-utils',
     'juju-app-state',
     'juju-charm-models',
