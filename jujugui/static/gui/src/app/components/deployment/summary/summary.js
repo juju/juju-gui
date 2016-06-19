@@ -23,6 +23,7 @@ YUI.add('deployment-summary', function() {
   juju.components.DeploymentSummary = React.createClass({
 
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       appSet: React.PropTypes.func.isRequired,
       autoPlaceUnits: React.PropTypes.func.isRequired,
       changeCounts: React.PropTypes.object.isRequired,
@@ -355,7 +356,7 @@ YUI.add('deployment-summary', function() {
           ref="selectRegion"
           value={this.state.activeRegion}
           onChange={this._storeRegion}
-          disabled={true}>
+          disabled={true || this.props.acl.isReadOnly()}>
           <option key="default">{defaultMessage}</option>
           {options}
         </select>);
@@ -437,7 +438,7 @@ YUI.add('deployment-summary', function() {
       }
       return (
         <span className="link deployment-panel__section-title-link"
-          onClick={this._handleClear}
+          onClick={!this.props.acl.isReadOnly() && this._handleClear}
           role="button"
           tabIndex="0">
           Clear all changes&nbsp;&rsaquo;
@@ -468,7 +469,8 @@ YUI.add('deployment-summary', function() {
       buttons.push({
         title: modelCommitted ? 'Commit' : 'Deploy',
         action: this._handleDeploy,
-        disabled: this.props.numberOfChanges === 0,
+        disabled: this.props.acl.isReadOnly() ||
+          this.props.numberOfChanges === 0,
         type: 'inline-positive'
       });
       var classes = {
@@ -484,7 +486,7 @@ YUI.add('deployment-summary', function() {
             { !!modelCommitted ?
               this.props.modelName :
               <juju.components.DeploymentInput
-                disabled={!!modelCommitted}
+                disabled={this.props.acl.isReadOnly() || !!modelCommitted}
                 label="Model name"
                 placeholder="test-model-01"
                 required={true}
