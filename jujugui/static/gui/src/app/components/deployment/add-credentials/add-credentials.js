@@ -23,6 +23,7 @@ YUI.add('deployment-add-credentials', function() {
   juju.components.DeploymentAddCredentials = React.createClass({
 
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.object.isRequired,
       jem: React.PropTypes.object.isRequired,
@@ -123,6 +124,7 @@ YUI.add('deployment-add-credentials', function() {
       @method _generateCredentialsFields
     */
     _generateCredentialsFields: function() {
+      var isReadOnly = this.props.acl.isReadOnly();
       switch (this.props.cloud.id) {
         case 'aws':
           return (
@@ -138,6 +140,7 @@ YUI.add('deployment-add-credentials', function() {
                 </a>
               </p>
               <juju.components.DeploymentInput
+                disabled={isReadOnly}
                 label="Access key"
                 placeholder="TDFIWNDKF7UW6DVGX98X"
                 required={true}
@@ -147,6 +150,7 @@ YUI.add('deployment-add-credentials', function() {
                   error: 'This field is required.'
                 }]} />
               <juju.components.DeploymentInput
+                disabled={isReadOnly}
                 label="Secret key"
                 placeholder="p/hdU8TnOP5D7JNHrFiM8IO8f5GN6GhHj7tueBN9"
                 required={true}
@@ -225,13 +229,15 @@ YUI.add('deployment-add-credentials', function() {
         });
       }
       return (
-        <select ref="selectRegion">
+        <select ref="selectRegion"
+          disabled={this.props.acl.isReadOnly()}>
           <option>{defaultMessage}</option>
           {options}
         </select>);
     },
 
     render: function() {
+      var isReadOnly = this.props.acl.isReadOnly();
       var cloud = this.props.cloud;
       var title = cloud.title;
       var buttons = [{
@@ -241,7 +247,7 @@ YUI.add('deployment-add-credentials', function() {
       }, {
         title: 'Add credential',
         action: this._handleAddCredentials,
-        disabled: cloud.id !== 'aws',
+        disabled: isReadOnly || cloud.id !== 'aws',
         type: 'inline-positive'
       }];
       var credentialName = cloud.id === 'google' ?
@@ -269,6 +275,7 @@ YUI.add('deployment-add-credentials', function() {
             <form className="twelve-col">
               <div className="six-col">
                 <juju.components.DeploymentInput
+                  disabled={isReadOnly}
                   label={credentialName}
                   placeholder="AWS-1"
                   required={true}
