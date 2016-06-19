@@ -22,6 +22,7 @@ YUI.add('deployment-bar', function() {
 
   juju.components.DeploymentBar = React.createClass({
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       currentChangeSet: React.PropTypes.object.isRequired,
       generateChangeDescription: React.PropTypes.func.isRequired,
@@ -135,7 +136,7 @@ YUI.add('deployment-bar', function() {
               <juju.components.GenericButton
                 action={this._deployAction}
                 type="inline-deployment"
-                disabled={changeCount === 0}
+                disabled={this.props.acl.isReadOnly() || changeCount === 0}
                 title={deployButton} />
             </div>
           </div>

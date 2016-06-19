@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentBar', function() {
-  var previousNotifications;
+  var acl, previousNotifications;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -35,6 +35,7 @@ describe('DeploymentBar', function() {
     var DeploymentBar = juju.components.DeploymentBar;
     previousNotifications = DeploymentBar.prototype.previousNotifications;
     juju.components.DeploymentBar.prototype.previousNotifications = [];
+    acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   afterEach(function() {
@@ -46,6 +47,7 @@ describe('DeploymentBar', function() {
     var currentChangeSet = {one: 1, two: 2};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
         generateChangeDescription={sinon.stub()}
@@ -83,6 +85,7 @@ describe('DeploymentBar', function() {
     var deployButtonAction = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
         deployButtonAction={deployButtonAction}
@@ -98,6 +101,7 @@ describe('DeploymentBar', function() {
     var deployButtonAction = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
         deployButtonAction={deployButtonAction}
@@ -114,6 +118,7 @@ describe('DeploymentBar', function() {
     var deployButtonAction = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
         deployButtonAction={deployButtonAction}
@@ -130,6 +135,7 @@ describe('DeploymentBar', function() {
     var deployButtonAction = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
         hasEntities={false}
@@ -150,6 +156,7 @@ describe('DeploymentBar', function() {
     var generateChangeDescription = sinon.stub().returns(change);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
         generateChangeDescription={generateChangeDescription}
@@ -161,6 +168,7 @@ describe('DeploymentBar', function() {
     // Re-render the component so that componentWillReceiveProps is called.
     renderer.render(
       <juju.components.DeploymentBar
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
         generateChangeDescription={generateChangeDescription}
@@ -183,6 +191,7 @@ describe('DeploymentBar', function() {
     var generateChangeDescription = sinon.stub().returns(change);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
         generateChangeDescription={generateChangeDescription}
@@ -194,6 +203,7 @@ describe('DeploymentBar', function() {
     // Re-render the component so that componentWillReceiveProps is called.
     renderer.render(
       <juju.components.DeploymentBar
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
         generateChangeDescription={generateChangeDescription}
@@ -211,6 +221,7 @@ describe('DeploymentBar', function() {
     generateChangeDescription.returns(change);
     renderer.render(
       <juju.components.DeploymentBar
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
         generateChangeDescription={generateChangeDescription}
@@ -231,6 +242,7 @@ describe('DeploymentBar', function() {
     var generateChangeDescription = sinon.stub().returns(change);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBar
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
         generateChangeDescription={generateChangeDescription}
@@ -242,6 +254,7 @@ describe('DeploymentBar', function() {
     // Re-render the component so that componentWillReceiveProps is called.
     renderer.render(
       <juju.components.DeploymentBar
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
         generateChangeDescription={generateChangeDescription}
@@ -259,6 +272,7 @@ describe('DeploymentBar', function() {
     generateChangeDescription.returns(change);
     renderer.render(
       <juju.components.DeploymentBar
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
         generateChangeDescription={generateChangeDescription}
@@ -275,6 +289,7 @@ describe('DeploymentBar', function() {
     generateChangeDescription.returns('add-services-change');
     renderer.render(
       <juju.components.DeploymentBar
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
         generateChangeDescription={generateChangeDescription}
@@ -287,5 +302,29 @@ describe('DeploymentBar', function() {
     assert.deepEqual(output.props.children.props.children[1],
       <juju.components.DeploymentBarNotification
         change={change} />);
+  });
+
+  it('disables the deploy button when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var currentChangeSet = {one: 1, two: 2};
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentBar
+        acl={acl}
+        changeState={sinon.stub()}
+        currentChangeSet={currentChangeSet}
+        generateChangeDescription={sinon.stub()}
+        hasEntities={true}
+        modelCommitted={false}
+        showInstall={true} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.GenericButton
+        action={instance._deployAction}
+        type="inline-deployment"
+        disabled={true}
+        title="Deploy changes (2)" />);
+    assert.deepEqual(
+      output.props.children.props.children[2].props.children, expected);
   });
 });
