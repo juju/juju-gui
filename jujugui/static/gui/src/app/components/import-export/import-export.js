@@ -108,7 +108,7 @@ YUI.add('import-export', function() {
           </span>
           <input className="import-export__file"
             type="file"
-            onChange={!isReadOnly && this._handleImportFile}
+            onChange={isReadOnly ? null : this._handleImportFile}
             accept=".zip,.yaml,.yml"
             ref="file-input" />
         </div>

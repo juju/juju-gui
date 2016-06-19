@@ -216,7 +216,7 @@ describe('ImportExport', function() {
         </span>
         <input className="import-export__file"
           type="file"
-          onChange={false}
+          onChange={null}
           accept=".zip,.yaml,.yml"
           ref="file-input" />
       </div>);
