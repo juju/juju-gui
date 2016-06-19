@@ -1140,6 +1140,7 @@ YUI.add('juju-gui', function(Y) {
         var localCharmHelpers = juju.localCharmHelpers;
         inspector = (
           <components.LocalInspector
+            acl={this.acl}
             file={metadata.flash.file}
             localType={localType}
             services={this.db.services}
