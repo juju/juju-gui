@@ -23,6 +23,7 @@ YUI.add('inspector-relations', function() {
       acl: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       destroyRelations: React.PropTypes.func.isRequired,
+      service: React.PropTypes.object.isRequired,
       serviceRelations: React.PropTypes.array.isRequired
     },
 

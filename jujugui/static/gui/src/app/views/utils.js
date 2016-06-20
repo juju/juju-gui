@@ -1775,14 +1775,15 @@ YUI.add('juju-view-utils', function(Y) {
   utils.createRelation = function(db, env, relations, callback) {
     var endpoints = [relations[0].service, {
       name: relations[0].name,
-      role: "client"
+      role: 'client'
     }, relations[1].service, {
       name: relations[1].name,
-      role: "server"
+      role: 'server'
     }];
 
-    var relationId = 'pending-' + endpoints[0] + ':' + endpoints[0].name + endpoints[1] + ':' + endpoints[1].name;
-    var relation = db.relations.add({
+    var relationId = 'pending-' + endpoints[0] + ':' + endpoints[0].name +
+                      endpoints[1] + ':' + endpoints[1].name;
+    db.relations.add({
       relation_id: relationId,
       'interface': endpoints[0].name,
       endpoints: endpoints,
@@ -1801,8 +1802,7 @@ YUI.add('juju-view-utils', function(Y) {
           scope: e.result.scope
         });
       }.bind(this));
-    // env.add_relation(endpointA, endpointB, function() {console.log('Relation created')});
-  }
+  };
 
   /**
     Return the application object that matches the ID
@@ -1835,7 +1835,8 @@ YUI.add('juju-view-utils', function(Y) {
       var filtered = utils.getRelationDataForService(db, applicationTo).filter(
         function(match) {
           return match.endpoints[0] !== applicationFrom.get('id');
-      });
+        }
+      );
       if (filtered.length !== 0) {
         relationTypes = relationTypes.filter(function(relation) {
           return filtered.some(function(item) {
