@@ -137,6 +137,6 @@ describe('DeploymentSummaryPlacementClassic', function() {
           Automatically place
         </label>
       </form>);
-      assert.deepEqual(output.props.children[6], expected);
+    assert.deepEqual(output.props.children[6], expected);
   });
 });
