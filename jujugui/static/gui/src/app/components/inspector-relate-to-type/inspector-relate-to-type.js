@@ -19,6 +19,12 @@ YUI.add('inspector-relate-to-type', function() {
 
   juju.components.InspectorRelateToType = React.createClass({
 
+    propTypes: {
+      changeState: React.PropTypes.func.isRequired,
+      createRelation: React.PropTypes.func.isRequired,
+      relationTypes: React.PropTypes.array.isRequired
+    },
+
     /**
       Generate the initial state.
 

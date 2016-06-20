@@ -24,6 +24,7 @@ YUI.add('inspector-relate-to', function() {
 
     propTypes: {
       application: React.PropTypes.object.isRequired,
+      changeState: React.PropTypes.func.isRequired,
       getRelatableApplications: React.PropTypes.func.isRequired,
     },
 
@@ -35,7 +36,7 @@ YUI.add('inspector-relate-to', function() {
       @param {Object} e The click event.
     */
     _relateToItemAction: function(e) {
-      var applicationFrom = this.props.application.get('id')
+      var applicationFrom = this.props.application.get('id');
       var applicationTo = e.currentTarget.getAttribute('data-id');
 
       this.props.changeState({

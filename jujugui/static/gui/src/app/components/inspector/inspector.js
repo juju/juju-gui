@@ -36,6 +36,7 @@ YUI.add('inspector-component', function() {
       destroyUnits: React.PropTypes.func.isRequired,
       envResolved: React.PropTypes.func.isRequired,
       exposeService: React.PropTypes.func.isRequired,
+      getApplicationById: React.PropTypes.func.isRequired,
       getAvailableVersions: React.PropTypes.func.isRequired,
       getCharm: React.PropTypes.func.isRequired,
       getMacaroon: React.PropTypes.func.isRequired,
@@ -316,38 +317,22 @@ YUI.add('inspector-component', function() {
                 }}}};
           break;
         case 'relate-to':
-          var spouseId = metadata['relate-to'];
-          if (typeof serviceId === 'string' && typeof spouseId === 'string') {
-            var spouseApplication = this.props.getApplicationById(spouseId);
-            var relationTypes = this.props.getRelationTypes(service, spouseApplication, false);
-            state.activeChild = {
-              title: spouseApplication.get('name'),
-              icon: service.get('icon'),
-              component:
-                <juju.components.InspectorRelateToType
-                  service={service}
-                  spouseApplication={spouseApplication}
-                  createRelation={this.props.createRelation}
-                  relationTypes={relationTypes}
-                  changeState={this.props.changeState} />,
-              backState: {
-                sectionA: {
-                  component: 'inspector',
-                  metadata: {
-                    id: serviceId,
-                    activeComponent: 'relations'
-                  }}}};
-            break;
-          }
+          var relationId = metadata.id;
+          var relation = this.props.serviceRelations[relationId];
           state.activeChild = {
             title: 'Relate to',
             icon: service.get('icon'),
             component:
-              <juju.components.InspectorRelateTo
-                changeState={this.props.changeState}
-                application={service}
-                getRelatableApplications={this.props.getRelatableApplications}
-                />,
+              <juju.components.AddedServicesList
+                services={db.services}
+                hoveredId={hoveredId}
+                updateUnitFlags={db.updateUnitFlags.bind(db)}
+                findRelatedServices={db.findRelatedServices.bind(db)}
+                findUnrelatedServices={db.findUnrelatedServices.bind(db)}
+                getUnitStatusCounts={utils.getUnitStatusCounts}
+                hoverService={ServiceModule.hoverService.bind(ServiceModule)}
+                panToService={ServiceModule.panToService.bind(ServiceModule)}
+                changeState={this.changeState.bind(this)} />,
             backState: {
               sectionA: {
                 component: 'inspector',
@@ -414,8 +399,6 @@ YUI.add('inspector-component', function() {
     'inspector-config',
     'inspector-relations',
     'inspector-relation-details',
-    'inspector-relate-to',
-    'inspector-relate-to-type',
     'scale-service',
     'service-overview',
     'unit-details',
