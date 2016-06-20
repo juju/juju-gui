@@ -91,6 +91,7 @@ $asset-path: 'static/gui/build/app/assets/';
 @mixin required-theme-modules {
   @include cloud-base;
   @include cloud-buttons;
+  @include cloud-forms;
   @include cloud-instructions;
   @include cloud-rows;
   @include cloud-strips;

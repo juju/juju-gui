@@ -14,7 +14,7 @@
     "babel-preset-es2015": "^6.9.0",
     "classnames": "^2.2.5",
     "clipboard": "^1.5.8",
-    "cloud-vanilla-theme": "0.0.22",
+    "cloud-vanilla-theme": "0.0.24",
     "cryptojs": ">= 2.5.3",
     "graceful-fs": "^4.1.4",
     "js-macaroon": "1.0.1",
