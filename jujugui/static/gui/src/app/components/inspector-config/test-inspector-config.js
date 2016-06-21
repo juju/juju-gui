@@ -70,14 +70,14 @@ describe('Configuration', function() {
 
     assert.deepEqual(output.props.children[0].props.children[3], [
       <juju.components.StringConfig
-        key='Config-option1'
-        ref='Config-option1'
+        key="Config-option1"
+        ref="Config-option1"
         option={option1}
         config={option1key} />,
       <juju.components.BooleanConfig
-        key='Config-option2'
-        ref='Config-option2'
-        label='option2:'
+        key="Config-option2"
+        ref="Config-option2"
+        label="option2:"
         option={option2}
         config={option2key} />
     ]);
@@ -110,7 +110,7 @@ describe('Configuration', function() {
         setConfig={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />);
     assert.deepEqual(output.props.children[0].props.children[3],
-      <div className='inspector-config--no-config'>
+      <div className="inspector-config--no-config">
         No configuration options.
       </div>);
   });
@@ -450,14 +450,14 @@ describe('Configuration', function() {
     output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children[0].props.children[3], [
       <juju.components.StringConfig
-        key='Config-option1'
-        ref='Config-option1'
+        key="Config-option1"
+        ref="Config-option1"
         option={option1}
-        config='my apache2' />,
+        config="my apache2" />,
       <juju.components.BooleanConfig
-        key='Config-option2'
-        ref='Config-option2'
-        label='option2:'
+        key="Config-option2"
+        ref="Config-option2"
+        label="option2:"
         option={option2}
         config={false} />
     ]);
@@ -563,40 +563,40 @@ describe('Configuration', function() {
       action: instance._saveConfig
     }];
     var expected = (
-      <div className='inspector-config'>
-        <div className='inspector-config__fields'>
+      <div className="inspector-config">
+        <div className="inspector-config__fields">
         <juju.components.StringConfig
           disabled={true}
-          ref='ServiceName'
+          ref="ServiceName"
           option={{
             key: 'Application name',
             description: 'Specify a custom application name. The application' +
               ' name cannot be changed once it has been deployed.'
           }}
           config="abc123$" />
-          <form ref='file-form'>
+          <form ref="file-form">
             <input
-              className='hidden'
+              className="hidden"
               disabled={true}
               onChange={instance._importConfig}
-              ref='file'
-              type='file'  />
+              ref="file"
+              type="file"  />
           </form>
-          <div className='inspector-config__config-file'>
+          <div className="inspector-config__config-file">
             <juju.components.ButtonRow buttons={importButton} />
           </div>
           {[<juju.components.StringConfig
             disabled={true}
-            key='Config-option1'
-            ref='Config-option1'
+            key="Config-option1"
+            ref="Config-option1"
             option={option1}
             config={option1key} />,
           <juju.components.BooleanConfig
             disabled={true}
-            key='Config-option2'
-            ref='Config-option2'
+            key="Config-option2"
+            ref="Config-option2"
             option={option2}
-            label='option2:'
+            label="option2:"
             config={option2key} />]}
         </div>
         <juju.components.ButtonRow buttons={actionButtons} />

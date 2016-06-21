@@ -53,7 +53,7 @@ describe('GenericButton', function() {
     assert.equal(callbackStub.callCount, 0);
   });
 
-  it('does submit when disabled', function() {
+  it('does not submit when disabled', function() {
     var preventDefault = sinon.stub();
     var output = jsTestUtils.shallowRender(
         <juju.components.GenericButton

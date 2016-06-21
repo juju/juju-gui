@@ -195,7 +195,7 @@ YUI.add('machine-view', function() {
     },
 
     /**
-      Display a list of unplaced units or onboarding.
+      Display the scale up form.
 
       @method _generateScaleUp
       @returns {Object} The scale up component.

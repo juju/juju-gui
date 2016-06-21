@@ -220,6 +220,7 @@ YUI.add('inspector-config', function() {
       @returns {Array} An array of React components.
     */
     _generateConfigElements: function() {
+      var disabled = this.props.acl.isReadOnly();
       var serviceConfig = this.state.serviceConfig;
       var charmOptions = this.props.charm.get('options');
       // Some charms don't have any options, in this case, just return.
@@ -232,7 +233,6 @@ YUI.add('inspector-config', function() {
       var configElements = [];
 
       Object.keys(charmOptions).forEach((key) => {
-        var disabled = this.props.acl.isReadOnly();
         var option = charmOptions[key];
         option.key = key;
         option.description = this.props.linkify(option.description);

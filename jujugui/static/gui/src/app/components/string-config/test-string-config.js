@@ -149,7 +149,7 @@ describe('StringConfig', function() {
         option={option} />);
     var expected = (
       <div
-        className="string-config--value"
+        className="string-config--value string-config--disabled"
         contentEditable={false}
         ref="editableInput"
         onInput={output.props.children[1].props.onInput}
