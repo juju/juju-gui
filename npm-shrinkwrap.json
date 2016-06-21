@@ -1,6 +1,6 @@
 {
   "name": "juju-gui",
-  "version": "2.1.5",
+  "version": "2.1.7",
   "dependencies": {
     "babel-cli": {
       "version": "6.9.0",
@@ -4706,14 +4706,14 @@
       }
     },
     "cloud-vanilla-theme": {
-      "version": "0.0.22",
-      "from": "https://registry.npmjs.org/cloud-vanilla-theme/-/cloud-vanilla-theme-0.0.22.tgz",
-      "resolved": "https://registry.npmjs.org/cloud-vanilla-theme/-/cloud-vanilla-theme-0.0.22.tgz",
+      "version": "0.0.24",
+      "from": "cloud-vanilla-theme@0.0.24",
+      "resolved": "https://registry.npmjs.org/cloud-vanilla-theme/-/cloud-vanilla-theme-0.0.24.tgz",
       "dependencies": {
         "vanilla-framework": {
-          "version": "0.0.71",
-          "from": "https://registry.npmjs.org/vanilla-framework/-/vanilla-framework-0.0.71.tgz",
-          "resolved": "https://registry.npmjs.org/vanilla-framework/-/vanilla-framework-0.0.71.tgz"
+          "version": "0.1.0",
+          "from": "vanilla-framework@>=0.1.0 <0.2.0",
+          "resolved": "https://registry.npmjs.org/vanilla-framework/-/vanilla-framework-0.1.0.tgz"
         }
       }
     },
