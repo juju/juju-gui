@@ -31,7 +31,6 @@ YUI.add('deployment-input', function() {
       value: React.PropTypes.string,
     },
 
-
     getDefaultProps: () => {
       return {
         required: false

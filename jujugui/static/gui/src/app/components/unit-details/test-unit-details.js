@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('UnitDetails', function() {
-  var fakeUnit, service;
+  var acl, fakeUnit, service;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -29,6 +29,7 @@ describe('UnitDetails', function() {
   });
 
   beforeEach(function() {
+    acl = {isReadOnly: sinon.stub().returns(false)};
     fakeUnit = {
       private_address: '192.168.0.1',
       public_address: '93.20.93.20',
@@ -49,6 +50,7 @@ describe('UnitDetails', function() {
   it('shows the unit properties', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
+        acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
         service={service}
@@ -83,6 +85,7 @@ describe('UnitDetails', function() {
 
     var output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
+        acl={acl}
         destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
         service={service}
@@ -148,6 +151,7 @@ describe('UnitDetails', function() {
     };
     var output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
+        acl={acl}
         destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
         service={service}
@@ -204,6 +208,7 @@ describe('UnitDetails', function() {
 
     var output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
+        acl={acl}
         destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
         service={service}
@@ -237,6 +242,7 @@ describe('UnitDetails', function() {
 
     var output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
+        acl={acl}
         destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
         service={service}
@@ -282,6 +288,7 @@ describe('UnitDetails', function() {
 
     var output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
+        acl={acl}
         destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
         service={service}
@@ -320,11 +327,32 @@ describe('UnitDetails', function() {
   it('renders the remove button', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
+        acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
         service={service}
         unit={fakeUnit} />);
     var buttons = [{
+      disabled: false,
+      title: 'Remove',
+      action: output.props.children[1].props.buttons[0].action
+    }];
+    assert.deepEqual(output.props.children[1],
+      <juju.components.ButtonRow
+        buttons={buttons} />);
+  });
+
+  it('can disable remove button when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var output = jsTestUtils.shallowRender(
+      <juju.components.UnitDetails
+        acl={acl}
+        changeState={sinon.stub()}
+        destroyUnits={sinon.stub()}
+        service={service}
+        unit={fakeUnit} />);
+    var buttons = [{
+      disabled: true,
       title: 'Remove',
       action: output.props.children[1].props.buttons[0].action
     }];
@@ -338,6 +366,7 @@ describe('UnitDetails', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
+        acl={acl}
         destroyUnits={destroyUnits}
         changeState={changeState}
         service={service}
@@ -352,6 +381,7 @@ describe('UnitDetails', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
+        acl={acl}
         destroyUnits={destroyUnits}
         changeState={changeState}
         unitStatus='pending'
@@ -375,6 +405,7 @@ describe('UnitDetails', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.UnitDetails
+        acl={acl}
         destroyUnits={destroyUnits}
         changeState={changeState}
         previousComponent='expose'

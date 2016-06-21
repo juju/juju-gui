@@ -23,6 +23,7 @@ YUI.add('scale-service', function() {
   juju.components.ScaleService = React.createClass({
 
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       addGhostAndEcsUnits: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       createMachinesPlaceUnits: React.PropTypes.func.isRequired,
@@ -126,7 +127,9 @@ YUI.add('scale-service', function() {
     },
 
     render: function() {
+      var disabled = this.props.acl.isReadOnly();
       var buttons = [{
+        disabled: disabled,
         title: 'Confirm',
         submit: true
       }];
@@ -137,6 +140,7 @@ YUI.add('scale-service', function() {
           <div className="scale-service--units">
             <input
               className="scale-service--units__input"
+              disabled={disabled}
               type="number"
               min="0"
               step="1"
@@ -150,6 +154,7 @@ YUI.add('scale-service', function() {
             <div>
               <input
                 className="scale-service--selector__radio"
+                disabled={disabled}
                 name="placement" type="radio"
                 onChange={this._toggleConstraints}
                 id="auto-place-units"
@@ -159,6 +164,7 @@ YUI.add('scale-service', function() {
             <div>
               <input
                 className="scale-service--selector__radio"
+                disabled={disabled}
                 name="placement" type="radio"
                 onChange={this._toggleConstraints}
                 defaultChecked={true}
@@ -168,6 +174,7 @@ YUI.add('scale-service', function() {
           </div>
           <div className={this._generateClasses()} ref="constraintsContainer">
             <juju.components.Constraints
+              disabled={true}
               valuesChanged={this._updateConstraints} />
           </div>
           <juju.components.ButtonRow buttons={buttons} />

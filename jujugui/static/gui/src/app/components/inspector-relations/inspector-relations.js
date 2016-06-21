@@ -20,6 +20,7 @@ YUI.add('inspector-relations', function() {
   juju.components.InspectorRelations = React.createClass({
 
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       destroyRelations: React.PropTypes.func.isRequired,
       serviceRelations: React.PropTypes.array.isRequired
@@ -74,6 +75,7 @@ YUI.add('inspector-relations', function() {
     */
     _generateRelations: function() {
       var relations = this.props.serviceRelations;
+      var disabled = this.props.acl.isReadOnly();
       var activeRelations = [];
       // Remove deleted relations from the list
       for (var i in relations) {
@@ -92,6 +94,7 @@ YUI.add('inspector-relations', function() {
       var components = [
         <juju.components.CheckListItem
           className='select-all'
+          disabled={disabled}
           key={ref+'1'}
           ref={ref}
           label='Select all relations'
@@ -103,6 +106,7 @@ YUI.add('inspector-relations', function() {
         components.push(
         <juju.components.CheckListItem
           action={this._handleRelationClick.bind(this, index)}
+          disabled={disabled}
           key={relation.id}
           ref={ref}
           label={this._generateRelationLabel(relation)}
@@ -183,7 +187,8 @@ YUI.add('inspector-relations', function() {
       if (this.props.serviceRelations.length === 0) {
         return;
       }
-      var disabled = this.state.activeCount === 0;
+      var disabled = this.state.activeCount === 0 ||
+        this.props.acl.isReadOnly();
       var buttons = [];
       buttons.push({
         title: 'Remove',

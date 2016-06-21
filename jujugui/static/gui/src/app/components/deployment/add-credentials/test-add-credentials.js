@@ -24,11 +24,15 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentAddCredentials', function() {
-  var clouds, users, jem, refs;
+  var acl, clouds, users, jem, refs;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('deployment-add-credentials', function() { done(); });
+  });
+
+  beforeEach(function() {
+    acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   beforeEach(function() {
@@ -89,6 +93,7 @@ describe('DeploymentAddCredentials', function() {
     var cloud = clouds['aws'];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentAddCredentials
+        acl={acl}
         changeState={sinon.stub()}
         controller="my-controller"
         cloud={cloud}
@@ -131,6 +136,7 @@ describe('DeploymentAddCredentials', function() {
           <form className="twelve-col">
             <div className="six-col">
               <juju.components.DeploymentInput
+                disabled={false}
                 label="Credential name"
                 placeholder="AWS-1"
                 required={true}
@@ -144,7 +150,8 @@ describe('DeploymentAddCredentials', function() {
                     'letters, numbers, and hyphens. It must not start or ' +
                     'end with a hyphen.'
                 }]} />
-              <select ref="selectRegion">
+              <select ref="selectRegion"
+                disabled={false}>
                 <option>Choose a region</option>
                 {[<option key="us-east-1" value="us-east-1">us-east-1</option>]}
               </select>
@@ -174,6 +181,7 @@ describe('DeploymentAddCredentials', function() {
                 </a>
               </p>
               <juju.components.DeploymentInput
+                disabled={false}
                 label="Access key"
                 placeholder="TDFIWNDKF7UW6DVGX98X"
                 required={true}
@@ -183,6 +191,7 @@ describe('DeploymentAddCredentials', function() {
                   error: 'This field is required.'
                 }]} />
               <juju.components.DeploymentInput
+                disabled={false}
                 label="Secret key"
                 placeholder="p/hdU8TnOP5D7JNHrFiM8IO8f5GN6GhHj7tueBN9"
                 required={true}
@@ -204,6 +213,7 @@ describe('DeploymentAddCredentials', function() {
     var cloud = clouds['google'];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentAddCredentials
+        acl={acl}
         changeState={sinon.stub()}
         controller="my-controller"
         cloud={cloud}
@@ -246,6 +256,7 @@ describe('DeploymentAddCredentials', function() {
           <form className="twelve-col">
             <div className="six-col">
               <juju.components.DeploymentInput
+                disabled={false}
                 label="Project ID (credential name)"
                 placeholder="AWS-1"
                 required={true}
@@ -259,7 +270,8 @@ describe('DeploymentAddCredentials', function() {
                     'letters, numbers, and hyphens. It must not start or ' +
                     'end with a hyphen.'
                 }]} />
-              <select ref="selectRegion">
+              <select ref="selectRegion"
+                disabled={false}>
                 <option>Choose a region</option>
                 {[<option key="us-east-1" value="us-east-1">us-east-1</option>]}
               </select>
@@ -315,6 +327,7 @@ describe('DeploymentAddCredentials', function() {
     var cloud = clouds['azure'];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentAddCredentials
+        acl={acl}
         changeState={sinon.stub()}
         controller="my-controller"
         cloud={cloud}
@@ -357,6 +370,7 @@ describe('DeploymentAddCredentials', function() {
           <form className="twelve-col">
             <div className="six-col">
               <juju.components.DeploymentInput
+                disabled={false}
                 label="Credential name"
                 placeholder="AWS-1"
                 required={true}
@@ -370,7 +384,8 @@ describe('DeploymentAddCredentials', function() {
                     'letters, numbers, and hyphens. It must not start or ' +
                     'end with a hyphen.'
                 }]} />
-              <select ref="selectRegion">
+              <select ref="selectRegion"
+                disabled={false}>
                 <option>Choose a region</option>
                 {[<option key="us-east-1" value="us-east-1">us-east-1</option>]}
               </select>
@@ -416,6 +431,7 @@ describe('DeploymentAddCredentials', function() {
     jem.listRegions = (c, cb) => cb(null, []);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentAddCredentials
+        acl={acl}
         changeState={sinon.stub()}
         controller="my-controller"
         cloud={cloud}
@@ -426,7 +442,8 @@ describe('DeploymentAddCredentials', function() {
     var output = renderer.getRenderOutput();
     var props = output.props;
     var emptySelect = (
-      <select ref="selectRegion">
+      <select ref="selectRegion"
+        disabled={false}>
         <option>Loading available regions</option>
         {null}
       </select>);
@@ -439,6 +456,7 @@ describe('DeploymentAddCredentials', function() {
     jem.listControllers = cb => cb(null, ['my-controller']);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentAddCredentials
+        acl={acl}
         changeState={sinon.stub()}
         controller="my-controller"
         cloud={clouds['aws']}
@@ -456,6 +474,7 @@ describe('DeploymentAddCredentials', function() {
     var changeState = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentAddCredentials
+        acl={acl}
         changeState={changeState}
         controller="my-controller"
         cloud={clouds['aws']}
@@ -479,6 +498,7 @@ describe('DeploymentAddCredentials', function() {
   it('does not submit the form if there are validation errors', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentAddCredentials
+        acl={acl}
         changeState={sinon.stub()}
         controller="my-controller"
         cloud={clouds['aws']}
@@ -489,5 +509,126 @@ describe('DeploymentAddCredentials', function() {
     var instance = renderer.getMountedInstance();
     instance._handleAddCredentials();
     assert.equal(jem.addTemplate.callCount, 0);
+  });
+
+  it('disables controls when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var cloud = clouds['aws'];
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentAddCredentials
+        acl={acl}
+        changeState={sinon.stub()}
+        controller="my-controller"
+        cloud={cloud}
+        jem={jem}
+        setDeploymentInfo={sinon.stub()}
+        users={users}
+        validateForm={sinon.stub().returns(true)} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var buttons = [{
+      action: instance._handleChangeCloud,
+      title: 'Change cloud',
+      type: 'inline-neutral'
+    }, {
+      title: 'Add credential',
+      action: instance._handleAddCredentials,
+      disabled: true,
+      type: 'inline-positive'
+    }];
+    var expected = (
+      <div className="deployment-panel__child">
+        <juju.components.DeploymentPanelContent
+          title="Configure Amazon Web Services">
+          <div className="deployment-add-credentials__logo">
+              <juju.components.SvgIcon
+                height={cloud.svgHeight}
+                name={cloud.id}
+                width={cloud.svgWidth} />
+          </div>
+          <div className="twelve-col deployment-add-credentials__signup">
+            <a href={cloud.signupUrl}
+              target="_blank">
+              Sign up for {cloud.title}
+              &nbsp;
+              <juju.components.SvgIcon
+                name="external-link-16"
+                size="12" />
+            </a>
+          </div>
+          <form className="twelve-col">
+            <div className="six-col">
+              <juju.components.DeploymentInput
+                disabled={true}
+                label="Credential name"
+                placeholder="AWS-1"
+                required={true}
+                ref="templateName"
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }, {
+                  regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
+                  error: 'This field must only contain upper and lowercase ' +
+                    'letters, numbers, and hyphens. It must not start or ' +
+                    'end with a hyphen.'
+                }]} />
+              <select ref="selectRegion"
+                disabled={true}>
+                <option>Choose a region</option>
+                {[<option key="us-east-1" value="us-east-1">us-east-1</option>]}
+              </select>
+            </div>
+            <div className="deployment-panel__notice six-col last-col">
+              <p className="deployment-panel__notice-content">
+                <juju.components.SvgIcon
+                  name="general-action-blue"
+                  size="16" />
+                Credentials are stored securely on our servers and we will
+                notify you by email whenever they are used. See where they are
+                used and manage or remove them via the account page.
+              </p>
+            </div>
+            <h3 className="deployment-panel__section-title twelve-col">
+              Enter credentials
+            </h3>
+            <div className="six-col">
+              <p className="deployment-add-credentials__p">
+                You can obtain your AWS credentials at:<br />
+                <a className="deployment-panel__link"
+                  href={'https://console.aws.amazon.com/iam/home?region=' +
+                    'eu-west-1#security_credential'}
+                  target="_blank">
+                  https://console.aws.amazon.com/iam/home?region=eu-west-1#
+                  security_credential
+                </a>
+              </p>
+              <juju.components.DeploymentInput
+                disabled={true}
+                label="Access key"
+                placeholder="TDFIWNDKF7UW6DVGX98X"
+                required={true}
+                ref="templateAccessKey"
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }]} />
+              <juju.components.DeploymentInput
+                disabled={true}
+                label="Secret key"
+                placeholder="p/hdU8TnOP5D7JNHrFiM8IO8f5GN6GhHj7tueBN9"
+                required={true}
+                ref="templateSecretKey"
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }]} />
+            </div>
+          </form>
+        </juju.components.DeploymentPanelContent>
+        <juju.components.DeploymentPanelFooter
+          buttons={buttons} />
+      </div>);
+    assert.deepEqual(output, expected);
   });
 });

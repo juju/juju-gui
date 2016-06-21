@@ -24,12 +24,17 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('Charmbrowser', function() {
+  var acl;
 
   beforeAll(function(done) {
     // Mock these out since we just do shallow renders.
     juju.components.Panel = function() {};
     // By loading this file it adds the component to the juju components.
     YUI().use('charmbrowser-component', function() { done(); });
+  });
+
+  beforeEach(function() {
+    acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   it('displays the search results when the app state calls for it', function() {
@@ -55,6 +60,7 @@ describe('Charmbrowser', function() {
     var utils = {getName: sinon.stub()};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
+        acl={acl}
         addNotification={sinon.stub()}
         apiUrl="http://example.com/"
         appState={appState}
@@ -111,6 +117,7 @@ describe('Charmbrowser', function() {
     var changeState = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
+        acl={acl}
         addNotification={sinon.stub()}
         apiUrl="http://example.com/"
         appState={appState}
@@ -160,6 +167,7 @@ describe('Charmbrowser', function() {
     var seriesList = {};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
+        acl={acl}
         addNotification={sinon.stub()}
         apiUrl="http://example.com/"
         appState={appState}
@@ -224,6 +232,7 @@ describe('Charmbrowser', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Charmbrowser
+        acl={acl}
         addNotification={addNotification}
         apiUrl={apiUrl}
         appState={appState}
@@ -252,6 +261,7 @@ describe('Charmbrowser', function() {
           <div className="charmbrowser"
             ref="charmbrowser">
             <juju.components.EntityDetails
+              acl={acl}
               apiUrl={apiUrl}
               importBundleYAML={importBundleYAML}
               getBundleYAML={getBundleYAML}

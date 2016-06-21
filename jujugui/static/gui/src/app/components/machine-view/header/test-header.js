@@ -21,10 +21,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('MachineViewHeader', function() {
+  var acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('machine-view-header', function() { done(); });
+  });
+
+  beforeEach(() => {
+    acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   it('can render', function() {
@@ -32,6 +37,7 @@ describe('MachineViewHeader', function() {
     // test the internal component so we access it via DecoratedComponent.
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewHeader.DecoratedComponent
+        acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}
@@ -54,6 +60,7 @@ describe('MachineViewHeader', function() {
   it('can render in droppable mode', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewHeader.DecoratedComponent
+        acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}
@@ -70,6 +77,7 @@ describe('MachineViewHeader', function() {
   it('can render in drop mode', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewHeader.DecoratedComponent
+        acl={acl}
         canDrop={true}
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}
@@ -87,6 +95,7 @@ describe('MachineViewHeader', function() {
     var menuItems = [];
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewHeader.DecoratedComponent
+        acl={acl}
         activeMenuItem="name"
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
@@ -114,6 +123,7 @@ describe('MachineViewHeader', function() {
     var action = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewHeader.DecoratedComponent
+        acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}

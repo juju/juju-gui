@@ -23,6 +23,7 @@ YUI.add('inspector-change-version', function() {
   juju.components.InspectorChangeVersion = React.createClass({
 
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       addCharm: React.PropTypes.func.isRequired,
       addNotification: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
@@ -201,6 +202,7 @@ YUI.add('inspector-change-version', function() {
           }
           components.push(
             <juju.components.InspectorChangeVersionItem
+              acl={this.props.acl}
               key={version}
               downgrade={downgrade}
               itemAction={this._viewCharmDetails.bind(this, version)}

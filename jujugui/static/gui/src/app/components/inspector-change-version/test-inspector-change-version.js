@@ -24,10 +24,15 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('InspectorChangeVersion', function() {
+  var acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('inspector-change-version', function() { done(); });
+  });
+
+  beforeEach(() => {
+    acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   it('can display a loading spinner', function() {
@@ -38,6 +43,7 @@ describe('InspectorChangeVersion', function() {
     var getAvailableVersions = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersion
+          acl={acl}
           addCharm={sinon.stub()}
           addNotification={sinon.stub()}
           changeState={changeState}
@@ -73,6 +79,7 @@ describe('InspectorChangeVersion', function() {
     var getAvailableVersions = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersion
+          acl={acl}
           addCharm={sinon.stub()}
           addNotification={sinon.stub()}
           changeState={changeState}
@@ -113,6 +120,7 @@ describe('InspectorChangeVersion', function() {
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersion
+          acl={acl}
           addCharm={sinon.stub()}
           addNotification={sinon.stub()}
           changeState={changeState}
@@ -137,12 +145,14 @@ describe('InspectorChangeVersion', function() {
         </div>
         <ul className="inspector-change-version__versions">
           <juju.components.InspectorChangeVersionItem
+            acl={acl}
             key="cs:django-4"
             downgrade={true}
             itemAction={list.props.children[0].props.itemAction}
             buttonAction={list.props.children[0].props.buttonAction}
             id="cs:django-4" />
           <juju.components.InspectorChangeVersionItem
+            acl={acl}
             key="cs:django-6"
             downgrade={false}
             itemAction={list.props.children[1].props.itemAction}
@@ -160,6 +170,7 @@ describe('InspectorChangeVersion', function() {
     var getAvailableVersions = sinon.stub().callsArg(1, 'bad wolf', []);
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersion
+          acl={acl}
           addCharm={sinon.stub()}
           addNotification={sinon.stub()}
           changeState={changeState}
@@ -199,6 +210,7 @@ describe('InspectorChangeVersion', function() {
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersion
+          acl={acl}
           addCharm={sinon.stub()}
           addNotification={sinon.stub()}
           changeState={changeState}
@@ -233,6 +245,7 @@ describe('InspectorChangeVersion', function() {
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersion
+          acl={acl}
           addCharm={sinon.stub()}
           addNotification={sinon.stub()}
           changeState={changeState}
@@ -273,6 +286,7 @@ describe('InspectorChangeVersion', function() {
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersion
+          acl={acl}
           addNotification={sinon.stub()}
           changeState={changeState}
           charmId="cs:django-5"
@@ -314,6 +328,7 @@ describe('InspectorChangeVersion', function() {
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersion
+          acl={acl}
           changeState={changeState}
           charmId="cs:django-5"
           getMacaroon={getMacaroon}
@@ -346,6 +361,7 @@ describe('InspectorChangeVersion', function() {
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersion
+          acl={acl}
           changeState={changeState}
           charmId="cs:django-5"
           service={service}
@@ -380,6 +396,7 @@ describe('InspectorChangeVersion', function() {
     ]);
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersion
+          acl={acl}
           changeState={changeState}
           charmId="cs:django-5"
           service={service}
@@ -410,6 +427,7 @@ describe('InspectorChangeVersion', function() {
     var getAvailableVersions = sinon.stub().returns({abort: abort});
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.InspectorChangeVersion
+          acl={acl}
           addCharm={sinon.stub()}
           addNotification={sinon.stub()}
           changeState={changeState}

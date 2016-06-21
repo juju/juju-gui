@@ -22,10 +22,15 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 var testUtils = React.addons.TestUtils;
 
 describe('MachineViewAddMachine', function() {
+  var acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('machine-view-add-machine', function() { done(); });
+  });
+
+  beforeEach(() => {
+    acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   it('can render for creating a machine', function() {
@@ -33,6 +38,7 @@ describe('MachineViewAddMachine', function() {
     var createMachine = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewAddMachine
+        acl={acl}
         close={close}
         createMachine={createMachine} />, true);
     var instance = renderer.getMountedInstance();
@@ -55,6 +61,46 @@ describe('MachineViewAddMachine', function() {
             Define constraints
           </h4>
           <juju.components.Constraints
+            disabled={false}
+            valuesChanged={instance._updateConstraints} />
+        </div>
+        <juju.components.ButtonRow
+          buttons={buttons}
+          key="buttons" />
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can disable the controls when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var close = sinon.stub();
+    var createMachine = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.MachineViewAddMachine
+        acl={acl}
+        close={close}
+        createMachine={createMachine} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var buttons = [{
+      title: 'Cancel',
+      type: 'base',
+      action: close
+    }, {
+      title: 'Create',
+      action: instance._submitForm,
+      type: 'neutral',
+      disabled: true
+    }];
+    var expected = (
+      <div className="add-machine">
+        <div className="add-machine__constraints"
+          key="constraints">
+          <h4 className="add-machine__title">
+            Define constraints
+          </h4>
+          <juju.components.Constraints
+            disabled={true}
             valuesChanged={instance._updateConstraints} />
         </div>
         <juju.components.ButtonRow
@@ -69,6 +115,7 @@ describe('MachineViewAddMachine', function() {
     var createMachine = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewAddMachine
+        acl={acl}
         close={close}
         createMachine={createMachine}
         jujuCoreVersion="1.4"
@@ -89,6 +136,7 @@ describe('MachineViewAddMachine', function() {
       <div className="add-machine">
         <select className="add-machine__container"
           defaultValue=""
+          disabled={false}
           key="containers"
           onChange={instance._updateSelectedContainer}>
           <option disabled={true} value="">
@@ -110,6 +158,7 @@ describe('MachineViewAddMachine', function() {
     var createMachine = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewAddMachine
+        acl={acl}
         close={close}
         createMachine={createMachine}
         jujuCoreVersion="2.4"
@@ -130,6 +179,7 @@ describe('MachineViewAddMachine', function() {
       <div className="add-machine">
         <select className="add-machine__container"
           defaultValue=""
+          disabled={false}
           key="containers"
           onChange={instance._updateSelectedContainer}>
           <option disabled={true} value="">
@@ -166,6 +216,7 @@ describe('MachineViewAddMachine', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewAddMachine
+        acl={acl}
         close={close}
         createMachine={createMachine}
         machines={machines}
@@ -176,6 +227,7 @@ describe('MachineViewAddMachine', function() {
     var expected = (
       <select
         defaultValue=""
+        disabled={false}
         key="machines"
         onChange={instance._updateSelectedMachine}>
         <option disabled={true} value="">
@@ -220,6 +272,7 @@ describe('MachineViewAddMachine', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewAddMachine
+        acl={acl}
         close={close}
         createMachine={createMachine}
         jujuCoreVersion="1.4"
@@ -231,6 +284,7 @@ describe('MachineViewAddMachine', function() {
     var expected = (
       <select className="add-machine__container"
         defaultValue=""
+        disabled={false}
         key="containers"
         onChange={instance._updateSelectedContainer}>
         <option disabled={true} value="">
@@ -264,6 +318,7 @@ describe('MachineViewAddMachine', function() {
     var createMachine = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewAddMachine
+        acl={acl}
         close={close}
         createMachine={createMachine} />, true);
     var output = renderer.getRenderOutput();
@@ -276,6 +331,7 @@ describe('MachineViewAddMachine', function() {
     var createMachine = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewAddMachine
+        acl={acl}
         close={close}
         createMachine={createMachine} />, true);
     var instance = renderer.getMountedInstance();
@@ -292,6 +348,7 @@ describe('MachineViewAddMachine', function() {
     var createMachine = sinon.stub();
     var output = testUtils.renderIntoDocument(
       <juju.components.MachineViewAddMachine
+        acl={acl}
         close={close}
         createMachine={createMachine}
         jujuCoreVersion="1.4"
@@ -312,6 +369,7 @@ describe('MachineViewAddMachine', function() {
     var createMachine = sinon.stub();
     var output = testUtils.renderIntoDocument(
       <juju.components.MachineViewAddMachine
+        acl={acl}
         close={close}
         createMachine={createMachine}
         jujuCoreVersion="2.4"
@@ -337,6 +395,7 @@ describe('MachineViewAddMachine', function() {
     var unit = {id: 'unit1'};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewAddMachine
+        acl={acl}
         close={close}
         createMachine={createMachine}
         machines={machines}
@@ -365,6 +424,7 @@ describe('MachineViewAddMachine', function() {
     var unit = {id: 'unit1'};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewAddMachine
+        acl={acl}
         close={close}
         createMachine={createMachine}
         machines={machines}
@@ -395,6 +455,7 @@ describe('MachineViewAddMachine', function() {
     var unit = {id: 'unit1'};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewAddMachine
+        acl={acl}
         close={close}
         createMachine={createMachine}
         machines={machines}
@@ -423,6 +484,7 @@ describe('MachineViewAddMachine', function() {
     var unit = {id: 'unit1'};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewAddMachine
+        acl={acl}
         close={close}
         createMachine={createMachine}
         machines={machines}
@@ -452,6 +514,7 @@ describe('MachineViewAddMachine', function() {
     var unit = {id: 'unit1'};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewAddMachine
+        acl={acl}
         close={close}
         createMachine={createMachine}
         machines={machines}
@@ -477,6 +540,7 @@ describe('MachineViewAddMachine', function() {
     var unit = {id: 'unit1'};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.MachineViewAddMachine
+        acl={acl}
         close={close}
         createMachine={createMachine}
         machines={machines}

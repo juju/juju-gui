@@ -25,6 +25,7 @@ YUI.add('entity-details', function() {
 
     /* Define and validate the properites available on this component. */
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
       apiUrl: React.PropTypes.string.isRequired,
       changeState: React.PropTypes.func.isRequired,
@@ -77,6 +78,7 @@ YUI.add('entity-details', function() {
           activeChild = (
               <div>
                 <juju.components.EntityHeader
+                  acl={this.props.acl}
                   entityModel={entityModel}
                   addNotification={this.props.addNotification}
                   importBundleYAML={this.props.importBundleYAML}

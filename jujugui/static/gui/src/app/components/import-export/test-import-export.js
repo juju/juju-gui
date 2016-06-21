@@ -24,16 +24,22 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('ImportExport', function() {
+  var acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('import-export', function() { done(); });
   });
 
+  beforeEach(function() {
+    acl = {isReadOnly: sinon.stub().returns(false)};
+  });
+
   it('can render and pass the correct props', function() {
     var currentChangeSet = {one: 1, two: 2};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.ImportExport
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
         exportEnvironmentFile={sinon.stub()}
@@ -76,6 +82,7 @@ describe('ImportExport', function() {
     var currentChangeSet = {};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.ImportExport
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
         exportEnvironmentFile={sinon.stub()}
@@ -92,6 +99,7 @@ describe('ImportExport', function() {
     var currentChangeSet = {};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.ImportExport
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
         exportEnvironmentFile={sinon.stub()}
@@ -109,6 +117,7 @@ describe('ImportExport', function() {
     var exportEnvironmentFile = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.ImportExport
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
         exportEnvironmentFile={exportEnvironmentFile}
@@ -129,6 +138,7 @@ describe('ImportExport', function() {
     var exportEnvironmentFile = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.ImportExport
+        acl={acl}
         changeState={sinon.stub()}
         exportEnvironmentFile={exportEnvironmentFile}
         renderDragOverNotification={renderDragOverNotification}
@@ -151,6 +161,7 @@ describe('ImportExport', function() {
     var exportEnvironmentFile = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.ImportExport
+        acl={acl}
         changeState={sinon.stub()}
         exportEnvironmentFile={exportEnvironmentFile}
         renderDragOverNotification={renderDragOverNotification}
@@ -166,5 +177,49 @@ describe('ImportExport', function() {
     output.props.children[2].props.onChange();
     assert.equal(importBundleFile.callCount, 1);
     assert.equal(importBundleFile.args[0][0], 'apache2.yaml');
+  });
+
+  it('can disable importing when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var currentChangeSet = {one: 1, two: 2};
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.ImportExport
+        acl={acl}
+        changeState={sinon.stub()}
+        currentChangeSet={currentChangeSet}
+        exportEnvironmentFile={sinon.stub()}
+        hasEntities={true}
+        hideDragOverNotification={sinon.stub()}
+        importBundleFile={sinon.stub()}
+        renderDragOverNotification={sinon.stub()} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="import-export">
+        <span className="import-export__export link"
+          onClick={instance._handleExport}
+          role="button"
+          title="Export"
+          tabIndex="0">
+          <juju.components.SvgIcon name="export_16"
+            className="import-export__icon"
+            size="16" />
+        </span>
+        <span className="import-export__import link"
+          onClick={false}
+          role="button"
+          title="Import"
+          tabIndex="0">
+          <juju.components.SvgIcon name="import_16"
+            className="import-export__icon"
+            size="16" />
+        </span>
+        <input className="import-export__file"
+          type="file"
+          onChange={null}
+          accept=".zip,.yaml,.yml"
+          ref="file-input" />
+      </div>);
+    assert.deepEqual(output, expected);
   });
 });

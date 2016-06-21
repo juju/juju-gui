@@ -25,7 +25,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('EntityHeader', function() {
-  var mockEntity;
+  var acl, mockEntity;
 
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
@@ -33,6 +33,7 @@ describe('EntityHeader', function() {
   });
 
   beforeEach(function() {
+    acl = {isReadOnly: sinon.stub().returns(false)};
     mockEntity = jsTestUtils.makeEntity();
   });
 
@@ -43,6 +44,7 @@ describe('EntityHeader', function() {
   it('renders an entity properly', function() {
     var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityHeader
+          acl={acl}
           addNotification={sinon.stub()}
           deployService={sinon.spy()}
           changeState={sinon.spy()}
@@ -112,6 +114,7 @@ describe('EntityHeader', function() {
               <juju.components.GenericButton
                 ref="deployAction"
                 action={instance._handleDeployClick}
+                disabled={false}
                 type="positive"
                 title="Add to canvas" />
             </div>
@@ -127,6 +130,7 @@ describe('EntityHeader', function() {
     }];
     var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityHeader
+          acl={acl}
           addNotification={sinon.stub()}
           deployService={sinon.spy()}
           changeState={sinon.spy()}
@@ -155,6 +159,7 @@ describe('EntityHeader', function() {
   it('displays correctly when loading plans', function() {
     var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityHeader
+          acl={acl}
           addNotification={sinon.stub()}
           deployService={sinon.spy()}
           changeState={sinon.spy()}
@@ -185,6 +190,7 @@ describe('EntityHeader', function() {
     var entity = jsTestUtils.makeEntity(true);
     var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityHeader
+          acl={acl}
           addNotification={sinon.stub()}
           deployService={sinon.spy()}
           changeState={sinon.spy()}
@@ -211,6 +217,7 @@ describe('EntityHeader', function() {
   it('displays an add to canvas button', function() {
     var output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
+        acl={acl}
         addNotification={sinon.stub()}
         entityModel={mockEntity}
         changeState={sinon.spy()}
@@ -229,6 +236,7 @@ describe('EntityHeader', function() {
     mockEntity.set('series', undefined);
     var output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
+        acl={acl}
         addNotification={sinon.stub()}
         entityModel={mockEntity}
         changeState={sinon.spy()}
@@ -250,6 +258,7 @@ describe('EntityHeader', function() {
     var getBundleYAML = sinon.stub();
     var output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
+        acl={acl}
         addNotification={sinon.stub()}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
@@ -274,6 +283,7 @@ describe('EntityHeader', function() {
     var plans = [{url: 'test-plan'}];
     var output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
+        acl={acl}
         addNotification={sinon.stub()}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
@@ -303,6 +313,7 @@ describe('EntityHeader', function() {
     var plans = [{url: 'test-plan'}];
     var output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
+        acl={acl}
         addNotification={sinon.stub()}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
@@ -330,6 +341,7 @@ describe('EntityHeader', function() {
     var entity = jsTestUtils.makeEntity(true);
     var output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
+        acl={acl}
         addNotification={sinon.stub()}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
@@ -357,6 +369,7 @@ describe('EntityHeader', function() {
     var entity = jsTestUtils.makeEntity(true);
     var output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
+        acl={acl}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
         hasPlans={false}
@@ -383,6 +396,7 @@ describe('EntityHeader', function() {
     var entity = jsTestUtils.makeEntity(true);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityHeader
+        acl={acl}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
         hasPlans={false}
@@ -409,5 +423,32 @@ describe('EntityHeader', function() {
             {output.props.children.props.children}
           </header>
         </div>);
+  });
+
+  it('can disable the deploy button when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var renderer = jsTestUtils.shallowRender(
+        <juju.components.EntityHeader
+          acl={acl}
+          addNotification={sinon.stub()}
+          deployService={sinon.spy()}
+          changeState={sinon.spy()}
+          entityModel={mockEntity}
+          getBundleYAML={sinon.stub()}
+          hasPlans={false}
+          importBundleYAML={sinon.stub()}
+          pluralize={sinon.stub()}
+          scrollPosition={0} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.GenericButton
+        ref="deployAction"
+        action={instance._handleDeployClick}
+        disabled={true}
+        type="positive"
+        title="Add to canvas" />);
+    assert.deepEqual(output.props.children.props.children.props.children[1]
+      .props.children[2], expected);
   });
 });

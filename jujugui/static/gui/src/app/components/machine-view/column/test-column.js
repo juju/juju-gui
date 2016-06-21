@@ -21,10 +21,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('MachineViewColumn', function() {
+  var acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('machine-view-column', function() { done(); });
+  });
+
+  beforeEach(() => {
+    acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   it('can render', function() {
@@ -35,6 +40,7 @@ describe('MachineViewColumn', function() {
     // test the internal component so we access it via DecoratedComponent.
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewColumn.DecoratedComponent
+        acl={acl}
         activeMenuItem="name"
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
@@ -50,6 +56,7 @@ describe('MachineViewColumn', function() {
     var expected = (
       <div className="machine-view__column">
         <juju.components.MachineViewHeader
+          acl={acl}
           activeMenuItem="name"
           droppable={true}
           dropUnit={dropUnit}
@@ -71,6 +78,7 @@ describe('MachineViewColumn', function() {
   it('can render in droppable mode', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewColumn.DecoratedComponent
+        acl={acl}
         canDrop={false}
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}
@@ -87,6 +95,7 @@ describe('MachineViewColumn', function() {
   it('can render in drop mode', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewColumn.DecoratedComponent
+        acl={acl}
         canDrop={true}
         connectDropTarget={jsTestUtils.connectDropTarget}
         droppable={true}

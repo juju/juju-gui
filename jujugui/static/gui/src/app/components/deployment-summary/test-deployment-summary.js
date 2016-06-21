@@ -24,10 +24,15 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentSummaryClassic', function() {
+  var acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('deployment-summary-classic', function() { done(); });
+  });
+
+  beforeEach(function() {
+    acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   it('can display a list of changes', function() {
@@ -52,6 +57,7 @@ describe('DeploymentSummaryClassic', function() {
         'deployment-summary-classic__list-header';
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummaryClassic
+        acl={acl}
         autoPlaceUnits={sinon.stub()}
         changeState={sinon.stub()}
         ecsClear={sinon.stub()}
@@ -77,6 +83,7 @@ describe('DeploymentSummaryClassic', function() {
               Deployment summary
             </h2>
             <juju.components.DeploymentSummaryPlacementClassic
+              acl={acl}
               handleViewMachinesClick={instance._handleViewMachinesClick}
               handlePlacementChange={instance._handlePlacementChange}
               autoPlace={false}
@@ -100,13 +107,46 @@ describe('DeploymentSummaryClassic', function() {
             <juju.components.GenericButton
               type="inline-neutral"
               action={instance._handleClear}
+              disabled={false}
               title="Clear changes" />
             <juju.components.GenericButton
               action={instance._handleDeploy}
+              disabled={false}
               type="inline-positive"
               title="Deploy" />
           </div>
         </div>
       </juju.components.Panel>);
+  });
+
+  it('can disable the controls when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var getUnplacedUnitCount = sinon.stub().returns(0);
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentSummaryClassic
+        acl={acl}
+        autoPlaceUnits={sinon.stub()}
+        changeState={sinon.stub()}
+        ecsClear={sinon.stub()}
+        ecsCommit={sinon.stub()}
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        changeDescriptions={[]}
+        autoPlaceDefault={false} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="deployment-summary-classic__footer">
+        <juju.components.GenericButton
+          type="inline-neutral"
+          action={instance._handleClear}
+          disabled={true}
+          title="Clear changes" />
+        <juju.components.GenericButton
+          action={instance._handleDeploy}
+          disabled={true}
+          type="inline-positive"
+          title="Deploy" />
+      </div>);
+    assert.deepEqual(output.props.children.props.children[2], expected);
   });
 });

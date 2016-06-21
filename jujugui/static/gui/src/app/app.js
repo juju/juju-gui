@@ -371,6 +371,9 @@ YUI.add('juju-gui', function(Y) {
         this.websocketLogging = new Y.juju.WebsocketLogging();
       }
 
+      // Provide the ACL object.
+      this.acl = Y.juju.acl;
+
       /**
         Reference to the juju.Cookies instance.
 
@@ -779,6 +782,7 @@ YUI.add('juju-gui', function(Y) {
       // nextProps on the lifecycle methods.
       ReactDOM.render(
         <window.juju.components.UserProfile
+          acl={this.acl}
           addNotification={
             this.db.notifications.add.bind(this.db.notifications)}
           canCreateNew={this.env.get('connected')}
@@ -814,6 +818,7 @@ YUI.add('juju-gui', function(Y) {
     _renderAccount: function() {
       ReactDOM.render(
         <window.juju.components.Account
+          acl={this.acl}
           deleteTemplate={this.jem.deleteTemplate.bind(this.jem)}
           listTemplates={this.jem.listTemplates.bind(this.jem)}
           user={this._getAuth()}
@@ -901,6 +906,7 @@ YUI.add('juju-gui', function(Y) {
         }
         ReactDOM.render(
           <window.juju.components.DeploymentSummaryClassic
+            acl={this.acl}
             autoPlaceDefault={!localStorage.getItem('disable-auto-place')}
             autoPlaceUnits={this._autoPlaceUnits.bind(this)}
             changeDescriptions={changeDescriptions}
@@ -935,6 +941,7 @@ YUI.add('juju-gui', function(Y) {
       }
       ReactDOM.render(
         <window.juju.components.Deployment
+          acl={this.acl}
           activeComponent={activeComponent}
           autoPlaceUnits={this._autoPlaceUnits.bind(this)}
           changeCounts={changesUtils.getChangeCounts(currentChangeSet)}
@@ -977,6 +984,7 @@ YUI.add('juju-gui', function(Y) {
       var changesUtils = this.changesUtils;
       ReactDOM.render(
         <window.juju.components.DeploymentBar
+          acl={this.acl}
           changeState={this.changeState.bind(this)}
           currentChangeSet={ecs.getCurrentChangeSet()}
           generateChangeDescription={
@@ -1004,6 +1012,7 @@ YUI.add('juju-gui', function(Y) {
       var utils = views.utils;
       ReactDOM.render(
         <window.juju.components.ImportExport
+          acl={this.acl}
           changeState={this.changeState.bind(this)}
           currentChangeSet={ecs.getCurrentChangeSet()}
           exportEnvironmentFile={
@@ -1086,6 +1095,7 @@ YUI.add('juju-gui', function(Y) {
         var charm = app.db.charms.getById(service.get('charm'));
         inspector = (
           <components.Inspector
+            acl={this.acl}
             service={service}
             charm={charm}
             addNotification=
@@ -1130,6 +1140,7 @@ YUI.add('juju-gui', function(Y) {
         var localCharmHelpers = juju.localCharmHelpers;
         inspector = (
           <components.LocalInspector
+            acl={this.acl}
             file={metadata.flash.file}
             localType={localType}
             services={this.db.services}
@@ -1183,6 +1194,7 @@ YUI.add('juju-gui', function(Y) {
       });
       ReactDOM.render(
         <components.Charmbrowser
+          acl={this.acl}
           apiUrl={charmstore.url}
           charmstoreSearch={charmstore.search.bind(charmstore)}
           displayPlans={
@@ -1248,6 +1260,7 @@ YUI.add('juju-gui', function(Y) {
       var db = this.db;
       ReactDOM.render(
         <components.MachineView
+          acl={this.acl}
           addGhostAndEcsUnits={views.utils.addGhostAndEcsUnits.bind(
               this, this.db, this.env)}
           autoPlaceUnits={this._autoPlaceUnits.bind(this)}
@@ -2578,6 +2591,7 @@ YUI.add('juju-gui', function(Y) {
 
 }, '0.5.3', {
   requires: [
+    'acl',
     'changes-utils',
     'juju-app-state',
     'juju-charm-models',

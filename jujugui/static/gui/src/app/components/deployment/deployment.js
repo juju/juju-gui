@@ -22,6 +22,7 @@ YUI.add('deployment-component', function() {
 
   juju.components.Deployment = React.createClass({
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       activeComponent: React.PropTypes.string.isRequired,
       appSet: React.PropTypes.func.isRequired,
       autoPlaceUnits: React.PropTypes.func.isRequired,
@@ -115,6 +116,7 @@ YUI.add('deployment-component', function() {
         case 'summary':
           return (
             <juju.components.DeploymentSummary
+              acl={this.props.acl}
               jem={this.props.jem}
               env={this.props.env}
               appSet={this.props.appSet}
@@ -136,6 +138,7 @@ YUI.add('deployment-component', function() {
         case 'choose-cloud':
           return (
             <juju.components.DeploymentChooseCloud
+              acl={this.props.acl}
               jem={this.props.jem}
               changeState={this.props.changeState}
               cloudData={this.clouds}
@@ -145,6 +148,7 @@ YUI.add('deployment-component', function() {
         case 'add-credentials-google':
           return (
             <juju.components.DeploymentAddCredentials
+              acl={this.props.acl}
               changeState={this.props.changeState}
               cloud={this.clouds[activeComponent.split('-')[2]]}
               setDeploymentInfo={this.setDeploymentInfo}

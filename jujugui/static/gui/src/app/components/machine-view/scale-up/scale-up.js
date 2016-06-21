@@ -22,6 +22,7 @@ YUI.add('machine-view-scale-up', function() {
 
   juju.components.MachineViewScaleUp = React.createClass({
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       addGhostAndEcsUnits: React.PropTypes.func.isRequired,
       services: React.PropTypes.object.isRequired,
       toggleScaleUp: React.PropTypes.func.isRequired
@@ -49,6 +50,7 @@ YUI.add('machine-view-scale-up', function() {
             {service.get('name')}
             <input
               className="machine-view__scale-up-unit-input"
+              disabled={this.props.acl.isReadOnly()}
               placeholder="units"
               ref={'scaleUpUnit-' + service.get('id')}
               type="number"
@@ -90,6 +92,7 @@ YUI.add('machine-view-scale-up', function() {
         type: 'base'
       }, {
         action: this._handleAddUnits,
+        disabled: this.props.acl.isReadOnly(),
         title: 'Add units',
         type: 'neutral'
       }];

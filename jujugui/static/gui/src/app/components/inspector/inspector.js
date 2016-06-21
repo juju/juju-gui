@@ -22,6 +22,7 @@ YUI.add('inspector-component', function() {
 
   juju.components.Inspector = React.createClass({
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       addCharm: React.PropTypes.func.isRequired,
       addGhostAndEcsUnits: React.PropTypes.func.isRequired,
       addNotification: React.PropTypes.func.isRequired,
@@ -125,6 +126,7 @@ YUI.add('inspector-component', function() {
             title: service.get('name'),
             icon: service.get('icon'),
             component: <juju.components.ServiceOverview
+              acl={this.props.acl}
               destroyService={this.props.destroyService}
               clearState={this.props.clearState}
               changeState={this.props.changeState}
@@ -150,6 +152,7 @@ YUI.add('inspector-component', function() {
             headerType: unitStatus,
             component:
               <juju.components.UnitList
+                acl={this.props.acl}
                 service={service}
                 unitStatus={unitStatus}
                 units={units}
@@ -200,6 +203,7 @@ YUI.add('inspector-component', function() {
             headerType: unit.agent_state || 'uncommitted',
             component:
               <juju.components.UnitDetails
+                acl={this.props.acl}
                 destroyUnits={this.props.destroyUnits}
                 service={service}
                 changeState={this.props.changeState}
@@ -222,6 +226,7 @@ YUI.add('inspector-component', function() {
             icon: service.get('icon'),
             component:
               <juju.components.ScaleService
+                acl={this.props.acl}
                 serviceId={serviceId}
                 addGhostAndEcsUnits={this.props.addGhostAndEcsUnits}
                 createMachinesPlaceUnits={this.props.createMachinesPlaceUnits}
@@ -240,6 +245,7 @@ YUI.add('inspector-component', function() {
             icon: service.get('icon'),
             component:
               <juju.components.Configuration
+                acl={this.props.acl}
                 service={service}
                 charm={nextProps.charm}
                 changeState={this.props.changeState}
@@ -264,6 +270,7 @@ YUI.add('inspector-component', function() {
             icon: service.get('icon'),
             component:
               <juju.components.InspectorExpose
+                acl={this.props.acl}
                 changeState={this.props.changeState}
                 exposeService={this.props.exposeService}
                 unexposeService={this.props.unexposeService}
@@ -284,6 +291,7 @@ YUI.add('inspector-component', function() {
             icon: service.get('icon'),
             component:
               <juju.components.InspectorRelations
+                acl={this.props.acl}
                 service={service}
                 destroyRelations={this.props.destroyRelations}
                 serviceRelations={this.props.serviceRelations}
@@ -321,6 +329,7 @@ YUI.add('inspector-component', function() {
             icon: service.get('icon'),
             component:
               <juju.components.InspectorChangeVersion
+                acl={this.props.acl}
                 changeState={this.props.changeState}
                 addNotification={this.props.addNotification}
                 charmId={service.get('charm')}

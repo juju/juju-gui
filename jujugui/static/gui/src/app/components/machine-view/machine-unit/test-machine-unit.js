@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('MachineViewMachineUnit', function() {
-  var service, unit;
+  var acl, service, unit;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -29,6 +29,7 @@ describe('MachineViewMachineUnit', function() {
   });
 
   beforeEach(function () {
+    acl = {isReadOnly: sinon.stub().returns(false)};
     service = {
       get: function(val) {
         switch (val) {
@@ -56,6 +57,7 @@ describe('MachineViewMachineUnit', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewMachineUnit.DecoratedComponent
+        acl={acl}
         canDrag={false}
         connectDragSource={jsTestUtils.connectDragSource}
         isDragging={false}
@@ -84,6 +86,7 @@ describe('MachineViewMachineUnit', function() {
     var removeUnit = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewMachineUnit.DecoratedComponent
+        acl={acl}
         canDrag={false}
         connectDragSource={jsTestUtils.connectDragSource}
         isDragging={false}
@@ -111,10 +114,33 @@ describe('MachineViewMachineUnit', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('can disable the destroy when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var removeUnit = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.MachineViewMachineUnit.DecoratedComponent
+        acl={acl}
+        canDrag={false}
+        connectDragSource={jsTestUtils.connectDragSource}
+        isDragging={false}
+        machineType="container"
+        removeUnit={removeUnit}
+        service={service}
+        unit={unit} />);
+    var expected = (
+      <juju.components.MoreMenu
+        items={[{
+          label: 'Destroy',
+          action: false
+        }]} />);
+    assert.deepEqual(output.props.children[2], expected);
+  });
+
   it('can display in dragged mode', function() {
     var removeUnit = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewMachineUnit.DecoratedComponent
+        acl={acl}
         canDrag={false}
         connectDragSource={jsTestUtils.connectDragSource}
         isDragging={true}
@@ -136,6 +162,7 @@ describe('MachineViewMachineUnit', function() {
     var removeUnit = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewMachineUnit.DecoratedComponent
+        acl={acl}
         canDrag={false}
         connectDragSource={jsTestUtils.connectDragSource}
         isDragging={false}
@@ -155,6 +182,7 @@ describe('MachineViewMachineUnit', function() {
     var removeUnit = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewMachineUnit.DecoratedComponent
+        acl={acl}
         connectDragSource={jsTestUtils.connectDragSource}
         canDrag={true}
         isDragging={false}
@@ -175,6 +203,7 @@ describe('MachineViewMachineUnit', function() {
     var removeUnit = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.MachineViewMachineUnit.DecoratedComponent
+        acl={acl}
         canDrag={false}
         connectDragSource={jsTestUtils.connectDragSource}
         isDragging={false}

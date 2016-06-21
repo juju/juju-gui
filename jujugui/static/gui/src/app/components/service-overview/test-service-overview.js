@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('ServiceOverview', function() {
-  var fakeService;
+  var acl, fakeService;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -29,6 +29,7 @@ describe('ServiceOverview', function() {
   });
 
   beforeEach(function() {
+    acl = {isReadOnly: sinon.stub().returns(false)};
     fakeService = {
       get: function() {
         return {
@@ -59,6 +60,7 @@ describe('ServiceOverview', function() {
 
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
+            acl={acl}
             changeState={sinon.stub()}
             clearState={sinon.stub()}
             destroyService={sinon.stub()}
@@ -89,6 +91,7 @@ describe('ServiceOverview', function() {
 
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
+            acl={acl}
             changeState={sinon.stub()}
             clearState={sinon.stub()}
             destroyService={sinon.stub()}
@@ -120,6 +123,7 @@ describe('ServiceOverview', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
+            acl={acl}
             clearState={sinon.stub()}
             destroyService={sinon.stub()}
             getUnitStatusCounts={getUnitStatusCounts()}
@@ -161,6 +165,7 @@ describe('ServiceOverview', function() {
       }};
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
+            acl={acl}
             changeState={sinon.stub()}
             clearState={sinon.stub()}
             destroyService={sinon.stub()}
@@ -190,6 +195,7 @@ describe('ServiceOverview', function() {
       }};
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
+            acl={acl}
             changeState={sinon.stub()}
             clearState={sinon.stub()}
             destroyService={sinon.stub()}
@@ -219,6 +225,7 @@ describe('ServiceOverview', function() {
       }};
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
+            acl={acl}
             changeState={sinon.stub()}
             clearState={sinon.stub()}
             destroyService={sinon.stub()}
@@ -248,6 +255,7 @@ describe('ServiceOverview', function() {
       }};
     var output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
+            acl={acl}
             changeState={sinon.stub()}
             clearState={sinon.stub()}
             destroyService={sinon.stub()}
@@ -277,6 +285,7 @@ describe('ServiceOverview', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
+          acl={acl}
           changeState={sinon.stub()}
           clearState={sinon.stub()}
           destroyService={sinon.stub()}
@@ -309,6 +318,7 @@ describe('ServiceOverview', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
+          acl={acl}
           changeState={sinon.stub()}
           clearState={sinon.stub()}
           destroyService={sinon.stub()}
@@ -342,6 +352,7 @@ describe('ServiceOverview', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
+          acl={acl}
           changeState={sinon.stub()}
           clearState={sinon.stub()}
           destroyService={sinon.stub()}
@@ -376,6 +387,7 @@ describe('ServiceOverview', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
+          acl={acl}
           clearState={sinon.stub()}
           destroyService={sinon.stub()}
           changeState={changeState}
@@ -408,6 +420,7 @@ describe('ServiceOverview', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
+          acl={acl}
           changeState={sinon.stub()}
           clearState={sinon.stub()}
           destroyService={sinon.stub()}
@@ -430,6 +443,7 @@ describe('ServiceOverview', function() {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
+          acl={acl}
           changeState={sinon.stub()}
           clearState={sinon.stub()}
           destroyService={sinon.stub()}
@@ -442,6 +456,7 @@ describe('ServiceOverview', function() {
   it('renders the delete button', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
+        acl={acl}
         changeState={sinon.stub()}
         clearState={sinon.stub()}
         destroyService={sinon.stub()}
@@ -449,6 +464,28 @@ describe('ServiceOverview', function() {
         service={fakeService}
         serviceRelations={[]} />);
     var buttons = [{
+      disabled: false,
+      title: 'Destroy',
+      action: output.props.children[1].props.buttons[0].action
+    }];
+    assert.deepEqual(output.props.children[1],
+      <juju.components.ButtonRow
+        buttons={buttons} />);
+  });
+
+  it('disables the delete button when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var output = jsTestUtils.shallowRender(
+      <juju.components.ServiceOverview
+        acl={acl}
+        changeState={sinon.stub()}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        service={fakeService}
+        serviceRelations={[]} />);
+    var buttons = [{
+      disabled: true,
       title: 'Destroy',
       action: output.props.children[1].props.buttons[0].action
     }];
@@ -460,6 +497,7 @@ describe('ServiceOverview', function() {
   it('renders the delete confirmation', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
+        acl={acl}
         changeState={sinon.stub()}
         clearState={sinon.stub()}
         destroyService={sinon.stub()}
@@ -467,9 +505,11 @@ describe('ServiceOverview', function() {
         service={fakeService}
         serviceRelations={[]} />);
     var buttons = [{
+      disabled: false,
       title: 'Cancel',
       action: output.props.children[2].props.buttons[0].action
     }, {
+      disabled: false,
       title: 'Confirm',
       type: 'destructive',
       action: output.props.children[2].props.buttons[1].action
@@ -488,6 +528,7 @@ describe('ServiceOverview', function() {
         'This cannot be undone.';
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
+        acl={acl}
         changeState={sinon.stub()}
         clearState={sinon.stub()}
         destroyService={sinon.stub()}
@@ -496,9 +537,11 @@ describe('ServiceOverview', function() {
         serviceRelations={[]} />, true);
     var output = shallowRenderer.getRenderOutput();
     var buttons = [{
+      disabled: false,
       title: 'Cancel',
       action: output.props.children[2].props.buttons[0].action
     }, {
+      disabled: false,
       title: 'Confirm',
       type: 'destructive',
       action: output.props.children[2].props.buttons[1].action
@@ -507,6 +550,7 @@ describe('ServiceOverview', function() {
     output.props.children[1].props.buttons[0].action();
     shallowRenderer.render(
       <juju.components.ServiceOverview
+        acl={acl}
         changeState={sinon.stub()}
         clearState={sinon.stub()}
         destroyService={sinon.stub()}
@@ -526,6 +570,7 @@ describe('ServiceOverview', function() {
         'This cannot be undone.';
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
+        acl={acl}
         changeState={sinon.stub()}
         clearState={sinon.stub()}
         destroyService={sinon.stub()}
@@ -534,9 +579,11 @@ describe('ServiceOverview', function() {
         serviceRelations={[]} />, true);
     var output = shallowRenderer.getRenderOutput();
     var buttons = [{
+      disabled: false,
       title: 'Cancel',
       action: output.props.children[2].props.buttons[0].action
     },{
+      disabled: false,
       title: 'Confirm',
       type: 'destructive',
       action: output.props.children[2].props.buttons[1].action
@@ -547,6 +594,7 @@ describe('ServiceOverview', function() {
     output.props.children[2].props.buttons[0].action();
     shallowRenderer.render(
       <juju.components.ServiceOverview
+        acl={acl}
         changeState={sinon.stub()}
         clearState={sinon.stub()}
         destroyService={sinon.stub()}
@@ -569,6 +617,7 @@ describe('ServiceOverview', function() {
     var changeState = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
+        acl={acl}
         destroyService={destroyService}
         getUnitStatusCounts={getUnitStatusCounts()}
         clearState={clearState}
@@ -577,9 +626,11 @@ describe('ServiceOverview', function() {
         serviceRelations={[]} />, true);
     var output = shallowRenderer.getRenderOutput();
     var buttons = [{
+      disabled: false,
       title: 'Cancel',
       action: output.props.children[2].props.buttons[0].action
     }, {
+      disabled: false,
       title: 'Confirm',
       type: 'destructive',
       action: output.props.children[2].props.buttons[1].action
@@ -590,6 +641,7 @@ describe('ServiceOverview', function() {
     output.props.children[2].props.buttons[1].action();
     shallowRenderer.render(
       <juju.components.ServiceOverview
+        acl={acl}
         destroyService={destroyService}
         clearState={clearState}
         changeState={changeState}
@@ -610,6 +662,7 @@ describe('ServiceOverview', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
+        acl={acl}
         destroyService={destroyService}
         clearState={clearState}
         changeState={changeState}
@@ -627,6 +680,7 @@ describe('ServiceOverview', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
+        acl={acl}
         destroyService={destroyService}
         getUnitStatusCounts={getUnitStatusCounts()}
         clearState={clearState}

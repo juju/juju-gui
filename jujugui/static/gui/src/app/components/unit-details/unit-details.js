@@ -22,6 +22,7 @@ YUI.add('unit-details', function() {
 
   juju.components.UnitDetails = React.createClass({
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       destroyUnits: React.PropTypes.func.isRequired,
       previousComponent: React.PropTypes.string,
@@ -96,6 +97,7 @@ YUI.add('unit-details', function() {
     render: function() {
       var unit = this.props.unit;
       var buttons = [{
+        disabled: this.props.acl.isReadOnly(),
         title: 'Remove',
         action: this._handleRemoveUnit
       }];

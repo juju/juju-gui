@@ -21,10 +21,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('MachineViewUnplacedUnit', function() {
+  var acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('machine-view-unplaced-unit', function() { done(); });
+  });
+
+  beforeEach(() => {
+    acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   it('can render', function() {
@@ -34,6 +39,7 @@ describe('MachineViewUnplacedUnit', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewUnplacedUnit.DecoratedComponent
+        acl={acl}
         connectDragSource={jsTestUtils.connectDragSource}
         createMachine={sinon.stub()}
         icon="icon.svg"
@@ -71,6 +77,7 @@ describe('MachineViewUnplacedUnit', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewUnplacedUnit.DecoratedComponent
+        acl={acl}
         connectDragSource={jsTestUtils.connectDragSource}
         createMachine={sinon.stub()}
         icon="icon.svg"
@@ -95,6 +102,7 @@ describe('MachineViewUnplacedUnit', function() {
       // The component is wrapped to handle drag and drop, but we just want to
       // test the internal component so we access it via DecoratedComponent.
       <juju.components.MachineViewUnplacedUnit.DecoratedComponent
+        acl={acl}
         connectDragSource={jsTestUtils.connectDragSource}
         createMachine={sinon.stub()}
         icon="icon.svg"
@@ -107,5 +115,36 @@ describe('MachineViewUnplacedUnit', function() {
     output.props.children[2].props.items[1].action();
     assert.equal(removeUnit.callCount, 1);
     assert.equal(removeUnit.args[0][0], 'django/7');
+  });
+
+  it('disables the menu items when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var removeUnit = sinon.stub();
+    var unit = {displayName: 'django/7'};
+    var renderer = jsTestUtils.shallowRender(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <juju.components.MachineViewUnplacedUnit.DecoratedComponent
+        acl={acl}
+        connectDragSource={jsTestUtils.connectDragSource}
+        createMachine={sinon.stub()}
+        icon="icon.svg"
+        isDragging={false}
+        machines={{}}
+        placeUnit={sinon.stub()}
+        removeUnit={removeUnit}
+        selectMachine={sinon.stub()}
+        unit={unit} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.MoreMenu
+        items={[{
+          label: 'Deploy to...',
+          action: false
+        }, {
+          label: 'Destroy',
+          action: false
+        }]} />);
+    assert.deepEqual(output.props.children[2], expected);
   });
 });

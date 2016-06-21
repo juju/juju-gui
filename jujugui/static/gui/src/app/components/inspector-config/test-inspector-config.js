@@ -25,10 +25,15 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('Configuration', function() {
+  var acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('inspector-config', function() { done(); });
+  });
+
+  beforeEach(() => {
+    acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   it('renders binary and string config inputs', function() {
@@ -52,6 +57,7 @@ describe('Configuration', function() {
     var setConfig = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Configuration
+        acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={charm}
@@ -93,6 +99,7 @@ describe('Configuration', function() {
     };
     var output = jsTestUtils.shallowRender(
       <juju.components.Configuration
+        acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={charm}
@@ -129,6 +136,7 @@ describe('Configuration', function() {
     var changeState = sinon.stub();
     var component = testUtils.renderIntoDocument(
       <juju.components.Configuration
+        acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
         charm={charm}
@@ -190,6 +198,7 @@ describe('Configuration', function() {
     var getServiceByName = sinon.stub().returns(null);
     var component = testUtils.renderIntoDocument(
       <juju.components.Configuration
+        acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={charm}
@@ -242,6 +251,7 @@ describe('Configuration', function() {
     var addNotification = sinon.stub();
     var component = testUtils.renderIntoDocument(
       <juju.components.Configuration
+        acl={acl}
         addNotification={addNotification}
         changeState={sinon.stub()}
         charm={charm}
@@ -288,6 +298,7 @@ describe('Configuration', function() {
     };
     var component = testUtils.renderIntoDocument(
       <juju.components.Configuration
+        acl={acl}
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         charm={charm}
@@ -311,6 +322,7 @@ describe('Configuration', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.Configuration
+        acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
         charm={charm}
@@ -343,6 +355,7 @@ describe('Configuration', function() {
     var changeState = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Configuration
+        acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
         charm={charm}
@@ -373,6 +386,7 @@ describe('Configuration', function() {
     var changeState = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Configuration
+        acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
         charm={charm}
@@ -416,6 +430,7 @@ describe('Configuration', function() {
     var changeState = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Configuration
+        acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
         charm={charm}
@@ -469,6 +484,7 @@ describe('Configuration', function() {
     var changeState = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Configuration
+        acl={acl}
         addNotification={sinon.stub()}
         changeState={changeState}
         charm={charm}
@@ -492,5 +508,99 @@ describe('Configuration', function() {
     assert.deepEqual(
       instance.state.serviceConfig,
       {option1: 'string body value', option2: true});
+  });
+
+  it('can disable controls when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var option1 = { key: 'option1key', type: 'string' };
+    var option2 = { key: 'option2key', type: 'boolean' };
+    var option1key = 'string body value';
+    var option2key = true;
+    var charm = {
+      get: function() {
+        // Return the charm options.
+        return { option1: option1, option2: option2 };
+      }};
+    var service = {
+      get: function(val) {
+        if (val === 'id') {
+          return 'abc123$';
+        } else if (val === 'name') {
+          return 'abc123$';
+        }
+        // Return the config options
+        return { option1: option1key, option2: option2key };
+      }};
+    var setConfig = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Configuration
+        acl={acl}
+        addNotification={sinon.stub()}
+        changeState={sinon.stub()}
+        charm={charm}
+        getServiceByName={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
+        service={service}
+        setConfig={setConfig}
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var importButton = [{
+      disabled: true,
+      title: 'Import config file',
+      action: instance._openFileDialog
+    }];
+    var actionButtons = [{
+      disabled: true,
+      title: 'Cancel',
+      type: 'base',
+      action: instance._showInspectorIndex
+    }, {
+      disabled: true,
+      title: 'Save changes',
+      type: 'neutral',
+      action: instance._saveConfig
+    }];
+    var expected = (
+      <div className="inspector-config">
+        <div className="inspector-config__fields">
+        <juju.components.StringConfig
+          disabled={true}
+          ref="ServiceName"
+          option={{
+            key: 'Application name',
+            description: 'Specify a custom application name. The application' +
+              ' name cannot be changed once it has been deployed.'
+          }}
+          config="abc123$" />
+          <form ref="file-form">
+            <input
+              className="hidden"
+              disabled={true}
+              onChange={instance._importConfig}
+              ref="file"
+              type="file"  />
+          </form>
+          <div className="inspector-config__config-file">
+            <juju.components.ButtonRow buttons={importButton} />
+          </div>
+          {[<juju.components.StringConfig
+            disabled={true}
+            key="Config-option1"
+            ref="Config-option1"
+            option={option1}
+            config={option1key} />,
+          <juju.components.BooleanConfig
+            disabled={true}
+            key="Config-option2"
+            ref="Config-option2"
+            option={option2}
+            label="option2:"
+            config={option2key} />]}
+        </div>
+        <juju.components.ButtonRow buttons={actionButtons} />
+      </div>);
+    assert.deepEqual(output, expected);
   });
 });

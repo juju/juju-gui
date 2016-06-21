@@ -23,6 +23,7 @@ YUI.add('entity-header', function() {
   juju.components.EntityHeader = React.createClass({
     /* Define and validate the properites available on this component. */
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       deployService: React.PropTypes.func.isRequired,
@@ -181,6 +182,7 @@ YUI.add('entity-header', function() {
           <juju.components.GenericButton
             ref="deployAction"
             action={this._handleDeployClick}
+            disabled={this.props.acl.isReadOnly()}
             type="positive"
             title="Add to canvas" />
         );

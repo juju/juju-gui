@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentSummary', function() {
-  var changeCounts, env, jem, pluralize, refs;
+  var acl, changeCounts, env, jem, pluralize, refs;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -32,6 +32,7 @@ describe('DeploymentSummary', function() {
   });
 
   beforeEach(() => {
+    acl = {isReadOnly: sinon.stub().returns(false)};
     changeCounts = {
       '_addMachines': 1,
       '_deploy': 2
@@ -93,6 +94,7 @@ describe('DeploymentSummary', function() {
     };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        acl={acl}
         jem={jem}
         env={{}}
         appSet={sinon.stub()}
@@ -219,6 +221,7 @@ describe('DeploymentSummary', function() {
     var getUnplacedUnitCount = sinon.stub().returns(1);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        acl={acl}
         jem={jem}
         env={{}}
         appSet={sinon.stub()}
@@ -258,6 +261,7 @@ describe('DeploymentSummary', function() {
     var getUnplacedUnitCount = sinon.stub().returns(1);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        acl={acl}
         jem={{}}
         env={{}}
         appSet={sinon.stub()}
@@ -285,6 +289,7 @@ describe('DeploymentSummary', function() {
     var getUnplacedUnitCount = sinon.stub().returns(1);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        acl={acl}
         jem={{}}
         env={{}}
         appSet={sinon.stub()}
@@ -321,6 +326,7 @@ describe('DeploymentSummary', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        acl={acl}
         jem={jem}
         env={{}}
         appSet={sinon.stub()}
@@ -359,6 +365,7 @@ describe('DeploymentSummary', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        acl={acl}
         jem={jem}
         env={{}}
         appSet={sinon.stub()}
@@ -395,6 +402,7 @@ describe('DeploymentSummary', function() {
     var ecsCommit = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        acl={acl}
         jem={jem}
         env={{}}
         appSet={sinon.stub()}
@@ -449,6 +457,7 @@ describe('DeploymentSummary', function() {
     env.on = sinon.stub().returns({ detach: detach });
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        acl={acl}
         jem={jem}
         env={env}
         appSet={appSet}
@@ -542,6 +551,7 @@ describe('DeploymentSummary', function() {
     var createSocketURL = sinon.stub().returns('newurl');
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        acl={acl}
         jem={jem}
         env={env}
         appSet={appSet}
@@ -569,6 +579,7 @@ describe('DeploymentSummary', function() {
     var preventDefault = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSummary
+        acl={acl}
         jem={jem}
         env={env}
         appSet={sinon.stub()}
@@ -598,5 +609,161 @@ describe('DeploymentSummary', function() {
       {preventDefault: preventDefault});
     assert.equal(preventDefault.callCount, 1);
     assert.equal(jem.newModel.callCount, 1, 'here');
+  });
+
+  it('disables controls when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var getUnplacedUnitCount = sinon.stub().returns(0);
+    var changeDescriptions = [{
+      icon: 'my-icon.svg',
+      description: 'Django was added',
+      time: '10:12 am'
+    }, {
+      icon: 'another-icon.svg',
+      description: 'Apache2 was added',
+      time: '10:13 am'
+    }];
+    var changeItems = [
+      <juju.components.DeploymentSummaryChangeItem
+        key={0}
+        change={changeDescriptions[0]} />,
+      <juju.components.DeploymentSummaryChangeItem
+        key={1}
+        change={changeDescriptions[1]} />];
+    jem = {
+      listTemplates: cb => {
+        cb(null, [{
+          path: 'spinach/my-creds',
+          location: { cloud: 'aws', region: 'us-west-1' }
+        }]);
+      },
+      listRegions: (cloud, cb) => {
+        assert.equal(cloud, 'aws');
+        cb(null, ['us-west-1', 'us-east-1']);
+      }
+    };
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentSummary
+        acl={acl}
+        jem={jem}
+        env={{}}
+        appSet={sinon.stub()}
+        createSocketURL={sinon.stub()}
+        deploymentStorage={{
+          templateName: 'spinach/my-creds',
+          cloud: 'aws',
+          region: 'us-west-1'
+        }}
+        users={{}}
+        autoPlaceUnits={sinon.stub()}
+        changeCounts={changeCounts}
+        changeDescriptions={changeDescriptions}
+        changeState={sinon.stub()}
+        ecsClear={sinon.stub()}
+        ecsCommit={sinon.stub()}
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        modelCommitted={false}
+        modelName="Prod"
+        numberOfChanges={6}
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(true)} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var buttons = [{
+      action: instance._handleChangeCloud,
+      title: 'Change cloud',
+      type: 'inline-neutral'
+    }, {
+      title: 'Deploy',
+      action: instance._handleDeploy,
+      disabled: true,
+      type: 'inline-positive'
+    }];
+    var expected = (
+      <div className="deployment-panel__child deployment-summary">
+        <juju.components.DeploymentPanelContent
+          title="Review deployment">
+          <form className="six-col last-col"
+            onSubmit={instance._handleDeploy}>
+            <juju.components.DeploymentInput
+              disabled={true}
+              label="Model name"
+              placeholder="test-model-01"
+              required={true}
+              ref="modelName"
+              validate={[{
+                regex: /\S+/,
+                error: 'This field is required.'
+              }, {
+                regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
+                error: 'This field must only contain upper and lowercase ' +
+                  'letters, numbers, and hyphens. It must not start or ' +
+                  'end with a hyphen.'
+              }]}
+              value="Prod" />
+          </form>
+          <div className={'deployment-choose-cloud__cloud-option ' +
+            'deployment-summary__cloud-option six-col last-col'}>
+            <span className={
+              'deployment-choose-cloud__cloud-option-title'}>
+              <span className="deployment-choose-cloud__cloud-option-name">
+                my-creds
+              </span>
+              <span className="deployment-choose-cloud__cloud-option-owner">
+                spinach
+              </span>
+            </span>
+            <form className="deployment-summary__cloud-option-region">
+            <select
+              ref="selectRegion"
+              value="us-west-1"
+              onChange={instance._storeRegion}
+              disabled={true}>
+                {[
+                  <option key="default">Choose a region</option>,
+                  [<option key="us-west-1" value="us-west-1">us-west-1</option>,
+                  <option key="us-east-1" value="us-east-1">us-east-1</option>]
+                ]}
+            </select>
+            </form>
+          </div>
+          <h3 className="deployment-panel__section-title twelve-col">
+            Deploying {2} {'applications'} on
+            &nbsp;{1} {'machines'}
+          </h3>
+          {undefined}
+          <juju.components.ExpandingRow
+            classes={{
+              'deployment-summary__changelog': true
+            }}>
+            <div className="deployment-summary__changelog-title">
+              <div className="deployment-summary__changelog-title-chevron">
+                <juju.components.SvgIcon
+                  name="chevron_down_16"
+                  size="16" />
+              </div>
+              <span>
+                View complete change log ({6}&nbsp;{'changes'})
+              </span>
+              {undefined}
+            </div>
+            <ul className="deployment-summary__list">
+              <li className={'deployment-summary-change-item ' +
+                  'deployment-summary__list-header'}>
+                <span className="deployment-summary-change-item__change">
+                  Change
+                </span>
+                <span className="deployment-summary-change-item__time">
+                  Time
+                </span>
+              </li>
+              {changeItems}
+            </ul>
+          </juju.components.ExpandingRow>
+        </juju.components.DeploymentPanelContent>
+        <juju.components.DeploymentPanelFooter
+          buttons={buttons} />
+      </div>);
+    assert.deepEqual(output, expected);
   });
 });

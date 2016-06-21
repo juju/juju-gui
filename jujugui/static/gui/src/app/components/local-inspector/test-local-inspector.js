@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('LocalInspector', function() {
-  var series;
+  var acl, series;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -32,6 +32,7 @@ describe('LocalInspector', function() {
   });
 
   beforeEach(function() {
+    acl = {isReadOnly: sinon.stub().returns(false)};
     series = {
       vivid: {name: 'Vivid Vervet 15.04'},
       wily: {name: 'Wily Werewolf 15.10'}
@@ -49,6 +50,7 @@ describe('LocalInspector', function() {
     var changeState = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.LocalInspector
+        acl={acl}
         file={file}
         series={series}
         localType="new"
@@ -65,6 +67,7 @@ describe('LocalInspector', function() {
     }, {
       title: 'Upload',
       action: instance._handleUpload,
+      disabled: false,
       type: 'neutral'
     }];
     var options = output.props.children[1].props.children[1].props.children;
@@ -83,6 +86,7 @@ describe('LocalInspector', function() {
               <label>
                 <input type="radio" name="action"
                   defaultChecked={true}
+                  disabled={false}
                   onChange={
                     options[0].props.children.props.children[0]
                       .props.onChange} />
@@ -93,6 +97,7 @@ describe('LocalInspector', function() {
               <label>
                 <input type="radio" name="action"
                   defaultChecked={false}
+                  disabled={false}
                   onChange={
                     options[1].props.children.props.children[0]
                       .props.onChange} />
@@ -103,7 +108,8 @@ describe('LocalInspector', function() {
           <div>
             <p>Choose a series to deploy this charm</p>
             <select ref="series" defaultValue="trusty"
-              className="local-inspector__series">
+              className="local-inspector__series"
+              disabled={false}>
               <option value="vivid" key="vivid">Vivid Vervet 15.04</option>
               <option value="wily" key="wily">Wily Werewolf 15.10</option>
             </select>
@@ -134,6 +140,7 @@ describe('LocalInspector', function() {
     var changeState = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.LocalInspector
+        acl={acl}
         file={file}
         series={series}
         localType="update"
@@ -150,6 +157,7 @@ describe('LocalInspector', function() {
     }, {
       title: 'Upload',
       action: instance._handleUpdate,
+      disabled: false,
       type: 'neutral'
     }];
     var options = output.props.children[1].props.children[1].props.children;
@@ -168,6 +176,7 @@ describe('LocalInspector', function() {
               <label>
                 <input type="radio" name="action"
                   defaultChecked={false}
+                  disabled={false}
                   onChange={
                     options[0].props.children.props.children[0]
                       .props.onChange} />
@@ -178,6 +187,7 @@ describe('LocalInspector', function() {
               <label>
                 <input type="radio" name="action"
                   defaultChecked={true}
+                  disabled={false}
                   onChange={
                     options[1].props.children.props.children[0]
                       .props.onChange} />
@@ -189,6 +199,7 @@ describe('LocalInspector', function() {
             <li key="apache2-2">
               <label>
                 <input type="checkbox" data-id="apache2-2"
+                  disabled={false}
                   ref="service-apache2-2" />
                 apache2
               </label>
@@ -196,6 +207,7 @@ describe('LocalInspector', function() {
             <li key="mysql-1">
               <label>
                 <input type="checkbox" data-id="mysql-1"
+                  disabled={false}
                   ref="service-mysql-1" />
                 mysql
               </label>
@@ -227,6 +239,7 @@ describe('LocalInspector', function() {
     var changeState = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.LocalInspector
+        acl={acl}
         file={file}
         series={series}
         localType="new"
@@ -248,6 +261,7 @@ describe('LocalInspector', function() {
             <li key="apache2-2">
               <label>
                 <input type="checkbox" data-id="apache2-2"
+                  disabled={false}
                   ref="service-apache2-2" />
                 apache2
               </label>
@@ -255,6 +269,7 @@ describe('LocalInspector', function() {
             <li key="mysql-1">
               <label>
                 <input type="checkbox" data-id="mysql-1"
+                  disabled={false}
                   ref="service-mysql-1" />
                 mysql
               </label>
@@ -277,6 +292,7 @@ describe('LocalInspector', function() {
     var changeState = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.LocalInspector
+        acl={acl}
         file={file}
         series={series}
         localType="new"
@@ -310,6 +326,7 @@ describe('LocalInspector', function() {
     var changeState = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.LocalInspector
+        acl={acl}
         file={file}
         series={series}
         localType="update"
@@ -349,6 +366,7 @@ describe('LocalInspector', function() {
     var changeState = sinon.spy();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.LocalInspector
+        acl={acl}
         file={file}
         series={series}
         localType="new"
@@ -364,5 +382,88 @@ describe('LocalInspector', function() {
         component: 'applications',
         metadata: null
       }});
+  });
+
+  it('disables the controls when read only', function() {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var file = {
+      name: 'apache2.zip',
+      size: '2048'
+    };
+    var services = {};
+    var uploadLocalCharm = sinon.spy();
+    var upgradeServiceUsingLocalCharm = sinon.spy();
+    var changeState = sinon.spy();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.LocalInspector
+        acl={acl}
+        file={file}
+        series={series}
+        localType="new"
+        services={services}
+        uploadLocalCharm={uploadLocalCharm}
+        upgradeServiceUsingLocalCharm={upgradeServiceUsingLocalCharm}
+        changeState={changeState} />, true);
+    var instance = shallowRenderer.getMountedInstance();
+    var output = shallowRenderer.getRenderOutput();
+    var buttons = [{
+      title: 'Cancel',
+      action: instance._close,
+      type: 'base'
+    }, {
+      title: 'Upload',
+      action: instance._handleUpload,
+      disabled: true,
+      type: 'neutral'
+    }];
+    var options = output.props.children[1].props.children[1].props.children;
+    var expected = (
+      <div className="inspector-view local-inspector">
+        <juju.components.InspectorHeader
+          backCallback={instance._close}
+          title="Local charm" />
+        <div className="inspector-content local-inspector__section">
+          <div className="local-inspector__file">
+            <p>File: {"apache2.zip"}</p>
+            <p>Size: {"2.00"}kb</p>
+          </div>
+          <ul className="local-inspector__list">
+            <li>
+              <label>
+                <input type="radio" name="action"
+                  defaultChecked={true}
+                  disabled={true}
+                  onChange={
+                    options[0].props.children.props.children[0]
+                      .props.onChange} />
+                Deploy local
+              </label>
+            </li>
+            <li>
+              <label>
+                <input type="radio" name="action"
+                  defaultChecked={false}
+                  disabled={true}
+                  onChange={
+                    options[1].props.children.props.children[0]
+                      .props.onChange} />
+                Upgrade local
+              </label>
+            </li>
+          </ul>
+          <div>
+            <p>Choose a series to deploy this charm</p>
+            <select ref="series" defaultValue="trusty"
+              className="local-inspector__series"
+              disabled={true}>
+              <option value="vivid" key="vivid">Vivid Vervet 15.04</option>
+              <option value="wily" key="wily">Wily Werewolf 15.10</option>
+            </select>
+          </div>
+        </div>
+        <juju.components.ButtonRow
+          buttons={buttons} />
+      </div>);
+    assert.deepEqual(output, expected);
   });
 });

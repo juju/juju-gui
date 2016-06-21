@@ -22,7 +22,7 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 var testUtils = React.addons.TestUtils;
 
 describe('UnitList', () => {
-  var service;
+  var acl, service;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -30,6 +30,7 @@ describe('UnitList', () => {
   });
 
   beforeEach(() => {
+    acl = {isReadOnly: sinon.stub().returns(false)};
     service = {
       get: function(val) {
         if (val === 'subordinate') {
@@ -43,6 +44,7 @@ describe('UnitList', () => {
   it('renders if there are no units', () => {
     var renderer = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          acl={acl}
           changeState={sinon.stub()}
           destroyUnits={sinon.stub()}
           envResolved={sinon.stub()}
@@ -77,6 +79,7 @@ describe('UnitList', () => {
     }];
     var renderer = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          acl={acl}
           changeState={sinon.stub()}
           destroyUnits={sinon.stub()}
           envResolved={sinon.stub()}
@@ -92,6 +95,7 @@ describe('UnitList', () => {
     ];
     assert.deepEqual(children, [
       <juju.components.CheckListItem
+        disabled={false}
         ref="select-all"
         key="select-all"
         className="select-all"
@@ -99,6 +103,7 @@ describe('UnitList', () => {
         aside="2"
         whenChanged={children[0].props.whenChanged}/>,
       <juju.components.CheckListItem
+        disabled={false}
         key={units[0].displayName}
         ref={refs[0]}
         label={units[0].displayName}
@@ -106,6 +111,7 @@ describe('UnitList', () => {
         id="mysql/0"
         whenChanged={instance._updateActiveCount} />,
       <juju.components.CheckListItem
+        disabled={false}
         key={units[1].displayName}
         ref={refs[1]}
         label={units[1].displayName}
@@ -127,6 +133,7 @@ describe('UnitList', () => {
     }];
     var renderer = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          acl={acl}
           changeState={sinon.stub()}
           destroyUnits={sinon.stub()}
           envResolved={sinon.stub()}
@@ -143,6 +150,7 @@ describe('UnitList', () => {
     ];
     assert.deepEqual(children, [
       <juju.components.CheckListItem
+        disabled={false}
         ref="select-all-0"
         key="select-all-0"
         className="select-all"
@@ -150,6 +158,7 @@ describe('UnitList', () => {
         aside="1"
         whenChanged={children[0].props.whenChanged}/>,
       <juju.components.CheckListItem
+        disabled={false}
         key={units[0].displayName}
         ref={refs[0]}
         label={units[0].displayName}
@@ -157,6 +166,7 @@ describe('UnitList', () => {
         id="mysql/0"
         whenChanged={instance._updateActiveCount} />,
       <juju.components.CheckListItem
+        disabled={false}
         ref="select-all-1"
         key="select-all-1"
         className="select-all"
@@ -164,6 +174,7 @@ describe('UnitList', () => {
         aside="1"
         whenChanged={children[2].props.whenChanged}/>,
       <juju.components.CheckListItem
+        disabled={false}
         key={units[1].displayName}
         ref={refs[1]}
         label={units[1].displayName}
@@ -191,6 +202,7 @@ describe('UnitList', () => {
 
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          acl={acl}
           changeState={sinon.stub()}
           destroyUnits={sinon.stub()}
           envResolved={sinon.stub()}
@@ -211,6 +223,7 @@ describe('UnitList', () => {
     }];
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          acl={acl}
           changeState={sinon.stub()}
           destroyUnits={sinon.stub()}
           envResolved={sinon.stub()}
@@ -240,6 +253,7 @@ describe('UnitList', () => {
     };
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          acl={acl}
           changeState={sinon.stub()}
           destroyUnits={sinon.stub()}
           envResolved={sinon.stub()}
@@ -265,6 +279,7 @@ describe('UnitList', () => {
     // shallowRenderer doesn't support state so need to render it.
     var component = testUtils.renderIntoDocument(
       <juju.components.UnitList
+        acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
         envResolved={sinon.stub()}
@@ -290,6 +305,7 @@ describe('UnitList', () => {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          acl={acl}
           changeState={changeState}
           destroyUnits={sinon.stub()}
           envResolved={sinon.stub()}
@@ -326,6 +342,7 @@ describe('UnitList', () => {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          acl={acl}
           changeState={changeState}
           destroyUnits={sinon.stub()}
           envResolved={sinon.stub()}
@@ -359,6 +376,7 @@ describe('UnitList', () => {
     }];
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          acl={acl}
           changeState={sinon.stub()}
           destroyUnits={sinon.stub()}
           envResolved={sinon.stub()}
@@ -384,6 +402,7 @@ describe('UnitList', () => {
     }];
     var output = jsTestUtils.shallowRender(
         <juju.components.UnitList
+          acl={acl}
           changeState={sinon.stub()}
           destroyUnits={sinon.stub()}
           envResolved={sinon.stub()}
@@ -432,6 +451,7 @@ describe('UnitList', () => {
     // refs.
     var output = testUtils.renderIntoDocument(
         <juju.components.UnitList
+          acl={acl}
           destroyUnits={destroyUnits}
           changeState={changeState}
           envResolved={envResolved}
@@ -464,6 +484,7 @@ describe('UnitList', () => {
     // refs.
     var output = testUtils.renderIntoDocument(
         <juju.components.UnitList
+          acl={acl}
           destroyUnits={destroyUnits}
           changeState={changeState}
           envResolved={sinon.stub()}
@@ -491,6 +512,7 @@ describe('UnitList', () => {
     // refs.
     var output = testUtils.renderIntoDocument(
         <juju.components.UnitList
+          acl={acl}
           destroyUnits={destroyUnits}
           changeState={changeState}
           envResolved={sinon.stub()}
@@ -526,6 +548,7 @@ describe('UnitList', () => {
     // refs.
     var output = testUtils.renderIntoDocument(
         <juju.components.UnitList
+          acl={acl}
           destroyUnits={sinon.stub()}
           unitStatus='error'
           envResolved={envResolved}
@@ -566,6 +589,7 @@ describe('UnitList', () => {
     // refs.
     var output = testUtils.renderIntoDocument(
         <juju.components.UnitList
+          acl={acl}
           destroyUnits={sinon.stub()}
           unitStatus='error'
           envResolved={envResolved}
@@ -587,5 +611,69 @@ describe('UnitList', () => {
     assert.deepEqual(envResolved.args[0][2], true);
     assert.deepEqual(envResolved.args[1][0], units[1].id);
     assert.deepEqual(envResolved.args[1][2], true);
+  });
+
+  it('can disable controls when read only', () => {
+    acl.isReadOnly = sinon.stub().returns(true);
+    var units = [{
+      displayName: 'mysql/0',
+      id: 'mysql/0'
+    }, {
+      displayName: 'mysql/1',
+      id: 'mysql/1'
+    }];
+    var renderer = jsTestUtils.shallowRender(
+        <juju.components.UnitList
+          acl={acl}
+          changeState={sinon.stub()}
+          destroyUnits={sinon.stub()}
+          envResolved={sinon.stub()}
+          service={service}
+          units={units}
+          whenChanged={sinon.stub()} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var children = output.props.children[1].props.children;
+    var refs = [
+      'CheckListItem-' + units[0].id,
+      'CheckListItem-' + units[1].id
+    ];
+    assert.deepEqual(children, [
+      <juju.components.CheckListItem
+        disabled={true}
+        ref="select-all"
+        key="select-all"
+        className="select-all"
+        label="Select all units"
+        aside="2"
+        whenChanged={children[0].props.whenChanged}/>,
+      <juju.components.CheckListItem
+        disabled={true}
+        key={units[0].displayName}
+        ref={refs[0]}
+        label={units[0].displayName}
+        action={children[1].props.action}
+        id="mysql/0"
+        whenChanged={instance._updateActiveCount} />,
+      <juju.components.CheckListItem
+        disabled={true}
+        key={units[1].displayName}
+        ref={refs[1]}
+        label={units[1].displayName}
+        action={children[2].props.action}
+        id="mysql/1"
+        whenChanged={instance._updateActiveCount} />
+    ]);
+    var buttonItems = output.props.children[2].props.buttons;
+    var buttons = [{
+      disabled: true,
+      title: 'Remove',
+      type: 'neutral',
+      action: buttonItems[0].action,
+      disabled: true
+    }];
+    assert.deepEqual(output.props.children[2],
+      <juju.components.ButtonRow
+        buttons={buttons} />);
   });
 });

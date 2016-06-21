@@ -47,7 +47,7 @@ describe('StringConfig', function() {
         <span>{option.key}{typeString}</span>
         <div
           className="string-config--value"
-          contentEditable="true"
+          contentEditable={true}
           ref="editableInput"
           onInput={output.props.children[1].props.onInput}
           onBlur={output.props.children[1].props.onBlur}
@@ -133,5 +133,29 @@ describe('StringConfig', function() {
         option={option} />);
     assert.deepEqual(
       output.props.children[0].props.children, ['testconfig', '']);
+  });
+
+  it('can be disabled', function() {
+    var option = {
+      key: 'testconfig',
+      type: 'text',
+      description: 'test config for strings'
+    };
+    var config = 'the value';
+    var output = jsTestUtils.shallowRender(
+      <juju.components.StringConfig
+        config={config}
+        disabled={true}
+        option={option} />);
+    var expected = (
+      <div
+        className="string-config--value string-config--disabled"
+        contentEditable={false}
+        ref="editableInput"
+        onInput={output.props.children[1].props.onInput}
+        onBlur={output.props.children[1].props.onBlur}
+        dangerouslySetInnerHTML={{__html: config}}>
+      </div>);
+    assert.deepEqual(output.props.children[1], expected);
   });
 });

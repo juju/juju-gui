@@ -26,6 +26,7 @@ YUI.add('check-list-item', function() {
       action: React.PropTypes.func,
       aside: React.PropTypes.string,
       className: React.PropTypes.string,
+      disabled: React.PropTypes.bool,
       id: React.PropTypes.string,
       label: React.PropTypes.string.isRequired,
       whenChanged: React.PropTypes.func.isRequired
@@ -123,6 +124,7 @@ YUI.add('check-list-item', function() {
           onClick={this.props.action} tabIndex="0" role="button">
           <label htmlFor={this._generateId(id)}>
             <input
+              disabled={this.props.disabled}
               type="checkbox"
               id={id}
               onClick={this._stopBubble}

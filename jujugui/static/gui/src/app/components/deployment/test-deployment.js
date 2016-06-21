@@ -24,10 +24,15 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('Deployment', function() {
+  var acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('deployment-component', function() { done(); });
+  });
+
+  beforeEach(function() {
+    acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   it('can display the deployment summary', function() {
@@ -50,6 +55,7 @@ describe('Deployment', function() {
     var changeCounts = {};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
+        acl={acl}
         activeComponent="summary"
         autoPlaceUnits={autoPlaceUnits}
         changeCounts={changeCounts}
@@ -73,6 +79,7 @@ describe('Deployment', function() {
     var instance = renderer.getMountedInstance();
     var expected = (
       <juju.components.DeploymentSummary
+        acl={acl}
         jem={jem}
         env={env}
         appSet={appSet}
@@ -110,6 +117,7 @@ describe('Deployment', function() {
     var user = {};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
+        acl={acl}
         activeComponent="choose-cloud"
         autoPlaceUnits={autoPlaceUnits}
         changeCounts={{}}
@@ -133,6 +141,7 @@ describe('Deployment', function() {
     var instance = renderer.getMountedInstance();
     var expected = (
       <juju.components.DeploymentChooseCloud
+        acl={acl}
         jem={jem}
         changeState={changeState}
         cloudData={instance.clouds}
@@ -157,6 +166,7 @@ describe('Deployment', function() {
     var changeDescriptions = [];
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Deployment
+        acl={acl}
         activeComponent="add-credentials-aws"
         appSet={sinon.stub()}
         autoPlaceUnits={autoPlaceUnits}
@@ -180,6 +190,7 @@ describe('Deployment', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.DeploymentAddCredentials
+        acl={acl}
         changeState={changeState}
         cloud={instance.clouds['aws']}
         jem={jem}

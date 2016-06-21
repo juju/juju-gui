@@ -23,9 +23,16 @@ YUI.add('boolean-config', function() {
   juju.components.BooleanConfig = React.createClass({
     propTypes: {
       config: React.PropTypes.any.isRequired,
+      disabled: React.PropTypes.bool,
       label: React.PropTypes.string.isRequired,
       onChange: React.PropTypes.func,
       option: React.PropTypes.object.isRequired
+    },
+
+    getDefaultProps: () => {
+      return {
+        disabled: false
+      };
     },
 
     getInitialState: function() {
@@ -86,6 +93,7 @@ YUI.add('boolean-config', function() {
           <div className="boolean-config--title">{this.props.label}</div>
           <div className="boolean-config--toggle">
             <input
+              disabled={this.props.disabled}
               type="checkbox"
               id={this.props.option.key}
               onClick={this._stopBubble}

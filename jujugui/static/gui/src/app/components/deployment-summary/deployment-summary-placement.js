@@ -35,6 +35,7 @@ YUI.add('deployment-summary-placement-classic', function() {
         <form>
           <input type="radio"
               defaultChecked={!autoPlace}
+              disabled={props.acl.isReadOnly()}
               onChange={handlePlacementChange}
               data-placement="unplaced"
               id="leave-unplaced" name="placement"
@@ -46,6 +47,7 @@ YUI.add('deployment-summary-placement-classic', function() {
           </label>
           <input type="radio"
               defaultChecked={autoPlace}
+              disabled={props.acl.isReadOnly()}
               onChange={handlePlacementChange}
               data-placement="placed"
               id="automatically-place" name="placement"
@@ -66,6 +68,7 @@ YUI.add('deployment-summary-placement-classic', function() {
   };
 
   DeploymentSummaryPlacementClassic.propTypes = {
+    acl: React.PropTypes.object.isRequired,
     autoPlace: React.PropTypes.bool.isRequired,
     getUnplacedUnitCount: React.PropTypes.func.isRequired,
     handlePlacementChange: React.PropTypes.func.isRequired,

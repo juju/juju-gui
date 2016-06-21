@@ -31,6 +31,121 @@ describe('Constraints', function() {
     YUI().use('constraints', function() { done(); });
   });
 
+  it('can render', function() {
+    var valuesChanged = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Constraints
+        valuesChanged={valuesChanged} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="constraints">
+        <label htmlFor="cpu-constraint"
+          className="constraints__label">
+          CPU (GHZ)
+        </label>
+        <input type="text"
+          className="constraints__input"
+          disabled={false}
+          id="cpu-constraint"
+          name="cpu-constraint"
+          onChange={instance._handleValueChanged}
+          ref="cpuConstraintInput"/>
+        <label htmlFor="cores-constraint"
+          className="constraints__label">
+          Cores
+        </label>
+        <input type="text"
+          className="constraints__input"
+          disabled={false}
+          id="cores-constraint"
+          name="cores-constraint"
+          onChange={instance._handleValueChanged}
+          ref="coresConstraintInput"/>
+        <label htmlFor="mem-constraint"
+          className="constraints__label">
+          Ram (MB)
+        </label>
+        <input type="text"
+          className="constraints__input"
+          disabled={false}
+          id="mem-constraint"
+          name="mem-constraint"
+          onChange={instance._handleValueChanged}
+          ref="memConstraintInput"/>
+        <label htmlFor="disk-constraint"
+          className="constraints__label">
+          Disk (MB)
+        </label>
+        <input type="text"
+          className="constraints__input"
+          disabled={false}
+          id="disk-constraint"
+          name="disk-constraint"
+          onChange={instance._handleValueChanged}
+          ref="diskConstraintInput"/>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can disable the inputs', function() {
+    var valuesChanged = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Constraints
+        disabled={true}
+        valuesChanged={valuesChanged} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="constraints">
+        <label htmlFor="cpu-constraint"
+          className="constraints__label">
+          CPU (GHZ)
+        </label>
+        <input type="text"
+          className="constraints__input"
+          disabled={true}
+          id="cpu-constraint"
+          name="cpu-constraint"
+          onChange={instance._handleValueChanged}
+          ref="cpuConstraintInput"/>
+        <label htmlFor="cores-constraint"
+          className="constraints__label">
+          Cores
+        </label>
+        <input type="text"
+          className="constraints__input"
+          disabled={true}
+          id="cores-constraint"
+          name="cores-constraint"
+          onChange={instance._handleValueChanged}
+          ref="coresConstraintInput"/>
+        <label htmlFor="mem-constraint"
+          className="constraints__label">
+          Ram (MB)
+        </label>
+        <input type="text"
+          className="constraints__input"
+          disabled={true}
+          id="mem-constraint"
+          name="mem-constraint"
+          onChange={instance._handleValueChanged}
+          ref="memConstraintInput"/>
+        <label htmlFor="disk-constraint"
+          className="constraints__label">
+          Disk (MB)
+        </label>
+        <input type="text"
+          className="constraints__input"
+          disabled={true}
+          id="disk-constraint"
+          name="disk-constraint"
+          onChange={instance._handleValueChanged}
+          ref="diskConstraintInput"/>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
   it('calls the provided method when the component is mounted', function() {
     var valuesChanged = sinon.stub();
     testUtils.renderIntoDocument(

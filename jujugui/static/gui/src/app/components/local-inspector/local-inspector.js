@@ -23,6 +23,7 @@ YUI.add('local-inspector', function() {
   juju.components.LocalInspector = React.createClass({
 
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       file: React.PropTypes.object.isRequired,
       localType: React.PropTypes.string.isRequired,
@@ -95,7 +96,8 @@ YUI.add('local-inspector', function() {
             <div>
               <p>Choose a series to deploy this charm</p>
               <select ref="series" defaultValue="trusty"
-                className="local-inspector__series">
+                className="local-inspector__series"
+                disabled={this.props.acl.isReadOnly()}>
                 {seriesOptions}
               </select>
             </div>
@@ -118,7 +120,8 @@ YUI.add('local-inspector', function() {
       @method _generateServiceList
     */
     _generateServiceList: function() {
-      var services = this.props.services.toArray();
+      var props = this.props;
+      var services = props.services.toArray();
       if (services.length === 0) {
         return <li>No existing services</li>;
       }
@@ -129,6 +132,7 @@ YUI.add('local-inspector', function() {
           <li key={serviceId}>
             <label>
               <input type="checkbox" data-id={serviceId}
+                disabled={props.acl.isReadOnly()}
                 ref={'service-' + serviceId} />
               {service.get('name')}
             </label>
@@ -185,6 +189,7 @@ YUI.add('local-inspector', function() {
     },
 
     render: function() {
+      var isReadOnly = this.props.acl.isReadOnly();
       var localType = this.props.localType;
       var file = this.props.file;
       var size = (file.size / 1024).toFixed(2);
@@ -196,6 +201,7 @@ YUI.add('local-inspector', function() {
         title: 'Upload',
         action: this.state.activeComponent === 'new' ?
           this._handleUpload : this._handleUpdate,
+        disabled: isReadOnly,
         type: 'neutral'
       }];
       return (
@@ -213,6 +219,7 @@ YUI.add('local-inspector', function() {
                 <label>
                   <input type="radio" name="action"
                     defaultChecked={localType === 'new'}
+                    disabled={isReadOnly}
                     onChange={this._changeActiveComponent.bind(this, 'new')} />
                   Deploy local
                 </label>
@@ -221,6 +228,7 @@ YUI.add('local-inspector', function() {
                 <label>
                   <input type="radio" name="action"
                     defaultChecked={localType === 'update'}
+                    disabled={isReadOnly}
                     onChange={
                       this._changeActiveComponent.bind(this, 'update')} />
                   Upgrade local

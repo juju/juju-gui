@@ -23,6 +23,7 @@ YUI.add('inspector-change-version-item', function() {
   juju.components.InspectorChangeVersionItem = React.createClass({
 
     propTypes: {
+      acl: React.PropTypes.object.isRequired,
       buttonAction: React.PropTypes.func.isRequired,
       downgrade: React.PropTypes.bool.isRequired,
       id: React.PropTypes.string.isRequired,
@@ -67,6 +68,7 @@ YUI.add('inspector-change-version-item', function() {
             {this._generateTitle()}
           </span>
           <juju.components.GenericButton
+            disabled={this.props.acl.isReadOnly()}
             key={this.props.id}
             type='inline-neutral'
             title={this._generateButtonLabel()}
