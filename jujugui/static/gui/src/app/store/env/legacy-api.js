@@ -22,10 +22,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  * The Go store environment.
  *
  * @module env
- * @submodule env.go
+ * @submodule legacy-api.go
  */
 
-YUI.add('juju-env-go', function(Y) {
+YUI.add('juju-env-legacy-api', function(Y) {
 
   // Define the pinger interval in seconds.
   var PING_INTERVAL = 10;

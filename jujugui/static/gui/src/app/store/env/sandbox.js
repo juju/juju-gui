@@ -1342,7 +1342,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     'base',
     'js-yaml',
     'json-parse',
-    'juju-env-go',
+    'juju-env-api',
     'reconnecting-websocket',
     'timers'
   ]
