@@ -295,6 +295,33 @@ describe('EntityHeader', function() {
     assert.deepEqual(deployService.args[0][3], plans[0]);
   });
 
+  it('can set the plans when deploying a charm without selecing one', () => {
+    var deployService = sinon.stub();
+    var changeState = sinon.stub();
+    var importBundleYAML = sinon.stub();
+    var getBundleYAML = sinon.stub();
+    var plans = [{url: 'test-plan'}];
+    var output = testUtils.renderIntoDocument(
+      <juju.components.EntityHeader
+        addNotification={sinon.stub()}
+        importBundleYAML={importBundleYAML}
+        getBundleYAML={getBundleYAML}
+        hasPlans={true}
+        deployService={deployService}
+        changeState={changeState}
+        entityModel={mockEntity}
+        plans={plans}
+        pluralize={sinon.stub()}
+        scrollPosition={0}/>);
+    var refs = output.refs;
+    var deployAction = refs.deployAction;
+    // Simulate a click.
+    deployAction.props.action();
+    assert.equal(deployService.callCount, 1);
+    assert.deepEqual(deployService.args[0][2], plans);
+    assert.isUndefined(deployService.args[0][3]);
+  });
+
   it('adds a bundle when the add button is clicked', function() {
     var deployService = sinon.stub();
     var changeState = sinon.stub();

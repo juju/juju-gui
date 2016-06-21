@@ -104,6 +104,15 @@ describe('Ghost Deployer Extension', function() {
     assert.deepEqual(service.get('plans'), plans);
   });
 
+  it('sets the plans on the charm when not setting an active plan', function() {
+    var charm = makeCharm();
+    var plans = ['plan1', 'plan2'];
+    ghostDeployer.db.charms = new Y.juju.models.ServiceList();
+    ghostDeployer.deployService(charm, undefined, plans);
+    var service = ghostDeployer.db.charms.item(0);
+    assert.deepEqual(service.get('plans'), plans);
+  });
+
   it('calls the env deploy method with default charm data', function() {
     var charm = makeCharm();
     ghostDeployer.deployService(charm);
