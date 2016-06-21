@@ -313,6 +313,7 @@ describe('EntityHeader', function() {
     var plans = [{url: 'test-plan'}];
     var output = testUtils.renderIntoDocument(
       <juju.components.EntityHeader
+        acl={acl}
         addNotification={sinon.stub()}
         importBundleYAML={importBundleYAML}
         getBundleYAML={getBundleYAML}
