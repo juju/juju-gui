@@ -23,7 +23,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   describe('sandbox.GoJujuAPI', function() {
     var requires = [
       'jsyaml', 'juju-env-sandbox', 'juju-tests-utils',
-      'environment-change-set', 'juju-tests-factory', 'juju-env-go',
+      'environment-change-set', 'juju-tests-factory', 'juju-env-api',
       'juju-models', 'promise'
     ];
     var client, env, ecs, environmentsModule, factory, juju,

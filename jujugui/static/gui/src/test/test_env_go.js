@@ -20,11 +20,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe('Go Juju environment utilities', function() {
+  describe('Juju environment API utilities', function() {
     var environments;
 
     before(function(done) {
-      YUI(GlobalConfig).use(['juju-env-go'], function(Y) {
+      YUI(GlobalConfig).use(['juju-env-api'], function(Y) {
         environments = Y.namespace('juju.environments');
         done();
       });
@@ -94,7 +94,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   });
 
-  describe('Go Juju environment', function() {
+  describe('Juju environment API', function() {
     var cleanups, conn, endpointA, endpointB, ecs, env, juju, machineJobs, msg,
         utils, Y;
 

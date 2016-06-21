@@ -2586,7 +2586,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-bakery',
     'juju-env-base',
     'juju-env-fakebackend',
-    'juju-env-go',
+    'juju-env-api',
     'juju-env-sandbox',
     'juju-env-web-handler',
     'juju-env-web-sandbox',

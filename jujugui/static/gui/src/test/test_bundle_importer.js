@@ -24,7 +24,7 @@ describe('Bundle Importer', function() {
 
   before(function(done) {
     var requires = ['bundle-importer', 'juju-tests-utils', 'juju-models',
-                    'juju-env-go', 'juju-tests-factory',
+                    'juju-env-api', 'juju-tests-factory',
                     'environment-change-set'];
     YUI(GlobalConfig).use(requires, function(Y) {
       BundleImporter = Y.juju.BundleImporter;

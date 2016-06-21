@@ -693,7 +693,7 @@ YUI.add('bundle-importer', function(Y) {
 
 }, '', {
   requires: [
-    'juju-env-go',
+    'juju-env-api',
     'environment-change-set'
   ]
 });
