@@ -310,9 +310,9 @@ YUI.add('entity-header', function() {
               </div>
               <div className={
                 'entity-header__right four-col last-col no-margin-bottom'}>
+                {this._generateSelectPlan()}
                 <juju.components.CopyToClipboard
                   value={'juju deploy ' + entity.id} />
-                {this._generateSelectPlan()}
                 {this._generateDeployAction()}
               </div>
             </div>

@@ -106,9 +106,9 @@ describe('EntityHeader', function() {
             </div>
             <div className={
               'entity-header__right four-col last-col no-margin-bottom'}>
+              {undefined}
               <juju.components.CopyToClipboard
                 value="juju deploy cs:django" />
-              {undefined}
               <juju.components.GenericButton
                 ref="deployAction"
                 action={instance._handleDeployClick}
@@ -148,7 +148,7 @@ describe('EntityHeader', function() {
         </option>]}
       </select>);
     assert.deepEqual(
-      output.props.children.props.children.props.children[1].props.children[1],
+      output.props.children.props.children.props.children[1].props.children[0],
       expected);
   });
 
@@ -173,7 +173,7 @@ describe('EntityHeader', function() {
         {null}
       </select>);
     assert.deepEqual(
-      output.props.children.props.children.props.children[1].props.children[1],
+      output.props.children.props.children.props.children[1].props.children[0],
       expected);
   });
 
