@@ -46,7 +46,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       sessionStorage.setItem('credentials', null);
     });
 
-    // These duplicate more thorough tests in test_env_go.js.
+    // These duplicate more thorough tests in test_env_api.js.
     test('the user is initially assumed to be unauthenticated', function() {
       assert.isFalse(env.userIsAuthenticated);
     });
