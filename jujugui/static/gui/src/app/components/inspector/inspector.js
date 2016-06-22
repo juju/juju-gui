@@ -360,6 +360,7 @@ YUI.add('inspector-component', function() {
             icon: service.get('icon'),
             component:
               <juju.components.InspectorPlan
+                acl={this.props.acl}
                 currentPlan={this.props.service.get('activePlan')} />,
             backState: {
               sectionA: {

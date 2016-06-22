@@ -38,6 +38,7 @@ describe('InspectorPlans', () => {
     };
     var output = jsTestUtils.shallowRender(
       <juju.components.InspectorPlan
+        acl={{}}
         currentPlan={currentPlan}/>);
     var expected = (
       <div className="inspector-plan">
@@ -61,6 +62,7 @@ describe('InspectorPlans', () => {
   it('can render correctly without a selected plan', () => {
     var output = jsTestUtils.shallowRender(
       <juju.components.InspectorPlan
+        acl={{}}
         currentPlan={null}/>);
     var expected = (
       <div className="inspector-plan">

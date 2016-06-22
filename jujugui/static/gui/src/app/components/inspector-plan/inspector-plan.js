@@ -23,7 +23,8 @@ YUI.add('inspector-plan', function() {
   juju.components.InspectorPlan = React.createClass({
 
     propTypes: {
-      currentPlan: React.PropTypes.object.isRequired
+      acl: React.PropTypes.object.isRequired,
+      currentPlan: React.PropTypes.object
     },
 
     /**
