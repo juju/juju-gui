@@ -26,17 +26,63 @@ YUI.add('inspector-plan', function() {
       currentPlan: React.PropTypes.object.isRequired
     },
 
-    _generateButtons: function() {
+    /**
+      Navigates to the Choose Plans UI.
 
+      @method _navigatePlans
+    */
+    _navigatePlans: function() {},
+
+    /**
+      Generates the footer buttons for the UI depending on if the application
+      has a selected plan or not.
+
+      @method _generateButtons
+      @return {Function} The React elements for the UI.
+    */
+    _generateButtons: function() {
+      var buttons = [{
+        title: this.props.currentPlan ? 'Change plan' : 'Choose plan',
+        action: this._navigatePlans
+      }];
+      return (
+        <juju.components.ButtonRow
+          buttons={buttons}/>);
+    },
+
+    /**
+      Generates the elements if the applicaton has a plan selected.
+
+      @method _generatePlanDetails
+      @return {Function} The React elements for the UI.
+    */
+    _generatePlanDetails: function() {
+      return (
+        <div className="inspector-plan__details">
+          <div className="inspector-plan__plan-title"></div>
+          <div className="inspector-plan__plan-price"></div>
+          <div className="inspector-plan__description"></div>
+        </div>);
+    },
+
+    /**
+      Generates the elements if the application does not have a plan selected.
+
+      @method _generateNoPlans
+      @return {Function} The React elements for the UI.
+    */
+    _generateNoPlans: function() {
+      return (
+        <div className="inspector-plan__no-plan">
+          You have no active plan
+        </div>);
     },
 
     render: function() {
       return (
-        <div className="inspector-plans">
-          Current plan
-          <div className="inspector-plans__plan-title"></div>
-          <div className="inspector-plans__plan-price"></div>
-          <div className="inspector-plans__description"></div>
+        <div className="inspector-plan">
+          {this.props.currentPlan ?
+            this._generatePlanDetails() : this._generateNoPlans()}
           {this._generateButtons()}
         </div>
       );
@@ -45,5 +91,5 @@ YUI.add('inspector-plan', function() {
   });
 
 }, '0.1.0', { requires: [
-  'generic-button'
+  'button-row'
 ]});

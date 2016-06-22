@@ -357,7 +357,7 @@ YUI.add('inspector-component', function() {
         case 'plan':
           state.activeChild = {
             title: 'Plan',
-            icon: '',
+            icon: service.get('icon'),
             component:
               <juju.components.InspectorPlan
                 currentPlan={this.props.service.get('activePlan')} />,
