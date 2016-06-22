@@ -41,9 +41,11 @@ YUI.add('inspector-plan', function() {
       @return {Function} The React elements for the UI.
     */
     _generateButtons: function() {
+      var currentPlan = this.props.currentPlan;
       var buttons = [{
-        title: this.props.currentPlan ? 'Change plan' : 'Choose plan',
-        action: this._navigatePlans
+        title: currentPlan ? 'Change plan' : 'Choose plan',
+        action: this._navigatePlans,
+        type: currentPlan ? 'base': 'neutral'
       }];
       return (
         <juju.components.ButtonRow
@@ -57,11 +59,14 @@ YUI.add('inspector-plan', function() {
       @return {Function} The React elements for the UI.
     */
     _generatePlanDetails: function() {
+      var currentPlan = this.props.currentPlan;
       return (
         <div className="inspector-plan__details">
-          <div className="inspector-plan__plan-title"></div>
-          <div className="inspector-plan__plan-price"></div>
-          <div className="inspector-plan__description"></div>
+          <div className="inspector-plan__title">{currentPlan.url}</div>
+          <div className="inspector-plan__price">{currentPlan.price}</div>
+          <div className="inspector-plan__description">
+            {currentPlan.description}
+          </div>
         </div>);
     },
 
