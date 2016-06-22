@@ -76,6 +76,43 @@ var module = module;
         url += '?revision=' + revision;
       }
       return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
+    },
+
+    /**
+      Retrieves all the agreements for the authenticated user.
+
+      @public getAgreements
+      @params callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and the agreements data as its second. The agreements
+        data includes the following fields:
+          - user: the user's username.
+          - term: the name of the term
+          - revision: the terms revision, as a positive number;
+          - createdAt: a date object with the terms creation time.
+        If the agreements are not found, the second argument is null.
+    */
+    getAgreements: function(callback) {
+      var handler = function(error, response) {
+        if (error !== null) {
+          callback(error, null);
+          return;
+        }
+        if (!response.length) {
+          callback(null, null);
+          return;
+        }
+        var terms = response[0];
+        var milliseconds = Date.parse(terms['created-on']);
+        callback(null, {
+          user: terms.user,
+          term: terms.term,
+          revision: terms.revision,
+          createdAt: new Date(milliseconds)
+        });
+      };
+      var url = this.url + '/agreements/';
+      return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
     }
 
   };
