@@ -18,13 +18,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('inspector-plans', function() {
+YUI.add('inspector-plan', function() {
 
-  juju.components.InspectorPlans = React.createClass({
+  juju.components.InspectorPlan = React.createClass({
 
-    propTypes: {},
+    propTypes: {
+      currentPlan: React.PropTypes.object.isRequired
+    },
 
-    _changePlan: function() {},
+    _generateButtons: function() {
+
+    },
 
     render: function() {
       return (
@@ -33,9 +37,7 @@ YUI.add('inspector-plans', function() {
           <div className="inspector-plans__plan-title"></div>
           <div className="inspector-plans__plan-price"></div>
           <div className="inspector-plans__description"></div>
-          <juju.components.GenericButton
-            title="Change plan"
-            action={this._changePlan}/>
+          {this._generateButtons()}
         </div>
       );
     }
