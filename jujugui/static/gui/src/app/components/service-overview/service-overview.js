@@ -65,10 +65,19 @@ YUI.add('service-overview', function() {
       }
 
       var service = this.props.service;
-      var plans = service.get('plans');
+      var plans = this.props.charm.get('plans');
       var activePlan = service.get('activePlan');
 
+      if (plans || activePlan) {
+        // If we already have plans then set them so that the UI can render
+        // with available data.
+        this.setState({plans, activePlan});
+      }
+
       if (plans === undefined || activePlan === undefined) {
+        // If we don't have the plans or the activePlan then make a request
+        // to fetch them. This is a fallback as the UI should handle
+        // insufficient data transparently.
         this.props.showActivePlan(
           this.props.modelUUID,
           service.get('name'),
@@ -78,15 +87,10 @@ YUI.add('service-overview', function() {
               return;
             }
             if (plans && plans.length > 0) {
-              var planData = { activePlan, plans };
-              service.setAttrs(planData);
-              this.setState(planData);
+              service.set('activePlan', activePlan);
+              this.setState({ activePlan, plans });
             }
           });
-      } else if (plans && activePlan) {
-        var planData = { activePlan, plans };
-        service.setAttrs(planData);
-        this.setState(planData);
       }
     },
 
@@ -249,16 +253,15 @@ YUI.add('service-overview', function() {
       // or display the plans.
       if (this.props.displayPlans && (state.activePlan || state.plans)) {
         actions.push({
-          title: 'Plans',
-          icon: 'plans',
-          // XXX Add plan name from above query.
+          title: 'Plan',
+          icon: 'plan',
           action: this._navigate,
           state: {
             sectionA: {
               component: 'inspector',
               metadata: {
                 id: serviceId,
-                activeComponent: 'plans'
+                activeComponent: 'plan'
               }
             }
           }

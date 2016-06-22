@@ -354,14 +354,13 @@ YUI.add('inspector-component', function() {
                   activeComponent: undefined
                 }}}};
           break;
-        case 'plans':
+        case 'plan':
           state.activeChild = {
-            title: 'Plans',
+            title: 'Plan',
             icon: '',
-            component: <juju.components.InspectorPlans
-              plans={currentPlan}
-              buttonLabel="Change Plan"
-              buttonAction=""/>,
+            component:
+              <juju.components.InspectorPlan
+                currentPlan={this.props.service.get('activePlan')} />,
             backState: {
               sectionA: {
                 component: 'inspector',
@@ -403,6 +402,7 @@ YUI.add('inspector-component', function() {
     'inspector-expose',
     'inspector-header',
     'inspector-config',
+    'inspector-plan',
     'inspector-relations',
     'inspector-relation-details',
     'scale-service',
