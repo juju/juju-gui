@@ -150,16 +150,16 @@ YUI.add('juju-env-legacy-api', function(Y) {
    *
    * This class handles the websocket connection to the GoJuju API backend.
    *
-   * @class GoEnvironment
+   * @class GoLegacyEnvironment
    */
-  function GoEnvironment(config) {
+  function GoLegacyEnvironment(config) {
     // Invoke Base constructor, passing through arguments.
-    GoEnvironment.superclass.constructor.apply(this, arguments);
+    GoLegacyEnvironment.superclass.constructor.apply(this, arguments);
   }
 
-  GoEnvironment.NAME = 'go-env';
+  GoLegacyEnvironment.NAME = 'go-env';
 
-  Y.extend(GoEnvironment, environments.BaseEnvironment, {
+  Y.extend(GoLegacyEnvironment, environments.BaseEnvironment, {
 
     /**
       A list of the valid constraints for all providers. Required
@@ -3256,7 +3256,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
 
   environments.endpointToName = endpointToName;
   environments.createRelationKey = createRelationKey;
-  environments.GoEnvironment = GoEnvironment;
+  environments.GoLegacyEnvironment = GoLegacyEnvironment;
   environments.lowerObjectKeys = lowerObjectKeys;
   environments.parsePlacement = parsePlacement;
   environments.stringifyObjectValues = stringifyObjectValues;

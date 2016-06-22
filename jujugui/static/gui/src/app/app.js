@@ -471,7 +471,12 @@ YUI.add('juju-gui', function(Y) {
           // requests to the juju-core API.
           envOptions.webHandler = new webModule.WebHandler();
         }
-        this._init(cfg, new environments.GoEnvironment(envOptions), state);
+        var environment = environments.GoEnvironment;
+        if (
+          views.utils.compareSemver(this.get('jujuCoreVersion'), '1') > -1) {
+          environment = environments.GoLegacyEnvironment;
+        }
+        this._init(cfg, new environment(envOptions), state);
       });
     },
 
@@ -2601,6 +2606,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-base',
     'juju-env-fakebackend',
     'juju-env-api',
+    'juju-env-legacy-api',
     'juju-env-sandbox',
     'juju-env-web-handler',
     'juju-env-web-sandbox',
