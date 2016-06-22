@@ -24,7 +24,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var environments;
 
     before(function(done) {
-      YUI(GlobalConfig).use(['juju-env-api'], function(Y) {
+      YUI(GlobalConfig).use(['juju-env-legacy-api'], function(Y) {
         environments = Y.namespace('juju.environments');
         done();
       });
@@ -101,7 +101,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     before(function(done) {
       Y = YUI(GlobalConfig).use([
         'environment-change-set',
-        'juju-tests-utils'
+        'juju-tests-utils',
+        'juju-env-legacy-api'
       ], function(Y) {
         juju = Y.namespace('juju');
         utils = Y.namespace('juju-tests.utils');
@@ -113,7 +114,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     beforeEach(function() {
       conn = new utils.SocketStub();
       ecs = new juju.EnvironmentChangeSet();
-      env = new juju.environments.GoEnvironment({
+      env = new juju.environments.GoLegacyEnvironment({
         conn: conn, user: 'user', password: 'password', ecs: ecs
       });
       env.connect();
@@ -139,10 +140,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     var noopHandleLogin = function() {
-      var oldHandleLogin = Y.juju.environments.GoEnvironment.handleLogin;
-      Y.juju.environments.GoEnvironment.handleLogin = function() {};
+      var oldHandleLogin = Y.juju.environments.GoLegacyEnvironment.handleLogin;
+      Y.juju.environments.GoLegacyEnvironment.handleLogin = function() {};
       cleanups.push(function() {
-        Y.juju.environments.GoEnvironment.handleLogin = oldHandleLogin;
+        Y.juju.environments.GoLegacyEnvironment.handleLogin = oldHandleLogin;
       });
     };
 
