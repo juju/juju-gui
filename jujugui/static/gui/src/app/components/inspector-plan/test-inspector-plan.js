@@ -27,21 +27,52 @@ describe('InspectorPlans', () => {
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
-    YUI().use('inspector-plans', () => { done(); });
+    YUI().use('inspector-plan', () => { done(); });
   });
 
-  it('can render correctly', () => {
+  it('can render correctly with a selected plan', () => {
+    var currentPlan = {
+      description: 'best description ever',
+      price: 'price/goes/here',
+      url: 'canonical-landscape/24-7'
+    };
     var output = jsTestUtils.shallowRender(
-      <juju.components.InspectorPlans/>);
+      <juju.components.InspectorPlan
+        currentPlan={currentPlan}/>);
     var expected = (
-      <div className="inspector-plans">
-        Current plan
-        <div className="inspector-plans__plan-title"></div>
-        <div className="inspector-plans__plan-price"></div>
-        <div className="inspector-plans__description"></div>
-        <juju.components.GenericButton
-          title="Change plan"
-          action={output.props.children[4].props.action}/>
+      <div className="inspector-plan">
+        <div className="inspector-plan__details">
+          <div className="inspector-plan__title">{currentPlan.url}</div>
+          <div className="inspector-plan__price">{currentPlan.price}</div>
+          <div className="inspector-plan__description">
+            {currentPlan.description}
+          </div>
+        </div>
+        <juju.components.ButtonRow
+          buttons={[{
+            title: 'Change plan',
+            action: output.props.children[1].props.buttons[0].action,
+            type: 'base'
+          }]}/>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render correctly without a selected plan', () => {
+    var output = jsTestUtils.shallowRender(
+      <juju.components.InspectorPlan
+        currentPlan={null}/>);
+    var expected = (
+      <div className="inspector-plan">
+        <div className="inspector-plan__no-plan">
+          You have no active plan
+        </div>
+        <juju.components.ButtonRow
+          buttons={[{
+            title: 'Choose plan',
+            action: output.props.children[1].props.buttons[0].action,
+            type: 'neutral'
+          }]}/>
       </div>);
     assert.deepEqual(output, expected);
   });
