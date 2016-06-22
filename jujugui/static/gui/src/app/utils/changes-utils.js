@@ -218,7 +218,7 @@ YUI.add('changes-utils', function(Y) {
 
   /**
     Loops through the services in the db to find ones which have id's which
-    match the temporary id's assigned to the add realation call.
+    match the temporary id's assigned to the add relation call.
 
     @method getRealRelationEndpointNames
     @param {Array} args The arguments array from the ecs add relations call.

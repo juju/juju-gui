@@ -1112,13 +1112,20 @@ YUI.add('juju-gui', function(Y) {
             destroyUnits={utils.destroyUnits.bind(this, this.env)}
             destroyRelations={utils.destroyRelations.bind(
               this, this.db, this.env)}
+            getRelatableApplications={utils.getRelatableApplications.bind(
+              this, topo, this.db, models, service)}
             clearState={utils.clearState.bind(this, topo)}
+            createRelation={utils.createRelation.bind(this, this.db, this.env)}
             getYAMLConfig={utils.getYAMLConfig.bind(this)}
             changeState={this.changeState.bind(this)}
             exposeService={this.env.expose.bind(this.env)}
             unexposeService={this.env.unexpose.bind(this.env)}
             getAvailableVersions={charmstore.getAvailableVersions.bind(
                 charmstore)}
+            getApplicationById={utils.getApplicationById.bind(
+                this, this.db)}
+            getRelationTypes={utils.getRelationTypes.bind(
+              this, topo, this.db, models)}
             getMacaroon={charmstore.bakery.getMacaroon.bind(charmstore.bakery)}
             addCharm={this.env.addCharm.bind(this.env)}
             setCharm={this.env.setCharm.bind(this.env)}

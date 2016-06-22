@@ -23,6 +23,7 @@ YUI.add('inspector-relations', function() {
       acl: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       destroyRelations: React.PropTypes.func.isRequired,
+      service: React.PropTypes.object.isRequired,
       serviceRelations: React.PropTypes.array.isRequired
     },
 
@@ -34,6 +35,22 @@ YUI.add('inspector-relations', function() {
     */
     getInitialState: function() {
       return {activeCount: 0};
+    },
+
+    /**
+      Fires changeState to update the UI based on the component clicked.
+
+      @method _navigate
+      @param {Object} e The click event.
+    */
+    _navigate: function(e) {
+      this.props.changeState({
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            id: this.props.service.get('id'),
+            activeComponent: 'relate-to'
+          }}});
     },
 
     /**
@@ -201,9 +218,26 @@ YUI.add('inspector-relations', function() {
           buttons={buttons} />);
     },
 
+    /**
+      Generate the build relation action.
+
+      @method _generateButtons
+      @returns {Object} The build relation component.
+    */
+    _generateBuildRelation: function() {
+      return (
+        <div className="inspector-relations__actions">
+          <juju.components.OverviewAction
+            action={this._navigate}
+            icon="plus_box_16"
+            title="Build a relation" />
+        </div>);
+    },
+
     render: function() {
       return (
         <div className="inspector-relations">
+          {this._generateBuildRelation()}
           <ul className="inspector-relations__list">
             {this._generateRelations()}
           </ul>

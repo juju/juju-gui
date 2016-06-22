@@ -1,0 +1,17 @@
+.inspector-relate-to-type {
+
+    &__list,
+    &__actions {
+        margin: 0;
+        list-style: none;
+    }
+
+    &__message {
+        padding: 10px 20px;
+    }
+
+    .inspector-relations-item__label {
+        width: 210px;
+    }
+
+}

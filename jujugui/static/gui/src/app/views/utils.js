@@ -1765,6 +1765,111 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
+    Create a list of relations.
+
+    @method createRelation
+    @param {Object} env The current environment.
+    @param {Array} relations A list of relation endpoints.
+    @param {Function} callback A function to call after removal.
+  */
+  utils.createRelation = function(db, env, relations, callback) {
+    var endpoints = [relations[0].service, {
+      name: relations[0].name,
+      role: 'client'
+    }, relations[1].service, {
+      name: relations[1].name,
+      role: 'server'
+    }];
+
+    var relationId = 'pending-' + endpoints[0] + ':' + endpoints[0].name +
+                      endpoints[1] + ':' + endpoints[1].name;
+    db.relations.add({
+      relation_id: relationId,
+      'interface': endpoints[0].name,
+      endpoints: endpoints,
+      pending: true,
+      scope: 'global', // XXX check the charms to see if this is a subordinate
+      display_name: 'pending'
+    });
+    env.add_relation(
+      endpoints[0], endpoints[1],
+      function(e) {
+        this.db.relations.create({
+          relation_id: e.result.id,
+          type: e.result['interface'],
+          endpoints: endpoints,
+          pending: false,
+          scope: e.result.scope
+        });
+      }.bind(this));
+  };
+
+  /**
+    Return the application object that matches the ID
+
+    @method getApplicationById
+    @param {Database} db to resolve relations on.
+    @param {String} applicationId the application id.
+  */
+  utils.getApplicationById = function(db, applicationId) {
+    return db.services.getById(applicationId);
+  };
+
+  /**
+    Returns an array of relation types for the passed applications
+
+    @method getRelationTypes
+    @param {Object} applicationFrom the application to relate from.
+    @param {Object} applicationTo the application to relate to.
+    @param {Boolean} filterExisting filters exisiting relations from the
+    returned relation types
+    @returns {Array} The relations that are compatible.
+  */
+  utils.getRelationTypes = function(
+    topo, db, models, applicationFrom, applicationTo, filterExisting=true) {
+    var endpointsController = topo.get('endpointsController');
+    var applicationToEndpoints = models.getEndpoints(applicationTo,
+      endpointsController);
+    var relationTypes = applicationToEndpoints[applicationFrom.get('id')];
+    if (filterExisting) {
+      var filtered = utils.getRelationDataForService(db, applicationTo).filter(
+        function(match) {
+          return match.endpoints[0] !== applicationFrom.get('id');
+        }
+      );
+      if (filtered.length !== 0) {
+        relationTypes = relationTypes.filter(function(relation) {
+          return filtered.some(function(item) {
+            return relation[0].name !== item.near.name ||
+              relation[1].name !== item.far.name;
+          });
+        });
+      }
+    }
+    return relationTypes;
+  };
+
+  /**
+    Returns a list of relatible applications
+
+    @method getRelatableApplications
+    @param {Object} topo The topology object.
+    @param {Database} db to resolve relations on.
+    @param {Object} service A BoxModel-wrapped application.
+    @param {Function} callback A function to call after removal.
+    @returns {Array} The service objects that can related to the application.
+  */
+  utils.getRelatableApplications = function(topo, db, models, application) {
+    var endpointsController = topo.get('endpointsController');
+    var endpoints = models.getEndpoints(application, endpointsController);
+    var possibleRelations = [];
+    for (endpoint in endpoints) {
+      possibleRelations.push(db.services.getById(endpoint));
+    }
+    return possibleRelations;
+  };
+
+  /**
     Destroy a list of units.
 
     @method destroyUnits
