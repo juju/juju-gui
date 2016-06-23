@@ -1748,4 +1748,41 @@ describe('App', function() {
       assert.equal(next.callCount(), 1, 'Next not invoked.');
     });
   });
+
+  describe('isLegacyJuju', function() {
+    var Y, app;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      app = new Y.juju.App({
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0'
+      });
+    });
+
+    afterEach(function() {
+      app.destroy();
+    });
+
+    it('reports legacy Juju versions', function() {
+      ['1.26.0', '0.8.0', '1.9', '1'].forEach(function(version) {
+        app.set('jujuCoreVersion', version);
+        assert.strictEqual(app.isLegacyJuju(), true, version);
+      });
+    });
+
+    it('reports non-legacy Juju versions', function() {
+      ['2.0.1', '2.0-beta42.47', '3.5', '2'].forEach(function(version) {
+        app.set('jujuCoreVersion', version);
+        assert.strictEqual(app.isLegacyJuju(), false, version);
+      });
+    });
+
+  });
+
 });

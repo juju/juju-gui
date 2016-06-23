@@ -472,8 +472,7 @@ YUI.add('juju-gui', function(Y) {
           envOptions.webHandler = new webModule.WebHandler();
         }
         var environment = environments.GoEnvironment;
-        if (
-          views.utils.compareSemver(this.get('jujuCoreVersion'), '1') > -1) {
+        if (this.isLegacyJuju()) {
           environment = environments.GoLegacyEnvironment;
         }
         this._init(cfg, new environment(envOptions), state);
@@ -687,6 +686,18 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Reports whether the currently connected controller is a legacy Juju
+      (with version < 2).
+
+      @method isLegacyJuju
+      @return {Boolean} Whether a legacy Juju version is being used.
+    */
+    isLegacyJuju: function() {
+      var jujuVersion = this.get('jujuCoreVersion');
+      return views.utils.compareSemver(jujuVersion, '2') === -1;
+    },
+
+    /**
       Parses the application URL to populate the state object without
       dispatching
 
@@ -722,7 +733,7 @@ YUI.add('juju-gui', function(Y) {
           <code>juju api-info --password password</code>
         </p>);
       var loginWithMacaroon = null;
-      if (views.utils.compareSemver(this.get('jujuCoreVersion'), '2') > -1) {
+      if (!this.isLegacyJuju()) {
         // Use the new Juju 2 command to retrieve credentials.
         msg = (
           <p>
@@ -1202,8 +1213,7 @@ YUI.add('juju-gui', function(Y) {
           acl={this.acl}
           apiUrl={charmstore.url}
           charmstoreSearch={charmstore.search.bind(charmstore)}
-          displayPlans={
-            views.utils.compareSemver(this.get('jujuCoreVersion'), '2') > -1}
+          displayPlans={!this.isLegacyJuju()}
           series={utils.getSeriesList()}
           importBundleYAML={this.bundleImporter.importBundleYAML.bind(
               this.bundleImporter)}
