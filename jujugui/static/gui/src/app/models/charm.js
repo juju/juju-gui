@@ -727,6 +727,14 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       /**
+        The plans for the charm.
+
+        @attribute plans
+        @type {Array}
+        @default undefined
+      */
+      plans: {},
+      /**
         The metrics for the charm.
         @attribute metrics
         @type {Object}

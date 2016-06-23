@@ -1,21 +1,21 @@
 .inspector-plan {
 
     &__details {
-      padding: 10px 20px;
+        padding: 10px 20px;
     }
 
     &__title {
-      margin-bottom: 15px
+        margin-bottom: 15px
     }
 
     &__price {
-      color: $dark-grey;
-      font-size: 14px;
-      margin-bottom: 15px;
+        color: $dark-grey;
+        font-size: 14px;
+        margin-bottom: 15px;
     }
 
     &__description {
-      font-size: 14px;
+        font-size: 14px;
     }
 
     &__no-plan {
