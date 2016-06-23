@@ -23,7 +23,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   describe('sandbox.GoJujuAPI', function() {
     var requires = [
       'jsyaml', 'juju-env-sandbox', 'juju-tests-utils',
-      'environment-change-set', 'juju-tests-factory', 'juju-env-api',
+      'environment-change-set', 'juju-tests-factory', 'juju-env-legacy-api',
       'juju-models', 'promise'
     ];
     var client, env, ecs, environmentsModule, factory, juju,
@@ -48,7 +48,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       client = new sandboxModule.ClientConnection({juju: juju});
       ecs = new ns.EnvironmentChangeSet({db: state.db});
-      env = new environmentsModule.GoEnvironment({conn: client, ecs: ecs});
+      // TODO frankban: use the proper GoEnvironment here.
+      env = new environmentsModule.GoLegacyEnvironment({
+        conn: client, ecs: ecs
+      });
       var facades = sandboxModule.Facades.reduce(function(collected, facade) {
         collected[facade.Name] = facade.Versions;
         return collected;

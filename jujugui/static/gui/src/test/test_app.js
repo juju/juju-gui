@@ -673,8 +673,8 @@ describe('App', function() {
 
     // Ensure the given message is a login request.
     var assertIsLogin = function(message) {
-      assert.equal('Admin', message.Type);
-      assert.equal('Login', message.Request);
+      assert.equal('Admin', message.type);
+      assert.equal('Login', message.request);
     };
 
     // These tests fail spuriously. It appears that even though ready is called
@@ -754,6 +754,12 @@ describe('App', function() {
     });
 
     it('uses the authtoken when there are no credentials', function(done) {
+      env = new juju.environments.GoLegacyEnvironment({
+        conn: conn,
+        ecs: ecs,
+        user: 'user',
+        password: 'password'
+      });
       var app = makeApp(false, this);
       // Override the local window.location object.
       app.location = {search: '?authtoken=demoToken'};
@@ -774,6 +780,12 @@ describe('App', function() {
     });
 
     it('handles multiple authtokens', function(done) {
+      env = new juju.environments.GoLegacyEnvironment({
+        conn: conn,
+        ecs: ecs,
+        user: 'user',
+        password: 'password'
+      });
       var app = makeApp(false, this);
       // Override the local window.location object.
       app.location = {search: '?authtoken=demoToken&authtoken=discarded'};
@@ -794,14 +806,23 @@ describe('App', function() {
     });
 
     it('ignores the authtoken if credentials exist', function(done) {
+      env = new juju.environments.GoLegacyEnvironment({
+        conn: conn,
+        ecs: ecs,
+        user: 'user',
+        password: 'password'
+      });
       var app = makeApp(false, this);
       // Override the local window.location object.
       app.location = {search: '?authtoken=demoToken'};
+      env.setCredentials({user: 'user', password: 'password'});
       env.connect();
       this._cleanups.push(env.close.bind(env));
       app.after('ready', function() {
         assert.equal(1, conn.messages.length);
-        assertIsLogin(conn.last_message());
+        var message = conn.last_message();
+        assert.equal('Admin', message.Type);
+        assert.equal('Login', message.Request);
         done();
       });
     });
@@ -812,7 +833,7 @@ describe('App', function() {
       app.after('ready', function() {
         app.env.login();
         // Mimic a login failed response assuming login is the first request.
-        conn.msg({RequestId: 1, Error: 'bad wolf'});
+        conn.msg({'request-id': 1, error: 'bad wolf'});
         assert.equal(1, conn.messages.length);
         assertIsLogin(conn.last_message());
         assert.equal(loginStub.callCount(), 1);
@@ -919,7 +940,7 @@ describe('App', function() {
       env.connect();
       this._cleanups.push(env.close.bind(env));
       conn.msg({
-        RequestId: conn.last_message().RequestId,
+        'request-id': conn.last_message()['request-id'],
         Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
     });
 
@@ -960,9 +981,9 @@ describe('App', function() {
         conn.open();
         assert.equal(1, conn.messages.length, 'no login messages sent');
         var msg = conn.last_message();
-        assert.strictEqual(msg.Type, 'Admin');
-        assert.strictEqual(msg.Request, 'Login');
-        assert.deepEqual(msg.Params, {macaroons: [['macaroon']]});
+        assert.strictEqual(msg.type, 'Admin');
+        assert.strictEqual(msg.request, 'Login');
+        assert.deepEqual(msg.params, {macaroons: [['macaroon']]});
         done();
       });
     });

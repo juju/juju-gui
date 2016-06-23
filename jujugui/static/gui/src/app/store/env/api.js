@@ -30,9 +30,8 @@ YUI.add('juju-env-api', function(Y) {
   // Define the pinger interval in seconds.
   var PING_INTERVAL = 10;
 
-  // Define the Admin API facade versions for Juju 1 and 2.
-  var ADMIN_FACADE_VERSION_JUJU1 = 0;
-  var ADMIN_FACADE_VERSION_JUJU2 = 3;
+  // Define the Admin API facade version.
+  var ADMIN_FACADE_VERSION = 3;
 
   var environments = Y.namespace('juju.environments');
   var utils = Y.namespace('juju.views.utils');
@@ -66,7 +65,7 @@ YUI.add('juju-env-api', function(Y) {
   var createRelationKey = function(endpoints) {
     var roles = Object.create(null);
     Y.each(endpoints, function(value, key) {
-      roles[value.Role] = key + ':' + value.Name;
+      roles[value.role] = key + ':' + value.name;
     });
     return roles.requirer + ' ' + roles.provider;
   };
@@ -148,7 +147,7 @@ YUI.add('juju-env-api', function(Y) {
   /**
    * The Go Juju environment.
    *
-   * This class handles the websocket connection to the GoJuju API backend.
+   * This class handles the WebSocket connection to the GoJuju API backend.
    *
    * @class GoEnvironment
    */
@@ -192,25 +191,6 @@ YUI.add('juju-env-api', function(Y) {
     series: Object.keys(utils.getSeriesList()),
 
     /**
-      Some default facades are always assumed to be present, even in old
-      versions of Juju not returning facades on login. Base client, watcher and
-      pinger facades are part of this list. Also facades historically
-      implemented by the GUI server are included.
-
-      @property defaultFacades
-      @type {Object}
-    */
-    defaultFacades: {
-      // Default Juju API facades.
-      AllWatcher: [0],
-      Client: [0],
-      Pinger: [0],
-      // Custom GUI server types.
-      ChangeSet: [0],
-      GUIToken: [0]
-    },
-
-    /**
      * Go environment constructor.
      *
      * @method initializer
@@ -235,7 +215,7 @@ YUI.add('juju-env-api', function(Y) {
      * @return {undefined} Dispatches only.
      */
     dispatch_result: function(data) {
-      var tid = data.RequestId;
+      var tid = data['request-id'];
       if (tid in this._txn_callbacks) {
         this._txn_callbacks[tid].call(this, data);
         delete this._txn_callbacks[tid];
@@ -243,7 +223,7 @@ YUI.add('juju-env-api', function(Y) {
     },
 
     /**
-     * Send a message to the server using the websocket connection.
+     * Send a message to the server using the WebSocket connection.
      *
      * @method _send_rpc
      * @private
@@ -255,35 +235,35 @@ YUI.add('juju-env-api', function(Y) {
      * @return {undefined} Sends a message to the server only.
      */
     _send_rpc: function(op, callback) {
-      var facade = op.Type;
+      var facade = op.type;
       // The facades info is only available after logging in (as the facades
       // are sent as part of the login response). For this reason, do not
       // check if the "Admin" facade is supported, but just assume it is,
       // otherwise even logging in ("Admin.Login") would be impossible.
-      var version = op.Version;
+      var version = op.version;
       if (facade !== 'Admin') {
         version = this.findFacadeVersion(facade, version);
       }
       if (version === null) {
-        callback({
-          Error: 'operation not supported by API server: ' + JSON.stringify(op)
-        });
+        var err = 'api client: operation not supported: ' + JSON.stringify(op);
+        console.log(err);
+        callback({error: err});
         return;
       }
       if (this.ws.readyState !== 1) {
         console.log(
           'Websocket is not open, dropping request. ' +
-          'readyState: ' + this.ws.readyState, msg);
+          'readyState: ' + this.ws.readyState, op);
         return;
       }
-      op.Version = version;
+      op.version = version;
       var tid = this._counter += 1;
       if (callback) {
         this._txn_callbacks[tid] = callback;
       }
-      op.RequestId = tid;
-      if (!op.Params) {
-        op.Params = {};
+      op['request-id'] = tid;
+      if (!op.params) {
+        op.params = {};
       }
       var msg = Y.JSON.stringify(op);
       this.ws.send(msg);
@@ -297,20 +277,18 @@ YUI.add('juju-env-api', function(Y) {
       @return {undefined} Sends a message to the server only.
      */
     _watchAll: function() {
-      this._send_rpc(
-        {
-          Type: 'Client',
-          Request: 'WatchAll'
-        },
-        function(data) {
-          if (data.Error) {
-            console.log('aiiiiie!'); // retry and eventually alert user XXX
-          } else {
-            this._allWatcherId = data.Response.AllWatcherId;
-            this._next();
-          }
+      this._send_rpc({
+        type: 'Client',
+        request: 'WatchAll'
+      }, function(data) {
+        if (data.error) {
+          // TODO: retry and eventually alert the user.
+          console.error('cannot start the mega-watcher');
+          return;
         }
-      );
+        this._allWatcherId = data.response['watcher-id'];
+        this._next();
+      });
     },
 
     /**
@@ -331,15 +309,13 @@ YUI.add('juju-env-api', function(Y) {
       var deltas = [],
           cmp = {
             applicationInfo: 1,
-            serviceInfo: 1,
             relationInfo: 2,
             unitInfo: 3,
             machineInfo: 4,
             annotationInfo: 5,
             remoteapplicationInfo: 100,
-            remoteserviceInfo: 100
           };
-      data.Response.Deltas.forEach(function(delta) {
+      data.response.deltas.forEach(function(delta) {
         var kind = delta[0],
             operation = delta[1],
             entityInfo = delta[2];
@@ -372,16 +348,15 @@ YUI.add('juju-env-api', function(Y) {
      */
     _next: function() {
       this._send_rpc({
-        Type: 'AllWatcher',
-        Request: 'Next',
-        Id: this._allWatcherId,
-        Params: {}
+        type: 'AllWatcher',
+        request: 'Next',
+        id: this._allWatcherId
       }, function(data) {
-        if (data.Error) {
-          console.log('aiiiiie!'); // XXX
-        } else {
-          this.fire('_rpc_response', data);
+        if (data.error) {
+          console.error('cannot get next changes from the mega-watcher');
+          return;
         }
+        this.fire('_rpc_response', data);
       });
     },
 
@@ -399,10 +374,9 @@ YUI.add('juju-env-api', function(Y) {
         callback();
       }.bind(this);
       this._send_rpc({
-        Type: 'AllWatcher',
-        Request: 'Stop',
-        Id: this._allWatcherId,
-        Params: {}
+        type: 'AllWatcher',
+        request: 'Stop',
+        id: this._allWatcherId
       }, cb);
     },
 
@@ -468,29 +442,28 @@ YUI.add('juju-env-api', function(Y) {
      *
      * @method handleLogin
      * @param {Object} data The response returned by the server.
-     * param {Bool} fromToken Whether the login request was via a token.
      * @return {undefined} Nothing.
      */
-    handleLogin: function(data, fromToken) {
-      fromToken = !!fromToken; // Normalize.
+    handleLogin: function(data) {
       this.pendingLoginResponse = false;
-      this.userIsAuthenticated = !data.Error;
+      this.userIsAuthenticated = !data.error;
       if (this.userIsAuthenticated) {
         // If this is a token login, set the credentials.
-        var response = data.Response;
-        if (response && response.AuthTag && response.Password) {
+        var response = data.response;
+        if (response && response['auth-tag'] && response.password) {
           this.setCredentials({
-            user: response.AuthTag, password: response.Password});
+            user: response['auth-tag'],
+            password: response.password
+          });
         }
         // If login succeeded store the facades and retrieve environment info.
-        // Starting from Juju 2.0, "Facades" is spelled "facades".
-        var facadeList = response.facades || response.Facades || [];
+        var facadeList = response.facades || [];
         var facades = facadeList.reduce(function(previous, current) {
-          previous[current.Name] = current.Versions;
+          previous[current.name] = current.versions;
           return previous;
         }, {});
         this.set('facades', facades);
-        this.environmentInfo();
+        this.currentModelInfo();
         this._watchAll();
         // Start pinging the server.
         // XXX frankban: this is only required as a temporary workaround to
@@ -500,18 +473,15 @@ YUI.add('juju-env-api', function(Y) {
             this.ping.bind(this), PING_INTERVAL * 1000);
         }
         // Clean up for log out text.
-        this.failedAuthentication = this.failedTokenAuthentication = false;
+        this.failedAuthentication = false;
       } else {
         // If the credentials were rejected remove them.
         this.setCredentials(null);
-        // Indicate if the authentication was from a token.
-        this.failedAuthentication = !fromToken;
-        this.failedTokenAuthentication = fromToken;
+        this.failedAuthentication = true;
       }
       this.fire('login', {data: {
         result: this.userIsAuthenticated,
-        error: data.Error || null,
-        fromToken: fromToken
+        error: data.error || null
       }});
     },
 
@@ -529,7 +499,7 @@ YUI.add('juju-env-api', function(Y) {
     */
     findFacadeVersion: function(name, version) {
       var facades = this.get('facades') || {};
-      var versions = facades[name] || this.defaultFacades[name] || [];
+      var versions = facades[name] || [];
       if (!versions.length) {
         return null;
       }
@@ -540,17 +510,6 @@ YUI.add('juju-env-api', function(Y) {
         return version;
       }
       return null;
-    },
-
-    /**
-     * React to the results of sending a token login message to the server.
-     *
-     * @method handleTokenLogin
-     * @param {Object} data The response returned by the server.
-     * @return {undefined} Nothing.
-     */
-    handleTokenLogin: function(data) {
-      this.handleLogin(data, true);
     },
 
     /**
@@ -575,27 +534,14 @@ YUI.add('juju-env-api', function(Y) {
         this.fire('login', {data: {result: false}});
         return;
       }
-      var version = ADMIN_FACADE_VERSION_JUJU1;
-      var params = {
-        AuthTag: credentials.user,
-        Password: credentials.password
-      };
-      // If the user is connecting to juju-core 2.0 or higher then we need
-      // to use the new params arguments. This is comparing against '2'
-      // because Juju doesn't properly stick to semver and sometimes returns
-      // versions that do not properly validate as semver.
-      if (utils.compareSemver(this.get('jujuCoreVersion'), '2') > -1) {
-        version = ADMIN_FACADE_VERSION_JUJU2;
-        params = {
+      this._send_rpc({
+        type: 'Admin',
+        request: 'Login',
+        params: {
           'auth-tag': credentials.user,
           credentials: credentials.password
-        };
-      }
-      this._send_rpc({
-        Type: 'Admin',
-        Request: 'Login',
-        Params: params,
-        Version: version
+        },
+        version: ADMIN_FACADE_VERSION
       }, this.handleLogin);
       this.pendingLoginResponse = true;
     },
@@ -617,7 +563,7 @@ YUI.add('juju-env-api', function(Y) {
 
       // Ensure we always have a callback.
       var cback = function(err, response) {
-        this.handleLogin({Error: err, Response: response});
+        this.handleLogin({error: err, response: response});
         if (callback) {
           callback(err);
           return;
@@ -629,25 +575,19 @@ YUI.add('juju-env-api', function(Y) {
         console.debug('macaroon authentication succeeded');
       }.bind(this);
 
-      // Ensure this type of login is supported.
-      if (utils.compareSemver(this.get('jujuCoreVersion'), '2') === -1) {
-        cback('macaroon auth requires Juju 2');
-        return;
-      }
-
       // Define the handler reacting to Juju controller login responses.
       var handleResponse = function(bakery, macaroons, cback, data) {
-        if (data.Error) {
+        if (data.error) {
           // Macaroon authentication failed or macaroons based authentication
           // not supported by this controller. In the latter case, the
           // controller was probably not bootstrapped with an identity manager,
           // for instance by providing the following parameter to bootstrap:
           // "--config identity-url=https://api.jujucharms.com/identity".
-          cback('authentication failed: ' + data.Error);
+          cback('authentication failed: ' + data.error);
           return;
         }
 
-        var response = data.Response;
+        var response = data.response;
         var macaroon = response['discharge-required'];
         if (macaroon) {
           // This is a discharge required response.
@@ -678,12 +618,12 @@ YUI.add('juju-env-api', function(Y) {
       // Define the function used to send the login request.
       var sendLoginRequest = function(macaroons, callback) {
         var request = {
-          Type: 'Admin',
-          Request: 'Login',
-          Version: ADMIN_FACADE_VERSION_JUJU2
+          type: 'Admin',
+          request: 'Login',
+          version: ADMIN_FACADE_VERSION
         };
         if (macaroons) {
-          request.Params = {macaroons: [macaroons]};
+          request.params = {macaroons: [macaroons]};
         }
         this._send_rpc(request, callback);
       }.bind(this);
@@ -726,56 +666,34 @@ YUI.add('juju-env-api', function(Y) {
       @return {undefined} Sends a message to the server only.
     */
     ping: function() {
-      this._send_rpc({Type: 'Pinger', Request: 'Ping'});
+      this._send_rpc({type: 'Pinger', request: 'Ping'});
     },
 
     /**
-     * Attempt to log the user in with a token.
+     * Store the model info coming from the server.
      *
-     * @method tokenLogin
-     * @return {undefined} Nothing.
-     */
-    tokenLogin: function(token) {
-      // If the user is already authenticated there is nothing to do.
-      if (this.userIsAuthenticated) {
-        this.fire('login', {data: {result: true}});
-        return;
-      }
-      if (this.pendingLoginResponse) {
-        return;
-      }
-      this._send_rpc({
-        Type: 'GUIToken',
-        Request: 'Login',
-        Params: {Token: token}
-      }, this.handleTokenLogin);
-    },
-
-    /**
-     * Store the environment info coming from the server.
-     *
-     * @method _handleEnvironmentInfo
+     * @method _handleCurrentModelInfo
      * @param {Object} data The response returned by the server.
      * @return {undefined} Nothing.
      */
-    _handleEnvironmentInfo: function(data) {
-      if (data.Error) {
-        console.warn('Error retrieving model information.');
+    _handleCurrentModelInfo: function(data) {
+      if (data.error) {
+        console.warn('error retrieving model information');
         return;
       }
       // Store default series and provider type in the env.
-      var response = data.Response;
-      this.set('defaultSeries', response.DefaultSeries);
-      this.set('providerType', response.ProviderType);
-      this.set('environmentName', response.Name);
-      // For now we only need to call environmentGet if the provider is MAAS.
-      if (response.ProviderType !== 'maas') {
+      var response = data.response;
+      this.set('defaultSeries', response['default-series']);
+      this.set('providerType', response['provider-type']);
+      this.set('environmentName', response.name);
+      // For now we only need to call modelGet if the provider is MAAS.
+      if (response['provider-type'] !== 'maas') {
         // Set the MAAS server to null, so that subscribers waiting for this
         // attribute to be set can be released.
         this.set('maasServer', null);
         return;
       }
-      this.environmentGet(data => {
+      this.modelGet(data => {
         if (data.err) {
           console.warn('error calling ModelGet API: ' + data.err);
           return;
@@ -785,21 +703,17 @@ YUI.add('juju-env-api', function(Y) {
     },
 
     /**
-     * Send a request for details about the current Juju environment: default
-     * series and provider type.
+     * Send a request for base details about the current Juju model, for
+     * instance default series and provider type.
      *
-     * @method environmentInfo
+     * @method currentModelInfo
      * @return {undefined} Nothing.
      */
-    environmentInfo: function() {
-      var request = 'ModelInfo';
-      if (this.findFacadeVersion('Client') === 0) {
-        request = 'EnvironmentInfo';
-      }
+    currentModelInfo: function() {
       this._send_rpc({
-        Type: 'Client',
-        Request: request
-      }, this._handleEnvironmentInfo);
+        type: 'Client',
+        request: 'ModelInfo'
+      }, this._handleCurrentModelInfo);
     },
 
     /**
@@ -835,12 +749,12 @@ YUI.add('juju-env-api', function(Y) {
           console.log('data returned by model info API call:', data);
           return;
         }
-        var err = data.Error && data.Error.Message;
+        var err = data.error && data.error.message;
         if (err) {
           userCallback({err: err});
           return;
         }
-        var results = data.Response.results;
+        var results = data.response.results;
         if (results.length !== tags.length) {
           // Sanity check: this should never happen.
           userCallback({
@@ -849,22 +763,22 @@ YUI.add('juju-env-api', function(Y) {
           return;
         }
         var models = results.map(function(result, index) {
-          err = result.error && result.error.Message;
+          err = result.error && result.error.message;
           if (err) {
             return {tag: tags[index], err: err};
           }
           result = result.result;
           return {
             tag: tags[index],
-            name: result.Name,
-            series: result.DefaultSeries,
-            provider: result.ProviderType,
-            uuid: result.UUID,
-            serverUuid: result.ServerUUID,
-            ownerTag: result.OwnerTag,
-            life: result.Life,
-            isAlive: result.Life === 'alive',
-            isAdmin: result.UUID === result.ServerUUID
+            name: result.name,
+            series: result['default-series'],
+            provider: result['provider-type'],
+            uuid: result.uuid,
+            serverUuid: result['controller-uuid'],
+            ownerTag: result['owner-tag'],
+            life: result.life,
+            isAlive: result.life === 'alive',
+            isAdmin: result.uuid === result['controller-uuid']
           };
         });
         userCallback({models: models});
@@ -872,12 +786,12 @@ YUI.add('juju-env-api', function(Y) {
 
       // Send the API request.
       var entities = tags.map(function(tag) {
-        return {Tag: tag};
+        return {tag: tag};
       });
       this._send_rpc({
-        Type: 'ModelManager',
-        Request: 'ModelInfo',
-        Params: {Entities: entities}
+        type: 'ModelManager',
+        request: 'ModelInfo',
+        params: {entities: entities}
       }, handler);
     },
 
@@ -964,46 +878,40 @@ YUI.add('juju-env-api', function(Y) {
     },
 
     /**
-      Send a client EnvironmentGet request to retrieve info about the
-      environment definition.
+      Send a client ModelGet request to retrieve info about the model.
 
-      @method environmentGet
+      @method modelGet
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an object with an "err"
         attribute containing a string describing the problem (if an error
         occurred), or with the "config" attribute if everything went well.
       @return {undefined} Sends a message to the server only.
     */
-    environmentGet: function(callback) {
+    modelGet: function(callback) {
       var intermediateCallback;
       if (callback) {
         // Capture the callback. No context is passed.
-        intermediateCallback = this._handleEnvironmentGet.bind(null, callback);
+        intermediateCallback = this._handleModelGet.bind(null, callback);
       }
-      var facade = 'Client';
-      var version = this.findFacadeVersion(facade);
-      var request = version === 0 ? 'EnvironmentGet' : 'ModelGet';
       this._send_rpc({
-        Type: facade,
-        Request: request
+        type: 'Client',
+        request: 'ModelGet'
       }, intermediateCallback);
     },
 
     /**
-      Handle the results of calling the EnvironmentGet API endpoint.
-      Specifically, if the current provider is MAAS, store the MAAS
-      controller address as an attribute of this environment.
+      Handle the results of calling the ModelGet API endpoint.
 
-      @method _handleEnvironmentGet
+      @method _handleModelGet
       @param {Function} callback The originally submitted callback.
       @param {Object} data The response returned by the server.
     */
-    _handleEnvironmentGet: function(callback, data) {
+    _handleModelGet: function(callback, data) {
       var transformedData = {
-        err: data.Error,
+        err: data.error,
       };
-      if (!data.Error) {
-        transformedData.config = data.Response.Config;
+      if (!data.error) {
+        transformedData.config = data.response.config;
       }
       // Call the original user callback.
       callback(transformedData);
@@ -1027,6 +935,8 @@ YUI.add('juju-env-api', function(Y) {
         return;
       }
       var credentials = this.getCredentials();
+      // TODO frankban: when the GUI is served directly from the Juju
+      // controller the path below is not correct.
       var path = '/juju-core/charms?series=' + series;
       var headers = {'Content-Type': 'application/zip'};
       // Use a web handler to communicate to the Juju HTTPS API. The web
@@ -1057,6 +967,8 @@ YUI.add('juju-env-api', function(Y) {
     */
     getLocalCharmFileUrl: function(charmUrl, filename) {
       var credentials = this.getCredentials();
+      // TODO frankban: when the GUI is served directly from the Juju
+      // controller the path below is not correct.
       var path = '/juju-core/charms?url=' + charmUrl + '&file=' + filename;
       var webHandler = this.get('webHandler');
       // TODO frankban: allow macaroons based auth here.
@@ -1093,6 +1005,8 @@ YUI.add('juju-env-api', function(Y) {
         retrieved.
     */
     listLocalCharmFiles: function(charmUrl, progress, callback) {
+      // TODO frankban: when the GUI is served directly from the Juju
+      // controller the path below is not correct.
       var path = '/juju-core/charms?url=' + charmUrl;
       this._jujuHttpGet(path, progress, callback);
     },
@@ -1109,160 +1023,12 @@ YUI.add('juju-env-api', function(Y) {
       @param {Function} callback The callback to call after the file contents
         have been retrieved.
     */
-    getLocalCharmFileContents: function(charmUrl, filename,
-                                        progress, callback) {
+    getLocalCharmFileContents: function(
+      charmUrl, filename, progress, callback) {
+      // TODO frankban: when the GUI is served directly from the Juju
+      // controller the path below is not correct.
       var path = '/juju-core/charms?url=' + charmUrl + '&file=' + filename;
       this._jujuHttpGet(path, progress, callback);
-    },
-
-    /*
-    Deployer support
-
-    The deployer integration introduces a number of calls,
-
-    Deployer:Watch can watch a request Id returning status information
-    Deployer:Status asks for status information across all running and queued
-    imports.
-    */
-    /**
-      Retrieve the current status of all the bundle deployments.
-
-      @method deployerStatus
-      @param {Function} callback A callable that must be called once the
-        operation is performed. The callback is called passing an object
-        including either an "err" property if an error occurred, or a "changes"
-        list of bundle deployment statuses.
-        A deployment status object looks like the following:
-          {
-            deploymentId: <the deployment id as a positive integer>,
-            status: 'scheduled' || 'started' || 'completed' || 'cancelled',
-            time: <the number of seconds since the epoch as an integer>,
-            queue: <the position of the bundle deployment in the queue>,
-            err: 'only defined if an error occurred'
-          }
-    */
-    deployerStatus: function(callback) {
-      var intermediateCallback;
-      if (callback) {
-        intermediateCallback = this._handleDeployerStatus.bind(this, callback);
-      }
-      this._send_rpc({
-        Type: 'Deployer',
-        Request: 'Status'
-      }, intermediateCallback);
-    },
-
-    /**
-     Callback to map data from deployerStatus back to caller.
-
-     @method _handleDeployerStatus
-     @param {Function} userCallback to trigger.
-     @param {Object} data from backend to transform.
-    */
-    _handleDeployerStatus: function(userCallback, data) {
-      var lastChanges = data.Response.LastChanges || [];
-      var transformedData = {
-        err: data.Error,
-        changes: lastChanges.map(function(change) {
-          return {
-            deploymentId: change.DeploymentId,
-            status: change.Status,
-            time: change.Time,
-            queue: change.Queue,
-            err: change.Error
-          };
-        })
-      };
-      userCallback(transformedData);
-    },
-
-    /**
-      Register a Watch with the deployment specified.
-
-      The callback will receive an {Object} An object with err, and the
-      generated WatchId.  .
-
-      @method deployerWatch
-      @param {Integer} deploymentId The ID of the deployment from the
-      original deployment call.
-      @param {Function} callback A user callback to return the response data
-      to.
-     */
-    deployerWatch: function(deploymentId, callback) {
-      var intermediateCallback;
-      if (callback) {
-        intermediateCallback = this.handleDeployerWatch.bind(this, callback);
-      }
-      this._send_rpc({
-        Type: 'Deployer',
-        Request: 'Watch',
-        Params: {
-          DeploymentId: deploymentId
-        }
-      }, intermediateCallback);
-
-    },
-
-    /**
-      Callback to process the environments response to requested a watcher for
-      the deployment specified above.
-
-      @method handleDeployerWatch
-      @param {Function} userCallback The original callback to the
-      deployerWatch function.
-      @param {Object} data The servers response to the deployerWatch call.
-     */
-    handleDeployerWatch: function(userCallback, data) {
-      var transformedData = {
-        err: data.Error,
-        WatchId: data.Response.WatcherId
-      };
-      userCallback(transformedData);
-    },
-
-    /**
-      Wait for an update to a deployer watch created earlier.
-
-      Note: This returns once the server has something to update on. It might
-      wait a while.
-
-      The callback will receive an {Object} An object with err, and the
-      list of Changes.
-
-      @method deployerNext
-      @param {Integer} watchId The ID of the watcher created in depployWatch.
-      @param {Function} callback The caller's callback function to process
-      the response.
-     */
-    deployerNext: function(watchId, callback) {
-      var intermediateCallback;
-      if (callback) {
-        intermediateCallback = this.handleDeployerNext.bind(this, callback);
-      }
-      this._send_rpc({
-        Type: 'Deployer',
-        Request: 'Next',
-        Params: {
-          WatcherId: watchId
-        }
-      }, intermediateCallback);
-    },
-
-    /**
-      Wrapper for the deployerNext call.
-
-      @method handleDeployerNext
-      @param {Function} userCallback The original callback to the
-      deployerNext function.
-      @param {Object} data The servers response to the deployerNext
-      call.
-     */
-    handleDeployerNext: function(userCallback, data) {
-      var transformedData = {
-        err: data.Error,
-        Changes: data.Response.Changes
-      };
-      userCallback(transformedData);
     },
 
     /**
@@ -1310,18 +1076,18 @@ YUI.add('juju-env-api', function(Y) {
           console.log('data returned by addCharm API call:', data);
           return;
         }
-        userCallback({err: data.Error, url: url});
+        userCallback({err: data.error, url: url});
       }.bind(this, callback, url);
 
       // Build the API call parameters.
       var request = {
-        Type: 'Client',
-        Request: 'AddCharm',
-        Params: {URL: url}
+        type: 'Client',
+        request: 'AddCharm',
+        params: {url: url}
       };
       if (macaroon) {
-        request.Request = 'AddCharmWithAuthorization';
-        request.Params.CharmStoreMacaroon = macaroon;
+        request.request = 'AddCharmWithAuthorization';
+        request.params.macaroon = macaroon;
       }
 
       // Perform the API call.
@@ -1369,25 +1135,22 @@ YUI.add('juju-env-api', function(Y) {
         used if available, otherwise new top level machines are created.
         If the value is set, numUnits must be 1: i.e. it is not possible to add
         multiple units to a single machine/container.
+        TODO frankban: currently unit placement is not supported by the client.
       @param {Function} callback A callable that must be called once the
         operation is performed.
       @return {undefined} Sends a message to the server only.
     */
     _deploy: function(charmUrl, applicationName, config, configRaw, numUnits,
         constraints, toMachine, callback) {
-      var facadeVersion = this.findFacadeVersion('Application');
-
       // Define the API callback.
       var handler = function(userCallback, applicationName, charmUrl, data) {
         if (!userCallback) {
           console.log('data returned by deploy API call:', data);
           return;
         }
-        if (facadeVersion !== null) {
-          data = data.Response.Results[0];
-        }
+        var result = data.response.results[0];
         userCallback({
-          err: data.Error,
+          err: result.error,
           applicationName: applicationName,
           charmUrl: charmUrl
         });
@@ -1406,31 +1169,19 @@ YUI.add('juju-env-api', function(Y) {
         constraints = {};
       }
       var params = {
-        Config: stringifyObjectValues(config),
-        ConfigYAML: configRaw,
-        Constraints: constraints,
-        CharmUrl: charmUrl,
-        NumUnits: numUnits,
-        ToMachineSpec: toMachine
+        application: applicationName,
+        'charm-url': charmUrl,
+        config: stringifyObjectValues(config),
+        'config-yaml': configRaw,
+        constraints: constraints,
+        'num-units': numUnits
       };
 
       // Perform the API call.
-      if (facadeVersion !== null) {
-        // This is the new Juju 2 application deployment.
-        params.ApplicationName = applicationName;
-        this._send_rpc({
-          Type: 'Application',
-          Request: 'Deploy',
-          Params: {Applications: [params]}
-        }, handler);
-        return;
-      }
-      // Fall back to legacy Juju 1 service deployment.
-      params.ServiceName = applicationName;
       this._send_rpc({
-        Type: 'Client',
-        Request: 'ServiceDeploy',
-        Params: params
+        type: 'Application',
+        request: 'Deploy',
+        params: {applications: [params]}
       }, handler);
     },
 
@@ -1452,16 +1203,16 @@ YUI.add('juju-env-api', function(Y) {
           console.log('data returned by SetMetricCredentials API call:', data);
           return;
         }
-        userCallback(data.Error || null);
+        userCallback(data.error || null);
       }.bind(this, callback);
 
       // Send the API request.
       this._send_rpc({
-        Type: 'Application',
-        Request: 'SetMetricCredentials',
-        Params: {Creds: [{
-          ApplicationName: applicationName,
-          MetricCredentials: macaroon
+        type: 'Application',
+        request: 'SetMetricCredentials',
+        params: {creds: [{
+          application: applicationName,
+          'metrics-credentials': macaroon
         }]}
       }, handler);
     },
@@ -1564,20 +1315,21 @@ YUI.add('juju-env-api', function(Y) {
       var machineParams = params.map(function(param) {
         var machineParam = {
           // By default the new machines we add are suitable for storing units.
-          Jobs: param.jobs || [machineJobs.HOST_UNITS],
-          Series: param.series,
-          ParentId: param.parentId,
-          ContainerType: param.containerType
+          jobs: param.jobs || [machineJobs.HOST_UNITS],
+          series: param.series,
+          'parent-id': param.parentId,
+          'container-type': param.containerType
         };
         if (param.constraints) {
-          machineParam.Constraints = self.prepareConstraints(param.constraints);
+          machineParam.constraints = self.prepareConstraints(
+            param.constraints);
         }
         return machineParam;
       });
       var request = {
-        Type: 'Client',
-        Request: 'AddMachines',
-        Params: {MachineParams: machineParams}
+        type: 'Client',
+        request: 'AddMachines',
+        params: {params: machineParams}
       };
       self._send_rpc(request, intermediateCallback);
     },
@@ -1592,32 +1344,32 @@ YUI.add('juju-env-api', function(Y) {
         to the original callback.
       @param {Object} data The response returned by the server, e.g.:
         {
-          RequestId: 1,
-          Error: 'only defined if a global error occurred',
-          Response: {
-            Machines: [
-              {Machine: '2', Error: {Code: "code", Message: "error message"}},
-              {Machine: '2/lxc/1', Error: null}
+          request-id: 1,
+          error: 'only defined if a global error occurred',
+          response: {
+            machines: [
+              {machine: '2', error: {code: "code", message: "error message"}},
+              {machine: '2/lxc/1', error: null}
             ]
           }
         }
      */
     _handleAddMachines: function(userCallback, data) {
-      var machines = data.Response.Machines || [];
+      var machines = data.response.machines || [];
       var transformedData = {
-        err: data.Error,
+        err: data.error,
         machines: machines.map(function(machine) {
           var error = null;
-          var machineError = machine.Error;
+          var machineError = machine.error;
           if (machineError) {
-            error = machineError.Message;
-            if (machineError.Code) {
-              error += ' (code ' + machineError.Code + ')';
+            error = machineError.message;
+            if (machineError.code) {
+              error += ' (code ' + machineError.code + ')';
             }
           }
           return {
             err: error,
-            name: machine.Machine
+            name: machine.machine
           };
         })
       };
@@ -1675,9 +1427,9 @@ YUI.add('juju-env-api', function(Y) {
           this, callback, names);
       }
       var request = {
-        Type: 'Client',
-        Request: 'DestroyMachines',
-        Params: {MachineNames: names, Force: !!force}
+        type: 'Client',
+        request: 'DestroyMachines',
+        params: {'machine-names': names, force: !!force}
       };
       this._send_rpc(request, intermediateCallback);
     },
@@ -1695,11 +1447,11 @@ YUI.add('juju-env-api', function(Y) {
         containers have the [machine name]/[container type]/[container number]
         form, e.g. "2/lxc/0" or "1/kvm/42".
       @param {Object} data The response returned by the server, e.g.:
-        {RequestId: 1, Error: 'an error occurred', Response: {}}
+        {request-id: 1, error: 'an error occurred', response: {}}
     */
     _handleDestroyMachines: function(userCallback, names, data) {
       var transformedData = {
-        err: data.Error,
+        err: data.error,
         names: names
       };
       // Call the original user callback.
@@ -1737,7 +1489,7 @@ YUI.add('juju-env-api', function(Y) {
           console.log('data returned by application update API call:', data);
           return;
         }
-        var response = {applicationName: applicationName, err: data.Error};
+        var response = {applicationName: applicationName, err: data.error};
         Object.keys(args).forEach((key) => {
           response[key] = args[key];
         });
@@ -1745,44 +1497,28 @@ YUI.add('juju-env-api', function(Y) {
       }.bind(this, callback, applicationName, args);
 
       // Prepare the request parameters.
-      var facadeVersion = this.findFacadeVersion('Application');
-      var params = {};
+      var params = {application: applicationName};
       if (args.url) {
-        params.CharmUrl = args.url;
-        var forceUnits = !!args.forceUnits;
-        var forceSeries = !!args.forceSeries;
-        if (facadeVersion !== null) {
-          params.ForceCharmUrl = forceUnits;
-          params.ForceSeries = forceSeries;
-        } else {
-          // Because the call signature has changed a bit to properly set
-          // force on the old facade we will force if either of the forced
-          // values are truthy.
-          params.ForceCharmUrl = forceUnits || forceSeries;
-        }
+        params['charm-url'] = args.url;
+        params['force-charm-url'] = !!args.forceUnits;
+        params['force-series'] = !!args.forceSeries;
       }
       if (args.settings) {
-        params.SettingsStrings = stringifyObjectValues(args.settings);
+        params.settings = stringifyObjectValues(args.settings);
       }
       if (args.constraints) {
-        params.Constraints = this.prepareConstraints(args.constraints);
+        params.constraints = this.prepareConstraints(args.constraints);
       }
       if (args.minUnits)  {
-        params.MinUnits = args.minUnits;
+        params['min-units'] = args.minUnits;
       }
 
-      // Prepare the request and perform the API call.
-      var request;
-      if (facadeVersion !== null) {
-        // This is the new Juju 2 application update call.
-        params.ApplicationName = applicationName;
-        request = {Type: 'Application', Request: 'Update', Params: params};
-      } else {
-        // This is the legacy Juju 1 service update call.
-        params.ServiceName = applicationName;
-        request = {Type: 'Client', Request: 'ServiceUpdate', Params: params};
-      }
-      this._send_rpc(request, handler);
+      // Perform the API call.
+      this._send_rpc({
+        type: 'Application',
+        request: 'Update',
+        params: params
+      }, handler);
     },
 
     /**
@@ -1798,8 +1534,8 @@ YUI.add('juju-env-api', function(Y) {
         operation is performed.
       @return {undefined} Sends a message to the server only.
     */
-    setCharm: function(applicationName, url, forceUnits, forceSeries,
-                       callback) {
+    setCharm: function(
+      applicationName, url, forceUnits, forceSeries, callback) {
       var args = {url: url, forceUnits: forceUnits, forceSeries: forceSeries};
       this.updateApplication(applicationName, args, function(data) {
         if (!callback) {
@@ -1863,13 +1599,13 @@ YUI.add('juju-env-api', function(Y) {
           return;
         }
         var transformedData = {
-          err: data.Error,
+          err: data.error,
           applicationName: applicationName
         };
-        if (data.Error) {
+        if (data.error) {
           transformedData.numUnits = numUnits;
         } else {
-          var units = data.Response.Units;
+          var units = data.response.units;
           transformedData.result = units;
           transformedData.numUnits = units.length;
         }
@@ -1878,26 +1614,13 @@ YUI.add('juju-env-api', function(Y) {
       }.bind(this, callback);
 
       // Make the call.
-      if (this.findFacadeVersion('Application') === null) {
-        // Use legacy Juju API for adding units.
-        this._send_rpc({
-          Type: 'Client',
-          Request: 'AddServiceUnits',
-          Params: {
-            ServiceName: applicationName,
-            NumUnits: numUnits,
-            ToMachineSpec: toMachine
-          }
-        }, handleAddUnit);
-        return;
-      }
       this._send_rpc({
-        Type: 'Application',
-        Request: 'AddUnits',
-        Params: {
-          ApplicationName: applicationName,
-          NumUnits: numUnits,
-          Placement: [parsePlacement(toMachine)]
+        type: 'Application',
+        request: 'AddUnits',
+        params: {
+          application: applicationName,
+          'num-units': numUnits,
+          placement: [parsePlacement(toMachine)]
         }
       }, handleAddUnit);
     },
@@ -1954,23 +1677,14 @@ YUI.add('juju-env-api', function(Y) {
           console.log('data returned by DestroyUnits API call:', data);
           return;
         }
-        userCallback({err: data.Error, unit_names: unitNames});
+        userCallback({err: data.error, unit_names: unitNames});
       }.bind(this, callback, unitNames);
 
       // Perform the API call.
-      if (this.findFacadeVersion('Application') === null) {
-        // Use legacy Juju API for destroying units.
-        this._send_rpc({
-          Type: 'Client',
-          Request: 'DestroyServiceUnits',
-          Params: {UnitNames: unitNames}
-        }, handleRemoveUnits);
-        return;
-      }
       this._send_rpc({
-        Type: 'Application',
-        Request: 'DestroyUnits',
-        Params: {UnitNames: unitNames}
+        type: 'Application',
+        request: 'DestroyUnits',
+        params: {'unit-names': unitNames}
       }, handleRemoveUnits);
     },
 
@@ -2012,19 +1726,10 @@ YUI.add('juju-env-api', function(Y) {
         intermediateCallback = this.handleSimpleApplicationCalls.bind(
           null, callback, applicationName);
       }
-      if (this.findFacadeVersion('Application') === null) {
-        // Use the legacy API call (Juju < 2.0).
-        this._send_rpc({
-          Type: 'Client',
-          Request: 'ServiceExpose',
-          Params: {ServiceName: applicationName}
-        }, intermediateCallback);
-        return;
-      }
       this._send_rpc({
-        Type: 'Application',
-        Request: 'Expose',
-        Params: {ApplicationName: applicationName}
+        type: 'Application',
+        request: 'Expose',
+        params: {application: applicationName}
       }, intermediateCallback);
     },
 
@@ -2066,19 +1771,10 @@ YUI.add('juju-env-api', function(Y) {
         intermediateCallback = this.handleSimpleApplicationCalls.bind(
           null, callback, applicationName);
       }
-      if (this.findFacadeVersion('Application') === null) {
-        // Use the legacy API call (Juju < 2.0).
-        this._send_rpc({
-          Type: 'Client',
-          Request: 'ServiceUnexpose',
-          Params: {ServiceName: applicationName}
-        }, intermediateCallback);
-        return;
-      }
       this._send_rpc({
-        Type: 'Application',
-        Request: 'Unexpose',
-        Params: {ApplicationName: applicationName}
+        type: 'Application',
+        request: 'Unexpose',
+        params: {application: applicationName}
       }, intermediateCallback);
     },
 
@@ -2094,7 +1790,7 @@ YUI.add('juju-env-api', function(Y) {
       @param {Object} data The response returned by the server.
     */
     handleSimpleApplicationCalls: function(callback, applicationName, data) {
-      callback({err: data.Error, applicationName: applicationName});
+      callback({err: data.error, applicationName: applicationName});
     },
 
     /**
@@ -2108,50 +1804,34 @@ YUI.add('juju-env-api', function(Y) {
      * @param {Object} data A dictionary of key, value pairs.
      */
     update_annotations: function(entity, type, data, callback) {
-      var facadeVersion = this.findFacadeVersion('Annotations') || 0;
-
       // Decorate the user supplied callback.
       var handler = function(userCallback, entity, data) {
         if (!userCallback) {
           return;
         }
         var response = {entity: entity};
-        if (data.Error) {
-          response.err = data.Error;
+        if (data.error) {
+          response.err = data.error;
           userCallback(response);
           return;
         }
-        if (facadeVersion >= 2) {
-          // New API allows setting annotations in bulk, so we can have an
-          // error for each entity result.
-          var result = data.Response.Results[0];
-          if (result.Error) {
-            response.err = result.Error;
-          }
+        // New API allows setting annotations in bulk, so we can have an
+        // error for each entity result.
+        var result = data.response.results[0];
+        if (result.error) {
+          response.err = result.error;
         }
         userCallback(response);
       }.bind(this, callback, entity);
 
-      // Prepare the API request.
-      var tag = this.generateTag(entity, type);
-      data = stringifyObjectValues(data);
-
       // Perform the request to set annotations.
-      if (facadeVersion < 2) {
-        // Use legacy Juju API on the Client facade for setting annotations.
-        this._send_rpc({
-          Type: 'Client',
-          Request: 'SetAnnotations',
-          Params: {Tag: tag, Pairs: data}
-        }, handler);
-        return;
-      }
       this._send_rpc({
-        Type: 'Annotations',
-        Request: 'Set',
-        Params: {
-          Annotations: [{EntityTag: tag, Annotations: data}]
-        }
+        type: 'Annotations',
+        request: 'Set',
+        params: {annotations: [{
+          entity: this.generateTag(entity, type),
+          annotations: stringifyObjectValues(data)
+        }]}
       }, handler);
     },
 
@@ -2190,55 +1870,32 @@ YUI.add('juju-env-api', function(Y) {
      *   callback.  The invocation of this command returns nothing.
      */
     get_annotations: function(entity, type, callback) {
-      var handler;
-      var tag = this.generateTag(entity, type);
-      var facadeVersion = this.findFacadeVersion('Annotations') || 0;
-
-      if (facadeVersion < 2) {
-        // Use legacy Juju API on the Client facade for getting annotations.
-        handler = function(userCallback, entity, data) {
-          if (!userCallback) {
-            console.log('data returned by GetAnnotations API call:', data);
-            return;
-          }
-          userCallback({
-            err: data.Error,
-            entity: entity,
-            results: data.Response && data.Response.Annotations
-          });
-        }.bind(this, callback, entity);
-        this._send_rpc({
-          Type: 'Client',
-          Request: 'GetAnnotations',
-          Params: {Tag: tag}
-        }, handler);
-        return;
-      }
-
-      handler = function(userCallback, entity, data) {
+      var handler = function(userCallback, entity, data) {
         if (!userCallback) {
           console.log('data returned by Annotations.Get API call:', data);
           return;
         }
         var response = {entity: entity};
-        if (data.Error) {
-          response.err = data.Error;
+        if (data.error) {
+          response.err = data.error;
           userCallback(response);
           return;
         }
-        var result = data.Response.Results[0];
-        if (result.Error) {
-          response.err = result.Error;
+        var result = data.response.results[0];
+        if (result.error) {
+          response.err = result.error;
           userCallback(response);
           return;
         }
-        response.results = result.Annotations;
+        response.results = result.annotations;
         userCallback(response);
       }.bind(this, callback, entity);
       this._send_rpc({
-        Type: 'Annotations',
-        Request: 'Get',
-        Params: {Entities: [{Tag: tag}]}
+        type: 'Annotations',
+        request: 'Get',
+        params: {entities: [{
+          tag: this.generateTag(entity, type)
+        }]}
       }, handler);
     },
 
@@ -2253,16 +1910,6 @@ YUI.add('juju-env-api', function(Y) {
       @return {String} The entity tag.
     */
     generateTag: function(entity, type) {
-      if (utils.compareSemver(this.get('jujuCoreVersion'), '2') === -1) {
-        // The GUI is connected to an old Juju 1 environment. So we need to
-        // convert entity types to legacy ones.
-        if (type === 'application') {
-          type = 'service';
-        }
-        if (type === 'model') {
-          type = 'environment';
-        }
-      }
       return type + '-' + entity;
     },
 
@@ -2285,19 +1932,10 @@ YUI.add('juju-env-api', function(Y) {
         intermediateCallback = this._handleGetApplicationConfig.bind(
           null, callback, applicationName);
       }
-      if (this.findFacadeVersion('Application') === null) {
-        // Use legacy call on the Client facade.
-        this._send_rpc({
-          Type: 'Client',
-          Request: 'ServiceGet',
-          Params: {ServiceName: applicationName}
-        }, intermediateCallback);
-        return;
-      }
       this._send_rpc({
-        Type: 'Application',
-        Request: 'Get',
-        Params: {ApplicationName: applicationName}
+        type: 'Application',
+        request: 'Get',
+        params: {application: applicationName}
       }, intermediateCallback);
     },
 
@@ -2311,17 +1949,17 @@ YUI.add('juju-env-api', function(Y) {
      * @param {Object} data The response returned by the server.
      */
     _handleGetApplicationConfig: function(callback, applicationName, data) {
-      var config = (data.Response || {}).Config;
+      var config = (data.response || {}).config;
       var transformedConfig = {};
       Y.each(config, function(value, key) {
         transformedConfig[key] = value.value;
       });
       callback({
-        err: data.Error,
+        err: data.error,
         applicationName: applicationName,
         result: {
           config: transformedConfig,
-          constraints: (data.Response || {}).Constraints
+          constraints: (data.response || {}).constraints
         }
       });
     },
@@ -2413,19 +2051,10 @@ YUI.add('juju-env-api', function(Y) {
         intermediateCallback = this.handleSimpleApplicationCalls.bind(
           null, callback, applicationName);
       }
-      if (this.findFacadeVersion('Application') === null) {
-        // Use legacy Juju API for destroying applications.
-        this._send_rpc({
-          Type: 'Client',
-          Request: 'ServiceDestroy',
-          Params: {ServiceName: applicationName}
-        }, intermediateCallback);
-        return;
-      }
       this._send_rpc({
-        Type: 'Application',
-        Request: 'Destroy',
-        Params: {ApplicationName: applicationName}
+        type: 'Application',
+        request: 'Destroy',
+        params: {application: applicationName}
       }, intermediateCallback);
     },
 
@@ -2447,21 +2076,17 @@ YUI.add('juju-env-api', function(Y) {
       }
       // Resolving a unit/relation pair is not supported by the Go back-end, so
       // relationName is ignored here.
-      var intermediateCallback, sendData;
+      var intermediateCallback;
       if (callback) {
         // Capture the callback and relationName.  No context is passed.
         intermediateCallback = this.handleResolved.bind(
           null, callback, unitName);
       }
-      sendData = {
-        Type: 'Client',
-        Request: 'Resolved',
-        Params: {
-          UnitName: unitName,
-          Retry: !!retry
-        }
-      };
-      this._send_rpc(sendData, intermediateCallback);
+      this._send_rpc({
+        type: 'Client',
+        request: 'Resolved',
+        params: {'unit-name': unitName, retry: !!retry}
+      }, intermediateCallback);
     },
 
     /**
@@ -2481,7 +2106,7 @@ YUI.add('juju-env-api', function(Y) {
       // Translate the callback data and call the user's callback.
       userCallback({
         op: 'resolved',
-        err: data.Error,
+        err: data.error,
         unit_name: unitName
       });
     },
@@ -2532,44 +2157,38 @@ YUI.add('juju-env-api', function(Y) {
           return;
         }
         var result = {};
-        var response = data.Response;
-        if (response && response.Endpoints) {
+        var response = data.response;
+        if (response && response.endpoints) {
+          var endpoints = response.endpoints;
           var applicationNameA = epA.split(':')[0];
           var applicationNameB = epB.split(':')[0];
           result.endpoints = [];
           Y.each([applicationNameA, applicationNameB], function(name) {
-            var jujuEndpoint = response.Endpoints[name];
+            var jujuEndpoint = endpoints[name];
             var guiEndpoint = {};
-            guiEndpoint[name] = {'name': jujuEndpoint.Name};
+            guiEndpoint[name] = {'name': jujuEndpoint.name};
             result.endpoints.push(guiEndpoint);
           });
-          result.id = createRelationKey(response.Endpoints);
+          result.id = createRelationKey(endpoints);
           // The interface and scope should be the same for both endpoints.
-          result['interface'] = response.Endpoints[applicationNameA].Interface;
-          result.scope = response.Endpoints[applicationNameA].Scope;
+          result['interface'] = endpoints[applicationNameA].interface;
+          result.scope = endpoints[applicationNameA].scope;
         }
         userCallback({
-          request_id: data.RequestId,
+          request_id: data['request-id'],
           endpoint_a: epA,
           endpoint_b: epB,
-          err: data.Error,
+          err: data.error,
           result: result
         });
       }.bind(this, callback, epA, epB);
 
       // Send the API request.
-      var request = {
-        Type: 'Application',
-        Request: 'AddRelation',
-        Params: {
-          Endpoints: [epA, epB]
-        }
-      };
-      if (this.findFacadeVersion('Application') === null) {
-        // Use legacy Juju API for adding relations.
-        request.Type = 'Client';
-      }
-      this._send_rpc(request, handleAddRelation);
+      this._send_rpc({
+        type: 'Application',
+        request: 'AddRelation',
+        params: {endpoints: [epA, epB]}
+      }, handleAddRelation);
     },
 
     /**
@@ -2618,20 +2237,15 @@ YUI.add('juju-env-api', function(Y) {
           console.log('data returned by DestroyRelation API call:', data);
           return;
         }
-        userCallback({err: data.Error, endpoint_a: epA, endpoint_b: epB});
+        userCallback({err: data.error, endpoint_a: epA, endpoint_b: epB});
       }.bind(this, callback, epA, epB);
 
       // Send the API request.
-      var request = {
-        Type: 'Application',
-        Request: 'DestroyRelation',
-        Params: {Endpoints: [epA, epB]}
-      };
-      if (this.findFacadeVersion('Application') === null) {
-        // Use legacy Juju API for removing relations.
-        request.Type = 'Client';
-      }
-      this._send_rpc(request, handleRemoveRelation);
+      this._send_rpc({
+        type: 'Application',
+        request: 'DestroyRelation',
+        params: {endpoints: [epA, epB]}
+      }, handleRemoveRelation);
     },
 
     /**
@@ -2656,9 +2270,9 @@ YUI.add('juju-env-api', function(Y) {
         intermediateCallback = this.handleCharmInfo.bind(null, callback);
       }
       this._send_rpc({
-        Type: 'Client',
-        Request: 'CharmInfo',
-        Params: {CharmURL: charmURL}
+        type: 'Client',
+        request: 'CharmInfo',
+        params: {'charm-url': charmURL}
       }, intermediateCallback);
     },
 
@@ -2670,7 +2284,7 @@ YUI.add('juju-env-api', function(Y) {
        @param {Function} userCallback The callback originally submitted by the
        call site.
        @param {Object} data The response returned by the server. An example of
-        the "data.Response" returned by juju-core follows:
+        the "data.response" returned by juju-core follows:
           {
             'Config': {
               'Options': {
@@ -2746,7 +2360,7 @@ YUI.add('juju-env-api', function(Y) {
       };
       // Build the transformed data structure.
       var result,
-          response = data.Response;
+          response = data.response;
       if (!Y.Object.isEmpty(response)) {
         var meta = response.Meta;
         result = {
@@ -2764,7 +2378,7 @@ YUI.add('juju-env-api', function(Y) {
         };
       }
       var transformedData = {
-        err: data.Error,
+        err: data.error,
         result: result
       };
       // Call the original user callback.
@@ -2778,7 +2392,7 @@ YUI.add('juju-env-api', function(Y) {
       @method getBundleChanges
       @param {String} bundleYAML The bundle YAML file contents.
       @param {String} changesToken The token identifying a bundle change set
-        (ignored if bundleYAML is provided).
+        (ignored on juju 2).
       @param {Function} callback The user supplied callback to send the bundle
         changes response to after proper post processing. The callback receives
         an object with an "errors" attribute containing possible errors and
@@ -2788,51 +2402,22 @@ YUI.add('juju-env-api', function(Y) {
                       view/head:/server/guiserver/bundles/__init__.py#L322
     */
     getBundleChanges: function(bundleYAML, changesToken, callback) {
-      self = this;
-      // Define callbacks for both legacy and new Juju API calls.
-      var handleLegacy = function(userCallback, data) {
-        if (!userCallback) {
-          console.log('data returned by ChangeSet.GetChanges:', data);
-          return;
-        }
-        userCallback({
-          errors: data.Error && [data.Error] || data.Response.Errors,
-          changes: data.Response && data.Response.Changes
-        });
-      };
       var handle = function(userCallback, data) {
-        if (data.ErrorCode === 'not implemented') {
-          // The current Juju API server does not support
-          // Client.GetBundleChanges calls. Fall back to the GUI server call.
-          self._send_rpc({
-            Type: 'ChangeSet',
-            Request: 'GetChanges',
-            Params: params
-          }, handleLegacy.bind(self, userCallback));
-          return;
-        }
         if (!userCallback) {
           console.log('data returned by Client.GetBundleChanges:', data);
           return;
         }
         userCallback({
-          errors: data.Error && [data.Error] || data.Response.errors,
-          changes: data.Response && data.Response.changes
+          errors: data.error && [data.error] || data.response.errors,
+          changes: data.response && data.response.changes
         });
       };
-      // Prepare the request parameters.
-      var params = Object.create(null);
-      if (bundleYAML !== null) {
-        params.YAML = bundleYAML;
-      } else {
-        params.Token = changesToken;
-      }
       // Send the request to retrieve bundle changes from Juju.
-      self._send_rpc({
-        Type: 'Client',
-        Request: 'GetBundleChanges',
-        Params: params
-      }, handle.bind(self, callback));
+      this._send_rpc({
+        type: 'Client',
+        request: 'GetBundleChanges',
+        params: {yaml: bundleYAML}
+      }, handle.bind(this, callback));
     },
 
     /**
@@ -2876,10 +2461,10 @@ YUI.add('juju-env-api', function(Y) {
           console.log('data returned by offer API call:', data);
           return;
         }
-        var err = data.Error;
+        var err = data.error;
         if (!err) {
-          var errResponse = data.Response.Results[0].Error;
-          err = errResponse && errResponse.Message;
+          var errResponse = data.response.results[0].error;
+          err = errResponse && errResponse.message;
         }
         userCallback({
           err: err,
@@ -2907,9 +2492,9 @@ YUI.add('juju-env-api', function(Y) {
 
       // Perform the API call.
       this._send_rpc({
-        Type: 'CrossModelRelations',
-        Request: 'Offer',
-        Params: {Offers: [offer]}
+        type: 'CrossModelRelations',
+        request: 'Offer',
+        params: {offers: [offer]}
       }, handleOffer);
     },
 
@@ -2944,12 +2529,12 @@ YUI.add('juju-env-api', function(Y) {
           console.log('data returned by listOffers API call:', data);
           return;
         }
-        if (data.Error) {
-          userCallback({err: data.Error, results: []});
+        if (data.error) {
+          userCallback({err: data.error, results: []});
           return;
         }
         // XXX frankban 2015/12/15: really?
-        var apiResults = data.Response.results[0].result;
+        var apiResults = data.response.results[0].result;
         var results = apiResults.map(function(apiResult) {
           if (apiResult.error) {
             return {err: apiResult.error};
@@ -2977,13 +2562,13 @@ YUI.add('juju-env-api', function(Y) {
 
       // Build the API call parameters.
       // XXX frankban 2015/12/15: add support for specifying filters.
-      var filter = {FilterTerms: []};
+      var filter = {'filter-terms': []};
 
       // Perform the API call.
       this._send_rpc({
-        Type: 'CrossModelRelations',
-        Request: 'ListOffers',
-        Params: {Filters: [filter]}
+        type: 'CrossModelRelations',
+        request: 'ListOffers',
+        params: {filters: [filter]}
       }, handleListOffers);
     },
 
@@ -3015,11 +2600,11 @@ YUI.add('juju-env-api', function(Y) {
           console.log('data returned by getOffer API call:', data);
           return;
         }
-        var err = data.Error,
+        var err = data.error,
             response = {};
         if (!err) {
-          response = data.Response.results[0];
-          err = response.error && response.error.Message;
+          response = data.response.results[0];
+          err = response.error && response.error.message;
         }
         if (err) {
           userCallback({err: err});
@@ -3048,9 +2633,9 @@ YUI.add('juju-env-api', function(Y) {
 
       // Perform the API call.
       this._send_rpc({
-        Type: 'CrossModelRelations',
-        Request: 'ApplicationOffers',
-        Params: {applicationurls: [url]}
+        type: 'CrossModelRelations',
+        request: 'ApplicationOffers',
+        params: {applicationurls: [url]}
       }, handleGetOffer);
     },
 
@@ -3077,35 +2662,28 @@ YUI.add('juju-env-api', function(Y) {
         intermediateCallback = this._handleCreateModel.bind(null, callback);
       } else {
         intermediateCallback = function(callback, data) {
-          console.log('createModel done: err:', data.Error);
+          console.log('createModel done: err:', data.error);
         };
-      }
-      var facade = 'ModelManager';
-      var request = 'CreateModel';
-      if (this.findFacadeVersion(facade) === null) {
-        // Legacy version of Juju in which "model" was called "environment".
-        facade = 'EnvironmentManager';
-        request = 'CreateEnvironment';
       }
       // In order to create a new model, we first need to retrieve the
       // configuration skeleton for this provider.
       this._send_rpc({
-        Type: facade,
-        Request: 'ConfigSkeleton',
+        type: 'ModelManager',
+        request: 'ConfigSkeleton',
       }, data => {
-        if (data.Error) {
+        if (data.error) {
           intermediateCallback({
-            Error: 'cannot get configuration skeleton: ' + data.Error
+            error: 'cannot get configuration skeleton: ' + data.error
           });
           return;
         };
-        var config = data.Response.Config;
+        var config = data.response.config;
         // Then, having the configuration skeleton, we need configuration
         // options for this specific model.
-        this.environmentGet(data => {
+        this.modelGet(data => {
           if (data.err) {
             intermediateCallback({
-              Error: 'cannot get model configuration: ' + data.err
+              error: 'cannot get model configuration: ' + data.err
             });
             return;
           }
@@ -3113,7 +2691,7 @@ YUI.add('juju-env-api', function(Y) {
           // XXX frankban: juju-core should not require clients to provide SSH
           // keys at this point, but only when strictly necessary. Provide an
           // invalid one for now.
-          config['authorized-keys'] = 'ssh-rsa INVALID';
+          config['authorized-keys'] = 'ssh-rsa INVALID (set by the Juju GUI)';
           Object.keys(data.config).forEach((attr) => {
             // Juju returns an error if a uuid key is included in the request.
             if (attr !== 'uuid' && config[attr] === undefined) {
@@ -3123,9 +2701,9 @@ YUI.add('juju-env-api', function(Y) {
           // At this point, having both skeleton and model options, we
           // are ready to create the new model in this system.
           this._send_rpc({
-            Type: facade,
-            Request: request,
-            Params: {OwnerTag: userTag, Config: config}
+            type: 'ModelManager',
+            request: 'CreateModel',
+            params: {'owner-tag': userTag, config: config}
           }, intermediateCallback);
         });
       });
@@ -3142,13 +2720,13 @@ YUI.add('juju-env-api', function(Y) {
     */
     _handleCreateModel: function(callback, data) {
       var transformedData = {
-        err: data.Error,
+        err: data.error,
       };
-      if (!data.Error) {
-        var response = data.Response;
-        transformedData.name = response.Name;
-        transformedData.owner = response.OwnerTag;
-        transformedData.uuid = response.UUID;
+      if (!data.error) {
+        var response = data.response;
+        transformedData.name = response.name;
+        transformedData.owner = response['owner-tag'];
+        transformedData.uuid = response.uuid;
       }
       // Call the original user callback.
       callback(transformedData);
@@ -3179,13 +2757,13 @@ YUI.add('juju-env-api', function(Y) {
           console.log('data returned by destroy model API call:', data);
           return;
         }
-        userCallback(data.Error || null);
+        userCallback(data.error || null);
       }.bind(this, callback);
 
       // Send the API request.
       this._send_rpc({
-        Type: 'Client',
-        Request: 'DestroyModel'
+        type: 'Client',
+        request: 'DestroyModel'
       }, handler);
     },
 
@@ -3211,32 +2789,24 @@ YUI.add('juju-env-api', function(Y) {
       @return {undefined} Sends a message to the server only.
     */
     listModels: function(userTag, callback) {
-      var facade = 'ModelManager';
-      var request = 'ListModels';
-      var results = 'UserModels';
-      if (this.findFacadeVersion(facade) === null) {
-        facade = 'EnvironmentManager';
-        request = 'ListEnvironments';
-        results = 'UserEnvironments';
-      }
-
       var handleListModels = function(userCallback, data) {
         if (!userCallback) {
           console.log('data returned by listModels API call:', data);
           return;
         }
         var transformedData = {
-          err: data.Error,
+          err: data.error,
         };
-        if (!data.Error) {
-          var response = data.Response;
-          transformedData.envs = response[results].map(function(value) {
+        if (!data.error) {
+          var response = data.response;
+          transformedData.envs = response['user-models'].map(function(value) {
+            var model = value.model;
             return {
-              name: value.Name,
-              tag: 'model-' + value.UUID,
-              owner: value.OwnerTag,
-              uuid: value.UUID,
-              lastConnection: value.LastConnection
+              name: model.name,
+              owner: model['owner-tag'],
+              tag: 'model-' + model.uuid,
+              uuid: model.uuid,
+              lastConnection: value['last-connection']
             };
           });
         }
@@ -3245,9 +2815,9 @@ YUI.add('juju-env-api', function(Y) {
       }.bind(this, callback);
 
       this._send_rpc({
-        Type: facade,
-        Request: request,
-        Params: {Tag: userTag}
+        type: 'ModelManager',
+        request: 'ListModels',
+        params: {tag: userTag}
       }, handleListModels);
     }
 
