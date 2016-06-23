@@ -109,6 +109,7 @@ describe('App', function() {
 
     function constructAppInstance(config, context) {
       config = config || {};
+      config.jujuCoreVersion = config.jujuCoreVersion || '2.0.0';
       if (config.env && config.env.connect) {
         config.env.connect();
         context._cleanups.push(config.env.close.bind(config.env));
@@ -1364,7 +1365,8 @@ describe('App', function() {
       container = Y.Node.create('<div id="test" class="container"></div>');
       var app = new Y.juju.App({
         viewContainer: container,
-        consoleEnabled: true
+        consoleEnabled: true,
+        jujuCoreVersion: '2.0.0'
       });
       var charmstoreUser = {
         name: 'foo'
@@ -1390,7 +1392,8 @@ describe('App', function() {
       container = Y.Node.create('<div id="test" class="container"></div>');
       var app = new Y.juju.App({
         viewContainer: container,
-        consoleEnabled: true
+        consoleEnabled: true,
+        jujuCoreVersion: '2.0.0'
       });
       var charmstoreUser = {
         name: 'foo'
@@ -1418,7 +1421,8 @@ describe('App', function() {
       container = Y.Node.create('<div id="test" class="container"></div>');
       app = new Y.juju.App({
         viewContainer: container,
-        consoleEnabled: true
+        consoleEnabled: true,
+        jujuCoreVersion: '2.0.0'
       });
       jemStub = testUtils.makeStubFunction();
       app.jem = {
@@ -1473,7 +1477,8 @@ describe('App', function() {
       container = Y.Node.create('<div id="test" class="container"></div>');
       app = new Y.juju.App({
         viewContainer: container,
-        consoleEnabled: true
+        consoleEnabled: true,
+        jujuCoreVersion: '2.0.0'
       });
       credStub = utils.makeStubMethod(app.env, 'getCredentials', {user: ''});
       this._cleanups.push(credStub.reset);
