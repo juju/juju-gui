@@ -157,7 +157,7 @@ YUI.add('juju-env-api', function(Y) {
     GoEnvironment.superclass.constructor.apply(this, arguments);
   }
 
-  GoEnvironment.NAME = 'go-env';
+  GoEnvironment.NAME = 'api-env';
 
   Y.extend(GoEnvironment, environments.BaseEnvironment, {
 

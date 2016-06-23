@@ -157,7 +157,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
     GoLegacyEnvironment.superclass.constructor.apply(this, arguments);
   }
 
-  GoLegacyEnvironment.NAME = 'go-env';
+  GoLegacyEnvironment.NAME = 'legacy-api-env';
 
   Y.extend(GoLegacyEnvironment, environments.BaseEnvironment, {
 
