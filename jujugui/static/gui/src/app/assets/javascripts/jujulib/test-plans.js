@@ -138,7 +138,7 @@ describe('jujulib plans service', function() {
           path,
           'http://1.2.3.4/' +
           window.jujulib.plansAPIVersion +
-          '/status/uuid/app-name');
+          '/plan/model/uuid/service/app-name');
         var xhr = makeXHRRequest({
           'current-plan': 'canonical-landscape/free',
           'available-plans': {
