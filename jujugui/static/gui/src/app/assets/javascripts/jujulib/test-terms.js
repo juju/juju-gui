@@ -127,7 +127,7 @@ describe('jujulib terms service', function() {
           path,
           'http://1.2.3.4/' +
           window.jujulib.termsAPIVersion +
-          '/terms/canonical');
+          '/agreements');
         var xhr = makeXHRRequest([{
           user: 'spinach',
           term: 'One fancy term',
@@ -150,7 +150,7 @@ describe('jujulib terms service', function() {
     });
   });
 
-  it('handles missing terms', function(done) {
+  it('handles missing agreements', function(done) {
     var bakery = {
       sendGetRequest: function(path, success, failure) {
         var xhr = makeXHRRequest([]);
@@ -165,7 +165,7 @@ describe('jujulib terms service', function() {
     });
   });
 
-  it('handles errors fetching terms', function(done) {
+  it('handles errors fetching agreements', function(done) {
     var bakery = {
       sendGetRequest: function(path, success, failure) {
         var xhr = makeXHRRequest({Message: 'bad wolf'});

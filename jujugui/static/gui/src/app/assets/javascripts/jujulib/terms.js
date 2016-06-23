@@ -111,7 +111,7 @@ var module = module;
           createdAt: new Date(milliseconds)
         });
       };
-      var url = this.url + '/agreements/';
+      var url = this.url + '/agreements';
       return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
     }
 
