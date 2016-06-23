@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe('Juju environment API utilities', function() {
+  describe('Juju legacy API utilities', function() {
     var environments;
 
     before(function(done) {
@@ -94,7 +94,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   });
 
-  describe('Juju environment API', function() {
+  describe('Juju legacy API', function() {
     var cleanups, conn, endpointA, endpointB, ecs, env, juju, machineJobs, msg,
         utils, Y;
 
