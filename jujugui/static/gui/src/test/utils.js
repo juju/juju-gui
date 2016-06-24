@@ -218,41 +218,6 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
     }
   };
 
-  // Split jujuTests.utils definition, so that charms can be cached
-  // right away, while at the same time reusing the loadFixture method.
-  Y.mix(jujuTests.utils, {
-    /**
-     Return a promise to return a working fakebackend
-     with imported YAML as its bundle. This returns
-     the result of the import call as 'result' and
-     the new fakebackend as 'backend'.
-
-     promiseImport('data/bundle.yaml', 'bundleName')
-     .then(function(resolve) {
-      var fakebackend = resolve.backend;
-      var result = resolve.result;
-      // Asserts.
-      done();
-     })
-
-      @method promiseImport
-      @param {String} YAMLBundleURL File to import based on root path /test/.
-      @param {String} [name] Name of bundle to load, optional when
-             only one target in the bundle.
-      @param {Object} fakebackend An instance of fakebackend from the
-              factory makeFakeBackend() method.
-      @return {Promise} Outlined in description.
-    */
-    promiseImport: function(YAMLBundleURL, name, fakebackend) {
-      var db = fakebackend.db;
-      db.environment.set('defaultSeries', 'precise');
-      var fixture = jujuTests.utils.loadFixture(YAMLBundleURL);
-      return fakebackend.promiseImport(fixture, name)
-             .then(function(result) {
-               return {result: result, backend: fakebackend};
-             });
-    },
-  });
 }, '0.1.0', {
   requires: [
     'io',

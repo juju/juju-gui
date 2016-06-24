@@ -20,20 +20,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe('sandbox.GoJujuAPI', function() {
+  describe('sandbox.JujuAPI', function() {
     var requires = [
-      'jsyaml', 'juju-env-sandbox', 'juju-tests-utils',
-      'environment-change-set', 'juju-tests-factory', 'juju-env-legacy-api',
-      'juju-models', 'promise'
+      'jsyaml', 'juju-env-sandbox', 'environment-change-set',
+      'juju-tests-factory', 'juju-env-api', 'juju-models', 'promise'
     ];
     var client, env, ecs, environmentsModule, factory, juju,
-        sandboxModule, state, utils, Y, ns;
+        sandboxModule, state, Y, ns;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         sandboxModule = Y.namespace('juju.environments.sandbox');
         environmentsModule = Y.namespace('juju.environments');
-        utils = Y.namespace('juju-tests.utils');
         factory = Y.namespace('juju-tests.factory');
         ns = Y.namespace('juju');
         done();
@@ -48,12 +46,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       client = new sandboxModule.ClientConnection({juju: juju});
       ecs = new ns.EnvironmentChangeSet({db: state.db});
-      // TODO frankban: use the proper GoEnvironment here.
-      env = new environmentsModule.GoLegacyEnvironment({
-        conn: client, ecs: ecs
-      });
-      var facades = sandboxModule.Facades.reduce(function(collected, facade) {
-        collected[facade.Name] = facade.Versions;
+      env = new environmentsModule.GoEnvironment({conn: client, ecs: ecs});
+      var facades = sandboxModule.facades.reduce(function(collected, facade) {
+        collected[facade.name] = facade.versions;
         return collected;
       }, {});
       env.set('facades', facades);
@@ -120,7 +115,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can dispatch on received information.', function(done) {
-      var data = {Type: 'TheType', Request: 'TheRequest'};
+      var data = {type: 'TheType', request: 'TheRequest'};
       juju.handleTheTypeTheRequest = function(received) {
         assert.notStrictEqual(received, data);
         assert.deepEqual(received, data);
@@ -141,19 +136,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // See FakeBackend's authorizedUsers for these default authentication
       // values.
       var data = {
-        Type: 'Admin',
-        Request: 'Login',
-        Params: {
-          AuthTag: 'user-admin',
-          Password: 'password'
+        type: 'Admin',
+        request: 'Login',
+        params: {
+          'auth-tag': 'user-admin',
+          credentials: 'password'
         },
-        RequestId: 42
+        'request-id': 42
       };
       client.onmessage = function(received) {
         // Add in the error indicator so the deepEqual is comparing apples to
         // apples.
-        data.Error = false;
-        data.Response = {facades: sandboxModule.Facades};
+        data.error = false;
+        data.response = {facades: sandboxModule.facades};
         assert.deepEqual(Y.JSON.parse(received.data), data);
         assert.isTrue(state.get('authenticated'));
         done();
@@ -175,89 +170,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.login();
     });
 
-    it('can log in with a token.', function(done) {
-      // See FakeBackend's initialization for these default authentication
-      // values.
-      var data = {
-        Type: 'GUIToken',
-        Request: 'Login',
-        Params: {
-          Token: 'demoToken'
-        },
-        RequestId: 42
-      };
-      client.onmessage = function(received) {
-        var expected = {
-          RequestId: 42, Response: {
-            AuthTag: 'user-admin',
-            Password: 'password',
-            facades: sandboxModule.Facades
-          }
-        };
-        assert.deepEqual(Y.JSON.parse(received.data), expected);
-        assert.isTrue(state.get('authenticated'));
-        done();
-      };
-      state.logout();
-      assert.isFalse(state.get('authenticated'));
-      client.open();
-      client.send(Y.JSON.stringify(data));
-    });
-
-    it('does not log in with a bad token.', function(done) {
-      // See FakeBackend's initialization for these default authentication
-      // values.
-      var data = {
-        Type: 'GUIToken',
-        Request: 'Login',
-        Params: {
-          Token: 'badToken'
-        },
-        RequestId: 42
-      };
-      client.onmessage = function(received) {
-        var expected = {
-          RequestId: 42,
-          Error: 'unknown, fulfilled, or expired token',
-          ErrorCode: 'unauthorized access',
-          Response: {}};
-        assert.deepEqual(Y.JSON.parse(received.data), expected);
-        assert.isFalse(state.get('authenticated'));
-        done();
-      };
-      state.logout();
-      assert.isFalse(state.get('authenticated'));
-      client.open();
-      client.send(Y.JSON.stringify(data));
-    });
-
-    it('can log in with a token (environment integration).', function(done) {
-      state.logout();
-      env.after('login', function() {
-        assert.isTrue(env.userIsAuthenticated);
-        assert.deepEqual(env.getCredentials(), {
-          user: 'user-admin', password: 'password', macaroons: null});
-        done();
-      });
-      env.connect();
-      assert.isFalse(env.getCredentials().areAvailable);
-      env.tokenLogin('demoToken');
-    });
-
     it('can return model information.', function(done) {
       // See FakeBackend's initialization for these default values.
       var data = {
-        Type: 'Client',
-        Request: 'ModelInfo',
-        RequestId: 42
+        type: 'Client',
+        request: 'ModelInfo',
+        'request-id': 42
       };
       client.onmessage = function(received) {
         var expected = {
-          RequestId: 42,
-          Response: {
-            ProviderType: state.get('providerType'),
-            DefaultSeries: state.get('defaultSeries'),
-            Name: 'sandbox'}};
+          'request-id': 42,
+          response: {
+            'provider-type': state.get('providerType'),
+            'default-series': state.get('defaultSeries'),
+            name: 'sandbox'}};
         assert.deepEqual(Y.JSON.parse(received.data), expected);
         done();
       };
@@ -267,15 +193,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('returns ModelGet responses', function(done) {
       var data = {
-        RequestId: 42,
-        Type: 'Client',
-        Request: 'ModelGet'
+        'request-id': 42,
+        type: 'Client',
+        request: 'ModelGet'
       };
       client.onmessage = function(received) {
         var expected = {
-          RequestId: 42,
-          Response: {
-            Config: {'maas-server': state.get('maasServer')}
+          'request-id': 42,
+          response: {
+            config: {'maas-server': state.get('maasServer')}
           }
         };
         assert.deepEqual(Y.JSON.parse(received.data), expected);
@@ -287,15 +213,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can start the AllWatcher', function(done) {
       var data = {
-        Type: 'Client',
-        Request: 'WatchAll',
-        Params: {},
-        RequestId: 1066
+        type: 'Client',
+        request: 'WatchAll',
+        params: {},
+        'request-id': 1066
       };
       client.onmessage = function(received) {
         var receivedData = Y.JSON.parse(received.data);
-        assert.equal(receivedData.Response.AllWatcherId, 42);
-        assert.equal(receivedData.RequestId, 1066);
+        assert.equal(receivedData.response.AllWatcherId, 42);
+        assert.equal(receivedData['request-id'], 1066);
         assert.isUndefined(client.get('juju').get('nextRequestId'));
         done();
       };
@@ -306,17 +232,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can listen for deltas with Next', function(done) {
       client.get('juju').set('deltaInterval', 50);
       var data = {
-        Type: 'AllWatcher',
-        Request: 'Next',
-        Params: {},
-        RequestId: 1067
+        type: 'AllWatcher',
+        request: 'Next',
+        params: {},
+        'request-id': 1067
       };
       state.deploy('cs:precise/wordpress-27', function() {});
       client.onmessage = function(received) {
         var receivedData = Y.JSON.parse(received.data);
-        assert.equal(receivedData.RequestId, 1067);
-        assert.isNotNull(receivedData.Response.Deltas);
-        var deltas = receivedData.Response.Deltas;
+        assert.equal(receivedData['request-id'], 1067);
+        assert.isNotNull(receivedData.response.Deltas);
+        var deltas = receivedData.response.Deltas;
         assert.equal(deltas.length, 3);
         assert.deepEqual(deltas.map(function(delta) {
           return delta[0];
@@ -330,15 +256,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('structures deltas properly', function(done) {
       client.get('juju').set('deltaInterval', 50);
       var data = {
-        Type: 'AllWatcher',
-        Request: 'Next',
-        Params: {},
-        RequestId: 1067
+        type: 'AllWatcher',
+        request: 'Next',
+        params: {},
+        'request-id': 1067
       };
       state.deploy('cs:precise/wordpress-27', function() {});
       client.onmessage = function(received) {
         var receivedData = Y.JSON.parse(received.data);
-        var deltas = receivedData.Response.Deltas;
+        var deltas = receivedData.response.Deltas;
         assert.equal(deltas.length, 3);
         var applicationChange = deltas[0];
         var machineChange = deltas[1];
@@ -399,21 +325,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can deploy', function(done) {
       // We begin logged in.  See utils.makeFakeBackend.
       var data = {
-        Type: 'Application',
-        Request: 'Deploy',
-        Version: 2,
-        Params: {Applications: [{
-          CharmUrl: 'cs:precise/wordpress-27',
-          ApplicationName: 'kumquat',
-          ConfigYAML: 'engine: apache',
-          NumUnits: 2
+        type: 'Application',
+        request: 'Deploy',
+        version: 2,
+        params: {applications: [{
+          'charm-url': 'cs:precise/wordpress-27',
+          application: 'kumquat',
+          'config-yaml': 'engine: apache',
+          'num-units': 2
         }]},
-        RequestId: 42
+        'request-id': 42
       };
       client.onmessage = function(received) {
         var receivedData = Y.JSON.parse(received.data);
-        assert.equal(receivedData.RequestId, data.RequestId);
-        assert.isUndefined(receivedData.Error);
+        assert.equal(receivedData['request-id'], data['request-id']);
+        assert.isUndefined(receivedData.error);
         assert.isObject(
             state.db.charms.getById('cs:precise/wordpress-27'));
         var application = state.db.services.getById('kumquat');
@@ -514,25 +440,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can add machines', function(done) {
       state.db.machines.add({id: '0'});
       var request = {
-        Type: 'Client',
-        Request: 'AddMachines',
-        Params: {
-          MachineParams: [
-            {}, {ParentId: '0', ContainerType: 'lxc'}, {ContainerType: 'kvm'}
+        type: 'Client',
+        request: 'AddMachines',
+        params: {
+          params: [
+            {},
+            {'parent-id': '0', 'container-type': 'lxc'},
+            {'container-type': 'kvm'}
           ]
         },
-        RequestId: 42
+        'request-id': 42
       };
       client.onmessage = function(response) {
         var data = Y.JSON.parse(response.data);
-        assert.isUndefined(data.Error);
-        assert.strictEqual(data.RequestId, 42);
+        assert.isUndefined(data.error);
+        assert.strictEqual(data['request-id'], 42);
         var expectedMachines = [
-          {Machine: '1', Error: null},
-          {Machine: '0/lxc/0', Error: null},
-          {Machine: '2/kvm/0', Error: null}
+          {machine: '1', error: null},
+          {machine: '0/lxc/0', error: null},
+          {machine: '2/kvm/0', error: null}
         ];
-        assert.deepEqual(data.Response.Machines, expectedMachines);
+        assert.deepEqual(data.response.machines, expectedMachines);
         done();
       };
       client.open();
@@ -575,15 +503,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can destroy machines', function(done) {
       state.db.machines.add([{id: '1'}, {id: '2/lxc/0'}]);
       var request = {
-        Type: 'Client',
-        Request: 'DestroyMachines',
-        Params: {MachineNames: ['1', '2/lxc/0'], Force: false},
-        RequestId: 42
+        type: 'Client',
+        request: 'DestroyMachines',
+        params: {'machine-names': ['1', '2/lxc/0'], force: false},
+        'request-id': 42
       };
       client.onmessage = function(response) {
         var data = Y.JSON.parse(response.data);
-        assert.isUndefined(data.Error);
-        assert.strictEqual(data.RequestId, 42);
+        assert.isUndefined(data.error);
+        assert.strictEqual(data['request-id'], 42);
         done();
       };
       client.open();
@@ -617,17 +545,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can destroy an application', function(done) {
       state.deploy('cs:precise/wordpress-27', function() {
         var data = {
-          Type: 'Application',
-          Request: 'Destroy',
-          Params: {
-            ApplicationName: 'wordpress'
-          },
-          RequestId: 42
+          type: 'Application',
+          request: 'Destroy',
+          params: {application: 'wordpress'},
+          'request-id': 42
         };
         client.onmessage = function(received) {
           var receivedData = Y.JSON.parse(received.data);
-          assert.equal(receivedData.RequestId, data.RequestId);
-          assert.isUndefined(receivedData.Error);
+          assert.equal(receivedData['request-id'], data['request-id']);
+          assert.isUndefined(receivedData.error);
           assert.equal(state.db.services.size(), 0);
           assert.isNull(state.db.services.getById('wordpress'));
           done();
@@ -653,19 +579,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can remove a unit', function(done) {
       state.deploy('cs:precise/wordpress-27', function() {
         var data = {
-          Type: 'Application',
-          Request: 'DestroyUnits',
-          Params: {
-            UnitNames: 'wordpress/0'
+          type: 'Application',
+          request: 'DestroyUnits',
+          params: {
+            'unit-names': 'wordpress/0'
           },
-          RequestId: 42
+          'request-id': 42
         };
         client.onmessage = function(received) {
           var receivedData = Y.JSON.parse(received.data);
-          assert.equal(receivedData.RequestId, data.RequestId);
+          assert.equal(receivedData['request-id'], data['request-id']);
           // fakebackend defaults error and warning to [] which carries
           // through.
-          assert.isUndefined(receivedData.Error);
+          assert.isUndefined(receivedData.error);
           assert.equal(state.db.services.item(0).get('units').size(), 0);
           done();
         };
@@ -690,17 +616,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can get a charm', function(done) {
       var data = {
-        Type: 'Client',
-        Request: 'CharmInfo',
-        Params: {
-          CharmURL: 'cs:precise/wordpress-27'
-        },
-        RequestId: 42
+        type: 'Client',
+        request: 'CharmInfo',
+        params: {'charm-url': 'cs:precise/wordpress-27'},
+        'request-id': 42
       };
       client.onmessage = function(received) {
         var receivedData = Y.JSON.parse(received.data);
-        assert.isUndefined(receivedData.Error);
-        assert.isObject(receivedData.Response);
+        assert.isUndefined(receivedData.error);
+        assert.isObject(receivedData.response);
         done();
       };
       client.open();
@@ -710,20 +634,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can set annotations', function(done) {
       generateApplications(function() {
         var data = {
-          Type: 'Annotations',
-          Request: 'Set',
-          Params: {
-            Annotations: [{
-              EntityTag: 'application-wordpress',
-              Annotations: {'foo': 'bar'}
+          type: 'Annotations',
+          request: 'Set',
+          params: {
+            annotations: [{
+              entity: 'application-wordpress',
+              annotations: {'foo': 'bar'}
             }]
           },
-          RequestId: 42
+          'request-id': 42
         };
         client.onmessage = function(received) {
           var receivedData = Y.JSON.parse(received.data);
-          assert.isUndefined(receivedData.Error);
-          assert.deepEqual(receivedData.Response, {});
+          assert.isUndefined(receivedData.error);
+          assert.deepEqual(receivedData.response, {});
           done();
         };
         client.open();
@@ -776,17 +700,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can set constraints', function(done) {
       state.deploy('cs:precise/wordpress-27', function() {
         var data = {
-          Type: 'Application',
-          Request: 'Update',
-          Params: {
-            ApplicationName: 'wordpress',
-            Constraints: {mem: '2'}
+          type: 'Application',
+          request: 'Update',
+          params: {
+            application: 'wordpress',
+            constraints: {mem: '2'}
           },
-          RequestId: 42
+          'request-id': 42
         };
         client.onmessage = function(received) {
           var receivedData = Y.JSON.parse(received.data);
-          assert.isUndefined(receivedData.Error);
+          assert.isUndefined(receivedData.error);
           var application = state.db.services.getById('wordpress');
           assert.equal(application.get('constraintsStr'), 'mem=2');
           assert.equal(application.get('constraints').mem, 2);
@@ -815,17 +739,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can set config', function(done) {
       state.deploy('cs:precise/wordpress-27', function() {
         var data = {
-          Type: 'Application',
-          Request: 'Update',
-          Params: {
-            ApplicationName: 'wordpress',
-            SettingsStrings: {engine: 'apache'}
+          type: 'Application',
+          request: 'Update',
+          params: {
+            application: 'wordpress',
+            settings: {engine: 'apache'}
           },
-          RequestId: 42
+          'request-id': 42
         };
         client.onmessage = function(received) {
           var receivedData = Y.JSON.parse(received.data);
-          assert.isUndefined(receivedData.Error);
+          assert.isUndefined(receivedData.error);
           var application = state.db.services.getById('wordpress');
           assert.deepEqual(application.get('config'), {
             debug: 'no',
@@ -865,12 +789,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           .get('units').getById('wordpress/0')
           .agent_state = 'error';
         var data = {
-          Type: 'Client',
-          Request: 'Resolved',
-          Params: {
-            UnitName: 'wordpress/0'
-          },
-          RequestId: 42
+          type: 'Client',
+          request: 'Resolved',
+          params: {'unit-name': 'wordpress/0'},
+          'request-id': 42
         };
         client.onmessage = function(received) {
           var receivedData = Y.JSON.parse(received.data);
@@ -879,7 +801,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // Additionally, resolved does not actually clear the unit error,
           // as that would be done by the hooks.  Since no change actually
           // takes place, we simply need to ensure that no error occurred.
-          assert.isUndefined(receivedData.Error);
+          assert.isUndefined(receivedData.error);
           done();
         };
         client.open();
@@ -905,13 +827,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can set a charm.', function(done) {
       state.deploy('cs:precise/wordpress-27', function() {});
       var data = {
-        Type: 'Application',
-        Request: 'Update',
-        Params: {
-          ApplicationName: 'wordpress',
-          CharmUrl: 'cs:precise/mediawiki-18',
+        type: 'Application',
+        request: 'Update',
+        params: {
+          application: 'wordpress',
+          'charm-url': 'cs:precise/mediawiki-18',
         },
-        RequestId: 42
+        'request-id': 42
       };
       client.onmessage = function(received) {
         var receivedData = Y.JSON.parse(received.data);
@@ -951,11 +873,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     function generateApplications(callback) {
       state.deploy('cs:precise/wordpress-27', function(application) {
         var data = {
-          Type: 'Application',
-          Request: 'AddUnits',
-          Params: {
-            ApplicationName: 'wordpress',
-            NumUnits: 2
+          type: 'Application',
+          request: 'AddUnits',
+          params: {
+            application: 'wordpress',
+            'num-units': 2
           }
         };
         state.nextChanges();
@@ -1012,9 +934,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     function generateAndExposeApplication(callback) {
       state.deploy('cs:precise/wordpress-27', function(data) {
         var command = {
-          Type: 'Application',
-          Request: 'Expose',
-          Params: {ApplicationName: data.application.get('name')}
+          type: 'Application',
+          request: 'Expose',
+          params: {application: data.application.get('name')}
         };
         state.nextChanges();
         client.onmessage = function(rec) {
@@ -1058,17 +980,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var application = state.db.services.getById('wordpress'),
             units = application.get('units').toArray(),
             data = Y.JSON.parse(received.data),
-            mock = {
-              Response: {
-                Units: ['wordpress/1', 'wordpress/2']
-              }
-            };
+            mock = {response: {units: ['wordpress/1', 'wordpress/2']}};
         // Do we have enough total units?
         assert.lengthOf(units, 3);
         // Does the response object contain the proper data?
         assert.deepEqual(data, mock);
         // Error is undefined.
-        assert.isUndefined(data.Error);
+        assert.isUndefined(data.error);
         done();
       }
       // Generate the default applications and add units.
@@ -1079,11 +997,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         function(done) {
           state.deploy('cs:precise/wordpress-27', function(application) {
             var data = {
-              Type: 'Application',
-              Request: 'AddUnits',
-              Params: {
-                ApplicationName: 'no-application',
-                NumUnits: 2
+              type: 'Application',
+              request: 'AddUnits',
+              params: {
+                application: 'no-application',
+                'num-units': 2
               }
             };
             state.nextChanges();
@@ -1092,7 +1010,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 var data = Y.JSON.parse(received.data);
 
                 // If there is no error data.err will be undefined
-                assert.equal(true, !!data.Error);
+                assert.equal(true, !!data.error);
                 done();
               };
               client.send(Y.JSON.stringify(data));
@@ -1117,7 +1035,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       function checkExposedApplication(rec) {
         var applicationName = 'wordpress';
         var data = Y.JSON.parse(rec.data),
-            mock = {Response: {}};
+            mock = {response: {}};
         var application = state.db.services.getById(applicationName);
         assert.equal(application.get('exposed'), true);
         assert.deepEqual(data, mock);
@@ -1144,9 +1062,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             data = Y.JSON.parse(rec.data),
             application = state.db.services.getById(applicationName),
             command = {
-              Type: 'Application',
-              Request: 'Expose',
-              Params: {ApplicationName: applicationName}
+              type: 'Application',
+              request: 'Expose',
+              params: {application: applicationName}
             };
         state.nextChanges();
         client.onmessage = function(rec) {
@@ -1163,14 +1081,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         function(done) {
           state.deploy('cs:precise/wordpress-27', function(data) {
             var command = {
-              Type: 'Application',
-              Request: 'Expose',
-              Params: {ApplicationName: 'foobar'}
+              type: 'Application',
+              request: 'Expose',
+              params: {application: 'foobar'}
             };
             state.nextChanges();
             client.onmessage = function(rec) {
               var data = Y.JSON.parse(rec.data);
-              assert.equal(data.Error,
+              assert.equal(data.error,
                  '"foobar" is an invalid application name.');
               done();
             };
@@ -1184,15 +1102,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       function unexposeApplication(rec) {
         var applicationName = 'wordpress',
             command = {
-              Type: 'Application',
-              Request: 'Unexpose',
-              Params: {ApplicationName: applicationName}
+              type: 'Application',
+              request: 'Unexpose',
+              params: {application: applicationName}
             };
         state.nextChanges();
         client.onmessage = function(rec) {
           var data = Y.JSON.parse(rec.data),
               application = state.db.services.getById('wordpress'),
-              mock = {Response: {}};
+              mock = {response: {}};
           assert.equal(application.get('exposed'), false);
           assert.deepEqual(data, mock);
           done();
@@ -1222,9 +1140,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           var applicationName = 'wordpress';
           state.deploy('cs:precise/wordpress-27', function(data) {
             var command = {
-              Type: 'Application',
-              Request: 'Unexpose',
-              Params: {ApplicationName: applicationName}
+              type: 'Application',
+              request: 'Unexpose',
+              params: {application: applicationName}
             };
             state.nextChanges();
             client.onmessage = function(rec) {
@@ -1244,15 +1162,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         function(done) {
           function unexposeApplication(rec) {
             var command = {
-              Type: 'Application',
-              Request: 'Unexpose',
-              Params: {ApplicationName: 'foobar'}
+              type: 'Application',
+              request: 'Unexpose',
+              params: {application: 'foobar'}
             };
             state.nextChanges();
             client.onmessage = function(rec) {
               var data = Y.JSON.parse(rec.data);
               assert.equal(
-                data.Error, '"foobar" is an invalid application name.');
+                data.error, '"foobar" is an invalid application name.');
               done();
             };
             client.send(Y.JSON.stringify(command));
@@ -1266,24 +1184,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state.deploy('cs:precise/wordpress-27', function() {
         state.deploy('cs:precise/mysql-26', function() {
           var data = {
-            RequestId: 42,
-            Type: 'Application',
-            Request: 'AddRelation',
-            Params: {
-              Endpoints: ['wordpress:db', 'mysql:db']
+            'request-id': 42,
+            type: 'Application',
+            request: 'AddRelation',
+            params: {
+              endpoints: ['wordpress:db', 'mysql:db']
             }
           };
           client.onmessage = function(received) {
             var recData = Y.JSON.parse(received.data);
-            assert.equal(recData.RequestId, data.RequestId);
-            assert.equal(recData.Error, undefined);
+            assert.equal(recData['request-id'], data['request-id']);
+            assert.equal(recData.error, undefined);
             assert.isObject(
                 state.db.relations.getById('wordpress:db mysql:db'));
-            var recEndpoints = recData.Response.Endpoints;
-            assert.equal(recEndpoints.wordpress.Name, 'db');
-            assert.equal(recEndpoints.wordpress.Scope, 'global');
-            assert.equal(recEndpoints.mysql.Name, 'db');
-            assert.equal(recEndpoints.mysql.Scope, 'global');
+            var recEndpoints = recData.response.endpoints;
+            assert.equal(recEndpoints.wordpress.name, 'db');
+            assert.equal(recEndpoints.wordpress.scope, 'global');
+            assert.equal(recEndpoints.mysql.name, 'db');
+            assert.equal(recEndpoints.mysql.scope, 'global');
             done();
           };
           client.open();
@@ -1319,22 +1237,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state.deploy('cs:precise/wordpress-27', function() {
         state.deploy('cs:precise/puppet-5', function(application) {
           var data = {
-            RequestId: 42,
-            Type: 'Application',
-            Request: 'AddRelation',
-            Params: {
-              Endpoints: ['wordpress:juju-info', 'puppet:juju-info']
+            'request-id': 42,
+            type: 'Application',
+            request: 'AddRelation',
+            params: {
+              endpoints: ['wordpress:juju-info', 'puppet:juju-info']
             }
           };
           client.onmessage = function(received) {
             var recData = Y.JSON.parse(received.data);
-            assert.equal(recData.RequestId, data.RequestId);
-            assert.equal(recData.Error, undefined);
-            var recEndpoints = recData.Response.Endpoints;
-            assert.equal(recEndpoints.wordpress.Name, 'juju-info');
-            assert.equal(recEndpoints.wordpress.Scope, 'container');
-            assert.equal(recEndpoints.puppet.Name, 'juju-info');
-            assert.equal(recEndpoints.puppet.Scope, 'container');
+            assert.equal(recData['request-id'], data['request-id']);
+            assert.equal(recData.error, undefined);
+            var recEndpoints = recData.response.endpoints;
+            assert.equal(recEndpoints.wordpress.name, 'juju-info');
+            assert.equal(recEndpoints.wordpress.scope, 'container');
+            assert.equal(recEndpoints.puppet.name, 'juju-info');
+            assert.equal(recEndpoints.puppet.scope, 'container');
             done();
           };
           client.open();
@@ -1347,17 +1265,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We begin logged in.  See utils.makeFakeBackend.
       state.deploy('cs:precise/wordpress-27', function() {
         var data = {
-          RequestId: 42,
-          Type: 'Application',
-          Request: 'AddRelation',
-          Params: {
-            Endpoints: ['wordpress:db']
+          'request-id': 42,
+          type: 'Application',
+          request: 'AddRelation',
+          params: {
+            endpoints: ['wordpress:db']
           }
         };
         client.onmessage = function(received) {
           var recData = Y.JSON.parse(received.data);
-          assert.equal(recData.RequestId, data.RequestId);
-          assert.equal(recData.Error,
+          assert.equal(recData['request-id'], data['request-id']);
+          assert.equal(recData.error,
               'Two string endpoint names required to establish a relation');
           done();
         };
@@ -1370,17 +1288,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We begin logged in.  See utils.makeFakeBackend.
       state.deploy('cs:precise/wordpress-27', function() {
         var data = {
-          RequestId: 42,
-          Type: 'Application',
-          Request: 'AddRelation',
-          Params: {
-            Endpoints: ['wordpress:db', 'mysql:foo']
+          'request-id': 42,
+          type: 'Application',
+          request: 'AddRelation',
+          params: {
+            endpoints: ['wordpress:db', 'mysql:foo']
           }
         };
         client.onmessage = function(received) {
           var recData = Y.JSON.parse(received.data);
-          assert.equal(recData.RequestId, data.RequestId);
-          assert.equal(recData.Error, 'Charm not loaded.');
+          assert.equal(recData['request-id'], data['request-id']);
+          assert.equal(recData.error, 'Charm not loaded.');
           done();
         };
         client.open();
@@ -1395,17 +1313,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         state.deploy('cs:precise/mysql-26', function() {
           state.addRelation(relation[0], relation[1]);
           var data = {
-            RequestId: 42,
-            Type: 'Application',
-            Request: 'DestroyRelation',
-            Params: {
-              Endpoints: relation
+            'request-id': 42,
+            type: 'Application',
+            request: 'DestroyRelation',
+            params: {
+              endpoints: relation
             }
           };
           client.onmessage = function(received) {
             var recData = Y.JSON.parse(received.data);
-            assert.equal(recData.RequestId, data.RequestId);
-            assert.equal(recData.Error, undefined);
+            assert.equal(recData['request-id'], data['request-id']);
+            assert.equal(recData.error, undefined);
             done();
           };
           client.open();
@@ -1435,136 +1353,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                   }, {immediate: true});
                 }, {immediate: true});
           }, {immediate: true});
-    });
-
-    describe('handleChangeSetGetChanges', function() {
-      var count, data, closeStub, sendStub, ReconnectingWebSocket, websockets;
-
-      beforeEach(function() {
-        websockets = [];
-        count = 0;
-        ReconnectingWebSocket = Y.ReconnectingWebSocket;
-        closeStub = utils.makeStubFunction();
-        sendStub = utils.makeStubFunction();
-        Y.ReconnectingWebSocket = function(socketUrl) {
-          this.id = count;
-          count += 1;
-          assert.equal(socketUrl, 'socket url');
-          // Store the generated instances of this object.
-          websockets.push(this);
-          this.send = sendStub;
-          this.close = closeStub;
-        };
-        data = {
-          Type: 'ChangeSet',
-          Request: 'GetChanges'
-        };
-        client.open();
-        client.send(JSON.stringify(data));
-      });
-
-      afterEach(function() {
-        Y.ReconnectingWebSocket = ReconnectingWebSocket;
-      });
-
-      it('creates a new websocket on each request', function() {
-        // send the data twice to simulate two requests.
-        client.send(JSON.stringify(data));
-        // Make sure that they aren't the same ws instance.
-        assert.equal(websockets[0] instanceof Y.ReconnectingWebSocket, true);
-        assert.equal(websockets[1] instanceof Y.ReconnectingWebSocket, true);
-        assert.equal(websockets[0] === websockets[1], false);
-      });
-
-      it('sends the data when the connection opens', function() {
-        websockets[0].onopen();
-        assert.equal(sendStub.callCount(), 1, 'send not called');
-        assert.equal(
-            sendStub.lastArguments()[0],
-            '{"Type":"ChangeSet","Request":"GetChanges"}');
-      });
-
-      it('returns with error if websocket cannot connect', function(done) {
-        // We allow it to try to connect three times before closing the
-        // connection and returning with an error.
-        websockets[0].onerror();
-        websockets[0].onerror();
-        websockets[0].onerror();
-        assert.equal(juju.wsFailureCount, 3, 'failure count not 3');
-        assert.equal(closeStub.callCount(), 1, 'close not called');
-        client.onmessage = function(response) {
-          assert.equal(
-              response.data,
-              '{"Response":{},"Error":"Unable to connect to bundle processor."}'
-          );
-          done();
-        };
-      });
-
-      it('returns with data if websocket is successful', function(done) {
-        websockets[0].onmessage({data: '{"Response":"record set data"}'});
-        client.onmessage = function(response) {
-          assert.deepEqual(
-              response,
-              { data: '{"Response":"record set data"}'});
-          assert.equal(closeStub.callCount(), 1, 'close not called');
-          done();
-        };
-      });
-    });
-
-    it('should support deployer status without imports', function(done) {
-      var data = {
-        Type: 'Deployer',
-        Request: 'Status',
-        Params: {},
-        RequestId: 42
-      };
-      client.onmessage = function(received) {
-        var receivedData = Y.JSON.parse(received.data);
-        assert.equal(receivedData.RequestId, 42);
-        var lastChanges = receivedData.Response.LastChanges;
-        assert.equal(lastChanges.length, 0);
-        done();
-      };
-      client.open();
-      client.send(Y.JSON.stringify(data));
-    });
-
-    it('should not deal with deployer watches', function(done) {
-      var data = {
-        Type: 'Deployer',
-        Request: 'Watch',
-        Params: {
-          DeploymentId: 10
-        },
-        RequestId: 42
-      };
-      client.onmessage = function(received) {
-        assert.fail('Should never get a response.');
-      };
-      client.open();
-      client.send(Y.JSON.stringify(data));
-
-      done();
-    });
-
-    it('should not deal with watch updates', function(done) {
-      var data = {
-        Type: 'Deployer',
-        Request: 'Next',
-        Params: {
-          WatcherId: 11
-        },
-        RequestId: 42
-      };
-      client.onmessage = function(received) {
-        assert.fail('Should never get a response.');
-      };
-      client.open();
-      client.send(Y.JSON.stringify(data));
-
-      done();
     });
 
   });

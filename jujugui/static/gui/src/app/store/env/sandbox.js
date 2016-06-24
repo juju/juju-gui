@@ -177,11 +177,11 @@ YUI.add('juju-env-sandbox', function(Y) {
 
   sandboxModule.ClientConnection = ClientConnection;
   // Define sandbox API facades: please keep these in alphabetical order.
-  sandboxModule.Facades = [
-    {Name: 'Annotations', Versions: [2]},
-    {Name: 'Application', Versions: [1]},
-    {Name: 'Client', Versions: [1]},
-    {Name: 'ModelManager', Versions: [2]}
+  sandboxModule.facades = [
+    {name: 'Annotations', versions: [2]},
+    {name: 'Application', versions: [1]},
+    {name: 'Client', versions: [1]},
+    {name: 'ModelManager', versions: [2]}
   ];
 
   /**
@@ -266,7 +266,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     receive: function(data) {
       if (this.connected) {
         var client = this.get('client');
-        var key = 'handle' + data.Type + data.Request;
+        var key = 'handle' + data.type + data.request;
         if (!this[key]) {
           // If the sandbox method has not been implemented show a helpful
           // message to the poor developer who has to figure out why things are
@@ -291,39 +291,10 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleAdminLogin: function(data, client, state) {
-      data.Error = !state.login(data.Params.AuthTag, data.Params.Password);
-      data.Response = {facades: sandboxModule.Facades};
+      data.error = !state.login(
+        data.params['auth-tag'], data.params.credentials);
+      data.response = {facades: sandboxModule.facades};
       client.receive(data);
-    },
-
-    /**
-    Handle GUIToken Login messages to the state object.
-
-    @method handleGUITokenLogin
-    @param {Object} data The contents of the API arguments.
-    @param {Object} client The active ClientConnection.
-    @param {Object} state An instance of FakeBackend.
-    @return {undefined} Side effects only.
-    */
-    handleGUITokenLogin: function(data, client, state) {
-      var response = state.tokenlogin(data.Params.Token);
-      if (response) {
-        client.receive({
-          RequestId: data.RequestId,
-          Response: {
-            AuthTag: response[0],
-            Password: response[1],
-            facades: sandboxModule.Facades
-          }
-        });
-      } else {
-        client.receive({
-          RequestId: data.RequestId,
-          Error: 'unknown, fulfilled, or expired token',
-          ErrorCode: 'unauthorized access',
-          Response: {}
-        });
-      }
     },
 
     /**
@@ -336,7 +307,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handlePingerPing: function(data, client, state) {
-      client.receive({RequestId: data.RequestId, Response: {}});
+      client.receive({'request-id': data['request-id'], response: {}});
     },
 
     /**
@@ -350,11 +321,11 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleClientModelInfo: function(data, client, state) {
       client.receive({
-        RequestId: data.RequestId,
-        Response: {
-          ProviderType: state.get('providerType'),
-          DefaultSeries: state.get('defaultSeries'),
-          Name: 'sandbox'
+        'request-id': data['request-id'],
+        response: {
+          'provider-type': state.get('providerType'),
+          'default-series': state.get('defaultSeries'),
+          name: 'sandbox'
         }
       });
     },
@@ -369,10 +340,10 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleClientModelGet: function(data, client, state) {
       client.receive({
-        RequestId: data.RequestId,
-        Response: {
+        'request-id': data['request-id'],
+        response: {
           // For now only the MAAS server is required by the GUI.
-          Config: {'maas-server': state.get('maasServer')}
+          config: {'maas-server': state.get('maasServer')}
         }
       });
     },
@@ -413,13 +384,13 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleModelManagerListModels: function(data, client, state) {
       client.receive({
-        RequestId: data.RequestId,
-        Response: {
-          UserModels: [{
-            Name: 'sandbox',
-            UUID: 'sandbox1',
-            OwnerTag: 'user-admin',
-            LastConnection: 'today'
+        'request-id': data['request-id'],
+        response: {
+          'user-models': [{
+            name: 'sandbox',
+            uuid: 'sandbox1',
+            'owner-tag': 'user-admin',
+            'last-connection': 'today'
           }]
         }
       });
@@ -436,10 +407,10 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleModelManagerConfigSkeleton: function(data, client, state) {
       client.receive({
-        RequestId: data.RequestId,
-        Response: {
-          OwnerTag: 'user-admin',
-          Config: {
+        'request-id': data['request-id'],
+        response: {
+          'owner-tag': 'user-admin',
+          config: {
             attr1: 'value1',
             attr2: 'value2',
             name: 'sandbox',
@@ -688,8 +659,8 @@ YUI.add('juju-env-sandbox', function(Y) {
         var annotations = this._prepareAnnotations();
         if (deltas.length || annotations.length) {
           this.get('client').receive({
-            RequestId: this.get('nextRequestId'),
-            Response: {Deltas: deltas.concat(annotations)}
+            'request-id': this.get('nextRequestId'),
+            response: {Deltas: deltas.concat(annotations)}
           });
           // Prevent sending additional deltas until the Go environment is
           // ready for them (when the next `Next` message is sent).
@@ -711,8 +682,8 @@ YUI.add('juju-env-sandbox', function(Y) {
       // AllWatcherId can be hard-coded because we will only ever have one
       // client listening to the environment with the sandbox environment.
       client.receive({
-        RequestId: data.RequestId,
-        Response: {AllWatcherId: 42}
+        'request-id': data['request-id'],
+        response: {AllWatcherId: 42}
       });
     },
 
@@ -725,7 +696,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} state An instance of FakeBackend.
     */
     handleAllWatcherNext: function(data, client, state) {
-      this.set('nextRequestId', data.RequestId);
+      this.set('nextRequestId', data['request-id']);
       clearInterval(this.deltaIntervalId);
       this.deltaIntervalId = setInterval(
           this.sendDelta.bind(this), this.get('deltaInterval'));
@@ -741,7 +712,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleAllWatcherStop: function(data, client, state) {
       clearInterval(this.deltaIntervalId);
-      client.receive({RequestId: data.RequestId, Response: {}});
+      client.receive({'request-id': data['request-id'], response: {}});
     },
 
     /**
@@ -751,16 +722,16 @@ YUI.add('juju-env-sandbox', function(Y) {
     @method _basicReceive
     @private
     @param {Object} client The active ClientConnection.
-    @param {Object} request The initial request with a RequestId.
+    @param {Object} request The initial request with a 'request-id'.
     @param {Object} result The result of the call with an optional error.
     */
     _basicReceive: function(request, client, result) {
       var response = {
-        RequestId: request.RequestId,
-        Response: {}
+        'request-id': request['request-id'],
+        response: {}
       };
       if (result.error) {
-        response.Error = result.error;
+        response.error = result.error;
       }
       client.receive(response);
     },
@@ -777,7 +748,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     handleClientAddCharm: function(data, client, state) {
       // In sandbox mode there is no need for adding a charm before simulating
       // its deployment.
-      client.receive({RequestId: data.RequestId, Response: {}});
+      client.receive({'request-id': data['request-id'], response: {}});
     },
 
     /**
@@ -806,21 +777,20 @@ YUI.add('juju-env-sandbox', function(Y) {
       var callback = function(result) {
         var res = {};
         if (result.error) {
-          res.Error = result.error;
+          res.error = result.error;
         }
         client.receive({
-          RequestId: data.RequestId,
-          Response: {Results: [res]}
+          'request-id': data['request-id'],
+          response: {results: [res]}
         });
       };
-      var params = data.Params.Applications[0];
-      state.deploy(params.CharmUrl, callback, {
-        name: params.ApplicationName,
-        config: params.Config,
-        configYAML: params.ConfigYAML,
-        constraints: params.Constraints,
-        unitCount: params.NumUnits,
-        toMachine: params.ToMachineSpec
+      var params = data.params.applications[0];
+      state.deploy(params['charm-url'], callback, {
+        name: params.application,
+        config: params.config,
+        configYAML: params['config-yaml'],
+        constraints: params.constraints,
+        unitCount: params['num-units']
       });
     },
 
@@ -833,13 +803,13 @@ YUI.add('juju-env-sandbox', function(Y) {
       @param {Object} state An instance of FakeBackend.
     */
     handleClientAddMachines: function(data, client, state) {
-      var params = data.Params.MachineParams.map(function(machineParam) {
+      var params = data.params.params.map(function(machineParam) {
         return {
-          jobs: machineParam.Jobs,
-          series: machineParam.Series,
-          parentId: machineParam.ParentId,
-          containerType: machineParam.ContainerType,
-          constraints: machineParam.Constraints
+          jobs: machineParam.jobs,
+          series: machineParam.series,
+          parentId: machineParam['parent-id'],
+          containerType: machineParam['container-type'],
+          constraints: machineParam.constraints
         };
       });
       var response = state.addMachines(params);
@@ -848,15 +818,15 @@ YUI.add('juju-env-sandbox', function(Y) {
         if (data.error) {
           // There is no need for the sandbox to simulate the juju-core error
           // code machinery. Most of the times this is an empty string in real
-          // environments. The message can always be found in Error.Message.
-          error = {Code: '', Message: data.error};
+          // environments. The message can always be found in error.message.
+          error = {code: '', message: data.error};
         }
-        return {Machine: data.name || '', Error: error};
+        return {machine: data.name || '', error: error};
       });
       client.receive({
-        RequestId: data.RequestId,
-        Error: response.error,
-        Response: {Machines: machines}
+        'request-id': data['request-id'],
+        error: response.error,
+        response: {machines: machines}
       });
     },
 
@@ -869,8 +839,9 @@ YUI.add('juju-env-sandbox', function(Y) {
       @param {Object} state An instance of FakeBackend.
     */
     handleClientDestroyMachines: function(data, client, state) {
-      var params = data.Params;
-      var response = state.destroyMachines(params.MachineNames, params.Force);
+      var params = data.params;
+      var response = state.destroyMachines(
+        params['machine-names'], params.force);
       this._basicReceive(data, client, response);
     },
 
@@ -884,7 +855,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleApplicationDestroy: function(data, client, state) {
-      var result = state.destroyApplication(data.Params.ApplicationName);
+      var result = state.destroyApplication(data.params.application);
       this._basicReceive(data, client, result);
     },
 
@@ -898,7 +869,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       @return {undefined} Side effects only.
      */
     handleApplicationDestroyUnits: function(data, client, state) {
-      var res = state.removeUnits(data.Params.UnitNames);
+      var res = state.removeUnits(data.params['unit-names']);
       this._basicReceive(data, client, res);
     },
 
@@ -912,7 +883,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientCharmInfo: function(data, client, state) {
-      state.getCharm(data.Params.CharmURL, function(result) {
+      state.getCharm(data.params['charm-url'], function(result) {
         if (result.error) {
           this._basicReceive(data, client, result);
         } else {
@@ -920,8 +891,8 @@ YUI.add('juju-env-sandbox', function(Y) {
           // Convert the charm into the Go format, so it can be converted
           // back into the provided format.
           var convertedData = {
-            RequestId: data.RequestId,
-            Response: {
+            'request-id': data['request-id'],
+            response: {
               Config: {
                 Options: result.options
               },
@@ -955,23 +926,23 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleApplicationUpdate: function(data, client, state) {
       var result;
-      var params = data.Params;
-      var application = params.ApplicationName;
+      var params = data.params;
+      var application = params.application;
       var callback = function(result) {
         this._basicReceive(data, client, result);
       }.bind(this);
 
       // Handle application settings.
-      if (params.SettingsStrings) {
-        result = state.setConfig(application, params.SettingsStrings);
+      if (params.settings) {
+        result = state.setConfig(application, params.settings);
         if (result.error) {
           callback(result);
         }
       }
 
       // Handle application constraints.
-      if (params.Constraints) {
-        result = state.setConstraints(application, params.Constraints);
+      if (params.constraints) {
+        result = state.setConstraints(application, params.constraints);
         if (result.error) {
           callback(result);
         }
@@ -980,10 +951,10 @@ YUI.add('juju-env-sandbox', function(Y) {
 
       // Handle charm URL changes.
       // This is kept as last step as it is asynchronous.
-      if (params.CharmUrl) {
+      if (params['charm-url']) {
         state.setCharm(
-          application, params.CharmUrl, params.ForceCharmUrl,
-          params.ForceSeries, callback);
+          application, params['charm-url'], params['force-charm-url'],
+          params['force-series'], callback);
         return;
       }
       callback({});
@@ -1001,61 +972,8 @@ YUI.add('juju-env-sandbox', function(Y) {
     handleClientResolved: function(data, client, state) {
       // Resolving a unit/relation pair is not supported by the Go back-end,
       // so relationName is ignored.
-      var result = state.resolved(data.Params.UnitName);
+      var result = state.resolved(data.params['unit-name']);
       this._basicReceive(data, client, result);
-    },
-
-    /**
-    Handle DeployerStatus messages.
-
-    @method handleDeployerStatus
-    @param {Object} data The contents of the API arguments.
-    @param {Object} client The active ClientConnection.
-    @param {Object} state An instance of FakeBackend.
-    @return {undefined} Side effects only.
-    */
-    handleDeployerStatus: function(data, client, state) {
-      var request = data;
-      var callback = function(reply) {
-        var response = {
-          RequestId: request.RequestId,
-          Error: reply.Error,
-          Response: {
-            LastChanges: reply.LastChanges
-          }
-        };
-        client.receive(response);
-      };
-      state.statusDeployer(callback.bind(this));
-    },
-
-    /**
-     * *no op* Handle the response from a deployerWatch call from the backend.
-     *
-     * @method handleDeployerWatch
-     * @param {Object} data The contents of the API arguments.
-     * @param {Object} client The active ClientConnection.
-     * @param {Object} state An instance of FakeBackend.
-     * @return {undefined} Side effects only.
-     *
-     */
-    handleDeployerWatch: function(data, client, state) {
-      return;
-    },
-
-    /**
-     * *no op* Handle the response from a deployerNext call from the
-     * backend.
-     *
-     * @method handleDeployerNext
-     * @param {Object} data The contents of the API arguments.
-     * @param {Object} client The active ClientConnection.
-     * @param {Object} state An instance of FakeBackend.
-     * @return {undefined} Side effects only.
-     *
-     */
-    handleDeployerNext: function(data, client, state) {
-      return;
     },
 
     /**
@@ -1068,9 +986,9 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleAnnotationsSet: function(data, client, state) {
-      var args = data.Params.Annotations[0];
-      var entityId = /^(application|unit|machine|model|environment)-([^ ]*)$/.
-          exec(args.EntityTag)[2];
+      var args = data.params.annotations[0];
+      var entityId = /^(application|unit|machine|model)-([^ ]*)$/.
+          exec(args.entity)[2];
       var result = state.updateAnnotations(entityId, args.Annotations);
       this._basicReceive(data, client, result);
     },
@@ -1085,12 +1003,12 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleApplicationGet: function(data, client, state) {
-      var reply = state.getApplication(data.Params.ApplicationName);
+      var reply = state.getApplication(data.params.application);
       var response = {
-        RequestId: data.RequestId
+        'request-id': data['request-id']
       };
       if (reply.error) {
-        response.Error = reply.error;
+        response.error = reply.error;
         client.receive(response);
       } else {
         var charmName = reply.result.charm;
@@ -1111,11 +1029,11 @@ YUI.add('juju-env-sandbox', function(Y) {
             }
           });
 
-          response.Response = {
-            Application: data.Params.ApplicationName,
-            Charm: charmName,
-            Config: formattedConfig,
-            Constraints: reply.result.constraints
+          response.response = {
+            application: data.params.application,
+            charm: charmName,
+            config: formattedConfig,
+            constraints: reply.result.constraints
           };
           client.receiveNow(response);
         });
@@ -1133,21 +1051,21 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleApplicationAddUnits: function(data, client, state) {
-      var args = data.Params;
+      var args = data.params;
       var toMachine;
-      if (args.Placement && args.Placement[0]) {
-        toMachine = args.Placement[0].Directive;
+      if (args.placement && args.placement[0]) {
+        toMachine = args.placement[0].Directive;
       }
       var reply = state.addUnit(
-        args.ApplicationName, args.NumUnits, toMachine);
+        args.application, args['num-units'], toMachine);
       var units = [];
       if (!reply.error) {
         units = reply.units.map(function(u) {return u.id;});
       }
       client.receive({
-        RequestId: data.RequestId,
-        Error: reply.error,
-        Response: {Units: units}
+        'request-id': data['request-id'],
+        error: reply.error,
+        response: {units: units}
       });
     },
 
@@ -1161,7 +1079,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleApplicationExpose: function(data, client, state) {
-      var result = state.expose(data.Params.ApplicationName);
+      var result = state.expose(data.params.application);
       this._basicReceive(data, client, result);
     },
 
@@ -1175,7 +1093,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleApplicationUnexpose: function(data, client, state) {
-      var result = state.unexpose(data.Params.ApplicationName);
+      var result = state.unexpose(data.params.application);
       this._basicReceive(data, client, result);
     },
 
@@ -1190,16 +1108,16 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleApplicationAddRelation: function(data, client, state) {
       var stateData = state.addRelation(
-          data.Params.Endpoints[0], data.Params.Endpoints[1], false);
-      var resp = {RequestId: data.RequestId};
+          data.params.endpoints[0], data.params.endpoints[1], false);
+      var resp = {'request-id': data['request-id']};
       if (stateData === false) {
         // Everything checks out but could not create a new relation model.
-        resp.Error = 'Unable to create relation';
+        resp.error = 'Unable to create relation';
         client.receive(resp);
         return;
       }
       if (stateData.error) {
-        resp.Error = stateData.error;
+        resp.error = stateData.error;
         client.receive(resp);
         return;
       }
@@ -1207,21 +1125,21 @@ YUI.add('juju-env-sandbox', function(Y) {
           stateEpA = stateData.endpoints[0],
           stateEpB = stateData.endpoints[1],
           epA = {
-            Name: stateEpA[1].name,
-            Role: 'requirer',
-            Scope: stateData.scope,
-            Interface: stateData['interface']
+            name: stateEpA[1].name,
+            role: 'requirer',
+            scope: stateData.scope,
+            interface: stateData['interface']
           },
           epB = {
-            Name: stateEpB[1].name,
-            Role: 'provider',
-            Scope: stateData.scope,
-            Interface: stateData['interface']
+            name: stateEpB[1].name,
+            role: 'provider',
+            scope: stateData.scope,
+            interface: stateData['interface']
           };
       respEndpoints[stateEpA[0]] = epA;
       respEndpoints[stateEpB[0]] = epB;
-      resp.Response = {
-        Endpoints: respEndpoints
+      resp.response = {
+        endpoints: respEndpoints
       };
       client.receive(resp);
     },
@@ -1236,13 +1154,13 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleApplicationDestroyRelation: function(data, client, state) {
-      var result = state.removeRelation(data.Params.Endpoints[0],
-          data.Params.Endpoints[1]);
+      var result = state.removeRelation(data.params.endpoints[0],
+          data.params.endpoints[1]);
       this._basicReceive(data, client, result);
     },
 
     /**
-      Makes a request using a real websocket to get the bundle changeSet data.
+      Makes a request using a real WebSocket to get the bundle changeSet data.
 
       @method handleClientGetBundleChanges
       @param {Object} data The contents of the API arguments.
@@ -1252,6 +1170,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     handleClientGetBundleChanges: function(data, client, state) {
       // The getBundleChanges functionality still needs to be possible when
       // deployed via charm and in sandbox mode.
+      // TODO frankban: use the new external service to get bundle changes.
       var ws = new Y.ReconnectingWebSocket(this.get('socket_url'));
       ws.onopen = this._changeSetWsOnOpen.bind(this, ws, data);
       ws.onmessage = this._changeSetWsOnMessage.bind(this, ws, data, client);
@@ -1260,19 +1179,6 @@ YUI.add('juju-env-sandbox', function(Y) {
       // bail and throw an error after trying a few times. We try a few times
       // in the event of a poor connection.
       ws.onerror = this._changeSetWsOnError.bind(this, ws, data, client);
-    },
-
-    /**
-      Makes a request using a real websocket to get the bundle changeSet data.
-      This enables supporting legacy GUI server API for getting bundle changes.
-
-      @method handleChangeSetGetChanges
-      @param {Object} data The contents of the API arguments.
-      @param {Object} client The active ClientConnection.
-      @param {Object} state An instance of FakeBackend.
-    */
-    handleChangeSetGetChanges: function(data, client, state) {
-      this.handleClientGetBundleChanges(data, client, state);
     },
 
     /**
@@ -1314,7 +1220,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       @param {Object} ws Reference to the reconnecting WebSocket instance.
       @param {Object} data The contents of the API arguments.
       @param {Object} client The active ClientConnection.
-      @param {Object} response The websocket response.
+      @param {Object} response The WebSocket response.
     */
     _changeSetWsOnMessage: function(ws, data, client, response) {
       var responseData = JSON.parse(response.data);
@@ -1323,13 +1229,13 @@ YUI.add('juju-env-sandbox', function(Y) {
         // sandbox mode. For instance, a Juju Client.GetBundleChanges has been
         // issued and cannot be handled. Let callers be notified of this
         // failure in the way they expect from juju-core.
-        responseData.ErrorCode = 'not implemented';
+        responseData['error-code'] = 'not implemented';
       }
       client.receive({
-        RequestId: data.RequestId,
-        Error: responseData.Error,
-        ErrorCode: responseData.ErrorCode,
-        Response: responseData.Response
+        'request-id': data['request-id'],
+        error: responseData.Error,
+        'error-code': responseData.ErrorCode,
+        response: responseData.Response
       });
       ws.close();
     }
