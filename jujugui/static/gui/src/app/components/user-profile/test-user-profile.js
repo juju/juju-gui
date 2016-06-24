@@ -91,6 +91,7 @@ describe('UserProfile', () => {
         canCreateNew={true}
         charmstore={{}}
         env={env}
+        getAgreements={sinon.stub().callsArgWith(0, null, [])}
         getDiagramURL={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: []})}
         switchModel={sinon.stub()}
@@ -171,6 +172,7 @@ describe('UserProfile', () => {
         canCreateNew={true}
         charmstore={{}}
         env={env}
+        getAgreements={sinon.stub().callsArgWith(0, null, [])}
         getDiagramURL={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, [])}
         switchModel={sinon.stub()}
@@ -197,6 +199,7 @@ describe('UserProfile', () => {
         canCreateNew={true}
         charmstore={charmstore}
         env={env}
+        getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         switchModel={sinon.stub()}
@@ -232,6 +235,7 @@ describe('UserProfile', () => {
         canCreateNew={true}
         charmstore={charmstore}
         env={env}
+        getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         listModels={sinon.stub()}
         switchModel={sinon.stub()}
@@ -257,6 +261,7 @@ describe('UserProfile', () => {
     pluralize.withArgs('model', sinon.match.any).returns('model');
     pluralize.withArgs('bundle', sinon.match.any).returns('bundle');
     pluralize.withArgs('charm', sinon.match.any).returns('charm');
+    pluralize.withArgs('charm', sinon.match.any).returns('charm');
     var links = [{
       label: '1 model'
     }, {
@@ -267,6 +272,13 @@ describe('UserProfile', () => {
     var changeState = sinon.stub();
     var getDiagramURL = sinon.stub();
     var switchModel = sinon.stub();
+    var agreements = [{
+      user: 'spinach',
+      term: 'One fancy term',
+      revision: 47,
+      createdAt: new Date(1465510044000)
+    }];
+    var getAgreements = sinon.stub().callsArgWith(0, null, agreements);
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         addNotification={sinon.stub()}
@@ -274,6 +286,7 @@ describe('UserProfile', () => {
         canCreateNew={true}
         charmstore={charmstore}
         env={env}
+        getAgreements={getAgreements}
         getDiagramURL={getDiagramURL}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         switchModel={switchModel}
@@ -488,6 +501,35 @@ describe('UserProfile', () => {
               </juju.components.UserProfileEntity>]}
             </ul>
           </div>
+          <div>
+            <div className="user-profile__header twelve-col no-margin-bottom">
+              Agreements
+              <span className="user-profile__size">
+                ({1})
+              </span>
+              {undefined}
+            </div>
+            <ul className="user-profile__list twelve-col">
+              <li className="user-profile__list-header twelve-col">
+                <span className="user-profile__list-col eight-col">
+                  Name
+                </span>
+                <span className="user-profile__list-col four-col last-col">
+                  Date signed
+                </span>
+              </li>
+              {[<li className="user-profile__list-row"
+                key="One fancy term">
+                <span className="user-profile__list-col eight-col">
+                  One fancy term
+                </span>
+                <span className={'user-profile__list-col four-col ' +
+                  'prepend-two last-col'}>
+                  {agreements[0].createdAt}
+                </span>
+              </li>]}
+            </ul>
+          </div>
         </div>
       </div>);
     assert.deepEqual(content, expected);
@@ -502,6 +544,7 @@ describe('UserProfile', () => {
         canCreateNew={true}
         charmstore={charmstore}
         env={env}
+        getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         switchModel={sinon.stub()}
@@ -545,6 +588,7 @@ describe('UserProfile', () => {
         listModels={sinon.stub()}
         changeState={sinon.stub()}
         env={env}
+        getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         interactiveLogin={false}
         pluralize={pluralize}
@@ -582,6 +626,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={charmstore}
         env={env}
+        getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         pluralize={sinon.stub()}
@@ -608,6 +653,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={charmstore}
         env={env}
+        getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         pluralize={sinon.stub()}
@@ -626,6 +672,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={charmstore}
         env={env}
+        getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         pluralize={sinon.stub()}
@@ -650,6 +697,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={{}}
         env={env}
+        getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         hideConnectingMask={sinon.stub()}
         showConnectingMask={sinon.stub()}
@@ -683,6 +731,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={charmstore}
         env={env}
+        getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         listModels={sinon.stub()}
@@ -716,6 +765,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={charmstore}
         env={env}
+        getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         listModels={listModels}
@@ -746,6 +796,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={{}}
         env={env}
+        getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         hideConnectingMask={sinon.stub()}
@@ -771,6 +822,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={charmstore}
         env={env}
+        getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         pluralize={sinon.stub()}
@@ -797,6 +849,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={charmstore}
         env={env}
+        getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         pluralize={sinon.stub()}
@@ -840,6 +893,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={charmstore}
         env={env}
+        getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         pluralize={sinon.stub()}
@@ -891,6 +945,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={charmstore}
         env={env}
+        getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         pluralize={sinon.stub()}
@@ -936,6 +991,7 @@ describe('UserProfile', () => {
         changeState={sinon.stub()}
         charmstore={charmstore}
         env={env}
+        getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         jem={{}}
