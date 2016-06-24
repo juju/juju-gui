@@ -1542,6 +1542,7 @@ describe('test_model.js', function() {
       conn = new (Y.namespace('juju-tests.utils')).SocketStub();
       env = new juju.environments.GoEnvironment({conn: conn});
       env.connect();
+      env.set('facades', {Client: [0]});
       conn.open();
       container = Y.Node.create('<div id="test" class="container"></div>');
     });
@@ -1596,7 +1597,7 @@ describe('test_model.js', function() {
     it('must send request to juju environment for local charms', function() {
       var charm = new models.Charm({id: 'local:precise/foo-4'}).load(env);
       assert(!charm.loaded);
-      assert.equal('CharmInfo', conn.last_message().Request);
+      assert.equal(conn.last_message().request, 'CharmInfo');
     });
 
     it('must handle success from local charm request', function(done) {
@@ -1609,8 +1610,8 @@ describe('test_model.js', function() {
             done();
           });
       var response = {
-        RequestId: conn.last_message().RequestId,
-        Response: {Meta: {Summary: 'wowza'}, Config: {}}
+        'request-id': conn.last_message()['request-id'],
+        response: {Meta: {Summary: 'wowza'}, Config: {}}
       };
       env.dispatch_result(response);
       // The test in the callback above should run.
@@ -1629,8 +1630,8 @@ describe('test_model.js', function() {
             done();
           });
       var response = {
-        RequestId: conn.last_message().RequestId,
-        Response: {
+        'request-id': conn.last_message()['request-id'],
+        response: {
           Meta: {},
           Config: {
             Options: {
@@ -1657,8 +1658,8 @@ describe('test_model.js', function() {
             done();
           });
       var response = {
-        RequestId: conn.last_message().RequestId,
-        Error: 'error'
+        'request-id': conn.last_message()['request-id'],
+        error: 'error'
       };
       env.dispatch_result(response);
       // The test in the callback above should run.

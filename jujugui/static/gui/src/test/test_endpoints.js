@@ -528,7 +528,7 @@ describe('Endpoints map handlers', function() {
 });
 
 
-describe('Service config handlers', function() {
+describe('Application config handlers', function() {
   var Y, juju, utils, app, conn, env, controller, destroyMe;
 
   before(function(done) {
@@ -558,6 +558,7 @@ describe('Service config handlers', function() {
       password: 'password'
     });
     env.connect();
+    env.set('facades', {Application: [1]});
     this._cleanups.push(env.close.bind(env));
     app = new Y.juju.App({env: env, consoleEnabled: true });
     destroyMe.push(app);
@@ -575,10 +576,12 @@ describe('Service config handlers', function() {
   // Ensure the last message in the connection is a ServiceGet request.
   var assertServiceGetCalled = function() {
     assert.equal(1, conn.messages.length);
-    assert.equal('ServiceGet', conn.last_message().Request);
+    var msg = conn.last_message();
+    assert.strictEqual(msg.type, 'Application');
+    assert.strictEqual(msg.request, 'Get');
   };
 
-  it('should not call ServiceGet when a pending service is added',
+  it('should not call Application.Get when a pending service is added',
      function() {
        var charmUrl = 'cs:precise/wordpress-2';
        app.db.services.add({
@@ -588,7 +591,7 @@ describe('Service config handlers', function() {
        assert.equal(0, conn.messages.length);
      });
 
-  it('should call ServiceGet when non-pending services are added',
+  it('should call Application.Get when non-pending services are added',
      function() {
        var applicationName = 'wordpress';
        var charmUrl = 'cs:precise/wordpress-2';
@@ -602,7 +605,7 @@ describe('Service config handlers', function() {
        assertServiceGetCalled();
      });
 
-  it('should call ServiceGet when a service\'s charm changes', function() {
+  it('should call Application.Get when a charm changes', function() {
     var applicationName = 'wordpress';
     var charmUrl = 'cs:precise/wordpress-2';
     var charm = app.db.charms.add({id: charmUrl});

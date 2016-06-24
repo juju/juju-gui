@@ -127,7 +127,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   describe('bundle helpers watchAll', function() {
     var bundleNotifications, conn, db, env, juju, testUtils;
     var requirements = [
-      'bundle-import-notifications', 'juju-tests-utils'];
+      'bundle-import-notifications', 'juju-env-legacy-api', 'juju-tests-utils'
+    ];
 
     before(function(done) {
       YUI(GlobalConfig).use(requirements, function(Y) {
@@ -140,9 +141,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     beforeEach(function() {
       conn = new testUtils.SocketStub();
-      env = new juju.environments.GoEnvironment({
+      env = new juju.environments.GoLegacyEnvironment({
         conn: conn, user: 'user', password: 'password'
-      }, 'go');
+      });
       env.connect();
       env.set('facades', {Deployer: [0]});
       this._cleanups.push(env.close.bind(env));
