@@ -79,6 +79,28 @@ var module = module;
     },
 
     /**
+      Creates a record of the authenticated user's agreement to a revision of
+      a Terms and Conditions document.
+
+      @public addAgreement
+      @params name {String} The terms name.
+      @params revision {String or Int} The optional terms revision. If no
+        revision is specified an agreement to the latest revision will be
+        created.
+      @params callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and an authorization object as its second.
+    */
+    addAgreement: function(name, revision, callback) {
+      var url = this.url + '/agreement/' + name;
+      var payload = {};
+      if (revision === 0 || revision) {
+        payload.revision = revision;
+      }
+      return jujulib._makeRequest(this.bakery, url, 'POST', payload, callback);
+    },
+
+    /**
       Retrieves all the agreements for the authenticated user.
 
       @public getAgreements
