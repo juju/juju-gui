@@ -1812,10 +1812,14 @@ YUI.add('juju-view-utils', function(Y) {
     Returns an array of relation types for the passed applications
 
     @method getRelationTypes
+    @param {Object} endpointsController a reference to the endpoints
+      Controller instance
+    @param {Object} db a reference to the db instance
+    @param {Function} reference to the models.getEndpoints method
     @param {Object} applicationFrom the application to relate from.
     @param {Object} applicationTo the application to relate to.
     @param {Boolean} filterExisting filters exisiting relations from the
-    returned relation types
+      returned relation types
     @returns {Array} The relations that are compatible.
   */
   utils.getRelationTypes = function(
@@ -1825,17 +1829,15 @@ YUI.add('juju-view-utils', function(Y) {
       endpointsController);
     var relationTypes = applicationToEndpoints[applicationFrom.get('id')];
     if (filterExisting) {
-      var filtered = utils.getRelationDataForService(db, applicationTo).filter(
-        function(match) {
-          return match.endpoints[0] !== applicationFrom.get('id');
-        }
-      );
+      var filtered =
+        utils.getRelationDataForService(db, applicationTo)
+             .filter(match => match.endpoints[0] !== applicationFrom.get('id'));
       if (filtered.length !== 0) {
-        relationTypes = relationTypes.filter(function(relation) {
-          return filtered.some(function(item) {
-            return relation[0].name !== item.near.name ||
-              relation[1].name !== item.far.name;
-          });
+        // Find the 'far' endpoint.
+        relationTypes = relationTypes.filter(relation => {
+          return filtered.some(
+            item => relation[0].name !== item.near.name ||
+              relation[1].name !== item.far.name);
         });
       }
     }
