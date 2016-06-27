@@ -1773,19 +1773,22 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Function} callback A function to call after removal.
   */
   utils.createRelation = function(db, env, relations, callback) {
-    var endpoints = [relations[0].service, {
-      name: relations[0].name,
-      role: 'client'
-    }, relations[1].service, {
-      name: relations[1].name,
-      role: 'server'
-    }];
-
-    var relationId = 'pending-' + endpoints[0] + ':' + endpoints[0].name +
-                      endpoints[1] + ':' + endpoints[1].name;
+    var endpoints = [[
+      relations[0].service, {
+        name: relations[0].name,
+        role: 'client'
+      }
+    ], [
+      relations[1].service, {
+        name: relations[1].name,
+        role: 'server'
+      }
+    ]];
+    var relationId = 'pending-' + endpoints[0][0] + ':' + endpoints[0][1].name +
+                      endpoints[1][0] + ':' + endpoints[1][1].name;
     db.relations.add({
       relation_id: relationId,
-      'interface': endpoints[0].name,
+      'interface': endpoints[0][1].name,
       endpoints: endpoints,
       pending: true,
       scope: 'global', // XXX check the charms to see if this is a subordinate
@@ -1794,7 +1797,8 @@ YUI.add('juju-view-utils', function(Y) {
     env.add_relation(
       endpoints[0], endpoints[1],
       function(e) {
-        this.db.relations.create({
+        db.relations.remove(db.relations.getById(relationId));
+        db.relations.create({
           relation_id: e.result.id,
           type: e.result['interface'],
           endpoints: endpoints,
@@ -1802,17 +1806,6 @@ YUI.add('juju-view-utils', function(Y) {
           scope: e.result.scope
         });
       }.bind(this));
-  };
-
-  /**
-    Return the application object that matches the ID
-
-    @method getApplicationById
-    @param {Database} db to resolve relations on.
-    @param {String} applicationId the application id.
-  */
-  utils.getApplicationById = function(db, applicationId) {
-    return db.services.getById(applicationId);
   };
 
   /**
@@ -1826,9 +1819,9 @@ YUI.add('juju-view-utils', function(Y) {
     @returns {Array} The relations that are compatible.
   */
   utils.getRelationTypes = function(
-    topo, db, models, applicationFrom, applicationTo, filterExisting=true) {
-    var endpointsController = topo.get('endpointsController');
-    var applicationToEndpoints = models.getEndpoints(applicationTo,
+    endpointsController, db, getEndpoints, applicationFrom,
+    applicationTo, filterExisting=true) {
+    var applicationToEndpoints = getEndpoints(applicationTo,
       endpointsController);
     var relationTypes = applicationToEndpoints[applicationFrom.get('id')];
     if (filterExisting) {
@@ -1853,17 +1846,17 @@ YUI.add('juju-view-utils', function(Y) {
     Returns a list of relatible applications
 
     @method getRelatableApplications
-    @param {Object} topo The topology object.
+    @param {Object} endpointsController The topology object.
     @param {Database} db to resolve relations on.
     @param {Object} service A BoxModel-wrapped application.
     @param {Function} callback A function to call after removal.
     @returns {Array} The service objects that can related to the application.
   */
-  utils.getRelatableApplications = function(topo, db, models, application) {
-    var endpointsController = topo.get('endpointsController');
-    var endpoints = models.getEndpoints(application, endpointsController);
+  utils.getRelatableApplications = function(
+    endpointsController, db, getEndpoints, application) {
+    var endpoints = getEndpoints(application, endpointsController);
     var possibleRelations = [];
-    for (endpoint in endpoints) {
+    for (var endpoint in endpoints) {
       possibleRelations.push(db.services.getById(endpoint));
     }
     return possibleRelations;
