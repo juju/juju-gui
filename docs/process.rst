@@ -219,8 +219,7 @@ Utopic) will run into problems with running the functional tests.
   string that combines the value in the branch's ``CHANGES.yaml`` with the
   branch's revno.
 - While still in the directory where you extracted the tar file, change
-  build-prod/static/gui/build/app/assets/config.js to specify simulateEvents: false
-  and hideLoginButton: false.
+  build-prod/static/gui/build/app/assets/config.js to hideLoginButton: false.
 - Serve the app with a python module.
 
   - cd build-prod && python -m SimpleHTTPServer
@@ -403,8 +402,8 @@ lane and try to break new (and old) features.  Any breakages would stop the
 release process and be worthy of a test in their own right.
 
 Using whatever branch will be used for the release, run ``make prod`` while
-improv is running.  Additionally, these steps may be completed with both
-``sandbox`` and ``simulateEvents`` set to ``true``.
+improv is running.  Additionally, these steps may be completed with
+``sandbox`` set to ``true``.
 
 - Add MySQL.
 - Drag MySQL ghost.
@@ -423,8 +422,6 @@ improv is running.  Additionally, these steps may be completed with both
 - Add another charm.
 - Confirm adding it.
 - Delete it.
-- Leave the simulator running for a minute or so to ensure nothing weird
-  happens (only applicable if the simulator is running).
 - Pan and zoom around the canvas.
 - Hit ')' to re-center the services in the viewport.
 - Log out and back in.

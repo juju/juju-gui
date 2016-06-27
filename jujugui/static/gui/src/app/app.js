@@ -208,17 +208,6 @@ YUI.add('juju-gui', function(Y) {
         label: 'Esc'
       },
 
-      'C-s': {
-        'condition': function() {
-          return this._simulator !== undefined;
-        },
-        callback: function() {
-          this._simulator.toggle();
-        },
-        help: 'Toggle the simulator',
-        label: 'Control + s'
-      },
-
       'S-d': {
         callback: function(evt) {
           views.utils.exportEnvironmentFile(this.db);
@@ -510,11 +499,6 @@ YUI.add('juju-gui', function(Y) {
         macaroons: macaroons
       });
       this.env = env;
-
-      // Create an event simulator where possible.
-      // Starting the simulator is handled by hotkeys
-      // and/or the config setting 'simulateEvents'.
-      this.simulateEvents();
 
       // Set the env in the model controller here so
       // that we know that it's been setup.
@@ -1700,34 +1684,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-    Start the simulator if it can start and it has not already been started.
-
-    @method simulateEvents
-    */
-    simulateEvents: function() {
-      if (!this._simulator && this.env) {
-        // Try/Catch this to allow mocks in tests.
-        try {
-          var conn = this.env.get('conn');
-          var juju = conn && conn.get('juju');
-          var state = juju && juju.get('state');
-          if (state) {
-            var Simulator = Y.namespace('juju.environments').Simulator;
-            this._simulator = new Simulator({state: state});
-            if (this.get('simulateEvents')) {
-              this._simulator.start();
-            }
-          }
-        }
-        catch (err) {
-          // Unable to create simulator, usually due to mocks or an
-          // unsupported environment
-          console.log('Unable to create simulator: ');
-        }
-      }
-    },
-
-    /**
     Release resources and inform subcomponents to do the same.
 
     @method destructor
@@ -1738,9 +1694,6 @@ YUI.add('juju-gui', function(Y) {
       }
       if (this._keybindings) {
         this._keybindings.detach();
-      }
-      if (this._simulator) {
-        this._simulator.stop();
       }
       Y.each(
           [this.env, this.db, this.endpointsController],
@@ -2620,7 +2573,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-sandbox',
     'juju-env-web-handler',
     'juju-env-web-sandbox',
-    'juju-fakebackend-simulator',
     'juju-models',
     'jujulib-utils',
     'net-utils',
