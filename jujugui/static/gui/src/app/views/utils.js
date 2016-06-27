@@ -1846,20 +1846,14 @@ YUI.add('juju-view-utils', function(Y) {
     Returns a list of relatible applications
 
     @method getRelatableApplications
-    @param {Object} endpointsController The topology object.
-    @param {Database} db to resolve relations on.
-    @param {Object} service A BoxModel-wrapped application.
-    @param {Function} callback A function to call after removal.
+    @param {Object} db Reference to the db instance.
+    @param {Object} endpoints An object of endpoints with the keys being
+      the service name.
     @returns {Array} The service objects that can related to the application.
   */
-  utils.getRelatableApplications = function(
-    endpointsController, db, getEndpoints, application) {
-    var endpoints = getEndpoints(application, endpointsController);
-    var possibleRelations = [];
-    for (var endpoint in endpoints) {
-      possibleRelations.push(db.services.getById(endpoint));
-    }
-    return possibleRelations;
+  utils.getRelatableApplications = function(db, endpoints) {
+    return Object.keys(endpoints)
+                 .map(appName => db.services.getById(appName));
   };
 
   /**
