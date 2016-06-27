@@ -1,7 +1,7 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2012-2013 Canonical Ltd.
+Copyright (C) 2016 Canonical Ltd.
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3, as published by
@@ -18,15 +18,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe('Juju delta handlers', function() {
+describe('Juju legacy delta handlers', function() {
   var db, models, handlers, testUtils;
   var requirements = [
-    'juju-models', 'juju-delta-handlers', 'juju-tests-utils'];
+    'juju-models', 'juju-legacy-delta-handlers', 'juju-tests-utils'];
 
   before(function(done) {
     YUI(GlobalConfig).use(requirements, function(Y) {
       models = Y.namespace('juju.models');
-      handlers = models.handlers;
+      handlers = models.legacyHandlers;
       testUtils = Y.namespace('juju-tests.utils');
       done();
     });
@@ -368,205 +368,6 @@ describe('Juju delta handlers', function() {
     });
   });
 
-  describe('applicationInfo handler', function() {
-    var applicationInfo, constraints, config;
-
-    before(function() {
-      applicationInfo = handlers.applicationInfo;
-      constraints = {
-        arch: 'amd64',
-        mem: 2000,
-        'cpu-cores': 4
-      };
-      config = {cow: 'pie'};
-    });
-
-    it('creates an application in the database', function() {
-      var change = {
-        Name: 'django',
-        CharmURL: 'cs:precise/django-42',
-        Exposed: true,
-        Constraints: constraints,
-        Config: config,
-        Life: 'alive',
-        Subordinate: true
-      };
-      var oldUpdateConfig = models.Service.prototype.updateConfig;
-      models.Service.prototype.updateConfig = testUtils.makeStubFunction();
-      applicationInfo(db, 'add', change);
-      assert.strictEqual(db.services.size(), 1);
-      // Retrieve the application from the database.
-      var application = db.services.getById('django');
-      assert.strictEqual(application.get('charm'), 'cs:precise/django-42');
-      assert.strictEqual(application.get('exposed'), true, 'exposed');
-      assert.deepEqual(application.get('constraints'), constraints);
-      // The config on the application is initially set to the customized
-      // subset in the delta stream. The full config will be gotten via a call
-      // to the Application.Get API.
-      assert.equal(db.services.item(0).updateConfig.callCount(), 1);
-      models.Service.prototype.updateConfig = oldUpdateConfig;
-      assert.strictEqual(application.get('life'), 'alive');
-      assert.strictEqual(application.get('subordinate'), true, 'subordinate');
-    });
-
-    it('updates an application in the database', function() {
-      db.services.add({
-        id: 'wordpress',
-        charm: 'cs:quantal/wordpress-11',
-        exposed: true
-      });
-      var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false,
-        Life: 'dying',
-        Subordinate: false
-      };
-      applicationInfo(db, 'change', change);
-      assert.strictEqual(db.services.size(), 1);
-      // Retrieve the application from the database.
-      var application = db.services.getById('wordpress');
-      assert.strictEqual(application.get('charm'), 'cs:quantal/wordpress-11');
-      assert.strictEqual(application.get('exposed'), false, 'exposed');
-      assert.strictEqual('dying', application.get('life'));
-      assert.strictEqual(application.get('subordinate'), false, 'subordinate');
-    });
-
-    it('handles missing constraints', function() {
-      db.services.add({
-        id: 'wordpress',
-        charm: 'cs:quantal/wordpress-11',
-        exposed: true
-      });
-      var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false
-      };
-      applicationInfo(db, 'change', change);
-      assert.strictEqual(1, db.services.size());
-      // Retrieve the application from the database.
-      var application = db.services.getById('wordpress');
-      assert.deepEqual(application.get('constraints'), {});
-    });
-
-    it('converts the tags constraint into a string', function() {
-      db.services.add({
-        id: 'wordpress',
-        charm: 'cs:quantal/wordpress-11',
-        exposed: true
-      });
-      var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false,
-        Constraints: {tags: ['tag1', 'tag2', 'tag3']}
-      };
-      applicationInfo(db, 'change', change);
-      assert.strictEqual(1, db.services.size());
-      // Retrieve the application from the database.
-      var application = db.services.getById('wordpress');
-      assert.deepEqual(
-        application.get('constraints'), {tags: 'tag1,tag2,tag3'});
-    });
-
-    it('handle empty tags constraint', function() {
-      db.services.add({
-        id: 'wordpress',
-        charm: 'cs:quantal/wordpress-11',
-        exposed: true
-      });
-      var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false,
-        Constraints: {tags: []}
-      };
-      applicationInfo(db, 'change', change);
-      assert.strictEqual(1, db.services.size());
-      // Retrieve the application from the database.
-      var application = db.services.getById('wordpress');
-      assert.deepEqual(application.get('constraints'), {});
-    });
-
-    it('if configs are not in the change stream they are {}', function() {
-      db.services.add({
-        id: 'wordpress',
-        charm: 'cs:quantal/wordpress-11',
-        exposed: true
-      });
-      var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false
-      };
-      applicationInfo(db, 'change', change);
-      assert.strictEqual(1, db.services.size());
-      // Retrieve the application from the database.
-      var application = db.services.getById('wordpress');
-      assert.deepEqual({}, application.get('config'));
-    });
-
-    it('handles constraint changes', function() {
-      db.services.add({
-        id: 'wordpress',
-        charm: 'cs:quantal/wordpress-11',
-        exposed: true,
-        constraints: constraints
-      });
-      var changedConstraints = {'arch': 'i386'};
-      var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false,
-        Constraints: changedConstraints
-      };
-      applicationInfo(db, 'change', change);
-      assert.strictEqual(1, db.services.size());
-      // Retrieve the application from the database.
-      var application = db.services.getById('wordpress');
-      assert.deepEqual(changedConstraints, application.get('constraints'));
-    });
-
-    it('removes an application from the database', function() {
-      db.services.add({
-        id: 'wordpress',
-        charm: 'cs:quantal/wordpress-11',
-        exposed: true
-      });
-      var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false
-      };
-      applicationInfo(db, 'remove', change);
-      assert.strictEqual(0, db.services.size());
-    });
-
-    it('executes collected application hooks on change', function() {
-      var hook1 = testUtils.makeStubFunction();
-      var hook2 = testUtils.makeStubFunction();
-      models._applicationChangedHooks.django = [hook1, hook2];
-      var change = {
-        Name: 'django',
-        CharmURL: 'cs:precise/django-42',
-        Exposed: true,
-        Constraints: constraints,
-        Config: config,
-        Life: 'alive'
-      };
-      applicationInfo(db, 'change', change);
-      // The two hooks have been called.
-      assert.strictEqual(hook1.calledOnce(), true);
-      assert.strictEqual(hook1.lastArguments().length, 0);
-      assert.strictEqual(hook2.calledOnce(), true);
-      assert.strictEqual(hook2.lastArguments().length, 0);
-      // The hooks have been garbage collected.
-      assert.deepEqual(models._applicationChangedHooks, {});
-    });
-
-  });
-
   describe('serviceInfo handler', function() {
     var serviceInfo, constraints, config;
 
@@ -745,7 +546,7 @@ describe('Juju delta handlers', function() {
     it('executes collected application hooks on change', function() {
       var hook1 = testUtils.makeStubFunction();
       var hook2 = testUtils.makeStubFunction();
-      models._applicationChangedHooks.django = [hook1, hook2];
+      models._serviceChangedHooks.django = [hook1, hook2];
       var change = {
         Name: 'django',
         CharmURL: 'cs:precise/django-42',
@@ -761,7 +562,7 @@ describe('Juju delta handlers', function() {
       assert.strictEqual(hook2.calledOnce(), true);
       assert.strictEqual(hook2.lastArguments().length, 0);
       // The hooks have been garbage collected.
-      assert.deepEqual(models._applicationChangedHooks, {});
+      assert.deepEqual(models._serviceChangedHooks, {});
     });
 
   });
@@ -1341,246 +1142,6 @@ describe('Juju delta handlers', function() {
       };
       annotationInfo(db, 'add', change);
       assert.strictEqual(0, db.services.size());
-    });
-
-  });
-
-});
-
-describe('Juju delta handlers utilities', function() {
-  var utils, Y;
-
-  before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-delta-handlers'], function(Y) {
-      utils = Y.namespace('juju.models').utils;
-      done();
-    });
-  });
-
-  describe('Go Juju Entity Tag cleaner', function() {
-    var cleanUpEntityTags;
-
-    before(function() {
-      cleanUpEntityTags = utils.cleanUpEntityTags;
-    });
-
-    it('cleans up tags from Go juju', function() {
-      // Clean up application tags.
-      assert.equal('mysql', cleanUpEntityTags('application-mysql'));
-      assert.equal(
-          'buildbot-master', cleanUpEntityTags('application-buildbot-master'));
-      assert.equal('mysql', cleanUpEntityTags('service-mysql'));
-      assert.equal(
-          'buildbot-master', cleanUpEntityTags('service-buildbot-master'));
-      // Clean up unit tags.
-      assert.equal('mysql/47', cleanUpEntityTags('unit-mysql-47'));
-      assert.equal(
-          'buildbot-master/0', cleanUpEntityTags('unit-buildbot-master-0'));
-      // Clean up machine tags.
-      assert.equal('0', cleanUpEntityTags('machine-0'));
-      assert.equal('42', cleanUpEntityTags('machine-42'));
-      // Clean up model and environment tags.
-      assert.equal('aws', cleanUpEntityTags('model-aws'));
-      assert.equal('my-env', cleanUpEntityTags('model-my-env'));
-      assert.equal('aws', cleanUpEntityTags('environment-aws'));
-      assert.equal('my-env', cleanUpEntityTags('environment-my-env'));
-    });
-
-    it('ignores bad values', function() {
-      var data = ['foo', 'bar-baz', '123', 'unit-', 'application-', 'machine'];
-      Y.each(data, function(item) {
-        assert.equal(item, cleanUpEntityTags(item));
-      });
-    });
-
-  });
-
-  describe('Go Juju ports converter', function() {
-    var convertOpenPorts;
-
-    before(function() {
-      convertOpenPorts = utils.convertOpenPorts;
-    });
-
-    it('correctly returns a list of ports', function() {
-      var ports = [
-        {Number: 80, Protocol: 'tcp'},
-        {Number: 42, Protocol: 'udp'}
-      ];
-      assert.deepEqual(['80/tcp', '42/udp'], convertOpenPorts(ports));
-    });
-
-    it('returns an empty list if there are no ports', function() {
-      assert.deepEqual([], convertOpenPorts([]));
-      assert.deepEqual([], convertOpenPorts(null));
-      assert.deepEqual([], convertOpenPorts(undefined));
-    });
-
-  });
-
-  describe('Go Juju endpoints converter', function() {
-    var createEndpoints;
-
-    before(function() {
-      createEndpoints = utils.createEndpoints;
-    });
-
-    it('correctly returns a list of endpoints', function() {
-      var endpoints = [
-        {
-          Relation: {
-            Interface: 'http',
-            Limit: 1,
-            Name: 'reverseproxy',
-            Optional: false,
-            Role: 'requirer',
-            Scope: 'global'
-          },
-          ApplicationName: 'haproxy'
-        },
-        {
-          Relation: {
-            Interface: 'http',
-            Limit: 0,
-            Name: 'website',
-            Optional: false,
-            Role: 'provider',
-            Scope: 'global'
-          },
-          ApplicationName: 'wordpress'
-        }
-      ];
-      var expected = [
-        ['haproxy', {role: 'requirer', name: 'reverseproxy'}],
-        ['wordpress', {role: 'provider', name: 'website'}]
-      ];
-      assert.deepEqual(expected, createEndpoints(endpoints));
-    });
-
-    it('correctly returns a list of endpoints (legacy API)', function() {
-      var endpoints = [
-        {
-          Relation: {
-            Interface: 'http',
-            Limit: 1,
-            Name: 'reverseproxy',
-            Optional: false,
-            Role: 'requirer',
-            Scope: 'global'
-          },
-          ServiceName: 'haproxy'
-        },
-        {
-          Relation: {
-            Interface: 'http',
-            Limit: 0,
-            Name: 'website',
-            Optional: false,
-            Role: 'provider',
-            Scope: 'global'
-          },
-          ServiceName: 'wordpress'
-        }
-      ];
-      var expected = [
-        ['haproxy', {role: 'requirer', name: 'reverseproxy'}],
-        ['wordpress', {role: 'provider', name: 'website'}]
-      ];
-      console.log(createEndpoints(endpoints));
-      assert.deepEqual(expected, createEndpoints(endpoints));
-    });
-
-    it('returns an empty list if there are no endpoints', function() {
-      assert.deepEqual([], createEndpoints([]));
-    });
-
-  });
-
-  describe('Go Juju convertConstraints', function() {
-    var convertConstraints;
-
-    before(function() {
-      convertConstraints = utils.convertConstraints;
-    });
-
-    it('correctly returns the constraints', function() {
-      var constraints = {
-        arch: 'amd64',
-        'cpu-cores': 2,
-        'cpu-power': 800,
-        mem: 2000
-      };
-      assert.deepEqual(convertConstraints(constraints), constraints);
-    });
-
-    it('returns an empty object if no constraints are set', function() {
-      assert.deepEqual(convertConstraints(null), {});
-      assert.deepEqual(convertConstraints({}), {});
-      assert.deepEqual(convertConstraints(undefined), {});
-    });
-
-    it('converts the tags', function() {
-      var constraints = convertConstraints({
-        arch: 'i386',
-        tags: ['tag1', 'tag2', 'tag3']
-      });
-      assert.deepEqual(constraints, {arch: 'i386', tags: 'tag1,tag2,tag3'});
-    });
-
-  });
-
-  describe('translateToLegacyAgentState', function() {
-    var translate;
-
-    before(function() {
-      translate = utils.translateToLegacyAgentState;
-    });
-
-    it('returns pending when allocating', function() {
-      assert.equal(translate('allocating'), 'pending');
-    });
-
-    it('returns error when in error', function() {
-      assert.equal(translate('error'), 'error');
-    });
-
-    describe('rebooting, executing, idle, lost, failed', function() {
-
-      var states = ['rebooting', 'executing', 'idle', 'lost', 'failed'];
-
-      states.forEach(function(state) {
-
-        it('returns error when in error: ' + state, function() {
-          assert.equal(translate(state, 'error'), 'error',
-            state + ' did not return the correct value');
-        });
-
-        it('returns stopped when terminated: ' + state, function() {
-          assert.equal(translate(state, 'terminated'), 'stopped',
-            state + ' did not return the correct value');
-        });
-
-        it('returns properly when in maintenance and installed: ' + state,
-          function() {
-            assert.equal(translate(state, 'maintenance'), 'started',
-              state + ' did not return the correct value');
-          });
-
-        it('returns pending when in maintenance and not installed: ' + state,
-          function() {
-            assert.equal(
-              translate(state, 'maintenance', 'installing charm software'),
-              'pending',
-              state + ' did not return the correct value');
-          });
-
-        it('returns started as a default: ' + state, function() {
-          assert.equal(translate(state, 'foobar'), 'started',
-            state + ' did not return the correct value');
-        });
-
-      });
-
     });
 
   });

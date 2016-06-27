@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
    Delta handlers.
    This module contains delta stream handlers and converters to be used
-   to parse and prepare the delta stream coming from environments so that
+   to parse and prepare the delta stream coming from Juju >= 2 models so that
    it can be used to populate the database.
 
    @module handlers
@@ -328,21 +328,6 @@ YUI.add('juju-delta-handlers', function(Y) {
       }
       // Delete the application hooks for this application.
       delete applicationChangedHooks[change.Name];
-    },
-
-    /**
-      Handle service info coming from the juju-core delta when using Juju 1,
-      updating the relevant database models.
-
-      @method serviceInfo
-      @param {Object} db The app.models.models.Database instance.
-      @param {String} action The operation to be performed
-       ("add", "change" or "remove").
-      @param {Object} change The JSON entity information.
-      @return {undefined} Nothing.
-     */
-    serviceInfo: function(db, action, change) {
-      models.handlers.applicationInfo(db, action, change);
     },
 
     /**
