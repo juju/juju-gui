@@ -472,9 +472,7 @@ YUI.add('juju-gui', function(Y) {
           envOptions.webHandler = new webModule.WebHandler();
         }
         var environment = environments.GoEnvironment;
-        // TODO frankban: switch to using the new GoEnvironment when sandbox
-        // is ready to do so.
-        if (this.isLegacyJuju() || this.get('sandbox')) {
+        if (this.isLegacyJuju()) {
           environment = environments.GoLegacyEnvironment;
         }
         this._init(cfg, new environment(envOptions), state);

@@ -31,7 +31,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
   var ziputils = Y.namespace('juju.ziputils');
   var viewUtils = Y.namespace('juju.views.utils');
 
-  var VALUE_ERROR = {error: 'Unparsable model data.'};
   var UNAUTHENTICATED_ERROR = {error: 'Please log in.'};
 
   /**
@@ -54,7 +53,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
     },
     defaultSeries: {value: 'trusty'},
-    name: {value: 'Environment'},
+    name: {value: 'Model'},
     maasServer: {value: null},
     providerType: {value: 'demonstration'},
     charmstore: {},
@@ -75,8 +74,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
       this._resetAnnotations();
       // used for relation id's
       this._relationCount = 0;
-      // used for deployer import tracking
-      this._importId = 0;
       this._importChanges = [];
       this._deploymentId = 0;
     },
@@ -395,8 +392,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
       configYAML: The charm configuration options, expressed as a YAML
         string.  You may provide only one of config or configYAML.
       unitCount: The number of units to be deployed.
-      toMachine: The machine/container specification to which the application
-        should be deployed.
     @return {undefined} Get the result from the callback.
     */
     _deployFromCharm: function(charm, callback, options) {
@@ -511,7 +506,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var response = {};
       // Add units if requested.
       if (unitCount !== 0) {
-        response = this.addUnit(options.name, unitCount, options.toMachine);
+        response = this.addUnit(options.name, unitCount, null);
       }
       response.application = application;
       callback(response);
@@ -1683,281 +1678,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
       });
 
       return {result: result};
-    },
-
-
-    /**
-     Single atomic, non-mutating parse of a bundle
-     followed by things like id assignment, this
-     returns a complex data structure which is used
-     by importDeployer to enact the deploy.
-
-     @method ingestDeployer
-    */
-    ingestDeployer: function(data, options) {
-      if (!data) {return;}
-      options = options || {};
-      var db = this.db;
-      var targetBundle = options.targetBundle;
-      var useGhost = options.useGhost;
-      if (useGhost === undefined) {
-        useGhost = true;
-      }
-
-      var source;
-      // Check whether this is a raw bundle or a basket of bundles.
-      if (data.applications && !data.applications.applications) {
-        source = data;
-      } else {
-        if (!targetBundle && Object.keys(data).length > 1) {
-          throw new Error('Import target ambiguous, aborting.');
-        }
-
-        // Builds out a object with inherited properties.
-        source = targetBundle && data[targetBundle] ||
-            data[Object.keys(data)[0]];
-      }
-      var ancestors = [];
-      var seen = [];
-
-      /**
-        Helper to build out an inheritance chain
-
-        @method setupInheritance
-        @param {Object} base object currently being inspected.
-        @param {Array} baseList chain of ancestors to later inherit.
-        @param {Object} bundleData import data used to resolve ancestors.
-        @param {Array} seen list used to track objects already in inheritence
-        chain.  @return {Array} of all inherited objects ordered from most base
-        to most specialized.
-      */
-      function setupInheritance(base, baseList, bundleData, seen) {
-        // local alias for internal function.
-        var sourceData = bundleData;
-        var seenList = seen;
-
-        baseList.unshift(base);
-        // Normalize to array when present.
-        if (!base.inherits) { return; }
-        if (base.inherits && !Array.isArray(base.inherits)) {
-          base.inherits = [base.inherits];
-        }
-
-        base.inherits.forEach(function(ancestor) {
-          var baseDeploy = sourceData[ancestor];
-          if (baseDeploy === undefined) {
-            throw new Error('Unable to resolve bundle inheritence.');
-          }
-          if (seenList.indexOf(ancestor) === -1) {
-            seenList.push(ancestor);
-            setupInheritance(baseDeploy, baseList, bundleData, seenList);
-          }
-        });
-
-      }
-      setupInheritance(source, ancestors, data, seen);
-      // Source now merges it all.
-      source = {};
-      ancestors.forEach(function(ancestor) {
-        // Mix Merge and overwrite in order of inheritance
-        Y.mix(source, ancestor, true, undefined, 0, true);
-      });
-
-      var error = '';
-      for (var applicationName in source.applications) {
-        var existing = db.services.getById(applicationName);
-        if (existing) {
-          console.log(source);
-          error = applicationName + ' is already present in the database.' +
-              ' Change application name and try again.';
-        }
-        source.applications[applicationName].name = applicationName;
-      };
-
-      if (error) {
-        return { error: error };
-      } else {
-        return {
-          applications: source.applications,
-          relations: source.relations
-        };
-      }
-    },
-
-    /**
-     Import Deployer from YAML files
-
-     @method importDeployer
-     @param {String} YAMLData YAML string data to import.
-     @param {String} [name] Name of bundle within deployer file to import.
-     @param {Function} callback Triggered on completion of the import.
-     @return {undefined} Callback only.
-     */
-    importDeployer: function(YAMLData, name, callback) {
-      var self = this;
-      if (!this.get('authenticated')) {
-        return callback(UNAUTHENTICATED_ERROR);
-      }
-      var data;
-      if (typeof YAMLData === 'string') {
-        try {
-          data = jsyaml.safeLoad(YAMLData);
-        } catch (e) {
-          console.log('error parsing deployer bundle');
-          return callback(VALUE_ERROR);
-        }
-      } else {
-        // Allow passing in Objects directly to ease testing.
-        data = YAMLData;
-      }
-      // XXX: The proper API doesn't allow options for the level
-      // of control that ingest allows. This should be addressed
-      // in the future.
-      var options = {};
-      if (name) {
-        options.targetBundle = name;
-      }
-      var ingestedData = this.ingestDeployer(data, options);
-      var applicationPromises = [];
-      // If there is an error in the ingestedData then return with the error.
-      if (ingestedData.error) {
-        callback(ingestedData);
-        return;
-      }
-      for (var appName in ingestedData.applications) {
-        var applicationData = ingestedData.applications[appName];
-        // Map the argument name from the deployer format
-        // name for unit count.
-        if (!applicationData.unitCount) {
-          applicationData.unitCount = applicationData.num_units;
-        }
-        if (applicationData.options) {
-          // If the applicationData does not contain a config object then the
-          // inspectors won't be able to render it properly.
-          applicationData.config = applicationData.options;
-        }
-        applicationPromises.push(
-            self.promiseDeploy(applicationData.charm, applicationData));
-      }
-
-      self._deploymentId += 1;
-      var deployStatus = {
-        DeploymentId: self._deploymentId,
-        Status: 'started',
-        Timestamp: Math.round(Date.now() / 1000)
-      };
-      self._importChanges.push(deployStatus);
-      // Keep the list limited to the last 5
-      if (self._importChanges.length > 5) {
-        self._importChanges = self._importChanges.slice(-5);
-      }
-
-      Y.batch.apply(this, applicationPromises)
-        .then(function(applicationDeployResult) {
-          // Expose, if requested.
-          applicationDeployResult.forEach(function(sdr) {
-            var applicationId = sdr.application.get('id');
-            var applicationData = ingestedData.applications[applicationId];
-            if (applicationData.expose) {
-              self.expose(applicationId);
-            }
-          });
-
-          // Create requested relations.
-          ingestedData.relations.forEach(function(relationData) {
-            var relResult = self.addRelations(
-                    relationData[0], relationData[1], true);
-            // If the bungle provides a list of endpoints to relate to a
-            // single endpoint then we need to add each relation to the
-            // result list.
-            if (!Array.isArray(relResult)) {
-              relResult = [relResult];
-            }
-            relResult.forEach(function(result) {
-              self.changes.relations[result.relation.get('id')] = [
-                result.relation, true];
-            });
-          });
-        })
-        .then(function() {
-          deployStatus.Status = 'completed';
-          callback({DeploymentId: self._deploymentId});
-        }, function(err) {
-          deployStatus.Status = 'failed';
-          console.log(err, err.stack);
-          callback({Error: err.error});
-        });
-    },
-
-    /**
-     Promise the result of an importDeployer call. This method
-     exists to aid tests which use the import system to quickly
-     generate fixtures.
-
-     @method promiseImport
-     @param {String} YAMLData YAML data to import.
-     @param {String} [name] Bundle name to import.
-     @return {Promise} After the import is run.
-    */
-    promiseImport: function(YAMLData, name) {
-      var self = this;
-      return new Y.Promise(function(resolve) {
-        self.importDeployer(YAMLData, name, resolve);
-      });
-    },
-
-    /**
-     Query the deployer import code for global status of the last 5 imports. We
-     don't currently queue but a real impl would need to always include every
-     pending import regardless of queue length
-
-     @method statusDeployer
-     @param {Function} callback Triggered with completion information.
-     @return {undefined} Callback only.
-    */
-    statusDeployer: function(callback) {
-      if (!this.get('authenticated')) {
-        return callback(UNAUTHENTICATED_ERROR);
-      }
-      callback({LastChanges: this._importChanges});
-    },
-
-    /**
-      *no op* Create a watcher for the deployment specified.
-
-      This method is a no op in the fakebackend. We've already sent the user a
-      notification that things are complete in the normal deployer call.
-      There's no time to get a watcher and send/sync the watch update down
-      the road.
-
-      @method deployerWatch
-      @param {Integer} deploymentId The id of the deployment the watch is
-      for.
-      @param {Function} callback The callback to send the watcherId to.
-
-     */
-    deployerWatch: function(deploymentId, callback) {
-      // No op in the fakebackend. Just return and ignore the callback.
-      return;
-    },
-
-    /**
-      *no op* Perform a check for updates of a given deployment watcher.
-
-      This should never be called and is provided just to aid in grep-ability
-      of the codebase. Typically this is called via the callback in the
-      deployerWatch function.
-
-
-      @method deployerNext
-      @param {Integer} watcherId The id of the watcher from deployerWatch
-      @param {Function} callback The callback to handle the update response
-      from the deployer information.
-
-     */
-    deployerNext: function(watcherId, callback) {
-      // No op in the fakebackend. Just return and ignore the callback.
-      return;
     },
 
     /**
