@@ -354,8 +354,12 @@ YUI.add('inspector-component', function() {
                   relationTypes={this.props.getRelationTypes(
                     service, this.props.getServiceById(spouse))}
                   changeState={this.props.changeState} />,
-              backState: backState
-            };
+              backState: {
+                component: 'inspector',
+                metadata: {
+                  id: serviceId,
+                  activeComponent: 'relations'
+                }}};
             break;
           }
           state.activeChild = {
