@@ -358,7 +358,7 @@ YUI.add('inspector-component', function() {
                 component: 'inspector',
                 metadata: {
                   id: serviceId,
-                  activeComponent: 'relations'
+                  activeComponent: 'relate-to'
                 }}};
             break;
           }
