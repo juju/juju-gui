@@ -25,7 +25,7 @@ YUI.add('inspector-relate-to', function() {
     propTypes: {
       application: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
-      getRelatableApplications: React.PropTypes.func.isRequired,
+      relatableApplications: React.PropTypes.array.isRequired,
     },
 
     /**
@@ -36,15 +36,14 @@ YUI.add('inspector-relate-to', function() {
       @param {Object} e The click event.
     */
     _relateToItemAction: function(e) {
-      var applicationFrom = this.props.application.get('id');
-      var applicationTo = e.currentTarget.getAttribute('data-id');
-
       this.props.changeState({
         sectionA: {
           component: 'inspector',
           metadata: {
-            id: applicationFrom, // Application from Id
-            spouse: applicationTo, // Application to Id
+            // Application from Id
+            id: this.props.application.get('id'),
+            // Application to Id
+            spouse: e.currentTarget.getAttribute('data-id'),
             activeComponent: 'relate-to'
           }
         }
@@ -58,25 +57,24 @@ YUI.add('inspector-relate-to', function() {
       @param {Object} services Relatable services.
     */
     generateItemList: function() {
-      var applications = this.props.getRelatableApplications();
+      var applications = this.props.relatableApplications;
       if (applications.length === 0) {
         return (
           <div className="unit-list__message">
             No relatable endpoints available.
           </div>);
       }
-      var items = [];
-      for (var i = 0; i < applications.length; i++ ) {
-        var application = applications[i].getAttrs();
-        items.push(<li className="inspector-view__list-item"
-          data-id={application.id}
-          key={application.id + i}
-          onClick={this._relateToItemAction} tabIndex="0" role="button">
-          <img src={application.icon} className="inspector-view__item-icon" />
-          {application.name}
-        </li>);
-      }
-      return items;
+      return applications.map((application, index) => {
+        var data = application.getAttrs();
+        return (
+          <li className="inspector-view__list-item"
+            data-id={data.id}
+            key={data.id + index}
+            onClick={this._relateToItemAction} tabIndex="0" role="button">
+            <img src={data.icon} className="inspector-view__item-icon" />
+            {data.name}
+          </li>);
+      });
     },
 
     render: function() {

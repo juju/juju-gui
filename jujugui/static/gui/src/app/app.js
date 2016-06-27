@@ -1098,6 +1098,8 @@ YUI.add('juju-gui', function(Y) {
         // Select the service token.
         topo.modules.ServiceModule.selectService(service.get('id'));
         var charm = app.db.charms.getById(service.get('charm'));
+        var relatableApplications = utils.getRelatableApplications(
+          this.db, models.getEndpoints(service, this.endpointsController));
         inspector = (
           <components.Inspector
             acl={this.acl}
@@ -1117,9 +1119,7 @@ YUI.add('juju-gui', function(Y) {
             destroyUnits={utils.destroyUnits.bind(this, this.env)}
             destroyRelations={utils.destroyRelations.bind(
               this, this.db, this.env)}
-            getRelatableApplications={utils.getRelatableApplications.bind(this,
-              this.db,
-              models.getEndpoints(service, this.endpointsController))}
+            relatableApplications={relatableApplications}
             clearState={utils.clearState.bind(this, topo)}
             createRelation={utils.createRelation.bind(this, this.db, this.env)}
             getYAMLConfig={utils.getYAMLConfig.bind(this)}

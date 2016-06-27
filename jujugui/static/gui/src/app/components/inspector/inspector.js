@@ -42,7 +42,6 @@ YUI.add('inspector-component', function() {
       getAvailableVersions: React.PropTypes.func.isRequired,
       getCharm: React.PropTypes.func.isRequired,
       getMacaroon: React.PropTypes.func.isRequired,
-      getRelatableApplications: React.PropTypes.func.isRequired,
       getRelationTypes: React.PropTypes.func.isRequired,
       getServiceById: React.PropTypes.func.isRequired,
       getServiceByName: React.PropTypes.func.isRequired,
@@ -50,6 +49,7 @@ YUI.add('inspector-component', function() {
       getYAMLConfig: React.PropTypes.func.isRequired,
       linkify: React.PropTypes.func.isRequired,
       modelUUID: React.PropTypes.string.isRequired,
+      relatableApplications: React.PropTypes.array.isRequired,
       service: React.PropTypes.object.isRequired,
       serviceRelations: React.PropTypes.array.isRequired,
       setCharm: React.PropTypes.func.isRequired,
@@ -369,7 +369,7 @@ YUI.add('inspector-component', function() {
               <juju.components.InspectorRelateTo
               changeState={this.props.changeState}
               application={service}
-              getRelatableApplications={this.props.getRelatableApplications}/>,
+              relatableApplications={this.props.relatableApplications}/>,
             backState: backState
           };
           break;
