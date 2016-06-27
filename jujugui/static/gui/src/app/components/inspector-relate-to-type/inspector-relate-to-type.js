@@ -74,29 +74,22 @@ YUI.add('inspector-relate-to-type', function() {
     */
     _generateRelations: function() {
       var relations = this.props.relationTypes;
-      var relationTypes = [];
       if (relations.length === 0) {
         return (
           <li className="inspector-relate-to-type__message">
             No relatable endpoints for these applications.
           </li>);
       }
-      relations.forEach((relation, i) => {
-        var start = relation[0];
-        var end = relation[1];
-        var ref = 'InspectorRelateToType-' + i;
-        var key = i;
-        relationTypes.push(
-        <juju.components.CheckListItem
-          index={i}
-          key={key}
-          ref={ref}
-          label={this._generateRelationLabel(start, end)}
+      return relations.map((relation, index) => {
+        return (<juju.components.CheckListItem
+          index={index}
+          key={index}
+          ref={`InspectorRelateToType-${index}`}
+          label={this._generateRelationLabel(relation[0], relation[1])}
           relation={relation}
           changeState={this.props.changeState}
           whenChanged={this._updateActiveCount} />);
-      }, this);
-      return relationTypes;
+      });
     },
 
     /**
