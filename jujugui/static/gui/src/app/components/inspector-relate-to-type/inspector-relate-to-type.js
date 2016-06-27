@@ -20,6 +20,7 @@ YUI.add('inspector-relate-to-type', function() {
   juju.components.InspectorRelateToType = React.createClass({
 
     propTypes: {
+      backState: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       createRelation: React.PropTypes.func.isRequired,
       relationTypes: React.PropTypes.array.isRequired
@@ -77,7 +78,7 @@ YUI.add('inspector-relate-to-type', function() {
       if (relations.length === 0) {
         return (
           <li className="inspector-relate-to-type__message">
-            No relation types for these applications.
+            No relatable endpoints for these applications.
           </li>);
       }
       relations.forEach((relation, i) => {
@@ -115,6 +116,7 @@ YUI.add('inspector-relate-to-type', function() {
       });
       var relationTypes = this.props.relationTypes;
       this.props.createRelation(relationTypes[relations]);
+      this.props.changeState(this.props.backState);
     },
 
     /**

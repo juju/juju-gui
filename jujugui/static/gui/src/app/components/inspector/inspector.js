@@ -336,23 +336,26 @@ YUI.add('inspector-component', function() {
           break;
         case 'relate-to':
           var spouse = metadata['relate-to'];
+          var backState = {
+            sectionA: {
+              component: 'inspector',
+              metadata: {
+                id: serviceId,
+                activeComponent: 'relations'
+              }}};
           if (typeof serviceId === 'string' && typeof spouse === 'string') {
             state.activeChild = {
               title: this.props.getServiceById(spouse).get('name'),
               icon: service.get('icon'),
               component:
                 <juju.components.InspectorRelateToType
+                  backState={backState}
                   createRelation={this.props.createRelation}
                   relationTypes={this.props.getRelationTypes(
                     service, this.props.getServiceById(spouse))}
                   changeState={this.props.changeState} />,
-              backState: {
-                sectionA: {
-                  component: 'inspector',
-                  metadata: {
-                    id: serviceId,
-                    activeComponent: 'relations'
-                  }}}};
+              backState: backState
+            };
             break;
           }
           state.activeChild = {
@@ -363,13 +366,8 @@ YUI.add('inspector-component', function() {
               changeState={this.props.changeState}
               application={service}
               getRelatableApplications={this.props.getRelatableApplications}/>,
-            backState: {
-              sectionA: {
-                component: 'inspector',
-                metadata: {
-                  id: serviceId,
-                  activeComponent: 'relations'
-                }}}};
+            backState: backState
+          };
           break;
         case 'change-version':
           state.activeChild = {
