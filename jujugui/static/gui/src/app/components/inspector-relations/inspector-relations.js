@@ -40,10 +40,10 @@ YUI.add('inspector-relations', function() {
     /**
       Fires changeState to update the UI based on the component clicked.
 
-      @method _navigate
+      @method _showCreateRelation
       @param {Object} e The click event.
     */
-    _navigate: function(e) {
+    _showCreateRelation: function(e) {
       this.props.changeState({
         sectionA: {
           component: 'inspector',
@@ -228,7 +228,7 @@ YUI.add('inspector-relations', function() {
       return (
         <div className="inspector-relations__actions">
           <juju.components.OverviewAction
-            action={this._navigate}
+            action={this._showCreateRelation}
             icon="plus_box_16"
             title="Build a relation" />
         </div>);

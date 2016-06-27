@@ -62,7 +62,7 @@ YUI.add('inspector-relate-to', function() {
       if (applications.length === 0) {
         return (
           <div className="unit-list__message">
-            No relatable applications for this service.
+            No relatable endpoints available.
           </div>);
       }
       var items = [];

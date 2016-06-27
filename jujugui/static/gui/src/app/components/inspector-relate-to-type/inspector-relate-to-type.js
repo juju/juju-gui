@@ -86,7 +86,7 @@ YUI.add('inspector-relate-to-type', function() {
         var ref = 'InspectorRelateToType-' + i;
         var key = i;
         relationTypes.push(
-        <juju.components.InspectorRelationsItem
+        <juju.components.CheckListItem
           index={i}
           key={key}
           ref={ref}
@@ -99,9 +99,9 @@ YUI.add('inspector-relate-to-type', function() {
     },
 
     /**
-      Remove the selected relations
+      Create the selected relations
 
-      @method _handleRemoveRelation
+      @method _handleCreateRelation
     */
     _handleCreateRelation: function() {
       var relations = [];
@@ -154,6 +154,6 @@ YUI.add('inspector-relate-to-type', function() {
   });
 
 }, '0.1.0', { requires: [
-  'inspector-relations-item',
-  'button-row'
+  'button-row',
+  'check-list-item'
 ]});
