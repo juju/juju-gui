@@ -371,9 +371,6 @@ YUI.add('juju-gui', function(Y) {
         this.websocketLogging = new Y.juju.WebsocketLogging();
       }
 
-      // Provide the ACL object.
-      this.acl = new Y.juju.acl(this);
-
       /**
 
         Reference to the juju.Cookies instance.
@@ -527,6 +524,9 @@ YUI.add('juju-gui', function(Y) {
         }),
         hideDragOverNotification: this._hideDragOverNotification.bind(this)
       });
+
+      // Create the ACL object.
+      this.acl = new Y.juju.generateAcl(this.env);
 
       this.changesUtils = window.juju.utils.ChangesUtils;
 
