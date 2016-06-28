@@ -686,6 +686,7 @@ YUI.add('juju-env-api', function(Y) {
       this.set('defaultSeries', response['default-series']);
       this.set('providerType', response['provider-type']);
       this.set('environmentName', response.name);
+      this.set('modelUUID', response.uuid);
       // For now we only need to call modelGet if the provider is MAAS.
       if (response['provider-type'] !== 'maas') {
         // Set the MAAS server to null, so that subscribers waiting for this
