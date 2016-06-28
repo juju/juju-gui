@@ -22,12 +22,25 @@ YUI.add('acl', function(Y) {
   var juju = Y.namespace('juju');
 
   /**
-    An object of methods that return boolean values that can be used to enable
-    or disable interactions in the GUI.
+    Initializer.
+    @function acl
+    @param app {Object} The main app object
   */
-  juju.acl = {
-    isReadOnly: () => false
+  function acl(app) {
+    this.app = app;
   };
+
+  acl.prototype = {
+    /**
+      An object of methods that return boolean values that can be used to enable
+      or disable interactions in the GUI.
+    */
+    isReadOnly: function() {
+      return !!this.app.env.get('readOnly');
+    }
+  };
+
+  juju.acl = acl;
 
 }, '0.1.0', {
   requires: []

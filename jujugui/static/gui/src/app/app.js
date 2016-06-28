@@ -372,9 +372,10 @@ YUI.add('juju-gui', function(Y) {
       }
 
       // Provide the ACL object.
-      this.acl = Y.juju.acl;
+      this.acl = new Y.juju.acl(this);
 
       /**
+
         Reference to the juju.Cookies instance.
 
         @property cookieHandler
