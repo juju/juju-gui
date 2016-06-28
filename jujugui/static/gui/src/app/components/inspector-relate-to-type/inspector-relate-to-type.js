@@ -55,18 +55,6 @@ YUI.add('inspector-relate-to-type', function() {
     },
 
     /**
-      Generate the relation label.
-
-      @method _generateRelationLabel
-      @param {Object} start Start of the relation.
-      @param {Object} end Far end of the relation.
-      @returns {String} The relation label.
-    */
-    _generateRelationLabel: function(start, end) {
-      return <span>{end.name} &rarr; {start.name}</span>;
-    },
-
-    /**
       Generate the relation list for the two application.
 
       @method _generateRelations
@@ -85,7 +73,7 @@ YUI.add('inspector-relate-to-type', function() {
           index={index}
           key={index}
           ref={`InspectorRelateToType-${index}`}
-          label={this._generateRelationLabel(relation[0], relation[1])}
+          label={`${relation[0].name} → ${relation[1].name}`}
           relation={relation}
           changeState={this.props.changeState}
           whenChanged={this._updateActiveCount} />);
@@ -98,18 +86,16 @@ YUI.add('inspector-relate-to-type', function() {
       @method _handleCreateRelation
     */
     _handleCreateRelation: function() {
-      var relations = [];
       var refs = this.refs;
+      var props = this.props;
       Object.keys(refs).forEach((ref) => {
         var isInstance = ref.split('-')[0] === 'InspectorRelateToType';
         if (isInstance && refs[ref].state.checked) {
           var relationName = ref.slice(ref.indexOf('-') + 1);
-          relations.push(relationName);
+          props.createRelation(props.relationTypes[relationName]);
         }
       });
-      var relationTypes = this.props.relationTypes;
-      this.props.createRelation(relationTypes[relations]);
-      this.props.changeState(this.props.backState);
+      props.changeState(props.backState);
     },
 
     /**
