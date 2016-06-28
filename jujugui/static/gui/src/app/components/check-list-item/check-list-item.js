@@ -28,7 +28,10 @@ YUI.add('check-list-item', function() {
       className: React.PropTypes.string,
       disabled: React.PropTypes.bool,
       id: React.PropTypes.string,
-      label: React.PropTypes.string.isRequired,
+      label: React.PropTypes.oneOfType([
+        React.PropTypes.string.isRequired,
+        React.PropTypes.object.isRequired
+      ]),
       whenChanged: React.PropTypes.func.isRequired
     },
 
