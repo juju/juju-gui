@@ -46,7 +46,7 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
     Each handler is called passing the db instance, the action to be
     performed ("add", "change" or "remove"), the change coming from
     the environment, and a (optional) kind identifying what will be
-    changed (e.g. "applicationInfo", "unitInfo").
+    changed (e.g. "serviceLegacyInfo", "unitLegacyInfo").
     Each handler has the responsibility to update the database according to
     the received change.
   */
@@ -56,7 +56,7 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
       Handle unit info coming from the juju-core delta, updating the
       relevant database models.
 
-      @method unitInfo
+      @method unitLegacyInfo
       @param {Object} db The app.models.models.Database instance.
       @param {String} action The operation to be performed
        ("add", "change" or "remove").
@@ -64,7 +64,7 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
       @param {String} kind The delta event type.
       @return {undefined} Nothing.
      */
-    unitInfo: function(db, action, change) {
+    unitLegacyInfo: function(db, action, change) {
       // Return a list of ports represented as "NUM/PROTOCOL", e.g. "80/tcp".
       var convertOpenPorts = function(ports) {
         if (!ports) {
@@ -89,30 +89,11 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
         subordinate: change.Subordinate,
         workloadStatusMessage: ''
       };
-      // Juju 2.0 changes the delta structure by removing Status, StatusInfo,
-      // and StatusData in favour of JujuStatus.Message and JujuStatus.Data.
-      // If change.JujuStatus is not defined then we will use the old delta
-      // structure.
-      var jujuStatus = change.JujuStatus;
-      if (jujuStatus) {
-        var workloadStatus = change.WorkloadStatus;
-        unitData.workloadStatusMessage = workloadStatus.Message;
-        if (workloadStatus.Current === 'error') {
-          unitData.agent_state = workloadStatus.Current;
-          unitData.agent_state_info = workloadStatus.Message;
-          unitData.agent_state_data = workloadStatus.Data;
-        } else {
-          unitData.agent_state = utils.translateToLegacyAgentState(
-            jujuStatus.Current, workloadStatus.Current, workloadStatus.Message);
-          unitData.agent_state_info = jujuStatus.Message;
-          unitData.agent_state_data = jujuStatus.Data;
-        }
-      } else {
-        // For Juju 1.x
-        unitData.agent_state = change.Status;
-        unitData.agent_state_info = change.StatusInfo;
-        unitData.agent_state_data = change.StatusData;
-      }
+
+      // Handle unit status.
+      unitData.agent_state = change.Status;
+      unitData.agent_state_info = change.StatusInfo;
+      unitData.agent_state_data = change.StatusData;
 
       var machineData = {
         id: change.MachineId,
@@ -133,14 +114,14 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
       Handle service info coming from the juju-core delta when using Juju 1,
       updating the relevant database models.
 
-      @method serviceInfo
+      @method serviceLegacyInfo
       @param {Object} db The app.models.models.Database instance.
       @param {String} action The operation to be performed
        ("add", "change" or "remove").
       @param {Object} change The JSON entity information.
       @return {undefined} Nothing.
      */
-    serviceInfo: function(db, action, change) {
+    serviceLegacyInfo: function(db, action, change) {
       var data = {
         id: change.Name,
         // The name attribute is used to store the temporary name of ghost
@@ -168,38 +149,10 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
     },
 
     /**
-      Handle remote application info coming from the juju-core delta, updating
-      the relevant database models.
-
-      @method remoteapplicationInfo
-      @param {Object} db The app.models.models.Database instance.
-      @param {String} action The operation to be performed
-       ("add", "change" or "remove").
-      @param {Object} change The JSON entity information.
-      @param {String} kind The delta event type.
-     */
-    remoteapplicationInfo: function(db, action, change) {
-      var status = change.Status || {};
-      var data = {
-        id: change.ApplicationURL,
-        service: change.Name,
-        sourceId: change.EnvUUID,
-        life: change.Life,
-        status: {
-          current: status.Current,
-          message: status.Message,
-          data: status.Data,
-          since: status.Since
-        }
-      };
-      db.remoteServices.process_delta(action, data);
-    },
-
-    /**
       Handle relation info coming from the juju-core delta, updating the
       relevant database models.
 
-      @method relationInfo
+      @method relationLegacyInfo
       @param {Object} db The app.models.models.Database instance.
       @param {String} action The operation to be performed
        ("add", "change" or "remove").
@@ -207,7 +160,7 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
       @param {String} kind The delta event type.
       @return {undefined} Nothing.
      */
-    relationInfo: function(db, action, change) {
+    relationLegacyInfo: function(db, action, change) {
       // Return a list of endpoints suitable for being included in the db.
       var createEndpoints = function(endpoints) {
         return endpoints.map(endpoint => {
@@ -232,7 +185,7 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
         db.relations.process_delta(action, data, db);
       };
 
-      var applicationName = firstEp.ApplicationName || firstEp.ServiceName;
+      var applicationName = firstEp.ServiceName;
       if (!db.services.getById(applicationName)) {
         // Sometimes (e.g. when a peer relation is immediately created on
         // application deploy) a relation delta is sent by juju-core before the
@@ -254,7 +207,7 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
       Handle machine info coming from the juju-core delta, updating the
       relevant database models.
 
-      @method machineInfo
+      @method machineLegacyInfo
       @param {Object} db The app.models.models.Database instance.
       @param {String} action The operation to be performed
        ("add", "change" or "remove").
@@ -262,7 +215,7 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
       @param {String} kind The delta event type.
       @return {undefined} Nothing.
      */
-    machineInfo: function(db, action, change) {
+    machineLegacyInfo: function(db, action, change) {
       var addresses = change.Addresses || [];
       var data = {
         id: change.Id,
@@ -309,7 +262,7 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
       Handle annotation info coming from the juju-core delta, updating the
       relevant database models.
 
-      @method annotationInfo
+      @method annotationLegacyInfo
       @param {Object} db The app.models.models.Database instance.
       @param {String} action The operation to be performed
        ("add", "change" or "remove").
@@ -317,7 +270,7 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
       @param {String} kind The delta event type.
       @return {undefined} Nothing.
      */
-    annotationInfo: function(db, action, change) {
+    annotationLegacyInfo: function(db, action, change) {
       var cleanUpEntityTags = function(tag) {
         var result = tag.replace(/^(service|unit|machine|environment)-/, '');
         if (!result) {
@@ -338,7 +291,7 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
       // We cannot use the process_delta methods here, because their legacy
       // behavior is to override the application exposed and unit
       // relation_errors attributes when they are missing in the change data.
-      if (kind === 'environment' || kind === 'model') {
+      if (kind === 'environment') {
         instance = db.environment;
       } else {
         instance = db.resolveModelByName(id);

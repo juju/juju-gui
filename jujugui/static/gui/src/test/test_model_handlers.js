@@ -43,139 +43,7 @@ describe('Juju delta handlers', function() {
       unitInfo = handlers.unitInfo;
     });
 
-    describe('Juju 1.x unit delta', function() {
-      // Ensure the unit has been correctly created in the given model list.
-      var assertCreated = function(list) {
-        var change = {
-          Name: 'django/1',
-          Service: 'django',
-          MachineId: '1',
-          Status: 'pending',
-          StatusInfo: 'info',
-          PublicAddress: 'example.com',
-          PrivateAddress: '10.0.0.1',
-          Subordinate: false,
-          Ports: [{number: 80, protocol: 'tcp'}, {number: 42, protocol: 'udp'}]
-        };
-        unitInfo(db, 'add', change);
-        // Retrieve the unit from the list.
-        var unit = list.getById('django/1');
-        assert.strictEqual(unit.service, 'django');
-        assert.strictEqual(unit.machine, '1');
-        assert.strictEqual(unit.agent_state, 'pending');
-        assert.strictEqual(unit.agent_state_info, 'info');
-        assert.strictEqual(unit.workloadStatusMessage, '');
-        assert.strictEqual(unit.public_address, 'example.com');
-        assert.strictEqual(unit.private_address, '10.0.0.1');
-        assert.strictEqual(unit.subordinate, false, 'subordinate');
-        assert.deepEqual(unit.open_ports, ['80/tcp', '42/udp']);
-      };
-
-      it('creates a unit in the database (global list)', function() {
-        db.services.add({id: 'django'});
-        assertCreated(db.units);
-      });
-
-      it('creates a unit in the database (service list)', function() {
-        var django = db.services.add({id: 'django'});
-        assertCreated(django.get('units'));
-      });
-
-      // Ensure the unit has been correctly updated in the given model list.
-      var assertUpdated = function(list) {
-        db.addUnits({
-          id: 'django/2',
-          agent_state: 'pending',
-          public_address: 'example.com',
-          private_address: '10.0.0.1'
-        });
-        var change = {
-          Name: 'django/2',
-          Application: 'django',
-          Status: 'started',
-          PublicAddress: 'example.com',
-          PrivateAddress: '192.168.0.1',
-          Subordinate: true
-        };
-        unitInfo(db, 'change', change);
-        // Retrieve the unit from the database.
-        var unit = list.getById('django/2');
-        assert.strictEqual(unit.agent_state, 'started');
-        assert.strictEqual(unit.public_address, 'example.com');
-        assert.strictEqual(unit.private_address, '192.168.0.1');
-        assert.strictEqual(unit.subordinate, true, 'subordinate');
-      };
-
-      it('updates a unit in the database (global list)', function() {
-        db.services.add({id: 'django'});
-        assertUpdated(db.units);
-      });
-
-      it('updates a unit in the database (service list)', function() {
-        var django = db.services.add({id: 'django'});
-        assertUpdated(django.get('units'));
-      });
-
-      it('creates or updates the corresponding machine', function() {
-        var machine;
-        db.services.add({id: 'django'});
-        var change = {
-          Name: 'django/2',
-          Application: 'django',
-          MachineId: '1',
-          Status: 'pending',
-          PublicAddress: 'example.com'
-        };
-        unitInfo(db, 'add', change);
-        assert.strictEqual(1, db.machines.size());
-        // Retrieve the machine from the database.
-        machine = db.machines.getById(1);
-        assert.strictEqual('example.com', machine.public_address);
-        // Update the machine.
-        change.PublicAddress = 'example.com/foo';
-        unitInfo(db, 'change', change);
-        assert.strictEqual(1, db.machines.size());
-        // Retrieve the machine from the database (again).
-        machine = db.machines.getById('1');
-        assert.strictEqual('example.com/foo', machine.public_address);
-      });
-
-      it('skips machine create if an app is unassociated', function() {
-        db.services.add({id: 'django'});
-        var change = {
-          Name: 'django/2',
-          Application: 'django',
-          MachineId: '',
-          Status: 'pending',
-          PublicAddress: 'example.com'
-        };
-        unitInfo(db, 'add', change);
-        assert.strictEqual(0, db.machines.size());
-      });
-
-      it('removes a unit from the database', function() {
-        var django = db.services.add({id: 'django'});
-        db.addUnits({
-          id: 'django/2',
-          agent_state: 'pending',
-          public_address: 'example.com',
-          private_address: '10.0.0.1'
-        });
-        var change = {
-          Name: 'django/2',
-          Application: 'django',
-          Status: 'started',
-          PublicAddress: 'example.com',
-          PrivateAddress: '192.168.0.1'
-        };
-        unitInfo(db, 'remove', change);
-        // The unit has been removed from both the global list and the app.
-        assert.strictEqual(db.units.size(), 0);
-        assert.strictEqual(django.get('units').size(), 0);
-      });
-    });
-
-    describe('Juju 2.x unit delta', function() {
+    describe('unit delta', function() {
       // Ensure the unit has been correctly created in the given model list.
       var assertCreated = function(list) {
         var change = {
@@ -1019,10 +887,10 @@ describe('Juju delta handlers', function() {
       assert.deepEqual(annotations, machine.annotations);
     });
 
-    it('stores annotations on the environment', function() {
+    it('stores annotations on the model', function() {
       var annotations = {'foo': '42', 'bar': '47'};
       var change = {
-        Tag: 'environment-foo',
+        Tag: 'model-foo',
         Annotations: annotations
       };
       annotationInfo(db, 'add', change);
