@@ -50,8 +50,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       @return {String} The tag without the prefix.
     */
     cleanUpEntityTags: function(tag) {
-      var result = tag.replace(
-        /^(application|service|unit|machine|model|environment)-/, '');
+      var result = tag.replace(/^(application|unit|machine|model)-/, '');
       if (!result) {
         return tag;
       }
@@ -76,7 +75,7 @@ YUI.add('juju-delta-handlers', function(Y) {
         return [];
       }
       return ports.map(port => {
-        return port.Number + '/' + port.Protocol;
+        return port.number + '/' + port.protocol;
       });
     },
 
@@ -90,10 +89,9 @@ YUI.add('juju-delta-handlers', function(Y) {
     */
     createEndpoints: function(endpoints) {
       return endpoints.map(endpoint => {
-        var relation = endpoint.Relation;
-        var data = {role: relation.Role, name: relation.Name};
-        var applicationName = endpoint.ApplicationName || endpoint.ServiceName;
-        return [applicationName, data];
+        var relation = endpoint.relation;
+        var data = {role: relation.role, name: relation.name};
+        return [endpoint['application-name'], data];
       });
     },
 
@@ -373,12 +371,12 @@ YUI.add('juju-delta-handlers', function(Y) {
     relationInfo: function(db, action, change) {
       var endpoints = change.Endpoints;
       var firstEp = endpoints[0];
-      var firstRelation = firstEp.Relation;
+      var firstRelation = firstEp.relation;
       var data = {
         id: change.Key,
         // The interface and scope attrs should be the same in both relations.
-        'interface': firstRelation.Interface,
-        scope: firstRelation.Scope,
+        'interface': firstRelation.interface,
+        scope: firstRelation.scope,
         endpoints: utils.createEndpoints(endpoints)
       };
 
@@ -386,7 +384,7 @@ YUI.add('juju-delta-handlers', function(Y) {
         db.relations.process_delta(action, data, db);
       };
 
-      var applicationName = firstEp.ApplicationName || firstEp.ServiceName;
+      var applicationName = firstEp['application-name'];
       if (!db.services.getById(applicationName)) {
         // Sometimes (e.g. when a peer relation is immediately created on
         // application deploy) a relation delta is sent by juju-core before the
