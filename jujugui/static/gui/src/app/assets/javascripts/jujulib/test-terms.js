@@ -127,47 +127,27 @@ describe('jujulib terms service', function() {
           path,
           'http://1.2.3.4/' +
           window.jujulib.termsAPIVersion +
-          '/agreement/these-terms');
-        var xhr = makeXHRRequest({
-          'look ma': 'I\'m a macaroon'
-        });
+          '/agreement');
+        var xhr = makeXHRRequest({agreements: [{
+          user: 'spinach',
+          term: 'these-terms',
+          revision: 42,
+          'created-on': '2016-06-09T22:07:24Z'
+        }]});
         success(xhr);
       }
     };
     var terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
     terms.addAgreement(
-      'these-terms',
-      null,
-      function(error, authz) {
+      [{name: 'canonical', revision: 5}],
+      function(error, terms) {
         assert.equal(error, null);
-        assert.equal(authz['look ma'], 'I\'m a macaroon');
-        done();
-      }
-    );
-  });
-
-  it('handles adding an agreement with a revision', function(done) {
-    var bakery = {
-      sendPostRequest: function(path, params, success, failure) {
-        assert.equal(
-          path,
-          'http://1.2.3.4/' +
-          window.jujulib.termsAPIVersion +
-          '/agreement/these-terms');
-        assert.equal(params, '{"revision":5}');
-        var xhr = makeXHRRequest({
-          'look ma': 'I\'m a macaroon'
-        });
-        success(xhr);
-      }
-    };
-    var terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
-    terms.addAgreement(
-      'these-terms',
-      5,
-      function(error, authz) {
-        assert.equal(error, null);
-        assert.equal(authz['look ma'], 'I\'m a macaroon');
+        assert.deepEqual(terms, [{
+          user: 'spinach',
+          term: 'these-terms',
+          revision: 42,
+          createdAt: new Date(1465510044000)
+        }]);
         done();
       }
     );
@@ -193,12 +173,12 @@ describe('jujulib terms service', function() {
     var terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
     terms.getAgreements(function(error, terms) {
       assert.strictEqual(error, null);
-      assert.deepEqual(terms, {
+      assert.deepEqual(terms, [{
         user: 'spinach',
         term: 'One fancy term',
         revision: 47,
         createdAt: new Date(1465510044000)
-      });
+      }]);
       done();
     });
   });
