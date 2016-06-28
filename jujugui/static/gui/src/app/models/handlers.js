@@ -244,35 +244,23 @@ YUI.add('juju-delta-handlers', function(Y) {
         public_address: change.PublicAddress,
         private_address: change.PrivateAddress,
         open_ports: utils.convertOpenPorts(change.Ports),
-        // Since less recent versions of juju-core (<= 1.20.7) do not include
-        // the Subordinate field in the mega-watcher for units, the following
-        // attribute could be undefined.
         subordinate: change.Subordinate,
         workloadStatusMessage: ''
       };
-      // Juju 2.0 changes the delta structure by removing Status, StatusInfo,
-      // and StatusData in favour of JujuStatus.Message and JujuStatus.Data.
-      // If change.JujuStatus is not defined then we will use the old delta
-      // structure.
-      var jujuStatus = change.JujuStatus;
-      if (jujuStatus) {
-        var workloadStatus = change.WorkloadStatus;
-        unitData.workloadStatusMessage = workloadStatus.Message;
-        if (workloadStatus.Current === 'error') {
-          unitData.agent_state = workloadStatus.Current;
-          unitData.agent_state_info = workloadStatus.Message;
-          unitData.agent_state_data = workloadStatus.Data;
-        } else {
-          unitData.agent_state = utils.translateToLegacyAgentState(
-            jujuStatus.Current, workloadStatus.Current, workloadStatus.Message);
-          unitData.agent_state_info = jujuStatus.Message;
-          unitData.agent_state_data = jujuStatus.Data;
-        }
+
+      // Handle agent and workload status.
+      var jujuStatus = change.JujuStatus || {};
+      var workloadStatus = change.WorkloadStatus || {};
+      unitData.workloadStatusMessage = workloadStatus.Message;
+      if (workloadStatus.Current === 'error') {
+        unitData.agent_state = workloadStatus.Current;
+        unitData.agent_state_info = workloadStatus.Message;
+        unitData.agent_state_data = workloadStatus.Data;
       } else {
-        // For Juju 1.x
-        unitData.agent_state = change.Status;
-        unitData.agent_state_info = change.StatusInfo;
-        unitData.agent_state_data = change.StatusData;
+        unitData.agent_state = utils.translateToLegacyAgentState(
+          jujuStatus.Current, workloadStatus.Current, workloadStatus.Message);
+        unitData.agent_state_info = jujuStatus.Message;
+        unitData.agent_state_data = jujuStatus.Data;
       }
 
       var machineData = {
@@ -477,7 +465,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       // We cannot use the process_delta methods here, because their legacy
       // behavior is to override the application exposed and unit
       // relation_errors attributes when they are missing in the change data.
-      if (kind === 'environment' || kind === 'model') {
+      if (kind === 'model') {
         instance = db.environment;
       } else {
         instance = db.resolveModelByName(id);

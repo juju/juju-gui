@@ -26,22 +26,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     var environment_delta = {
       'result': [
-        ['serviceInfo', 'add', {
+        ['applicationInfo', 'add', {
           'CharmURL': 'cs:precise/wordpress-6',
           'Name': 'wordpress',
           'exposed': false,
           'Annotations': {'gui-x': 100, 'gui-y': 200}
         }],
-        ['serviceInfo', 'add', {
+        ['applicationInfo', 'add', {
           'CharmURL': 'cs:precise/mediawiki-3',
           'Name': 'mediawiki',
           'exposed': false
         }],
-        ['serviceInfo', 'add', {
+        ['applicationInfo', 'add', {
           'CharmURL': 'cs:precise/mysql-26',
           'Name': 'mysql'
         }],
-        ['serviceInfo', 'add', {
+        ['applicationInfo', 'add', {
           'Subordinate': true,
           'CharmURL': 'cs:precise/puppet-2',
           'Name': 'puppet'
@@ -124,19 +124,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }],
         ['unitInfo', 'add', {
           'MachineId': 0,
-          'Status': 'started',
+          'JujuStatus': {Current: '', Message: '', Data: {}},
+          'WorkloadStatus': {Current: '', Message: '', Data: {}},
           'PublicAddress': '192.168.122.113',
           'Name': 'wordpress/0'
         }],
         ['unitInfo', 'add', {
           'MachineId': 0,
-          'Status': 'started',
+          'JujuStatus': {Current: '', Message: '', Data: {}},
+          'WorkloadStatus': {Current: '', Message: '', Data: {}},
           'PublicAddress': '192.168.122.113',
           'Name': 'mediawiki/0'
         }],
         ['unitInfo', 'add', {
           'MachineId': 0,
-          'Status': 'started',
+          'JujuStatus': {Current: '', Message: '', Data: {}},
+          'WorkloadStatus': {Current: '', Message: '', Data: {}},
           'PublicAddress': '192.168.122.222',
           'Name': 'mysql/0'
         }], [
@@ -515,7 +518,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       var addSubordinate = {
         result: [
-          ['serviceInfo', 'add', {
+          ['applicationInfo', 'add', {
             'Subordinate': true,
             'CharmURL': 'cs:precise/puppet-2',
             'Name': 'puppet2'
@@ -774,14 +777,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           tmp_data = {
             result: [
               [
-                'serviceInfo',
+                'applicationInfo',
                 'add', {
                   Subordinate: true,
                   CharmURL: 'cs:precise/puppet-2',
                   Name: 'puppet2'
                 }
               ], [
-                'serviceInfo',
+                'applicationInfo',
                 'add', {
                   CharmURL: 'cs:precise/mysql-26',
                   Name: 'mysql2'
@@ -790,7 +793,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 'unitInfo',
                 'add', {
                   MachineId: 0,
-                  Status: 'started',
+                  'JujuStatus': {Current: '', Message: '', Data: {}},
+                  'WorkloadStatus': {Current: '', Message: '', Data: {}},
                   PublicAddress: '192.168.122.222',
                   Name: 'mysql2/0'
                 }
@@ -826,7 +830,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var tmp_data = {
         result: [
           [
-            'serviceInfo',
+            'applicationInfo',
             'add', {
               Subordinate: false,
               CharmURL: 'cs:precise/wordpress-6',
@@ -897,7 +901,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       tmp_data = {
         result: [
           [
-            'serviceInfo',
+            'applicationInfo',
             'add',
             {
               Subordinate: true,

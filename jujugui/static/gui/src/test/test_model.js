@@ -555,7 +555,7 @@ describe('test_model.js', function() {
       it('should handle messages from legacy Juju versions', function() {
         var db = new models.Database();
         db.onDelta({data: {result: [
-          ['serviceInfo', 'add', {Name: 'django'}]
+          ['serviceLegacyInfo', 'add', {Name: 'django'}]
         ]}});
         assert.strictEqual(db.services.size(), 1);
         assert.strictEqual(db.services.item(0).get('id'), 'django');
@@ -642,7 +642,7 @@ describe('test_model.js', function() {
            var my0 = new models.Service({id: 'mysql', exposed: true});
            db.services.add([my0]);
            db.onDelta({data: {result: [
-             ['serviceInfo', 'add', {
+             ['applicationInfo', 'add', {
                Name: 'mysql',
                CharmURL: 'cs:precise/mysql',
                Exposed: false
@@ -656,12 +656,12 @@ describe('test_model.js', function() {
          function() {
            var db = new models.Database();
            db.services.add({id: 'mysql'});
-           var my0 = {id: 'mysql/0', agent_state: 'pending'};
+           var my0 = {id: 'mysql/0', public_address: '1.2.3.4'};
            db.addUnits([my0]);
            db.onDelta({data: {result: [
-             ['unitInfo', 'add', {Name: 'mysql/0', Status: 'another'}]
+             ['unitInfo', 'add', {Name: 'mysql/0', PublicAddress: '5.6.7.8'}]
            ]}});
-           my0.agent_state.should.equal('another');
+           my0.public_address.should.equal('5.6.7.8');
          });
 
       it('uses default handler for unknown deltas', function() {
