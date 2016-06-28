@@ -31,23 +31,20 @@ describe('ACL', function() {
     YUI().use('acl', function(y) { Y = y; done(); });
   });
 
-  it('can return initial readOnly state', function() {
-    var app = {
-      env: {
-        get: sinon.stub().withArgs('readOnly').returns(false)
-      }
+  it('returns valid readOnly statuses', function() {
+    var env = {
+      get: sinon.stub().withArgs('readOnly').returns(false)
     };
-    var acl = new Y.juju.acl(app);
-    assert.equal(acl.isReadOnly(), false);
+    assert.equal(
+      Y.juju.generateAcl(env).isReadOnly(), false,
+      'isReadOnly should have been false');
+
+    env = {
+      get: sinon.stub().withArgs('readOnly').returns(true)
+    };
+    assert.equal(
+      Y.juju.generateAcl(env).isReadOnly(), true,
+      'isReadOnly should have been true');
   });
 
-  it('can return readOnly when changed', function() {
-    var app = {
-      env: {
-        get: sinon.stub().withArgs('readOnly').returns(true)
-      }
-    };
-    var acl = new Y.juju.acl(app);
-    assert.equal(acl.isReadOnly(), true);
-  });
 });
