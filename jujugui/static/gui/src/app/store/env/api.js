@@ -37,6 +37,24 @@ YUI.add('juju-env-api', function(Y) {
   var utils = Y.namespace('juju.views.utils');
 
   /**
+    Return a proper local charm endpoint for both the GUI in
+    Juju and the GUI charm.
+
+    @method _getCharmAPIPath
+    @param {String} The model uuid for the endpoint.
+    @param {String} A path fragment to update to the full path.
+    @return {String} Returns the proper full path.
+  */
+  var _getCharmAPIPath = function(uuid, query) {
+    var prefix = '/model/' + uuid + '/charms?';
+    if (!window.juju_config || !window.juju_config.staticURL) {
+      // We are in the GUI charm, not Juju itself.
+      prefix = '/juju-core' + prefix;
+    }
+    return prefix + query;
+  };
+
+  /**
     Return a normalized name from an endpoint object.
 
     @method endpointToName
@@ -936,9 +954,7 @@ YUI.add('juju-env-api', function(Y) {
         return;
       }
       var credentials = this.getCredentials();
-      // TODO frankban: when the GUI is served directly from the Juju
-      // controller the path below is not correct.
-      var path = '/juju-core/charms?series=' + series;
+      var path = _getCharmAPIPath(this.get('modelUUID'), 'series=' + series);
       var headers = {'Content-Type': 'application/zip'};
       // Use a web handler to communicate to the Juju HTTPS API. The web
       // handler takes care of setting up asynchronous requests with basic
@@ -968,9 +984,8 @@ YUI.add('juju-env-api', function(Y) {
     */
     getLocalCharmFileUrl: function(charmUrl, filename) {
       var credentials = this.getCredentials();
-      // TODO frankban: when the GUI is served directly from the Juju
-      // controller the path below is not correct.
-      var path = '/juju-core/charms?url=' + charmUrl + '&file=' + filename;
+      var path = _getCharmAPIPath(
+          this.get('modelUUID'), 'url=' + charmUrl + '&file=' + filename);
       var webHandler = this.get('webHandler');
       // TODO frankban: allow macaroons based auth here.
       return webHandler.getUrl(path, credentials.user, credentials.password);
@@ -1006,9 +1021,7 @@ YUI.add('juju-env-api', function(Y) {
         retrieved.
     */
     listLocalCharmFiles: function(charmUrl, progress, callback) {
-      // TODO frankban: when the GUI is served directly from the Juju
-      // controller the path below is not correct.
-      var path = '/juju-core/charms?url=' + charmUrl;
+      var path = _getCharmAPIPath(this.get('modelUUID'), 'url=' + charmUrl);
       this._jujuHttpGet(path, progress, callback);
     },
 
@@ -1026,9 +1039,8 @@ YUI.add('juju-env-api', function(Y) {
     */
     getLocalCharmFileContents: function(
       charmUrl, filename, progress, callback) {
-      // TODO frankban: when the GUI is served directly from the Juju
-      // controller the path below is not correct.
-      var path = '/juju-core/charms?url=' + charmUrl + '&file=' + filename;
+      var path = _getCharmAPIPath(
+          this.get('modelUUID'), 'url=' + charmUrl + '&file=' + filename);
       this._jujuHttpGet(path, progress, callback);
     },
 
