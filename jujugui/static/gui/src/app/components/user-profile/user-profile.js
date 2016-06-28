@@ -630,15 +630,18 @@ YUI.add('user-profile', function() {
     */
     _generateAgreementRow: function(agreement) {
       var term = agreement.term;
+      var createdAt = agreement.createdAt;
+      var date = createdAt.getUTCFullYear() + '-' +
+        ('0' + (createdAt.getUTCMonth() + 1)).slice(-2) + '-' +
+        ('0' + createdAt.getUTCDate()).slice(-2);
       return (
-        <li className="user-profile__list-row"
-          key={term}>
+        <li className="user-profile__list-row twelve-col"
+          key={term + agreement.revision}>
           <span className="user-profile__list-col eight-col">
             {term}
           </span>
-          <span className={'user-profile__list-col four-col ' +
-            'prepend-two last-col'}>
-            {agreement.createdAt}
+          <span className="user-profile__list-col four-col last-col">
+            {date}
           </span>
         </li>);
     },
@@ -724,7 +727,7 @@ YUI.add('user-profile', function() {
       } else if (type === 'agreements') {
         generateRow = this._generateAgreementRow;
         header = this._generateAgreementHeader();
-        title = 'Agreements';
+        title = 'Terms & conditions';
       }
       list.forEach((model) => {
         rows.push(generateRow(model));
