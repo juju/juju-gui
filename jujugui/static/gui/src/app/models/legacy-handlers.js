@@ -1,7 +1,7 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2012-2013 Canonical Ltd.
+Copyright (C) 2016 Canonical Ltd.
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3, as published by
@@ -19,185 +19,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 /**
-   Delta handlers.
+   Delta legacy handlers.
    This module contains delta stream handlers and converters to be used
-   to parse and prepare the delta stream coming from environments so that
-   it can be used to populate the database.
+   to parse and prepare the delta stream coming from Juju 1 environments so
+   that it can be used to populate the database.
 
-   @module handlers
+   @module legacy-handlers
  */
 
-YUI.add('juju-delta-handlers', function(Y) {
+YUI.add('juju-legacy-delta-handlers', function(Y) {
 
   var models = Y.namespace('juju.models');
-
-  // A collection of helper functions used by the delta handlers.
-  var utils = {
-
-    /**
-      Clean up the entity tags, which have the entity type prefixing the
-      entity's name when retrieved from the server in some instances, notably
-      annotations.
-
-      The regular expression removes any non-hyphen characters followed by a
-      hyphen from the beginning of a string.  Thus, application-mysql becomes
-      simply mysql (as the expression matches 'applicationName-').
-      This function also converts the unit tag so that "unit-mysql-1" becomes
-      "mysql/1".
-
-      @method cleanUpEntityTags
-      @param {String} tag The tag to clean up.
-      @return {String} The tag without the prefix.
-    */
-    cleanUpEntityTags: function(tag) {
-      var result = tag.replace(
-        /^(application|service|unit|machine|model|environment)-/, '');
-      if (!result) {
-        return tag;
-      }
-      var unitPrefix = 'unit-';
-      if (tag.slice(0, unitPrefix.length) === unitPrefix) {
-        // Clean up the unit name, e.g. "mysql-42" becomes "mysql/42".
-        result = result.replace(/-(\d+)$/, '/$1');
-      }
-      return result;
-    },
-
-    /**
-      Return a list of ports represented as "NUM/PROTOCOL", e.g. "80/tcp".
-
-      @method convertOpenPorts
-      @param {Array} ports A list of port objects, each one including the
-       "Number" and "Protocol" attributes.
-      @return {Array} The converted list of ports.
-    */
-    convertOpenPorts: function(ports) {
-      if (!ports) {
-        return [];
-      }
-      return ports.map(port => {
-        return port.Number + '/' + port.Protocol;
-      });
-    },
-
-    /**
-      Return a list of endpoints suitable for being included in the database.
-
-      @method createEndpoints
-      @param {Array} endpoints A list of endpoints returned by the juju-core
-       delta stream.
-      @return {Array} The converted list of endpoints.
-    */
-    createEndpoints: function(endpoints) {
-      return endpoints.map(endpoint => {
-        var relation = endpoint.Relation;
-        var data = {role: relation.Role, name: relation.Name};
-        var applicationName = endpoint.ApplicationName || endpoint.ServiceName;
-        return [applicationName, data];
-      });
-    },
-
-    /**
-      Return the constraints converting the tags to a comma separated string.
-
-      @method convertConstraints
-      @param {Object} constraints The constraints included in the mega-watcher
-        for applications, or null/undefined if no constraints are set.
-      @return {Object} The converted constraints.
-    */
-    convertConstraints: function(constraints) {
-      var result = constraints || {};
-      var tags = result.tags || [];
-      delete result.tags;
-      if (tags.length) {
-        result.tags = tags.join(',');
-      }
-      return result;
-    },
-
-    /**
-      Translates the new JujuStatus and WorkloadStatus's to the legacy Juju 1
-      values.
-
-      This logic is a JS implementation of the Juju core implementation to
-      accomplish the same task:
-      https://github.com/
-        juju/juju/blob/juju-1.26-alpha1/state/status_model.go#L272
-
-      @method translateToLegacyAgentState
-      @param {String} currentStatus JujuStatus.Current
-      @param {String} workloadStatus WorkloadStatus.Current
-      @param {String} workloadStatusMessage WorkloadStatus.Message
-      @return {String} The legacy agent state.
-    */
-    translateToLegacyAgentState: function(
-      currentStatus, workloadStatus, workloadStatusMessage) {
-      var statusMaintenance = 'maintenance';
-      var statusAllocating = 'allocating';
-      var statusPending = 'pending';
-      var statusError = 'error';
-      var statusRebooting = 'rebooting';
-      var statusExecuting = 'executing';
-      var statusIdle = 'idle';
-      var statusLost = 'lost';
-      var statusFailed = 'failed';
-      var statusTerminated = 'terminated';
-      var statusStarted = 'started';
-      var statusStopped = 'stopped';
-
-      var messageInstalling = 'installing charm software';
-      var isInstalled = workloadStatus != statusMaintenance ||
-                        workloadStatusMessage != messageInstalling;
-
-      switch (currentStatus) {
-
-        case statusAllocating:
-          return statusPending;
-          break;
-
-        case statusError:
-          return statusError;
-          break;
-
-        case statusRebooting:
-        case statusExecuting:
-        case statusIdle:
-        case statusLost:
-        case statusFailed:
-          switch (workloadStatus) {
-
-            case statusError:
-              return statusError;
-              break;
-
-            case statusTerminated:
-              return statusStopped;
-              break;
-
-            case statusMaintenance:
-              return isInstalled ? statusStarted : statusPending;
-              break;
-
-            default:
-              return statusStarted;
-              break;
-          }
-          break;
-      }
-    }
-
-  };
-  models.utils = utils; // Exported for testing purposes.
+  var utils = models.utils;
 
   /*
-    The applicationChangedHooks object maps application names to functions to
+    The serviceChangedHooks object maps application names to functions to
     be executed when the next corresponding application change event arrives.
     When an application is removed, the corresponding key is also garbage
     collected.
   */
-  var applicationChangedHooks = Object.create(null);
+  var serviceChangedHooks = Object.create(null);
   // Store the hooks in the models for testing.
-  models._applicationChangedHooks = applicationChangedHooks;
+  models._serviceChangedHooks = serviceChangedHooks;
 
   /*
     Each handler is called passing the db instance, the action to be
@@ -207,23 +50,7 @@ YUI.add('juju-delta-handlers', function(Y) {
     Each handler has the responsibility to update the database according to
     the received change.
   */
-  models.handlers = {
-
-    /**
-      Called by the delta parser if a delta is passed to the GUI which it does
-      not understand. Throws a console error and then allows delta parsing to
-      continue.
-
-      @method defaultHandler
-      @param {Object} db The application db (unused)
-      @param {String} action The action which the delta is trying to complete.
-      @param {Object} change The data for the delta change.
-      @param {String} kind The type of delta.
-    */
-    defaultHandler: function(db, action, change, kind) {
-      console.error('Unknown delta type: ' + kind);
-      console.log(action, change);
-    },
+  models.legacyHandlers = {
 
     /**
       Handle unit info coming from the juju-core delta, updating the
@@ -293,17 +120,17 @@ YUI.add('juju-delta-handlers', function(Y) {
     },
 
     /**
-      Handle application info coming from the juju-core delta, updating the
-      relevant database models.
+      Handle service info coming from the juju-core delta when using Juju 1,
+      updating the relevant database models.
 
-      @method applicationInfo
+      @method serviceInfo
       @param {Object} db The app.models.models.Database instance.
       @param {String} action The operation to be performed
        ("add", "change" or "remove").
       @param {Object} change The JSON entity information.
       @return {undefined} Nothing.
      */
-    applicationInfo: function(db, action, change) {
+    serviceInfo: function(db, action, change) {
       var data = {
         id: change.Name,
         // The name attribute is used to store the temporary name of ghost
@@ -321,28 +148,13 @@ YUI.add('juju-delta-handlers', function(Y) {
       if (action !== 'remove') {
         db.services.getById(change.Name).updateConfig(change.Config);
         // Execute the registered application hooks.
-        var hooks = applicationChangedHooks[change.Name] || [];
+        var hooks = serviceChangedHooks[change.Name] || [];
         hooks.forEach(function(hook) {
           hook();
         });
       }
       // Delete the application hooks for this application.
-      delete applicationChangedHooks[change.Name];
-    },
-
-    /**
-      Handle service info coming from the juju-core delta when using Juju 1,
-      updating the relevant database models.
-
-      @method serviceInfo
-      @param {Object} db The app.models.models.Database instance.
-      @param {String} action The operation to be performed
-       ("add", "change" or "remove").
-      @param {Object} change The JSON entity information.
-      @return {undefined} Nothing.
-     */
-    serviceInfo: function(db, action, change) {
-      models.handlers.applicationInfo(db, action, change);
+      delete serviceChangedHooks[change.Name];
     },
 
     /**
@@ -411,9 +223,9 @@ YUI.add('juju-delta-handlers', function(Y) {
             'relation change', change.Key,
             'delayed, waiting for missing application',
             applicationName);
-        var hooks = applicationChangedHooks[applicationName] || [];
+        var hooks = serviceChangedHooks[applicationName] || [];
         hooks.push(processRelation);
-        applicationChangedHooks[applicationName] = hooks;
+        serviceChangedHooks[applicationName] = hooks;
         return;
       }
       processRelation();
@@ -522,6 +334,7 @@ YUI.add('juju-delta-handlers', function(Y) {
 }, '0.1.0', {
   requires: [
     'base',
-    'array-extras'
+    'array-extras',
+    'juju-delta-handlers'
   ]
 });
