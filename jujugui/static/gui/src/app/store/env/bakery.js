@@ -90,8 +90,9 @@ YUI.add('juju-env-bakery', function(Y) {
             document.cookie = prefix + cfg.macaroon + ';path=/';
           }
         }
+        this.dischargeStore = cfg.dischargeStore;
         if (cfg.dischargeToken) {
-          window.localStorage.setItem(DISCHARGE_TOKEN, cfg.dischargeToken);
+          this.dischargeStore.setItem(DISCHARGE_TOKEN, cfg.dischargeToken);
         }
       },
 
@@ -491,7 +492,7 @@ YUI.add('juju-env-bakery', function(Y) {
                                             successCallback, failureCallback) {
         thirdPartyLocation += '/discharge';
 
-        var dischargeToken = window.localStorage.getItem(DISCHARGE_TOKEN);
+        var dischargeToken = this.dischargeStore.getItem(DISCHARGE_TOKEN);
         var headers = {
           'Bakery-Protocol-Version': 1,
           'Content-Type': 'application/x-www-form-urlencoded'
@@ -526,7 +527,7 @@ YUI.add('juju-env-bakery', function(Y) {
       _exportMacaroon: function (successCallback, failureCallback, response) {
         try {
           var json = JSON.parse(response.target.responseText);
-          window.localStorage.setItem(DISCHARGE_TOKEN,
+          this.dischargeStore.setItem(DISCHARGE_TOKEN,
             btoa(JSON.stringify(json.DischargeToken)));
           successCallback(macaroon.import(json.Macaroon));
         } catch (ex) {

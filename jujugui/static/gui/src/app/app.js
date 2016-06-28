@@ -1388,6 +1388,7 @@ YUI.add('juju-gui', function(Y) {
         webhandler: new Y.juju.environments.web.WebHandler(),
         interactive: this.get('interactiveLogin'),
         cookieStore: window.localStorage,
+        dischargeStore: window.localStorage,
         serviceName: 'jem',
         macaroon: existingMacaroons
       });
@@ -1523,7 +1524,8 @@ YUI.add('juju-gui', function(Y) {
         macaroon: config.plansMacaroons,
         webhandler: webHandler,
         interactive: interactive,
-        cookieStore: storage
+        cookieStore: storage,
+        dischargeStore: window.localStorage
       });
       this.plans = new window.jujulib.plans(config.plansURL, bakery);
       var bakery = new Y.juju.environments.web.Bakery({
@@ -1531,7 +1533,8 @@ YUI.add('juju-gui', function(Y) {
         macaroon: config.termsMacaroons,
         webhandler: webHandler,
         interactive: interactive,
-        cookieStore: storage
+        cookieStore: storage,
+        dischargeStore: window.localStorage
       });
       this.terms = new window.jujulib.terms(config.termsURL, bakery);
     },
