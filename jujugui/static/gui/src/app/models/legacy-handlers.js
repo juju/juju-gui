@@ -65,6 +65,16 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
       @return {undefined} Nothing.
      */
     unitInfo: function(db, action, change) {
+      // Return a list of ports represented as "NUM/PROTOCOL", e.g. "80/tcp".
+      var convertOpenPorts = function(ports) {
+        if (!ports) {
+          return [];
+        }
+        return ports.map(port => {
+          return port.Number + '/' + port.Protocol;
+        });
+      };
+
       var unitData = {
         id: change.Name,
         charmUrl: change.CharmURL,
@@ -72,7 +82,7 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
         machine: change.MachineId,
         public_address: change.PublicAddress,
         private_address: change.PrivateAddress,
-        open_ports: utils.convertOpenPorts(change.Ports),
+        open_ports: convertOpenPorts(change.Ports),
         // Since less recent versions of juju-core (<= 1.20.7) do not include
         // the Subordinate field in the mega-watcher for units, the following
         // attribute could be undefined.
@@ -198,6 +208,15 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
       @return {undefined} Nothing.
      */
     relationInfo: function(db, action, change) {
+      // Return a list of endpoints suitable for being included in the db.
+      var createEndpoints = function(endpoints) {
+        return endpoints.map(endpoint => {
+          var relation = endpoint.Relation;
+          var data = {role: relation.Role, name: relation.Name};
+          return [endpoint.ServiceName, data];
+        });
+      };
+
       var endpoints = change.Endpoints;
       var firstEp = endpoints[0];
       var firstRelation = firstEp.Relation;
@@ -206,7 +225,7 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
         // The interface and scope attrs should be the same in both relations.
         'interface': firstRelation.Interface,
         scope: firstRelation.Scope,
-        endpoints: utils.createEndpoints(endpoints)
+        endpoints: createEndpoints(endpoints)
       };
 
       var processRelation = function() {
@@ -299,9 +318,22 @@ YUI.add('juju-legacy-delta-handlers', function(Y) {
       @return {undefined} Nothing.
      */
     annotationInfo: function(db, action, change) {
+      var cleanUpEntityTags = function(tag) {
+        var result = tag.replace(/^(service|unit|machine|environment)-/, '');
+        if (!result) {
+          return tag;
+        }
+        var unitPrefix = 'unit-';
+        if (tag.slice(0, unitPrefix.length) === unitPrefix) {
+          // Clean up the unit name, e.g. "mysql-42" becomes "mysql/42".
+          result = result.replace(/-(\d+)$/, '/$1');
+        }
+        return result;
+      };
+
       var tag = change.Tag,
           kind = tag.split('-')[0],
-          id = utils.cleanUpEntityTags(tag),
+          id = cleanUpEntityTags(tag),
           instance;
       // We cannot use the process_delta methods here, because their legacy
       // behavior is to override the application exposed and unit

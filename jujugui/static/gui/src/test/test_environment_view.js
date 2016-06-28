@@ -52,12 +52,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             Id: 0,
             Endpoints: [
               {
-                ServiceName: 'wordpress',
-                Relation: {
-                  Name: 'loadbalancer',
-                  Role: 'peer',
-                  Interface: 'reversenginx',
-                  Scope: 'global'
+                'application-name': 'wordpress',
+                relation: {
+                  name: 'loadbalancer',
+                  role: 'peer',
+                  interface: 'reversenginx',
+                  scope: 'global'
                 }
               }
             ]
@@ -69,21 +69,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             Id: 1,
             Endpoints: [
               {
-                ServiceName: 'puppet',
-                Relation: {
-                  Name: 'juju-info',
-                  Role: 'requirer',
-                  Interface: 'juju-info',
-                  Scope: 'container'
+                'application-name': 'puppet',
+                relation: {
+                  name: 'juju-info',
+                  role: 'requirer',
+                  interface: 'juju-info',
+                  scope: 'container'
                 }
               },
               {
-                ServiceName: 'wordpress',
-                Relation: {
-                  Name: 'juju-info',
-                  Role: 'provider',
-                  Interface: 'juju-info',
-                  Scope: 'container'
+                'application-name': 'wordpress',
+                relation: {
+                  name: 'juju-info',
+                  role: 'provider',
+                  interface: 'juju-info',
+                  scope: 'container'
                 }
               }
             ]
@@ -95,20 +95,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             Id: 2,
             Endpoints: [
               {
-                ServiceName: 'mysql',
-                Relation: {
-                  Name: 'db',
-                  Role: 'server',
-                  Interface: 'mysql',
-                  Scope: 'global'
+                'application-name': 'mysql',
+                relation: {
+                  name: 'db',
+                  role: 'server',
+                  interface: 'mysql',
+                  scope: 'global'
                 }
               }, {
-                ServiceName: 'wordpress',
-                Relation: {
-                  Name: 'db',
-                  Role: 'client',
-                  Interface: 'mysql',
-                  Scope: 'global'
+                'application-name': 'wordpress',
+                relation: {
+                  name: 'db',
+                  role: 'client',
+                  interface: 'mysql',
+                  scope: 'global'
                 }
               }
             ]
@@ -142,7 +142,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }], [
           'annotationInfo',
           'change', {
-            Tag: 'service-wordpress',
+            Tag: 'application-wordpress',
             Annotations: {
               'gui-x': 100,
               'gui-y': 200
@@ -163,20 +163,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Id: 5,
           Endpoints: [
             {
-              ServiceName: 'mysql',
-              Relation: {
-                Name: 'db',
-                Role: 'server',
-                Interface: 'mysql',
-                Scope: 'global'
+              'application-name': 'mysql',
+              relation: {
+                name: 'db',
+                role: 'server',
+                interface: 'mysql',
+                scope: 'global'
               }
             }, {
-              ServiceName: 'mediawiki',
-              Relation: {
-                Name: 'db',
-                Role: 'client',
-                Interface: 'mysql',
-                Scope: 'global'
+              'application-name': 'mediawiki',
+              relation: {
+                name: 'db',
+                role: 'client',
+                interface: 'mysql',
+                scope: 'global'
               }
             }
           ]
@@ -188,20 +188,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Id: 6,
           Endpoints: [
             {
-              ServiceName: 'mysql',
-              Relation: {
-                Name: 'db-slave',
-                Role: 'server',
-                Interface: 'mysql',
-                Scope: 'global'
+              'application-name': 'mysql',
+              relation: {
+                name: 'db-slave',
+                role: 'server',
+                interface: 'mysql',
+                scope: 'global'
               }
             }, {
-              ServiceName: 'mediawiki',
-              Relation: {
-                Name: 'db-slave',
-                Role: 'client',
-                Interface: 'mysql',
-                Scope: 'global'
+              'application-name': 'mediawiki',
+              relation: {
+                name: 'db-slave',
+                role: 'client',
+                interface: 'mysql',
+                scope: 'global'
               }
             }
           ]
@@ -527,16 +527,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               Id: 7,
               Endpoints: [
                 {
-                  ServiceName: 'puppet2',
-                  Relation: {
-                    Name: 'juju-info', Role: 'requirer',
-                    Interface: 'juju-info', Scope: 'container'
+                  'application-name': 'puppet2',
+                  relation: {
+                    name: 'juju-info', role: 'requirer',
+                    interface: 'juju-info', scope: 'container'
                   }
                 }, {
-                  ServiceName: 'wordpress',
-                  Relation: {
-                    Name: 'juju-info', Role: 'provider',
-                    Interface: 'juju-info', Scope: 'container'
+                  'application-name': 'wordpress',
+                  relation: {
+                    name: 'juju-info', role: 'provider',
+                    interface: 'juju-info', scope: 'container'
                   }
                 }
               ]
@@ -553,16 +553,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               Id: 8,
               Endpoints: [
                 {
-                  ServiceName: 'mediawiki',
-                  Relation: {
-                    Name: 'juju-info', Role: 'provider',
-                    Interface: 'juju-info', Scope: 'container'
+                  'application-name': 'mediawiki',
+                  relation: {
+                    name: 'juju-info', role: 'provider',
+                    Interface: 'juju-info', scope: 'container'
                   }
                 }, {
-                  ServiceName: 'puppet',
-                  Relation: {
-                    Name: 'juju-info', Role: 'requirer',
-                    Interface: 'juju-info', Scope: 'container'
+                  'application-name': 'puppet',
+                  relation: {
+                    name: 'juju-info', role: 'requirer',
+                    interface: 'juju-info', scope: 'container'
                   }
                 }
               ]
@@ -858,7 +858,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           [
             'annotationInfo',
             'change', {
-              'Tag': 'service-wordpress',
+              'Tag': 'application-wordpress',
               'Annotations': {
                 'gui-x': 374.1,
                 'gui-y': 211.2

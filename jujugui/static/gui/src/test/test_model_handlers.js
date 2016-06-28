@@ -55,7 +55,7 @@ describe('Juju delta handlers', function() {
           PublicAddress: 'example.com',
           PrivateAddress: '10.0.0.1',
           Subordinate: false,
-          Ports: [{Number: 80, Protocol: 'tcp'}, {Number: 42, Protocol: 'udp'}]
+          Ports: [{number: 80, protocol: 'tcp'}, {number: 42, protocol: 'udp'}]
         };
         unitInfo(db, 'add', change);
         // Retrieve the unit from the list.
@@ -191,7 +191,7 @@ describe('Juju delta handlers', function() {
           PublicAddress: 'example.com',
           PrivateAddress: '10.0.0.1',
           Subordinate: false,
-          Ports: [{Number: 80, Protocol: 'tcp'}, {Number: 42, Protocol: 'udp'}]
+          Ports: [{number: 80, protocol: 'tcp'}, {number: 42, protocol: 'udp'}]
         };
         unitInfo(db, 'add', change);
         // Retrieve the unit from the list.
@@ -678,26 +678,26 @@ describe('Juju delta handlers', function() {
       ];
       deltaEndpoints = [
         {
-          Relation: {
-            Interface: 'http',
-            Limit: 1,
-            Name: 'reverseproxy',
-            Optional: false,
-            Role: 'requirer',
-            Scope: 'global'
+          relation: {
+            interface: 'http',
+            limit: 1,
+            name: 'reverseproxy',
+            optional: false,
+            role: 'requirer',
+            scope: 'global'
           },
-          ApplicationName: 'haproxy'
+          'application-name': 'haproxy'
         },
         {
-          Relation: {
-            Interface: 'http',
-            Limit: 0,
-            Name: 'website',
-            Optional: false,
-            Role: 'provider',
-            Scope: 'global'
+          relation: {
+            interface: 'http',
+            limit: 0,
+            name: 'website',
+            optional: false,
+            role: 'provider',
+            scope: 'global'
           },
-          ApplicationName: 'wordpress'
+          'application-name': 'wordpress'
         }
       ];
     });
@@ -706,44 +706,6 @@ describe('Juju delta handlers', function() {
       var change = {
         Key: relationKey,
         Endpoints: deltaEndpoints
-      };
-      relationInfo(db, 'add', change);
-      assert.strictEqual(1, db.relations.size());
-      // Retrieve the relation from the database.
-      var relation = db.relations.getById(relationKey);
-      assert.isNotNull(relation);
-      assert.strictEqual('http', relation.get('interface'));
-      assert.strictEqual('global', relation.get('scope'));
-      assert.deepEqual(dbEndpoints, relation.get('endpoints'));
-    });
-
-    it('creates a relation in the database (legacy API)', function() {
-      var change = {
-        Key: relationKey,
-        Endpoints: [
-          {
-            Relation: {
-              Interface: 'http',
-              Limit: 1,
-              Name: 'reverseproxy',
-              Optional: false,
-              Role: 'requirer',
-              Scope: 'global'
-            },
-            ServiceName: 'haproxy'
-          },
-          {
-            Relation: {
-              Interface: 'http',
-              Limit: 0,
-              Name: 'website',
-              Optional: false,
-              Role: 'provider',
-              Scope: 'global'
-            },
-            ServiceName: 'wordpress'
-          }
-        ]
       };
       relationInfo(db, 'add', change);
       assert.strictEqual(1, db.relations.size());
@@ -764,11 +726,11 @@ describe('Juju delta handlers', function() {
         endpoints: dbEndpoints
       });
       var firstEndpoint = deltaEndpoints[0],
-          firstRelation = firstEndpoint.Relation;
-      firstEndpoint.ApplicationName = 'mysql';
-      firstRelation.Name = 'db';
-      firstRelation.Interface = 'mysql';
-      firstRelation.Scope = 'local';
+          firstRelation = firstEndpoint.relation;
+      firstEndpoint['application-name'] = 'mysql';
+      firstRelation.name = 'db';
+      firstRelation.interface = 'mysql';
+      firstRelation.scope = 'local';
       var change = {
         Key: relationKey,
         Endpoints: deltaEndpoints
@@ -807,15 +769,15 @@ describe('Juju delta handlers', function() {
       var change = {
         Key: 'haproxy:peer',
         Endpoints: [{
-          Relation: {
-            Interface: 'haproxy-peer',
-            Limit: 1,
-            Name: 'peer',
-            Optional: false,
-            Role: 'peer',
-            Scope: 'global'
+          relation: {
+            interface: 'haproxy-peer',
+            limit: 1,
+            name: 'peer',
+            optional: false,
+            role: 'peer',
+            scope: 'global'
           },
-          ApplicationName: 'haproxy'
+          'application-name': 'haproxy'
         }]
       };
       relationInfo(db, 'change', change);
@@ -1024,19 +986,6 @@ describe('Juju delta handlers', function() {
       assert.deepEqual(annotations, application.get('annotations'));
     });
 
-    it('stores annotations on an application (legacy)', function() {
-      db.services.add({id: 'django'});
-      var annotations = {'gui-x': '42', 'gui-y': '47'};
-      var change = {
-        Tag: 'service-django',
-        Annotations: annotations
-      };
-      annotationInfo(db, 'add', change);
-      // Retrieve the annotations from the database.
-      var application = db.services.getById('django');
-      assert.deepEqual(annotations, application.get('annotations'));
-    });
-
     it('stores annotations on a unit', function() {
       var django = db.services.add({id: 'django'});
       var djangoUnits = django.get('units');
@@ -1170,9 +1119,6 @@ describe('Juju delta handlers utilities', function() {
       assert.equal('mysql', cleanUpEntityTags('application-mysql'));
       assert.equal(
           'buildbot-master', cleanUpEntityTags('application-buildbot-master'));
-      assert.equal('mysql', cleanUpEntityTags('service-mysql'));
-      assert.equal(
-          'buildbot-master', cleanUpEntityTags('service-buildbot-master'));
       // Clean up unit tags.
       assert.equal('mysql/47', cleanUpEntityTags('unit-mysql-47'));
       assert.equal(
@@ -1180,11 +1126,9 @@ describe('Juju delta handlers utilities', function() {
       // Clean up machine tags.
       assert.equal('0', cleanUpEntityTags('machine-0'));
       assert.equal('42', cleanUpEntityTags('machine-42'));
-      // Clean up model and environment tags.
+      // Clean up model tags.
       assert.equal('aws', cleanUpEntityTags('model-aws'));
       assert.equal('my-env', cleanUpEntityTags('model-my-env'));
-      assert.equal('aws', cleanUpEntityTags('environment-aws'));
-      assert.equal('my-env', cleanUpEntityTags('environment-my-env'));
     });
 
     it('ignores bad values', function() {
@@ -1205,8 +1149,8 @@ describe('Juju delta handlers utilities', function() {
 
     it('correctly returns a list of ports', function() {
       var ports = [
-        {Number: 80, Protocol: 'tcp'},
-        {Number: 42, Protocol: 'udp'}
+        {number: 80, protocol: 'tcp'},
+        {number: 42, protocol: 'udp'}
       ];
       assert.deepEqual(['80/tcp', '42/udp'], convertOpenPorts(ports));
     });
@@ -1229,65 +1173,32 @@ describe('Juju delta handlers utilities', function() {
     it('correctly returns a list of endpoints', function() {
       var endpoints = [
         {
-          Relation: {
-            Interface: 'http',
-            Limit: 1,
-            Name: 'reverseproxy',
-            Optional: false,
-            Role: 'requirer',
-            Scope: 'global'
+          relation: {
+            interface: 'http',
+            limit: 1,
+            name: 'reverseproxy',
+            optional: false,
+            role: 'requirer',
+            scope: 'global'
           },
-          ApplicationName: 'haproxy'
+          'application-name': 'haproxy'
         },
         {
-          Relation: {
-            Interface: 'http',
-            Limit: 0,
-            Name: 'website',
-            Optional: false,
-            Role: 'provider',
-            Scope: 'global'
+          relation: {
+            interface: 'http',
+            limit: 0,
+            name: 'website',
+            optional: false,
+            role: 'provider',
+            scope: 'global'
           },
-          ApplicationName: 'wordpress'
+          'application-name': 'wordpress'
         }
       ];
       var expected = [
         ['haproxy', {role: 'requirer', name: 'reverseproxy'}],
         ['wordpress', {role: 'provider', name: 'website'}]
       ];
-      assert.deepEqual(expected, createEndpoints(endpoints));
-    });
-
-    it('correctly returns a list of endpoints (legacy API)', function() {
-      var endpoints = [
-        {
-          Relation: {
-            Interface: 'http',
-            Limit: 1,
-            Name: 'reverseproxy',
-            Optional: false,
-            Role: 'requirer',
-            Scope: 'global'
-          },
-          ServiceName: 'haproxy'
-        },
-        {
-          Relation: {
-            Interface: 'http',
-            Limit: 0,
-            Name: 'website',
-            Optional: false,
-            Role: 'provider',
-            Scope: 'global'
-          },
-          ServiceName: 'wordpress'
-        }
-      ];
-      var expected = [
-        ['haproxy', {role: 'requirer', name: 'reverseproxy'}],
-        ['wordpress', {role: 'provider', name: 'website'}]
-      ];
-      console.log(createEndpoints(endpoints));
       assert.deepEqual(expected, createEndpoints(endpoints));
     });
 

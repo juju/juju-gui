@@ -686,7 +686,7 @@ describe('Juju legacy delta handlers', function() {
             Role: 'requirer',
             Scope: 'global'
           },
-          ApplicationName: 'haproxy'
+          ServiceName: 'haproxy'
         },
         {
           Relation: {
@@ -697,7 +697,7 @@ describe('Juju legacy delta handlers', function() {
             Role: 'provider',
             Scope: 'global'
           },
-          ApplicationName: 'wordpress'
+          ServiceName: 'wordpress'
         }
       ];
     });
@@ -706,44 +706,6 @@ describe('Juju legacy delta handlers', function() {
       var change = {
         Key: relationKey,
         Endpoints: deltaEndpoints
-      };
-      relationInfo(db, 'add', change);
-      assert.strictEqual(1, db.relations.size());
-      // Retrieve the relation from the database.
-      var relation = db.relations.getById(relationKey);
-      assert.isNotNull(relation);
-      assert.strictEqual('http', relation.get('interface'));
-      assert.strictEqual('global', relation.get('scope'));
-      assert.deepEqual(dbEndpoints, relation.get('endpoints'));
-    });
-
-    it('creates a relation in the database (legacy API)', function() {
-      var change = {
-        Key: relationKey,
-        Endpoints: [
-          {
-            Relation: {
-              Interface: 'http',
-              Limit: 1,
-              Name: 'reverseproxy',
-              Optional: false,
-              Role: 'requirer',
-              Scope: 'global'
-            },
-            ServiceName: 'haproxy'
-          },
-          {
-            Relation: {
-              Interface: 'http',
-              Limit: 0,
-              Name: 'website',
-              Optional: false,
-              Role: 'provider',
-              Scope: 'global'
-            },
-            ServiceName: 'wordpress'
-          }
-        ]
       };
       relationInfo(db, 'add', change);
       assert.strictEqual(1, db.relations.size());
@@ -765,7 +727,7 @@ describe('Juju legacy delta handlers', function() {
       });
       var firstEndpoint = deltaEndpoints[0],
           firstRelation = firstEndpoint.Relation;
-      firstEndpoint.ApplicationName = 'mysql';
+      firstEndpoint.ServiceName = 'mysql';
       firstRelation.Name = 'db';
       firstRelation.Interface = 'mysql';
       firstRelation.Scope = 'local';
@@ -1015,19 +977,6 @@ describe('Juju legacy delta handlers', function() {
       db.services.add({id: 'django'});
       var annotations = {'gui-x': '42', 'gui-y': '47'};
       var change = {
-        Tag: 'application-django',
-        Annotations: annotations
-      };
-      annotationInfo(db, 'add', change);
-      // Retrieve the annotations from the database.
-      var application = db.services.getById('django');
-      assert.deepEqual(annotations, application.get('annotations'));
-    });
-
-    it('stores annotations on an application (legacy)', function() {
-      db.services.add({id: 'django'});
-      var annotations = {'gui-x': '42', 'gui-y': '47'};
-      var change = {
         Tag: 'service-django',
         Annotations: annotations
       };
@@ -1087,7 +1036,7 @@ describe('Juju legacy delta handlers', function() {
           expected = {'gui-x': '42', 'gui-y': '47', 'gui-z': 'Now in 3D!'};
       db.services.add({id: 'django', annotations: initial});
       var change = {
-        Tag: 'application-django',
+        Tag: 'service-django',
         Annotations: next
       };
       annotationInfo(db, 'change', change);
@@ -1101,7 +1050,7 @@ describe('Juju legacy delta handlers', function() {
       db.services.add({id: 'django', exposed: true});
       var annotations = {'gui-x': '42', 'gui-y': '47'};
       var change = {
-        Tag: 'application-django',
+        Tag: 'service-django',
         Annotations: annotations
       };
       annotationInfo(db, 'add', change);
@@ -1137,7 +1086,7 @@ describe('Juju legacy delta handlers', function() {
     it('does not create new model instances', function() {
       var annotations = {'gui-x': '42', 'gui-y': '47'};
       var change = {
-        Tag: 'application-django',
+        Tag: 'service-django',
         Annotations: annotations
       };
       annotationInfo(db, 'add', change);

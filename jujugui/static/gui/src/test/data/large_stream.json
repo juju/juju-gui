@@ -72,13 +72,13 @@
             "Key": "wordpress:loadbalancer wordpress:loadbalancer",
             "Endpoints": [
                 {
-                    "Relation": {
-                        "Name": "loadbalancer",
-                        "Role": "peer",
-                        "Interface": "reversenginx",
-                        "Scope": "container"
+                    "relation": {
+                        "name": "loadbalancer",
+                        "role": "peer",
+                        "interface": "reversenginx",
+                        "scope": "container"
                     },
-                    "ApplicationName": "wordpress"
+                    "application-name": "wordpress"
                 }
             ]
         }
@@ -90,22 +90,22 @@
             "Key": "puppet:juju-info mediawiki:juju-info",
             "Endpoints": [
                 {
-                    "Relation": {
-                        "Name": "juju-info",
-                        "Role": "client",
-                        "Interface": "juju-info",
-                        "Scope": "container"
+                    "relation": {
+                        "name": "juju-info",
+                        "role": "client",
+                        "interface": "juju-info",
+                        "scope": "container"
                     },
-                    "ApplicationName": "puppet"
+                    "application-name": "puppet"
                 },
                 {
-                    "Relation": {
-                        "Name": "juju-info",
-                        "Role": "server",
-                        "Interface": "juju-info",
-                        "Scope": "container"
+                    "relation": {
+                        "name": "juju-info",
+                        "role": "server",
+                        "interface": "juju-info",
+                        "scope": "container"
                     },
-                    "ApplicationName": "mediawiki"
+                    "application-name": "mediawiki"
                 }
             ]
         }
@@ -117,22 +117,22 @@
             "Key": "puppet:puppetmaster puppetmaster:puppetmaster",
             "Endpoints": [
                 {
-                    "Relation": {
-                        "Name": "puppetmaster",
-                        "Role": "client",
-                        "Interface": "puppet",
-                        "Scope": "global"
+                    "relation": {
+                        "name": "puppetmaster",
+                        "role": "client",
+                        "interface": "puppet",
+                        "scope": "global"
                     },
-                    "ApplicationName": "puppet"
+                    "application-name": "puppet"
                 },
                 {
-                    "Relation": {
-                        "Name": "puppetmaster",
-                        "Role": "server",
-                        "Interface": "puppet",
-                        "Scope": "global"
+                    "relation": {
+                        "name": "puppetmaster",
+                        "role": "server",
+                        "interface": "puppet",
+                        "scope": "global"
                     },
-                    "ApplicationName": "puppetmaster"
+                    "application-name": "puppetmaster"
                 }
             ]
         }
@@ -144,22 +144,22 @@
             "Key": "rsyslog-forwarder-ha:juju-info mysql:juju-info",
             "Endpoints": [
                 {
-                    "Relation": {
-                        "Name": "juju-info",
-                        "Role": "client",
-                        "Interface": "juju-info",
-                        "Scope": "container"
+                    "relation": {
+                        "name": "juju-info",
+                        "role": "client",
+                        "interface": "juju-info",
+                        "scope": "container"
                     },
-                    "ApplicationName": "rsyslog-forwarder-ha"
+                    "application-name": "rsyslog-forwarder-ha"
                 },
                 {
-                    "Relation": {
-                        "Name": "juju-info",
-                        "Role": "server",
-                        "Interface": "juju-info",
-                        "Scope": "container"
+                    "relation": {
+                        "name": "juju-info",
+                        "role": "server",
+                        "interface": "juju-info",
+                        "scope": "container"
                     },
-                    "ApplicationName": "mysql"
+                    "application-name": "mysql"
                 }
             ]
         }
@@ -171,22 +171,22 @@
             "Key": "puppet:juju-info wordpress:juju-info",
             "Endpoints": [
                 {
-                    "Relation": {
-                        "Name": "juju-info",
-                        "Role": "client",
-                        "Interface": "juju-info",
-                        "Scope": "container"
+                    "relation": {
+                        "name": "juju-info",
+                        "role": "client",
+                        "interface": "juju-info",
+                        "scope": "container"
                     },
-                    "ApplicationName": "puppet"
+                    "application-name": "puppet"
                 },
                 {
-                    "Relation": {
-                        "Name": "juju-info",
-                        "Role": "server",
-                        "Interface": "juju-info",
-                        "Scope": "container"
+                    "relation": {
+                        "name": "juju-info",
+                        "role": "server",
+                        "interface": "juju-info",
+                        "scope": "container"
                     },
-                    "ApplicationName": "wordpress"
+                    "application-name": "wordpress"
                 }
             ]
         }
@@ -198,22 +198,22 @@
             "Key": "rsyslog-forwarder-ha:syslog rsyslog:aggregator",
             "Endpoints": [
                 {
-                    "Relation": {
-                        "Name": "syslog",
-                        "Role": "client",
-                        "Interface": "syslog",
-                        "Scope": "global"
+                    "relation": {
+                        "name": "syslog",
+                        "role": "client",
+                        "interface": "syslog",
+                        "scope": "global"
                     },
-                    "ApplicationName": "rsyslog-forwarder-ha"
+                    "application-name": "rsyslog-forwarder-ha"
                 },
                 {
-                    "Relation": {
-                        "Name": "aggregator",
-                        "Role": "server",
-                        "Interface": "syslog",
-                        "Scope": "global"
+                    "relation": {
+                        "name": "aggregator",
+                        "role": "server",
+                        "interface": "syslog",
+                        "scope": "global"
                     },
-                    "ApplicationName": "rsyslog"
+                    "application-name": "rsyslog"
                 }
             ]
         }
@@ -225,22 +225,22 @@
             "Key": "rsyslog-forwarder-ha:juju-info mediawiki:juju-info",
             "Endpoints": [
                 {
-                    "Relation": {
-                        "Name": "juju-info",
-                        "Role": "client",
-                        "Interface": "juju-info",
-                        "Scope": "container"
+                    "relation": {
+                        "name": "juju-info",
+                        "role": "client",
+                        "interface": "juju-info",
+                        "scope": "container"
                     },
-                    "ApplicationName": "rsyslog-forwarder-ha"
+                    "application-name": "rsyslog-forwarder-ha"
                 },
                 {
-                    "Relation": {
-                        "Name": "juju-info",
-                        "Role": "server",
-                        "Interface": "juju-info",
-                        "Scope": "container"
+                    "relation": {
+                        "name": "juju-info",
+                        "role": "server",
+                        "interface": "juju-info",
+                        "scope": "container"
                     },
-                    "ApplicationName": "mediawiki"
+                    "application-name": "mediawiki"
                 }
             ]
         }
@@ -252,22 +252,22 @@
             "Key": "mediawiki:cache memcached:cache",
             "Endpoints": [
                 {
-                    "Relation": {
-                        "Name": "cache",
-                        "Role": "client",
-                        "Interface": "memcache",
-                        "Scope": "global"
+                    "relation": {
+                        "name": "cache",
+                        "role": "client",
+                        "interface": "memcache",
+                        "scope": "global"
                     },
-                    "ApplicationName": "mediawiki"
+                    "application-name": "mediawiki"
                 },
                 {
-                    "Relation": {
-                        "Name": "cache",
-                        "Role": "server",
-                        "Interface": "memcache",
-                        "Scope": "global"
+                    "relation": {
+                        "name": "cache",
+                        "role": "server",
+                        "interface": "memcache",
+                        "scope": "global"
                     },
-                    "ApplicationName": "memcached"
+                    "application-name": "memcached"
                 }
             ]
         }
@@ -279,22 +279,22 @@
             "Key": "wordpress:db mysql:db",
             "Endpoints": [
                 {
-                    "Relation": {
-                        "Name": "db",
-                        "Role": "client",
-                        "Interface": "mysql",
-                        "Scope": "global"
+                    "relation": {
+                        "name": "db",
+                        "role": "client",
+                        "interface": "mysql",
+                        "scope": "global"
                     },
-                    "ApplicationName": "wordpress"
+                    "application-name": "wordpress"
                 },
                 {
-                    "Relation": {
-                        "Name": "db",
-                        "Role": "server",
-                        "Interface": "mysql",
-                        "Scope": "global"
+                    "relation": {
+                        "name": "db",
+                        "role": "server",
+                        "interface": "mysql",
+                        "scope": "global"
                     },
-                    "ApplicationName": "mysql"
+                    "application-name": "mysql"
                 }
             ]
         }
@@ -306,22 +306,22 @@
             "Key": "puppet:juju-info mysql:juju-info",
             "Endpoints": [
                 {
-                    "Relation": {
-                        "Name": "juju-info",
-                        "Role": "client",
-                        "Interface": "juju-info",
-                        "Scope": "container"
+                    "relation": {
+                        "name": "juju-info",
+                        "role": "client",
+                        "interface": "juju-info",
+                        "scope": "container"
                     },
-                    "ApplicationName": "puppet"
+                    "application-name": "puppet"
                 },
                 {
-                    "Relation": {
-                        "Name": "juju-info",
-                        "Role": "server",
-                        "Interface": "juju-info",
-                        "Scope": "container"
+                    "relation": {
+                        "name": "juju-info",
+                        "role": "server",
+                        "interface": "juju-info",
+                        "scope": "container"
                     },
-                    "ApplicationName": "mysql"
+                    "application-name": "mysql"
                 }
             ]
         }
