@@ -127,6 +127,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         GUIToken: [46, 47],
         Pinger: [42]
       });
+      env.set('modelUUID', 'this-is-a-uuid');
       this._cleanups.push(env.close.bind(env));
       cleanups = [];
     });
@@ -1293,6 +1294,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     describe('local charm upload support', function() {
 
+      afterEach(function() {
+        delete window.juju_config;
+      });
+
+      it('uses the correct endpoint when served from juju', function() {
+        window.juju_config = { staticURL: '/static-url'};
+        env.userIsAuthenticated = true;
+        var mockWebHandler = {sendPostRequest: utils.makeStubFunction()};
+        env.set('webHandler', mockWebHandler);
+        env.uploadLocalCharm(
+          'a zip file', 'trusty',
+          function() {return 'progress';},
+          function() {return 'completed';});
+        // Ensure the web handler's sendPostRequest method has been called with
+        // the correct charm endpoint
+        var lastArguments = mockWebHandler.sendPostRequest.lastArguments();
+        assert.strictEqual(
+          lastArguments[0],
+          '/model/this-is-a-uuid/charms?series=trusty'); // Path.
+      });
+
       it('prevents non authorized users from sending files', function(done) {
         env.userIsAuthenticated = false;
         var warn = console.warn,
@@ -1327,7 +1349,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var lastArguments = mockWebHandler.sendPostRequest.lastArguments();
         assert.strictEqual(lastArguments.length, 7);
         assert.strictEqual(
-            lastArguments[0], '/juju-core/charms?series=trusty'); // Path.
+            lastArguments[0],
+            '/juju-core/model/this-is-a-uuid/charms?series=trusty'); // Path.
         assert.deepEqual(
             lastArguments[1], {'Content-Type': 'application/zip'}); // Headers.
         assert.strictEqual(lastArguments[2], 'a zip file'); // Zip file object.
@@ -1354,9 +1377,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(mockWebHandler.getUrl.callCount(), 1);
         var lastArguments = mockWebHandler.getUrl.lastArguments();
         assert.lengthOf(lastArguments, 3);
-        assert.strictEqual(
-            lastArguments[0],
-            '/juju-core/charms?url=local:trusty/django-42&file=icon.svg');
+        var expected = '/juju-core/model/this-is-a-uuid/charms?' +
+            'url=local:trusty/django-42&file=icon.svg';
+        assert.strictEqual(lastArguments[0], expected);
         assert.strictEqual(lastArguments[1], 'user-user'); // User name.
         assert.strictEqual(lastArguments[2], 'password'); // Password.
       });
@@ -1377,8 +1400,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(mockWebHandler.sendGetRequest.callCount(), 1);
         var lastArguments = mockWebHandler.sendGetRequest.lastArguments();
         assert.lengthOf(lastArguments, 6);
-        assert.strictEqual(
-            lastArguments[0], '/juju-core/charms?url=local:trusty/django-42');
+        var expected = '/juju-core/model/this-is-a-uuid/charms' +
+            '?url=local:trusty/django-42';
+        assert.strictEqual(lastArguments[0], expected);
         assert.deepEqual(lastArguments[1], {}); // Headers.
         assert.strictEqual(lastArguments[2], 'user-user'); // User name.
         assert.strictEqual(lastArguments[3], 'password'); // Password.
@@ -1404,9 +1428,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(mockWebHandler.sendGetRequest.callCount(), 1);
         var lastArguments = mockWebHandler.sendGetRequest.lastArguments();
         assert.lengthOf(lastArguments, 6);
-        assert.strictEqual(
-            lastArguments[0],
-            '/juju-core/charms?url=local:trusty/django-42&file=hooks/install');
+        var expected = '/juju-core/model/this-is-a-uuid/charms?' +
+            'url=local:trusty/django-42&file=hooks/install';
+        assert.strictEqual(lastArguments[0], expected);
         assert.deepEqual(lastArguments[1], {}); // Headers.
         assert.strictEqual(lastArguments[2], 'user-user'); // User name.
         assert.strictEqual(lastArguments[3], 'password'); // Password.
