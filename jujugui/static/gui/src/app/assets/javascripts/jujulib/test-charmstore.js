@@ -487,5 +487,14 @@ describe('jujulib charmstore', function() {
       assert.equal(path.indexOf('cs:'), -1,
                    'The string "cs:" should not be found in the path');
     });
+
+    it('calls the correct path', function() {
+      charmstore.getEntity('cs:foobar', sinon.stub());
+      var path = charmstore.bakery.sendGetRequest.lastCall.args[0];
+      assert.equal(
+        path, 'local/v4/foobar/meta/any?include=bundle-metadata' +
+        '&include=charm-metadata&include=charm-config&include=manifest' +
+        '&include=stats&include=extra-info&include=tags&include=charm-metrics');
+    });
   });
 });
