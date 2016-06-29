@@ -181,6 +181,14 @@ YUI.add('juju-env-base', function(Y) {
     'environmentName': {},
 
     /**
+      The model's uuid.
+
+      @attribute modelUUID
+      @type {string}
+    */
+    'modelUUID': {},
+
+    /**
       The object handling Web requests to external APIs.
       This is usually an instance of app/store/web-handler.js:WebHandler when
       the GUI is connected to a real Juju environment, or
