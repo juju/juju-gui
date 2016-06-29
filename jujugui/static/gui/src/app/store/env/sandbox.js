@@ -293,7 +293,10 @@ YUI.add('juju-env-sandbox', function(Y) {
     handleAdminLogin: function(data, client, state) {
       data.error = !state.login(
         data.params['auth-tag'], data.params.credentials);
-      data.response = {facades: sandboxModule.facades};
+      data.response = {
+        facades: sandboxModule.facades,
+        'user-info': {'read-only': false}
+      };
       client.receive(data);
     },
 

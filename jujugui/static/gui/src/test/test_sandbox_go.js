@@ -148,7 +148,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Add in the error indicator so the deepEqual is comparing apples to
         // apples.
         data.error = false;
-        data.response = {facades: sandboxModule.facades};
+        data.response = {
+          facades: sandboxModule.facades,
+          'user-info': {'read-only': false}
+        };
         assert.deepEqual(Y.JSON.parse(received.data), data);
         assert.isTrue(state.get('authenticated'));
         done();
@@ -162,7 +165,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can log in (environment integration).', function(done) {
       state.logout();
       env.after('login', function() {
-        assert.isTrue(env.userIsAuthenticated);
+        assert.deepEqual(env.userIsAuthenticated, true);
+        assert.deepEqual(env.get('readOnly'), false);
         done();
       });
       env.connect();

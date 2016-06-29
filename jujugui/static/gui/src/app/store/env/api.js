@@ -448,21 +448,17 @@ YUI.add('juju-env-api', function(Y) {
       this.pendingLoginResponse = false;
       this.userIsAuthenticated = !data.error;
       if (this.userIsAuthenticated) {
-        // If this is a token login, set the credentials.
         var response = data.response;
-        if (response && response['auth-tag'] && response.password) {
-          this.setCredentials({
-            user: response['auth-tag'],
-            password: response.password
-          });
-        }
-        // If login succeeded store the facades and retrieve environment info.
+        // If login succeeded store the facades and user information, and
+        // retrieve model info.
         var facadeList = response.facades || [];
         var facades = facadeList.reduce(function(previous, current) {
           previous[current.name] = current.versions;
           return previous;
         }, {});
         this.set('facades', facades);
+        var userInfo = response['user-info'];
+        this.set('readOnly', !!userInfo['read-only']);
         this.currentModelInfo();
         this._watchAll();
         // Start pinging the server.

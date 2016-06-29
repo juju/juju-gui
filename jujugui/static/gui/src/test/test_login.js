@@ -52,7 +52,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     test('successful login event marks user as authenticated', function() {
-      var data = {response: {facades: []}};
+      var data = {response: {facades: [], 'user-info': {}}};
       env.handleLogin(data);
       assert.isTrue(env.userIsAuthenticated);
     });
