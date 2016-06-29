@@ -3,74 +3,72 @@
     "applicationInfo",
     "add",
     {
-      "subordinate": true,
-      "CharmURL": "cs:precise/rsyslog-forwarder-ha-2",
-      "Name": "rsyslog-forwarder-ha"
+      "charm-url": "cs:precise/rsyslog-forwarder-ha-2",
+      "name": "rsyslog-forwarder-ha"
     }
   ],
   [
     "applicationInfo",
     "add",
     {
-      "CharmURL": "cs:precise/mediawiki-3",
-      "Name": "mediawiki"
+      "charm-url": "cs:precise/mediawiki-3",
+      "name": "mediawiki"
     }
   ],
   [
     "applicationInfo",
     "add",
     {
-      "CharmURL": "cs:precise/wordpress-7",
-      "Name": "wordpress"
+      "charm-url": "cs:precise/wordpress-7",
+      "name": "wordpress"
     }
   ],
   [
     "applicationInfo",
     "add",
     {
-      "CharmURL": "cs:precise/rsyslog-6",
-      "Name": "rsyslog"
+      "charm-url": "cs:precise/rsyslog-6",
+      "name": "rsyslog"
     }
   ],
   [
     "applicationInfo",
     "add",
     {
-      "CharmURL": "cs:precise/mysql-6",
-      "Name": "mysql"
+      "charm-url": "cs:precise/mysql-6",
+      "name": "mysql"
     }
   ],
   [
     "applicationInfo",
     "add",
     {
-      "subordinate": true,
-      "CharmURL": "cs:precise/puppet-2",
-      "Name": "puppet"
+      "charm-url": "cs:precise/puppet-2",
+      "name": "puppet"
     }
   ],
   [
     "applicationInfo",
     "add",
     {
-      "CharmURL": "cs:precise/memcached-1",
-      "Name": "memcached"
+      "charm-url": "cs:precise/memcached-1",
+      "name": "memcached"
     }
   ],
   [
     "applicationInfo",
     "add",
     {
-      "CharmURL": "cs:precise/puppetmaster-2",
-      "Name": "puppetmaster"
+      "charm-url": "cs:precise/puppetmaster-2",
+      "name": "puppetmaster"
     }
   ],
-    [
+  [
         "relationInfo",
         "add",
         {
-            "Key": "wordpress:loadbalancer wordpress:loadbalancer",
-            "Endpoints": [
+            "key": "wordpress:loadbalancer wordpress:loadbalancer",
+            "endpoints": [
                 {
                     "relation": {
                         "name": "loadbalancer",
@@ -87,8 +85,8 @@
         "relationInfo",
         "change",
         {
-            "Key": "puppet:juju-info mediawiki:juju-info",
-            "Endpoints": [
+            "key": "puppet:juju-info mediawiki:juju-info",
+            "endpoints": [
                 {
                     "relation": {
                         "name": "juju-info",
@@ -114,8 +112,8 @@
         "relationInfo",
         "change",
         {
-            "Key": "puppet:puppetmaster puppetmaster:puppetmaster",
-            "Endpoints": [
+            "key": "puppet:puppetmaster puppetmaster:puppetmaster",
+            "endpoints": [
                 {
                     "relation": {
                         "name": "puppetmaster",
@@ -141,8 +139,8 @@
         "relationInfo",
         "change",
         {
-            "Key": "rsyslog-forwarder-ha:juju-info mysql:juju-info",
-            "Endpoints": [
+            "key": "rsyslog-forwarder-ha:juju-info mysql:juju-info",
+            "endpoints": [
                 {
                     "relation": {
                         "name": "juju-info",
@@ -168,8 +166,8 @@
         "relationInfo",
         "change",
         {
-            "Key": "puppet:juju-info wordpress:juju-info",
-            "Endpoints": [
+            "key": "puppet:juju-info wordpress:juju-info",
+            "endpoints": [
                 {
                     "relation": {
                         "name": "juju-info",
@@ -195,8 +193,8 @@
         "relationInfo",
         "change",
         {
-            "Key": "rsyslog-forwarder-ha:syslog rsyslog:aggregator",
-            "Endpoints": [
+            "key": "rsyslog-forwarder-ha:syslog rsyslog:aggregator",
+            "endpoints": [
                 {
                     "relation": {
                         "name": "syslog",
@@ -222,8 +220,8 @@
         "relationInfo",
         "change",
         {
-            "Key": "rsyslog-forwarder-ha:juju-info mediawiki:juju-info",
-            "Endpoints": [
+            "key": "rsyslog-forwarder-ha:juju-info mediawiki:juju-info",
+            "endpoints": [
                 {
                     "relation": {
                         "name": "juju-info",
@@ -249,8 +247,8 @@
         "relationInfo",
         "change",
         {
-            "Key": "mediawiki:cache memcached:cache",
-            "Endpoints": [
+            "key": "mediawiki:cache memcached:cache",
+            "endpoints": [
                 {
                     "relation": {
                         "name": "cache",
@@ -276,8 +274,8 @@
         "relationInfo",
         "change",
         {
-            "Key": "wordpress:db mysql:db",
-            "Endpoints": [
+            "key": "wordpress:db mysql:db",
+            "endpoints": [
                 {
                     "relation": {
                         "name": "db",
@@ -303,8 +301,8 @@
         "relationInfo",
         "change",
         {
-            "Key": "puppet:juju-info mysql:juju-info",
-            "Endpoints": [
+            "key": "puppet:juju-info mysql:juju-info",
+            "endpoints": [
                 {
                     "relation": {
                         "name": "juju-info",

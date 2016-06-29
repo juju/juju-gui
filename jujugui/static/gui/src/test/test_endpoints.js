@@ -136,12 +136,11 @@ describe('Relation endpoints logic', function() {
     // Wordpress already has one subordinates related (puppet)
     // ..the picture is wrong.. wordpress only has one subordinate
     app.endpointsController.endpointsMap = sample_endpoints;
-    var service = db.services.getById('wordpress'),
-        available = models.getEndpoints(service, app.endpointsController),
-        available_svcs = Y.Object.keys(available);
+    var service = db.services.getById('wordpress');
+    var available = models.getEndpoints(service, app.endpointsController);
+    var available_svcs = Y.Object.keys(available);
     available_svcs.sort();
-    available_svcs.should.eql(
-        ['memcached']);
+    available_svcs.should.eql(['memcached']);
   });
 
   it('should find valid targets for subordinates', function() {
