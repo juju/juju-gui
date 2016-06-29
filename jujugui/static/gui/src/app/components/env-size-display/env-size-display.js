@@ -26,6 +26,7 @@ YUI.add('env-size-display', function() {
       changeState: React.PropTypes.func.isRequired,
       getAppState: React.PropTypes.func.isRequired,
       machineCount: React.PropTypes.number.isRequired,
+      pluralize: React.PropTypes.func.isRequired,
       serviceCount: React.PropTypes.number.isRequired
     },
 
@@ -86,6 +87,10 @@ YUI.add('env-size-display', function() {
     },
 
     render: function() {
+      var props = this.props;
+      var serviceCount = props.serviceCount;
+      var machineCount = props.machineCount;
+      var pluralize = props.pluralize;
       return (
         <div className="env-size-display">
           <ul className="env-size-display__list">
@@ -95,7 +100,8 @@ YUI.add('env-size-display', function() {
                     className="env-size-display__link">
                     <juju.components.SvgIcon name="relations"
                       className="env-size-display__icon" size="16" />
-                    {this.props.serviceCount} applications
+                    {serviceCount}&nbsp;
+                    {pluralize('application', serviceCount)}
                   </a>
               </li>
               <li className={this._genClasses('machine')}>
@@ -103,7 +109,8 @@ YUI.add('env-size-display', function() {
                     className="env-size-display__link">
                     <juju.components.SvgIcon name="changes-machine-created"
                       className="env-size-display__icon" size="16" />
-                    {this.props.machineCount} machines
+                    {machineCount}&nbsp;
+                    {pluralize('machine', machineCount)}
                   </a>
               </li>
           </ul>

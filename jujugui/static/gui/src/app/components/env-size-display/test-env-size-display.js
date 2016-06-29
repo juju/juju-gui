@@ -35,18 +35,22 @@ describe('EnvSizeDisplay', function() {
   });
 
   it('shows applications and machines count', function() {
+    var pluralize = sinon.stub();
+    pluralize.withArgs('application').returns('applications');
+    pluralize.withArgs('machine').returns('machines');
     var component = renderIntoDocument(
         <juju.components.EnvSizeDisplay
           changeState={sinon.stub()}
           getAppState={function() {}}
           machineCount={4}
+          pluralize={pluralize}
           serviceCount={3} />);
     assert.equal(
         queryComponentSelector(
-            component, 'a[data-view=application]').innerText, '3 applications');
+            component, 'a[data-view=application]').innerText, '3 applications');
     assert.equal(
         queryComponentSelector(
-            component, 'a[data-view=machine]').innerText, '4 machines');
+            component, 'a[data-view=machine]').innerText, '4 machines');
   });
 
   it('highlights active tab on initial render', function() {
@@ -58,7 +62,8 @@ describe('EnvSizeDisplay', function() {
           changeState={sinon.stub()}
           serviceCount={3}
           machineCount={4}
-          getAppState={getAppStateStub} />);
+          getAppState={getAppStateStub}
+          pluralize={sinon.stub()}  />);
 
     assert.equal(getAppStateStub.callCount, 1);
     assert.notEqual(
@@ -76,7 +81,8 @@ describe('EnvSizeDisplay', function() {
           serviceCount={3}
           machineCount={4}
           getAppState={function() {}}
-          changeState={changeStateStub} />);
+          changeState={changeStateStub}
+          pluralize={sinon.stub()}  />);
     var serviceLink = queryComponentSelector(component,
       'a[data-view=application]');
     var machineLink = queryComponentSelector(component,
@@ -101,7 +107,8 @@ describe('EnvSizeDisplay', function() {
           serviceCount={3}
           machineCount={4}
           getAppState={function() {}}
-          changeState={changeStateStub} />);
+          changeState={changeStateStub}
+          pluralize={sinon.stub()}  />);
     var serviceLink = queryComponentSelector(component,
       'a[data-view=application]');
     var machineLink = queryComponentSelector(component,
