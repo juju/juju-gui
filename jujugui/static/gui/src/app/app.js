@@ -840,10 +840,11 @@ YUI.add('juju-gui', function(Y) {
       var state = this.state;
       ReactDOM.render(
         <window.juju.components.EnvSizeDisplay
-          serviceCount={serviceCount}
-          machineCount={machineCount}
           changeState={this.changeState.bind(this)}
-          getAppState={state.getState.bind(state)} />,
+          getAppState={state.getState.bind(state)}
+          machineCount={machineCount}
+          pluralize={views.utils.pluralize.bind(this)}
+          serviceCount={serviceCount} />,
         document.getElementById('env-size-display-container'));
     },
 
