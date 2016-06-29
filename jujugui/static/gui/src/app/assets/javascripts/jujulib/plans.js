@@ -97,7 +97,7 @@ var module = module;
       Finds the currently active plan for the given model and application.
 
       @public showActivePlan
-      @params modelUuid {String} The model UUID.
+      @params modelUUID {String} The model UUID.
       @params applicationName {String} The name of the application.
       @params callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
@@ -111,7 +111,7 @@ var module = module;
           - yaml: the YAML content for the plan
             (not really useful in this context).
     */
-    showActivePlan: function(modelUuid, applicationName, callback) {
+    showActivePlan: function(modelUUID, applicationName, callback) {
       var handler = function(error, response) {
         if (error !== null) {
           callback(error, null, []);
@@ -124,7 +124,8 @@ var module = module;
         var current = availablePlans[response['current-plan']];
         callback(null, _handlePlan(current), plans);
       };
-      var url = this.url + '/status/' + modelUuid + '/' + applicationName;
+      var url = this.url + '/plan/model/' + modelUUID +
+        '/service/' + applicationName;
       return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
     }
 

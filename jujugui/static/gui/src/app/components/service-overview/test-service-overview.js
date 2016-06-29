@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('ServiceOverview', function() {
-  var acl, fakeService;
+  var acl, fakeCharm, fakeService;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -38,6 +38,9 @@ describe('ServiceOverview', function() {
           }
         };
       }};
+    fakeCharm = {
+      hasMetrics: sinon.stub().returns(true)
+    };
   });
 
   function getUnitStatusCounts(error=0, pending=0, uncommitted=0) {
@@ -47,6 +50,164 @@ describe('ServiceOverview', function() {
       uncommitted: {size: uncommitted}
     });
   }
+
+  it('does not request plans if charm does not have metrics', function() {
+    var setAttrs = sinon.stub();
+    var getStub = sinon.stub();
+    getStub.withArgs('activePlan')
+      .throws('it should not fetch this if no metrics');
+    getStub.withArgs('name').throws('it should not fetch this if no metrics');
+    getStub.withArgs('plans').throws('it should not fetch this if no metrics');
+    getStub.withArgs('units').returns({
+      toArray: sinon.stub().returns([])
+    });
+    var service = {
+      setAttrs: setAttrs,
+      get: getStub
+    };
+    var charm = {
+      hasMetrics: sinon.stub().returns(false)
+    };
+    var showActivePlan = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.ServiceOverview
+        acl={acl}
+        changeState={sinon.stub()}
+        charm={charm}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        displayPlans={false}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID={'abc123'}
+        service={service}
+        serviceRelations={[1]}
+        showActivePlan={showActivePlan} />, true);
+    var instance = renderer.getMountedInstance();
+    assert.equal(showActivePlan.callCount, 0);
+    assert.equal(instance.state.plans, null);
+    assert.equal(instance.state.activePlan, null);
+  });
+
+  it('queries for active plans if none are stored on the charm', function() {
+    var setStub = sinon.stub();
+    var getStub = sinon.stub();
+    getStub.withArgs('activePlan').returns(undefined);
+    getStub.withArgs('name').returns('servicename');
+    getStub.withArgs('units').returns({
+      toArray: sinon.stub().returns([])
+    });
+    var charmGetStub = sinon.stub();
+    charmGetStub.withArgs('plans').returns(undefined);
+    var service = {
+      set: setStub,
+      get: getStub
+    };
+    var charm = {
+      get: charmGetStub,
+      hasMetrics: sinon.stub().returns(true)
+    };
+    var modelUUID = 'abc123';
+    var showActivePlan = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.ServiceOverview
+        acl={acl}
+        changeState={sinon.stub()}
+        charm={charm}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        displayPlans={true}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID={modelUUID}
+        service={service}
+        serviceRelations={[1]}
+        showActivePlan={showActivePlan} />, true);
+    var instance = renderer.getMountedInstance();
+    assert.equal(showActivePlan.callCount, 1, 'showActivePlan not called');
+    assert.equal(showActivePlan.args[0][0], modelUUID);
+    assert.equal(showActivePlan.args[0][1], 'servicename');
+    var activePlan = 'active';
+    var plans = 'plans';
+    // Call the callback sent to showActivePlan
+    showActivePlan.args[0][2](null, activePlan, plans);
+    assert.equal(setStub.callCount, 1, 'setAttrs never called');
+    assert.deepEqual(setStub.args[0], ['activePlan', activePlan]);
+    assert.equal(instance.state.plans, plans);
+    assert.equal(instance.state.activePlan, activePlan);
+  });
+
+  it('uses plans stored on a charm', function() {
+    var setStub = sinon.stub();
+    var activePlan = {active: 'plan'};
+    var planList = [{plan: 'list'}];
+    var getStub = sinon.stub();
+    getStub.withArgs('activePlan').returns(activePlan);
+    getStub.withArgs('name').throws('it should not request the service name');
+    getStub.withArgs('units').returns({
+      toArray: sinon.stub().returns([])
+    });
+    var charmGetStub = sinon.stub();
+    charmGetStub.withArgs('plans').returns(planList);
+    var service = {
+      set: setStub,
+      get: getStub
+    };
+    var charm = {
+      get: charmGetStub,
+      hasMetrics: sinon.stub().returns(true)
+    };
+    var showActivePlan = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.ServiceOverview
+        acl={acl}
+        changeState={sinon.stub()}
+        charm={charm}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        displayPlans={true}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID={'abc123'}
+        service={service}
+        serviceRelations={[1]}
+        showActivePlan={showActivePlan} />, true);
+    var instance = renderer.getMountedInstance();
+    assert.equal(showActivePlan.callCount, 0);
+    assert.equal(instance.state.plans, planList);
+    assert.equal(instance.state.activePlan, activePlan);
+  });
+
+  it('does not make the plans request for Juju 1', function() {
+    var setAttrs = sinon.stub();
+    var getStub = sinon.stub();
+    getStub.withArgs('activePlan')
+      .throws('it should not fetch this for Juju 1');
+    getStub.withArgs('name').throws('it should not fetch this for Juju 1');
+    getStub.withArgs('plans').throws('it should not fetch this for Juju 1');
+    getStub.withArgs('units').returns({
+      toArray: sinon.stub().returns([])
+    });
+    var service = {
+      setAttrs: setAttrs,
+      get: getStub
+    };
+    var showActivePlan = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.ServiceOverview
+        acl={acl}
+        changeState={sinon.stub()}
+        charm={fakeCharm}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        displayPlans={false}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID={'abc123'}
+        service={service}
+        serviceRelations={[1]}
+        showActivePlan={showActivePlan} />, true);
+    var instance = renderer.getMountedInstance();
+    assert.equal(showActivePlan.callCount, 0);
+    assert.equal(instance.state.plans, null);
+    assert.equal(instance.state.activePlan, null);
+  });
 
   it('shows the all units action', function() {
     var service = {
@@ -62,11 +223,15 @@ describe('ServiceOverview', function() {
           <juju.components.ServiceOverview
             acl={acl}
             changeState={sinon.stub()}
+            charm={fakeCharm}
             clearState={sinon.stub()}
             destroyService={sinon.stub()}
+            displayPlans={false}
             getUnitStatusCounts={getUnitStatusCounts()}
+            modelUUID="abc123"
             service={service}
-            serviceRelations={[1]} />);
+            serviceRelations={[1]}
+            showActivePlan={sinon.stub()} />);
     assert.deepEqual(output.props.children[0].props.children[0],
       <juju.components.OverviewAction
         icon="units"
@@ -93,11 +258,15 @@ describe('ServiceOverview', function() {
           <juju.components.ServiceOverview
             acl={acl}
             changeState={sinon.stub()}
+            charm={fakeCharm}
             clearState={sinon.stub()}
             destroyService={sinon.stub()}
+            displayPlans={false}
             getUnitStatusCounts={getUnitStatusCounts()}
+            modelUUID="abc123"
             service={service}
-            serviceRelations={[1]} />);
+            serviceRelations={[1]}
+            showActivePlan={sinon.stub()} />);
     assert.deepEqual(output.props.children[0].props.children[0],
       <juju.components.OverviewAction
         icon="units"
@@ -125,11 +294,15 @@ describe('ServiceOverview', function() {
           <juju.components.ServiceOverview
             acl={acl}
             clearState={sinon.stub()}
+            charm={fakeCharm}
             destroyService={sinon.stub()}
+            displayPlans={false}
             getUnitStatusCounts={getUnitStatusCounts()}
+            modelUUID="abc123"
             changeState={changeState}
             service={service}
-            serviceRelations={[1]} />);
+            serviceRelations={[1]}
+            showActivePlan={sinon.stub()} />);
     // call the action method which is passed to the child to make sure it
     // is hooked up to the changeState method.
     output.props.children[0].props.children[0].props.action({
@@ -167,11 +340,15 @@ describe('ServiceOverview', function() {
           <juju.components.ServiceOverview
             acl={acl}
             changeState={sinon.stub()}
+            charm={fakeCharm}
             clearState={sinon.stub()}
             destroyService={sinon.stub()}
+            displayPlans={false}
             getUnitStatusCounts={getUnitStatusCounts(0, 0, 2)}
+            modelUUID="abc123"
             service={service}
-            serviceRelations={[1]} />);
+            serviceRelations={[1]}
+            showActivePlan={sinon.stub()} />);
     assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
         key="Uncommitted"
@@ -197,11 +374,15 @@ describe('ServiceOverview', function() {
           <juju.components.ServiceOverview
             acl={acl}
             changeState={sinon.stub()}
+            charm={fakeCharm}
             clearState={sinon.stub()}
             destroyService={sinon.stub()}
+            displayPlans={false}
             getUnitStatusCounts={getUnitStatusCounts(0, 1, 0)}
+            modelUUID="abc123"
             service={service}
-            serviceRelations={[1]} />);
+            serviceRelations={[1]}
+            showActivePlan={sinon.stub()} />);
     assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
         key="Pending"
@@ -227,11 +408,15 @@ describe('ServiceOverview', function() {
           <juju.components.ServiceOverview
             acl={acl}
             changeState={sinon.stub()}
+            charm={fakeCharm}
             clearState={sinon.stub()}
             destroyService={sinon.stub()}
+            displayPlans={false}
             getUnitStatusCounts={getUnitStatusCounts(1, 0, 0)}
+            modelUUID="abc123"
             service={service}
-            serviceRelations={[1]} />);
+            serviceRelations={[1]}
+            showActivePlan={sinon.stub()} />);
     assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
         key="Errors"
@@ -257,11 +442,15 @@ describe('ServiceOverview', function() {
           <juju.components.ServiceOverview
             acl={acl}
             changeState={sinon.stub()}
+            charm={fakeCharm}
             clearState={sinon.stub()}
             destroyService={sinon.stub()}
+            displayPlans={false}
             getUnitStatusCounts={getUnitStatusCounts()}
+            modelUUID="abc123"
             service={service}
-            serviceRelations={[1]} />);
+            serviceRelations={[1]}
+            showActivePlan={sinon.stub()} />);
     assert.deepEqual(output.props.children[0].props.children[1],
       <juju.components.OverviewAction
         key="Configure"
@@ -287,11 +476,15 @@ describe('ServiceOverview', function() {
         <juju.components.ServiceOverview
           acl={acl}
           changeState={sinon.stub()}
+          charm={fakeCharm}
           clearState={sinon.stub()}
           destroyService={sinon.stub()}
+          displayPlans={false}
           getUnitStatusCounts={getUnitStatusCounts()}
+          modelUUID="abc123"
           service={service}
-          serviceRelations={[1, 2, 3]} />);
+          serviceRelations={[1, 2, 3]}
+          showActivePlan={sinon.stub()} />);
     assert.deepEqual(output.props.children[0].props.children[2],
       <juju.components.OverviewAction
         key="Relations"
@@ -320,11 +513,15 @@ describe('ServiceOverview', function() {
         <juju.components.ServiceOverview
           acl={acl}
           changeState={sinon.stub()}
+          charm={fakeCharm}
           clearState={sinon.stub()}
           destroyService={sinon.stub()}
+          displayPlans={false}
           getUnitStatusCounts={getUnitStatusCounts()}
+          modelUUID="abc123"
           service={service}
-          serviceRelations={[1]} />);
+          serviceRelations={[1]}
+          showActivePlan={sinon.stub()} />);
     assert.deepEqual(output.props.children[0].props.children[3],
       <juju.components.OverviewAction
         key="Expose"
@@ -354,11 +551,15 @@ describe('ServiceOverview', function() {
         <juju.components.ServiceOverview
           acl={acl}
           changeState={sinon.stub()}
+          charm={fakeCharm}
           clearState={sinon.stub()}
           destroyService={sinon.stub()}
+          displayPlans={false}
           getUnitStatusCounts={getUnitStatusCounts()}
+          modelUUID="abc123"
           service={service}
-          serviceRelations={[1]} />);
+          serviceRelations={[1]}
+          showActivePlan={sinon.stub()} />);
     assert.deepEqual(output.props.children[0].props.children[4],
       <juju.components.OverviewAction
         key="Change version"
@@ -389,11 +590,15 @@ describe('ServiceOverview', function() {
         <juju.components.ServiceOverview
           acl={acl}
           clearState={sinon.stub()}
+          charm={fakeCharm}
           destroyService={sinon.stub()}
+          displayPlans={false}
           changeState={changeState}
           getUnitStatusCounts={getUnitStatusCounts()}
+          modelUUID="abc123"
           service={service}
-          serviceRelations={[1]} />);
+          serviceRelations={[1]}
+          showActivePlan={sinon.stub()} />);
     output.props.children[0].props.children[4].props.linkAction();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -422,11 +627,15 @@ describe('ServiceOverview', function() {
         <juju.components.ServiceOverview
           acl={acl}
           changeState={sinon.stub()}
+          charm={fakeCharm}
           clearState={sinon.stub()}
           destroyService={sinon.stub()}
+          displayPlans={false}
           getUnitStatusCounts={getUnitStatusCounts()}
+          modelUUID="abc123"
           service={service}
-          serviceRelations={[1, 2, 3]} />);
+          serviceRelations={[1, 2, 3]}
+          showActivePlan={sinon.stub()} />);
     assert.equal(output.props.children[0].props.children.length, 4);
   });
 
@@ -445,12 +654,56 @@ describe('ServiceOverview', function() {
         <juju.components.ServiceOverview
           acl={acl}
           changeState={sinon.stub()}
+          charm={fakeCharm}
           clearState={sinon.stub()}
           destroyService={sinon.stub()}
+          displayPlans={false}
           getUnitStatusCounts={getUnitStatusCounts()}
+          modelUUID="abc123"
           service={service}
-          serviceRelations={[]} />);
+          serviceRelations={[]}
+          showActivePlan={sinon.stub()} />);
     assert.equal(output.props.children[0].props.children.length, 4);
+  });
+
+  it('shows the plans action if there are plans', function() {
+    var setAttrs = sinon.stub();
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('units').returns({
+      toArray: sinon.stub().returns([])
+    });
+    // Return an array to make it think it has plans
+    var charmGetStub = sinon.stub();
+    charmGetStub.withArgs('plans').returns([]);
+    getStub.withArgs('activePlan').returns([]);
+    var service = {
+      setAttrs: setAttrs,
+      get: getStub
+    };
+    var charm = {
+      get: charmGetStub,
+      hasMetrics: sinon.stub().returns(true)
+    };
+    var showActivePlan = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+        <juju.components.ServiceOverview
+          acl={acl}
+          changeState={sinon.stub()}
+          charm={charm}
+          clearState={sinon.stub()}
+          destroyService={sinon.stub()}
+          displayPlans={true}
+          getUnitStatusCounts={getUnitStatusCounts()}
+          modelUUID="abc123"
+          service={service}
+          serviceRelations={[]}
+          showActivePlan={showActivePlan} />);
+    assert.equal(
+      showActivePlan.callCount, 0,
+      'we are defining plans in the service, it should not call to fetch more');
+    assert.equal(
+      output.props.children[0].props.children[4].props.title, 'Plan');
   });
 
   it('renders the delete button', function() {
@@ -458,11 +711,15 @@ describe('ServiceOverview', function() {
       <juju.components.ServiceOverview
         acl={acl}
         changeState={sinon.stub()}
+        charm={fakeCharm}
         clearState={sinon.stub()}
         destroyService={sinon.stub()}
+        displayPlans={false}
         getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
         service={fakeService}
-        serviceRelations={[]} />);
+        serviceRelations={[]}
+        showActivePlan={sinon.stub()} />);
     var buttons = [{
       disabled: false,
       title: 'Destroy',
@@ -479,11 +736,15 @@ describe('ServiceOverview', function() {
       <juju.components.ServiceOverview
         acl={acl}
         changeState={sinon.stub()}
+        charm={fakeCharm}
         clearState={sinon.stub()}
         destroyService={sinon.stub()}
         getUnitStatusCounts={getUnitStatusCounts()}
+        displayPlans={false}
+        modelUUID="abc123"
         service={fakeService}
-        serviceRelations={[]} />);
+        serviceRelations={[]}
+        showActivePlan={sinon.stub()} />);
     var buttons = [{
       disabled: true,
       title: 'Destroy',
@@ -499,11 +760,15 @@ describe('ServiceOverview', function() {
       <juju.components.ServiceOverview
         acl={acl}
         changeState={sinon.stub()}
+        charm={fakeCharm}
         clearState={sinon.stub()}
         destroyService={sinon.stub()}
+        displayPlans={false}
         getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
         service={fakeService}
-        serviceRelations={[]} />);
+        serviceRelations={[]}
+        showActivePlan={sinon.stub()} />);
     var buttons = [{
       disabled: false,
       title: 'Cancel',
@@ -529,12 +794,16 @@ describe('ServiceOverview', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        charm={fakeCharm}
         changeState={sinon.stub()}
         clearState={sinon.stub()}
         destroyService={sinon.stub()}
+        displayPlans={false}
         getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
         service={fakeService}
-        serviceRelations={[]} />, true);
+        serviceRelations={[]}
+        showActivePlan={sinon.stub()} />, true);
     var output = shallowRenderer.getRenderOutput();
     var buttons = [{
       disabled: false,
@@ -552,11 +821,15 @@ describe('ServiceOverview', function() {
       <juju.components.ServiceOverview
         acl={acl}
         changeState={sinon.stub()}
+        charm={fakeCharm}
         clearState={sinon.stub()}
         destroyService={sinon.stub()}
+        displayPlans={false}
         getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
         service={fakeService}
-        serviceRelations={[]} />);
+        serviceRelations={[]}
+        showActivePlan={sinon.stub()} />);
     output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children[2],
       <juju.components.InspectorConfirm
@@ -572,11 +845,15 @@ describe('ServiceOverview', function() {
       <juju.components.ServiceOverview
         acl={acl}
         changeState={sinon.stub()}
+        charm={fakeCharm}
         clearState={sinon.stub()}
         destroyService={sinon.stub()}
+        displayPlans={false}
         getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
         service={fakeService}
-        serviceRelations={[]} />, true);
+        serviceRelations={[]}
+        showActivePlan={sinon.stub()} />, true);
     var output = shallowRenderer.getRenderOutput();
     var buttons = [{
       disabled: false,
@@ -596,11 +873,15 @@ describe('ServiceOverview', function() {
       <juju.components.ServiceOverview
         acl={acl}
         changeState={sinon.stub()}
+        charm={fakeCharm}
         clearState={sinon.stub()}
         destroyService={sinon.stub()}
+        displayPlans={false}
         getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
         service={fakeService}
-        serviceRelations={[]} />);
+        serviceRelations={[]}
+        showActivePlan={sinon.stub()} />);
     output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children[2],
       <juju.components.InspectorConfirm
@@ -618,12 +899,16 @@ describe('ServiceOverview', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        charm={fakeCharm}
         destroyService={destroyService}
         getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
         clearState={clearState}
         changeState={changeState}
+        displayPlans={false}
         service={fakeService}
-        serviceRelations={[]} />, true);
+        serviceRelations={[]}
+        showActivePlan={sinon.stub()} />, true);
     var output = shallowRenderer.getRenderOutput();
     var buttons = [{
       disabled: false,
@@ -642,12 +927,16 @@ describe('ServiceOverview', function() {
     shallowRenderer.render(
       <juju.components.ServiceOverview
         acl={acl}
+        charm={fakeCharm}
         destroyService={destroyService}
         clearState={clearState}
         changeState={changeState}
+        displayPlans={false}
         getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
         service={fakeService}
-        serviceRelations={[]} />);
+        serviceRelations={[]}
+        showActivePlan={sinon.stub()} />);
     output = shallowRenderer.getRenderOutput();
     assert.deepEqual(output.props.children[2],
       <juju.components.InspectorConfirm
@@ -663,12 +952,16 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        charm={fakeCharm}
         destroyService={destroyService}
         clearState={clearState}
         changeState={changeState}
+        displayPlans={false}
         getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
         service={fakeService}
-        serviceRelations={[]} />);
+        serviceRelations={[]}
+        showActivePlan={sinon.stub()} />);
     // Simulate the confirm click.
     output.props.children[2].props.buttons[1].action();
     assert.equal(destroyService.callCount, 1);
@@ -681,12 +974,16 @@ describe('ServiceOverview', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
+        charm={fakeCharm}
         destroyService={destroyService}
         getUnitStatusCounts={getUnitStatusCounts()}
+        modelUUID="abc123"
         clearState={clearState}
         changeState={changeState}
+        displayPlans={false}
         service={fakeService}
-        serviceRelations={[]} />);
+        serviceRelations={[]}
+        showActivePlan={sinon.stub()} />);
     // Simulate the confirm click.
     output.props.children[2].props.buttons[1].action();
     assert.equal(clearState.callCount, 1);

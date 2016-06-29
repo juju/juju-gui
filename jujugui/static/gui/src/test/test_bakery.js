@@ -89,9 +89,12 @@ describe('Bakery', function() {
       webhandler: new Y.juju.environments.web.WebHandler(),
       serviceName: 'test',
       macaroon: 'foo-bar',
-      cookieStore: fakeLocalStorage
+      dischargeToken: 'discharge-foo',
+      cookieStore: fakeLocalStorage,
+      dischargeStore: fakeLocalStorage
     });
     assert.equal(fakeLocalStorage.getItem('Macaroons-test'), 'foo-bar');
+    assert.equal(fakeLocalStorage.getItem('discharge-token'), 'discharge-foo');
   });
 
   it('can be configured to use a specified cookie name', function() {
@@ -289,6 +292,7 @@ describe('Bakery', function() {
           webhandler: new Y.juju.environments.web.WebHandler(),
           visitMethod: null,
           serviceName: 'test',
+          dischargeStore: fakeLocalStorage
         });
         bakery._sendOriginalRequest = function (path, sucessCallback,
                                                 failureCallback) {
@@ -324,7 +328,8 @@ describe('Bakery', function() {
             'target': {
               status: 200,
               responseText: JSON.stringify({
-                'Macaroon': macaroon.export(dischargeMacaroon)
+                'Macaroon': macaroon.export(dischargeMacaroon),
+                'DischargeToken': 'discharge-foo'
               })
             }
           });
@@ -345,6 +350,78 @@ describe('Bakery', function() {
         assert.equal(postCalled, 1);
         assert.equal(postSuccess, true);
         assert.equal(originalCalled, 1);
+        assert.equal(fakeLocalStorage.getItem('discharge-token'),
+          btoa(JSON.stringify('discharge-foo')));
+      });
+
+      it('calls original send with macaroon with third party ' +
+        'and no interaction needed with discharge-token', function () {
+        bakery = new Y.juju.environments.web.Bakery({
+          webhandler: new Y.juju.environments.web.WebHandler(),
+          visitMethod: null,
+          serviceName: 'test',
+          dischargeStore: fakeLocalStorage,
+          dischargeToken: 'discharge-foo'
+        });
+        bakery._sendOriginalRequest = function (path, sucessCallback,
+                                                failureCallback) {
+          originalCalled++;
+          assert.equal(path, 'path');
+          assert.equal(sucessCallback, success);
+          assert.equal(failureCallback, failure);
+        };
+
+        bakery.webhandler.sendPostRequest = function (path, headers, query,
+                                                      d, e, f, g, completed) {
+          postCalled++;
+          postSuccess = (path == 'elsewhere/discharge')
+            && (headers['Bakery-Protocol-Version'] == 1)
+            && (headers['Content-Type'] ==
+            'application/x-www-form-urlencoded')
+            && (headers['Macaroons'] == 'discharge-foo');
+
+          var caveatObj = {};
+          try {
+            query.split('&').forEach(function (part) {
+              var item = part.split('=');
+              caveatObj[item[0]] = decodeURIComponent(item[1]);
+            });
+          } catch (ex) {
+            fail('unable to read url query params from sendPost request');
+          }
+
+          var dischargeMacaroon = bakery.dischargeThirdPartyCaveat(caveatObj.id,
+            thirdParty, function (m) {
+            });
+          // Call completed with 200 leads to no interaction
+          completed({
+            'target': {
+              status: 200,
+              responseText: JSON.stringify({
+                'Macaroon': macaroon.export(dischargeMacaroon),
+                'DischargeToken': 'discharge-foo'
+              })
+            }
+          });
+        };
+
+        bakery._requestHandlerWithInteraction(
+          'path', success, failure, true, {
+            target: {
+              status: 401,
+              responseText: JSON.stringify({'Info': {'Macaroon': m}}),
+              getResponseHeader: function (k) {
+                return 'Macaroon';
+              }
+            }
+          }
+        );
+
+        assert.equal(postCalled, 1);
+        assert.equal(postSuccess, true);
+        assert.equal(originalCalled, 1);
+        assert.equal(fakeLocalStorage.getItem('discharge-token'),
+          btoa(JSON.stringify('discharge-foo')));
       });
 
       it('calls original send with macaroon with third party ' +
@@ -354,6 +431,7 @@ describe('Bakery', function() {
           webhandler: new Y.juju.environments.web.WebHandler(),
           visitMethod: visitMethod,
           serviceName: 'test',
+          dischargeStore: fakeLocalStorage
         });
         bakery._sendOriginalRequest = function (path, sucessCallback,
                                                 failureCallback) {

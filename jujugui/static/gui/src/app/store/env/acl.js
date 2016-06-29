@@ -19,15 +19,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 YUI.add('acl', function(Y) {
+
   var juju = Y.namespace('juju');
 
   /**
-    An object of methods that return boolean values that can be used to enable
-    or disable interactions in the GUI.
+    Acl factory.
+    @function generateAcl
+    @param env {Object} The env instance.
   */
-  juju.acl = {
-    isReadOnly: () => false
-  };
+  juju.generateAcl = env => ({
+    isReadOnly: () => !!env.get('readOnly')
+  });
 
 }, '0.1.0', {
   requires: []

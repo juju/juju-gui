@@ -25,11 +25,15 @@ YUI.add('service-overview', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
+      charm: React.PropTypes.object.isRequired,
       clearState: React.PropTypes.func.isRequired,
       destroyService: React.PropTypes.func.isRequired,
+      displayPlans: React.PropTypes.bool.isRequired,
       getUnitStatusCounts: React.PropTypes.func.isRequired,
+      modelUUID: React.PropTypes.string.isRequired,
       service: React.PropTypes.object.isRequired,
-      serviceRelations: React.PropTypes.array.isRequired
+      serviceRelations: React.PropTypes.array.isRequired,
+      showActivePlan: React.PropTypes.func.isRequired
     },
 
     /**
@@ -41,8 +45,53 @@ YUI.add('service-overview', function() {
     getInitialState: function() {
       // Setting a default state object.
       return {
-        confirmationOpen: false
+        confirmationOpen: false,
+        activePlan: null,
+        plans: null
       };
+    },
+
+    componentWillMount: function() {
+      if (!this.props.displayPlans) {
+        // If we aren't in a Juju 2 model then do not query for
+        // or display the plans.
+        return;
+      }
+
+      if (!this.props.charm.hasMetrics()) {
+        // Do not request or update the plans if this charm doesn't
+        // have any metrics.
+        return;
+      }
+
+      var service = this.props.service;
+      var plans = this.props.charm.get('plans');
+      var activePlan = service.get('activePlan');
+
+      if (plans || activePlan) {
+        // If we already have plans then set them so that the UI can render
+        // with available data.
+        this.setState({plans, activePlan});
+      }
+
+      if (plans === undefined || activePlan === undefined) {
+        // If we don't have the plans or the activePlan then make a request
+        // to fetch them. This is a fallback as the UI should handle
+        // insufficient data transparently.
+        this.props.showActivePlan(
+          this.props.modelUUID,
+          service.get('name'),
+          (err, activePlan, plans) => {
+            if (err) {
+              console.error(err);
+              return;
+            }
+            if (plans && plans.length > 0) {
+              service.set('activePlan', activePlan);
+              this.setState({ activePlan, plans });
+            }
+          });
+      }
     },
 
     /**
@@ -93,6 +142,7 @@ YUI.add('service-overview', function() {
     */
     _generateActions: function(service) {
       var serviceId = service.get('id');
+      var state = this.state;
       var actions = [];
       var units = service.get('units').toArray();
       var statusCounts = this.props.getUnitStatusCounts(units);
@@ -194,6 +244,24 @@ YUI.add('service-overview', function() {
               metadata: {
                 id: serviceId,
                 activeComponent: 'change-version'
+              }
+            }
+          }
+        });
+      }
+      // If we aren't in a Juju 2 model then do not query for
+      // or display the plans.
+      if (this.props.displayPlans && (state.activePlan || state.plans)) {
+        actions.push({
+          title: 'Plan',
+          icon: 'plan',
+          action: this._navigate,
+          state: {
+            sectionA: {
+              component: 'inspector',
+              metadata: {
+                id: serviceId,
+                activeComponent: 'plan'
               }
             }
           }

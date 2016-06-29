@@ -31,6 +31,8 @@ YUI.add('juju-env-bakery', function(Y) {
   var module = Y.namespace('juju.environments.web');
   var macaroon = Y.namespace('macaroon');
 
+  var DISCHARGE_TOKEN = 'discharge-token';
+
   /**
    * Bakery client inspired by the equivalent GO code.
    *
@@ -87,6 +89,10 @@ YUI.add('juju-env-bakery', function(Y) {
             var prefix = this.macaroonName + '=';
             document.cookie = prefix + cfg.macaroon + ';path=/';
           }
+        }
+        this.dischargeStore = cfg.dischargeStore;
+        if (cfg.dischargeToken) {
+          this.dischargeStore.setItem(DISCHARGE_TOKEN, cfg.dischargeToken);
         }
       },
 
@@ -485,10 +491,15 @@ YUI.add('juju-env-bakery', function(Y) {
                                             thirdPartyLocation, condition,
                                             successCallback, failureCallback) {
         thirdPartyLocation += '/discharge';
+
+        var dischargeToken = this.dischargeStore.getItem(DISCHARGE_TOKEN);
         var headers = {
           'Bakery-Protocol-Version': 1,
           'Content-Type': 'application/x-www-form-urlencoded'
         };
+        if (dischargeToken) {
+          headers['Macaroons'] = dischargeToken;
+        }
         var content = 'id=' + encodeURIComponent(condition) +
           '&location=' + encodeURIComponent(location);
         return this.webhandler.sendPostRequest(
@@ -515,10 +526,10 @@ YUI.add('juju-env-bakery', function(Y) {
       */
       _exportMacaroon: function (successCallback, failureCallback, response) {
         try {
-          var dm = macaroon.import(
-            JSON.parse(response.target.responseText).Macaroon
-          );
-          successCallback(dm);
+          var json = JSON.parse(response.target.responseText);
+          this.dischargeStore.setItem(DISCHARGE_TOKEN,
+            btoa(JSON.stringify(json.DischargeToken)));
+          successCallback(macaroon.import(json.Macaroon));
         } catch (ex) {
           failureCallback(ex.message);
         }

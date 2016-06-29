@@ -360,10 +360,8 @@ YUI.add('juju-gui', function(Y) {
         this.websocketLogging = new Y.juju.WebsocketLogging();
       }
 
-      // Provide the ACL object.
-      this.acl = Y.juju.acl;
-
       /**
+
         Reference to the juju.Cookies instance.
 
         @property cookieHandler
@@ -514,6 +512,9 @@ YUI.add('juju-gui', function(Y) {
         }),
         hideDragOverNotification: this._hideDragOverNotification.bind(this)
       });
+
+      // Create the ACL object.
+      this.acl = new Y.juju.generateAcl(this.env);
 
       this.changesUtils = window.juju.utils.ChangesUtils;
 
@@ -791,6 +792,7 @@ YUI.add('juju-gui', function(Y) {
           listModels={utils.listModels.bind(
             this, this.env, this.jem, user, this.get('gisf'))}
           changeState={this.changeState.bind(this)}
+          getAgreements={this.terms.getAgreements.bind(this.terms)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           interactiveLogin={this.get('interactiveLogin')}
           jem={this.jem}
@@ -1121,6 +1123,10 @@ YUI.add('juju-gui', function(Y) {
                 charmstore)}
             getMacaroon={charmstore.bakery.getMacaroon.bind(charmstore.bakery)}
             addCharm={this.env.addCharm.bind(this.env)}
+            displayPlans={utils.compareSemver(
+              this.get('jujuCoreVersion'), '2') > -1}
+            modelUUID={this.get('jujuEnvUUID')}
+            showActivePlan={this.plans.showActivePlan.bind(this.plans)}
             setCharm={this.env.setCharm.bind(this.env)}
             getCharm={this.env.get_charm.bind(this.env)}
             getUnitStatusCounts={utils.getUnitStatusCounts}
@@ -1387,6 +1393,7 @@ YUI.add('juju-gui', function(Y) {
         webhandler: new Y.juju.environments.web.WebHandler(),
         interactive: this.get('interactiveLogin'),
         cookieStore: window.localStorage,
+        dischargeStore: window.localStorage,
         serviceName: 'jem',
         macaroon: existingMacaroons
       });
@@ -1522,7 +1529,8 @@ YUI.add('juju-gui', function(Y) {
         macaroon: config.plansMacaroons,
         webhandler: webHandler,
         interactive: interactive,
-        cookieStore: storage
+        cookieStore: storage,
+        dischargeStore: window.localStorage
       });
       this.plans = new window.jujulib.plans(config.plansURL, bakery);
       var bakery = new Y.juju.environments.web.Bakery({
@@ -1530,7 +1538,8 @@ YUI.add('juju-gui', function(Y) {
         macaroon: config.termsMacaroons,
         webhandler: webHandler,
         interactive: interactive,
-        cookieStore: storage
+        cookieStore: storage,
+        dischargeStore: window.localStorage
       });
       this.terms = new window.jujulib.terms(config.termsURL, bakery);
     },

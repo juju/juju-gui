@@ -54,6 +54,7 @@ describe('Inspector', function() {
     var clearState = sinon.stub();
     var destroyService = sinon.stub();
     var getUnitStatusCounts = sinon.stub();
+    var showActivePlan = sinon.stub();
     var serviceRelations = ['relations'];
     var component = jsTestUtils.shallowRender(
         <juju.components.Inspector
@@ -70,6 +71,7 @@ describe('Inspector', function() {
           destroyRelations={sinon.stub()}
           destroyService={destroyService}
           destroyUnits={sinon.stub()}
+          displayPlans={true}
           envResolved={sinon.stub()}
           exposeService={sinon.stub()}
           getAvailableVersions={sinon.stub()}
@@ -79,10 +81,12 @@ describe('Inspector', function() {
           getUnitStatusCounts={getUnitStatusCounts}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
+          modelUUID="abc123"
           service={service}
           serviceRelations={serviceRelations}
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
+          showActivePlan={showActivePlan}
           unexposeService={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = component.getMountedInstance();
@@ -103,11 +107,15 @@ describe('Inspector', function() {
         <juju.components.ServiceOverview
           acl={acl}
           changeState={changeState}
-          destroyService={destroyService}
-          getUnitStatusCounts={getUnitStatusCounts}
+          charm={{}}
           clearState={clearState}
+          destroyService={destroyService}
+          displayPlans={true}
+          getUnitStatusCounts={getUnitStatusCounts}
+          modelUUID="abc123"
           service={service}
-          serviceRelations={serviceRelations} />);
+          serviceRelations={serviceRelations}
+          showActivePlan={showActivePlan} />);
     var overview = output.props.children[1].props.children;
     assert.deepEqual(overview, expectedOverview,
                      'Overview is not rendered as expected');
@@ -149,6 +157,7 @@ describe('Inspector', function() {
           destroyRelations={sinon.stub()}
           destroyService={sinon.stub()}
           destroyUnits={destroyUnits}
+          displayPlans={true}
           envResolved={envResolved}
           exposeService={sinon.stub()}
           getAvailableVersions={sinon.stub()}
@@ -158,10 +167,12 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
+          modelUUID="abc123"
           service={service}
           serviceRelations={[]}
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
+          showActivePlan={sinon.stub()}
           unexposeService={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()}>
         </juju.components.Inspector>, true);
@@ -228,6 +239,7 @@ describe('Inspector', function() {
           destroyRelations={sinon.stub()}
           destroyService={sinon.stub()}
           destroyUnits={sinon.stub()}
+          displayPlans={true}
           envResolved={sinon.stub()}
           exposeService={sinon.stub()}
           getAvailableVersions={sinon.stub()}
@@ -237,10 +249,12 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={getYAMLConfig}
           linkify={linkify}
+          modelUUID="abc123"
           service={service}
           serviceRelations={[]}
           setCharm={sinon.stub()}
           setConfig={setConfig}
+          showActivePlan={sinon.stub()}
           unexposeService={sinon.stub()}
           updateServiceUnitsDisplayname={updateServiceUnitsDisplayname} />,
           true);
@@ -314,6 +328,7 @@ describe('Inspector', function() {
           destroyRelations={sinon.stub()}
           destroyService={sinon.stub()}
           destroyUnits={destroyUnits}
+          displayPlans={true}
           envResolved={sinon.stub()}
           exposeService={sinon.stub()}
           getAvailableVersions={sinon.stub()}
@@ -323,10 +338,12 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
+          modelUUID="abc123"
           service={service}
           serviceRelations={[]}
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
+          showActivePlan={sinon.stub()}
           unexposeService={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()}>
         </juju.components.Inspector>, true);
@@ -390,6 +407,7 @@ describe('Inspector', function() {
         destroyRelations={sinon.stub()}
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
+        displayPlans={true}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableVersions={sinon.stub()}
@@ -399,10 +417,12 @@ describe('Inspector', function() {
         getUnitStatusCounts={sinon.stub()}
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
+        modelUUID="abc123"
         service={service}
         serviceRelations={[]}
         setCharm={sinon.stub()}
         setConfig={sinon.stub()}
+        showActivePlan={sinon.stub()}
         unexposeService={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = shallowRenderer.getMountedInstance();
@@ -434,6 +454,7 @@ describe('Inspector', function() {
         destroyRelations={sinon.stub()}
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
+        displayPlans={true}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableVersions={sinon.stub()}
@@ -443,10 +464,12 @@ describe('Inspector', function() {
         getUnitStatusCounts={sinon.stub()}
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
+        modelUUID="abc123"
         service={service}
         serviceRelations={[]}
         setCharm={sinon.stub()}
         setConfig={sinon.stub()}
+        showActivePlan={sinon.stub()}
         unexposeService={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />);
     // The displayed component should not have been updated.
@@ -502,6 +525,7 @@ describe('Inspector', function() {
           destroyRelations={sinon.stub()}
           destroyService={sinon.stub()}
           destroyUnits={destroyUnits}
+          displayPlans={true}
           envResolved={sinon.stub()}
           exposeService={sinon.stub()}
           getAvailableVersions={sinon.stub()}
@@ -511,10 +535,12 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
+          modelUUID="abc123"
           service={service}
           serviceRelations={[]}
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
+          showActivePlan={sinon.stub()}
           unexposeService={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()}>
         </juju.components.Inspector>);
@@ -563,6 +589,7 @@ describe('Inspector', function() {
           destroyRelations={sinon.stub()}
           destroyService={sinon.stub()}
           destroyUnits={destroyUnits}
+          displayPlans={true}
           envResolved={sinon.stub()}
           exposeService={sinon.stub()}
           getAvailableVersions={sinon.stub()}
@@ -572,10 +599,12 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
+          modelUUID="abc123"
           service={service}
           serviceRelations={[]}
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
+          showActivePlan={sinon.stub()}
           unexposeService={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()}>
         </juju.components.Inspector>);
@@ -634,6 +663,7 @@ describe('Inspector', function() {
           destroyRelations={sinon.stub()}
           destroyService={sinon.stub()}
           destroyUnits={destroyUnits}
+          displayPlans={true}
           envResolved={sinon.stub()}
           exposeService={sinon.stub()}
           getAvailableVersions={sinon.stub()}
@@ -643,10 +673,12 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
+          modelUUID="abc123"
           service={service}
           serviceRelations={[]}
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
+          showActivePlan={sinon.stub()}
           unexposeService={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()}>
         </juju.components.Inspector>);
@@ -692,6 +724,7 @@ describe('Inspector', function() {
         destroyRelations={sinon.stub()}
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
+        displayPlans={true}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableVersions={sinon.stub()}
@@ -701,10 +734,12 @@ describe('Inspector', function() {
         getUnitStatusCounts={sinon.stub()}
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
+        modelUUID="abc123"
         service={service}
         serviceRelations={[]}
         setCharm={sinon.stub()}
         setConfig={sinon.stub()}
+        showActivePlan={sinon.stub()}
         unexposeService={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = component.getMountedInstance();
@@ -766,6 +801,7 @@ describe('Inspector', function() {
         destroyRelations={sinon.stub()}
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
+        displayPlans={true}
         envResolved={sinon.stub()}
         exposeService={exposeService}
         getAvailableVersions={sinon.stub()}
@@ -775,10 +811,12 @@ describe('Inspector', function() {
         getUnitStatusCounts={sinon.stub()}
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
+        modelUUID="abc123"
         service={service}
         serviceRelations={[]}
         setCharm={sinon.stub()}
         setConfig={sinon.stub()}
+        showActivePlan={sinon.stub()}
         unexposeService={unexposeService}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = component.getMountedInstance();
@@ -839,6 +877,7 @@ describe('Inspector', function() {
         destroyRelations={destroyRelations}
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
+        displayPlans={true}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableVersions={sinon.stub()}
@@ -848,10 +887,12 @@ describe('Inspector', function() {
         getUnitStatusCounts={sinon.stub()}
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
+        modelUUID="abc123"
         service={service}
         serviceRelations={serviceRelations}
         setCharm={sinon.stub()}
         setConfig={sinon.stub()}
+        showActivePlan={sinon.stub()}
         unexposeService={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = component.getMountedInstance();
@@ -876,6 +917,78 @@ describe('Inspector', function() {
           destroyRelations={destroyRelations}
           service={service}
           serviceRelations={serviceRelations} />);
+  });
+
+  it('displays the Plans when the app state calls for it', function() {
+    var changeState = sinon.stub();
+    var icon = 'icon.png';
+    var activePlan = {active: 'plan'};
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('icon').returns(icon);
+    getStub.withArgs('activePlan').returns(activePlan);
+    var service = {
+      get: getStub
+    };
+    var appState = {
+      sectionA: {
+        metadata: {
+          component: 'inspector',
+          activeComponent: 'plan'
+        }}};
+    var serviceRelations = ['relatons'];
+    var component = jsTestUtils.shallowRender(
+      <juju.components.Inspector
+        acl={acl}
+        addCharm={sinon.stub()}
+        addGhostAndEcsUnits={sinon.stub()}
+        addNotification={sinon.stub()}
+        appPreviousState={{}}
+        appState={appState}
+        changeState={changeState}
+        charm={{}}
+        clearState={sinon.stub()}
+        createMachinesPlaceUnits={sinon.stub()}
+        destroyRelations={sinon.stub()}
+        destroyService={sinon.stub()}
+        destroyUnits={sinon.stub()}
+        displayPlans={true}
+        envResolved={sinon.stub()}
+        exposeService={sinon.stub()}
+        getAvailableVersions={sinon.stub()}
+        getCharm={sinon.stub()}
+        getMacaroon={sinon.stub()}
+        getServiceByName={sinon.stub()}
+        getUnitStatusCounts={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
+        modelUUID="abc123"
+        service={service}
+        serviceRelations={serviceRelations}
+        setCharm={sinon.stub()}
+        setConfig={sinon.stub()}
+        showActivePlan={sinon.stub()}
+        unexposeService={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
+    var instance = component.getMountedInstance();
+    var output = component.getRenderOutput();
+    var header = output.props.children[0];
+    var expectedHeader = (
+      <juju.components.InspectorHeader
+        backCallback={instance._backCallback}
+        activeComponent={appState.sectionA.metadata.activeComponent}
+        type={undefined}
+        count={undefined}
+        title='Plan'
+        icon={icon} />
+    );
+    assert.deepEqual(header, expectedHeader,
+                     'Header is not rendered as expected');
+    var children = output.props.children[1].props.children;
+    assert.deepEqual(children,
+        <juju.components.InspectorPlan
+          acl={acl}
+          currentPlan={activePlan} />);
   });
 
   it('displays Change versions when the app state calls for it', function() {
@@ -915,6 +1028,7 @@ describe('Inspector', function() {
         destroyRelations={sinon.stub()}
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
+        displayPlans={true}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableVersions={getAvailableVersions}
@@ -924,10 +1038,12 @@ describe('Inspector', function() {
         getUnitStatusCounts={sinon.stub()}
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
+        modelUUID="abc123"
         service={service}
         serviceRelations={[]}
         setCharm={setCharm}
         setConfig={sinon.stub()}
+        showActivePlan={sinon.stub()}
         unexposeService={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = component.getMountedInstance();
@@ -992,6 +1108,7 @@ describe('Inspector', function() {
           destroyRelations={sinon.stub()}
           destroyService={sinon.stub()}
           destroyUnits={sinon.stub()}
+          displayPlans={true}
           envResolved={sinon.stub()}
           exposeService={sinon.stub()}
           getAvailableVersions={sinon.stub()}
@@ -1001,10 +1118,12 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
+          modelUUID="abc123"
           service={service}
           serviceRelations={[]}
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
+          showActivePlan={sinon.stub()}
           unexposeService={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()} />);
     var output = shallowRenderer.getRenderOutput();
@@ -1057,6 +1176,7 @@ describe('Inspector', function() {
           destroyRelations={sinon.stub()}
           destroyService={sinon.stub()}
           destroyUnits={sinon.stub()}
+          displayPlans={true}
           envResolved={sinon.stub()}
           exposeService={sinon.stub()}
           getAvailableVersions={sinon.stub()}
@@ -1066,10 +1186,12 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
+          modelUUID="abc123"
           service={service}
           serviceRelations={[]}
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
+          showActivePlan={sinon.stub()}
           unexposeService={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()} />);
     var output = shallowRenderer.getRenderOutput();
@@ -1118,6 +1240,7 @@ describe('Inspector', function() {
           destroyRelations={sinon.stub()}
           destroyService={sinon.stub()}
           destroyUnits={sinon.stub()}
+          displayPlans={true}
           envResolved={sinon.stub()}
           exposeService={sinon.stub()}
           getAvailableVersions={sinon.stub()}
@@ -1127,10 +1250,12 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
+          modelUUID="abc123"
           service={service}
           serviceRelations={[]}
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
+          showActivePlan={sinon.stub()}
           unexposeService={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()} />);
     var output = shallowRenderer.getRenderOutput();
@@ -1170,6 +1295,7 @@ describe('Inspector', function() {
           destroyRelations={sinon.stub()}
           destroyService={sinon.stub()}
           destroyUnits={sinon.stub()}
+          displayPlans={true}
           envResolved={sinon.stub()}
           exposeService={sinon.stub()}
           getAvailableVersions={sinon.stub()}
@@ -1179,10 +1305,12 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
+          modelUUID="abc123"
           service={service}
           serviceRelations={[]}
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
+          showActivePlan={sinon.stub()}
           unexposeService={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()} />);
     var output = shallowRenderer.getRenderOutput();
@@ -1222,6 +1350,7 @@ describe('Inspector', function() {
           destroyRelations={sinon.stub()}
           destroyService={sinon.stub()}
           destroyUnits={sinon.stub()}
+          displayPlans={true}
           envResolved={sinon.stub()}
           exposeService={sinon.stub()}
           getAvailableVersions={sinon.stub()}
@@ -1231,10 +1360,12 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
+          modelUUID="abc123"
           service={service}
           serviceRelations={[]}
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
+          showActivePlan={sinon.stub()}
           unexposeService={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()} />);
     var output = shallowRenderer.getRenderOutput();
@@ -1280,6 +1411,7 @@ describe('Inspector', function() {
           destroyRelations={sinon.stub()}
           destroyService={sinon.stub()}
           destroyUnits={sinon.stub()}
+          displayPlans={true}
           envResolved={sinon.stub()}
           exposeService={sinon.stub()}
           getAvailableVersions={sinon.stub()}
@@ -1289,10 +1421,12 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
+          modelUUID="abc123"
           service={service}
           serviceRelations={[]}
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
+          showActivePlan={sinon.stub()}
           unexposeService={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()} />);
     shallowRenderer.getRenderOutput();
@@ -1319,6 +1453,7 @@ describe('Inspector', function() {
           destroyRelations={sinon.stub()}
           destroyService={sinon.stub()}
           destroyUnits={sinon.stub()}
+          displayPlans={true}
           envResolved={sinon.stub()}
           exposeService={sinon.stub()}
           getAvailableVersions={sinon.stub()}
@@ -1328,10 +1463,12 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
+          modelUUID="abc123"
           service={service}
           serviceRelations={[]}
           setCharm={sinon.stub()}
           setConfig={sinon.stub()}
+          showActivePlan={sinon.stub()}
           unexposeService={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()} />);
     shallowRenderer.getRenderOutput();

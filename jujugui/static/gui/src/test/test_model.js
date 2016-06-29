@@ -92,7 +92,6 @@ describe('test_model.js', function() {
       }
     });
 
-
     it('must reject missing charm ids at initialization.', function() {
       try {
         new models.Charm();
@@ -102,7 +101,6 @@ describe('test_model.js', function() {
             'Developers must initialize charms with a well-formed id.');
       }
     });
-
   });
 
   describe('juju models', function() {
@@ -1796,6 +1794,29 @@ describe('test_model.js', function() {
     it('has an entity type static property', function() {
       instance = new models.Charm(data);
       assert.equal(instance.constructor.entityType, 'charm');
+    });
+
+    describe('hasMetrics', function() {
+
+      it('returns true if there is data in the metrics attribute', function() {
+        instance = new models.Charm(data);
+        instance.set('metrics', {});
+        assert.equal(instance.hasMetrics(), true);
+      });
+
+      it('returns true if there is a metrics.yaml file', function() {
+        instance = new models.Charm(data);
+        instance.set('files', ['metrics.yaml']);
+        assert.equal(instance.hasMetrics(), true);
+      });
+
+      it('returns false otherwise', function() {
+        instance = new models.Charm(data);
+        instance.setAttrs({
+          files: null,
+          metrics: null
+        });
+      });
     });
 
   });

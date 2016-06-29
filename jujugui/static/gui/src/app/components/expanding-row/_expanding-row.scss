@@ -1,4 +1,6 @@
 .expanding-row {
+    cursor: pointer;
+
     &--expanded {
         .expanding-row {
             &__initial {
