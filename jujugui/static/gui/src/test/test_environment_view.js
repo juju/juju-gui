@@ -27,30 +27,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var environment_delta = {
       'result': [
         ['applicationInfo', 'add', {
-          'CharmURL': 'cs:precise/wordpress-6',
-          'Name': 'wordpress',
+          'charm-url': 'cs:precise/wordpress-6',
+          'name': 'wordpress',
           'exposed': false,
-          'Annotations': {'gui-x': 100, 'gui-y': 200}
+          'annotations': {'gui-x': 100, 'gui-y': 200}
         }],
         ['applicationInfo', 'add', {
-          'CharmURL': 'cs:precise/mediawiki-3',
-          'Name': 'mediawiki',
+          'charm-url': 'cs:precise/mediawiki-3',
+          'name': 'mediawiki',
           'exposed': false
         }],
         ['applicationInfo', 'add', {
-          'CharmURL': 'cs:precise/mysql-26',
-          'Name': 'mysql'
+          'charm-url': 'cs:precise/mysql-26',
+          'name': 'mysql'
         }],
         ['applicationInfo', 'add', {
-          'Subordinate': true,
-          'CharmURL': 'cs:precise/puppet-2',
-          'Name': 'puppet'
+          'subordinate': true,
+          'charm-url': 'cs:precise/puppet-2',
+          'name': 'puppet'
         }], [
           'relationInfo',
           'add', {
-            Key: 'wordpress:loadbalancer',
-            Id: 0,
-            Endpoints: [
+            key: 'wordpress:loadbalancer',
+            id: 0,
+            endpoints: [
               {
                 'application-name': 'wordpress',
                 relation: {
@@ -65,9 +65,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         ], [
           'relationInfo',
           'add', {
-            Key: 'puppet:juju-info wordpress:juju-info',
-            Id: 1,
-            Endpoints: [
+            key: 'puppet:juju-info wordpress:juju-info',
+            id: 1,
+            endpoints: [
               {
                 'application-name': 'puppet',
                 relation: {
@@ -91,9 +91,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         ], [
           'relationInfo',
           'add', {
-            Key: 'mysql:db wordpress:db',
-            Id: 2,
-            Endpoints: [
+            key: 'mysql:db wordpress:db',
+            id: 2,
+            endpoints: [
               {
                 'application-name': 'mysql',
                 relation: {
@@ -116,37 +116,35 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         ],
 
         ['machineInfo', 'add', {
-          'agent-state': 'running',
-          'instance-state': 'running',
+          'agent-status': {current: 'running'},
           'id': 0,
           'instance-id': 'local',
-          'dns-name': 'localhost'
         }],
         ['unitInfo', 'add', {
-          'MachineId': 0,
-          'JujuStatus': {Current: '', Message: '', Data: {}},
-          'WorkloadStatus': {Current: '', Message: '', Data: {}},
-          'PublicAddress': '192.168.122.113',
-          'Name': 'wordpress/0'
+          'machine-id': 0,
+          'agent-status': {current: '', message: '', data: {}},
+          'workload-status': {current: '', message: '', data: {}},
+          'public-address': '192.168.122.113',
+          'name': 'wordpress/0'
         }],
         ['unitInfo', 'add', {
-          'MachineId': 0,
-          'JujuStatus': {Current: '', Message: '', Data: {}},
-          'WorkloadStatus': {Current: '', Message: '', Data: {}},
-          'PublicAddress': '192.168.122.113',
-          'Name': 'mediawiki/0'
+          'machine-id': 0,
+          'agent-status': {current: '', message: '', data: {}},
+          'workload-status': {current: '', message: '', data: {}},
+          'public-address': '192.168.122.113',
+          'name': 'mediawiki/0'
         }],
         ['unitInfo', 'add', {
-          'MachineId': 0,
-          'JujuStatus': {Current: '', Message: '', Data: {}},
-          'WorkloadStatus': {Current: '', Message: '', Data: {}},
-          'PublicAddress': '192.168.122.222',
-          'Name': 'mysql/0'
+          'machine-id': 0,
+          'agent-status': {current: '', message: '', data: {}},
+          'workload-status': {current: '', message: '', data: {}},
+          'public-address': '192.168.122.222',
+          'name': 'mysql/0'
         }], [
           'annotationInfo',
           'change', {
-            Tag: 'application-wordpress',
-            Annotations: {
+            tag: 'application-wordpress',
+            annotations: {
               'gui-x': 100,
               'gui-y': 200
             }
@@ -162,9 +160,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       [
         'relationInfo',
         'add', {
-          Key: 'mysql:db mediawiki:db',
-          Id: 5,
-          Endpoints: [
+          key: 'mysql:db mediawiki:db',
+          id: 5,
+          endpoints: [
             {
               'application-name': 'mysql',
               relation: {
@@ -187,9 +185,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       ], [
         'relationInfo',
         'add', {
-          Key: 'mysql:db-slave mediawiki:db-slave',
-          Id: 6,
-          Endpoints: [
+          key: 'mysql:db-slave mediawiki:db-slave',
+          id: 6,
+          endpoints: [
             {
               'application-name': 'mysql',
               relation: {
@@ -519,16 +517,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var addSubordinate = {
         result: [
           ['applicationInfo', 'add', {
-            'Subordinate': true,
-            'CharmURL': 'cs:precise/puppet-2',
-            'Name': 'puppet2'
+            'subordinate': true,
+            'charm-url': 'cs:precise/puppet-2',
+            'name': 'puppet2'
           }],
           [
             'relationInfo',
             'add', {
-              Key: 'wordpress:juju-info puppet2:juju-info',
-              Id: 7,
-              Endpoints: [
+              key: 'wordpress:juju-info puppet2:juju-info',
+              id: 7,
+              endpoints: [
                 {
                   'application-name': 'puppet2',
                   relation: {
@@ -552,14 +550,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           [
             'relationInfo',
             'add', {
-              Key: '',
-              Id: 8,
-              Endpoints: [
+              key: '',
+              id: 8,
+              endpoints: [
                 {
                   'application-name': 'mediawiki',
                   relation: {
                     name: 'juju-info', role: 'provider',
-                    Interface: 'juju-info', scope: 'container'
+                    interface: 'juju-info', scope: 'container'
                   }
                 }, {
                   'application-name': 'puppet',
@@ -779,24 +777,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               [
                 'applicationInfo',
                 'add', {
-                  Subordinate: true,
-                  CharmURL: 'cs:precise/puppet-2',
-                  Name: 'puppet2'
+                  subordinate: true,
+                  'charm-url': 'cs:precise/puppet-2',
+                  name: 'puppet2'
                 }
               ], [
                 'applicationInfo',
                 'add', {
-                  CharmURL: 'cs:precise/mysql-26',
-                  Name: 'mysql2'
+                  'charm-url': 'cs:precise/mysql-26',
+                  name: 'mysql2'
                 }
               ], [
                 'unitInfo',
                 'add', {
-                  MachineId: 0,
-                  'JujuStatus': {Current: '', Message: '', Data: {}},
-                  'WorkloadStatus': {Current: '', Message: '', Data: {}},
-                  PublicAddress: '192.168.122.222',
-                  Name: 'mysql2/0'
+                  'machine-id': 0,
+                  'agent-status': {current: '', message: '', data: {}},
+                  'workload-status': {current: '', message: '', data: {}},
+                  'public-address': '192.168.122.222',
+                  name: 'mysql2/0'
                 }
               ]
             ]
@@ -832,9 +830,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           [
             'applicationInfo',
             'add', {
-              Subordinate: false,
-              CharmURL: 'cs:precise/wordpress-6',
-              Name: 'wordpressa'
+              subordinate: false,
+              'charm-url': 'cs:precise/wordpress-6',
+              name: 'wordpressa'
             }
           ]
         ]
@@ -847,7 +845,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       db.onDelta({ data: tmp_data });
       view.update();
-      tmp_data.result[0][2].Name = 'wordpressb';
+      tmp_data.result[0][2].name = 'wordpressb';
       db.onDelta({ data: tmp_data });
       view.update();
 
@@ -862,8 +860,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           [
             'annotationInfo',
             'change', {
-              'Tag': 'application-wordpress',
-              'Annotations': {
+              'tag': 'application-wordpress',
+              'annotations': {
                 'gui-x': 374.1,
                 'gui-y': 211.2
               }
@@ -904,9 +902,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'applicationInfo',
             'add',
             {
-              Subordinate: true,
-              CharmURL: 'cs:precise/wordpress-6',
-              Name: 'wordpressa'
+              subordinate: true,
+              'charm-url': 'cs:precise/wordpress-6',
+              name: 'wordpressa'
             }
           ]
         ]
