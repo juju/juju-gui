@@ -1790,12 +1790,6 @@ describe('test_model.js', function() {
         assert.equal(instance.hasMetrics(), true);
       });
 
-      it('returns true if there is a metrics.yaml file', function() {
-        instance = new models.Charm(data);
-        instance.set('files', ['metrics.yaml']);
-        assert.equal(instance.hasMetrics(), true);
-      });
-
       it('returns false otherwise', function() {
         instance = new models.Charm(data);
         instance.setAttrs({

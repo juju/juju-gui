@@ -177,6 +177,9 @@ var module = module;
       if (meta['supported-series']) {
         processed.series = meta['supported-series']['SupportedSeries'];
       }
+      if (meta['charm-metrics']) {
+        processed.metrics = meta['charm-metrics'].Metrics;
+      }
       // Convert the options keys to lowercase.
       if (charmConfig && typeof charmConfig.Options === 'object') {
         this._lowerCaseKeys(charmConfig.Options, charmConfig.Options, 0);

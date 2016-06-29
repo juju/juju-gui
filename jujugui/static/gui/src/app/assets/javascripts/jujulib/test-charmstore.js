@@ -148,6 +148,11 @@ describe('jujulib charmstore', function() {
               }
             }
           },
+          'charm-metrics': {
+            Metrics: {
+              metric: 'metric'
+            }
+          },
           stats: {
             ArchiveDownloadCount: 10
           },
@@ -166,6 +171,9 @@ describe('jujulib charmstore', function() {
         entityType: 'charm',
         is_approved: true,
         is_subordinate: false,
+        metrics: {
+          metric: 'metric'
+        },
         owner: 'hatch',
         revisions: 5,
         code_source: {
