@@ -64,6 +64,7 @@ describe('EntityDetails', function() {
   });
 
   it('fetches an entity properly', function() {
+    mockEntity.hasMetrics = sinon.stub().returns(false);
     var apiUrl = 'http://example.com';
     var id = mockEntity.get('id');
     var getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
@@ -326,7 +327,7 @@ describe('EntityDetails', function() {
   });
 
   it('can get plans', function() {
-    mockEntity = jsTestUtils.makeEntity(false, ['metrics.yaml']);
+    mockEntity.hasMetrics = sinon.stub().returns(true);
     var plans = ['plan1', 'plan2'];
     var addNotification = sinon.spy();
     var apiUrl = 'http://example.com';
@@ -403,7 +404,7 @@ describe('EntityDetails', function() {
   });
 
   it('can not display plans', function() {
-    mockEntity = jsTestUtils.makeEntity(false, ['metrics.yaml']);
+    mockEntity.hasMetrics = sinon.stub().returns(false);
     var plans = ['plan1', 'plan2'];
     var addNotification = sinon.spy();
     var apiUrl = 'http://example.com';
