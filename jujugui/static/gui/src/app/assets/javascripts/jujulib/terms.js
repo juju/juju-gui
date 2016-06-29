@@ -36,10 +36,10 @@ var module = module;
       Show details on a terms of service entity.
 
       @public showTerms
-      @params name {String} The terms name.
-      @params revision {String or Int} The optional terms revision. If not
+      @param name {String} The terms name.
+      @param revision {String or Int} The optional terms revision. If not
         provided, details on the most recent revision are returned.
-      @params callback {Function} A callback to handle errors or accept the
+      @param callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
         first parameter and the terms data as its second. The terms data
         includes the following fields:
@@ -75,6 +75,91 @@ var module = module;
       if (revision === 0 || revision) {
         url += '?revision=' + revision;
       }
+      return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
+    },
+
+    /**
+      Parse and format a term response into a friendly format.
+
+      @private _formatTerm
+      @param term {Object} A term response.
+    */
+    _formatTerm: function(term) {
+      var milliseconds = Date.parse(term['created-on']);
+      return {
+        user: term.user,
+        term: term.term,
+        revision: term.revision,
+        createdAt: new Date(milliseconds)
+      };
+    },
+
+    /**
+      Creates a record of the authenticated user's agreement to a revision of
+      a Terms and Conditions document.
+
+      @public addAgreement
+      @param terms {Array} A list of terms to agree to. Each term should be an
+        object with the following parameters:
+        - name {String} The terms name.
+        - revision {Int} The terms revision.
+      @param callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and an authorization object as its second.
+    */
+    addAgreement: function(terms, callback) {
+      var self = this;
+      var handler = function(error, response) {
+        if (error !== null) {
+          callback(error, null);
+          return;
+        }
+        var terms = response.agreements.map(function(term) {
+          return self._formatTerm(term);
+        });
+        callback(null, terms);
+      }
+      var url = this.url + '/agreement';
+      var payload = terms.map(function(term) {
+        return {
+          termname: term.name,
+          termrevision: term.revision
+        }
+      });
+      return jujulib._makeRequest(this.bakery, url, 'POST', payload, handler);
+    },
+
+    /**
+      Retrieves all the agreements for the authenticated user.
+
+      @public getAgreements
+      @param callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and the agreements data as its second. The agreements
+        data includes the following fields:
+          - user: the user's username.
+          - term: the name of the term
+          - revision: the terms revision, as a positive number;
+          - createdAt: a date object with the terms creation time.
+        If the agreements are not found, the second argument is null.
+    */
+    getAgreements: function(callback) {
+      var self = this;
+      var handler = function(error, response) {
+        if (error !== null) {
+          callback(error, null);
+          return;
+        }
+        if (!response.length) {
+          callback(null, null);
+          return;
+        }
+        var terms = response.map(function(term) {
+          return self._formatTerm(term);
+        });
+        callback(null, terms);
+      }
+      var url = this.url + '/agreements';
       return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
     }
 

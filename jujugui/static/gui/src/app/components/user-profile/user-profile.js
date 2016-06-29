@@ -30,6 +30,7 @@ YUI.add('user-profile', function() {
       charmstore: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
       env: React.PropTypes.object.isRequired,
+      getAgreements: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       hideConnectingMask: React.PropTypes.func.isRequired,
       interactiveLogin: React.PropTypes.bool,
@@ -46,9 +47,11 @@ YUI.add('user-profile', function() {
 
     getInitialState: function() {
       return {
+        agreementList: [],
         envList: [],
         charmList: [],
         bundleList: [],
+        loadingAgreements: false,
         loadingBundles: false,
         loadingCharms: false,
         loadingModels: false,
@@ -59,6 +62,7 @@ YUI.add('user-profile', function() {
     componentWillMount: function() {
       var props = this.props,
           users = props.users;
+      this._getAgreements();
       this._fetchEnvironments();
       if (users.charmstore && users.charmstore.user) {
         this._fetchEntities('charm', props);
@@ -76,6 +80,7 @@ YUI.add('user-profile', function() {
       // If the user has changed then update the data.
       var props = this.props;
       if (nextProps.user.user !== props.user.user) {
+        this._getAgreements();
         this._fetchEnvironments();
       }
       // Compare next and previous charmstore users in a data-safe manner.
@@ -85,6 +90,38 @@ YUI.add('user-profile', function() {
         this._fetchEntities('charm', nextProps);
         this._fetchEntities('bundle', nextProps);
       }
+    },
+
+    /**
+      Get the agreements for the authenticated user.
+
+      @method _getAgreements
+    */
+    _getAgreements: function() {
+      // Delay the call until after the state change to prevent race
+      // conditions.
+      this.setState({loadingAgreements: true}, () => {
+        var xhr = this.props.getAgreements(this._getAgreementsCallback);
+        this.xhrs.push(xhr);
+      });
+    },
+
+    /**
+      Callback for the terms API call to get agreements.
+
+      @method _getAgreementsCallback
+      @param {String} error The error from the request, or null.
+      @param {Object} data The data from the request.
+    */
+    _getAgreementsCallback: function(error, data) {
+      this.setState({loadingAgreements: false});
+      // We need to coerce error types returned bt the terms API into one error.
+      var err = data.err || error;
+      if (err) {
+        console.error(err);
+        return;
+      }
+      this.setState({agreementList: data});
     },
 
     /**
@@ -585,6 +622,31 @@ YUI.add('user-profile', function() {
     },
 
     /**
+      Generate the details for the provided agreement.
+
+      @method _generateAgreementRow
+      @param {Object} agreement A agreement object.
+      @returns {Array} The markup for the row.
+    */
+    _generateAgreementRow: function(agreement) {
+      var term = agreement.term;
+      var createdAt = agreement.createdAt;
+      var date = createdAt.getUTCFullYear() + '-' +
+        ('0' + (createdAt.getUTCMonth() + 1)).slice(-2) + '-' +
+        ('0' + createdAt.getUTCDate()).slice(-2);
+      return (
+        <li className="user-profile__list-row twelve-col"
+          key={term + agreement.revision}>
+          <span className="user-profile__list-col eight-col">
+            {term}
+          </span>
+          <span className="user-profile__list-col four-col last-col">
+            {date}
+          </span>
+        </li>);
+    },
+
+    /**
       Generate the header for the charms.
 
       @method _generateCharmHeader
@@ -601,6 +663,24 @@ YUI.add('user-profile', function() {
           </span>
           <span className="user-profile__list-col two-col last-col">
             Owner
+          </span>
+        </li>);
+    },
+
+    /**
+      Generate the header for the agreements.
+
+      @method _generateAgreementHeader
+      @returns {Array} The markup for the header.
+    */
+    _generateAgreementHeader: function() {
+      return (
+        <li className="user-profile__list-header twelve-col">
+          <span className="user-profile__list-col eight-col">
+            Name
+          </span>
+          <span className="user-profile__list-col four-col last-col">
+            Date signed
           </span>
         </li>);
     },
@@ -644,6 +724,10 @@ YUI.add('user-profile', function() {
         generateRow = this._generateCharmRow;
         header = this._generateCharmHeader();
         title = 'Charms';
+      } else if (type === 'agreements') {
+        generateRow = this._generateAgreementRow;
+        header = this._generateAgreementHeader();
+        title = 'Terms & conditions';
       }
       list.forEach((model) => {
         rows.push(generateRow(model));
@@ -674,8 +758,10 @@ YUI.add('user-profile', function() {
       var state = this.state;
       // We can't be loading anything, and all the lists must be empty.
       var isEmpty = !state.loadingBundles
+                    && !state.loadingAgreements
                     && !state.loadingCharms
                     && !state.loadingModels
+                    && state.agreementList.length === 0
                     && state.bundleList.length === 0
                     && state.charmList.length === 0
                     && state.envList.length === 0;
@@ -706,6 +792,8 @@ YUI.add('user-profile', function() {
           {this._generateRows(
             'bundles', state.bundleList, state.loadingBundles)}
           {this._generateRows('charms', state.charmList, state.loadingCharms)}
+          {this._generateRows(
+            'agreements', state.agreementList, state.loadingAgreements)}
         </div>);
     },
 

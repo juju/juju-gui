@@ -64,7 +64,8 @@ YUI.add('entity-header', function() {
         var plans = this.props.plans;
         var plan = refs.plan && refs.plan.value;
         var activePlan;
-        if (plan) {
+        if (plan && Array.isArray(plans)) {
+          // It is possible that plan is a string "loading plans..."
           plans.some(item => {
             if (item.url === plan) {
               activePlan = item;

@@ -345,6 +345,19 @@ YUI.add('juju-charm-models', function(Y) {
       return ids;
     },
 
+    /**
+      Returns whether or not the charm has metrics. If the charm metadata does
+      not have the metrics value listed then check to see if a metrics file
+      is in the asset list.
+
+      @method hasMetrics
+      @return {Boolean} Whether the charm has metrics or not.
+    */
+    hasMetrics: function() {
+      return !!this.get('metrics') ||
+        this.get('files').some(file => file === 'metrics.yaml');
+    }
+
   }, {
     /**
       Static to indicate the type of entity so that other code
@@ -712,7 +725,22 @@ YUI.add('juju-charm-models', function(Y) {
             'icon.svg'
           ].join('/');
         }
-      }
+      },
+      /**
+        The plans for the charm.
+
+        @attribute plans
+        @type {Array}
+        @default undefined
+      */
+      plans: {},
+      /**
+        The metrics for the charm.
+        @attribute metrics
+        @type {Object}
+        @default undefined
+      */
+      metrics: {}
     }
   });
 

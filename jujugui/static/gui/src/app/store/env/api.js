@@ -2374,7 +2374,8 @@ YUI.add('juju-env-api', function(Y) {
           format: meta.Format,
           name: meta.Name,
           subordinate: meta.Subordinate,
-          summary: meta.Summary
+          summary: meta.Summary,
+          metrics: response.Metrics
         };
       }
       var transformedData = {
