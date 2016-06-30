@@ -123,13 +123,13 @@ YUI.add('juju-env-api', function(Y) {
     }
     var parts = toMachine.split(':');
     if (parts.length === 2) {
-      return {Scope: parts[0], Directive: parts[1]};
+      return {scope: parts[0], directive: parts[1]};
     }
     var part = parts[0];
-    if (part === LXC.value || part === KVM.value) {
-      return {Scope: part, Directive: ''};
+    if (part === LXC.value || part === LXD.value || part === KVM.value) {
+      return {scope: part, directive: ''};
     }
-    return {Scope: MACHINE_SCOPE, Directive: part};
+    return {scope: MACHINE_SCOPE, directive: part};
   };
 
   /**
@@ -2842,16 +2842,18 @@ YUI.add('juju-env-api', function(Y) {
   environments.stringifyObjectValues = stringifyObjectValues;
   environments.machineJobs = machineJobs;
 
-  var KVM = {label: 'LXC', value: 'lxc'},
-      LXC = {label: 'KVM', value: 'kvm'};
+  var KVM = {label: 'KVM', value: 'kvm'},
+      LXC = {label: 'LXC', value: 'lxc'},
+      LXD = {label: 'LXD', value: 'lxd'};
 
   // Define features exposed by each Juju provider type.
   // To enable/disable containerization in the machine view, just add/remove
   // supportedContainerTypes to the provider types below.
+  // TODO frankban: is this still used in the machine view? Or somewhere?
   environments.providerFeatures = {
     // All container types (used when the "containers" feature flags is set).
     all: {
-      supportedContainerTypes: [KVM, LXC]
+      supportedContainerTypes: [KVM, LXC, LXD]
     },
     // Microsoft Azure.
     azure: {
@@ -2859,27 +2861,27 @@ YUI.add('juju-env-api', function(Y) {
     },
     // Sandbox mode.
     demonstration: {
-      supportedContainerTypes: [KVM, LXC]
+      supportedContainerTypes: [KVM, LXC, LXD]
     },
     // Amazon EC2.
     ec2: {
-      supportedContainerTypes: []
+      supportedContainerTypes: [KVM, LXC, LXD]
     },
     // Joyent Cloud.
     joyent: {
-      supportedContainerTypes: []
+      supportedContainerTypes: [KVM, LXC, LXD]
     },
-    // Local (LXC).
-    local: {
+    // Local (LXD).
+    lxd: {
       supportedContainerTypes: []
     },
     // Canonical MAAS.
     maas: {
-      supportedContainerTypes: [KVM, LXC]
+      supportedContainerTypes: [KVM, LXC, LXD]
     },
     // OpenStack or HP Public Cloud.
     openstack: {
-      supportedContainerTypes: []
+      supportedContainerTypes: [KVM, LXC, LXD]
     },
     // Manual provider.
     manual: {

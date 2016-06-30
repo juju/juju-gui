@@ -430,11 +430,11 @@ YUI.add('juju-delta-handlers', function(Y) {
       if (hardwareCharacteristics) {
         data.hardware = {
           arch: hardwareCharacteristics.arch,
-          cpuCores: hardwareCharacteristics.cpucores,
-          cpuPower: hardwareCharacteristics.cpupower,
+          cpuCores: hardwareCharacteristics['cpu-cores'],
+          cpuPower: hardwareCharacteristics['cpu-power'],
           mem: hardwareCharacteristics.mem,
-          disk: hardwareCharacteristics.rootdisk,
-          availabilityZone: hardwareCharacteristics.availabilityzone
+          disk: hardwareCharacteristics['root-disk'],
+          availabilityZone: hardwareCharacteristics['availability-zone']
         };
       }
       // The supported containers are only available when the machine is

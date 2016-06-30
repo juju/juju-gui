@@ -329,20 +329,17 @@ YUI.add('juju-env-legacy-api', function(Y) {
       // for the sort function below.
       var deltas = [],
           cmp = {
-            applicationInfo: 1,
-            serviceInfo: 1,
-            relationInfo: 2,
-            unitInfo: 3,
-            machineInfo: 4,
-            annotationInfo: 5,
-            remoteapplicationInfo: 100,
-            remoteserviceInfo: 100
+            serviceLegacyInfo: 1,
+            relationLegacyInfo: 2,
+            unitLegacyInfo: 3,
+            machineLegacyInfo: 4,
+            annotationLegacyInfo: 5,
           };
       data.Response.Deltas.forEach(function(delta) {
         var kind = delta[0],
             operation = delta[1],
             entityInfo = delta[2];
-        deltas.push([kind + 'Info', operation, entityInfo]);
+        deltas.push([kind + 'LegacyInfo', operation, entityInfo]);
       });
       deltas.sort(function(a, b) {
         // Sort items not in our hierarchy last.
@@ -2617,50 +2614,8 @@ YUI.add('juju-env-legacy-api', function(Y) {
   environments.GoLegacyEnvironment = GoLegacyEnvironment;
   environments.legacyParsePlacement = parsePlacement;
 
-  var KVM = {label: 'LXC', value: 'lxc'},
-      LXC = {label: 'KVM', value: 'kvm'};
-
-  // Define features exposed by each Juju provider type.
-  // To enable/disable containerization in the machine view, just add/remove
-  // supportedContainerTypes to the provider types below.
-  environments.providerFeatures = {
-    // All container types (used when the "containers" feature flags is set).
-    all: {
-      supportedContainerTypes: [KVM, LXC]
-    },
-    // Microsoft Azure.
-    azure: {
-      supportedContainerTypes: []
-    },
-    // Sandbox mode.
-    demonstration: {
-      supportedContainerTypes: [KVM, LXC]
-    },
-    // Amazon EC2.
-    ec2: {
-      supportedContainerTypes: []
-    },
-    // Joyent Cloud.
-    joyent: {
-      supportedContainerTypes: []
-    },
-    // Local (LXC).
-    local: {
-      supportedContainerTypes: []
-    },
-    // Canonical MAAS.
-    maas: {
-      supportedContainerTypes: [KVM, LXC]
-    },
-    // OpenStack or HP Public Cloud.
-    openstack: {
-      supportedContainerTypes: []
-    },
-    // Manual provider.
-    manual: {
-      supportedContainerTypes: []
-    }
-  };
+  var KVM = {label: 'KVM', value: 'kvm'},
+      LXC = {label: 'LXC', value: 'lxc'};
 
 }, '0.1.0', {
   requires: [

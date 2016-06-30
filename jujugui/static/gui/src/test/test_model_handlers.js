@@ -693,11 +693,11 @@ describe('Juju delta handlers', function() {
         ],
         'hardware-characteristics': {
           arch: 'amd64',
-          cpucores: 1,
-          cpupower: 100,
+          'cpu-cores': 1,
+          'cpu-power': 100,
           mem: 1740,
-          rootdisk: 8192,
-          availabilityzone: 'zone'
+          'root-disk': 8192,
+          'availability-zone': 'zone'
         },
         jobs: ['JobHostUnits'],
         life: 'alive',

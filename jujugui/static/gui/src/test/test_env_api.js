@@ -77,17 +77,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('correctly returns the scope and the directive', function() {
         var placement = environments.parsePlacement('lxc:2');
-        assert.deepEqual(placement, {Scope: 'lxc', Directive: '2'});
+        assert.deepEqual(placement, {scope: 'lxc', directive: '2'});
       });
 
       it('returns a new container placement', function() {
         var placement = environments.parsePlacement('kvm');
-        assert.deepEqual(placement, {Scope: 'kvm', Directive: ''});
+        assert.deepEqual(placement, {scope: 'kvm', directive: ''});
       });
 
       it('returns a machine placement', function() {
         var placement = environments.parsePlacement('42');
-        assert.deepEqual(placement, {Scope: '#', Directive: '42'});
+        assert.deepEqual(placement, {scope: '#', directive: '42'});
       });
 
     });
@@ -1214,7 +1214,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         params: {
           application: 'django',
           'num-units': 3,
-          placement: [{Scope: '#', Directive: '42'}]
+          placement: [{scope: '#', directive: '42'}]
         }
       };
       assert.deepEqual(conn.last_message(), expectedMessage);
@@ -1230,7 +1230,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         params: {
           application: 'haproxy',
           'num-units': 1,
-          placement: [{Scope: 'lxc', Directive: '47'}]
+          placement: [{scope: 'lxc', directive: '47'}]
         }
       };
       assert.deepEqual(conn.last_message(), expectedMessage);
@@ -3122,7 +3122,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'demonstration',
         'ec2',
         'joyent',
-        'local',
+        'lxd',
         'maas',
         'openstack',
         'manual'
