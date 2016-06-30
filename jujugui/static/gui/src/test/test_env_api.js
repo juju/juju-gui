@@ -3545,258 +3545,68 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('successfully creates a local model', function(done) {
-      env.set('providerType', 'local');
-      env.createModel('myenv', 'user-who', function(data) {
+    it('successfully creates a model', function(done) {
+      env.createModel('mymodel', 'user-who@external', function(data) {
         assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.name, 'myenv');
-        assert.strictEqual(data.owner, 'user-rose');
+        assert.strictEqual(data.name, 'mymodel');
         assert.strictEqual(data.uuid, 'unique-id');
-        assert.equal(conn.messages.length, 3);
-        assert.deepEqual(conn.messages[0], {
-          type: 'ModelManager',
-          version: 2,
-          request: 'ConfigSkeleton',
-          params: {},
-          'request-id': 1
-        });
-        assert.deepEqual(conn.messages[1], {
-          type: 'Client',
-          version: 1,
-          request: 'ModelGet',
-          params: {},
-          'request-id': 2
-        });
-        assert.deepEqual(conn.messages[2], {
+        assert.strictEqual(data.owner, 'user-rose@external');
+        assert.strictEqual(data.region, 'alpha-quadrant');
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
           type: 'ModelManager',
           version: 2,
           request: 'CreateModel',
           params: {
-            'owner-tag': 'user-who',
+            name: 'mymodel',
+            'owner-tag': 'user-who@external',
             config: {
-              attr1: 'value1',
-              attr2: 'value2',
-              name: 'myenv',
-              namespace: 'who-local',
               'authorized-keys': 'ssh-rsa INVALID (set by the Juju GUI)'
             }
           },
-          'request-id': 3
+          'request-id': 1
         });
         done();
       });
-      // Mimic the first response to ModelManager.ConfigSkeleton.
+      // Mimic the response to ModelManager.CreateModel.
       conn.msg({
         'request-id': 1,
-        response: {config: {attr1: 'value1', attr2: 'value2'}}
-      });
-      // Mimic the second response to Client.ModelGet.
-      conn.msg({
-        'request-id': 2,
-        response: {config: {namespace: 'who-local'}}
-      });
-      // Mimic the third response to ModelManager.CreateModel.
-      conn.msg({
-        'request-id': 3,
         response: {
-          name: 'myenv',
-          'owner-tag': 'user-rose',
-          uuid: 'unique-id'
+          name: 'mymodel',
+          uuid: 'unique-id',
+          'owner-tag': 'user-rose@external',
+          'cloud-region': 'alpha-quadrant'
         }
       });
     });
 
-    it('successfully creates an ec2 model', function(done) {
-      env.set('providerType', 'ec2');
-      env.createModel('myenv', 'user-who', function(data) {
+    it('adds local user domain when creating a model', function(done) {
+      env.createModel('mymodel', 'user-cyberman', function(data) {
         assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.name, 'my-ec2-env');
-        assert.equal(conn.messages.length, 3);
-        assert.deepEqual(conn.messages[2], {
-          type: 'ModelManager',
-          version: 2,
-          request: 'CreateModel',
-          params: {
-            'owner-tag': 'user-who',
-            config: {
-              attr1: 'value1',
-              attr2: 'value2',
-              name: 'myenv',
-              'authorized-keys': 'ssh-rsa INVALID (set by the Juju GUI)',
-              'access-key': 'access!',
-              'secret-key': 'secret!'
-            }
-          },
-          'request-id': 3
-        });
+        assert.equal(conn.messages.length, 1);
+        var message = conn.last_message();
+        assert.strictEqual(message.params['owner-tag'], 'user-cyberman@local');
         done();
       });
-      // Mimic the first response to ModelManager.ConfigSkeleton.
+      // Mimic the response to ModelManager.CreateModel.
       conn.msg({
         'request-id': 1,
-        response: {config: {attr1: 'value1', attr2: 'value2'}}
-      });
-      // Mimic the second response to Client.ModelGet.
-      conn.msg({
-        'request-id': 2,
-        response: {config: {'access-key': 'access!', 'secret-key': 'secret!'}}
-      });
-      // Mimic the third response to ModelManager.CreateModel.
-      conn.msg({
-        'request-id': 3,
         response: {
-          name: 'my-ec2-env',
-          'owner-tag': 'user-rose',
-          uuid: 'unique-id'
+          name: 'mymodel',
+          uuid: 'unique-id',
+          'owner-tag': 'user-rose@local',
+          'cloud-region': 'delta-quadrant'
         }
       });
-    });
-
-    it('successfully creates an openstack model', function(done) {
-      env.set('providerType', 'openstack');
-      env.createModel('myenv', 'user-who', function(data) {
-        assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.name, 'my-openstack-env');
-        assert.equal(conn.messages.length, 3);
-        assert.deepEqual(conn.messages[2], {
-          type: 'ModelManager',
-          version: 2,
-          request: 'CreateModel',
-          params: {
-            'owner-tag': 'user-who',
-            config: {
-              attr1: 'valueA',
-              attr2: 'valueB',
-              name: 'myenv',
-              'authorized-keys': 'ssh-rsa INVALID (set by the Juju GUI)',
-              'tenant-name': 'tenant',
-              username: 'who',
-              password: 'secret!'
-            }
-          },
-          'request-id': 3
-        });
-        done();
-      });
-      // Mimic the first response to ModelManager.ConfigSkeleton.
-      conn.msg({
-        'request-id': 1,
-        response: {config: {attr1: 'valueA', attr2: 'valueB'}}
-      });
-      // Mimic the second response to Client.ModelGet.
-      conn.msg({
-        'request-id': 2,
-        response: {config: {
-          'tenant-name': 'tenant',
-          username: 'who',
-          password: 'secret!'
-        }}
-      });
-      // Mimic the third response to ModelManager.CreateModel.
-      conn.msg({
-        'request-id': 3,
-        response: {
-          name: 'my-openstack-env',
-          'owner-tag': 'user-rose',
-          uuid: 'unique-id'
-        }
-      });
-    });
-
-    it('successfully creates a MAAS model', function(done) {
-      env.set('providerType', 'maas');
-      env.createModel('myenv', 'user-who', function(data) {
-        assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.name, 'my-maas-env');
-        assert.equal(conn.messages.length, 3);
-        assert.deepEqual(conn.messages[2], {
-          type: 'ModelManager',
-          version: 2,
-          request: 'CreateModel',
-          params: {
-            'owner-tag': 'user-who',
-            config: {
-              attr1: 'valueA',
-              attr2: 'valueB',
-              name: 'myenv',
-              'authorized-keys': 'ssh-rsa INVALID (set by the Juju GUI)',
-              'maas-server': 'server',
-              'maas-oauth': 'oauth',
-              'maas-agent-name': 'agent'
-            }
-          },
-          'request-id': 3
-        });
-        done();
-      });
-      // Mimic the first response to ModelManager.ConfigSkeleton.
-      conn.msg({
-        'request-id': 1,
-        response: {config: {attr1: 'valueA', attr2: 'valueB'}}
-      });
-      // Mimic the second response to Client.ModelGet.
-      conn.msg({
-        'request-id': 2,
-        response: {config: {
-          'maas-server': 'server',
-          'maas-oauth': 'oauth',
-          'maas-agent-name': 'agent'
-        }}
-      });
-      // Mimic the third response to ModelManager.CreateModel.
-      conn.msg({
-        'request-id': 3,
-        response: {
-          name: 'my-maas-env',
-          'owner-tag': 'user-rose',
-          uuid: 'unique-id'
-        }
-      });
-    });
-
-    it('handles failures while retrieving model skeleton', function(done) {
-      env.createModel('bad-env', 'user-dalek', function(data) {
-        assert.strictEqual(
-          data.err, 'cannot get configuration skeleton: bad wolf');
-        done();
-      });
-      // Mimic the first response to ModelManager.ConfigSkeleton.
-      conn.msg({'request-id': 1, error: 'bad wolf'});
-    });
-
-    it('handles failures while retrieving model config', function(done) {
-      env.createModel('bad-env', 'user-dalek', function(data) {
-        assert.strictEqual(
-          data.err, 'cannot get model configuration: bad wolf');
-        done();
-      });
-      // Mimic the first response to ModelManager.ConfigSkeleton.
-      conn.msg({
-        'request-id': 1,
-        response: {config: {attr1: 'value1', attr2: 'value2'}}
-      });
-      // Mimic the second response to Client.ModelGet.
-      conn.msg({'request-id': 2, error: 'bad wolf'});
     });
 
     it('handles failures while creating models', function(done) {
-      env.set('providerType', 'local');
-      env.createModel('bad-env', 'user-dalek', function(data) {
+      env.createModel('bad-model', 'user-dalek', function(data) {
         assert.strictEqual(data.err, 'bad wolf');
         done();
       });
-      // Mimic the first response to ModelManager.ConfigSkeleton.
-      conn.msg({
-        'request-id': 1,
-        response: {config: {attr1: 'value1', attr2: 'value2'}}
-      });
-      // Mimic the second response to Client.ModelGet.
-      conn.msg({
-        'request-id': 2,
-        response: {config: {}}
-      });
-      // Mimic the third response to ModelManager.CreateModel.
-      conn.msg({'request-id': 3, error: 'bad wolf'});
+      // Mimic the response to ModelManager.CreateModel.
+      conn.msg({'request-id': 1, error: 'bad wolf'});
     });
 
     it('lists models for a specific owner', function(done) {
