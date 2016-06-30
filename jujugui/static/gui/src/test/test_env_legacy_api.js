@@ -30,63 +30,34 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('provides a way to retrieve a name from an endpoint', function() {
-      // Test both an endpoint with a name and one without, as may occur in
-      // hand-crafted bundles.
-      var endpointA = [
-        'foo',
-        { name: 'bar' }
-      ];
-      var endpointB = [
-        'bar',
-        {}
-      ];
-      assert.equal('foo:bar', environments.endpointToName(endpointA));
-      assert.equal('bar', environments.endpointToName(endpointB));
-    });
-
     it('provides a way to retrieve a relation key from endpoints', function() {
       var endpoints = {
         wordpress: {Name: 'website', Role: 'provider'},
         haproxy: {Name: 'reverseproxy', Role: 'requirer'}
       };
-      var key = environments.createRelationKey(endpoints);
+      var key = environments.legacyCreateRelationKey(endpoints);
       assert.deepEqual('haproxy:reverseproxy wordpress:website', key);
     });
 
-    it('provides a way to lowercase the keys of an object', function() {
-      var obj = {Key1: 'value1', key2: 'value2', MyThirdKey: 'value3'},
-          expected = {key1: 'value1', key2: 'value2', mythirdkey: 'value3'},
-          result = environments.lowerObjectKeys(obj);
-      assert.deepEqual(expected, result);
-    });
-
-    it('provides a way to convert object values to strings', function() {
-      var obj = {key1: 42, key2: false, key3: null, key4: 'foo'},
-          expected = {key1: '42', key2: 'false', key3: null, key4: 'foo'},
-          result = environments.stringifyObjectValues(obj);
-      assert.deepEqual(expected, result);
-    });
-
-    describe('parsePlacement', function() {
+    describe('legacyParsePlacement', function() {
 
       it('returns null if there is nothing to parse', function() {
-        var placement = environments.parsePlacement('');
+        var placement = environments.legacyParsePlacement('');
         assert.strictEqual(placement, null);
       });
 
       it('correctly returns the scope and the directive', function() {
-        var placement = environments.parsePlacement('lxc:2');
+        var placement = environments.legacyParsePlacement('lxc:2');
         assert.deepEqual(placement, {Scope: 'lxc', Directive: '2'});
       });
 
       it('returns a new container placement', function() {
-        var placement = environments.parsePlacement('kvm');
+        var placement = environments.legacyParsePlacement('kvm');
         assert.deepEqual(placement, {Scope: 'kvm', Directive: ''});
       });
 
       it('returns a machine placement', function() {
-        var placement = environments.parsePlacement('42');
+        var placement = environments.legacyParsePlacement('42');
         assert.deepEqual(placement, {Scope: '#', Directive: '42'});
       });
 
@@ -388,7 +359,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var lastMessage = conn.last_message();
         var expected = {
           Type: 'GUIToken',
-          Version: 47,
+          Version: 0,
           Request: 'Login',
           RequestId: 1,
           Params: {Token: 'demoToken'}
@@ -590,7 +561,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMessage = {
         Type: 'Pinger',
         Request: 'Ping',
-        Version: 42,
+        Version: 0,
         RequestId: 1,
         Params: {}
       };
@@ -821,19 +792,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sends the correct expose message', function() {
-      env.expose('apache', function() {}, {immediate: true});
-      var lastMessage = conn.last_message();
-      var expected = {
-        Type: 'Application',
-        Request: 'Expose',
-        Version: 7,
-        RequestId: 1,
-        Params: {ApplicationName: 'apache'}
-      };
-      assert.deepEqual(expected, lastMessage);
-    });
-
-    it('sends the correct expose message (legacy API)', function() {
       env.set('facades', {});
       env.expose('apache', function() {}, {immediate: true});
       var lastMessage = conn.last_message();
@@ -877,19 +835,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sends the correct unexpose message', function() {
-      env.unexpose('apache', function() {}, {immediate: true});
-      var lastMessage = conn.last_message();
-      var expected = {
-        Type: 'Application',
-        Request: 'Unexpose',
-        Version: 7,
-        RequestId: 1,
-        Params: {ApplicationName: 'apache'}
-      };
-      assert.deepEqual(expected, lastMessage);
-    });
-
-    it('sends the correct unexpose message (legacy API)', function() {
       env.set('facades', {});
       env.unexpose('apache', function() {}, {immediate: true});
       var lastMessage = conn.last_message();
@@ -943,7 +888,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       var expectedMessage = {
         Type: 'Client',
-        Version: 1,
+        Version: 0,
         Request: 'AddCharm',
         Params: {URL: 'wily/django-42'},
         RequestId: 1
@@ -964,7 +909,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMessage = {
         Type: 'Client',
         Request: 'AddCharmWithAuthorization',
-        Version: 1,
+        Version: 0,
         Params: {CharmStoreMacaroon: 'MACAROON', URL: 'trusty/django-0'},
         RequestId: 1
       };
@@ -1001,7 +946,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var expected = {
           Type: 'Client',
           Request: 'ServiceUpdate',
-          Version: 1,
+          Version: 0,
           RequestId: 1,
           Params: {
             ServiceName: applicationName,
@@ -1048,18 +993,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('successfully deploys an application with a config file', function() {
       var config_raw = 'tuning-level: \nexpert-mojo';
       var expected = {
-        Type: 'Application',
-        Request: 'Deploy',
-        Version: 7,
-        Params: {Applications: [{
-          ApplicationName: null,
+        Type: 'Client',
+        Version: 0,
+        Request: 'ServiceDeploy',
+        Params: {
+          ServiceName: null,
+          ConfigYAML: config_raw,
           Config: {},
           Constraints: {},
-          ConfigYAML: config_raw,
           CharmUrl: 'precise/mysql',
           NumUnits: null,
           ToMachineSpec: null
-        }]},
+        },
         RequestId: 1
       };
       env.deploy('precise/mysql', null, null, config_raw, null, null, null,
@@ -1111,7 +1056,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
-        Version: 1,
+        Version: 0,
         Request: 'AddMachines',
         Params: {
           MachineParams: [{Jobs: [machineJobs.HOST_UNITS]}]
@@ -1127,7 +1072,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
-        Version: 1,
+        Version: 0,
         Request: 'AddMachines',
         Params: {
           MachineParams: [{
@@ -1145,7 +1090,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
-        Version: 1,
+        Version: 0,
         Request: 'AddMachines',
         Params: {
           MachineParams: [{
@@ -1164,7 +1109,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
-        Version: 1,
+        Version: 0,
         Request: 'AddMachines',
         Params: {
           MachineParams: [{
@@ -1194,7 +1139,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
-        Version: 1,
+        Version: 0,
         Request: 'AddMachines',
         Params: {MachineParams: expectedMachineParams}
       };
@@ -1267,7 +1212,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var expectedMsg = {
         RequestId: 1,
         Type: 'Client',
-        Version: 1,
+        Version: 0,
         Request: 'DestroyMachines',
         Params: {MachineNames: names, Force: force}
       };
@@ -1327,20 +1272,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(response.names, ['1']);
     });
 
-    it('sends the correct Annotations.Get message', function() {
-      env.set('jujuCoreVersion', '2.0');
-      env.get_annotations('apache', 'application');
-      var lastMessage = conn.last_message();
-      var expected = {
-        Type: 'Annotations',
-        Version: 2,
-        Request: 'Get',
-        RequestId: 1,
-        Params: {Entities: [{Tag: 'application-apache'}]}
-      };
-      assert.deepEqual(expected, lastMessage);
-    });
-
     it('sends the correct legacy Client.GetAnnotations message', function() {
       env.set('jujuCoreVersion', '1.26.0');
       env.set('facades', {});
@@ -1354,25 +1285,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Params: {Tag: 'unit-apache/1'}
       };
       console.log(lastMessage);
-      assert.deepEqual(expected, lastMessage);
-    });
-
-    it('sends the correct Annotations.Set message', function() {
-      env.set('jujuCoreVersion', '2.1.0');
-      env.update_annotations('apache', 'application', {'mykey': 'myvalue'});
-      var lastMessage = conn.last_message();
-      var expected = {
-        Type: 'Annotations',
-        Version: 2,
-        Request: 'Set',
-        RequestId: 1,
-        Params: {
-          Annotations: [{
-            EntityTag: 'application-apache',
-            Annotations: {mykey: 'myvalue'}
-          }]
-        }
-      };
       assert.deepEqual(expected, lastMessage);
     });
 
@@ -1429,9 +1341,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Mimic response.
       conn.msg({
         RequestId: 1,
-        Response: {
-          Results: [{Annotations: expected}]
-        }
+        Response: {Annotations: expected}
       });
       assert.deepEqual(expected, annotations);
     });
@@ -1493,21 +1403,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal('This is an error.', err);
     });
 
-    it('handles internal errors from getting annotations', function() {
-      var err;
-      env.get_annotations('haproxy', 'application', function(data) {
-        err = data.err;
-      });
-      // Mimic response.
-      conn.msg({
-        RequestId: 1,
-        Response: {
-          Results: [{Error: 'bad wolf'}]
-        }
-      });
-      assert.equal('bad wolf', err);
-    });
-
     it('handles errors from setting annotations', function() {
       var err;
       env.update_annotations('haproxy', 'application', {
@@ -1521,21 +1416,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Error: 'This is an error.'
       });
       assert.equal('This is an error.', err);
-    });
-
-    it('handles internal errors from setting annotations', function() {
-      var err;
-      env.update_annotations('haproxy', 'application', {
-        'key': 'value'
-      }, function(data) {
-        err = data.err;
-      });
-      // Mimic response.
-      conn.msg({
-        RequestId: 1,
-        Response: {Results: [{Error: 'bad wolf'}]}
-      });
-      assert.equal('bad wolf', err);
     });
 
     it('correctly handles errors from removing annotations', function() {
@@ -1818,7 +1698,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var lastMessage = conn.last_message();
       var expected = {
         Type: 'Client',
-        Version: 1,
+        Version: 0,
         Request: 'CharmInfo',
         Params: {CharmURL: 'cs:precise/wordpress-10'},
         RequestId: 1
@@ -2177,8 +2057,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var unit_name = 'mysql/0';
       env.remove_units([unit_name], null, {immediate: true});
       msg = conn.last_message();
-      assert.equal(msg.Type, 'Application');
-      assert.equal(msg.Request, 'DestroyUnits');
+      assert.equal(msg.Type, 'Client');
+      assert.equal(msg.Request, 'DestroyServiceUnits');
       assert.deepEqual(msg.Params.UnitNames, ['mysql/0']);
     });
 
@@ -2224,9 +2104,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       msg = conn.last_message();
       assert.deepEqual(msg, {
         RequestId: 1,
-        Type: 'Client',
-        Version: 1,
-        Request: 'GetBundleChanges',
+        Type: 'ChangeSet',
+        Version: 0,
+        Request: 'GetChanges',
         Params: {YAML: yaml}
       });
     });
@@ -2237,9 +2117,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       msg = conn.last_message();
       assert.deepEqual(msg, {
         RequestId: 1,
-        Type: 'Client',
-        Version: 1,
-        Request: 'GetBundleChanges',
+        Type: 'ChangeSet',
+        Version: 0,
+        Request: 'GetChanges',
         Params: {Token: 'TOKEN'}
       });
     });
@@ -2251,7 +2131,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       msg = conn.last_message();
       env.dispatch_result({
         RequestId: msg.RequestId,
-        Response: {changes: ['foo']}
+        Response: {Changes: ['foo']}
       });
       assert.equal(callback.callCount(), 1);
       assert.deepEqual(callback.lastArguments()[0], {
@@ -2267,7 +2147,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       msg = conn.last_message();
       env.dispatch_result({
         RequestId: msg.RequestId,
-        Response: {errors: ['bad wolf']}
+        Response: {Errors: ['bad wolf']}
       });
       assert.equal(callback.callCount(), 1);
       assert.deepEqual(callback.lastArguments()[0], {

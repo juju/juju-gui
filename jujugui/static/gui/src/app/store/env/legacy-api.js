@@ -1074,6 +1074,10 @@ YUI.add('juju-env-legacy-api', function(Y) {
         Request: 'AddCharm',
         Params: {URL: url}
       };
+      if (macaroon) {
+        request.Request = 'AddCharmWithAuthorization';
+        request.Params.CharmStoreMacaroon = macaroon;
+      }
 
       // Perform the API call.
       this._send_rpc(request, handleAddCharm);
@@ -1153,6 +1157,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
         constraints = {};
       }
       var params = {
+        ServiceName: applicationName,
         Config: stringifyObjectValues(config),
         ConfigYAML: configRaw,
         Constraints: constraints,
@@ -1160,7 +1165,6 @@ YUI.add('juju-env-legacy-api', function(Y) {
         NumUnits: numUnits,
         ToMachineSpec: toMachine
       };
-      params.ServiceName = applicationName;
       this._send_rpc({
         Type: 'Client',
         Request: 'ServiceDeploy',
@@ -2495,9 +2499,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
       WebSocket connection to a zombie model could lead to a broken GUI state
       and exotic errors difficult to debug.
       Note that at the time the callback is called the destroyed model may
-      still be included in the list of models returned by listModels or
-      listModelsWithInfo calls. In the latter call, the model "isAlive"
-      attribute will be false.
+      still be included in the list of models returned by listModels calls.
 
       @method destroyModel
       @param {Function} callback A callable that must be called once the
@@ -2577,18 +2579,43 @@ YUI.add('juju-env-legacy-api', function(Y) {
         Request: request,
         Params: {Tag: userTag}
       }, handleListModels);
+    },
+
+    /**
+      Return detailed information about Juju models available for current user.
+      Under the hood, this call leverages the ModelManager ListModels and
+      ModelInfo endpoints.
+
+      @method listModelsWithInfo
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive two arguments, the first
+        an error or null and the second an object with a "models" attribute
+        containing an array of model info, each one with the following fields:
+        - tag: the original Juju model tag;
+        - name: the model name, like "admin" or "mymodel";
+        - series: the model default series, like "trusty" or "xenial";
+        - provider: the provider type, like "lxd" or "aws";
+        - uuid: the model unique identifier;
+        - serverUuid: the corresponding controller unique identifier;
+        - ownerTag: the Juju tag of the user owning the model;
+        - life: the lifecycle status of the model: "alive", "dying" or "dead";
+        - isAlive: whether the model is alive or dying/dead;
+        - isAdmin: whether the model is an admin model;
+        - lastConnection: the date of the last connection as a string, e.g.:
+          '2015-09-24T10:08:50Z' or null if the model was never connected to;
+        - err: a message describing a specific model error, or undefined.
+      @return {undefined} Sends a message to the server only.
+    */
+    listModelsWithInfo: function(callback) {
+      // TODO frankban: implement by only using listModels.
+      callback('not implemented', null);
     }
 
   });
 
-
-  environments.endpointToName = endpointToName;
-  environments.createRelationKey = createRelationKey;
+  environments.legacyCreateRelationKey = createRelationKey;
   environments.GoLegacyEnvironment = GoLegacyEnvironment;
-  environments.lowerObjectKeys = lowerObjectKeys;
-  environments.parsePlacement = parsePlacement;
-  environments.stringifyObjectValues = stringifyObjectValues;
-  environments.machineJobs = machineJobs;
+  environments.legacyParsePlacement = parsePlacement;
 
   var KVM = {label: 'LXC', value: 'lxc'},
       LXC = {label: 'KVM', value: 'kvm'};
