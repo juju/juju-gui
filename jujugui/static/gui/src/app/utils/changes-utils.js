@@ -91,6 +91,10 @@ YUI.add('changes-utils', function(Y) {
       // the service also adds the unit. We need to look at the UX for
       // units as follow up.
       switch (change.command.method) {
+        case '_addCharm':
+          changeItem.icon = ghostService.get('icon');
+          changeItem.description = ' ' + ghostService.get('name') +
+              ' charm has been added.';
         case '_deploy':
           if (!change.command.options || !change.command.options.modelId) {
             // When using the deploy-target query parameter we want to auto
