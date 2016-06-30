@@ -94,7 +94,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   });
 
-  describe.only('Juju legacy API', function() {
+  describe('Juju legacy API', function() {
     var cleanups, conn, endpointA, endpointB, ecs, env, juju, machineJobs, msg,
         utils, Y;
 
@@ -2292,7 +2292,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it.only('falls back to GUI server for bundle deployments', function(done) {
+    it('falls back to GUI server for bundle deployments', function(done) {
       var yaml = 'foo:\n  bar: baz';
       env.getBundleChanges(yaml, null, function(data) {
         assert.strictEqual(data.errors, undefined);

@@ -31,8 +31,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
   var PING_INTERVAL = 10;
 
   // Define the Admin API facade versions for Juju 1 and 2.
-  var ADMIN_FACADE_VERSION_JUJU1 = 0;
-  var ADMIN_FACADE_VERSION_JUJU2 = 3;
+  var ADMIN_FACADE_VERSION = 0;
 
   var environments = Y.namespace('juju.environments');
   var utils = Y.namespace('juju.views.utils');
@@ -575,7 +574,6 @@ YUI.add('juju-env-legacy-api', function(Y) {
         this.fire('login', {data: {result: false}});
         return;
       }
-      var version = ADMIN_FACADE_VERSION_JUJU1;
       var params = {
         AuthTag: credentials.user,
         Password: credentials.password
@@ -584,7 +582,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
         Type: 'Admin',
         Request: 'Login',
         Params: params,
-        Version: version
+        Version: ADMIN_FACADE_VERSION
       }, this.handleLogin);
       this.pendingLoginResponse = true;
     },
@@ -1759,8 +1757,6 @@ YUI.add('juju-env-legacy-api', function(Y) {
      * @param {Object} data A dictionary of key, value pairs.
      */
     update_annotations: function(entity, type, data, callback) {
-      var facadeVersion = this.findFacadeVersion('Annotations') || 0;
-
       // Decorate the user supplied callback.
       var handler = function(userCallback, entity, data) {
         if (!userCallback) {
@@ -1824,8 +1820,6 @@ YUI.add('juju-env-legacy-api', function(Y) {
     get_annotations: function(entity, type, callback) {
       var handler;
       var tag = this.generateTag(entity, type);
-      var facadeVersion = this.findFacadeVersion('Annotations') || 0;
-
       handler = function(userCallback, entity, data) {
         if (!userCallback) {
           console.log('data returned by GetAnnotations API call:', data);
@@ -2363,7 +2357,8 @@ YUI.add('juju-env-legacy-api', function(Y) {
     */
     getBundleChanges: function(bundleYAML, changesToken, callback) {
       // Define callbacks for Juju API calls.
-      var intermediateCallback = this.handleGetBundleChanges.bind(null, callback);
+      var intermediateCallback = this.handleGetBundleChanges.bind(
+        null, callback);
       // Prepare the request parameters.
       var params = Object.create(null);
       if (bundleYAML !== null) {
