@@ -92,9 +92,12 @@ YUI.add('changes-utils', function(Y) {
       // units as follow up.
       switch (change.command.method) {
         case '_addCharm':
+          var ghostService = services.getById(
+            change.command.options.applicationId);
           changeItem.icon = ghostService.get('icon');
           changeItem.description = ' ' + ghostService.get('name') +
               ' charm has been added.';
+          break;
         case '_deploy':
           if (!change.command.options || !change.command.options.modelId) {
             // When using the deploy-target query parameter we want to auto
