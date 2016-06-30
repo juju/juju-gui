@@ -1033,7 +1033,6 @@ YUI.add('juju-env-legacy-api', function(Y) {
         // Call the _addCharm method right away bypassing the queue.
         this._addCharm.apply(this, args);
       } else {
-        // XXX frankban: ecs._lazyAddCharm is not yet implemented.
         ecs._lazyAddCharm(arguments);
       }
     },
@@ -1064,7 +1063,6 @@ YUI.add('juju-env-legacy-api', function(Y) {
         }
         userCallback({err: data.Error, url: url});
       }.bind(this, callback, url);
-
       // Build the API call parameters.
       var request = {
         Type: 'Client',
@@ -1075,7 +1073,6 @@ YUI.add('juju-env-legacy-api', function(Y) {
         request.Request = 'AddCharmWithAuthorization';
         request.Params.CharmStoreMacaroon = macaroon;
       }
-
       // Perform the API call.
       this._send_rpc(request, handleAddCharm);
     },
