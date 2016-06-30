@@ -1983,10 +1983,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('translates the type of each change in the delta', function(done) {
       env.detach('delta');
-      var callbackData = {Response: {Deltas: [['application', 'deploy', {}]]}};
+      var callbackData = {Response: {Deltas: [['service', 'change', {}]]}};
       env.on('delta', function(evt) {
         var change = evt.data.result[0];
-        assert.deepEqual(['applicationInfo', 'deploy', {}], change);
+        assert.deepEqual(['serviceLegacyInfo', 'change', {}], change);
         done();
       });
       env._handleRpcResponse(callbackData);
@@ -2000,10 +2000,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             ['annotation', 'change', {}],
             ['relation', 'change', {}],
             ['machine', 'change', {}],
-            ['remoteapplication', 'change', {}],
             ['foobar', 'fake', {}],
             ['unit', 'change', {}],
-            ['application', 'deploy', {}]
+            ['service', 'change', {}]
           ]
         }
       };
@@ -2012,13 +2011,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           return delta[0];
         });
         assert.deepEqual([
-          'applicationInfo',
-          'relationInfo',
-          'unitInfo',
-          'machineInfo',
-          'annotationInfo',
-          'remoteapplicationInfo',
-          'foobarInfo'
+          'serviceLegacyInfo',
+          'relationLegacyInfo',
+          'unitLegacyInfo',
+          'machineLegacyInfo',
+          'annotationLegacyInfo',
+          'foobarLegacyInfo'
         ], change);
         done();
       });
@@ -2074,26 +2072,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         RequestId: msg.RequestId,
         Error: 'badness',
         Response: {}
-      });
-    });
-
-    it('provides provider features for all supported providers', function() {
-      var providers = [
-        'all',
-        'azure',
-        'demonstration',
-        'ec2',
-        'joyent',
-        'local',
-        'maas',
-        'openstack',
-        'manual'
-      ];
-      var providerFeatures = Y.juju.environments.providerFeatures;
-      providers.forEach(function(provider) {
-        assert.equal(
-            Y.Lang.isArray(providerFeatures[provider].supportedContainerTypes),
-            true);
       });
     });
 
