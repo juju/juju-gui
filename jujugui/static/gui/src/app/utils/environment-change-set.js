@@ -578,7 +578,8 @@ YUI.add('environment-change-set', function(Y) {
     _lazyAddCharm: function(args) {
       var command = {
         method: '_addCharm',
-        args: this._getArgs(args)
+        args: this._getArgs(args),
+        options: args[3]
       };
       return this._createNewRecord('addCharm', command, []);
     },
