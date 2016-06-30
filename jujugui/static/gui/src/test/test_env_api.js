@@ -297,7 +297,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
         env.login();
         // Assume login to be the first request.
-        conn.msg({'request-id': 1, response: {}});
+        conn.msg({'request-id': 1, response: {'user-info': {}}});
         assert.isTrue(loginFired);
         assert.isTrue(result);
       });
@@ -306,7 +306,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.failedAuthentication = true;
         env.login();
         // Assume login to be the first request.
-        conn.msg({'request-id': 1, response: {}});
+        conn.msg({'request-id': 1, response: {'user-info': {}}});
         assert.isFalse(env.failedAuthentication);
       });
 
@@ -334,7 +334,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.login();
         // Assume login to be the first request.
         conn.msg({'request-id': 1, response: {
-          facades: [{name: 'Client', versions: [0]}]
+          facades: [{name: 'Client', versions: [0]}],
+          'user-info': {}
         }});
         var currentModelInfoMessage = conn.last_message(2);
         // EnvironmentInfo is the second request.
@@ -361,6 +362,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         assert.deepEqual(watchAllExpected, watchAllMessage);
       });
+
+      it('stores user information', function() {
+        env.login();
+        // Assume login to be the first request.
+        conn.msg({'request-id': 1, response: {
+          facades: [{name: 'Client', versions: [0]}],
+          'user-info': {'read-only': true}
+        }});
+        assert.strictEqual(env.get('readOnly'), true);
+      });
+
     });
 
     describe('login with macaroons', function() {
