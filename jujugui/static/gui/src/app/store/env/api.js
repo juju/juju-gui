@@ -264,8 +264,10 @@ YUI.add('juju-env-api', function(Y) {
       }
       if (version === null) {
         var err = 'api client: operation not supported: ' + JSON.stringify(op);
-        console.log(err);
-        callback({error: err});
+        console.error(err);
+        if (callback) {
+          callback({error: err});
+        }
         return;
       }
       if (this.ws.readyState !== 1) {
@@ -2661,85 +2663,49 @@ YUI.add('juju-env-api', function(Y) {
         attribute containing a string describing the problem (if an error
         occurred), or with the following attributes if everything went well:
         - name: the name of the new model;
+        - uuid: the unique identifier of the new model;
         - owner: the model owner tag;
-        - uuid: the unique identifier of the new model.
+        - region: the cloud region.
+
       @return {undefined} Sends a message to the server only.
     */
     createModel: function(name, userTag, callback) {
-      var intermediateCallback;
-      if (callback) {
-        // Capture the callback. No context is passed.
-        intermediateCallback = this._handleCreateModel.bind(null, callback);
-      } else {
-        intermediateCallback = function(callback, data) {
-          console.log('createModel done: err:', data.error);
-        };
+      // Define the API callback.
+      var handler = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by CreateModel API call:', data);
+          return;
+        }
+        if (data.error) {
+          userCallback({err: data.error});
+          return;
+        }
+        var response = data.response;
+        userCallback({
+          name: response.name,
+          uuid: response.uuid,
+          owner: response['owner-tag'],
+          region: response['cloud-region']
+        });
+      }.bind(this, callback);
+
+      // Prepare API call params.
+      if (userTag.indexOf('@') === -1) {
+        userTag += '@local';
       }
-      // In order to create a new model, we first need to retrieve the
-      // configuration skeleton for this provider.
+      var config = {
+        // XXX frankban: juju-core should not require clients to provide SSH
+        // keys at this point, but only when strictly necessary. Provide an
+        // invalid one for now.
+        'authorized-keys': 'ssh-rsa INVALID (set by the Juju GUI)'
+      };
+
+      // Send the API call.
       this._send_rpc({
         type: 'ModelManager',
-        request: 'ConfigSkeleton',
-      }, data => {
-        if (data.error) {
-          intermediateCallback({
-            error: 'cannot get configuration skeleton: ' + data.error
-          });
-          return;
-        };
-        var config = data.response.config;
-        // Then, having the configuration skeleton, we need configuration
-        // options for this specific model.
-        this.modelGet(data => {
-          if (data.err) {
-            intermediateCallback({
-              error: 'cannot get model configuration: ' + data.err
-            });
-            return;
-          }
-          config.name = name;
-          // XXX frankban: juju-core should not require clients to provide SSH
-          // keys at this point, but only when strictly necessary. Provide an
-          // invalid one for now.
-          config['authorized-keys'] = 'ssh-rsa INVALID (set by the Juju GUI)';
-          Object.keys(data.config).forEach((attr) => {
-            // Juju returns an error if a uuid key is included in the request.
-            if (attr !== 'uuid' && config[attr] === undefined) {
-              config[attr] = data.config[attr];
-            }
-          });
-          // At this point, having both skeleton and model options, we
-          // are ready to create the new model in this system.
-          this._send_rpc({
-            type: 'ModelManager',
-            request: 'CreateModel',
-            params: {'owner-tag': userTag, config: config}
-          }, intermediateCallback);
-        });
-      });
-    },
-
-    /**
-      Transform the data returned from the juju-core createModel call into that
-      suitable for the user callback.
-
-      @method _handleCreateModel
-      @static
-      @param {Function} callback The originally submitted callback.
-      @param {Object} data The response returned by the server.
-    */
-    _handleCreateModel: function(callback, data) {
-      var transformedData = {
-        err: data.error,
-      };
-      if (!data.error) {
-        var response = data.response;
-        transformedData.name = response.name;
-        transformedData.owner = response['owner-tag'];
-        transformedData.uuid = response.uuid;
-      }
-      // Call the original user callback.
-      callback(transformedData);
+        request: 'CreateModel',
+        params: {name: name, 'owner-tag': userTag, config: config}
+      }, handler);
     },
 
     /**
