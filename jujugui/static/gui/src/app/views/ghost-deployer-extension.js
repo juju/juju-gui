@@ -71,7 +71,9 @@ YUI.add('ghost-deployer-extension', function(Y) {
       this.env.addCharm(
         charmId,
         this.get('charmstore').bakery.getMacaroon(),
-        this._addCharmCallbackHandler.bind(this, charm));
+        this._addCharmCallbackHandler.bind(this, charm),
+        // Options used by ECS, ignored by environment.
+        {applicationId: ghostServiceId});
       this.env.deploy(
           charmId,
           serviceName,
