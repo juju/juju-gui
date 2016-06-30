@@ -1811,37 +1811,32 @@ YUI.add('juju-view-utils', function(Y) {
   /**
     Returns an array of relation types for the passed applications
 
-    @method getRelationTypes
+    @method getAvailableEndpoints
     @param {Object} endpointsController a reference to the endpoints
       Controller instance
     @param {Object} db a reference to the db instance
-    @param {Function} reference to the models.getEndpoints method
+    @param {Function} getEndpoints reference to the models.getEndpoints method
     @param {Object} applicationFrom the application to relate from.
     @param {Object} applicationTo the application to relate to.
-    @param {Boolean} filterExisting filters exisiting relations from the
-      returned relation types
     @returns {Array} The relations that are compatible.
   */
-  utils.getRelationTypes = function(
-    endpointsController, db, getEndpoints, applicationFrom,
-    applicationTo, filterExisting=true) {
-    var applicationToEndpoints = getEndpoints(applicationTo,
-      endpointsController);
-    var relationTypes = applicationToEndpoints[applicationFrom.get('id')];
-    if (filterExisting) {
-      var filtered =
-        utils.getRelationDataForService(db, applicationTo)
-             .filter(match => match.endpoints[0] !== applicationFrom.get('id'));
-      if (filtered.length !== 0) {
-        // Find the 'far' endpoint.
-        relationTypes = relationTypes.filter(relation => {
-          return filtered.some(
-            item => relation[0].name !== item.near.name ||
-              relation[1].name !== item.far.name);
-        });
-      }
+  utils.getAvailableEndpoints = function(
+    endpointsController, db, getEndpoints, applicationFrom, applicationTo) {
+    // Get the endpoints that are possible to relate to.
+    var relatableEndpoints = getEndpoints(
+      applicationFrom, endpointsController)[applicationTo.get('id')];
+    var existing = utils.getRelationDataForService(db, applicationTo);
+    if (existing.length === 0) {
+      return relatableEndpoints;
     }
-    return relationTypes;
+    // Filter out the existing relations
+    var availableEndpoints =
+      relatableEndpoints.filter(relation =>
+        !existing.some(existingRelation =>
+          relation[0].name === existingRelation.far.name ||
+          relation[1].name === existingRelation.near.name
+      ));
+    return availableEndpoints;
   };
 
   /**

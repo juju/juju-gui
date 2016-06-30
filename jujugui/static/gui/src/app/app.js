@@ -1128,7 +1128,7 @@ YUI.add('juju-gui', function(Y) {
             unexposeService={this.env.unexpose.bind(this.env)}
             getAvailableVersions={charmstore.getAvailableVersions.bind(
                 charmstore)}
-            getRelationTypes={utils.getRelationTypes.bind(
+            getAvailableEndpoints={utils.getAvailableEndpoints.bind(
               this, this.endpointsController, this.db, models.getEndpoints)}
             getMacaroon={charmstore.bakery.getMacaroon.bind(charmstore.bakery)}
             addCharm={this.env.addCharm.bind(this.env)}

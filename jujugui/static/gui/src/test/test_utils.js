@@ -1808,4 +1808,87 @@ describe('utilities', function() {
     });
   });
 
+  describe('getAvailableEndpoints', function() {
+    var utils, testUtils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', 'juju-tests-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        testUtils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    // Necessary for the _cleanups to be attached.
+    beforeEach(function() {});
+    afterEach(function() {});
+
+    function runGetAvailableEndpoints(vals, context) {
+      var endpointsController = 'endpointsController';
+      var db = 'db';
+      var endpointData = {};
+      endpointData[vals.applicationToId] = JSON.parse(vals.getEndpoints);
+      var getEndpoints = testUtils.makeStubFunction(endpointData);
+      var applicationFrom = vals.applicationFrom || {};
+      var applicationTo = { get: function() { return vals.applicationToId; } };
+      var dataStub = testUtils.makeStubMethod(utils,
+        'getRelationDataForService',
+        JSON.parse(vals.getRelationDataForService));
+      context._cleanups.push(dataStub.reset);
+      return utils.getAvailableEndpoints(
+        endpointsController, db, getEndpoints, applicationFrom, applicationTo);
+    }
+
+    describe('works with...', function() {
+      /* eslint-disable max-len */
+      it('two services, one possible endpoint', function() {
+        var relatableEndpoints = '[[{"service":"8784924$","name":"db","type":"mysql"},{"service":"38546607$","name":"db","type":"mysql"}]]';
+        var availableEndpoints = runGetAvailableEndpoints({
+          applicationToId: '38546607$',
+          getEndpoints: relatableEndpoints,
+          getRelationDataForService: '[]'
+        }, this);
+        assert.deepEqual(availableEndpoints, JSON.parse(relatableEndpoints));
+      });
+
+      it('two services, one full endpoint', function() {
+        var availableEndpoints = runGetAvailableEndpoints({
+          applicationToId: '38546607$',
+          getEndpoints: '[[{"service":"8784924$","name":"db","type":"mysql"},{"service":"38546607$","name":"db","type":"mysql"}]]',
+          getRelationDataForService: '[{"interface":"db","initialized":true,"destroyed":false,"clientId":"relation_10","id":"pending-8784924$:db38546607$:db","relation_id":"pending-8784924$:db38546607$:db","endpoints":[["8784924$",{"name":"db","role":"client"}],["38546607$",{"name":"db","role":"server"}]],"pending":true,"scope":"global","display_name":"pending","near":{"service":"38546607$","serviceName":"wordpress","role":"server","name":"db"},"far":{"service":"8784924$","serviceName":"mariadb","role":"client","name":"db"},"ident":"pending-8784924$:db38546607$:db","elementId":"e-pending_8784924__db38546607__db-1455252509"}]'
+        }, this);
+        assert.deepEqual(availableEndpoints, []);
+      });
+
+      it('two services, two possible and empty endpoints', function() {
+        var relatableEndpoints = '[[{"service":"1485178$","name":"master","type":"mysql-oneway-replication"},{"service":"81820288$","name":"slave","type":"mysql-oneway-replication"}],[{"service":"1485178$","name":"slave","type":"mysql-oneway-replication"},{"service":"81820288$","name":"master","type":"mysql-oneway-replication"}]]';
+        var availableEndpoints = runGetAvailableEndpoints({
+          applicationToId: '1485178$',
+          getEndpoints: relatableEndpoints,
+          getRelationDataForService: '[]'
+        }, this);
+        assert.deepEqual(availableEndpoints, JSON.parse(relatableEndpoints));
+      });
+
+      it('two services, one possible and one full endpoint', function() {
+        var availableEndpoints = runGetAvailableEndpoints({
+          applicationToId: '12648410$',
+          getEndpoints: '[[{"service":"96799599$","name":"master","type":"mysql-oneway-replication"},{"service":"12648410$","name":"slave","type":"mysql-oneway-replication"}],[{"service":"96799599$","name":"slave","type":"mysql-oneway-replication"},{"service":"12648410$","name":"master","type":"mysql-oneway-replication"}]]',
+          getRelationDataForService: '[{"initialized":true,"destroyed":false,"clientId":"relation_72","id":"pending-96799599$12648410$slavemaster","relation_id":"pending-96799599$12648410$slavemaster","endpoints":[["96799599$",{"name":"slave","role":"server"}],["12648410$",{"name":"master","role":"client"}]],"pending":true,"scope":"global","display_name":"pending","near":{"service":"12648410$","serviceName":"mysql","role":"client","name":"master"},"far":{"service":"96799599$","serviceName":"mysql-a","role":"server","name":"slave"},"ident":"pending-96799599$12648410$slavemaster","elementId":"e-pending_96799599_12648410_slavemaster-1611657570"}]'
+        }, this);
+        assert.deepEqual(availableEndpoints, JSON.parse('[[{"service":"96799599$","name":"master","type":"mysql-oneway-replication"},{"service":"12648410$","name":"slave","type":"mysql-oneway-replication"}]]'));
+      });
+
+      it('two services, no possible and two full endpoints', function() {
+        var availableEndpoints = runGetAvailableEndpoints({
+          applicationToId: '93057667$',
+          getEndpoints: '[[{"service":"24412010$","name":"master","type":"mysql-oneway-replication"},{"service":"93057667$","name":"slave","type":"mysql-oneway-replication"}],[{"service":"24412010$","name":"slave","type":"mysql-oneway-replication"},{"service":"93057667$","name":"master","type":"mysql-oneway-replication"}]]',
+          getRelationDataForService: '[{"interface":"master","initialized":true,"destroyed":false,"clientId":"relation_72","id":"pending-24412010$:master93057667$:slave","relation_id":"pending-24412010$:master93057667$:slave","endpoints":[["24412010$",{"name":"master","role":"client"}],["93057667$",{"name":"slave","role":"server"}]],"pending":true,"scope":"global","display_name":"pending","near":{"service":"93057667$","serviceName":"mysql","role":"server","name":"slave"},"far":{"service":"24412010$","serviceName":"mysql-a","role":"client","name":"master"},"ident":"pending-24412010$:master93057667$:slave","elementId":"e-pending_24412010__master93057667__slave-278287960"},{"interface":"slave","initialized":true,"destroyed":false,"clientId":"relation_73","id":"pending-24412010$:slave93057667$:master","relation_id":"pending-24412010$:slave93057667$:master","endpoints":[["24412010$",{"name":"slave","role":"client"}],["93057667$",{"name":"master","role":"server"}]],"pending":true,"scope":"global","display_name":"pending","near":{"service":"93057667$","serviceName":"mysql","role":"server","name":"master"},"far":{"service":"24412010$","serviceName":"mysql-a","role":"client","name":"slave"},"ident":"pending-24412010$:slave93057667$:master","elementId":"e-pending_24412010__slave93057667__master-1283641382"}]'
+        }, this);
+        assert.deepEqual(availableEndpoints, []);
+      });
+      /* eslint-enable max-len */
+    });
+  });
+
 })();

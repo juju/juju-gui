@@ -39,10 +39,10 @@ YUI.add('inspector-component', function() {
       displayPlans: React.PropTypes.bool.isRequired,
       envResolved: React.PropTypes.func.isRequired,
       exposeService: React.PropTypes.func.isRequired,
+      getAvailableEndpoints: React.PropTypes.func.isRequired,
       getAvailableVersions: React.PropTypes.func.isRequired,
       getCharm: React.PropTypes.func.isRequired,
       getMacaroon: React.PropTypes.func.isRequired,
-      getRelationTypes: React.PropTypes.func.isRequired,
       getServiceById: React.PropTypes.func.isRequired,
       getServiceByName: React.PropTypes.func.isRequired,
       getUnitStatusCounts: React.PropTypes.func.isRequired,
@@ -351,7 +351,7 @@ YUI.add('inspector-component', function() {
                 <juju.components.InspectorRelateToType
                   backState={backState}
                   createRelation={this.props.createRelation}
-                  relationTypes={this.props.getRelationTypes(
+                  relationTypes={this.props.getAvailableEndpoints(
                     service, this.props.getServiceById(spouse))}
                   changeState={this.props.changeState} />,
               backState: {
