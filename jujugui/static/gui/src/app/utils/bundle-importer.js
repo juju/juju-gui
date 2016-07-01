@@ -504,9 +504,6 @@ YUI.add('bundle-importer', function(Y) {
     /**
       Executes the addCharm method call.
 
-      XXX At the moment this simply calls the _loadCharm method on the
-      fakebackend because the env doesn't have a addCharm functionality yet.
-
       @method _execute_addCharm
       @param {Object} record The addCharm record.
       @param {Function} next The method to call to trigger the executor to
@@ -523,6 +520,7 @@ YUI.add('bundle-importer', function(Y) {
             charm.loaded = true;
             db.charms.add(charm);
           }
+          this.env.addCharm(charmId, null, () => {});
           this._saveModelToRequires(record.id, charm);
           next();
         }.bind(this),

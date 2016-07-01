@@ -92,11 +92,17 @@ YUI.add('changes-utils', function(Y) {
       // units as follow up.
       switch (change.command.method) {
         case '_addCharm':
-          var ghostService = services.getById(
-            change.command.options.applicationId);
-          changeItem.icon = ghostService.get('icon');
-          changeItem.description = ' ' + ghostService.get('name') +
-              ' charm has been added.';
+          var command = change.command;
+          changeItem.description = ' ' + command.args[0] +
+            ' charm has been added.';
+          // TODO frankban: retrieve the icon from the charm itself. We cannot
+          // always pass applicationId as an option, and maybe we should never
+          // do that, and just get what we need from the charm.
+          changeItem.icon = 'charm-added';
+          var appId = command.options && command.options.applicationId;
+          if (appId) {
+            changeItem.icon = services.getById(appId).get('icon');
+          }
           break;
         case '_deploy':
           if (!change.command.options || !change.command.options.modelId) {
