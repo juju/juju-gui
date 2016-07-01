@@ -1553,7 +1553,7 @@ describe('test_model.js', function() {
       conn = new (Y.namespace('juju-tests.utils')).SocketStub();
       env = new juju.environments.GoEnvironment({conn: conn});
       env.connect();
-      env.set('facades', {Client: [0]});
+      env.set('facades', {Client: [0], Charms: [1]});
       conn.open();
       container = Y.Node.create('<div id="test" class="container"></div>');
     });
@@ -1615,14 +1615,14 @@ describe('test_model.js', function() {
       var charm = new models.Charm({id: 'local:precise/foo-4'}).load(
           env,
           function(err, response) {
-            assert(!err);
-            assert.equal('wowza', charm.get('summary'));
-            assert(charm.loaded);
+            assert.strictEqual(err, false);
+            assert.equal(charm.get('summary'), 'wowza');
+            assert.strictEqual(charm.loaded, true);
             done();
           });
       var response = {
         'request-id': conn.last_message()['request-id'],
-        response: {Meta: {Summary: 'wowza'}, Config: {}}
+        response: {meta: {summary: 'wowza'}, config: {}}
       };
       env.dispatch_result(response);
       // The test in the callback above should run.
@@ -1643,14 +1643,12 @@ describe('test_model.js', function() {
       var response = {
         'request-id': conn.last_message()['request-id'],
         response: {
-          Meta: {},
-          Config: {
-            Options: {
-              default_log: {
-                Default: 'global',
-                Description: 'Default log',
-                Type: 'string'
-              }
+          meta: {},
+          config: {
+            default_log: {
+              default: 'global',
+              description: 'Default log',
+              type: 'string'
             }
           }
         }

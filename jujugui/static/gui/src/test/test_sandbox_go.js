@@ -245,8 +245,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client.onmessage = function(received) {
         var receivedData = Y.JSON.parse(received.data);
         assert.equal(receivedData['request-id'], 1067);
-        assert.isNotNull(receivedData.response.Deltas);
-        var deltas = receivedData.response.Deltas;
+        assert.isNotNull(receivedData.response.deltas);
+        var deltas = receivedData.response.deltas;
         assert.equal(deltas.length, 3);
         assert.deepEqual(deltas.map(function(delta) {
           return delta[0];
@@ -268,56 +268,69 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state.deploy('cs:precise/wordpress-27', function() {});
       client.onmessage = function(received) {
         var receivedData = Y.JSON.parse(received.data);
-        var deltas = receivedData.response.Deltas;
+        var deltas = receivedData.response.deltas;
         assert.equal(deltas.length, 3);
         var applicationChange = deltas[0];
         var machineChange = deltas[1];
         var unitChange = deltas[2];
         assert.deepEqual(applicationChange, [
           'application', 'change', {
-            'Name': 'wordpress',
-            'Exposed': false,
-            'CharmURL': 'cs:precise/wordpress-27',
-            'Life': 'alive',
-            'Config': {
+            name: 'wordpress',
+            exposed: false,
+            'charm-url': 'cs:precise/wordpress-27',
+            life: 'alive',
+            config: {
               debug: 'no',
               engine: 'nginx',
               tuning: 'single',
               'wp-content': ''
             },
-            'Constraints': {},
-            'Subordinate': false
+            constraints: {},
+            subordinate: false
           }], 'applicationChange'
         );
+        console.log(machineChange);
+        console.log(machineChange[2]['agent-status']);
         assert.deepEqual(machineChange, [
           'machine', 'change', {
-            Id: '0',
-            Addresses: [],
-            InstanceId: 'fake-instance',
-            Status: 'started',
-            Jobs: ['JobHostUnits'],
-            Life: 'alive',
-            Series: 'precise',
-            HardwareCharacteristics: {
-              Arch: 'amd64',
-              CpuCores: 1,
-              CpuPower: 100,
-              Mem: 1740,
-              RootDisk: 8192
+            id: '0',
+            addresses: [],
+            'instance-id': 'fake-instance',
+            'agent-status': {
+              current: 'started',
             },
-            SupportedContainers: ['lxc', 'kvm'],
-            SupportedContainersKnown: true
+            jobs: ['JobHostUnits'],
+            life: 'alive',
+            series: 'precise',
+            'hardware-characteristics': {
+              arch: 'amd64',
+              'cpu-cores': 1,
+              'cpu-power': 100,
+              mem: 1740,
+              'root-disk': 8192
+            },
+            'supported-containers': ['lxc', 'kvm'],
+            'supported-containers-known': true
           }], 'machineChange'
         );
         assert.deepEqual(unitChange, [
           'unit', 'change', {
-            'Name': 'wordpress/0',
-            'Application': 'wordpress',
-            'Series': 'precise',
-            'CharmURL': 'cs:precise/wordpress-27',
-            'MachineId': '0',
-            'Status': 'started',
-            'Subordinate': false
+            name: 'wordpress/0',
+            application: 'wordpress',
+            series: 'precise',
+            'charm-url': 'cs:precise/wordpress-27',
+            'machine-id': '0',
+            'agent-status': {
+              current: 'idle',
+              message: '',
+              data: {}
+            },
+            'workload-status': {
+              current: 'idle',
+              message: '',
+              data: {}
+            },
+            subordinate: false
           }], 'unitChange'
         );
         done();
@@ -620,9 +633,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can get a charm', function(done) {
       var data = {
-        type: 'Client',
+        type: 'Charms',
         request: 'CharmInfo',
-        params: {'charm-url': 'cs:precise/wordpress-27'},
+        params: {'url': 'cs:precise/wordpress-27'},
         'request-id': 42
       };
       client.onmessage = function(received) {
@@ -662,7 +675,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can get a charm (environment integration)', function(done) {
       env.connect();
       var callback = function(result) {
-        assert.isUndefined(result.err);
+        assert.strictEqual(result.err, undefined);
         assert.isObject(result.result);
         done();
       };

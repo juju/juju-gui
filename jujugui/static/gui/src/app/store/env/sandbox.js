@@ -178,10 +178,13 @@ YUI.add('juju-env-sandbox', function(Y) {
   sandboxModule.ClientConnection = ClientConnection;
   // Define sandbox API facades: please keep these in alphabetical order.
   sandboxModule.facades = [
+    {name: 'AllWatcher', versions: [1]},
     {name: 'Annotations', versions: [2]},
     {name: 'Application', versions: [1]},
+    {name: 'Charms', versions: [2]},
     {name: 'Client', versions: [1]},
-    {name: 'ModelManager', versions: [2]}
+    {name: 'ModelManager', versions: [2]},
+    {name: 'Pinger', versions: [1]}
   ];
 
   /**
@@ -434,11 +437,11 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     _deltaWhitelist: {
       application: {
-        Name: 'id',
-        Exposed: 'exposed',
-        CharmURL: 'charm',
-        Life: 'life',
-        'Constraints': function(attrs) {
+        name: 'id',
+        exposed: 'exposed',
+        'charm-url': 'charm',
+        life: 'life',
+        'constraints': function(attrs) {
           var constraints = attrs.constraints || {};
           // Since juju-core sends the tags constraint as a list of strings,
           // we need to convert the value to an array.
@@ -448,38 +451,42 @@ YUI.add('juju-env-sandbox', function(Y) {
           }
           return constraints;
         },
-        Config: 'config',
-        Subordinate: 'subordinate'
+        config: 'config',
+        subordinate: 'subordinate'
       },
       machine: {
-        Id: 'id',
-        Addresses: 'addresses',
-        InstanceId: 'instance_id',
-        Status: 'agent_state',
-        StateInfo: 'agent_status_info',
-        StatusData: 'agent_state_data',
-        'HardwareCharacteristics': function(attrs) {
-          var hardware = attrs.hardware || {};
+        id: 'id',
+        addresses: 'addresses',
+        'instance-id': 'instance_id',
+        'agent-status': function(attrs) {
           return {
-            Arch: hardware.arch,
-            CpuCores: hardware.cpuCores,
-            CpuPower: hardware.cpuPower,
-            Mem: hardware.mem,
-            RootDisk: hardware.disk
+            current: attrs.agent_state,
+            message: attrs.agent_state_info,
+            data: attrs.agent_state_data
           };
         },
-        Jobs: 'jobs',
-        Life: 'life',
-        Series: 'series',
-        SupportedContainers: 'supportedContainers',
-        'SupportedContainersKnown': function() {
+        'hardware-characteristics': function(attrs) {
+          var hardware = attrs.hardware || {};
+          return {
+            arch: hardware.arch,
+            'cpu-cores': hardware.cpuCores,
+            'cpu-power': hardware.cpuPower,
+            mem: hardware.mem,
+            'root-disk': hardware.disk
+          };
+        },
+        jobs: 'jobs',
+        life: 'life',
+        series: 'series',
+        'supported-containers': 'supportedContainers',
+        'supported-containers-known': function() {
           return true;
         }
       },
       unit: {
-        Name: 'id',
-        Application: 'service',
-        'Series': function(attrs, self) {
+        name: 'id',
+        application: 'service',
+        'series': function(attrs, self) {
           var db = self.get('state').db;
           var application = db.services.getById(attrs.service);
           if (application) {
@@ -489,7 +496,7 @@ YUI.add('juju-env-sandbox', function(Y) {
             return null; // Probably unit/application was deleted.
           }
         },
-        'CharmURL': function(attrs, self) {
+        'charm-url': function(attrs, self) {
           var db = self.get('state').db;
           var application = db.services.getById(attrs.service);
           if (application) {
@@ -498,41 +505,54 @@ YUI.add('juju-env-sandbox', function(Y) {
             return null; // Probably unit/application was deleted.
           }
         },
-        PublicAddress: 'public_address',
-        PrivateAddress: 'private_address',
-        MachineId: 'machine',
-        Ports: 'open_ports',
-        Status: 'agent_state',
-        StatusInfo: 'agent_state_info',
-        StatusData: 'agent_state_data',
-        Subordinate: 'subordinate'
+        'public-address': 'public_address',
+        'private-address': 'private_address',
+        'machine-id': 'machine',
+        ports: 'open_ports',
+        'agent-status': function(attrs) {
+          // TODO frankban: handle unit agent status.
+          return {
+            current: 'idle',
+            message: '',
+            data: {}
+          };
+        },
+        'workload-status': function(attrs) {
+          // TODO frankban: handle unit workload status.
+          return {
+            current: 'idle',
+            message: '',
+            data: {}
+          };
+        },
+        subordinate: 'subordinate'
       },
       relation: {
-        Key: 'relation_id',
-        'Endpoints': function(relation, goAPI) {
+        key: 'relation_id',
+        'endpoints': function(relation, goAPI) {
           var result = [];
           if (relation.endpoints.length === 1) {
             return;
           }
           relation.endpoints.forEach(function(endpoint, index) {
             result.push({
-              Relation: {
-                Name: endpoint[1].name,
-                Role: (index) ? 'server' : 'client',
-                Interface: relation.type,
-                Scope: relation.scope
+              relation: {
+                name: endpoint[1].name,
+                role: (index) ? 'server' : 'client',
+                interface: relation.type,
+                scope: relation.scope
               },
-              ApplicationName: endpoint[0]
+              'application-name': endpoint[0]
             });
           });
           return result;
         }
       },
       annotation: {
-        'Tag': function(entity) {
+        'tag': function(entity) {
           return entity.id;
         },
-        'Annotations': function(entity) {
+        'annotations': function(entity) {
           return entity.annotations;
         }
       }
@@ -623,7 +643,7 @@ YUI.add('juju-env-sandbox', function(Y) {
             var tag = this.modelToTag(model);
             // This form will trigger the annotationInfo handler.
             deltas.push(['annotation', 'change', {
-              Tag: tag, Annotations: attrs}]);
+              tag: tag, annotations: attrs}]);
           }, this);
         }, this);
       }
@@ -641,8 +661,10 @@ YUI.add('juju-env-sandbox', function(Y) {
       var name = model.name;
       if (name === 'serviceUnit') {
         name = 'unit';
+      } else if (name === 'service') {
+        name = 'application';
       } else if (name === 'environment') {
-        return 'env';
+        return 'model';
       }
       return name + '-' + (model.id || model.get('id'));
     },
@@ -663,7 +685,7 @@ YUI.add('juju-env-sandbox', function(Y) {
         if (deltas.length || annotations.length) {
           this.get('client').receive({
             'request-id': this.get('nextRequestId'),
-            response: {Deltas: deltas.concat(annotations)}
+            response: {deltas: deltas.concat(annotations)}
           });
           // Prevent sending additional deltas until the Go environment is
           // ready for them (when the next `Next` message is sent).
@@ -877,16 +899,16 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle CharmInfo messages
+    Handle Charms.CharmInfo messages
 
-    @method handleClientCharmInfo
+    @method handleCharmsCharmInfo
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     @return {undefined} Side effects only.
     */
-    handleClientCharmInfo: function(data, client, state) {
-      state.getCharm(data.params['charm-url'], function(result) {
+    handleCharmsCharmInfo: function(data, client, state) {
+      state.getCharm(data.params.url, function(result) {
         if (result.error) {
           this._basicReceive(data, client, result);
         } else {
@@ -896,21 +918,19 @@ YUI.add('juju-env-sandbox', function(Y) {
           var convertedData = {
             'request-id': data['request-id'],
             response: {
-              Config: {
-                Options: result.options
+              config: result.options,
+              meta: {
+                description: result.description,
+                format: result.format,
+                name: result.name,
+                oeers: result.peers,
+                provides: result.provides,
+                requires: result.requires,
+                subordinate: result.is_subordinate,
+                summary: result.summary
               },
-              Meta: {
-                Description: result.description,
-                Format: result.format,
-                Name: result.name,
-                Peers: result.peers,
-                Provides: result.provides,
-                Requires: result.requires,
-                Subordinate: result.is_subordinate,
-                Summary: result.summary
-              },
-              URL: result.url,
-              Revision: result.revision
+              url: result.url,
+              revision: result.revision
             }
           };
           client.receive(convertedData);
