@@ -499,6 +499,10 @@ YUI.add('environment-change-set', function(Y) {
           relations = db.relations,
           units = db.units;
       switch (command.method) {
+        case '_addCharm':
+          // Leaving the charm in memory doesn't pose any negative side
+          // effects so once it's added we just leave it there.
+          break;
         case '_deploy':
           services.remove(services.getById(command.options.modelId));
           break;
@@ -563,6 +567,23 @@ YUI.add('environment-change-set', function(Y) {
     /* Private environment methods. */
 
     /**
+      Creates a new entry in the queue for adding a charm to the controller.
+
+      Receives all the parameters received by the models "addCharm" method
+      with the exception of the ECS options object.
+
+      @method _lazyAddCharm
+      @param {Array} args The arguments to add the charm with.
+    */
+    _lazyAddCharm: function(args) {
+      var command = {
+        method: '_addCharm',
+        args: this._getArgs(args),
+        options: args[3]
+      };
+      return this._createNewRecord('addCharm', command, []);
+    },
+    /**
       Creates a new entry in the queue for creating a new service.
 
       Receives all the parameters received by the environment's "deploy"
@@ -605,16 +626,26 @@ YUI.add('environment-change-set', function(Y) {
       if (command.args.length !== args.length) {
         command.options = args[args.length - 1];
       }
+      // Set up the parents of this record.
+      var parents = [];
+      Object.keys(this.changeSet).forEach(key => {
+        if (this.changeSet[key].command.method === '_addCharm') {
+          // Get the key to the record which adds the charm for this app.
+          if (this.changeSet[key].command.args[0] === args[0]) {
+            parents.push(key);
+          }
+        }
+      });
       // The 6th param is the toMachine param of the env deploy call.
       var toMachine = command.args[6];
-      if (!this.changeSet[parent]) {
+      if (!this.changeSet[toMachine]) {
         // If the toMachine isn't a record in the changeSet that means it's
         // an existing machine or that the machine does not exist and one
         // will be created to host this unit. This means that this does not
         // need to be queued behind another command.
-        toMachine = [];
+        parents.push(toMachine);
       }
-      return this._createNewRecord('service', command, toMachine);
+      return this._createNewRecord('service', command, parents);
     },
 
     /**

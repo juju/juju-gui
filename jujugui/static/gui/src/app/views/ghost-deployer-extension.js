@@ -68,6 +68,12 @@ YUI.add('ghost-deployer-extension', function(Y) {
       var serviceName = ghostService.get('name');
       var charmId = charm.get('id');
       var constraints = {};
+      this.env.addCharm(
+        charmId,
+        this.get('charmstore').bakery.getMacaroon(),
+        this._addCharmCallbackHandler.bind(this, charm),
+        // Options used by ECS, ignored by environment.
+        {applicationId: ghostServiceId});
       this.env.deploy(
           charmId,
           serviceName,
@@ -76,7 +82,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
           0, // Number of units.
           constraints,
           null, // toMachine.
-          Y.bind(this._deployCallbackHandler, this, ghostService),
+          this._deployCallbackHandler.bind(this, ghostService),
           // Options used by ECS, ignored by environment.
           {modelId: ghostServiceId});
 
@@ -136,6 +142,33 @@ YUI.add('ghost-deployer-extension', function(Y) {
         }
         ghostService.set('icon', ghostAttributes.icon);
       }
+    },
+
+    /**
+      The callback handler for the env.addCharm call.
+
+      @method _addCharmCallbackHandler
+      @param {Object} charm The added charm model.
+      @param {Object} response The response from Juju.
+    */
+    _addCharmCallbackHandler: function(charm, response) {
+      var db = this.db;
+      var charmId = charm.get('id');
+      if (response.err) {
+        db.notifications.add({
+          title: `Error adding ${charmId}`,
+          message: 'Could not add requested charm. Server responded with: ' +
+            response.err,
+          level: 'error'
+        });
+        return;
+      }
+
+      db.notifications.add({
+        title: `Added ${charmId} successfully`,
+        message: `Successfully added ${charmId}`,
+        level: 'info'
+      });
     },
 
     /**
