@@ -121,6 +121,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         AllWatcher: [0],
         Annotations: [2],
         Application: [7],
+        Charms: [3],
         Client: [1],
         CrossModelRelations: [1],
         ModelManager: [2],
@@ -2593,10 +2594,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.get_charm('cs:precise/wordpress-10');
       var lastMessage = conn.last_message();
       var expected = {
-        type: 'Client',
-        version: 1,
+        type: 'Charms',
+        version: 3,
         request: 'CharmInfo',
-        params: {'charm-url': 'cs:precise/wordpress-10'},
+        params: {'url': 'cs:precise/wordpress-10'},
         'request-id': 1
       };
       assert.deepEqual(expected, lastMessage);
@@ -2605,135 +2606,152 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('successfully retrieves information about a charm', function(done) {
       // Define a response example.
       var response = {
-        Config: {
-          Options: {
-            debug: {
-              Default: 'no',
-              Description: 'Setting this option to "yes" will ...',
-              Title: '',
-              Type: 'string'
-            },
-            engine: {
-              Default: 'nginx',
-              Description: 'Two web server engines are supported...',
-              Title: '',
-              Type: 'string'
-            }
+        config: {
+          debug: {
+            default: 'no',
+            description: 'Setting this option to "yes" will ...',
+            type: 'string'
+          },
+          engine: {
+            default: 'nginx',
+            description: 'Two web server engines are supported...',
+            type: 'string'
           }
         },
-        Meta: {
-          Categories: null,
-          Description: 'This will install and setup WordPress...',
-          Format: 1,
-          Name: 'wordpress',
-          OldRevision: 0,
-          Peers: {
+        meta: {
+          description: 'This will install and setup WordPress...',
+          name: 'wordpress',
+          peers: {
             loadbalancer: {
-              Interface: 'reversenginx',
-              Limit: 1,
-              Optional: false,
-              Scope: 'global'
+              interface: 'reversenginx',
+              limit: 1,
+              name: 'loadbalancer',
+              role: 'peer',
+              optional: false,
+              scope: 'global'
             }
           },
-          Provides: {
+          provides: {
             website: {
-              Interface: 'http',
-              Limit: 0,
-              Optional: false,
-              Scope: 'global'
+              interface: 'http',
+              limit: 0,
+              name: 'website',
+              role: 'provider',
+              optional: false,
+              scope: 'global'
             }
           },
-          Requires: {
+          requires: {
             cache: {
-              Interface: 'memcache',
-              Limit: 1,
-              Optional: false,
-              Scope: 'global'
+              interface: 'memcache',
+              limit: 1,
+              name: 'cache',
+              role: 'requirer',
+              optional: false,
+              scope: 'global'
             },
             db: {
-              Interface: 'mysql',
-              Limit: 1,
-              Optional: false,
-              Scope: 'global'
+              interface: 'mysql',
+              limit: 1,
+              name: 'db',
+              role: 'requirer',
+              optional: false,
+              scope: 'global'
             }
           },
-          Subordinate: false,
-          Summary: 'WordPress is a full featured web blogging tool...'
+          subordinate: false,
+          summary: 'WordPress is a full featured web blogging tool...',
+          series: ['xenial', 'trusty'],
+          terms: ['term1', 'term2'],
+          tags: ['applications', 'blog'],
+          'min-juju-version': '2.0.42'
         },
-        Revision: 10,
-        URL: 'cs:precise/wordpress-10'
+        revision: 10,
+        metrics: 'my metrics',
+        url: 'cs:precise/wordpress-10'
       };
       // Define expected options.
-      var options = response.Config.Options;
+      var options = response.config;
       var expectedOptions = {
         debug: {
-          'default': options.debug.Default,
-          description: options.debug.Description,
-          type: options.debug.Type,
-          title: options.debug.Title
+          'default': options.debug.default,
+          description: options.debug.description,
+          type: options.debug.type,
         },
         engine: {
-          'default': options.engine.Default,
-          description: options.engine.Description,
-          type: options.engine.Type,
-          title: options.engine.Title
+          'default': options.engine.default,
+          description: options.engine.description,
+          type: options.engine.type,
         }
       };
       // Define expected peers.
-      var meta = response.Meta;
-      var peer = meta.Peers.loadbalancer;
+      var meta = response.meta;
+      var peer = meta.peers.loadbalancer;
       var expectedPeers = {
         loadbalancer: {
-          'interface': peer.Interface,
-          limit: peer.Limit,
-          optional: peer.Optional,
-          scope: peer.Scope
+          'interface': peer.interface,
+          limit: peer.limit,
+          name: peer.name,
+          role: peer.role,
+          optional: peer.optional,
+          scope: peer.scope
         }
       };
       // Define expected provides.
-      var provide = meta.Provides.website;
+      var provide = meta.provides.website;
       var expectedProvides = {
         website: {
-          'interface': provide.Interface,
-          limit: provide.Limit,
-          optional: provide.Optional,
-          scope: provide.Scope
+          'interface': provide.interface,
+          limit: provide.limit,
+          name: provide.name,
+          role: provide.role,
+          optional: provide.optional,
+          scope: provide.scope
         }
       };
       // Define expected requires.
-      var require1 = meta.Requires.cache;
-      var require2 = meta.Requires.db;
+      var require1 = meta.requires.cache;
+      var require2 = meta.requires.db;
       var expectedRequires = {
         cache: {
-          'interface': require1.Interface,
-          limit: require1.Limit,
-          optional: require1.Optional,
-          scope: require1.Scope
+          'interface': require1.interface,
+          limit: require1.limit,
+          name: require1.name,
+          role: require1.role,
+          optional: require1.optional,
+          scope: require1.scope
         },
         db: {
-          'interface': require2.Interface,
-          limit: require2.Limit,
-          optional: require2.Optional,
-          scope: require2.Scope
+          'interface': require2.interface,
+          limit: require2.limit,
+          name: require2.name,
+          role: require2.role,
+          optional: require2.optional,
+          scope: require2.scope
         }
       };
       env.get_charm('cs:precise/wordpress-10', function(data) {
         var err = data.err,
             result = data.result;
         // Ensure the result is correctly generated.
-        assert.isUndefined(err);
-        assert.deepEqual({options: expectedOptions}, result.config);
-        assert.deepEqual(expectedPeers, result.peers);
-        assert.deepEqual(expectedProvides, result.provides);
-        assert.deepEqual(expectedRequires, result.requires);
-        assert.equal(response.URL, result.url);
+        assert.strictEqual(err, undefined, 'error');
+        assert.deepEqual(result.config, {options: expectedOptions}, 'config');
+        assert.deepEqual(result.peers, expectedPeers, 'peers');
+        assert.deepEqual(result.provides, expectedProvides, 'provides');
+        assert.deepEqual(result.requires, expectedRequires, 'requires');
         // The result is enriched with additional info returned by juju-core.
-        assert.equal(response.Revision, result.revision);
-        assert.equal(meta.Description, result.description);
-        assert.equal(meta.Format, result.format);
-        assert.equal(meta.Name, result.name);
-        assert.equal(meta.Subordinate, result.subordinate);
-        assert.equal(meta.Summary, result.summary);
+        assert.equal(result.url, response.url, 'url');
+        assert.equal(result.revision, response.revision, 'revision');
+        assert.equal(result.description, meta.description, 'description');
+        assert.equal(result.name, meta.name, 'name');
+        assert.equal(result.subordinate, meta.subordinate, 'subordinate');
+        assert.equal(result.summary, meta.summary, 'summary');
+        assert.equal(
+          result.minJujuVersion, meta['min-juju-version'], 'min-juju-version');
+        assert.deepEqual(result.tags, meta.tags, 'tags');
+        assert.deepEqual(result.series, meta.series, 'series');
+        assert.deepEqual(result.terms, meta.terms, 'terms');
+        assert.equal(result.metrics, response.metrics, 'metrics');
         done();
       });
       // Mimic response, assuming CharmInfo to be the first request.
@@ -2745,10 +2763,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles failed attempt to retrieve charm info', function(done) {
       env.get_charm('cs:precise/wordpress-10', function(data) {
-        var err = data.err,
-            result = data.result;
-        assert.equal('charm not found', err);
-        assert.isUndefined(result);
+        assert.strictEqual(data.err, 'charm not found');
+        assert.strictEqual(data.result, undefined);
         done();
       });
       // Mimic response, assuming CharmInfo to be the first request.

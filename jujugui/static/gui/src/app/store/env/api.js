@@ -2257,141 +2257,155 @@ YUI.add('juju-env-api', function(Y) {
     },
 
     /**
-       Retrieve charm info.
+      Retrieve charm info by sending the Charms.CharmInfo API call.
+      An example of the "data.response" returned by juju-core follows:
 
-       @method get_charm
-       @param {String} charmURL The URL of the charm.
-       @param {Function} callback A callable that must be called once the
+        {
+          'config': {
+            'debug': {
+              'default': 'no',
+              'description': 'Setting this option to "yes" will ...',
+              'type': 'string'
+            },
+            'engine': {
+              'default': 'nginx',
+              'description': 'Two web server engines are supported...',
+              'type': 'string'
+            }
+          },
+          'meta': {
+            'description': 'This will install and setup WordPress...',
+            'name': 'wordpress',
+            'min-juju-version': '0.0.0',
+            'peers': {
+              'loadbalancer': {
+                'interface': 'reversenginx',
+                'limit': 1,
+                'name': 'loadbalancer',
+                'optional': false,
+                'role': 'peer',
+                'scope': 'global'
+              }
+            },
+            'provides': {
+              'website': {
+                'interface': 'http',
+                'limit': 0,
+                'name': 'website',
+                'optional': false,
+                'role': 'provider',
+                'scope': 'global'
+              }
+            },
+            'requires': {
+              'cache': {
+                'interface': 'memcache',
+                'limit': 1,
+                'name': 'cache',
+                'optional': false,
+                'role': 'requirer',
+                'scope': 'global'
+              },
+              'db': {
+                'interface': 'mysql',
+                'limit': 1,
+                'name': 'db',
+                'optional': false,
+                'role': 'requirer',
+                'scope': 'global'
+              }
+            },
+            'subordinate': false,
+            'summary': 'WordPress is a full featured web blogging tool...',
+            'tags': ['applications', 'blog']
+          },
+          'revision': 10,
+          'url': 'cs:precise/wordpress-10'
+        }
+
+      The example above is not exhaustive. For a more complete description,
+      check the CharmInfo response type at
+      <https://github.com/juju/juju/blob/master/apiserver/params/charms.go>.
+
+      @method get_charm
+      @param {String} charmURL The URL of the charm.
+      @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an object with an "err"
         attribute containing a string describing the problem (if an error
         occurred), and with a "result" attribute containing information
         about the charm. The "result" object includes "config" options, a list
         of "peers", "provides" and "requires", and the charm URL.
-       @return {undefined} Sends a message to the server only.
-     */
+      @return {undefined} Sends a message to the server only.
+    */
     get_charm: function(charmURL, callback) {
-      // Since the callback argument of this._send_rpc is optional, if a
-      // callback is not provided, we can leave intermediateCallback undefined.
-      var intermediateCallback;
-      if (callback) {
-        // Capture the callback. No context is passed.
-        intermediateCallback = this.handleCharmInfo.bind(null, callback);
-      }
-      this._send_rpc({
-        type: 'Client',
-        request: 'CharmInfo',
-        params: {'charm-url': charmURL}
-      }, intermediateCallback);
-    },
-
-    /**
-       Transform the data returned from juju-core 'CharmInfo' into that
-       suitable for the user callback.
-
-       @method handleCharmInfo
-       @param {Function} userCallback The callback originally submitted by the
-       call site.
-       @param {Object} data The response returned by the server. An example of
-        the "data.response" returned by juju-core follows:
-          {
-            'Config': {
-              'Options': {
-                'debug': {
-                  'Default': 'no',
-                  'Description': 'Setting this option to "yes" will ...',
-                  'Title': '',
-                  'Type': 'string'
-                },
-                'engine': {
-                  'Default': 'nginx',
-                  'Description': 'Two web server engines are supported...',
-                  'Title': '',
-                  'Type': 'string'
-                }
-              }
-            },
-            'Meta': {
-              'Categories': null,
-              'Description': 'This will install and setup WordPress...',
-              'Format': 1,
-              'Name': 'wordpress',
-              'OldRevision': 0,
-              'Peers': {
-                'loadbalancer': {
-                  'Interface': 'reversenginx',
-                  'Limit': 1,
-                  'Optional': false,
-                  'Scope': 'global'
-                }
-              },
-              'Provides': {
-                'website': {
-                  'Interface': 'http',
-                  'Limit': 0,
-                  'Optional': false,
-                  'Scope': 'global'
-                }
-              },
-              'Requires': {
-                'cache': {
-                  'Interface': 'memcache',
-                  'Limit': 1,
-                  'Optional': false,
-                  'Scope': 'global'
-                },
-                'db': {
-                  'Interface': 'mysql',
-                  'Limit': 1,
-                  'Optional': false,
-                  'Scope': 'global'
-                }
-              },
-              'Subordinate': false,
-              'Summary': 'WordPress is a full featured web blogging tool...'
-            },
-            'Revision': 10,
-            'URL': 'cs:precise/wordpress-10'
-          }
-        This data will be parsed and transformed before sending the final
-        result to the callback.
-       @return {undefined} Nothing.
-     */
-    handleCharmInfo: function(userCallback, data) {
-      // Transform subsets of data (config options, peers, provides, requires)
-      // returned by juju-core into that suitable for the user callback.
-      var parseItems = function(items) {
-        var result = {};
-        Y.each(items, function(value, key) {
-          result[key] = lowerObjectKeys(value);
-        });
-        return result;
+      // Define a charm relation helper.
+      var handleRelations = function(relations) {
+        relations = relations || {};
+        return Object.keys(relations).reduce((prev, curr) => {
+          var values = relations[curr];
+          prev[curr] = {
+            interface: values.interface,
+            name: values.name,
+            role: values.role,
+            scope: values.scope,
+            limit: values.limit,
+            optional: values.optional
+          };
+          return prev;
+        }, {});
       };
-      // Build the transformed data structure.
-      var result,
-          response = data.response;
-      if (!Y.Object.isEmpty(response)) {
-        var meta = response.Meta;
-        result = {
-          config: {options: parseItems(response.Config.Options)},
-          peers: parseItems(meta.Peers),
-          provides: parseItems(meta.Provides),
-          requires: parseItems(meta.Requires),
-          url: response.URL,
-          revision: response.Revision,
-          description: meta.Description,
-          format: meta.Format,
-          name: meta.Name,
-          subordinate: meta.Subordinate,
-          summary: meta.Summary,
-          metrics: response.Metrics
+
+      // Define the API callback.
+      var handler = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by CharmInfo API call:', data);
+          return;
+        }
+        // Handle possible errors.
+        if (data.error) {
+          userCallback({err: data.error});
+          return;
+        }
+        var response = data.response;
+        // Handle charm options.
+        var config = response.config || {};
+        var options = Object.keys(config).reduce((prev, curr) => {
+          var values = config[curr];
+          prev[curr] = {
+            type: values.type,
+            description: values.description,
+            default: values.default
+          };
+          return prev;
+        }, {});
+        var meta = response.meta;
+        var result = {
+          config: {options: options},
+          peers: handleRelations(meta.peers),
+          provides: handleRelations(meta.provides),
+          requires: handleRelations(meta.requires),
+          url: response.url,
+          revision: response.revision,
+          description: meta.description,
+          minJujuVersion: meta['min-juju-version'],
+          name: meta.name,
+          subordinate: meta.subordinate,
+          summary: meta.summary,
+          tags: meta.tags || [],
+          series: meta.series || [],
+          terms: meta.terms || [],
+          // TODO frankban: convert metrics to a JS friendly object.
+          metrics: response.metrics
         };
-      }
-      var transformedData = {
-        err: data.error,
-        result: result
-      };
-      // Call the original user callback.
-      userCallback(transformedData);
+        userCallback({result: result});
+      }.bind(this, callback);
+
+      // Send the API request.
+      this._send_rpc({
+        type: 'Charms',
+        request: 'CharmInfo',
+        params: {'url': charmURL}
+      }, handler);
     },
 
     /**
