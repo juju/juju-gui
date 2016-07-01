@@ -1,3 +1,6 @@
+- 2.1.8:
+    - Add support for Juju 2 API.
+    - Various UI fixes.
 - 2.1.7:
     - Provide API clients for Romulus services in the app object.
     - Last user-facing clean up on text for svc2app
