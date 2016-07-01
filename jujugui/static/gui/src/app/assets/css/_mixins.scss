@@ -14,16 +14,22 @@
     }
 }
 
-@mixin diamond($color: inherit, $size: 6px) {
-    -webkit-transform: rotate(45deg);
-    -ms-transform: rotate(45deg);
-    transform: rotate(45deg);
+@mixin diamond($color: inherit, $size: 6px, $direction: 'down') {
     content: '';
     width: $size;
     height: $size;
     position: absolute;
     display: block;
     background-color: $color;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+
+    @if $direction == 'down' {
+        bottom: -4px;
+    } @else if $direction == 'up' {
+        top: -4px;
+    }
 }
 
 @mixin notification($background) {

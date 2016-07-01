@@ -2,16 +2,26 @@
     position: relative;
 
     &:hover {
-        .tooltip__tooltip {
+        .tooltip__tooltip,
+        .tooltip__tooltip--below {
             display: block;
         }
     }
 
-    &__tooltip {
+    %tooltip__tooltip {
         display: none;
         position: absolute;
-        bottom: calc(100% + 10px);
         left: 50%;
+    }
+
+    &__tooltip {
+        @extend %tooltip__tooltip;
+        bottom: calc(100% + 10px);
+    }
+
+    &__tooltip--below {
+        @extend %tooltip__tooltip;
+        top: calc(100% + 10px);
     }
 
     &__inner {
@@ -26,7 +36,7 @@
         white-space: nowrap;
 
         &:after {
-            @include diamond($black, 8px);
+            @include diamond($black, 8px, 'up');
             left: 50%;
             margin-left: -4px;
         }

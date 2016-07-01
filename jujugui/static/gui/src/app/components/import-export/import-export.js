@@ -88,23 +88,31 @@ YUI.add('import-export', function() {
       var isReadOnly = this.props.acl.isReadOnly();
       return (
         <div className={this._generateClasses()}>
-          <span className="import-export__export link"
+          <span className="import-export__export link tooltip"
             onClick={this._handleExport}
             role="button"
-            title="Export"
             tabIndex="0">
             <juju.components.SvgIcon name="export_16"
               className="import-export__icon"
               size="16" />
+            <span className="tooltip__tooltip--below">
+              <span className="tooltip__inner">
+                Export
+              </span>
+            </span>
           </span>
-          <span className="import-export__import link"
+          <span className="import-export__import link tooltip"
             onClick={!isReadOnly && this._handleImportClick}
             role="button"
-            title="Import"
             tabIndex="0">
             <juju.components.SvgIcon name="import_16"
               className="import-export__icon"
               size="16" />
+            <span className="tooltip__tooltip--below">
+              <span className="tooltip__inner">
+                Import
+              </span>
+            </span>
           </span>
           <input className="import-export__file"
             type="file"
