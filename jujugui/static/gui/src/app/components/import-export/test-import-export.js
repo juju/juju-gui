@@ -51,23 +51,31 @@ describe('ImportExport', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="import-export">
-        <span className="import-export__export link"
+        <span className="import-export__export link tooltip"
           onClick={instance._handleExport}
           role="button"
-          title="Export"
           tabIndex="0">
           <juju.components.SvgIcon name="export_16"
             className="import-export__icon"
             size="16" />
+          <span className="tooltip__tooltip--below">
+            <span className="tooltip__inner">
+              Export
+            </span>
+          </span>
         </span>
-        <span className="import-export__import link"
+        <span className="import-export__import link tooltip"
           onClick={instance._handleImportClick}
           role="button"
-          title="Import"
           tabIndex="0">
           <juju.components.SvgIcon name="import_16"
             className="import-export__icon"
             size="16" />
+          <span className="tooltip__tooltip--below">
+            <span className="tooltip__inner">
+              Import
+            </span>
+          </span>
         </span>
         <input className="import-export__file"
           type="file"
@@ -196,23 +204,31 @@ describe('ImportExport', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="import-export">
-        <span className="import-export__export link"
+        <span className="import-export__export link tooltip"
           onClick={instance._handleExport}
           role="button"
-          title="Export"
           tabIndex="0">
           <juju.components.SvgIcon name="export_16"
             className="import-export__icon"
             size="16" />
+          <span className="tooltip__tooltip--below">
+            <span className="tooltip__inner">
+              Export
+            </span>
+          </span>
         </span>
-        <span className="import-export__import link"
+        <span className="import-export__import link tooltip"
           onClick={false}
           role="button"
-          title="Import"
           tabIndex="0">
           <juju.components.SvgIcon name="import_16"
             className="import-export__icon"
             size="16" />
+          <span className="tooltip__tooltip--below">
+            <span className="tooltip__inner">
+              Import
+            </span>
+          </span>
         </span>
         <input className="import-export__file"
           type="file"
