@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe('Juju environment API utilities', function() {
+  describe('Juju API utilities', function() {
     var environments;
 
     before(function(done) {
@@ -47,11 +47,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('provides a way to retrieve a relation key from endpoints', function() {
       var endpoints = {
-        wordpress: {Name: 'website', Role: 'provider'},
-        haproxy: {Name: 'reverseproxy', Role: 'requirer'}
+        wordpress: {name: 'website', role: 'provider'},
+        haproxy: {name: 'reverseproxy', role: 'requirer'}
       };
       var key = environments.createRelationKey(endpoints);
-      assert.deepEqual('haproxy:reverseproxy wordpress:website', key);
+      assert.deepEqual(key, 'haproxy:reverseproxy wordpress:website');
     });
 
     it('provides a way to lowercase the keys of an object', function() {
@@ -77,24 +77,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('correctly returns the scope and the directive', function() {
         var placement = environments.parsePlacement('lxc:2');
-        assert.deepEqual(placement, {Scope: 'lxc', Directive: '2'});
+        assert.deepEqual(placement, {scope: 'lxc', directive: '2'});
       });
 
       it('returns a new container placement', function() {
         var placement = environments.parsePlacement('kvm');
-        assert.deepEqual(placement, {Scope: 'kvm', Directive: ''});
+        assert.deepEqual(placement, {scope: 'kvm', directive: ''});
       });
 
       it('returns a machine placement', function() {
         var placement = environments.parsePlacement('42');
-        assert.deepEqual(placement, {Scope: '#', Directive: '42'});
+        assert.deepEqual(placement, {scope: '#', directive: '42'});
       });
 
     });
 
   });
 
-  describe('Juju environment API', function() {
+  describe('Juju API', function() {
     var cleanups, conn, endpointA, endpointB, ecs, env, juju, machineJobs, msg,
         utils, Y;
 
@@ -118,14 +118,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       env.connect();
       env.set('facades', {
+        AllWatcher: [0],
         Annotations: [2],
         Application: [7],
+        Charms: [3],
         Client: [1],
         CrossModelRelations: [1],
         ModelManager: [2],
         GUIToken: [46, 47],
         Pinger: [42]
       });
+      env.set('modelUUID', 'this-is-a-uuid');
       this._cleanups.push(env.close.bind(env));
       cleanups = [];
     });
@@ -159,16 +162,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(env.findFacadeVersion('Test', 1), 1);
       });
 
-      it('returns the version if a default version is supported', function() {
-        assert.strictEqual(env.findFacadeVersion('ChangeSet', 0), 0);
-      });
-
       it('returns the last version if the facade is supported', function() {
         assert.strictEqual(env.findFacadeVersion('Test'), 1);
-      });
-
-      it('returns the version if a default facade is supported', function() {
-        assert.strictEqual(env.findFacadeVersion('ChangeSet'), 0);
       });
 
       it('returns null if a specific version is not supported', function() {
@@ -185,16 +180,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('returns null if a facade version is not supported', function() {
         assert.strictEqual(env.findFacadeVersion('BadWolf', 42), null);
-      });
-
-      it('returns the version if a facade is supported (legacy)', function() {
-        env.set('facades', undefined);
-        assert.strictEqual(env.findFacadeVersion('AllWatcher'), 0);
-      });
-
-      it('returns the version if a facade is supported (empty)', function() {
-        env.set('facades', {});
-        assert.strictEqual(env.findFacadeVersion('Pinger'), 0);
       });
 
     });
@@ -280,32 +265,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     describe('login', function() {
-      it('sends the correct login message for juju < 2.0', function() {
-        env.set('jujuCoreVersion', '1.23');
-        noopHandleLogin();
-        env.login();
-        var lastMessage = conn.last_message();
-        var expected = {
-          Type: 'Admin',
-          Request: 'Login',
-          RequestId: 1,
-          Params: {AuthTag: 'user-user', Password: 'password'},
-          Version: 0
-        };
-        assert.deepEqual(expected, lastMessage);
-      });
 
-      it('sends the correct login message for juju > 2.0', function() {
-        env.set('jujuCoreVersion', '2.0');
+      it('sends the correct login message', function() {
         noopHandleLogin();
         env.login();
         var lastMessage = conn.last_message();
         var expected = {
-          Type: 'Admin',
-          Request: 'Login',
-          RequestId: 1,
-          Params: {'auth-tag': 'user-user', credentials: 'password'},
-          Version: 3
+          type: 'Admin',
+          request: 'Login',
+          'request-id': 1,
+          params: {'auth-tag': 'user-user', credentials: 'password'},
+          version: 3
         };
         assert.deepEqual(expected, lastMessage);
       });
@@ -313,36 +283,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('resets the user and password if they are not valid', function() {
         env.login();
         // Assume login to be the first request.
-        conn.msg({RequestId: 1, Error: 'Invalid user or password'});
+        conn.msg({'request-id': 1, error: 'Invalid user or password'});
         assert.deepEqual(
           env.getCredentials(), {user: '', password: '', macaroons: null});
         assert.isTrue(env.failedAuthentication);
-        assert.isFalse(env.failedTokenAuthentication);
       });
 
       it('fires a login event on successful login', function() {
         var loginFired = false;
-        var result, fromToken;
+        var result;
         env.on('login', function(evt) {
           loginFired = true;
           result = evt.data.result;
-          fromToken = evt.data.fromToken;
         });
         env.login();
         // Assume login to be the first request.
-        conn.msg({RequestId: 1, Response: {}});
+        conn.msg({'request-id': 1, response: {'user-info': {}}});
         assert.isTrue(loginFired);
         assert.isTrue(result);
-        assert.isFalse(fromToken);
       });
 
       it('resets failed markers on successful login', function() {
-        env.failedAuthentication = env.failedTokenAuthentication = true;
+        env.failedAuthentication = true;
         env.login();
         // Assume login to be the first request.
-        conn.msg({RequestId: 1, Response: {}});
+        conn.msg({'request-id': 1, response: {'user-info': {}}});
         assert.isFalse(env.failedAuthentication);
-        assert.isFalse(env.failedTokenAuthentication);
       });
 
       it('fires a login event on failed login', function() {
@@ -354,7 +320,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
         env.login();
         // Assume login to be the first request.
-        conn.msg({RequestId: 1, Error: 'Invalid user or password'});
+        conn.msg({'request-id': 1, error: 'Invalid user or password'});
         assert.isTrue(loginFired);
         assert.isFalse(result);
       });
@@ -365,35 +331,49 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(0, conn.messages.length);
       });
 
-      it('calls environmentInfo and watchAll after login', function() {
+      it('calls currentModelInfo and watchAll after login', function() {
         env.login();
         // Assume login to be the first request.
-        conn.msg({RequestId: 1, Response: {}});
-        var environmentInfoMessage = conn.last_message(2);
+        conn.msg({'request-id': 1, response: {
+          facades: [{name: 'Client', versions: [0]}],
+          'user-info': {}
+        }});
+        var currentModelInfoMessage = conn.last_message(2);
         // EnvironmentInfo is the second request.
-        var environmentInfoExpected = {
-          Type: 'Client',
-          Request: 'EnvironmentInfo',
+        var currentModelInfoExpected = {
+          type: 'Client',
+          request: 'ModelInfo',
           // Note that facade version here is 0 because the login mock response
           // below is empty.
-          Version: 0,
-          RequestId: 2,
-          Params: {}
+          version: 0,
+          'request-id': 2,
+          params: {}
         };
-        assert.deepEqual(environmentInfoExpected, environmentInfoMessage);
+        assert.deepEqual(currentModelInfoExpected, currentModelInfoMessage);
         var watchAllMessage = conn.last_message();
         // EnvironmentInfo is the second request.
         var watchAllExpected = {
-          Type: 'Client',
-          Request: 'WatchAll',
+          type: 'Client',
+          request: 'WatchAll',
           // Note that facade version here is 0 because the login mock response
           // below is empty.
-          Version: 0,
-          RequestId: 3,
-          Params: {}
+          version: 0,
+          'request-id': 3,
+          params: {}
         };
         assert.deepEqual(watchAllExpected, watchAllMessage);
       });
+
+      it('stores user information', function() {
+        env.login();
+        // Assume login to be the first request.
+        conn.msg({'request-id': 1, response: {
+          facades: [{name: 'Client', versions: [0]}],
+          'user-info': {'read-only': true}
+        }});
+        assert.strictEqual(env.get('readOnly'), true);
+      });
+
     });
 
     describe('login with macaroons', function() {
@@ -412,19 +392,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Check that the given message sent to the WebSocket is what we expect.
       // Return the request id.
       var assertRequest = function(msg, macaroons) {
-        assert.strictEqual(msg.Type, 'Admin');
-        assert.strictEqual(msg.Request, 'Login');
-        assert.strictEqual(msg.Version, 3);
+        assert.strictEqual(msg.type, 'Admin');
+        assert.strictEqual(msg.request, 'Login');
+        assert.strictEqual(msg.version, 3);
         if (macaroons) {
-          assert.deepEqual(msg.Params, {macaroons: [macaroons]});
+          assert.deepEqual(msg.params, {macaroons: [macaroons]});
         } else {
-          assert.deepEqual(msg.Params, {});
+          assert.deepEqual(msg.params, {});
         }
-        return msg.RequestId;
+        return msg['request-id'];
       };
 
       beforeEach(function() {
-        env.set('jujuCoreVersion', '2.0.0');
         error = '';
       });
 
@@ -432,13 +411,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.pendingLoginResponse = true;
         env.loginWithMacaroon();
         assert.strictEqual(conn.messages.length, 0, 'unexpected messages');
-      });
-
-      it('does not work on Juju < 2', function() {
-        env.set('jujuCoreVersion', '1.25');
-        env.loginWithMacaroon(makeBakery(), callback);
-        assert.strictEqual(conn.messages.length, 0, 'unexpected messages');
-        assert.strictEqual(error, 'macaroon auth requires Juju 2');
       });
 
       it('sends an initial login request without macaroons', function() {
@@ -458,7 +430,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.loginWithMacaroon(makeBakery(), callback);
         assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
         var requestId = assertRequest(conn.last_message());
-        conn.msg({RequestId: requestId, Error: 'bad wolf'});
+        conn.msg({'request-id': requestId, error: 'bad wolf'});
         assert.strictEqual(error, 'authentication failed: bad wolf');
       });
 
@@ -471,8 +443,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
         var requestId = assertRequest(conn.last_message());
         conn.msg({
-          RequestId: requestId,
-          Response: {'discharge-required': 'discharge-required-macaroon'}
+          'request-id': requestId,
+          response: {'discharge-required': 'discharge-required-macaroon'}
         });
         assert.strictEqual(conn.messages.length, 2, 'unexpected msg number');
         assertRequest(conn.last_message(), ['macaroon', 'discharge']);
@@ -486,8 +458,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
         var requestId = assertRequest(conn.last_message());
         conn.msg({
-          RequestId: requestId,
-          Response: {'discharge-required': 'discharge-required-macaroon'}
+          'request-id': requestId,
+          response: {'discharge-required': 'discharge-required-macaroon'}
         });
         assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
         assert.strictEqual(error, 'macaroon discharge failed: bad wolf');
@@ -497,7 +469,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.loginWithMacaroon(makeBakery(), callback);
         assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
         var requestId = assertRequest(conn.last_message());
-        conn.msg({RequestId: requestId, Response: {}});
+        conn.msg({'request-id': requestId, response: {}});
         assert.strictEqual(
           error, 'authentication failed: use a proper Juju 2 release');
       });
@@ -511,17 +483,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
         var requestId = assertRequest(conn.last_message());
         conn.msg({
-          RequestId: requestId,
-          Response: {'discharge-required': 'discharge-required-macaroon'}
+          'request-id': requestId,
+          response: {'discharge-required': 'discharge-required-macaroon'}
         });
         assert.strictEqual(conn.messages.length, 2, 'unexpected msg number');
         requestId = assertRequest(
           conn.last_message(), ['macaroon', 'discharge']);
         conn.msg({
-          RequestId: requestId,
-          Response: {
+          'request-id': requestId,
+          response: {
             'user-info': {identity: 'who'},
-            'facades': [{Name: 'Client', Versions: [42, 47]}]
+            facades: [{name: 'Client', versions: [42, 47]}]
           }
         });
         assert.strictEqual(error, null);
@@ -539,10 +511,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var requestId = assertRequest(
           conn.last_message(), ['already stored', 'macaroons']);
         conn.msg({
-          RequestId: requestId,
-          Response: {
+          'request-id': requestId,
+          response: {
             'user-info': {identity: 'dalek'},
-            'facades': [{Name: 'Client', Versions: [0]}]
+            facades: [{name: 'Client', versions: [0]}]
           }
         });
         assert.strictEqual(error, null);
@@ -555,179 +527,57 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     });
 
-    describe('tokenLogin', function() {
-      it('sends the correct tokenLogin message', function() {
-        noopHandleLogin();
-        env.tokenLogin('demoToken');
-        var lastMessage = conn.last_message();
-        var expected = {
-          Type: 'GUIToken',
-          Version: 47,
-          Request: 'Login',
-          RequestId: 1,
-          Params: {Token: 'demoToken'}
-        };
-        assert.deepEqual(expected, lastMessage);
-      });
-
-      it('resets the user and password if the token is not valid', function() {
-        env.tokenLogin('badToken');
-        // Assume login to be the first request.
-        conn.msg({
-          RequestId: 1,
-          Error: 'unknown, fulfilled, or expired token',
-          ErrorCode: 'unauthorized access'
-        });
-        assert.deepEqual(
-          env.getCredentials(), {user: '', password: '', macaroons: null});
-        assert.isTrue(env.failedTokenAuthentication);
-        assert.isFalse(env.failedAuthentication);
-      });
-
-      it('fires a login event on successful token login', function() {
-        var loginFired = false;
-        var result, fromToken;
-        env.on('login', function(evt) {
-          loginFired = true;
-          result = evt.data.result;
-          fromToken = evt.data.fromToken;
-        });
-        env.tokenLogin('demoToken');
-        // Assume login to be the first request.
-        conn.msg({
-          RequestId: 1,
-          Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
-        assert.isTrue(loginFired);
-        assert.isTrue(result);
-        assert.isTrue(fromToken);
-        var credentials = env.getCredentials();
-        assert.equal('user-tokenuser', credentials.user);
-        assert.equal('tokenpasswd', credentials.password);
-      });
-
-      it('resets failed markers on successful login', function() {
-        env.failedAuthentication = env.failedTokenAuthentication = true;
-        env.tokenLogin('demoToken');
-        // Assume login to be the first request.
-        conn.msg({
-          RequestId: 1,
-          Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
-        assert.isFalse(env.failedAuthentication);
-        assert.isFalse(env.failedTokenAuthentication);
-      });
-
-      it('fires a login event on failed token login', function() {
-        var loginFired = false;
-        var result;
-        env.on('login', function(evt) {
-          loginFired = true;
-          result = evt.data.result;
-        });
-        env.tokenLogin('badToken');
-        // Assume login to be the first request.
-        conn.msg({
-          RequestId: 1,
-          Error: 'unknown, fulfilled, or expired token',
-          ErrorCode: 'unauthorized access'
-        });
-        assert.isTrue(loginFired);
-        assert.isFalse(result);
-      });
-
-      it('calls environmentInfo and watchAll after token login', function() {
-        env.tokenLogin('demoToken');
-        // Assume login to be the first request.
-        conn.msg({
-          RequestId: 1,
-          Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
-        var environmentInfoMessage = conn.last_message(2);
-        // EnvironmentInfo is the second request.
-        var environmentInfoExpected = {
-          Type: 'Client',
-          Request: 'EnvironmentInfo',
-          Version: 0,
-          RequestId: 2,
-          Params: {}
-        };
-        assert.deepEqual(environmentInfoExpected, environmentInfoMessage);
-        var watchAllMessage = conn.last_message();
-        // EnvironmentInfo is the second request.
-        var watchAllExpected = {
-          Type: 'Client',
-          Version: 0,
-          Request: 'WatchAll',
-          RequestId: 3,
-          Params: {}
-        };
-        assert.deepEqual(watchAllExpected, watchAllMessage);
-      });
-    });
-
     it('ignores rpc requests when websocket is not connected', function() {
       // Set the readyState to 2 for CLOSING.
       conn.readyState = 2;
       env._send_rpc({
-        Type: 'Client',
-        Request: 'ModelInfo',
-        Version: 1,
-        RequestId: 1,
-        Params: {}
+        type: 'Client',
+        request: 'ModelInfo',
+        version: 1,
+        'request-id': 1,
+        params: {}
       });
       // No calls should be made.
       assert.equal(conn.messages.length, 0);
     });
 
     it('sends the correct request for model info', function() {
-      env.environmentInfo();
+      env.currentModelInfo();
       var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Client',
-        Request: 'ModelInfo',
-        Version: 1,
-        RequestId: 1,
-        Params: {}
-      };
-      assert.deepEqual(expected, lastMessage);
-    });
-
-    it('sends the correct request for legacy environment info', function() {
-      env.set('facades', {Client: [0]});
-      env.environmentInfo();
-      var lastMessage = conn.last_message();
-      var expected = {
-        Type: 'Client',
-        Request: 'EnvironmentInfo',
-        Version: 0,
-        RequestId: 1,
-        Params: {}
+        type: 'Client',
+        request: 'ModelInfo',
+        version: 1,
+        'request-id': 1,
+        params: {}
       };
       assert.deepEqual(expected, lastMessage);
     });
 
     it('warns on model info errors', function() {
-      env.environmentInfo();
+      env.currentModelInfo();
       // Mock "console.warn" so that it is possible to collect warnings.
       var original = console.warn;
       var warning = null;
       console.warn = function(msg) {
         warning = msg;
       };
-      // Assume environmentInfo to be the first request.
-      conn.msg({RequestId: 1, Error: 'Error retrieving env info.'});
-      assert.include(warning, 'Error');
+      // Assume currentModelInfo to be the first request.
+      conn.msg({'request-id': 1, error: 'Error retrieving env info.'});
+      assert.include(warning, 'error');
       // Restore the original "console.warn".
       console.warn = original;
     });
 
     it('stores model info into env attributes', function() {
-      env.environmentInfo();
-      // Assume environmentInfo to be the first request.
+      env.currentModelInfo();
+      // Assume currentModelInfo to be the first request.
       conn.msg({
-        RequestId: 1,
-        Response: {
-          DefaultSeries: 'precise',
-          'ProviderType': 'ec2',
-          'Name': 'envname'
+        'request-id': 1,
+        response: {
+          'default-series': 'precise',
+          'provider-type': 'ec2',
+          'name': 'envname'
         }
       });
       assert.equal('precise', env.get('defaultSeries'));
@@ -736,32 +586,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sends the correct ModelGet request', function() {
-      env.environmentGet();
+      env.modelGet();
       var expectedMessage = {
-        Type: 'Client',
-        Request: 'ModelGet',
-        Version: 1,
-        RequestId: 1,
-        Params: {}
-      };
-      assert.deepEqual(conn.last_message(), expectedMessage);
-    });
-
-    it('sends the correct legacy EnvironmentGet request', function() {
-      env.set('facades', {Client: [0]});
-      env.environmentGet();
-      var expectedMessage = {
-        Type: 'Client',
-        Request: 'EnvironmentGet',
-        Version: 0,
-        RequestId: 1,
-        Params: {}
+        type: 'Client',
+        request: 'ModelGet',
+        version: 1,
+        'request-id': 1,
+        params: {}
       };
       assert.deepEqual(conn.last_message(), expectedMessage);
     });
 
     it('warns on ModelGet errors', function() {
-      env.environmentInfo();
+      env.currentModelInfo();
       // Mock "console.warn" so that it is possible to collect warnings.
       var original = console.warn;
       var warning = null;
@@ -769,33 +606,33 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         warning = msg;
       };
       conn.msg({
-        RequestId: 1,
-        Response: {
-          DefaultSeries: 'precise',
-          'ProviderType': 'maas',
-          'Name': 'envname'
+        'request-id': 1,
+        response: {
+          'default-series': 'precise',
+          'provider-type': 'maas',
+          'name': 'envname'
         }
       });
-      conn.msg({RequestId: 2, Error: 'bad wolf'});
+      conn.msg({'request-id': 2, error: 'bad wolf'});
       assert.strictEqual(warning, 'error calling ModelGet API: bad wolf');
       // Restore the original "console.warn".
       console.warn = original;
     });
 
     it('stores the MAAS server on ModelGet results on MAAS', function() {
-      env.environmentInfo();
+      env.currentModelInfo();
       conn.msg({
-        RequestId: 1,
-        Response: {
-          DefaultSeries: 'trusty',
-          'ProviderType': 'maas',
-          'Name': 'envname'
+        'request-id': 1,
+        response: {
+          'default-series': 'trusty',
+          'provider-type': 'maas',
+          'name': 'envname'
         }
       });
       conn.msg({
-        RequestId: 2,
-        Response: {
-          Config: {'maas-server': '1.2.3.4/MAAS'}
+        'request-id': 2,
+        response: {
+          config: {'maas-server': '1.2.3.4/MAAS'}
         }
       });
       assert.equal(env.get('maasServer'), '1.2.3.4/MAAS');
@@ -803,11 +640,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('ignores MAAS data on ModelGet results not in MAAS', function() {
       env.set('providerType', 'ec2');
-      env.environmentGet();
+      env.modelGet();
       conn.msg({
-        RequestId: 1,
-        Response: {
-          Config: {'maas-server': '1.2.3.4/MAAS'}
+        'request-id': 1,
+        response: {
+          config: {'maas-server': '1.2.3.4/MAAS'}
         }
       });
       assert.isUndefined(env.get('maasServer'));
@@ -815,22 +652,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('calls ModelGet after ModelInfo on MAAS', function() {
       // Simulate an EnvironmentInfo request/response.
-      env.environmentInfo();
+      env.currentModelInfo();
       conn.msg({
-        RequestId: 1,
-        Response: {
-          DefaultSeries: 'utopic',
-          'ProviderType': 'maas',
-          'Name': 'envname'
+        'request-id': 1,
+        response: {
+          'default-series': 'utopic',
+          'provider-type': 'maas',
+          'name': 'envname'
         }
       });
       assert.lengthOf(conn.messages, 2);
       var expectedMessage = {
-        Type: 'Client',
-        Request: 'ModelGet',
-        Version: 1,
-        RequestId: 2,
-        Params: {}
+        type: 'Client',
+        request: 'ModelGet',
+        version: 1,
+        'request-id': 2,
+        params: {}
       };
       assert.deepEqual(conn.last_message(), expectedMessage);
     });
@@ -839,13 +676,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // The MAAS server attribute is initially undefined.
       assert.isUndefined(env.get('maasServer'));
       // Simulate an EnvironmentInfo request/response.
-      env.environmentInfo();
+      env.currentModelInfo();
       conn.msg({
-        RequestId: 1,
-        Response: {
-          DefaultSeries: 'utopic',
-          'ProviderType': 'ec2',
-          'Name': 'envname'
+        'request-id': 1,
+        response: {
+          'default-series': 'utopic',
+          'provider-type': 'ec2',
+          'name': 'envname'
         }
       });
       assert.lengthOf(conn.messages, 1);
@@ -859,17 +696,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(err, null);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'Client',
-          Version: 1,
-          Request: 'DestroyModel',
-          Params: {},
-          RequestId: 1
+          type: 'Client',
+          version: 1,
+          request: 'DestroyModel',
+          params: {},
+          'request-id': 1
         });
         done();
       });
 
       // Mimic response.
-      conn.msg({RequestId: 1, Response: {}});
+      conn.msg({'request-id': 1, response: {}});
     });
 
     it('handles request failures while destroying models', function(done) {
@@ -880,7 +717,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       // Mimic response.
-      conn.msg({RequestId: 1, Error: 'bad wolf'});
+      conn.msg({'request-id': 1, error: 'bad wolf'});
     });
 
     it('retrieves model info for a single model', function(done) {
@@ -902,28 +739,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(result.isAdmin, false, 'unexpected admin model');
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'ModelManager',
-          Version: 2,
-          Request: 'ModelInfo',
-          Params: {Entities: [{Tag: tag}]},
-          RequestId: 1
+          type: 'ModelManager',
+          version: 2,
+          request: 'ModelInfo',
+          params: {entities: [{tag: tag}]},
+          'request-id': 1
         });
         done();
       });
 
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {
+        'request-id': 1,
+        response: {
           results: [{
             result: {
-              DefaultSeries: 'trusty',
-              Name: 'admin',
-              ProviderType: 'lxd',
-              UUID: '5bea955d-7a43-47d3-89dd-b02c923e',
-              ServerUUID: '5bea955d-7a43-47d3-89dd',
-              Life: 'alive',
-              OwnerTag: 'user-admin@local'
+              'default-series': 'trusty',
+              name: 'admin',
+              'provider-type': 'lxd',
+              uuid: '5bea955d-7a43-47d3-89dd-b02c923e',
+              'controller-uuid': '5bea955d-7a43-47d3-89dd',
+              life: 'alive',
+              'owner-tag': 'user-admin@local'
             }
           }]
         }
@@ -961,38 +798,38 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(result2.isAdmin, false, 'unexpected admin model');
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'ModelManager',
-          Version: 2,
-          Request: 'ModelInfo',
-          Params: {Entities: [{Tag: tag1}, {Tag: tag2}]},
-          RequestId: 1
+          type: 'ModelManager',
+          version: 2,
+          request: 'ModelInfo',
+          params: {entities: [{tag: tag1}, {tag: tag2}]},
+          'request-id': 1
         });
         done();
       });
 
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {
+        'request-id': 1,
+        response: {
           results: [{
             result: {
-              DefaultSeries: 'trusty',
-              Name: 'model1',
-              ProviderType: 'lxd',
-              UUID: '5bea955d-7a43-47d3-89dd-tag1',
-              ServerUUID: '5bea955d-7a43-47d3-89dd-tag1',
-              Life: 'alive',
-              OwnerTag: 'user-admin@local'
+              'default-series': 'trusty',
+              name: 'model1',
+              'provider-type': 'lxd',
+              uuid: '5bea955d-7a43-47d3-89dd-tag1',
+              'controller-uuid': '5bea955d-7a43-47d3-89dd-tag1',
+              life: 'alive',
+              'owner-tag': 'user-admin@local'
             }
           }, {
             result: {
-              DefaultSeries: 'xenial',
-              Name: 'model2',
-              ProviderType: 'aws',
-              UUID: '5bea955d-7a43-47d3-89dd-tag2',
-              ServerUUID: '5bea955d-7a43-47d3-89dd-tag1',
-              Life: 'dying',
-              OwnerTag: 'user-dalek@skaro'
+              'default-series': 'xenial',
+              name: 'model2',
+              'provider-type': 'aws',
+              uuid: '5bea955d-7a43-47d3-89dd-tag2',
+              'controller-uuid': '5bea955d-7a43-47d3-89dd-tag1',
+              life: 'dying',
+              'owner-tag': 'user-dalek@skaro'
             }
           }]
         }
@@ -1008,8 +845,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Error: {Message: 'bad wolf'}
+        'request-id': 1,
+        error: {message: 'bad wolf'}
       });
     });
 
@@ -1027,10 +864,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {
+        'request-id': 1,
+        response: {
           results: [{
-            error: {Message: 'bad wolf'}
+            error: {message: 'bad wolf'}
           }]
         }
       });
@@ -1045,8 +882,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {results: []}
+        'request-id': 1,
+        response: {results: []}
       });
     });
 
@@ -1072,47 +909,49 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.strictEqual(result.lastConnection, 'today');
           assert.equal(conn.messages.length, 2);
           assert.deepEqual(conn.messages[0], {
-            Type: 'ModelManager',
-            Version: 2,
-            Request: 'ListModels',
-            Params: {Tag: 'user-who'},
-            RequestId: 1
+            type: 'ModelManager',
+            version: 2,
+            request: 'ListModels',
+            params: {tag: 'user-who'},
+            'request-id': 1
           });
           assert.deepEqual(conn.messages[1], {
-            Type: 'ModelManager',
-            Version: 2,
-            Request: 'ModelInfo',
-            Params: {Entities: [{Tag: 'model-5bea955d-1'}]},
-            RequestId: 2
+            type: 'ModelManager',
+            version: 2,
+            request: 'ModelInfo',
+            params: {entities: [{tag: 'model-5bea955d-1'}]},
+            'request-id': 2
           });
           done();
         });
 
         // Mimic first response to ModelManager.ListModels.
         conn.msg({
-          RequestId: 1,
-          Response: {
-            UserModels: [{
-              Name: 'admin',
-              OwnerTag: 'user-who',
-              UUID: '5bea955d-1',
-              LastConnection: 'today'
+          'request-id': 1,
+          response: {
+            'user-models': [{
+              model: {
+                name: 'admin',
+                'owner-tag': 'user-who',
+                uuid: '5bea955d-1'
+              },
+              'last-connection': 'today'
             }]
           }
         });
         // Mimic second response to ModelManager.ModelInfo.
         conn.msg({
-          RequestId: 2,
-          Response: {
+          'request-id': 2,
+          response: {
             results: [{
               result: {
-                DefaultSeries: 'trusty',
-                Name: 'admin',
-                ProviderType: 'lxd',
-                UUID: '5bea955d-1',
-                ServerUUID: '5bea955d-c',
-                Life: 'alive',
-                OwnerTag: 'user-admin@local'
+                'default-series': 'trusty',
+                name: 'admin',
+                'provider-type': 'lxd',
+                uuid: '5bea955d-1',
+                'controller-uuid': '5bea955d-c',
+                life: 'alive',
+                'owner-tag': 'user-admin@local'
               }
             }]
           }
@@ -1166,81 +1005,87 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.strictEqual(result3.lastConnection, 'tomorrow');
           assert.equal(conn.messages.length, 2);
           assert.deepEqual(conn.messages[0], {
-            Type: 'ModelManager',
-            Version: 2,
-            Request: 'ListModels',
-            Params: {Tag: 'user-dalek'},
-            RequestId: 1
+            type: 'ModelManager',
+            version: 2,
+            request: 'ListModels',
+            params: {tag: 'user-dalek'},
+            'request-id': 1
           });
           assert.deepEqual(conn.messages[1], {
-            Type: 'ModelManager',
-            Version: 2,
-            Request: 'ModelInfo',
-            Params: {Entities: [
-              {Tag: 'model-5bea955d-1'},
-              {Tag: 'model-5bea955d-c'},
-              {Tag: 'model-5bea955d-3'}
+            type: 'ModelManager',
+            version: 2,
+            request: 'ModelInfo',
+            params: {entities: [
+              {tag: 'model-5bea955d-1'},
+              {tag: 'model-5bea955d-c'},
+              {tag: 'model-5bea955d-3'}
             ]},
-            RequestId: 2
+            'request-id': 2
           });
           done();
         });
 
         // Mimic first response to ModelManager.ListModels.
         conn.msg({
-          RequestId: 1,
-          Response: {
-            UserModels: [{
-              Name: 'default',
-              OwnerTag: 'user-dalek',
-              UUID: '5bea955d-1',
-              LastConnection: 'today'
+          'request-id': 1,
+          response: {
+            'user-models': [{
+              model: {
+                name: 'default',
+                'owner-tag': 'user-dalek',
+                uuid: '5bea955d-1'
+              },
+              'last-connection': 'today'
             }, {
-              Name: 'admin',
-              OwnerTag: 'user-who',
-              UUID: '5bea955d-c',
-              LastConnection: 'yesterday'
+              model: {
+                name: 'admin',
+                'owner-tag': 'user-who',
+                uuid: '5bea955d-c'
+              },
+              'last-connection': 'yesterday'
             }, {
-              Name: 'mymodel',
-              OwnerTag: 'user-cyberman',
-              UUID: '5bea955d-3',
-              LastConnection: 'tomorrow'
+              model: {
+                name: 'mymodel',
+                'owner-tag': 'user-cyberman',
+                uuid: '5bea955d-3'
+              },
+              'last-connection': 'tomorrow'
             }]
           }
         });
         // Mimic second response to ModelManager.ModelInfo.
         conn.msg({
-          RequestId: 2,
-          Response: {
+          'request-id': 2,
+          response: {
             results: [{
               result: {
-                DefaultSeries: 'xenial',
-                Name: 'default',
-                ProviderType: 'lxd',
-                UUID: '5bea955d-1',
-                ServerUUID: '5bea955d-c',
-                Life: 'dead',
-                OwnerTag: 'user-dalek@local'
+                'default-series': 'xenial',
+                name: 'default',
+                'provider-type': 'lxd',
+                uuid: '5bea955d-1',
+                'controller-uuid': '5bea955d-c',
+                life: 'dead',
+                'owner-tag': 'user-dalek@local'
               }
             }, {
               result: {
-                DefaultSeries: 'trusty',
-                Name: 'admin',
-                ProviderType: 'lxd',
-                UUID: '5bea955d-c',
-                ServerUUID: '5bea955d-c',
-                Life: 'alive',
-                OwnerTag: 'user-who@local'
+                'default-series': 'trusty',
+                name: 'admin',
+                'provider-type': 'lxd',
+                uuid: '5bea955d-c',
+                'controller-uuid': '5bea955d-c',
+                life: 'alive',
+                'owner-tag': 'user-who@local'
               }
             }, {
               result: {
-                DefaultSeries: 'precise',
-                Name: 'mymodel',
-                ProviderType: 'aws',
-                UUID: '5bea955d-3',
-                ServerUUID: '5bea955d-c',
-                Life: 'alive',
-                OwnerTag: 'user-cyberman@local'
+                'default-series': 'precise',
+                name: 'mymodel',
+                'provider-type': 'aws',
+                uuid: '5bea955d-3',
+                'controller-uuid': '5bea955d-c',
+                life: 'alive',
+                'owner-tag': 'user-cyberman@local'
               }
             }]
           }
@@ -1265,8 +1110,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         // Mimic response.
         conn.msg({
-          RequestId: 1,
-          Error: 'bad wolf'
+          'request-id': 1,
+          error: 'bad wolf'
         });
       });
 
@@ -1279,20 +1124,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         // Mimic first response to ModelManager.ListModels.
         conn.msg({
-          RequestId: 1,
-          Response: {
-            UserModels: [{
-              Name: 'default',
-              OwnerTag: 'user-dalek',
-              UUID: '5bea955d-1',
-              LastConnection: 'today'
+          'request-id': 1,
+          response: {
+            'user-models': [{
+              model: {
+                name: 'default',
+                'owner-tag': 'user-dalek',
+                uuid: '5bea955d-1'
+              },
+              'last-connection': 'today'
             }]
           }
         });
         // Mimic second response to ModelManager.ModelInfo.
         conn.msg({
-          RequestId: 2,
-          Error: {Message: 'bad wolf'}
+          'request-id': 2,
+          error: {message: 'bad wolf'}
         });
       });
 
@@ -1309,22 +1156,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         // Mimic first response to ModelManager.ListModels.
         conn.msg({
-          RequestId: 1,
-          Response: {
-            UserModels: [{
-              Name: 'default',
-              OwnerTag: 'user-dalek',
-              UUID: '5bea955d-1',
-              LastConnection: 'today'
+          'request-id': 1,
+          response: {
+            'user-models': [{
+              model: {
+                name: 'default',
+                'owner-tag': 'user-dalek',
+                uuid: '5bea955d-1'
+              },
+              'last-connection': 'today'
             }]
           }
         });
         // Mimic second response to ModelManager.ModelInfo.
         conn.msg({
-          RequestId: 2,
-          Response: {
+          'request-id': 2,
+          response: {
             results: [{
-              error: {Message: 'bad wolf'}
+              error: {message: 'bad wolf'}
             }]
           }
         });
@@ -1334,11 +1183,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('pings the server correctly', function() {
       env.ping();
       var expectedMessage = {
-        Type: 'Pinger',
-        Request: 'Ping',
-        Version: 42,
-        RequestId: 1,
-        Params: {}
+        type: 'Pinger',
+        request: 'Ping',
+        version: 42,
+        'request-id': 1,
+        params: {}
       };
       assert.deepEqual(conn.last_message(), expectedMessage);
     });
@@ -1347,25 +1196,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.add_unit('django', 3, null, null, {immediate: true});
       var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Application',
-        Request: 'AddUnits',
-        Version: 7,
-        RequestId: 1,
-        Params: {ApplicationName: 'django', NumUnits: 3, Placement: [null]}
-      };
-      assert.deepEqual(expected, lastMessage);
-    });
-
-    it('sends the correct legacy AddServiceUnits message', function() {
-      env.set('facades', {Client: [1]});
-      env.add_unit('django', 3, null, null, {immediate: true});
-      var lastMessage = conn.last_message();
-      var expected = {
-        Type: 'Client',
-        Request: 'AddServiceUnits',
-        Version: 1,
-        RequestId: 1,
-        Params: {ServiceName: 'django', NumUnits: 3, ToMachineSpec: null}
+        type: 'Application',
+        request: 'AddUnits',
+        version: 7,
+        'request-id': 1,
+        params: {application: 'django', 'num-units': 3, placement: [null]}
       };
       assert.deepEqual(expected, lastMessage);
     });
@@ -1373,14 +1208,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('adds new units to a specific machine', function() {
       env.add_unit('django', 3, '42', null, {immediate: true});
       var expectedMessage = {
-        Type: 'Application',
-        Request: 'AddUnits',
-        Version: 7,
-        RequestId: 1,
-        Params: {
-          ApplicationName: 'django',
-          NumUnits: 3,
-          Placement: [{Scope: '#', Directive: '42'}]
+        type: 'Application',
+        request: 'AddUnits',
+        version: 7,
+        'request-id': 1,
+        params: {
+          application: 'django',
+          'num-units': 3,
+          placement: [{scope: '#', directive: '42'}]
         }
       };
       assert.deepEqual(conn.last_message(), expectedMessage);
@@ -1389,28 +1224,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('adds new units to a specific container', function() {
       env.add_unit('haproxy', 1, 'lxc:47', null, {immediate: true});
       var expectedMessage = {
-        Type: 'Application',
-        Request: 'AddUnits',
-        Version: 7,
-        RequestId: 1,
-        Params: {
-          ApplicationName: 'haproxy',
-          NumUnits: 1,
-          Placement: [{Scope: 'lxc', Directive: '47'}]
+        type: 'Application',
+        request: 'AddUnits',
+        version: 7,
+        'request-id': 1,
+        params: {
+          application: 'haproxy',
+          'num-units': 1,
+          placement: [{scope: 'lxc', directive: '47'}]
         }
-      };
-      assert.deepEqual(conn.last_message(), expectedMessage);
-    });
-
-    it('adds new units to a specific machine (legacy)', function() {
-      env.set('facades', {Client: [1]});
-      env.add_unit('django', 3, '42', null, {immediate: true});
-      var expectedMessage = {
-        Type: 'Client',
-        Request: 'AddServiceUnits',
-        Version: 1,
-        RequestId: 1,
-        Params: {ServiceName: 'django', NumUnits: 3, ToMachineSpec: '42'}
       };
       assert.deepEqual(conn.last_message(), expectedMessage);
     });
@@ -1425,8 +1247,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {Units: ['django/2', 'django/3']}
+        'request-id': 1,
+        response: {units: ['django/2', 'django/3']}
       });
     });
 
@@ -1439,8 +1261,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Error: 'must add at least one unit'
+        'request-id': 1,
+        error: 'must add at least one unit'
       });
     });
 
@@ -1448,25 +1270,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.remove_units(['django/2', 'django/3'], null, {immediate: true});
       var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Application',
-        Request: 'DestroyUnits',
-        Version: 7,
-        RequestId: 1,
-        Params: {UnitNames: ['django/2', 'django/3']}
-      };
-      assert.deepEqual(expected, lastMessage);
-    });
-
-    it('sends the correct legacy DestroyServiceUnits message', function() {
-      env.set('facades', {});
-      env.remove_units(['django/2', 'django/3'], null, {immediate: true});
-      var lastMessage = conn.last_message();
-      var expected = {
-        Type: 'Client',
-        Request: 'DestroyServiceUnits',
-        Version: 0,
-        RequestId: 1,
-        Params: {UnitNames: ['django/2', 'django/3']}
+        type: 'Application',
+        request: 'DestroyUnits',
+        version: 7,
+        'request-id': 1,
+        params: {'unit-names': ['django/2', 'django/3']}
       };
       assert.deepEqual(expected, lastMessage);
     });
@@ -1479,8 +1287,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {}
+        'request-id': 1,
+        response: {}
       });
     });
 
@@ -1492,12 +1300,33 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Error: 'unit django/2 does not exist'
+        'request-id': 1,
+        error: 'unit django/2 does not exist'
       });
     });
 
-    describe('Local charm upload support', function() {
+    describe('local charm upload support', function() {
+
+      afterEach(function() {
+        delete window.juju_config;
+      });
+
+      it('uses the correct endpoint when served from juju', function() {
+        window.juju_config = { staticURL: '/static-url'};
+        env.userIsAuthenticated = true;
+        var mockWebHandler = {sendPostRequest: utils.makeStubFunction()};
+        env.set('webHandler', mockWebHandler);
+        env.uploadLocalCharm(
+          'a zip file', 'trusty',
+          function() {return 'progress';},
+          function() {return 'completed';});
+        // Ensure the web handler's sendPostRequest method has been called with
+        // the correct charm endpoint
+        var lastArguments = mockWebHandler.sendPostRequest.lastArguments();
+        assert.strictEqual(
+          lastArguments[0],
+          '/model/this-is-a-uuid/charms?series=trusty'); // Path.
+      });
 
       it('prevents non authorized users from sending files', function(done) {
         env.userIsAuthenticated = false;
@@ -1533,7 +1362,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var lastArguments = mockWebHandler.sendPostRequest.lastArguments();
         assert.strictEqual(lastArguments.length, 7);
         assert.strictEqual(
-            lastArguments[0], '/juju-core/charms?series=trusty'); // Path.
+            lastArguments[0],
+            '/juju-core/model/this-is-a-uuid/charms?series=trusty'); // Path.
         assert.deepEqual(
             lastArguments[1], {'Content-Type': 'application/zip'}); // Headers.
         assert.strictEqual(lastArguments[2], 'a zip file'); // Zip file object.
@@ -1560,9 +1390,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(mockWebHandler.getUrl.callCount(), 1);
         var lastArguments = mockWebHandler.getUrl.lastArguments();
         assert.lengthOf(lastArguments, 3);
-        assert.strictEqual(
-            lastArguments[0],
-            '/juju-core/charms?url=local:trusty/django-42&file=icon.svg');
+        var expected = '/juju-core/model/this-is-a-uuid/charms?' +
+            'url=local:trusty/django-42&file=icon.svg';
+        assert.strictEqual(lastArguments[0], expected);
         assert.strictEqual(lastArguments[1], 'user-user'); // User name.
         assert.strictEqual(lastArguments[2], 'password'); // Password.
       });
@@ -1583,8 +1413,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(mockWebHandler.sendGetRequest.callCount(), 1);
         var lastArguments = mockWebHandler.sendGetRequest.lastArguments();
         assert.lengthOf(lastArguments, 6);
-        assert.strictEqual(
-            lastArguments[0], '/juju-core/charms?url=local:trusty/django-42');
+        var expected = '/juju-core/model/this-is-a-uuid/charms' +
+            '?url=local:trusty/django-42';
+        assert.strictEqual(lastArguments[0], expected);
         assert.deepEqual(lastArguments[1], {}); // Headers.
         assert.strictEqual(lastArguments[2], 'user-user'); // User name.
         assert.strictEqual(lastArguments[3], 'password'); // Password.
@@ -1610,9 +1441,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(mockWebHandler.sendGetRequest.callCount(), 1);
         var lastArguments = mockWebHandler.sendGetRequest.lastArguments();
         assert.lengthOf(lastArguments, 6);
-        assert.strictEqual(
-            lastArguments[0],
-            '/juju-core/charms?url=local:trusty/django-42&file=hooks/install');
+        var expected = '/juju-core/model/this-is-a-uuid/charms?' +
+            'url=local:trusty/django-42&file=hooks/install';
+        assert.strictEqual(lastArguments[0], expected);
         assert.deepEqual(lastArguments[1], {}); // Headers.
         assert.strictEqual(lastArguments[2], 'user-user'); // User name.
         assert.strictEqual(lastArguments[3], 'password'); // Password.
@@ -1628,25 +1459,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.expose('apache', function() {}, {immediate: true});
       var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Application',
-        Request: 'Expose',
-        Version: 7,
-        RequestId: 1,
-        Params: {ApplicationName: 'apache'}
-      };
-      assert.deepEqual(expected, lastMessage);
-    });
-
-    it('sends the correct expose message (legacy API)', function() {
-      env.set('facades', {});
-      env.expose('apache', function() {}, {immediate: true});
-      var lastMessage = conn.last_message();
-      var expected = {
-        Type: 'Client',
-        Request: 'ServiceExpose',
-        Version: 0,
-        RequestId: 1,
-        Params: {ServiceName: 'apache'}
+        type: 'Application',
+        request: 'Expose',
+        version: 7,
+        'request-id': 1,
+        params: {application: 'apache'}
       };
       assert.deepEqual(expected, lastMessage);
     });
@@ -1658,8 +1475,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {}
+        'request-id': 1,
+        response: {}
       });
       assert.equal(applicationName, 'mysql');
     });
@@ -1673,8 +1490,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Error: 'application \"mysql\" not found'
+        'request-id': 1,
+        error: 'application \"mysql\" not found'
       });
       assert.equal(applicationName, 'mysql');
       assert.equal(err, 'application "mysql" not found');
@@ -1684,25 +1501,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.unexpose('apache', function() {}, {immediate: true});
       var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Application',
-        Request: 'Unexpose',
-        Version: 7,
-        RequestId: 1,
-        Params: {ApplicationName: 'apache'}
-      };
-      assert.deepEqual(expected, lastMessage);
-    });
-
-    it('sends the correct unexpose message (legacy API)', function() {
-      env.set('facades', {});
-      env.unexpose('apache', function() {}, {immediate: true});
-      var lastMessage = conn.last_message();
-      var expected = {
-        Type: 'Client',
-        Request: 'ServiceUnexpose',
-        Version: 0,
-        RequestId: 1,
-        Params: {ServiceName: 'apache'}
+        type: 'Application',
+        request: 'Unexpose',
+        version: 7,
+        'request-id': 1,
+        params: {application: 'apache'}
       };
       assert.deepEqual(expected, lastMessage);
     });
@@ -1716,8 +1519,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       // Mimic response, assuming Application.Unexpose to be the first request.
       conn.msg({
-        RequestId: 1,
-        Response: {}
+        'request-id': 1,
+        response: {}
       });
       assert.isUndefined(err);
       assert.equal(applicationName, 'mysql');
@@ -1732,8 +1535,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       // Mimic response, assuming Application.Unexpose to be the first request.
       conn.msg({
-        RequestId: 1,
-        Error: 'application \"mysql\" not found'
+        'request-id': 1,
+        error: 'application \"mysql\" not found'
       });
       assert.equal(err, 'application "mysql" not found');
       assert.equal(applicationName, 'mysql');
@@ -1746,15 +1549,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         url = data.url;
       }, {immediate: true});
       var expectedMessage = {
-        Type: 'Client',
-        Version: 1,
-        Request: 'AddCharm',
-        Params: {URL: 'wily/django-42'},
-        RequestId: 1
+        type: 'Client',
+        version: 1,
+        request: 'AddCharm',
+        params: {url: 'wily/django-42'},
+        'request-id': 1
       };
       assert.deepEqual(expectedMessage, conn.last_message());
       // Mimic response.
-      conn.msg({RequestId: 1, Response: {}});
+      conn.msg({'request-id': 1, response: {}});
       assert.strictEqual(url, 'wily/django-42');
       assert.strictEqual(err, undefined);
     });
@@ -1766,15 +1569,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         url = data.url;
       }, {immediate: true});
       var expectedMessage = {
-        Type: 'Client',
-        Request: 'AddCharmWithAuthorization',
-        Version: 1,
-        Params: {CharmStoreMacaroon: 'MACAROON', URL: 'trusty/django-0'},
-        RequestId: 1
+        type: 'Client',
+        request: 'AddCharmWithAuthorization',
+        version: 1,
+        params: {macaroon: 'MACAROON', url: 'trusty/django-0'},
+        'request-id': 1
       };
       assert.deepEqual(expectedMessage, conn.last_message());
       // Mimic response.
-      conn.msg({RequestId: 1, Response: {}});
+      conn.msg({'request-id': 1, response: {}});
       assert.strictEqual(url, 'trusty/django-0');
       assert.strictEqual(err, undefined);
     });
@@ -1786,7 +1589,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         url = data.url;
       }, {immediate: true});
       // Mimic response.
-      conn.msg({RequestId: 1, Error: 'bad wolf'});
+      conn.msg({'request-id': 1, error: 'bad wolf'});
       assert.strictEqual(url, 'wily/django-42');
       assert.strictEqual(err, 'bad wolf');
     });
@@ -1802,46 +1605,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.setCharm(applicationName, charmUrl, forceUnits, forceSeries, cb);
         var lastMessage = conn.last_message();
         var expected = {
-          Type: 'Application',
-          Request: 'Update',
-          Version: 7,
-          RequestId: 1,
-          Params: {
-            ApplicationName: applicationName,
-            CharmUrl: charmUrl,
-            ForceCharmUrl: forceUnits,
-            ForceSeries: forceSeries
-          }
-        };
-        assert.deepEqual(lastMessage, expected);
-        // Trigger the message.
-        conn.msg(expected);
-        assert.equal(cb.callCount(), 1);
-        assert.deepEqual(cb.lastArguments(), [{
-          err: undefined,
-          applicationName: applicationName,
-          charmUrl: charmUrl
-        }]);
-      });
-
-      it('sends message to change the charm version (legacy API)', function() {
-        var applicationName = 'rethinkdb';
-        var charmUrl = 'trusty/rethinkdb-1';
-        var forceUnits = false;
-        var forceSeries = true;
-        var cb = utils.makeStubFunction();
-        env.get('facades').Application = null;
-        env.setCharm(applicationName, charmUrl, forceUnits, forceSeries, cb);
-        var lastMessage = conn.last_message();
-        var expected = {
-          Type: 'Client',
-          Request: 'ServiceUpdate',
-          Version: 1,
-          RequestId: 1,
-          Params: {
-            ServiceName: applicationName,
-            CharmUrl: charmUrl,
-            ForceCharmUrl: forceUnits || forceSeries
+          type: 'Application',
+          request: 'Update',
+          version: 7,
+          'request-id': 1,
+          params: {
+            application: applicationName,
+            'charm-url': charmUrl,
+            'force-charm-url': forceUnits,
+            'force-series': forceSeries
           }
         };
         assert.deepEqual(lastMessage, expected);
@@ -1862,42 +1634,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           {immediate: true});
       msg = conn.last_message();
       var expected = {
-        Type: 'Application',
-        Request: 'Deploy',
-        Version: 7,
-        Params: {Applications: [{
-          ApplicationName: null,
-          ConfigYAML: null,
-          Config: {},
-          Constraints: {},
-          CharmUrl: 'precise/mysql',
-          NumUnits: null,
-          ToMachineSpec: null
+        type: 'Application',
+        request: 'Deploy',
+        version: 7,
+        params: {applications: [{
+          application: null,
+          'config-yaml': null,
+          config: {},
+          constraints: {},
+          'charm-url': 'precise/mysql',
+          'num-units': null
         }]},
-        RequestId: 1
-      };
-      assert.deepEqual(expected, msg);
-    });
-
-    it('successfully deploys an application (legacy API)', function() {
-      env.set('facades', {});
-      env.deploy('precise/mysql', null, null, null, null, null, null, null,
-          {immediate: true});
-      msg = conn.last_message();
-      var expected = {
-        Type: 'Client',
-        Version: 0,
-        Request: 'ServiceDeploy',
-        Params: {
-          ServiceName: null,
-          ConfigYAML: null,
-          Config: {},
-          Constraints: {},
-          CharmUrl: 'precise/mysql',
-          NumUnits: null,
-          ToMachineSpec: null
-        },
-        RequestId: 1
+        'request-id': 1
       };
       assert.deepEqual(expected, msg);
     });
@@ -1905,20 +1653,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('successfully deploys an application with a config object', function() {
       var config = {debug: true, logo: 'example.com/mylogo.png'};
       var expected = {
-        Type: 'Application',
-        Request: 'Deploy',
-        Version: 7,
-        Params: {Applications: [{
-          ApplicationName: null,
+        type: 'Application',
+        request: 'Deploy',
+        version: 7,
+        params: {applications: [{
+          application: null,
           // Configuration values are sent as strings.
-          Config: {debug: 'true', logo: 'example.com/mylogo.png'},
-          ConfigYAML: null,
-          Constraints: {},
-          CharmUrl: 'precise/mediawiki',
-          NumUnits: null,
-          ToMachineSpec: null
+          config: {debug: 'true', logo: 'example.com/mylogo.png'},
+          'config-yaml': null,
+          constraints: {},
+          'charm-url': 'precise/mediawiki',
+          'num-units': null
         }]},
-        RequestId: 1
+        'request-id': 1
       };
       env.deploy('precise/mediawiki', null, config, null, null, null, null,
           null, {immediate: true});
@@ -1929,19 +1676,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('successfully deploys an application with a config file', function() {
       var config_raw = 'tuning-level: \nexpert-mojo';
       var expected = {
-        Type: 'Application',
-        Request: 'Deploy',
-        Version: 7,
-        Params: {Applications: [{
-          ApplicationName: null,
-          Config: {},
-          Constraints: {},
-          ConfigYAML: config_raw,
-          CharmUrl: 'precise/mysql',
-          NumUnits: null,
-          ToMachineSpec: null
+        type: 'Application',
+        request: 'Deploy',
+        version: 7,
+        params: {applications: [{
+          application: null,
+          config: {},
+          constraints: {},
+          'config-yaml': config_raw,
+          'charm-url': 'precise/mysql',
+          'num-units': null
         }]},
-        RequestId: 1
+        'request-id': 1
       };
       env.deploy('precise/mysql', null, null, config_raw, null, null, null,
           null, {immediate: true});
@@ -1961,7 +1707,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.deploy('precise/mediawiki', null, null, null, 1, constraints, null,
           null, {immediate: true});
       msg = conn.last_message();
-      assert.deepEqual(msg.Params.Applications[0].Constraints, {
+      assert.deepEqual(msg.params.applications[0].constraints, {
         'cpu-cores': 1,
         'cpu-power': 0,
         mem: 512,
@@ -1973,19 +1719,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('successfully deploys an app to a specific machine', function() {
       var expectedMessage = {
-        Type: 'Application',
-        Request: 'Deploy',
-        Version: 7,
-        Params: {Applications: [{
-          ApplicationName: null,
-          ConfigYAML: null,
-          Config: {},
-          Constraints: {},
-          CharmUrl: 'precise/mediawiki',
-          NumUnits: 1,
-          ToMachineSpec: '42'
+        type: 'Application',
+        request: 'Deploy',
+        version: 7,
+        params: {applications: [{
+          application: null,
+          'config-yaml': null,
+          config: {},
+          constraints: {},
+          'charm-url': 'precise/mediawiki',
+          'num-units': 1
         }]},
-        RequestId: 1
+        'request-id': 1
       };
       env.deploy('precise/mediawiki', null, null, null, 1, null, '42', null,
           {immediate: true});
@@ -2005,30 +1750,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }, {immediate: true});
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {Results: [{}]}
-      });
-      assert.equal(charmUrl, 'precise/mysql');
-      assert.strictEqual(err, undefined);
-      assert.equal(applicationName, 'mysql');
-    });
-
-    it('successfully deploys an app storing legacy charm data', function() {
-      env.set('facades', env.defaultFacades);
-      var charmUrl;
-      var err;
-      var applicationName;
-      env.deploy(
-          'precise/mysql', 'mysql', null, null, null, null, null,
-          function(data) {
-            charmUrl = data.charmUrl;
-            err = data.err;
-            applicationName = data.applicationName;
-          }, {immediate: true});
-      // Mimic response.
-      conn.msg({
-        RequestId: 1,
-        Response: {}
+        'request-id': 1,
+        response: {results: [{}]}
       });
       assert.equal(charmUrl, 'precise/mysql');
       assert.strictEqual(err, undefined);
@@ -2044,26 +1767,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }, {immediate: true});
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {Results: [{Error: 'app "mysql" not found'}]}
+        'request-id': 1,
+        response: {results: [{error: 'app "mysql" not found'}]}
       });
       assert.equal(err, 'app "mysql" not found');
-    });
-
-    it('handles failed application deployments (legacy API)', function() {
-      env.set('facades', env.defaultFacades);
-      var err;
-      env.deploy(
-          'precise/mysql', 'mysql', null, null, null, null, null,
-          function(data) {
-            err = data.err;
-          }, {immediate: true});
-      // Mimic response.
-      conn.msg({
-        RequestId: 1,
-        Error: 'service "mysql" not found'
-      });
-      assert.equal(err, 'service "mysql" not found');
     });
 
     it('sets metric credentials', function(done) {
@@ -2072,19 +1779,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(err, null);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'Application',
-          Version: 7,
-          Request: 'SetMetricCredentials',
-          Params: {Creds: [{
-            ApplicationName: 'django',
-            MetricCredentials: 'macaroon-content'
+          type: 'Application',
+          version: 7,
+          request: 'SetMetricCredentials',
+          params: {creds: [{
+            application: 'django',
+            'metrics-credentials': 'macaroon-content'
           }]},
-          RequestId: 1
+          'request-id': 1
         });
         done();
       });
       // Mimic response.
-      conn.msg({RequestId: 1, Response: {}});
+      conn.msg({'request-id': 1, response: {}});
     });
 
     it('handles failures while setting metric credentials', function(done) {
@@ -2094,18 +1801,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       });
       // Mimic response.
-      conn.msg({RequestId: 1, Error: 'bad wolf'});
+      conn.msg({'request-id': 1, error: 'bad wolf'});
     });
 
     it('adds a machine', function() {
       env.addMachines([{}], null, {immediate: true});
       var expectedMsg = {
-        RequestId: 1,
-        Type: 'Client',
-        Version: 1,
-        Request: 'AddMachines',
-        Params: {
-          MachineParams: [{Jobs: [machineJobs.HOST_UNITS]}]
+        'request-id': 1,
+        type: 'Client',
+        version: 1,
+        request: 'AddMachines',
+        params: {
+          params: [{jobs: [machineJobs.HOST_UNITS]}]
         }
       };
       assert.deepEqual(conn.last_message(), expectedMsg);
@@ -2116,15 +1823,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.addMachines([{series: 'trusty', constraints: constraints}], null,
           {immediate: true});
       var expectedMsg = {
-        RequestId: 1,
-        Type: 'Client',
-        Version: 1,
-        Request: 'AddMachines',
-        Params: {
-          MachineParams: [{
-            Jobs: [machineJobs.HOST_UNITS],
-            Series: 'trusty',
-            Constraints: constraints
+        'request-id': 1,
+        type: 'Client',
+        version: 1,
+        request: 'AddMachines',
+        params: {
+          params: [{
+            jobs: [machineJobs.HOST_UNITS],
+            series: 'trusty',
+            constraints: constraints
           }]
         }
       };
@@ -2134,14 +1841,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('adds a container', function() {
       env.addMachines([{containerType: 'lxc'}], null, {immediate: true});
       var expectedMsg = {
-        RequestId: 1,
-        Type: 'Client',
-        Version: 1,
-        Request: 'AddMachines',
-        Params: {
-          MachineParams: [{
-            Jobs: [machineJobs.HOST_UNITS],
-            ContainerType: 'lxc'
+        'request-id': 1,
+        type: 'Client',
+        version: 1,
+        request: 'AddMachines',
+        params: {
+          params: [{
+            jobs: [machineJobs.HOST_UNITS],
+            'container-type': 'lxc'
           }]
         }
       };
@@ -2153,16 +1860,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           [{containerType: 'lxc', parentId: '42', series: 'saucy'}],
           null, {immediate: true});
       var expectedMsg = {
-        RequestId: 1,
-        Type: 'Client',
-        Version: 1,
-        Request: 'AddMachines',
-        Params: {
-          MachineParams: [{
-            Jobs: [machineJobs.HOST_UNITS],
-            ContainerType: 'lxc',
-            ParentId: '42',
-            Series: 'saucy'
+        'request-id': 1,
+        type: 'Client',
+        version: 1,
+        request: 'AddMachines',
+        params: {
+          params: [{
+            jobs: [machineJobs.HOST_UNITS],
+            'container-type': 'lxc',
+            'parent-id': '42',
+            series: 'saucy'
           }]
         }
       };
@@ -2177,17 +1884,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         {containerType: 'lxc', parentId: '1'}
       ], null, {immediate: true});
       var expectedMachineParams = [
-          {Jobs: [machineJobs.HOST_UNITS]},
-          {Jobs: [machineJobs.MANAGE_ENVIRON], Series: 'precise'},
-          {Jobs: [machineJobs.HOST_UNITS], ContainerType: 'kvm'},
-          {Jobs: [machineJobs.HOST_UNITS], ContainerType: 'lxc', ParentId: '1' }
+          {jobs: [machineJobs.HOST_UNITS]},
+          {jobs: [machineJobs.MANAGE_ENVIRON], series: 'precise'},
+          {jobs: [machineJobs.HOST_UNITS], 'container-type': 'kvm'},
+          {jobs: [machineJobs.HOST_UNITS],
+           'container-type': 'lxc', 'parent-id': '1' }
       ];
       var expectedMsg = {
-        RequestId: 1,
-        Type: 'Client',
-        Version: 1,
-        Request: 'AddMachines',
-        Params: {MachineParams: expectedMachineParams}
+        'request-id': 1,
+        type: 'Client',
+        version: 1,
+        request: 'AddMachines',
+        params: {params: expectedMachineParams}
       };
       assert.deepEqual(conn.last_message(), expectedMsg);
     });
@@ -2204,8 +1912,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       // Mimic the server AddMachines response.
       conn.msg({
-        RequestId: 1,
-        Response: {Machines: [{Machine: '42'}, {Machine: '2/lxc/1'}]}
+        'request-id': 1,
+        response: {machines: [{machine: '42'}, {machine: '2/lxc/1'}]}
       });
       assert.isUndefined(response.err);
       var expectedMachines = [
@@ -2222,9 +1930,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       // Mimic the server AddMachines response.
       conn.msg({
-        RequestId: 1,
-        Error: 'bad wolf',
-        Response: {Machines: []}
+        'request-id': 1,
+        error: 'bad wolf',
+        response: {machines: []}
       });
       assert.strictEqual(response.err, 'bad wolf');
       assert.strictEqual(response.machines.length, 0);
@@ -2237,11 +1945,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       // Mimic the server AddMachines response.
       conn.msg({
-        RequestId: 1,
-        Response: {
-          Machines: [
-            {Machine: '', Error: {Code: '', Message: 'bad wolf'}},
-            {Machine: '', Error: {Code: '47', Message: 'machine 42 not found'}}
+        'request-id': 1,
+        response: {
+          machines: [
+            {machine: '', error: {code: '', message: 'bad wolf'}},
+            {machine: '', error: {code: '47', message: 'machine 42 not found'}}
           ]
         }
       });
@@ -2256,11 +1964,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     // Ensure a destroyMachines request has been sent.
     var assertDestroyMachinesRequestSent = function(names, force) {
       var expectedMsg = {
-        RequestId: 1,
-        Type: 'Client',
-        Version: 1,
-        Request: 'DestroyMachines',
-        Params: {MachineNames: names, Force: force}
+        'request-id': 1,
+        type: 'Client',
+        version: 1,
+        request: 'DestroyMachines',
+        params: {'machine-names': names, force: force}
       };
       assert.deepEqual(conn.last_message(), expectedMsg);
     };
@@ -2302,7 +2010,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         response = data;
       }, {immediate: true});
       // Mimic the server DestroyMachines response.
-      conn.msg({RequestId: 1, Response: {}});
+      conn.msg({'request-id': 1, response: {}});
       assert.isUndefined(response.err);
       assert.deepEqual(response.names, ['42', '1/lxc/2']);
     });
@@ -2313,21 +2021,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         response = data;
       }, {immediate: true});
       // Mimic the server DestroyMachines response.
-      conn.msg({RequestId: 1, Error: 'bad wolf', Response: {}});
+      conn.msg({'request-id': 1, error: 'bad wolf', response: {}});
       assert.strictEqual(response.err, 'bad wolf');
       assert.deepEqual(response.names, ['1']);
     });
 
     it('sends the correct Annotations.Get message', function() {
-      env.set('jujuCoreVersion', '2.0');
       env.get_annotations('apache', 'application');
       var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Annotations',
-        Version: 2,
-        Request: 'Get',
-        RequestId: 1,
-        Params: {Entities: [{Tag: 'application-apache'}]}
+        type: 'Annotations',
+        version: 2,
+        request: 'Get',
+        'request-id': 1,
+        params: {entities: [{tag: 'application-apache'}]}
       };
       assert.deepEqual(expected, lastMessage);
     });
@@ -2336,44 +2043,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.get_annotations('apache', 'service');
       var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Annotations',
-        Version: 2,
-        Request: 'Get',
-        RequestId: 1,
-        Params: {Entities: [{Tag: 'service-apache'}]}
+        type: 'Annotations',
+        version: 2,
+        request: 'Get',
+        'request-id': 1,
+        params: {entities: [{tag: 'service-apache'}]}
       };
-      assert.deepEqual(expected, lastMessage);
-    });
-
-    it('sends the correct legacy Client.GetAnnotations message', function() {
-      env.set('jujuCoreVersion', '1.26.0');
-      env.set('facades', {});
-      env.get_annotations('apache/1', 'unit');
-      var lastMessage = conn.last_message();
-      var expected = {
-        Type: 'Client',
-        Version: 0,
-        Request: 'GetAnnotations',
-        RequestId: 1,
-        Params: {Tag: 'unit-apache/1'}
-      };
-      console.log(lastMessage);
       assert.deepEqual(expected, lastMessage);
     });
 
     it('sends the correct Annotations.Set message', function() {
-      env.set('jujuCoreVersion', '2.1.0');
       env.update_annotations('apache', 'application', {'mykey': 'myvalue'});
       var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Annotations',
-        Version: 2,
-        Request: 'Set',
-        RequestId: 1,
-        Params: {
-          Annotations: [{
-            EntityTag: 'application-apache',
-            Annotations: {mykey: 'myvalue'}
+        type: 'Annotations',
+        version: 2,
+        request: 'Set',
+        'request-id': 1,
+        params: {
+          annotations: [{
+            entity: 'application-apache',
+            annotations: {mykey: 'myvalue'}
           }]
         }
       };
@@ -2384,35 +2074,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.update_annotations('apache', 'service', {'mykey': 'myvalue'});
       var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Annotations',
-        Version: 2,
-        Request: 'Set',
-        RequestId: 1,
-        Params: {
-          Annotations: [{
-            EntityTag: 'service-apache',
-            Annotations: {mykey: 'myvalue'}
+        type: 'Annotations',
+        version: 2,
+        request: 'Set',
+        'request-id': 1,
+        params: {
+          annotations: [{
+            entity: 'service-apache',
+            annotations: {mykey: 'myvalue'}
           }]
-        }
-      };
-      assert.deepEqual(expected, lastMessage);
-    });
-
-    it('sends the correct legacy Client.SetAnnotations message', function() {
-      env.set('jujuCoreVersion', '1.26.0');
-      env.set('facades', {});
-      env.update_annotations('apache/42', 'unit', {'mykey': 'myvalue'});
-      var lastMessage = conn.last_message();
-      var expected = {
-        Type: 'Client',
-        Version: 0,
-        Request: 'SetAnnotations',
-        RequestId: 1,
-        Params: {
-          Tag: 'unit-apache/42',
-          Pairs: {
-            mykey: 'myvalue'
-          }
         }
       };
       assert.deepEqual(expected, lastMessage);
@@ -2423,25 +2093,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           expected = {mynumber: '42', mybool: 'true', mystring: 'string'};
       env.update_annotations('apache', 'application', annotations);
       var msg = conn.last_message();
-      var pairs = msg.Params.Annotations[0].Annotations;
+      var pairs = msg.params.annotations[0].annotations;
       assert.deepEqual(expected, pairs);
     });
 
     it('sends correct multiple update_annotations messages', function() {
-      env.set('jujuCoreVersion', '2');
       env.update_annotations('apache', 'application', {
         'key1': 'value1',
         'key2': 'value2'
       });
       var expectedMessage = {
-        Type: 'Annotations',
-        Version: 2,
-        Request: 'Set',
-        RequestId: 1,
-        Params: {
-          Annotations: [{
-            EntityTag: 'application-apache',
-            Annotations: {'key1': 'value1', 'key2': 'value2'}
+        type: 'Annotations',
+        version: 2,
+        request: 'Set',
+        'request-id': 1,
+        params: {
+          annotations: [{
+            entity: 'application-apache',
+            annotations: {'key1': 'value1', 'key2': 'value2'}
           }]
         }
       };
@@ -2449,18 +2118,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sends the correct message to remove annotations', function() {
-      env.set('jujuCoreVersion', '2.0');
       env.remove_annotations('apache', 'application', ['key1', 'key2']);
       var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Annotations',
-        Version: 2,
-        Request: 'Set',
-        RequestId: 1,
-        Params: {
-          Annotations: [{
-            EntityTag: 'application-apache',
-            Annotations: {'key1': '', 'key2': ''}
+        type: 'Annotations',
+        version: 2,
+        request: 'Set',
+        'request-id': 1,
+        params: {
+          annotations: [{
+            entity: 'application-apache',
+            annotations: {'key1': '', 'key2': ''}
           }]
         }
       };
@@ -2471,36 +2139,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.remove_annotations('apache', 'service', ['key1', 'key2']);
       var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Annotations',
-        Version: 2,
-        Request: 'Set',
-        RequestId: 1,
-        Params: {
-          Annotations: [{
-            EntityTag: 'service-apache',
-            Annotations: {'key1': '', 'key2': ''}
+        type: 'Annotations',
+        version: 2,
+        request: 'Set',
+        'request-id': 1,
+        params: {
+          annotations: [{
+            entity: 'service-apache',
+            annotations: {'key1': '', 'key2': ''}
           }]
-        }
-      };
-      assert.deepEqual(expected, lastMessage);
-    });
-
-    it('sends the correct message to remove annotations (legacy)', function() {
-      env.set('jujuCoreVersion', '1.26.0');
-      env.set('facades', {});
-      env.remove_annotations('apache', 'application', ['key1', 'key2']);
-      var lastMessage = conn.last_message();
-      var expected = {
-        Type: 'Client',
-        Version: 0,
-        Request: 'SetAnnotations',
-        RequestId: 1,
-        Params: {
-          Tag: 'service-apache',
-          Pairs: {
-            key1: '',
-            key2: ''
-          }
         }
       };
       assert.deepEqual(expected, lastMessage);
@@ -2517,9 +2164,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {
-          Results: [{Annotations: expected}]
+        'request-id': 1,
+        response: {
+          results: [{annotations: expected}]
         }
       });
       assert.deepEqual(expected, annotations);
@@ -2533,8 +2180,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {Results: [{}]}
+        'request-id': 1,
+        response: {results: [{}]}
       });
       assert.isUndefined(err);
     });
@@ -2549,8 +2196,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {Results: [{}]}
+        'request-id': 1,
+        response: {results: [{}]}
       });
       assert.isUndefined(err);
     });
@@ -2563,8 +2210,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {Results: [{}]}
+        'request-id': 1,
+        response: {results: [{}]}
       });
       assert.isUndefined(err);
     });
@@ -2576,8 +2223,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Error: 'This is an error.'
+        'request-id': 1,
+        error: 'This is an error.'
       });
       assert.equal('This is an error.', err);
     });
@@ -2589,9 +2236,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {
-          Results: [{Error: 'bad wolf'}]
+        'request-id': 1,
+        response: {
+          results: [{error: 'bad wolf'}]
         }
       });
       assert.equal('bad wolf', err);
@@ -2606,8 +2253,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Error: 'This is an error.'
+        'request-id': 1,
+        error: 'This is an error.'
       });
       assert.equal('This is an error.', err);
     });
@@ -2621,8 +2268,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {Results: [{Error: 'bad wolf'}]}
+        'request-id': 1,
+        response: {results: [{error: 'bad wolf'}]}
       });
       assert.equal('bad wolf', err);
     });
@@ -2635,8 +2282,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Error: 'This is an error.'
+        'request-id': 1,
+        error: 'This is an error.'
       });
       assert.equal('This is an error.', err);
     });
@@ -2645,38 +2292,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       var tag;
 
-      it('generates an application tag with Juju 2', function() {
-        env.set('jujuCoreVersion', '2');
+      it('generates an application tag', function() {
         tag = env.generateTag('django', 'application');
         assert.strictEqual('application-django', tag);
       });
 
-      it('generates a model tag with Juju 2', function() {
-        env.set('jujuCoreVersion', '2');
+      it('generates a model tag', function() {
         tag = env.generateTag('default', 'model');
         assert.strictEqual('model-default', tag);
       });
 
-      it('generates a unit tag with Juju 2', function() {
-        env.set('jujuCoreVersion', '2');
-        tag = env.generateTag('django/1', 'unit');
-        assert.strictEqual('unit-django/1', tag);
-      });
-
-      it('generates an application tag with Juju 1', function() {
-        env.set('jujuCoreVersion', '1');
-        tag = env.generateTag('django', 'application');
-        assert.strictEqual('service-django', tag);
-      });
-
-      it('generates a model tag with Juju 1', function() {
-        env.set('jujuCoreVersion', '1');
-        tag = env.generateTag('default', 'model');
-        assert.strictEqual('environment-default', tag);
-      });
-
-      it('generates a unit tag with Juju 1', function() {
-        env.set('jujuCoreVersion', '1');
+      it('generates a unit tag', function() {
         tag = env.generateTag('django/1', 'unit');
         assert.strictEqual('unit-django/1', tag);
       });
@@ -2687,25 +2313,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.getApplicationConfig('mysql');
       var lastMessage = conn.last_message();
       var expected = {
-        RequestId: 1,
-        Type: 'Application',
-        Version: 7,
-        Request: 'Get',
-        Params: {ApplicationName: 'mysql'}
-      };
-      assert.deepEqual(expected, lastMessage);
-    });
-
-    it('sends the correct Client.ServiceGet message (legacy API)', function() {
-      env.set('facades', {'Client': [0]});
-      env.getApplicationConfig('mysql');
-      var lastMessage = conn.last_message();
-      var expected = {
-        RequestId: 1,
-        Type: 'Client',
-        Version: 0,
-        Request: 'ServiceGet',
-        Params: {ServiceName: 'mysql'}
+        'request-id': 1,
+        type: 'Application',
+        version: 7,
+        request: 'Get',
+        params: {application: 'mysql'}
       };
       assert.deepEqual(expected, lastMessage);
     });
@@ -2718,11 +2330,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {
+        'request-id': 1,
+        response: {
           Application: 'mysql',
           Charm: 'mysql',
-          Config: {
+          config: {
             'binlog-format': {
               description: 'Yada, yada, yada.',
               type: 'string',
@@ -2751,9 +2363,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Error: 'app \"yoursql\" not found',
-        Response: {
+        'request-id': 1,
+        error: 'app \"yoursql\" not found',
+        response: {
           Application: 'yoursql'
         }
       });
@@ -2767,39 +2379,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.set_config('mysql', settings, callback, {immediate: true});
       msg = conn.last_message();
       var expected = {
-        Type: 'Application',
-        Request: 'Update',
-        Version: 7,
-        Params: {
-          ApplicationName: 'mysql',
-          SettingsStrings: {
+        type: 'Application',
+        request: 'Update',
+        version: 7,
+        params: {
+          application: 'mysql',
+          settings: {
             'cfg-key': 'cfg-val',
             'unchanged': 'bar'
           }
         },
-        RequestId: msg.RequestId
-      };
-      assert.deepEqual(expected, msg);
-    });
-
-    it('can set an application config (legacy API)', function() {
-      env.set('facades', {});
-      var settings = {'cfg-key': 'cfg-val', 'unchanged': 'bar'};
-      var callback = null;
-      env.set_config('mysql', settings, callback, {immediate: true});
-      msg = conn.last_message();
-      var expected = {
-        Type: 'Client',
-        Request: 'ServiceUpdate',
-        Version: 0,
-        Params: {
-          ServiceName: 'mysql',
-          SettingsStrings: {
-            'cfg-key': 'cfg-val',
-            'unchanged': 'bar'
-          }
-        },
-        RequestId: msg.RequestId
+        'request-id': msg['request-id']
       };
       assert.deepEqual(expected, msg);
     });
@@ -2812,8 +2402,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       msg = conn.last_message();
       conn.msg({
-        RequestId: msg.RequestId,
-        Error: 'app "yoursql" not found'
+        'request-id': msg['request-id'],
+        error: 'app "yoursql" not found'
       });
       assert.equal(err, 'app "yoursql" not found');
       assert.equal(applicationName, 'yoursql');
@@ -2827,8 +2417,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       msg = conn.last_message();
       conn.msg({
-        RequestId: msg.RequestId,
-        Response: {}
+        'request-id': msg['request-id'],
+        response: {}
       });
       assert.strictEqual(dataReturned.err, undefined);
       assert.strictEqual(dataReturned.applicationName, 'django');
@@ -2841,33 +2431,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         applicationName = evt.applicationName;
       }, {immediate: true});
       var expected = {
-        Type: 'Application',
-        Version: 7,
-        Request: 'Destroy',
-        Params: {ApplicationName: 'mysql'},
-        RequestId: msg.RequestId
+        type: 'Application',
+        version: 7,
+        request: 'Destroy',
+        params: {application: 'mysql'},
+        'request-id': msg['request-id']
       };
       msg = conn.last_message();
-      conn.msg({RequestId: msg.RequestId});
-      assert.deepEqual(expected, msg);
-      assert.equal(applicationName, 'mysql');
-    });
-
-    it('can destroy an application using legacy Client API', function() {
-      env.set('facades', {Client: [2]});
-      var applicationName = '';
-      env.destroyApplication('mysql', function(evt) {
-        applicationName = evt.applicationName;
-      }, {immediate: true});
-      var expected = {
-        Type: 'Client',
-        Version: 2,
-        Request: 'ServiceDestroy',
-        Params: {ServiceName: 'mysql'},
-        RequestId: msg.RequestId
-      };
-      msg = conn.last_message();
-      conn.msg({RequestId: msg.RequestId,});
+      conn.msg({'request-id': msg['request-id']});
       assert.deepEqual(expected, msg);
       assert.equal(applicationName, 'mysql');
     });
@@ -2880,8 +2451,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       msg = conn.last_message();
       conn.msg({
-        RequestId: msg.RequestId,
-        Error: 'app "yoursql" not found'
+        'request-id': msg['request-id'],
+        error: 'app "yoursql" not found'
       });
       assert.equal(err, 'app "yoursql" not found');
       assert.equal(applicationName, 'yoursql');
@@ -2893,29 +2464,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.add_relation(endpointA, endpointB, null, {immediate: true});
       var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Application',
-        Version: 7,
-        Request: 'AddRelation',
-        Params: {Endpoints: ['haproxy:reverseproxy', 'wordpress:website']},
-        RequestId: 1
-      };
-      assert.deepEqual(expected, lastMessage);
-    });
-
-    it('sends the correct AddRelation message (legacy API)', function() {
-      env.set('facades', {});
-      endpointA = ['haproxy', {name: 'reverseproxy'}];
-      endpointB = ['wordpress', {name: 'website'}];
-      env.add_relation(endpointA, endpointB, null, {immediate: true});
-      var lastMessage = conn.last_message();
-      var expected = {
-        Type: 'Client',
-        Version: 0,
-        Request: 'AddRelation',
-        Params: {
-          Endpoints: ['haproxy:reverseproxy', 'wordpress:website']
-        },
-        RequestId: 1
+        type: 'Application',
+        version: 7,
+        request: 'AddRelation',
+        params: {endpoints: ['haproxy:reverseproxy', 'wordpress:website']},
+        'request-id': 1
       };
       assert.deepEqual(expected, lastMessage);
     });
@@ -2930,21 +2483,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       msg = conn.last_message();
       jujuEndpoints.haproxy = {
-        Name: 'reverseproxy',
-        Interface: 'http',
-        Scope: 'global',
-        Role: 'requirer'
+        name: 'reverseproxy',
+        interface: 'http',
+        scope: 'global',
+        role: 'requirer'
       };
       jujuEndpoints.wordpress = {
-        Name: 'website',
-        Interface: 'http',
-        Scope: 'global',
-        Role: 'provider'
+        name: 'website',
+        interface: 'http',
+        scope: 'global',
+        role: 'provider'
       };
       conn.msg({
-        RequestId: msg.RequestId,
-        Response: {
-          Endpoints: jujuEndpoints
+        'request-id': msg['request-id'],
+        response: {
+          endpoints: jujuEndpoints
         }
       });
       assert.equal(result.id, 'haproxy:reverseproxy wordpress:website');
@@ -2964,8 +2517,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       msg = conn.last_message();
       conn.msg({
-        RequestId: msg.RequestId,
-        Error: 'cannot add relation'
+        'request-id': msg['request-id'],
+        error: 'cannot add relation'
       });
       assert.equal(evt.err, 'cannot add relation');
       assert.equal(evt.endpoint_a, 'haproxy:reverseproxy');
@@ -2978,27 +2531,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.remove_relation(endpointA, endpointB, null, {immediate: true});
       var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Application',
-        Version: 7,
-        Request: 'DestroyRelation',
-        Params: {Endpoints: ['mysql:database', 'wordpress:website']},
-        RequestId: 1
-      };
-      assert.deepEqual(expected, lastMessage);
-    });
-
-    it('sends the correct DestroyRelation message (legacy API)', function() {
-      env.set('facades', {});
-      endpointA = ['mysql', {name: 'database'}];
-      endpointB = ['wordpress', {name: 'website'}];
-      env.remove_relation(endpointA, endpointB, null, {immediate: true});
-      var lastMessage = conn.last_message();
-      var expected = {
-        Type: 'Client',
-        Version: 0,
-        Request: 'DestroyRelation',
-        Params: {Endpoints: ['mysql:database', 'wordpress:website']},
-        RequestId: 1
+        type: 'Application',
+        version: 7,
+        request: 'DestroyRelation',
+        params: {endpoints: ['mysql:database', 'wordpress:website']},
+        'request-id': 1
       };
       assert.deepEqual(expected, lastMessage);
     });
@@ -3020,8 +2557,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       msg = conn.last_message();
       conn.msg({
-        RequestId: msg.RequestId,
-        Response: {}
+        'request-id': msg['request-id'],
+        response: {}
       });
       assert.equal(endpoint_a, 'mysql:database');
       assert.equal(endpoint_b, 'wordpress:website');
@@ -3038,8 +2575,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, {immediate: true});
       msg = conn.last_message();
       conn.msg({
-        RequestId: msg.RequestId,
-        Error: 'app "yoursql" not found'
+        'request-id': msg['request-id'],
+        error: 'app "yoursql" not found'
       });
       assert.equal(endpoint_a, 'yoursql:database');
       assert.equal(endpoint_b, 'wordpress:website');
@@ -3057,11 +2594,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.get_charm('cs:precise/wordpress-10');
       var lastMessage = conn.last_message();
       var expected = {
-        Type: 'Client',
-        Version: 1,
-        Request: 'CharmInfo',
-        Params: {CharmURL: 'cs:precise/wordpress-10'},
-        RequestId: 1
+        type: 'Charms',
+        version: 3,
+        request: 'CharmInfo',
+        params: {'url': 'cs:precise/wordpress-10'},
+        'request-id': 1
       };
       assert.deepEqual(expected, lastMessage);
     });
@@ -3069,156 +2606,171 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('successfully retrieves information about a charm', function(done) {
       // Define a response example.
       var response = {
-        Config: {
-          Options: {
-            debug: {
-              Default: 'no',
-              Description: 'Setting this option to "yes" will ...',
-              Title: '',
-              Type: 'string'
-            },
-            engine: {
-              Default: 'nginx',
-              Description: 'Two web server engines are supported...',
-              Title: '',
-              Type: 'string'
-            }
+        config: {
+          debug: {
+            default: 'no',
+            description: 'Setting this option to "yes" will ...',
+            type: 'string'
+          },
+          engine: {
+            default: 'nginx',
+            description: 'Two web server engines are supported...',
+            type: 'string'
           }
         },
-        Meta: {
-          Categories: null,
-          Description: 'This will install and setup WordPress...',
-          Format: 1,
-          Name: 'wordpress',
-          OldRevision: 0,
-          Peers: {
+        meta: {
+          description: 'This will install and setup WordPress...',
+          name: 'wordpress',
+          peers: {
             loadbalancer: {
-              Interface: 'reversenginx',
-              Limit: 1,
-              Optional: false,
-              Scope: 'global'
+              interface: 'reversenginx',
+              limit: 1,
+              name: 'loadbalancer',
+              role: 'peer',
+              optional: false,
+              scope: 'global'
             }
           },
-          Provides: {
+          provides: {
             website: {
-              Interface: 'http',
-              Limit: 0,
-              Optional: false,
-              Scope: 'global'
+              interface: 'http',
+              limit: 0,
+              name: 'website',
+              role: 'provider',
+              optional: false,
+              scope: 'global'
             }
           },
-          Requires: {
+          requires: {
             cache: {
-              Interface: 'memcache',
-              Limit: 1,
-              Optional: false,
-              Scope: 'global'
+              interface: 'memcache',
+              limit: 1,
+              name: 'cache',
+              role: 'requirer',
+              optional: false,
+              scope: 'global'
             },
             db: {
-              Interface: 'mysql',
-              Limit: 1,
-              Optional: false,
-              Scope: 'global'
+              interface: 'mysql',
+              limit: 1,
+              name: 'db',
+              role: 'requirer',
+              optional: false,
+              scope: 'global'
             }
           },
-          Subordinate: false,
-          Summary: 'WordPress is a full featured web blogging tool...'
+          subordinate: false,
+          summary: 'WordPress is a full featured web blogging tool...',
+          series: ['xenial', 'trusty'],
+          terms: ['term1', 'term2'],
+          tags: ['applications', 'blog'],
+          'min-juju-version': '2.0.42'
         },
-        Revision: 10,
-        URL: 'cs:precise/wordpress-10'
+        revision: 10,
+        metrics: 'my metrics',
+        url: 'cs:precise/wordpress-10'
       };
       // Define expected options.
-      var options = response.Config.Options;
+      var options = response.config;
       var expectedOptions = {
         debug: {
-          'default': options.debug.Default,
-          description: options.debug.Description,
-          type: options.debug.Type,
-          title: options.debug.Title
+          'default': options.debug.default,
+          description: options.debug.description,
+          type: options.debug.type,
         },
         engine: {
-          'default': options.engine.Default,
-          description: options.engine.Description,
-          type: options.engine.Type,
-          title: options.engine.Title
+          'default': options.engine.default,
+          description: options.engine.description,
+          type: options.engine.type,
         }
       };
       // Define expected peers.
-      var meta = response.Meta;
-      var peer = meta.Peers.loadbalancer;
+      var meta = response.meta;
+      var peer = meta.peers.loadbalancer;
       var expectedPeers = {
         loadbalancer: {
-          'interface': peer.Interface,
-          limit: peer.Limit,
-          optional: peer.Optional,
-          scope: peer.Scope
+          'interface': peer.interface,
+          limit: peer.limit,
+          name: peer.name,
+          role: peer.role,
+          optional: peer.optional,
+          scope: peer.scope
         }
       };
       // Define expected provides.
-      var provide = meta.Provides.website;
+      var provide = meta.provides.website;
       var expectedProvides = {
         website: {
-          'interface': provide.Interface,
-          limit: provide.Limit,
-          optional: provide.Optional,
-          scope: provide.Scope
+          'interface': provide.interface,
+          limit: provide.limit,
+          name: provide.name,
+          role: provide.role,
+          optional: provide.optional,
+          scope: provide.scope
         }
       };
       // Define expected requires.
-      var require1 = meta.Requires.cache;
-      var require2 = meta.Requires.db;
+      var require1 = meta.requires.cache;
+      var require2 = meta.requires.db;
       var expectedRequires = {
         cache: {
-          'interface': require1.Interface,
-          limit: require1.Limit,
-          optional: require1.Optional,
-          scope: require1.Scope
+          'interface': require1.interface,
+          limit: require1.limit,
+          name: require1.name,
+          role: require1.role,
+          optional: require1.optional,
+          scope: require1.scope
         },
         db: {
-          'interface': require2.Interface,
-          limit: require2.Limit,
-          optional: require2.Optional,
-          scope: require2.Scope
+          'interface': require2.interface,
+          limit: require2.limit,
+          name: require2.name,
+          role: require2.role,
+          optional: require2.optional,
+          scope: require2.scope
         }
       };
       env.get_charm('cs:precise/wordpress-10', function(data) {
         var err = data.err,
             result = data.result;
         // Ensure the result is correctly generated.
-        assert.isUndefined(err);
-        assert.deepEqual({options: expectedOptions}, result.config);
-        assert.deepEqual(expectedPeers, result.peers);
-        assert.deepEqual(expectedProvides, result.provides);
-        assert.deepEqual(expectedRequires, result.requires);
-        assert.equal(response.URL, result.url);
+        assert.strictEqual(err, undefined, 'error');
+        assert.deepEqual(result.config, {options: expectedOptions}, 'config');
+        assert.deepEqual(result.peers, expectedPeers, 'peers');
+        assert.deepEqual(result.provides, expectedProvides, 'provides');
+        assert.deepEqual(result.requires, expectedRequires, 'requires');
         // The result is enriched with additional info returned by juju-core.
-        assert.equal(response.Revision, result.revision);
-        assert.equal(meta.Description, result.description);
-        assert.equal(meta.Format, result.format);
-        assert.equal(meta.Name, result.name);
-        assert.equal(meta.Subordinate, result.subordinate);
-        assert.equal(meta.Summary, result.summary);
+        assert.equal(result.url, response.url, 'url');
+        assert.equal(result.revision, response.revision, 'revision');
+        assert.equal(result.description, meta.description, 'description');
+        assert.equal(result.name, meta.name, 'name');
+        assert.equal(result.subordinate, meta.subordinate, 'subordinate');
+        assert.equal(result.summary, meta.summary, 'summary');
+        assert.equal(
+          result.minJujuVersion, meta['min-juju-version'], 'min-juju-version');
+        assert.deepEqual(result.tags, meta.tags, 'tags');
+        assert.deepEqual(result.series, meta.series, 'series');
+        assert.deepEqual(result.terms, meta.terms, 'terms');
+        assert.equal(result.metrics, response.metrics, 'metrics');
         done();
       });
       // Mimic response, assuming CharmInfo to be the first request.
       conn.msg({
-        RequestId: 1,
-        Response: response
+        'request-id': 1,
+        response: response
       });
     });
 
     it('handles failed attempt to retrieve charm info', function(done) {
       env.get_charm('cs:precise/wordpress-10', function(data) {
-        var err = data.err,
-            result = data.result;
-        assert.equal('charm not found', err);
-        assert.isUndefined(result);
+        assert.strictEqual(data.err, 'charm not found');
+        assert.strictEqual(data.result, undefined);
         done();
       });
       // Mimic response, assuming CharmInfo to be the first request.
       conn.msg({
-        RequestId: 1,
-        Error: 'charm not found'
+        'request-id': 1,
+        error: 'charm not found'
       });
     });
 
@@ -3230,21 +2782,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(data.url, args.url);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'Application',
-          Version: 7,
-          Request: 'Update',
-          Params: {
-            ApplicationName: 'django',
-            CharmUrl: args.url,
-            ForceCharmUrl: false,
-            ForceSeries: false,
+          type: 'Application',
+          version: 7,
+          request: 'Update',
+          params: {
+            application: 'django',
+            'charm-url': args.url,
+            'force-charm-url': false,
+            'force-series': false,
           },
-          RequestId: 1
+          'request-id': 1
         });
         done();
       });
       // Mimic response.
-      conn.msg({RequestId: 1, Response: {}});
+      conn.msg({'request-id': 1, response: {}});
     });
 
     it('updates an application charm URL (force units)', function(done) {
@@ -3253,21 +2805,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(data.forceUnits, true);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'Application',
-          Version: 7,
-          Request: 'Update',
-          Params: {
-            ApplicationName: 'django',
-            CharmUrl: args.url,
-            ForceCharmUrl: true,
-            ForceSeries: false,
+          type: 'Application',
+          version: 7,
+          request: 'Update',
+          params: {
+            application: 'django',
+            'charm-url': args.url,
+            'force-charm-url': true,
+            'force-series': false,
           },
-          RequestId: 1
+          'request-id': 1
         });
         done();
       });
       // Mimic response.
-      conn.msg({RequestId: 1, Response: {}});
+      conn.msg({'request-id': 1, response: {}});
     });
 
     it('updates an application charm URL (force series)', function(done) {
@@ -3276,21 +2828,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(data.forceSeries, true);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'Application',
-          Version: 7,
-          Request: 'Update',
-          Params: {
-            ApplicationName: 'django',
-            CharmUrl: args.url,
-            ForceCharmUrl: false,
-            ForceSeries: true
+          type: 'Application',
+          version: 7,
+          request: 'Update',
+          params: {
+            application: 'django',
+            'charm-url': args.url,
+            'force-charm-url': false,
+            'force-series': true
           },
-          RequestId: 1
+          'request-id': 1
         });
         done();
       });
       // Mimic response.
-      conn.msg({RequestId: 1, Response: {}});
+      conn.msg({'request-id': 1, response: {}});
     });
 
     it('updates an application settings', function(done) {
@@ -3301,19 +2853,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(data.settings, args.settings);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'Application',
-          Version: 7,
-          Request: 'Update',
-          Params: {
-            ApplicationName: 'django',
-            SettingsStrings: {'opt1': 'val1', 'opt2': '42'}
+          type: 'Application',
+          version: 7,
+          request: 'Update',
+          params: {
+            application: 'django',
+            settings: {'opt1': 'val1', 'opt2': '42'}
           },
-          RequestId: 1
+          'request-id': 1
         });
         done();
       });
       // Mimic response.
-      conn.msg({RequestId: 1, Response: {}});
+      conn.msg({'request-id': 1, response: {}});
     });
 
     it('updates an application constraints', function(done) {
@@ -3324,19 +2876,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(data.constraints, args.constraints);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'Application',
-          Version: 7,
-          Request: 'Update',
-          Params: {
-            ApplicationName: 'django',
-            Constraints: {'cpu-cores': 4, 'mem': 2000}
+          type: 'Application',
+          version: 7,
+          request: 'Update',
+          params: {
+            application: 'django',
+            constraints: {'cpu-cores': 4, 'mem': 2000}
           },
-          RequestId: 1
+          'request-id': 1
         });
         done();
       });
       // Mimic response.
-      conn.msg({RequestId: 1, Response: {}});
+      conn.msg({'request-id': 1, response: {}});
     });
 
     it('updates an application minimum number of units', function(done) {
@@ -3347,19 +2899,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(data.minUnits, args.minUnits);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'Application',
-          Version: 7,
-          Request: 'Update',
-          Params: {
-            ApplicationName: 'django',
-            MinUnits: 2
+          type: 'Application',
+          version: 7,
+          request: 'Update',
+          params: {
+            application: 'django',
+            'min-units': 2
           },
-          RequestId: 1
+          'request-id': 1
         });
         done();
       });
       // Mimic response.
-      conn.msg({RequestId: 1, Response: {}});
+      conn.msg({'request-id': 1, response: {}});
     });
 
     it('updates applications (multiple properties)', function(done) {
@@ -3382,62 +2934,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(data.minUnits, 3);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'Application',
-          Version: 7,
-          Request: 'Update',
-          Params: {
-            ApplicationName: 'django',
-            CharmUrl: args.url,
-            ForceCharmUrl: true,
-            ForceSeries: true,
-            SettingsStrings: {'opt1': 'val1', 'opt2': 'true'},
-            Constraints: args.constraints,
-            MinUnits: 3
+          type: 'Application',
+          version: 7,
+          request: 'Update',
+          params: {
+            application: 'django',
+            'charm-url': args.url,
+            'force-charm-url': true,
+            'force-series': true,
+            settings: {'opt1': 'val1', 'opt2': 'true'},
+            constraints: args.constraints,
+            'min-units': 3
           },
-          RequestId: 1
+          'request-id': 1
         });
         done();
       });
       // Mimic response.
-      conn.msg({RequestId: 1, Response: {}});
-    });
-
-    it('updates applications (legacy API)', function(done) {
-      env.set('facades', {});
-      var args = {
-        url: 'cs:trusty/django-47',
-        forceUnits: true,
-        settings: {'opt1': 'val1', 'opt2': true},
-        constraints: {'cpu-cores': 8},
-        minUnits: 3
-      };
-      env.updateApplication('django', args, function(data) {
-        assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.applicationName, 'django');
-        assert.strictEqual(data.url, args.url);
-        assert.strictEqual(data.forceUnits, true);
-        assert.deepEqual(data.settings, args.settings);
-        assert.deepEqual(data.constraints, args.constraints);
-        assert.strictEqual(data.minUnits, 3);
-        assert.equal(conn.messages.length, 1);
-        assert.deepEqual(conn.last_message(), {
-          Type: 'Client',
-          Version: 0,
-          Request: 'ServiceUpdate',
-          Params: {
-            ServiceName: 'django',
-            CharmUrl: args.url,
-            ForceCharmUrl: true,
-            SettingsStrings: {'opt1': 'val1', 'opt2': 'true'},
-            Constraints: args.constraints,
-            MinUnits: 3
-          },
-          RequestId: 1
-        });
-        done();
-      });
-      // Mimic response.
-      conn.msg({RequestId: 1, Response: {}});
+      conn.msg({'request-id': 1, response: {}});
     });
 
     it('handles failures while updating applications', function(done) {
@@ -3448,21 +2962,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       });
       // Mimic response.
-      conn.msg({RequestId: 1, Error: 'bad wolf'});
+      conn.msg({'request-id': 1, error: 'bad wolf'});
     });
 
     it('provides for a missing Params', function() {
       // If no "Params" are provided in an RPC call an empty one is added.
-      var op = {Type: 'Client'};
+      var op = {type: 'Client'};
       env._send_rpc(op);
-      assert.deepEqual(op.Params, {});
+      assert.deepEqual(op.params, {});
     });
 
     it('can watch all changes', function() {
       env._watchAll();
       msg = conn.last_message();
-      assert.equal(msg.Type, 'Client');
-      assert.equal(msg.Request, 'WatchAll');
+      assert.equal(msg.type, 'Client');
+      assert.equal(msg.request, 'WatchAll');
     });
 
     it('can retrieve the next set of environment changes', function() {
@@ -3470,11 +2984,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env._allWatcherId = 42;
       env._next();
       msg = conn.last_message();
-      assert.equal(msg.Type, 'AllWatcher');
-      assert.equal(msg.Request, 'Next');
-      assert.isTrue('Id' in msg);
+      assert.equal(msg.type, 'AllWatcher');
+      assert.equal(msg.request, 'Next');
+      assert.isTrue('id' in msg);
       // This response is in fact to the sent _next request.
-      assert.equal(msg.Id, env._allWatcherId);
+      assert.equal(msg.id, env._allWatcherId);
     });
 
     it('stops the mega-watcher', function() {
@@ -3484,18 +2998,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var callback = utils.makeStubFunction();
       env._stopWatching(callback);
       // Mimic response.
-      conn.msg({RequestId: 1, Response: {}});
+      conn.msg({'request-id': 1, response: {}});
       // The callback has been called.
       assert.strictEqual(callback.calledOnce(), true, 'callback not');
       assert.strictEqual(env._allWatcherId, null);
       // The request has been properly sent.
       assert.deepEqual({
-        RequestId: 1,
-        Type: 'AllWatcher',
-        Version: 0,
-        Request: 'Stop',
-        Id: 42,
-        Params: {}
+        'request-id': 1,
+        type: 'AllWatcher',
+        version: 0,
+        request: 'Stop',
+        id: 42,
+        params: {}
       }, conn.last_message());
     });
 
@@ -3514,7 +3028,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('fires "delta" when handling an RPC response', function(done) {
       env.detach('delta');
-      var callbackData = {Response: {Deltas: [['application', 'deploy', {}]]}};
+      var callbackData = {response: {deltas: [['application', 'deploy', {}]]}};
       env.on('delta', function(evt) {
         done();
       });
@@ -3523,7 +3037,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('translates the type of each change in the delta', function(done) {
       env.detach('delta');
-      var callbackData = {Response: {Deltas: [['application', 'deploy', {}]]}};
+      var callbackData = {response: {deltas: [['application', 'deploy', {}]]}};
       env.on('delta', function(evt) {
         var change = evt.data.result[0];
         assert.deepEqual(['applicationInfo', 'deploy', {}], change);
@@ -3535,8 +3049,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('sorts deltas', function(done) {
       env.detach('delta');
       var callbackData = {
-        Response: {
-          Deltas: [
+        response: {
+          deltas: [
             ['annotation', 'change', {}],
             ['relation', 'change', {}],
             ['machine', 'change', {}],
@@ -3577,29 +3091,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var unit_name = 'mysql/0';
       env.resolved(unit_name);
       msg = conn.last_message();
-      assert.equal(msg.Type, 'Client');
-      assert.equal(msg.Request, 'Resolved');
-      assert.equal(msg.Params.UnitName, 'mysql/0');
-      assert.isFalse(msg.Params.Retry);
+      assert.equal(msg.type, 'Client');
+      assert.equal(msg.request, 'Resolved');
+      assert.equal(msg.params['unit-name'], 'mysql/0');
+      assert.isFalse(msg.params.retry);
     });
 
     it('can retry a problem with a unit', function() {
       var unit_name = 'mysql/0';
       env.resolved(unit_name, null, true);
       msg = conn.last_message();
-      assert.equal(msg.Type, 'Client');
-      assert.equal(msg.Request, 'Resolved');
-      assert.equal(msg.Params.UnitName, 'mysql/0');
-      assert.isTrue(msg.Params.Retry);
+      assert.equal(msg.type, 'Client');
+      assert.equal(msg.request, 'Resolved');
+      assert.equal(msg.params['unit-name'], 'mysql/0');
+      assert.isTrue(msg.params.retry);
     });
 
     it('can remove a unit', function() {
       var unit_name = 'mysql/0';
       env.remove_units([unit_name], null, {immediate: true});
       msg = conn.last_message();
-      assert.equal(msg.Type, 'Application');
-      assert.equal(msg.Request, 'DestroyUnits');
-      assert.deepEqual(msg.Params.UnitNames, ['mysql/0']);
+      assert.equal(msg.type, 'Application');
+      assert.equal(msg.request, 'DestroyUnits');
+      assert.deepEqual(msg.params['unit-names'], ['mysql/0']);
     });
 
     it('can provide a callback', function(done) {
@@ -3611,9 +3125,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       msg = conn.last_message();
       env.dispatch_result({
-        RequestId: msg.RequestId,
-        Error: 'badness',
-        Response: {}
+        'request-id': msg['request-id'],
+        error: 'badness',
+        response: {}
       });
     });
 
@@ -3624,7 +3138,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'demonstration',
         'ec2',
         'joyent',
-        'local',
+        'lxd',
         'maas',
         'openstack',
         'manual'
@@ -3643,24 +3157,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.getBundleChanges(yaml, null, callback);
       msg = conn.last_message();
       assert.deepEqual(msg, {
-        RequestId: 1,
-        Type: 'Client',
-        Version: 1,
-        Request: 'GetBundleChanges',
-        Params: {YAML: yaml}
+        'request-id': 1,
+        type: 'Client',
+        version: 1,
+        request: 'GetBundleChanges',
+        params: {yaml: yaml}
       });
     });
 
-    it('requests the changes from the GUI server using a token', function() {
+    it('ignores token requests for bundle changes', function() {
       var callback = utils.makeStubFunction();
       env.getBundleChanges(null, 'TOKEN', callback);
       msg = conn.last_message();
       assert.deepEqual(msg, {
-        RequestId: 1,
-        Type: 'Client',
-        Version: 1,
-        Request: 'GetBundleChanges',
-        Params: {Token: 'TOKEN'}
+        'request-id': 1,
+        type: 'Client',
+        version: 1,
+        request: 'GetBundleChanges',
+        params: {yaml: null}
       });
     });
 
@@ -3670,8 +3184,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.getBundleChanges(yaml, null, callback);
       msg = conn.last_message();
       env.dispatch_result({
-        RequestId: msg.RequestId,
-        Response: {changes: ['foo']}
+        'request-id': msg['request-id'],
+        response: {changes: ['foo']}
       });
       assert.equal(callback.callCount(), 1);
       assert.deepEqual(callback.lastArguments()[0], {
@@ -3686,8 +3200,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.getBundleChanges(yaml, null, callback);
       msg = conn.last_message();
       env.dispatch_result({
-        RequestId: msg.RequestId,
-        Response: {errors: ['bad wolf']}
+        'request-id': msg['request-id'],
+        response: {errors: ['bad wolf']}
       });
       assert.equal(callback.callCount(), 1);
       assert.deepEqual(callback.lastArguments()[0], {
@@ -3702,8 +3216,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.getBundleChanges(yaml, null, callback);
       msg = conn.last_message();
       env.dispatch_result({
-        RequestId: msg.RequestId,
-        Error: 'bad wolf'
+        'request-id': msg['request-id'],
+        error: 'bad wolf'
       });
       assert.equal(callback.callCount(), 1);
       assert.deepEqual(callback.lastArguments()[0], {
@@ -3712,41 +3226,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('falls back to GUI server for bundle deployments', function(done) {
-      var yaml = 'foo:\n  bar: baz';
-      env.getBundleChanges(yaml, null, function(data) {
-        assert.strictEqual(data.errors, undefined);
-        assert.deepEqual(data.changes, ['foo']);
-        done();
-      });
-      // Mimic the first response to Client.GetBundleChanges (Juju).
-      conn.msg({
-        RequestId: 1,
-        ErrorCode: 'not implemented'
-      });
-      // Mimic the second response to ChangeSet.GetChanges (GUI server).
-      conn.msg({
-        RequestId: 2,
-        Response: {Changes: ['foo']}
-      });
-    });
-
     it('handles errors on GUI server bundle deployments', function(done) {
       var yaml = 'foo:\n  bar: baz';
       env.getBundleChanges(yaml, null, function(data) {
         assert.strictEqual(data.changes, undefined);
-        assert.deepEqual(data.errors, ['bad wolf']);
+        assert.deepEqual(data.errors, ['not implemented']);
         done();
       });
       // Mimic the first response to Client.GetBundleChanges (Juju).
       conn.msg({
-        RequestId: 1,
-        ErrorCode: 'not implemented'
-      });
-      // Mimic the second response to ChangeSet.GetChanges (GUI server).
-      conn.msg({
-        RequestId: 2,
-        Response: {Errors: ['bad wolf']}
+        'request-id': 1,
+        'error': 'not implemented'
       });
     });
 
@@ -3759,11 +3249,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(data.url, 'local:/u/mydjango');
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'CrossModelRelations',
-          Version: 1,
-          Request: 'Offer',
-          Params: {
-            Offers: [{
+          type: 'CrossModelRelations',
+          version: 1,
+          request: 'Offer',
+          params: {
+            offers: [{
               applicationname: 'django',
               endpoints: ['web', 'cache'],
               applicationurl: 'local:/u/mydjango',
@@ -3771,7 +3261,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               applicationdescription: 'my description'
             }]
           },
-          RequestId: 1
+          'request-id': 1
         });
         done();
       };
@@ -3783,9 +3273,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {
-          Results: [{}]
+        'request-id': 1,
+        response: {
+          results: [{}]
         }
       });
     });
@@ -3800,11 +3290,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(data.url, 'local:/u/user/myenv/haproxy');
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'CrossModelRelations',
-          Version: 1,
-          Request: 'Offer',
-          Params: {
-            Offers: [{
+          type: 'CrossModelRelations',
+          version: 1,
+          request: 'Offer',
+          params: {
+            offers: [{
               applicationname: 'haproxy',
               endpoints: ['proxy'],
               applicationurl: 'local:/u/user/myenv/haproxy',
@@ -3812,7 +3302,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               applicationdescription: ''
             }]
           },
-          RequestId: 1
+          'request-id': 1
         });
         done();
       };
@@ -3822,9 +3312,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {
-          Results: [{}]
+        'request-id': 1,
+        response: {
+          results: [{}]
         }
       });
     });
@@ -3845,10 +3335,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {
-          Results: [{Error: {
-            Message: 'bad wolf'
+        'request-id': 1,
+        response: {
+          results: [{error: {
+            message: 'bad wolf'
           }}]
         }
       });
@@ -3870,8 +3360,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Error: 'bad wolf'
+        'request-id': 1,
+        error: 'bad wolf'
       });
     });
 
@@ -3913,23 +3403,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         ]);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'CrossModelRelations',
-          Version: 1,
-          Request: 'ListOffers',
-          Params: {
-            Filters: [{
-              FilterTerms: []
+          type: 'CrossModelRelations',
+          version: 1,
+          request: 'ListOffers',
+          params: {
+            filters: [{
+              'filter-terms': []
             }]
           },
-          RequestId: 1
+          'request-id': 1
         });
         done();
       });
 
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {
+        'request-id': 1,
+        response: {
           results: [{
             result: [
               {result: {
@@ -3979,8 +3469,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Error: 'bad wolf'
+        'request-id': 1,
+        error: 'bad wolf'
       });
     });
 
@@ -4000,19 +3490,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         ]);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'CrossModelRelations',
-          Version: 1,
-          Request: 'ApplicationOffers',
-          Params: {applicationurls: [url]},
-          RequestId: 1
+          type: 'CrossModelRelations',
+          version: 1,
+          request: 'ApplicationOffers',
+          params: {applicationurls: [url]},
+          'request-id': 1
         });
         done();
       });
 
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {
+        'request-id': 1,
+        response: {
           results: [{
             result: {
               applicationname: 'django',
@@ -4048,8 +3538,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Error: 'bad wolf'
+        'request-id': 1,
+        error: 'bad wolf'
       });
     });
 
@@ -4062,329 +3552,77 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {
+        'request-id': 1,
+        response: {
           results: [{
-            error: {Message: 'bad wolf'}
+            error: {message: 'bad wolf'}
           }]
         }
       });
     });
 
-    it('successfully creates a local model', function(done) {
-      env.set('providerType', 'local');
-      env.createModel('myenv', 'user-who', function(data) {
+    it('successfully creates a model', function(done) {
+      env.createModel('mymodel', 'user-who@external', function(data) {
         assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.name, 'myenv');
-        assert.strictEqual(data.owner, 'user-rose');
+        assert.strictEqual(data.name, 'mymodel');
         assert.strictEqual(data.uuid, 'unique-id');
-        assert.equal(conn.messages.length, 3);
-        assert.deepEqual(conn.messages[0], {
-          Type: 'ModelManager',
-          Version: 2,
-          Request: 'ConfigSkeleton',
-          Params: {},
-          RequestId: 1
-        });
-        assert.deepEqual(conn.messages[1], {
-          Type: 'Client',
-          Version: 1,
-          Request: 'ModelGet',
-          Params: {},
-          RequestId: 2
-        });
-        assert.deepEqual(conn.messages[2], {
-          Type: 'ModelManager',
-          Version: 2,
-          Request: 'CreateModel',
-          Params: {
-            OwnerTag: 'user-who',
-            Config: {
-              attr1: 'value1',
-              attr2: 'value2',
-              name: 'myenv',
-              namespace: 'who-local',
-              'authorized-keys': 'ssh-rsa INVALID'
+        assert.strictEqual(data.owner, 'user-rose@external');
+        assert.strictEqual(data.region, 'alpha-quadrant');
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          type: 'ModelManager',
+          version: 2,
+          request: 'CreateModel',
+          params: {
+            name: 'mymodel',
+            'owner-tag': 'user-who@external',
+            config: {
+              'authorized-keys': 'ssh-rsa INVALID (set by the Juju GUI)'
             }
           },
-          RequestId: 3
+          'request-id': 1
         });
         done();
       });
-      // Mimic the first response to ModelManager.ConfigSkeleton.
+      // Mimic the response to ModelManager.CreateModel.
       conn.msg({
-        RequestId: 1,
-        Response: {Config: {attr1: 'value1', attr2: 'value2'}}
-      });
-      // Mimic the second response to Client.ModelGet.
-      conn.msg({
-        RequestId: 2,
-        Response: {Config: {namespace: 'who-local'}}
-      });
-      // Mimic the third response to ModelManager.CreateModel.
-      conn.msg({
-        RequestId: 3,
-        Response: {
-          Name: 'myenv',
-          OwnerTag: 'user-rose',
-          UUID: 'unique-id'
+        'request-id': 1,
+        response: {
+          name: 'mymodel',
+          uuid: 'unique-id',
+          'owner-tag': 'user-rose@external',
+          'cloud-region': 'alpha-quadrant'
         }
       });
     });
 
-    it('successfully creates a local model (legacy)', function(done) {
-      env.set('providerType', 'local');
-      env.set('facades', {'EnvironmentManager': [1]});
-      env.createModel('myenv', 'user-who', function(data) {
+    it('adds local user domain when creating a model', function(done) {
+      env.createModel('mymodel', 'user-cyberman', function(data) {
         assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.name, 'myenv');
-        assert.strictEqual(data.owner, 'user-rose');
-        assert.strictEqual(data.uuid, 'unique-id');
-        assert.equal(conn.messages.length, 3);
-        assert.deepEqual(conn.messages[0], {
-          Type: 'EnvironmentManager',
-          Version: 1,
-          Request: 'ConfigSkeleton',
-          Params: {},
-          RequestId: 1
-        });
-        assert.deepEqual(conn.messages[1], {
-          Type: 'Client',
-          Version: 0,
-          Request: 'EnvironmentGet',
-          Params: {},
-          RequestId: 2
-        });
-        assert.deepEqual(conn.messages[2], {
-          Type: 'EnvironmentManager',
-          Version: 1,
-          Request: 'CreateEnvironment',
-          Params: {
-            OwnerTag: 'user-who',
-            Config: {
-              attr1: 'value1',
-              attr2: 'value2',
-              name: 'myenv',
-              namespace: 'who-local',
-              'authorized-keys': 'ssh-rsa INVALID'
-            }
-          },
-          RequestId: 3
-        });
+        assert.equal(conn.messages.length, 1);
+        var message = conn.last_message();
+        assert.strictEqual(message.params['owner-tag'], 'user-cyberman@local');
         done();
       });
-      // Mimic the first response to EnvironmentManager.ConfigSkeleton.
+      // Mimic the response to ModelManager.CreateModel.
       conn.msg({
-        RequestId: 1,
-        Response: {Config: {attr1: 'value1', attr2: 'value2'}}
-      });
-      // Mimic the second response to Client.ModelGet.
-      conn.msg({
-        RequestId: 2,
-        Response: {Config: {namespace: 'who-local'}}
-      });
-      // Mimic the third response to EnvironmentManager.CreateEnvironment.
-      conn.msg({
-        RequestId: 3,
-        Response: {
-          Name: 'myenv',
-          OwnerTag: 'user-rose',
-          UUID: 'unique-id'
+        'request-id': 1,
+        response: {
+          name: 'mymodel',
+          uuid: 'unique-id',
+          'owner-tag': 'user-rose@local',
+          'cloud-region': 'delta-quadrant'
         }
       });
-    });
-
-    it('successfully creates an ec2 model', function(done) {
-      env.set('providerType', 'ec2');
-      env.createModel('myenv', 'user-who', function(data) {
-        assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.name, 'my-ec2-env');
-        assert.equal(conn.messages.length, 3);
-        assert.deepEqual(conn.messages[2], {
-          Type: 'ModelManager',
-          Version: 2,
-          Request: 'CreateModel',
-          Params: {
-            OwnerTag: 'user-who',
-            Config: {
-              attr1: 'value1',
-              attr2: 'value2',
-              name: 'myenv',
-              'authorized-keys': 'ssh-rsa INVALID',
-              'access-key': 'access!',
-              'secret-key': 'secret!'
-            }
-          },
-          RequestId: 3
-        });
-        done();
-      });
-      // Mimic the first response to ModelManager.ConfigSkeleton.
-      conn.msg({
-        RequestId: 1,
-        Response: {Config: {attr1: 'value1', attr2: 'value2'}}
-      });
-      // Mimic the second response to Client.ModelGet.
-      conn.msg({
-        RequestId: 2,
-        Response: {Config: {'access-key': 'access!', 'secret-key': 'secret!'}}
-      });
-      // Mimic the third response to ModelManager.CreateModel.
-      conn.msg({
-        RequestId: 3,
-        Response: {
-          Name: 'my-ec2-env',
-          OwnerTag: 'user-rose',
-          UUID: 'unique-id'
-        }
-      });
-    });
-
-    it('successfully creates an openstack model', function(done) {
-      env.set('providerType', 'openstack');
-      env.createModel('myenv', 'user-who', function(data) {
-        assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.name, 'my-openstack-env');
-        assert.equal(conn.messages.length, 3);
-        assert.deepEqual(conn.messages[2], {
-          Type: 'ModelManager',
-          Version: 2,
-          Request: 'CreateModel',
-          Params: {
-            OwnerTag: 'user-who',
-            Config: {
-              attr1: 'valueA',
-              attr2: 'valueB',
-              name: 'myenv',
-              'authorized-keys': 'ssh-rsa INVALID',
-              'tenant-name': 'tenant',
-              username: 'who',
-              password: 'secret!'
-            }
-          },
-          RequestId: 3
-        });
-        done();
-      });
-      // Mimic the first response to ModelManager.ConfigSkeleton.
-      conn.msg({
-        RequestId: 1,
-        Response: {Config: {attr1: 'valueA', attr2: 'valueB'}}
-      });
-      // Mimic the second response to Client.ModelGet.
-      conn.msg({
-        RequestId: 2,
-        Response: {Config: {
-          'tenant-name': 'tenant',
-          username: 'who',
-          password: 'secret!'
-        }}
-      });
-      // Mimic the third response to ModelManager.CreateModel.
-      conn.msg({
-        RequestId: 3,
-        Response: {
-          Name: 'my-openstack-env',
-          OwnerTag: 'user-rose',
-          UUID: 'unique-id'
-        }
-      });
-    });
-
-    it('successfully creates a MAAS model', function(done) {
-      env.set('providerType', 'maas');
-      env.createModel('myenv', 'user-who', function(data) {
-        assert.strictEqual(data.err, undefined);
-        assert.strictEqual(data.name, 'my-maas-env');
-        assert.equal(conn.messages.length, 3);
-        assert.deepEqual(conn.messages[2], {
-          Type: 'ModelManager',
-          Version: 2,
-          Request: 'CreateModel',
-          Params: {
-            OwnerTag: 'user-who',
-            Config: {
-              attr1: 'valueA',
-              attr2: 'valueB',
-              name: 'myenv',
-              'authorized-keys': 'ssh-rsa INVALID',
-              'maas-server': 'server',
-              'maas-oauth': 'oauth',
-              'maas-agent-name': 'agent'
-            }
-          },
-          RequestId: 3
-        });
-        done();
-      });
-      // Mimic the first response to ModelManager.ConfigSkeleton.
-      conn.msg({
-        RequestId: 1,
-        Response: {Config: {attr1: 'valueA', attr2: 'valueB'}}
-      });
-      // Mimic the second response to Client.ModelGet.
-      conn.msg({
-        RequestId: 2,
-        Response: {Config: {
-          'maas-server': 'server',
-          'maas-oauth': 'oauth',
-          'maas-agent-name': 'agent'
-        }}
-      });
-      // Mimic the third response to ModelManager.CreateModel.
-      conn.msg({
-        RequestId: 3,
-        Response: {
-          Name: 'my-maas-env',
-          OwnerTag: 'user-rose',
-          UUID: 'unique-id'
-        }
-      });
-    });
-
-    it('handles failures while retrieving model skeleton', function(done) {
-      env.createModel('bad-env', 'user-dalek', function(data) {
-        assert.strictEqual(
-          data.err, 'cannot get configuration skeleton: bad wolf');
-        done();
-      });
-      // Mimic the first response to ModelManager.ConfigSkeleton.
-      conn.msg({RequestId: 1, Error: 'bad wolf'});
-    });
-
-    it('handles failures while retrieving model config', function(done) {
-      env.createModel('bad-env', 'user-dalek', function(data) {
-        assert.strictEqual(
-          data.err, 'cannot get model configuration: bad wolf');
-        done();
-      });
-      // Mimic the first response to ModelManager.ConfigSkeleton.
-      conn.msg({
-        RequestId: 1,
-        Response: {Config: {attr1: 'value1', attr2: 'value2'}}
-      });
-      // Mimic the second response to Client.ModelGet.
-      conn.msg({RequestId: 2, Error: 'bad wolf'});
     });
 
     it('handles failures while creating models', function(done) {
-      env.set('providerType', 'local');
-      env.createModel('bad-env', 'user-dalek', function(data) {
+      env.createModel('bad-model', 'user-dalek', function(data) {
         assert.strictEqual(data.err, 'bad wolf');
         done();
       });
-      // Mimic the first response to ModelManager.ConfigSkeleton.
-      conn.msg({
-        RequestId: 1,
-        Response: {Config: {attr1: 'value1', attr2: 'value2'}}
-      });
-      // Mimic the second response to Client.ModelGet.
-      conn.msg({
-        RequestId: 2,
-        Response: {Config: {}}
-      });
-      // Mimic the third response to ModelManager.CreateModel.
-      conn.msg({RequestId: 3, Error: 'bad wolf'});
+      // Mimic the response to ModelManager.CreateModel.
+      conn.msg({'request-id': 1, error: 'bad wolf'});
     });
 
     it('lists models for a specific owner', function(done) {
@@ -4408,84 +3646,33 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         ], data.envs);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
-          Type: 'ModelManager',
-          Version: 2,
-          Request: 'ListModels',
-          Params: {Tag: 'user-who'},
-          RequestId: 1
+          type: 'ModelManager',
+          version: 2,
+          request: 'ListModels',
+          params: {tag: 'user-who'},
+          'request-id': 1
         });
         done();
       });
       // Mimic response.
       conn.msg({
-        RequestId: 1,
-        Response: {
-          UserModels: [
-            {
-              Name: 'env1',
-              OwnerTag: 'user-who',
-              UUID: 'unique1',
-              LastConnection: 'today'
+        'request-id': 1,
+        response: {
+          'user-models': [{
+            model: {
+              name: 'env1',
+              'owner-tag': 'user-who',
+              uuid: 'unique1'
             },
-            {
-              Name: 'env2',
-              OwnerTag: 'user-rose',
-              UUID: 'unique2',
-              LastConnection: 'yesterday'
-            }
-          ]
-        }
-      });
-    });
-
-    it('lists models for a specific owner (legacy)', function(done) {
-      env.set('facades', {'EnvironmentManager': [1]});
-      env.listModels('user-who', function(data) {
-        assert.strictEqual(data.err, undefined);
-        assert.deepEqual([
-          {
-            name: 'env1',
-            tag: 'model-unique1',
-            owner: 'user-who',
-            uuid: 'unique1',
-            lastConnection: 'today'
-          },
-          {
-            name: 'env2',
-            tag: 'model-unique2',
-            owner: 'user-rose',
-            uuid: 'unique2',
-            lastConnection: 'yesterday'
-          }
-        ], data.envs);
-        assert.equal(conn.messages.length, 1);
-        assert.deepEqual(conn.last_message(), {
-          Type: 'EnvironmentManager',
-          Version: 1,
-          Request: 'ListEnvironments',
-          Params: {Tag: 'user-who'},
-          RequestId: 1
-        });
-        done();
-      });
-      // Mimic response.
-      conn.msg({
-        RequestId: 1,
-        Response: {
-          UserEnvironments: [
-            {
-              Name: 'env1',
-              OwnerTag: 'user-who',
-              UUID: 'unique1',
-              LastConnection: 'today'
+            'last-connection': 'today'
+          }, {
+            model: {
+              name: 'env2',
+              'owner-tag': 'user-rose',
+              uuid: 'unique2'
             },
-            {
-              Name: 'env2',
-              OwnerTag: 'user-rose',
-              UUID: 'unique2',
-              LastConnection: 'yesterday'
-            }
-          ]
+            'last-connection': 'yesterday'
+          }]
         }
       });
     });
@@ -4496,7 +3683,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       });
       // Mimic response.
-      conn.msg({RequestId: 1, Error: 'bad wolf'});
+      conn.msg({'request-id': 1, error: 'bad wolf'});
     });
 
   });

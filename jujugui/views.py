@@ -99,7 +99,6 @@ def config(request):
         'cachedFonts': False,
         # Debugging options.
         'consoleEnabled': True,
-        'simulateEvents': False,
         # The external services' URLs.
         'charmstoreURL': settings['jujugui.charmstore_url'],
         'jemURL': settings['jujugui.jem_url'],

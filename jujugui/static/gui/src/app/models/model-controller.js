@@ -115,7 +115,6 @@ YUI.add('model-controller', function(Y) {
               resolve(service);
               return;
             }
-
             if (!service || !service.get('loaded')) {
               env.getApplicationConfig(serviceId, function(result) {
                 if (result.err) {

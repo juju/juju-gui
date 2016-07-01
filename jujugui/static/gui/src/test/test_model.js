@@ -529,6 +529,7 @@ describe('test_model.js', function() {
     });
 
     describe('onDelta', function() {
+
       it('should update service units on change', function() {
         var db = new models.Database();
         var mysql = new models.Service({id: 'mysql'});
@@ -536,17 +537,26 @@ describe('test_model.js', function() {
         assert.equal(mysql.get('units') instanceof models.ServiceUnitList,
                      true);
         db.onDelta({data: {result: [
-          ['unitInfo', 'add', {Name: 'mysql/0', Status: 'pending'}],
-          ['unitInfo', 'add', {Name: 'mysql/1', Status: 'pending'}]
+          ['unitInfo', 'add', {name: 'mysql/0'}],
+          ['unitInfo', 'add', {name: 'mysql/1'}]
         ]}});
         assert.equal(mysql.get('units').size(), 2);
         db.onDelta({data: {result: [
           ['unitInfo', 'remove', {
-            Name: 'mysql/0',
-            Service: 'mysql'
+            name: 'mysql/0',
+            applicastion: 'mysql'
           }]
         ]}});
         assert.equal(mysql.get('units').size(), 1);
+      });
+
+      it('should handle messages from legacy Juju versions', function() {
+        var db = new models.Database();
+        db.onDelta({data: {result: [
+          ['serviceLegacyInfo', 'add', {Name: 'django'}]
+        ]}});
+        assert.strictEqual(db.services.size(), 1);
+        assert.strictEqual(db.services.item(0).get('id'), 'django');
       });
 
       it('should create non-existing machines on change', function() {
@@ -560,7 +570,7 @@ describe('test_model.js', function() {
         assert.equal(db.machines.size(), 0,
                      'the machine list is not be empty');
         db.onDelta({data: {result: [
-          ['machineInfo', 'change', {Id: id}]
+          ['machineInfo', 'change', {id: id}]
         ]}});
         assert.equal(db.machines.size(), 1,
                      'the machines list did not have the expected size');
@@ -578,7 +588,7 @@ describe('test_model.js', function() {
         ]);
         var service = db.services.item(0);
         db.onDelta({data: {result: [
-          ['unitInfo', 'change', {Name: id, Service: service.get('id')}]
+          ['unitInfo', 'change', {name: id, application: service.get('id')}]
         ]}});
         var unit = db.units.getById(id);
         assert.notEqual(unit, null, 'Unit was not created');
@@ -597,7 +607,7 @@ describe('test_model.js', function() {
         this._cleanups.push(machinesStub.reset);
         this._cleanups.push(unitsStub.reset);
         db.onDelta({data: {result: [
-          ['unitInfo', 'remove', {MachineId: '0'}]
+          ['unitInfo', 'remove', {'machine-id': '0'}]
         ]}});
         var args = machinesStub.lastArguments();
         assert.equal(args[0], 'change',
@@ -615,8 +625,8 @@ describe('test_model.js', function() {
            db.addUnits([my0, my1]);
            db.onDelta({data: {result: [
              ['unitInfo', 'remove', {
-               Name: 'mysql/1',
-               Service: 'mysql'
+               name: 'mysql/1',
+               application: 'mysql'
              }]
            ]}});
            var names = mysql.get('units').get('id');
@@ -630,10 +640,10 @@ describe('test_model.js', function() {
            var my0 = new models.Service({id: 'mysql', exposed: true});
            db.services.add([my0]);
            db.onDelta({data: {result: [
-             ['serviceInfo', 'add', {
-               Name: 'mysql',
-               CharmURL: 'cs:precise/mysql',
-               Exposed: false
+             ['applicationInfo', 'add', {
+               name: 'mysql',
+               'charm-url': 'cs:precise/mysql',
+               exposed: false
              }]
            ]}});
            my0.get('exposed').should.equal(false);
@@ -644,12 +654,15 @@ describe('test_model.js', function() {
          function() {
            var db = new models.Database();
            db.services.add({id: 'mysql'});
-           var my0 = {id: 'mysql/0', agent_state: 'pending'};
+           var my0 = {id: 'mysql/0', public_address: '1.2.3.4'};
            db.addUnits([my0]);
            db.onDelta({data: {result: [
-             ['unitInfo', 'add', {Name: 'mysql/0', Status: 'another'}]
+             ['unitInfo', 'add', {
+               name: 'mysql/0',
+               'public-address': '5.6.7.8'
+             }]
            ]}});
-           my0.agent_state.should.equal('another');
+           my0.public_address.should.equal('5.6.7.8');
          });
 
       it('uses default handler for unknown deltas', function() {
@@ -1540,6 +1553,7 @@ describe('test_model.js', function() {
       conn = new (Y.namespace('juju-tests.utils')).SocketStub();
       env = new juju.environments.GoEnvironment({conn: conn});
       env.connect();
+      env.set('facades', {Client: [0], Charms: [1]});
       conn.open();
       container = Y.Node.create('<div id="test" class="container"></div>');
     });
@@ -1594,21 +1608,21 @@ describe('test_model.js', function() {
     it('must send request to juju environment for local charms', function() {
       var charm = new models.Charm({id: 'local:precise/foo-4'}).load(env);
       assert(!charm.loaded);
-      assert.equal('CharmInfo', conn.last_message().Request);
+      assert.equal(conn.last_message().request, 'CharmInfo');
     });
 
     it('must handle success from local charm request', function(done) {
       var charm = new models.Charm({id: 'local:precise/foo-4'}).load(
           env,
           function(err, response) {
-            assert(!err);
-            assert.equal('wowza', charm.get('summary'));
-            assert(charm.loaded);
+            assert.strictEqual(err, false);
+            assert.equal(charm.get('summary'), 'wowza');
+            assert.strictEqual(charm.loaded, true);
             done();
           });
       var response = {
-        RequestId: conn.last_message().RequestId,
-        Response: {Meta: {Summary: 'wowza'}, Config: {}}
+        'request-id': conn.last_message()['request-id'],
+        response: {meta: {summary: 'wowza'}, config: {}}
       };
       env.dispatch_result(response);
       // The test in the callback above should run.
@@ -1627,16 +1641,14 @@ describe('test_model.js', function() {
             done();
           });
       var response = {
-        RequestId: conn.last_message().RequestId,
-        Response: {
-          Meta: {},
-          Config: {
-            Options: {
-              default_log: {
-                Default: 'global',
-                Description: 'Default log',
-                Type: 'string'
-              }
+        'request-id': conn.last_message()['request-id'],
+        response: {
+          meta: {},
+          config: {
+            default_log: {
+              default: 'global',
+              description: 'Default log',
+              type: 'string'
             }
           }
         }
@@ -1655,8 +1667,8 @@ describe('test_model.js', function() {
             done();
           });
       var response = {
-        RequestId: conn.last_message().RequestId,
-        Error: 'error'
+        'request-id': conn.last_message()['request-id'],
+        error: 'error'
       };
       env.dispatch_result(response);
       // The test in the callback above should run.

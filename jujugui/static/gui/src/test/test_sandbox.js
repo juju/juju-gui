@@ -184,25 +184,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'INVALID_STATE_ERR : Connection is closed.');
     });
 
-    it('returns ListEnvironments responses', function(done) {
+    it('returns ListModels responses', function(done) {
       var client = new ClientConnection({juju: juju});
       var data = {
-        RequestId: 42,
-        Type: 'ModelManager',
-        Request: 'ListModels'
+        'request-id': 42,
+        type: 'ModelManager',
+        request: 'ListModels'
       };
       client.onmessage = function(received) {
         var expected = {
-          RequestId: 42,
-          Response: {
-            UserModels: [{
-              Name: 'sandbox',
-              UUID: 'sandbox1',
-              OwnerTag: 'user-admin',
-              LastConnection: 'today'
+          'request-id': 42,
+          response: {
+            'user-models': [{
+              name: 'sandbox',
+              uuid: 'sandbox1',
+              'owner-tag': 'user-admin',
+              'last-connection': 'today'
             }]
           }
         };
+        console.log(received.data);
         assert.deepEqual(Y.JSON.parse(received.data), expected);
         done();
       };
@@ -213,16 +214,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('returns ConfigSkeleton responses', function(done) {
       var client = new ClientConnection({juju: juju});
       var data = {
-        RequestId: 42,
-        Type: 'ModelManager',
-        Request: 'ConfigSkeleton'
+        'request-id': 42,
+        type: 'ModelManager',
+        request: 'ConfigSkeleton'
       };
       client.onmessage = function(received) {
         var expected = {
-          RequestId: 42,
-          Response: {
-            OwnerTag: 'user-admin',
-            Config: {
+          'request-id': 42,
+          response: {
+            'owner-tag': 'user-admin',
+            config: {
               attr1: 'value1',
               attr2: 'value2',
               name: 'sandbox',

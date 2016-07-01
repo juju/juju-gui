@@ -46,25 +46,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       sessionStorage.setItem('credentials', null);
     });
 
-    // These duplicate more thorough tests in test_env_go.js.
+    // These duplicate more thorough tests in test_env_api.js.
     test('the user is initially assumed to be unauthenticated', function() {
       assert.isFalse(env.userIsAuthenticated);
     });
 
     test('successful login event marks user as authenticated', function() {
-      var data = {Response: {}};
+      var data = {response: {facades: [], 'user-info': {}}};
       env.handleLogin(data);
       assert.isTrue(env.userIsAuthenticated);
     });
 
     test('unsuccessful login event keeps user unauthenticated', function() {
-      var data = {Error: 'who are you?'};
+      var data = {error: 'who are you?'};
       env.handleLogin(data);
       assert.isFalse(env.userIsAuthenticated);
     });
 
     test('bad credentials are removed', function() {
-      var data = {Error: 'who are you?'};
+      var data = {error: 'who are you?'};
       env.handleLogin(data);
       assert.deepEqual(
         env.getCredentials(), {user: '', password: '', macaroons: null});
@@ -101,12 +101,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     test('with credentials set, login() sends an RPC message', function() {
-      env.setCredentials({user: 'user', password: 'password'});
+      env.setCredentials({user: 'admin', password: 'password'});
       env.login();
       var message = conn.last_message();
-      assert.equal('Login', message.Request);
-      assert.equal('user-user', message.Params.AuthTag);
-      assert.equal('password', message.Params.Password);
+      assert.equal(message.request, 'Login');
+      assert.equal(message.params['auth-tag'], 'user-admin');
+      assert.equal(message.params.credentials, 'password');
     });
 
   });

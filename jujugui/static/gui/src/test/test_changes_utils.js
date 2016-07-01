@@ -53,7 +53,8 @@ describe('ChangesUtils', function() {
 
   // Add a service and a unit to the given database.
   var addEntities = function(db) {
-    db.services.add({id: 'django', charm: 'cs:trusty/django-1'});
+    db.services.add({
+      id: 'django', charm: 'cs:trusty/django-1', icon: 'django.svg'});
     db.addUnits({id: 'django/0'});
   };
 
@@ -97,7 +98,17 @@ describe('ChangesUtils', function() {
   it('can generate descriptions for any change type', function() {
     addEntities(db);
     var tests = [{
-      icon: undefined,
+      icon: 'django.svg',
+      msg: ' django charm has been added.',
+      change: {
+        command: {
+          method: '_addCharm',
+          args: ['cs:trusty/django-1', 'cookies are better'],
+          options: {applicationId: 'django'}
+        }
+      }
+    }, {
+      icon: 'django.svg',
       msg: ' django has been added.',
       change: {
         command: {

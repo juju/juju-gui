@@ -47,6 +47,7 @@ describe('Environment Change Set', function() {
       password: 'password',
       ecs: ecs
     });
+    testUtils.makeStubMethod(envObj, '_addCharm');
     testUtils.makeStubMethod(envObj, '_deploy');
     testUtils.makeStubMethod(envObj, '_set_config');
     testUtils.makeStubMethod(envObj, '_add_relation');
@@ -759,6 +760,26 @@ describe('Environment Change Set', function() {
   });
 
   describe('private ENV methods', function() {
+    describe('_lazyAddCharm', function() {
+      it('adds a new `add Charm` record', function(done) {
+        var args = ['id', 'cookies are better', done, {applicationId: 'foo'}];
+        var key = ecs._lazyAddCharm(args);
+        var record = ecs.changeSet[key];
+        assert.isObject(record);
+        assert.isObject(record.command);
+        assert.equal(record.executed, false);
+        assert.equal(record.command.method, '_addCharm');
+        // Remove the functions, which will not be equal.
+        var cb = record.command.args.pop();
+        args.pop();
+        // Also remove the options object.
+        args.pop();
+        assert.deepEqual(record.command.args, args);
+        assert.deepEqual(record.command.options, {applicationId: 'foo'});
+        cb(); // Will call done().
+      });
+    });
+
     describe('_lazyDeploy', function() {
       it('creates a new `deploy` record', function(done) {
         var args = [1, 2, 'foo', 'bar', done, {modelId: 'baz'}];
@@ -1631,6 +1652,39 @@ describe('Environment Change Set', function() {
   });
 
   describe('public ENV methods', function() {
+    describe('addCharm', function() {
+      it('can immediately add a charm via the env', function() {
+        var lazyAddCharm = testUtils.makeStubMethod(ecs, '_lazyAddCharm');
+        this._cleanups.push(lazyAddCharm.reset);
+        var callback = testUtils.makeStubFunction();
+        var args = [1, 2, callback, { immediate: true}];
+        envObj.addCharm.apply(envObj, args);
+        assert.equal(envObj._addCharm.calledOnce(), true);
+        var addCharmArgs = envObj._addCharm.lastArguments();
+        // Remove the final options element, which should not be an argument to
+        // env.addCharm
+        assert.deepEqual(addCharmArgs, Array.prototype.slice.call(args, 0, -1));
+        // make sure that we don't add it to the changeSet.
+        assert.equal(lazyAddCharm.callCount(), 0);
+      });
+
+      it('can add a `addCharm` command to the changeSet', function() {
+        var lazyAddCharm = testUtils.makeStubMethod(ecs, '_lazyAddCharm');
+        this._cleanups.push(lazyAddCharm. reset);
+        var callback = testUtils.makeStubFunction();
+        var args = [1, 2, callback];
+        envObj.addCharm.apply(envObj, args);
+        var lazyAddCharmArgs = lazyAddCharm.lastArguments()[0];
+        // Assert within a loop, as Arguments do not deeply equal arrays.
+        args.forEach(function(arg, i) {
+          assert.equal(lazyAddCharmArgs[i], arg);
+        });
+        assert.equal(lazyAddCharm.calledOnce(), true);
+        // make sure we don't call the env deploy method.
+        assert.equal(envObj._addCharm.callCount(), 0);
+      });
+    });
+
     describe('deploy', function() {
       it('can immediately deploy a charm via the env', function() {
         var lazyDeploy = testUtils.makeStubMethod(ecs, '_lazyDeploy');

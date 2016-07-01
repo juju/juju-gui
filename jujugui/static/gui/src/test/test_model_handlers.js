@@ -43,155 +43,23 @@ describe('Juju delta handlers', function() {
       unitInfo = handlers.unitInfo;
     });
 
-    describe('Juju 1.x unit delta', function() {
+    describe('unit delta', function() {
       // Ensure the unit has been correctly created in the given model list.
       var assertCreated = function(list) {
         var change = {
-          Name: 'django/1',
-          Service: 'django',
-          MachineId: '1',
-          Status: 'pending',
-          StatusInfo: 'info',
-          PublicAddress: 'example.com',
-          PrivateAddress: '10.0.0.1',
-          Subordinate: false,
-          Ports: [{Number: 80, Protocol: 'tcp'}, {Number: 42, Protocol: 'udp'}]
-        };
-        unitInfo(db, 'add', change);
-        // Retrieve the unit from the list.
-        var unit = list.getById('django/1');
-        assert.strictEqual(unit.service, 'django');
-        assert.strictEqual(unit.machine, '1');
-        assert.strictEqual(unit.agent_state, 'pending');
-        assert.strictEqual(unit.agent_state_info, 'info');
-        assert.strictEqual(unit.workloadStatusMessage, '');
-        assert.strictEqual(unit.public_address, 'example.com');
-        assert.strictEqual(unit.private_address, '10.0.0.1');
-        assert.strictEqual(unit.subordinate, false, 'subordinate');
-        assert.deepEqual(unit.open_ports, ['80/tcp', '42/udp']);
-      };
-
-      it('creates a unit in the database (global list)', function() {
-        db.services.add({id: 'django'});
-        assertCreated(db.units);
-      });
-
-      it('creates a unit in the database (service list)', function() {
-        var django = db.services.add({id: 'django'});
-        assertCreated(django.get('units'));
-      });
-
-      // Ensure the unit has been correctly updated in the given model list.
-      var assertUpdated = function(list) {
-        db.addUnits({
-          id: 'django/2',
-          agent_state: 'pending',
-          public_address: 'example.com',
-          private_address: '10.0.0.1'
-        });
-        var change = {
-          Name: 'django/2',
-          Application: 'django',
-          Status: 'started',
-          PublicAddress: 'example.com',
-          PrivateAddress: '192.168.0.1',
-          Subordinate: true
-        };
-        unitInfo(db, 'change', change);
-        // Retrieve the unit from the database.
-        var unit = list.getById('django/2');
-        assert.strictEqual(unit.agent_state, 'started');
-        assert.strictEqual(unit.public_address, 'example.com');
-        assert.strictEqual(unit.private_address, '192.168.0.1');
-        assert.strictEqual(unit.subordinate, true, 'subordinate');
-      };
-
-      it('updates a unit in the database (global list)', function() {
-        db.services.add({id: 'django'});
-        assertUpdated(db.units);
-      });
-
-      it('updates a unit in the database (service list)', function() {
-        var django = db.services.add({id: 'django'});
-        assertUpdated(django.get('units'));
-      });
-
-      it('creates or updates the corresponding machine', function() {
-        var machine;
-        db.services.add({id: 'django'});
-        var change = {
-          Name: 'django/2',
-          Application: 'django',
-          MachineId: '1',
-          Status: 'pending',
-          PublicAddress: 'example.com'
-        };
-        unitInfo(db, 'add', change);
-        assert.strictEqual(1, db.machines.size());
-        // Retrieve the machine from the database.
-        machine = db.machines.getById(1);
-        assert.strictEqual('example.com', machine.public_address);
-        // Update the machine.
-        change.PublicAddress = 'example.com/foo';
-        unitInfo(db, 'change', change);
-        assert.strictEqual(1, db.machines.size());
-        // Retrieve the machine from the database (again).
-        machine = db.machines.getById('1');
-        assert.strictEqual('example.com/foo', machine.public_address);
-      });
-
-      it('skips machine create if an app is unassociated', function() {
-        db.services.add({id: 'django'});
-        var change = {
-          Name: 'django/2',
-          Application: 'django',
-          MachineId: '',
-          Status: 'pending',
-          PublicAddress: 'example.com'
-        };
-        unitInfo(db, 'add', change);
-        assert.strictEqual(0, db.machines.size());
-      });
-
-      it('removes a unit from the database', function() {
-        var django = db.services.add({id: 'django'});
-        db.addUnits({
-          id: 'django/2',
-          agent_state: 'pending',
-          public_address: 'example.com',
-          private_address: '10.0.0.1'
-        });
-        var change = {
-          Name: 'django/2',
-          Application: 'django',
-          Status: 'started',
-          PublicAddress: 'example.com',
-          PrivateAddress: '192.168.0.1'
-        };
-        unitInfo(db, 'remove', change);
-        // The unit has been removed from both the global list and the app.
-        assert.strictEqual(db.units.size(), 0);
-        assert.strictEqual(django.get('units').size(), 0);
-      });
-    });
-
-    describe('Juju 2.x unit delta', function() {
-      // Ensure the unit has been correctly created in the given model list.
-      var assertCreated = function(list) {
-        var change = {
-          Name: 'django/1',
-          Application: 'django',
-          MachineId: '1',
-          JujuStatus: {
-            Current: 'allocating',
-            Message: 'waiting for machine',
-            Data: {}
+          name: 'django/1',
+          application: 'django',
+          'machine-id': '1',
+          'agent-status': {
+            current: 'allocating',
+            message: 'waiting for machine',
+            data: {}
           },
-          WorkloadStatus: {Message: 'exterminating'},
-          PublicAddress: 'example.com',
-          PrivateAddress: '10.0.0.1',
-          Subordinate: false,
-          Ports: [{Number: 80, Protocol: 'tcp'}, {Number: 42, Protocol: 'udp'}]
+          'workload-status': {message: 'exterminating'},
+          'public-address': 'example.com',
+          'private-address': '10.0.0.1',
+          subordinate: false,
+          ports: [{number: 80, protocol: 'tcp'}, {number: 42, protocol: 'udp'}]
         };
         unitInfo(db, 'add', change);
         // Retrieve the unit from the list.
@@ -226,27 +94,27 @@ describe('Juju delta handlers', function() {
           private_address: '10.0.0.1'
         });
         var change = {
-          Name: 'django/2',
-          Application: 'django',
-          JujuStatus: {
-            Current: 'idle',
-            Message: '',
-            Data: {}
+          name: 'django/2',
+          application: 'django',
+          'agent-status': {
+            current: 'idle',
+            message: '',
+            data: {}
           },
-          WorkloadStatus: {
-            Current: 'maintenance',
-            Message: 'installing charm software'
+          'workload-status': {
+            current: 'maintenance',
+            message: 'installing charm software'
           },
-          PublicAddress: 'example.com',
-          PrivateAddress: '192.168.0.1',
-          Subordinate: true
+          'public-address': 'example.com',
+          'private-address': '192.168.0.1',
+          subordinate: true
         };
         if (workloadInError) {
-          change.JujuStatus.Current = 'executing';
-          change.WorkloadStatus = {
-            Current: 'error',
-            Message: 'hook run error',
-            Data: {foo: 'bar'}
+          change['agent-status'].current = 'executing';
+          change['workload-status'] = {
+            current: 'error',
+            message: 'hook run error',
+            data: {foo: 'bar'}
           };
         }
         unitInfo(db, 'change', change);
@@ -287,19 +155,19 @@ describe('Juju delta handlers', function() {
         var machine;
         db.services.add({id: 'django'});
         var change = {
-          Name: 'django/2',
-          Application: 'django',
-          MachineId: '1',
-          JujuStatus: {
-            Current: 'idle',
-            Message: '',
-            Data: {}
+          name: 'django/2',
+          application: 'django',
+          'machine-id': '1',
+          'agent-status': {
+            current: 'idle',
+            message: '',
+            data: {}
           },
-          WorkloadStatus: {
-            Current: 'maintenance',
-            Message: 'installing charm software'
+          'workload-status': {
+            current: 'maintenance',
+            message: 'installing charm software'
           },
-          PublicAddress: 'example.com'
+          'public-address': 'example.com'
         };
         unitInfo(db, 'add', change);
         assert.strictEqual(1, db.machines.size());
@@ -307,7 +175,7 @@ describe('Juju delta handlers', function() {
         machine = db.machines.getById(1);
         assert.strictEqual('example.com', machine.public_address);
         // Update the machine.
-        change.PublicAddress = 'example.com/foo';
+        change['public-address'] = 'example.com/foo';
         unitInfo(db, 'change', change);
         assert.strictEqual(1, db.machines.size());
         // Retrieve the machine from the database (again).
@@ -318,19 +186,19 @@ describe('Juju delta handlers', function() {
       it('skips machine create if an app is unassociated', function() {
         db.services.add({id: 'django'});
         var change = {
-          Name: 'django/2',
-          Application: 'django',
-          MachineId: '',
-          JujuStatus: {
-            Current: 'idle',
-            Message: '',
-            Data: {}
+          name: 'django/2',
+          application: 'django',
+          'machine-id': '',
+          'agent-status': {
+            current: 'idle',
+            message: '',
+            data: {}
           },
-          WorkloadStatus: {
-            Current: 'maintenance',
-            Message: 'installing charm software'
+          'workload-status': {
+            current: 'maintenance',
+            message: 'installing charm software'
           },
-          PublicAddress: 'example.com'
+          'public-address': 'example.com'
         };
         unitInfo(db, 'add', change);
         assert.strictEqual(0, db.machines.size());
@@ -345,19 +213,19 @@ describe('Juju delta handlers', function() {
           private_address: '10.0.0.1'
         });
         var change = {
-          Name: 'django/2',
-          Application: 'django',
-          JujuStatus: {
-            Current: 'idle',
-            Message: '',
-            Data: {}
+          name: 'django/2',
+          application: 'django',
+          'agent-status': {
+            current: 'idle',
+            message: '',
+            data: {}
           },
-          WorkloadStatus: {
-            Current: 'idle',
-            Message: ''
+          'workload-status': {
+            current: 'idle',
+            message: ''
           },
-          PublicAddress: 'example.com',
-          PrivateAddress: '192.168.0.1'
+          'public-address': 'example.com',
+          'private-address': '192.168.0.1'
         };
         unitInfo(db, 'remove', change);
         // The unit has been removed from both the global list and the app.
@@ -383,13 +251,13 @@ describe('Juju delta handlers', function() {
 
     it('creates an application in the database', function() {
       var change = {
-        Name: 'django',
-        CharmURL: 'cs:precise/django-42',
-        Exposed: true,
-        Constraints: constraints,
-        Config: config,
-        Life: 'alive',
-        Subordinate: true
+        name: 'django',
+        'charm-url': 'cs:precise/django-42',
+        exposed: true,
+        constraints: constraints,
+        config: config,
+        life: 'alive',
+        subordinate: true
       };
       var oldUpdateConfig = models.Service.prototype.updateConfig;
       models.Service.prototype.updateConfig = testUtils.makeStubFunction();
@@ -416,11 +284,11 @@ describe('Juju delta handlers', function() {
         exposed: true
       });
       var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false,
-        Life: 'dying',
-        Subordinate: false
+        name: 'wordpress',
+        'charm-url': 'cs:quantal/wordpress-11',
+        exposed: false,
+        life: 'dying',
+        subordinate: false
       };
       applicationInfo(db, 'change', change);
       assert.strictEqual(db.services.size(), 1);
@@ -439,9 +307,9 @@ describe('Juju delta handlers', function() {
         exposed: true
       });
       var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false
+        name: 'wordpress',
+        'charm-url': 'cs:quantal/wordpress-11',
+        exposed: false
       };
       applicationInfo(db, 'change', change);
       assert.strictEqual(1, db.services.size());
@@ -457,10 +325,10 @@ describe('Juju delta handlers', function() {
         exposed: true
       });
       var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false,
-        Constraints: {tags: ['tag1', 'tag2', 'tag3']}
+        name: 'wordpress',
+        'charm-url': 'cs:quantal/wordpress-11',
+        exposed: false,
+        constraints: {tags: ['tag1', 'tag2', 'tag3']}
       };
       applicationInfo(db, 'change', change);
       assert.strictEqual(1, db.services.size());
@@ -477,10 +345,10 @@ describe('Juju delta handlers', function() {
         exposed: true
       });
       var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false,
-        Constraints: {tags: []}
+        name: 'wordpress',
+        'charm-url': 'cs:quantal/wordpress-11',
+        exposed: false,
+        constraints: {tags: []}
       };
       applicationInfo(db, 'change', change);
       assert.strictEqual(1, db.services.size());
@@ -496,9 +364,9 @@ describe('Juju delta handlers', function() {
         exposed: true
       });
       var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false
+        name: 'wordpress',
+        'charm-url': 'cs:quantal/wordpress-11',
+        exposed: false
       };
       applicationInfo(db, 'change', change);
       assert.strictEqual(1, db.services.size());
@@ -516,10 +384,10 @@ describe('Juju delta handlers', function() {
       });
       var changedConstraints = {'arch': 'i386'};
       var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false,
-        Constraints: changedConstraints
+        name: 'wordpress',
+        'charm-url': 'cs:quantal/wordpress-11',
+        exposed: false,
+        constraints: changedConstraints
       };
       applicationInfo(db, 'change', change);
       assert.strictEqual(1, db.services.size());
@@ -535,9 +403,9 @@ describe('Juju delta handlers', function() {
         exposed: true
       });
       var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false
+        name: 'wordpress',
+        'charm-url': 'cs:quantal/wordpress-11',
+        exposed: false
       };
       applicationInfo(db, 'remove', change);
       assert.strictEqual(0, db.services.size());
@@ -548,213 +416,14 @@ describe('Juju delta handlers', function() {
       var hook2 = testUtils.makeStubFunction();
       models._applicationChangedHooks.django = [hook1, hook2];
       var change = {
-        Name: 'django',
-        CharmURL: 'cs:precise/django-42',
-        Exposed: true,
-        Constraints: constraints,
-        Config: config,
-        Life: 'alive'
+        name: 'django',
+        'charm-url': 'cs:precise/django-42',
+        exposed: true,
+        constraints: constraints,
+        config: config,
+        life: 'alive'
       };
       applicationInfo(db, 'change', change);
-      // The two hooks have been called.
-      assert.strictEqual(hook1.calledOnce(), true);
-      assert.strictEqual(hook1.lastArguments().length, 0);
-      assert.strictEqual(hook2.calledOnce(), true);
-      assert.strictEqual(hook2.lastArguments().length, 0);
-      // The hooks have been garbage collected.
-      assert.deepEqual(models._applicationChangedHooks, {});
-    });
-
-  });
-
-  describe('serviceInfo handler', function() {
-    var serviceInfo, constraints, config;
-
-    before(function() {
-      serviceInfo = handlers.serviceInfo;
-      constraints = {
-        arch: 'amd64',
-        mem: 2000,
-        'cpu-cores': 4
-      };
-      config = {cow: 'pie'};
-    });
-
-    it('creates an application in the database', function() {
-      var change = {
-        Name: 'django',
-        CharmURL: 'cs:precise/django-42',
-        Exposed: true,
-        Constraints: constraints,
-        Config: config,
-        Life: 'alive',
-        Subordinate: true
-      };
-      var oldUpdateConfig = models.Service.prototype.updateConfig;
-      models.Service.prototype.updateConfig = testUtils.makeStubFunction();
-      serviceInfo(db, 'add', change);
-      assert.strictEqual(db.services.size(), 1);
-      // Retrieve the application from the database.
-      var application = db.services.getById('django');
-      assert.strictEqual(application.get('charm'), 'cs:precise/django-42');
-      assert.strictEqual(application.get('exposed'), true, 'exposed');
-      assert.deepEqual(application.get('constraints'), constraints);
-      // The config on the application is initially set to the customized
-      // subset in the delta stream. The full config will be gotten via a call
-      // to the Application.Get API.
-      assert.equal(db.services.item(0).updateConfig.callCount(), 1);
-      models.Service.prototype.updateConfig = oldUpdateConfig;
-      assert.strictEqual(application.get('life'), 'alive');
-      assert.strictEqual(application.get('subordinate'), true, 'subordinate');
-    });
-
-    it('updates an application in the database', function() {
-      db.services.add({
-        id: 'wordpress',
-        charm: 'cs:quantal/wordpress-11',
-        exposed: true
-      });
-      var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false,
-        Life: 'dying',
-        Subordinate: false
-      };
-      serviceInfo(db, 'change', change);
-      assert.strictEqual(db.services.size(), 1);
-      // Retrieve the application from the database.
-      var application = db.services.getById('wordpress');
-      assert.strictEqual(application.get('charm'), 'cs:quantal/wordpress-11');
-      assert.strictEqual(application.get('exposed'), false, 'exposed');
-      assert.strictEqual('dying', application.get('life'));
-      assert.strictEqual(application.get('subordinate'), false, 'subordinate');
-    });
-
-    it('handles missing constraints', function() {
-      db.services.add({
-        id: 'wordpress',
-        charm: 'cs:quantal/wordpress-11',
-        exposed: true
-      });
-      var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false
-      };
-      serviceInfo(db, 'change', change);
-      assert.strictEqual(1, db.services.size());
-      // Retrieve the application from the database.
-      var application = db.services.getById('wordpress');
-      assert.deepEqual(application.get('constraints'), {});
-    });
-
-    it('converts the tags constraint into a string', function() {
-      db.services.add({
-        id: 'wordpress',
-        charm: 'cs:quantal/wordpress-11',
-        exposed: true
-      });
-      var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false,
-        Constraints: {tags: ['tag1', 'tag2', 'tag3']}
-      };
-      serviceInfo(db, 'change', change);
-      assert.strictEqual(1, db.services.size());
-      // Retrieve the application from the database.
-      var application = db.services.getById('wordpress');
-      assert.deepEqual(
-        application.get('constraints'), {tags: 'tag1,tag2,tag3'});
-    });
-
-    it('handle empty tags constraint', function() {
-      db.services.add({
-        id: 'wordpress',
-        charm: 'cs:quantal/wordpress-11',
-        exposed: true
-      });
-      var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false,
-        Constraints: {tags: []}
-      };
-      serviceInfo(db, 'change', change);
-      assert.strictEqual(1, db.services.size());
-      // Retrieve the application from the database.
-      var application = db.services.getById('wordpress');
-      assert.deepEqual(application.get('constraints'), {});
-    });
-
-    it('if configs are not in the change stream they are {}', function() {
-      db.services.add({
-        id: 'wordpress',
-        charm: 'cs:quantal/wordpress-11',
-        exposed: true
-      });
-      var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false
-      };
-      serviceInfo(db, 'change', change);
-      assert.strictEqual(1, db.services.size());
-      // Retrieve the application from the database.
-      var application = db.services.getById('wordpress');
-      assert.deepEqual({}, application.get('config'));
-    });
-
-    it('handles constraint changes', function() {
-      db.services.add({
-        id: 'wordpress',
-        charm: 'cs:quantal/wordpress-11',
-        exposed: true,
-        constraints: constraints
-      });
-      var changedConstraints = {'arch': 'i386'};
-      var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false,
-        Constraints: changedConstraints
-      };
-      serviceInfo(db, 'change', change);
-      assert.strictEqual(1, db.services.size());
-      // Retrieve the application from the database.
-      var application = db.services.getById('wordpress');
-      assert.deepEqual(changedConstraints, application.get('constraints'));
-    });
-
-    it('removes an application from the database', function() {
-      db.services.add({
-        id: 'wordpress',
-        charm: 'cs:quantal/wordpress-11',
-        exposed: true
-      });
-      var change = {
-        Name: 'wordpress',
-        CharmURL: 'cs:quantal/wordpress-11',
-        Exposed: false
-      };
-      serviceInfo(db, 'remove', change);
-      assert.strictEqual(0, db.services.size());
-    });
-
-    it('executes collected application hooks on change', function() {
-      var hook1 = testUtils.makeStubFunction();
-      var hook2 = testUtils.makeStubFunction();
-      models._applicationChangedHooks.django = [hook1, hook2];
-      var change = {
-        Name: 'django',
-        CharmURL: 'cs:precise/django-42',
-        Exposed: true,
-        Constraints: constraints,
-        Config: config,
-        Life: 'alive'
-      };
-      serviceInfo(db, 'change', change);
       // The two hooks have been called.
       assert.strictEqual(hook1.calledOnce(), true);
       assert.strictEqual(hook1.lastArguments().length, 0);
@@ -772,21 +441,21 @@ describe('Juju delta handlers', function() {
     before(function() {
       remoteapplicationInfo = handlers.remoteapplicationInfo;
       status = {
-        Current: 'idle',
-        Message: 'waiting',
-        Data: {},
-        Since: 'yesterday'
+        current: 'idle',
+        message: 'waiting',
+        data: {},
+        since: 'yesterday'
       };
       url = 'local:/u/who/model/django';
     });
 
     it('creates a remote application in the database', function() {
       var change = {
-        ApplicationURL: url,
-        Name: 'django',
-        EnvUUID: 'uuid',
-        Life: 'alive',
-        Status: status
+        'application-url': url,
+        name: 'django',
+        'model-uuid': 'uuid',
+        life: 'alive',
+        status: status
       };
       // Send the mega-watcher change.
       remoteapplicationInfo(db, 'add', change);
@@ -815,11 +484,11 @@ describe('Juju delta handlers', function() {
         life: 'alive'
       });
       var change = {
-        ApplicationURL: url,
-        Name: 'rails',
-        EnvUUID: 'uuid',
-        Life: 'dying',
-        Status: status
+        'application-url': url,
+        name: 'rails',
+        'model-uuid': 'uuid',
+        life: 'dying',
+        status: status
       };
       // Send the mega-watcher change.
       remoteapplicationInfo(db, 'change', change);
@@ -848,10 +517,10 @@ describe('Juju delta handlers', function() {
         life: 'alive'
       });
       var change = {
-        ApplicationURL: url,
-        Name: 'django',
-        EnvUUID: 'uuid',
-        Life: 'alive',
+        'application-url': url,
+        name: 'django',
+        'model-uuid': 'uuid',
+        life: 'alive',
       };
       // Send the mega-watcher change to remove the remote application.
       remoteapplicationInfo(db, 'remove', change);
@@ -877,72 +546,34 @@ describe('Juju delta handlers', function() {
       ];
       deltaEndpoints = [
         {
-          Relation: {
-            Interface: 'http',
-            Limit: 1,
-            Name: 'reverseproxy',
-            Optional: false,
-            Role: 'requirer',
-            Scope: 'global'
+          relation: {
+            interface: 'http',
+            limit: 1,
+            name: 'reverseproxy',
+            optional: false,
+            role: 'requirer',
+            scope: 'global'
           },
-          ApplicationName: 'haproxy'
+          'application-name': 'haproxy'
         },
         {
-          Relation: {
-            Interface: 'http',
-            Limit: 0,
-            Name: 'website',
-            Optional: false,
-            Role: 'provider',
-            Scope: 'global'
+          relation: {
+            interface: 'http',
+            limit: 0,
+            name: 'website',
+            optional: false,
+            role: 'provider',
+            scope: 'global'
           },
-          ApplicationName: 'wordpress'
+          'application-name': 'wordpress'
         }
       ];
     });
 
     it('creates a relation in the database', function() {
       var change = {
-        Key: relationKey,
-        Endpoints: deltaEndpoints
-      };
-      relationInfo(db, 'add', change);
-      assert.strictEqual(1, db.relations.size());
-      // Retrieve the relation from the database.
-      var relation = db.relations.getById(relationKey);
-      assert.isNotNull(relation);
-      assert.strictEqual('http', relation.get('interface'));
-      assert.strictEqual('global', relation.get('scope'));
-      assert.deepEqual(dbEndpoints, relation.get('endpoints'));
-    });
-
-    it('creates a relation in the database (legacy API)', function() {
-      var change = {
-        Key: relationKey,
-        Endpoints: [
-          {
-            Relation: {
-              Interface: 'http',
-              Limit: 1,
-              Name: 'reverseproxy',
-              Optional: false,
-              Role: 'requirer',
-              Scope: 'global'
-            },
-            ServiceName: 'haproxy'
-          },
-          {
-            Relation: {
-              Interface: 'http',
-              Limit: 0,
-              Name: 'website',
-              Optional: false,
-              Role: 'provider',
-              Scope: 'global'
-            },
-            ServiceName: 'wordpress'
-          }
-        ]
+        key: relationKey,
+        endpoints: deltaEndpoints
       };
       relationInfo(db, 'add', change);
       assert.strictEqual(1, db.relations.size());
@@ -963,14 +594,14 @@ describe('Juju delta handlers', function() {
         endpoints: dbEndpoints
       });
       var firstEndpoint = deltaEndpoints[0],
-          firstRelation = firstEndpoint.Relation;
-      firstEndpoint.ApplicationName = 'mysql';
-      firstRelation.Name = 'db';
-      firstRelation.Interface = 'mysql';
-      firstRelation.Scope = 'local';
+          firstRelation = firstEndpoint.relation;
+      firstEndpoint['application-name'] = 'mysql';
+      firstRelation.name = 'db';
+      firstRelation.interface = 'mysql';
+      firstRelation.scope = 'local';
       var change = {
-        Key: relationKey,
-        Endpoints: deltaEndpoints
+        key: relationKey,
+        endpoints: deltaEndpoints
       };
       var expectedEndpoints = [
         ['mysql', {role: 'requirer', name: 'db'}],
@@ -994,8 +625,8 @@ describe('Juju delta handlers', function() {
         endpoints: dbEndpoints
       });
       var change = {
-        Key: relationKey,
-        Endpoints: deltaEndpoints
+        key: relationKey,
+        endpoints: deltaEndpoints
       };
       relationInfo(db, 'remove', change);
       assert.strictEqual(db.relations.size(), 0);
@@ -1004,17 +635,17 @@ describe('Juju delta handlers', function() {
     it('waits for the application to be available', function() {
       db.services.reset();
       var change = {
-        Key: 'haproxy:peer',
-        Endpoints: [{
-          Relation: {
-            Interface: 'haproxy-peer',
-            Limit: 1,
-            Name: 'peer',
-            Optional: false,
-            Role: 'peer',
-            Scope: 'global'
+        key: 'haproxy:peer',
+        endpoints: [{
+          relation: {
+            interface: 'haproxy-peer',
+            limit: 1,
+            name: 'peer',
+            optional: false,
+            role: 'peer',
+            scope: 'global'
           },
-          ApplicationName: 'haproxy'
+          'application-name': 'haproxy'
         }]
       };
       relationInfo(db, 'change', change);
@@ -1022,10 +653,10 @@ describe('Juju delta handlers', function() {
       assert.strictEqual(db.relations.size(), 0);
       // After processing an extraneous application change, the relation is
       // still pending.
-      handlers.serviceInfo(db, 'change', {Name: 'mysql'});
+      handlers.applicationInfo(db, 'change', {name: 'mysql'});
       assert.strictEqual(db.relations.size(), 0);
       // After processing the corresponding application, the relation is added.
-      handlers.serviceInfo(db, 'change', {Name: 'haproxy'});
+      handlers.applicationInfo(db, 'change', {name: 'haproxy'});
       assert.strictEqual(db.relations.size(), 1);
       var relation = db.relations.getById('haproxy:peer');
       assert.isNotNull(relation);
@@ -1043,36 +674,36 @@ describe('Juju delta handlers', function() {
 
     it('creates a machine in the database', function() {
       var change = {
-        Id: '1',
-        InstanceId: 'my-machine-instance',
-        Status: 'pending',
-        StatusInfo: 'info',
-        Addresses: [
+        id: '1',
+        'instance-id': 'my-machine-instance',
+        'agent-status': {current: 'pending', message: 'info'},
+        addresses: [
           {
-            NetworkName: '',
-            NetworkScope: 'public',
-            Type: 'hostname',
-            Value: 'example.com'
+            'space-name': '',
+            scope: 'public',
+            type: 'hostname',
+            value: 'example.com'
           },
           {
-            NetworkName: '',
-            NetworkScope: 'local-cloud',
-            Type: 'ipv4',
-            Value: '10.0.0.1'
+            'space-name': '',
+            scope: 'local-cloud',
+            type: 'ipv4',
+            value: '10.0.0.1'
           }
         ],
-        HardwareCharacteristics: {
-          Arch: 'amd64',
-          CpuCores: 1,
-          CpuPower: 100,
-          Mem: 1740,
-          RootDisk: 8192
+        'hardware-characteristics': {
+          arch: 'amd64',
+          'cpu-cores': 1,
+          'cpu-power': 100,
+          mem: 1740,
+          'root-disk': 8192,
+          'availability-zone': 'zone'
         },
-        Jobs: ['JobHostUnits'],
-        Life: 'alive',
-        Series: 'trusty',
-        SupportedContainers: ['lxc'],
-        SupportedContainersKnown: true
+        jobs: ['JobHostUnits'],
+        life: 'alive',
+        series: 'trusty',
+        'supported-containers': ['lxc'],
+        'supported-containers-known': true
       };
       machineInfo(db, 'change', change);
       assert.strictEqual(db.machines.size(), 1);
@@ -1086,7 +717,12 @@ describe('Juju delta handlers', function() {
         {name: '', scope: 'local-cloud', type: 'ipv4', value: '10.0.0.1'}
       ]);
       assert.deepEqual(machine.hardware, {
-        arch: 'amd64', cpuCores: 1, cpuPower: 100, mem: 1740, disk: 8192
+        arch: 'amd64',
+        cpuCores: 1,
+        cpuPower: 100,
+        mem: 1740,
+        disk: 8192,
+        availabilityZone: 'zone'
       });
       assert.deepEqual(machine.jobs, ['JobHostUnits']);
       assert.strictEqual(machine.life, 'alive');
@@ -1105,14 +741,13 @@ describe('Juju delta handlers', function() {
         supportedContainers: null
       });
       var change = {
-        Id: '2',
-        InstanceId: 'instance-47',
-        Status: 'started',
-        StatusInfo: '',
-        Series: 'saucy',
-        Life: 'dying',
-        SupportedContainers: ['lxc', 'kvm'],
-        SupportedContainersKnown: true
+        id: '2',
+        'instance-id': 'instance-47',
+        'agent-status': {current: 'started'},
+        series: 'saucy',
+        life: 'dying',
+        'supported-containers': ['lxc', 'kvm'],
+        'supported-containers-known': true
       };
       machineInfo(db, 'change', change);
       assert.strictEqual(db.machines.size(), 1);
@@ -1133,9 +768,9 @@ describe('Juju delta handlers', function() {
         agent_state: 'started'
       });
       var change = {
-        Id: '3',
-        InstanceId: 'instance-42',
-        Status: 'started'
+        id: '3',
+        'instance-id': 'instance-42',
+        'agent-status': {current: 'started'}
       };
       machineInfo(db, 'remove', change);
       assert.strictEqual(db.machines.size(), 0);
@@ -1143,9 +778,9 @@ describe('Juju delta handlers', function() {
 
     it('handles missing addresses', function() {
       var change = {
-        Id: '42',
-        InstanceId: 'my-machine-instance',
-        Status: 'started'
+        id: '42',
+        'instance-id': 'my-machine-instance',
+        'agent-status': {current: 'started'}
       };
       machineInfo(db, 'change', change);
       assert.strictEqual(db.machines.size(), 1);
@@ -1156,9 +791,9 @@ describe('Juju delta handlers', function() {
 
     it('handles missing hardware info', function() {
       var change = {
-        Id: '42',
-        InstanceId: 'my-machine-instance',
-        Status: 'started'
+        id: '42',
+        'instance-id': 'my-machine-instance',
+        'agent-status': {current: 'started'}
       };
       machineInfo(db, 'change', change);
       assert.strictEqual(db.machines.size(), 1);
@@ -1169,10 +804,10 @@ describe('Juju delta handlers', function() {
 
     it('handles partial hardware info', function() {
       var change = {
-        Id: '42',
-        InstanceId: 'my-machine-instance',
-        Status: 'started',
-        HardwareCharacteristics: {Arch: 'amd64'}
+        id: '42',
+        'instance-id': 'my-machine-instance',
+        'agent-status': {current: 'started'},
+        'hardware-characteristics': {arch: 'amd64'}
       };
       machineInfo(db, 'change', change);
       assert.strictEqual(db.machines.size(), 1);
@@ -1188,11 +823,11 @@ describe('Juju delta handlers', function() {
 
     it('handles supported containers not known', function() {
       var change = {
-        Id: '42',
-        InstanceId: 'my-machine-instance',
-        Status: 'started',
-        SupportedContainers: [],
-        SupportedContainersKnown: false
+        id: '42',
+        'instance-id': 'my-machine-instance',
+        'agent-status': {current: 'started'},
+        'supported-containers': [],
+        'supported-containers-known': false
       };
       machineInfo(db, 'change', change);
       assert.strictEqual(db.machines.size(), 1);
@@ -1214,21 +849,8 @@ describe('Juju delta handlers', function() {
       db.services.add({id: 'django'});
       var annotations = {'gui-x': '42', 'gui-y': '47'};
       var change = {
-        Tag: 'application-django',
-        Annotations: annotations
-      };
-      annotationInfo(db, 'add', change);
-      // Retrieve the annotations from the database.
-      var application = db.services.getById('django');
-      assert.deepEqual(annotations, application.get('annotations'));
-    });
-
-    it('stores annotations on an application (legacy)', function() {
-      db.services.add({id: 'django'});
-      var annotations = {'gui-x': '42', 'gui-y': '47'};
-      var change = {
-        Tag: 'service-django',
-        Annotations: annotations
+        tag: 'application-django',
+        annotations: annotations
       };
       annotationInfo(db, 'add', change);
       // Retrieve the annotations from the database.
@@ -1243,8 +865,8 @@ describe('Juju delta handlers', function() {
       db.addUnits(unitData);
       var annotations = {'foo': '42', 'bar': '47'};
       var change = {
-        Tag: 'unit-django-2',
-        Annotations: annotations
+        tag: 'unit-django-2',
+        annotations: annotations
       };
       annotationInfo(db, 'add', change);
       // Retrieve the annotations from the database.
@@ -1260,8 +882,8 @@ describe('Juju delta handlers', function() {
       db.machines.add({id: '1'});
       var annotations = {'foo': '42', 'bar': '47'};
       var change = {
-        Tag: 'machine-1',
-        Annotations: annotations
+        tag: 'machine-1',
+        annotations: annotations
       };
       annotationInfo(db, 'add', change);
       // Retrieve the annotations from the database.
@@ -1269,11 +891,11 @@ describe('Juju delta handlers', function() {
       assert.deepEqual(annotations, machine.annotations);
     });
 
-    it('stores annotations on the environment', function() {
+    it('stores annotations on the model', function() {
       var annotations = {'foo': '42', 'bar': '47'};
       var change = {
-        Tag: 'environment-foo',
-        Annotations: annotations
+        tag: 'model-foo',
+        annotations: annotations
       };
       annotationInfo(db, 'add', change);
       // Retrieve the annotations from the database.
@@ -1286,8 +908,8 @@ describe('Juju delta handlers', function() {
           expected = {'gui-x': '42', 'gui-y': '47', 'gui-z': 'Now in 3D!'};
       db.services.add({id: 'django', annotations: initial});
       var change = {
-        Tag: 'application-django',
-        Annotations: next
+        tag: 'application-django',
+        annotations: next
       };
       annotationInfo(db, 'change', change);
       // Retrieve the annotations from the database.
@@ -1300,8 +922,8 @@ describe('Juju delta handlers', function() {
       db.services.add({id: 'django', exposed: true});
       var annotations = {'gui-x': '42', 'gui-y': '47'};
       var change = {
-        Tag: 'application-django',
-        Annotations: annotations
+        tag: 'application-django',
+        annotations: annotations
       };
       annotationInfo(db, 'add', change);
       // Retrieve the annotations from the database.
@@ -1321,8 +943,8 @@ describe('Juju delta handlers', function() {
       };
       db.addUnits(unitData);
       var change = {
-        Tag: 'unit-django-2',
-        Annotations: annotations
+        tag: 'unit-django-2',
+        annotations: annotations
       };
       annotationInfo(db, 'add', change);
       // Retrieve the annotations from the database.
@@ -1336,8 +958,8 @@ describe('Juju delta handlers', function() {
     it('does not create new model instances', function() {
       var annotations = {'gui-x': '42', 'gui-y': '47'};
       var change = {
-        Tag: 'application-django',
-        Annotations: annotations
+        tag: 'application-django',
+        annotations: annotations
       };
       annotationInfo(db, 'add', change);
       assert.strictEqual(0, db.services.size());
@@ -1369,9 +991,6 @@ describe('Juju delta handlers utilities', function() {
       assert.equal('mysql', cleanUpEntityTags('application-mysql'));
       assert.equal(
           'buildbot-master', cleanUpEntityTags('application-buildbot-master'));
-      assert.equal('mysql', cleanUpEntityTags('service-mysql'));
-      assert.equal(
-          'buildbot-master', cleanUpEntityTags('service-buildbot-master'));
       // Clean up unit tags.
       assert.equal('mysql/47', cleanUpEntityTags('unit-mysql-47'));
       assert.equal(
@@ -1379,11 +998,9 @@ describe('Juju delta handlers utilities', function() {
       // Clean up machine tags.
       assert.equal('0', cleanUpEntityTags('machine-0'));
       assert.equal('42', cleanUpEntityTags('machine-42'));
-      // Clean up model and environment tags.
+      // Clean up model tags.
       assert.equal('aws', cleanUpEntityTags('model-aws'));
       assert.equal('my-env', cleanUpEntityTags('model-my-env'));
-      assert.equal('aws', cleanUpEntityTags('environment-aws'));
-      assert.equal('my-env', cleanUpEntityTags('environment-my-env'));
     });
 
     it('ignores bad values', function() {
@@ -1404,8 +1021,8 @@ describe('Juju delta handlers utilities', function() {
 
     it('correctly returns a list of ports', function() {
       var ports = [
-        {Number: 80, Protocol: 'tcp'},
-        {Number: 42, Protocol: 'udp'}
+        {number: 80, protocol: 'tcp'},
+        {number: 42, protocol: 'udp'}
       ];
       assert.deepEqual(['80/tcp', '42/udp'], convertOpenPorts(ports));
     });
@@ -1428,65 +1045,32 @@ describe('Juju delta handlers utilities', function() {
     it('correctly returns a list of endpoints', function() {
       var endpoints = [
         {
-          Relation: {
-            Interface: 'http',
-            Limit: 1,
-            Name: 'reverseproxy',
-            Optional: false,
-            Role: 'requirer',
-            Scope: 'global'
+          relation: {
+            interface: 'http',
+            limit: 1,
+            name: 'reverseproxy',
+            optional: false,
+            role: 'requirer',
+            scope: 'global'
           },
-          ApplicationName: 'haproxy'
+          'application-name': 'haproxy'
         },
         {
-          Relation: {
-            Interface: 'http',
-            Limit: 0,
-            Name: 'website',
-            Optional: false,
-            Role: 'provider',
-            Scope: 'global'
+          relation: {
+            interface: 'http',
+            limit: 0,
+            name: 'website',
+            optional: false,
+            role: 'provider',
+            scope: 'global'
           },
-          ApplicationName: 'wordpress'
+          'application-name': 'wordpress'
         }
       ];
       var expected = [
         ['haproxy', {role: 'requirer', name: 'reverseproxy'}],
         ['wordpress', {role: 'provider', name: 'website'}]
       ];
-      assert.deepEqual(expected, createEndpoints(endpoints));
-    });
-
-    it('correctly returns a list of endpoints (legacy API)', function() {
-      var endpoints = [
-        {
-          Relation: {
-            Interface: 'http',
-            Limit: 1,
-            Name: 'reverseproxy',
-            Optional: false,
-            Role: 'requirer',
-            Scope: 'global'
-          },
-          ServiceName: 'haproxy'
-        },
-        {
-          Relation: {
-            Interface: 'http',
-            Limit: 0,
-            Name: 'website',
-            Optional: false,
-            Role: 'provider',
-            Scope: 'global'
-          },
-          ServiceName: 'wordpress'
-        }
-      ];
-      var expected = [
-        ['haproxy', {role: 'requirer', name: 'reverseproxy'}],
-        ['wordpress', {role: 'provider', name: 'website'}]
-      ];
-      console.log(createEndpoints(endpoints));
       assert.deepEqual(expected, createEndpoints(endpoints));
     });
 

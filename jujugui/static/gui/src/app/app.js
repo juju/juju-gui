@@ -208,17 +208,6 @@ YUI.add('juju-gui', function(Y) {
         label: 'Esc'
       },
 
-      'C-s': {
-        'condition': function() {
-          return this._simulator !== undefined;
-        },
-        callback: function() {
-          this._simulator.toggle();
-        },
-        help: 'Toggle the simulator',
-        label: 'Control + s'
-      },
-
       'S-d': {
         callback: function(evt) {
           views.utils.exportEnvironmentFile(this.db);
@@ -469,7 +458,11 @@ YUI.add('juju-gui', function(Y) {
           // requests to the juju-core API.
           envOptions.webHandler = new webModule.WebHandler();
         }
-        this._init(cfg, new environments.GoEnvironment(envOptions), state);
+        var environment = environments.GoEnvironment;
+        if (this.isLegacyJuju()) {
+          environment = environments.GoLegacyEnvironment;
+        }
+        this._init(cfg, new environment(envOptions), state);
       });
     },
 
@@ -504,11 +497,6 @@ YUI.add('juju-gui', function(Y) {
         macaroons: macaroons
       });
       this.env = env;
-
-      // Create an event simulator where possible.
-      // Starting the simulator is handled by hotkeys
-      // and/or the config setting 'simulateEvents'.
-      this.simulateEvents();
 
       // Set the env in the model controller here so
       // that we know that it's been setup.
@@ -683,6 +671,18 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Reports whether the currently connected controller is a legacy Juju
+      (with version < 2).
+
+      @method isLegacyJuju
+      @return {Boolean} Whether a legacy Juju version is being used.
+    */
+    isLegacyJuju: function() {
+      var jujuVersion = this.get('jujuCoreVersion');
+      return views.utils.compareSemver(jujuVersion, '2') === -1;
+    },
+
+    /**
       Parses the application URL to populate the state object without
       dispatching
 
@@ -718,7 +718,7 @@ YUI.add('juju-gui', function(Y) {
           <code>juju api-info --password password</code>
         </p>);
       var loginWithMacaroon = null;
-      if (views.utils.compareSemver(this.get('jujuCoreVersion'), '2') > -1) {
+      if (!this.isLegacyJuju()) {
         // Use the new Juju 2 command to retrieve credentials.
         msg = (
           <p>
@@ -1204,8 +1204,7 @@ YUI.add('juju-gui', function(Y) {
           acl={this.acl}
           apiUrl={charmstore.url}
           charmstoreSearch={charmstore.search.bind(charmstore)}
-          displayPlans={
-            views.utils.compareSemver(this.get('jujuCoreVersion'), '2') > -1}
+          displayPlans={!this.isLegacyJuju()}
           series={utils.getSeriesList()}
           importBundleYAML={this.bundleImporter.importBundleYAML.bind(
               this.bundleImporter)}
@@ -1695,34 +1694,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-    Start the simulator if it can start and it has not already been started.
-
-    @method simulateEvents
-    */
-    simulateEvents: function() {
-      if (!this._simulator && this.env) {
-        // Try/Catch this to allow mocks in tests.
-        try {
-          var conn = this.env.get('conn');
-          var juju = conn && conn.get('juju');
-          var state = juju && juju.get('state');
-          if (state) {
-            var Simulator = Y.namespace('juju.environments').Simulator;
-            this._simulator = new Simulator({state: state});
-            if (this.get('simulateEvents')) {
-              this._simulator.start();
-            }
-          }
-        }
-        catch (err) {
-          // Unable to create simulator, usually due to mocks or an
-          // unsupported environment
-          console.log('Unable to create simulator: ');
-        }
-      }
-    },
-
-    /**
     Release resources and inform subcomponents to do the same.
 
     @method destructor
@@ -1733,9 +1704,6 @@ YUI.add('juju-gui', function(Y) {
       }
       if (this._keybindings) {
         this._keybindings.detach();
-      }
-      if (this._simulator) {
-        this._simulator.stop();
       }
       Y.each(
           [this.env, this.db, this.endpointsController],
@@ -2611,10 +2579,10 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-base',
     'juju-env-fakebackend',
     'juju-env-api',
+    'juju-env-legacy-api',
     'juju-env-sandbox',
     'juju-env-web-handler',
     'juju-env-web-sandbox',
-    'juju-fakebackend-simulator',
     'juju-models',
     'jujulib-utils',
     'net-utils',
