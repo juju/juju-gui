@@ -30,4 +30,79 @@ describe('InspectorRelateTo', function() {
     YUI().use('inspector-relate-to', function() { done(); });
   });
 
+  it('can render properly', () => {
+    var applications = [{
+      getAttrs: () => ({ id: 'id', name: 'name', icon: 'icon'})
+    }];
+    var output = jsTestUtils.shallowRender(
+      <juju.components.InspectorRelateTo
+        application={{}}
+        changeState={sinon.stub()}
+        relatableApplications={applications} /> );
+    var expected = (
+      <div className="inspector-relate-to">
+        <ul className="inspector-view__list">
+          {[<li className="inspector-view__list-item"
+            data-id="id"
+            key="id0"
+            onClick={output.props.children.props.children[0].props.onClick}
+            tabIndex="0"
+            role="button">
+              <img src="icon" className="inspector-view__item-icon" />
+              name
+          </li>]}
+        </ul>
+      </div>
+    );
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render when there are no relatable endpoints', () => {
+    var output = jsTestUtils.shallowRender(
+      <juju.components.InspectorRelateTo
+        application={{}}
+        changeState={sinon.stub()}
+        relatableApplications={[]} /> );
+    var expected = (
+      <div className="inspector-relate-to">
+        <ul className="inspector-view__list">
+          <div className="unit-list__message">
+            No relatable endpoints available.
+          </div>
+        </ul>
+      </div>
+    );
+    assert.deepEqual(output, expected);
+  });
+
+  it('can navigate to relate-to-endpoint', () => {
+    var applications = [{
+      getAttrs: () => ({ id: 'id', name: 'name', icon: 'icon'})
+    }];
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.InspectorRelateTo
+        application={{
+          get: () => 'my-id'
+        }}
+        changeState={changeState}
+        relatableApplications={applications} /> );
+    // Trigger a relation click.
+    output.props.children.props.children[0].props.onClick({
+      currentTarget: {
+        getAttribute: sinon.stub().withArgs('data-id').returns('zee-spouse')
+      }
+    });
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionA: {
+        component: 'inspector',
+        metadata: {
+          id: 'my-id',
+          spouse: 'zee-spouse',
+          activeComponent: 'relate-to'
+        }}});
+
+  });
+
 });

@@ -80,9 +80,9 @@ YUI.add('inspector-relate-to', function() {
     render: function() {
       return (
         <div className="inspector-relate-to">
-            <ul className="inspector-view__list">
-              {this.generateItemList()}
-            </ul>
+          <ul className="inspector-view__list">
+            {this.generateItemList()}
+          </ul>
         </div>
       );
     }
