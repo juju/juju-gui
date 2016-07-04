@@ -299,12 +299,10 @@ describe('InspectorChangeVersion', function() {
     shallowRenderer.getMountedInstance().componentDidMount();
     var output = shallowRenderer.getRenderOutput();
     output.props.children[1].props.children[0].props.buttonAction();
-    // We need to fetch a macaroon if there is one.
-    assert.equal(getMacaroon.callCount, 1);
     // The charm needs to be added to the model first.
     assert.equal(addCharm.callCount, 1);
     assert.equal(addCharm.args[0][0], 'cs:django-4');
-    assert.equal(addCharm.args[0][1], 'macaroon');
+    assert.equal(addCharm.args[0][1], null);
     // Call the callback
     addCharm.args[0][2]({});
     assert.equal(serviceSet.callCount, 1);

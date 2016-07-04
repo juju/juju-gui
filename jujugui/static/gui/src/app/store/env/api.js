@@ -1067,7 +1067,7 @@ YUI.add('juju-env-api', function(Y) {
 
       @method _addCharm
       @param {String} url The URL of the charm. It must include the revision.
-      @param {Object} macaroon The optional JSON encoded delegatable macaroon
+      @param {Object} macaroon The optional JSON decoded delegatable macaroon
         to use in order to authorize access to a non-public charm. This is only
         required when adding non-public charms.
       @param {Function} callback A callable that must be called once the
