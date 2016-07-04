@@ -351,7 +351,7 @@ YUI.add('inspector-component', function() {
                 <juju.components.InspectorRelateToEndpoint
                   backState={backState}
                   createRelation={this.props.createRelation}
-                  relationTypes={this.props.getAvailableEndpoints(
+                  endpoints={this.props.getAvailableEndpoints(
                     service, this.props.getServiceById(spouse))}
                   changeState={this.props.changeState} />,
               backState: {

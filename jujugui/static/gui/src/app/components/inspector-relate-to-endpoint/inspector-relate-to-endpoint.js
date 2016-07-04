@@ -23,7 +23,7 @@ YUI.add('inspector-relate-to-endpoint', function() {
       backState: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       createRelation: React.PropTypes.func.isRequired,
-      relationTypes: React.PropTypes.array.isRequired
+      endpoints: React.PropTypes.array.isRequired
     },
 
     /**
@@ -61,7 +61,7 @@ YUI.add('inspector-relate-to-endpoint', function() {
       @returns {Object} The relation components.
     */
     _generateRelations: function() {
-      var relations = this.props.relationTypes;
+      var relations = this.props.endpoints;
       if (relations.length === 0) {
         return (
           <li className="inspector-relate-to-endpoint__message">
@@ -92,7 +92,7 @@ YUI.add('inspector-relate-to-endpoint', function() {
         var isInstance = ref.split('-')[0] === 'InspectorRelateToEndpoint';
         if (isInstance && refs[ref].state.checked) {
           var relationName = ref.slice(ref.indexOf('-') + 1);
-          props.createRelation(props.relationTypes[relationName]);
+          props.createRelation(props.endpoints[relationName]);
         }
       });
       props.changeState(props.backState);
@@ -105,7 +105,7 @@ YUI.add('inspector-relate-to-endpoint', function() {
       @returns {Object} The button row component.
     */
     _generateButtons: function() {
-      if (this.props.relationTypes.length === 0) {
+      if (this.props.endpoints.length === 0) {
         return;
       }
       var disabled = this.state.activeCount === 0;
