@@ -252,6 +252,30 @@ describe('UI State object', function() {
         'inspector/local/upgrade': {
           localType: 'upgrade',
           flash: flash
+        },
+        'inspector/service123/relation/0': {
+          activeComponent: 'relation',
+          id: 'service123',
+          relation: '0',
+          flash: flash
+        },
+        'inspector/service123/relations': {
+          activeComponent: 'relations',
+          id: 'service123',
+          relations: true,
+          flash: flash
+        },
+        'inspector/service123/relate-to': {
+          activeComponent: 'relate-to',
+          'relate-to': true,
+          id: 'service123',
+          flash: flash
+        },
+        'inspector/service123/relate-to/serviceabc': {
+          activeComponent: 'relate-to',
+          'relate-to': 'serviceabc',
+          id: 'service123',
+          flash: flash
         }
       };
 
