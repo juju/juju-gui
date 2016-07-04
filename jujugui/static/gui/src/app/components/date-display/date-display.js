@@ -26,8 +26,21 @@ YUI.add('date-display', function() {
     NOW: new Date(),
 
     propTypes: {
-      date: React.PropTypes.object.isRequired,
+      date: React.PropTypes.oneOfType([
+        React.PropTypes.object,
+        React.PropTypes.string
+      ]),
       relative: React.PropTypes.bool
+    },
+
+    /**
+      Get a date object from the supplied date.
+
+      @method _getParsedDate
+      @returns {Object} The parsed date.
+    */
+    _getParsedDate: function() {
+      return new Date(Date.parse(this.props.date));
     },
 
     /**
@@ -37,7 +50,7 @@ YUI.add('date-display', function() {
       @returns {String} The date.
     */
     _generateDate: function() {
-      var date = new Date(Date.parse(this.props.date));
+      var date = this._getParsedDate();
       var year = date.getUTCFullYear();
       var month = ('0' + (date.getUTCMonth() + 1)).slice(-2);
       var day = ('0' + date.getUTCDate()).slice(-2);
@@ -52,7 +65,8 @@ YUI.add('date-display', function() {
     */
     _generateRelativeDate: function() {
       // Get the diff in milliseconds.
-      var diff = this.NOW.getTime() - this.props.date.getTime();
+      var date = this._getParsedDate();
+      var diff = this.NOW.getTime() - date.getTime();
       var seconds = diff / 1000;
       var minutes = seconds / 60;
       var hours = minutes / 60;

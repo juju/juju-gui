@@ -630,10 +630,6 @@ YUI.add('user-profile', function() {
     */
     _generateAgreementRow: function(agreement) {
       var term = agreement.term;
-      var createdAt = agreement.createdAt;
-      var date = createdAt.getUTCFullYear() + '-' +
-        ('0' + (createdAt.getUTCMonth() + 1)).slice(-2) + '-' +
-        ('0' + createdAt.getUTCDate()).slice(-2);
       return (
         <li className="user-profile__list-row twelve-col"
           key={term + agreement.revision}>
@@ -641,7 +637,9 @@ YUI.add('user-profile', function() {
             {term}
           </span>
           <span className="user-profile__list-col four-col last-col">
-            {date}
+            <juju.components.DateDisplay
+              date={agreement.createdAt}
+              relative={true} />
           </span>
         </li>);
     },

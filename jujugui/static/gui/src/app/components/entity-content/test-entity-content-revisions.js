@@ -53,7 +53,9 @@ describe('EntityContentRevisions', function() {
               <p className="revisions__list-meta smaller">
                 by {"Charles Butler"}
                 <span className="revisions__list-meta-date">
-                  2015-06-16
+                  <juju.components.DateDisplay
+                    date="2015-06-16T17:09:35Z"
+                    relative={true} />
                 </span>
               </p>
               <p className="revisions__list-message">
@@ -64,7 +66,9 @@ describe('EntityContentRevisions', function() {
               <p className="revisions__list-meta smaller">
                 by {"Tim Van Steenburgh"}
                 <span className="revisions__list-meta-date">
-                  2015-06-12
+                  <juju.components.DateDisplay
+                    date="2015-06-12T14:02:06Z"
+                    relative={true} />
                 </span>
               </p>
               <p className="revisions__list-message">
@@ -75,7 +79,9 @@ describe('EntityContentRevisions', function() {
               <p className="revisions__list-meta smaller">
                 by {"Charles Butler"}
                 <span className="revisions__list-meta-date">
-                  2015-05-22
+                  <juju.components.DateDisplay
+                    date="2015-05-22T19:35:18Z"
+                    relative={true} />
                 </span>
               </p>
               <p className="revisions__list-message">

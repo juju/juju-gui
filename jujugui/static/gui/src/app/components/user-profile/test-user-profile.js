@@ -524,7 +524,9 @@ describe('UserProfile', () => {
                   One fancy term
                 </span>
                 <span className="user-profile__list-col four-col last-col">
-                  2016-06-09
+                <juju.components.DateDisplay
+                  date={agreements[0].createdAt}
+                  relative={true} />
                 </span>
               </li>]}
             </ul>

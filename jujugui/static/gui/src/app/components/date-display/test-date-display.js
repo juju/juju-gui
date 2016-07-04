@@ -47,6 +47,18 @@ describe('DateDisplay', () => {
     assert.deepEqual(output, expected);
   });
 
+  it('can parse a date from a string', () => {
+    var output = jsTestUtils.shallowRender(
+      <DateDisplay
+        date='2020-01-19' />);
+    var expected = (
+      <time datetime="19/01/2020"
+        title={undefined}>
+        19/01/2020
+      </time>);
+    assert.deepEqual(output, expected);
+  });
+
   it('can display a relative date that is less than a minute ago', () => {
     relative.setSeconds(date.getSeconds() + 10);
     var output = jsTestUtils.shallowRender(
