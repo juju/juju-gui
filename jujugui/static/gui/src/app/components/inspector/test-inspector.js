@@ -919,6 +919,164 @@ describe('Inspector', function() {
           serviceRelations={serviceRelations} />);
   });
 
+  it('displays the relate-to when the app state calls for it', function() {
+    var changeState = sinon.stub();
+    var destroyRelations = sinon.stub();
+    var icon = 'icon.png';
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('icon').returns(icon);
+    var service = {
+      get: getStub
+    };
+    var appState = {
+      sectionA: {
+        metadata: {
+          activeComponent: 'relate-to'
+        }}};
+    var component = jsTestUtils.shallowRender(
+      <juju.components.Inspector
+        acl={acl}
+        addCharm={sinon.stub()}
+        addGhostAndEcsUnits={sinon.stub()}
+        addNotification={sinon.stub()}
+        appPreviousState={{}}
+        appState={appState}
+        changeState={changeState}
+        charm={{}}
+        clearState={sinon.stub()}
+        createMachinesPlaceUnits={sinon.stub()}
+        destroyRelations={destroyRelations}
+        destroyService={sinon.stub()}
+        destroyUnits={sinon.stub()}
+        displayPlans={true}
+        envResolved={sinon.stub()}
+        exposeService={sinon.stub()}
+        getAvailableVersions={sinon.stub()}
+        getCharm={sinon.stub()}
+        getMacaroon={sinon.stub()}
+        getServiceByName={sinon.stub()}
+        getUnitStatusCounts={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
+        modelUUID="abc123"
+        relatableApplications={['apps']}
+        service={service}
+        serviceRelations={[]}
+        setCharm={sinon.stub()}
+        setConfig={sinon.stub()}
+        showActivePlan={sinon.stub()}
+        unexposeService={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
+    var instance = component.getMountedInstance();
+    var output = component.getRenderOutput();
+    var header = output.props.children[0];
+    var expectedHeader = (
+      <juju.components.InspectorHeader
+        backCallback={instance._backCallback}
+        activeComponent={appState.sectionA.metadata.activeComponent}
+        type={undefined}
+        count={undefined}
+        title='Relate to'
+        icon={icon} />
+    );
+    assert.deepEqual(header, expectedHeader,
+                     'Header is not rendered as expected');
+    var children = output.props.children[1].props.children;
+    assert.deepEqual(children,
+      <juju.components.InspectorRelateTo
+        changeState={changeState}
+        application={service}
+        relatableApplications={['apps']}/>);
+  });
+
+  it('displays relate-to with spouse when the app state calls for it', () => {
+    var changeState = sinon.stub();
+    var destroyRelations = sinon.stub();
+    var icon = 'icon.png';
+    var getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('icon').returns(icon);
+    var service = {
+      get: getStub
+    };
+    var appState = {
+      sectionA: {
+        metadata: {
+          activeComponent: 'relate-to',
+          'relate-to': 'zee-spouse'
+        }}};
+    var createRelation = sinon.stub();
+    var getAvailableEndpoints = sinon.stub().returns([]);
+    var getServiceById = () => ({
+      get: sinon.stub().returns('spouse-name')
+    });
+    var component = jsTestUtils.shallowRender(
+      <juju.components.Inspector
+        acl={acl}
+        addCharm={sinon.stub()}
+        addGhostAndEcsUnits={sinon.stub()}
+        addNotification={sinon.stub()}
+        appPreviousState={{}}
+        appState={appState}
+        changeState={changeState}
+        charm={{}}
+        clearState={sinon.stub()}
+        createMachinesPlaceUnits={sinon.stub()}
+        createRelation={createRelation}
+        destroyRelations={destroyRelations}
+        destroyService={sinon.stub()}
+        destroyUnits={sinon.stub()}
+        displayPlans={true}
+        envResolved={sinon.stub()}
+        exposeService={sinon.stub()}
+        getAvailableEndpoints={getAvailableEndpoints}
+        getAvailableVersions={sinon.stub()}
+        getCharm={sinon.stub()}
+        getMacaroon={sinon.stub()}
+        getServiceById={getServiceById}
+        getServiceByName={sinon.stub()}
+        getUnitStatusCounts={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
+        modelUUID="abc123"
+        relatableApplications={['apps']}
+        service={service}
+        serviceRelations={[]}
+        setCharm={sinon.stub()}
+        setConfig={sinon.stub()}
+        showActivePlan={sinon.stub()}
+        unexposeService={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
+    var instance = component.getMountedInstance();
+    var output = component.getRenderOutput();
+    var header = output.props.children[0];
+    var expectedHeader = (
+      <juju.components.InspectorHeader
+        backCallback={instance._backCallback}
+        activeComponent={appState.sectionA.metadata.activeComponent}
+        type={undefined}
+        count={undefined}
+        title='spouse-name'
+        icon={icon} />
+    );
+    assert.deepEqual(header, expectedHeader,
+                     'Header is not rendered as expected');
+    var children = output.props.children[1].props.children;
+    assert.deepEqual(children,
+      <juju.components.InspectorRelateToEndpoint
+        backState={{
+          sectionA: {
+            component: 'inspector',
+            metadata: {
+              id: 'demo',
+              activeComponent: 'relations'
+            }}}}
+        createRelation={createRelation}
+        endpoints={[]}
+        changeState={changeState} />);
+  });
+
   it('displays the Plans when the app state calls for it', function() {
     var changeState = sinon.stub();
     var icon = 'icon.png';
