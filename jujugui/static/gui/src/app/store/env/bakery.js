@@ -91,6 +91,10 @@ YUI.add('juju-env-bakery', function(Y) {
           }
         }
         this.dischargeStore = cfg.dischargeStore;
+        if (!this.dischargeStore) {
+          console.error('bakery instantiated without a discharge store');
+          return;
+        }
         if (cfg.dischargeToken) {
           this.dischargeStore.setItem(DISCHARGE_TOKEN, cfg.dischargeToken);
         }

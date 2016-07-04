@@ -68,10 +68,10 @@ YUI.add('ghost-deployer-extension', function(Y) {
       var serviceName = ghostService.get('name');
       var charmId = charm.get('id');
       var constraints = {};
+      // TODO frankban: add support for fetching delegatable macaroons that can
+      // be used to add private charms.
       this.env.addCharm(
-        charmId,
-        this.get('charmstore').bakery.getMacaroon(),
-        this._addCharmCallbackHandler.bind(this, charm),
+        charmId, null, this._addCharmCallbackHandler.bind(this, charm),
         // Options used by ECS, ignored by environment.
         {applicationId: ghostServiceId});
       this.env.deploy(

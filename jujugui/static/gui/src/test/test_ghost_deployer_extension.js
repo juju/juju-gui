@@ -131,7 +131,7 @@ describe('Ghost Deployer Extension', function() {
       addCharmCalled = true;
       assert.equal(charmId, charm.get('id'));
       // It should fetch the macaroon when adding the charm.
-      assert.equal(macaroon, 'cookies are better');
+      assert.strictEqual(macaroon, null);
       assert.equal(typeof callback, 'function');
       assert.deepEqual(opt, {
         applicationId: 'ghost-service-id'

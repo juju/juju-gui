@@ -571,7 +571,8 @@ YUI.add('juju-gui', function(Y) {
               var bakery = new Y.juju.environments.web.Bakery({
                 webhandler: new Y.juju.environments.web.WebHandler(),
                 interactive: true,
-                serviceName: 'juju'
+                serviceName: 'juju',
+                dischargeStore: window.localStorage
               });
               this.env.loginWithMacaroon(bakery);
             } else {
@@ -729,7 +730,8 @@ YUI.add('juju-gui', function(Y) {
         var bakery = new Y.juju.environments.web.Bakery({
           webhandler: new Y.juju.environments.web.WebHandler(),
           interactive: true,
-          serviceName: 'juju'
+          serviceName: 'juju',
+          dischargeStore: window.localStorage
         });
         loginWithMacaroon = this.env.loginWithMacaroon.bind(this.env, bakery);
       }
@@ -1493,7 +1495,8 @@ YUI.add('juju-gui', function(Y) {
           staticMacaroonPath: `${charmstoreURL}${apiVersion}/macaroon`,
           existingCookie: existingCookie,
           serviceName: 'charmstore',
-          macaroon: existingMacaroons
+          macaroon: existingMacaroons,
+          dischargeStore: window.localStorage
         });
         this.set('charmstore', new Charmstore(charmstoreURL, bakery));
         // Store away the charmstore auth info.
