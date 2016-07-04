@@ -1808,6 +1808,82 @@ describe('utilities', function() {
     });
   });
 
+  describe('createRelation', function() {
+    var utils, testUtils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', 'juju-tests-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        testUtils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    // Necessary for the _cleanups to be attached.
+    beforeEach(function() {});
+    afterEach(function() {});
+
+    it('properly creates a relation', function() {
+      var relationId = 'pending-19984570$:db23212464$:db';
+      var db = {
+        relations: {
+          add: testUtils.makeStubFunction(),
+          remove: testUtils.makeStubFunction(),
+          create: testUtils.makeStubFunction(),
+          getById: testUtils.makeStubFunction(relationId)
+        }
+      };
+      var env = {
+        add_relation: testUtils.makeStubFunction()
+      };
+      var relations = [{
+        service: '19984570$',
+        name: 'db',
+        type: 'mysql'
+      }, {
+        service: '23212464$',
+        name: 'db',
+        type: 'mysql'
+      }];
+      utils.createRelation(db, env, relations, testUtils.makeStubFunction());
+      assert.equal(db.relations.add.callCount(), 1);
+      var endpoints = [[
+        '19984570$', {
+          name: 'db', role: 'client'
+        }],
+        ['23212464$', {
+          name: 'db', role: 'server'
+        }]
+      ];
+      assert.deepEqual(db.relations.add.lastArguments()[0], {
+        relation_id: relationId,
+        'interface': 'db',
+        endpoints: endpoints,
+        pending: true,
+        scope: 'global',
+        display_name: 'pending'
+      });
+      assert.equal(env.add_relation.callCount(), 1);
+      assert.deepEqual(env.add_relation.lastArguments()[0], endpoints[0]);
+      assert.deepEqual(env.add_relation.lastArguments()[1], endpoints[1]);
+      // Call the add_relation callback.
+      env.add_relation.lastArguments()[2]({
+        result: { id: 'foo', 'interface': 'bar', scope: 'global' }
+      });
+      // Callback method assertions.
+      assert.equal(db.relations.remove.callCount(), 1);
+      assert.equal(db.relations.remove.lastArguments()[0], relationId);
+      assert.equal(db.relations.create.callCount(), 1);
+      assert.deepEqual(db.relations.create.lastArguments()[0], {
+        relation_id: 'foo',
+        type: 'bar',
+        endpoints: endpoints,
+        pending: false,
+        scope: 'global'
+      });
+    });
+  });
+
   describe('getAvailableEndpoints', function() {
     var utils, testUtils;
 
@@ -1888,6 +1964,41 @@ describe('utilities', function() {
         assert.deepEqual(availableEndpoints, []);
       });
       /* eslint-enable max-len */
+    });
+  });
+
+  describe('getRelatableApplications', function() {
+    var utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('properly returns relatable applications', function() {
+      var service1 = 'service1';
+      var db = {
+        services: {
+          getById: function (appName) { return service1; }
+        }
+      };
+      var endpoints = {
+        '7117087$': [
+          [{
+            service: '2003212$',
+            name: 'db',
+            type: 'mysql'
+          }, {
+            service: '7117087$',
+            name: 'db',
+            type: 'mysql'
+          }]
+        ]};
+
+      assert.deepEqual(
+        [service1], utils.getRelatableApplications(db, endpoints));
     });
   });
 
