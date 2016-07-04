@@ -222,7 +222,12 @@ YUI.add('juju-env-base', function(Y) {
         emitFacade: true,
         defaultFn: this.dispatch_result
       });
-      // txn-id sequence.
+      // txn-id sequence. This is used in order to keep track of "request-id"
+      // in the WebSocket API requests to Juju. Note that Juju requires the
+      // "request-id" to be >= 1, as a 0 valued "request-id" would result in
+      // Juju assuming a legacy client to be connected, and therefore falling
+      // back to legacy mode, in which top level request and response fields
+      // are CamelCased (for instance "Request", "Params", "Version", etc.).
       this._counter = 0;
       // mapping txn-id callback if any.
       this._txn_callbacks = {};
