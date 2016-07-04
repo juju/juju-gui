@@ -251,4 +251,5 @@ YUI.add('inspector-relations', function() {
 }, '0.1.0', { requires: [
   'check-list-item',
   'button-row',
+  'overview-action'
 ]});

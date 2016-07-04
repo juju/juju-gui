@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('InspectorRelations', function() {
-  var acl;
+  var acl, service;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,6 +33,7 @@ describe('InspectorRelations', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    service = {get: sinon.stub().withArgs('id').returns('ghost')};
   });
 
   it('can render the relations list', function() {
@@ -67,6 +68,7 @@ describe('InspectorRelations', function() {
           acl={acl}
           changeState={changeState}
           destroyRelations={sinon.stub()}
+          service={service}
           serviceRelations={relations} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -78,6 +80,12 @@ describe('InspectorRelations', function() {
       disabled: true
     });
     var expected = (<div className="inspector-relations">
+      <div className="inspector-relations__actions">
+        <juju.components.OverviewAction
+          action={output.props.children[0].props.children.props.action}
+          icon="plus_box_16"
+          title="Build a relation" />
+       </div>
       <ul className="inspector-relations__list">
         <juju.components.CheckListItem
           className='select-all'
@@ -86,10 +94,10 @@ describe('InspectorRelations', function() {
           ref='select-all'
           label='Select all relations'
           whenChanged={
-            output.props.children[0].props.children[0].props.whenChanged
+            output.props.children[1].props.children[0].props.whenChanged
           }/>
         <juju.components.CheckListItem
-          action={output.props.children[0].props.children[1].props.action}
+          action={output.props.children[1].props.children[1].props.action}
           disabled={false}
           label={'django:django'}
           key={relations[0].id}
@@ -98,7 +106,7 @@ describe('InspectorRelations', function() {
           changeState={changeState}
           whenChanged={instance._updateActiveCount} />
         <juju.components.CheckListItem
-          action={output.props.children[0].props.children[2].props.action}
+          action={output.props.children[1].props.children[2].props.action}
           disabled={false}
           label={'django:django'}
           key={relations[1].id}
@@ -146,6 +154,7 @@ describe('InspectorRelations', function() {
           acl={acl}
           changeState={changeState}
           destroyRelations={sinon.stub()}
+          service={service}
           serviceRelations={relations} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -157,37 +166,43 @@ describe('InspectorRelations', function() {
       disabled: true
     });
     var expected = (<div className="inspector-relations">
-      <ul className="inspector-relations__list">
-        <juju.components.CheckListItem
-          className='select-all'
-          disabled={true}
-          key='select-all1'
-          ref='select-all'
-          label='Select all relations'
-          whenChanged={
-            output.props.children[0].props.children[0].props.whenChanged
-          }/>
-        <juju.components.CheckListItem
-          action={output.props.children[0].props.children[1].props.action}
-          disabled={true}
-          label={'django:django'}
-          key={relations[0].id}
-          ref='CheckListItem-mysql'
-          relation={relations[0]}
-          changeState={changeState}
-          whenChanged={instance._updateActiveCount} />
-        <juju.components.CheckListItem
-          action={output.props.children[0].props.children[2].props.action}
-          disabled={true}
-          label={'django:django'}
-          key={relations[1].id}
-          ref='CheckListItem-postgresql'
-          relation={relations[1]}
-          changeState={changeState}
-          whenChanged={instance._updateActiveCount} />
-      </ul>
-      <juju.components.ButtonRow
-        buttons={buttons} />
+      <div className="inspector-relations__actions">
+        <juju.components.OverviewAction
+          action={output.props.children[0].props.children.props.action}
+          icon="plus_box_16"
+          title="Build a relation" />
+        </div>
+        <ul className="inspector-relations__list">
+          <juju.components.CheckListItem
+            className='select-all'
+            disabled={true}
+            key='select-all1'
+            ref='select-all'
+            label='Select all relations'
+            whenChanged={
+              output.props.children[1].props.children[0].props.whenChanged
+            }/>
+          <juju.components.CheckListItem
+            action={output.props.children[1].props.children[1].props.action}
+            disabled={true}
+            label={'django:django'}
+            key={relations[0].id}
+            ref='CheckListItem-mysql'
+            relation={relations[0]}
+            changeState={changeState}
+            whenChanged={instance._updateActiveCount} />
+          <juju.components.CheckListItem
+            action={output.props.children[1].props.children[2].props.action}
+            disabled={true}
+            label={'django:django'}
+            key={relations[1].id}
+            ref='CheckListItem-postgresql'
+            relation={relations[1]}
+            changeState={changeState}
+            whenChanged={instance._updateActiveCount} />
+        </ul>
+        <juju.components.ButtonRow
+          buttons={buttons} />
     </div>);
     assert.deepEqual(output, expected);
   });
@@ -198,11 +213,12 @@ describe('InspectorRelations', function() {
           acl={acl}
           changeState={sinon.stub()}
           destroyRelations={sinon.stub()}
+          service={service}
           serviceRelations={[]} />);
     var expected = (<li className="inspector-relations__message">
             No active relations for this application.
           </li>);
-    assert.deepEqual(output.props.children[0].props.children,
+    assert.deepEqual(output.props.children[1].props.children,
       expected);
   });
 
@@ -238,6 +254,7 @@ describe('InspectorRelations', function() {
         acl={acl}
         changeState={sinon.stub()}
         destroyRelations={sinon.stub()}
+        service={service}
         serviceRelations={relations} />);
     var refs = component.refs;
     // We want to make sure that they are not checked first.
@@ -274,15 +291,16 @@ describe('InspectorRelations', function() {
           acl={acl}
           changeState={sinon.stub()}
           destroyRelations={sinon.stub()}
+          service={service}
           serviceRelations={relations} />);
-    var buttonItems = output.props.children[1].props.buttons;
+    var buttonItems = output.props.children[2].props.buttons;
     var buttons = [{
       title: 'Remove',
       type: 'neutral',
       action: buttonItems[0].action,
       disabled: true
     }];
-    assert.deepEqual(output.props.children[1],
+    assert.deepEqual(output.props.children[2],
       <juju.components.ButtonRow
         buttons={buttons} />);
     assert.equal(buttonItems.length, 1);
@@ -333,9 +351,10 @@ describe('InspectorRelations', function() {
     var output = testUtils.renderIntoDocument(
         <juju.components.InspectorRelations
           acl={acl}
+          changeState={changeState}
           destroyRelations={destroyRelations}
-          serviceRelations={relations}
-          changeState={changeState} />);
+          service={service}
+          serviceRelations={relations} />);
     var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
       output, 'input');
     checkboxes[1].checked = true;
@@ -372,9 +391,10 @@ describe('InspectorRelations', function() {
     var output = testUtils.renderIntoDocument(
       <juju.components.InspectorRelations
         acl={acl}
+        changeState={changeState}
         destroyRelations={destroyRelations}
-        serviceRelations={relations}
-        changeState={changeState} />);
+        service={service}
+        serviceRelations={relations} />);
     var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
       output, 'input');
     checkboxes[1].checked = true;
@@ -385,6 +405,26 @@ describe('InspectorRelations', function() {
     assert.isFalse(
       output.refs['CheckListItem-' + relations[0].id].state.checked
     );
+  });
+
+  it('navigates to show build relation on build-relation click', function() {
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+        <juju.components.InspectorRelations
+          acl={acl}
+          changeState={changeState}
+          destroyRelations={sinon.stub()}
+          service={service}
+          serviceRelations={[]} />);
+    // Call the action for the create realtion button.
+    output.props.children[0].props.children.props.action();
+    assert.deepEqual(changeState.args[0][0], {
+      sectionA: {
+        component: 'inspector',
+        metadata: {
+          id: 'ghost',
+          activeComponent: 'relate-to'
+        }}});
   });
 
 });
