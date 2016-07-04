@@ -1768,6 +1768,7 @@ YUI.add('juju-view-utils', function(Y) {
     Create a list of relations.
 
     @method createRelation
+    @param {Object} db Reference to the db instance.
     @param {Object} env The current environment.
     @param {Array} relations A list of relation endpoints.
     @param {Function} callback A function to call after removal.

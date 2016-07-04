@@ -1,7 +1,7 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
+Copyright (C) 2016 Canonical Ltd.
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3, as published by
@@ -54,7 +54,7 @@ YUI.add('inspector-relate-to', function() {
       Generate the list items from a set of services
 
       @method generateItemList
-      @param {Object} services Relatable services.
+      @returns {Function} A React component for the endpoints available.
     */
     generateItemList: function() {
       var applications = this.props.relatableApplications;

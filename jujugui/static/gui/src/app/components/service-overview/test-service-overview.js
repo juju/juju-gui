@@ -639,33 +639,6 @@ describe('ServiceOverview', function() {
     assert.equal(output.props.children[0].props.children.length, 4);
   });
 
-  it('does not show relations if there are none', function() {
-    var getStub = sinon.stub();
-    getStub.withArgs('id').returns('demo');
-    getStub.withArgs('pending').returns(false);
-    getStub.withArgs('exposed').returns(true);
-    getStub.withArgs('units').returns({
-      toArray: sinon.stub().returns([])
-    });
-    var service = {
-      get: getStub
-    };
-    var output = jsTestUtils.shallowRender(
-        <juju.components.ServiceOverview
-          acl={acl}
-          changeState={sinon.stub()}
-          charm={fakeCharm}
-          clearState={sinon.stub()}
-          destroyService={sinon.stub()}
-          displayPlans={false}
-          getUnitStatusCounts={getUnitStatusCounts()}
-          modelUUID="abc123"
-          service={service}
-          serviceRelations={[]}
-          showActivePlan={sinon.stub()} />);
-    assert.equal(output.props.children[0].props.children.length, 4);
-  });
-
   it('shows the plans action if there are plans', function() {
     var setAttrs = sinon.stub();
     var getStub = sinon.stub();
@@ -703,7 +676,7 @@ describe('ServiceOverview', function() {
       showActivePlan.callCount, 0,
       'we are defining plans in the service, it should not call to fetch more');
     assert.equal(
-      output.props.children[0].props.children[4].props.title, 'Plan');
+      output.props.children[0].props.children[5].props.title, 'Plan');
   });
 
   it('renders the delete button', function() {

@@ -1,7 +1,7 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
+Copyright (C) 2016 Canonical Ltd.
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3, as published by
 the Free Software Foundation.
@@ -30,7 +30,7 @@ YUI.add('inspector-relate-to-type', function() {
       Generate the initial state.
 
       @method getInitialState
-      @returns {String} The intial state.
+      @returns {Object} The intial state.
     */
     getInitialState: function() {
       return {activeCount: 0};

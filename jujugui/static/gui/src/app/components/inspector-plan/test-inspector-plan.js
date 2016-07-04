@@ -24,10 +24,15 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('InspectorPlans', () => {
+  var acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('inspector-plan', () => { done(); });
+  });
+
+  beforeEach(function() {
+    acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   it('can render correctly with a selected plan', () => {
@@ -38,7 +43,7 @@ describe('InspectorPlans', () => {
     };
     var output = jsTestUtils.shallowRender(
       <juju.components.InspectorPlan
-        acl={{}}
+        acl={acl}
         currentPlan={currentPlan}/>);
     var expected = (
       <div className="inspector-plan">
@@ -62,7 +67,7 @@ describe('InspectorPlans', () => {
   it('can render correctly without a selected plan', () => {
     var output = jsTestUtils.shallowRender(
       <juju.components.InspectorPlan
-        acl={{}}
+        acl={acl}
         currentPlan={null}/>);
     var expected = (
       <div className="inspector-plan">
