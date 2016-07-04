@@ -348,7 +348,7 @@ YUI.add('inspector-component', function() {
               title: this.props.getServiceById(spouse).get('name'),
               icon: service.get('icon'),
               component:
-                <juju.components.InspectorRelateToType
+                <juju.components.InspectorRelateToEndpoint
                   backState={backState}
                   createRelation={this.props.createRelation}
                   relationTypes={this.props.getAvailableEndpoints(
@@ -448,7 +448,7 @@ YUI.add('inspector-component', function() {
     'inspector-config',
     'inspector-plan',
     'inspector-relate-to',
-    'inspector-relate-to-type',
+    'inspector-relate-to-endpoint',
     'inspector-relations',
     'inspector-relation-details',
     'scale-service',

@@ -15,9 +15,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('inspector-relate-to-type', function() {
+YUI.add('inspector-relate-to-endpoint', function() {
 
-  juju.components.InspectorRelateToType = React.createClass({
+  juju.components.InspectorRelateToEndpoint = React.createClass({
 
     propTypes: {
       backState: React.PropTypes.object.isRequired,
@@ -45,7 +45,7 @@ YUI.add('inspector-relate-to-type', function() {
       var activeCount = 0;
       var refs = this.refs;
       Object.keys(refs).forEach((ref) => {
-        if (ref.split('-')[0] === 'InspectorRelateToType') {
+        if (ref.split('-')[0] === 'InspectorRelateToEndpoint') {
           if (refs[ref].state.checked) {
             activeCount += 1;
           }
@@ -64,7 +64,7 @@ YUI.add('inspector-relate-to-type', function() {
       var relations = this.props.relationTypes;
       if (relations.length === 0) {
         return (
-          <li className="inspector-relate-to-type__message">
+          <li className="inspector-relate-to-endpoint__message">
             No relatable endpoints for these applications.
           </li>);
       }
@@ -72,7 +72,7 @@ YUI.add('inspector-relate-to-type', function() {
         return (<juju.components.CheckListItem
           index={index}
           key={index}
-          ref={`InspectorRelateToType-${index}`}
+          ref={`InspectorRelateToEndpoint-${index}`}
           label={`${relation[0].name} → ${relation[1].name}`}
           relation={relation}
           changeState={this.props.changeState}
@@ -89,7 +89,7 @@ YUI.add('inspector-relate-to-type', function() {
       var refs = this.refs;
       var props = this.props;
       Object.keys(refs).forEach((ref) => {
-        var isInstance = ref.split('-')[0] === 'InspectorRelateToType';
+        var isInstance = ref.split('-')[0] === 'InspectorRelateToEndpoint';
         if (isInstance && refs[ref].state.checked) {
           var relationName = ref.slice(ref.indexOf('-') + 1);
           props.createRelation(props.relationTypes[relationName]);
@@ -123,8 +123,8 @@ YUI.add('inspector-relate-to-type', function() {
 
     render: function() {
       return (
-        <div className="inspector-relate-to-type">
-          <ul className="inspector-relate-to-type__list">
+        <div className="inspector-relate-to-endpoint">
+          <ul className="inspector-relate-to-endpoint__list">
             {this._generateRelations()}
           </ul>
           {this._generateButtons()}

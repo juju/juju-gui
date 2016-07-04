@@ -1,7 +1,7 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
+Copyright (C) 2016 Canonical Ltd.
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3, as published by
@@ -23,11 +23,16 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('InspectorRelateToType', function() {
+describe('InspectorRelateToEndpoint', () => {
 
-  beforeAll(function(done) {
+  beforeAll(done => {
     // By loading this file it adds the component to the juju components.
-    YUI().use('inspector-relations', function() { done(); });
+    YUI().use('inspector-relate-to-endpoint', () => { done(); });
   });
+
+  it('can render properly', () => {});
+  it('can render when there are no relatable endpoints');
+  it('can properly handle select-all interactions');
+  it('can handle creating a relation');
 
 });
