@@ -832,6 +832,7 @@ YUI.add('user-profile', function() {
 
 }, '', {
   requires: [
+    'date-display',
     'loading-spinner',
     'svg-icon',
     'panel-component',
