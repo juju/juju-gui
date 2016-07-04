@@ -30,9 +30,99 @@ describe('InspectorRelateToEndpoint', () => {
     YUI().use('inspector-relate-to-endpoint', () => { done(); });
   });
 
-  it('can render properly', () => {});
-  it('can render when there are no relatable endpoints');
-  it('can properly handle select-all interactions');
-  it('can handle creating a relation');
+  it('can render properly', () => {
+    var endpoints = [[{
+      service: '55173389$',
+      name: 'db',
+      type: 'mysql'
+    }, {
+      service: '59672078$',
+      name: 'db',
+      type: 'mysql'
+    }]];
+    var changeState = sinon.stub();
+    var output = jsTestUtils.shallowRender(
+      <juju.components.InspectorRelateToEndpoint
+        backState={{}}
+        changeState={changeState}
+        createRelation={sinon.stub()}
+        endpoints={endpoints} />);
+    var expected = (
+      <div className="inspector-relate-to-endpoint">
+        <ul className="inspector-relate-to-endpoint__list">
+          {[<juju.components.CheckListItem
+            index={0}
+            key={0}
+            ref="InspectorRelateToEndpoint-0"
+            label="db → db"
+            relation={endpoints[0]}
+            changeState={changeState}
+            whenChanged={output.props.children[0].props.children[0]
+              .props.whenChanged} />]}
+        </ul>
+        <juju.components.ButtonRow
+          buttons={[{
+            title: 'Relate',
+            type: 'neutral',
+            action: output.props.children[1].props.buttons[0].action,
+            disabled: true
+          }]} />
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render when there are no relatable endpoints', () => {
+    var output = jsTestUtils.shallowRender(
+      <juju.components.InspectorRelateToEndpoint
+        backState={{}}
+        changeState={sinon.stub()}
+        createRelation={sinon.stub()}
+        endpoints={[]} />);
+    var expected = (
+      <div className="inspector-relate-to-endpoint">
+        <ul className="inspector-relate-to-endpoint__list">
+          <li className="inspector-relate-to-endpoint__message">
+            No relatable endpoints for these applications.
+          </li>
+        </ul>
+        {undefined}
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can handle creating a relation', () => {
+    var endpoints = [[{
+      service: '55173389$',
+      name: 'db',
+      type: 'mysql'
+    }, {
+      service: '59672078$',
+      name: 'db',
+      type: 'mysql'
+    }]];
+    var changeState = sinon.stub();
+    var createRelation = sinon.stub();
+    var backState = {back: 'state'};
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.InspectorRelateToEndpoint
+        backState={backState}
+        changeState={changeState}
+        createRelation={createRelation}
+        endpoints={endpoints} />, true);
+    var output = renderer.getRenderOutput();
+    var instance = renderer.getMountedInstance();
+    // Trigger the checkbox for the available relation
+    instance.refs = {
+      'InspectorRelateToEndpoint-0': {
+        state: { checked: true }}};
+    output.props.children[0].props.children[0].props.whenChanged();
+    // Click the add relation button
+    output.props.children[1].props.buttons[0].action();
+    // Validate create relation.
+    assert.equal(createRelation.callCount, 1);
+    assert.deepEqual(createRelation.args[0][0], endpoints[0]);
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], backState);
+  });
 
 });
