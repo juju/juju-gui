@@ -21,9 +21,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('date-display', function() {
 
   juju.components.DateDisplay = React.createClass({
-    // Set the current date on the component so that it can be overridden in
-    // tests.
-    NOW: new Date(),
 
     propTypes: {
       date: React.PropTypes.oneOfType([
@@ -31,6 +28,17 @@ YUI.add('date-display', function() {
         React.PropTypes.string
       ]),
       relative: React.PropTypes.bool
+    },
+
+    /**
+      Get the current time. This is done in a method so that it can be
+      overriden in tests.
+
+      @method _getNow
+      @returns {Object} The current date.
+    */
+    _getNow: function() {
+      return new Date();
     },
 
     /**
@@ -66,7 +74,7 @@ YUI.add('date-display', function() {
     _generateRelativeDate: function() {
       // Get the diff in milliseconds.
       var date = this._getParsedDate();
-      var diff = this.NOW.getTime() - date.getTime();
+      var diff = this._getNow().getTime() - date.getTime();
       var seconds = diff / 1000;
       var minutes = seconds / 60;
       var hours = minutes / 60;

@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('DateDisplay', () => {
-  var date, DateDisplay, relative;
+  var date, relative, renderer;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -31,13 +31,19 @@ describe('DateDisplay', () => {
   beforeEach(() => {
     date = new Date('Mon, 19 Jan 2020 21:07:24 GMT');
     relative = new Date(date.getTime());
-    DateDisplay = juju.components.DateDisplay;
-    DateDisplay.prototype.NOW = date;
+    // Set up the rendered instance here so that we can override the _getNow
+    // method and then rerender the component with the correct params in the
+    // test.
+    renderer = jsTestUtils.shallowRender(
+      <juju.components.DateDisplay
+        date={relative} />, true);
+    var instance = renderer.getMountedInstance();
+    sinon.stub(instance, '_getNow').returns(date);
   });
 
   it('can display a date in the correct format', () => {
-    var output = jsTestUtils.shallowRender(
-      <DateDisplay
+    var output = renderer.render(
+      <juju.components.DateDisplay
         date={relative} />);
     var expected = (
       <time datetime="19/01/2020"
@@ -48,8 +54,8 @@ describe('DateDisplay', () => {
   });
 
   it('can parse a date from a string', () => {
-    var output = jsTestUtils.shallowRender(
-      <DateDisplay
+    var output = renderer.render(
+      <juju.components.DateDisplay
         date='2020-01-19' />);
     var expected = (
       <time datetime="19/01/2020"
@@ -61,8 +67,8 @@ describe('DateDisplay', () => {
 
   it('can display a relative date that is less than a minute ago', () => {
     relative.setSeconds(date.getSeconds() + 10);
-    var output = jsTestUtils.shallowRender(
-      <DateDisplay
+    var output = renderer.render(
+      <juju.components.DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -75,8 +81,8 @@ describe('DateDisplay', () => {
 
   it('can display a relative date that is a minute ago', () => {
     relative.setMinutes(date.getMinutes() - 1);
-    var output = jsTestUtils.shallowRender(
-      <DateDisplay
+    var output = renderer.render(
+      <juju.components.DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -89,8 +95,8 @@ describe('DateDisplay', () => {
 
   it('can display a relative date that is minutes ago', () => {
     relative.setMinutes(date.getMinutes() - 19);
-    var output = jsTestUtils.shallowRender(
-      <DateDisplay
+    var output = renderer.render(
+      <juju.components.DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -103,8 +109,8 @@ describe('DateDisplay', () => {
 
   it('can display a relative date that is an hour ago', () => {
     relative.setHours(date.getHours() - 1);
-    var output = jsTestUtils.shallowRender(
-      <DateDisplay
+    var output = renderer.render(
+      <juju.components.DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -117,8 +123,8 @@ describe('DateDisplay', () => {
 
   it('can display a relative date that is hours ago', () => {
     relative.setHours(date.getHours() - 11);
-    var output = jsTestUtils.shallowRender(
-      <DateDisplay
+    var output = renderer.render(
+      <juju.components.DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -131,8 +137,8 @@ describe('DateDisplay', () => {
 
   it('can display a relative date that is a day ago', () => {
     relative.setDate(date.getDate() - 1);
-    var output = jsTestUtils.shallowRender(
-      <DateDisplay
+    var output = renderer.render(
+      <juju.components.DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -145,8 +151,8 @@ describe('DateDisplay', () => {
 
   it('can display a relative date that is days ago', () => {
     relative.setDate(date.getDate() - 6);
-    var output = jsTestUtils.shallowRender(
-      <DateDisplay
+    var output = renderer.render(
+      <juju.components.DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -159,8 +165,8 @@ describe('DateDisplay', () => {
 
   it('can display a relative date that is a week ago', () => {
     relative.setDate(date.getDate() - 8);
-    var output = jsTestUtils.shallowRender(
-      <DateDisplay
+    var output = renderer.render(
+      <juju.components.DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -173,8 +179,8 @@ describe('DateDisplay', () => {
 
   it('can display a relative date that is weeks ago', () => {
     relative.setDate(date.getDate() - 25);
-    var output = jsTestUtils.shallowRender(
-      <DateDisplay
+    var output = renderer.render(
+      <juju.components.DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -187,8 +193,8 @@ describe('DateDisplay', () => {
 
   it('can display a relative date that is a month ago', () => {
     relative.setDate(date.getDate() - 32);
-    var output = jsTestUtils.shallowRender(
-      <DateDisplay
+    var output = renderer.render(
+      <juju.components.DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -201,8 +207,8 @@ describe('DateDisplay', () => {
 
   it('can display a relative date that is months ago', () => {
     relative.setDate(date.getDate() - 100);
-    var output = jsTestUtils.shallowRender(
-      <DateDisplay
+    var output = renderer.render(
+      <juju.components.DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
@@ -215,8 +221,8 @@ describe('DateDisplay', () => {
 
   it('can display a relative date as regular that is years ago', () => {
     relative.setDate(date.getDate() - 500);
-    var output = jsTestUtils.shallowRender(
-      <DateDisplay
+    var output = renderer.render(
+      <juju.components.DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
