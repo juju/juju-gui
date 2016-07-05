@@ -37,31 +37,40 @@ describe('InspectorRelations', function() {
 
   it('can render the relations list', function() {
     var changeState = sinon.stub();
-    var relations = [
-      {id: 'mysql',
-        near: {
-          name: 'mysql',
-          role: 'primary'
-        },
-        far: {
-          name: 'django',
-          serviceName: 'django'
-        },
-        interface: 'postgresql',
-        scope: 'global'
+    var relations = [{
+      id: 'mysql',
+      near: {
+        name: 'mysql',
+        role: 'primary'
       },
-      {id: 'postgresql',
-        near: {
-          name: 'pgsql',
-          role: 'primary'
-        },
-        far: {
-          name: 'django',
-          serviceName: 'django'
-        },
-        interface: 'postgresql',
-        scope: 'global'}
-    ];
+      far: {
+        name: 'django',
+        serviceName: 'django'
+      },
+      interface: 'postgresql',
+      scope: 'global'
+    }, {
+      id: 'postgresql',
+      near: {
+        name: 'pgsql',
+        role: 'primary'
+      },
+      far: {
+        name: 'django',
+        serviceName: 'django'
+      },
+      interface: 'postgresql',
+      scope: 'global'
+    }, {
+      id: 'peer-relation',
+      near: {
+        name: 'self',
+        serviceName: 'referential',
+        role: 'peer'
+      },
+      interface: 'some-interface',
+      scope: 'global'
+    }];
     var renderer = jsTestUtils.shallowRender(
         <juju.components.InspectorRelations
           acl={acl}

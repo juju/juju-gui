@@ -62,9 +62,8 @@ YUI.add('inspector-relations', function() {
       @returns {String} The relation label.
     */
     _generateRelationLabel: function(relation) {
-      var serviceName = relation.far.serviceName;
-      var relationName = relation.far.name;
-      return `${serviceName}:${relationName}`;
+      var endpoint = relation.far;
+      return `${endpoint.serviceName}:${endpoint.name}`;
     },
 
     /**
@@ -102,6 +101,10 @@ YUI.add('inspector-relations', function() {
       ];
 
       relations.forEach(function(relation, index) {
+        if (relation.near.role === 'peer') {
+          // Exclude peer relations as they cannot be removed.
+          return;
+        }
         var ref = 'CheckListItem-' + relation.id;
         components.push(
         <juju.components.CheckListItem
