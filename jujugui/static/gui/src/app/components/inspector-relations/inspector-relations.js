@@ -79,9 +79,8 @@ YUI.add('inspector-relations', function() {
       @returns {String} The relation label.
     */
     _generateRelationLabel: function(relation) {
-      var serviceName = relation.far.serviceName;
-      var relationName = relation.far.name;
-      return `${serviceName}:${relationName}`;
+      var endpoint = relation.far;
+      return `${endpoint.serviceName}:${endpoint.name}`;
     },
 
     /**
@@ -96,7 +95,11 @@ YUI.add('inspector-relations', function() {
       var activeRelations = [];
       // Remove deleted relations from the list
       for (var i in relations) {
-        if (relations.hasOwnProperty(i) && !relations[i].deleted) {
+        if (relations.hasOwnProperty(i) &&
+            // Excluded deleted relations.
+            !relations[i].deleted &&
+            // Exclude peer relations as they cannot be removed.
+            relations[i].near.role !== 'peer') {
           activeRelations.push(relations[i]);
         }
       }
