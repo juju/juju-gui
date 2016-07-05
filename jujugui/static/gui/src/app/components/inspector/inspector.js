@@ -32,20 +32,24 @@ YUI.add('inspector-component', function() {
       charm: React.PropTypes.object.isRequired,
       clearState: React.PropTypes.func.isRequired,
       createMachinesPlaceUnits: React.PropTypes.func.isRequired,
+      createRelation: React.PropTypes.func.isRequired,
       destroyRelations: React.PropTypes.func.isRequired,
       destroyService: React.PropTypes.func.isRequired,
       destroyUnits: React.PropTypes.func.isRequired,
       displayPlans: React.PropTypes.bool.isRequired,
       envResolved: React.PropTypes.func.isRequired,
       exposeService: React.PropTypes.func.isRequired,
+      getAvailableEndpoints: React.PropTypes.func.isRequired,
       getAvailableVersions: React.PropTypes.func.isRequired,
       getCharm: React.PropTypes.func.isRequired,
       getMacaroon: React.PropTypes.func.isRequired,
+      getServiceById: React.PropTypes.func.isRequired,
       getServiceByName: React.PropTypes.func.isRequired,
       getUnitStatusCounts: React.PropTypes.func.isRequired,
       getYAMLConfig: React.PropTypes.func.isRequired,
       linkify: React.PropTypes.func.isRequired,
       modelUUID: React.PropTypes.string.isRequired,
+      relatableApplications: React.PropTypes.array.isRequired,
       service: React.PropTypes.object.isRequired,
       serviceRelations: React.PropTypes.array.isRequired,
       setCharm: React.PropTypes.func.isRequired,
@@ -330,6 +334,45 @@ YUI.add('inspector-component', function() {
                   activeComponent: 'relations'
                 }}}};
           break;
+        case 'relate-to':
+          var spouse = metadata['relate-to'];
+          var backState = {
+            sectionA: {
+              component: 'inspector',
+              metadata: {
+                id: serviceId,
+                activeComponent: 'relations'
+              }}};
+          if (typeof serviceId === 'string' && typeof spouse === 'string') {
+            state.activeChild = {
+              title: this.props.getServiceById(spouse).get('name'),
+              icon: service.get('icon'),
+              component:
+                <juju.components.InspectorRelateToEndpoint
+                  backState={backState}
+                  createRelation={this.props.createRelation}
+                  endpoints={this.props.getAvailableEndpoints(
+                    service, this.props.getServiceById(spouse))}
+                  changeState={this.props.changeState} />,
+              backState: {
+                component: 'inspector',
+                metadata: {
+                  id: serviceId,
+                  activeComponent: 'relate-to'
+                }}};
+            break;
+          }
+          state.activeChild = {
+            title: 'Relate to',
+            icon: service.get('icon'),
+            component:
+              <juju.components.InspectorRelateTo
+              changeState={this.props.changeState}
+              application={service}
+              relatableApplications={this.props.relatableApplications}/>,
+            backState: backState
+          };
+          break;
         case 'change-version':
           state.activeChild = {
             title: 'Change version',
@@ -404,6 +447,8 @@ YUI.add('inspector-component', function() {
     'inspector-header',
     'inspector-config',
     'inspector-plan',
+    'inspector-relate-to',
+    'inspector-relate-to-endpoint',
     'inspector-relations',
     'inspector-relation-details',
     'scale-service',

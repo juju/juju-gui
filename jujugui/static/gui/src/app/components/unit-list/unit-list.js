@@ -309,6 +309,7 @@ YUI.add('unit-list', function() {
     /**
       Generate the scale service action.
 
+      @method _generateScaleService
       @returns {Object} The scale service component.
     */
     _generateScaleService: function() {
@@ -341,6 +342,5 @@ YUI.add('unit-list', function() {
 }, '0.1.0', { requires: [
   'overview-action',
   'button-row',
-  'check-list-item',
-  'overview-action'
+  'check-list-item'
 ]});

@@ -1765,6 +1765,96 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
+    Create a list of relations.
+
+    @method createRelation
+    @param {Object} db Reference to the db instance.
+    @param {Object} env The current environment.
+    @param {Array} relations A list of relation endpoints.
+    @param {Function} callback A function to call after removal.
+  */
+  utils.createRelation = function(db, env, relations, callback) {
+    var endpoints = [[
+      relations[0].service, {
+        name: relations[0].name,
+        role: 'client'
+      }
+    ], [
+      relations[1].service, {
+        name: relations[1].name,
+        role: 'server'
+      }
+    ]];
+    var relationId = 'pending-' + endpoints[0][0] + ':' + endpoints[0][1].name +
+                      endpoints[1][0] + ':' + endpoints[1][1].name;
+    db.relations.add({
+      relation_id: relationId,
+      'interface': endpoints[0][1].name,
+      endpoints: endpoints,
+      pending: true,
+      scope: 'global', // XXX check the charms to see if this is a subordinate
+      display_name: 'pending'
+    });
+    env.add_relation(
+      endpoints[0], endpoints[1],
+      function(e) {
+        db.relations.remove(db.relations.getById(relationId));
+        db.relations.create({
+          relation_id: e.result.id,
+          type: e.result['interface'],
+          endpoints: endpoints,
+          pending: false,
+          scope: e.result.scope
+        });
+      }.bind(this));
+  };
+
+  /**
+    Returns an array of relation types for the passed applications
+
+    @method getAvailableEndpoints
+    @param {Object} endpointsController a reference to the endpoints
+      Controller instance
+    @param {Object} db a reference to the db instance
+    @param {Function} getEndpoints reference to the models.getEndpoints method
+    @param {Object} applicationFrom the application to relate from.
+    @param {Object} applicationTo the application to relate to.
+    @returns {Array} The relations that are compatible.
+  */
+  utils.getAvailableEndpoints = function(
+    endpointsController, db, getEndpoints, applicationFrom, applicationTo) {
+    // Get the endpoints that are possible to relate to.
+    var relatableEndpoints = getEndpoints(
+      applicationFrom, endpointsController)[applicationTo.get('id')];
+    var existing = utils.getRelationDataForService(db, applicationTo);
+    if (existing.length === 0) {
+      return relatableEndpoints;
+    }
+    // Filter out the existing relations
+    var availableEndpoints =
+      relatableEndpoints.filter(relation =>
+        !existing.some(existingRelation =>
+          relation[0].name === existingRelation.far.name ||
+          relation[1].name === existingRelation.near.name
+      ));
+    return availableEndpoints;
+  };
+
+  /**
+    Returns a list of relatible applications
+
+    @method getRelatableApplications
+    @param {Object} db Reference to the db instance.
+    @param {Object} endpoints An object of endpoints with the keys being
+      the service name.
+    @returns {Array} The service objects that can related to the application.
+  */
+  utils.getRelatableApplications = function(db, endpoints) {
+    return Object.keys(endpoints)
+                 .map(appName => db.services.getById(appName));
+  };
+
+  /**
     Destroy a list of units.
 
     @method destroyUnits

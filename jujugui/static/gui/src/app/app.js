@@ -1098,6 +1098,8 @@ YUI.add('juju-gui', function(Y) {
         // Select the service token.
         topo.modules.ServiceModule.selectService(service.get('id'));
         var charm = app.db.charms.getById(service.get('charm'));
+        var relatableApplications = utils.getRelatableApplications(
+          this.db, models.getEndpoints(service, this.endpointsController));
         inspector = (
           <components.Inspector
             acl={this.acl}
@@ -1117,13 +1119,17 @@ YUI.add('juju-gui', function(Y) {
             destroyUnits={utils.destroyUnits.bind(this, this.env)}
             destroyRelations={utils.destroyRelations.bind(
               this, this.db, this.env)}
+            relatableApplications={relatableApplications}
             clearState={utils.clearState.bind(this, topo)}
+            createRelation={utils.createRelation.bind(this, this.db, this.env)}
             getYAMLConfig={utils.getYAMLConfig.bind(this)}
             changeState={this.changeState.bind(this)}
             exposeService={this.env.expose.bind(this.env)}
             unexposeService={this.env.unexpose.bind(this.env)}
             getAvailableVersions={charmstore.getAvailableVersions.bind(
                 charmstore)}
+            getAvailableEndpoints={utils.getAvailableEndpoints.bind(
+              this, this.endpointsController, this.db, models.getEndpoints)}
             getMacaroon={charmstore.bakery.getMacaroon.bind(charmstore.bakery)}
             addCharm={this.env.addCharm.bind(this.env)}
             displayPlans={utils.compareSemver(
@@ -1135,6 +1141,7 @@ YUI.add('juju-gui', function(Y) {
             getUnitStatusCounts={utils.getUnitStatusCounts}
             updateServiceUnitsDisplayname=
               {this.db.updateServiceUnitsDisplayname.bind(this.db)}
+            getServiceById={this.db.services.getById.bind(this.db.services)}
             getServiceByName=
               {this.db.services.getServiceByName.bind(this.db.services)}
             linkify={utils.linkify}
