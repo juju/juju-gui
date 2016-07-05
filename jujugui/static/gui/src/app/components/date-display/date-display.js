@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('date-display', function() {
 
   juju.components.DateDisplay = React.createClass({
+    timer: null,
 
     propTypes: {
       date: React.PropTypes.oneOfType([
@@ -28,6 +29,57 @@ YUI.add('date-display', function() {
         React.PropTypes.string
       ]),
       relative: React.PropTypes.bool
+    },
+
+    componentDidMount: function() {
+      if (this.props.relative) {
+        this._startTimer();
+      }
+    },
+
+    componentDidUpdate: function() {
+      this._stopTimer();
+      if (this.props.relative) {
+        this._startTimer();
+      }
+    },
+
+    componentWillUnmount: function() {
+      this._stopTimer();
+    },
+
+    /**
+      Rerender the component so that the relative dates update.
+
+      @method _rerender
+    */
+    _rerender: function() {
+      // Force the component to rerender even though the props or state haven't
+      // been updated. This will make the component recalculate the relative
+      // times.
+      this.forceUpdate();
+    },
+
+    /**
+      Start the update timer.
+
+      @method _startTimer
+    */
+    _startTimer: function() {
+      // Rerender relative times every minute.
+      this.timer = setInterval(this._rerender, 60000);
+    },
+
+    /**
+      Stop the update timer.
+
+      @method _stopTimer
+    */
+    _stopTimer: function() {
+      if (this.timer) {
+        clearInterval(this.timer);
+        this.timer = null;
+      }
     },
 
     /**

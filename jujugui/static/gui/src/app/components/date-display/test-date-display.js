@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('DateDisplay', () => {
-  var date, relative, renderer;
+  var date, instance, relative, renderer, timers;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -29,6 +29,8 @@ describe('DateDisplay', () => {
   });
 
   beforeEach(() => {
+    // Replace setInterval etc. with mocks.
+    timers = sinon.useFakeTimers();
     date = new Date('Mon, 19 Jan 2020 21:07:24 GMT');
     relative = new Date(date.getTime());
     // Set up the rendered instance here so that we can override the _getNow
@@ -37,8 +39,13 @@ describe('DateDisplay', () => {
     renderer = jsTestUtils.shallowRender(
       <juju.components.DateDisplay
         date={relative} />, true);
-    var instance = renderer.getMountedInstance();
+    instance = renderer.getMountedInstance();
     sinon.stub(instance, '_getNow').returns(date);
+  });
+
+  afterEach(() => {
+    // Restore the native implementations of setInterval etc.
+    timers.restore();
   });
 
   it('can display a date in the correct format', () => {
@@ -231,5 +238,40 @@ describe('DateDisplay', () => {
         26/10/2018
       </time>);
     assert.deepEqual(output, expected);
+  });
+
+  it('does not set a timer if the date is not relative', () => {
+    renderer.render(
+      <juju.components.DateDisplay
+        date={relative}
+        relative={false} />);
+    var forceUpdate = sinon.stub(instance, 'forceUpdate');
+    instance.componentDidMount();
+    // The timer should not get called times if we skip in time.
+    timers.tick(120000);
+    assert.equal(forceUpdate.callCount, 0);
+  });
+
+  it('updates relative dates every minute', () => {
+    renderer.render(
+      <juju.components.DateDisplay
+        date={relative}
+        relative={true} />);
+    var forceUpdate = sinon.stub(instance, 'forceUpdate');
+    instance.componentDidMount();
+    // The timer should get called two times if we skip ahead two minutes.
+    timers.tick(120000);
+    assert.equal(forceUpdate.callCount, 2);
+  });
+
+  it('clears the timer when it unmounts', () => {
+    renderer.render(
+      <juju.components.DateDisplay
+        date={relative}
+        relative={true} />);
+    instance.componentDidMount();
+    assert.isNotNull(instance.timer);
+    instance.componentWillUnmount();
+    assert.isNull(instance.timer);
   });
 });
