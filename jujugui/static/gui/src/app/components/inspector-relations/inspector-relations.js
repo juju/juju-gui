@@ -78,7 +78,11 @@ YUI.add('inspector-relations', function() {
       var activeRelations = [];
       // Remove deleted relations from the list
       for (var i in relations) {
-        if (relations.hasOwnProperty(i) && !relations[i].deleted) {
+        if (relations.hasOwnProperty(i) &&
+            // Excluded deleted relations.
+            !relations[i].deleted &&
+            // Exclude peer relations as they cannot be removed.
+            relations[i].near.role !== 'peer') {
           activeRelations.push(relations[i]);
         }
       }
@@ -101,10 +105,6 @@ YUI.add('inspector-relations', function() {
       ];
 
       relations.forEach(function(relation, index) {
-        if (relation.near.role === 'peer') {
-          // Exclude peer relations as they cannot be removed.
-          return;
-        }
         var ref = 'CheckListItem-' + relation.id;
         components.push(
         <juju.components.CheckListItem
