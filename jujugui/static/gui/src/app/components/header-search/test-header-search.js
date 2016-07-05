@@ -88,6 +88,34 @@ describe('HeaderSearch', function() {
     });
   });
 
+  it('gets cleared when closed', function() {
+    var getAppState = sinon.stub();
+    getAppState.withArgs(
+      'current', 'sectionC', 'component').returns('charmbrowser');
+    getAppState.withArgs('current', 'sectionC', 'metadata')
+               .onFirstCall().returns({ search: 'hexo' });
+    getAppState.withArgs('current', 'sectionC', 'metadata')
+               .onSecondCall().returns({ search: '' });
+    var changeState = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.HeaderSearch
+        getAppState={getAppState}
+        changeState={changeState} />, true);
+    var output = renderer.getRenderOutput();
+    // The input should have the metadata search value
+    var input = output.props.children[0].props.children[1];
+    assert.equal(input.props.value, 'hexo');
+    // re-render which will get the new state.
+    renderer = jsTestUtils.shallowRender(
+      <juju.components.HeaderSearch
+        getAppState={getAppState}
+        changeState={changeState} />, true);
+    output = renderer.getRenderOutput();
+    // It should be emptied out when metadata.search is undefined.
+    input = output.props.children[0].props.children[1];
+    assert.equal(input.props.value, undefined);
+  });
+
   it('becomes active when the input is focused', function() {
     var getAppState = sinon.stub();
     var changeState = sinon.stub();
