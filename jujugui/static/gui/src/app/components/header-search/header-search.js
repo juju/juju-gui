@@ -34,13 +34,21 @@ YUI.add('header-search', function() {
       @returns {String} The current state.
     */
     getInitialState: function() {
-      var metadata = this.props.getAppState('current', 'sectionC', 'metadata');
-      var active = this._activeForComponent();
       return {
-        query: metadata && metadata.search,
-        active: active,
+        query: this._getSearchQuery(),
+        active: this._activeForComponent(),
         inputStyles: this._generateInputStyles()
       };
+    },
+
+    /**
+      Grabs the metadata search query from the app state and returns it.
+      @method _getSearchQuery
+      @returns {String} The search query.
+    */
+    _getSearchQuery: function() {
+      var metadata = this.props.getAppState('current', 'sectionC', 'metadata');
+      return metadata && metadata.search;
     },
 
     /**
@@ -64,6 +72,7 @@ YUI.add('header-search', function() {
       // Need to check if there is a change to sectionC and if it has been
       // cleared (mid-point/search results have been closed) then we also need
       // to deactivate the search box.
+      this.setState({query: this._getSearchQuery()});
       if (this._activeForComponent()) {
         this._openSearch();
       } else {
@@ -260,7 +269,7 @@ YUI.add('header-search', function() {
             <input type="search" name="query"
               className="header-search__input"
               placeholder="Search the store"
-              defaultValue={this.state.query}
+              value={this.state.query}
               onChange={this._handleQueryChange}
               onFocus={this._handleSearchFocus}
               style={this.state.inputStyles}
