@@ -33,6 +33,10 @@ YUI.add('juju-env-api', function(Y) {
   // Define the Admin API facade version.
   var ADMIN_FACADE_VERSION = 3;
 
+  // Define the error returned by Juju when the mega-watcher is stopped and
+  // clients make a "Next" request.
+  var ERR_STOP_WATCHER = 'watcher was stopped';
+
   var environments = Y.namespace('juju.environments');
   var utils = Y.namespace('juju.views.utils');
 
@@ -223,6 +227,7 @@ YUI.add('juju-env-api', function(Y) {
       // pendingLoginResponse is set to true when the login process is running.
       this.pendingLoginResponse = false;
       this.on('_rpc_response', this._handleRpcResponse);
+      this._allWatcherBeingStopped = false;
     },
 
     /**
@@ -372,11 +377,18 @@ YUI.add('juju-env-api', function(Y) {
         request: 'Next',
         id: this._allWatcherId
       }, function(data) {
-        if (data.error) {
-          console.error('cannot get next changes from the mega-watcher');
+        if (!data.error) {
+          this.fire('_rpc_response', data);
           return;
         }
-        this.fire('_rpc_response', data);
+        if (this._allWatcherBeingStopped && data.error === ERR_STOP_WATCHER) {
+          // This is an expected "Next" error: we are switching from one model
+          // connection to another.
+          this._allWatcherBeingStopped = false;
+          return;
+        }
+        console.error(
+          'cannot get next changes from the mega-watcher:', data.error);
       });
     },
 
@@ -393,6 +405,7 @@ YUI.add('juju-env-api', function(Y) {
         this._allWatcherId = null;
         callback();
       }.bind(this);
+      this._allWatcherBeingStopped = true;
       this._send_rpc({
         type: 'AllWatcher',
         request: 'Stop',
