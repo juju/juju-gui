@@ -47,7 +47,7 @@ describe('DateDisplay', () => {
         date={relative} />);
     var expected = (
       <time datetime="19/01/2020"
-        title={undefined}>
+        title="19/01/2020 21:07">
         19/01/2020
       </time>);
     assert.deepEqual(output, expected);
@@ -56,10 +56,10 @@ describe('DateDisplay', () => {
   it('can parse a date from a string', () => {
     var output = renderer.render(
       <juju.components.DateDisplay
-        date='2020-01-19' />);
+        date='Mon, 19 Jan 2020 21:07:24 GMT' />);
     var expected = (
       <time datetime="19/01/2020"
-        title={undefined}>
+        title="19/01/2020 21:07">
         19/01/2020
       </time>);
     assert.deepEqual(output, expected);
@@ -73,7 +73,7 @@ describe('DateDisplay', () => {
         relative={true} />);
     var expected = (
       <time datetime="19/01/2020"
-        title="19/01/2020">
+        title="19/01/2020 21:07">
         just now
       </time>);
     assert.deepEqual(output, expected);
@@ -87,7 +87,7 @@ describe('DateDisplay', () => {
         relative={true} />);
     var expected = (
       <time datetime="19/01/2020"
-        title="19/01/2020">
+        title="19/01/2020 21:06">
         1 minute ago
       </time>);
     assert.deepEqual(output, expected);
@@ -101,7 +101,7 @@ describe('DateDisplay', () => {
         relative={true} />);
     var expected = (
       <time datetime="19/01/2020"
-        title="19/01/2020">
+        title="19/01/2020 20:48">
         19 minutes ago
       </time>);
     assert.deepEqual(output, expected);
@@ -115,7 +115,7 @@ describe('DateDisplay', () => {
         relative={true} />);
     var expected = (
       <time datetime="19/01/2020"
-        title="19/01/2020">
+        title="19/01/2020 20:07">
         1 hour ago
       </time>);
     assert.deepEqual(output, expected);
@@ -129,7 +129,7 @@ describe('DateDisplay', () => {
         relative={true} />);
     var expected = (
       <time datetime="19/01/2020"
-        title="19/01/2020">
+        title="19/01/2020 10:07">
         11 hours ago
       </time>);
     assert.deepEqual(output, expected);
@@ -143,7 +143,7 @@ describe('DateDisplay', () => {
         relative={true} />);
     var expected = (
       <time datetime="18/01/2020"
-        title="18/01/2020">
+        title="18/01/2020 21:07">
         1 day ago
       </time>);
     assert.deepEqual(output, expected);
@@ -157,7 +157,7 @@ describe('DateDisplay', () => {
         relative={true} />);
     var expected = (
       <time datetime="13/01/2020"
-        title="13/01/2020">
+        title="13/01/2020 21:07">
         6 days ago
       </time>);
     assert.deepEqual(output, expected);
@@ -171,7 +171,7 @@ describe('DateDisplay', () => {
         relative={true} />);
     var expected = (
       <time datetime="11/01/2020"
-        title="11/01/2020">
+        title="11/01/2020 21:07">
         1 week ago
       </time>);
     assert.deepEqual(output, expected);
@@ -185,7 +185,7 @@ describe('DateDisplay', () => {
         relative={true} />);
     var expected = (
       <time datetime="25/12/2019"
-        title="25/12/2019">
+        title="25/12/2019 21:07">
         3 weeks ago
       </time>);
     assert.deepEqual(output, expected);
@@ -199,7 +199,7 @@ describe('DateDisplay', () => {
         relative={true} />);
     var expected = (
       <time datetime="18/12/2019"
-        title="18/12/2019">
+        title="18/12/2019 21:07">
         1 month ago
       </time>);
     assert.deepEqual(output, expected);
@@ -213,22 +213,22 @@ describe('DateDisplay', () => {
         relative={true} />);
     var expected = (
       <time datetime="11/10/2019"
-        title="11/10/2019">
+        title="11/10/2019 21:07">
         3 months ago
       </time>);
     assert.deepEqual(output, expected);
   });
 
   it('can display a relative date as regular that is years ago', () => {
-    relative.setDate(date.getDate() - 500);
+    relative.setDate(date.getDate() - 450);
     var output = renderer.render(
       <juju.components.DateDisplay
         date={relative}
         relative={true} />);
     var expected = (
-      <time datetime="06/09/2018"
-        title="06/09/2018">
-        06/09/2018
+      <time datetime="26/10/2018"
+        title="26/10/2018 21:07">
+        26/10/2018
       </time>);
     assert.deepEqual(output, expected);
   });

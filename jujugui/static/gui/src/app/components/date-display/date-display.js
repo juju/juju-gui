@@ -66,10 +66,10 @@ YUI.add('date-display', function() {
     },
 
     /**
-      Generate the date.
+      Generate a relative date.
 
-      @method _generateDate
-      @returns {String} The date.
+      @method _generateRelativeDate
+      @returns {String} The relative date.
     */
     _generateRelativeDate: function() {
       // Get the diff in milliseconds.
@@ -120,10 +120,10 @@ YUI.add('date-display', function() {
       @returns {String} The title.
     */
     _generateTitle: function() {
-      if (!this.props.relative) {
-        return;
-      }
-      return this._generateDate();
+      var date = this._getParsedDate();
+      var hour = ('0' + date.getUTCHours()).slice(-2);
+      var minute = ('0' + date.getUTCMinutes()).slice(-2);
+      return `${this._generateDate()} ${hour}:${minute}`;
     },
 
     /**
