@@ -102,11 +102,17 @@ describe('HeaderSearch', function() {
         getAppState={getAppState}
         changeState={changeState} />, true);
     var output = renderer.getRenderOutput();
+    var instance = renderer.getMountedInstance();
+    instance.refs = {
+      searchInput: {
+        focus: sinon.stub()
+      }
+    };
     // The input should have the metadata search value
     var input = output.props.children[0].props.children[1];
     assert.equal(input.props.value, 'hexo');
     // re-render which will get the new state.
-    renderer = jsTestUtils.shallowRender(
+    renderer.render(
       <juju.components.HeaderSearch
         getAppState={getAppState}
         changeState={changeState} />, true);
@@ -114,6 +120,7 @@ describe('HeaderSearch', function() {
     // It should be emptied out when metadata.search is undefined.
     input = output.props.children[0].props.children[1];
     assert.equal(input.props.value, undefined);
+    assert.equal(instance.refs.searchInput.focus.callCount, 1);
   });
 
   it('becomes active when the input is focused', function() {
