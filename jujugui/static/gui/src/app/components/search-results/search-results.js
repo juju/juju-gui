@@ -109,7 +109,6 @@ YUI.add('search-results', function(Y) {
         var defaultSeries = e.series[0];
         if (defaultSeries) {
           e.storeId = defaultSeries.storeId;
-          e.id = `${defaultSeries.name}/${getName(e.id)}`;
         }
       }
       // Now convert that object back to an ordered list and return it.
