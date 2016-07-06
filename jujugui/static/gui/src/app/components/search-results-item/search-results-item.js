@@ -74,9 +74,9 @@ YUI.add('search-results-item', function(Y) {
       @returns {String} The generated elements.
     */
     _generateIconList: function() {
-      var services = this.props.item.services || [this.props.item];
+      var applications = this.props.item.applications || [this.props.item];
       var components = [];
-      services.forEach(function(service) {
+      applications.forEach(function(service) {
         var src = service.iconPath ||
             'static/gui/build/app/assets/images/non-sprites/charm_160.svg';
         components.push(
@@ -88,7 +88,7 @@ YUI.add('search-results-item', function(Y) {
               className="list-icons__image"
               alt={service.displayName} />
             <span className="tooltip__tooltip">
-              <span className="tooltip__inner">
+              <span className="tooltip__inner tooltip__inner--down">
                 {service.displayName}
               </span>
             </span>
@@ -243,7 +243,7 @@ YUI.add('search-results-item', function(Y) {
       return (
         <li className={'list-block__list--item ' + item.type}
             tabIndex="0" role="button"
-            onClick={this._handleItemClick.bind(this, item.storeId)}>
+            onClick={this._handleItemClick.bind(this, item.id)}>
           <div className="four-col charm-name__column">
             <h3 className="list-block__list--item-title">
               {item.displayName}
@@ -266,12 +266,11 @@ YUI.add('search-results-item', function(Y) {
           <div className={
             'prepend-one two-col owner__column list-block__column last-col'}>
             <p className="cell">
-              By
+              {'By '}
               <span className="link"
                 onClick={this._handleOwnerClick.bind(this, item.owner)}
                 role="button"
                 tabIndex="0">
-                {' '}
                 {item.owner}
               </span>
             </p>
