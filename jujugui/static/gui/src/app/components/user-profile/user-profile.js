@@ -115,10 +115,9 @@ YUI.add('user-profile', function() {
     */
     _getAgreementsCallback: function(error, data) {
       this.setState({loadingAgreements: false});
-      // We need to coerce error types returned bt the terms API into one error.
-      var err = data.err || error;
-      if (err) {
-        console.error(err);
+      if (error) {
+        // TODO frankban: notify the user with the error.
+        console.error('cannot retrieve terms:', error);
         return;
       }
       this.setState({agreementList: data});

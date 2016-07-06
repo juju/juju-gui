@@ -143,7 +143,7 @@ describe('DateDisplay', () => {
   });
 
   it('can display a relative date that is a day ago', () => {
-    relative.setDate(date.getDate() - 1);
+    relative.setUTCDate(date.getUTCDate() - 1);
     var output = renderer.render(
       <juju.components.DateDisplay
         date={relative}
@@ -157,7 +157,7 @@ describe('DateDisplay', () => {
   });
 
   it('can display a relative date that is days ago', () => {
-    relative.setDate(date.getDate() - 6);
+    relative.setUTCDate(date.getUTCDate() - 6);
     var output = renderer.render(
       <juju.components.DateDisplay
         date={relative}
@@ -171,7 +171,7 @@ describe('DateDisplay', () => {
   });
 
   it('can display a relative date that is a week ago', () => {
-    relative.setDate(date.getDate() - 8);
+    relative.setUTCDate(date.getUTCDate() - 8);
     var output = renderer.render(
       <juju.components.DateDisplay
         date={relative}
@@ -185,7 +185,7 @@ describe('DateDisplay', () => {
   });
 
   it('can display a relative date that is weeks ago', () => {
-    relative.setDate(date.getDate() - 25);
+    relative.setUTCDate(date.getUTCDate() - 25);
     var output = renderer.render(
       <juju.components.DateDisplay
         date={relative}
@@ -199,7 +199,7 @@ describe('DateDisplay', () => {
   });
 
   it('can display a relative date that is a month ago', () => {
-    relative.setDate(date.getDate() - 32);
+    relative.setUTCDate(date.getUTCDate() - 32);
     var output = renderer.render(
       <juju.components.DateDisplay
         date={relative}
@@ -213,7 +213,7 @@ describe('DateDisplay', () => {
   });
 
   it('can display a relative date that is months ago', () => {
-    relative.setDate(date.getDate() - 100);
+    relative.setUTCDate(date.getUTCDate() - 100);
     var output = renderer.render(
       <juju.components.DateDisplay
         date={relative}
@@ -227,7 +227,7 @@ describe('DateDisplay', () => {
   });
 
   it('can display a relative date as regular that is years ago', () => {
-    relative.setDate(date.getDate() - 450);
+    relative.setUTCDate(date.getUTCDate() - 450);
     var output = renderer.render(
       <juju.components.DateDisplay
         date={relative}
