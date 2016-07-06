@@ -34,11 +34,17 @@
         color: $white;
         font-size: 14px;
         white-space: nowrap;
+    }
 
-        &:after {
-            @include diamond($black, 8px, 'up');
-            left: 50%;
-            margin-left: -4px;
-        }
+    &__inner--up:after {
+        @include diamond($black, 8px, 'up');
+        left: 50%;
+        margin-left: -4px;
+    }
+
+    &__inner--down:after {
+        @include diamond($black, 8px, 'down');
+        left: 50%;
+        margin-left: -4px;
     }
 }
