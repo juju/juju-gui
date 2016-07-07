@@ -258,11 +258,28 @@ YUI.add('entity-header', function() {
         </li>);
     },
 
+    /**
+      Generates the list of series. Supports bundles, multi-series and
+      single-series charms.
+
+      @method_generateSeriesList
+    */
+    _generateSeriesList: function() {
+      var entity = this.props.entityModel.toEntity();
+      var series = entity.series;
+      if (!series) {
+        return null;
+      }
+      if (Array.isArray(series)) {
+        return series.map(series =>
+          <li key={series} className="entity-header__series">{series}</li>);
+      }
+      return <li className="entity-header__series">{series}</li>;
+    },
+
     render: function() {
       var entity = this.props.entityModel.toEntity();
       var ownerUrl = 'https://launchpad.net/~' + entity.owner;
-      var series = entity.series ?
-        <li className="entity-header__series">{entity.series}</li> : null;
       var twitterUrl = [
         'https://twitter.com/intent/tweet?text=',
         entity.displayName,
@@ -294,7 +311,7 @@ YUI.add('entity-header', function() {
                     <a href={ownerUrl}
                       target="_blank">{entity.owner}</a>
                   </li>
-                  {series}
+                  {this._generateSeriesList()}
                   {this._generateCounts()}
                 </ul>
                 <ul className="entity-header__social-list">
