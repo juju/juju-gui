@@ -148,6 +148,11 @@ describe('jujulib charmstore', function() {
               }
             }
           },
+          'charm-metrics': {
+            Metrics: {
+              metric: 'metric'
+            }
+          },
           stats: {
             ArchiveDownloadCount: 10
           },
@@ -166,6 +171,9 @@ describe('jujulib charmstore', function() {
         entityType: 'charm',
         is_approved: true,
         is_subordinate: false,
+        metrics: {
+          metric: 'metric'
+        },
         owner: 'hatch',
         revisions: 5,
         code_source: {
@@ -486,6 +494,15 @@ describe('jujulib charmstore', function() {
       var path = charmstore.bakery.sendGetRequest.lastCall.args[0];
       assert.equal(path.indexOf('cs:'), -1,
                    'The string "cs:" should not be found in the path');
+    });
+
+    it('calls the correct path', function() {
+      charmstore.getEntity('cs:foobar', sinon.stub());
+      var path = charmstore.bakery.sendGetRequest.lastCall.args[0];
+      assert.equal(
+        path, 'local/v4/foobar/meta/any?include=bundle-metadata' +
+        '&include=charm-metadata&include=charm-config&include=manifest' +
+        '&include=stats&include=extra-info&include=tags&include=charm-metrics');
     });
   });
 });

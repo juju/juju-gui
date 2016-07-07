@@ -354,8 +354,7 @@ YUI.add('juju-charm-models', function(Y) {
       @return {Boolean} Whether the charm has metrics or not.
     */
     hasMetrics: function() {
-      return !!this.get('metrics') ||
-        this.get('files').some(file => file === 'metrics.yaml');
+      return !!this.get('metrics');
     }
 
   }, {

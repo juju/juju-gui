@@ -177,6 +177,9 @@ var module = module;
       if (meta['supported-series']) {
         processed.series = meta['supported-series']['SupportedSeries'];
       }
+      if (meta['charm-metrics']) {
+        processed.metrics = meta['charm-metrics'].Metrics;
+      }
       // Convert the options keys to lowercase.
       if (charmConfig && typeof charmConfig.Options === 'object') {
         this._lowerCaseKeys(charmConfig.Options, charmConfig.Options, 0);
@@ -269,12 +272,19 @@ var module = module;
     getEntity: function(entityId, callback) {
       // Make sure we strip the ID of any extraneous strings.
       entityId = entityId.replace('cs:', '');
-      var filters = 'include=bundle-metadata&include=charm-metadata' +
-                    '&include=charm-config&include=manifest&include=stats' +
-                    '&include=extra-info&include=tags';
+      var endpoints = 'include=' + [
+        'bundle-metadata',
+        'charm-metadata',
+        'charm-config',
+        'manifest',
+        'stats',
+        'extra-info',
+        'tags',
+        'charm-metrics'
+      ].join('&include=');
       return jujulib._makeRequest(
           this.bakery,
-          this._generatePath(entityId, filters, '/meta/any'),
+          this._generatePath(entityId, endpoints, '/meta/any'),
           'GET',
           null,
           this._transformQueryResults.bind(this, callback));

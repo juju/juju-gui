@@ -163,10 +163,7 @@ YUI.add('entity-details', function() {
       var entityModel = this.state.entityModel;
       if (this.props.displayPlans &&
         entityModel.get('entityType') === 'charm') {
-        var hasMetrics = entityModel.get('files').some((file) => {
-          return file === 'metrics.yaml';
-        });
-        if (hasMetrics) {
+        if (entityModel.hasMetrics()) {
           this.setState({hasPlans: true}, () => {
             this.props.listPlansForCharm(
               entityModel.get('id'), this._getPlansCallback);
