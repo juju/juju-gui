@@ -69,6 +69,18 @@ YUI.add('search-results', function(Y) {
             series = entity.series,
             storeId = entity.storeId || '',
             value = {name: series, storeId: storeId};
+
+        if (Array.isArray(series)) {
+          // This is a multi-series charm so we don't need to do any collapsing.
+          // The series data structure is modified in the non-multi series
+          // charms so this formats the series to match.
+          entity.series = series.map(
+            name => ({ name: name, storeId: entity.id }));
+          collapsedEntities[key] = entity;
+          orderedKeys.push(key);
+          continue;
+        }
+
         // If the key already exists, append the series to the existing list.
         if (collapsedEntities[key]) {
           var collapsed = collapsedEntities[key];
