@@ -1,7 +1,8 @@
 .inspector-header {
-    cursor: pointer;
-    padding: 10px 20px;
     border-bottom: 1px solid $mid-grey;
+    cursor: pointer;
+    min-height: 44px;
+    padding: 10px 20px;
 
     &__back {
         vertical-align: middle;

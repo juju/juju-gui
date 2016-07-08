@@ -1,4 +1,8 @@
 .inspector-content {
     @extend %scroll-children;
     position: relative;
+
+    .button-row {
+        min-height: 60px;
+    }
 }
