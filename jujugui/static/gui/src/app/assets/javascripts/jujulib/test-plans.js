@@ -238,4 +238,56 @@ describe('jujulib plans service', function() {
       }
     );
   });
+
+  it('lists budgets', function(done) {
+    var budgets = {
+    'budgets': [{
+      'owner': 'spinach',
+      'budget': 'my-budget',
+      'limit': 99,
+      'allocated': 77,
+      'unallocated': 22,
+      'available': 22,
+      'consumed': 55,
+      }],
+    'total': {
+      'limit': 999,
+      'allocated': 777,
+      'unallocated': 222,
+      'consumed': 55,
+      'available': 22,
+    }};
+    var bakery = {
+      sendGetRequest: function(path, success, failure) {
+        assert.equal(
+          path,
+          'http://1.2.3.4/' +
+          window.jujulib.plansAPIVersion +
+          '/budget');
+        var xhr = makeXHRRequest(budgets);
+        success(xhr);
+      }
+    };
+    var plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.getBudgets(function(error, data) {
+      assert.strictEqual(error, null);
+      assert.deepEqual(data, budgets);
+      done();
+    });
+  });
+
+  it('handles errors listing budgets', function(done) {
+    var bakery = {
+      sendGetRequest: function(path, success, failure) {
+        var xhr = makeXHRRequest({error: 'bad wolf'});
+        failure(xhr);
+      }
+    };
+    var plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.getBudgets(function(error, data) {
+      assert.equal(error, 'bad wolf');
+      assert.strictEqual(data, null);
+      done();
+    });
+  });
 });

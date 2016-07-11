@@ -127,7 +127,30 @@ var module = module;
       var url = this.url + '/plan/model/' + modelUUID +
         '/service/' + applicationName;
       return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
-    }
+    },
+
+    /**
+      Lists a user's budgets.
+
+      @public getBudgets
+      @params callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and an object of budget data as its second, containing
+        the following data:
+          - budgets: an array of budgets;
+          - total: an object container then summary of all budgets.
+    */
+    getBudgets: function(callback) {
+      var handler = function(error, data) {
+        if (error !== null) {
+          callback(error, null);
+          return;
+        }
+        callback(null, data);
+      };
+      var url = this.url + '/budget';
+      return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
+    },
 
   };
 
