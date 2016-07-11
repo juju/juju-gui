@@ -152,6 +152,25 @@ var module = module;
       return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
     },
 
+    /**
+      Create a new budget for the authorised user.
+
+      @public createBudget
+      @params budget {String} The budget name.
+      @params limit {String} The numeric limit.
+      @params callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and an authorization object as its second.
+    */
+    createBudget: function(budget, limit, callback) {
+      var url = this.url + '/budget';
+      var payload = {
+        'budget': budget,
+        'limit': limit
+      }
+      return jujulib._makeRequest(this.bakery, url, 'POST', payload, callback);
+    }
+
   };
 
   /**
