@@ -399,4 +399,62 @@ describe('jujulib plans service', function() {
       done();
     });
   });
+
+  it('handles adding a profile', function(done) {
+    var bakery = {
+      sendPostRequest: function(path, params, success, failure) {
+        assert.equal(
+          path,
+          'http://1.2.3.4/' +
+          window.jujulib.plansAPIVersion +
+          '/profile');
+        var xhr = makeXHRRequest({
+          'auth': 'I\'m a macaroon',
+          'params': params
+        });
+        success(xhr);
+      }
+    };
+    var plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.createProfile(
+      'user',
+      'limit',
+      'default-budget',
+      'default-budget-limit',
+      function(error, data) {
+        assert.isNull(error);
+        assert.equal(data['auth'], 'I\'m a macaroon');
+        assert.equal(
+          data.params,
+          '{"user":"user","limit":"limit","default-budget":"default-budget",' +
+          '"default-budget-limit":"default-budget-limit"}');
+        done();
+      }
+    );
+  });
+
+  it('handles errors when adding a budget', function(done) {
+    var bakery = {
+      sendPostRequest: function(path, params, success, failure) {
+        assert.equal(
+          path,
+          'http://1.2.3.4/' +
+          window.jujulib.plansAPIVersion +
+          '/profile');
+        var xhr = makeXHRRequest({error: 'bad wolf'});
+        success(xhr);
+      }
+    };
+    var plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.createProfile(
+      'user',
+      'limit',
+      'default-budget',
+      'default-budget-limit',
+      function(error, data) {
+        assert.equal(error, 'bad wolf');
+        done();
+      }
+    );
+  });
 });
