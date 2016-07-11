@@ -161,9 +161,7 @@ YUI.add('entity-header', function() {
         'entity-header',
         {
           'entity-header--sticky':
-            this.props.scrollPosition > this.state.headerHeight,
-          'entity-header--multi-series':
-            Array.isArray(this.props.entityModel.get('series'))
+            this.props.scrollPosition > this.state.headerHeight
         }
       );
     },
@@ -197,26 +195,6 @@ YUI.add('entity-header', function() {
         );
       }
       return deployAction;
-    },
-
-    /**
-      Generate the series selector for multi-series charms.
-
-      @method _generateSelectSeries
-    */
-    _generateSelectSeries: function() {
-      let series = this.props.entityModel.get('series');
-      if (!Array.isArray(series)) {
-        // We don't show the selector if it isn't a multi-series charm.
-        return;
-      }
-      let options = series.map(series =>
-        <option key={series} value={series}>{series}</option>);
-      return (
-        <select
-          className="entity-header__select entity-header__series" ref="series">
-          {options}
-        </select>);
     },
 
     /**
@@ -287,8 +265,7 @@ YUI.add('entity-header', function() {
       @method_generateSeriesList
     */
     _generateSeriesList: function() {
-      var entity = this.props.entityModel.toEntity();
-      var series = entity.series;
+      var series = this.props.entityModel.get('series');
       if (!series) {
         return null;
       }
@@ -318,7 +295,7 @@ YUI.add('entity-header', function() {
           style={this._generateWrapperStyles()}>
           <header className={this._generateClasses()}>
             <div className="inner-wrapper">
-              <div className="entity-header__left eight-col no-margin-bottom">
+              <div className="eight-col no-margin-bottom">
                 <img src={entity.iconPath} alt={entity.displayName}
                      width="96" className="entity-header__icon"/>
                 <h1
@@ -359,7 +336,6 @@ YUI.add('entity-header', function() {
               </div>
               <div className={
                 'entity-header__right four-col last-col no-margin-bottom'}>
-                {this._generateSelectSeries()}
                 {this._generateSelectPlan()}
                 <juju.components.CopyToClipboard
                   value={'juju deploy ' + entity.id} />

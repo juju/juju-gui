@@ -38,15 +38,6 @@
             pointer-events: auto;
         }
 
-        &.entity-header--multi-series .inner-wrapper {
-            display: flex;
-
-            .entity-header__left,
-            .entity-header__right {
-                flex: 1;
-            }
-        }
-
         .inner-wrapper {
             position: absolute;
             bottom: 0;
@@ -81,10 +72,6 @@
             &__select {
                 width: 150px;
                 margin: 0 10px 0 0;
-            }
-
-            &__select.entity-header__series {
-                text-transform: capitalize;
             }
 
             &__right {
@@ -162,10 +149,6 @@
 
     &__select {
         margin-bottom: 15px;
-    }
-
-    &__select.entity-header__series {
-        text-transform: capitalize;
     }
 
     &__social-list {
