@@ -269,7 +269,7 @@ describe('jujulib plans service', function() {
       }
     };
     var plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.getBudgets(function(error, data) {
+    plans.listBudgets(function(error, data) {
       assert.isNull(error);
       assert.deepEqual(data, budgets);
       done();
@@ -284,7 +284,7 @@ describe('jujulib plans service', function() {
       }
     };
     var plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.getBudgets(function(error, data) {
+    plans.listBudgets(function(error, data) {
       assert.equal(error, 'bad wolf');
       assert.isNull(data);
       done();
@@ -340,5 +340,63 @@ describe('jujulib plans service', function() {
         done();
       }
     );
+  });
+
+  it('gets budget details', function(done) {
+    var budget = {
+      'limit': 'budget limit',
+      'total': {
+        'allocated': 'total allocated amount',
+        'available': 'unconsumed amount',
+        'unallocated': 'unallocated amount',
+        'usage': 'percentage of budget consumed',
+        'consumed': 'total consumed amount',
+      },
+      'allocations': [{
+        'owner': 'user, creator of allocation',
+        'consumed': 'amount consumed',
+        'limit': 'allocation limit',
+        'usage': 'consumed/limit',
+        'model': 'model uuid',
+        'services': {
+          'service name': {
+            'consumed': 'consumed',
+            'usage': 'consumed/allocation limit',
+          }
+        }
+      }]
+    };
+    var bakery = {
+      sendGetRequest: function(path, success, failure) {
+        assert.equal(
+          path,
+          'http://1.2.3.4/' +
+          window.jujulib.plansAPIVersion +
+          '/budget/my-budget');
+        var xhr = makeXHRRequest(budget);
+        success(xhr);
+      }
+    };
+    var plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.showBudget('my-budget', function(error, data) {
+      assert.isNull(error);
+      assert.deepEqual(data, budget);
+      done();
+    });
+  });
+
+  it('handles errors listing budgets', function(done) {
+    var bakery = {
+      sendGetRequest: function(path, success, failure) {
+        var xhr = makeXHRRequest({error: 'bad wolf'});
+        failure(xhr);
+      }
+    };
+    var plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.showBudget('my-budget', function(error, data) {
+      assert.equal(error, 'bad wolf');
+      assert.isNull(data);
+      done();
+    });
   });
 });

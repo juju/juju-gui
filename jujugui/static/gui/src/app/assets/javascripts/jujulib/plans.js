@@ -36,14 +36,14 @@ var module = module;
       Get a plan authorization to deploy a charm.
 
       @public authorizePlan
-      @params uuid {String} The UUID of the model the charm is being deployed
+      @param uuid {String} The UUID of the model the charm is being deployed
         on.
-      @params charmUrl {String} URL of the charm being deployed.
-      @params applicationName {String} name of the application.
-      @params planUrl {String} The URL of the plan being deployed.
-      @params budget {String} The budget name for allocation.
-      @params limit {String} The numeric limit for allocation.
-      @params callback {Function} A callback to handle errors or accept the
+      @param charmUrl {String} URL of the charm being deployed.
+      @param applicationName {String} name of the application.
+      @param planUrl {String} The URL of the plan being deployed.
+      @param budget {String} The budget name for allocation.
+      @param limit {String} The numeric limit for allocation.
+      @param callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
         first parameter and an authorization object as its second.
     */
@@ -65,9 +65,9 @@ var module = module;
       Lists available plans for the given charm.
 
       @public listPlansForCharm
-      @params charmUrl {String} A fully qualified charm URL, with or without
+      @param charmUrl {String} A fully qualified charm URL, with or without
         the "cs:" schema.
-      @params callback {Function} A callback to handle errors or accept the
+      @param callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
         first parameter and a list of plans as its second. Each plan includes
         the following fields:
@@ -97,9 +97,9 @@ var module = module;
       Finds the currently active plan for the given model and application.
 
       @public showActivePlan
-      @params modelUUID {String} The model UUID.
-      @params applicationName {String} The name of the application.
-      @params callback {Function} A callback to handle errors or accept the
+      @param modelUUID {String} The model UUID.
+      @param applicationName {String} The name of the application.
+      @param callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
         first parameter the currently active plan as its second argument, and a
         list of available plans as its third. Each plan includes the following
@@ -132,15 +132,15 @@ var module = module;
     /**
       Lists a user's budgets.
 
-      @public getBudgets
-      @params callback {Function} A callback to handle errors or accept the
+      @public listBudgets
+      @param callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
         first parameter and an object of budget data as its second, containing
         the following data:
           - budgets: an array of budgets;
           - total: an object container then summary of all budgets.
     */
-    getBudgets: function(callback) {
+    listBudgets: function(callback) {
       var handler = function(error, data) {
         if (error !== null) {
           callback(error, null);
@@ -156,9 +156,9 @@ var module = module;
       Create a new budget for the authorised user.
 
       @public createBudget
-      @params budget {String} The budget name.
-      @params limit {String} The numeric limit.
-      @params callback {Function} A callback to handle errors or accept the
+      @param budget {String} The budget name.
+      @param limit {String} The numeric limit.
+      @param callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
         first parameter and an authorization object as its second.
     */
@@ -169,7 +169,32 @@ var module = module;
         'limit': limit
       }
       return jujulib._makeRequest(this.bakery, url, 'POST', payload, callback);
-    }
+    },
+
+    /**
+      Get the details for a budget.
+
+      @public showBudget
+      @param budget {String} A buget name.
+      @param callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and an object of budget data as its second, containing
+        the following data:
+          - limit: the budget limit;
+          - total: an object container then summary of all budgets;
+          - allocations: an array of allocation details.
+    */
+    showBudget: function(budget, callback) {
+      var handler = function(error, data) {
+        if (error !== null) {
+          callback(error, null);
+          return;
+        }
+        callback(null, data);
+      };
+      var url = this.url + '/budget/' + budget;
+      return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
+    },
 
   };
 
@@ -177,7 +202,7 @@ var module = module;
     Handles plan response data.
 
     @public _handlePlan
-    @params plan {Object} The plan data returned by the plan service. It
+    @param plan {Object} The plan data returned by the plan service. It
       includes at least the following fields:
         - url: the plan URL, like "canonical-landscape/24-7";
         - price: the price for this plan;
