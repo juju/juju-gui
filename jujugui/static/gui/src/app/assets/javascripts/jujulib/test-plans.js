@@ -410,7 +410,7 @@ describe('jujulib plans service', function() {
           '/profile');
         var xhr = makeXHRRequest({
           'auth': 'I\'m a macaroon',
-          'params': params
+          'response': 'profile saved'
         });
         success(xhr);
       }
@@ -424,10 +424,7 @@ describe('jujulib plans service', function() {
       function(error, data) {
         assert.isNull(error);
         assert.equal(data['auth'], 'I\'m a macaroon');
-        assert.equal(
-          data.params,
-          '{"user":"user","limit":"limit","default-budget":"default-budget",' +
-          '"default-budget-limit":"default-budget-limit"}');
+        assert.equal(data.response, 'profile saved');
         done();
       }
     );

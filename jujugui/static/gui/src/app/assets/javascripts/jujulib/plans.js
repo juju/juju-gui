@@ -208,7 +208,8 @@ var module = module;
         data from the request. Must accept an error message or null as its
         first parameter and an authorization object as its second.
     */
-    createProfile: function(user, limit, defaultBudget, defaultLimit, callback) {
+    createProfile: function(
+      user, limit, defaultBudget, defaultLimit, callback) {
       var url = this.url + '/profile';
       var payload = {
         'user': user,
