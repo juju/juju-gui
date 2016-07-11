@@ -27,6 +27,7 @@
   input[type="number"],
   input[type="password"] {
         @extend %input;
+        box-sizing: content-box;
   }
 
   input[type=number]::-webkit-inner-spin-button,
