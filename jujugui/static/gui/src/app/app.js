@@ -791,6 +791,7 @@ YUI.add('juju-gui', function(Y) {
           canCreateNew={this.env.get('connected')}
           currentModel={this.get('jujuEnvUUID')}
           env={this.env}
+          listBudgets={this.plans.listBudgets.bind(this.plans)}
           listModels={utils.listModels.bind(
             this, this.env, this.jem, user, this.get('gisf'))}
           changeState={this.changeState.bind(this)}
