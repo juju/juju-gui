@@ -613,12 +613,12 @@ YUI.add('environment-change-set', function(Y) {
           // Update the service name, which can change from when the
           // charm is added to the canvas to the actual time the changes are
           // committed.
-          this.args[1] = ghostService.get('name');
+          this.args[2] = ghostService.get('name');
           // Loop through the services settings and remove any which have
           // undefined values so that they aren't set as 'undefined'.
-          Object.keys(this.args[2]).forEach(function(key) {
-            if (this.args[2][key] === undefined) {
-              delete this.args[2][key];
+          Object.keys(this.args[3]).forEach(function(key) {
+            if (this.args[3][key] === undefined) {
+              delete this.args[3][key];
             }
           }, this);
         }
@@ -637,7 +637,7 @@ YUI.add('environment-change-set', function(Y) {
         }
       });
       // The 6th param is the toMachine param of the env deploy call.
-      var toMachine = command.args[6];
+      var toMachine = command.args[7];
       if (!this.changeSet[toMachine]) {
         // If the toMachine isn't a record in the changeSet that means it's
         // an existing machine or that the machine does not exist and one
@@ -1174,11 +1174,16 @@ YUI.add('environment-change-set', function(Y) {
           if (!units.length) {
             return;
           }
+          // If no series is provided on the machine then define it.
           // Assume all the units in this machine have the same series.
           // This is safe since this kind of validation is done during
           // units' placement.
-          var url = units[0].charmUrl;
-          this.args[0][0].series = utils.getSeries(url);
+          if (!this.args[0][0].series) {
+            // This won't be used for multi-series charms and is only left
+            // in for backwards compatibility with single-series charms.
+            var url = units[0].charmUrl;
+            this.args[0][0].series = utils.getSeries(url);
+          }
         },
         /**
           Replace changeSet keys with real machine IDs returned from the call.
@@ -1224,7 +1229,7 @@ YUI.add('environment-change-set', function(Y) {
         if (value.command.method === '_deploy') {
           if (value.command.options.modelId === args[0]) {
             parent.push(key);
-            args[0] = value.command.args[1];
+            args[0] = value.command.args[2];
           }
         }
       });
@@ -1266,7 +1271,7 @@ YUI.add('environment-change-set', function(Y) {
               // Update the service name. The add_unit record is first added
               // passing the initial service name. This service name can be
               // changed by users before the changes are committed.
-              var newServiceId = record.command.args[1];
+              var newServiceId = record.command.args[2];
               this.args[0] = newServiceId;
               // We also need to update the unit id to match the new service id
               // so that we can correctly look up the unit using service id +

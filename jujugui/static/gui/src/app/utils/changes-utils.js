@@ -117,7 +117,7 @@ YUI.add('changes-utils', function(Y) {
           changeItem.description = ' ' + ghostService.get('name') +
               ' has been added.';
           break;
-        case '_destroyService':
+        case '_destroyApplication':
           changeItem.icon = 'changes-service-destroyed';
           changeItem.description = ' ' + change.command.args[0] +
               ' has been destroyed.';

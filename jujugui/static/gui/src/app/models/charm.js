@@ -50,12 +50,13 @@ YUI.add('juju-charm-models', function(Y) {
       }
       if (parts) {
         var result = {},
-            storeId;
-        Y.Array.map(pairs, function(pair) { result[pair[0]] = pair[1]; });
-        storeId = [
-          result.series,
-          result.package_name + (result.revision ? '-' + result.revision : '')
-        ];
+            storeId = [];
+        pairs.forEach(pair => result[pair[0]] = pair[1]);
+        if (result.series) {
+          storeId.push(result.series);
+        }
+        storeId.push(
+          result.package_name + (result.revision ? '-' + result.revision : ''));
         if (result.owner) {
           storeId.unshift('~' + result.owner);
         }

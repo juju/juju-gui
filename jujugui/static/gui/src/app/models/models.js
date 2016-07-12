@@ -607,7 +607,17 @@ YUI.add('juju-models', function(Y) {
         @type {Object}
         @default undefined
       */
-      activePlan: {}
+      activePlan: {},
+
+      /**
+        In a multi-series charm the service of the service will not always
+        match the one specified at the top of the charm.
+
+        @attribute series
+        @type {String}
+        @default undefined
+      */
+      series: {},
     }
   });
   models.Service = Service;
