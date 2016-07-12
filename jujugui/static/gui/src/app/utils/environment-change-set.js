@@ -1179,10 +1179,7 @@ YUI.add('environment-change-set', function(Y) {
           // This is safe since this kind of validation is done during
           // units' placement.
           if (!this.args[0][0].series) {
-            // This won't be used for multi-series charms and is only left
-            // in for backwards compatibility with single-series charms.
-            var url = units[0].charmUrl;
-            this.args[0][0].series = utils.getSeries(url);
+            this.args[0][0].series = utils.getUnitSeries(units[0], db);
           }
         },
         /**
@@ -1323,8 +1320,7 @@ YUI.add('environment-change-set', function(Y) {
         return 'attempted to place a unit which has not been added: ' + unit.id;
       }
       var db = this.get('db');
-      var error = this.validateUnitPlacement(
-          unit, db.machines.getById(machineId));
+      var error = this.validateUnitPlacement(unit, machineId, db);
       if (error) {
         db.notifications.add({
           title: 'Error placing unit',
@@ -1345,15 +1341,20 @@ YUI.add('environment-change-set', function(Y) {
       });
       // Add the new addMachines parent.
       var containerExists = true;
-      Y.Object.each(this.changeSet, function(value, key) {
+      Object.keys(this.changeSet).forEach(key => {
+        var value = this.changeSet[key];
         var command = value.command;
         if (command.method === '_addMachines' &&
             command.options.modelId === machineId) {
+          // If the machine doesn't yet have a series defined then set one
+          // when placing the first unit on it.
+          if (!value.command.args[0][0].series) {
+            value.command.args[0][0].series = utils.getUnitSeries(unit, db);
+          }
           record.parents.push(key);
           containerExists = false;
         }
-
-      }, this);
+      });
       // Update the command in the changeset to place the unit on an already
       // existing machine.
       if (containerExists && machineId) {
@@ -1375,13 +1376,15 @@ YUI.add('environment-change-set', function(Y) {
     /**
       Validate the unit's placement on a machine.
 
-      @method placeUnit
+      @method validateUnitPlacement
       @param {Object} unit The unit to place.
-      @param {Object} machine The machine where to place the unit.
+      @param {String} machineId the machine Id to place the unit.
+      @param {Object} db Reference to the application db.
       @return {String} A validation error or null if no errors occurred.
     */
-    validateUnitPlacement: function(unit, machine) {
-      var unitSeries = utils.getSeries(unit.charmUrl);
+    validateUnitPlacement: function(unit, machineId, db) {
+      var machine = db.machines.getById(machineId);
+      var unitSeries = utils.getUnitSeries(unit, db);
       if (machine.series) {
         // This is a real provisioned machine. Ensure its series matches the
         // unit series.
@@ -1395,8 +1398,8 @@ YUI.add('environment-change-set', function(Y) {
       // machine, ensure they all share the same series.
       var error = null;
       var db = this.get('db');
-      db.units.filterByMachine(machine.id).some(function(existingUnit) {
-        var existingUnitSeries = utils.getSeries(existingUnit.charmUrl);
+      db.units.filterByMachine(machine.id).some(existingUnit => {
+        var existingUnitSeries = utils.getUnitSeries(existingUnit, db);
         if (existingUnitSeries !== unitSeries) {
           error = 'machine ' + machine.id + ' already includes units with a ' +
               'different series: ' + existingUnitSeries;

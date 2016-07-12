@@ -1365,22 +1365,15 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
-    Return the series of the given charm URL.
+    Given a unit and reference to the db get that units series.
 
-    @method getSeries
-    @param {String} url A fully qualified charm URL, like
-      "cs:trusty/django-42" or "cs:~frankban/utopic/juju-gui-0"
+    @method getUnitSeries
+    @param {Object} unit The unit object.
+    @param {Object} db reference to the db.
     @return {String} The charm series.
   */
-  utils.getSeries = function(url) {
-    var path = url.split(':')[1];
-    var parts = path.split('/');
-    if (path.indexOf('~') === 0) {
-      // The URL includes the user.
-      return parts[1];
-    }
-    return parts[0];
-  };
+  utils.getUnitSeries = (unit, db) =>
+    db.services.getServiceByName(unit.id.split('/')[0]).get('series');
 
   /**
     Return the name from the given charm ID.
