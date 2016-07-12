@@ -1124,8 +1124,8 @@ YUI.add('juju-env-api', function(Y) {
 
       @method deploy
     */
-    deploy: function(charmUrl, applicationName, config, configRaw, numUnits,
-                     constraints, toMachine, callback, options) {
+    deploy: function(charmUrl, series, applicationName, config, configRaw,
+        numUnits, constraints, toMachine, callback, options) {
       var ecs = this.get('ecs');
       var args = ecs._getArgs(arguments);
       if (options && options.immediate) {
@@ -1141,6 +1141,7 @@ YUI.add('juju-env-api', function(Y) {
 
       @method _deploy
       @param {String} charmUrl The URL of the charm.
+      @param {String} series The series to use in a multi-series charm.
       @param {String} applicationName The name of the app to be deployed.
       @param {Object} config The charm configuration options.
       @param {String} configRaw The YAML representation of the charm
@@ -1161,8 +1162,8 @@ YUI.add('juju-env-api', function(Y) {
         operation is performed.
       @return {undefined} Sends a message to the server only.
     */
-    _deploy: function(charmUrl, applicationName, config, configRaw, numUnits,
-        constraints, toMachine, callback) {
+    _deploy: function(charmUrl, series, applicationName, config, configRaw,
+        numUnits, constraints, toMachine, callback) {
       // Define the API callback.
       var handler = function(userCallback, applicationName, charmUrl, data) {
         if (!userCallback) {
@@ -1197,6 +1198,11 @@ YUI.add('juju-env-api', function(Y) {
         constraints: constraints,
         'num-units': numUnits
       };
+
+      if (series) {
+        // We only want to supply the series when it is a multi-series charm.
+        params.series = series;
+      }
 
       // Perform the API call.
       this._send_rpc({

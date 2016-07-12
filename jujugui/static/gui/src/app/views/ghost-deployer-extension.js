@@ -63,8 +63,14 @@ YUI.add('ghost-deployer-extension', function(Y) {
       Y.Object.each(charm.get('options'), function(v, k) {
         config[k] = v['default'];
       });
+      var series = charm.get('series');
+      // If series is an array then pick the first one. This will be the
+      // case if it is a multi-series charm and we're picking the default
+      // and preferred series.
+      var activeSeries = Array.isArray(series) ? series[0] : series;
       ghostService.set('config', config);
       ghostService.set('activePlan', activePlan);
+      ghostService.set('series', activeSeries);
       var serviceName = ghostService.get('name');
       var charmId = charm.get('id');
       var constraints = {};
@@ -76,6 +82,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
         {applicationId: ghostServiceId});
       this.env.deploy(
           charmId,
+          activeSeries,
           serviceName,
           config,
           undefined, // Config file content.
@@ -186,7 +193,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
         db.notifications.add({
           title: 'Error deploying ' + serviceName,
           message: 'Could not deploy the requested application. Server ' +
-              'responded with: ' + evt.err,
+              'responded with: ' + evt.err.message,
           level: 'error'
         });
         return;

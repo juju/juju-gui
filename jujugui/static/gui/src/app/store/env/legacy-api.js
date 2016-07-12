@@ -1086,8 +1086,8 @@ YUI.add('juju-env-legacy-api', function(Y) {
 
       @method deploy
     */
-    deploy: function(charmUrl, applicationName, config, configRaw, numUnits,
-                     constraints, toMachine, callback, options) {
+    deploy: function(charmUrl, series, applicationName, config, configRaw,
+        numUnits,constraints, toMachine, callback, options) {
       var ecs = this.get('ecs');
       var args = ecs._getArgs(arguments);
       if (options && options.immediate) {
@@ -1103,6 +1103,9 @@ YUI.add('juju-env-legacy-api', function(Y) {
 
       @method _deploy
       @param {String} charmUrl The URL of the charm.
+      @param {String} series The series to use in a multi-series charm. This
+        field is ignored as Juju 1.x does not support multi-series charms. It
+        is only here to keep the api consistent with the Juju 2 call signature.
       @param {String} applicationName The name of the app to be deployed.
       @param {Object} config The charm configuration options.
       @param {String} configRaw The YAML representation of the charm
@@ -1122,9 +1125,8 @@ YUI.add('juju-env-legacy-api', function(Y) {
         operation is performed.
       @return {undefined} Sends a message to the server only.
     */
-    _deploy: function(charmUrl, applicationName, config, configRaw, numUnits,
-        constraints, toMachine, callback) {
-
+    _deploy: function(charmUrl, series, applicationName, config, configRaw,
+        numUnits, constraints, toMachine, callback) {
       // Define the API callback.
       var handler = function(userCallback, applicationName, charmUrl, data) {
         if (!userCallback) {
