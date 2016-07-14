@@ -152,7 +152,7 @@ YUI.add('user-profile', function() {
     _listBudgetsCallback: function(error, data) {
       this.setState({loadingBudgets: false});
       if (error) {
-        // TODO frankban: notify the user with the error.
+        // TODO huwshimi: notify the user with the error.
         console.error('cannot retrieve terms:', error);
         return;
       }
