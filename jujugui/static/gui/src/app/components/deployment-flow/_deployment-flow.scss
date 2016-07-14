@@ -23,8 +23,44 @@
         padding-top: 40px;
     }
 
-    &__clouds {
+    &__section {
+        padding: 20px;
+        background-color: $light-grey;
 
+        &-title {
+            .svg-icon {
+                margin-right: 10px;
+                vertical-align: text-top;
+            }
+        }
+    }
+
+    &__clouds {
+        &-list {
+            @extend %list-style;
+        }
+
+        &-cloud {
+            background-color: $white;
+            box-shadow: $box-shadow;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 20px;
+            margin-bottom: 0;
+
+            &:hover {
+                background-color: $light-grey;
+            }
+
+            &-logo {
+                display: block;
+                line-height: 120px;
+
+                .svg-icon {
+                    vertical-align: middle;
+                }
+            }
+        }
     }
 
     &__credentials {

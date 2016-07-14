@@ -57,9 +57,45 @@ YUI.add('deployment-flow', function() {
             <div className="deployment-flow__content">
               <div className="twelve-col">
                 <div className="inner-wrapper">
-                  <div className="deployment-flow__section">
+                  <div className="deployment-flow__section twelve-col">
                     <div className="deployment-flow__clouds">
+                      <h3 className="deployment-flow__section-title">
+                        <juju.components.SvgIcon name="incomplete"
+                          size="24" />
+                        Choose cloud to deploy to
+                      </h3>
                     </div>
+                    <ul className="deployment-flow__clouds-list">
+                      <li className="deployment-flow__clouds-cloud four-col">
+                        <span className="deployment-flow__clouds-cloud-logo">
+                          <juju.components.SvgIcon
+                            height={33}
+                            name="google"
+                            width={256} />
+                        </span>
+                      </li>
+                      <li className="deployment-flow__clouds-cloud four-col">
+                        <span className="deployment-flow__clouds-cloud-logo">
+                          <juju.components.SvgIcon
+                            height={48}
+                            name="azure"
+                            width={120} />
+                        </span>
+                      </li>
+                      <li className="deployment-flow__clouds-cloud four-col last-col">
+                        <span className="deployment-flow__clouds-cloud-logo">
+                          <juju.components.SvgIcon
+                            height={48}
+                            name="aws"
+                            width={120} />
+                        </span>
+                      </li>
+                      <li className="deployment-flow__clouds-cloud four-col">
+                        <span className="deployment-flow__clouds-cloud-logo">
+                          Local
+                        </span>
+                      </li>
+                    </ul>
                   </div>
                   <div className="deployment-flow__section">
                     <div className="deployment-flow__credentials">
