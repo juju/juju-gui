@@ -23,27 +23,211 @@
         padding-top: 40px;
     }
 
-    &__clouds {
+    &__section {
+        margin-bottom: 40px;
+        padding: 20px;
+        background-color: $light-grey;
 
+        &--clear {
+            padding: 0;
+            background-color: transparent;
+        }
+
+        &-title {
+            .svg-icon {
+                margin-right: 10px;
+                vertical-align: text-top;
+            }
+
+            &-checkmark {
+                fill: $warm-grey;
+            }
+        }
+    }
+
+    &__top-action {
+        float: right;
+    }
+
+    &__label {
+        margin-bottom: 10px;
+        color: $warm-grey;
+        font-size: 0.688em;
+    }
+
+    &__row-header {
+        font-weight: 400;
+    }
+
+    &__row-header,
+    &__row {
+        border-bottom: 1px solid $light-mid-grey;
+    }
+
+    .button--neutral {
+        background-color: $white;
+    }
+
+    &__clouds {
+        &-list {
+            @extend %list-style;
+        }
+
+        &-cloud {
+            background-color: $white;
+            box-shadow: $box-shadow;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 20px;
+            margin-bottom: 0;
+
+            &:hover {
+                background-color: $light-grey;
+            }
+
+            &-logo {
+                display: block;
+                // Set the line height the the height we want the boxes. This
+                // will vertically center the logos inside the boxes.
+                line-height: 120px;
+
+                .svg-icon {
+                    vertical-align: middle;
+                }
+            }
+        }
     }
 
     &__credentials {
-
+        &-form {
+            margin-top: 20px;
+        }
     }
 
     &__machines {
-
+        &-message {
+            margin: 20px 0 40px 0;
+        }
     }
 
     &__services {
+        &-budget {
+            margin-top: 40px;
 
-    }
+            &-form {
+                margin-top: 20px;
+                margin-bottom: 0;
+            }
 
-    &__payment {
+            &-increase {
+                display: inline-block;
+                margin-top: 30px;
+            }
 
+            &-chart {
+                position: relative;
+                height: 20px;
+                margin-bottom: 10px;
+
+                &-new,
+                &-limit {
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: 0;
+                    border-radius: $border-radius;
+                }
+
+                &-limit {
+                    right: 0;
+                    background-color: $white;
+                    border: 1px solid $light-mid-grey;
+                }
+
+                &-new {
+                    width: 50%;
+                    background-color: $success;
+                }
+            }
+
+            &-indicator {
+                display: inline-block;
+                width: 15px;
+                height: 15px;
+                margin-right: 10px;
+                border-radius: $border-radius;
+                vertical-align: middle;
+
+                &--new {
+                    background-color: $success;
+                }
+
+                &--existing {
+                    background-color: #aee2b6;
+                }
+
+                &--limit {
+                    background-color: $white;
+                    border: 1px solid $light-mid-grey;
+                }
+            }
+        }
+
+        &-plans {
+            margin-top: 20px;
+            padding-top: 40px;
+            border-top: 2px solid $light-mid-grey;
+
+            &-max {
+                font-size: 1.4em;
+            }
+        }
+
+        &-service {
+            &:hover {
+                .deployment-flow__services-service-edit {
+                    display: block;
+                }
+            }
+
+            &-edit {
+                display: none;
+                margin: -8px 0;
+            }
+        }
+
+        &-charm-icon {
+            $size: 24px;
+            width: $size;
+            height: $size;
+            border-radius: $size / 2;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
     }
 
     &__deploy {
+        &-option {
+            margin-bottom: 20px;
+        }
 
+        &-checkbox {
+            margin-right: 10px;
+        }
+
+        &-label {
+            display: inline-block;
+            width: 50%;
+            vertical-align: text-top;
+        }
+
+        &-action {
+            padding-top: 20px;
+
+            .button--positive {
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
+        }
     }
 }
