@@ -201,8 +201,36 @@ YUI.add('deployment-flow', function() {
                       </h3>
                     </div>
                   </div>
-                  <div className="deployment-flow__section twelve-col">
+                  <div className="deployment-flow__section deployment-flow__section--clear twelve-col">
                     <div className="deployment-flow__deploy">
+                      <div className="deployment-flow__deploy-option">
+                        <input className="deployment-flow__deploy-checkbox"
+                          id="emails"
+                          type="checkbox" />
+                        <label className="deployment-flow__deploy-label"
+                          htmlFor="emails">
+                          Please email me updates regarding feature announcements,
+                          performance suggestions, feedback surveys and special
+                          offers.
+                        </label>
+                      </div>
+                      <div className="deployment-flow__deploy-option">
+                        <input className="deployment-flow__deploy-checkbox"
+                          id="terms"
+                          type="checkbox" />
+                        <label className="deployment-flow__deploy-label"
+                          htmlFor="terms">
+                          I agree that my use of any services and related APIs is
+                          subject to my compliance with the applicable&nbsp;
+                          <a href="" target="_blank">Terms of service</a>.
+                        </label>
+                      </div>
+                      <div className="deployment-flow__deploy-action">
+                        <juju.components.GenericButton
+                          action={() => {}}
+                          type="positive"
+                          title="Deploy" />
+                      </div>
                     </div>
                   </div>
                 </div>

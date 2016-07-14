@@ -28,6 +28,11 @@
         padding: 20px;
         background-color: $light-grey;
 
+        &--clear {
+            padding: 0;
+            background-color: transparent;
+        }
+
         &-title {
             .svg-icon {
                 margin-right: 10px;
@@ -113,6 +118,27 @@
     }
 
     &__deploy {
+        &-option {
+            margin-bottom: 20px;
+        }
 
+        &-checkbox {
+            margin-right: 10px;
+        }
+
+        &-label {
+            display: inline-block;
+            width: 50%;
+            vertical-align: text-top;
+        }
+
+        &-action {
+            padding-top: 20px;
+
+            .button--positive {
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
+        }
     }
 }
