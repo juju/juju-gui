@@ -41,6 +41,7 @@ YUI.add('deployment-flow', function() {
     },
 
     render: function() {
+      /* eslint-disable max-len */
       return (
         <juju.components.Panel
           instanceName="deployment-flow-panel"
@@ -64,38 +65,38 @@ YUI.add('deployment-flow', function() {
                           size="24" />
                         Choose cloud to deploy to
                       </h3>
-                    </div>
-                    <ul className="deployment-flow__clouds-list">
-                      <li className="deployment-flow__clouds-cloud four-col">
-                        <span className="deployment-flow__clouds-cloud-logo">
-                          <juju.components.SvgIcon
-                            height={33}
-                            name="google"
-                            width={256} />
-                        </span>
-                      </li>
-                      <li className="deployment-flow__clouds-cloud four-col">
-                        <span className="deployment-flow__clouds-cloud-logo">
-                          <juju.components.SvgIcon
-                            height={48}
-                            name="azure"
-                            width={120} />
-                        </span>
-                      </li>
-                      <li className="deployment-flow__clouds-cloud four-col last-col">
-                        <span className="deployment-flow__clouds-cloud-logo">
-                          <juju.components.SvgIcon
-                            height={48}
-                            name="aws"
-                            width={120} />
-                        </span>
-                      </li>
-                      <li className="deployment-flow__clouds-cloud four-col">
-                        <span className="deployment-flow__clouds-cloud-logo">
-                          Local
-                        </span>
-                      </li>
-                    </ul>
+                      <ul className="deployment-flow__clouds-list">
+                        <li className="deployment-flow__clouds-cloud four-col">
+                          <span className="deployment-flow__clouds-cloud-logo">
+                            <juju.components.SvgIcon
+                              height={33}
+                              name="google"
+                              width={256} />
+                          </span>
+                        </li>
+                        <li className="deployment-flow__clouds-cloud four-col">
+                          <span className="deployment-flow__clouds-cloud-logo">
+                            <juju.components.SvgIcon
+                              height={48}
+                              name="azure"
+                              width={120} />
+                          </span>
+                        </li>
+                        <li className="deployment-flow__clouds-cloud four-col last-col">
+                          <span className="deployment-flow__clouds-cloud-logo">
+                            <juju.components.SvgIcon
+                              height={48}
+                              name="aws"
+                              width={120} />
+                          </span>
+                        </li>
+                        <li className="deployment-flow__clouds-cloud four-col">
+                          <span className="deployment-flow__clouds-cloud-logo">
+                            Local
+                          </span>
+                        </li>
+                      </ul>
+                  </div>
                   </div>
                   <div className="deployment-flow__section">
                     <div className="deployment-flow__credentials">
@@ -123,6 +124,7 @@ YUI.add('deployment-flow', function() {
           </div>
         </juju.components.Panel>
       );
+      /* eslint-disable max-len */
     }
 
   });
