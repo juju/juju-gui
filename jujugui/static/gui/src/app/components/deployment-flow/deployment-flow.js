@@ -140,7 +140,7 @@ YUI.add('deployment-flow', function() {
                         Platform. You will incur a charge from your cloud
                         provider.
                       </p>
-                      <div className="deployment-flow__machines-header twelve-col">
+                      <div className="deployment-flow__row-header twelve-col">
                         <div className="eight-col">
                           Machine
                         </div>
@@ -151,7 +151,7 @@ YUI.add('deployment-flow', function() {
                           Quantity
                         </div>
                       </div>
-                      <div className="deployment-flow__machines-row twelve-col">
+                      <div className="deployment-flow__row twelve-col">
                         <div className="eight-col">
                           Trusty, 1x1GHz, 1.70GB, 8.00GB
                         </div>
@@ -162,7 +162,7 @@ YUI.add('deployment-flow', function() {
                           4
                         </div>
                       </div>
-                      <div className="deployment-flow__machines-row twelve-col">
+                      <div className="deployment-flow__row twelve-col">
                         <div className="eight-col">
                           Trusty, 1x1GHz, 1.70GB, 8.00GB
                         </div>
@@ -177,6 +177,115 @@ YUI.add('deployment-flow', function() {
                   </div>
                   <div className="deployment-flow__section twelve-col">
                     <div className="deployment-flow__services">
+                      <h3 className="deployment-flow__section-title">
+                        <juju.components.SvgIcon
+                        name="incomplete"
+                          size="24" />
+                        Services to be deployed
+                      </h3>
+                      <div className="deployment-flow__services-budget">
+                        <h4>
+                          Choose your budget
+                        </h4>
+                        <div className="deployment-flow__services-budget-form twelve-col">
+                          <div className="four-col">
+                            <label className="deployment-flow__label">
+                              Budget
+                            </label>
+                            <select>
+                              <option>test-cred</option>
+                            </select>
+                          </div>
+                          <div className="three-col">
+                            <span className="deployment-flow__services-budget-increase link">
+                              Increase budget
+                            </span>
+                          </div>
+                        </div>
+                        <div className="deployment-flow__services-budget-chart twelve-col">
+                          <div className="deployment-flow__services-budget-chart-limit">
+                          </div>
+                          <div className="deployment-flow__services-budget-chart-new">
+                          </div>
+                        </div>
+                        <div className="three-col">
+                          <span className="deployment-flow__services-budget-indicator deployment-flow__services-budget-indicator--new">
+                          </span>
+                          New allocations: <strong>$550</strong>
+                        </div>
+                        <div className="three-col">
+                          <span className="deployment-flow__services-budget-indicator deployment-flow__services-budget-indicator--existing">
+                          </span>
+                          Existing allocations: <strong>$0</strong>
+                        </div>
+                        <div className="three-col">
+                          <span className="deployment-flow__services-budget-indicator deployment-flow__services-budget-indicator--limit">
+                          </span>
+                          Budget limit: <strong>$1000</strong>
+                        </div>
+                      </div>
+                      <div className="deployment-flow__services-plans twelve-col">
+                        <div className="deployment-flow__top-action">
+                          <juju.components.GenericButton
+                            action={() => {}}
+                            type="neutral"
+                            title="Show change log" />
+                        </div>
+                        <h4>
+                          Confirm services and plans
+                        </h4>
+                        <div className="deployment-flow__row-header twelve-col">
+                          <div className="three-col">
+                            Name
+                          </div>
+                          <div className="two-col">
+                            Units
+                          </div>
+                          <div className="three-col">
+                            Details
+                          </div>
+                          <div className="four-col last-col">
+                            Allocation
+                          </div>
+                        </div>
+                        <div className="deployment-flow__row twelve-col">
+                          <div className="three-col">
+                            <img className="deployment-flow__services-charm-icon"
+                              src="https://api.staging.jujucharms.com/charmstore/v4/trusty/landscape-server-14/icon.svg" />
+                            Landscape
+                          </div>
+                          <div className="two-col">
+                            4
+                          </div>
+                          <div className="three-col">
+                            You need to choose a plan.
+                          </div>
+                          <div className="four-col last-col">
+
+                          </div>
+                        </div>
+                        <div className="deployment-flow__row twelve-col">
+                          <div className="three-col">
+                            <img className="deployment-flow__services-charm-icon"
+                              src="https://api.staging.jujucharms.com/charmstore/v4/trusty/mediawiki-5/icon.svg" />
+                            Mediawiki
+                          </div>
+                          <div className="two-col">
+                            3
+                          </div>
+                          <div className="three-col">
+                            -
+                          </div>
+                          <div className="four-col last-col">
+                          </div>
+                        </div>
+                        <div className="prepend-seven">
+                          Maximum monthly spend:&nbsp;
+                          <span className="deployment-flow__services-plans-max">
+                            $100
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div className="deployment-flow__section twelve-col">

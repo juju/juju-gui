@@ -60,6 +60,15 @@
         font-size: 0.688em;
     }
 
+    &__row-header {
+        font-weight: 400;
+    }
+
+    &__row-header,
+    &__row {
+        border-bottom: 1px solid $light-mid-grey;
+    }
+
     &__clouds {
         &-list {
             @extend %list-style;
@@ -98,19 +107,89 @@
         &-message {
             margin: 20px 0 40px 0;
         }
-
-        &-header {
-            font-weight: 400;
-        }
-
-        &-header,
-        &-row {
-            border-bottom: 1px solid $light-mid-grey;
-        }
     }
 
     &__services {
+        &-budget {
+            margin-top: 40px;
 
+            &-form {
+                margin-top: 20px;
+                margin-bottom: 0;
+            }
+
+            &-increase {
+                display: inline-block;
+                margin-top: 30px;
+            }
+
+            &-chart {
+                position: relative;
+                height: 20px;
+                margin-bottom: 10px;
+
+                &-new,
+                &-limit {
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: 0;
+                    border-radius: $border-radius;
+                }
+
+                &-limit {
+                    right: 0;
+                    background-color: $white;
+                    border: 1px solid $light-mid-grey;
+                }
+
+                &-new {
+                    width: 50%;
+                    background-color: $success;
+                }
+            }
+
+            &-indicator {
+                display: inline-block;
+                width: 15px;
+                height: 15px;
+                margin-right: 10px;
+                border-radius: $border-radius;
+                vertical-align: middle;
+
+                &--new {
+                    background-color: $success;
+                }
+
+                &--existing {
+                    background-color: #aee2b6;
+                }
+
+                &--limit {
+                    background-color: $white;
+                    border: 1px solid $light-mid-grey;
+                }
+            }
+        }
+
+        &-plans {
+            margin-top: 20px;
+            padding-top: 40px;
+            border-top: 2px solid $light-mid-grey;
+
+            &-max {
+                font-size: 22px;
+            }
+        }
+
+        &-charm-icon {
+            $size: 24px;
+            width: $size;
+            height: $size;
+            border-radius: $size / 2;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
     }
 
     &__payment {
