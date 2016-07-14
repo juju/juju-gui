@@ -24,6 +24,7 @@
     }
 
     &__section {
+        margin-bottom: 40px;
         padding: 20px;
         background-color: $light-grey;
 
@@ -33,6 +34,20 @@
                 vertical-align: text-top;
             }
         }
+    }
+
+    &__top-action {
+        float: right;
+
+        .button--neutral {
+            background-color: $white;
+        }
+    }
+
+    &__label {
+        margin-bottom: 10px;
+        color: $warm-grey;
+        font-size: 0.688em;
     }
 
     &__clouds {
@@ -64,7 +79,9 @@
     }
 
     &__credentials {
-
+        &-form {
+            margin-top: 20px;
+        }
     }
 
     &__machines {

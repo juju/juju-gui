@@ -96,25 +96,52 @@ YUI.add('deployment-flow', function() {
                           </span>
                         </li>
                       </ul>
-                  </div>
-                  </div>
-                  <div className="deployment-flow__section">
-                    <div className="deployment-flow__credentials">
                     </div>
                   </div>
-                  <div className="deployment-flow__section">
+                  <div className="deployment-flow__section twelve-col">
+                    <div className="deployment-flow__credentials">
+                      <div className="deployment-flow__top-action">
+                        <juju.components.GenericButton
+                          action={() => {}}
+                          type="neutral"
+                          title="Add credential" />
+                      </div>
+                      <h3 className="deployment-flow__section-title">
+                        Choose credential
+                      </h3>
+                      <form className="deployment-flow__credentials-form">
+                        <div className="four-col">
+                          <label className="deployment-flow__label">
+                            Credential
+                          </label>
+                          <select>
+                            <option>test-cred</option>
+                          </select>
+                        </div>
+                        <div className="four-col">
+                          <label className="deployment-flow__label">
+                            Region
+                          </label>
+                          <select>
+                            <option>test-region</option>
+                          </select>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                  <div className="deployment-flow__section twelve-col">
                     <div className="deployment-flow__machines">
                     </div>
                   </div>
-                  <div className="deployment-flow__section">
+                  <div className="deployment-flow__section twelve-col">
                     <div className="deployment-flow__services">
                     </div>
                   </div>
-                  <div className="deployment-flow__section">
+                  <div className="deployment-flow__section twelve-col">
                     <div className="deployment-flow__payment">
                     </div>
                   </div>
-                  <div className="deployment-flow__section">
+                  <div className="deployment-flow__section twelve-col">
                     <div className="deployment-flow__deploy">
                     </div>
                   </div>
@@ -131,6 +158,8 @@ YUI.add('deployment-flow', function() {
 
 }, '0.1.0', {
   requires: [
-    'panel-component'
+    'generic-button',
+    'panel-component',
+    'svg-icon'
   ]
 });
