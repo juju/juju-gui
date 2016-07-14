@@ -1,0 +1,49 @@
+.deployment-flow {
+    @extend %scroll-children;
+
+    &__header {
+        // Don't allow the header to collapse:
+        flex: 1 0 auto;
+        margin: 0 20px;
+        padding: 10px 0;
+        border-bottom: 1px solid $light-mid-grey;
+    }
+
+    &__close {
+        @extend %link;
+        color: $cool-grey;
+
+        .button--neutral {
+            width: auto;
+        }
+    }
+
+    &__content {
+        @extend %scroll-children;
+        padding-top: 40px;
+    }
+
+    &__clouds {
+
+    }
+
+    &__credentials {
+
+    }
+
+    &__machines {
+
+    }
+
+    &__services {
+
+    }
+
+    &__payment {
+
+    }
+
+    &__deploy {
+
+    }
+}
