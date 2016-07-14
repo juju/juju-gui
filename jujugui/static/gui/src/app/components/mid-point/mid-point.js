@@ -32,7 +32,7 @@ YUI.add('mid-point', function() {
       icon: 'https://api.jujucharms.com/charmstore/v4/trusty/mariadb/icon.svg', // eslint-disable-line max-len
       name: 'Mariadb'
     }, {
-      id: 'trusty/hadoop',
+      id: 'hadoop-processing',
       icon: 'https://api.jujucharms.com/charmstore/v4/trusty/hadoop/icon.svg', // eslint-disable-line max-len
       name: 'Hadoop'
     }, {
