@@ -35,6 +35,7 @@ YUI.add('user-profile', function() {
       hideConnectingMask: React.PropTypes.func.isRequired,
       interactiveLogin: React.PropTypes.bool,
       jem: React.PropTypes.object,
+      listBudgets: React.PropTypes.func.isRequired,
       listModels: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
@@ -48,10 +49,12 @@ YUI.add('user-profile', function() {
     getInitialState: function() {
       return {
         agreementList: [],
+        budgetList: [],
         envList: [],
         charmList: [],
         bundleList: [],
         loadingAgreements: false,
+        loadingBudgets: false,
         loadingBundles: false,
         loadingCharms: false,
         loadingModels: false,
@@ -63,6 +66,7 @@ YUI.add('user-profile', function() {
       var props = this.props,
           users = props.users;
       this._getAgreements();
+      this._getBudgets();
       this._fetchEnvironments();
       if (users.charmstore && users.charmstore.user) {
         this._fetchEntities('charm', props);
@@ -81,6 +85,7 @@ YUI.add('user-profile', function() {
       var props = this.props;
       if (nextProps.user.user !== props.user.user) {
         this._getAgreements();
+        this._getBudgets();
         this._fetchEnvironments();
       }
       // Compare next and previous charmstore users in a data-safe manner.
@@ -121,6 +126,37 @@ YUI.add('user-profile', function() {
         return;
       }
       this.setState({agreementList: data});
+    },
+
+    /**
+      Get the budgets for the authenticated user.
+
+      @method _getBudgets
+    */
+    _getBudgets: function() {
+      // Delay the call until after the state change to prevent race
+      // conditions.
+      this.setState({loadingBudgets: true}, () => {
+        var xhr = this.props.listBudgets(this._listBudgetsCallback);
+        this.xhrs.push(xhr);
+      });
+    },
+
+    /**
+      Callback for the plans API call to get budgets.
+
+      @method _listBudgetsCallback
+      @param {String} error The error from the request, or null.
+      @param {Object} data The data from the request.
+    */
+    _listBudgetsCallback: function(error, data) {
+      this.setState({loadingBudgets: false});
+      if (error) {
+        // TODO huwshimi: notify the user with the error.
+        console.error('cannot retrieve terms:', error);
+        return;
+      }
+      this.setState({budgetList: data.budgets});
     },
 
     /**
@@ -644,6 +680,35 @@ YUI.add('user-profile', function() {
     },
 
     /**
+      Generate the details for the provided budget.
+
+      @method _generateBudgetRow
+      @param {Object} budget A budget object.
+      @returns {Array} The markup for the row.
+    */
+    _generateBudgetRow: function(budget) {
+      return (
+        <li className="user-profile__list-row twelve-col"
+          key={budget.budget}>
+            <span className="user-profile__list-col three-col">
+              {budget.budget}
+            </span>
+            <span className="user-profile__list-col two-col">
+              ${budget.allocated}
+            </span>
+            <span className="user-profile__list-col two-col">
+              ${budget.limit}
+            </span>
+            <span className="user-profile__list-col four-col">
+              ${budget.available}
+            </span>
+            <span className="user-profile__list-col one-col last-col">
+              ${budget.consumed}
+            </span>
+        </li>);
+    },
+
+    /**
       Generate the header for the charms.
 
       @method _generateCharmHeader
@@ -678,6 +743,33 @@ YUI.add('user-profile', function() {
           </span>
           <span className="user-profile__list-col four-col last-col">
             Date signed
+          </span>
+        </li>);
+    },
+
+    /**
+      Generate the header for the budgets.
+
+      @method _generateBudgetHeader
+      @returns {Array} The markup for the header.
+    */
+    _generateBudgetHeader: function() {
+      return (
+        <li className="user-profile__list-header twelve-col">
+          <span className="user-profile__list-col three-col">
+            Name
+          </span>
+          <span className="user-profile__list-col two-col">
+            Budget
+          </span>
+          <span className="user-profile__list-col two-col">
+            Limit
+          </span>
+          <span className="user-profile__list-col four-col">
+            Credit
+          </span>
+          <span className="user-profile__list-col one-col last-col">
+            Spend
           </span>
         </li>);
     },
@@ -725,6 +817,10 @@ YUI.add('user-profile', function() {
         generateRow = this._generateAgreementRow;
         header = this._generateAgreementHeader();
         title = 'Terms & conditions';
+      } else if (type === 'budgets') {
+        generateRow = this._generateBudgetRow;
+        header = this._generateBudgetHeader();
+        title = 'Budgets';
       }
       list.forEach((model) => {
         rows.push(generateRow(model));
@@ -756,9 +852,11 @@ YUI.add('user-profile', function() {
       // We can't be loading anything, and all the lists must be empty.
       var isEmpty = !state.loadingBundles
                     && !state.loadingAgreements
+                    && !state.loadingBudgets
                     && !state.loadingCharms
                     && !state.loadingModels
                     && state.agreementList.length === 0
+                    && state.budgetList.length === 0
                     && state.bundleList.length === 0
                     && state.charmList.length === 0
                     && state.envList.length === 0;
@@ -791,6 +889,8 @@ YUI.add('user-profile', function() {
           {this._generateRows('charms', state.charmList, state.loadingCharms)}
           {this._generateRows(
             'agreements', state.agreementList, state.loadingAgreements)}
+          {this._generateRows(
+            'budgets', state.budgetList, state.loadingBudgets)}
         </div>);
     },
 
