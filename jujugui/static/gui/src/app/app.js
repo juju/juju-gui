@@ -904,6 +904,15 @@ YUI.add('juju-gui', function(Y) {
       var activeComponent = metadata.activeComponent;
       var modelCommitted = this.env.get('connected');
       var modelName = this.db.environment.get('name');
+      // Display the new WIP deployment flow
+      if (window.flags && window.flags.df) {
+        ReactDOM.render(
+          <window.juju.components.DeploymentFlow
+            acl={this.acl}
+            changeState={this.changeState.bind(this)} />,
+          document.getElementById('deployment-container'));
+        return;
+      }
       if (!window.flags || !window.flags.blues) {
         // Display the old deploy summary if we're not using the feature flag
         // for the new deployment flow.
@@ -2604,6 +2613,7 @@ YUI.add('juju-gui', function(Y) {
     'charmbrowser-component',
     'deployment-bar',
     'deployment-component',
+    'deployment-flow',
     'deployment-summary-classic',
     'env-size-display',
     'header-breadcrumb',
