@@ -210,8 +210,15 @@ YUI.add('entity-header', function() {
       }
       var plans = props.plans;
       var options = null;
-      var defaultMessage = 'Loading plans...';
-      if (plans && plans.length > 0) {
+      var defaultMessage = '';
+      // Return a loading message if null (we don't have a response yet) or
+      // nothing if plans are a 0-length array (no plans found, likely due to
+      // an error).
+      if (!plans) {
+        defaultMessage = 'Loading plans...';
+      } else if (!plans.length) {
+        return;
+      } else {
         defaultMessage = 'Choose a plan';
         options = [];
         plans.forEach((plan, i) => {
