@@ -85,7 +85,18 @@
     }
 
     &__machines {
+        &-message {
+            margin: 20px 0 40px 0;
+        }
 
+        &-header {
+            font-weight: 400;
+        }
+
+        &-header,
+        &-row {
+            border-bottom: 1px solid $light-mid-grey;
+        }
     }
 
     &__services {

@@ -131,6 +131,47 @@ YUI.add('deployment-flow', function() {
                   </div>
                   <div className="deployment-flow__section twelve-col">
                     <div className="deployment-flow__machines">
+                      <h3 className="deployment-flow__section-title">
+                        Machines to be deployed
+                      </h3>
+                      <p className="deployment-flow__machines-message">
+                        These machines will be provisioned on Google Cloud
+                        Platform. You will incur a charge from your cloud
+                        provider.
+                      </p>
+                      <div className="deployment-flow__machines-header twelve-col">
+                        <div className="eight-col">
+                          Machine
+                        </div>
+                        <div className="three-col">
+                          Provider
+                        </div>
+                        <div className="one-col last-col">
+                          Quantity
+                        </div>
+                      </div>
+                      <div className="deployment-flow__machines-row twelve-col">
+                        <div className="eight-col">
+                          Trusty, 1x1GHz, 1.70GB, 8.00GB
+                        </div>
+                        <div className="three-col">
+                          Google
+                        </div>
+                        <div className="one-col last-col">
+                          4
+                        </div>
+                      </div>
+                      <div className="deployment-flow__machines-row twelve-col">
+                        <div className="eight-col">
+                          Trusty, 1x1GHz, 1.70GB, 8.00GB
+                        </div>
+                        <div className="three-col">
+                          Google
+                        </div>
+                        <div className="one-col last-col">
+                          3
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div className="deployment-flow__section twelve-col">
