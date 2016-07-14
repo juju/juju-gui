@@ -28,8 +28,12 @@ YUI.add('zip-utils', function(Y) {
 
   // Configure the zip.js library. The workerScriptsPath must point to the
   // location of inflate.zip and deflate.zip.
-  zip.workerScriptsPath = 'static/gui/build/app/assets/javascripts/';
-
+  if (window.juju_config && window.juju_config.staticURL) {
+    zip.workerScriptsPath = window.juju_config.staticURL +
+        '/combo?app/assets/javascripts/';
+  } else {
+    zip.workerScriptsPath = 'static/gui/build/app/assets/javascripts/';
+  }
   var module = Y.namespace('juju.ziputils');
 
   /**
