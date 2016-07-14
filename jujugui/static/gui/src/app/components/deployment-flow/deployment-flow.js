@@ -193,7 +193,7 @@ YUI.add('deployment-flow', function() {
                               Budget
                             </label>
                             <select>
-                              <option>test-cred</option>
+                              <option>test-budget</option>
                             </select>
                           </div>
                           <div className="three-col">
