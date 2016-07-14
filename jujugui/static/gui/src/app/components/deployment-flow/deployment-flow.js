@@ -192,10 +192,11 @@ YUI.add('deployment-flow', function() {
                         </h4>
                         <div className="deployment-flow__services-budget-form twelve-col">
                           <div className="four-col">
-                            <label className="deployment-flow__label">
+                            <label className="deployment-flow__label"
+                              htmlFor="budget">
                               Budget
                             </label>
-                            <select>
+                            <select id="budget">
                               <option>test-budget</option>
                             </select>
                           </div>
