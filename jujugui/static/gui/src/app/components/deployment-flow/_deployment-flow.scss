@@ -39,9 +39,8 @@
                 vertical-align: text-top;
             }
 
-            &-aside {
-                padding-left: 20px;
-                font-size: 16px;
+            &-checkmark {
+                fill: $warm-grey;
             }
         }
     }
@@ -88,6 +87,8 @@
 
             &-logo {
                 display: block;
+                // Set the line height the the height we want the boxes. This
+                // will vertically center the logos inside the boxes.
                 line-height: 120px;
 
                 .svg-icon {
@@ -178,7 +179,7 @@
             border-top: 2px solid $light-mid-grey;
 
             &-max {
-                font-size: 22px;
+                font-size: 1.4em;
             }
         }
 

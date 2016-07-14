@@ -62,7 +62,8 @@ YUI.add('deployment-flow', function() {
                     <div className="deployment-flow__clouds">
                       <h3 className="deployment-flow__section-title">
                         <juju.components.SvgIcon
-                        name="incomplete"
+                          className="deployment-flow__section-title-checkmark"
+                          name="complete"
                           size="24" />
                         Choose cloud to deploy to
                       </h3>
@@ -112,18 +113,20 @@ YUI.add('deployment-flow', function() {
                       </h3>
                       <form className="deployment-flow__credentials-form">
                         <div className="four-col">
-                          <label className="deployment-flow__label">
+                          <label className="deployment-flow__label"
+                            htmlFor="creds">
                             Credential
                           </label>
-                          <select>
+                          <select id="creds">
                             <option>test-cred</option>
                           </select>
                         </div>
                         <div className="four-col">
-                          <label className="deployment-flow__label">
+                          <label className="deployment-flow__label"
+                            htmlFor="region">
                             Region
                           </label>
-                          <select>
+                          <select id="region">
                             <option>test-region</option>
                           </select>
                         </div>
@@ -179,7 +182,7 @@ YUI.add('deployment-flow', function() {
                     <div className="deployment-flow__services">
                       <h3 className="deployment-flow__section-title">
                         <juju.components.SvgIcon
-                        name="incomplete"
+                          name="complete"
                           size="24" />
                         Services to be deployed
                       </h3>
