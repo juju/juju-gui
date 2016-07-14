@@ -297,28 +297,6 @@ YUI.add('deployment-flow', function() {
                       </div>
                     </div>
                   </div>
-                  <div className="deployment-flow__section twelve-col">
-                    <div className="deployment-flow__payment">
-                      <div className="deployment-flow__top-action">
-                        <juju.components.GenericButton
-                          action={() => {}}
-                          type="neutral"
-                          title="Add payment details" />
-                      </div>
-                      <h3 className="deployment-flow__section-title">
-                        <juju.components.SvgIcon
-                          name="incomplete"
-                          size="24" />
-                        Payment details
-                        <span className="deployment-flow__section-title-aside">
-                          <juju.components.SvgIcon
-                            name="padlock_16"
-                            size="16" />
-                          128-bit SSL encrypted payment
-                        </span>
-                      </h3>
-                    </div>
-                  </div>
                   <div className="deployment-flow__section deployment-flow__section--clear twelve-col">
                     <div className="deployment-flow__deploy">
                       <div className="deployment-flow__deploy-option">
