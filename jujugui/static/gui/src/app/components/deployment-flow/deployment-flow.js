@@ -248,7 +248,7 @@ YUI.add('deployment-flow', function() {
                             Allocation
                           </div>
                         </div>
-                        <div className="deployment-flow__row twelve-col">
+                        <div className="deployment-flow__row deployment-flow__services-service twelve-col">
                           <div className="three-col">
                             <img className="deployment-flow__services-charm-icon"
                               src="https://api.staging.jujucharms.com/charmstore/v4/trusty/landscape-server-14/icon.svg" />
@@ -260,11 +260,18 @@ YUI.add('deployment-flow', function() {
                           <div className="three-col">
                             You need to choose a plan.
                           </div>
-                          <div className="four-col last-col">
-
+                          <div className="two-col">
+                          </div>
+                          <div className="two-col last-col">
+                            <div className="deployment-flow__services-service-edit">
+                              <juju.components.GenericButton
+                                action={() => {}}
+                                type="neutral"
+                                title="Edit" />
+                            </div>
                           </div>
                         </div>
-                        <div className="deployment-flow__row twelve-col">
+                        <div className="deployment-flow__row deployment-flow__services-service twelve-col">
                           <div className="three-col">
                             <img className="deployment-flow__services-charm-icon"
                               src="https://api.staging.jujucharms.com/charmstore/v4/trusty/mediawiki-5/icon.svg" />
@@ -276,7 +283,9 @@ YUI.add('deployment-flow', function() {
                           <div className="three-col">
                             -
                           </div>
-                          <div className="four-col last-col">
+                          <div className="two-col">
+                          </div>
+                          <div className="two-col last-col">
                           </div>
                         </div>
                         <div className="prepend-seven">

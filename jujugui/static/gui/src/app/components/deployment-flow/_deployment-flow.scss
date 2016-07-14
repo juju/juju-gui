@@ -48,10 +48,6 @@
 
     &__top-action {
         float: right;
-
-        .button--neutral {
-            background-color: $white;
-        }
     }
 
     &__label {
@@ -67,6 +63,10 @@
     &__row-header,
     &__row {
         border-bottom: 1px solid $light-mid-grey;
+    }
+
+    .button--neutral {
+        background-color: $white;
     }
 
     &__clouds {
@@ -179,6 +179,19 @@
 
             &-max {
                 font-size: 22px;
+            }
+        }
+
+        &-service {
+            &:hover {
+                .deployment-flow__services-service-edit {
+                    display: block;
+                }
+            }
+
+            &-edit {
+                display: none;
+                margin: -8px 0;
             }
         }
 
