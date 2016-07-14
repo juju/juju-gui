@@ -44,6 +44,7 @@ YUI.add('inspector-config', function() {
       return {
         // Have to clone the config so we don't update it via reference.
         serviceConfig: this._clone(this.props.service.get('config')),
+        series: this.props.service.get('series'),
         forceUpdate: false
       };
     },
@@ -287,6 +288,50 @@ YUI.add('inspector-config', function() {
       return;
     },
 
+    /**
+      Handle updating state to proeprly update the components.
+
+      @method _handleSeriesChange
+      @param {Object} e The change event.
+    */
+    _handleSeriesChange: function(e) {
+      var value = e.currentTarget.value;
+      this.setState({forceUpdate: true}, () => {
+        this.setState({series: value});
+      });
+    },
+
+    /**
+      If the application is from a multi-series charm and has not yet been
+      deployed then this will be a select element for the user to configure
+      which series to use.
+
+      @method _generateMultiSeriesSelector
+    */
+    _generateMultiSeriesSelector: function() {
+      var series = this.props.charm.get('series');
+      if (!this.props.service.get('pending') || !Array.isArray(series)) {
+        // If the application is deployed or if it's not a multi-series
+        // charm then nothing needs to happen here.
+        return;
+      }
+      return (
+        <div className="inspector-config__series-select">
+          <span>Choose Series</span>
+          <select
+            className="inspector-config__select"
+            onChange={this._handleSeriesChange}
+            value={this.state.series}>
+            {series.map(name =>
+              <option key={name} value={name}>{name}</option>)}
+          </select>
+          <span className="inspector-config__series-select-description">
+            Choose the series to deploy. This cannot be
+            changed once it is deployed
+          </span>
+        </div>);
+    },
+
     render: function() {
       var disabled = this.props.acl.isReadOnly();
       var importButton = [{
@@ -310,6 +355,7 @@ YUI.add('inspector-config', function() {
         <div className="inspector-config">
           <div className="inspector-config__fields">
             {this._customizeServiceName()}
+            {this._generateMultiSeriesSelector()}
             <form ref="file-form">
               <input
                 className="hidden"
