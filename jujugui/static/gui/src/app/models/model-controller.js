@@ -123,9 +123,10 @@ YUI.add('model-controller', function(Y) {
                 } else {
                   var service = db.services.getById(result.applicationName);
                   service.setAttrs({
-                    'config': result.result.config,
-                    'constraints': result.result.constraints,
-                    'loaded': true
+                    config: result.result.config,
+                    constraints: result.result.constraints,
+                    loaded: true,
+                    series: result.result.series
                   });
                   resolve(service);
                 }

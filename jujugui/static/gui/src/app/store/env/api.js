@@ -1986,7 +1986,8 @@ YUI.add('juju-env-api', function(Y) {
         applicationName: applicationName,
         result: {
           config: transformedConfig,
-          constraints: (data.response || {}).constraints
+          constraints: (data.response || {}).constraints,
+          series: (data.response || {}).series
         }
       });
     },
