@@ -4,6 +4,12 @@
     padding: 20px;
     background-color: $light-grey;
 
+    &--completed {
+        .deployment-section__title-checkmark {
+            fill: $success;
+        }
+    }
+
     &__title {
         .svg-icon {
             margin-right: 10px;

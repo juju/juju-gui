@@ -88,8 +88,12 @@ YUI.add('deployment-section', function() {
     },
 
     render: function() {
+      var classes = classNames(
+        'deployment-section',
+        'twelve-col',
+        {'deployment-section--completed': this.props.completed});
       return (
-        <div className="deployment-section twelve-col">
+        <div className={classes}>
           {this._generateMask()}
           {this._generateActions()}
           <h3 className="deployment-section__title">
