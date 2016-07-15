@@ -23,32 +23,6 @@
         padding-top: 40px;
     }
 
-    &__section {
-        margin-bottom: 40px;
-        padding: 20px;
-        background-color: $light-grey;
-
-        &--clear {
-            padding: 0;
-            background-color: transparent;
-        }
-
-        &-title {
-            .svg-icon {
-                margin-right: 10px;
-                vertical-align: text-top;
-            }
-
-            &-checkmark {
-                fill: $warm-grey;
-            }
-        }
-    }
-
-    &__top-action {
-        float: right;
-    }
-
     &__label {
         margin-bottom: 10px;
         color: $warm-grey;
@@ -180,6 +154,10 @@
 
             &-max {
                 font-size: 1.4em;
+            }
+
+            &-show-changelog {
+                float: right;
             }
         }
 
