@@ -30,6 +30,10 @@ YUI.add('deployment-section', function() {
       ]),
       completed: React.PropTypes.bool,
       disabled: React.PropTypes.bool,
+      extra: React.PropTypes.oneOfType([
+        React.PropTypes.array,
+        React.PropTypes.object
+      ]),
       showCheck: React.PropTypes.bool,
       title: React.PropTypes.oneOfType([
         React.PropTypes.array,
@@ -45,14 +49,46 @@ YUI.add('deployment-section', function() {
       @returns {Object} The actions markup.
     */
     _generateActions: function() {
+      if (!this.props.buttons && !this.props.extra) {
+        return;
+      }
+      return (
+        <div className="deployment-section__actions">
+          {this._generateExtra()}
+          {this._generateButtons()}
+        </div>);
+    },
+
+    /**
+      Generate the buttons.
+
+      @method _generateButtons
+      @returns {Object} The buttons component.
+    */
+    _generateButtons: function() {
       var buttons = this.props.buttons;
       if (!buttons) {
         return;
       }
       return (
-        <div className="deployment-section__actions">
-          <juju.components.ButtonRow
-            buttons={this.props.buttons} />
+        <juju.components.ButtonRow
+          buttons={this.props.buttons} />);
+    },
+
+    /**
+      Generate the extra info.
+
+      @method _generateExtra
+      @returns {Object} The actions markup.
+    */
+    _generateExtra: function() {
+      var extra = this.props.extra;
+      if (!extra) {
+        return;
+      }
+      return (
+        <div className="deployment-section__extra">
+          {extra}
         </div>);
     },
 

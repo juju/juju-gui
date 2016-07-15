@@ -26,6 +26,19 @@ YUI.add('deployment-flow', function() {
       changeState: React.PropTypes.func.isRequired
     },
 
+    getInitialState: function() {
+      return {cloud: null};
+    },
+
+    /**
+      Store the selected cloud in state.
+
+      @method _setCloud
+    */
+    _setCloud: function(cloud) {
+      this.setState({cloud: cloud});
+    },
+
     /**
       Handle closing the panel when the close button is clicked.
 
@@ -41,6 +54,7 @@ YUI.add('deployment-flow', function() {
     },
 
     render: function() {
+      var disabled = this.props.acl.isReadOnly();
       /* eslint-disable max-len */
       return (
         <juju.components.Panel
@@ -58,53 +72,19 @@ YUI.add('deployment-flow', function() {
             <div className="deployment-flow__content">
               <div className="twelve-col">
                 <div className="inner-wrapper">
-                  <juju.components.DeploymentSection
-                    completed={false}
-                    disabled={false}
-                    showCheck={true}
-                    title="Choose cloud to deploy to">
-                    <div className="deployment-flow__clouds">
-                      <ul className="deployment-flow__clouds-list">
-                        <li className="deployment-flow__clouds-cloud four-col">
-                          <span className="deployment-flow__clouds-cloud-logo">
-                            <juju.components.SvgIcon
-                              height={33}
-                              name="google"
-                              width={256} />
-                          </span>
-                        </li>
-                        <li className="deployment-flow__clouds-cloud four-col">
-                          <span className="deployment-flow__clouds-cloud-logo">
-                            <juju.components.SvgIcon
-                              height={48}
-                              name="azure"
-                              width={120} />
-                          </span>
-                        </li>
-                        <li className="deployment-flow__clouds-cloud four-col last-col">
-                          <span className="deployment-flow__clouds-cloud-logo">
-                            <juju.components.SvgIcon
-                              height={48}
-                              name="aws"
-                              width={120} />
-                          </span>
-                        </li>
-                        <li className="deployment-flow__clouds-cloud four-col">
-                          <span className="deployment-flow__clouds-cloud-logo">
-                            Local
-                          </span>
-                        </li>
-                      </ul>
-                    </div>
-                  </juju.components.DeploymentSection>
+                  <juju.components.DeploymentCloud
+                    acl={this.props.acl}
+                    cloud={this.state.cloud}
+                    setCloud={this._setCloud} />
                   <juju.components.DeploymentSection
                     buttons={[{
                       action: () => {},
+                      disabled: disabled,
                       title: 'Add credential',
                       type: 'neutral'
                     }]}
                     completed={false}
-                    disabled={false}
+                    disabled={!this.state.cloud}
                     showCheck={false}
                     title="Chosen credential">
                     <div className="deployment-flow__credentials">
@@ -132,7 +112,7 @@ YUI.add('deployment-flow', function() {
                   </juju.components.DeploymentSection>
                   <juju.components.DeploymentSection
                     completed={false}
-                    disabled={false}
+                    disabled={!this.state.cloud}
                     showCheck={false}
                     title="Machines to be deployed">
                     <div className="deployment-flow__machines">
@@ -178,7 +158,7 @@ YUI.add('deployment-flow', function() {
                   </juju.components.DeploymentSection>
                   <juju.components.DeploymentSection
                     completed={false}
-                    disabled={false}
+                    disabled={!this.state.cloud}
                     showCheck={true}
                     title="Services to be deployed">
                     <div className="deployment-flow__services">
@@ -266,6 +246,7 @@ YUI.add('deployment-flow', function() {
                             <div className="deployment-flow__services-service-edit">
                               <juju.components.GenericButton
                                 action={() => {}}
+                                disabled={disabled}
                                 type="neutral"
                                 title="Edit" />
                             </div>
@@ -301,6 +282,7 @@ YUI.add('deployment-flow', function() {
                     <div className="deployment-flow__deploy">
                       <div className="deployment-flow__deploy-option">
                         <input className="deployment-flow__deploy-checkbox"
+                          disabled={disabled || !this.state.cloud}
                           id="emails"
                           type="checkbox" />
                         <label className="deployment-flow__deploy-label"
@@ -312,6 +294,7 @@ YUI.add('deployment-flow', function() {
                       </div>
                       <div className="deployment-flow__deploy-option">
                         <input className="deployment-flow__deploy-checkbox"
+                          disabled={disabled || !this.state.cloud}
                           id="terms"
                           type="checkbox" />
                         <label className="deployment-flow__deploy-label"
@@ -324,6 +307,7 @@ YUI.add('deployment-flow', function() {
                       <div className="deployment-flow__deploy-action">
                         <juju.components.GenericButton
                           action={() => {}}
+                          disabled={disabled || !this.state.cloud}
                           type="positive"
                           title="Deploy" />
                       </div>
@@ -342,6 +326,7 @@ YUI.add('deployment-flow', function() {
 
 }, '0.1.0', {
   requires: [
+    'deployment-cloud',
     'deployment-section',
     'generic-button',
     'panel-component',
