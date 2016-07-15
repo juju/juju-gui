@@ -32,7 +32,8 @@ YUI.add('deployment-section', function() {
       disabled: React.PropTypes.bool,
       extra: React.PropTypes.oneOfType([
         React.PropTypes.array,
-        React.PropTypes.object
+        React.PropTypes.object,
+        React.PropTypes.string
       ]),
       showCheck: React.PropTypes.bool,
       title: React.PropTypes.oneOfType([
