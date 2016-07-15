@@ -50,7 +50,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('sendPostRequest', function() {
 
       it('uses the given state to handle local charm uploads', function() {
-        var path = '/juju-core/charms?series=trusty';
+        var path = '/juju-core/model/73aca47e-5b7b-4302-8632-10150eb9d889' +
+                   '/charms?series=trusty';
         var headers = {'Content-Type': 'application/zip'};
         var data = 'a zip file object';
         // Make a POST request.
@@ -91,8 +92,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('sendGetRequest', function() {
 
       it('handles local charm file contents retrieval', function() {
-        var path = '/juju-core/charms' +
-            '?url=local:trusty/juju-gui-42&file=hooks/install';
+        var path = '/juju-core/model/73aca47e-5b7b-4302-8632-10150eb9d889' +
+                   '/charms?url=local:trusty/juju-gui-42&file=hooks/install';
         // Make a GET request.
         webSandbox.sendGetRequest(
             path, {}, 'user', 'passwd', function() {},
@@ -111,7 +112,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles local charm files listing', function() {
-        var path = '/juju-core/charms?url=local:saucy/django-42';
+        var path = '/juju-core/model/73aca47e-5b7b-4302-8632-10150eb9d889' +
+                   '/charms?url=local:saucy/django-42';
         // Make a GET request.
         webSandbox.sendGetRequest(
             path, {}, 'user', 'passwd', function() {},
@@ -151,9 +153,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('getUrl', function() {
 
       it('uses the state to handle returning charm file paths', function() {
-        var url = webSandbox.getUrl(
-            '/juju-core/charms?url=local:trusty/django-42&file=icon.svg',
-            'myuser', 'mypassword');
+        var path = '/juju-core/model/73aca47e-5b7b-4302-8632-10150eb9d889' +
+                   '/charms?url=local:trusty/django-42&file=icon.svg';
+        var url = webSandbox.getUrl(path, 'myuser', 'mypassword');
         assert.strictEqual(url, 'file-url');
         // Ensure the state has been called with the expected arguments.
         assert.strictEqual(mockState.getLocalCharmFileUrl.callCount(), 1);

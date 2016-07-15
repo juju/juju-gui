@@ -29,12 +29,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-env-web-sandbox', function(Y) {
 
   var module = Y.namespace('juju.environments.web');
-  var localCharmExpression = /\/juju-core\/charms\?series=(\w+)/;
+  var localCharmExpression = new RegExp(
+      /\/juju-core\/model\/[A-Za-z0-9-]+\/charms\?/.source +
+      /series=(\w+)/.source);
   // The expression below is not perfect but good enough for sandbox mode
   // needs, in which we can safely assume the "url: query to always precede
   // the "file" query.
-  var localCharmFilesExpression =
-      /\/juju-core\/charms(?:\/)?\?(?:url=([\w-/:]+))(?:&file=([\w-/.]+))?/;
+  var localCharmFilesExpression = new RegExp(
+      /\/juju-core\/model\/[A-Za-z0-9-]+\/charms(?:\/)?\?/.source + 
+      /(?:url=([\w-/:]+))(?:&file=([\w-/.]+))?/.source);
 
   /**
    * Sandbox Web requests handler.
