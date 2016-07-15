@@ -540,4 +540,26 @@ describe('EntityContent', function() {
       <juju.components.Spinner />);
     assert.deepEqual(output.props.children[1], expected);
   });
+
+  it('can remove plans when none exist', function() {
+    mockEntity.set('options', null);
+    var apiUrl = 'http://example.com';
+    var renderMarkdown = sinon.spy();
+    var getFile = sinon.spy();
+    var pluralize = sinon.spy();
+    var changeState = sinon.spy();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.EntityContent
+        apiUrl={apiUrl}
+        changeState={changeState}
+        entityModel={mockEntity}
+        getFile={getFile}
+        hasPlans={true}
+        plans={[]}
+        pluralize={pluralize}
+        renderMarkdown={renderMarkdown} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (undefined);
+    assert.deepEqual(output.props.children[1], expected);
+  });
 });

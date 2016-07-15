@@ -182,6 +182,27 @@ describe('EntityHeader', function() {
       expected);
   });
 
+  it('displays correctly when there are no plans', function() {
+    var renderer = jsTestUtils.shallowRender(
+        <juju.components.EntityHeader
+          acl={acl}
+          addNotification={sinon.stub()}
+          deployService={sinon.spy()}
+          changeState={sinon.spy()}
+          entityModel={mockEntity}
+          getBundleYAML={sinon.stub()}
+          hasPlans={true}
+          plans={[]}
+          importBundleYAML={sinon.stub()}
+          pluralize={sinon.stub()}
+          scrollPosition={0} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (undefined);
+    assert.deepEqual(
+      output.props.children.props.children.props.children[1].props.children[0],
+      expected);
+  });
+
   it('displays the counts for a bundle', function() {
     var pluralize = sinon.stub();
     pluralize.withArgs('application').returns('applications');

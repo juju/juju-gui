@@ -478,4 +478,79 @@ describe('EntityDetails', function() {
     assert.deepEqual(output, expected);
     assert.equal(listPlansForCharm.callCount, 0);
   });
+
+  it('can set plans to empty on error', function() {
+    mockEntity.hasMetrics = sinon.stub().returns(true);
+    var addNotification = sinon.spy();
+    var apiUrl = 'http://example.com';
+    var changeState = sinon.spy();
+    var deployService = sinon.spy();
+    var getBundleYAML = sinon.spy();
+    var getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
+    var getFile = sinon.spy();
+    var id = mockEntity.get('id');
+    var importBundleYAML = sinon.spy();
+    var listPlansForCharm = sinon.stub().callsArgWith(1, 'An error', null);
+    var makeEntityModel = sinon.stub().returns(mockEntity);
+    var pluralize = sinon.spy();
+    var renderMarkdown = sinon.spy();
+    var shallowRenderer = jsTestUtils.shallowRender(
+      <juju.components.EntityDetails
+        acl={acl}
+        addNotification={addNotification}
+        apiUrl={apiUrl}
+        changeState={changeState}
+        deployService={deployService}
+        displayPlans={true}
+        getBundleYAML={getBundleYAML}
+        getDiagramURL={sinon.stub()}
+        getEntity={getEntity}
+        getFile={getFile}
+        id={id}
+        importBundleYAML={importBundleYAML}
+        listPlansForCharm={listPlansForCharm}
+        makeEntityModel={makeEntityModel}
+        pluralize={pluralize}
+        renderMarkdown={renderMarkdown}
+        scrollPosition={100} />, true);
+    var instance = shallowRenderer.getMountedInstance();
+    instance.refs = {content: {focus: sinon.stub()}};
+    instance.componentDidMount();
+    var output = shallowRenderer.getRenderOutput();
+    assert.isTrue(getEntity.calledOnce,
+                  'getEntity function not called');
+    assert.equal(getEntity.args[0][0], id,
+                 'getEntity not called with the entity ID');
+    var expected = (
+      <div className={'entity-details charm'}
+        ref="content"
+        tabIndex="0">
+        <div>
+          <juju.components.EntityHeader
+            acl={acl}
+            entityModel={mockEntity}
+            importBundleYAML={importBundleYAML}
+            getBundleYAML={getBundleYAML}
+            hasPlans={true}
+            changeState={changeState}
+            addNotification={addNotification}
+            deployService={deployService}
+            plans={[]}
+            pluralize={pluralize}
+            scrollPosition={100} />
+          {undefined}
+          <juju.components.EntityContent
+            apiUrl={apiUrl}
+            changeState={changeState}
+            entityModel={mockEntity}
+            getFile={getFile}
+            hasPlans={true}
+            plans={[]}
+            pluralize={pluralize}
+            renderMarkdown={renderMarkdown} />
+          </div>
+      </div>);
+    assert.deepEqual(output, expected);
+    assert.equal(listPlansForCharm.callCount, 1);
+  });
 });

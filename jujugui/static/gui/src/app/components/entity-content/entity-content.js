@@ -370,8 +370,13 @@ YUI.add('entity-content', function() {
         return;
       }
       var plans = props.plans;
+      // Return a spinner if null (we don't have a response yet) or nothing if
+      // plans are a 0-length array (no plans found, likely due to an error).
       if (!plans) {
         return <juju.components.Spinner />;
+      }
+      if (!plans.length) {
+        return;
       }
       var plansList = [];
       plans.forEach((plan, i) => {

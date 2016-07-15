@@ -181,10 +181,11 @@ YUI.add('entity-details', function() {
     */
     _getPlansCallback: function(error, plans) {
       if (error) {
-        console.error('Fetching plans failed.');
-        return;
+        console.error('Fetching plans failed: ' + error);
+        this.setState({plans: []});
+      } else {
+        this.setState({plans: plans});
       }
-      this.setState({plans: plans});
     },
 
     getInitialState: function() {
