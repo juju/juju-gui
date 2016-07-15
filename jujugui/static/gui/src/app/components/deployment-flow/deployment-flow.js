@@ -58,15 +58,12 @@ YUI.add('deployment-flow', function() {
             <div className="deployment-flow__content">
               <div className="twelve-col">
                 <div className="inner-wrapper">
-                  <div className="deployment-flow__section twelve-col">
+                  <juju.components.DeploymentSection
+                    completed={false}
+                    disabled={false}
+                    showCheck={true}
+                    title="Choose cloud to deploy to">
                     <div className="deployment-flow__clouds">
-                      <h3 className="deployment-flow__section-title">
-                        <juju.components.SvgIcon
-                          className="deployment-flow__section-title-checkmark"
-                          name="complete"
-                          size="24" />
-                        Choose cloud to deploy to
-                      </h3>
                       <ul className="deployment-flow__clouds-list">
                         <li className="deployment-flow__clouds-cloud four-col">
                           <span className="deployment-flow__clouds-cloud-logo">
@@ -99,18 +96,18 @@ YUI.add('deployment-flow', function() {
                         </li>
                       </ul>
                     </div>
-                  </div>
-                  <div className="deployment-flow__section twelve-col">
+                  </juju.components.DeploymentSection>
+                  <juju.components.DeploymentSection
+                    buttons={[{
+                      action: () => {},
+                      title: 'Add credential',
+                      type: 'neutral'
+                    }]}
+                    completed={false}
+                    disabled={false}
+                    showCheck={false}
+                    title="Chosen credential">
                     <div className="deployment-flow__credentials">
-                      <div className="deployment-flow__top-action">
-                        <juju.components.GenericButton
-                          action={() => {}}
-                          type="neutral"
-                          title="Add credential" />
-                      </div>
-                      <h3 className="deployment-flow__section-title">
-                        Choose credential
-                      </h3>
                       <form className="deployment-flow__credentials-form">
                         <div className="four-col">
                           <label className="deployment-flow__label"
@@ -132,12 +129,13 @@ YUI.add('deployment-flow', function() {
                         </div>
                       </form>
                     </div>
-                  </div>
-                  <div className="deployment-flow__section twelve-col">
+                  </juju.components.DeploymentSection>
+                  <juju.components.DeploymentSection
+                    completed={false}
+                    disabled={false}
+                    showCheck={false}
+                    title="Machines to be deployed">
                     <div className="deployment-flow__machines">
-                      <h3 className="deployment-flow__section-title">
-                        Machines to be deployed
-                      </h3>
                       <p className="deployment-flow__machines-message">
                         These machines will be provisioned on Google Cloud
                         Platform. You will incur a charge from your cloud
@@ -177,15 +175,13 @@ YUI.add('deployment-flow', function() {
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="deployment-flow__section twelve-col">
+                  </juju.components.DeploymentSection>
+                  <juju.components.DeploymentSection
+                    completed={false}
+                    disabled={false}
+                    showCheck={true}
+                    title="Services to be deployed">
                     <div className="deployment-flow__services">
-                      <h3 className="deployment-flow__section-title">
-                        <juju.components.SvgIcon
-                          name="complete"
-                          size="24" />
-                        Services to be deployed
-                      </h3>
                       <div className="deployment-flow__services-budget">
                         <h4>
                           Choose your budget
@@ -229,7 +225,7 @@ YUI.add('deployment-flow', function() {
                         </div>
                       </div>
                       <div className="deployment-flow__services-plans twelve-col">
-                        <div className="deployment-flow__top-action">
+                        <div className="deployment-flow__services-plans-show-changelog">
                           <juju.components.GenericButton
                             action={() => {}}
                             type="neutral"
@@ -300,8 +296,8 @@ YUI.add('deployment-flow', function() {
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="deployment-flow__section deployment-flow__section--clear twelve-col">
+                  </juju.components.DeploymentSection>
+                  <div className="twelve-col">
                     <div className="deployment-flow__deploy">
                       <div className="deployment-flow__deploy-option">
                         <input className="deployment-flow__deploy-checkbox"
@@ -346,6 +342,7 @@ YUI.add('deployment-flow', function() {
 
 }, '0.1.0', {
   requires: [
+    'deployment-section',
     'generic-button',
     'panel-component',
     'svg-icon'
