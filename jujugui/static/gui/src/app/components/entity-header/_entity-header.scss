@@ -29,6 +29,14 @@
         border-bottom: 1px solid #d4d4d4;
         border-top-left-radius: $border-radius;
         animation: slideIn .5s;
+        pointer-events: none;
+
+        a,
+        button,
+        input,
+        select {
+            pointer-events: auto;
+        }
 
         .inner-wrapper {
             position: absolute;
