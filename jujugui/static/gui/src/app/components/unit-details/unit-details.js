@@ -51,6 +51,20 @@ YUI.add('unit-details', function() {
     },
 
     /**
+      Display the status if there is a status message
+
+      @method _getUnitStatus
+      @param {String} status The unit message.
+      @returns {String} The formatted status.
+    */
+    _getUnitStatus: function(status) {
+      if (!status || status === '') {
+        return;
+      }
+      return ` - ${status}`;
+    },
+
+    /**
       Build a HTML list from an array of ports and an IP address.
 
       @method _getAddressList
@@ -107,6 +121,7 @@ YUI.add('unit-details', function() {
       var publicList = this._getAddressList(
         unit.public_address, ports,
         this.props.service.get('exposed'));
+      var unitStatus = this._getUnitStatus(unit.workloadStatusMessage);
       var privatePlural = unit.private_address && ports && ports.length > 1 ?
         'es' : '';
       var publicPlural = unit.public_address && ports && ports.length > 1 ?
@@ -115,7 +130,7 @@ YUI.add('unit-details', function() {
         <div className="unit-details">
           <div className="unit-details__properties">
             <p className="unit-details__property">
-              Status: {unit.agent_state || 'uncommitted'}
+              Status: {unit.agent_state || 'uncommitted'} {unitStatus}
             </p>
             <p className="unit-details__property">
               IP address{privatePlural}: {privateList ? null : 'none'}

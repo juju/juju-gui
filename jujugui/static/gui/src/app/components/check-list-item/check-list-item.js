@@ -27,6 +27,7 @@ YUI.add('check-list-item', function() {
       aside: React.PropTypes.string,
       className: React.PropTypes.string,
       disabled: React.PropTypes.bool,
+      extraInfo: React.PropTypes.string,
       id: React.PropTypes.string,
       label: React.PropTypes.string.isRequired,
       whenChanged: React.PropTypes.func.isRequired
@@ -43,7 +44,8 @@ YUI.add('check-list-item', function() {
       return classNames(
         'check-list-item',
         className ? 'check-list-item--' + className : '',
-        {'check-list-item--nav': this.props.action}
+        {'check-list-item--nav': this.props.action},
+        {'check-list-item--extra-info': this.props.extraInfo}
       );
     },
 
@@ -116,6 +118,17 @@ YUI.add('check-list-item', function() {
       }
     },
 
+    _generateExtraInfo: function(extraInfo) {
+      if (!extraInfo || extraInfo === '') {
+        return;
+      }
+      return (
+        <span className="check-list-item__extra-info"
+          title={this.props.extraInfo}>
+          {this.props.extraInfo}
+        </span>);
+    },
+
     render: function() {
       var id = this.props.label + '-item';
       return (
@@ -133,6 +146,7 @@ YUI.add('check-list-item', function() {
             <span className="check-list-item__label">
               {this.props.label}
             </span>
+            {this._generateExtraInfo(this.props.extraInfo)}
             {this._generateAside()}
           </label>
         </li>

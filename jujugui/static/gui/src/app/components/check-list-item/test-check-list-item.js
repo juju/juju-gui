@@ -55,6 +55,45 @@ describe('CheckListItem', () => {
             <span className="check-list-item__label">
               a-label
             </span>
+            {undefined}
+            <span className="check-list-item__aside">
+              3
+            </span>
+          </label>
+        </li>);
+  });
+
+  it('displays extraInfo when provided', () => {
+    var output = jsTestUtils.shallowRender(
+        <juju.components.CheckListItem
+          key="unique"
+          checked={false}
+          disabled={false}
+          label="a-label"
+          id="apache/2"
+          aside="3"
+          extraInfo="Current workload status"
+          whenChanged={sinon.stub()}
+        />);
+    assert.deepEqual(output,
+        <li className="check-list-item check-list-item--extra-info"
+          data-id="apache/2"
+          onClick={undefined} tabIndex="0" role="button">
+          <label htmlFor="a-label-item">
+            <input
+              disabled={false}
+              type="checkbox"
+              id="a-label-item"
+              onClick={output.props.children.props.children[0].props.onClick}
+              onChange={output.props.children.props.children[0].props.onChange}
+              checked={false} />
+            <span className="check-list-item__label">
+              a-label
+            </span>
+            <span className="check-list-item__extra-info"
+              title="Current workload status">
+              Current workload status
+            </span>
             <span className="check-list-item__aside">
               3
             </span>
