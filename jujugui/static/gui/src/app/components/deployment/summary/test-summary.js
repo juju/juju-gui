@@ -217,6 +217,109 @@ describe('DeploymentSummary', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('can render for the controller case', function() {
+    var getUnplacedUnitCount = sinon.stub().returns(0);
+    var changeDescriptions = [{
+      icon: 'my-icon.svg',
+      description: 'Django was added',
+      time: '10:12 am'
+    }, {
+      icon: 'another-icon.svg',
+      description: 'Apache2 was added',
+      time: '10:13 am'
+    }];
+    var changeItems = [
+      <juju.components.DeploymentSummaryChangeItem
+        key={0}
+        change={changeDescriptions[0]} />,
+      <juju.components.DeploymentSummaryChangeItem
+        key={1}
+        change={changeDescriptions[1]} />];
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentSummary
+        jem={undefined}
+        env={{}}
+        appSet={sinon.stub()}
+        createSocketURL={sinon.stub()}
+        deploymentStorage={{
+          templateName: 'spinach/my-creds',
+          cloud: 'aws',
+          region: 'us-west-1'
+        }}
+        users={{}}
+        autoPlaceUnits={sinon.stub()}
+        changeCounts={changeCounts}
+        changeDescriptions={changeDescriptions}
+        changeState={sinon.stub()}
+        ecsClear={sinon.stub()}
+        ecsCommit={sinon.stub()}
+        getUnplacedUnitCount={getUnplacedUnitCount}
+        modelCommitted={true}
+        modelName="Prod"
+        numberOfChanges={6}
+        pluralize={pluralize}
+        validateForm={sinon.stub().returns(true)} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var buttons = [{
+      title: 'Commit',
+      action: instance._handleDeploy,
+      disabled: false,
+      type: 'inline-positive'
+    }];
+    var expected = (
+      <div className="deployment-panel__child deployment-summary">
+        <juju.components.DeploymentPanelContent
+          title="Review deployment">
+          <form className="six-col last-col"
+            onSubmit={instance._handleDeploy}>
+            Prod
+          </form>
+          {undefined}
+          <h3 className="deployment-panel__section-title twelve-col">
+            Deploying {2} {'applications'} on &nbsp;{1} {'machines'}
+          </h3>
+          {undefined}
+          <juju.components.ExpandingRow
+            classes={{
+              'deployment-summary__changelog': true
+            }}>
+            <div className="deployment-summary__changelog-title">
+              <div className="deployment-summary__changelog-title-chevron">
+                <juju.components.SvgIcon
+                  name="chevron_down_16"
+                  size="16" />
+              </div>
+              <span>
+                View complete change log ({6}&nbsp;{'changes'})
+              </span>
+              <span className="link deployment-panel__section-title-link"
+                onClick={instance._handleClear}
+                role="button"
+                tabIndex="0">
+                Clear all changes&nbsp;&rsaquo;
+              </span>
+            </div>
+            <ul className="deployment-summary__list">
+              <li className={'deployment-summary-change-item ' +
+                  'deployment-summary__list-header'}>
+                <span className="deployment-summary-change-item__change">
+                  Change
+                </span>
+                <span className="deployment-summary-change-item__time">
+                  Time
+                </span>
+              </li>
+              {changeItems}
+            </ul>
+          </juju.components.ExpandingRow>
+        </juju.components.DeploymentPanelContent>
+        <juju.components.DeploymentPanelFooter
+          buttons={buttons} />
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
   it('can display a placement message', function() {
     var getUnplacedUnitCount = sinon.stub().returns(1);
     var renderer = jsTestUtils.shallowRender(

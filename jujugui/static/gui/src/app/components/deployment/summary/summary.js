@@ -35,7 +35,7 @@ YUI.add('deployment-summary', function() {
       ecsCommit: React.PropTypes.func.isRequired,
       env: React.PropTypes.object.isRequired,
       getUnplacedUnitCount: React.PropTypes.func.isRequired,
-      jem: React.PropTypes.object.isRequired,
+      jem: React.PropTypes.object,
       modelCommitted: React.PropTypes.bool.isRequired,
       modelName: React.PropTypes.string.isRequired,
       numberOfChanges: React.PropTypes.number.isRequired,
@@ -62,7 +62,13 @@ YUI.add('deployment-summary', function() {
       // drop down list.
       var deploymentStorage = props.deploymentStorage;
       var templateName = deploymentStorage.templateName;
-      this._listTemplatesXHR = props.jem.listTemplates((error, credentials) => {
+      var jem = props.jem;
+      if (!jem) {
+        // If there is no JEM then we are connected to a controller, in which
+        // case we don't need to get the list of credentials etc.
+        return;
+      }
+      this._listTemplatesXHR = jem.listTemplates((error, credentials) => {
         this._abortXHR('_listTemplatesXHR');
         if (error) {
           console.error('Unable to list templates', error);
@@ -78,7 +84,7 @@ YUI.add('deployment-summary', function() {
           }
         });
         if (deploymentStorage.cloud && deploymentStorage.region) {
-          this._listRegionsXHR = props.jem.listRegions(
+          this._listRegionsXHR = jem.listRegions(
             deploymentStorage.cloud, (error, regions) => {
               this._abortXHR('_listRegionsXHR');
               if (error) {
