@@ -5,6 +5,9 @@
     background-color: $light-grey;
 
     &--completed {
+        margin-bottom: 0;
+        border-bottom: 2px solid $light-mid-grey;
+
         .deployment-section__title-checkmark {
             fill: $success;
         }
