@@ -30,6 +30,7 @@ YUI.add('deployment-cloud', function() {
     CLOUDS: {
       google: {
         id: 'google',
+        showLogo: true,
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',
         svgHeight: 33,
         svgWidth: 256,
@@ -37,6 +38,7 @@ YUI.add('deployment-cloud', function() {
       },
       azure: {
         id: 'azure',
+        showLogo: true,
         signupUrl: 'https://azure.microsoft.com/en-us/free/',
         svgHeight: 24,
         svgWidth: 204,
@@ -44,6 +46,7 @@ YUI.add('deployment-cloud', function() {
       },
       aws: {
         id: 'aws',
+        showLogo: true,
         signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
         'registration/index.html',
         svgHeight: 48,
@@ -52,6 +55,7 @@ YUI.add('deployment-cloud', function() {
       },
       local: {
         id: 'local',
+        showLogo: false,
         title: 'Local'
       }
     },
@@ -102,7 +106,7 @@ YUI.add('deployment-cloud', function() {
         return;
       }
       var cloud = this.CLOUDS[id];
-      return cloud.svgHeight ? (
+      return cloud.showLogo ? (
         <juju.components.SvgIcon
         height={cloud.svgHeight}
         name={cloud.id}
