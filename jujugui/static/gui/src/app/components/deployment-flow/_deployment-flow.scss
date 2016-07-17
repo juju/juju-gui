@@ -42,36 +42,6 @@
         background-color: $white;
     }
 
-    &__clouds {
-        &-list {
-            @extend %list-style;
-        }
-
-        &-cloud {
-            background-color: $white;
-            box-shadow: $box-shadow;
-            text-align: center;
-            cursor: pointer;
-            margin-top: 20px;
-            margin-bottom: 0;
-
-            &:hover {
-                background-color: $light-grey;
-            }
-
-            &-logo {
-                display: block;
-                // Set the line height the the height we want the boxes. This
-                // will vertically center the logos inside the boxes.
-                line-height: 120px;
-
-                .svg-icon {
-                    vertical-align: middle;
-                }
-            }
-        }
-    }
-
     &__credentials {
         &-form {
             margin-top: 20px;

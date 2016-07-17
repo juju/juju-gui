@@ -24,21 +24,23 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentFlow', function() {
+  var acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('deployment-flow', function() { done(); });
   });
 
+  beforeEach(() => {
+    acl = {isReadOnly: sinon.stub().returns(false)};
+  });
+
   it('can close', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentFlow
-        activeComponent="start"
-        changeState={changeState}
-        modelName="my-model"
-        steps={[]}
-        visible={true}>
+        acl={acl}
+        changeState={changeState}>
         <span>content</span>
       </juju.components.DeploymentFlow>);
     output.props.children.props.children[0].props.children.props.children

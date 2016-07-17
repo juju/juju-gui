@@ -62,6 +62,7 @@ describe('DeploymentSection', function() {
         buttons={buttons}
         completed={true}
         disabled={true}
+        extra={<span>extra</span>}
         showCheck={true}
         title="Services to be deployed">
         <span>content</span>
@@ -72,6 +73,9 @@ describe('DeploymentSection', function() {
         'deployment-section twelve-col deployment-section--completed'}>
         <div className="deployment-section__mask"></div>
         <div className="deployment-section__actions">
+          <div className="deployment-section__extra">
+            <span>extra</span>
+          </div>
           <juju.components.ButtonRow
             buttons={buttons} />
         </div>

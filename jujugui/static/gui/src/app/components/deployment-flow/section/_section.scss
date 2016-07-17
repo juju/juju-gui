@@ -5,6 +5,9 @@
     background-color: $light-grey;
 
     &--completed {
+        margin-bottom: 0;
+        border-bottom: 2px solid $light-mid-grey;
+
         .deployment-section__title-checkmark {
             fill: $success;
         }
@@ -25,6 +28,7 @@
         float: right;
 
         .button-row {
+            display: inline-block;
             padding: 0;
         }
 
@@ -32,6 +36,13 @@
             padding-left: 20px;
             padding-right: 20px;
         }
+    }
+
+    &__extra {
+        @extend %fade-in;
+        display: inline-block;
+        margin-right: 40px;
+        vertical-align: middle;
     }
 
     &__mask {
