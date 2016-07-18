@@ -296,12 +296,22 @@ YUI.add('inspector-config', function() {
       @param {Object} e The change event.
     */
     _handleSeriesChange: function(e) {
-      var value = e.currentTarget.value;
-      // Warn that this will unplace the units
-      this.props.unplaceServiceUnits(this.props.service.get('id'));
+      const props = this.props;
+      // Defining `value` outside of the setState callback is required.
+      const value = e.currentTarget.value;
+      const unplacedUnits = props.unplaceServiceUnits(props.service.get('id'));
       this.setState({forceUpdate: true}, () => {
         this.setState({series: value});
       });
+      // If units were unplaced then we want to show a notification and
+      // open up the machine view for the user.
+      if (unplacedUnits.length > 0) {
+        props.changeState({
+          sectionB: {
+            component: 'machine',
+            metadata: {}
+          }});
+      }
     },
 
     /**

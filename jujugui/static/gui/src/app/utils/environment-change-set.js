@@ -1363,11 +1363,15 @@ YUI.add('environment-change-set', function(Y) {
 
       @method unplaceServiceUnits
       @param {String} serviceId The service id to unplace units for.
+      @returns {Array} Any units that had been unplaced, or an empty array.
     */
     unplaceServiceUnits: function(serviceId) {
-      const db = this.get('db');
-      const unitList = db.units.filter(unit => unit.service === serviceId);
-      unitList.forEach(unit => this.unplaceUnit(unit));
+      return this.get('db').units
+        // We only want to unplace units which have the matching
+        // service id and which are placed on machines.
+        .filter(unit => unit.service === serviceId && unit.machine)
+        // Unplace any units which match the criteria.
+        .map(unit => this.unplaceUnit(unit));
     },
 
     /**
