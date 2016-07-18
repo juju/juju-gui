@@ -39,7 +39,7 @@ describe('DeploymentSection', function() {
       </juju.components.DeploymentSection>, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="deployment-section twelve-col">
+      <div className="deployment-section twelve-col deployment-section--active">
         {undefined}
         {undefined}
         <h3 className="deployment-section__title">

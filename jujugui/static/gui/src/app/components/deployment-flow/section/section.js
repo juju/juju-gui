@@ -127,7 +127,10 @@ YUI.add('deployment-section', function() {
 
     render: function() {
       var instance = this.props.instance;
-      var extra = {'deployment-section--completed': this.props.completed};
+      var extra = {
+        'deployment-section--active': !this.props.disabled,
+        'deployment-section--completed': this.props.completed
+      };
       extra[instance] = !!instance;
       var classes = classNames(
         'deployment-section',
