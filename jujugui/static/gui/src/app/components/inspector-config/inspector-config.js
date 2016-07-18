@@ -299,13 +299,21 @@ YUI.add('inspector-config', function() {
       const props = this.props;
       // Defining `value` outside of the setState callback is required.
       const value = e.currentTarget.value;
-      const unplacedUnits = props.unplaceServiceUnits(props.service.get('id'));
+      const service = props.service;
+      const unplacedUnits = props.unplaceServiceUnits(service.get('id'));
       this.setState({forceUpdate: true}, () => {
         this.setState({series: value});
       });
       // If units were unplaced then we want to show a notification and
       // open up the machine view for the user.
-      if (unplacedUnits.length > 0) {
+      const unplacedUnitsLength = unplacedUnits.length;
+      if (unplacedUnitsLength > 0) {
+        props.addNotification({
+          title: `${unplacedUnitsLength} units unplaced`,
+          message: 'The ' + unplacedUnitsLength + ' placed units for ' +
+            service.get('name') + ' have been unplaced.',
+          level: 'error'
+        });
         props.changeState({
           sectionB: {
             component: 'machine',
