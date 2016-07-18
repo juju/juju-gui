@@ -28,6 +28,8 @@ YUI.add('deployment-credential-add', function() {
       clouds: React.PropTypes.object.isRequired
     },
 
+    DEFAULTCLOUD: 'google',
+
     /**
       Generate the fields for entering cloud credentials.
 
@@ -46,7 +48,7 @@ YUI.add('deployment-credential-add', function() {
             used and manage or remove them via the account page.
           </p>
         </div>);
-      switch (this.props.cloud) {
+      switch (this.props.cloud || this.DEFAULTCLOUD) {
         case 'aws':
           return (
             <div>
@@ -150,9 +152,8 @@ YUI.add('deployment-credential-add', function() {
       }];
       // If no cloud has been selected we set a default so that the disabled
       // form will display correctly as the next step.
-      var cloudId = this.props.cloud || 'google';
       var isReadOnly = this.props.acl.isReadOnly();
-      var cloud = this.props.clouds[cloudId];
+      var cloud = this.props.clouds[this.props.cloud || this.DEFAULTCLOUD];
       var title = cloud.title;
       var credentialName = cloud.id === 'google' ?
         'Project ID (credential name)' : 'Credential name';
@@ -174,7 +175,7 @@ YUI.add('deployment-credential-add', function() {
               <juju.components.DeploymentInput
                 disabled={isReadOnly}
                 label={credentialName}
-                placeholder="AWS-1"
+                placeholder="cred-1"
                 required={true}
                 ref="templateName"
                 validate={[{
@@ -214,7 +215,8 @@ YUI.add('deployment-credential-add', function() {
 }, '0.1.0', {
   requires: [
     'deployment-input',
-    'generic-button',
+    'button-row',
+    'inset-select',
     'svg-icon'
   ]
 });
