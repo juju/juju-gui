@@ -42,64 +42,63 @@ describe('DeploymentCloud', function() {
         cloud={null}
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
-    var clouds = output.props.children.props.children.props.children;
+    var clouds = output.props.children[0].props.children;
     var expected = (
       <juju.components.DeploymentSection
         buttons={undefined}
         completed={false}
         disabled={false}
-        extra={undefined}
+        instance="deployment-cloud"
         showCheck={true}
         title="Choose cloud to deploy to">
-        <div className="deployment-cloud">
-          <ul className="deployment-cloud__list">
-            <li className="deployment-cloud__cloud four-col"
-              key="google"
-              onClick={clouds[0].props.onClick}
-              role="button"
-              tabIndex="0">
-              <span className="deployment-cloud__cloud-logo">
-                <juju.components.SvgIcon
-                  height={33}
-                  name="google"
-                  width={256} />
-              </span>
-            </li>
-            <li className="deployment-cloud__cloud four-col"
-              key="azure"
-              onClick={clouds[1].props.onClick}
-              role="button"
-              tabIndex="0">
-              <span className="deployment-cloud__cloud-logo">
-                <juju.components.SvgIcon
-                  height={24}
-                  name="azure"
-                  width={204} />
-              </span>
-            </li>
-            <li className="deployment-cloud__cloud four-col last-col"
-              key="aws"
-              onClick={clouds[2].props.onClick}
-              role="button"
-              tabIndex="0">
-              <span className="deployment-cloud__cloud-logo">
-                <juju.components.SvgIcon
-                  height={48}
-                  name="aws"
-                  width={120} />
-              </span>
-            </li>
-            <li className="deployment-cloud__cloud four-col"
-              key="local"
-              onClick={clouds[3].props.onClick}
-              role="button"
-              tabIndex="0">
-              <span className="deployment-cloud__cloud-logo">
-                Local
-              </span>
-            </li>
-          </ul>
-        </div>
+        <ul className="deployment-cloud__list">
+          <li className="deployment-cloud__cloud four-col"
+            key="google"
+            onClick={clouds[0].props.onClick}
+            role="button"
+            tabIndex="0">
+            <span className="deployment-cloud__cloud-logo">
+              <juju.components.SvgIcon
+                height={33}
+                name="google"
+                width={256} />
+            </span>
+          </li>
+          <li className="deployment-cloud__cloud four-col"
+            key="azure"
+            onClick={clouds[1].props.onClick}
+            role="button"
+            tabIndex="0">
+            <span className="deployment-cloud__cloud-logo">
+              <juju.components.SvgIcon
+                height={24}
+                name="azure"
+                width={204} />
+            </span>
+          </li>
+          <li className="deployment-cloud__cloud four-col last-col"
+            key="aws"
+            onClick={clouds[2].props.onClick}
+            role="button"
+            tabIndex="0">
+            <span className="deployment-cloud__cloud-logo">
+              <juju.components.SvgIcon
+                height={48}
+                name="aws"
+                width={120} />
+            </span>
+          </li>
+          <li className="deployment-cloud__cloud four-col"
+            key="local"
+            onClick={clouds[3].props.onClick}
+            role="button"
+            tabIndex="0">
+            <span className="deployment-cloud__cloud-logo">
+              Local
+            </span>
+          </li>
+        </ul>
+        {undefined}
       </juju.components.DeploymentSection>);
     assert.deepEqual(output, expected);
   });
@@ -111,11 +110,6 @@ describe('DeploymentCloud', function() {
         cloud='google'
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
-    var logo = (
-      <juju.components.SvgIcon
-        height={33}
-        name="google"
-        width={256} />);
     var expected = (
       <juju.components.DeploymentSection
         buttons={[{
@@ -126,11 +120,15 @@ describe('DeploymentCloud', function() {
         }]}
         completed={true}
         disabled={false}
-        extra={logo}
+        instance="deployment-cloud"
         showCheck={true}
         title="Chosen cloud">
-        <div className="deployment-cloud">
-          {undefined}
+        {undefined}
+        <div className="deployment-cloud__chosen">
+          <juju.components.SvgIcon
+            height={33}
+            name="google"
+            width={256} />
         </div>
       </juju.components.DeploymentSection>);
     assert.deepEqual(output, expected);
@@ -155,7 +153,7 @@ describe('DeploymentCloud', function() {
         cloud={null}
         setCloud={setCloud} />, true);
     var output = renderer.getRenderOutput();
-    output.props.children.props.children.props.children[0].props.onClick();
+    output.props.children[0].props.children[0].props.onClick();
     assert.equal(setCloud.callCount, 1);
     assert.equal(setCloud.args[0][0], 'google');
   });

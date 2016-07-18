@@ -95,6 +95,23 @@ YUI.add('deployment-cloud', function() {
     },
 
     /**
+      Generate the logo for the selected cloud.
+
+      @method _generateCloud
+      @returns {Object} The cloud.
+    */
+    _generateCloud: function() {
+      var cloud = this.props.cloud;
+      if (!cloud) {
+        return;
+      }
+      return (
+        <div className="deployment-cloud__chosen">
+          {this._generateLogo(cloud)}
+        </div>);
+    },
+
+    /**
       Generate the logo for a cloud;
 
       @method _generateLogo
@@ -138,12 +155,11 @@ YUI.add('deployment-cloud', function() {
           buttons={this._generateAction()}
           completed={!!cloud}
           disabled={false}
-          extra={this._generateLogo(cloud)}
+          instance="deployment-cloud"
           showCheck={true}
           title={cloud ? 'Chosen cloud' : 'Choose cloud to deploy to'}>
-          <div className="deployment-cloud">
-            {this._generateClouds()}
-          </div>
+          {this._generateClouds()}
+          {this._generateCloud()}
         </juju.components.DeploymentSection>
       );
     }
