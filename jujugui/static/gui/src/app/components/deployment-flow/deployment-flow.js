@@ -26,6 +26,39 @@ YUI.add('deployment-flow', function() {
       changeState: React.PropTypes.func.isRequired
     },
 
+    CLOUDS: {
+      google: {
+        id: 'google',
+        showLogo: true,
+        signupUrl: 'https://console.cloud.google.com/billing/freetrial',
+        svgHeight: 33,
+        svgWidth: 256,
+        title: 'Google Compute Engine'
+      },
+      azure: {
+        id: 'azure',
+        showLogo: true,
+        signupUrl: 'https://azure.microsoft.com/en-us/free/',
+        svgHeight: 24,
+        svgWidth: 204,
+        title: 'Microsoft Azure'
+      },
+      aws: {
+        id: 'aws',
+        showLogo: true,
+        signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
+        'registration/index.html',
+        svgHeight: 48,
+        svgWidth: 120,
+        title: 'Amazon Web Services'
+      },
+      local: {
+        id: 'local',
+        showLogo: false,
+        title: 'Local'
+      }
+    },
+
     getInitialState: function() {
       return {cloud: null};
     },
@@ -75,41 +108,12 @@ YUI.add('deployment-flow', function() {
                   <juju.components.DeploymentCloud
                     acl={this.props.acl}
                     cloud={this.state.cloud}
+                    clouds={this.CLOUDS}
                     setCloud={this._setCloud} />
-                  <juju.components.DeploymentSection
-                    buttons={[{
-                      action: () => {},
-                      disabled: disabled,
-                      title: 'Add credential',
-                      type: 'neutral'
-                    }]}
-                    completed={false}
-                    disabled={!this.state.cloud}
-                    showCheck={false}
-                    title="Chosen credential">
-                    <div className="deployment-flow__credentials">
-                      <form className="deployment-flow__credentials-form">
-                        <div className="four-col">
-                          <label className="deployment-flow__label"
-                            htmlFor="creds">
-                            Credential
-                          </label>
-                          <select id="creds">
-                            <option>test-cred</option>
-                          </select>
-                        </div>
-                        <div className="four-col">
-                          <label className="deployment-flow__label"
-                            htmlFor="region">
-                            Region
-                          </label>
-                          <select id="region">
-                            <option>test-region</option>
-                          </select>
-                        </div>
-                      </form>
-                    </div>
-                  </juju.components.DeploymentSection>
+                  <juju.components.DeploymentCredential
+                    acl={this.props.acl}
+                    cloud={this.state.cloud}
+                    clouds={this.CLOUDS} />
                   <juju.components.DeploymentSection
                     completed={false}
                     disabled={!this.state.cloud}
@@ -168,13 +172,13 @@ YUI.add('deployment-flow', function() {
                         </h4>
                         <div className="deployment-flow__services-budget-form twelve-col">
                           <div className="four-col">
-                            <label className="deployment-flow__label"
-                              htmlFor="budget">
-                              Budget
-                            </label>
-                            <select id="budget">
-                              <option>test-budget</option>
-                            </select>
+                            <juju.components.InsetSelect
+                              disabled={disabled}
+                              label="Budget"
+                              options={[{
+                                label: 'test budget',
+                                value: 'test-budget'
+                              }]} />
                           </div>
                           <div className="three-col">
                             <span className="deployment-flow__services-budget-increase link">
@@ -327,7 +331,9 @@ YUI.add('deployment-flow', function() {
 }, '0.1.0', {
   requires: [
     'deployment-cloud',
+    'deployment-credential',
     'deployment-section',
+    'inset-select',
     'generic-button',
     'panel-component',
     'svg-icon'

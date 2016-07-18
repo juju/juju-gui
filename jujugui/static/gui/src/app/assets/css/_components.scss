@@ -21,6 +21,8 @@
 @import "../../components/deployment-flow/deployment-flow";
 @import "../../components/deployment-flow/section/section";
 @import "../../components/deployment-flow/cloud/cloud";
+@import "../../components/deployment-flow/credential/credential";
+@import "../../components/deployment-flow/credential/add/add";
 @import "../../components/deployment-summary/deployment-summary";
 @import "../../components/deployment-summary-change-item/deployment-summary-change-item";
 @import "../../components/env-size-display/env-size-display";
@@ -39,6 +41,7 @@
 @import "../../components/header-search/header-search";
 @import "../../components/import-export/import-export";
 @import "../../components/header-breadcrumb/header-breadcrumb";
+@import "../../components/inset-select/inset-select";
 @import "../../components/inspector/inspector";
 @import "../../components/inspector-change-version/inspector-change-version";
 @import "../../components/inspector-change-version-item/inspector-change-version-item";

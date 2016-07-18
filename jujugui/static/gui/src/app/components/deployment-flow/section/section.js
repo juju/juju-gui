@@ -35,6 +35,7 @@ YUI.add('deployment-section', function() {
         React.PropTypes.object,
         React.PropTypes.string
       ]),
+      instance: React.PropTypes.string,
       showCheck: React.PropTypes.bool,
       title: React.PropTypes.oneOfType([
         React.PropTypes.array,
@@ -125,10 +126,16 @@ YUI.add('deployment-section', function() {
     },
 
     render: function() {
+      var instance = this.props.instance;
+      var extra = {
+        'deployment-section--active': !this.props.disabled,
+        'deployment-section--completed': this.props.completed
+      };
+      extra[instance] = !!instance;
       var classes = classNames(
         'deployment-section',
         'twelve-col',
-        {'deployment-section--completed': this.props.completed});
+        extra);
       return (
         <div className={classes}>
           {this._generateMask()}

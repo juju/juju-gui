@@ -24,40 +24,8 @@ YUI.add('deployment-cloud', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       cloud: React.PropTypes.string,
+      clouds: React.PropTypes.object.isRequired,
       setCloud: React.PropTypes.func.isRequired
-    },
-
-    CLOUDS: {
-      google: {
-        id: 'google',
-        showLogo: true,
-        signupUrl: 'https://console.cloud.google.com/billing/freetrial',
-        svgHeight: 33,
-        svgWidth: 256,
-        title: 'Google Compute Engine'
-      },
-      azure: {
-        id: 'azure',
-        showLogo: true,
-        signupUrl: 'https://azure.microsoft.com/en-us/free/',
-        svgHeight: 24,
-        svgWidth: 204,
-        title: 'Microsoft Azure'
-      },
-      aws: {
-        id: 'aws',
-        showLogo: true,
-        signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
-        'registration/index.html',
-        svgHeight: 48,
-        svgWidth: 120,
-        title: 'Amazon Web Services'
-      },
-      local: {
-        id: 'local',
-        showLogo: false,
-        title: 'Local'
-      }
     },
 
     /**
@@ -71,8 +39,8 @@ YUI.add('deployment-cloud', function() {
         return;
       }
       var clouds = [];
-      Object.keys(this.CLOUDS).forEach((key, i) => {
-        var cloud = this.CLOUDS[key];
+      Object.keys(this.props.clouds).forEach((key, i) => {
+        var cloud = this.props.clouds[key];
         var classes = classNames(
           'deployment-cloud__cloud',
           'four-col',
@@ -95,6 +63,23 @@ YUI.add('deployment-cloud', function() {
     },
 
     /**
+      Generate the logo for the selected cloud.
+
+      @method _generateCloud
+      @returns {Object} The cloud.
+    */
+    _generateCloud: function() {
+      var cloud = this.props.cloud;
+      if (!cloud) {
+        return;
+      }
+      return (
+        <div className="deployment-cloud__chosen">
+          {this._generateLogo(cloud)}
+        </div>);
+    },
+
+    /**
       Generate the logo for a cloud;
 
       @method _generateLogo
@@ -105,7 +90,7 @@ YUI.add('deployment-cloud', function() {
       if (!id) {
         return;
       }
-      var cloud = this.CLOUDS[id];
+      var cloud = this.props.clouds[id];
       return cloud.showLogo ? (
         <juju.components.SvgIcon
         height={cloud.svgHeight}
@@ -138,12 +123,11 @@ YUI.add('deployment-cloud', function() {
           buttons={this._generateAction()}
           completed={!!cloud}
           disabled={false}
-          extra={this._generateLogo(cloud)}
+          instance="deployment-cloud"
           showCheck={true}
           title={cloud ? 'Chosen cloud' : 'Choose cloud to deploy to'}>
-          <div className="deployment-cloud">
-            {this._generateClouds()}
-          </div>
+          {this._generateClouds()}
+          {this._generateCloud()}
         </juju.components.DeploymentSection>
       );
     }
