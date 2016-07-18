@@ -31,6 +31,7 @@ YUI.add('inspector-config', function() {
       linkify: React.PropTypes.func.isRequired,
       service: React.PropTypes.object.isRequired,
       setConfig: React.PropTypes.func.isRequired,
+      unplaceServiceUnits: React.PropTypes.func.isRequired,
       updateServiceUnitsDisplayname: React.PropTypes.func.isRequired
     },
 
@@ -296,6 +297,8 @@ YUI.add('inspector-config', function() {
     */
     _handleSeriesChange: function(e) {
       var value = e.currentTarget.value;
+      // Warn that this will unplace the units
+      this.props.unplaceServiceUnits(this.props.service.get('id'));
       this.setState({forceUpdate: true}, () => {
         this.setState({series: value});
       });

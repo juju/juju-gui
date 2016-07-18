@@ -56,6 +56,7 @@ YUI.add('inspector-component', function() {
       setConfig: React.PropTypes.func.isRequired,
       showActivePlan: React.PropTypes.func.isRequired,
       unexposeService: React.PropTypes.func.isRequired,
+      unplaceServiceUnits: React.PropTypes.func.isRequired,
       updateServiceUnitsDisplayname: React.PropTypes.func.isRequired
     },
 
@@ -266,6 +267,7 @@ YUI.add('inspector-component', function() {
                 getServiceByName={this.props.getServiceByName}
                 addNotification={this.props.addNotification}
                 linkify={this.props.linkify}
+                unplaceServiceUnits={this.props.unplaceServiceUnits}
                 setConfig={nextProps.setConfig} />,
             backState: {
               sectionA: {

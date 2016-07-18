@@ -751,23 +751,9 @@ YUI.add('environment-change-set', function(Y) {
       }, this);
       var db = this.get('db');
       var machine = db.machines.getById(command.args[0]);
-      var removedUnits = [];
       var units = db.units.filterByMachine(machine.id, true);
-      units.forEach(function(unit) {
-        // Update the revived model to trigger events.
-        var unitModel = db.units.revive(unit);
-        if (!unit.agent_state) {
-          // Remove the unit's machine, making it an unplaced unit.
-          delete unit.machine;
-          removedUnits.push(unit);
-          unitModel.set('machine', null);
-        } else {
-          // If the unit is deployed to the machine then mark it as deleted
-          // so that the UI updates.
-          unitModel.set('deleted', true);
-        }
-        db.units.free(unitModel);
-      }, this);
+      // Remove the unit from the machine.
+      var removedUnits = units.filter(unit => this.unplaceUnit(unit));
       if (machine.parentId) {
         // Remove the removed units from the parent machines unit list.
         var parentMachine = db.machines.getById(machine.parentId);
@@ -1369,6 +1355,57 @@ YUI.add('environment-change-set', function(Y) {
       unitModel.set('machine', machineId);
       unitsDb.free(unitModel);
       return null;
+    },
+
+    /**
+      Takes a service id and then handles unplacing all of the uncommitted
+      units for that service.
+
+      @method unplaceServiceUnits
+      @param {String} serviceId The service id to unplace units for.
+    */
+    unplaceServiceUnits: function(serviceId) {
+      const db = this.get('db');
+      const unitList = db.units.filter(unit => unit.service === serviceId);
+      unitList.forEach(unit => this.unplaceUnit(unit));
+    },
+
+    /**
+      removed the placed unit from the machine it's placed on.
+
+      @method unplaceUnit
+      @param {Object} unit The unit to remove from the machine.
+      @returns {Object} unit The removed unit or undefined if the unit has
+        already been deployed.
+    */
+    unplaceUnit: function(unit) {
+      const db = this.get('db');
+      // Update the revived model to trigger events.
+      const unitModel = db.units.revive(unit);
+      unit = this._unplaceUnit(unit, unitModel);
+      db.units.free(unitModel);
+      return unit;
+    },
+
+    /**
+      removed the placed unit from the machine it's placed on.
+
+      @method _unplaceUnit
+      @param {Object} unit The unit to remove from the machine.
+      @param {Object} unitModel The YUI Model instance for the unit.
+      @returns {Object} unit The removed unit or undefined if the unit has
+        already been deployed.
+    */
+    _unplaceUnit: function(unit, unitModel) {
+      if (!unit.agent_state) {
+        // Remove the unit's machine, making it an unplaced unit.
+        delete unit.machine;
+        unitModel.set('machine', null);
+        return unit;
+      }
+      // If the unit is deployed to the machine then mark it as deleted
+      // so that the UI updates.
+      unitModel.set('deleted', true);
     },
 
     /* End private environment methods. */
