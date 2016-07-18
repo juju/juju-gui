@@ -73,37 +73,6 @@
     left: 0;
   }
 
-  // Mid-point
-  .mid-point__title {
-    display: none;
-  }
-
-  .mid-point__charm,
-  .mid-point__charm-list {
-    display: block;
-    width: 100%;
-    float: none;
-    box-sizing: border-box;
-  }
-
-  .mid-point__charm-icon {
-    margin-bottom: .5em;
-  }
-
-  .mid-point__charm {
-    display: none;
-  }
-
-  .mid-point__charm:nth-child(2n) {
-    display: block;
-  }
-
-  .mid-point__tag {
-    float: left;
-    width: 49%;
-    text-align: left;
-  }
-
   // Machine view
   .machine-view {
     z-index: index($z-indexed-elements, inspector-view);

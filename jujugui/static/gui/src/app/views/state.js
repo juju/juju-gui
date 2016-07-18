@@ -288,9 +288,6 @@ YUI.add('juju-app-state', function(Y) {
               queryValues.owner = metadata.owner;
             }
           }
-          if (activeComponent === 'mid-point') {
-            queryValues.midpoint = '';
-          }
           if (activeComponent === 'entity-details') {
             queryValues.store = id || '';
           }
@@ -502,7 +499,7 @@ YUI.add('juju-app-state', function(Y) {
           state.sectionC = {
             component: 'charmbrowser',
             metadata: {
-              activeComponent: 'mid-point'
+              activeComponent: 'store'
             }
           };
         }

@@ -84,7 +84,7 @@ describe('Charmbrowser', function() {
         <juju.components.Panel
           instanceName="white-box"
           clickAction={instance._close}
-          focus={true}
+          focus={false}
           visible={true}>
           <div className="charmbrowser"
             ref="charmbrowser">
@@ -105,52 +105,6 @@ describe('Charmbrowser', function() {
             </div>
         </juju.components.Panel>);
     assert.deepEqual(output, expected);
-  });
-
-  it('displays the mid-point when the app state calls for it', function() {
-    var appState = {
-      sectionC: {
-        metadata: {
-          activeComponent: 'mid-point'
-        }
-      }};
-    var changeState = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.Charmbrowser
-        acl={acl}
-        addNotification={sinon.stub()}
-        apiUrl="http://example.com/"
-        appState={appState}
-        changeState={changeState}
-        charmstoreSearch={sinon.stub()}
-        deployService={sinon.stub()}
-        displayPlans={true}
-        getBundleYAML={sinon.stub()}
-        getDiagramURL={sinon.stub()}
-        getEntity={sinon.stub()}
-        getFile={sinon.stub()}
-        importBundleYAML={sinon.stub()}
-        listPlansForCharm={sinon.stub()}
-        makeEntityModel={sinon.stub()}
-        utils={{}}
-        renderMarkdown={sinon.stub()}
-        series={{}} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    assert.deepEqual(output,
-        <juju.components.Panel
-          instanceName="white-box"
-          clickAction={instance._close}
-          focus={false}
-          visible={true}>
-          <div className="charmbrowser"
-            ref="charmbrowser">
-            <juju.components.MidPoint
-              outsideClickClose={true}
-              storeOpen={false}
-              changeState={changeState} />
-          </div>
-        </juju.components.Panel>);
   });
 
   it('displays the store when the app state calls for it', function() {
@@ -191,7 +145,7 @@ describe('Charmbrowser', function() {
         <juju.components.Panel
           instanceName="white-box"
           clickAction={instance._close}
-          focus={true}
+          focus={false}
           visible={true}>
           <div className="charmbrowser"
             ref="charmbrowser">
@@ -256,7 +210,7 @@ describe('Charmbrowser', function() {
         <juju.components.Panel
           instanceName="white-box"
           clickAction={instance._close}
-          focus={true}
+          focus={false}
           visible={true}>
           <div className="charmbrowser"
             ref="charmbrowser">

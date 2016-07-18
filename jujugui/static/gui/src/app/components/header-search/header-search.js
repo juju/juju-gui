@@ -70,7 +70,7 @@ YUI.add('header-search', function() {
     */
     componentWillReceiveProps: function() {
       // Need to check if there is a change to sectionC and if it has been
-      // cleared (mid-point/search results have been closed) then we also need
+      // cleared (store/search results have been closed) then we also need
       // to deactivate the search box.
       this.setState({query: this._getSearchQuery()});
       if (this._activeForComponent()) {
@@ -128,7 +128,7 @@ YUI.add('header-search', function() {
           sectionC: {
             component: 'charmbrowser',
             metadata: {
-              activeComponent: 'mid-point'
+              activeComponent: 'store'
             }
           }
         });
@@ -175,7 +175,7 @@ YUI.add('header-search', function() {
           'current', 'sectionC', 'metadata');
         if (metadata) {
           var activeComponent = metadata.activeComponent;
-          if (activeComponent === 'mid-point' ||
+          if (activeComponent === 'store' ||
               activeComponent === 'search-results') {
             active = true;
           }

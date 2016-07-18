@@ -120,14 +120,6 @@ YUI.add('charmbrowser-component', function() {
       var metadata = this.props.appState.sectionC.metadata;
       var utils = this.props.utils;
       switch (this.state.activeComponent) {
-        case 'mid-point':
-          activeChild = (
-              <juju.components.MidPoint
-                changeState={this.props.changeState}
-                outsideClickClose={true}
-                storeOpen={false} />
-          );
-          break;
         case 'store':
           activeChild = (
               <juju.components.Store
@@ -187,14 +179,11 @@ YUI.add('charmbrowser-component', function() {
     },
 
     render: function() {
-      // Do not focus on the panel when the midpoint is opened so that the focus
-      // remains on the search box.
-      var focus = this.state.activeComponent !== 'mid-point';
       return (
         <juju.components.Panel
           clickAction={this._close}
           instanceName="white-box"
-          focus={focus}
+          focus={false}
           visible={true}>
           <div className="charmbrowser"
             ref="charmbrowser">
@@ -209,7 +198,6 @@ YUI.add('charmbrowser-component', function() {
 }, '0.1.0', {
   requires: [
     'entity-details',
-    'mid-point',
     'search-results',
     'store'
   ]
