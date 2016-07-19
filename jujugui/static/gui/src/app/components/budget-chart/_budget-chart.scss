@@ -1,0 +1,49 @@
+.budget-chart {
+    &__chart {
+        position: relative;
+        height: 20px;
+        margin-bottom: 10px;
+
+        &-new,
+        &-limit {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            border-radius: $border-radius;
+        }
+
+        &-limit {
+            right: 0;
+            background-color: $white;
+            border: 1px solid $light-mid-grey;
+        }
+
+        &-new {
+            width: 50%;
+            background-color: $success;
+        }
+    }
+
+    &__indicator {
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        margin-right: 10px;
+        border-radius: $border-radius;
+        vertical-align: middle;
+
+        &--new {
+            background-color: $success;
+        }
+
+        &--existing {
+            background-color: #aee2b6;
+        }
+
+        &--limit {
+            background-color: $white;
+            border: 1px solid $light-mid-grey;
+        }
+    }
+}
