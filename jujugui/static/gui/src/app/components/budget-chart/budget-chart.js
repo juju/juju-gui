@@ -56,6 +56,5 @@ YUI.add('budget-chart', function() {
 
 }, '0.1.0', {
   requires: [
-    'generic-button'
   ]
 });
