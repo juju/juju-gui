@@ -215,6 +215,7 @@ describe('Inspector', function() {
     var getServiceByName = sinon.stub();
     var addNotification = sinon.stub();
     var linkify = sinon.stub();
+    var unplaceServiceUnits = sinon.stub();
     var service = {
       get: getStub
     };
@@ -256,6 +257,7 @@ describe('Inspector', function() {
           setConfig={setConfig}
           showActivePlan={sinon.stub()}
           unexposeService={sinon.stub()}
+          unplaceServiceUnits={unplaceServiceUnits}
           updateServiceUnitsDisplayname={updateServiceUnitsDisplayname} />,
           true);
     var instance = component.getMountedInstance();
@@ -284,6 +286,7 @@ describe('Inspector', function() {
           setConfig={setConfig}
           updateServiceUnitsDisplayname={updateServiceUnitsDisplayname}
           addNotification={addNotification}
+          unplaceServiceUnits={unplaceServiceUnits}
           linkify={linkify}
           getServiceByName={getServiceByName} />);
   });

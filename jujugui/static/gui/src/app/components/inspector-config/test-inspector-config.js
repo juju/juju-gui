@@ -68,7 +68,7 @@ describe('Configuration', function() {
         setConfig={setConfig}
         updateServiceUnitsDisplayname={sinon.stub()} />);
 
-    assert.deepEqual(output.props.children[0].props.children[3], [
+    assert.deepEqual(output.props.children[0].props.children[4], [
       <juju.components.StringConfig
         key="Config-option1"
         ref="Config-option1"
@@ -109,7 +109,7 @@ describe('Configuration', function() {
         service={service}
         setConfig={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />);
-    assert.deepEqual(output.props.children[0].props.children[3],
+    assert.deepEqual(output.props.children[0].props.children[4],
       <div className="inspector-config--no-config">
         No configuration options.
       </div>);
@@ -227,6 +227,168 @@ describe('Configuration', function() {
     // Calls to check to see if a service exists.
     assert.equal(getServiceByName.callCount, 1);
     assert.equal(getServiceByName.args[0][0], 'newservicename');
+  });
+
+  it('allows you to modify the series of multi-series charms', function() {
+    var option1 = { key: 'option1key', type: 'string' };
+    var option1key = 'string body value';
+    var charm = {
+      get: function(val) {
+        // Return the charm options.
+        if (val === 'options') {
+          return { option1: option1 };
+        }
+        if (val === 'series') {
+          return ['precise', 'trusty'];
+        }
+      }};
+    var service = {
+      get: function(val) {
+        if (val === 'id') {
+          return 'abc123';
+        }
+        if (val === 'series') {
+          return 'trusty';
+        }
+        if (val === 'pending') {
+          return true;
+        }
+        // Return the config options
+        return { option1: option1key };
+      }};
+    var setConfig = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Configuration
+        acl={acl}
+        addNotification={sinon.stub()}
+        changeState={sinon.stub()}
+        charm={charm}
+        getServiceByName={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
+        service={service}
+        setConfig={setConfig}
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
+    var output = renderer.getRenderOutput();
+    var instance = renderer.getMountedInstance();
+    var expected = (
+      <div className="inspector-config__series-select">
+        <span>Choose Series</span>
+        <select
+          className="inspector-config__select"
+          onChange={instance._handleSeriesChange}
+          value='trusty'>
+          {[<option key="precise" value="precise">precise</option>,
+            <option key="trusty" value="trusty">trusty</option>]}
+        </select>
+        <span className="inspector-config__series-select-description">
+          Choose the series to deploy. This cannot be
+          changed once it is deployed
+        </span>
+      </div>);
+    assert.deepEqual(output.props.children[0].props.children[1], expected);
+  });
+
+  it('does not allow you to change series if app is deployed', function() {
+    var option1 = { key: 'option1key', type: 'string' };
+    var option1key = 'string body value';
+    var charm = {
+      get: function(val) {
+        // Return the charm options.
+        if (val === 'options') {
+          return { option1: option1 };
+        }
+        if (val === 'series') {
+          return ['precise', 'trusty'];
+        }
+      }};
+    var service = {
+      get: function(val) {
+        if (val === 'id') {
+          return 'abc123';
+        }
+        if (val === 'series') {
+          return 'trusty';
+        }
+        if (val === 'pending') {
+          return false;
+        }
+        // Return the config options
+        return { option1: option1key };
+      }};
+    var output = jsTestUtils.shallowRender(
+      <juju.components.Configuration
+        acl={acl}
+        addNotification={sinon.stub()}
+        changeState={sinon.stub()}
+        charm={charm}
+        getServiceByName={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
+        service={service}
+        setConfig={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()} />);
+    assert.deepEqual(output.props.children[0].props.children[1], undefined);
+  });
+
+  it('can handle changing of series', function() {
+    var option1 = { key: 'option1key', type: 'string' };
+    var option1key = 'string body value';
+    var charm = {
+      get: function(val) {
+        // Return the charm options.
+        if (val === 'options') {
+          return { option1: option1 };
+        }
+        if (val === 'series') {
+          return ['precise', 'trusty'];
+        }
+      }};
+    var service = {
+      get: function(val) {
+        if (val === 'id') {
+          return 'abc123';
+        }
+        if (val === 'series') {
+          return 'trusty';
+        }
+        if (val === 'pending') {
+          return false;
+        }
+        // Return the config options
+        return { option1: option1key };
+      }};
+    var unplaceServiceUnits = sinon.stub().returns([{}, {}]);
+    var addNotification = sinon.stub();
+    var changeState = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Configuration
+        acl={acl}
+        addNotification={addNotification}
+        changeState={changeState}
+        charm={charm}
+        getServiceByName={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
+        service={service}
+        setConfig={sinon.stub()}
+        unplaceServiceUnits={unplaceServiceUnits}
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._handleSeriesChange({
+      currentTarget: {
+        value: 'xenial'
+      }
+    });
+    assert.equal(unplaceServiceUnits.callCount, 1);
+    assert.equal(unplaceServiceUnits.args[0][0], 'abc123');
+    assert.equal(addNotification.callCount, 1);
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      sectionB: {
+        component: 'machine',
+        metadata: {}
+      }});
   });
 
   it('stops setting changes if service name already exists', function() {
@@ -369,7 +531,7 @@ describe('Configuration', function() {
     instance.refs = {file: {click: fileClick}};
     var output = shallowRenderer.getRenderOutput();
     var children = output.props.children[0];
-    children.props.children[2].props.children.props.buttons[0].action();
+    children.props.children[3].props.children.props.buttons[0].action();
     assert.equal(fileClick.callCount, 1);
   });
 
@@ -402,7 +564,7 @@ describe('Configuration', function() {
       'file-form': {reset: formReset}
     };
     var output = shallowRenderer.getRenderOutput();
-    output.props.children[0].props.children[1].props.children.props.onChange();
+    output.props.children[0].props.children[2].props.children.props.onChange();
     assert.equal(getYAMLConfig.callCount, 1);
     assert.equal(getYAMLConfig.args[0][0], 'apache2.yaml');
     assert.equal(getYAMLConfig.args[0][1], instance._applyConfig);
@@ -446,9 +608,9 @@ describe('Configuration', function() {
       'file-form': {reset: sinon.stub()}
     };
     var output = shallowRenderer.getRenderOutput();
-    output.props.children[0].props.children[1].props.children.props.onChange();
+    output.props.children[0].props.children[2].props.children.props.onChange();
     output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children[0].props.children[3], [
+    assert.deepEqual(output.props.children[0].props.children[4], [
       <juju.components.StringConfig
         key="Config-option1"
         ref="Config-option1"
@@ -503,7 +665,7 @@ describe('Configuration', function() {
     assert.deepEqual(
       instance.state.serviceConfig,
       {option1: 'string body value', option2: true});
-    output.props.children[0].props.children[1].props.children.props.onChange();
+    output.props.children[0].props.children[2].props.children.props.onChange();
     output = shallowRenderer.getRenderOutput();
     assert.deepEqual(
       instance.state.serviceConfig,
@@ -574,6 +736,7 @@ describe('Configuration', function() {
               ' name cannot be changed once it has been deployed.'
           }}
           config="abc123$" />
+          {undefined}
           <form ref="file-form">
             <input
               className="hidden"

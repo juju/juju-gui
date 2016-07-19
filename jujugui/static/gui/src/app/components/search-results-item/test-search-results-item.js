@@ -102,7 +102,7 @@ describe('SearchResultsItem', function() {
                 className="list-icons__image"
                 alt="mysql" />
               <span className="tooltip__tooltip">
-                <span className="tooltip__inner">
+                <span className="tooltip__inner tooltip__inner--down">
                   mysql
                 </span>
               </span>
@@ -112,12 +112,11 @@ describe('SearchResultsItem', function() {
         <div className={
           'prepend-one two-col owner__column list-block__column last-col'}>
           <p className="cell">
-            By
+            {'By '}
             <span className="link"
               onClick={owner.props.onClick}
               role="button"
               tabIndex="0">
-              {' '}
               {item.owner}
             </span>
           </p>
@@ -178,7 +177,7 @@ describe('SearchResultsItem', function() {
                 className="list-icons__image"
                 alt="mysql" />
               <span className="tooltip__tooltip">
-                <span className="tooltip__inner">
+                <span className="tooltip__inner tooltip__inner--down">
                   mysql
                 </span>
               </span>
@@ -188,12 +187,11 @@ describe('SearchResultsItem', function() {
         <div className={
           'prepend-one two-col owner__column list-block__column last-col'}>
           <p className="cell">
-            By
+            {'By '}
             <span className="link"
               onClick={owner.props.onClick}
               role="button"
               tabIndex="0">
-              {' '}
               {item.owner}
             </span>
           </p>
@@ -217,7 +215,7 @@ describe('SearchResultsItem', function() {
       storeId: '~test-owner/mysql',
       type: 'bundle',
       series: [],
-      services: [{
+      applications: [{
         displayName: 'wordpress',
         id: 'cs:wordpress',
         iconPath: 'wordpress.svg'
@@ -262,7 +260,7 @@ describe('SearchResultsItem', function() {
                 className="list-icons__image"
                 alt="wordpress" />
               <span className="tooltip__tooltip">
-                <span className="tooltip__inner">
+                <span className="tooltip__inner tooltip__inner--down">
                   wordpress
                 </span>
               </span>
@@ -275,7 +273,7 @@ describe('SearchResultsItem', function() {
                 className="list-icons__image"
                 alt="apache2" />
               <span className="tooltip__tooltip">
-                <span className="tooltip__inner">
+                <span className="tooltip__inner tooltip__inner--down">
                   apache2
                 </span>
               </span>
@@ -285,12 +283,11 @@ describe('SearchResultsItem', function() {
         <div className={
           'prepend-one two-col owner__column list-block__column last-col'}>
           <p className="cell">
-            By
+            {'By '}
             <span className="link"
               onClick={owner.props.onClick}
               role="button"
               tabIndex="0">
-              {' '}
               {item.owner}
             </span>
           </p>
@@ -330,7 +327,7 @@ describe('SearchResultsItem', function() {
         component: 'charmbrowser',
         metadata: {
           activeComponent: 'entity-details',
-          id: '~test-owner/mysql'
+          id: 'mysql'
         }
       }
     });

@@ -290,7 +290,9 @@ YUI.add('inspector-config', function() {
     },
 
     /**
-      Handle updating state to proeprly update the components.
+      Handle updating state to properly update the components. If units were
+      already placed but not yet deployed then call to unplace them and
+      navigate to the machine view.
 
       @method _handleSeriesChange
       @param {Object} e The change event.
