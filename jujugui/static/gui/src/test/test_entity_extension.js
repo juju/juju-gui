@@ -73,7 +73,7 @@ describe('Entity Extension', function() {
       series: 'trusty',
       tags: ['database', 'application'],
     };
-    var iconPath = 'v4/' + entityModel.get('id') + '/icon.svg';
+    var iconPath = 'v5/' + entityModel.get('id') + '/icon.svg';
     utils.makeStubMethod(utils, 'getIconPath', iconPath);
     entityModel.setAttrs(attrs);
     var entity = entityModel.toEntity();

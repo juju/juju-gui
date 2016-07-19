@@ -1588,7 +1588,7 @@ YUI.add('juju-view-utils', function(Y) {
     } else {
       displayName = serviceName;
     }
-    for (var i = 1; i === unitCount; i += 1) {
+    for (var i = 1; i <= unitCount; i += 1) {
       unitIdCount = serviceUnits.length === 0 ? highestIndex : highestIndex + i;
       unitId = serviceName + '/' + unitIdCount;
       ghostUnit = db.addUnits({

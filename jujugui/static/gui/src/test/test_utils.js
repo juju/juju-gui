@@ -713,8 +713,8 @@ describe('utilities', function() {
 
 (function() {
 
-  describe('utils.getSeries', function() {
-    var utils;
+  describe('utils.getUnitSeries', function() {
+    var utils, db;
 
     before(function(done) {
       YUI(GlobalConfig).use('juju-view-utils', function(Y) {
@@ -723,21 +723,26 @@ describe('utilities', function() {
       });
     });
 
+    beforeEach(function() {
+      db = {
+        services: {
+          getServiceByName: function(name) {
+            assert.equal(name, 'rails');
+            return {
+              get: function(arg) {
+                assert.equal(arg, 'series');
+                return 'precise';
+              }
+            };
+          }
+        }
+      };
+    });
+
     it('returns the series of a charmstore charm', function() {
-      var series = utils.getSeries('cs:precise/rails-47');
+      var series = utils.getUnitSeries({id: 'rails/47'}, db);
       assert.strictEqual(series, 'precise');
     });
-
-    it('returns the series of a local charm with no revision', function() {
-      var series = utils.getSeries('local:trusty/django');
-      assert.strictEqual(series, 'trusty');
-    });
-
-    it('returns the series of a user charm', function() {
-      var series = utils.getSeries('cs:~who/utopic/wordpress-42');
-      assert.strictEqual(series, 'utopic');
-    });
-
   });
 })();
 
@@ -1154,7 +1159,7 @@ describe('utilities', function() {
       var path = utils.getIconPath('~paulgear/precise/quassel-core-2');
       assert.equal(
           path,
-          'local/v4/~paulgear/precise/quassel-core-2/icon.svg');
+          'local/v5/~paulgear/precise/quassel-core-2/icon.svg');
     });
 
     after(function() {
@@ -1182,7 +1187,12 @@ describe('utilities', function() {
               returnVal = applicationName;
               break;
             case 'units':
-              returnVal = { size: function() { return 2; } };
+              returnVal = {
+                size: function() { return 2; },
+                toArray: function() { return [
+                  {id: applicationName + '/1'},
+                  {id: applicationName + '/2'}
+                ]; }};
               break;
             case 'displayName':
               if (applicationName.indexOf('$') > 0) {
@@ -1214,36 +1224,39 @@ describe('utilities', function() {
       var units = utils.addGhostAndEcsUnits(
           db, env, service, unitCount, callback);
       // Test the db.addUnits call.
-      assert.equal(db.addUnits.callCount(), 2);
+      assert.equal(db.addUnits.callCount(), 2, 'db addUnits not called');
       var addUnitsArgs = db.addUnits.allArguments();
+      // The numbers for the id's are important. The mocks have existing units
+      // having indexes of 1 and 2. There was a bug where the next value wasn't
+      // being properly computed when there was no 0 unit.
       assert.deepEqual(addUnitsArgs[0][0], {
-        id: applicationName + '/' + 2,
-        displayName: applicationName + '/' + 2,
-        charmUrl: 'I am a charm url',
-        subordinate: false
-      });
-      assert.deepEqual(addUnitsArgs[1][0], {
         id: applicationName + '/' + 3,
         displayName: applicationName + '/' + 3,
         charmUrl: 'I am a charm url',
         subordinate: false
-      });
+      }, 'addUnits first not called with proper data');
+      assert.deepEqual(addUnitsArgs[1][0], {
+        id: applicationName + '/' + 4,
+        displayName: applicationName + '/' + 4,
+        charmUrl: 'I am a charm url',
+        subordinate: false
+      }, 'addUnits second not called with proper data');
       // Test the env.add_unit call.
-      assert.equal(env.add_unit.callCount(), 2);
+      assert.equal(env.add_unit.callCount(), 2, 'add unit not called');
       var add_unit_args = env.add_unit.allArguments();
       assert.equal(add_unit_args[0][0], applicationName);
       assert.equal(add_unit_args[0][1], 1);
       assert.strictEqual(add_unit_args[0][2], null);
       assert.equal(typeof add_unit_args[0][3], 'function');
       assert.deepEqual(add_unit_args[0][4], {
-        modelId: applicationName + '/' + 2
+        modelId: applicationName + '/' + 3
       });
       assert.equal(add_unit_args[1][0], applicationName);
       assert.equal(add_unit_args[1][1], 1);
       assert.strictEqual(add_unit_args[1][2], null);
       assert.equal(typeof add_unit_args[1][3], 'function');
       assert.deepEqual(add_unit_args[1][4], {
-        modelId: applicationName + '/' + 3
+        modelId: applicationName + '/' + 4
       });
       assert.equal(units.length, 2);
     }

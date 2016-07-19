@@ -35,6 +35,7 @@ describe('Ghost Deployer Extension', function() {
   beforeEach(function() {
     GhostDeployer = Y.Base.create(
         'deployer', Y.Base, [juju.GhostDeployer], {
+          isLegacyJuju: utils.makeStubFunction(false),
           views: {
             environment: {
               instance: {
@@ -85,7 +86,8 @@ describe('Ghost Deployer Extension', function() {
       id: 'cs:trusty/django-42',
       name: 'django',
       package_name: 'django',
-      is_subordinate: false
+      is_subordinate: false,
+      series: 'trusty'
     });
   };
 
@@ -150,11 +152,20 @@ describe('Ghost Deployer Extension', function() {
     assert.strictEqual(ghostDeployer.env.deploy.calledOnce(), true);
     var args = ghostDeployer.env.deploy.lastArguments();
     assert.strictEqual(args[0], 'cs:trusty/django-42'); // Charm URL.
-    assert.strictEqual(args[1], 'ghost-service-id'); // Service name.
-    assert.deepEqual(args[2], {}); // Config.
-    assert.strictEqual(args[4], 0); // Number of units.
-    assert.deepEqual(args[5], {}); // Constraints.
-    assert.isNull(args[6]); // Machine placement.
+    assert.strictEqual(args[1], 'trusty'); // service series.
+    assert.strictEqual(args[2], 'ghost-service-id'); // Service name.
+    assert.deepEqual(args[3], {}); // Config.
+    assert.strictEqual(args[5], 0); // Number of units.
+    assert.deepEqual(args[6], {}); // Constraints.
+    assert.isNull(args[7]); // Machine placement.
+  });
+
+  it('properly adds the series to Juju 1 aplications', function() {
+    var charm = makeCharm();
+    ghostDeployer.isLegacyJuju = function() { return true; };
+    ghostDeployer.deployService(charm);
+    var args = ghostDeployer.env.deploy.lastArguments();
+    assert.strictEqual(args[0], 'cs:trusty/django-42'); // Charm URL.
   });
 
   it('adds the ECS modelId option when deploying the charm', function() {

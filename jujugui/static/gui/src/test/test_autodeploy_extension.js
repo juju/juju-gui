@@ -46,7 +46,15 @@ describe('Autodeploy Extension', function() {
       machines: {
         updateModelId: utils.makeStubFunction(),
         revive: reviveStub,
-        free: utils.makeStubFunction()
+        free: utils.makeStubFunction(),
+        _createMachine: utils.makeStubFunction()
+      },
+      services: {
+        getById: function() {
+          return {
+            get: function() { return 'xenial'; }
+          };
+        }
       }
     });
     widget.set('env', {});
@@ -73,6 +81,7 @@ describe('Autodeploy Extension', function() {
                  'did not query DB for unplaced units');
     assert.equal(createStub.callCount(), units.length,
                  'did not create a machine for each unit');
+    assert.deepEqual(createStub.lastArguments(), [null, null, 'xenial', null]);
     assert.equal(placeStub.callCount(), units.length,
                  'did not place each unit');
     var allArgs = placeStub.allArguments();
