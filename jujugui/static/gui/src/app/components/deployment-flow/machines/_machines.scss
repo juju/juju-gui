@@ -1,0 +1,9 @@
+.deployment-machines {
+    &__message {
+        margin: 20px 0 40px 0;
+    }
+
+    &__list {
+        @extend %list-style;
+    }
+}

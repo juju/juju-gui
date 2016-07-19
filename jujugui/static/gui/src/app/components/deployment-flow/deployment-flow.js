@@ -114,52 +114,9 @@ YUI.add('deployment-flow', function() {
                     acl={this.props.acl}
                     cloud={this.state.cloud}
                     clouds={this.CLOUDS} />
-                  <juju.components.DeploymentSection
-                    completed={false}
-                    disabled={!this.state.cloud}
-                    showCheck={false}
-                    title="Machines to be deployed">
-                    <div className="deployment-flow__machines">
-                      <p className="deployment-flow__machines-message">
-                        These machines will be provisioned on Google Cloud
-                        Platform. You will incur a charge from your cloud
-                        provider.
-                      </p>
-                      <div className="deployment-flow__row-header twelve-col">
-                        <div className="eight-col">
-                          Machine
-                        </div>
-                        <div className="three-col">
-                          Provider
-                        </div>
-                        <div className="one-col last-col">
-                          Quantity
-                        </div>
-                      </div>
-                      <div className="deployment-flow__row twelve-col">
-                        <div className="eight-col">
-                          Trusty, 1x1GHz, 1.70GB, 8.00GB
-                        </div>
-                        <div className="three-col">
-                          Google
-                        </div>
-                        <div className="one-col last-col">
-                          4
-                        </div>
-                      </div>
-                      <div className="deployment-flow__row twelve-col">
-                        <div className="eight-col">
-                          Trusty, 1x1GHz, 1.70GB, 8.00GB
-                        </div>
-                        <div className="three-col">
-                          Google
-                        </div>
-                        <div className="one-col last-col">
-                          3
-                        </div>
-                      </div>
-                    </div>
-                  </juju.components.DeploymentSection>
+                  <juju.components.DeploymentMachines
+                    acl={this.props.acl}
+                    cloud={this.state.cloud && this.CLOUDS[this.state.cloud]} />
                   <juju.components.DeploymentSection
                     completed={false}
                     disabled={!this.state.cloud}
@@ -332,6 +289,7 @@ YUI.add('deployment-flow', function() {
   requires: [
     'deployment-cloud',
     'deployment-credential',
+    'deployment-machines',
     'deployment-section',
     'inset-select',
     'generic-button',
