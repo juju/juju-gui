@@ -49,13 +49,11 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
       var fakeBakery = {
         sendGetRequest: function(path, success, failure) {
           // Remove the includes and the charmstore path.
-          path = path.split('/meta/any')[0].replace('local/v4/', '');
+          path = path.split('/meta/any')[0].replace('local/v5/', '');
           // Get just the charm name
-          path = path.split('/')[1].split('-');
-          if (path.length > 1) {
-            path = path.slice(0, -1);
-          }
-          path = path.join('-');
+          var pathParts = path.split('/');
+          // The path might not contain the series.
+          path = pathParts[1] ? pathParts[1].split('-')[0] : pathParts[0];
           var xhr = { target: { responseText: null}};
           if (charms[path]) {
             xhr.target.responseText = charms[path];

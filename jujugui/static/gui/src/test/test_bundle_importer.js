@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe('Bundle Importer', function() {
+describe.skip('Bundle Importer', function() {
   var bundleImporter, BundleImporter, db, env, fakebackend, models,
       utils, yui;
 
