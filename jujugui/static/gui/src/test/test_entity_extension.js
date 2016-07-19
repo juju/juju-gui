@@ -106,7 +106,7 @@ describe('Entity Extension', function() {
       owner: 'foobar-charmers',
       entityType: 'bundle',
       serviceCount: 3,
-      services: [],
+      applications: [],
       unitCount: 5
     };
     entityModel.setAttrs(attrs);
@@ -129,7 +129,7 @@ describe('Entity Extension', function() {
       // path should not include a staticURL prefix.
       iconPath: 'static/gui/build/app/assets/images/non-sprites/bundle.svg',
       serviceCount: 3,
-      services: [],
+      applications: [],
       unitCount: 5
     };
     assert.deepEqual(expected, entity,

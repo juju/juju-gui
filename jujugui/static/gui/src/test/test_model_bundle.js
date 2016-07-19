@@ -52,7 +52,7 @@ describe('The bundle model', function() {
       utils = Y.namespace('juju-tests.utils');
       charmstore = new window.jujulib.charmstore('local/');
       origData = charmstore._processEntityQueryData(
-          utils.loadFixture('data/apiv4-bundle.json', true));
+          utils.loadFixture('data/apiv5-bundle.json', true));
       done();
     });
   });
