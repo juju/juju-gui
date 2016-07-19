@@ -1,0 +1,29 @@
+.deployment-services {
+    &__budget {
+        margin-top: 40px;
+
+        &-form {
+            margin-top: 20px;
+            margin-bottom: 0;
+        }
+
+        &-increase {
+            display: inline-block;
+            margin-top: 30px;
+        }
+    }
+
+    &__plans {
+        margin-top: 20px;
+        padding-top: 40px;
+        border-top: 2px solid $light-mid-grey;
+
+        &-max {
+            font-size: 1.4em;
+        }
+
+        &-show-changelog {
+            float: right;
+        }
+    }
+}

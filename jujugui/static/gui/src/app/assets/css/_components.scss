@@ -4,6 +4,8 @@
 @import "../../components/account/account";
 @import "../../components/added-services-list/added-services-list";
 @import "../../components/boolean-config/boolean-config";
+@import "../../components/budget-chart/budget-chart";
+@import "../../components/budget-table/budget-table";
 @import "../../components/button-row/button-row";
 @import "../../components/charmbrowser/charmbrowser";
 @import "../../components/check-list-item/check-list-item";
@@ -24,6 +26,7 @@
 @import "../../components/deployment-flow/credential/credential";
 @import "../../components/deployment-flow/credential/add/add";
 @import "../../components/deployment-flow/machines/machines";
+@import "../../components/deployment-flow/services/services";
 @import "../../components/deployment-summary/deployment-summary";
 @import "../../components/deployment-summary-change-item/deployment-summary-change-item";
 @import "../../components/env-size-display/env-size-display";

@@ -88,7 +88,6 @@ YUI.add('deployment-flow', function() {
 
     render: function() {
       var disabled = this.props.acl.isReadOnly();
-      /* eslint-disable max-len */
       return (
         <juju.components.Panel
           instanceName="deployment-flow-panel"
@@ -117,128 +116,9 @@ YUI.add('deployment-flow', function() {
                   <juju.components.DeploymentMachines
                     acl={this.props.acl}
                     cloud={this.state.cloud && this.CLOUDS[this.state.cloud]} />
-                  <juju.components.DeploymentSection
-                    completed={false}
-                    disabled={!this.state.cloud}
-                    showCheck={true}
-                    title="Services to be deployed">
-                    <div className="deployment-flow__services">
-                      <div className="deployment-flow__services-budget">
-                        <h4>
-                          Choose your budget
-                        </h4>
-                        <div className="deployment-flow__services-budget-form twelve-col">
-                          <div className="four-col">
-                            <juju.components.InsetSelect
-                              disabled={disabled}
-                              label="Budget"
-                              options={[{
-                                label: 'test budget',
-                                value: 'test-budget'
-                              }]} />
-                          </div>
-                          <div className="three-col">
-                            <span className="deployment-flow__services-budget-increase link">
-                              Increase budget
-                            </span>
-                          </div>
-                        </div>
-                        <div className="deployment-flow__services-budget-chart twelve-col">
-                          <div className="deployment-flow__services-budget-chart-limit">
-                          </div>
-                          <div className="deployment-flow__services-budget-chart-new">
-                          </div>
-                        </div>
-                        <div className="three-col">
-                          <span className="deployment-flow__services-budget-indicator deployment-flow__services-budget-indicator--new">
-                          </span>
-                          New allocations: <strong>$550</strong>
-                        </div>
-                        <div className="three-col">
-                          <span className="deployment-flow__services-budget-indicator deployment-flow__services-budget-indicator--existing">
-                          </span>
-                          Existing allocations: <strong>$0</strong>
-                        </div>
-                        <div className="three-col">
-                          <span className="deployment-flow__services-budget-indicator deployment-flow__services-budget-indicator--limit">
-                          </span>
-                          Budget limit: <strong>$1000</strong>
-                        </div>
-                      </div>
-                      <div className="deployment-flow__services-plans twelve-col">
-                        <div className="deployment-flow__services-plans-show-changelog">
-                          <juju.components.GenericButton
-                            action={() => {}}
-                            type="neutral"
-                            title="Show change log" />
-                        </div>
-                        <h4>
-                          Confirm services and plans
-                        </h4>
-                        <div className="deployment-flow__row-header twelve-col">
-                          <div className="three-col">
-                            Name
-                          </div>
-                          <div className="two-col">
-                            Units
-                          </div>
-                          <div className="three-col">
-                            Details
-                          </div>
-                          <div className="four-col last-col">
-                            Allocation
-                          </div>
-                        </div>
-                        <div className="deployment-flow__row deployment-flow__services-service twelve-col">
-                          <div className="three-col">
-                            <img className="deployment-flow__services-charm-icon"
-                              src="https://api.staging.jujucharms.com/charmstore/v4/trusty/landscape-server-14/icon.svg" />
-                            Landscape
-                          </div>
-                          <div className="two-col">
-                            4
-                          </div>
-                          <div className="three-col">
-                            You need to choose a plan.
-                          </div>
-                          <div className="two-col">
-                          </div>
-                          <div className="two-col last-col">
-                            <div className="deployment-flow__services-service-edit">
-                              <juju.components.GenericButton
-                                action={() => {}}
-                                disabled={disabled}
-                                type="neutral"
-                                title="Edit" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="deployment-flow__row deployment-flow__services-service twelve-col">
-                          <div className="three-col">
-                            <img className="deployment-flow__services-charm-icon"
-                              src="https://api.staging.jujucharms.com/charmstore/v4/trusty/mediawiki-5/icon.svg" />
-                            Mediawiki
-                          </div>
-                          <div className="two-col">
-                            3
-                          </div>
-                          <div className="three-col">
-                            -
-                          </div>
-                          <div className="two-col">
-                          </div>
-                          <div className="two-col last-col">
-                          </div>
-                        </div>
-                        <div className="prepend-seven">
-                          Maximum monthly spend:&nbsp;
-                          <span className="deployment-flow__services-plans-max">
-                            $100
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </juju.components.DeploymentSection>
+                  <juju.components.DeploymentServices
+                    acl={this.props.acl}
+                    cloud={this.state.cloud} />
                   <div className="twelve-col">
                     <div className="deployment-flow__deploy">
                       <div className="deployment-flow__deploy-option">
@@ -248,9 +128,9 @@ YUI.add('deployment-flow', function() {
                           type="checkbox" />
                         <label className="deployment-flow__deploy-label"
                           htmlFor="emails">
-                          Please email me updates regarding feature announcements,
-                          performance suggestions, feedback surveys and special
-                          offers.
+                          Please email me updates regarding feature
+                          announcements, performance suggestions, feedback
+                          surveys and special offers.
                         </label>
                       </div>
                       <div className="deployment-flow__deploy-option">
@@ -260,8 +140,8 @@ YUI.add('deployment-flow', function() {
                           type="checkbox" />
                         <label className="deployment-flow__deploy-label"
                           htmlFor="terms">
-                          I agree that my use of any services and related APIs is
-                          subject to my compliance with the applicable&nbsp;
+                          I agree that my use of any services and related APIs
+                          is subject to my compliance with the applicable&nbsp;
                           <a href="" target="_blank">Terms of service</a>.
                         </label>
                       </div>
@@ -280,7 +160,6 @@ YUI.add('deployment-flow', function() {
           </div>
         </juju.components.Panel>
       );
-      /* eslint-disable max-len */
     }
 
   });
@@ -291,9 +170,8 @@ YUI.add('deployment-flow', function() {
     'deployment-credential',
     'deployment-machines',
     'deployment-section',
-    'inset-select',
+    'deployment-services',
     'generic-button',
-    'panel-component',
-    'svg-icon'
+    'panel-component'
   ]
 });
