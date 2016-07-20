@@ -160,12 +160,21 @@ describe('Ghost Deployer Extension', function() {
     assert.isNull(args[7]); // Machine placement.
   });
 
-  it('properly adds the series to Juju 1 aplications', function() {
+  it('properly adds the series to Juju 1 applications', function() {
     var charm = makeCharm();
     ghostDeployer.isLegacyJuju = function() { return true; };
     ghostDeployer.deployService(charm);
     var args = ghostDeployer.env.deploy.lastArguments();
     assert.strictEqual(args[0], 'cs:trusty/django-42'); // Charm URL.
+  });
+
+  it('properly adds the series to userspace Juju 1 applications', function() {
+    var charm = makeCharm();
+    charm.set('id', 'cs:~thedr/django-42');
+    ghostDeployer.isLegacyJuju = function() { return true; };
+    ghostDeployer.deployService(charm);
+    var args = ghostDeployer.env.deploy.lastArguments();
+    assert.strictEqual(args[0], 'cs:~thedr/trusty/django-42'); // Charm URL.
   });
 
   it('adds the ECS modelId option when deploying the charm', function() {

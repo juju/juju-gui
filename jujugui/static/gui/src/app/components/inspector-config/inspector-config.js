@@ -351,7 +351,7 @@ YUI.add('inspector-config', function() {
           </select>
           <span className="inspector-config__series-select-description">
             Choose the series to deploy. This cannot be
-            changed once it is deployed
+            changed once the application is deployed.
           </span>
         </div>);
     },

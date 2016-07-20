@@ -269,11 +269,9 @@ YUI.add('entity-header', function() {
       if (!series) {
         return null;
       }
-      if (Array.isArray(series)) {
-        return series.map(series =>
-          <li key={series} className="entity-header__series">{series}</li>);
-      }
-      return <li className="entity-header__series">{series}</li>;
+      series = !Array.isArray(series) ? [series] : series;
+      return series.map(series =>
+        <li key={series} className="entity-header__series">{series}</li>);
     },
 
     render: function() {

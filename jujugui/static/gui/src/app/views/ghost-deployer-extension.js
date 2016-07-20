@@ -134,6 +134,8 @@ YUI.add('ghost-deployer-extension', function(Y) {
     },
 
     /**
+      Adds the series prefix correctly into the charmId if necessary.
+
       If we're using Juju 1 then we need to deploy a charm Id which has
       the series defined in the URL. This is not required for Juju 2 as it
       supports multi-series charms.

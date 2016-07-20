@@ -283,7 +283,7 @@ describe('Configuration', function() {
         </select>
         <span className="inspector-config__series-select-description">
           Choose the series to deploy. This cannot be
-          changed once it is deployed
+          changed once the application is deployed.
         </span>
       </div>);
     assert.deepEqual(output.props.children[0].props.children[1], expected);

@@ -1200,7 +1200,8 @@ YUI.add('juju-env-api', function(Y) {
       };
 
       if (series) {
-        // We only want to supply the series when it is a multi-series charm.
+        // If series is defined then set it, do not send an undefined series
+        // field as Juju core will not successfully deploy the application.
         params.series = series;
       }
 

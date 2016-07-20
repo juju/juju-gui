@@ -77,9 +77,9 @@ describe('EntityHeader', function() {
                   <a href="https://launchpad.net/~test-owner"
                     target="_blank">test-owner</a>
                 </li>
-                <li className="entity-header__series">
+                {[<li key="trusty" className="entity-header__series">
                   trusty
-                </li>
+                </li>]}
                 {undefined}
               </ul>
               <ul className="entity-header__social-list">
