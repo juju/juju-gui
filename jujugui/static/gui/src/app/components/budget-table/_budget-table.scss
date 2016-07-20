@@ -5,10 +5,14 @@
 
     &__row-header,
     &__row {
+        margin-bottom: 10px;
         border-bottom: 1px solid $light-mid-grey;
     }
 
     &__row {
+        padding-top: 6px;
+        padding-bottom: 10px;
+
         &:hover {
             .budget-table__edit {
                 display: block;
@@ -28,5 +32,29 @@
         border-radius: $size / 2;
         vertical-align: middle;
         margin-right: 10px;
+    }
+
+    &__current {
+        padding: 20px 0 0 10px;
+        border-bottom: 1px solid $light-mid-grey;
+    }
+
+    &__plans {
+        @extend %list-style;
+        padding: 20px 20px 0 20px;
+    }
+
+    &__plan {
+        border-bottom: 2px solid $light-mid-grey;
+
+        &:last-child {
+            margin-bottom: 0;
+            border-bottom: none;
+        }
+
+        &-notice {
+            border-top: 2px solid $light-mid-grey;
+            padding: 20px 20px 0 20px;
+        }
     }
 }

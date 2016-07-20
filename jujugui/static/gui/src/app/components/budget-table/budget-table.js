@@ -33,43 +33,13 @@ YUI.add('budget-table', function() {
      @returns {Array} The list of services.
     */
     _generateServices: function() {
-      var disabled = this.props.acl.isReadOnly();
-      var plansEditable = this.props.plansEditable;
-      return [1, 2].map((service, i) => {
-        var editCol = plansEditable ? (
-          <div className="two-col last-col">
-            <div className="budget-table__edit">
-              <juju.components.GenericButton
-                action={() => {}}
-                disabled={disabled}
-                type="neutral"
-                title="Change plan" />
-            </div>
-          </div>) : undefined;
+      return [{}, {}].map((service, i) => {
         return (
-          <div className="budget-table__row twelve-col"
-            key={i}>
-            <div className="three-col">
-              <img className="budget-table__charm-icon"
-                src={
-                  'https://api.staging.jujucharms.com/charmstore/v4/' +
-                  'trusty/landscape-server-14/icon.svg'} />
-              Landscape
-            </div>
-            <div className="one-col">
-              4
-            </div>
-            <div className="three-col">
-              You need to choose a plan.
-            </div>
-            <div className={plansEditable ? 'one-col' : 'two-col'}>
-            </div>
-            <div className={plansEditable ? 'one-col' : 'two-col'}>
-            </div>
-            <div className="one-col">
-            </div>
-            {editCol}
-          </div>);
+          <juju.components.BudgetTableRow
+            acl={this.props.acl}
+            key={i}
+            plansEditable={this.props.plansEditable}
+            service={service} />);
       });
     },
 
@@ -106,6 +76,6 @@ YUI.add('budget-table', function() {
 
 }, '0.1.0', {
   requires: [
-    'generic-button'
+    'budget-table-row'
   ]
 });
