@@ -39,6 +39,7 @@ describe('BudgetTableRow', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTableRow
         acl={acl}
+        allocationEditable={false}
         plansEditable={false}
         service={{}} />, true);
     var output = renderer.getRenderOutput();
@@ -70,7 +71,7 @@ describe('BudgetTableRow', function() {
             $1
           </div>
           <div className="two-col">
-            $1
+            <span onClick={undefined}>$1</span>
           </div>
           <div className="one-col">
             $1
@@ -88,6 +89,7 @@ describe('BudgetTableRow', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTableRow
         acl={acl}
+        allocationEditable={false}
         plansEditable={true}
         service={{}} />, true);
     var instance = renderer.getMountedInstance();
@@ -120,7 +122,7 @@ describe('BudgetTableRow', function() {
             $1
           </div>
           <div className="one-col">
-            $1
+            <span onClick={undefined}>$1</span>
           </div>
           <div className="one-col">
             $1
@@ -208,6 +210,7 @@ describe('BudgetTableRow', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTableRow
         acl={acl}
+        allocationEditable={false}
         plansEditable={true}
         service={{}} />, true);
     var instance = renderer.getMountedInstance();
@@ -240,7 +243,7 @@ describe('BudgetTableRow', function() {
             $1
           </div>
           <div className="one-col">
-            $1
+            <span onClick={undefined}>$1</span>
           </div>
           <div className="one-col">
             $1

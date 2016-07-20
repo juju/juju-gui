@@ -23,6 +23,7 @@ YUI.add('budget-table', function() {
   juju.components.BudgetTable = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
+      allocationEditable: React.PropTypes.bool,
       plansEditable: React.PropTypes.bool
     },
 
@@ -38,6 +39,7 @@ YUI.add('budget-table', function() {
           <juju.components.BudgetTableRow
             acl={this.props.acl}
             key={i}
+            allocationEditable={this.props.allocationEditable}
             plansEditable={this.props.plansEditable}
             service={service} />);
       });

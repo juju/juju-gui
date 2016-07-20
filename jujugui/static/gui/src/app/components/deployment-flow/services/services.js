@@ -69,6 +69,7 @@ YUI.add('deployment-services', function() {
             </h4>
             <juju.components.BudgetTable
               acl={this.props.acl}
+              allocationEditable={true}
               plansEditable={true} />
             <div className="prepend-seven">
               Maximum monthly spend:&nbsp;

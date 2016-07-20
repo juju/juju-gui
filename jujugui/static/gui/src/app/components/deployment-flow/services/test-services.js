@@ -84,6 +84,7 @@ describe('DeploymentServices', function() {
           </h4>
           <juju.components.BudgetTable
             acl={acl}
+            allocationEditable={true}
             plansEditable={true} />
           <div className="prepend-seven">
             Maximum monthly spend:&nbsp;
@@ -146,6 +147,7 @@ describe('DeploymentServices', function() {
           </h4>
           <juju.components.BudgetTable
             acl={acl}
+            allocationEditable={true}
             plansEditable={true} />
           <div className="prepend-seven">
             Maximum monthly spend:&nbsp;

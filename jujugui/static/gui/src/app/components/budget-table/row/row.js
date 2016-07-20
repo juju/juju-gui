@@ -23,12 +23,16 @@ YUI.add('budget-table-row', function() {
   juju.components.BudgetTableRow = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
+      allocationEditable: React.PropTypes.bool,
       plansEditable: React.PropTypes.bool,
       service: React.PropTypes.object.isRequired
     },
 
     getInitialState: function() {
-      return {expanded: false};
+      return {
+        editAllocation: false,
+        expanded: false
+      };
     },
 
     /**
@@ -38,6 +42,15 @@ YUI.add('budget-table-row', function() {
     */
     _toggle: function() {
       this.setState({expanded: !this.state.expanded});
+    },
+
+    /**
+     Toggle the expanded state.
+
+     @method _toggle
+    */
+    _toggleAllocation: function() {
+      this.setState({editAllocation: !this.state.editAllocation});
     },
 
     /**
@@ -124,6 +137,27 @@ YUI.add('budget-table-row', function() {
     },
 
     /**
+     Generate the input or display for the allocation.
+
+     @method _generateAllocation
+     @returns {Object} The allocation markup.
+    */
+    _generateAllocation: function() {
+      if (this.props.allocationEditable && this.state.editAllocation) {
+        return (
+          <input className="budget-table-row__allocation-input"
+            type="text"
+            value="$1" />);
+      } else {
+        return (
+          <span onClick={
+            this.props.allocationEditable ? this._toggleAllocation : undefined}>
+            $1
+          </span>);
+      }
+    },
+
+    /**
      Generate the shared fields.
 
      @method _generateSharedFields
@@ -165,7 +199,7 @@ YUI.add('budget-table-row', function() {
               $1
             </div>
             <div className={plansEditable ? 'one-col' : 'two-col'}>
-              $1
+              {this._generateAllocation()}
             </div>
             <div className="one-col">
               $1

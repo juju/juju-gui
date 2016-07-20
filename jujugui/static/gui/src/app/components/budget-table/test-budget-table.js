@@ -39,6 +39,7 @@ describe('BudgetTable', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTable
         acl={acl}
+        allocationEditable={false}
         plansEditable={false} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -66,11 +67,13 @@ describe('BudgetTable', function() {
         {[<juju.components.BudgetTableRow
             acl={acl}
             key={0}
+            allocationEditable={false}
             plansEditable={false}
             service={{}} />,
           <juju.components.BudgetTableRow
               acl={acl}
               key={1}
+              allocationEditable={false}
               plansEditable={false}
               service={{}} />]}
       </div>);
@@ -81,6 +84,7 @@ describe('BudgetTable', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTable
         acl={acl}
+        allocationEditable={false}
         plansEditable={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -108,11 +112,13 @@ describe('BudgetTable', function() {
         {[<juju.components.BudgetTableRow
             acl={acl}
             key={0}
+            allocationEditable={false}
             plansEditable={true}
             service={{}} />,
           <juju.components.BudgetTableRow
               acl={acl}
               key={1}
+              allocationEditable={false}
               plansEditable={true}
               service={{}} />]}
       </div>);
