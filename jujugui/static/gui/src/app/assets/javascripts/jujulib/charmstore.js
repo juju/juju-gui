@@ -13,7 +13,7 @@ var module = module;
     Provides access to the Juju charm store API.
   */
 
-  var charmstoreAPIVersion = 'v4';
+  var charmstoreAPIVersion = 'v5';
 
   /**
     Initializer.
@@ -160,7 +160,7 @@ var module = module;
           charmMeta = meta['charm-metadata'],
           charmConfig = meta['charm-config'],
           bundleMeta = meta['bundle-metadata'],
-          bzrOwner = extraInfo['bzr-owner'];
+          owner = meta.owner && meta.owner.User;
       // Singletons and keys which are outside of the common structure
       var processed = {
         id: data.Id,
@@ -168,7 +168,7 @@ var module = module;
         entityType: (charmMeta) ? 'charm' : 'bundle',
         // If the id has a user segment then it has not been promulgated.
         is_approved: data.Id.indexOf('~') > 0 ? false : true,
-        owner: bzrOwner,
+        owner: owner,
         revisions: extraInfo['bzr-revisions'] || [],
         code_source: {
           location: extraInfo['bzr-url']
@@ -280,7 +280,9 @@ var module = module;
         'stats',
         'extra-info',
         'tags',
-        'charm-metrics'
+        'charm-metrics',
+        'owner',
+        'supported-series'
       ].join('&include=');
       return jujulib._makeRequest(
           this.bakery,
@@ -321,9 +323,11 @@ var module = module;
           '&limit=' + (limit || 30) + '&' +
           'include=charm-metadata&' +
           'include=charm-config&' +
+          'include=supported-series&' +
           'include=bundle-metadata&' +
           'include=extra-info&' +
           'include=tags&' +
+          'include=owner&' +
           'include=stats';
       var path = this._generatePath('search', qs);
       return jujulib._makeRequest(

@@ -59,7 +59,7 @@ describe('ImportExport', function() {
             className="import-export__icon"
             size="16" />
           <span className="tooltip__tooltip--below">
-            <span className="tooltip__inner">
+            <span className="tooltip__inner tooltip__inner--up">
               Export
             </span>
           </span>
@@ -72,7 +72,7 @@ describe('ImportExport', function() {
             className="import-export__icon"
             size="16" />
           <span className="tooltip__tooltip--below">
-            <span className="tooltip__inner">
+            <span className="tooltip__inner tooltip__inner--up">
               Import
             </span>
           </span>
@@ -212,7 +212,7 @@ describe('ImportExport', function() {
             className="import-export__icon"
             size="16" />
           <span className="tooltip__tooltip--below">
-            <span className="tooltip__inner">
+            <span className="tooltip__inner tooltip__inner--up">
               Export
             </span>
           </span>
@@ -225,7 +225,7 @@ describe('ImportExport', function() {
             className="import-export__icon"
             size="16" />
           <span className="tooltip__tooltip--below">
-            <span className="tooltip__inner">
+            <span className="tooltip__inner tooltip__inner--up">
               Import
             </span>
           </span>

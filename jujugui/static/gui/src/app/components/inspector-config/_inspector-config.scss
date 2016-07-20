@@ -6,6 +6,25 @@
         border-bottom: 1px solid $mid-grey;
     }
 
+    &__select {
+        margin: 10px 0 14px 0;
+        text-transform: capitalize;
+    }
+
+    &__series-select {
+        margin: 10px 20px 14px 20px;
+        width: 250px;
+
+        option {
+            text-transform: capitalize;
+        }
+
+        &-description {
+            color: $cool-grey;
+            font-size: 0.875em;
+        }
+    }
+
     &--no-config {
       margin: 10px 20px 14px 20px;
     }

@@ -63,10 +63,16 @@ YUI.add('ghost-deployer-extension', function(Y) {
       Y.Object.each(charm.get('options'), function(v, k) {
         config[k] = v['default'];
       });
+      var series = charm.get('series');
+      // If series is an array then pick the first one. This will be the
+      // case if it is a multi-series charm and we're picking the default
+      // and preferred series.
+      var activeSeries = Array.isArray(series) ? series[0] : series;
       ghostService.set('config', config);
       ghostService.set('activePlan', activePlan);
+      ghostService.set('series', activeSeries);
       var serviceName = ghostService.get('name');
-      var charmId = charm.get('id');
+      var charmId = this._addSeriesToCharmId(charm.get('id'), activeSeries);
       var constraints = {};
       // TODO frankban: add support for fetching delegatable macaroons that can
       // be used to add private charms.
@@ -76,6 +82,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
         {applicationId: ghostServiceId});
       this.env.deploy(
           charmId,
+          activeSeries,
           serviceName,
           config,
           undefined, // Config file content.
@@ -124,6 +131,38 @@ YUI.add('ghost-deployer-extension', function(Y) {
           component: null,
           metadata: null
         }});
+    },
+
+    /**
+      Adds the series prefix correctly into the charmId if necessary.
+
+      If we're using Juju 1 then we need to deploy a charm Id which has
+      the series defined in the URL. This is not required for Juju 2 as it
+      supports multi-series charms.
+
+      @method _addSeriesToCharmId
+      @param {String} charmId The charm id.
+      @param {String} series The series of the service.
+    */
+    _addSeriesToCharmId: function(charmId, series) {
+      let charmIdParts = charmId.replace('cs:', '').split('/');
+      if (
+        // If we're in Juju 2 then just return the charmId as it can
+        // support both single and multi-series charms.
+        !this.isLegacyJuju() ||
+        // If this is a single series charm already then it'll already
+        // have the series in the id.
+        charmIdParts.indexOf(series) > -1) {
+        return charmId;
+      }
+      // If none of the above are correct then we need to add the series
+      // to the charm id. It is not possible to get here if you have a three
+      // part charm Id ie) cs:~user/series/charm-0 so we only need to handle
+      // the remaining cases of cs:~user/charm-0 and cs:charm-0
+      charmIdParts.length === 2 ?
+        charmIdParts.splice(1, 0, series) :
+        charmIdParts.unshift(series);
+      return `cs:${charmIdParts.join('/')}`;
     },
 
     /**
@@ -186,7 +225,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
         db.notifications.add({
           title: 'Error deploying ' + serviceName,
           message: 'Could not deploy the requested application. Server ' +
-              'responded with: ' + evt.err,
+              'responded with: ' + evt.err.message,
           level: 'error'
         });
         return;

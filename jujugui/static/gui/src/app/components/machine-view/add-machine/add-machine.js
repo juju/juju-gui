@@ -81,7 +81,7 @@ YUI.add('machine-view-add-machine', function() {
       if (selectedMachine === 'new' || selectedContainer === 'lxc' ||
           selectedContainer === 'lxd' || selectedContainer === 'kvm') {
         var machine = this.props.createMachine(
-          selectedContainer, machineId, constraints);
+          selectedContainer, machineId, null, constraints);
         if (this.props.selectMachine && !machineId) {
           this.props.selectMachine(machine.id);
         }

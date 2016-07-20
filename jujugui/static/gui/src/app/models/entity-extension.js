@@ -72,7 +72,8 @@ YUI.add('entity-extension', function(Y) {
       };
       if (type === 'bundle') {
         entity.iconPath = utils.getIconPath(entity.id, true);
-        entity.services = this.parseBundleServices(this.get('services'));
+        entity.applications = this.parseBundleServices(
+          this.get('applications'));
         entity.serviceCount = attrs.serviceCount;
         entity.machineCount = attrs.machines ?
           Object.keys(attrs.machines).length : attrs.serviceCount;

@@ -1630,20 +1630,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys an application', function() {
-      env.deploy('precise/mysql', null, null, null, null, null, null, null,
-          {immediate: true});
+      env.deploy('precise/mysql', 'trusty', 'mysql', null, null, 1, null,
+        null, null, {immediate: true});
       msg = conn.last_message();
       var expected = {
         type: 'Application',
         request: 'Deploy',
         version: 7,
         params: {applications: [{
-          application: null,
+          application: 'mysql',
           'config-yaml': null,
           config: {},
           constraints: {},
           'charm-url': 'precise/mysql',
-          'num-units': null
+          'num-units': 1,
+          series: 'trusty'
         }]},
         'request-id': 1
       };
@@ -1667,8 +1668,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }]},
         'request-id': 1
       };
-      env.deploy('precise/mediawiki', null, config, null, null, null, null,
-          null, {immediate: true});
+      env.deploy('precise/mediawiki', null, null, config, null, null, null,
+        null, null, {immediate: true});
       msg = conn.last_message();
       assert.deepEqual(expected, msg);
     });
@@ -1689,8 +1690,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }]},
         'request-id': 1
       };
-      env.deploy('precise/mysql', null, null, config_raw, null, null, null,
-          null, {immediate: true});
+      env.deploy('precise/mysql', null, null, null, config_raw, null, null,
+        null, null, {immediate: true});
       msg = conn.last_message();
       assert.deepEqual(expected, msg);
     });
@@ -1704,8 +1705,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'root-disk': '8000',
         tags: 'tag1,tag2'
       };
-      env.deploy('precise/mediawiki', null, null, null, 1, constraints, null,
-          null, {immediate: true});
+      env.deploy('precise/mediawiki', null, null, null, null, 1, constraints,
+        null, null, {immediate: true});
       msg = conn.last_message();
       assert.deepEqual(msg.params.applications[0].constraints, {
         'cpu-cores': 1,
@@ -1732,8 +1733,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }]},
         'request-id': 1
       };
-      env.deploy('precise/mediawiki', null, null, null, 1, null, '42', null,
-          {immediate: true});
+      env.deploy('precise/mediawiki', null, null, null, null, 1, null, '42',
+        null, {immediate: true});
       assert.deepEqual(conn.last_message(), expectedMessage);
     });
 
@@ -1742,7 +1743,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var err;
       var applicationName;
       env.deploy(
-          'precise/mysql', 'mysql', null, null, null, null, null,
+          'precise/mysql', null, 'mysql', null, null, null, null, null,
           function(data) {
             charmUrl = data.charmUrl;
             err = data.err;
@@ -1761,7 +1762,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('handles failed application deployments', function() {
       var err;
       env.deploy(
-          'precise/mysql', 'mysql', null, null, null, null, null,
+          'precise/mysql', null, 'mysql', null, null, null, null, null,
           function(data) {
             err = data.err;
           }, {immediate: true});
@@ -2348,7 +2349,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         config: {
           'binlog-format': 'gzip'
         },
-        constraints: undefined
+        constraints: undefined,
+        series: undefined
       };
       assert.strictEqual(applicationName, 'mysql');
       assert.deepEqual(expected, result);

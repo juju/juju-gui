@@ -610,15 +610,22 @@ YUI.add('environment-change-set', function(Y) {
             return;
           }
           var ghostService = db.services.getById(this.options.modelId);
-          // Update the service name, which can change from when the
+          // Update the application name, which can change from when the
           // charm is added to the canvas to the actual time the changes are
           // committed.
-          this.args[1] = ghostService.get('name');
+          this.args[2] = ghostService.get('name');
+          // Update the application series, which can change from when the
+          // charm is added to the canvas to the time that the changes are
+          // committed.
+          const series = ghostService.get('series');
+          if (series) {
+            this.args[1] = series;
+          }
           // Loop through the services settings and remove any which have
           // undefined values so that they aren't set as 'undefined'.
-          Object.keys(this.args[2]).forEach(function(key) {
-            if (this.args[2][key] === undefined) {
-              delete this.args[2][key];
+          Object.keys(this.args[3]).forEach(function(key) {
+            if (this.args[3][key] === undefined) {
+              delete this.args[3][key];
             }
           }, this);
         }
@@ -637,7 +644,7 @@ YUI.add('environment-change-set', function(Y) {
         }
       });
       // The 6th param is the toMachine param of the env deploy call.
-      var toMachine = command.args[6];
+      var toMachine = command.args[7];
       if (!this.changeSet[toMachine]) {
         // If the toMachine isn't a record in the changeSet that means it's
         // an existing machine or that the machine does not exist and one
@@ -751,23 +758,9 @@ YUI.add('environment-change-set', function(Y) {
       }, this);
       var db = this.get('db');
       var machine = db.machines.getById(command.args[0]);
-      var removedUnits = [];
       var units = db.units.filterByMachine(machine.id, true);
-      units.forEach(function(unit) {
-        // Update the revived model to trigger events.
-        var unitModel = db.units.revive(unit);
-        if (!unit.agent_state) {
-          // Remove the unit's machine, making it an unplaced unit.
-          delete unit.machine;
-          removedUnits.push(unit);
-          unitModel.set('machine', null);
-        } else {
-          // If the unit is deployed to the machine then mark it as deleted
-          // so that the UI updates.
-          unitModel.set('deleted', true);
-        }
-        db.units.free(unitModel);
-      }, this);
+      // Remove the unit from the machine.
+      var removedUnits = units.filter(unit => this.unplaceUnit(unit));
       if (machine.parentId) {
         // Remove the removed units from the parent machines unit list.
         var parentMachine = db.machines.getById(machine.parentId);
@@ -1174,11 +1167,13 @@ YUI.add('environment-change-set', function(Y) {
           if (!units.length) {
             return;
           }
+          // If no series is provided on the machine then define it.
           // Assume all the units in this machine have the same series.
           // This is safe since this kind of validation is done during
           // units' placement.
-          var url = units[0].charmUrl;
-          this.args[0][0].series = utils.getSeries(url);
+          if (!this.args[0][0].series) {
+            this.args[0][0].series = utils.getUnitSeries(units[0], db);
+          }
         },
         /**
           Replace changeSet keys with real machine IDs returned from the call.
@@ -1224,7 +1219,7 @@ YUI.add('environment-change-set', function(Y) {
         if (value.command.method === '_deploy') {
           if (value.command.options.modelId === args[0]) {
             parent.push(key);
-            args[0] = value.command.args[1];
+            args[0] = value.command.args[2];
           }
         }
       });
@@ -1266,7 +1261,7 @@ YUI.add('environment-change-set', function(Y) {
               // Update the service name. The add_unit record is first added
               // passing the initial service name. This service name can be
               // changed by users before the changes are committed.
-              var newServiceId = record.command.args[1];
+              var newServiceId = record.command.args[2];
               this.args[0] = newServiceId;
               // We also need to update the unit id to match the new service id
               // so that we can correctly look up the unit using service id +
@@ -1318,8 +1313,7 @@ YUI.add('environment-change-set', function(Y) {
         return 'attempted to place a unit which has not been added: ' + unit.id;
       }
       var db = this.get('db');
-      var error = this.validateUnitPlacement(
-          unit, db.machines.getById(machineId));
+      var error = this.validateUnitPlacement(unit, machineId, db);
       if (error) {
         db.notifications.add({
           title: 'Error placing unit',
@@ -1340,15 +1334,20 @@ YUI.add('environment-change-set', function(Y) {
       });
       // Add the new addMachines parent.
       var containerExists = true;
-      Y.Object.each(this.changeSet, function(value, key) {
+      Object.keys(this.changeSet).forEach(key => {
+        var value = this.changeSet[key];
         var command = value.command;
         if (command.method === '_addMachines' &&
             command.options.modelId === machineId) {
+          // If the machine doesn't yet have a series defined then set one
+          // when placing the first unit on it.
+          if (!value.command.args[0][0].series) {
+            value.command.args[0][0].series = utils.getUnitSeries(unit, db);
+          }
           record.parents.push(key);
           containerExists = false;
         }
-
-      }, this);
+      });
       // Update the command in the changeset to place the unit on an already
       // existing machine.
       if (containerExists && machineId) {
@@ -1365,18 +1364,75 @@ YUI.add('environment-change-set', function(Y) {
       return null;
     },
 
+    /**
+      Takes a service id and then handles unplacing all of the uncommitted
+      units for that service.
+
+      @method unplaceServiceUnits
+      @param {String} serviceId The service id to unplace units for.
+      @returns {Array} Any units that had been unplaced, or an empty array.
+    */
+    unplaceServiceUnits: function(serviceId) {
+      return this.get('db').units
+        // We only want to unplace units which have the matching
+        // service id and which are placed on machines.
+        .filter(unit => unit.service === serviceId && unit.machine)
+        // Unplace any units which match the criteria.
+        .map(unit => this.unplaceUnit(unit));
+    },
+
+    /**
+      Removes the placed unit from the machine it's placed on.
+
+      @method unplaceUnit
+      @param {Object} unit The unit to remove from the machine.
+      @returns {Object} unit The removed unit or undefined if the unit has
+        already been deployed.
+    */
+    unplaceUnit: function(unit) {
+      const db = this.get('db');
+      // Update the revived model to trigger events.
+      const unitModel = db.units.revive(unit);
+      unit = this._unplaceUnit(unit, unitModel);
+      db.units.free(unitModel);
+      return unit;
+    },
+
+    /**
+      Removes the placed unit from the machine it's placed on.
+
+      @method _unplaceUnit
+      @param {Object} unit The unit to remove from the machine.
+      @param {Object} unitModel The YUI Model instance for the unit.
+      @returns {Object} unit The removed unit or undefined if the unit has
+        already been deployed.
+    */
+    _unplaceUnit: function(unit, unitModel) {
+      if (!unit.agent_state) {
+        // Remove the unit's machine, making it an unplaced unit.
+        delete unit.machine;
+        unitModel.set('machine', null);
+        return unit;
+      }
+      // If the unit is deployed to the machine then mark it as deleted
+      // so that the UI updates.
+      unitModel.set('deleted', true);
+    },
+
     /* End private environment methods. */
 
     /**
       Validate the unit's placement on a machine.
 
-      @method placeUnit
+      @method validateUnitPlacement
       @param {Object} unit The unit to place.
-      @param {Object} machine The machine where to place the unit.
+      @param {String} machineId the machine Id to place the unit.
+      @param {Object} db Reference to the application db.
       @return {String} A validation error or null if no errors occurred.
     */
-    validateUnitPlacement: function(unit, machine) {
-      var unitSeries = utils.getSeries(unit.charmUrl);
+    validateUnitPlacement: function(unit, machineId, db) {
+      var machine = db.machines.getById(machineId);
+      var unitSeries = utils.getUnitSeries(unit, db);
       if (machine.series) {
         // This is a real provisioned machine. Ensure its series matches the
         // unit series.
@@ -1390,8 +1446,8 @@ YUI.add('environment-change-set', function(Y) {
       // machine, ensure they all share the same series.
       var error = null;
       var db = this.get('db');
-      db.units.filterByMachine(machine.id).some(function(existingUnit) {
-        var existingUnitSeries = utils.getSeries(existingUnit.charmUrl);
+      db.units.filterByMachine(machine.id).some(existingUnit => {
+        var existingUnitSeries = utils.getUnitSeries(existingUnit, db);
         if (existingUnitSeries !== unitSeries) {
           error = 'machine ' + machine.id + ' already includes units with a ' +
               'different series: ' + existingUnitSeries;

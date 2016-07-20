@@ -364,7 +364,7 @@ describe('SearchResults', function() {
           first = entities[0],
           last = entities[2];
       var expected = [{
-        id: 'trusty/' + first.name,
+        id: first.name,
         name: first.name,
         owner: first.owner,
         type: first.type,
@@ -372,7 +372,7 @@ describe('SearchResults', function() {
         downloads: 0,
         storeId: ''
       }, {
-        id: 'vivid/' + last.name,
+        id: last.name,
         name: last.name,
         owner: last.owner,
         type: last.type,

@@ -2718,7 +2718,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.lengthOf(lastArguments, 1);
       // An empty list has been sent.
       var evt = lastArguments[0];
-      console.log(evt.target);
       var expectedEvt = {
         target: {responseText: '{"Files":[]}', status: 200}
       };

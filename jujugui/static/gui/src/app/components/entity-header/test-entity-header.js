@@ -77,9 +77,9 @@ describe('EntityHeader', function() {
                   <a href="https://launchpad.net/~test-owner"
                     target="_blank">test-owner</a>
                 </li>
-                <li className="entity-header__series">
+                {[<li key="trusty" className="entity-header__series">
                   trusty
-                </li>
+                </li>]}
                 {undefined}
               </ul>
               <ul className="entity-header__social-list">
@@ -143,7 +143,7 @@ describe('EntityHeader', function() {
           scrollPosition={0} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <select className="entity-header__plan"
+      <select className="entity-header__select"
         ref="plan">
         <option key="default">Choose a plan</option>
         {[<option key="test0"
@@ -172,7 +172,7 @@ describe('EntityHeader', function() {
           scrollPosition={0} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <select className="entity-header__plan"
+      <select className="entity-header__select"
         ref="plan">
         <option key="default">Loading plans...</option>
         {null}

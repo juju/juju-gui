@@ -47,7 +47,10 @@ YUI.add('autodeploy-extension', function(Y) {
           env = this.get('env') || this.env,
           unplacedUnits = db.units.filterByMachine(null);
       unplacedUnits.forEach(function(unit) {
-        var machine = this._createMachine();
+        // Get the application name from the unit id then grab the series
+        // for that application.
+        var series = db.services.getById(unit.id.split('/')[0]).get('series');
+        var machine = this._createMachine(null, null, series, null);
         env.placeUnit(unit, machine.id);
       }, this);
     },
@@ -58,10 +61,11 @@ YUI.add('autodeploy-extension', function(Y) {
       @method _createMachine
       @param {String} containerType The container type to create.
       @param {String} parentId The parent for the container.
+      @param {String} series The series of the machine.
       @param {Object} constraints The machine/container constraints.
       @return {Object} The newly created ghost machine model instance.
     */
-    _createMachine: function(containerType, parentId, constraints) {
+    _createMachine: function(containerType, parentId, series, constraints) {
       var db = this.get('db') || this.db;
       var env = this.get('env') || this.env;
       var machine = db.machines.addGhost(parentId, containerType);
@@ -71,6 +75,7 @@ YUI.add('autodeploy-extension', function(Y) {
       // handled properly on the ECS side. Jeff May 12 2014
       var callback = Y.bind(this._onMachineCreated, this, machine);
       env.addMachines([{
+        series: series,
         containerType: containerType,
         parentId: parentId,
         constraints: constraints || {}

@@ -93,17 +93,17 @@ YUI.add('juju-bundle-models', function(Y) {
     },
 
     /**
-      Populate data about bundled services; provides display data for each
+      Populate data about bundled applications; provides display data for each
       service.
       @method parseBundleServices
-      @param {Object} services more of a hash or dict than an object; contains
-                      service names as keys to their service objects.
+      @param {Object} applications more of a hash or dict than an object;
+        contains service names as keys to their service objects.
       @return {Object} a service display object.
     */
-    parseBundleServices: function(services) {
+    parseBundleServices: function(applications) {
       var parsedServices = [];
-      for (var name in services) {
-        var service = services[name],
+      for (var name in applications) {
+        var service = applications[name],
             id = service.charm.replace(/^cs:/, '');
         parsedServices.push({
           id: id,
@@ -284,13 +284,13 @@ YUI.add('juju-bundle-models', function(Y) {
       },
       series: {},
       /**
-        The services used in this bundle.
+        The applications used in this bundle.
 
-        @attribute services
+        @attribute applications
         @default undefined
         @type {Object}
       */
-      services: {},
+      applications: {},
 
       /**
        * @attribute serviceCount
@@ -300,8 +300,8 @@ YUI.add('juju-bundle-models', function(Y) {
        */
       serviceCount: {
         'getter': function() {
-          if (this.get('services')) {
-            return Y.Object.keys(this.get('services')).length;
+          if (this.get('applications')) {
+            return Y.Object.keys(this.get('applications')).length;
           }
         }
       },
@@ -320,7 +320,7 @@ YUI.add('juju-bundle-models', function(Y) {
       unitCount: {
         'getter': function() {
           var count = 0;
-          Y.Object.each(this.get('services'), function(service) {
+          Y.Object.each(this.get('applications'), function(service) {
             if (service.num_units) {
               count += service.num_units;
             } else {

@@ -799,11 +799,11 @@ describe('Environment Change Set', function() {
         cb(); // Will call done().
       });
 
-      it('retrieves the updated service name on preparation', function() {
+      it('retrieves the updated application name on preparation', function() {
         var options = {modelId: 'new1'};
         var callback = testUtils.makeStubFunction();
         var args = [
-          'cs:precise/django-42', 'django', {}, null, 1, {}, null,
+          'cs:precise/django-42', 'precise', 'django', {}, null, 1, {}, null,
           callback, options
         ];
         var key = ecs._lazyDeploy(args);
@@ -814,14 +814,32 @@ describe('Environment Change Set', function() {
         // Execute the command preparation.
         command.prepare({services: services});
         // The service name has been updated.
-        assert.strictEqual(command.args[1], 'renamed-service');
+        assert.strictEqual(command.args[2], 'renamed-service');
+      });
+
+      it('retrieves the updated application series on preparation', function() {
+        var options = {modelId: 'new1'};
+        var callback = testUtils.makeStubFunction();
+        var args = [
+          'cs:precise/django-42', 'precise', 'django', {}, null, 1, {}, null,
+          callback, options
+        ];
+        var key = ecs._lazyDeploy(args);
+        var command = ecs.changeSet[key].command;
+        // Add the ghost service to the db.
+        var services = new Y.juju.models.ServiceList();
+        services.add({id: 'new1', name: 'renamed-service', series: 'xenial'});
+        // Execute the command preparation.
+        command.prepare({services: services});
+        // The service name has been updated.
+        assert.strictEqual(command.args[1], 'xenial');
       });
 
       it('filters out any undefined settings on commit', function() {
         var options = {modelId: 'new1'};
         var callback = testUtils.makeStubFunction();
         var args = [
-          'cs:precise/django-42', 'django', {
+          'cs:precise/django-42', 'precise', 'django', {
             foo: 'bar',
             baz: undefined
           }, null, 1, {}, null,
@@ -838,7 +856,7 @@ describe('Environment Change Set', function() {
           options: options
         }, {services: services});
         // Ensure that the undefined key is not still in the config param.
-        assert.deepEqual(args[2], {
+        assert.deepEqual(args[3], {
           foo: 'bar'
         });
       });
@@ -1213,13 +1231,21 @@ describe('Environment Change Set', function() {
         var command = ecs.changeSet[key].command;
         // Assign a unit to the machine.
         var units = new Y.juju.models.ServiceUnitList();
+        var services = new Y.juju.models.ServiceList();
+        services.add({
+          name: 'django',
+          series: 'utopic'
+        });
         units.add({
           id: 'django/1',
           machine: 'new1',
           charmUrl: 'cs:utopic/django-42'
         });
         // Execute the command preparation.
-        command.prepare({units: units});
+        command.prepare({
+          units: units,
+          services: services
+        });
         // The series is now set for the new machine call.
         assert.strictEqual(command.args[0][0].series, 'utopic');
       });
@@ -1318,7 +1344,7 @@ describe('Environment Change Set', function() {
         var parentRecord = {
           command: {
             method: '_deploy',
-            args: ['cs:utipic/django-42', 'my-service']
+            args: ['cs:utipic/django-42', 'utopic', 'my-service']
           }
         };
         var parentResults = {}; // Not used in this case.
@@ -1690,7 +1716,7 @@ describe('Environment Change Set', function() {
         var lazyDeploy = testUtils.makeStubMethod(ecs, '_lazyDeploy');
         this._cleanups.push(lazyDeploy.reset);
         var callback = testUtils.makeStubFunction();
-        var args = [1, 2, 3, 4, 5, 6, 7, callback, { immediate: true}];
+        var args = [1, 2, 3, 4, 5, 6, 7, 8, callback, { immediate: true}];
         envObj.deploy.apply(envObj, args);
         assert.equal(envObj._deploy.calledOnce(), true);
         var deployArgs = envObj._deploy.lastArguments();
@@ -1853,6 +1879,7 @@ describe('Environment Change Set', function() {
           },
           b: {
             command: {
+              args: [[{series: 'trusty'}]],
               method: '_addMachines',
               options: {modelId: machineId}
             },
@@ -1871,6 +1898,7 @@ describe('Environment Change Set', function() {
             parents: ['addMachines_123'] },
           addMachines_123: {
             command: {
+              args: [[{series: 'trusty'}]],
               method: '_addMachines',
               options: {
                 modelId: machineId }},
@@ -1921,7 +1949,7 @@ describe('Environment Change Set', function() {
         assert.isNull(err);
         assert.strictEqual(mockValidateUnitPlacement.calledOnce(), true);
         var args = mockValidateUnitPlacement.lastArguments();
-        assert.deepEqual(args, [unit, {id: machineId}]);
+        assert.deepEqual(args, [{ id: 'django/42' }, '0', ecs.get('db')]);
       });
 
       it('does not apply changes if unit placement is not valid', function() {
@@ -1953,13 +1981,32 @@ describe('Environment Change Set', function() {
   });
 
   describe('validateUnitPlacement', function() {
-    var unit, units;
+    var db, machines, services, unit, units;
 
     beforeEach(function() {
       // Set up a unit used for tests and the ecs database.
-      unit = {charmUrl: 'cs:utopic/django-42'};
+      unit = {id: 'django/0', charmUrl: 'cs:utopic/django-42'};
       units = new Y.juju.models.ServiceUnitList();
-      ecs.set('db', {units: units});
+      machines = new Y.juju.models.MachineList();
+      services = new Y.juju.models.ServiceList();
+      services.add({
+        name: 'django',
+        series: 'utopic'
+      });
+      services.add({
+        name: 'wordpress',
+        series: 'trusty'
+      });
+      machines.add({
+        id: '0',
+        series: 'utopic'
+      });
+      db = {
+        units: units,
+        machines: machines,
+        services: services
+      };
+      ecs.set('db', db);
     });
 
     afterEach(function() {
@@ -1967,37 +2014,26 @@ describe('Environment Change Set', function() {
     });
 
     it('passes the validation on an existing machine', function() {
-      var machine = {id: '0', series: 'utopic'};
-      var err = ecs.validateUnitPlacement(unit, machine);
-      assert.isNull(err);
-    });
-
-    it('passes the validation on a ghost machine', function() {
-      units.add({
-        id: 'wordpress/1',
-        charmUrl: 'cs:utopic/wordpress-0',
-        machine: '0'
-      });
-      var machine = {id: '0'};
-      var err = ecs.validateUnitPlacement(unit, machine);
+      var err = ecs.validateUnitPlacement(unit, '0', db);
       assert.isNull(err);
     });
 
     it('checks the series of an existing machine', function() {
-      var machine = {id: '0', series: 'trusty'};
-      var err = ecs.validateUnitPlacement(unit, machine);
+      machines.getById('0').series = 'trusty';
+      var err = ecs.validateUnitPlacement(unit, '0', db);
       assert.strictEqual(
           err, 'unable to place a utopic unit on the trusty machine 0');
     });
 
-    it('checks the series of a ghost machine', function() {
+    it('checks the series of a machine with existing units', function() {
+      // This is a ghost mchine.
+      machines.getById('0').series = undefined;
       units.add({
         id: 'wordpress/1',
         charmUrl: 'cs:trusty/wordpress-0',
         machine: '0'
       });
-      var machine = {id: '0'};
-      var err = ecs.validateUnitPlacement(unit, machine);
+      var err = ecs.validateUnitPlacement(unit, '0', db);
       assert.strictEqual(
           err,
           'machine 0 already includes units with a different series: trusty');

@@ -69,7 +69,7 @@
                 display: none;
             }
 
-            &__plan {
+            &__select {
                 width: 150px;
                 margin: 0 10px 0 0;
             }
@@ -147,8 +147,8 @@
         text-transform: capitalize;
     }
 
-    &__plan {
-        margin-bottom: 20px;
+    &__select {
+        margin-bottom: 15px;
     }
 
     &__social-list {

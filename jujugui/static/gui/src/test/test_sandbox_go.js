@@ -289,8 +289,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             subordinate: false
           }], 'applicationChange'
         );
-        console.log(machineChange);
-        console.log(machineChange[2]['agent-status']);
         assert.deepEqual(machineChange, [
           'machine', 'change', {
             id: '0',
@@ -399,6 +397,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       env.deploy(
           'cs:precise/mediawiki-18',
+          'precise',
           'kumquat',
           {logo: 'test logo'},
           null,
@@ -431,6 +430,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       env.deploy(
           'cs:precise/wordpress-27',
+          'precise',
           'kumquat',
           {llama: 'pajama'},
           null,
@@ -450,8 +450,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'An application with this name already exists (wordpress).');
         done();
       };
-      env.deploy('cs:precise/wordpress-27', undefined, undefined, undefined,
-          1, null, null, callback, {immediate: true});
+      env.deploy('cs:precise/wordpress-27', 'precise', undefined, undefined,
+        undefined, 1, null, null, callback, {immediate: true});
     });
 
     it('can add machines', function(done) {
@@ -926,6 +926,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.connect();
       env.deploy(
           'cs:precise/wordpress-27',
+          'precise',
           'kumquat',
           {llama: 'pajama'},
           null,
@@ -982,6 +983,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.connect();
       env.deploy(
           'cs:precise/wordpress-27',
+          'precise',
           'kumquat',
           {llama: 'pajama'},
           null,
@@ -1230,11 +1232,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can add a relation (integration)', function(done) {
       env.connect();
       env.deploy(
-          'cs:precise/wordpress-27', null, null, null, 1, null, null,
-          function() {
+          'cs:precise/wordpress-27', null, null, null, null, 1,
+          null, null, function() {
             env.deploy(
-                'cs:precise/mysql-26', null, null, null, 1, null, null,
-                function() {
+                'cs:precise/mysql-26', null, null, null, null, 1,
+                null, null, function() {
                   var endpointA = ['wordpress', {name: 'db', role: 'client'}],
                       endpointB = ['mysql', {name: 'db', role: 'server'}];
                   env.add_relation(endpointA, endpointB, function(recData) {
@@ -1352,11 +1354,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can remove a relation(integration)', function(done) {
       env.connect();
       env.deploy(
-          'cs:precise/wordpress-27', null, null, null, 1, null, null,
-          function() {
+          'cs:precise/wordpress-27', null, null, null, null, 1,
+          null, null, function() {
             env.deploy(
-                'cs:precise/mysql-26', null, null, null, 1, null, null,
-                function() {
+                'cs:precise/mysql-26', null, null, null, null, 1,
+                null, null, function() {
                   var endpointA = ['wordpress', {name: 'db', role: 'client'}],
                       endpointB = ['mysql', {name: 'db', role: 'server'}];
                   env.add_relation(endpointA, endpointB, function() {

@@ -1110,6 +1110,7 @@ YUI.add('juju-gui', function(Y) {
         var charm = app.db.charms.getById(service.get('charm'));
         var relatableApplications = utils.getRelatableApplications(
           this.db, models.getEndpoints(service, this.endpointsController));
+        const ecs = this.env.get('ecs');
         inspector = (
           <components.Inspector
             acl={this.acl}
@@ -1136,6 +1137,7 @@ YUI.add('juju-gui', function(Y) {
             changeState={this.changeState.bind(this)}
             exposeService={this.env.expose.bind(this.env)}
             unexposeService={this.env.unexpose.bind(this.env)}
+            unplaceServiceUnits={ecs.unplaceServiceUnits.bind(ecs)}
             getAvailableVersions={charmstore.getAvailableVersions.bind(
                 charmstore)}
             getAvailableEndpoints={utils.getAvailableEndpoints.bind(

@@ -31,6 +31,7 @@ YUI.add('inspector-config', function() {
       linkify: React.PropTypes.func.isRequired,
       service: React.PropTypes.object.isRequired,
       setConfig: React.PropTypes.func.isRequired,
+      unplaceServiceUnits: React.PropTypes.func.isRequired,
       updateServiceUnitsDisplayname: React.PropTypes.func.isRequired
     },
 
@@ -44,6 +45,7 @@ YUI.add('inspector-config', function() {
       return {
         // Have to clone the config so we don't update it via reference.
         serviceConfig: this._clone(this.props.service.get('config')),
+        series: this.props.service.get('series'),
         forceUpdate: false
       };
     },
@@ -287,6 +289,73 @@ YUI.add('inspector-config', function() {
       return;
     },
 
+    /**
+      Handle updating state to properly update the components. If units were
+      already placed but not yet deployed then call to unplace them and
+      navigate to the machine view.
+
+      @method _handleSeriesChange
+      @param {Object} e The change event.
+    */
+    _handleSeriesChange: function(e) {
+      const props = this.props;
+      // Defining `value` outside of the setState callback is required.
+      const value = e.currentTarget.value;
+      const service = props.service;
+      const unplacedUnits = props.unplaceServiceUnits(service.get('id'));
+      service.set('series', value);
+      this.setState({forceUpdate: true}, () => {
+        this.setState({series: value});
+      });
+      // If units were unplaced then we want to show a notification and
+      // open up the machine view for the user.
+      const unplacedUnitsLength = unplacedUnits.length;
+      if (unplacedUnitsLength > 0) {
+        props.addNotification({
+          title: `${unplacedUnitsLength} units unplaced`,
+          message: 'The ' + unplacedUnitsLength + ' placed units for ' +
+            service.get('name') + ' have been unplaced.',
+          level: 'error'
+        });
+        props.changeState({
+          sectionB: {
+            component: 'machine',
+            metadata: {}
+          }});
+      }
+    },
+
+    /**
+      If the application is from a multi-series charm and has not yet been
+      deployed then this will be a select element for the user to configure
+      which series to use.
+
+      @method _generateMultiSeriesSelector
+    */
+    _generateMultiSeriesSelector: function() {
+      var series = this.props.charm.get('series');
+      if (!this.props.service.get('pending') || !Array.isArray(series)) {
+        // If the application is deployed or if it's not a multi-series
+        // charm then nothing needs to happen here.
+        return;
+      }
+      return (
+        <div className="inspector-config__series-select">
+          <span>Choose Series</span>
+          <select
+            className="inspector-config__select"
+            onChange={this._handleSeriesChange}
+            value={this.state.series}>
+            {series.map(name =>
+              <option key={name} value={name}>{name}</option>)}
+          </select>
+          <span className="inspector-config__series-select-description">
+            Choose the series to deploy. This cannot be
+            changed once the application is deployed.
+          </span>
+        </div>);
+    },
+
     render: function() {
       var disabled = this.props.acl.isReadOnly();
       var importButton = [{
@@ -310,6 +379,7 @@ YUI.add('inspector-config', function() {
         <div className="inspector-config">
           <div className="inspector-config__fields">
             {this._customizeServiceName()}
+            {this._generateMultiSeriesSelector()}
             <form ref="file-form">
               <input
                 className="hidden"
