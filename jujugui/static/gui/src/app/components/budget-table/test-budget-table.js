@@ -38,23 +38,29 @@ describe('BudgetTable', function() {
   it('can render', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTable
-        acl={acl} />, true);
+        acl={acl}
+        plansEditable={false} />, true);
     var output = renderer.getRenderOutput();
-    var services = output.props.children[1];
     var expected = (
       <div className="budget-table">
         <div className="budget-table__row-header twelve-col">
           <div className="three-col">
             Name
           </div>
-          <div className="two-col">
+          <div className="one-col">
             Units
           </div>
           <div className="three-col">
             Details
           </div>
-          <div className="four-col last-col">
+          <div className="two-col">
+            Usage
+          </div>
+          <div className="two-col">
             Allocation
+          </div>
+          <div className="one-col last-col">
+            Spend
           </div>
         </div>
         {[<div className="budget-table__row twelve-col"
@@ -66,7 +72,7 @@ describe('BudgetTable', function() {
                 'trusty/landscape-server-14/icon.svg'} />
             Landscape
           </div>
-          <div className="two-col">
+          <div className="one-col">
             4
           </div>
           <div className="three-col">
@@ -74,15 +80,98 @@ describe('BudgetTable', function() {
           </div>
           <div className="two-col">
           </div>
+          <div className="two-col">
+          </div>
+          <div className="one-col">
+          </div>
+          {undefined}
+        </div>,
+        <div className="budget-table__row twelve-col"
+          key={1}>
+          <div className="three-col">
+            <img className="budget-table__charm-icon"
+              src={
+                'https://api.staging.jujucharms.com/charmstore/v4/' +
+                'trusty/landscape-server-14/icon.svg'} />
+            Landscape
+          </div>
+          <div className="one-col">
+            4
+          </div>
+          <div className="three-col">
+            You need to choose a plan.
+          </div>
+          <div className="two-col">
+          </div>
+          <div className="two-col">
+          </div>
+          <div className="one-col">
+          </div>
+          {undefined}
+        </div>]}
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can display editable plans', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.BudgetTable
+        acl={acl}
+        plansEditable={true} />, true);
+    var output = renderer.getRenderOutput();
+    var services = output.props.children[1];
+    var expected = (
+      <div className="budget-table">
+        <div className="budget-table__row-header twelve-col">
+          <div className="three-col">
+            Name
+          </div>
+          <div className="one-col">
+            Units
+          </div>
+          <div className="three-col">
+            Details
+          </div>
+          <div className="one-col">
+            Usage
+          </div>
+          <div className="one-col">
+            Allocation
+          </div>
+          <div className="one-col last-col">
+            Spend
+          </div>
+        </div>
+        {[<div className="budget-table__row twelve-col"
+          key={0}>
+          <div className="three-col">
+            <img className="budget-table__charm-icon"
+              src={
+                'https://api.staging.jujucharms.com/charmstore/v4/' +
+                'trusty/landscape-server-14/icon.svg'} />
+            Landscape
+          </div>
+          <div className="one-col">
+            4
+          </div>
+          <div className="three-col">
+            You need to choose a plan.
+          </div>
+          <div className="one-col">
+          </div>
+          <div className="one-col">
+          </div>
+          <div className="one-col">
+          </div>
           <div className="two-col last-col">
             <div className="budget-table__edit">
               <juju.components.GenericButton
                 action={
-                  services[0].props.children[4].props.children.props
+                  services[0].props.children[6].props.children.props
                   .children.props.action}
                 disabled={false}
                 type="neutral"
-                title="Edit" />
+                title="Change plan" />
             </div>
           </div>
         </div>,
@@ -95,23 +184,27 @@ describe('BudgetTable', function() {
                 'trusty/landscape-server-14/icon.svg'} />
             Landscape
           </div>
-          <div className="two-col">
+          <div className="one-col">
             4
           </div>
           <div className="three-col">
             You need to choose a plan.
           </div>
-          <div className="two-col">
+          <div className="one-col">
+          </div>
+          <div className="one-col">
+          </div>
+          <div className="one-col">
           </div>
           <div className="two-col last-col">
             <div className="budget-table__edit">
               <juju.components.GenericButton
                 action={
-                  services[1].props.children[4].props.children.props
+                  services[1].props.children[6].props.children.props
                   .children.props.action}
                 disabled={false}
                 type="neutral"
-                title="Edit" />
+                title="Change plan" />
             </div>
           </div>
         </div>]}
@@ -123,7 +216,8 @@ describe('BudgetTable', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTable
-        acl={acl} />, true);
+        acl={acl}
+        plansEditable={true} />, true);
     var output = renderer.getRenderOutput();
     var services = output.props.children[1];
     var expected = (
@@ -132,14 +226,20 @@ describe('BudgetTable', function() {
           <div className="three-col">
             Name
           </div>
-          <div className="two-col">
+          <div className="one-col">
             Units
           </div>
           <div className="three-col">
             Details
           </div>
-          <div className="four-col last-col">
+          <div className="one-col">
+            Usage
+          </div>
+          <div className="one-col">
             Allocation
+          </div>
+          <div className="one-col last-col">
+            Spend
           </div>
         </div>
         {[<div className="budget-table__row twelve-col"
@@ -151,23 +251,27 @@ describe('BudgetTable', function() {
                 'trusty/landscape-server-14/icon.svg'} />
             Landscape
           </div>
-          <div className="two-col">
+          <div className="one-col">
             4
           </div>
           <div className="three-col">
             You need to choose a plan.
           </div>
-          <div className="two-col">
+          <div className="one-col">
+          </div>
+          <div className="one-col">
+          </div>
+          <div className="one-col">
           </div>
           <div className="two-col last-col">
             <div className="budget-table__edit">
               <juju.components.GenericButton
                 action={
-                  services[0].props.children[4].props.children.props
+                  services[0].props.children[6].props.children.props
                   .children.props.action}
                 disabled={true}
                 type="neutral"
-                title="Edit" />
+                title="Change plan" />
             </div>
           </div>
         </div>,
@@ -180,23 +284,27 @@ describe('BudgetTable', function() {
                 'trusty/landscape-server-14/icon.svg'} />
             Landscape
           </div>
-          <div className="two-col">
+          <div className="one-col">
             4
           </div>
           <div className="three-col">
             You need to choose a plan.
           </div>
-          <div className="two-col">
+          <div className="one-col">
+          </div>
+          <div className="one-col">
+          </div>
+          <div className="one-col">
           </div>
           <div className="two-col last-col">
             <div className="budget-table__edit">
               <juju.components.GenericButton
                 action={
-                  services[1].props.children[4].props.children.props
+                  services[1].props.children[6].props.children.props
                   .children.props.action}
                 disabled={true}
                 type="neutral"
-                title="Edit" />
+                title="Change plan" />
             </div>
           </div>
         </div>]}

@@ -22,7 +22,8 @@ YUI.add('budget-table', function() {
 
   juju.components.BudgetTable = React.createClass({
     propTypes: {
-      acl: React.PropTypes.object.isRequired
+      acl: React.PropTypes.object.isRequired,
+      plansEditable: React.PropTypes.bool
     },
 
     /**
@@ -33,7 +34,18 @@ YUI.add('budget-table', function() {
     */
     _generateServices: function() {
       var disabled = this.props.acl.isReadOnly();
+      var plansEditable = this.props.plansEditable;
       return [1, 2].map((service, i) => {
+        var editCol = plansEditable ? (
+          <div className="two-col last-col">
+            <div className="budget-table__edit">
+              <juju.components.GenericButton
+                action={() => {}}
+                disabled={disabled}
+                type="neutral"
+                title="Change plan" />
+            </div>
+          </div>) : undefined;
         return (
           <div className="budget-table__row twelve-col"
             key={i}>
@@ -44,42 +56,45 @@ YUI.add('budget-table', function() {
                   'trusty/landscape-server-14/icon.svg'} />
               Landscape
             </div>
-            <div className="two-col">
+            <div className="one-col">
               4
             </div>
             <div className="three-col">
               You need to choose a plan.
             </div>
-            <div className="two-col">
+            <div className={plansEditable ? 'one-col' : 'two-col'}>
             </div>
-            <div className="two-col last-col">
-              <div className="budget-table__edit">
-                <juju.components.GenericButton
-                  action={() => {}}
-                  disabled={disabled}
-                  type="neutral"
-                  title="Edit" />
-              </div>
+            <div className={plansEditable ? 'one-col' : 'two-col'}>
             </div>
+            <div className="one-col">
+            </div>
+            {editCol}
           </div>);
       });
     },
 
     render: function() {
+      var plansEditable = this.props.plansEditable;
       return (
         <div className="budget-table">
           <div className="budget-table__row-header twelve-col">
             <div className="three-col">
               Name
             </div>
-            <div className="two-col">
+            <div className="one-col">
               Units
             </div>
             <div className="three-col">
               Details
             </div>
-            <div className="four-col last-col">
+            <div className={plansEditable ? 'one-col' : 'two-col'}>
+              Usage
+            </div>
+            <div className={plansEditable ? 'one-col' : 'two-col'}>
               Allocation
+            </div>
+            <div className="one-col last-col">
+              Spend
             </div>
           </div>
           {this._generateServices()}
