@@ -18,6 +18,10 @@
                 display: block;
             }
         }
+
+        .expanding-row__expanded {
+            margin-left: 0;
+        }
     }
 
     &__edit {

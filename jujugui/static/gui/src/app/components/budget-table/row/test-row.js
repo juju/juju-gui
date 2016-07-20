@@ -195,10 +195,10 @@ describe('BudgetTableRow', function() {
                 </div>
               </li>]}
             </ul>
-            <div className="budget-table__plan-notice twelve-col">
+            <p className="budget-table__plan-notice twelve-col">
               By setting an allocation and selecting a plan you agree to the
               plans terms and conditions
-            </div>
+            </p>
           </div>
         </div>
       </juju.components.ExpandingRow>);
@@ -316,10 +316,10 @@ describe('BudgetTableRow', function() {
                 </div>
               </li>]}
             </ul>
-            <div className="budget-table__plan-notice twelve-col">
+            <p className="budget-table__plan-notice twelve-col">
               By setting an allocation and selecting a plan you agree to the
               plans terms and conditions
-            </div>
+            </p>
           </div>
         </div>
       </juju.components.ExpandingRow>);

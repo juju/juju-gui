@@ -45,9 +45,9 @@ YUI.add('budget-table-row', function() {
     },
 
     /**
-     Toggle the expanded state.
+     Toggle the allocation field state.
 
-     @method _toggle
+     @method _toggleAllocation
     */
     _toggleAllocation: function() {
       this.setState({editAllocation: !this.state.editAllocation});
@@ -106,10 +106,10 @@ YUI.add('budget-table-row', function() {
             {this._generateSharedFields()}
           </div>
           {this._generatePlans()}
-          <div className="budget-table__plan-notice twelve-col">
+          <p className="budget-table__plan-notice twelve-col">
             By setting an allocation and selecting a plan you agree to the
             plans terms and conditions
-          </div>
+          </p>
         </div>);
     },
 
