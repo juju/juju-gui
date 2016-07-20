@@ -1,5 +1,7 @@
 .expanding-row {
-    cursor: pointer;
+    &--clickable {
+        cursor: pointer;
+    }
 
     &--expanded {
         .expanding-row {

@@ -28,7 +28,12 @@ YUI.add('expanding-row', function() {
         React.PropTypes.array
       ]),
       classes: React.PropTypes.object,
+      clickable: React.PropTypes.bool,
       expanded: React.PropTypes.bool
+    },
+
+    getDefaultProps: function() {
+      return {clickable: true};
     },
 
     /**
@@ -59,6 +64,12 @@ YUI.add('expanding-row', function() {
       }
     },
 
+    componentWillUpdate: function(nextProps, nextState) {
+      if (this.props.expanded !== nextProps.expanded) {
+        this._toggle();
+      }
+    },
+
     /**
       Generate the base class names for the component.
 
@@ -68,6 +79,7 @@ YUI.add('expanding-row', function() {
     _generateClasses: function() {
       var classes = this.props.classes || {};
       classes['expanding-row--expanded'] = this.state.expanded;
+      classes['expanding-row--clickable'] = this.props.clickable;
       return classNames(
         'expanding-row',
         'twelve-col',
@@ -93,7 +105,7 @@ YUI.add('expanding-row', function() {
     render: function() {
       return (
         <li className={this._generateClasses()}
-          onClick={this._toggle}>
+          onClick={this.props.clickable ? this._toggle : undefined}>
           <div className="expanding-row__initial twelve-col no-margin-bottom">
             {this.props.children[0]}
           </div>
