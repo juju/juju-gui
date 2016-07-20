@@ -357,7 +357,8 @@ describe('Configuration', function() {
         }
         // Return the config options
         return { option1: option1key };
-      }};
+      },
+      set: sinon.stub()};
     var unplaceServiceUnits = sinon.stub().returns([{}, {}]);
     var addNotification = sinon.stub();
     var changeState = sinon.stub();
@@ -380,6 +381,8 @@ describe('Configuration', function() {
         value: 'xenial'
       }
     });
+    assert.equal(service.set.callCount, 1);
+    assert.deepEqual(service.set.args[0], ['series', 'xenial']);
     assert.equal(unplaceServiceUnits.callCount, 1);
     assert.equal(unplaceServiceUnits.args[0][0], 'abc123');
     assert.equal(addNotification.callCount, 1);

@@ -303,6 +303,7 @@ YUI.add('inspector-config', function() {
       const value = e.currentTarget.value;
       const service = props.service;
       const unplacedUnits = props.unplaceServiceUnits(service.get('id'));
+      service.set('series', value);
       this.setState({forceUpdate: true}, () => {
         this.setState({series: value});
       });
