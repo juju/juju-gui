@@ -63,52 +63,16 @@ describe('BudgetTable', function() {
             Spend
           </div>
         </div>
-        {[<div className="budget-table__row twelve-col"
-          key={0}>
-          <div className="three-col">
-            <img className="budget-table__charm-icon"
-              src={
-                'https://api.staging.jujucharms.com/charmstore/v4/' +
-                'trusty/landscape-server-14/icon.svg'} />
-            Landscape
-          </div>
-          <div className="one-col">
-            4
-          </div>
-          <div className="three-col">
-            You need to choose a plan.
-          </div>
-          <div className="two-col">
-          </div>
-          <div className="two-col">
-          </div>
-          <div className="one-col">
-          </div>
-          {undefined}
-        </div>,
-        <div className="budget-table__row twelve-col"
-          key={1}>
-          <div className="three-col">
-            <img className="budget-table__charm-icon"
-              src={
-                'https://api.staging.jujucharms.com/charmstore/v4/' +
-                'trusty/landscape-server-14/icon.svg'} />
-            Landscape
-          </div>
-          <div className="one-col">
-            4
-          </div>
-          <div className="three-col">
-            You need to choose a plan.
-          </div>
-          <div className="two-col">
-          </div>
-          <div className="two-col">
-          </div>
-          <div className="one-col">
-          </div>
-          {undefined}
-        </div>]}
+        {[<juju.components.BudgetTableRow
+            acl={acl}
+            key={0}
+            plansEditable={false}
+            service={{}} />,
+          <juju.components.BudgetTableRow
+              acl={acl}
+              key={1}
+              plansEditable={false}
+              service={{}} />]}
       </div>);
     assert.deepEqual(output, expected);
   });
@@ -119,7 +83,6 @@ describe('BudgetTable', function() {
         acl={acl}
         plansEditable={true} />, true);
     var output = renderer.getRenderOutput();
-    var services = output.props.children[1];
     var expected = (
       <div className="budget-table">
         <div className="budget-table__row-header twelve-col">
@@ -142,172 +105,16 @@ describe('BudgetTable', function() {
             Spend
           </div>
         </div>
-        {[<div className="budget-table__row twelve-col"
-          key={0}>
-          <div className="three-col">
-            <img className="budget-table__charm-icon"
-              src={
-                'https://api.staging.jujucharms.com/charmstore/v4/' +
-                'trusty/landscape-server-14/icon.svg'} />
-            Landscape
-          </div>
-          <div className="one-col">
-            4
-          </div>
-          <div className="three-col">
-            You need to choose a plan.
-          </div>
-          <div className="one-col">
-          </div>
-          <div className="one-col">
-          </div>
-          <div className="one-col">
-          </div>
-          <div className="two-col last-col">
-            <div className="budget-table__edit">
-              <juju.components.GenericButton
-                action={
-                  services[0].props.children[6].props.children.props
-                  .children.props.action}
-                disabled={false}
-                type="neutral"
-                title="Change plan" />
-            </div>
-          </div>
-        </div>,
-        <div className="budget-table__row twelve-col"
-          key={1}>
-          <div className="three-col">
-            <img className="budget-table__charm-icon"
-              src={
-                'https://api.staging.jujucharms.com/charmstore/v4/' +
-                'trusty/landscape-server-14/icon.svg'} />
-            Landscape
-          </div>
-          <div className="one-col">
-            4
-          </div>
-          <div className="three-col">
-            You need to choose a plan.
-          </div>
-          <div className="one-col">
-          </div>
-          <div className="one-col">
-          </div>
-          <div className="one-col">
-          </div>
-          <div className="two-col last-col">
-            <div className="budget-table__edit">
-              <juju.components.GenericButton
-                action={
-                  services[1].props.children[6].props.children.props
-                  .children.props.action}
-                disabled={false}
-                type="neutral"
-                title="Change plan" />
-            </div>
-          </div>
-        </div>]}
-      </div>);
-    assert.deepEqual(output, expected);
-  });
-
-  it('can disable controls when read only', function() {
-    acl.isReadOnly = sinon.stub().returns(true);
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.BudgetTable
-        acl={acl}
-        plansEditable={true} />, true);
-    var output = renderer.getRenderOutput();
-    var services = output.props.children[1];
-    var expected = (
-      <div className="budget-table">
-        <div className="budget-table__row-header twelve-col">
-          <div className="three-col">
-            Name
-          </div>
-          <div className="one-col">
-            Units
-          </div>
-          <div className="three-col">
-            Details
-          </div>
-          <div className="one-col">
-            Usage
-          </div>
-          <div className="one-col">
-            Allocation
-          </div>
-          <div className="one-col last-col">
-            Spend
-          </div>
-        </div>
-        {[<div className="budget-table__row twelve-col"
-          key={0}>
-          <div className="three-col">
-            <img className="budget-table__charm-icon"
-              src={
-                'https://api.staging.jujucharms.com/charmstore/v4/' +
-                'trusty/landscape-server-14/icon.svg'} />
-            Landscape
-          </div>
-          <div className="one-col">
-            4
-          </div>
-          <div className="three-col">
-            You need to choose a plan.
-          </div>
-          <div className="one-col">
-          </div>
-          <div className="one-col">
-          </div>
-          <div className="one-col">
-          </div>
-          <div className="two-col last-col">
-            <div className="budget-table__edit">
-              <juju.components.GenericButton
-                action={
-                  services[0].props.children[6].props.children.props
-                  .children.props.action}
-                disabled={true}
-                type="neutral"
-                title="Change plan" />
-            </div>
-          </div>
-        </div>,
-        <div className="budget-table__row twelve-col"
-          key={1}>
-          <div className="three-col">
-            <img className="budget-table__charm-icon"
-              src={
-                'https://api.staging.jujucharms.com/charmstore/v4/' +
-                'trusty/landscape-server-14/icon.svg'} />
-            Landscape
-          </div>
-          <div className="one-col">
-            4
-          </div>
-          <div className="three-col">
-            You need to choose a plan.
-          </div>
-          <div className="one-col">
-          </div>
-          <div className="one-col">
-          </div>
-          <div className="one-col">
-          </div>
-          <div className="two-col last-col">
-            <div className="budget-table__edit">
-              <juju.components.GenericButton
-                action={
-                  services[1].props.children[6].props.children.props
-                  .children.props.action}
-                disabled={true}
-                type="neutral"
-                title="Change plan" />
-            </div>
-          </div>
-        </div>]}
+        {[<juju.components.BudgetTableRow
+            acl={acl}
+            key={0}
+            plansEditable={true}
+            service={{}} />,
+          <juju.components.BudgetTableRow
+              acl={acl}
+              key={1}
+              plansEditable={true}
+              service={{}} />]}
       </div>);
     assert.deepEqual(output, expected);
   });
