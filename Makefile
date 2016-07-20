@@ -135,7 +135,7 @@ modules-js: $(MODULESMIN)
 .PHONY: fast-babel
 fast-babel: $(NODE_MODULES)
 	$(NODE_MODULES)/.bin/babel $(GUISRC)/app --out-dir $(GUIBUILD)/app \
-		--ignore /assets/javascripts/
+		--ignore /assets/javascripts/ --compact
 
 $(GUIBUILD)/app/%-min.js: $(GUIBUILD)/app/%.js $(NODE_MODULES)
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(GUIBUILD)/app/$*.js -o $@
