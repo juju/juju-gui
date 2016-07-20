@@ -610,10 +610,17 @@ YUI.add('environment-change-set', function(Y) {
             return;
           }
           var ghostService = db.services.getById(this.options.modelId);
-          // Update the service name, which can change from when the
+          // Update the application name, which can change from when the
           // charm is added to the canvas to the actual time the changes are
           // committed.
           this.args[2] = ghostService.get('name');
+          // Update the application series, which can change from when the
+          // charm is added to the canvas to the time that the changes are
+          // committed.
+          const series = ghostService.get('series');
+          if (series) {
+            this.args[1] = series;
+          }
           // Loop through the services settings and remove any which have
           // undefined values so that they aren't set as 'undefined'.
           Object.keys(this.args[3]).forEach(function(key) {
@@ -1375,7 +1382,7 @@ YUI.add('environment-change-set', function(Y) {
     },
 
     /**
-      removed the placed unit from the machine it's placed on.
+      Removes the placed unit from the machine it's placed on.
 
       @method unplaceUnit
       @param {Object} unit The unit to remove from the machine.
@@ -1392,7 +1399,7 @@ YUI.add('environment-change-set', function(Y) {
     },
 
     /**
-      removed the placed unit from the machine it's placed on.
+      Removes the placed unit from the machine it's placed on.
 
       @method _unplaceUnit
       @param {Object} unit The unit to remove from the machine.
