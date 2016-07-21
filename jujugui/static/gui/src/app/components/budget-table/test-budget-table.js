@@ -40,7 +40,8 @@ describe('BudgetTable', function() {
       <juju.components.BudgetTable
         acl={acl}
         allocationEditable={false}
-        plansEditable={false} />, true);
+        plansEditable={false}
+        services={[{}, {}]} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="budget-table">
@@ -85,7 +86,8 @@ describe('BudgetTable', function() {
       <juju.components.BudgetTable
         acl={acl}
         allocationEditable={false}
-        plansEditable={true} />, true);
+        plansEditable={true}
+        services={[{}, {}]} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="budget-table">

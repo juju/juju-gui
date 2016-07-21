@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentServices', function() {
-  var acl;
+  var acl, changes, servicesGetById;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,13 +33,24 @@ describe('DeploymentServices', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    changes = {
+      '_deploy': {
+        'add1': {command: {options: {modelId: 'apache2'}}},
+        'add2': {command: {options: {modelId: 'mysql'}}}
+      }
+    };
+    servicesGetById = (id) => {
+      return {service: id};
+    };
   });
 
   it('can render', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentServices
         acl={acl}
-        cloud='azure' />, true);
+        changes={changes}
+        cloud='azure'
+        servicesGetById={servicesGetById} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.DeploymentSection
@@ -85,7 +96,8 @@ describe('DeploymentServices', function() {
           <juju.components.BudgetTable
             acl={acl}
             allocationEditable={true}
-            plansEditable={true} />
+            plansEditable={true}
+            services={[{service: 'apache2'}, {service: 'mysql'}]} />
           <div className="prepend-seven">
             Maximum monthly spend:&nbsp;
             <span className="deployment-services__plans-max">
@@ -102,7 +114,9 @@ describe('DeploymentServices', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentServices
         acl={acl}
-        cloud='azure' />, true);
+        changes={changes}
+        cloud='azure'
+        servicesGetById={servicesGetById} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.DeploymentSection
@@ -148,7 +162,8 @@ describe('DeploymentServices', function() {
           <juju.components.BudgetTable
             acl={acl}
             allocationEditable={true}
-            plansEditable={true} />
+            plansEditable={true}
+            services={[{service: 'apache2'}, {service: 'mysql'}]} />
           <div className="prepend-seven">
             Maximum monthly spend:&nbsp;
             <span className="deployment-services__plans-max">
