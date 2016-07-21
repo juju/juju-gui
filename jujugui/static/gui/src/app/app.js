@@ -909,7 +909,10 @@ YUI.add('juju-gui', function(Y) {
         ReactDOM.render(
           <window.juju.components.DeploymentFlow
             acl={this.acl}
-            changeState={this.changeState.bind(this)} />,
+            changes={changesUtils.getGroupedChanges(currentChangeSet)}
+            changeState={this.changeState.bind(this)}
+            makeEntityModel={Y.juju.makeEntityModel}
+            servicesGetById={services.getById.bind(services)} />,
           document.getElementById('deployment-container'));
         return;
       }

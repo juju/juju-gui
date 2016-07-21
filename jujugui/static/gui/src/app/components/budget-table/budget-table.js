@@ -24,7 +24,8 @@ YUI.add('budget-table', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       allocationEditable: React.PropTypes.bool,
-      plansEditable: React.PropTypes.bool
+      plansEditable: React.PropTypes.bool,
+      services: React.PropTypes.array.isRequired
     },
 
     /**
@@ -34,7 +35,7 @@ YUI.add('budget-table', function() {
      @returns {Array} The list of services.
     */
     _generateServices: function() {
-      return [{}, {}].map((service, i) => {
+      return this.props.services.map((service, i) => {
         return (
           <juju.components.BudgetTableRow
             acl={this.props.acl}
