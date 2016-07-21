@@ -51,11 +51,11 @@ YUI.add('changes-utils', function(Y) {
   };
 
   /**
-    Return the counts for each type of ecs change.
+    Group the ecs changes by method type.
 
-    @method getChangeCounts
-    @param {Object} services The list of services from the db.
-    @returns {Object} The ecs change counts.
+    @method getGroupedChanges
+    @param {Object} changeSet The current environment change set.
+    @returns {Object} The grouped ecs changes.
   */
   ChangesUtils.getGroupedChanges = function(changeSet) {
     var changes = {};
@@ -76,9 +76,9 @@ YUI.add('changes-utils', function(Y) {
     Return a list of all change descriptions.
 
     @method generateAllChangeDescriptions
+    @param {Object} changeSet The current environment change set.
     @param {Object} services The list of services from the db.
     @param {Object} units The list of units from the db.
-    @param {Object} changeSet The current environment change set.
   */
   ChangesUtils.generateAllChangeDescriptions = function(changeSet, services,
                                                         units) {
