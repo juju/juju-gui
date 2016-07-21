@@ -1239,6 +1239,7 @@ YUI.add('juju-gui', function(Y) {
           appState={state.get('current')}
           changeState={this.changeState.bind(this)}
           utils={utils}
+          staticURL={window.juju_config.staticURL}
           addNotification={
             this.db.notifications.add.bind(this.db.notifications)}
           makeEntityModel={Y.juju.makeEntityModel} />,

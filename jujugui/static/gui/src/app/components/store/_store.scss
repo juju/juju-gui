@@ -1,0 +1,213 @@
+.store {
+    background-color: $white;
+    background-image: none;
+
+    // XXX Ant, move to cloud-vanilla-theme
+    .note {
+        font-size: 1em;
+        text-decoration: none;
+    }
+
+    // XXX Ant, move to cloud-vanilla-theme
+    .row--border-bottom {
+      border-bottom: 1px dotted $warm-grey;
+    }
+
+    // XXX Ant, Ask about the styling going forward here
+    .inline-list {
+        &__item {
+            margin-bottom: 10px;
+            display: inline-block;
+            margin-right: 5px;
+        }
+    }
+
+    // XXX Ant, New component for theme
+    .featured-entity {
+        background-color: $white;
+        padding: 20px;
+        transition: background-color .3s;
+
+        // Sets the columns to six-col on small screens
+        @media only screen and (max-width: $breakpoint-medium - 1) {
+            width: 48.94737%;
+            text-align: center;
+            padding: 0;
+        }
+
+        &:hover {
+            background: $light-grey;
+        }
+
+        &__link {
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        &__title {
+            font-size: 1.25em;
+            margin-bottom: 0;
+            text-decoration: none;
+        }
+
+        &__image-list {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        &__image-list-item {
+            box-sizing: border-box;
+            width: 20px;
+            height: 20px;
+            float: left;
+            margin: 2px;
+            margin-bottom: 0;
+
+            @media only screen and (max-width: $breakpoint-medium - 1) {
+                width: 20%;
+                height: 20%;
+            }
+        }
+
+        &__image {
+            border-radius: 50%;
+            float: left;
+
+            @media only screen and (max-width: $breakpoint-medium - 1) {
+                float: none;
+
+                &.control-size {
+                    max-width: 96px;
+                }
+            }
+        }
+
+        p {
+            margin-bottom: 0;
+        }
+    }
+
+    .box {
+        margin-bottom: 20px;
+
+        &--kibana {
+            padding-bottom: 100px;
+            background-color: $cool-grey;
+            border-color: $cool-grey;
+            color: $white;
+
+            .box__image {
+                margin-top: 50px;
+                margin-bottom: 32px;
+            }
+        }
+
+        &--kubernetes {
+            padding-bottom: 100px;
+            background-color: $light-grey;
+
+            .box__image {
+                margin-top: -$gutter-width;
+                margin-bottom: 31px;
+            }
+        }
+
+        &--openstack {
+            $openstack-brand: #DF2E29;
+            padding-bottom: 100px;
+            border-color:  $openstack-brand;
+            background-color: $openstack-brand;
+            color: $white;
+
+            .box__image {
+                margin-top: $gutter-width;
+            }
+        }
+
+        .button--inline-neutral {
+            background-color: $white;
+
+            &:hover {
+                background-color: $light-grey;
+            }
+        }
+
+        &--mysql {
+            $mysql-brand: #2089B5;
+            border-color:  $mysql-brand;
+            background-color: $mysql-brand;
+            color: $white;
+
+            a {
+                color: $white;
+            }
+
+            .button--inline-neutral {
+                color: $cool-grey;
+            }
+        }
+
+        &--nagios,
+        &--realtime-syslog-analytics {
+            background-color: $light-grey;
+        }
+
+        .align-bottom {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right:0;
+        }
+    }
+
+    .row--write-your-own,
+    .row--bigdata {
+        padding-top: 0;
+        padding-bottom: 0;
+
+        .inner-wrapper {
+            padding-top: 60px;
+            padding-bottom: 40px;
+            background-repeat: no-repeat;
+            background-position: right center;
+        }
+    }
+
+    .row--bigdata {
+        $hadoop-brand-start: #7ccdf7;
+        $hadoop-brand-end: #40b6f2;
+        color: $white;
+        background: $hadoop-brand-start;
+        background: -moz-linear-gradient(top,  $hadoop-brand-start 0%, $hadoop-brand-end 100%);
+        background: -webkit-linear-gradient(top,  $hadoop-brand-start 0%,$hadoop-brand-end 100%);
+        background: linear-gradient(to bottom,  $hadoop-brand-start 0%,$hadoop-brand-end 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$hadoop-brand-start', endColorstr='$hadoop-brand-end',GradientType=0 );
+
+
+        .inner-wrapper {
+            @media only screen and (min-width: $breakpoint-medium) {
+                background-image: url('static/gui/build/app/assets/images/store/hadoop-elephant.png');
+                background-repeat: no-repeat;
+                background-position: right 40px;
+                background-size: 35%;
+            }
+        }
+
+        a {
+            color: white;
+        }
+    }
+
+    .row--write-your-own .inner-wrapper {
+        @media only screen and (min-width: $breakpoint-medium) {
+            background-image: url("static/gui/build/app/assets/images/store/write-your-own.png");
+            background-size: 50%;
+        }
+    }
+
+    .row--charm-and-bundle {
+      padding-top: 0;
+    }
+}

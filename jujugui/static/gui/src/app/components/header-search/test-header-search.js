@@ -187,7 +187,7 @@ describe('HeaderSearch', function() {
   it('searches when clicking search button if the input is open', function() {
     var getAppState = sinon.stub().returns({
       search: 'apache2',
-      activeComponent: 'mid-point'
+      activeComponent: 'store'
     });
     var changeState = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
