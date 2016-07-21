@@ -138,6 +138,7 @@ describe('Charmbrowser', function() {
         makeEntityModel={makeEntityModel}
         utils={utils}
         renderMarkdown={sinon.stub()}
+        staticURL='surl'
         series={seriesList}/>, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -150,10 +151,7 @@ describe('Charmbrowser', function() {
           <div className="charmbrowser"
             ref="charmbrowser">
             <juju.components.Store
-              makeEntityModel={makeEntityModel}
-              charmstoreSearch={charmstoreSearch}
-              getName={utils.getName}
-              seriesList={seriesList}
+              staticURL='surl'
               changeState={changeState} />
           </div>
         </juju.components.Panel>);

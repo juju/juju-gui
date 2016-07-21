@@ -39,6 +39,7 @@ YUI.add('charmbrowser-component', function() {
       makeEntityModel: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
       series: React.PropTypes.object.isRequired,
+      staticURL: React.PropTypes.string,
       utils: React.PropTypes.object.isRequired
     },
 
@@ -123,11 +124,8 @@ YUI.add('charmbrowser-component', function() {
         case 'store':
           activeChild = (
               <juju.components.Store
-                charmstoreSearch={this.props.charmstoreSearch}
                 changeState={this.props.changeState}
-                getName={utils.getName}
-                seriesList={this.props.series}
-                makeEntityModel={this.props.makeEntityModel} />
+                staticURL={this.props.staticURL} />
           );
           break;
         case 'search-results':

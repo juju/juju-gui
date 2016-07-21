@@ -22,7 +22,8 @@ YUI.add('store', function() {
 
   juju.components.Store = React.createClass({
     propTypes: {
-      changeState: React.PropTypes.func.isRequired
+      changeState: React.PropTypes.func.isRequired,
+      staticURL: React.PropTypes.string
     },
 
     /**
@@ -33,7 +34,9 @@ YUI.add('store', function() {
       @return {String} A path to the local asset
     */
     _generateLocalImagePath: function(filename) {
-      return `/static/gui/build/app/assets/images/store/${filename}`;
+      var staticURL = this.props.staticURL || '';
+      var basePath = `${staticURL}/static/gui/build/app/assets/images/store/`;
+      return basePath + filename;
     },
 
     /**
