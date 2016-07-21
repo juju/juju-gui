@@ -32,7 +32,9 @@ YUI.add('inspector-plan', function() {
 
       @method _navigatePlans
     */
-    _navigatePlans: function() {},
+    _navigatePlans: function() {
+      console.log('not implemented yet');
+    },
 
     /**
       Generates the footer buttons for the UI depending on if the application
