@@ -52,20 +52,21 @@ YUI.add('service-overview', function() {
     },
 
     componentWillMount: function() {
-      if (!this.props.displayPlans) {
+      var props = this.props;
+      if (!props.displayPlans) {
         // If we aren't in a Juju 2 model then do not query for
         // or display the plans.
         return;
       }
 
-      if (!this.props.charm.hasMetrics()) {
+      if (!props.charm.hasMetrics()) {
         // Do not request or update the plans if this charm doesn't
         // have any metrics.
         return;
       }
 
-      var service = this.props.service;
-      var plans = this.props.charm.get('plans');
+      var service = props.service;
+      var plans = props.charm.get('plans');
       var activePlan = service.get('activePlan');
 
       if (plans || activePlan) {
@@ -78,8 +79,8 @@ YUI.add('service-overview', function() {
         // If we don't have the plans or the activePlan then make a request
         // to fetch them. This is a fallback as the UI should handle
         // insufficient data transparently.
-        this.props.showActivePlan(
-          this.props.modelUUID,
+        props.showActivePlan(
+          props.modelUUID,
           service.get('name'),
           (err, activePlan, plans) => {
             if (err) {
