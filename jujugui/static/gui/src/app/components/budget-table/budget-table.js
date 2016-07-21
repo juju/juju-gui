@@ -22,7 +22,9 @@ YUI.add('budget-table', function() {
 
   juju.components.BudgetTable = React.createClass({
     propTypes: {
-      acl: React.PropTypes.object.isRequired
+      acl: React.PropTypes.object.isRequired,
+      allocationEditable: React.PropTypes.bool,
+      plansEditable: React.PropTypes.bool
     },
 
     /**
@@ -32,54 +34,39 @@ YUI.add('budget-table', function() {
      @returns {Array} The list of services.
     */
     _generateServices: function() {
-      var disabled = this.props.acl.isReadOnly();
-      return [1, 2].map((service, i) => {
+      return [{}, {}].map((service, i) => {
         return (
-          <div className="budget-table__row twelve-col"
-            key={i}>
-            <div className="three-col">
-              <img className="budget-table__charm-icon"
-                src={
-                  'https://api.staging.jujucharms.com/charmstore/v4/' +
-                  'trusty/landscape-server-14/icon.svg'} />
-              Landscape
-            </div>
-            <div className="two-col">
-              4
-            </div>
-            <div className="three-col">
-              You need to choose a plan.
-            </div>
-            <div className="two-col">
-            </div>
-            <div className="two-col last-col">
-              <div className="budget-table__edit">
-                <juju.components.GenericButton
-                  action={() => {}}
-                  disabled={disabled}
-                  type="neutral"
-                  title="Edit" />
-              </div>
-            </div>
-          </div>);
+          <juju.components.BudgetTableRow
+            acl={this.props.acl}
+            key={i}
+            allocationEditable={this.props.allocationEditable}
+            plansEditable={this.props.plansEditable}
+            service={service} />);
       });
     },
 
     render: function() {
+      var plansEditable = this.props.plansEditable;
       return (
         <div className="budget-table">
           <div className="budget-table__row-header twelve-col">
             <div className="three-col">
               Name
             </div>
-            <div className="two-col">
+            <div className="one-col">
               Units
             </div>
             <div className="three-col">
               Details
             </div>
-            <div className="four-col last-col">
+            <div className={plansEditable ? 'one-col' : 'two-col'}>
+              Usage
+            </div>
+            <div className={plansEditable ? 'one-col' : 'two-col'}>
               Allocation
+            </div>
+            <div className="one-col last-col">
+              Spend
             </div>
           </div>
           {this._generateServices()}
@@ -91,6 +78,6 @@ YUI.add('budget-table', function() {
 
 }, '0.1.0', {
   requires: [
-    'generic-button'
+    'budget-table-row'
   ]
 });
