@@ -724,7 +724,7 @@ YUI.add('juju-gui', function(Y) {
         msg = (
           <p>
             Find your username and password with<br />
-            <code>juju show-controller --show-passwords</code>
+            <code>juju show-controller --show-password</code>
           </p>);
         // In Juju 2 logging in with macaroons could also be available.
         var bakery = new Y.juju.environments.web.Bakery({
