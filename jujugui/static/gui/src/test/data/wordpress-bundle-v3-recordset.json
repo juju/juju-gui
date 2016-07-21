@@ -1,7 +1,8 @@
 [
    {
       "args":[
-         "cs:precise/wordpress-27"
+         "cs:precise/wordpress-27",
+         "precise"
       ],
       "requires":[
 
@@ -12,10 +13,9 @@
    {
       "args":[
          "cs:precise/wordpress-27",
+         "precise",
          "wordpress",
-         {
-
-         }
+         {}
       ],
       "requires":[
          "addCharm-0"
@@ -40,7 +40,8 @@
    },
    {
       "args":[
-         "cs:precise/mysql-51"
+         "cs:precise/mysql-51",
+         "precise"
       ],
       "requires":[
 
@@ -51,10 +52,9 @@
    {
       "args":[
          "cs:precise/mysql-51",
+         "precise",
          "mysql",
-         {
-
-         }
+         {}
       ],
       "requires":[
          "addCharm-3"

@@ -430,12 +430,19 @@ YUI.add('bundle-importer', function(Y) {
         'success': function(charm) {
           // We have to set the name for the service because some bundles
           // specify multiples of the same charms as different names.
-          var displayName = record.args[1];
+          var displayName = record.args[2];
           var ghostService = this.db.services.ghostService(charm, displayName);
           // The service name may have been updated to prevent collisions, so
           // update the record with the new name.
-          record.args[1] = ghostService.get('name');
-
+          record.args[2] = ghostService.get('name');
+          // If the series is not provided in the recordset returned from the
+          // bundle parsing then grab the preferred one from the charm.
+          var series = record.args[1];
+          var charmSeries = charm.get('series');
+          if (!series) {
+            series = Array.isArray(charmSeries) ? charmSeries[0] : charmSeries;
+          }
+          ghostService.set('series', series);
           if (record.annotations) {
             ghostService.annotations['gui-x'] = record.annotations['gui-x'];
             ghostService.annotations['gui-y'] = record.annotations['gui-y'];
@@ -448,8 +455,8 @@ YUI.add('bundle-importer', function(Y) {
           var charmOptions = charm.get('options');
           if (charmOptions) {
             Object.keys(charmOptions).forEach(function(key) {
-              if (record.args[2][key]) {
-                config[key] = record.args[2][key];
+              if (record.args[3][key]) {
+                config[key] = record.args[3][key];
               } else {
                 var value = charmOptions[key];
                 config[key] = value['default'];
@@ -458,7 +465,7 @@ YUI.add('bundle-importer', function(Y) {
           }
           ghostService.set('config', config);
 
-          var constraints = record.args[3] || {};
+          var constraints = record.args[4] || {};
 
           this.env.deploy(
               // Utilize the charm's id, as bundles may specify charms without
@@ -466,8 +473,9 @@ YUI.add('bundle-importer', function(Y) {
               // allows bundles to use charms without revisions, effectively
               // requesting the most recent charm.
               charm.get('id'),
-              record.args[1],
+              series,
               record.args[2],
+              record.args[3],
               undefined, // Config file content.
               0, // Number of units.
               constraints, // Constraints.

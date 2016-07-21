@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe.skip('Bundle Importer', function() {
+describe('Bundle Importer', function() {
   var bundleImporter, BundleImporter, db, env, fakebackend, models,
       utils, yui;
 
@@ -326,7 +326,7 @@ describe.skip('Bundle Importer', function() {
 
   describe('Changeset execution', function() {
 
-    it('Sets up the correct environment (v4 Integration)', function(done) {
+    it('Sets up the correct environment (v5 Integration)', function(done) {
       var data = utils.loadFixture(
           'data/wordpress-bundle-recordset.json', true);
       bundleImporter.db.after('bundleImportComplete', function() {
