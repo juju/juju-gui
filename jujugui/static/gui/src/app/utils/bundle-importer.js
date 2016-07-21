@@ -332,7 +332,6 @@ YUI.add('bundle-importer', function(Y) {
       @param {Array} records The list of records in the recordSet.
     */
     _executeRecord: function(record, records) {
-      console.log('======================= EXECUTING', record);
       var method = this['_execute_' + record.method];
       if (typeof method === 'function') {
         this['_execute_' + record.method](
@@ -456,8 +455,8 @@ YUI.add('bundle-importer', function(Y) {
           var charmOptions = charm.get('options');
           if (charmOptions) {
             Object.keys(charmOptions).forEach(function(key) {
-              if (record.args[2][key]) {
-                config[key] = record.args[2][key];
+              if (record.args[3][key]) {
+                config[key] = record.args[3][key];
               } else {
                 var value = charmOptions[key];
                 config[key] = value['default'];
@@ -466,7 +465,7 @@ YUI.add('bundle-importer', function(Y) {
           }
           ghostService.set('config', config);
 
-          var constraints = record.args[3] || {};
+          var constraints = record.args[4] || {};
 
           this.env.deploy(
               // Utilize the charm's id, as bundles may specify charms without
