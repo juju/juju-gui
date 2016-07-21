@@ -198,7 +198,7 @@ YUI.add('user-profile', function() {
           model.owner = model.ownerTag;
           return model;
         });
-      } else {
+      } else if (data.map) {
         modelList = data.map(function(model) {
           // XXX kadams54: JEM models don't *currently* have a name or owner.
           // They have a path which is a combination of both, but that format
@@ -790,7 +790,7 @@ YUI.add('user-profile', function() {
             <juju.components.Spinner />
           </div>);
       }
-      if (list.length === 0) {
+      if (!list || list.length === 0) {
         return;
       }
       var generateRow;
@@ -842,6 +842,17 @@ YUI.add('user-profile', function() {
     },
 
     /**
+      Return a list's length or default to 0, in a manner that doesn't fall
+      over when confronted with a null list.
+
+      @method _safeCount
+      @returns {Array} The list.
+    */
+    _safeCount: function(list) {
+      return (list && list.length) || 0;
+    },
+
+    /**
       Generate the content for the panel.
 
       @method _generateContent
@@ -850,17 +861,25 @@ YUI.add('user-profile', function() {
     _generateContent: function() {
       var state = this.state;
       // We can't be loading anything, and all the lists must be empty.
-      var isEmpty = !state.loadingBundles
-                    && !state.loadingAgreements
-                    && !state.loadingBudgets
-                    && !state.loadingCharms
-                    && !state.loadingModels
-                    && state.agreementList.length === 0
-                    && state.budgetList.length === 0
-                    && state.bundleList.length === 0
-                    && state.charmList.length === 0
-                    && state.envList.length === 0;
-      if (isEmpty) {
+      var isLoaded = !state.loadingBundles
+                     && !state.loadingAgreements
+                     && !state.loadingBudgets
+                     && !state.loadingCharms
+                     && !state.loadingModels;
+      var agreementCount = this._safeCount(state.agreementList);
+      var budgetCount = this._safeCount(state.budgetList);
+      var bundleCount = this._safeCount(state.bundleList);
+      var charmCount = this._safeCount(state.charmList);
+      var envCount = this._safeCount(state.envList);
+      var isEmpty = agreementCount === 0
+                    && budgetCount === 0
+                    && bundleCount === 0
+                    && charmCount === 0
+                    && envCount === 0;
+      if (isLoaded && isEmpty) {
+        var header = 'Your profile is currently empty';
+        var message = 'Your models, bundles and charms will appear here when'
+                      + ' you create them.';
         var staticURL = this.props.staticURL || '';
         var basePath = `${staticURL}/static/gui/build/app`;
         return (
@@ -871,13 +890,8 @@ YUI.add('user-profile', function() {
                 className="user-profile__empty-image"
                 src=
                   {`${basePath}/assets/images/non-sprites/empty_profile.png`} />
-              <h2 className="user-profile__empty-title">
-                Your profile is currently empty
-              </h2>
-              <p className="user-profile__empty-text">
-                Your models, bundles and charms will appear here when you create
-                them.
-              </p>
+              <h2 className="user-profile__empty-title">{header}</h2>
+              <p className="user-profile__empty-text">{message}</p>
             </div>
           </div>);
       }
@@ -896,9 +910,10 @@ YUI.add('user-profile', function() {
 
     render: function() {
       var username = this.props.user && this.props.user.usernameDisplay;
-      var bundleCount = this.state.bundleList.length;
-      var charmCount = this.state.charmList.length;
-      var modelCount = this.state.envList.length;
+      var state = this.state;
+      var bundleCount = this._safeCount(state.bundleList);
+      var charmCount = this._safeCount(state.charmList);
+      var modelCount = this._safeCount(state.envList);
       var pluralize = this.props.pluralize;
       var links = [{
         label: `${modelCount} ${pluralize('model', modelCount)}`
