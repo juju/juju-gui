@@ -37,7 +37,8 @@ describe('ExpandingRow', () => {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <li className="expanding-row twelve-col extraClass"
+      <li className={
+        'expanding-row twelve-col extraClass expanding-row--clickable'}
         onClick={instance._toggle}>
         <div className="expanding-row__initial twelve-col no-margin-bottom">
           <span>closed</span>
@@ -66,7 +67,9 @@ describe('ExpandingRow', () => {
     output.props.onClick();
     output = renderer.getRenderOutput();
     var expected = (
-      <li className="expanding-row twelve-col expanding-row--expanded"
+      <li className={
+          'expanding-row twelve-col expanding-row--expanded ' +
+          'expanding-row--clickable'}
         onClick={instance._toggle}>
         {output.props.children}
       </li>);
@@ -88,8 +91,62 @@ describe('ExpandingRow', () => {
     instance.componentDidMount();
     var output = renderer.getRenderOutput();
     var expected = (
-      <li className="expanding-row twelve-col expanding-row--expanded"
+      <li className={
+        'expanding-row twelve-col expanding-row--expanded ' +
+        'expanding-row--clickable'}
         onClick={instance._toggle}>
+        {output.props.children}
+      </li>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can update to be expanded', () => {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.ExpandingRow
+        expanded={false}>
+        <span>closed</span>
+        <span>open</span>
+      </juju.components.ExpandingRow>, true);
+    var instance = renderer.getMountedInstance();
+    // Mock the ref.
+    instance.refs = {inner: {offsetHeight: 10}};
+    // The shallow renderer does not call componentDidMount, so call it
+    // manually.
+    instance.componentDidMount();
+    var output = renderer.getRenderOutput();
+    output = renderer.render(
+      <juju.components.ExpandingRow
+        expanded={true}>
+        <span>closed</span>
+        <span>open</span>
+      </juju.components.ExpandingRow>);
+    var expected = (
+      <li className={
+        'expanding-row twelve-col expanding-row--expanded ' +
+        'expanding-row--clickable'}
+        onClick={instance._toggle}>
+        {output.props.children}
+      </li>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can be not clickable', () => {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.ExpandingRow
+        clickable={false}>
+        <span>closed</span>
+        <span>open</span>
+      </juju.components.ExpandingRow>, true);
+    var instance = renderer.getMountedInstance();
+    // Mock the ref.
+    instance.refs = {inner: {offsetHeight: 10}};
+    // The shallow renderer does not call componentDidMount, so call it
+    // manually.
+    instance.componentDidMount();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <li className="expanding-row twelve-col"
+        onClick={undefined}>
         {output.props.children}
       </li>);
     assert.deepEqual(output, expected);
