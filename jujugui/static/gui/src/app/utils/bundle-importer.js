@@ -332,6 +332,7 @@ YUI.add('bundle-importer', function(Y) {
       @param {Array} records The list of records in the recordSet.
     */
     _executeRecord: function(record, records) {
+      console.log('======================= EXECUTING', record);
       var method = this['_execute_' + record.method];
       if (typeof method === 'function') {
         this['_execute_' + record.method](

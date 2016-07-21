@@ -48,6 +48,7 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
       var charms = this._fetchCharmData();
       var fakeBakery = {
         sendGetRequest: function(path, success, failure) {
+          console.log('======================= PATH:', path)
           // Remove the includes and the charmstore path.
           path = path.split('/meta/any')[0].replace('local/v5/', '');
           // Get just the charm name
@@ -66,6 +67,8 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
         }
       };
       var fakeCharmstore = new window.jujulib.charmstore('local/', fakeBakery);
+      console.log('=========================== CS API:', window.jujulib.charmstoreAPIVersion);
+      console.log('=========================== CS URL:', fakeCharmstore.url);
       // We need to stub out the _makeRequest method so that we can simulate
       // api responses from the server.
       return fakeCharmstore;
