@@ -152,8 +152,12 @@ YUI.add('user-profile', function() {
     _listBudgetsCallback: function(error, data) {
       this.setState({loadingBudgets: false});
       if (error) {
-        // TODO huwshimi: notify the user with the error.
-        console.error('cannot retrieve terms:', error);
+        if (error.indexOf('not found') === -1) {
+          // A "profile not found" error is expected, and it means the user
+          // does not have a credit limit yet. Notify any other errors.
+          // TODO huwshimi: notify the user with the error.
+          console.error('cannot retrieve budgets:', error);
+        }
         return;
       }
       this.setState({budgetList: data.budgets});
@@ -555,9 +559,10 @@ YUI.add('user-profile', function() {
     _generateBundleRow: function(bundle) {
       var id = bundle.id;
       var services = [];
-      var serviceNames = Object.keys(bundle.services);
+      var applications = bundle.applications || bundle.services || {};
+      var serviceNames = Object.keys(applications);
       serviceNames.forEach((serviceName, idx) => {
-        var service = bundle.services[serviceName];
+        var service = applications[serviceName];
         var id = service.charm;
         var key = `icon-${idx}-${id}`;
         services.push(

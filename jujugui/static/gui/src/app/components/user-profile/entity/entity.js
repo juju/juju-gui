@@ -231,8 +231,8 @@ YUI.add('user-profile-entity', function() {
       }
       var entity = this.props.entity;
       var services = [];
-      var names = Object.keys(entity.services);
-      names.forEach((name) => {
+      var applications = entity.applications || entity.services || {};
+      Object.keys(applications).forEach((name) => {
         services.push(
           <li className="user-profile__comma-item"
             key={entity.id + '-service-' + name}>
