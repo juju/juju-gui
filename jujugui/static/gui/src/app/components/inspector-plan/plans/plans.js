@@ -90,7 +90,8 @@ YUI.add('inspector-plans', function() {
 
       @method _showPlan
     */
-    _showPlan: function() {
+    _showPlan: function(plan) {
+      this.props.service.set('activePlan', plan);
       this.props.changeState({
         sectionA: {
           component: 'inspector',
@@ -118,7 +119,7 @@ YUI.add('inspector-plans', function() {
       var plans = this.state.plans.map((plan) => {
         return (
           <li className="inspector-plan__details inspector-plans__list-plan"
-            onClick={this._showPlan}
+            onClick={this._showPlan.bind(this, plan)}
             key={plan.url}>
             <div className="inspector-plan__title">{plan.url}</div>
             <div className="inspector-plan__price">{plan.price}</div>
