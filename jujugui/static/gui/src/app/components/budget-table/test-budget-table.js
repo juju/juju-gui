@@ -36,10 +36,12 @@ describe('BudgetTable', function() {
   });
 
   it('can render', function() {
+    var listPlansForCharm = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTable
         acl={acl}
         allocationEditable={false}
+        listPlansForCharm={listPlansForCharm}
         plansEditable={false}
         services={[{}, {}]} />, true);
     var output = renderer.getRenderOutput();
@@ -69,23 +71,27 @@ describe('BudgetTable', function() {
             acl={acl}
             key={0}
             allocationEditable={false}
+            listPlansForCharm={listPlansForCharm}
             plansEditable={false}
             service={{}} />,
           <juju.components.BudgetTableRow
-              acl={acl}
-              key={1}
-              allocationEditable={false}
-              plansEditable={false}
-              service={{}} />]}
+            acl={acl}
+            key={1}
+            allocationEditable={false}
+            listPlansForCharm={listPlansForCharm}
+            plansEditable={false}
+            service={{}} />]}
       </div>);
     assert.deepEqual(output, expected);
   });
 
   it('can display editable plans', function() {
+    var listPlansForCharm = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetTable
         acl={acl}
         allocationEditable={false}
+        listPlansForCharm={listPlansForCharm}
         plansEditable={true}
         services={[{}, {}]} />, true);
     var output = renderer.getRenderOutput();
@@ -115,12 +121,14 @@ describe('BudgetTable', function() {
             acl={acl}
             key={0}
             allocationEditable={false}
+            listPlansForCharm={listPlansForCharm}
             plansEditable={true}
             service={{}} />,
           <juju.components.BudgetTableRow
               acl={acl}
               key={1}
               allocationEditable={false}
+              listPlansForCharm={listPlansForCharm}
               plansEditable={true}
               service={{}} />]}
       </div>);

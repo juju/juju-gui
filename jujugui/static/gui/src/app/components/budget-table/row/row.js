@@ -24,7 +24,7 @@ YUI.add('budget-table-row', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       allocationEditable: React.PropTypes.bool,
-      listPlansForCharm: React.PropTypes.func.isRequired,
+      listPlansForCharm: React.PropTypes.func,
       plansEditable: React.PropTypes.bool,
       service: React.PropTypes.object.isRequired
     },
@@ -40,7 +40,7 @@ YUI.add('budget-table-row', function() {
       };
     },
 
-    componentDidMount: function() {
+    componentWillMount: function() {
       this._getPlans();
     },
 
@@ -58,7 +58,7 @@ YUI.add('budget-table-row', function() {
       this.setState({plansLoading: true}, () => {
         this.plansXHR = this.props.listPlansForCharm(
           this.props.service.get('charm'), this._getPlansCallback);
-      })  ;
+      });
     },
 
     /**
@@ -140,7 +140,7 @@ YUI.add('budget-table-row', function() {
      @returns {Object} The plan form.
     */
     _generateChangePlan: function() {
-      if (!this.props.plansEditable) {
+      if (!this.props.plansEditable || this.state.plans.length === 0) {
         return;
       }
       return (
@@ -163,7 +163,7 @@ YUI.add('budget-table-row', function() {
      @returns {Object} The edit component.
     */
     _generateEdit: function() {
-      if (!this.props.plansEditable) {
+      if (!this.props.plansEditable || this.state.plans.length === 0) {
         return;
       }
       var disabled = this.props.acl.isReadOnly();
@@ -254,7 +254,8 @@ YUI.add('budget-table-row', function() {
         'budget-table-row': true,
         'twelve-col': true
       };
-      var editableWidth = plansEditable ? 'one-col' : 'two-col';
+      var editableWidth = !plansEditable ?
+        'two-col' : 'one-col';
       return (
         <juju.components.ExpandingRow
           classes={classes}
@@ -271,7 +272,8 @@ YUI.add('budget-table-row', function() {
             <div className={editableWidth + ' no-margin-bottom'}>
               {this._generateAllocation()}
             </div>
-            <div className="one-col no-margin-bottom">
+            <div className={
+              'one-col no-margin-bottom' + (plansEditable ? '' : ' last-col')}>
               $1
             </div>
             {this._generateEdit()}

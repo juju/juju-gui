@@ -45,11 +45,13 @@ describe('DeploymentServices', function() {
   });
 
   it('can render', function() {
+    var listPlansForCharm = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentServices
         acl={acl}
         changes={changes}
         cloud='azure'
+        listPlansForCharm={listPlansForCharm}
         servicesGetById={servicesGetById} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -96,6 +98,7 @@ describe('DeploymentServices', function() {
           <juju.components.BudgetTable
             acl={acl}
             allocationEditable={true}
+            listPlansForCharm={listPlansForCharm}
             plansEditable={true}
             services={[{service: 'apache2'}, {service: 'mysql'}]} />
           <div className="prepend-seven">
@@ -110,12 +113,14 @@ describe('DeploymentServices', function() {
   });
 
   it('can disable controls when read only', function() {
+    var listPlansForCharm = sinon.stub();
     acl.isReadOnly = sinon.stub().returns(true);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentServices
         acl={acl}
         changes={changes}
         cloud='azure'
+        listPlansForCharm={listPlansForCharm}
         servicesGetById={servicesGetById} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -162,6 +167,7 @@ describe('DeploymentServices', function() {
           <juju.components.BudgetTable
             acl={acl}
             allocationEditable={true}
+            listPlansForCharm={listPlansForCharm}
             plansEditable={true}
             services={[{service: 'apache2'}, {service: 'mysql'}]} />
           <div className="prepend-seven">
