@@ -54,6 +54,7 @@ YUI.add('inspector-plans', function() {
     */
     _getPlans: function() {
       this.setState({plansLoading: true}, () => {
+        // TODO: Use the existing list of plans on a charm if it exists.
         this.plansXHR = this.props.listPlansForCharm(
           this.props.service.get('charm'), this._getPlansCallback);
       })  ;
@@ -64,7 +65,14 @@ YUI.add('inspector-plans', function() {
 
       @method _getPlansCallback
       @param {String} error An error message, or null if there's no error.
-      @param {Array} models A list of the plans found.
+      @param {Array} plans A list of the plans found. The plans have the
+        following attributes:
+          - url: the plan URL, like "canonical-landscape/24-7";
+          - price: the price for this plan;
+          - description: a text describing the plan;
+          - createdAt: a date object with the plan creation time;
+          - yaml: the YAML content for the plan
+            (not really useful in this context).
     */
     _getPlansCallback: function(error, plans) {
       if (error) {
@@ -98,7 +106,7 @@ YUI.add('inspector-plans', function() {
       Generate a list of plans.
 
       @method _generatePlans
-      @return {Function} The React elements for the UI.
+      @return {Object} The React elements for the UI.
     */
     _generatePlans: function() {
       if (this.state.plansLoading) {
