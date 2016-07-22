@@ -39,7 +39,14 @@ describe('ServiceOverview', function() {
         };
       }};
     fakeCharm = {
-      hasMetrics: sinon.stub().returns(true)
+      hasMetrics: sinon.stub().returns(true),
+      get: function() {
+        return {
+          toArray: function() {
+            return [];
+          }
+        };
+      }
     };
   });
 
@@ -66,7 +73,14 @@ describe('ServiceOverview', function() {
       get: getStub
     };
     var charm = {
-      hasMetrics: sinon.stub().returns(false)
+      hasMetrics: sinon.stub().returns(false),
+      get: function() {
+        return {
+          toArray: function() {
+            return [];
+          }
+        };
+      }
     };
     var showActivePlan = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
