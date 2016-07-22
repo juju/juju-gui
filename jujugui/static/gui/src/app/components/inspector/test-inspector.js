@@ -1149,7 +1149,9 @@ describe('Inspector', function() {
     assert.deepEqual(children,
         <juju.components.InspectorPlan
           acl={acl}
-          currentPlan={activePlan} />);
+          changeState={changeState}
+          currentPlan={activePlan}
+          service={service} />);
   });
 
   it('displays Change versions when the app state calls for it', function() {
