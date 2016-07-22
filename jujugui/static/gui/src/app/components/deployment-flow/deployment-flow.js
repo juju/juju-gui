@@ -23,7 +23,9 @@ YUI.add('deployment-flow', function() {
   juju.components.DeploymentFlow = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      changeState: React.PropTypes.func.isRequired
+      changeState: React.PropTypes.func.isRequired,
+      changes: React.PropTypes.object.isRequired,
+      servicesGetById: React.PropTypes.func.isRequired
     },
 
     CLOUDS: {
@@ -118,7 +120,9 @@ YUI.add('deployment-flow', function() {
                     cloud={this.state.cloud && this.CLOUDS[this.state.cloud]} />
                   <juju.components.DeploymentServices
                     acl={this.props.acl}
-                    cloud={this.state.cloud} />
+                    changes={this.props.changes}
+                    cloud={this.state.cloud}
+                    servicesGetById={this.props.servicesGetById} />
                   <div className="twelve-col">
                     <div className="deployment-flow__deploy">
                       <div className="deployment-flow__deploy-option">

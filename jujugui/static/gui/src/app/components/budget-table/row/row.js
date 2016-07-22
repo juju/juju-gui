@@ -164,17 +164,16 @@ YUI.add('budget-table-row', function() {
      @returns {Object} The fields markup.
     */
     _generateSharedFields: function() {
+      var service = this.props.service;
       return (
         <div>
           <div className="three-col">
             <img className="budget-table__charm-icon"
-              src={
-                'https://api.staging.jujucharms.com/charmstore/v4/' +
-                'trusty/landscape-server-14/icon.svg'} />
-            Landscape
+              src={service.get('icon')} />
+            {service.get('name')}
           </div>
           <div className="one-col">
-            4
+            {service.get('unit_count')}
           </div>
         </div>);
     },

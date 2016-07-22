@@ -23,7 +23,26 @@ YUI.add('deployment-services', function() {
   juju.components.DeploymentServices = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      cloud: React.PropTypes.string
+      changes: React.PropTypes.object.isRequired,
+      cloud: React.PropTypes.string,
+      servicesGetById: React.PropTypes.func.isRequired
+    },
+
+    /**
+      Create a list of services from the change set.
+
+      @method _getServices
+      @returns {Array} A list of services.
+    */
+    _getServices: function() {
+      var addedServices = this.props.changes['_deploy'];
+      if (!addedServices) {
+        return [];
+      }
+      return Object.keys(addedServices).map((change) => {
+        return this.props.servicesGetById(
+          addedServices[change].command.options.modelId);
+      });
     },
 
     render: function() {
@@ -70,7 +89,8 @@ YUI.add('deployment-services', function() {
             <juju.components.BudgetTable
               acl={this.props.acl}
               allocationEditable={true}
-              plansEditable={true} />
+              plansEditable={true}
+              services={this._getServices()} />
             <div className="prepend-seven">
               Maximum monthly spend:&nbsp;
               <span className="deployment-services__plans-max">

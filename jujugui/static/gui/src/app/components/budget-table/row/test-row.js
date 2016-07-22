@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('BudgetTableRow', function() {
-  var acl;
+  var acl, service;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,6 +33,21 @@ describe('BudgetTableRow', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    service = {
+      get: (val) => {
+        switch (val) {
+          case 'name':
+            return 'Landscape';
+            break;
+          case 'icon':
+            return 'landscape.svg';
+            break;
+          case 'unit_count':
+            return 4;
+            break;
+        }
+      }
+    };
   });
 
   it('can render', function() {
@@ -41,7 +56,7 @@ describe('BudgetTableRow', function() {
         acl={acl}
         allocationEditable={false}
         plansEditable={false}
-        service={{}} />, true);
+        service={service} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.ExpandingRow
@@ -55,13 +70,11 @@ describe('BudgetTableRow', function() {
           <div>
             <div className="three-col">
               <img className="budget-table__charm-icon"
-                src={
-                  'https://api.staging.jujucharms.com/charmstore/v4/' +
-                  'trusty/landscape-server-14/icon.svg'} />
+                src="landscape.svg" />
               Landscape
             </div>
             <div className="one-col">
-              4
+              {4}
             </div>
           </div>
           <div className="three-col">
@@ -91,7 +104,7 @@ describe('BudgetTableRow', function() {
         acl={acl}
         allocationEditable={false}
         plansEditable={true}
-        service={{}} />, true);
+        service={service} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -106,13 +119,11 @@ describe('BudgetTableRow', function() {
           <div>
             <div className="three-col">
               <img className="budget-table__charm-icon"
-                src={
-                  'https://api.staging.jujucharms.com/charmstore/v4/' +
-                  'trusty/landscape-server-14/icon.svg'} />
+                src="landscape.svg" />
               Landscape
             </div>
             <div className="one-col">
-              4
+              {4}
             </div>
           </div>
           <div className="three-col">
@@ -143,13 +154,11 @@ describe('BudgetTableRow', function() {
               <div>
                 <div className="three-col">
                   <img className="budget-table__charm-icon"
-                    src={
-                      'https://api.staging.jujucharms.com/charmstore/v4/' +
-                      'trusty/landscape-server-14/icon.svg'} />
+                    src="landscape.svg" />
                   Landscape
                 </div>
                 <div className="one-col">
-                  4
+                  {4}
                 </div>
               </div>
             </div>
@@ -212,7 +221,7 @@ describe('BudgetTableRow', function() {
         acl={acl}
         allocationEditable={false}
         plansEditable={true}
-        service={{}} />, true);
+        service={service} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -227,13 +236,11 @@ describe('BudgetTableRow', function() {
           <div>
             <div className="three-col">
               <img className="budget-table__charm-icon"
-                src={
-                  'https://api.staging.jujucharms.com/charmstore/v4/' +
-                  'trusty/landscape-server-14/icon.svg'} />
+                src="landscape.svg" />
               Landscape
             </div>
             <div className="one-col">
-              4
+              {4}
             </div>
           </div>
           <div className="three-col">
@@ -264,13 +271,11 @@ describe('BudgetTableRow', function() {
               <div>
                 <div className="three-col">
                   <img className="budget-table__charm-icon"
-                    src={
-                      'https://api.staging.jujucharms.com/charmstore/v4/' +
-                      'trusty/landscape-server-14/icon.svg'} />
+                    src="landscape.svg" />
                   Landscape
                 </div>
                 <div className="one-col">
-                  4
+                  {4}
                 </div>
               </div>
             </div>

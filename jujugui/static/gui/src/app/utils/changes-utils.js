@@ -51,12 +51,34 @@ YUI.add('changes-utils', function(Y) {
   };
 
   /**
+    Group the ecs changes by method type.
+
+    @method getGroupedChanges
+    @param {Object} changeSet The current environment change set.
+    @returns {Object} The grouped ecs changes.
+  */
+  ChangesUtils.getGroupedChanges = function(changeSet) {
+    var changes = {};
+    Object.keys(changeSet).forEach((key) => {
+      var change = changeSet[key];
+      var method = change.command && change.command.method;
+      if (method) {
+        if (!changes[method]) {
+          changes[method] = {};
+        }
+        changes[method][key] = change;
+      }
+    }, this);
+    return changes;
+  };
+
+  /**
     Return a list of all change descriptions.
 
     @method generateAllChangeDescriptions
+    @param {Object} changeSet The current environment change set.
     @param {Object} services The list of services from the db.
     @param {Object} units The list of units from the db.
-    @param {Object} changeSet The current environment change set.
   */
   ChangesUtils.generateAllChangeDescriptions = function(changeSet, services,
                                                         units) {

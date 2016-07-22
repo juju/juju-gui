@@ -255,4 +255,21 @@ describe('ChangesUtils', function() {
       total: 3
     });
   });
+
+  it('can group the ecs change by type', function() {
+    var changeSet = {
+      one: {command: {method: 'addMachine'}},
+      two: {command: {method: 'addUnit'}},
+      three: {command: {method: 'addMachine'}}
+    };
+    assert.deepEqual(changesUtils.getGroupedChanges(changeSet), {
+      addUnit: {
+        two: {command: {method: 'addUnit'}}
+      },
+      addMachine: {
+        one: {command: {method: 'addMachine'}},
+        three: {command: {method: 'addMachine'}}
+      }
+    });
+  });
 });
