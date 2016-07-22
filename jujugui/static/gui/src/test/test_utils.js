@@ -469,6 +469,42 @@ describe('utilities', function() {
       assert.strictEqual('db', result.far.name, 'far name');
     });
 
+    it('returns unique relations between applications', function() {
+      var secondApplication = new models.Service({
+        id: 'mediawiki-a',
+        charm: 'cs:mediawiki',
+        unit_count: 1,
+        loaded: true
+      });
+      db.services.add(secondApplication);
+      db.relations.add({
+        'interface': 'mysql',
+        scope: 'global',
+        endpoints: [
+          ['mysql', {role: 'server', name: 'mydb'}],
+          ['mediawiki', {role: 'client', name: 'db'}]
+        ],
+        'id': 'relation-0000000002'
+      });
+      var results = utils.getRelationDataForService(db, service);
+      assert.strictEqual(1, results.length);
+      var results = utils.getRelationDataForService(db, service,
+        secondApplication);
+      assert.strictEqual(0, results.length);
+      db.relations.add({
+        'interface': 'mysql',
+        scope: 'global',
+        endpoints: [
+          ['mysql', {role: 'server', name: 'mydb'}],
+          ['mediawiki-a', {role: 'client', name: 'db'}]
+        ],
+        'id': 'relation-0000000003'
+      });
+      var results = utils.getRelationDataForService(db, service,
+        secondApplication);
+      assert.strictEqual(1, results.length);
+    });
+
     it('shows a juju-core rel from the perspective of a service', function() {
       db.relations.add({
         'interface': 'mysql',
