@@ -24,6 +24,7 @@ YUI.add('budget-table', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       allocationEditable: React.PropTypes.bool,
+      listPlansForCharm: React.PropTypes.func.isRequired,
       plansEditable: React.PropTypes.bool,
       services: React.PropTypes.array.isRequired
     },
@@ -41,6 +42,7 @@ YUI.add('budget-table', function() {
             acl={this.props.acl}
             key={i}
             allocationEditable={this.props.allocationEditable}
+            listPlansForCharm={this.props.listPlansForCharm}
             plansEditable={this.props.plansEditable}
             service={service} />);
       });

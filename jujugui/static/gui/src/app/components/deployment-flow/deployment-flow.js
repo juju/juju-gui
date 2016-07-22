@@ -25,6 +25,7 @@ YUI.add('deployment-flow', function() {
       acl: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       changes: React.PropTypes.object.isRequired,
+      listPlansForCharm: React.PropTypes.func.isRequired,
       servicesGetById: React.PropTypes.func.isRequired
     },
 
@@ -122,6 +123,7 @@ YUI.add('deployment-flow', function() {
                     acl={this.props.acl}
                     changes={this.props.changes}
                     cloud={this.state.cloud}
+                    listPlansForCharm={this.props.listPlansForCharm}
                     servicesGetById={this.props.servicesGetById} />
                   <div className="twelve-col">
                     <div className="deployment-flow__deploy">

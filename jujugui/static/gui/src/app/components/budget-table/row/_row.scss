@@ -1,6 +1,24 @@
 .budget-table-row {
+    margin-bottom: 6px;
+    padding: 6px 0;
+    border-bottom: 1px solid $light-mid-grey;
+
+    &:hover {
+        .budget-table__edit {
+            display: block;
+        }
+    }
+
     &__allocation-input {
         width: 100%;
         margin-top: -11px;
+    }
+
+    .expanding-row__initial {
+        height: auto;
+    }
+
+    .expanding-row__expanded {
+        margin-left: 0;
     }
 }
