@@ -58,7 +58,7 @@ describe('InspectorPlans', () => {
           buttons={[{
             title: 'Change plan',
             action: output.props.children[1].props.buttons[0].action,
-            type: 'base'
+            type: 'neutral'
           }]}/>
       </div>);
     assert.deepEqual(output, expected);

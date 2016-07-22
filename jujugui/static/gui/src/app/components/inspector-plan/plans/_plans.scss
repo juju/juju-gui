@@ -1,0 +1,15 @@
+.inspector-plans {
+    &__loading {
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    &__list {
+        @extend %list-style;
+
+        &-plan {
+            border-bottom: 1px solid $light-mid-grey;
+            cursor: pointer;
+        }
+    }
+}
