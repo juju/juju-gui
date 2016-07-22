@@ -23,8 +23,9 @@ YUI.add('inspector-plans', function() {
   juju.components.InspectorPlans = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      charm: React.PropTypes.string.isRequired,
-      listPlansForCharm: React.PropTypes.func.isRequired
+      changeState: React.PropTypes.func.isRequired,
+      listPlansForCharm: React.PropTypes.func.isRequired,
+      service: React.PropTypes.object.isRequired
     },
 
     plansXHR: null,
@@ -54,7 +55,7 @@ YUI.add('inspector-plans', function() {
     _getPlans: function() {
       this.setState({plansLoading: true}, () => {
         this.plansXHR = this.props.listPlansForCharm(
-          this.props.charm, this._getPlansCallback);
+          this.props.service.get('charm'), this._getPlansCallback);
       })  ;
     },
 
@@ -77,6 +78,23 @@ YUI.add('inspector-plans', function() {
     },
 
     /**
+      Navigate to the plan
+
+      @method _showPlan
+    */
+    _showPlan: function() {
+      this.props.changeState({
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            id: this.props.service.get('id'),
+            activeComponent: 'plan'
+          }
+        }
+      });
+    },
+
+    /**
       Generate a list of plans.
 
       @method _generatePlans
@@ -91,24 +109,15 @@ YUI.add('inspector-plans', function() {
       }
       var plans = this.state.plans.map((plan) => {
         return (
-          <div key={plan.url}>
           <li className="inspector-plan__details inspector-plans__list-plan"
-            >
+            onClick={this._showPlan}
+            key={plan.url}>
             <div className="inspector-plan__title">{plan.url}</div>
             <div className="inspector-plan__price">{plan.price}</div>
             <div className="inspector-plan__description">
               {plan.description}
             </div>
-          </li>
-          <li className="inspector-plan__details"
-            >
-            <div className="inspector-plan__title">{plan.url}</div>
-            <div className="inspector-plan__price">{plan.price}</div>
-            <div className="inspector-plan__description">
-              {plan.description}
-            </div>
-          </li>
-            </div>);
+          </li>);
       });
       return (
         <ul className="inspector-plans__list">

@@ -428,8 +428,9 @@ YUI.add('inspector-component', function() {
             component:
               <juju.components.InspectorPlans
                 acl={this.props.acl}
-                charm={service.get('charm')}
-                listPlansForCharm={this.props.listPlansForCharm} />,
+                changeState={this.props.changeState}
+                listPlansForCharm={this.props.listPlansForCharm}
+                service={service} />,
             backState: {
               sectionA: {
                 component: 'inspector',
