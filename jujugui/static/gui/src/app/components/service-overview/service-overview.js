@@ -147,6 +147,7 @@ YUI.add('service-overview', function() {
       var actions = [];
       var units = service.get('units').toArray();
       var statusCounts = this.props.getUnitStatusCounts(units);
+      var plans = this.props.charm.get('plans');
       statusCounts.all = {size: units.length};
       var statuses = [{
         title: 'Units',
@@ -250,7 +251,7 @@ YUI.add('service-overview', function() {
       }
       // If we aren't in a Juju 2 model then do not query for
       // or display the plans.
-      if (this.props.displayPlans && (state.activePlan || state.plans)) {
+      if (this.props.displayPlans && (state.activePlan || plans)) {
         actions.push({
           title: 'Plan',
           icon: 'plan',
@@ -266,7 +267,6 @@ YUI.add('service-overview', function() {
           }
         });
       }
-
       this.state.actions = actions;
     },
 
