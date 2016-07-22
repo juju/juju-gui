@@ -24,7 +24,9 @@ YUI.add('inspector-plan', function() {
 
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      currentPlan: React.PropTypes.object
+      changeState: React.PropTypes.func.isRequired,
+      currentPlan: React.PropTypes.object,
+      service: React.PropTypes.object.isRequired
     },
 
     /**
@@ -33,7 +35,15 @@ YUI.add('inspector-plan', function() {
       @method _navigatePlans
     */
     _navigatePlans: function() {
-      console.log('not implemented yet');
+      this.props.changeState({
+        sectionA: {
+          component: 'inspector',
+          metadata: {
+            id: this.props.service.get('id'),
+            activeComponent: 'plans'
+          }
+        }
+      });
     },
 
     /**
@@ -48,7 +58,7 @@ YUI.add('inspector-plan', function() {
       var buttons = [{
         title: currentPlan ? 'Change plan' : 'Choose plan',
         action: this._navigatePlans,
-        type: currentPlan ? 'base': 'neutral'
+        type: 'neutral'
       }];
       return (
         <juju.components.ButtonRow
