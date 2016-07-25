@@ -65,7 +65,7 @@ YUI.add('budget-table-row', function() {
       Callback for when plans for an entity have been successfully fetched.
       @method _getPlansCallback
       @param {String} error An error message, or null if there's no error.
-      @param {Array} models A list of the plans found.
+      @param {Array} plans A list of the plans found.
     */
     _getPlansCallback: function(error, plans) {
       if (error) {
@@ -140,7 +140,8 @@ YUI.add('budget-table-row', function() {
      @returns {Object} The plan form.
     */
     _generateChangePlan: function() {
-      if (!this.props.plansEditable || this.state.plans.length === 0) {
+      if (!this.props.plansEditable ||
+          this.state.plans && this.state.plans.length === 0) {
         return;
       }
       return (
