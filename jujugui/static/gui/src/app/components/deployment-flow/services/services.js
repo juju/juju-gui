@@ -25,6 +25,7 @@ YUI.add('deployment-services', function() {
       acl: React.PropTypes.object.isRequired,
       changes: React.PropTypes.object.isRequired,
       cloud: React.PropTypes.string,
+      listPlansForCharm: React.PropTypes.func.isRequired,
       servicesGetById: React.PropTypes.func.isRequired
     },
 
@@ -89,6 +90,7 @@ YUI.add('deployment-services', function() {
             <juju.components.BudgetTable
               acl={this.props.acl}
               allocationEditable={true}
+              listPlansForCharm={this.props.listPlansForCharm}
               plansEditable={true}
               services={this._getServices()} />
             <div className="prepend-seven">

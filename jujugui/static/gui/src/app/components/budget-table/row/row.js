@@ -24,15 +24,58 @@ YUI.add('budget-table-row', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       allocationEditable: React.PropTypes.bool,
+      listPlansForCharm: React.PropTypes.func,
       plansEditable: React.PropTypes.bool,
       service: React.PropTypes.object.isRequired
     },
 
+    plansXHR: null,
+
     getInitialState: function() {
       return {
         editAllocation: false,
-        expanded: false
+        expanded: false,
+        plansLoading: false,
+        plans: []
       };
+    },
+
+    componentWillMount: function() {
+      this._getPlans();
+    },
+
+    componentWillUnmount: function() {
+      if (this.plansXHR) {
+        this.plansXHR.abort();
+      }
+    },
+
+    /**
+      Get the list of plans available for the service.
+      @method _getPlans
+    */
+    _getPlans: function() {
+      this.setState({plansLoading: true}, () => {
+        this.plansXHR = this.props.listPlansForCharm(
+          this.props.service.get('charm'), this._getPlansCallback);
+      });
+    },
+
+    /**
+      Callback for when plans for an entity have been successfully fetched.
+      @method _getPlansCallback
+      @param {String} error An error message, or null if there's no error.
+      @param {Array} plans A list of the plans found.
+    */
+    _getPlansCallback: function(error, plans) {
+      if (error) {
+        console.error('Fetching plans failed: ' + error);
+      } else {
+        this.setState({
+          plansLoading: false,
+          plans: plans
+        });
+      }
     },
 
     /**
@@ -61,16 +104,16 @@ YUI.add('budget-table-row', function() {
     */
     _generatePlans: function() {
       var disabled = this.props.acl.isReadOnly();
-      var plans = [{}, {}].map((plan, i) => {
+      var plans = this.state.plans.map((plan, i) => {
         return (
           <li className="budget-table__plan twelve-col"
             key={i}>
             <div className="six-col">
-              <h4>Bronze plan</h4>
-              <p>This is the basic support plan.</p>
+              <h4>{plan.url}</h4>
+              <p>{plan.description}</p>
             </div>
             <div className="two-col">
-              5 calls per month
+              {plan.price}
             </div>
             <div className="two-col">
               Recommended allocation: $550.
@@ -97,7 +140,8 @@ YUI.add('budget-table-row', function() {
      @returns {Object} The plan form.
     */
     _generateChangePlan: function() {
-      if (!this.props.plansEditable) {
+      if (!this.props.plansEditable ||
+          this.state.plans && this.state.plans.length === 0) {
         return;
       }
       return (
@@ -120,12 +164,12 @@ YUI.add('budget-table-row', function() {
      @returns {Object} The edit component.
     */
     _generateEdit: function() {
-      if (!this.props.plansEditable) {
+      if (!this.props.plansEditable || this.state.plans.length === 0) {
         return;
       }
       var disabled = this.props.acl.isReadOnly();
       return (
-        <div className="two-col last-col">
+        <div className="two-col last-col no-margin-bottom">
           <div className="budget-table__edit">
             <juju.components.GenericButton
               action={this._toggle}
@@ -167,23 +211,52 @@ YUI.add('budget-table-row', function() {
       var service = this.props.service;
       return (
         <div>
-          <div className="three-col">
+          <div className="three-col no-margin-bottom">
             <img className="budget-table__charm-icon"
               src={service.get('icon')} />
             {service.get('name')}
           </div>
-          <div className="one-col">
+          <div className="one-col no-margin-bottom">
             {service.get('unit_count')}
           </div>
         </div>);
     },
 
+    /**
+      Generate the details for the selected plan.
+
+      @method _generateSelectedPlan
+      @returns {Object} The plan markup.
+    */
+    _generateSelectedPlan: function() {
+      var service = this.props.service;
+      var activePlan = service.get('activePlan');
+      if (activePlan) {
+        return (
+          <span>
+            {activePlan.url} ({activePlan.price})
+          </span>);
+      } else if (this.state.plans.length > 0) {
+        return (
+          <span>
+            You need to select a plan
+          </span>);
+      } else {
+        return (
+          <span>
+            -
+          </span>);
+      }
+    },
+
     render: function() {
       var plansEditable = this.props.plansEditable;
       var classes = {
-        'budget-table__row': true,
+        'budget-table-row': true,
         'twelve-col': true
       };
+      var editableWidth = !plansEditable ?
+        'two-col' : 'one-col';
       return (
         <juju.components.ExpandingRow
           classes={classes}
@@ -191,16 +264,17 @@ YUI.add('budget-table-row', function() {
           expanded={this.state.expanded}>
           <div>
             {this._generateSharedFields()}
-            <div className="three-col">
-              You need to choose a plan.
+            <div className="three-col no-margin-bottom">
+              {this._generateSelectedPlan()}
             </div>
-            <div className={plansEditable ? 'one-col' : 'two-col'}>
+            <div className={editableWidth + ' no-margin-bottom'}>
               $1
             </div>
-            <div className={plansEditable ? 'one-col' : 'two-col'}>
+            <div className={editableWidth + ' no-margin-bottom'}>
               {this._generateAllocation()}
             </div>
-            <div className="one-col">
+            <div className={
+              'one-col no-margin-bottom' + (plansEditable ? '' : ' last-col')}>
               $1
             </div>
             {this._generateEdit()}

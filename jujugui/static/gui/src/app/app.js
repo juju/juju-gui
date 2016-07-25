@@ -911,7 +911,7 @@ YUI.add('juju-gui', function(Y) {
             acl={this.acl}
             changes={changesUtils.getGroupedChanges(currentChangeSet)}
             changeState={this.changeState.bind(this)}
-            makeEntityModel={Y.juju.makeEntityModel}
+            listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
             servicesGetById={services.getById.bind(services)} />,
           document.getElementById('deployment-container'));
         return;

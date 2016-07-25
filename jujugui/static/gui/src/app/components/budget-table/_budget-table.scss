@@ -1,27 +1,8 @@
 .budget-table {
     &__row-header {
-        font-weight: 400;
-    }
-
-    &__row-header,
-    &__row {
         margin-bottom: 10px;
         border-bottom: 1px solid $light-mid-grey;
-    }
-
-    &__row {
-        padding-top: 6px;
-        padding-bottom: 10px;
-
-        &:hover {
-            .budget-table__edit {
-                display: block;
-            }
-        }
-
-        .expanding-row__expanded {
-            margin-left: 0;
-        }
+        font-weight: 400;
     }
 
     &__edit {
@@ -39,7 +20,7 @@
     }
 
     &__current {
-        padding: 20px 0 0 10px;
+        padding: 20px 10px;
         border-bottom: 1px solid $light-mid-grey;
     }
 
