@@ -25,9 +25,11 @@ YUI.add('charmbrowser-component', function() {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
       apiUrl: React.PropTypes.string.isRequired,
+      apiVersion: React.PropTypes.string.isRequired,
       appState: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       charmstoreSearch: React.PropTypes.func.isRequired,
+      charmstoreURL: React.PropTypes.string.isRequired,
       deployService: React.PropTypes.func.isRequired,
       displayPlans: React.PropTypes.bool.isRequired,
       getBundleYAML: React.PropTypes.func.isRequired,
@@ -125,7 +127,9 @@ YUI.add('charmbrowser-component', function() {
           activeChild = (
               <juju.components.Store
                 changeState={this.props.changeState}
-                staticURL={this.props.staticURL} />
+                staticURL={this.props.staticURL}
+                charmstoreURL={this.props.charmstoreURL}
+                apiVersion={this.props.apiVersion} />
           );
           break;
         case 'search-results':

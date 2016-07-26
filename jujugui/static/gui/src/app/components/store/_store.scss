@@ -185,7 +185,6 @@
         background: linear-gradient(to bottom,  $hadoop-brand-start 0%,$hadoop-brand-end 100%);
         filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$hadoop-brand-start', endColorstr='$hadoop-brand-end',GradientType=0 );
 
-
         .inner-wrapper {
             @media only screen and (min-width: $breakpoint-medium) {
                 background-image: url('static/gui/build/app/assets/images/store/hadoop-elephant.png');
@@ -195,7 +194,7 @@
             }
         }
 
-        a {
+        .link {
             color: white;
         }
     }
