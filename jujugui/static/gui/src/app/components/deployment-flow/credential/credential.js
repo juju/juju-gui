@@ -146,13 +146,32 @@ YUI.add('deployment-credential', function() {
       @returns {Array} The list of credential options.
     */
     _generateCredentials: function() {
-      return this.state.credentials.map((credential) => {
+      var credentials = this.state.credentials.map((credential) => {
         var path = credential.path;
         return {
           label: path,
           value: path
         };
       });
+      credentials.push({
+        label: 'Add credential...',
+        value: 'add-credential'
+      });
+      return credentials;
+    },
+
+    /**
+      Set the credential value or navigate to the add credentails form.
+
+      @method _handleCredentialChange
+      @param {String} The select value.
+    */
+    _handleCredentialChange: function(value) {
+      if (value === 'add-credential') {
+        this._toggleAdd();
+      } else {
+        this.props.setCredential();
+      }
     },
 
     /**
@@ -183,11 +202,11 @@ YUI.add('deployment-credential', function() {
       var disabled = this.props.acl.isReadOnly();
       return (
         <form className="deployment-credential__form">
-          <div className="prepend-one four-col">
+          <div className="prepend-two four-col">
           <juju.components.InsetSelect
             disabled={disabled}
             label="Credential"
-            onChange={this.props.setCredential}
+            onChange={this._handleCredentialChange}
             options={this._generateCredentials()} />
           </div>
           <div className="four-col">
@@ -196,12 +215,6 @@ YUI.add('deployment-credential', function() {
               label="Region"
               onChange={this.props.setRegion}
               options={this._generateRegions()} />
-          </div>
-          <div className="three-col last-col">
-            <juju.components.GenericButton
-              action={this._toggleAdd}
-              title="Add credential"
-              type="inline-neutral" />
           </div>
         </form>);
     },
@@ -270,7 +283,6 @@ YUI.add('deployment-credential', function() {
     'deployment-credential-add',
     'deployment-section',
     'inset-select',
-    'generic-button',
     'loading-spinner'
   ]
 });

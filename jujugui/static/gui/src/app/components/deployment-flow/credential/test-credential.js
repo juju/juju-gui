@@ -230,10 +230,13 @@ describe('DeploymentCredential', function() {
               <juju.components.InsetSelect
                 disabled={false}
                 label="Credential"
-                onChange={setCredential}
+                onChange={instance._handleCredentialChange}
                 options={[{
                   label: 'owner/test-cred',
                   value: 'owner/test-cred'
+                }, {
+                  label: 'Add credential...',
+                  value: 'add-credential'
                 }]} />
             </div>
             <div className="four-col">
@@ -245,12 +248,6 @@ describe('DeploymentCredential', function() {
                   label: 'test-region',
                   value: 'test-region'
                 }]} />
-            </div>
-            <div className="three-col last-col">
-              <juju.components.GenericButton
-                action={instance._toggleAdd}
-                title="Add credential"
-                type="inline-neutral" />
             </div>
           </form>
           {undefined}
@@ -292,10 +289,13 @@ describe('DeploymentCredential', function() {
               <juju.components.InsetSelect
                 disabled={true}
                 label="Credential"
-                onChange={setCredential}
+                onChange={instance._handleCredentialChange}
                 options={[{
                   label: 'owner/test-cred',
                   value: 'owner/test-cred'
+                }, {
+                  label: 'Add credential...',
+                  value: 'add-credential'
                 }]} />
             </div>
             <div className="four-col">
@@ -307,12 +307,6 @@ describe('DeploymentCredential', function() {
                   label: 'test-region',
                   value: 'test-region'
                 }]} />
-            </div>
-            <div className="three-col last-col">
-              <juju.components.GenericButton
-                action={instance._toggleAdd}
-                title="Add credential"
-                type="inline-neutral" />
             </div>
           </form>
           {undefined}
@@ -340,5 +334,56 @@ describe('DeploymentCredential', function() {
         validateForm={sinon.stub()} />, true);
     renderer.unmount();
     assert.equal(abort.callCount, 2);
+  });
+
+  it('can navigate to the add credentials form', function() {
+    var addTemplate = sinon.stub();
+    var setCredential = sinon.stub();
+    var setRegion = sinon.stub();
+    var setTemplate = sinon.stub();
+    var users = {};
+    var validateForm = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredential
+        acl={acl}
+        addTemplate={addTemplate}
+        cloud="azure"
+        clouds={clouds}
+        listRegions={
+          sinon.stub().callsArgWith(1, null, regions)}
+        listTemplates={
+          sinon.stub().callsArgWith(0, null, credentials)}
+        setCredential={setCredential}
+        setRegion={setRegion}
+        setTemplate={setTemplate}
+        users={users}
+        validateForm={validateForm} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._handleCredentialChange('add-credential');
+    var output = renderer.getRenderOutput();
+    // output = renderer.render();
+    var expected = (
+      <juju.components.DeploymentSection
+        completed={false}
+        disabled={false}
+        instance="deployment-credential"
+        showCheck={false}>
+        <div>
+          {undefined}
+          <juju.components.DeploymentCredentialAdd
+            acl={acl}
+            addTemplate={addTemplate}
+            close={instance._toggleAdd}
+            cloud="azure"
+            clouds={clouds}
+            regions={regions}
+            setCredential={setCredential}
+            setRegion={setRegion}
+            setTemplate={setTemplate}
+            users={users}
+            validateForm={validateForm}/>
+        </div>
+      </juju.components.DeploymentSection>);
+    assert.deepEqual(output, expected);
   });
 });
