@@ -42,13 +42,20 @@ YUI.add('deployment-credential', function() {
       this._getCredentials();
     },
 
+    componentWillUnmount: function() {
+      if (this.credentialXHR) {
+        this.credentialXHR.abort();
+      }
+    },
+
     /**
       Request credentials from JEM.
 
       @method _getCredentials
     */
     _getCredentials: function() {
-      this.props.listTemplates(this._getCredentialsCallback);
+      this.credentialXHR = this.props.listTemplates(
+        this._getCredentialsCallback);
     },
 
     /**
@@ -63,15 +70,12 @@ YUI.add('deployment-credential', function() {
         console.error('Unable to list templates', error);
         return;
       }
-      var state = {
+      this.setState({
         credentials: credentials,
-        credentialsLoading: false
-      };
-      if (!credentials || credentials.length === 0) {
+        credentialsLoading: false,
         // If there are no credentials then display the form to add credentials.
-        state.showAdd = true;
-      }
-      this.setState(state);
+        showAdd: !credentials || credentials.length === 0
+      });
     },
 
     /**
@@ -81,6 +85,22 @@ YUI.add('deployment-credential', function() {
     */
     _toggleAdd: function() {
       this.setState({showAdd: !this.state.showAdd});
+    },
+
+    /**
+      Generate the list of credential options.
+
+      @method _generateCredentials
+      @returns {Array} The list of credential options.
+    */
+    _generateCredentials: function() {
+      return this.state.credentials.map((credential) => {
+        var path = credential.path;
+        return {
+          label: path,
+          value: path
+        };
+      });
     },
 
     /**
@@ -100,10 +120,7 @@ YUI.add('deployment-credential', function() {
           <juju.components.InsetSelect
             disabled={disabled}
             label="Credential"
-            options={[{
-              label: 'test cred',
-              value: 'test-cred'
-            }]} />
+            options={this._generateCredentials()} />
           </div>
           <div className="four-col">
             <juju.components.InsetSelect

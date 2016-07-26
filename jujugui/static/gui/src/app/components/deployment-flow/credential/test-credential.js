@@ -24,11 +24,15 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentCredential', function() {
-  var acl, clouds;
+  var acl, clouds, credentials;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('deployment-credential', function() { done(); });
+  });
+
+  beforeEach(function() {
+    credentials = [{path: 'owner/test-cred'}];
   });
 
   beforeEach(() => {
@@ -72,7 +76,9 @@ describe('DeploymentCredential', function() {
       <juju.components.DeploymentCredential
         acl={acl}
         cloud="azure"
-        clouds={clouds} />, true);
+        clouds={clouds}
+        listTemplates={
+          sinon.stub().callsArgWith(0, null, [])} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -81,12 +87,14 @@ describe('DeploymentCredential', function() {
         disabled={false}
         instance="deployment-credential"
         showCheck={false}>
-        {undefined}
-        <juju.components.DeploymentCredentialAdd
-          acl={acl}
-          close={instance._toggleAdd}
-          cloud="azure"
-          clouds={clouds} />
+        <div>
+          {undefined}
+          <juju.components.DeploymentCredentialAdd
+            acl={acl}
+            close={instance._toggleAdd}
+            cloud="azure"
+            clouds={clouds} />
+        </div>
       </juju.components.DeploymentSection>);
     assert.deepEqual(output, expected);
   });
@@ -96,7 +104,9 @@ describe('DeploymentCredential', function() {
       <juju.components.DeploymentCredential
         acl={acl}
         cloud={null}
-        clouds={clouds} />, true);
+        clouds={clouds}
+        listTemplates={
+          sinon.stub().callsArgWith(0, null, [])} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -105,12 +115,14 @@ describe('DeploymentCredential', function() {
         disabled={true}
         instance="deployment-credential"
         showCheck={false}>
-        {undefined}
-        <juju.components.DeploymentCredentialAdd
-          acl={acl}
-          close={instance._toggleAdd}
-          cloud={null}
-          clouds={clouds} />
+        <div>
+          {undefined}
+          <juju.components.DeploymentCredentialAdd
+            acl={acl}
+            close={instance._toggleAdd}
+            cloud={null}
+            clouds={clouds} />
+        </div>
       </juju.components.DeploymentSection>);
     assert.deepEqual(output, expected);
   });
@@ -120,9 +132,10 @@ describe('DeploymentCredential', function() {
       <juju.components.DeploymentCredential
         acl={acl}
         cloud="azure"
-        clouds={clouds} />, true);
+        clouds={clouds}
+        listTemplates={
+          sinon.stub().callsArgWith(0, null, credentials)} />, true);
     var instance = renderer.getMountedInstance();
-    instance._toggleAdd();
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.DeploymentSection
@@ -130,33 +143,35 @@ describe('DeploymentCredential', function() {
         disabled={false}
         instance="deployment-credential"
         showCheck={false}>
-        <form className="deployment-credential__form">
-          <div className="prepend-one four-col">
-          <juju.components.InsetSelect
-            disabled={false}
-            label="Credential"
-            options={[{
-              label: 'test cred',
-              value: 'test-cred'
-            }]} />
-          </div>
-          <div className="four-col">
+        <div>
+          <form className="deployment-credential__form">
+            <div className="prepend-one four-col">
             <juju.components.InsetSelect
               disabled={false}
-              label="Region"
+              label="Credential"
               options={[{
-                label: 'test region',
-                value: 'test-region'
+                label: 'owner/test-cred',
+                value: 'owner/test-cred'
               }]} />
-          </div>
-          <div className="three-col last-col">
-            <juju.components.GenericButton
-              action={instance._toggleAdd}
-              title="Add credential"
-              type="inline-neutral" />
-          </div>
-        </form>
-        {undefined}
+            </div>
+            <div className="four-col">
+              <juju.components.InsetSelect
+                disabled={false}
+                label="Region"
+                options={[{
+                  label: 'test region',
+                  value: 'test-region'
+                }]} />
+            </div>
+            <div className="three-col last-col">
+              <juju.components.GenericButton
+                action={instance._toggleAdd}
+                title="Add credential"
+                type="inline-neutral" />
+            </div>
+          </form>
+          {undefined}
+        </div>
       </juju.components.DeploymentSection>);
     assert.deepEqual(output, expected);
   });
@@ -167,9 +182,10 @@ describe('DeploymentCredential', function() {
       <juju.components.DeploymentCredential
         acl={acl}
         cloud="azure"
-        clouds={clouds} />, true);
+        clouds={clouds}
+        listTemplates={
+          sinon.stub().callsArgWith(0, null, credentials)} />, true);
     var instance = renderer.getMountedInstance();
-    instance._toggleAdd();
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.DeploymentSection
@@ -177,34 +193,49 @@ describe('DeploymentCredential', function() {
         disabled={false}
         instance="deployment-credential"
         showCheck={false}>
-        <form className="deployment-credential__form">
-          <div className="prepend-one four-col">
-          <juju.components.InsetSelect
-            disabled={true}
-            label="Credential"
-            options={[{
-              label: 'test cred',
-              value: 'test-cred'
-            }]} />
-          </div>
-          <div className="four-col">
+        <div>
+          <form className="deployment-credential__form">
+            <div className="prepend-one four-col">
             <juju.components.InsetSelect
               disabled={true}
-              label="Region"
+              label="Credential"
               options={[{
-                label: 'test region',
-                value: 'test-region'
+                label: 'owner/test-cred',
+                value: 'owner/test-cred'
               }]} />
-          </div>
-          <div className="three-col last-col">
-            <juju.components.GenericButton
-              action={instance._toggleAdd}
-              title="Add credential"
-              type="inline-neutral" />
-          </div>
-        </form>
-        {undefined}
+            </div>
+            <div className="four-col">
+              <juju.components.InsetSelect
+                disabled={true}
+                label="Region"
+                options={[{
+                  label: 'test region',
+                  value: 'test-region'
+                }]} />
+            </div>
+            <div className="three-col last-col">
+              <juju.components.GenericButton
+                action={instance._toggleAdd}
+                title="Add credential"
+                type="inline-neutral" />
+            </div>
+          </form>
+          {undefined}
+        </div>
       </juju.components.DeploymentSection>);
     assert.deepEqual(output, expected);
+  });
+
+  it('will abort the request when unmounting', function() {
+    var abort = sinon.stub();
+    var listTemplates = sinon.stub().returns({abort: abort});
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredential
+        acl={acl}
+        cloud="azure"
+        clouds={clouds}
+        listTemplates={listTemplates} />, true);
+    renderer.unmount();
+    assert.equal(abort.callCount, 1);
   });
 });
