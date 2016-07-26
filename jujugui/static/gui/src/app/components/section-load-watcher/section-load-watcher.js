@@ -35,6 +35,8 @@ YUI.add('section-load-watcher', function(Y) {
     },
 
     getInitialState: function() {
+      this._childrenStatuses = new Map();
+
       return {
         renderEmpty: false,
         renderError: false
@@ -42,8 +44,6 @@ YUI.add('section-load-watcher', function(Y) {
     },
 
     _validStatuses: ['starting', 'ok', 'empty', 'error'],
-
-    _childrenStatuses: new Map(),
 
     /**
       When a child status has been updated we need to loop through all of
@@ -69,6 +69,14 @@ YUI.add('section-load-watcher', function(Y) {
       }
     },
 
+    /**
+      Sets the child status in the component and then checks all the statuses
+      to see if we should be rendering an error or empty component.
+
+      @method _setChildStatus
+      @param {String} ref The ref of the child.
+      @param {String} status The status of the child.
+    */
     _setChildStatus: function(ref, status) {
       if (this._validStatuses.indexOf(status) === -1) {
         throw `Invalid status: "${status}" from ref: ${ref}`;
@@ -77,6 +85,12 @@ YUI.add('section-load-watcher', function(Y) {
       this._checkChildrenStatuses();
     },
 
+    /**
+      Checks the state of the component to determine whether it should
+      render the empty, error, or children components.
+
+      @method _renderContent
+    */
     _renderContent: function() {
       if (this.state.renderEmpty) {
         return <this.props.EmptyComponent />;
