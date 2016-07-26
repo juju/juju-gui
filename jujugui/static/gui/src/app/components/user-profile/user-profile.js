@@ -48,12 +48,10 @@ YUI.add('user-profile', function() {
 
     getInitialState: function() {
       return {
-        agreementList: [],
         budgetList: [],
         envList: [],
         charmList: [],
         bundleList: [],
-        loadingAgreements: false,
         loadingBudgets: false,
         loadingBundles: false,
         loadingCharms: false,
@@ -65,7 +63,6 @@ YUI.add('user-profile', function() {
     componentWillMount: function() {
       var props = this.props,
           users = props.users;
-      this._getAgreements();
       this._getBudgets();
       this._fetchEnvironments();
       if (users.charmstore && users.charmstore.user) {
@@ -84,7 +81,6 @@ YUI.add('user-profile', function() {
       // If the user has changed then update the data.
       var props = this.props;
       if (nextProps.user.user !== props.user.user) {
-        this._getAgreements();
         this._getBudgets();
         this._fetchEnvironments();
       }
@@ -95,37 +91,6 @@ YUI.add('user-profile', function() {
         this._fetchEntities('charm', nextProps);
         this._fetchEntities('bundle', nextProps);
       }
-    },
-
-    /**
-      Get the agreements for the authenticated user.
-
-      @method _getAgreements
-    */
-    _getAgreements: function() {
-      // Delay the call until after the state change to prevent race
-      // conditions.
-      this.setState({loadingAgreements: true}, () => {
-        var xhr = this.props.getAgreements(this._getAgreementsCallback);
-        this.xhrs.push(xhr);
-      });
-    },
-
-    /**
-      Callback for the terms API call to get agreements.
-
-      @method _getAgreementsCallback
-      @param {String} error The error from the request, or null.
-      @param {Object} data The data from the request.
-    */
-    _getAgreementsCallback: function(error, data) {
-      this.setState({loadingAgreements: false});
-      if (error) {
-        // TODO frankban: notify the user with the error.
-        console.error('cannot retrieve terms:', error);
-        return;
-      }
-      this.setState({agreementList: data});
     },
 
     /**
@@ -662,29 +627,6 @@ YUI.add('user-profile', function() {
     },
 
     /**
-      Generate the details for the provided agreement.
-
-      @method _generateAgreementRow
-      @param {Object} agreement A agreement object.
-      @returns {Array} The markup for the row.
-    */
-    _generateAgreementRow: function(agreement) {
-      var term = agreement.term;
-      return (
-        <li className="user-profile__list-row twelve-col"
-          key={term + agreement.revision}>
-          <span className="user-profile__list-col eight-col">
-            {term}
-          </span>
-          <span className="user-profile__list-col four-col last-col">
-            <juju.components.DateDisplay
-              date={agreement.createdAt}
-              relative={true} />
-          </span>
-        </li>);
-    },
-
-    /**
       Generate the details for the provided budget.
 
       @method _generateBudgetRow
@@ -730,24 +672,6 @@ YUI.add('user-profile', function() {
           </span>
           <span className="user-profile__list-col two-col last-col">
             Owner
-          </span>
-        </li>);
-    },
-
-    /**
-      Generate the header for the agreements.
-
-      @method _generateAgreementHeader
-      @returns {Array} The markup for the header.
-    */
-    _generateAgreementHeader: function() {
-      return (
-        <li className="user-profile__list-header twelve-col">
-          <span className="user-profile__list-col eight-col">
-            Name
-          </span>
-          <span className="user-profile__list-col four-col last-col">
-            Date signed
           </span>
         </li>);
     },
@@ -818,10 +742,6 @@ YUI.add('user-profile', function() {
         generateRow = this._generateCharmRow;
         header = this._generateCharmHeader();
         title = 'Charms';
-      } else if (type === 'agreements') {
-        generateRow = this._generateAgreementRow;
-        header = this._generateAgreementHeader();
-        title = 'Terms & conditions';
       } else if (type === 'budgets') {
         generateRow = this._generateBudgetRow;
         header = this._generateBudgetHeader();
@@ -906,8 +826,9 @@ YUI.add('user-profile', function() {
           {this._generateRows(
             'bundles', state.bundleList, state.loadingBundles)}
           {this._generateRows('charms', state.charmList, state.loadingCharms)}
-          {this._generateRows(
-            'agreements', state.agreementList, state.loadingAgreements)}
+          <juju.components.AgreementList
+            getAgreements={this.props.getAgreements}
+            user={this.props.user} />
           {this._generateRows(
             'budgets', state.budgetList, state.loadingBudgets)}
         </div>);
@@ -951,9 +872,8 @@ YUI.add('user-profile', function() {
 
 }, '', {
   requires: [
-    'date-display',
+    'agreement-list',
     'loading-spinner',
-    'svg-icon',
     'panel-component',
     'user-profile-entity',
     'user-profile-header',
