@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentCredential', function() {
-  var acl, clouds, credentials;
+  var acl, clouds, credentials, regions;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,6 +33,7 @@ describe('DeploymentCredential', function() {
 
   beforeEach(function() {
     credentials = [{path: 'owner/test-cred'}];
+    regions = ['test-region'];
   });
 
   beforeEach(() => {
@@ -71,15 +72,42 @@ describe('DeploymentCredential', function() {
     };
   });
 
+  it('can display a loader when loading regions and credentials', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredential
+        acl={acl}
+        cloud="azure"
+        clouds={clouds}
+        listRegions={sinon.stub()}
+        listTemplates={sinon.stub()}
+        setCredential={sinon.stub()}
+        setRegion={sinon.stub()} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.DeploymentSection
+        completed={false}
+        disabled={false}
+        instance="deployment-credential"
+        showCheck={false}>
+        <div className="deployment-credential__loading">
+          <juju.components.Spinner />
+        </div>
+      </juju.components.DeploymentSection>);
+    assert.deepEqual(output, expected);
+  });
+
   it('can render with a cloud', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
         cloud="azure"
         clouds={clouds}
+        listRegions={
+          sinon.stub().callsArgWith(1, null, [])}
         listTemplates={
           sinon.stub().callsArgWith(0, null, [])}
-        setCredential={sinon.stub()} />, true);
+        setCredential={sinon.stub()}
+        setRegion={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -106,9 +134,12 @@ describe('DeploymentCredential', function() {
         acl={acl}
         cloud={null}
         clouds={clouds}
+        listRegions={
+          sinon.stub().callsArgWith(1, null, [])}
         listTemplates={
           sinon.stub().callsArgWith(0, null, [])}
-        setCredential={sinon.stub()} />, true);
+        setCredential={sinon.stub()}
+        setRegion={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -131,14 +162,18 @@ describe('DeploymentCredential', function() {
 
   it('can show existing credentials', function() {
     var setCredential = sinon.stub();
+    var setRegion = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
         cloud="azure"
         clouds={clouds}
+        listRegions={
+          sinon.stub().callsArgWith(1, null, regions)}
         listTemplates={
           sinon.stub().callsArgWith(0, null, credentials)}
-        setCredential={setCredential} />, true);
+        setCredential={setCredential}
+        setRegion={setRegion} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -150,21 +185,22 @@ describe('DeploymentCredential', function() {
         <div>
           <form className="deployment-credential__form">
             <div className="prepend-one four-col">
-            <juju.components.InsetSelect
-              disabled={false}
-              label="Credential"
-              onChange={setCredential}
-              options={[{
-                label: 'owner/test-cred',
-                value: 'owner/test-cred'
-              }]} />
+              <juju.components.InsetSelect
+                disabled={false}
+                label="Credential"
+                onChange={setCredential}
+                options={[{
+                  label: 'owner/test-cred',
+                  value: 'owner/test-cred'
+                }]} />
             </div>
             <div className="four-col">
               <juju.components.InsetSelect
                 disabled={false}
                 label="Region"
+                onChange={setRegion}
                 options={[{
-                  label: 'test region',
+                  label: 'test-region',
                   value: 'test-region'
                 }]} />
             </div>
@@ -184,14 +220,18 @@ describe('DeploymentCredential', function() {
   it('can disable controls when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     var setCredential = sinon.stub();
+    var setRegion = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
         cloud="azure"
         clouds={clouds}
+        listRegions={
+          sinon.stub().callsArgWith(1, null, regions)}
         listTemplates={
           sinon.stub().callsArgWith(0, null, credentials)}
-        setCredential={setCredential} />, true);
+        setCredential={setCredential}
+        setRegion={setRegion} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -203,21 +243,22 @@ describe('DeploymentCredential', function() {
         <div>
           <form className="deployment-credential__form">
             <div className="prepend-one four-col">
-            <juju.components.InsetSelect
-              disabled={true}
-              label="Credential"
-              onChange={setCredential}
-              options={[{
-                label: 'owner/test-cred',
-                value: 'owner/test-cred'
-              }]} />
+              <juju.components.InsetSelect
+                disabled={true}
+                label="Credential"
+                onChange={setCredential}
+                options={[{
+                  label: 'owner/test-cred',
+                  value: 'owner/test-cred'
+                }]} />
             </div>
             <div className="four-col">
               <juju.components.InsetSelect
                 disabled={true}
                 label="Region"
+                onChange={setRegion}
                 options={[{
-                  label: 'test region',
+                  label: 'test-region',
                   value: 'test-region'
                 }]} />
             </div>
@@ -237,14 +278,17 @@ describe('DeploymentCredential', function() {
   it('will abort the request when unmounting', function() {
     var abort = sinon.stub();
     var listTemplates = sinon.stub().returns({abort: abort});
+    var listRegions = sinon.stub().returns({abort: abort});
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
         cloud="azure"
         clouds={clouds}
+        listRegions={listRegions}
         listTemplates={listTemplates}
-        setCredential={sinon.stub()} />, true);
+        setCredential={sinon.stub()}
+        setRegion={sinon.stub()} />, true);
     renderer.unmount();
-    assert.equal(abort.callCount, 1);
+    assert.equal(abort.callCount, 2);
   });
 });
