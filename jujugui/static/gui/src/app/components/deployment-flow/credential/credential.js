@@ -24,11 +24,54 @@ YUI.add('deployment-credential', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       cloud: React.PropTypes.string,
-      clouds: React.PropTypes.object.isRequired
+      clouds: React.PropTypes.object.isRequired,
+      listTemplates: React.PropTypes.func.isRequired
     },
 
+    credentialXHR: null,
+
     getInitialState: function() {
-      return {showAdd: true};
+      return {
+        credentials: [],
+        credentialsLoading: true,
+        showAdd: true
+      };
+    },
+
+    componentWillMount: function() {
+      this._getCredentials();
+    },
+
+    /**
+      Request credentials from JEM.
+
+      @method _getCredentials
+    */
+    _getCredentials: function() {
+      this.props.listTemplates(this._getCredentialsCallback);
+    },
+
+    /**
+      The method to be called when the credentials reponse has been received.
+
+      @method _getCredentialsCallback
+      @param {String} error An error message, or null if there's no error.
+      @param {Array} plans A list of the plans found.
+    */
+    _getCredentialsCallback: function(error, credentials) {
+      if (error) {
+        console.error('Unable to list templates', error);
+        return;
+      }
+      var state = {
+        credentials: credentials,
+        credentialsLoading: false
+      };
+      if (!credentials || credentials.length === 0) {
+        // If there are no credentials then display the form to add credentials.
+        state.showAdd = true;
+      }
+      this.setState(state);
     },
 
     /**
@@ -98,6 +141,26 @@ YUI.add('deployment-credential', function() {
           clouds={this.props.clouds} />);
     },
 
+    /**
+      Display the credentials or a spinner if the data is loading.
+
+      @method _generateContent
+      @returns {Object} The dom elements.
+    */
+    _generateContent: function() {
+      if (this.state.credentialsLoading) {
+        return (
+          <div className="deployment-credential__loading">
+            <juju.components.Spinner />
+          </div>);
+      }
+      return (
+        <div>
+          {this._generateSelect()}
+          {this._generateAdd()}
+        </div>);
+    },
+
     render: function() {
       return (
         <juju.components.DeploymentSection
@@ -105,8 +168,7 @@ YUI.add('deployment-credential', function() {
           disabled={!this.props.cloud}
           instance="deployment-credential"
           showCheck={false}>
-          {this._generateSelect()}
-          {this._generateAdd()}
+          {this._generateContent()}
         </juju.components.DeploymentSection>
       );
     }
@@ -118,6 +180,7 @@ YUI.add('deployment-credential', function() {
     'deployment-credential-add',
     'deployment-section',
     'inset-select',
-    'generic-button'
+    'generic-button',
+    'loading-spinner'
   ]
 });

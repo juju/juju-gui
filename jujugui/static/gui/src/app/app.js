@@ -912,6 +912,7 @@ YUI.add('juju-gui', function(Y) {
             changes={changesUtils.getGroupedChanges(currentChangeSet)}
             changeState={this.changeState.bind(this)}
             listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
+            listTemplates={this.jem.listTemplates.bind(this.jem)}
             servicesGetById={services.getById.bind(services)} />,
           document.getElementById('deployment-container'));
         return;
