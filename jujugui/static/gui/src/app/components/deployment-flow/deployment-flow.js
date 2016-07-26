@@ -64,7 +64,10 @@ YUI.add('deployment-flow', function() {
     },
 
     getInitialState: function() {
-      return {cloud: null};
+      return {
+        cloud: null,
+        credential: null
+      };
     },
 
     /**
@@ -74,6 +77,15 @@ YUI.add('deployment-flow', function() {
     */
     _setCloud: function(cloud) {
       this.setState({cloud: cloud});
+    },
+
+    /**
+      Store the selected credential in state.
+
+      @method _setCloud
+    */
+    _setCredential: function(credential) {
+      this.setState({credential: credential});
     },
 
     /**

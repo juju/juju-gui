@@ -25,6 +25,7 @@ YUI.add('inset-select', function() {
     propTypes: {
       disabled: React.PropTypes.bool,
       label: React.PropTypes.string,
+      onChange: React.PropTypes.func,
       options: React.PropTypes.array.isRequired,
       required: React.PropTypes.bool,
       value: React.PropTypes.string,
@@ -37,6 +38,18 @@ YUI.add('inset-select', function() {
     */
     getValue: function() {
       return this.refs.field.value;
+    },
+
+    /**
+      Call the supplied onChange method with the value of the select.
+
+      @method _callOnChange
+    */
+    _callOnChange: function() {
+      var onChange = this.props.onChange;
+      if (onChange) {
+        onChange(this.getValue());
+      }
     },
 
     /**
@@ -88,6 +101,7 @@ YUI.add('inset-select', function() {
             defaultValue={this.props.value}
             disabled={this.props.disabled}
             id={id}
+            onChange={this._callOnChange}
             required={this.props.required}
             ref="field">
             {this._generateOptions()}

@@ -25,7 +25,8 @@ YUI.add('deployment-credential', function() {
       acl: React.PropTypes.object.isRequired,
       cloud: React.PropTypes.string,
       clouds: React.PropTypes.object.isRequired,
-      listTemplates: React.PropTypes.func.isRequired
+      listTemplates: React.PropTypes.func.isRequired,
+      setCredential: React.PropTypes.func.isRequired
     },
 
     credentialXHR: null,
@@ -120,6 +121,7 @@ YUI.add('deployment-credential', function() {
           <juju.components.InsetSelect
             disabled={disabled}
             label="Credential"
+            onChange={this.props.setCredential}
             options={this._generateCredentials()} />
           </div>
           <div className="four-col">

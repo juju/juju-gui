@@ -78,7 +78,8 @@ describe('DeploymentCredential', function() {
         cloud="azure"
         clouds={clouds}
         listTemplates={
-          sinon.stub().callsArgWith(0, null, [])} />, true);
+          sinon.stub().callsArgWith(0, null, [])}
+        setCredential={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -106,7 +107,8 @@ describe('DeploymentCredential', function() {
         cloud={null}
         clouds={clouds}
         listTemplates={
-          sinon.stub().callsArgWith(0, null, [])} />, true);
+          sinon.stub().callsArgWith(0, null, [])}
+        setCredential={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -128,13 +130,15 @@ describe('DeploymentCredential', function() {
   });
 
   it('can show existing credentials', function() {
+    var setCredential = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
         cloud="azure"
         clouds={clouds}
         listTemplates={
-          sinon.stub().callsArgWith(0, null, credentials)} />, true);
+          sinon.stub().callsArgWith(0, null, credentials)}
+        setCredential={setCredential} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -149,6 +153,7 @@ describe('DeploymentCredential', function() {
             <juju.components.InsetSelect
               disabled={false}
               label="Credential"
+              onChange={setCredential}
               options={[{
                 label: 'owner/test-cred',
                 value: 'owner/test-cred'
@@ -178,13 +183,15 @@ describe('DeploymentCredential', function() {
 
   it('can disable controls when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
+    var setCredential = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
         cloud="azure"
         clouds={clouds}
         listTemplates={
-          sinon.stub().callsArgWith(0, null, credentials)} />, true);
+          sinon.stub().callsArgWith(0, null, credentials)}
+        setCredential={setCredential} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -199,6 +206,7 @@ describe('DeploymentCredential', function() {
             <juju.components.InsetSelect
               disabled={true}
               label="Credential"
+              onChange={setCredential}
               options={[{
                 label: 'owner/test-cred',
                 value: 'owner/test-cred'
@@ -234,7 +242,8 @@ describe('DeploymentCredential', function() {
         acl={acl}
         cloud="azure"
         clouds={clouds}
-        listTemplates={listTemplates} />, true);
+        listTemplates={listTemplates}
+        setCredential={sinon.stub()} />, true);
     renderer.unmount();
     assert.equal(abort.callCount, 1);
   });
