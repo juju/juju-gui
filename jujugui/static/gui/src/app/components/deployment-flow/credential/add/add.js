@@ -23,12 +23,90 @@ YUI.add('deployment-credential-add', function() {
   juju.components.DeploymentCredentialAdd = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
+      addTemplate: React.PropTypes.func.isRequired,
       close: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.string,
-      clouds: React.PropTypes.object.isRequired
+      clouds: React.PropTypes.object.isRequired,
+      regions: React.PropTypes.array.isRequired,
+      setCredential: React.PropTypes.func.isRequired,
+      setRegion: React.PropTypes.func.isRequired,
+      setTemplate: React.PropTypes.func.isRequired,
+      users: React.PropTypes.object.isRequired,
+      validateForm: React.PropTypes.func.isRequired
     },
 
     DEFAULTCLOUD: 'google',
+
+    /**
+      Get the region value.
+
+      @method _getRegion
+      @returns {String} The region.
+    */
+    _getRegion: function() {
+      return this.refs.region.getValue();
+    },
+
+    /**
+      Generate a full template object in the expected format.
+
+      @method _generateTemplate
+    */
+    _generateTemplate: function(id) {
+      var cloud = this.props.cloud;
+      var region = this._getRegion();
+      return {
+        location: {region, cloud},
+        config: {
+          'access-key': this.refs.templateAccessKey.getValue(),
+          'secret-key': this.refs.templateSecretKey.getValue(),
+          // XXX This is a 'hack' to make Juju not complain about being
+          // able to find ssh keys.
+          'authorized-keys': 'fake'
+        }
+      };
+    },
+
+    /**
+      Handling clicking on a cloud option.
+
+      @method _handleCloudClick
+    */
+    _handleAddCredentials: function(id) {
+      var valid = this.props.validateForm([
+        'templateAccessKey',
+        'templateName',
+        'templateSecretKey'
+      ], this.refs);
+      if (!valid) {
+        // If there are any form validation errors then stop adding the
+        // credentials.
+        return;
+      }
+      // Add template
+      var user = this.props.users.jem.user;
+      var templateName = this.refs.templateName.getValue();
+      var template = this._generateTemplate();
+      this.props.addTemplate(
+        user, templateName, template, this._addTemplateCallback);
+    },
+
+    /**
+      The method to be called once the addTemplate request is complete.
+
+      @method _addTemplateCallback
+      @param {String} error An error message, or null if there's no error.
+    */
+    _addTemplateCallback: function(error) {
+      if (error) {
+        console.error('Unable to add template', error);
+        return;
+      }
+      var templateName = this.refs.templateName.getValue();
+      this.props.setCredential(`${user}/${templateName}`);
+      this.props.setRegion(this._getRegion());
+      this.props.setTemplate(this._generateTemplate());
+    },
 
     /**
       Generate the fields for entering cloud credentials.
@@ -139,6 +217,25 @@ YUI.add('deployment-credential-add', function() {
       }
     },
 
+    /**
+      Generate the list of region options.
+
+      @method _generateRegions
+      @returns {Array} The list of region options.
+    */
+    _generateRegions: function() {
+      var regions = this.props.regions;
+      if (!regions) {
+        return [];
+      }
+      return regions.map((region) => {
+        return {
+          label: region,
+          value: region
+        };
+      });
+    },
+
     render: function() {
       var buttons = [{
         action: this.props.close,
@@ -192,10 +289,8 @@ YUI.add('deployment-credential-add', function() {
               <juju.components.InsetSelect
                 disabled={isReadOnly}
                 label="Region"
-                options={[{
-                  label: 'test region',
-                  value: 'test-region'
-                }]} />
+                options={this._generateRegions()}
+                ref="region" />
             </div>
             <h3 className="deployment-panel__section-title twelve-col">
               Enter credentials

@@ -23,12 +23,19 @@ YUI.add('deployment-credential', function() {
   juju.components.DeploymentCredential = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
+      addTemplate: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.string,
       clouds: React.PropTypes.object.isRequired,
+      credential: React.PropTypes.string,
       listRegions: React.PropTypes.func.isRequired,
       listTemplates: React.PropTypes.func.isRequired,
+      region: React.PropTypes.string,
       setCredential: React.PropTypes.func.isRequired,
-      setRegion: React.PropTypes.func.isRequired
+      setRegion: React.PropTypes.func.isRequired,
+      setTemplate: React.PropTypes.func.isRequired,
+      template: React.PropTypes.string,
+      users: React.PropTypes.object.isRequired,
+      validateForm: React.PropTypes.func.isRequired
     },
 
     credentialXHR: null,
@@ -149,10 +156,10 @@ YUI.add('deployment-credential', function() {
     },
 
     /**
-      Generate the list of credential options.
+      Generate the list of region options.
 
       @method _generateRegions
-      @returns {Array} The list of credential options.
+      @returns {Array} The list of region options.
     */
     _generateRegions: function() {
       return this.state.regions.map((region) => {
@@ -212,9 +219,16 @@ YUI.add('deployment-credential', function() {
       return (
         <juju.components.DeploymentCredentialAdd
           acl={this.props.acl}
+          addTemplate={this.props.addTemplate}
           close={this._toggleAdd}
           cloud={this.props.cloud}
-          clouds={this.props.clouds} />);
+          clouds={this.props.clouds}
+          regions={this.state.regions}
+          setCredential={this.props.setCredential}
+          setRegion={this.props.setRegion}
+          setTemplate={this.props.setTemplate}
+          users={this.props.users}
+          validateForm={this.props.validateForm} />);
     },
 
     /**
