@@ -26,6 +26,7 @@ YUI.add('deployment-flow', function() {
       changeState: React.PropTypes.func.isRequired,
       changes: React.PropTypes.object.isRequired,
       listPlansForCharm: React.PropTypes.func.isRequired,
+      listRegions: React.PropTypes.func.isRequired,
       listTemplates: React.PropTypes.func.isRequired,
       servicesGetById: React.PropTypes.func.isRequired
     },
@@ -82,10 +83,19 @@ YUI.add('deployment-flow', function() {
     /**
       Store the selected credential in state.
 
-      @method _setCloud
+      @method _setCredential
     */
     _setCredential: function(credential) {
       this.setState({credential: credential});
+    },
+
+    /**
+      Store the selected region in state.
+
+      @method _setRegion
+    */
+    _setRegion: function(region) {
+      this.setState({region: region});
     },
 
     /**
@@ -129,7 +139,10 @@ YUI.add('deployment-flow', function() {
                     acl={this.props.acl}
                     cloud={this.state.cloud}
                     clouds={this.CLOUDS}
-                    listTemplates={this.props.listTemplates} />
+                    listRegions={this.props.listRegions}
+                    listTemplates={this.props.listTemplates}
+                    setCredential={this._setCredential}
+                    setRegion={this._setRegion} />
                   <juju.components.DeploymentMachines
                     acl={this.props.acl}
                     cloud={this.state.cloud && this.CLOUDS[this.state.cloud]} />

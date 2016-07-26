@@ -900,6 +900,7 @@ YUI.add('juju-gui', function(Y) {
       var currentChangeSet = ecs.getCurrentChangeSet();
       var changeDescriptions = changesUtils.generateAllChangeDescriptions(
           currentChangeSet, services, units);
+      var jem = this.jem;
       var metadata = metadata || {};
       var activeComponent = metadata.activeComponent;
       var modelCommitted = this.env.get('connected');
@@ -912,7 +913,8 @@ YUI.add('juju-gui', function(Y) {
             changes={changesUtils.getGroupedChanges(currentChangeSet)}
             changeState={this.changeState.bind(this)}
             listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
-            listTemplates={this.jem.listTemplates.bind(this.jem)}
+            listRegions={jem.listRegions.bind(jem)}
+            listTemplates={jem.listTemplates.bind(jem)}
             servicesGetById={services.getById.bind(services)} />,
           document.getElementById('deployment-container'));
         return;
