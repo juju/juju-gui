@@ -20,7 +20,7 @@
         // Force hardware acceleration.
         transform: translate3d(0, 0, 0);
         transition: all .3s;
-        height: 20px;
+        height: auto;
         opacity: 1;
     }
 
@@ -28,7 +28,7 @@
         // Force hardware acceleration.
         transform: translate3d(0, 0, 0);
         transition: all .3s;
-        margin: 5px 0 5px -15px;
+        margin: 5px 0;
         overflow: hidden;
 
         &-header {

@@ -258,10 +258,13 @@ YUI.add('deployment-credential', function() {
           </div>);
       }
       return (
-        <div>
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={this.state.showAdd}>
           {this._generateSelect()}
           {this._generateAdd()}
-        </div>);
+        </juju.components.ExpandingRow>);
     },
 
     render: function() {
@@ -282,6 +285,7 @@ YUI.add('deployment-credential', function() {
   requires: [
     'deployment-credential-add',
     'deployment-section',
+    'expanding-row',
     'inset-select',
     'loading-spinner'
   ]

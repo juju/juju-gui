@@ -130,7 +130,10 @@ describe('DeploymentCredential', function() {
         disabled={false}
         instance="deployment-credential"
         showCheck={false}>
-        <div>
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={true}>
           {undefined}
           <juju.components.DeploymentCredentialAdd
             acl={acl}
@@ -144,7 +147,7 @@ describe('DeploymentCredential', function() {
             setTemplate={setTemplate}
             users={users}
             validateForm={validateForm}/>
-        </div>
+        </juju.components.ExpandingRow>
       </juju.components.DeploymentSection>);
     assert.deepEqual(output, expected);
   });
@@ -179,7 +182,10 @@ describe('DeploymentCredential', function() {
         disabled={true}
         instance="deployment-credential"
         showCheck={false}>
-        <div>
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={true}>
           {undefined}
           <juju.components.DeploymentCredentialAdd
             acl={acl}
@@ -193,7 +199,7 @@ describe('DeploymentCredential', function() {
             setTemplate={setTemplate}
             users={users}
             validateForm={validateForm} />
-        </div>
+        </juju.components.ExpandingRow>
       </juju.components.DeploymentSection>);
     assert.deepEqual(output, expected);
   });
@@ -224,9 +230,12 @@ describe('DeploymentCredential', function() {
         disabled={false}
         instance="deployment-credential"
         showCheck={false}>
-        <div>
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={false}>
           <form className="deployment-credential__form">
-            <div className="prepend-one four-col">
+            <div className="prepend-two four-col">
               <juju.components.InsetSelect
                 disabled={false}
                 label="Credential"
@@ -251,7 +260,7 @@ describe('DeploymentCredential', function() {
             </div>
           </form>
           {undefined}
-        </div>
+        </juju.components.ExpandingRow>
       </juju.components.DeploymentSection>);
     assert.deepEqual(output, expected);
   });
@@ -283,9 +292,12 @@ describe('DeploymentCredential', function() {
         disabled={false}
         instance="deployment-credential"
         showCheck={false}>
-        <div>
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={false}>
           <form className="deployment-credential__form">
-            <div className="prepend-one four-col">
+            <div className="prepend-two four-col">
               <juju.components.InsetSelect
                 disabled={true}
                 label="Credential"
@@ -310,7 +322,7 @@ describe('DeploymentCredential', function() {
             </div>
           </form>
           {undefined}
-        </div>
+        </juju.components.ExpandingRow>
       </juju.components.DeploymentSection>);
     assert.deepEqual(output, expected);
   });
@@ -368,7 +380,10 @@ describe('DeploymentCredential', function() {
         disabled={false}
         instance="deployment-credential"
         showCheck={false}>
-        <div>
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={true}>
           {undefined}
           <juju.components.DeploymentCredentialAdd
             acl={acl}
@@ -382,7 +397,7 @@ describe('DeploymentCredential', function() {
             setTemplate={setTemplate}
             users={users}
             validateForm={validateForm}/>
-        </div>
+        </juju.components.ExpandingRow>
       </juju.components.DeploymentSection>);
     assert.deepEqual(output, expected);
   });
