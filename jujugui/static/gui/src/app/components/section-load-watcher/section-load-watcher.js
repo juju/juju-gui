@@ -23,43 +23,90 @@ YUI.add('section-load-watcher', function(Y) {
   juju.components.SectionLoadWatcher = React.createClass({
 
     propTypes: {
-      children: React.PropTypes.func,
+      // The eslint propType sorting requires that capital letters come
+      // before lower case.
       EmptyComponent: React.PropTypes.func,
       ErrorComponent: React.PropTypes.func,
+      children: React.PropTypes.oneOfType([
+        React.PropTypes.object,
+        React.PropTypes.array
+      ]),
       timeout: React.PropTypes.number
+    },
+
+    getInitialState: function() {
+      return {
+        renderEmpty: false,
+        renderError: false
+      };
     },
 
     _validStatuses: ['starting', 'ok', 'empty', 'error'],
 
-    _childrenStatuses: {},
+    _childrenStatuses: new Map(),
+
+    /**
+      When a child status has been updated we need to loop through all of
+      the available statuses to see if they are all 'empty', 'error', or
+      if the timeout has been hit to then decide which component to show.
+
+      @method _checkChildrenStatuses
+    */
+    _checkChildrenStatuses: function() {
+      const total = React.Children.count(this.props.children);
+      let statuses = {};
+      this._childrenStatuses.forEach((status, ref) => {
+        if (!Number.isInteger(statuses[status])) {
+          statuses[status] = 0;
+        }
+        statuses[status] += 1;
+      });
+      if (statuses.empty === total) {
+        this.setState({renderEmpty: true});
+      }
+      if (statuses.error === total) {
+        this.setState({renderError: true});
+      }
+    },
 
     _setChildStatus: function(ref, status) {
       if (this._validStatuses.indexOf(status) === -1) {
-        throw `Invalid status: ${status} from ref: ${ref}`;
+        throw `Invalid status: "${status}" from ref: ${ref}`;
       }
-      this._childrenStatuses[ref] = status;
+      this._childrenStatuses.set(ref, status);
+      this._checkChildrenStatuses();
+    },
+
+    _renderContent: function() {
+      if (this.state.renderEmpty) {
+        return <this.props.EmptyComponent />;
+      } else if (this.state.renderError) {
+        return <this.props.ErrorComponent />;
+      } else {
+        // Augment the children with the broadcastStatus method
+        const children = React.Children.map(this.props.children, child => {
+          const ref = child.ref;
+          if (!ref) {
+            throw 'ref required but not supplied for component';
+          }
+          // Set the status for the child as null if it is new.
+          if (!this._childrenStatuses.has(ref)) {
+            this._childrenStatuses.set(ref, null);
+          }
+          // Clone the child adding in the broadcastStatus prop.
+          return React.cloneElement(child, {
+            broadcastStatus: this._setChildStatus.bind(this, ref)
+          });
+        });
+
+        return children;
+      }
     },
 
     render: function() {
-      // Augment the children with the broadcastStatus method
-      const children = React.Children.map(this.props.children, child => {
-        const ref = child.ref;
-        if (!ref) {
-          throw `ref required but not supplied for component: ${child.type}`;
-        }
-        // Set the status for the child as null if it is new.
-        if (!this._childrenStatuses[ref]) {
-          this._childrenStatuses[ref] = null;
-        }
-        // Clone the child adding in the broadcastStatus prop.
-        return React.cloneElement(child, {
-          broadcastStatus: this._setChildStatus.bind(this, ref)
-        });
-      });
-
       return (
         <div>
-          {children}
+          {this._renderContent()}
         </div>);
     }
 
