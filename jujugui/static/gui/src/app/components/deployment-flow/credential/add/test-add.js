@@ -73,9 +73,16 @@ describe('DeploymentCredentialAdd', function() {
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
         acl={acl}
+        addTemplate={sinon.stub()}
         close={close}
         cloud={null}
-        clouds={clouds} />, true);
+        clouds={clouds}
+        regions={['test-region']}
+        setCredential={sinon.stub()}
+        setRegion={sinon.stub()}
+        setTemplate={sinon.stub()}
+        users={{}}
+        validateForm={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-credential-add twelve-col">
@@ -113,9 +120,10 @@ describe('DeploymentCredentialAdd', function() {
               disabled={false}
               label="Region"
               options={[{
-                label: 'test region',
+                label: 'test-region',
                 value: 'test-region'
-              }]} />
+              }]}
+              ref="region" />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -180,9 +188,16 @@ describe('DeploymentCredentialAdd', function() {
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
         acl={acl}
+        addTemplate={sinon.stub()}
         close={close}
         cloud="google"
-        clouds={clouds} />, true);
+        clouds={clouds}
+        regions={['test-region']}
+        setCredential={sinon.stub()}
+        setRegion={sinon.stub()}
+        setTemplate={sinon.stub()}
+        users={{}}
+        validateForm={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-credential-add twelve-col">
@@ -220,9 +235,10 @@ describe('DeploymentCredentialAdd', function() {
               disabled={false}
               label="Region"
               options={[{
-                label: 'test region',
+                label: 'test-region',
                 value: 'test-region'
-              }]} />
+              }]}
+              ref="region" />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -287,9 +303,16 @@ describe('DeploymentCredentialAdd', function() {
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
         acl={acl}
+        addTemplate={sinon.stub()}
         close={close}
         cloud="aws"
-        clouds={clouds} />, true);
+        clouds={clouds}
+        regions={['test-region']}
+        setCredential={sinon.stub()}
+        setRegion={sinon.stub()}
+        setTemplate={sinon.stub()}
+        users={{}}
+        validateForm={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-credential-add twelve-col">
@@ -327,9 +350,10 @@ describe('DeploymentCredentialAdd', function() {
               disabled={false}
               label="Region"
               options={[{
-                label: 'test region',
+                label: 'test-region',
                 value: 'test-region'
-              }]} />
+              }]}
+              ref="region" />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -402,9 +426,16 @@ describe('DeploymentCredentialAdd', function() {
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
         acl={acl}
+        addTemplate={sinon.stub()}
         close={close}
         cloud="azure"
-        clouds={clouds} />, true);
+        clouds={clouds}
+        regions={['test-region']}
+        setCredential={sinon.stub()}
+        setRegion={sinon.stub()}
+        setTemplate={sinon.stub()}
+        users={{}}
+        validateForm={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-credential-add twelve-col">
@@ -442,9 +473,10 @@ describe('DeploymentCredentialAdd', function() {
               disabled={false}
               label="Region"
               options={[{
-                label: 'test region',
+                label: 'test-region',
                 value: 'test-region'
-              }]} />
+              }]}
+              ref="region" />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -499,9 +531,16 @@ describe('DeploymentCredentialAdd', function() {
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
         acl={acl}
+        addTemplate={sinon.stub()}
         close={close}
         cloud="azure"
-        clouds={clouds} />, true);
+        clouds={clouds}
+        regions={['test-region']}
+        setCredential={sinon.stub()}
+        setRegion={sinon.stub()}
+        setTemplate={sinon.stub()}
+        users={{}}
+        validateForm={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-credential-add twelve-col">
@@ -539,9 +578,10 @@ describe('DeploymentCredentialAdd', function() {
               disabled={true}
               label="Region"
               options={[{
-                label: 'test region',
+                label: 'test-region',
                 value: 'test-region'
-              }]} />
+              }]}
+              ref="region" />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -587,5 +627,62 @@ describe('DeploymentCredentialAdd', function() {
         </div>
       </div>);
     assert.deepEqual(output, expected);
+  });
+
+  it('can add the credentials', function() {
+    var addTemplate = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredentialAdd
+          acl={acl}
+          addTemplate={addTemplate}
+          close={sinon.stub()}
+          cloud="google"
+          clouds={clouds}
+          regions={['us-east-1']}
+          setCredential={sinon.stub()}
+          setRegion={sinon.stub()}
+          setTemplate={sinon.stub()}
+          users={{jem: {user: 'spinach'}}}
+          validateForm={sinon.stub().returns(true)} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {
+      templateAccessKey: {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('templateAccessKey')
+      },
+      templateName: {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('templateName')
+      },
+      templateSecretKey: {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('templateSecretKey')
+      },
+      region: {
+        getValue: sinon.stub().returns('us-east-1')
+      }
+    };
+    instance._handleAddCredentials();
+    assert.equal(addTemplate.callCount, 1);
+  });
+
+  it('does not submit the form if there are validation errors', function() {
+    var addTemplate = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredentialAdd
+          acl={acl}
+          addTemplate={addTemplate}
+          close={sinon.stub()}
+          cloud="google"
+          clouds={clouds}
+          regions={['test-region']}
+          setCredential={sinon.stub()}
+          setRegion={sinon.stub()}
+          setTemplate={sinon.stub()}
+          users={{}}
+          validateForm={sinon.stub().returns(false)} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._handleAddCredentials();
+    assert.equal(addTemplate.callCount, 0);
   });
 });

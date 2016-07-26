@@ -76,12 +76,16 @@ describe('DeploymentCredential', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addTemplate={sinon.stub()}
         cloud="azure"
         clouds={clouds}
         listRegions={sinon.stub()}
         listTemplates={sinon.stub()}
         setCredential={sinon.stub()}
-        setRegion={sinon.stub()} />, true);
+        setRegion={sinon.stub()}
+        setTemplate={sinon.stub()}
+        users={{}}
+        validateForm={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.DeploymentSection
@@ -97,17 +101,27 @@ describe('DeploymentCredential', function() {
   });
 
   it('can render with a cloud', function() {
+    var addTemplate = sinon.stub();
+    var setCredential = sinon.stub();
+    var setRegion = sinon.stub();
+    var setTemplate = sinon.stub();
+    var users = {};
+    var validateForm = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addTemplate={addTemplate}
         cloud="azure"
         clouds={clouds}
         listRegions={
           sinon.stub().callsArgWith(1, null, [])}
         listTemplates={
           sinon.stub().callsArgWith(0, null, [])}
-        setCredential={sinon.stub()}
-        setRegion={sinon.stub()} />, true);
+        setCredential={setCredential}
+        setRegion={setRegion}
+        setTemplate={setTemplate}
+        users={users}
+        validateForm={validateForm} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -120,26 +134,43 @@ describe('DeploymentCredential', function() {
           {undefined}
           <juju.components.DeploymentCredentialAdd
             acl={acl}
+            addTemplate={addTemplate}
             close={instance._toggleAdd}
             cloud="azure"
-            clouds={clouds} />
+            clouds={clouds}
+            regions={[]}
+            setCredential={setCredential}
+            setRegion={setRegion}
+            setTemplate={setTemplate}
+            users={users}
+            validateForm={validateForm}/>
         </div>
       </juju.components.DeploymentSection>);
     assert.deepEqual(output, expected);
   });
 
   it('can render without a cloud', function() {
+    var addTemplate = sinon.stub();
+    var setCredential = sinon.stub();
+    var setRegion = sinon.stub();
+    var setTemplate = sinon.stub();
+    var users = {};
+    var validateForm = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addTemplate={addTemplate}
         cloud={null}
         clouds={clouds}
         listRegions={
           sinon.stub().callsArgWith(1, null, [])}
         listTemplates={
           sinon.stub().callsArgWith(0, null, [])}
-        setCredential={sinon.stub()}
-        setRegion={sinon.stub()} />, true);
+        setCredential={setCredential}
+        setRegion={setRegion}
+        setTemplate={setTemplate}
+        users={users}
+        validateForm={validateForm} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -152,9 +183,16 @@ describe('DeploymentCredential', function() {
           {undefined}
           <juju.components.DeploymentCredentialAdd
             acl={acl}
+            addTemplate={addTemplate}
             close={instance._toggleAdd}
             cloud={null}
-            clouds={clouds} />
+            clouds={clouds}
+            regions={[]}
+            setCredential={setCredential}
+            setRegion={setRegion}
+            setTemplate={setTemplate}
+            users={users}
+            validateForm={validateForm} />
         </div>
       </juju.components.DeploymentSection>);
     assert.deepEqual(output, expected);
@@ -166,6 +204,7 @@ describe('DeploymentCredential', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addTemplate={sinon.stub()}
         cloud="azure"
         clouds={clouds}
         listRegions={
@@ -173,7 +212,10 @@ describe('DeploymentCredential', function() {
         listTemplates={
           sinon.stub().callsArgWith(0, null, credentials)}
         setCredential={setCredential}
-        setRegion={setRegion} />, true);
+        setRegion={setRegion}
+        setTemplate={sinon.stub()}
+        users={{}}
+        validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -224,6 +266,7 @@ describe('DeploymentCredential', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addTemplate={sinon.stub()}
         cloud="azure"
         clouds={clouds}
         listRegions={
@@ -231,7 +274,10 @@ describe('DeploymentCredential', function() {
         listTemplates={
           sinon.stub().callsArgWith(0, null, credentials)}
         setCredential={setCredential}
-        setRegion={setRegion} />, true);
+        setRegion={setRegion}
+        setTemplate={sinon.stub()}
+        users={{}}
+        validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -282,12 +328,16 @@ describe('DeploymentCredential', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addTemplate={sinon.stub()}
         cloud="azure"
         clouds={clouds}
         listRegions={listRegions}
         listTemplates={listTemplates}
         setCredential={sinon.stub()}
-        setRegion={sinon.stub()} />, true);
+        setRegion={sinon.stub()}
+        setTemplate={sinon.stub()}
+        users={{}}
+        validateForm={sinon.stub()} />, true);
     renderer.unmount();
     assert.equal(abort.callCount, 2);
   });
