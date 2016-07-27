@@ -93,7 +93,7 @@ describe('UserProfile', () => {
         env={env}
         getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
+        listBudgets={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: []})}
         switchModel={sinon.stub()}
         interactiveLogin={true}
@@ -175,7 +175,7 @@ describe('UserProfile', () => {
         env={env}
         getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
+        listBudgets={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, [])}
         switchModel={sinon.stub()}
         interactiveLogin={true}
@@ -203,7 +203,7 @@ describe('UserProfile', () => {
         env={env}
         getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
+        listBudgets={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         switchModel={sinon.stub()}
         interactiveLogin={true}
@@ -240,7 +240,7 @@ describe('UserProfile', () => {
         env={env}
         getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
+        listBudgets={sinon.stub()}
         listModels={sinon.stub()}
         switchModel={sinon.stub()}
         interactiveLogin={true}
@@ -276,16 +276,8 @@ describe('UserProfile', () => {
     var changeState = sinon.stub();
     var getDiagramURL = sinon.stub();
     var switchModel = sinon.stub();
-    var budgets = [{
-      'owner': 'spinach',
-      'budget': 'my-budget',
-      'limit': '99',
-      'allocated': '77',
-      'unallocated': '22',
-      'available': '22',
-      'consumed': '55'
-    }];
     var getAgreements = sinon.stub();
+    var listBudgets = sinon.stub();
     var user = users.charmstore;
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
@@ -296,7 +288,7 @@ describe('UserProfile', () => {
         env={env}
         getAgreements={getAgreements}
         getDiagramURL={getDiagramURL}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: budgets})}
+        listBudgets={listBudgets}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         switchModel={switchModel}
         interactiveLogin={true}
@@ -513,52 +505,9 @@ describe('UserProfile', () => {
           <juju.components.AgreementList
             getAgreements={getAgreements}
             user={user} />
-          <div>
-            <div className="user-profile__header twelve-col no-margin-bottom">
-              Budgets
-              <span className="user-profile__size">
-                ({1})
-              </span>
-              {undefined}
-            </div>
-            <ul className="user-profile__list twelve-col">
-              <li className="user-profile__list-header twelve-col">
-                <span className="user-profile__list-col three-col">
-                  Name
-                </span>
-                <span className="user-profile__list-col two-col">
-                  Budget
-                </span>
-                <span className="user-profile__list-col two-col">
-                  Limit
-                </span>
-                <span className="user-profile__list-col four-col">
-                  Credit
-                </span>
-                <span className="user-profile__list-col one-col last-col">
-                  Spend
-                </span>
-              </li>
-              {[<li className="user-profile__list-row twelve-col"
-                key="my-budget">
-                  <span className="user-profile__list-col three-col">
-                    my-budget
-                  </span>
-                  <span className="user-profile__list-col two-col">
-                    ${'77'}
-                  </span>
-                  <span className="user-profile__list-col two-col">
-                    ${'99'}
-                  </span>
-                  <span className="user-profile__list-col four-col">
-                    ${'22'}
-                  </span>
-                  <span className="user-profile__list-col one-col last-col">
-                    ${'55'}
-                  </span>
-              </li>]}
-            </ul>
-          </div>
+          <juju.components.BudgetList
+            listBudgets={listBudgets}
+            user={user} />
         </div>
       </div>);
     assert.deepEqual(content, expected);
@@ -575,7 +524,7 @@ describe('UserProfile', () => {
         env={env}
         getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
+        listBudgets={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         switchModel={sinon.stub()}
         interactiveLogin={true}
@@ -615,7 +564,7 @@ describe('UserProfile', () => {
         canCreateNew={true}
         charmstore={{}}
         switchModel={sinon.stub()}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
+        listBudgets={sinon.stub()}
         listModels={sinon.stub()}
         changeState={sinon.stub()}
         env={env}
@@ -652,7 +601,7 @@ describe('UserProfile', () => {
         addNotification={sinon.stub()}
         switchModel={sinon.stub()}
         users={users}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
+        listBudgets={sinon.stub()}
         listModels={sinon.stub()}
         canCreateNew={true}
         changeState={sinon.stub()}
@@ -680,7 +629,7 @@ describe('UserProfile', () => {
         addNotification={sinon.stub()}
         switchModel={sinon.stub()}
         users={{}}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
+        listBudgets={sinon.stub()}
         listModels={sinon.stub()}
         canCreateNew={true}
         changeState={sinon.stub()}
@@ -700,7 +649,7 @@ describe('UserProfile', () => {
         addNotification={sinon.stub()}
         switchModel={sinon.stub()}
         users={users}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
+        listBudgets={sinon.stub()}
         listModels={sinon.stub()}
         canCreateNew={true}
         changeState={sinon.stub()}
@@ -734,7 +683,7 @@ describe('UserProfile', () => {
         getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         hideConnectingMask={sinon.stub()}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
+        listBudgets={sinon.stub()}
         showConnectingMask={sinon.stub()}
         pluralize={sinon.stub()}
         storeUser={sinon.stub()}
@@ -769,7 +718,7 @@ describe('UserProfile', () => {
         getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
+        listBudgets={sinon.stub()}
         listModels={sinon.stub()}
         pluralize={sinon.stub()}
         hideConnectingMask={sinon.stub()}
@@ -804,7 +753,7 @@ describe('UserProfile', () => {
         getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
+        listBudgets={sinon.stub()}
         listModels={listModels}
         pluralize={sinon.stub()}
         hideConnectingMask={sinon.stub()}
@@ -828,7 +777,7 @@ describe('UserProfile', () => {
         addNotification={sinon.stub()}
         switchModel={utilsSwitchModel}
         users={users}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
+        listBudgets={sinon.stub()}
         listModels={sinon.stub()}
         canCreateNew={true}
         changeState={sinon.stub()}
@@ -862,7 +811,7 @@ describe('UserProfile', () => {
         env={env}
         getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
+        listBudgets={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         pluralize={sinon.stub()}
         hideConnectingMask={sinon.stub()}
@@ -890,7 +839,7 @@ describe('UserProfile', () => {
         env={env}
         getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
+        listBudgets={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         pluralize={sinon.stub()}
         hideConnectingMask={sinon.stub()}
@@ -935,7 +884,7 @@ describe('UserProfile', () => {
         env={env}
         getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
+        listBudgets={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         pluralize={sinon.stub()}
         hideConnectingMask={sinon.stub()}
@@ -988,7 +937,7 @@ describe('UserProfile', () => {
         env={env}
         getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
+        listBudgets={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         pluralize={sinon.stub()}
         hideConnectingMask={hideConnectingMask}
@@ -1035,7 +984,7 @@ describe('UserProfile', () => {
         env={env}
         getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
-        listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
+        listBudgets={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         jem={{}}
         pluralize={sinon.stub()}
