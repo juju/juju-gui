@@ -69,7 +69,6 @@ describe('AgreementList', () => {
       <juju.components.AgreementList
         getAgreements={getAgreements}
         user={users.charmstore} />, true);
-    var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
     var expected = (
       <div className="user-profile__agreement-list">

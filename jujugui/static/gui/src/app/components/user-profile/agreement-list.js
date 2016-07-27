@@ -21,14 +21,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('agreement-list', function() {
 
   juju.components.AgreementList = React.createClass({
-    xhrs: [],
-
     propTypes: {
       getAgreements: React.PropTypes.func.isRequired,
       user: React.PropTypes.object,
     },
 
     getInitialState: function() {
+      this.xhrs = [];
+
       return {
         agreementList: [],
         loadingAgreements: false,
