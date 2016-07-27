@@ -56,6 +56,12 @@ YUI.add('deployment-credential', function() {
       this._getRegions();
     },
 
+    componentDidUpdate: function(prevProps) {
+      if (prevProps.cloud !== this.props.cloud) {
+        this._getRegions();
+      }
+    },
+
     componentWillUnmount: function() {
       if (this.credentialXHR) {
         this.credentialXHR.abort();

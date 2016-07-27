@@ -83,6 +83,7 @@ describe('DeploymentCredentialAdd', function() {
         setTemplate={sinon.stub()}
         users={{}}
         validateForm={sinon.stub()} />, true);
+    var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-credential-add twelve-col">
@@ -172,7 +173,7 @@ describe('DeploymentCredentialAdd', function() {
               title: 'Cancel',
               type: 'neutral'
             }, {
-              action: close,
+              action: instance._handleAddCredentials,
               submit: true,
               title: 'Add cloud credential',
               type: 'positive'
@@ -198,6 +199,7 @@ describe('DeploymentCredentialAdd', function() {
         setTemplate={sinon.stub()}
         users={{}}
         validateForm={sinon.stub()} />, true);
+    var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-credential-add twelve-col">
@@ -287,7 +289,7 @@ describe('DeploymentCredentialAdd', function() {
               title: 'Cancel',
               type: 'neutral'
             }, {
-              action: close,
+              action: instance._handleAddCredentials,
               submit: true,
               title: 'Add cloud credential',
               type: 'positive'
@@ -313,6 +315,7 @@ describe('DeploymentCredentialAdd', function() {
         setTemplate={sinon.stub()}
         users={{}}
         validateForm={sinon.stub()} />, true);
+    var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-credential-add twelve-col">
@@ -410,7 +413,7 @@ describe('DeploymentCredentialAdd', function() {
               title: 'Cancel',
               type: 'neutral'
             }, {
-              action: close,
+              action: instance._handleAddCredentials,
               submit: true,
               title: 'Add cloud credential',
               type: 'positive'
@@ -436,6 +439,7 @@ describe('DeploymentCredentialAdd', function() {
         setTemplate={sinon.stub()}
         users={{}}
         validateForm={sinon.stub()} />, true);
+    var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-credential-add twelve-col">
@@ -514,7 +518,7 @@ describe('DeploymentCredentialAdd', function() {
               title: 'Cancel',
               type: 'neutral'
             }, {
-              action: close,
+              action: instance._handleAddCredentials,
               submit: true,
               title: 'Add cloud credential',
               type: 'positive'
@@ -541,6 +545,7 @@ describe('DeploymentCredentialAdd', function() {
         setTemplate={sinon.stub()}
         users={{}}
         validateForm={sinon.stub()} />, true);
+    var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-credential-add twelve-col">
@@ -619,7 +624,7 @@ describe('DeploymentCredentialAdd', function() {
               title: 'Cancel',
               type: 'neutral'
             }, {
-              action: close,
+              action: instance._handleAddCredentials,
               submit: true,
               title: 'Add cloud credential',
               type: 'positive'

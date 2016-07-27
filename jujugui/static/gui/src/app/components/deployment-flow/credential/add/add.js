@@ -72,12 +72,17 @@ YUI.add('deployment-credential-add', function() {
 
       @method _handleCloudClick
     */
-    _handleAddCredentials: function(id) {
-      var valid = this.props.validateForm([
-        'templateAccessKey',
-        'templateName',
-        'templateSecretKey'
-      ], this.refs);
+    _handleAddCredentials: function() {
+      var fields = [
+        'templateName'
+      ];
+      if (this.props.cloud === 'aws') {
+        fields = fields.concat([
+          'templateAccessKey',
+          'templateSecretKey'
+        ]);
+      }
+      var valid = this.props.validateForm(fields, this.refs);
       if (!valid) {
         // If there are any form validation errors then stop adding the
         // credentials.
@@ -106,6 +111,7 @@ YUI.add('deployment-credential-add', function() {
       this.props.setCredential(`${user}/${templateName}`);
       this.props.setRegion(this._getRegion());
       this.props.setTemplate(this._generateTemplate());
+      this.props.close();
     },
 
     /**
@@ -242,7 +248,7 @@ YUI.add('deployment-credential-add', function() {
         title: 'Cancel',
         type: 'neutral'
       }, {
-        action: this.props.close,
+        action: this._handleAddCredentials,
         submit: true,
         title: 'Add cloud credential',
         type: 'positive'
