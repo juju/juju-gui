@@ -137,10 +137,7 @@ YUI.add('agreement-list', function() {
       if (!list || list.length === 0) {
         return null;
       }
-      var rows = [];
-      list.forEach((model) => {
-        rows.push(this._generateRow(model));
-      });
+      var rows = list.map(this._generateRow);
       return (
         <div className="user-profile__agreement-list">
           <div className="user-profile__header twelve-col no-margin-bottom">
