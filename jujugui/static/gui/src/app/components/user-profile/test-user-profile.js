@@ -91,7 +91,7 @@ describe('UserProfile', () => {
         canCreateNew={true}
         charmstore={{}}
         env={env}
-        getAgreements={sinon.stub().callsArgWith(0, null, [])}
+        getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
         listModels={sinon.stub().callsArgWith(0, null, {models: []})}
@@ -173,7 +173,7 @@ describe('UserProfile', () => {
         canCreateNew={true}
         charmstore={{}}
         env={env}
-        getAgreements={sinon.stub().callsArgWith(0, null, [])}
+        getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
         listModels={sinon.stub().callsArgWith(0, null, [])}
@@ -276,12 +276,6 @@ describe('UserProfile', () => {
     var changeState = sinon.stub();
     var getDiagramURL = sinon.stub();
     var switchModel = sinon.stub();
-    var agreements = [{
-      user: 'spinach',
-      term: 'One fancy term',
-      revision: 47,
-      createdAt: new Date(1465510044000)
-    }];
     var budgets = [{
       'owner': 'spinach',
       'budget': 'my-budget',
@@ -291,7 +285,8 @@ describe('UserProfile', () => {
       'available': '22',
       'consumed': '55'
     }];
-    var getAgreements = sinon.stub().callsArgWith(0, null, agreements);
+    var getAgreements = sinon.stub();
+    var user = users.charmstore;
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         addNotification={sinon.stub()}
@@ -310,7 +305,7 @@ describe('UserProfile', () => {
         hideConnectingMask={sinon.stub()}
         showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
-        user={users.charmstore} />, true);
+        user={user} />, true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
     var content = output.props.children.props.children;
@@ -515,36 +510,9 @@ describe('UserProfile', () => {
               </juju.components.UserProfileEntity>]}
             </ul>
           </div>
-          <div>
-            <div className="user-profile__header twelve-col no-margin-bottom">
-              Terms & conditions
-              <span className="user-profile__size">
-                ({1})
-              </span>
-              {undefined}
-            </div>
-            <ul className="user-profile__list twelve-col">
-              <li className="user-profile__list-header twelve-col">
-                <span className="user-profile__list-col eight-col">
-                  Name
-                </span>
-                <span className="user-profile__list-col four-col last-col">
-                  Date signed
-                </span>
-              </li>
-              {[<li className="user-profile__list-row twelve-col"
-                key="One fancy term47">
-                <span className="user-profile__list-col eight-col">
-                  One fancy term
-                </span>
-                <span className="user-profile__list-col four-col last-col">
-                <juju.components.DateDisplay
-                  date={agreements[0].createdAt}
-                  relative={true} />
-                </span>
-              </li>]}
-            </ul>
-          </div>
+          <juju.components.AgreementList
+            getAgreements={getAgreements}
+            user={user} />
           <div>
             <div className="user-profile__header twelve-col no-margin-bottom">
               Budgets
