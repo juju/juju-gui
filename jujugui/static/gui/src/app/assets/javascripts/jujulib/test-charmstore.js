@@ -286,6 +286,7 @@ describe('jujulib charmstore', function() {
         'search',
         'text=foo&' +
             'limit=30&' +
+            'autocomplete=1&' +
             'include=charm-metadata&' +
             'include=charm-config&' +
             'include=supported-series&' +
@@ -303,6 +304,7 @@ describe('jujulib charmstore', function() {
         'search',
         'text=foo&' +
             'limit=99&' +
+            'autocomplete=1&' +
             'include=charm-metadata&' +
             'include=charm-config&' +
             'include=supported-series&' +
