@@ -319,17 +319,20 @@ var module = module;
           }
         });
       }
-      qs = qs +
-          '&limit=' + (limit || 30) + '&' +
-          'include=charm-metadata&' +
-          'include=charm-config&' +
-          'include=supported-series&' +
-          'include=bundle-metadata&' +
-          'include=extra-info&' +
-          'include=tags&' +
-          'include=owner&' +
-          'include=stats';
-      var path = this._generatePath('search', qs);
+      var includes = [
+        qs,
+        'limit=' + (limit || 30),
+        'autocomplete=1',
+        'include=charm-metadata',
+        'include=charm-config',
+        'include=supported-series',
+        'include=bundle-metadata',
+        'include=extra-info',
+        'include=tags',
+        'include=owner',
+        'include=stats'
+      ];
+      var path = this._generatePath('search', includes.join('&'));
       return jujulib._makeRequest(
           this.bakery,
           path,
