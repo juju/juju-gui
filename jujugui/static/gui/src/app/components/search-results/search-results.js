@@ -459,20 +459,6 @@ YUI.add('search-results', function(Y) {
     },
 
     /**
-      Generate the classes for a results list.
-
-      @method _generateListClasses
-      @param {Boolean} promulgated Whether to add the promulgated class.
-      @returns {String} The collection of class names.
-    */
-    _generateListClasses: function(promulgated) {
-      return classNames(
-        'list-block__list',
-        {promulgated: promulgated}
-      );
-    },
-
-    /**
       Handle navigating back.
 
       @method _handleBack
@@ -503,7 +489,7 @@ YUI.add('search-results', function(Y) {
           <h4>
             {title} <span className="count">({results.length})</span>
           </h4>
-          <ul className={this._generateListClasses(promulgated.length)}>
+          <ul className='list-block__list'>
             {results.map(item =>
                 <juju.components.SearchResultsItem
                   changeState={this.props.changeState}
