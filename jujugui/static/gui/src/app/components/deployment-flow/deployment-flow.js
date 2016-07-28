@@ -23,10 +23,14 @@ YUI.add('deployment-flow', function() {
   juju.components.DeploymentFlow = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
+      addTemplate: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       changes: React.PropTypes.object.isRequired,
       listPlansForCharm: React.PropTypes.func.isRequired,
-      servicesGetById: React.PropTypes.func.isRequired
+      listRegions: React.PropTypes.func.isRequired,
+      listTemplates: React.PropTypes.func.isRequired,
+      servicesGetById: React.PropTypes.func.isRequired,
+      users: React.PropTypes.object.isRequired
     },
 
     CLOUDS: {
@@ -63,7 +67,12 @@ YUI.add('deployment-flow', function() {
     },
 
     getInitialState: function() {
-      return {cloud: null};
+      return {
+        cloud: null,
+        credential: null,
+        template: null,
+        region: null
+      };
     },
 
     /**
@@ -73,6 +82,54 @@ YUI.add('deployment-flow', function() {
     */
     _setCloud: function(cloud) {
       this.setState({cloud: cloud});
+    },
+
+    /**
+      Store the selected credential in state.
+
+      @method _setCredential
+    */
+    _setCredential: function(credential) {
+      this.setState({credential: credential});
+    },
+
+    /**
+      Store the selected template in state.
+
+      @method _setTemplate
+    */
+    _setTemplate: function(template) {
+      this.setState({template: template});
+    },
+
+    /**
+      Store the selected region in state.
+
+      @method _setRegion
+    */
+    _setRegion: function(region) {
+      this.setState({region: region});
+    },
+
+    /**
+      Validate the form fields.
+
+      @method _validateForm
+      @param {Array} fields A list of field ref names.
+      @param {Object} refs The refs for a component.
+      @returns {Boolean} Whether the form is valid.
+    */
+    _validateForm: function(fields, refs) {
+      var formValid = true;
+      fields.forEach(field => {
+        var valid = refs[field].validate();
+        // If there is an error then mark that. We don't want to exit the loop
+        // at this point so that each field gets validated.
+        if (!valid) {
+          formValid = false;
+        }
+      });
+      return formValid;
     },
 
     /**
@@ -114,8 +171,19 @@ YUI.add('deployment-flow', function() {
                     setCloud={this._setCloud} />
                   <juju.components.DeploymentCredential
                     acl={this.props.acl}
+                    addTemplate={this.props.addTemplate}
+                    credential={this.state.credential}
                     cloud={this.state.cloud}
-                    clouds={this.CLOUDS} />
+                    clouds={this.CLOUDS}
+                    listRegions={this.props.listRegions}
+                    listTemplates={this.props.listTemplates}
+                    region={this.state.region}
+                    setCredential={this._setCredential}
+                    setRegion={this._setRegion}
+                    setTemplate={this._setTemplate}
+                    template={this.state.template}
+                    users={this.props.users}
+                    validateForm={this._validateForm} />
                   <juju.components.DeploymentMachines
                     acl={this.props.acl}
                     cloud={this.state.cloud && this.CLOUDS[this.state.cloud]} />

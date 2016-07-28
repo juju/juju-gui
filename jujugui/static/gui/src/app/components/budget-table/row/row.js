@@ -63,6 +63,7 @@ YUI.add('budget-table-row', function() {
 
     /**
       Callback for when plans for an entity have been successfully fetched.
+
       @method _getPlansCallback
       @param {String} error An error message, or null if there's no error.
       @param {Array} plans A list of the plans found.

@@ -23,12 +23,117 @@ YUI.add('deployment-credential', function() {
   juju.components.DeploymentCredential = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
+      addTemplate: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.string,
-      clouds: React.PropTypes.object.isRequired
+      clouds: React.PropTypes.object.isRequired,
+      credential: React.PropTypes.string,
+      listRegions: React.PropTypes.func.isRequired,
+      listTemplates: React.PropTypes.func.isRequired,
+      region: React.PropTypes.string,
+      setCredential: React.PropTypes.func.isRequired,
+      setRegion: React.PropTypes.func.isRequired,
+      setTemplate: React.PropTypes.func.isRequired,
+      template: React.PropTypes.string,
+      users: React.PropTypes.object.isRequired,
+      validateForm: React.PropTypes.func.isRequired
     },
 
+    credentialXHR: null,
+    regionsXHR: null,
+
     getInitialState: function() {
-      return {showAdd: true};
+      return {
+        credentials: [],
+        credentialsLoading: true,
+        regions: [],
+        regionsLoading: true,
+        showAdd: true
+      };
+    },
+
+    componentWillMount: function() {
+      this._getCredentials();
+      this._getRegions();
+    },
+
+    componentDidUpdate: function(prevProps) {
+      if (prevProps.cloud !== this.props.cloud) {
+        this._getRegions();
+      }
+    },
+
+    componentWillUnmount: function() {
+      if (this.credentialXHR) {
+        this.credentialXHR.abort();
+      }
+      if (this.regionsXHR) {
+        this.regionsXHR.abort();
+      }
+    },
+
+    /**
+      Request credentials from JEM.
+
+      @method _getCredentials
+    */
+    _getCredentials: function() {
+      this.credentialXHR = this.props.listTemplates(
+        this._getCredentialsCallback);
+    },
+
+    /**
+      The method to be called when the credentials reponse has been received.
+
+      @method _getCredentialsCallback
+      @param {String} error An error message, or null if there's no error.
+      @param {Array} credentials A list of the credentials found.
+    */
+    _getCredentialsCallback: function(error, credentials) {
+      if (error) {
+        console.error('Unable to list templates', error);
+        return;
+      }
+      this.setState({
+        credentials: credentials,
+        credentialsLoading: false,
+        // If there are no credentials then display the form to add credentials.
+        showAdd: !credentials || credentials.length === 0
+      });
+    },
+
+    /**
+      Request regions from JEM.
+
+      @method _getRegions
+    */
+    _getRegions: function() {
+      var props = this.props;
+      var cloud = props.cloud;
+      if (!cloud) {
+        this.setState({
+          regionsLoading: false
+        });
+        return;
+      }
+      this.regionsXHR = props.listRegions(cloud, this._getRegionsCallback);
+    },
+
+    /**
+      The method to be called when the regions reponse has been received.
+
+      @method _getRegionsCallback
+      @param {String} error An error message, or null if there's no error.
+      @param {Array} regions A list of the regions found.
+    */
+    _getRegionsCallback: function(error, regions) {
+      if (error) {
+        console.error('Unable to list templates', error);
+        return;
+      }
+      this.setState({
+        regions: regions,
+        regionsLoading: false
+      });
     },
 
     /**
@@ -38,6 +143,56 @@ YUI.add('deployment-credential', function() {
     */
     _toggleAdd: function() {
       this.setState({showAdd: !this.state.showAdd});
+    },
+
+    /**
+      Generate the list of credential options.
+
+      @method _generateCredentials
+      @returns {Array} The list of credential options.
+    */
+    _generateCredentials: function() {
+      var credentials = this.state.credentials.map((credential) => {
+        var path = credential.path;
+        return {
+          label: path,
+          value: path
+        };
+      });
+      credentials.push({
+        label: 'Add credential...',
+        value: 'add-credential'
+      });
+      return credentials;
+    },
+
+    /**
+      Set the credential value or navigate to the add credentails form.
+
+      @method _handleCredentialChange
+      @param {String} The select value.
+    */
+    _handleCredentialChange: function(value) {
+      if (value === 'add-credential') {
+        this._toggleAdd();
+      } else {
+        this.props.setCredential();
+      }
+    },
+
+    /**
+      Generate the list of region options.
+
+      @method _generateRegions
+      @returns {Array} The list of region options.
+    */
+    _generateRegions: function() {
+      return this.state.regions.map((region) => {
+        return {
+          label: region,
+          value: region
+        };
+      });
     },
 
     /**
@@ -53,29 +208,19 @@ YUI.add('deployment-credential', function() {
       var disabled = this.props.acl.isReadOnly();
       return (
         <form className="deployment-credential__form">
-          <div className="prepend-one four-col">
+          <div className="prepend-two four-col">
           <juju.components.InsetSelect
             disabled={disabled}
             label="Credential"
-            options={[{
-              label: 'test cred',
-              value: 'test-cred'
-            }]} />
+            onChange={this._handleCredentialChange}
+            options={this._generateCredentials()} />
           </div>
           <div className="four-col">
             <juju.components.InsetSelect
               disabled={disabled}
               label="Region"
-              options={[{
-                label: 'test region',
-                value: 'test-region'
-              }]} />
-          </div>
-          <div className="three-col last-col">
-            <juju.components.GenericButton
-              action={this._toggleAdd}
-              title="Add credential"
-              type="inline-neutral" />
+              onChange={this.props.setRegion}
+              options={this._generateRegions()} />
           </div>
         </form>);
     },
@@ -93,9 +238,39 @@ YUI.add('deployment-credential', function() {
       return (
         <juju.components.DeploymentCredentialAdd
           acl={this.props.acl}
+          addTemplate={this.props.addTemplate}
           close={this._toggleAdd}
           cloud={this.props.cloud}
-          clouds={this.props.clouds} />);
+          clouds={this.props.clouds}
+          regions={this.state.regions}
+          setCredential={this.props.setCredential}
+          setRegion={this.props.setRegion}
+          setTemplate={this.props.setTemplate}
+          users={this.props.users}
+          validateForm={this.props.validateForm} />);
+    },
+
+    /**
+      Display the credentials or a spinner if the data is loading.
+
+      @method _generateContent
+      @returns {Object} The dom elements.
+    */
+    _generateContent: function() {
+      if (this.state.credentialsLoading || this.state.regionsLoading) {
+        return (
+          <div className="deployment-credential__loading">
+            <juju.components.Spinner />
+          </div>);
+      }
+      return (
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={this.state.showAdd}>
+          {this._generateSelect()}
+          {this._generateAdd()}
+        </juju.components.ExpandingRow>);
     },
 
     render: function() {
@@ -105,8 +280,7 @@ YUI.add('deployment-credential', function() {
           disabled={!this.props.cloud}
           instance="deployment-credential"
           showCheck={false}>
-          {this._generateSelect()}
-          {this._generateAdd()}
+          {this._generateContent()}
         </juju.components.DeploymentSection>
       );
     }
@@ -117,7 +291,8 @@ YUI.add('deployment-credential', function() {
   requires: [
     'deployment-credential-add',
     'deployment-section',
+    'expanding-row',
     'inset-select',
-    'generic-button'
+    'loading-spinner'
   ]
 });

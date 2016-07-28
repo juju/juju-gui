@@ -24,11 +24,16 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentCredential', function() {
-  var acl, clouds;
+  var acl, clouds, credentials, regions;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('deployment-credential', function() { done(); });
+  });
+
+  beforeEach(function() {
+    credentials = [{path: 'owner/test-cred'}];
+    regions = ['test-region'];
   });
 
   beforeEach(() => {
@@ -67,12 +72,56 @@ describe('DeploymentCredential', function() {
     };
   });
 
-  it('can render with a cloud', function() {
+  it('can display a loader when loading regions and credentials', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addTemplate={sinon.stub()}
         cloud="azure"
-        clouds={clouds} />, true);
+        clouds={clouds}
+        listRegions={sinon.stub()}
+        listTemplates={sinon.stub()}
+        setCredential={sinon.stub()}
+        setRegion={sinon.stub()}
+        setTemplate={sinon.stub()}
+        users={{}}
+        validateForm={sinon.stub()} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.DeploymentSection
+        completed={false}
+        disabled={false}
+        instance="deployment-credential"
+        showCheck={false}>
+        <div className="deployment-credential__loading">
+          <juju.components.Spinner />
+        </div>
+      </juju.components.DeploymentSection>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render with a cloud', function() {
+    var addTemplate = sinon.stub();
+    var setCredential = sinon.stub();
+    var setRegion = sinon.stub();
+    var setTemplate = sinon.stub();
+    var users = {};
+    var validateForm = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredential
+        acl={acl}
+        addTemplate={addTemplate}
+        cloud="azure"
+        clouds={clouds}
+        listRegions={
+          sinon.stub().callsArgWith(1, null, [])}
+        listTemplates={
+          sinon.stub().callsArgWith(0, null, [])}
+        setCredential={setCredential}
+        setRegion={setRegion}
+        setTemplate={setTemplate}
+        users={users}
+        validateForm={validateForm} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -81,22 +130,50 @@ describe('DeploymentCredential', function() {
         disabled={false}
         instance="deployment-credential"
         showCheck={false}>
-        {undefined}
-        <juju.components.DeploymentCredentialAdd
-          acl={acl}
-          close={instance._toggleAdd}
-          cloud="azure"
-          clouds={clouds} />
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={true}>
+          {undefined}
+          <juju.components.DeploymentCredentialAdd
+            acl={acl}
+            addTemplate={addTemplate}
+            close={instance._toggleAdd}
+            cloud="azure"
+            clouds={clouds}
+            regions={[]}
+            setCredential={setCredential}
+            setRegion={setRegion}
+            setTemplate={setTemplate}
+            users={users}
+            validateForm={validateForm}/>
+        </juju.components.ExpandingRow>
       </juju.components.DeploymentSection>);
     assert.deepEqual(output, expected);
   });
 
   it('can render without a cloud', function() {
+    var addTemplate = sinon.stub();
+    var setCredential = sinon.stub();
+    var setRegion = sinon.stub();
+    var setTemplate = sinon.stub();
+    var users = {};
+    var validateForm = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addTemplate={addTemplate}
         cloud={null}
-        clouds={clouds} />, true);
+        clouds={clouds}
+        listRegions={
+          sinon.stub().callsArgWith(1, null, [])}
+        listTemplates={
+          sinon.stub().callsArgWith(0, null, [])}
+        setCredential={setCredential}
+        setRegion={setRegion}
+        setTemplate={setTemplate}
+        users={users}
+        validateForm={validateForm} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -105,24 +182,47 @@ describe('DeploymentCredential', function() {
         disabled={true}
         instance="deployment-credential"
         showCheck={false}>
-        {undefined}
-        <juju.components.DeploymentCredentialAdd
-          acl={acl}
-          close={instance._toggleAdd}
-          cloud={null}
-          clouds={clouds} />
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={true}>
+          {undefined}
+          <juju.components.DeploymentCredentialAdd
+            acl={acl}
+            addTemplate={addTemplate}
+            close={instance._toggleAdd}
+            cloud={null}
+            clouds={clouds}
+            regions={[]}
+            setCredential={setCredential}
+            setRegion={setRegion}
+            setTemplate={setTemplate}
+            users={users}
+            validateForm={validateForm} />
+        </juju.components.ExpandingRow>
       </juju.components.DeploymentSection>);
     assert.deepEqual(output, expected);
   });
 
   it('can show existing credentials', function() {
+    var setCredential = sinon.stub();
+    var setRegion = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addTemplate={sinon.stub()}
         cloud="azure"
-        clouds={clouds} />, true);
+        clouds={clouds}
+        listRegions={
+          sinon.stub().callsArgWith(1, null, regions)}
+        listTemplates={
+          sinon.stub().callsArgWith(0, null, credentials)}
+        setCredential={setCredential}
+        setRegion={setRegion}
+        setTemplate={sinon.stub()}
+        users={{}}
+        validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
-    instance._toggleAdd();
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.DeploymentSection
@@ -130,46 +230,61 @@ describe('DeploymentCredential', function() {
         disabled={false}
         instance="deployment-credential"
         showCheck={false}>
-        <form className="deployment-credential__form">
-          <div className="prepend-one four-col">
-          <juju.components.InsetSelect
-            disabled={false}
-            label="Credential"
-            options={[{
-              label: 'test cred',
-              value: 'test-cred'
-            }]} />
-          </div>
-          <div className="four-col">
-            <juju.components.InsetSelect
-              disabled={false}
-              label="Region"
-              options={[{
-                label: 'test region',
-                value: 'test-region'
-              }]} />
-          </div>
-          <div className="three-col last-col">
-            <juju.components.GenericButton
-              action={instance._toggleAdd}
-              title="Add credential"
-              type="inline-neutral" />
-          </div>
-        </form>
-        {undefined}
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={false}>
+          <form className="deployment-credential__form">
+            <div className="prepend-two four-col">
+              <juju.components.InsetSelect
+                disabled={false}
+                label="Credential"
+                onChange={instance._handleCredentialChange}
+                options={[{
+                  label: 'owner/test-cred',
+                  value: 'owner/test-cred'
+                }, {
+                  label: 'Add credential...',
+                  value: 'add-credential'
+                }]} />
+            </div>
+            <div className="four-col">
+              <juju.components.InsetSelect
+                disabled={false}
+                label="Region"
+                onChange={setRegion}
+                options={[{
+                  label: 'test-region',
+                  value: 'test-region'
+                }]} />
+            </div>
+          </form>
+          {undefined}
+        </juju.components.ExpandingRow>
       </juju.components.DeploymentSection>);
     assert.deepEqual(output, expected);
   });
 
   it('can disable controls when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
+    var setCredential = sinon.stub();
+    var setRegion = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
+        addTemplate={sinon.stub()}
         cloud="azure"
-        clouds={clouds} />, true);
+        clouds={clouds}
+        listRegions={
+          sinon.stub().callsArgWith(1, null, regions)}
+        listTemplates={
+          sinon.stub().callsArgWith(0, null, credentials)}
+        setCredential={setCredential}
+        setRegion={setRegion}
+        setTemplate={sinon.stub()}
+        users={{}}
+        validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
-    instance._toggleAdd();
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.DeploymentSection
@@ -177,33 +292,112 @@ describe('DeploymentCredential', function() {
         disabled={false}
         instance="deployment-credential"
         showCheck={false}>
-        <form className="deployment-credential__form">
-          <div className="prepend-one four-col">
-          <juju.components.InsetSelect
-            disabled={true}
-            label="Credential"
-            options={[{
-              label: 'test cred',
-              value: 'test-cred'
-            }]} />
-          </div>
-          <div className="four-col">
-            <juju.components.InsetSelect
-              disabled={true}
-              label="Region"
-              options={[{
-                label: 'test region',
-                value: 'test-region'
-              }]} />
-          </div>
-          <div className="three-col last-col">
-            <juju.components.GenericButton
-              action={instance._toggleAdd}
-              title="Add credential"
-              type="inline-neutral" />
-          </div>
-        </form>
-        {undefined}
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={false}>
+          <form className="deployment-credential__form">
+            <div className="prepend-two four-col">
+              <juju.components.InsetSelect
+                disabled={true}
+                label="Credential"
+                onChange={instance._handleCredentialChange}
+                options={[{
+                  label: 'owner/test-cred',
+                  value: 'owner/test-cred'
+                }, {
+                  label: 'Add credential...',
+                  value: 'add-credential'
+                }]} />
+            </div>
+            <div className="four-col">
+              <juju.components.InsetSelect
+                disabled={true}
+                label="Region"
+                onChange={setRegion}
+                options={[{
+                  label: 'test-region',
+                  value: 'test-region'
+                }]} />
+            </div>
+          </form>
+          {undefined}
+        </juju.components.ExpandingRow>
+      </juju.components.DeploymentSection>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('will abort the request when unmounting', function() {
+    var abort = sinon.stub();
+    var listTemplates = sinon.stub().returns({abort: abort});
+    var listRegions = sinon.stub().returns({abort: abort});
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredential
+        acl={acl}
+        addTemplate={sinon.stub()}
+        cloud="azure"
+        clouds={clouds}
+        listRegions={listRegions}
+        listTemplates={listTemplates}
+        setCredential={sinon.stub()}
+        setRegion={sinon.stub()}
+        setTemplate={sinon.stub()}
+        users={{}}
+        validateForm={sinon.stub()} />, true);
+    renderer.unmount();
+    assert.equal(abort.callCount, 2);
+  });
+
+  it('can navigate to the add credentials form', function() {
+    var addTemplate = sinon.stub();
+    var setCredential = sinon.stub();
+    var setRegion = sinon.stub();
+    var setTemplate = sinon.stub();
+    var users = {};
+    var validateForm = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredential
+        acl={acl}
+        addTemplate={addTemplate}
+        cloud="azure"
+        clouds={clouds}
+        listRegions={
+          sinon.stub().callsArgWith(1, null, regions)}
+        listTemplates={
+          sinon.stub().callsArgWith(0, null, credentials)}
+        setCredential={setCredential}
+        setRegion={setRegion}
+        setTemplate={setTemplate}
+        users={users}
+        validateForm={validateForm} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._handleCredentialChange('add-credential');
+    var output = renderer.getRenderOutput();
+    // output = renderer.render();
+    var expected = (
+      <juju.components.DeploymentSection
+        completed={false}
+        disabled={false}
+        instance="deployment-credential"
+        showCheck={false}>
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={true}>
+          {undefined}
+          <juju.components.DeploymentCredentialAdd
+            acl={acl}
+            addTemplate={addTemplate}
+            close={instance._toggleAdd}
+            cloud="azure"
+            clouds={clouds}
+            regions={regions}
+            setCredential={setCredential}
+            setRegion={setRegion}
+            setTemplate={setTemplate}
+            users={users}
+            validateForm={validateForm}/>
+        </juju.components.ExpandingRow>
       </juju.components.DeploymentSection>);
     assert.deepEqual(output, expected);
   });

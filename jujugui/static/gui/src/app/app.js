@@ -896,10 +896,12 @@ YUI.add('juju-gui', function(Y) {
       var services = db.services;
       var units = db.units;
       var utils = views.utils;
+      var users = Y.clone(this.get('users'), true);
       var changesUtils = this.changesUtils;
       var currentChangeSet = ecs.getCurrentChangeSet();
       var changeDescriptions = changesUtils.generateAllChangeDescriptions(
           currentChangeSet, services, units);
+      var jem = this.jem;
       var metadata = metadata || {};
       var activeComponent = metadata.activeComponent;
       var modelCommitted = this.env.get('connected');
@@ -909,10 +911,14 @@ YUI.add('juju-gui', function(Y) {
         ReactDOM.render(
           <window.juju.components.DeploymentFlow
             acl={this.acl}
+            addTemplate={jem.addTemplate.bind(jem)}
             changes={changesUtils.getGroupedChanges(currentChangeSet)}
             changeState={this.changeState.bind(this)}
             listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
-            servicesGetById={services.getById.bind(services)} />,
+            listRegions={jem.listRegions.bind(jem)}
+            listTemplates={jem.listTemplates.bind(jem)}
+            servicesGetById={services.getById.bind(services)}
+            users={users} />,
           document.getElementById('deployment-container'));
         return;
       }
@@ -981,7 +987,7 @@ YUI.add('juju-gui', function(Y) {
           pluralize={utils.pluralize.bind(this)}
           services={db.services.toArray()}
           user={this._getAuth()}
-          users={Y.clone(this.get('users'), true)} />,
+          users={users} />,
         document.getElementById('deployment-container'));
     },
 

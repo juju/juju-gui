@@ -38,6 +38,7 @@ describe('InsetSelect', function() {
           label: 'Splade!',
           value: 'splade'
         }]} />, true);
+    var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
       <div className='inset-select'>
@@ -49,6 +50,7 @@ describe('InsetSelect', function() {
           defaultValue={undefined}
           disabled={undefined}
           id="Spork!"
+          onChange={instance._callOnChange}
           required={undefined}
           ref="field">
           {[<option
@@ -74,6 +76,24 @@ describe('InsetSelect', function() {
     assert.equal(instance.getValue(), 'default');
   });
 
+  it('can pass the field value to a supplied onChange method', () => {
+    var onChange = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.InsetSelect
+        label="Spork!"
+        onChange={onChange}
+        options={[{
+          label: 'Splade!',
+          value: 'splade'
+        }]} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    instance.refs = {field: {value: 'new'}};
+    output.props.children[1].props.onChange();
+    assert.equal(onChange.callCount, 1);
+    assert.equal(onChange.args[0][0], 'new');
+  });
+
   it('allows the label to be optional', () => {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.InsetSelect
@@ -81,6 +101,7 @@ describe('InsetSelect', function() {
           label: 'Splade!',
           value: 'splade'
         }]} />, true);
+    var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
       <div className='inset-select'>
@@ -89,6 +110,7 @@ describe('InsetSelect', function() {
           defaultValue={undefined}
           disabled={undefined}
           id={undefined}
+          onChange={instance._callOnChange}
           required={undefined}
           ref="field">
           {[<option
