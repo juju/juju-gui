@@ -47,20 +47,20 @@ YUI.add('environment', function() {
                 </g>
                 <g fill="none" stroke="#CECDCD">
                   <circle cx="129.527" cy="300.771" r="63"/>
-                  <circle stroke-miterlimit="10" cx="129.527"
+                  <circle strokeMiterlimit="10" cx="129.527"
                     cy="300.771" r="32"/>
                 </g>
                 <g fill="none" stroke="#CECDCD">
                   <circle cx="679.295" cy="96.438" r="63"/>
-                  <circle stroke-miterlimit="10" cx="679.295"
+                  <circle strokeMiterlimit="10" cx="679.295"
                     cy="96.438" r="32"/>
                 </g>
                 <path fill="none" stroke="#CECDCD"
-                  stroke-miterlimit="10" d="M438.046 96.438h178"/>
+                  strokeMiterlimit="10" d="M438.046 96.438h178"/>
                 <circle fill="#CECDCD" cx="531.139" cy="96.438" r="7"/>
                 <circle fill="#CECDCD" cx="250.712" cy="197.276" r="7"/>
                 <path fill="none" stroke="#CECDCD"
-                  stroke-miterlimit="10" d="M175.28 257.708l150.865-120.865"/>
+                  strokeMiterlimit="10" d="M175.28 257.708l150.865-120.865"/>
                 <path fill="#CECDCD" d={
                   'M172.805 255.233c1.367-1.367 3.583-1.367 4.95 0s1.367 ' +
                   '3.583 0 4.95M328.62 139.318c-1.367 1.367-3.583 ' +
