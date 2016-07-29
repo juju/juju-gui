@@ -48,7 +48,7 @@ YUI.add('header-search', function() {
     */
     _getSearchQuery: function() {
       var metadata = this.props.getAppState('current', 'sectionC', 'metadata');
-      return metadata && metadata.search;
+      return metadata && metadata.search || '';
     },
 
     /**
@@ -156,7 +156,7 @@ YUI.add('header-search', function() {
     */
     _closeSearch: function() {
       this.setState({
-        query: undefined,
+        query: '',
         active: false,
         inputStyles: this._generateInputStyles(false)
       });
