@@ -914,6 +914,7 @@ YUI.add('juju-gui', function(Y) {
             addTemplate={jem.addTemplate.bind(jem)}
             changes={changesUtils.getGroupedChanges(currentChangeSet)}
             changeState={this.changeState.bind(this)}
+            listClouds={jem.listClouds.bind(jem)}
             listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
             listRegions={jem.listRegions.bind(jem)}
             listTemplates={jem.listTemplates.bind(jem)}

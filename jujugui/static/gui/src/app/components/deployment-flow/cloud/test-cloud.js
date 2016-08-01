@@ -73,6 +73,8 @@ describe('DeploymentCloud', function() {
         acl={acl}
         cloud={null}
         clouds={clouds}
+        listClouds={sinon.stub().callsArgWith(
+          0, null, ['google', 'azure', 'aws'])}
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var options = output.props.children[0].props.children;
@@ -136,12 +138,38 @@ describe('DeploymentCloud', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('can display the loading state', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentCloud
+        acl={acl}
+        cloud={null}
+        clouds={clouds}
+        listClouds={sinon.stub()}
+        setCloud={sinon.stub()} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.DeploymentSection
+        buttons={undefined}
+        completed={false}
+        disabled={false}
+        instance="deployment-cloud"
+        showCheck={true}
+        title="Choose cloud to deploy to">
+        <div className="deployment-cloud__loading">
+          <juju.components.Spinner />
+        </div>
+        {undefined}
+      </juju.components.DeploymentSection>);
+    assert.deepEqual(output, expected);
+  });
+
   it('can render with a chosen cloud', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCloud
         acl={acl}
         cloud='google'
         clouds={clouds}
+        listClouds={sinon.stub().callsArgWith(0, null, [])}
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -175,6 +203,7 @@ describe('DeploymentCloud', function() {
         acl={acl}
         cloud='google'
         clouds={clouds}
+        listClouds={sinon.stub().callsArgWith(0, null, [])}
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     assert.isTrue(output.props.buttons[0].disabled);
@@ -187,6 +216,8 @@ describe('DeploymentCloud', function() {
         acl={acl}
         cloud={null}
         clouds={clouds}
+        listClouds={sinon.stub().callsArgWith(
+          0, null, ['google', 'azure', 'aws'])}
         setCloud={setCloud} />, true);
     var output = renderer.getRenderOutput();
     output.props.children[0].props.children[0].props.onClick();
@@ -201,6 +232,7 @@ describe('DeploymentCloud', function() {
         acl={acl}
         cloud="google"
         clouds={clouds}
+        listClouds={sinon.stub().callsArgWith(0, null, [])}
         setCloud={setCloud} />, true);
     var output = renderer.getRenderOutput();
     output.props.buttons[0].action();
