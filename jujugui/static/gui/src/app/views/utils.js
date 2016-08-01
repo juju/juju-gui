@@ -412,13 +412,38 @@ YUI.add('juju-view-utils', function(Y) {
     return regex.test(relationId);
   };
 
-  utils.getRelationDataForService = function(db, service) {
+  /**
+     Return relation objects attached to the application
+
+     @method getRelationDataForService
+     @static
+     @param {Database} db to resolve charms/services on.
+     @param {Object} application in which we want the relations attached too
+     @param {Object} withApplication an optional parameter used to filter the
+      returning array by relations that match both endpoints
+   */
+  utils.getRelationDataForService = function(db, application, withApplication) {
+    var relationsArray = db.relations.get_relations_for_service(application);
+
+    // If withApplication is supplied the relationsArray is filtered by
+    // endpoints that are unique between application and withApplication.
+    if (withApplication !== undefined) {
+      var withApplicationName = withApplication.get('id');
+      relationsArray = relationsArray.filter(
+        function(relation) {
+          var rel = relation.getAttrs();
+          if (rel.endpoints[0][0] === withApplicationName ||
+            rel.endpoints[1][0] === withApplicationName) {
+            return relation;
+          }
+        });
+    }
+
     // Return a list of objects representing the `near` and `far`
     // endpoints for all of the relationships `rels`.  If it is a peer
     // relationship, then `far` will be undefined.
-    var applicationName = service.get('id');
-    return Y.Array.map(
-        db.relations.get_relations_for_service(service),
+    var applicationName = application.get('id');
+    return relationsArray.map(
         function(relation) {
           var rel = relation.getAttrs(),
               near,
@@ -432,7 +457,7 @@ YUI.add('juju-view-utils', function(Y) {
           }
           rel.near = {
             service: near[0],
-            serviceName: service.get('name'),
+            serviceName: application.get('name'),
             role: near[1].role,
             name: near[1].name
           };
@@ -1814,7 +1839,8 @@ YUI.add('juju-view-utils', function(Y) {
     // Get the endpoints that are possible to relate to.
     var relatableEndpoints = getEndpoints(
       applicationFrom, endpointsController)[applicationTo.get('id')];
-    var existing = utils.getRelationDataForService(db, applicationTo);
+    var existing = utils.getRelationDataForService(db, applicationTo,
+      applicationFrom);
     if (existing.length === 0) {
       return relatableEndpoints;
     }
