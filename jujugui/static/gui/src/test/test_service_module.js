@@ -408,11 +408,8 @@ describe.skip('service module events', function() {
 
   it('should deploy a bundle on bundle token drop events', function(done) {
     var src = '/static/gui/build/app/assets/svgs/service_health_mask.svg',
-        preventCount = 0,
         fakeEventObject = {
-          halt: function() {
-            preventCount += 1;
-          },
+          halt: function() {},
           _event: {
             dataTransfer: {
               getData: function(name) {

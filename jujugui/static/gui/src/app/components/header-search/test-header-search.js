@@ -119,7 +119,10 @@ describe('HeaderSearch', function() {
     output = renderer.getRenderOutput();
     // It should be emptied out when metadata.search is undefined.
     input = output.props.children[0].props.children[1];
-    assert.equal(input.props.value, undefined);
+    // It is important that this is an empty string with React 15.3+ because
+    // it now treats an undefined value as the input being 'uncontrolled',
+    // so it was switching between controlled and uncontrolled throwing errors.
+    assert.equal(input.props.value, '');
     assert.equal(instance.refs.searchInput.focus.callCount, 1);
   });
 

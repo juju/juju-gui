@@ -576,7 +576,7 @@ describe('Store', function() {
                                   className="featured-entity__image" />
                             </div>
                             <div
-                              lassName="two-col last-col no-margin-bottom">
+                              className="two-col last-col no-margin-bottom">
                                 <h3 className="featured-entity__title">
                                   Cassandra
                                 </h3>

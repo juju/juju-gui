@@ -193,7 +193,7 @@ YUI.add('date-display', function() {
 
     render: function() {
       return (
-        <time datetime={this._generateDate()}
+        <time dateTime={this._generateDate()}
           title={this._generateTitle()}>
           {this._generateContent()}
         </time>
