@@ -124,9 +124,11 @@ describe('Charmbrowser', function() {
         acl={acl}
         addNotification={sinon.stub()}
         apiUrl="http://example.com/"
+        apiVersion="v5"
         appState={appState}
         changeState={changeState}
         charmstoreSearch={charmstoreSearch}
+        charmstoreURL="http://1.2.3.4/"
         deployService={sinon.stub()}
         displayPlans={true}
         getBundleYAML={sinon.stub()}
@@ -152,6 +154,8 @@ describe('Charmbrowser', function() {
             ref="charmbrowser">
             <juju.components.Store
               staticURL='surl'
+              apiVersion="v5"
+              charmstoreURL="http://1.2.3.4/"
               changeState={changeState} />
           </div>
         </juju.components.Panel>);

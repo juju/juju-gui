@@ -22,7 +22,9 @@ YUI.add('store', function() {
 
   juju.components.Store = React.createClass({
     propTypes: {
+      apiVersion: React.PropTypes.string.isRequired,
       changeState: React.PropTypes.func.isRequired,
+      charmstoreURL: React.PropTypes.string.isRequired,
       staticURL: React.PropTypes.string
     },
 
@@ -47,7 +49,9 @@ YUI.add('store', function() {
       @return {String} A URL to the entity icon
     */
     _generateIconPath: function(entityName) {
-      return `https://api.jujucharms.com/charmstore/v5/${entityName}/icon.svg`;
+      var charmstoreURL = this.props.charmstoreURL;
+      var apiVersion = this.props.apiVersion;
+      return `${charmstoreURL}${apiVersion}/${entityName}/icon.svg`;
     },
 
     /**
@@ -58,8 +62,9 @@ YUI.add('store', function() {
       @return {String} A URL to the bundles diagram
     */
     _generateDiagramPath: function(entityName) {
-      return 'https://api.jujucharms.com/charmstore/v5/bundle/' +
-        entityName + '/diagram.svg';
+      var charmstoreURL = this.props.charmstoreURL;
+      var apiVersion = this.props.apiVersion;
+      return `${charmstoreURL}${apiVersion}/bundle/${entityName}/diagram.svg`;
     },
 
     /**
@@ -71,6 +76,50 @@ YUI.add('store', function() {
     */
     _generateUserPath: function(username) {
       return `https://jujucharms.com/u/${username}`;
+    },
+
+    /**
+      Show the entity details when clicked.
+
+      @method _handleEntityClick
+      @param {String} id The entity id.
+      @param {Object} e The click event.
+    */
+    _handleEntityClick: function(e) {
+      e.stopPropagation();
+      var id = (e.target.dataset.entity ||
+        e.target.closest('[data-entity]').dataset.entity);
+      this.props.changeState({
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'entity-details',
+            id: id
+          }
+        }
+      });
+    },
+
+    /**
+      Show the search results when clicked.
+
+      @method _handleSearchClick
+      @param {String} query The search string.
+      @param {Object} e The click event.
+    */
+    _handleSearchClick: function(e) {
+      e.stopPropagation();
+      var query = (e.target.dataset.query ||
+        e.target.closest('[data-query]').dataset.query);
+      this.props.changeState({
+        sectionC: {
+          component: 'charmbrowser',
+          metadata: {
+            activeComponent: 'search-results',
+            search: query
+          }
+        }
+      });
     },
 
     /**
@@ -90,7 +139,7 @@ YUI.add('store', function() {
                   scripts is straightforward. You can keep new charms
                   private, or share them back with the community.</p>
                   <p>
-                  <a
+                  <a target="_blank"
                     href={doc}>
                     Learn more about writing charms&nbsp;&rsaquo;
                   </a></p>
@@ -111,41 +160,39 @@ YUI.add('store', function() {
             <h2>Development tools</h2>
             <ul className="twelve-col no-bullets equal-height">
                 <li className="three-col featured-entity">
-                    <a className="featured-entity__link"
-                      href="/?store=gitlab">
-                        <div
-                          className="one-col no-margin-bottom">
+                    <span className="featured-entity__link link"
+                        data-entity="gitlab"
+                        onClick={this._handleEntityClick}>
+                        <div className="one-col no-margin-bottom">
                             <img src={this._generateIconPath('gitlab')}
-                              alt=""
-                              className="featured-entity__image" />
+                                alt=""
+                                className="featured-entity__image" />
                         </div>
                         <div
-                          className="two-col last-col no-margin-bottom">
+                            className="two-col last-col no-margin-bottom">
                             <h3 className="featured-entity__title">
-                              Gitlab
+                                Gitlab
                             </h3>
                             <p>by charmers</p>
                         </div>
-                    </a>
+                    </span>
                 </li>
                 <li className="three-col featured-entity">
-                    <a className="featured-entity__link"
-                      href="/?store=jenkins">
-                        <div
-                          className="one-col no-margin-bottom">
-                            <img
-                              src={this._generateIconPath('jenkins')}
-                              alt=""
-                              className="featured-entity__image" />
+                    <span className="featured-entity__link link"
+                        data-entity="jenkins"
+                        onClick={this._handleEntityClick}>
+                        <div className="one-col no-margin-bottom">
+                            <img src={this._generateIconPath('jenkins')}
+                                alt=""
+                                className="featured-entity__image" />
                         </div>
-                        <div
-                          className="two-col last-col no-margin-bottom">
+                        <div className="two-col last-col no-margin-bottom">
                             <h3 className="featured-entity__title">
-                              Jenkins
+                                Jenkins
                             </h3>
                             <p>by Creative</p>
                         </div>
-                    </a>
+                    </span>
                 </li>
             </ul>
         </div>
@@ -165,10 +212,12 @@ YUI.add('store', function() {
                 alt="" className="box__image" />
               <div className="align-bottom">
                   <h2>Kibana</h2>
-                  <a href="/?store=kibana"
+                  <span
+                    data-entity="kibana"
+                    onClick={this._handleEntityClick}
                     className="button--inline-neutral">
                     View the charm
-                  </a>
+                  </span>
               </div>
           </div>
           <div className="box box--kubernetes align-center four-col">
@@ -176,10 +225,12 @@ YUI.add('store', function() {
                 alt="" className="box__image" />
               <div className="align-bottom">
                   <h2>Observable Kubernetes</h2>
-                  <a href="/?store=observable-kubernetes"
+                  <span
+                    data-entity="observable-kubernetes"
+                    onClick={this._handleEntityClick}
                     className="button--inline-neutral">
                     View the bundle
-                  </a>
+                  </span>
               </div>
           </div>
           <div
@@ -188,10 +239,12 @@ YUI.add('store', function() {
                 alt="" className="box__image" />
               <div className="align-bottom">
                   <h2>OpenStack</h2>
-                  <a href="/?search=openstack&type=bundle"
-                    className="button--inline-neutral">
-                    View bundles
-                  </a>
+                  <span
+                      data-query="openstack&type=bundle"
+                      onClick={this._handleSearchClick}
+                      className="button--inline-neutral">
+                      View bundles
+                  </span>
               </div>
           </div>
       </div>);
@@ -221,13 +274,17 @@ YUI.add('store', function() {
       ];
       var list = [];
       topics.forEach(function(topic, index) {
-        var url = `/?search=&tags=${topic.name}`;
+        var url = `&tags=${topic.name}`;
         var key = `tagItem-${index}`;
         list.push(<li className="inline-list__item" key={key}>
-            <a href={url}>{topic.name}</a>
+            <span onClick={this._handleSearchClick}
+                data-query={url}
+                className="link">
+                {topic.name}
+            </span>
             <span className="note">({topic.count})</span>,
         </li>);
-      });
+      }, this);
       return (<div className="eight-col prepend-two align-center">
           <ul className="no-bullets inline-list">
               {list}
@@ -255,26 +312,28 @@ YUI.add('store', function() {
                     <p>Charms are sets of scripts that simplify the
                     deployment and management tasks of a service. They
                     are regularly reviewed and updated.</p>
-                    <a href="/?search=&type=charm"
-                      className="button--inline-neutral">
-                      View all the charms
-                    </a>
+                    <span onClick={this._handleSearchClick}
+                        data-query="&type=charm"
+                        className="button--inline-neutral">
+                        View all the charms
+                    </span>
                 </div>
             </div>
             <div className="six-col last-col box">
                 <div className="one-col no-margin-bottom align-center">
                     <img
-                      src={this._generateLocalImagePath('bundle-icon.png')}
-                      alt="" />
+                        src={this._generateLocalImagePath('bundle-icon.png')}
+                        alt="" />
                 </div>
                 <div className="five-col no-margin-bottom last-col">
                     <p>Bundles are collections of charms that link
                     applications together, so you can deploy whole
                     chunks of infrastructure in one go.</p>
-                    <a href="/?search=&type=bundle"
-                      className="button--inline-neutral">
-                      View all the bundles
-                    </a>
+                    <span onClick={this._handleSearchClick}
+                        data-query="&type=bundle"
+                        className="button--inline-neutral">
+                        View all the bundles
+                    </span>
                 </div>
             </div>
             {this._tagsSection()}
@@ -295,103 +354,110 @@ YUI.add('store', function() {
             <div className="box box--nagios clearfix">
                 <div className="six-col no-margin-bottom align-center">
                     <img
-                      src={this._generateLocalImagePath('nagios-promo.png')}
-                      alt="" />
+                        src={this._generateLocalImagePath('nagios-promo.png')}
+                        alt="" />
                 </div>
                 <div className="six-col no-margin-bottom last-col">
                     <h3>Nagios</h3>
                     <p>
-                      By <a href={this._generateUserPath('charmers')}>
-                        charmers
-                      </a>
+                        By <a href={this._generateUserPath('charmers')}
+                            target="_blank">
+                            charmers
+                        </a>
                     </p>
                     <p>Nagios offers complete monitoring, management
                     and alerting of any service from the charm store
                     that is related to it.</p>
-                    <a href="/?store=nagios"
-                      className="button--inline-neutral">
-                      View the charm
-                    </a>
+                    <span
+                        data-entity="nagios"
+                        onClick={this._handleEntityClick}
+                        className="button--inline-neutral">
+                        View the charm
+                    </span>
                 </div>
             </div>
 
             <ul className="twelve-col no-bullets equal-height">
                 <li className="three-col featured-entity">
-                    <a className="featured-entity__link" href="/?store=kibana">
+                    <span className="featured-entity__link link"
+                        data-entity="kibana"
+                        onClick={this._handleEntityClick}>
                         <div className="one-col no-margin-bottom">
                             <img src={this._generateIconPath('kibana')}
-                              alt=""
-                              className="featured-entity__image" />
+                                alt=""
+                                className="featured-entity__image" />
                         </div>
                         <div
-                          className="two-col last-col no-margin-bottom">
+                            className="two-col last-col no-margin-bottom">
                             <h3 className="featured-entity__title">
-                              kibana
+                                kibana
                             </h3>
                             <p>by containers</p>
                         </div>
-                    </a>
+                    </span>
                 </li>
                 <li className="three-col featured-entity">
-                    <a className="featured-entity__link"
-                      href="/?store=logstash">
-                        <div
-                          className="one-col no-margin-bottom">
+                    <span className="featured-entity__link link"
+                        data-entity="logstash"
+                        onClick={this._handleEntityClick}>
+                        <div className="one-col no-margin-bottom">
                             <img
                               src={this._generateIconPath('logstash')}
                               alt=""
                               className="featured-entity__image" />
                         </div>
                         <div
-                          className="two-col last-col no-margin-bottom">
+                            className="two-col last-col no-margin-bottom">
                             <h3 className="featured-entity__title">
-                              logstash
+                                logstash
                             </h3>
                             <p>by containers</p>
                         </div>
-                    </a>
+                    </span>
                 </li>
                 <li className="three-col featured-entity">
-                    <a className="featured-entity__link"
-                      href="/?store=elasticsearch">
-                        <div
-                          className="one-col no-margin-bottom">
+                    <span className="featured-entity__link link"
+                        data-entity="elasticsearch"
+                        onClick={this._handleEntityClick}>
+                        <div className="one-col no-margin-bottom">
                             <img
-                              src={this._generateIconPath('elasticsearch')}
-                              alt=""
-                              className="featured-entity__image" />
+                                src={this._generateIconPath('elasticsearch')}
+                                alt=""
+                                className="featured-entity__image" />
                         </div>
                         <div
-                          className="two-col last-col no-margin-bottom">
+                            className="two-col last-col no-margin-bottom">
                             <h3 className="featured-entity__title">
-                              Elasticsearch
+                                Elasticsearch
                             </h3>
                             <p>by onlineservices-charmers</p>
                         </div>
-                    </a>
+                    </span>
                 </li>
                 <li className="three-col last-col featured-entity">
-                    <a className="featured-entity__link"
-                      href="/?store=~canonical-bootstack/prometheus">
-                        <div
-                          className="one-col no-margin-bottom">
+                    <span className="featured-entity__link link"
+                        data-entity="~canonical-bootstack/prometheus"
+                        onClick={this._handleEntityClick}>
+                        <div className="one-col no-margin-bottom">
                             <img
-                              src={this._generateIconPath(
-                                '~canonical-bootstack/prometheus')}
-                              alt=""
-                              className="featured-entity__image" />
+                                src={this._generateIconPath(
+                                    '~canonical-bootstack/prometheus')}
+                                alt=""
+                                className="featured-entity__image" />
                         </div>
                         <div
                           className="two-col last-col no-margin-bottom">
-                            <h3 className="featured-entity__title">
-                              Prometheus
-                            </h3>
-                            <p>by canonical-bootstack</p>
+                              <h3 className="featured-entity__title">
+                                  Prometheus
+                              </h3>
+                              <p>by canonical-bootstack</p>
                         </div>
-                    </a>
+                    </span>
                 </li>
                 <li className="three-col featured-entity">
-                    <a className="featured-entity__link" href="/?store=munin">
+                    <a className="featured-entity__link link"
+                      data-entity="munin"
+                      onClick={this._handleEntityClick}>
                         <div
                           className="one-col no-margin-bottom">
                             <img src={this._generateIconPath('munin')}
@@ -408,66 +474,69 @@ YUI.add('store', function() {
                     </a>
                 </li>
                 <li className="three-col featured-entity">
-                    <a className="featured-entity__link"
-                      href="/?store=rsyslog">
+                    <span className="featured-entity__link link"
+                        data-entity="rsyslog"
+                        onClick={this._handleEntityClick}>
                         <div
-                          className="one-col no-margin-bottom">
+                            className="one-col no-margin-bottom">
                             <img src={this._generateIconPath('rsyslog')}
-                              alt=""
-                              className="featured-entity__image" />
+                                alt=""
+                                className="featured-entity__image" />
                         </div>
-                        <div
-                          className="two-col last-col no-margin-bottom">
-                            <h3 className="featured-entity__title">
-                              Rsyslog
-                            </h3>
-                            <p>by charmers</p>
+                        <div className="two-col last-col no-margin-bottom">
+                              <h3 className="featured-entity__title">
+                                  Rsyslog
+                              </h3>
+                              <p>by charmers</p>
                         </div>
-                    </a>
+                    </span>
                 </li>
                 <li className="three-col featured-entity">
-                    <a className="featured-entity__link"
-                      href="/?store=zabbix-server">
-                        <div
-                          className="one-col no-margin-bottom">
+                    <span className="featured-entity__link link"
+                        data-entity="zabbix-server"
+                        onClick={this._handleEntityClick}>
+                        <div className="one-col no-margin-bottom">
                             <img
-                              src={this._generateIconPath('zabbix-server')}
-                              alt=""
-                              className="featured-entity__image control-size"/>
+                                src={this._generateIconPath('zabbix-server')}
+                                alt=""
+                                className="featured-entity__image control-size"
+                            />
                         </div>
-                        <div
-                          className="two-col last-col no-margin-bottom">
+                        <div className="two-col last-col no-margin-bottom">
                             <h3 className="featured-entity__title">
-                              Zabbix Server
+                                Zabbix Server
                             </h3>
                             <p>by charmers</p>
                         </div>
-                    </a>
+                    </span>
                 </li>
                 <li className="three-col last-col featured-entity">
-                    <a className="featured-entity__link"
-                      href="/?store=~ricardokirkner/sentry">
-                        <div
-                          className="one-col no-margin-bottom">
+                    <span className="featured-entity__link link"
+                        data-entity="~ricardokirkner/sentry"
+                        onClick={this._handleEntityClick}>
+                        <div className="one-col no-margin-bottom">
                             <img src={this._generateIconPath(
-                              '~ricardokirkner/sentry')}
-                              alt=""
-                              className="featured-entity__image control-size"/>
+                                '~ricardokirkner/sentry')}
+                                alt=""
+                                className="featured-entity__image control-size"
+                            />
                         </div>
                         <div
-                          className="two-col last-col no-margin-bottom">
+                            className="two-col last-col no-margin-bottom">
                             <h3 className="featured-entity__title">
-                              Sentry
+                                Sentry
                             </h3>
                             <p>by ricardokirkner</p>
                         </div>
-                    </a>
+                    </span>
                 </li>
             </ul>
             <p className="intro">
-                <a href="/?search=&tags=ops">
+                <span onClick={this._handleSearchClick}
+                    data-query="&tags=ops"
+                    className="link">
                     View all operations&nbsp;&rsaquo;
-                </a>
+                </span>
             </p>
         </div>
       </div>);
@@ -488,15 +557,17 @@ YUI.add('store', function() {
                 Data solutions to benefit your business by using one of
                 Juju&rsquo;s pre-configured bundles or expertly
                 created charms.</p>
-                <p><a href="/?search=&tags=bigdata">
-                  Big data charms and bundles&nbsp;&rsaquo;
-                </a></p>
+                <p><span onClick={this._handleSearchClick}
+                    data-query="&type=bigdata"
+                    className="link">
+                    Big data charms and bundles&nbsp;&rsaquo;
+                </span></p>
             </div>
             <div className="four-col last-col prepend-one append-one">
                 <img
-                  src={this._generateLocalImagePath('hadoop-elephant.png')}
-                  className="for-small"
-                  alt="Hadoop logo" />
+                    src={this._generateLocalImagePath('hadoop-elephant.png')}
+                    className="for-small"
+                    alt="Hadoop logo" />
             </div>
         </div>
       </div>);
@@ -512,74 +583,75 @@ YUI.add('store', function() {
       return (<div className="row row--border-bottom">
         <div className="inner-wrapper">
             <h2>Analytics</h2>
-            <div
-              className="box box--realtime-syslog-analytics clearfix">
+            <div className="box box--realtime-syslog-analytics clearfix">
                 <div className="six-col no-margin-bottom align-center">
                     <object
-                      wmode="transparent"
-                      width="100%"
-                      type="image/svg+xml"
-                      data={this._generateDiagramPath(
-                        'realtime-syslog-analytics')}>
+                        wmode="transparent"
+                        width="100%"
+                        type="image/svg+xml"
+                        data={this._generateDiagramPath(
+                            'realtime-syslog-analytics')}>
                     </object>
                 </div>
                 <div className="six-col no-margin-bottom last-col">
                     <h3>Realtime Syslog Analytics</h3>
-                    <p>By <a href={this._generateUserPath('bigdata-charmers')}>
-                        bigdata-charmers
-                      </a>
+                    <p>By <a href={this._generateUserPath('bigdata-charmers')}
+                            target="_blank">
+                            bigdata-charmers
+                        </a>
                     </p>
                     <p>This bundle provides a big data environment for
                     analysing syslog events. Built around Apache Hadoop
                     components, it offers a repeatable and reliable way
                     to setup complex software across multiple
                     substrates.</p>
-                    <a href="/?store=realtime-syslog-analytics"
-                      className="button--inline-neutral">
-                      View the bundle
-                    </a>
+                    <span onClick={this._handleEntityClick}
+                        data-entity="realtime-syslog-analytics"
+                        className="button--inline-neutral">
+                        View the bundle
+                    </span>
                 </div>
             </div>
 
             <ul className="twelve-col no-bullets equal-height">
                 <li className="three-col featured-entity">
-                    <a className="featured-entity__link"
-                      href="/?store=apache-analytics-sql">
+                    <span className="featured-entity__link link"
+                        data-entity="apache-analytics-sql"
+                        onClick={this._handleEntityClick}>
                         <ul className="featured-entity__image-list one-col">
                             <li className="featured-entity__image-list-item">
                                 <img src={this._generateIconPath(
-                                  'apache-hadoop-slave')}
-                                  alt=""
-                                  className="featured-entity__image" />
+                                    'apache-hadoop-slave')}
+                                    alt=""
+                                    className="featured-entity__image" />
                             </li>
                             <li className="featured-entity__image-list-item">
                                 <img src={this._generateIconPath(
-                                  'apache-hive')}
-                                  alt=""
-                                  className="featured-entity__image" />
+                                    'apache-hive')}
+                                    alt=""
+                                    className="featured-entity__image" />
                             </li>
                             <li className="featured-entity__image-list-item">
                                 <img src={this._generateIconPath('mariadb')}
-                                  alt=""
-                                  className="featured-entity__image" />
+                                    alt=""
+                                    className="featured-entity__image" />
                             </li>
-                            <li
-                              className="featured-entity__image-list-item">
-                              +3
+                            <li className="featured-entity__image-list-item">
+                                +3
                             </li>
                         </ul>
-                        <div
-                          className="two-col last-col no-margin-bottom">
-                            <h3 className="featured-entity__title">
-                              Apache analytics SQL
-                            </h3>
-                            <p>by bigdata-charmers</p>
+                        <div className="two-col last-col no-margin-bottom">
+                              <h3 className="featured-entity__title">
+                                  Apache analytics SQL
+                              </h3>
+                              <p>by bigdata-charmers</p>
                         </div>
-                    </a>
+                    </span>
                 </li>
                 <li className="three-col featured-entity">
-                    <a className="featured-entity__link"
-                      href="/?store=apache-spark">
+                    <span className="featured-entity__link link"
+                        data-entity="apache-spark"
+                        onClick={this._handleEntityClick}>
                         <div className="one-col no-margin-bottom">
                             <img
                               src={this._generateIconPath('apache-spark')}
@@ -587,104 +659,103 @@ YUI.add('store', function() {
                               className="featured-entity__image" />
                         </div>
                         <div
-                          className="two-col last-col no-margin-bottom">
+                            className="two-col last-col no-margin-bottom">
                             <h3 className="featured-entity__title">
-                              Apache Spark
+                                Apache Spark
                             </h3>
                             <p>by bigdata-charmers</p>
                         </div>
-                    </a>
+                    </span>
                 </li>
                 <li className="three-col featured-entity">
-                    <a className="featured-entity__link"
-                      href="/?store=apache-zeppelin">
-                        <div
-                          className="one-col no-margin-bottom">
+                    <span className="featured-entity__link link"
+                        data-entity="apache-zeppelin"
+                        onClick={this._handleEntityClick}>
+                        <div className="one-col no-margin-bottom">
                             <img
-                              src={this._generateIconPath('apache-zeppelin')}
-                              alt=""
-                              className="featured-entity__image" />
+                                src={this._generateIconPath('apache-zeppelin')}
+                                alt=""
+                                className="featured-entity__image" />
                         </div>
-                        <div
-                          className="two-col last-col no-margin-bottom">
+                        <div className="two-col last-col no-margin-bottom">
                             <h3 className="featured-entity__title">
-                              Apache Zeppelin
+                                Apache Zeppelin
                             </h3>
                             <p>by bigdata-charmers</p>
                         </div>
-                    </a>
+                    </span>
                 </li>
                 <li className="three-col last-col featured-entity">
-                    <a className="featured-entity__link"
-                      href="/?store=elasticsearch-cluster/">
-                        <ul
-                          className="featured-entity__image-list one-col">
-                            <li
-                              className="featured-entity__image-list-item">
-                                <img
-                                  src={this._generateIconPath('elasticsearch')}
-                                  alt=""
-                                  className="featured-entity__image" />
-                            </li>
-                            <li
-                              className="featured-entity__image-list-item">
-                                <img src={this._generateIconPath('kibana')}
-                                  alt=""
-                                  className="featured-entity__image" />
-                            </li>
-                        </ul>
-                        <div
-                          className="two-col last-col no-margin-bottom">
-                            <h3 className="featured-entity__title">
-                              Elasticsearch cluster
-                            </h3>
-                            <p>by charmers</p>
-                        </div>
-                    </a>
-                </li>
-                <li className="three-col featured-entity">
-                    <a className="featured-entity__link"
-                      href="/?store=~containers/elk-stack">
-                        <ul
-                          className="featured-entity__image-list one-col">
-                            <li
-                              className="featured-entity__image-list-item">
-                                <img src={this._generateIconPath('zulu8')}
-                                  alt=""
-                                  className="featured-entity__image" />
-                            </li>
+                    <span className="featured-entity__link link"
+                        data-entity="elasticsearch-cluster"
+                        onClick={this._handleEntityClick}>
+                        <ul className="featured-entity__image-list one-col">
                             <li className="featured-entity__image-list-item">
                                 <img
-                                  src={this._generateIconPath('elasticsearch')}
-                                  alt=""
-                                  className="featured-entity__image" />
-                            </li>
-                            <li className="featured-entity__image-list-item">
-                                <img
-                                  src={this._generateIconPath(
-                                    '~containers/logstash')}
-                                  alt=""
-                                  className="featured-entity__image" />
+                                    src={this._generateIconPath(
+                                        'elasticsearch')}
+                                    alt=""
+                                    className="featured-entity__image" />
                             </li>
                             <li className="featured-entity__image-list-item">
                                 <img src={this._generateIconPath('kibana')}
-                                  alt=""
-                                  className="featured-entity__image" />
+                                    alt=""
+                                    className="featured-entity__image" />
                             </li>
                         </ul>
                         <div className="two-col last-col no-margin-bottom">
                             <h3 className="featured-entity__title">
-                              elk stack
+                                Elasticsearch cluster
+                            </h3>
+                            <p>by charmers</p>
+                        </div>
+                    </span>
+                </li>
+                <li className="three-col featured-entity">
+                    <span className="featured-entity__link link"
+                        data-entity="~containers/elk-stack"
+                        onClick={this._handleEntityClick}>
+                        <ul className="featured-entity__image-list one-col">
+                            <li className="featured-entity__image-list-item">
+                                <img src={this._generateIconPath('zulu8')}
+                                    alt=""
+                                    className="featured-entity__image" />
+                            </li>
+                            <li className="featured-entity__image-list-item">
+                                <img
+                                    src={this._generateIconPath(
+                                        'elasticsearch')}
+                                    alt=""
+                                    className="featured-entity__image" />
+                            </li>
+                            <li className="featured-entity__image-list-item">
+                                <img
+                                    src={this._generateIconPath(
+                                      '~containers/logstash')}
+                                    alt=""
+                                    className="featured-entity__image" />
+                            </li>
+                            <li className="featured-entity__image-list-item">
+                                <img src={this._generateIconPath('kibana')}
+                                    alt=""
+                                    className="featured-entity__image" />
+                            </li>
+                        </ul>
+                        <div className="two-col last-col no-margin-bottom">
+                            <h3 className="featured-entity__title">
+                                elk stack
                             </h3>
                             <p>by containers</p>
                         </div>
-                    </a>
+                    </span>
                 </li>
             </ul>
             <p className="intro">
-                <a href="/?search=&tags=analytics">
+                <span onClick={this._handleSearchClick}
+                    data-query="&tags=analytics"
+                    className="link">
                     View all analytics&nbsp;&rsaquo;
-                </a>
+                </span>
             </p>
         </div>
       </div>);
@@ -708,42 +779,44 @@ YUI.add('store', function() {
                 </div>
                 <div className="six-col no-margin-bottom last-col">
                     <h3>MySQL</h3>
-                    <p>By <a href={this._generateUserPath('mysql-charmers')}>
-                        mysql-charmers
-                      </a>
+                    <p>By <a href={this._generateUserPath('mysql-charmers')}
+                            target="_blank">
+                            mysql-charmers
+                        </a>
                     </p>
                     <p>MySQL is a fast, stable and true multi-user,
                     multi-threaded SQL database server. Its main goals
                     are speed, robustness and ease of use.</p>
-                    <a href="/?store=mysql"
-                      className="button--inline-neutral">
-                      View the charm
-                    </a>
+                    <span onClick={this._handleEntityClick}
+                        data-entity="mysql"
+                        className="button--inline-neutral">
+                        View the charm
+                    </span>
                 </div>
             </div>
 
             <ul className="twelve-col no-bullets equal-height">
                 <li className="three-col featured-entity">
-                    <a className="featured-entity__link"
-                      href="/?store=cassandra">
+                    <span className="featured-entity__link link"
+                        data-entity="cassandra"
+                        onClick={this._handleEntityClick}>
                         <div className="one-col no-margin-bottom">
-                            <img
-                              src={this._generateIconPath('cassandra')}
+                            <img src={this._generateIconPath('cassandra')}
                               alt=""
                               className="featured-entity__image" />
                         </div>
-                        <div
-                          className="two-col last-col no-margin-bottom">
+                        <div className="two-col last-col no-margin-bottom">
                             <h3 className="featured-entity__title">
-                              Cassandra
+                                Cassandra
                             </h3>
                             <p>by cassandra-charmers</p>
                         </div>
-                    </a>
+                    </span>
                 </li>
                 <li className="three-col featured-entity">
-                    <a className="featured-entity__link"
-                      href="/?store=mariadb">
+                    <span className="featured-entity__link link"
+                        data-entity="mariadb"
+                        onClick={this._handleEntityClick}>
                         <div
                           className="one-col no-margin-bottom">
                             <img
@@ -758,66 +831,68 @@ YUI.add('store', function() {
                             </h3>
                             <p>by mariadb-charmers</p>
                         </div>
-                    </a>
+                    </span>
                 </li>
                 <li className="three-col featured-entity">
-                    <a className="featured-entity__link"
-                      href="/?store=mongodb">
+                    <span className="featured-entity__link link"
+                        data-entity="mongodb"
+                        onClick={this._handleEntityClick}>
                         <div className="one-col no-margin-bottom">
                             <img src={this._generateIconPath('mongodb')}
-                              alt=""
-                              className="featured-entity__image" />
-                        </div>
-                        <div
-                          className="two-col last-col no-margin-bottom">
-                            <h3 className="featured-entity__title">
-                              Mongodb
-                            </h3>
-                            <p>by charmers</p>
-                        </div>
-                    </a>
-                </li>
-                <li className="three-col last-col featured-entity">
-                    <a className="featured-entity__link"
-                      href="/?store=redis">
-                        <div className="one-col no-margin-bottom">
-                            <img
-                              src={this._generateIconPath('redis')}
-                              alt=""
-                              className="featured-entity__image" />
+                                alt=""
+                                className="featured-entity__image" />
                         </div>
                         <div className="two-col last-col no-margin-bottom">
                             <h3 className="featured-entity__title">
-                              Redis
+                                Mongodb
                             </h3>
                             <p>by charmers</p>
                         </div>
-                    </a>
+                    </span>
                 </li>
                 <li className="three-col last-col featured-entity">
-                    <a className="featured-entity__link"
-                      href="/?store=postgresql">
+                    <span className="featured-entity__link link"
+                        data-entity="redis"
+                        onClick={this._handleEntityClick}>
+                        <div className="one-col no-margin-bottom">
+                            <img
+                                src={this._generateIconPath('redis')}
+                                alt=""
+                                className="featured-entity__image" />
+                        </div>
+                        <div className="two-col last-col no-margin-bottom">
+                            <h3 className="featured-entity__title">
+                                Redis
+                            </h3>
+                            <p>by charmers</p>
+                        </div>
+                    </span>
+                </li>
+                <li className="three-col last-col featured-entity">
+                    <span className="featured-entity__link link"
+                        data-entity="postgresql"
+                        onClick={this._handleEntityClick}>
                         <div
                           className="one-col no-margin-bottom">
-                            <img
-                              src={this._generateIconPath('postgresql')}
-                              alt=""
-                              className="featured-entity__image" />
+                            <img src={this._generateIconPath('postgresql')}
+                                alt=""
+                                className="featured-entity__image" />
                         </div>
-                        <div
-                          className="two-col last-col no-margin-bottom">
+                        <div className="two-col last-col no-margin-bottom">
                             <h3 className="featured-entity__title">
-                              Postgresql
+                                Postgresql
                             </h3>
                             <p>by postgresql-charmers</p>
                         </div>
-                    </a>
+                    </span>
                 </li>
             </ul>
             <p className="intro">
-                <a href="/?search=&tags=databases">
+                <span onClick={this._handleSearchClick}
+                    data-query="&tags=databases"
+                    className="link">
                     View all databases&nbsp;&rsaquo;
-                </a>
+                </span>
             </p>
         </div>
       </div>);
