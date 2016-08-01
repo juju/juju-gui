@@ -45,27 +45,23 @@
     .list-block {
 
         .list-block__list {
-            margin: 0;
+            margin: 0 10px;
+            border: none;
 
-            &.promulgated {
-                margin: 0 10px;
-                border: none;
+            .list-block__list--item {
+                margin-bottom: 10px;
+                padding-bottom: 8px;
+                border-width: 1px;
+                border-radius: 2px;
 
-                .list-block__list--item {
-                    margin-bottom: 10px;
+                @media only screen and (min-width : 768px) {
                     padding-bottom: 8px;
-                    border-width: 1px;
-                    border-radius: 2px;
+                }
 
-                    @media only screen and (min-width : 768px) {
-                        padding-bottom: 8px;
-                    }
-
-                    &:focus,
-                    &:active,
-                    &:hover {
-                        background-color: $hover-background;
-                    }
+                &:focus,
+                &:active,
+                &:hover {
+                    background-color: $hover-background;
                 }
             }
 

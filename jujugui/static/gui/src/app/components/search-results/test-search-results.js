@@ -165,7 +165,7 @@ describe('SearchResults', function() {
                    'total results returned is incorrect');
     });
 
-    it('can render the search results', function() {
+    it('can render the promulgated search results', function() {
       var changeState = sinon.spy();
       var getName = (val) => {
         return val;
@@ -305,7 +305,7 @@ describe('SearchResults', function() {
                     {"Recommended"}{' '}
                     <span className="count">({2})</span>
                   </h4>
-                  <ul className="list-block__list promulgated">
+                  <ul className="list-block__list">
                     <juju.components.SearchResultsItem
                       changeState={changeState}
                       key="~test-owner/mysql-one"
@@ -314,21 +314,6 @@ describe('SearchResults', function() {
                       changeState={changeState}
                       key="~test-owner/mysql-two"
                       item={results[1]} />
-                  </ul>
-                </div>
-                <div>
-                  <h4>
-                    {"Community"} <span className="count">({2})</span>
-                  </h4>
-                  <ul className="list-block__list">
-                    <juju.components.SearchResultsItem
-                      changeState={changeState}
-                      key="~test-owner/mysql-three"
-                      item={results[2]} />
-                    <juju.components.SearchResultsItem
-                      changeState={changeState}
-                      key="~test-owner/mysql-four"
-                      item={results[3]} />
                   </ul>
                 </div>
               </div>
@@ -499,9 +484,7 @@ describe('SearchResults', function() {
       var expected = {
         text: 'spinach',
         solutionsCount: 2,
-        normalResultsCount: 1,
-        normalResults: [results[1]],
-        promulgatedResultsCount: 1,
+        communityResults: [results[1]],
         promulgatedResults: [results[0]]
       };
       searchResults.collapseSeries = sinon.stub().returns(results);

@@ -37,8 +37,6 @@ YUI.add('search-results', function(Y) {
       type: React.PropTypes.string
     },
 
-    searchXhr: null,
-
      /**
       If it's the same charm but for different series, collapse into one
       entity. We do this by converting the list to an OrderedDict, keyed on
@@ -154,7 +152,7 @@ YUI.add('search-results', function(Y) {
       results = this.collapseSeries(results, this.props.getName);
       // Split the results into promulgated and normal.
       var promulgatedResults = [],
-          normalResults = [];
+          communityResults = [];
       results.forEach(function(obj) {
         // Pass in a full id including the owner to allow looking up the entity.
         var ownerPath = `~${obj.owner}`,
@@ -175,7 +173,7 @@ YUI.add('search-results', function(Y) {
         if (obj.promulgated) {
           promulgatedResults.push(obj);
         } else {
-          normalResults.push(obj);
+          communityResults.push(obj);
         }
       });
       if (results.length === 0) {
@@ -186,9 +184,7 @@ YUI.add('search-results', function(Y) {
       var data = {
         text: this.props.query,
         solutionsCount: results.length,
-        normalResultsCount: normalResults.length,
-        normalResults: normalResults,
-        promulgatedResultsCount: promulgatedResults.length,
+        communityResults: communityResults,
         promulgatedResults: promulgatedResults
       };
       // These need to be set separately, seemingly due to a React quirk.
@@ -231,11 +227,11 @@ YUI.add('search-results', function(Y) {
       }
       this._changeActiveComponent('loading');
       this.setState({ waitingForSearch: true });
+
       this.searchXhr = this.props.charmstoreSearch(
         filters,
         this.searchCallback,
-        150
-      );
+        150);
     },
 
     /**
@@ -259,6 +255,8 @@ YUI.add('search-results', function(Y) {
     },
 
     getInitialState: function() {
+      this.searchXhr = null;
+
       var state = this.generateState(this.props);
       state.waitingForSearch = false;
       return state;
@@ -377,11 +375,7 @@ YUI.add('search-results', function(Y) {
                   </div>
                   <div className="entity-search-results">
                     {this._generateResultsList(
-                      data.promulgatedResultsCount,
-                      data.promulgatedResults, true)}
-                    {this._generateResultsList(
-                      data.normalResultsCount,
-                      data.normalResults, false)}
+                      data.promulgatedResults, data.communityResults)}
                   </div>
                 </div>
               </div>
@@ -465,20 +459,6 @@ YUI.add('search-results', function(Y) {
     },
 
     /**
-      Generate the classes for a results list.
-
-      @method _generateListClasses
-      @param {Boolean} promulgated Whether to add the promulgated class.
-      @returns {String} The collection of class names.
-    */
-    _generateListClasses: function(promulgated) {
-      return classNames(
-        'list-block__list',
-        {promulgated: promulgated}
-      );
-    },
-
-    /**
       Handle navigating back.
 
       @method _handleBack
@@ -496,24 +476,25 @@ YUI.add('search-results', function(Y) {
       @param {Boolean} promulgated Whether to show a promulgated list.
       @returns {String} The collection of class names.
     */
-    _generateResultsList: function(count, results, promulgated) {
-      var title = promulgated ? 'Recommended' : 'Community';
-      var items = [];
-      var changeState = this.props.changeState;
-      results.forEach(function(item) {
-        items.push(
-          <juju.components.SearchResultsItem
-            changeState={changeState}
-            key={item.storeId}
-            item={item} />);
-      });
+    _generateResultsList: function(promulgated, community) {
+      let title = 'Recommended';
+      let results = promulgated;
+      if (!promulgated.length) {
+        title = 'Community';
+        results = community;
+      }
+
       return (
         <div>
           <h4>
-            {title} <span className="count">({count})</span>
+            {title} <span className="count">({results.length})</span>
           </h4>
-          <ul className={this._generateListClasses(promulgated)}>
-            {items}
+          <ul className='list-block__list'>
+            {results.map(item =>
+                <juju.components.SearchResultsItem
+                  changeState={this.props.changeState}
+                  key={item.storeId}
+                  item={item} />)}
           </ul>
         </div>
       );
