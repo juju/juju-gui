@@ -8,10 +8,12 @@
     color: $cool-grey;
 
     &__list {
+        @extend %floating-panel;
         margin: 0;
         list-style: none;
         display: flex;
         margin-bottom: 10px;
+        overflow: hidden;
     }
 
     &__list-item {
@@ -19,18 +21,16 @@
         line-height: $environment-header-height;
         text-align: center;
         flex: 1;
-        border: 1px solid $light-mid-grey;
+        border-right: 1px solid $light-mid-grey;
         margin-bottom: 0;
-        background-color: $canvas-background;
-        transition: background-color .2s;
+        background-color: $white;
 
         &:last-of-type {
             border-left: 0;
         }
 
         &:hover {
-            background-color: $white;
-            color: $ubuntu-orange;
+            background-color: $canvas-background;
         }
     }
 
@@ -40,24 +40,11 @@
 
         &:hover {
             text-decoration: none;
-            color: $ubuntu-orange;
-
-            span {
-                color: $cool-grey;
-            }
         }
     }
 
-    &__list-item.is-active {
-        background-color: $white;
-    }
-
-    &__list-item.is-active &__link {
+    &__list-item.is-active &__link &__icon {
         color: $ubuntu-orange;
-
-        span {
-            color: $cool-grey;
-        }
     }
 
     &__icon {
