@@ -80,7 +80,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           % endif
             <svg class="svg-icon"
               viewBox="0 0 75 30"
-              style="width:75px; height:30px;">
+              style="width:90px; height:35px;">
               <use xlink:href="#juju-logo" />
             </svg>
           % if logo_url:
