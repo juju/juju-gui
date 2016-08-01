@@ -2289,6 +2289,7 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Function} createSocketURL The method used to create a socket URL.
     @param {Function} appSet The method used to set parameters on the app.
     @param {Boolean} committed Whether the model is already committed.
+    @param {Boolean} autoplace Whether the unplace units should be placed.
     @param {Function} callback The function to be called once the deploy is
       complete.
     @param {String} model The name of the new model.
@@ -2352,11 +2353,11 @@ YUI.add('juju-view-utils', function(Y) {
     env.set('socket_url', socketURL);
     env.connect();
     // If we already have a login handler attached then detach it.
-    utils._detachOnLoginhandler();
+    utils._detachOnLoginHandler();
     // After the model connects it will emit a login event, listen
     // for that event so that we know when to commit the changeset.
     this._onLoginHandler = env.on('login', (model) => {
-      utils._detachOnLoginhandler();
+      utils._detachOnLoginHandler();
       env.get('ecs').commit(env);
       callback();
     });
@@ -2365,9 +2366,9 @@ YUI.add('juju-view-utils', function(Y) {
   /**
     Detach the handler for committing the changeset on login.
 
-    @method _detachOnLoginhandler
+    @method _detachOnLoginHandler
   */
-  utils._detachOnLoginhandler = function() {
+  utils._detachOnLoginHandler = function() {
     if (this._onLoginHandler) {
       this._onLoginHandler.detach();
       this._onLoginHandler = null;
