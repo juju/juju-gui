@@ -7,6 +7,10 @@
         @extend %list-style;
     }
 
+    &__loading {
+        text-align: center;
+    }
+
     &__cloud {
         @extend %stagger-fade-in;
         background-color: $white;

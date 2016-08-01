@@ -25,7 +25,32 @@ YUI.add('deployment-cloud', function() {
       acl: React.PropTypes.object.isRequired,
       cloud: React.PropTypes.string,
       clouds: React.PropTypes.object.isRequired,
+      listClouds: React.PropTypes.func.isRequired,
       setCloud: React.PropTypes.func.isRequired
+    },
+
+    getInitialState: function() {
+      return {
+        clouds: [],
+        cloudsLoading: true
+      };
+    },
+
+    componentWillMount: function() {
+      this.props.listClouds((error, clouds) => {
+        if (error) {
+          console.error('Unable to list clouds', error);
+          return;
+        }
+        if (!clouds) {
+          clouds = [];
+        }
+        clouds.push('local');
+        this.setState({
+          clouds: clouds,
+          cloudsLoading: false
+        });
+      });
     },
 
     /**
@@ -35,24 +60,29 @@ YUI.add('deployment-cloud', function() {
       @returns {Object} The cloud list.
     */
     _generateClouds: function() {
+      if (this.state.cloudsLoading) {
+        return (
+          <div className="deployment-cloud__loading">
+            <juju.components.Spinner />
+          </div>);
+      }
       if (this.props.cloud) {
         return;
       }
       var clouds = [];
-      Object.keys(this.props.clouds).forEach((key, i) => {
-        var cloud = this.props.clouds[key];
+      this.state.clouds.forEach((cloud, i) => {
         var classes = classNames(
           'deployment-cloud__cloud',
           'four-col',
           {'last-col': i % 3 === 2});
         clouds.push(
           <li className={classes}
-            key={cloud.id}
-            onClick={this.props.setCloud.bind(null, cloud.id)}
+            key={cloud}
+            onClick={this.props.setCloud.bind(null, cloud)}
             role="button"
             tabIndex="0">
             <span className="deployment-cloud__cloud-logo">
-              {this._generateLogo(key)}
+              {this._generateLogo(cloud)}
             </span>
           </li>);
       });
@@ -137,6 +167,7 @@ YUI.add('deployment-cloud', function() {
 }, '0.1.0', {
   requires: [
     'deployment-section',
+    'loading-spinner',
     'svg-icon'
   ]
 });

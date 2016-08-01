@@ -26,6 +26,7 @@ YUI.add('deployment-flow', function() {
       addTemplate: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       changes: React.PropTypes.object.isRequired,
+      listClouds: React.PropTypes.func.isRequired,
       listPlansForCharm: React.PropTypes.func.isRequired,
       listRegions: React.PropTypes.func.isRequired,
       listTemplates: React.PropTypes.func.isRequired,
@@ -168,6 +169,7 @@ YUI.add('deployment-flow', function() {
                     acl={this.props.acl}
                     cloud={this.state.cloud}
                     clouds={this.CLOUDS}
+                    listClouds={this.props.listClouds}
                     setCloud={this._setCloud} />
                   <juju.components.DeploymentCredential
                     acl={this.props.acl}
