@@ -492,7 +492,7 @@ YUI.add('user-profile', function() {
               action={this._nextCreateStep}
               type="inline-neutral first"
               title="Create new" />
-            <juju.components.DeploymentInput
+            <juju.components.GenericInput
               placeholder="untitled_model"
               required={true}
               ref="modelName"
@@ -873,10 +873,10 @@ YUI.add('user-profile', function() {
 }, '', {
   requires: [
     'agreement-list',
+    'generic-input',
     'loading-spinner',
     'panel-component',
     'user-profile-entity',
-    'user-profile-header',
-    'deployment-input'
+    'user-profile-header'
   ]
 });

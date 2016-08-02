@@ -135,7 +135,7 @@ describe('DeploymentAddCredentials', function() {
           </div>
           <form className="twelve-col">
             <div className="six-col">
-              <juju.components.DeploymentInput
+              <juju.components.GenericInput
                 disabled={false}
                 label="Credential name"
                 placeholder="AWS-1"
@@ -180,7 +180,7 @@ describe('DeploymentAddCredentials', function() {
                   security_credential
                 </a>
               </p>
-              <juju.components.DeploymentInput
+              <juju.components.GenericInput
                 disabled={false}
                 label="Access key"
                 placeholder="TDFIWNDKF7UW6DVGX98X"
@@ -190,7 +190,7 @@ describe('DeploymentAddCredentials', function() {
                   regex: /\S+/,
                   error: 'This field is required.'
                 }]} />
-              <juju.components.DeploymentInput
+              <juju.components.GenericInput
                 disabled={false}
                 label="Secret key"
                 placeholder="p/hdU8TnOP5D7JNHrFiM8IO8f5GN6GhHj7tueBN9"
@@ -255,7 +255,7 @@ describe('DeploymentAddCredentials', function() {
           </div>
           <form className="twelve-col">
             <div className="six-col">
-              <juju.components.DeploymentInput
+              <juju.components.GenericInput
                 disabled={false}
                 label="Project ID (credential name)"
                 placeholder="AWS-1"
@@ -369,7 +369,7 @@ describe('DeploymentAddCredentials', function() {
           </div>
           <form className="twelve-col">
             <div className="six-col">
-              <juju.components.DeploymentInput
+              <juju.components.GenericInput
                 disabled={false}
                 label="Credential name"
                 placeholder="AWS-1"
@@ -558,7 +558,7 @@ describe('DeploymentAddCredentials', function() {
           </div>
           <form className="twelve-col">
             <div className="six-col">
-              <juju.components.DeploymentInput
+              <juju.components.GenericInput
                 disabled={true}
                 label="Credential name"
                 placeholder="AWS-1"
@@ -603,7 +603,7 @@ describe('DeploymentAddCredentials', function() {
                   security_credential
                 </a>
               </p>
-              <juju.components.DeploymentInput
+              <juju.components.GenericInput
                 disabled={true}
                 label="Access key"
                 placeholder="TDFIWNDKF7UW6DVGX98X"
@@ -613,7 +613,7 @@ describe('DeploymentAddCredentials', function() {
                   regex: /\S+/,
                   error: 'This field is required.'
                 }]} />
-              <juju.components.DeploymentInput
+              <juju.components.GenericInput
                 disabled={true}
                 label="Secret key"
                 placeholder="p/hdU8TnOP5D7JNHrFiM8IO8f5GN6GhHj7tueBN9"

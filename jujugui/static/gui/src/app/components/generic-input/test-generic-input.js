@@ -23,16 +23,16 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('DeploymentInput', function() {
+describe('GenericInput', function() {
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
-    YUI().use('deployment-input', function() { done(); });
+    YUI().use('generic-input', function() { done(); });
   });
 
   it('can render', () => {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentInput
+      <juju.components.GenericInput
         disabled={false}
         label="Region"
         placeholder="us-central-1"
@@ -46,12 +46,12 @@ describe('DeploymentInput', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="deployment-input">
-        <label className="deployment-input__label"
+      <div className="generic-input">
+        <label className="generic-input__label"
           htmlFor="Region">
           Region
         </label>
-        <input className="deployment-input__field"
+        <input className="generic-input__field"
           defaultValue="default"
           disabled={false}
           id="Region"
@@ -68,7 +68,7 @@ describe('DeploymentInput', function() {
 
   it('can return the field value', () => {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentInput
+      <juju.components.GenericInput
         disabled={false}
         label="Region"
         placeholder="us-central-1"
@@ -86,7 +86,7 @@ describe('DeploymentInput', function() {
 
   it('can validate the form', () => {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentInput
+      <juju.components.GenericInput
         disabled={false}
         label="Region"
         placeholder="us-central-1"
@@ -101,8 +101,8 @@ describe('DeploymentInput', function() {
     instance.validate();
     var output = renderer.getRenderOutput();
     var expected = (
-      <ul className="deployment-input__errors">
-        {[<li className="deployment-input__error"
+      <ul className="generic-input__errors">
+        {[<li className="generic-input__error"
           key="This field is required.">
           This field is required.
         </li>]}
@@ -113,7 +113,7 @@ describe('DeploymentInput', function() {
 
   it('can validate the form when typing', () => {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentInput
+      <juju.components.GenericInput
         disabled={false}
         label="Region"
         placeholder="us-central-1"
@@ -129,8 +129,8 @@ describe('DeploymentInput', function() {
     output.props.children[1].props.onChange();
     output = renderer.getRenderOutput();
     var expected = (
-      <ul className="deployment-input__errors">
-        {[<li className="deployment-input__error"
+      <ul className="generic-input__errors">
+        {[<li className="generic-input__error"
           key="This field is required.">
           This field is required.
         </li>]}
@@ -141,7 +141,7 @@ describe('DeploymentInput', function() {
 
   it('allows the label to be optional', () => {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentInput
+      <juju.components.GenericInput
         disabled={false}
         placeholder="us-central-1"
         required={true}
@@ -154,9 +154,9 @@ describe('DeploymentInput', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="deployment-input">
+      <div className="generic-input">
         {undefined}
-        <input className="deployment-input__field"
+        <input className="generic-input__field"
           defaultValue="default"
           disabled={false}
           id={undefined}
@@ -173,7 +173,7 @@ describe('DeploymentInput', function() {
 
   it('adds a class to the wrapper element on error', () => {
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentInput
+      <juju.components.GenericInput
         disabled={false}
         placeholder="us-central-1"
         required={true}
@@ -187,6 +187,6 @@ describe('DeploymentInput', function() {
     var output = renderer.getRenderOutput();
     output.props.children[1].props.onChange();
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.className, 'deployment-input error');
+    assert.deepEqual(output.props.className, 'generic-input error');
   });
 });

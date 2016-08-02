@@ -100,7 +100,7 @@ describe('DeploymentCredentialAdd', function() {
         </div>
         <form className="twelve-col">
           <div className="six-col">
-            <juju.components.DeploymentInput
+            <juju.components.GenericInput
               disabled={false}
               label="Project ID (credential name)"
               placeholder="cred-1"
@@ -216,7 +216,7 @@ describe('DeploymentCredentialAdd', function() {
         </div>
         <form className="twelve-col">
           <div className="six-col">
-            <juju.components.DeploymentInput
+            <juju.components.GenericInput
               disabled={false}
               label="Project ID (credential name)"
               placeholder="cred-1"
@@ -332,7 +332,7 @@ describe('DeploymentCredentialAdd', function() {
         </div>
         <form className="twelve-col">
           <div className="six-col">
-            <juju.components.DeploymentInput
+            <juju.components.GenericInput
               disabled={false}
               label="Credential name"
               placeholder="cred-1"
@@ -373,7 +373,7 @@ describe('DeploymentCredentialAdd', function() {
                   security_credential
                 </a>
               </p>
-              <juju.components.DeploymentInput
+              <juju.components.GenericInput
                 disabled={false}
                 label="Access key"
                 placeholder="TDFIWNDKF7UW6DVGX98X"
@@ -383,7 +383,7 @@ describe('DeploymentCredentialAdd', function() {
                   regex: /\S+/,
                   error: 'This field is required.'
                 }]} />
-              <juju.components.DeploymentInput
+              <juju.components.GenericInput
                 disabled={false}
                 label="Secret key"
                 placeholder="p/hdU8TnOP5D7JNHrFiM8IO8f5GN6GhHj7tueBN9"
@@ -456,7 +456,7 @@ describe('DeploymentCredentialAdd', function() {
         </div>
         <form className="twelve-col">
           <div className="six-col">
-            <juju.components.DeploymentInput
+            <juju.components.GenericInput
               disabled={false}
               label="Credential name"
               placeholder="cred-1"
@@ -562,7 +562,7 @@ describe('DeploymentCredentialAdd', function() {
         </div>
         <form className="twelve-col">
           <div className="six-col">
-            <juju.components.DeploymentInput
+            <juju.components.GenericInput
               disabled={true}
               label="Credential name"
               placeholder="cred-1"

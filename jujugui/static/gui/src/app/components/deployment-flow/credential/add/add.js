@@ -147,7 +147,7 @@ YUI.add('deployment-credential-add', function() {
                     security_credential
                   </a>
                 </p>
-                <juju.components.DeploymentInput
+                <juju.components.GenericInput
                   disabled={isReadOnly}
                   label="Access key"
                   placeholder="TDFIWNDKF7UW6DVGX98X"
@@ -157,7 +157,7 @@ YUI.add('deployment-credential-add', function() {
                     regex: /\S+/,
                     error: 'This field is required.'
                   }]} />
-                <juju.components.DeploymentInput
+                <juju.components.GenericInput
                   disabled={isReadOnly}
                   label="Secret key"
                   placeholder="p/hdU8TnOP5D7JNHrFiM8IO8f5GN6GhHj7tueBN9"
@@ -275,7 +275,7 @@ YUI.add('deployment-credential-add', function() {
           </div>
           <form className="twelve-col">
             <div className="six-col">
-              <juju.components.DeploymentInput
+              <juju.components.GenericInput
                 disabled={isReadOnly}
                 label={credentialName}
                 placeholder="cred-1"
@@ -315,8 +315,8 @@ YUI.add('deployment-credential-add', function() {
 
 }, '0.1.0', {
   requires: [
-    'deployment-input',
     'button-row',
+    'generic-input',
     'inset-select',
     'svg-icon'
   ]

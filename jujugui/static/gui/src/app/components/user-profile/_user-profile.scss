@@ -7,12 +7,12 @@
         text-align: right;
 
         &.collapsed {
-            .deployment-input__field,
+            .generic-input__field,
             .button--inline-neutral.second {
                 width: 0;
                 border-width: 0;
             }
-            .deployment-input__field {
+            .generic-input__field {
                 padding: 0;
             }
             .button--inline-neutral.first {
@@ -36,17 +36,17 @@
             padding-left: 0;
         }
 
-        .deployment-input {
+        .generic-input {
             display: inline-block;
 
             &.error {
-                .deployment-input__field {
+                .generic-input__field {
                     border: 1px solid $error;
                 }
             }
         }
 
-        .deployment-input__errors {
+        .generic-input__errors {
             position: absolute;
             z-index: index($z-indexed-elements, more-menu);
             top: 60px;
@@ -54,7 +54,7 @@
             text-align: left;
         }
 
-        .deployment-input__field {
+        .generic-input__field {
             padding: 8px;
             width: 200px;
             transition: all 0.5s ease-in;

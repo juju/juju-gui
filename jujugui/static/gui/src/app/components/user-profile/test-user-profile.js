@@ -125,7 +125,7 @@ describe('UserProfile', () => {
                     action={instance._nextCreateStep}
                     type='inline-neutral first'
                     title='Create new' />
-                  <juju.components.DeploymentInput
+                  <juju.components.GenericInput
                     placeholder="untitled_model"
                     required={true}
                     ref="modelName"
@@ -330,7 +330,7 @@ describe('UserProfile', () => {
                     action={instance._nextCreateStep}
                     type='inline-neutral first'
                     title='Create new' />
-                  <juju.components.DeploymentInput
+                  <juju.components.GenericInput
                     placeholder="untitled_model"
                     required={true}
                     ref="modelName"
