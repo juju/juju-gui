@@ -55,12 +55,7 @@ describe('DeploymentServices', function() {
         servicesGetById={servicesGetById} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.DeploymentSection
-        completed={false}
-        disabled={false}
-        instance="deployment-services"
-        showCheck={true}
-        title="Services to be deployed">
+      <div>
         <div className="deployment-services__budget">
           <h4>
             Choose your budget
@@ -108,7 +103,7 @@ describe('DeploymentServices', function() {
             </span>
           </div>
         </div>
-      </juju.components.DeploymentSection>);
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -124,12 +119,7 @@ describe('DeploymentServices', function() {
         servicesGetById={servicesGetById} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.DeploymentSection
-        completed={false}
-        disabled={false}
-        instance="deployment-services"
-        showCheck={true}
-        title="Services to be deployed">
+      <div>
         <div className="deployment-services__budget">
           <h4>
             Choose your budget
@@ -177,7 +167,7 @@ describe('DeploymentServices', function() {
             </span>
           </div>
         </div>
-      </juju.components.DeploymentSection>);
+      </div>);
     assert.deepEqual(output, expected);
   });
 });

@@ -1,7 +1,5 @@
 .deployment-cloud {
-    &.deployment-section--completed {
-        margin-bottom: 0;
-    }
+    margin-bottom: 0;
 
     &__list {
         @extend %list-style;

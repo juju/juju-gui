@@ -147,7 +147,27 @@ YUI.add('deployment-flow', function() {
       });
     },
 
+    /**
+      Generate a change cloud action if a cloud has been selected.
+
+      @method _generateCloudAction
+      @returns {Array} The list of actions.
+    */
+    _generateCloudAction: function() {
+      if (!this.state.cloud) {
+        return;
+      }
+      return [{
+        action: this._setCloud.bind(null, null),
+        disabled: this.props.acl.isReadOnly(),
+        title: 'Change cloud',
+        type: 'neutral'
+      }];
+    },
+
     render: function() {
+      var cloud = this.state.cloud;
+      var credential = this.state.credential;
       var disabled = this.props.acl.isReadOnly();
       return (
         <juju.components.Panel
@@ -165,41 +185,70 @@ YUI.add('deployment-flow', function() {
             <div className="deployment-flow__content">
               <div className="twelve-col">
                 <div className="inner-wrapper">
-                  <juju.components.DeploymentCloud
-                    acl={this.props.acl}
-                    cloud={this.state.cloud}
-                    clouds={this.CLOUDS}
-                    listClouds={this.props.listClouds}
-                    setCloud={this._setCloud} />
-                  <juju.components.DeploymentCredential
-                    acl={this.props.acl}
-                    addTemplate={this.props.addTemplate}
-                    credential={this.state.credential}
-                    cloud={this.state.cloud}
-                    clouds={this.CLOUDS}
-                    listRegions={this.props.listRegions}
-                    listTemplates={this.props.listTemplates}
-                    region={this.state.region}
-                    setCredential={this._setCredential}
-                    setRegion={this._setRegion}
-                    setTemplate={this._setTemplate}
-                    template={this.state.template}
-                    users={this.props.users}
-                    validateForm={this._validateForm} />
-                  <juju.components.DeploymentMachines
-                    acl={this.props.acl}
-                    cloud={this.state.cloud && this.CLOUDS[this.state.cloud]} />
-                  <juju.components.DeploymentServices
-                    acl={this.props.acl}
-                    changes={this.props.changes}
-                    cloud={this.state.cloud}
-                    listPlansForCharm={this.props.listPlansForCharm}
-                    servicesGetById={this.props.servicesGetById} />
+                  <juju.components.DeploymentSection
+                    buttons={this._generateCloudAction()}
+                    completed={!!cloud && !!credential}
+                    disabled={false}
+                    instance="deployment-cloud"
+                    showCheck={true}
+                    title={
+                      cloud ? 'Chosen cloud' : 'Choose cloud to deploy to'}>
+                    <juju.components.DeploymentCloud
+                      acl={this.props.acl}
+                      cloud={cloud}
+                      clouds={this.CLOUDS}
+                      listClouds={this.props.listClouds}
+                      setCloud={this._setCloud} />
+                  </juju.components.DeploymentSection>
+                  <juju.components.DeploymentSection
+                    completed={false}
+                    disabled={!cloud}
+                    instance="deployment-credential"
+                    showCheck={false}>
+                    <juju.components.DeploymentCredential
+                      acl={this.props.acl}
+                      addTemplate={this.props.addTemplate}
+                      credential={credential}
+                      cloud={cloud}
+                      clouds={this.CLOUDS}
+                      listRegions={this.props.listRegions}
+                      listTemplates={this.props.listTemplates}
+                      region={this.state.region}
+                      setCredential={this._setCredential}
+                      setRegion={this._setRegion}
+                      setTemplate={this._setTemplate}
+                      template={this.state.template}
+                      users={this.props.users}
+                      validateForm={this._validateForm} />
+                  </juju.components.DeploymentSection>
+                  <juju.components.DeploymentSection
+                    completed={false}
+                    disabled={!cloud || !credential}
+                    instance="deployment-machines"
+                    showCheck={false}
+                    title="Machines to be deployed">
+                    <juju.components.DeploymentMachines
+                      acl={this.props.acl}
+                      cloud={cloud && this.CLOUDS[cloud]} />
+                  </juju.components.DeploymentSection>
+                  <juju.components.DeploymentSection
+                    completed={false}
+                    disabled={!cloud || !credential}
+                    instance="deployment-services"
+                    showCheck={true}
+                    title="Services to be deployed">
+                    <juju.components.DeploymentServices
+                      acl={this.props.acl}
+                      changes={this.props.changes}
+                      cloud={cloud}
+                      listPlansForCharm={this.props.listPlansForCharm}
+                      servicesGetById={this.props.servicesGetById} />
+                  </juju.components.DeploymentSection>
                   <div className="twelve-col">
                     <div className="deployment-flow__deploy">
                       <div className="deployment-flow__deploy-option">
                         <input className="deployment-flow__deploy-checkbox"
-                          disabled={disabled || !this.state.cloud}
+                          disabled={disabled || !cloud}
                           id="emails"
                           type="checkbox" />
                         <label className="deployment-flow__deploy-label"
@@ -211,7 +260,7 @@ YUI.add('deployment-flow', function() {
                       </div>
                       <div className="deployment-flow__deploy-option">
                         <input className="deployment-flow__deploy-checkbox"
-                          disabled={disabled || !this.state.cloud}
+                          disabled={disabled || !cloud}
                           id="terms"
                           type="checkbox" />
                         <label className="deployment-flow__deploy-label"
@@ -223,8 +272,8 @@ YUI.add('deployment-flow', function() {
                       </div>
                       <div className="deployment-flow__deploy-action">
                         <juju.components.GenericButton
-                          action={() => {}}
-                          disabled={disabled || !this.state.cloud}
+                          action={undefined}
+                          disabled={disabled || !cloud}
                           type="positive"
                           title="Deploy" />
                       </div>

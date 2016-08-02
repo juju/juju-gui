@@ -72,19 +72,14 @@ YUI.add('deployment-machines', function() {
 
     render: function() {
       return (
-        <juju.components.DeploymentSection
-          completed={false}
-          disabled={!this.props.cloud}
-          instance="deployment-machines"
-          showCheck={false}
-          title="Machines to be deployed">
+        <div>
           <p className="deployment-machines__message">
             These machines will be provisioned on&nbsp;
             {this.props.cloud && this.props.cloud.title}.
             You will incur a charge from your cloud provider.
           </p>
           {this._generateMachines()}
-        </juju.components.DeploymentSection>
+        </div>
       );
     }
 
@@ -92,7 +87,6 @@ YUI.add('deployment-machines', function() {
 
 }, '0.1.0', {
   requires: [
-    'deployment-section',
     'svg-icon'
   ]
 });

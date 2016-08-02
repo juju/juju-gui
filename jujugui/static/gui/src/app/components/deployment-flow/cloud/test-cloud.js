@@ -79,13 +79,7 @@ describe('DeploymentCloud', function() {
     var output = renderer.getRenderOutput();
     var options = output.props.children[0].props.children;
     var expected = (
-      <juju.components.DeploymentSection
-        buttons={undefined}
-        completed={false}
-        disabled={false}
-        instance="deployment-cloud"
-        showCheck={true}
-        title="Choose cloud to deploy to">
+      <div>
         <ul className="deployment-cloud__list">
           <li className="deployment-cloud__cloud four-col"
             key="google"
@@ -134,7 +128,7 @@ describe('DeploymentCloud', function() {
           </li>
         </ul>
         {undefined}
-      </juju.components.DeploymentSection>);
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -148,18 +142,12 @@ describe('DeploymentCloud', function() {
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.DeploymentSection
-        buttons={undefined}
-        completed={false}
-        disabled={false}
-        instance="deployment-cloud"
-        showCheck={true}
-        title="Choose cloud to deploy to">
+      <div>
         <div className="deployment-cloud__loading">
           <juju.components.Spinner />
         </div>
         {undefined}
-      </juju.components.DeploymentSection>);
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -173,18 +161,7 @@ describe('DeploymentCloud', function() {
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.DeploymentSection
-        buttons={[{
-          action: output.props.buttons[0].action,
-          disabled: false,
-          title: 'Change cloud',
-          type: 'neutral'
-        }]}
-        completed={true}
-        disabled={false}
-        instance="deployment-cloud"
-        showCheck={true}
-        title="Chosen cloud">
+      <div>
         {undefined}
         <div className="deployment-cloud__chosen">
           <juju.components.SvgIcon
@@ -192,21 +169,8 @@ describe('DeploymentCloud', function() {
             name="google"
             width={256} />
         </div>
-      </juju.components.DeploymentSection>);
+      </div>);
     assert.deepEqual(output, expected);
-  });
-
-  it('disables the change cloud button when read only', function() {
-    acl.isReadOnly = sinon.stub().returns(true);
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCloud
-        acl={acl}
-        cloud='google'
-        clouds={clouds}
-        listClouds={sinon.stub().callsArgWith(0, null, [])}
-        setCloud={sinon.stub()} />, true);
-    var output = renderer.getRenderOutput();
-    assert.isTrue(output.props.buttons[0].disabled);
   });
 
   it('can select a cloud', function() {
@@ -223,20 +187,5 @@ describe('DeploymentCloud', function() {
     output.props.children[0].props.children[0].props.onClick();
     assert.equal(setCloud.callCount, 1);
     assert.equal(setCloud.args[0][0], 'google');
-  });
-
-  it('can change the cloud', function() {
-    var setCloud = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.DeploymentCloud
-        acl={acl}
-        cloud="google"
-        clouds={clouds}
-        listClouds={sinon.stub().callsArgWith(0, null, [])}
-        setCloud={setCloud} />, true);
-    var output = renderer.getRenderOutput();
-    output.props.buttons[0].action();
-    assert.equal(setCloud.callCount, 1);
-    assert.isNull(setCloud.args[0][0]);
   });
 });

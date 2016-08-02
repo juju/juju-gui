@@ -42,12 +42,7 @@ describe('DeploymentMachines', function() {
         cloud={{title: 'My cloud'}} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.DeploymentSection
-        completed={false}
-        disabled={false}
-        instance="deployment-machines"
-        showCheck={false}
-        title="Machines to be deployed">
+      <div>
         <p className="deployment-machines__message">
           These machines will be provisioned on&nbsp;
           {'My cloud'}.
@@ -90,7 +85,7 @@ describe('DeploymentMachines', function() {
             </div>
           </li>]}
         </ul>
-      </juju.components.DeploymentSection>);
+      </div>);
     assert.deepEqual(output, expected);
   });
 });
