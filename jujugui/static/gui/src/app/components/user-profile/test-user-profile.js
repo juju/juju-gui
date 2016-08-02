@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('UserProfile', () => {
-  var models, charmstore, charms, bundles, users, env;
+  var models, charmstore, users, env;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -36,21 +36,6 @@ describe('UserProfile', () => {
       ownerTag: 'test-owner',
       isAlive: true
     }];
-    var list = sinon.stub();
-    var charm = jsTestUtils.makeEntity().toEntity();
-    charm.series = [charm.series];
-    charms = [charm];
-    var bundle = jsTestUtils.makeEntity(true).toEntity();
-    bundle.series = [bundle.series];
-    bundles = [bundle];
-    list.withArgs('test-owner', sinon.match.any, 'charm').callsArgWith(
-      1, null, charms);
-    list.withArgs('test-owner', sinon.match.any, 'bundle').callsArgWith(
-      1, null, bundles);
-    charmstore = {
-      list: list,
-      url: 'example.com/9'
-    };
     users = {charmstore: {
       user: 'test-owner',
       usernameDisplay: 'test owner'
@@ -75,14 +60,8 @@ describe('UserProfile', () => {
   it('renders the empty state', () => {
     var pluralize = sinon.stub();
     pluralize.withArgs('model', sinon.match.any).returns('models');
-    pluralize.withArgs('bundle', sinon.match.any).returns('bundles');
-    pluralize.withArgs('charm', sinon.match.any).returns('charms');
     var links = [{
       label: '0 models'
-    }, {
-      label: '0 bundles'
-    }, {
-      label: '0 charms'
     }];
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
@@ -192,44 +171,6 @@ describe('UserProfile', () => {
       'surl/static/gui/build/app/assets/images/non-sprites/empty_profile.png');
   });
 
-  it('displays loading spinners for charms and bundles', () => {
-    charmstore.list = sinon.stub();
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfile
-        addNotification={sinon.stub()}
-        users={users}
-        canCreateNew={true}
-        charmstore={charmstore}
-        env={env}
-        getAgreements={sinon.stub()}
-        getDiagramURL={sinon.stub()}
-        listBudgets={sinon.stub()}
-        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
-        switchModel={sinon.stub()}
-        interactiveLogin={true}
-        changeState={sinon.stub()}
-        pluralize={sinon.stub()}
-        hideConnectingMask={sinon.stub()}
-        showConnectingMask={sinon.stub()}
-        storeUser={sinon.stub()}
-        user={users.charmstore} />, true);
-    var output = component.getRenderOutput();
-    assert.deepEqual(
-      output.props.children.props.children.props.children[1]
-        .props.children[1], (
-          <div className="twelve-col">
-          <juju.components.Spinner />
-          </div>
-        ));
-    assert.deepEqual(
-      output.props.children.props.children.props.children[1].props
-        .children[2], (
-          <div className="twelve-col">
-          <juju.components.Spinner />
-          </div>
-        ));
-  });
-
   it('displays loading spinners for models', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
@@ -263,15 +204,8 @@ describe('UserProfile', () => {
   it('renders lists of entities', () => {
     var pluralize = sinon.stub();
     pluralize.withArgs('model', sinon.match.any).returns('model');
-    pluralize.withArgs('bundle', sinon.match.any).returns('bundle');
-    pluralize.withArgs('charm', sinon.match.any).returns('charm');
-    pluralize.withArgs('charm', sinon.match.any).returns('charm');
     var links = [{
       label: '1 model'
-    }, {
-      label: '1 bundle'
-    }, {
-      label: '1 charm'
     }];
     var changeState = sinon.stub();
     var getDiagramURL = sinon.stub();
@@ -385,123 +319,20 @@ describe('UserProfile', () => {
               </juju.components.UserProfileEntity>]}
             </ul>
           </div>
-          <div>
-            <div className="user-profile__header twelve-col no-margin-bottom">
-              Bundles
-              <span className="user-profile__size">
-                ({1})
-              </span>
-              {undefined}
-            </div>
-            <ul className="user-profile__list twelve-col">
-              <li className="user-profile__list-header twelve-col">
-                <span className="user-profile__list-col five-col">
-                  Name
-                </span>
-                <span className={
-                  'user-profile__list-col three-col user-profile__list-icons'}>
-                  Charms
-                </span>
-                <span className="user-profile__list-col one-col prepend-one">
-                  Units
-                </span>
-                <span className={
-                  'user-profile__list-col two-col last-col'}>
-                  Owner
-                </span>
-              </li>
-              {[<juju.components.UserProfileEntity
-                changeState={changeState}
-                entity={bundles[0]}
-                getDiagramURL={getDiagramURL}
-                key="django-cluster"
-                type="bundle">
-                <span className={'user-profile__list-col five-col ' +
-                  'user-profile__list-name'}>
-                  django-cluster
-                  <ul className="user-profile__list-tags">
-                    {[<li className="user-profile__comma-item"
-                      key="django-cluster-database">
-                      database
-                    </li>]}
-                  </ul>
-                </span>
-                <span className={'user-profile__list-col three-col ' +
-                  'user-profile__list-icons'}>
-                  <img className="user-profile__list-icon"
-                    key="icon-0-gunicorn"
-                    src="example.com/9/gunicorn/icon.svg"
-                    title="gunicorn" />
-                  <img className="user-profile__list-icon"
-                    key="icon-1-django"
-                    src="example.com/9/django/icon.svg"
-                    title="django" />
-                </span>
-                <span className="user-profile__list-col one-col prepend-one">
-                  {5}
-                </span>
-                <span className="user-profile__list-col two-col last-col">
-                  test-owner
-                </span>
-              </juju.components.UserProfileEntity>]}
-            </ul>
-          </div>
-          <div>
-            <div className="user-profile__header twelve-col no-margin-bottom">
-              Charms
-              <span className="user-profile__size">
-                ({1})
-              </span>
-              {undefined}
-            </div>
-            <ul className="user-profile__list twelve-col">
-              <li className="user-profile__list-header twelve-col">
-                <span className="user-profile__list-col three-col">
-                  Name
-                </span>
-                <span className="user-profile__list-col seven-col">
-                  Series
-                </span>
-                <span className="user-profile__list-col two-col last-col">
-                  Owner
-                </span>
-              </li>
-              {[<juju.components.UserProfileEntity
-                changeState={changeState}
-                entity={charms[0]}
-                key="cs:django"
-                type="charm">
-                <span className={'user-profile__list-col three-col ' +
-                  'user-profile__list-name'}>
-                  django
-                  <ul className="user-profile__list-tags">
-                    {[<li className="user-profile__comma-item"
-                      key="cs:django-database">
-                      database
-                    </li>]}
-                  </ul>
-                </span>
-                <span className="user-profile__list-col four-col">
-                  <ul className="user-profile__list-series">
-                    {[<li className="user-profile__comma-item"
-                      key="cs:django-trusty">
-                      trusty
-                    </li>]}
-                  </ul>
-                </span>
-                <span className={'user-profile__list-col one-col ' +
-                  'user-profile__list-icons'}>
-                  <img className="user-profile__list-icon"
-                    src="example.com/9/django/icon.svg"
-                    title="django" />
-                </span>
-                <span className={'user-profile__list-col two-col ' +
-                  'prepend-two last-col'}>
-                  test-owner
-                </span>
-              </juju.components.UserProfileEntity>]}
-            </ul>
-          </div>
+          <juju.components.EntityList
+            changeState={changeState}
+            charmstore={charmstore}
+            getDiagramURL={getDiagramURL}
+            type='bundle'
+            user={user}
+            users={users} />
+          <juju.components.EntityList
+            changeState={changeState}
+            charmstore={charmstore}
+            getDiagramURL={getDiagramURL}
+            type='charm'
+            user={user}
+            users={users} />
           <juju.components.AgreementList
             getAgreements={getAgreements}
             user={user} />
@@ -545,17 +376,11 @@ describe('UserProfile', () => {
     assert.deepEqual(content, expected);
   });
 
-  it('does not pass the charmstore login if interactiveLogin is falsy', () => {
+  it('does not pass the charmstore login if interactiveLogin is falsey', () => {
     var pluralize = sinon.stub();
     pluralize.withArgs('model', sinon.match.any).returns('models');
-    pluralize.withArgs('bundle', sinon.match.any).returns('bundles');
-    pluralize.withArgs('charm', sinon.match.any).returns('charms');
     var links = [{
       label: '0 models'
-    }, {
-      label: '0 bundles'
-    }, {
-      label: '0 charms'
     }];
     var output = jsTestUtils.shallowRender(
       <juju.components.UserProfile
@@ -621,51 +446,6 @@ describe('UserProfile', () => {
     assert.equal(storeUser.callCount, 1);
   });
 
-  it('gets the entity data when the user authenticates', () => {
-    var list = sinon.stub();
-    var charmstore = {list: list};
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfile
-        addNotification={sinon.stub()}
-        switchModel={sinon.stub()}
-        users={{}}
-        listBudgets={sinon.stub()}
-        listModels={sinon.stub()}
-        canCreateNew={true}
-        changeState={sinon.stub()}
-        charmstore={charmstore}
-        env={env}
-        getAgreements={sinon.stub()}
-        getDiagramURL={sinon.stub()}
-        interactiveLogin={true}
-        pluralize={sinon.stub()}
-        hideConnectingMask={sinon.stub()}
-        showConnectingMask={sinon.stub()}
-        storeUser={sinon.stub()}
-        user={users.charmstore} />, true);
-    assert.equal(list.callCount, 0);
-    component.render(
-      <juju.components.UserProfile
-        addNotification={sinon.stub()}
-        switchModel={sinon.stub()}
-        users={users}
-        listBudgets={sinon.stub()}
-        listModels={sinon.stub()}
-        canCreateNew={true}
-        changeState={sinon.stub()}
-        charmstore={charmstore}
-        env={env}
-        getAgreements={sinon.stub()}
-        getDiagramURL={sinon.stub()}
-        interactiveLogin={true}
-        pluralize={sinon.stub()}
-        hideConnectingMask={sinon.stub()}
-        showConnectingMask={sinon.stub()}
-        storeUser={sinon.stub()}
-        user={users.charmstore} />);
-    assert.equal(list.callCount, 2);
-  });
-
   it('switches env when calling switchModel method passed to list', () => {
     // This method is passed down to child components and called from there.
     // We are just calling it directly here to unit test the method.
@@ -706,42 +486,9 @@ describe('UserProfile', () => {
     }], 'modelname', undefined]);
   });
 
-  it('requests entities and updates state', () => {
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfile
-        addNotification={sinon.stub()}
-        users={users}
-        canCreateNew={true}
-        changeState={sinon.stub()}
-        charmstore={charmstore}
-        env={env}
-        getAgreements={sinon.stub()}
-        getDiagramURL={sinon.stub()}
-        interactiveLogin={true}
-        listBudgets={sinon.stub()}
-        listModels={sinon.stub()}
-        pluralize={sinon.stub()}
-        hideConnectingMask={sinon.stub()}
-        showConnectingMask={sinon.stub()}
-        storeUser={sinon.stub()}
-        switchModel={sinon.stub()}
-        user={users.charmstore} />, true);
-    var instance = component.getMountedInstance();
-    assert.equal(charmstore.list.callCount, 2,
-                 'charmstore list not called');
-    assert.equal(charmstore.list.args[0][0], 'test-owner',
-                 'username not passed to list request');
-    assert.deepEqual(instance.state.charmList, charms,
-                     'callback does not properly set charm state');
-    assert.deepEqual(instance.state.bundleList, bundles,
-                     'callback does not properly set bundle state');
-  });
-
   it('will abort the requests when unmounting', function() {
-    var charmstoreAbort = sinon.stub();
     var listModelsAbort = sinon.stub();
     var listModels = sinon.stub().returns({abort: listModelsAbort});
-    charmstore.list = sinon.stub().returns({abort: charmstoreAbort});
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         addNotification={sinon.stub()}
@@ -762,7 +509,6 @@ describe('UserProfile', () => {
         switchModel={sinon.stub()}
         user={users.charmstore} />, true);
     renderer.unmount();
-    assert.equal(charmstoreAbort.callCount, 2);
     assert.equal(listModelsAbort.callCount, 1);
   });
 
