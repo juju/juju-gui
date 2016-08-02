@@ -87,7 +87,7 @@ describe('EntityList', () => {
     var type = 'charm';
     var component = jsTestUtils.shallowRender(
       <juju.components.EntityList
-        changeState={sinon.stub()}
+        changeState={changeState}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
         type={type}
@@ -158,7 +158,7 @@ describe('EntityList', () => {
     var getDiagramURL = sinon.stub();
     var component = jsTestUtils.shallowRender(
       <juju.components.EntityList
-        changeState={sinon.stub()}
+        changeState={changeState}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
         type='bundle'
