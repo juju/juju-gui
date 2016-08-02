@@ -48,7 +48,9 @@ YUI.add('agreement-list', function() {
     componentWillReceiveProps: function(nextProps) {
       // If the user has changed then update the data.
       var props = this.props;
-      if (nextProps.user.user !== props.user.user) {
+      var currentUser = props.user && props.user.user;
+      var nextUser = nextProps.user && nextProps.user.user;
+      if (nextUser !== currentUser) {
         this._getAgreements();
       }
     },
