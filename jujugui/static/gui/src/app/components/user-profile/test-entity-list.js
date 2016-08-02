@@ -160,13 +160,13 @@ describe('EntityList', () => {
       <juju.components.EntityList
         changeState={changeState}
         charmstore={charmstore}
-        getDiagramURL={sinon.stub()}
+        getDiagramURL={getDiagramURL}
         type='bundle'
         user={users.charmstore}
         users={users} />, true);
     var output = component.getRenderOutput();
     var expected = (
-      <div className="user-profile__bundle-list">
+      <div className="user-profile__{type}-list">
         <div className="user-profile__header twelve-col no-margin-bottom">
           Bundles
           <span className="user-profile__size">
@@ -288,6 +288,7 @@ describe('EntityList', () => {
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
+        type='charm'
         users={{}}
         user={users.charmstore} />, true);
     assert.equal(list.callCount, 0);
@@ -296,6 +297,7 @@ describe('EntityList', () => {
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
+        type='charm'
         users={users}
         user={users.charmstore} />);
     assert.equal(list.callCount, 1);

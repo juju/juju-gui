@@ -317,7 +317,7 @@ YUI.add('entity-list', function() {
           title;
       if (type === 'bundle') {
         generateRow = this._generateBundleRow;
-        header = this._generateBundleHeader;
+        header = this._generateBundleHeader();
         title = 'Bundles';
       } else if (type === 'charm') {
         generateRow = this._generateCharmRow;
