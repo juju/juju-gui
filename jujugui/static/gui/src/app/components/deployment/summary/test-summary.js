@@ -135,7 +135,7 @@ describe('DeploymentSummary', function() {
           title="Review deployment">
           <form className="six-col last-col"
             onSubmit={instance._handleDeploy}>
-            <juju.components.DeploymentInput
+            <juju.components.GenericInput
               disabled={false}
               label="Model name"
               placeholder="test-model-01"
@@ -685,7 +685,7 @@ describe('DeploymentSummary', function() {
           title="Review deployment">
           <form className="six-col last-col"
             onSubmit={instance._handleDeploy}>
-            <juju.components.DeploymentInput
+            <juju.components.GenericInput
               disabled={true}
               label="Model name"
               placeholder="test-model-01"

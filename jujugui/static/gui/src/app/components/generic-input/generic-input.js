@@ -18,9 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('deployment-input', function() {
+YUI.add('generic-input', function() {
 
-  juju.components.DeploymentInput = React.createClass({
+  juju.components.GenericInput = React.createClass({
 
     propTypes: {
       disabled: React.PropTypes.bool,
@@ -54,7 +54,7 @@ YUI.add('deployment-input', function() {
         if (!validator.regex.test(value)) {
           var error = validator.error;
           errors.push(
-            <li className="deployment-input__error"
+            <li className="generic-input__error"
               key={error}>
               {error}
             </li>);
@@ -62,7 +62,7 @@ YUI.add('deployment-input', function() {
       });
       if (errors.length > 0) {
         components = (
-          <ul className="deployment-input__errors">
+          <ul className="generic-input__errors">
             {errors}
           </ul>);
       }
@@ -91,7 +91,7 @@ YUI.add('deployment-input', function() {
       if (label) {
         id = label.replace(' ', '-');
         element =
-          <label className="deployment-input__label"
+          <label className="generic-input__label"
             htmlFor={id}>
             {label}
           </label>;
@@ -106,14 +106,14 @@ YUI.add('deployment-input', function() {
     render: function() {
       var {labelElement, id} = this._generateLabel();
       var classes = classNames(
-        'deployment-input', {
+        'generic-input', {
           error: !!this.state.errors
         }
       );
       return (
         <div className={classes}>
           {labelElement}
-          <input className="deployment-input__field"
+          <input className="generic-input__field"
             defaultValue={this.props.value}
             disabled={this.props.disabled}
             id={id}

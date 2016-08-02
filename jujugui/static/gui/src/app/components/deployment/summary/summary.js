@@ -485,7 +485,7 @@ YUI.add('deployment-summary', function() {
               onSubmit={this._handleDeploy}>
             { !!modelCommitted ?
               this.props.modelName :
-              <juju.components.DeploymentInput
+              <juju.components.GenericInput
                 disabled={this.props.acl.isReadOnly() || !!modelCommitted}
                 label="Model name"
                 placeholder="test-model-01"
@@ -540,10 +540,10 @@ YUI.add('deployment-summary', function() {
   });
 
 }, '0.1.0', { requires: [
-  'deployment-input',
   'deployment-panel-content',
   'deployment-panel-footer',
   'deployment-summary-change-item',
   'expanding-row',
+  'generic-input',
   'svg-icon'
 ]});
