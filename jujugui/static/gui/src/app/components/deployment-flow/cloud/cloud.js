@@ -128,37 +128,12 @@ YUI.add('deployment-cloud', function() {
         width={cloud.svgWidth} />) : cloud.title;
     },
 
-    /**
-      Generate a change cloud action if a cloud has been selected.
-
-      @method _generateAction
-      @returns {Array} The list of actions.
-    */
-    _generateAction: function() {
-      if (!this.props.cloud) {
-        return;
-      }
-      return [{
-        action: this.props.setCloud.bind(null, null),
-        disabled: this.props.acl.isReadOnly(),
-        title: 'Change cloud',
-        type: 'neutral'
-      }];
-    },
-
     render: function() {
-      var cloud = this.props.cloud;
       return (
-        <juju.components.DeploymentSection
-          buttons={this._generateAction()}
-          completed={!!cloud}
-          disabled={false}
-          instance="deployment-cloud"
-          showCheck={true}
-          title={cloud ? 'Chosen cloud' : 'Choose cloud to deploy to'}>
+        <div>
           {this._generateClouds()}
           {this._generateCloud()}
-        </juju.components.DeploymentSection>
+        </div>
       );
     }
 
@@ -166,7 +141,6 @@ YUI.add('deployment-cloud', function() {
 
 }, '0.1.0', {
   requires: [
-    'deployment-section',
     'loading-spinner',
     'svg-icon'
   ]

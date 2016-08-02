@@ -176,7 +176,7 @@ YUI.add('deployment-credential', function() {
       if (value === 'add-credential') {
         this._toggleAdd();
       } else {
-        this.props.setCredential();
+        this.props.setCredential(value);
       }
     },
 
@@ -275,13 +275,9 @@ YUI.add('deployment-credential', function() {
 
     render: function() {
       return (
-        <juju.components.DeploymentSection
-          completed={false}
-          disabled={!this.props.cloud}
-          instance="deployment-credential"
-          showCheck={false}>
+        <div>
           {this._generateContent()}
-        </juju.components.DeploymentSection>
+        </div>
       );
     }
 
@@ -290,7 +286,6 @@ YUI.add('deployment-credential', function() {
 }, '0.1.0', {
   requires: [
     'deployment-credential-add',
-    'deployment-section',
     'expanding-row',
     'inset-select',
     'loading-spinner'

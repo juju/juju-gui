@@ -49,12 +49,7 @@ YUI.add('deployment-services', function() {
     render: function() {
       var disabled = this.props.acl.isReadOnly();
       return (
-        <juju.components.DeploymentSection
-          completed={false}
-          disabled={!this.props.cloud}
-          instance="deployment-services"
-          showCheck={true}
-          title="Services to be deployed">
+        <div>
           <div className="deployment-services__budget">
             <h4>
               Choose your budget
@@ -100,7 +95,7 @@ YUI.add('deployment-services', function() {
               </span>
             </div>
           </div>
-        </juju.components.DeploymentSection>
+        </div>
       );
     }
 
@@ -110,7 +105,6 @@ YUI.add('deployment-services', function() {
   requires: [
     'budget-chart',
     'budget-table',
-    'deployment-section',
     'generic-button',
     'inset-select'
   ]

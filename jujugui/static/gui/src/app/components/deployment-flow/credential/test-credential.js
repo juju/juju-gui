@@ -88,15 +88,11 @@ describe('DeploymentCredential', function() {
         validateForm={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.DeploymentSection
-        completed={false}
-        disabled={false}
-        instance="deployment-credential"
-        showCheck={false}>
+      <div>
         <div className="deployment-credential__loading">
           <juju.components.Spinner />
         </div>
-      </juju.components.DeploymentSection>);
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -125,11 +121,7 @@ describe('DeploymentCredential', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.DeploymentSection
-        completed={false}
-        disabled={false}
-        instance="deployment-credential"
-        showCheck={false}>
+      <div>
         <juju.components.ExpandingRow
           classes={{'twelve-col': true}}
           clickable={false}
@@ -148,7 +140,7 @@ describe('DeploymentCredential', function() {
             users={users}
             validateForm={validateForm}/>
         </juju.components.ExpandingRow>
-      </juju.components.DeploymentSection>);
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -177,11 +169,7 @@ describe('DeploymentCredential', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.DeploymentSection
-        completed={false}
-        disabled={true}
-        instance="deployment-credential"
-        showCheck={false}>
+      <div>
         <juju.components.ExpandingRow
           classes={{'twelve-col': true}}
           clickable={false}
@@ -200,7 +188,7 @@ describe('DeploymentCredential', function() {
             users={users}
             validateForm={validateForm} />
         </juju.components.ExpandingRow>
-      </juju.components.DeploymentSection>);
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -225,11 +213,7 @@ describe('DeploymentCredential', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.DeploymentSection
-        completed={false}
-        disabled={false}
-        instance="deployment-credential"
-        showCheck={false}>
+      <div>
         <juju.components.ExpandingRow
           classes={{'twelve-col': true}}
           clickable={false}
@@ -261,7 +245,7 @@ describe('DeploymentCredential', function() {
           </form>
           {undefined}
         </juju.components.ExpandingRow>
-      </juju.components.DeploymentSection>);
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -287,11 +271,7 @@ describe('DeploymentCredential', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.DeploymentSection
-        completed={false}
-        disabled={false}
-        instance="deployment-credential"
-        showCheck={false}>
+      <div>
         <juju.components.ExpandingRow
           classes={{'twelve-col': true}}
           clickable={false}
@@ -323,7 +303,7 @@ describe('DeploymentCredential', function() {
           </form>
           {undefined}
         </juju.components.ExpandingRow>
-      </juju.components.DeploymentSection>);
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -375,11 +355,7 @@ describe('DeploymentCredential', function() {
     var output = renderer.getRenderOutput();
     // output = renderer.render();
     var expected = (
-      <juju.components.DeploymentSection
-        completed={false}
-        disabled={false}
-        instance="deployment-credential"
-        showCheck={false}>
+      <div>
         <juju.components.ExpandingRow
           classes={{'twelve-col': true}}
           clickable={false}
@@ -398,7 +374,7 @@ describe('DeploymentCredential', function() {
             users={users}
             validateForm={validateForm}/>
         </juju.components.ExpandingRow>
-      </juju.components.DeploymentSection>);
+      </div>);
     assert.deepEqual(output, expected);
   });
 });

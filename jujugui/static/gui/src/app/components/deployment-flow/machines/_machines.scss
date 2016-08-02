@@ -1,4 +1,11 @@
 .deployment-machines {
+    margin-top: 40px;
+
+    &.deployment-section--active {
+        margin-top: 0;
+        border-top: 2px solid $light-mid-grey;
+    }
+
     &__message {
         margin: 20px 0 40px 0;
     }
