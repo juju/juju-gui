@@ -904,25 +904,6 @@ YUI.add('juju-gui', function(Y) {
       var jem = this.jem;
       var metadata = metadata || {};
       var activeComponent = metadata.activeComponent;
-      var modelCommitted = this.env.get('connected');
-      var modelName = this.db.environment.get('name');
-      // Display the new WIP deployment flow
-      if (window.flags && window.flags.df) {
-        ReactDOM.render(
-          <window.juju.components.DeploymentFlow
-            acl={this.acl}
-            addTemplate={jem.addTemplate.bind(jem)}
-            changes={changesUtils.getGroupedChanges(currentChangeSet)}
-            changeState={this.changeState.bind(this)}
-            listClouds={jem.listClouds.bind(jem)}
-            listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
-            listRegions={jem.listRegions.bind(jem)}
-            listTemplates={jem.listTemplates.bind(jem)}
-            servicesGetById={services.getById.bind(services)}
-            users={users} />,
-          document.getElementById('deployment-container'));
-        return;
-      }
       if (!window.flags || !window.flags.blues) {
         // Display the old deploy summary if we're not using the feature flag
         // for the new deployment flow.
@@ -943,51 +924,17 @@ YUI.add('juju-gui', function(Y) {
           document.getElementById('deployment-container'));
         return;
       }
-      if (!activeComponent) {
-        // If an active component (a specific step in the flow) has not been
-        // provided then the user is starting the deployment flow so we need to
-        // figure out what the first step in the deployment flow should be and
-        // take the user to that first step. e.g. if this user has signed up
-        // then skip to choosing credentials.
-        if (modelCommitted) {
-          activeComponent = 'summary';
-        } else {
-          activeComponent = 'choose-cloud';
-        }
-        this.changeState({
-          sectionC: {
-            component: 'deploy',
-            metadata: {
-              activeComponent: activeComponent
-            }
-          }
-        });
-        return;
-      }
       ReactDOM.render(
-        <window.juju.components.Deployment
+        <window.juju.components.DeploymentFlow
           acl={this.acl}
-          activeComponent={activeComponent}
-          autoPlaceUnits={this._autoPlaceUnits.bind(this)}
-          changeCounts={changesUtils.getChangeCounts(currentChangeSet)}
-          changeDescriptions={changeDescriptions}
+          addTemplate={jem.addTemplate.bind(jem)}
+          changes={changesUtils.getGroupedChanges(currentChangeSet)}
           changeState={this.changeState.bind(this)}
-          ecsClear={ecs.clear.bind(ecs)}
-          ecsCommit={ecs.commit.bind(ecs, env)}
-          getUnplacedUnitCount={
-            utils.getUnplacedUnitCount.bind(this, db.units)}
-          jem={this.jem}
-          env={this.env}
-          appSet={this.set.bind(this)}
-          createSocketURL={this.createSocketURL.bind(this)}
-          modelCommitted={modelCommitted}
-          // Hide the fact that we're using the sandbox from the user, as far as
-          // they are concerned they do not have a model yet.
-          modelName={this.get('sandbox') ? '' : modelName}
-          numberOfChanges={Object.keys(ecs.getCurrentChangeSet()).length}
-          pluralize={utils.pluralize.bind(this)}
-          services={db.services.toArray()}
-          user={this._getAuth()}
+          listClouds={jem.listClouds.bind(jem)}
+          listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
+          listRegions={jem.listRegions.bind(jem)}
+          listTemplates={jem.listTemplates.bind(jem)}
+          servicesGetById={services.getById.bind(services)}
           users={users} />,
         document.getElementById('deployment-container'));
     },
