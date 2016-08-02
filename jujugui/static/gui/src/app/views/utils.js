@@ -2278,6 +2278,103 @@ YUI.add('juju-view-utils', function(Y) {
     return xhr;
   };
 
+  /**
+    Deploy or commit to a model.
+
+    @method deploy
+    @param {Object} env Reference to the app env.
+    @param {Object} jem Reference to jem.
+    @param {Object} users The currently authenticated user info.
+    @param {Function} autoPlaceUnits The method used to auto place units.
+    @param {Function} createSocketURL The method used to create a socket URL.
+    @param {Function} appSet The method used to set parameters on the app.
+    @param {Boolean} committed Whether the model is already committed.
+    @param {Boolean} autoplace Whether the unplace units should be placed.
+    @param {Function} callback The function to be called once the deploy is
+      complete.
+    @param {String} model The name of the new model.
+    @param {String} credential The credentials to be used with the new model.
+    @param {String} cloud The cloud to deploy to.
+    @param {String} region The cloud region to deploy to.
+  */
+  utils.deploy = function(
+    env, jem, users, autoPlaceUnits, createSocketURL, appSet, committed,
+    callback, autoplace=true, model, credential, cloud, region) {
+    if (autoplace) {
+      autoPlaceUnits();
+    }
+    // If we're in a model which exists then just commit the ecs and return.
+    if (committed) {
+      env.get('ecs').commit(env);
+      callback();
+      return;
+    }
+
+    jem.newModel(
+      users.jem.user,
+      model,
+      credential,
+      {
+        cloud: cloud,
+        region: region
+      },
+      null, // Controller, using the location argument instead.
+      utils._newModelCallback.bind(
+        this, env, createSocketURL, appSet, callback));
+  };
+
+  /**
+    The function to call to connect to a new model once it has been created.
+
+    @method _newModelCallback
+    @param {Object} env Reference to the app env.
+    @param {Function} createSocketURL The method used to create a socket URL.
+    @param {Function} appSet The method used to set parameters on the app.
+    @param {Function} callback The function to be called once the deploy is
+      complete.
+    @param {Object} error The model creation error.
+    @param {Object} model The newly created model data.
+  */
+  utils._newModelCallback = function(
+    env, createSocketURL, appSet, callback, error, model) {
+    if (error) throw error;
+    var pathParts = model.hostPorts[0].split(':');
+    // Set the credentials in the env so that the GUI
+    // is able to connect to the new model.
+    env.setCredentials({
+      user: 'user-' + model.user,
+      password: model.password
+    });
+    var socketURL = createSocketURL(model.uuid, pathParts[0], pathParts[1]);
+    appSet('jujuEnvUUID', model.uuid);
+    // Set the socket url in both the app and the env so we don't end
+    // up with any confusion later on about which is which.
+    appSet('socket_url', socketURL);
+    env.set('socket_url', socketURL);
+    env.connect();
+    // If we already have a login handler attached then detach it.
+    utils._detachOnLoginHandler();
+    // After the model connects it will emit a login event, listen
+    // for that event so that we know when to commit the changeset.
+    this._onLoginHandler = env.on('login', (model) => {
+      utils._detachOnLoginHandler();
+      env.get('ecs').commit(env);
+      callback();
+    });
+  };
+
+  /**
+    Detach the handler for committing the changeset on login.
+
+    @method _detachOnLoginHandler
+  */
+  utils._detachOnLoginHandler = function() {
+    if (this._onLoginHandler) {
+      this._onLoginHandler.detach();
+      this._onLoginHandler = null;
+    }
+  };
+
 }, '0.1.0', {
   requires: [
     'base-build',

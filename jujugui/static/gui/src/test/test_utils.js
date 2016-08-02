@@ -2051,4 +2051,117 @@ describe('utilities', function() {
     });
   });
 
+  describe('deploy util', function() {
+    var callback, commit, env, envSet, jem, users, autoPlaceUnits, appSet,
+        createSocketURL, testUtils, utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', 'juju-tests-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        testUtils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      autoPlaceUnits = testUtils.makeStubFunction();
+      appSet = testUtils.makeStubFunction();
+      callback = testUtils.makeStubFunction();
+      commit = testUtils.makeStubFunction();
+      createSocketURL = testUtils.makeStubFunction('wss://socket-url');
+      envSet = testUtils.makeStubFunction();
+      env = {
+        connect: testUtils.makeStubFunction(),
+        get: testUtils.makeStubFunction({
+          commit: commit
+        }),
+        on: testUtils.makeStubFunction(),
+        set: envSet,
+        setCredentials: testUtils.makeStubFunction()
+      };
+      jem = {
+        newModel: testUtils.makeStubFunction(),
+      };
+      users = {
+        jem : {
+          user: 'spinach'
+        }
+      };
+    });
+
+    it('can auto place when requested', function() {
+      utils.deploy(
+        env, jem, users, autoPlaceUnits, createSocketURL, appSet, false,
+        callback, true);
+      assert.equal(autoPlaceUnits.callCount(), 1);
+    });
+
+    it('does not auto place when requested', function() {
+      utils.deploy(
+        env, jem, users, autoPlaceUnits, createSocketURL, appSet, false,
+        callback, false);
+      assert.equal(autoPlaceUnits.callCount(), 0);
+    });
+
+    it('can commit to an existing model', function() {
+      utils.deploy(
+        env, jem, users, autoPlaceUnits, createSocketURL, appSet, true,
+        callback);
+      assert.equal(commit.callCount(), 1);
+      assert.equal(callback.callCount(), 1);
+      assert.equal(jem.newModel.callCount(), 0);
+    });
+
+    it('can create a new model', function() {
+      utils.deploy(
+        env, jem, users, autoPlaceUnits, createSocketURL, appSet, false,
+        callback, true, 'new-model', 'the-credential', 'azure', 'north');
+      assert.equal(commit.callCount(), 0);
+      assert.equal(callback.callCount(), 0);
+      assert.equal(jem.newModel.callCount(), 1);
+      var args = jem.newModel.allArguments()[0];
+      assert.equal(args[0], 'spinach');
+      assert.equal(args[1], 'new-model');
+      assert.equal(args[2], 'the-credential');
+      assert.deepEqual(args[3], {
+        cloud: 'azure',
+        region: 'north'
+      });
+      assert.equal(args[4], null);
+      assert.isFunction(args[5]);
+    });
+
+    it('can connect to a newly created model', function() {
+      var model = {
+        hostPorts: ['http:80', 'https:443'],
+        password: 'taquitos123!',
+        user: 'spinach',
+        uuid: 'uuid123'
+      };
+      utils._newModelCallback(
+        env, createSocketURL, appSet, callback, null, model);
+      assert.equal(env.setCredentials.callCount(), 1);
+      assert.deepEqual(env.setCredentials.allArguments()[0][0], {
+        user: 'user-spinach',
+        password: 'taquitos123!'
+      });
+      assert.equal(createSocketURL.callCount(), 1);
+      var createSocketURLArgs = createSocketURL.allArguments()[0];
+      assert.equal(createSocketURLArgs[0], 'uuid123');
+      assert.equal(createSocketURLArgs[1], 'http');
+      assert.equal(createSocketURLArgs[2], '80');
+      assert.equal(appSet.callCount(), 2);
+      var appSetArgs = appSet.allArguments();
+      assert.equal(appSetArgs[0][0], 'jujuEnvUUID');
+      assert.equal(appSetArgs[0][1], 'uuid123');
+      assert.equal(appSetArgs[1][0], 'socket_url');
+      assert.equal(appSetArgs[1][1], 'wss://socket-url');
+      assert.equal(envSet.callCount(), 1);
+      var envSetArgs = envSet.allArguments()[0];
+      assert.equal(envSetArgs[0], 'socket_url');
+      assert.equal(envSetArgs[1], 'wss://socket-url');
+      assert.equal(env.connect.callCount(), 1);
+    });
+  });
+
 })();

@@ -42,6 +42,9 @@ YUI.add('deployment-cloud', function() {
           console.error('Unable to list clouds', error);
           return;
         }
+        // If the call returns a falsey value (false, null etc.) we need to
+        // manually set it to an array (otherwise we could have used the default
+        // parameter feature of es6 above).
         if (!clouds) {
           clouds = [];
         }
