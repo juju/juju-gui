@@ -426,6 +426,7 @@ describe('ModelList', () => {
         canCreateNew={true}
         env={env}
         hideConnectingMask={sinon.stub()}
+        jem={{}}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         showConnectingMask={showConnectingMask}
         switchModel={switchModel}

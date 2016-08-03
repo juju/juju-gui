@@ -261,8 +261,11 @@ YUI.add('model-list', function() {
         this.switchModel();
       } else {
         // Open up the UI to specify a model name for the Controller.
-        this.setState({ createNewModelActive: true }, _ => {
-          this.refs.modelName.refs.field.focus();
+        this.setState({ createNewModelActive: true }, () => {
+          var input = this.refs.modelName;
+          if (input && input.refs.field) {
+            input.refs.field.focus();
+          }
         });
       }
     },
