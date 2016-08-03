@@ -77,17 +77,18 @@ YUI.add('budget-list', function() {
       @param {Object} data The data from the request.
     */
     _getBudgetsCallback: function(error, data) {
-      this.setState({loadingBudgets: false});
-      if (error) {
-        if (error.indexOf('not found') === -1) {
-          // A "profile not found" error is expected, and it means the user
-          // does not have a credit limit yet. Notify any other errors.
-          // TODO huwshimi: notify the user with the error.
-          console.error('cannot retrieve budgets:', error);
+      this.setState({loadingBudgets: false}, () => {
+        if (error) {
+          if (error.indexOf('not found') === -1) {
+            // A "profile not found" error is expected, and it means the user
+            // does not have a credit limit yet. Notify any other errors.
+            // TODO huwshimi: notify the user with the error.
+            console.error('cannot retrieve budgets:', error);
+          }
+          return;
         }
-        return;
-      }
-      this.setState({budgetList: data.budgets});
+        this.setState({budgetList: data.budgets});
+      });
     },
 
     /**

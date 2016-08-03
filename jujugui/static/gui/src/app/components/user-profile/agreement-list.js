@@ -77,13 +77,14 @@ YUI.add('agreement-list', function() {
       @param {Object} data The data from the request.
     */
     _getAgreementsCallback: function(error, data) {
-      this.setState({loadingAgreements: false});
-      if (error) {
-        // TODO frankban: notify the user with the error.
-        console.error('cannot retrieve terms:', error);
-        return;
-      }
-      this.setState({agreementList: data});
+      this.setState({loadingAgreements: false}, () => {
+        if (error) {
+          // TODO frankban: notify the user with the error.
+          console.error('cannot retrieve terms:', error);
+          return;
+        }
+        this.setState({agreementList: data});
+      });
     },
 
     /**

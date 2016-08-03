@@ -90,19 +90,20 @@ YUI.add('entity-list', function() {
       @param {Object} data The data from the request.
     */
     _fetchEntitiesCallback: function(error, data) {
-      this.setState({loadingEntities: false});
-      if (error) {
-        console.error('Can not retrieve entities: ', error);
-        return;
-      }
-      this.setState({entityList: data});
+      this.setState({loadingEntities: false}, () => {
+        if (error) {
+          console.error('Can not retrieve entities: ', error);
+          return;
+        }
+        this.setState({entityList: data});
+      });
     },
 
     /**
       Generate a list of tags.
 
       @method _generateTags
-      @param {Array} tags A list of tags.
+      @param {Array} tagList A list of tags.
       @param {String} id The id of the entity.
       @returns {Object} A list of tag components.
     */
@@ -301,9 +302,13 @@ YUI.add('entity-list', function() {
 
     render: function() {
       var type = this.props.type;
+      var classes = classNames(
+        `user-profile__${type}-list`,
+        { 'twelve-col': this.state.loadingEntities }
+      );
       if (this.state.loadingEntities) {
         return (
-          <div className="user-profile__{type}-list twelve-col">
+          <div className={classes}>
             <juju.components.Spinner />
           </div>
         );
@@ -326,7 +331,7 @@ YUI.add('entity-list', function() {
       }
       var rows = list.map(generateRow);
       return (
-        <div className="user-profile__{type}-list">
+        <div className={classes}>
           <div className="user-profile__header twelve-col no-margin-bottom">
             {title}
             <span className="user-profile__size">

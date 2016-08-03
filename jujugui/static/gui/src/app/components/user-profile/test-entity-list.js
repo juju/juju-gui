@@ -76,7 +76,7 @@ describe('EntityList', () => {
         users={users} />, true);
     var output = component.getRenderOutput();
     assert.deepEqual(output, (
-      <div className="user-profile__{type}-list twelve-col">
+      <div className="user-profile__charm-list twelve-col">
         <juju.components.Spinner />
       </div>
     ));
@@ -95,7 +95,7 @@ describe('EntityList', () => {
         users={users} />, true);
     var output = component.getRenderOutput();
     var expected = (
-      <div className="user-profile__{type}-list">
+      <div className="user-profile__charm-list">
         <div className="user-profile__header twelve-col no-margin-bottom">
           Charms
           <span className="user-profile__size">
@@ -166,7 +166,7 @@ describe('EntityList', () => {
         users={users} />, true);
     var output = component.getRenderOutput();
     var expected = (
-      <div className="user-profile__{type}-list">
+      <div className="user-profile__bundle-list">
         <div className="user-profile__header twelve-col no-margin-bottom">
           Bundles
           <span className="user-profile__size">
