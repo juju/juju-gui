@@ -2575,7 +2575,6 @@ YUI.add('juju-gui', function(Y) {
     'added-services-list',
     'charmbrowser-component',
     'deployment-bar',
-    'deployment-component',
     'deployment-flow',
     'deployment-summary-classic',
     'env-size-display',
