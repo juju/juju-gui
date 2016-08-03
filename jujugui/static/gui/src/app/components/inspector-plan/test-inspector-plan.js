@@ -44,7 +44,9 @@ describe('InspectorPlans', () => {
     var output = jsTestUtils.shallowRender(
       <juju.components.InspectorPlan
         acl={acl}
-        currentPlan={currentPlan}/>);
+        changeState={sinon.stub()}
+        currentPlan={currentPlan}
+        service={{}} />);
     var expected = (
       <div className="inspector-plan">
         <div className="inspector-plan__details">
@@ -68,7 +70,9 @@ describe('InspectorPlans', () => {
     var output = jsTestUtils.shallowRender(
       <juju.components.InspectorPlan
         acl={acl}
-        currentPlan={null}/>);
+        changeState={sinon.stub()}
+        currentPlan={null}
+        service={{}} />);
     var expected = (
       <div className="inspector-plan">
         <div className="inspector-plan__no-plan">

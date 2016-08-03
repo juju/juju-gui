@@ -47,7 +47,9 @@ describe('Store', function() {
     var changeState = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Store
-        changeState={changeState} />, true);
+        apiVersion="v5"
+        changeState={changeState}
+        charmstoreURL="http://1.2.3.4/" />, true);
     var output = renderer.getRenderOutput();
     var expected = 'Big data charms and bundles';
     var row = output.props.children[3].props.children;
@@ -91,7 +93,9 @@ describe('Store', function() {
     var target = {dataset: {entity: 'kibana'}};
     var output = jsTestUtils.shallowRender(
       <juju.components.Store
-        changeState={changeState} />);
+        apiVersion="v5"
+        changeState={changeState}
+        charmstoreURL="http://1.2.3.4/" />);
     var entityList = output.props.children[2].props.children.props.children[2];
     var entityItem = entityList.props.children[0].props.children;
     entityItem.props.onClick({
@@ -117,7 +121,9 @@ describe('Store', function() {
     var target = {dataset: {query: '&tags=databases'}};
     var output = jsTestUtils.shallowRender(
       <juju.components.Store
-        changeState={changeState} />);
+        apiVersion="v5"
+        changeState={changeState}
+        charmstoreURL="http://1.2.3.4/" />);
     var row = output.props.children[1].props.children;
     var tagList = row.props.children[2].props.children;
     var searchItem = tagList.props.children[0].props.children[0];
