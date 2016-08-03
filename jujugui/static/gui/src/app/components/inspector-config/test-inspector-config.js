@@ -66,6 +66,7 @@ describe('Configuration', function() {
         linkify={sinon.stub()}
         service={service}
         setConfig={setConfig}
+        unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />);
 
     assert.deepEqual(output.props.children[0].props.children[4], [
@@ -108,6 +109,7 @@ describe('Configuration', function() {
         linkify={sinon.stub()}
         service={service}
         setConfig={sinon.stub()}
+        unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />);
     assert.deepEqual(output.props.children[0].props.children[4],
       <div className="inspector-config--no-config">
@@ -145,6 +147,7 @@ describe('Configuration', function() {
         linkify={sinon.stub()}
         service={service}
         setConfig={setConfig}
+        unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()}/>);
 
     var domNode = ReactDOM.findDOMNode(component);
@@ -207,6 +210,7 @@ describe('Configuration', function() {
         linkify={sinon.stub()}
         service={service}
         setConfig={sinon.stub()}
+        unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={updateUnit}/>);
     assert.equal(component.refs.ServiceName.props.config, 'servicename');
 
@@ -268,6 +272,7 @@ describe('Configuration', function() {
         linkify={sinon.stub()}
         service={service}
         setConfig={setConfig}
+        unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
@@ -327,6 +332,7 @@ describe('Configuration', function() {
         linkify={sinon.stub()}
         service={service}
         setConfig={sinon.stub()}
+        unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />);
     assert.deepEqual(output.props.children[0].props.children[1], undefined);
   });
@@ -425,6 +431,7 @@ describe('Configuration', function() {
         linkify={sinon.stub()}
         service={service}
         setConfig={sinon.stub()}
+        unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={updateUnit}/>);
 
     var domNode = ReactDOM.findDOMNode(component);
@@ -472,6 +479,7 @@ describe('Configuration', function() {
         linkify={sinon.stub()}
         service={service}
         setConfig={sinon.stub()}
+        unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()}/>);
     assert.equal(component.refs.ServiceName, undefined);
   });
@@ -496,6 +504,7 @@ describe('Configuration', function() {
         linkify={sinon.stub()}
         service={service}
         setConfig={sinon.stub()}
+        unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()}/>);
     output.props.children[1].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
@@ -529,6 +538,7 @@ describe('Configuration', function() {
         linkify={sinon.stub()}
         service={service}
         setConfig={sinon.stub()}
+        unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()}/>, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {file: {click: fileClick}};
@@ -560,6 +570,7 @@ describe('Configuration', function() {
         linkify={sinon.stub()}
         service={service}
         setConfig={sinon.stub()}
+        unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {
@@ -604,6 +615,7 @@ describe('Configuration', function() {
         linkify={sinon.stub()}
         service={service}
         setConfig={sinon.stub()}
+        unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {
@@ -658,6 +670,7 @@ describe('Configuration', function() {
         linkify={sinon.stub()}
         service={service}
         setConfig={sinon.stub()}
+        unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {
@@ -708,6 +721,7 @@ describe('Configuration', function() {
         linkify={sinon.stub()}
         service={service}
         setConfig={setConfig}
+        unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
