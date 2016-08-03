@@ -72,7 +72,8 @@ YUI.add('deployment-flow', function() {
         cloud: null,
         credential: null,
         template: null,
-        region: null
+        region: null,
+        showChangelogs: false
       };
     },
 
@@ -110,6 +111,15 @@ YUI.add('deployment-flow', function() {
     */
     _setRegion: function(region) {
       this.setState({region: region});
+    },
+
+    /**
+      Toggle the visibility of the changelogs.
+
+      @method _toggleChangelogs
+    */
+    _toggleChangelogs: function() {
+      this.setState({showChangelogs: !this.state.showChangelogs});
     },
 
     /**
@@ -163,6 +173,23 @@ YUI.add('deployment-flow', function() {
         title: 'Change cloud',
         type: 'neutral'
       }];
+    },
+
+    /**
+      Generate a button to toggle the visibility of the changelogs.
+
+      @method _generateChangelogTitle
+      @returns {Array} The action.
+    */
+    _generateChangelogTitle: function() {
+      return (
+        <span className="deployment-flow__service-title">
+          Services to be deployed
+          <juju.components.GenericButton
+            action={this._toggleChangelogs}
+            type="base"
+            title="Show changelog" />
+        </span>);
     },
 
     render: function() {
@@ -236,13 +263,23 @@ YUI.add('deployment-flow', function() {
                     disabled={!cloud || !credential}
                     instance="deployment-services"
                     showCheck={true}
-                    title="Services to be deployed">
+                    title={this._generateChangelogTitle()}>
                     <juju.components.DeploymentServices
                       acl={this.props.acl}
                       changes={this.props.changes}
                       cloud={cloud}
                       listPlansForCharm={this.props.listPlansForCharm}
-                      servicesGetById={this.props.servicesGetById} />
+                      servicesGetById={this.props.servicesGetById}
+                      showChangelogs={this.state.showChangelogs} />
+                  </juju.components.DeploymentSection>
+                  <juju.components.DeploymentSection
+                    completed={false}
+                    disabled={!cloud || !credential}
+                    instance="deployment-budget"
+                    showCheck={true}
+                    title="Confirm budget">
+                    <juju.components.DeploymentBudget
+                      acl={this.props.acl} />
                   </juju.components.DeploymentSection>
                   <div className="twelve-col">
                     <div className="deployment-flow__deploy">
@@ -291,6 +328,7 @@ YUI.add('deployment-flow', function() {
 
 }, '0.1.0', {
   requires: [
+    'deployment-budget',
     'deployment-cloud',
     'deployment-credential',
     'deployment-machines',

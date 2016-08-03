@@ -125,13 +125,30 @@ describe('DeploymentFlow', function() {
                   disabled={true}
                   instance="deployment-services"
                   showCheck={true}
-                  title="Services to be deployed">
+                  title={
+                    <span className="deployment-flow__service-title">
+                      Services to be deployed
+                      <juju.components.GenericButton
+                        action={instance._toggleChangelogs}
+                        type="base"
+                        title="Show changelog" />
+                    </span>}>
                   <juju.components.DeploymentServices
                     acl={acl}
                     changes={{}}
                     cloud={null}
                     listPlansForCharm={listPlansForCharm}
-                    servicesGetById={servicesGetById} />
+                    servicesGetById={servicesGetById}
+                    showChangelogs={false} />
+                </juju.components.DeploymentSection>
+                <juju.components.DeploymentSection
+                  completed={false}
+                  disabled={true}
+                  instance="deployment-budget"
+                  showCheck={true}
+                  title="Confirm budget">
+                  <juju.components.DeploymentBudget
+                    acl={acl} />
                 </juju.components.DeploymentSection>
                 <div className="twelve-col">
                   <div className="deployment-flow__deploy">

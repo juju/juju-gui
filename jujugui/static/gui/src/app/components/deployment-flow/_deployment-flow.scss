@@ -48,6 +48,14 @@
         }
     }
 
+    &__service-title {
+        .button--base {
+            width: auto;
+            color: $ubuntu-orange;
+            font-size: $base;
+        }
+    }
+
     &__deploy {
         &-option {
             margin-bottom: 20px;
