@@ -342,6 +342,182 @@ describe('jujulib plans service', function() {
     );
   });
 
+  it('requests to update a budget', function(done) {
+    var bakery = {
+      sendPatchRequest: function(path, params, success, failure) {
+        assert.equal(
+          path,
+          'http://1.2.3.4/' +
+          window.jujulib.plansAPIVersion +
+          '/budget/budgetid');
+        assert.equal(params, '{"limit":"limit"}');
+        var xhr = makeXHRRequest({ data: 'data' });
+        success(xhr);
+      }
+    };
+    var plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.updateBudget(
+      'budgetid',
+      'limit',
+      function(error, data) {
+        assert.strictEqual(error, null);
+        assert.deepEqual(data, {data: 'data'});
+        done();
+      }
+    );
+  });
+
+  it('requests to remove a budget', function(done) {
+    var bakery = {
+      sendDeleteRequest: function(path, params, success, failure) {
+        assert.equal(
+          path,
+          'http://1.2.3.4/' +
+          window.jujulib.plansAPIVersion +
+          '/budget/budgetid');
+        var xhr = makeXHRRequest({ data: 'data' });
+        success(xhr);
+      }
+    };
+    var plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.removeBudget(
+      'budgetid',
+      function(error, data) {
+        assert.strictEqual(error, undefined);
+        assert.deepEqual(data, {data: 'data'});
+        done();
+      }
+    );
+  });
+
+  it('requests to create an allocation', function(done) {
+    var bakery = {
+      sendPostRequest: function(path, params, success, failure) {
+        assert.equal(
+          path,
+          'http://1.2.3.4/' +
+          window.jujulib.plansAPIVersion +
+          '/budget/budgetid/allocation');
+        assert.deepEqual(params,
+          '{"services":["application"],"model":"model","limit":"limit"}');
+        var xhr = makeXHRRequest({ data: 'data' });
+        success(xhr);
+      }
+    };
+    var plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.createAllocation(
+      'budgetid',
+      'application',
+      'model',
+      'limit',
+      function(error, data) {
+        assert.strictEqual(error, null);
+        assert.deepEqual(data, {data: 'data'});
+        done();
+      }
+    );
+  });
+
+  it('requests to update allocations', function(done) {
+    var bakery = {
+      sendPatchRequest: function(path, params, success, failure) {
+        assert.equal(
+          path,
+          'http://1.2.3.4/' +
+          window.jujulib.plansAPIVersion +
+          '/model/model/service/application/allocation');
+        assert.deepEqual(params, '{"limit":"limit"}');
+        var xhr = makeXHRRequest({ data: 'data' });
+        success(xhr);
+      }
+    };
+    var plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.updateAllocation(
+      'model',
+      'application',
+      'limit',
+      function(error, data) {
+        assert.strictEqual(error, null);
+        assert.deepEqual(data, {data: 'data'});
+        done();
+      }
+    );
+  });
+
+  it('requests to remove allocations', function(done) {
+    var bakery = {
+      sendDeleteRequest: function(path, params, success, failure) {
+        assert.equal(
+          path,
+          'http://1.2.3.4/' +
+          window.jujulib.plansAPIVersion +
+          '/environment/model/service/application/allocation');
+        var xhr = makeXHRRequest({ data: 'data' });
+        success(xhr);
+      }
+    };
+    var plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.removeAllocation(
+      'application',
+      'model',
+      function(error, data) {
+        assert.strictEqual(error, undefined);
+        assert.deepEqual(data, {data: 'data'});
+        done();
+      }
+    );
+  });
+
+  it('requests to update credit limits', function(done) {
+    var bakery = {
+      sendPatchRequest: function(path, params, success, failure) {
+        assert.equal(
+          path,
+          'http://1.2.3.4/' +
+          window.jujulib.plansAPIVersion +
+          '/profile/user');
+        assert.deepEqual(params, '{"update":{"limit":"limit"}}');
+        var xhr = makeXHRRequest({ data: 'data' });
+        success(xhr);
+      }
+    };
+    var plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.updateCreditLimit(
+      'user',
+      'limit',
+      function(error, data) {
+        assert.strictEqual(error, null);
+        assert.deepEqual(data, {data: 'data'});
+        done();
+      }
+    );
+  });
+
+  it('requests to update default budget', function(done) {
+    var bakery = {
+      sendPatchRequest: function(path, params, success, failure) {
+        assert.equal(
+          path,
+          'http://1.2.3.4/' +
+          window.jujulib.plansAPIVersion +
+          '/profile');
+        assert.deepEqual(params,
+          '{"update":{"default-budget":"defaultBudget"}}');
+        var xhr = makeXHRRequest({ data: 'data' });
+        success(xhr);
+      }
+    };
+    var plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.updateDefaultBudget(
+      'defaultBudget',
+      function(error, data) {
+        assert.strictEqual(error, null);
+        assert.deepEqual(data, {data: 'data'});
+        done();
+      }
+    );
+  });
+
   it('gets budget details', function(done) {
     var budget = {
       'limit': 'budget limit',
