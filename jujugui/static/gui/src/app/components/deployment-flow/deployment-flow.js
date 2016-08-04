@@ -26,11 +26,13 @@ YUI.add('deployment-flow', function() {
       addTemplate: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       changes: React.PropTypes.object.isRequired,
+      listBudgets: React.PropTypes.func.isRequired,
       listClouds: React.PropTypes.func.isRequired,
       listPlansForCharm: React.PropTypes.func.isRequired,
       listRegions: React.PropTypes.func.isRequired,
       listTemplates: React.PropTypes.func.isRequired,
       servicesGetById: React.PropTypes.func.isRequired,
+      user: React.PropTypes.object,
       users: React.PropTypes.object.isRequired
     },
 
@@ -279,7 +281,9 @@ YUI.add('deployment-flow', function() {
                     showCheck={true}
                     title="Confirm budget">
                     <juju.components.DeploymentBudget
-                      acl={this.props.acl} />
+                      acl={this.props.acl}
+                      listBudgets={this.props.listBudgets}
+                      user={this.props.user} />
                   </juju.components.DeploymentSection>
                   <div className="twelve-col">
                     <div className="deployment-flow__deploy">
