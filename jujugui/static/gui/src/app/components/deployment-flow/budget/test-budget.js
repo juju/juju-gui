@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentBudget', function() {
-  var acl;
+  var acl, budgets;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,12 +33,32 @@ describe('DeploymentBudget', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    budgets = {budgets: [{
+      budget: 'Big budget',
+      limit: 20
+    }]};
+  });
+
+  it('can display a loading spinner', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentBudget
+        acl={acl}
+        listBudgets={sinon.stub()}
+        user={{user: 'spinach'}} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="deployment-budget__loading">
+        <juju.components.Spinner />
+      </div>);
+    assert.deepEqual(output, expected);
   });
 
   it('can render', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBudget
-        acl={acl} />, true);
+        acl={acl}
+        listBudgets={sinon.stub().callsArgWith(0, null, budgets)}
+        user={{user: 'spinach'}} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div>
@@ -48,8 +68,8 @@ describe('DeploymentBudget', function() {
               disabled={false}
               label="Budget"
               options={[{
-                label: 'test budget',
-                value: 'test-budget'
+                label: 'Big budget ($20)',
+                value: 'Big budget'
               }]} />
           </div>
           <div className="three-col">
@@ -58,7 +78,8 @@ describe('DeploymentBudget', function() {
             </span>
           </div>
         </div>
-        <juju.components.BudgetChart />
+        <juju.components.BudgetChart
+          budgets={budgets} />
       </div>);
     assert.deepEqual(output, expected);
   });
@@ -67,7 +88,9 @@ describe('DeploymentBudget', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentBudget
-        acl={acl} />, true);
+        acl={acl}
+        listBudgets={sinon.stub().callsArgWith(0, null, budgets)}
+        user={{user: 'spinach'}} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div>
@@ -77,8 +100,8 @@ describe('DeploymentBudget', function() {
               disabled={true}
               label="Budget"
               options={[{
-                label: 'test budget',
-                value: 'test-budget'
+                label: 'Big budget ($20)',
+                value: 'Big budget'
               }]} />
           </div>
           <div className="three-col">
@@ -87,8 +110,49 @@ describe('DeploymentBudget', function() {
             </span>
           </div>
         </div>
-        <juju.components.BudgetChart />
+        <juju.components.BudgetChart
+          budgets={budgets} />
       </div>);
     assert.deepEqual(output, expected);
+  });
+
+  it('should not load the budgets if there is no user', function() {
+    var listBudgets = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentBudget
+        acl={acl}
+        listBudgets={listBudgets}
+        user={{}} />, true);
+    renderer.getRenderOutput();
+    assert.deepEqual(listBudgets.callCount, 0);
+  });
+
+  it('should load the budgets again if the user changes', function() {
+    var listBudgets = sinon.stub().callsArgWith(0, null, budgets);
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentBudget
+        acl={acl}
+        listBudgets={listBudgets}
+        user={{}} />, true);
+    renderer.getRenderOutput();
+    assert.deepEqual(listBudgets.callCount, 0);
+    renderer.render(
+      <juju.components.DeploymentBudget
+        acl={acl}
+        listBudgets={listBudgets}
+        user={{user: 'spinach'}} />, true);
+    assert.deepEqual(listBudgets.callCount, 1);
+  });
+
+  it('will abort the requests when unmounting', function() {
+    var abort = sinon.stub();
+    var listBudgets = sinon.stub().returns({abort: abort});
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentBudget
+        acl={acl}
+        listBudgets={listBudgets}
+        user={{user: 'spinach'}} />, true);
+    renderer.unmount();
+    assert.deepEqual(abort.callCount, 1);
   });
 });
