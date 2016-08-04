@@ -172,6 +172,92 @@ var module = module;
     },
 
     /**
+      Changes the budget to the new limit.
+
+      @method updateBudget
+      @param budgetId {String} The budget name
+      @param limit {String} The new budget value (numeric).
+      @param callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and an authorization object as its second.
+    */
+    updateBudget: function(budgetId, limit, callback) {
+      var url = this.url + '/budget/' + budgetId;
+      var payload = { limit: limit };
+      return jujulib._makeRequest(this.bakery, url, 'PATCH', payload, callback);
+    },
+
+    /**
+      Removes a budget associated with the currently logged in user.
+
+      @method removeBudget
+      @param budgetId {String} The budget name
+      @param callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and an authorization object as its second.
+    */
+    removeBudget: function(budgetId, callback) {
+      var url = this.url + '/budget/' + budgetId;
+      return jujulib._makeRequest(this.bakery, url, 'DELETE', null, callback);
+    },
+
+    /**
+      Adds a budget allocation to an application.
+
+      @method createAllocation
+      @param budgetId {String} The budget name
+      @param application {String} The application to set this allocation on.
+      @param model {String} The model uuid
+      @param limit {String} The limit for the allocation (numeric).
+      @param callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and an authorization object as its second.
+    */
+    createAllocation: function(budgetId, application, model, limit, callback) {
+      var url = this.url + '/budget/' + budgetId + '/allocation';
+      var payload = {
+        services: [application],
+        model: model,
+        limit: limit
+      };
+      return jujulib._makeRequest(this.bakery, url, 'POST', payload, callback);
+    },
+
+    /**
+      Changes an allocation for an application
+
+      @method updateAllocation
+      @param model {String} The model uuid.
+      @param app {String} the application name.
+      @param limit {String} The limit for the allocation (numeric).
+      @param callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and an authorization object as its second.
+    */
+    updateAllocation: function(model, app, limit, callback) {
+      var url = this.url + '/model/' + model +
+        '/service/' + app + '/allocation';
+      var payload = { limit: limit };
+      return jujulib._makeRequest(this.bakery, url, 'PATCH', payload, callback);
+    },
+
+    /**
+      Removes the allocation from the service
+
+      @method removeAllocation
+      @param {String} app The application name.
+      @param {String} model The model uuid
+      @param callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and an authorization object as its second.
+    */
+    removeAllocation: function(app, model, callback) {
+      var url = this.url + '/environment/' + model +
+        '/service/' + app + '/allocation';
+      return jujulib._makeRequest(this.bakery, url, 'DELETE', null, callback);
+    },
+
+    /**
       Get the details for a budget.
 
       @public showBudget
@@ -197,13 +283,13 @@ var module = module;
     },
 
     /**
-      Create a new budget for the authorised user.
+      Create a new profile and credit limit for the authorised user.
 
       @public createProfile
       @param user {String} The user's name.
       @param limit {String} The numeric limit.
-      @param budget {String} The default budget name.
-      @param limit {String} The numeric limit for the default budget.
+      @param defaultBudget {String} The default budget name.
+      @param defaultLimit {String} The numeric limit for the default budget.
       @param callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
         first parameter and an authorization object as its second.
@@ -218,6 +304,37 @@ var module = module;
         'default-budget-limit': defaultLimit
       }
       return jujulib._makeRequest(this.bakery, url, 'POST', payload, callback);
+    },
+
+    /**
+      Updates the users credit limit.
+
+      @method updateCreditLimit
+      @param {String} user The user's name.
+      @param {String} limit The numeric limit.
+      @param {Function} callback A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and an authorization object as its second.
+    */
+    updateCreditLimit: function(user, limit, callback) {
+      var url = this.url + '/profile/' + user;
+      var payload = { update: { limit: limit } };
+      return jujulib._makeRequest(this.bakery, url, 'PATCH', payload, callback);
+    },
+
+    /**
+      Updates the users default budget
+
+      @method updateDefaultBudget
+      @param {String} defaultBudget The default budgets name.
+      @param {Function} callback A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and an authorization object as its second.
+    */
+    updateDefaultBudget: function(defaultBudget, callback) {
+      var url = this.url + '/profile';
+      var payload = { update: { 'default-budget': defaultBudget } };
+      return jujulib._makeRequest(this.bakery, url, 'PATCH', payload, callback);
     }
 
   };
