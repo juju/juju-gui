@@ -1,5 +1,5 @@
 .budget-chart {
-    $light-green: #aee2b6;
+    $light-green: lighten($success, 50%);
 
     &__chart {
         position: relative;

@@ -36,12 +36,14 @@ YUI.add('budget-chart', function() {
     */
     _generateStyles: function(limit, allocated, newAllocations) {
       // Set the width of the new allocations bar to the percent of the limit.
+      // If the limit is zero the percent will equal NaN, hence the || 0.
       var newWidth = ((newAllocations / limit * 100) || 0) + '%';
       return {
         existing: {
           // Move the bar to start where the new allocations bar ends.
           left: newWidth,
           // Set the width of the allocated bar to the percent of the limit.
+          // If the limit is zero the percent will equal NaN, hence the || 0.
           width: ((allocated / limit * 100) || 0) + '%'
         },
         new: {
