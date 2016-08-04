@@ -300,6 +300,46 @@ YUI.add('juju-env-bakery', function(Y) {
       },
 
       /**
+       Takes the path supplied by the caller and makes a patch request to the
+       requestHandlerWithInteraction instance. If setCookiePath is set then
+       it is used to set a cookie back to the ui after authentication.
+
+       @param path {String} The path to make the api request to.
+       @param data {String} Stringified JSON of parameters to send to the PATCH
+              endpoint.
+       @param successCallback {Function} Called when the api request completes
+              successfully.
+       @param failureCallback {Function} Called when the api request fails
+              with a response of >= 400 except 401/407 where it does
+              authentication.
+       @param {Boolean} redirect Whether the handler should redirect if there
+              is a 401 on the request.
+       @param {Object} response The XHR response object from initial request.
+      */
+      sendPatchRequest: function(
+        path, data, successCallback, failureCallback, redirect) {
+        const macaroons = this.getMacaroon();
+        let headers = {
+          'Bakery-Protocol-Version': 1,
+          'Content-type': 'application/json'
+        };
+        if (macaroons !== null) {
+          headers.Macaroons = macaroons;
+        }
+
+        return this.webhandler.sendPatchRequest(
+          path, headers, data, null, null, false, null,
+          this._requestHandlerWithInteraction.bind(
+            this,
+            path,
+            successCallback,
+            failureCallback,
+            redirect
+          )
+        );
+      },
+
+      /**
        Handles the request response from the _makeRequest method, calling the
        supplied failure callback if the response status was >= 400 or passing
        the response object to the supplied success callback. For 407/401

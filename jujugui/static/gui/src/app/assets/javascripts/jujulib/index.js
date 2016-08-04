@@ -70,6 +70,9 @@ var module = module;
       case 'PUT':
         return bakery.sendPutRequest(
             path, JSON.stringify(params), success, failure, redirect);
+      case 'PATCH':
+        return bakery.sendPatchRequest(
+            path, JSON.stringify(params), success, failure, redirect);
       case 'DELETE':
         return bakery.sendDeleteRequest(path, success, failure, redirect);
       default:

@@ -104,6 +104,33 @@ YUI.add('juju-env-web-handler', function(Y) {
     },
 
     /**
+      Send an asynchronous PATCH request to the given URL.
+
+      @method sendPatchRequest
+      @param {String} path The remote target path/URL.
+      @param {Object} headers Additional request headers as key/value pairs.
+      @param {Object} data The data to send as a file object, a string or in
+        general as an ArrayBufferView/Blob object.
+      @param {String} username The user name for basic HTTP authentication
+        (or null if no authentication is required).
+      @param {String} password The password for basic HTTP authentication
+        (or null if no authentication is required).
+      @param {Function} progressCallback The progress event callback.
+      @param {Function} completedCallback The load event callback.
+      @return {Object} The asynchronous request instance.
+    */
+    sendPatchRequest: function(path, headers, data, username, password,
+                             withCredentials, progressCallback,
+                             completedCallback) {
+      var xhr = this._createRequest(
+          path, 'PATCH', headers, username, password, withCredentials,
+          progressCallback, completedCallback);
+      // Send the PATCH data.
+      xhr.send(data);
+      return xhr;
+    },
+
+    /**
       Send an asynchronous GET request to the given URL.
 
       @method sendGetRequest
