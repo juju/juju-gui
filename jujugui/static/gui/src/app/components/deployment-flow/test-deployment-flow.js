@@ -38,6 +38,7 @@ describe('DeploymentFlow', function() {
   it('can render', function() {
     var addTemplate = sinon.stub();
     var changeState = sinon.stub();
+    var listBudgets = sinon.stub();
     var listClouds = sinon.stub();
     var listPlansForCharm = sinon.stub();
     var listRegions = sinon.stub();
@@ -49,11 +50,13 @@ describe('DeploymentFlow', function() {
         addTemplate={addTemplate}
         changeState={changeState}
         changes={{}}
+        listBudgets={listBudgets}
         listClouds={listClouds}
         listPlansForCharm={listPlansForCharm}
         listRegions={listRegions}
         listTemplates={listTemplates}
         servicesGetById={servicesGetById}
+        user={{}}
         users={{}}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
@@ -148,7 +151,9 @@ describe('DeploymentFlow', function() {
                   showCheck={true}
                   title="Confirm budget">
                   <juju.components.DeploymentBudget
-                    acl={acl} />
+                    acl={acl}
+                    listBudgets={listBudgets}
+                    user={{}} />
                 </juju.components.DeploymentSection>
                 <div className="twelve-col">
                   <div className="deployment-flow__deploy">
@@ -201,11 +206,13 @@ describe('DeploymentFlow', function() {
         addTemplate={sinon.stub()}
         changeState={changeState}
         changes={{}}
+        listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
         listTemplates={sinon.stub()}
         servicesGetById={sinon.stub()}
+        user={{}}
         users={{}}>
         <span>content</span>
       </juju.components.DeploymentFlow>);

@@ -1,27 +1,37 @@
 .budget-chart {
+    $light-green: lighten($success, 50%);
+
     &__chart {
         position: relative;
         height: 20px;
         margin-bottom: 10px;
 
         &-new,
+        &-existing,
         &-limit {
             position: absolute;
             top: 0;
             bottom: 0;
-            left: 0;
             border-radius: $border-radius;
         }
 
         &-limit {
+            left: 0;
             right: 0;
             background-color: $white;
             border: 1px solid $light-mid-grey;
         }
 
         &-new {
-            width: 50%;
+            left: 0;
             background-color: $success;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        &-existing {
+            border-radius: 0;
+            background-color: $light-green;
         }
     }
 
@@ -38,7 +48,7 @@
         }
 
         &--existing {
-            background-color: #aee2b6;
+            background-color: $light-green;
         }
 
         &--limit {

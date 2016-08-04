@@ -31,6 +31,54 @@ describe('BudgetChart', function() {
   });
 
   it('can render', function() {
+    var budgets = {
+      total: {
+        allocated: 20,
+        limit: 80
+      }
+    };
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.BudgetChart
+        budgets={budgets} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="budget-chart">
+        <div className="budget-chart__chart twelve-col">
+          <div className="budget-chart__chart-limit">
+          </div>
+          <div className="budget-chart__chart-new"
+            style={{width: '0%'}}>
+          </div>
+          <div className="budget-chart__chart-existing"
+            style={{
+              left: '0%',
+              width: '25%'
+            }}>
+          </div>
+        </div>
+        <div className="three-col">
+          <span className={
+            'budget-chart__indicator budget-chart__indicator--new'}>
+          </span>
+          New allocations: <strong>${0}</strong>
+        </div>
+        <div className="three-col">
+          <span className={
+            'budget-chart__indicator budget-chart__indicator--existing'}>
+          </span>
+          Existing allocations: <strong>${20}</strong>
+        </div>
+        <div className="three-col">
+          <span className={
+            'budget-chart__indicator budget-chart__indicator--limit'}>
+          </span>
+          Budget limit: <strong>${80}</strong>
+        </div>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render with no budget data', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.BudgetChart />, true);
     var output = renderer.getRenderOutput();
@@ -39,26 +87,33 @@ describe('BudgetChart', function() {
         <div className="budget-chart__chart twelve-col">
           <div className="budget-chart__chart-limit">
           </div>
-          <div className="budget-chart__chart-new">
+          <div className="budget-chart__chart-new"
+            style={{width: '0%'}}>
+          </div>
+          <div className="budget-chart__chart-existing"
+            style={{
+              left: '0%',
+              width: '0%'
+            }}>
           </div>
         </div>
         <div className="three-col">
           <span className={
             'budget-chart__indicator budget-chart__indicator--new'}>
           </span>
-          New allocations: <strong>$550</strong>
+          New allocations: <strong>${0}</strong>
         </div>
         <div className="three-col">
           <span className={
             'budget-chart__indicator budget-chart__indicator--existing'}>
           </span>
-          Existing allocations: <strong>$0</strong>
+          Existing allocations: <strong>${0}</strong>
         </div>
         <div className="three-col">
           <span className={
             'budget-chart__indicator budget-chart__indicator--limit'}>
           </span>
-          Budget limit: <strong>$1000</strong>
+          Budget limit: <strong>${0}</strong>
         </div>
       </div>);
     assert.deepEqual(output, expected);
