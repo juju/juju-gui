@@ -253,7 +253,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var path = '/juju-core/charms?series=trusty';
         var headers = {'Content-Type': 'application/zip'};
         var data = 'a zip file object';
-        // Make a POST request.
+        // Make a PATCH request.
         webHandler.sendPatchRequest(
             path, headers, data, 'user', 'passwd', false,
             function() {return 'progress';}, function() {return 'completed';});
@@ -283,7 +283,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('handles request progress', function() {
         var progressCallback = utils.makeStubFunction();
-        // Make a POST request.
+        // Make a PATCH request.
         webHandler.sendPatchRequest(
             '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
         assertProgressHandled(progressCallback);
@@ -291,7 +291,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('handles request completion', function() {
         var completedCallback = utils.makeStubFunction();
-        // Make a POST request.
+        // Make a PATCH request.
         webHandler.sendPatchRequest(
             '/path/', {}, 'data', 'user', 'passwd', false,
             function() {}, completedCallback);
