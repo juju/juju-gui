@@ -182,8 +182,8 @@ var module = module;
         first parameter and an authorization object as its second.
     */
     updateBudget: function(budgetId, limit, callback) {
-      const url = `${this.url}/budget/${budgetId}`;
-      const payload = { limit };
+      var url = this.url + '/budget/' + budgetId;
+      var payload = { limit: limit };
       return jujulib._makeRequest(this.bakery, url, 'PATCH', payload, callback);
     },
 
@@ -197,7 +197,7 @@ var module = module;
         first parameter and an authorization object as its second.
     */
     removeBudget: function(budgetId, callback) {
-      const url = `${this.url}/budget/${budgetId}`;
+      var url = this.url + '/budget/' + budgetId;
       return jujulib._makeRequest(this.bakery, url, 'DELETE', null, callback);
     },
 
@@ -214,8 +214,12 @@ var module = module;
         first parameter and an authorization object as its second.
     */
     createAllocation: function(budgetId, application, model, limit, callback) {
-      const url = `${this.url}/budget/${budgetId}/allocation`;
-      const payload = { services: [application], model, limit };
+      var url = this.url + '/budget/' + budgetId + '/allocation';
+      var payload = {
+        services: [application],
+        model: model,
+        limit: limit
+      };
       return jujulib._makeRequest(this.bakery, url, 'POST', payload, callback);
     },
 
@@ -231,8 +235,9 @@ var module = module;
         first parameter and an authorization object as its second.
     */
     updateAllocation: function(model, app, limit, callback) {
-      const url = `${this.url}/model/${model}/service/${app}/allocation`;
-      const payload = { limit };
+      var url = this.url + '/model/' + model +
+        '/service/' + app + '/allocation';
+      var payload = { limit: limit };
       return jujulib._makeRequest(this.bakery, url, 'PATCH', payload, callback);
     },
 
@@ -247,7 +252,8 @@ var module = module;
         first parameter and an authorization object as its second.
     */
     removeAllocation: function(app, model, callback) {
-      const url = `${this.url}/environment/${model}/service/${app}/allocation`;
+      var url = this.url + '/environment/' + model +
+        '/service/' + app + '/allocation';
       return jujulib._makeRequest(this.bakery, url, 'DELETE', null, callback);
     },
 
@@ -311,8 +317,8 @@ var module = module;
         first parameter and an authorization object as its second.
     */
     updateCreditLimit: function(user, limit, callback) {
-      const url = `${this.url}/profile/${user}`;
-      const payload = { update: { limit } };
+      var url = this.url + '/profile/' + user;
+      var payload = { update: { limit: limit } };
       return jujulib._makeRequest(this.bakery, url, 'PATCH', payload, callback);
     },
 
@@ -326,8 +332,8 @@ var module = module;
         first parameter and an authorization object as its second.
     */
     updateDefaultBudget: function(defaultBudget, callback) {
-      const url = `${this.url}/profile`;
-      const payload = { update: { 'default-budget': defaultBudget } };
+      var url = this.url + '/profile';
+      var payload = { update: { 'default-budget': defaultBudget } };
       return jujulib._makeRequest(this.bakery, url, 'PATCH', payload, callback);
     }
 
