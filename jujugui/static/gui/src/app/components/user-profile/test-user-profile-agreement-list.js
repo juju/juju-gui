@@ -20,12 +20,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
-describe('AgreementList', () => {
+describe('UserProfileAgreementList', () => {
   var users;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
-    YUI().use('agreement-list', () => { done(); });
+    YUI().use('user-profile-agreement-list', () => { done(); });
   });
 
   beforeEach(() => {
@@ -37,7 +37,7 @@ describe('AgreementList', () => {
 
   it('renders the empty state', () => {
     var component = jsTestUtils.shallowRender(
-      <juju.components.AgreementList
+      <juju.components.UserProfileAgreementList
         getAgreements={sinon.stub().callsArgWith(0, null, [])}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -46,7 +46,7 @@ describe('AgreementList', () => {
 
   it('displays loading spinner when loading', () => {
     var component = jsTestUtils.shallowRender(
-      <juju.components.AgreementList
+      <juju.components.UserProfileAgreementList
         getAgreements={sinon.stub()}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -66,7 +66,7 @@ describe('AgreementList', () => {
     }];
     var getAgreements = sinon.stub().callsArgWith(0, null, agreements);
     var component = jsTestUtils.shallowRender(
-      <juju.components.AgreementList
+      <juju.components.UserProfileAgreementList
         getAgreements={getAgreements}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -108,7 +108,7 @@ describe('AgreementList', () => {
     var getAgreementsAbort = sinon.stub();
     var getAgreements = sinon.stub().returns({abort: getAgreementsAbort});
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.AgreementList
+      <juju.components.UserProfileAgreementList
         getAgreements={getAgreements}
         user={users.charmstore} />, true);
     renderer.unmount();

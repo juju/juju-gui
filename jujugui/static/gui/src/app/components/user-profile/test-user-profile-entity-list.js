@@ -20,12 +20,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
-describe('EntityList', () => {
+describe('UserProfileEntityList', () => {
   var charmstore, charms, bundles, users;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
-    YUI().use('entity-list', () => { done(); });
+    YUI().use('user-profile-entity-list', () => { done(); });
   });
 
   beforeEach(() => {
@@ -52,7 +52,7 @@ describe('EntityList', () => {
 
   it('renders the empty state', () => {
     var component = jsTestUtils.shallowRender(
-      <juju.components.EntityList
+      <juju.components.UserProfileEntityList
         changeState={sinon.stub()}
         charmstore={{}}
         getDiagramURL={sinon.stub()}
@@ -67,7 +67,7 @@ describe('EntityList', () => {
     charmstore.list = sinon.stub();
     var type = 'charm';
     var component = jsTestUtils.shallowRender(
-      <juju.components.EntityList
+      <juju.components.UserProfileEntityList
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
@@ -86,7 +86,7 @@ describe('EntityList', () => {
     var changeState = sinon.stub();
     var type = 'charm';
     var component = jsTestUtils.shallowRender(
-      <juju.components.EntityList
+      <juju.components.UserProfileEntityList
         changeState={changeState}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
@@ -157,7 +157,7 @@ describe('EntityList', () => {
     var changeState = sinon.stub();
     var getDiagramURL = sinon.stub();
     var component = jsTestUtils.shallowRender(
-      <juju.components.EntityList
+      <juju.components.UserProfileEntityList
         changeState={changeState}
         charmstore={charmstore}
         getDiagramURL={getDiagramURL}
@@ -231,7 +231,7 @@ describe('EntityList', () => {
 
   it('requests charms and updates state', () => {
     var component = jsTestUtils.shallowRender(
-      <juju.components.EntityList
+      <juju.components.UserProfileEntityList
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
@@ -249,7 +249,7 @@ describe('EntityList', () => {
 
   it('requests bundles and updates state', () => {
     var component = jsTestUtils.shallowRender(
-      <juju.components.EntityList
+      <juju.components.UserProfileEntityList
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
@@ -269,7 +269,7 @@ describe('EntityList', () => {
     var charmstoreAbort = sinon.stub();
     charmstore.list = sinon.stub().returns({abort: charmstoreAbort});
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityList
+      <juju.components.UserProfileEntityList
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
@@ -284,7 +284,7 @@ describe('EntityList', () => {
     var list = sinon.stub();
     var charmstore = {list: list};
     var component = jsTestUtils.shallowRender(
-      <juju.components.EntityList
+      <juju.components.UserProfileEntityList
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
@@ -293,7 +293,7 @@ describe('EntityList', () => {
         user={users.charmstore} />, true);
     assert.equal(list.callCount, 0);
     component.render(
-      <juju.components.EntityList
+      <juju.components.UserProfileEntityList
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}

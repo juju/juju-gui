@@ -211,7 +211,7 @@ describe('UserProfile', () => {
           links={links}
           username={users.charmstore.usernameDisplay} />
         <div>
-          <juju.components.ModelList
+          <juju.components.UserProfileModelList
             addNotification={addNotification}
             canCreateNew={canCreateNew}
             currentModel={undefined}
@@ -223,24 +223,24 @@ describe('UserProfile', () => {
             switchModel={switchModel}
             user={user}
             users={users} />
-          <juju.components.EntityList
+          <juju.components.UserProfileEntityList
             changeState={changeState}
             charmstore={charmstore}
             getDiagramURL={getDiagramURL}
             type='bundle'
             user={user}
             users={users} />
-          <juju.components.EntityList
+          <juju.components.UserProfileEntityList
             changeState={changeState}
             charmstore={charmstore}
             getDiagramURL={getDiagramURL}
             type='charm'
             user={user}
             users={users} />
-          <juju.components.AgreementList
+          <juju.components.UserProfileAgreementList
             getAgreements={getAgreements}
             user={user} />
-          <juju.components.BudgetList
+          <juju.components.UserProfileBudgetList
             listBudgets={listBudgets}
             user={user} />
         </div>

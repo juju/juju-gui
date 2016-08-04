@@ -18,9 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('budget-list', function() {
+YUI.add('user-profile-budget-list', function() {
 
-  juju.components.BudgetList = React.createClass({
+  juju.components.UserProfileBudgetList = React.createClass({
     propTypes: {
       listBudgets: React.PropTypes.func.isRequired,
       user: React.PropTypes.object,

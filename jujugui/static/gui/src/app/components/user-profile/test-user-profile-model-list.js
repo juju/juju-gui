@@ -20,12 +20,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
-describe('ModelList', () => {
+describe('UserProfileModelList', () => {
   var env, models, users;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
-    YUI().use('model-list', () => { done(); });
+    YUI().use('user-profile-model-list', () => { done(); });
   });
 
   beforeEach(() => {
@@ -59,7 +59,7 @@ describe('ModelList', () => {
 
   it('renders the empty state', () => {
     var component = jsTestUtils.shallowRender(
-      <juju.components.ModelList
+      <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={false}
         currentModel={'model1'}
@@ -77,7 +77,7 @@ describe('ModelList', () => {
 
   it('displays loading spinner when loading', () => {
     var component = jsTestUtils.shallowRender(
-      <juju.components.ModelList
+      <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={false}
         currentModel={'model1'}
@@ -100,7 +100,7 @@ describe('ModelList', () => {
   it('renders a list of models', () => {
     var listModels = sinon.stub().callsArgWith(0, null, {models: models});
     var component = jsTestUtils.shallowRender(
-      <juju.components.ModelList
+      <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={true}
         currentModel={'model1'}
@@ -198,7 +198,7 @@ describe('ModelList', () => {
     models[0].isAlive = false;
     var listModels = sinon.stub().callsArgWith(0, null, {models: models});
     var component = jsTestUtils.shallowRender(
-      <juju.components.ModelList
+      <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={false}
         currentModel={'model1'}
@@ -226,7 +226,7 @@ describe('ModelList', () => {
     var switchModel = sinon.stub();
     var listModels = sinon.stub().callsArgWith(0, null, {models: models});
     var component = jsTestUtils.shallowRender(
-      <juju.components.ModelList
+      <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={true}
         currentModel={'model1'}
@@ -258,7 +258,7 @@ describe('ModelList', () => {
   it('can reset the model connection', () => {
     var utilsSwitchModel = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.ModelList
+      <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={true}
         env={env}
@@ -279,7 +279,7 @@ describe('ModelList', () => {
 
   it('can hide the create new model button', () => {
     var component = jsTestUtils.shallowRender(
-      <juju.components.ModelList
+      <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={false}
         env={env}
@@ -299,7 +299,7 @@ describe('ModelList', () => {
     var showConnectingMask = sinon.stub();
     var switchModel = sinon.stub();
     var component = jsTestUtils.shallowRender(
-      <juju.components.ModelList
+      <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={true}
         env={env}
@@ -337,7 +337,7 @@ describe('ModelList', () => {
     var showConnectingMask = sinon.stub();
     var switchModel = sinon.stub();
     var component = jsTestUtils.shallowRender(
-      <juju.components.ModelList
+      <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={true}
         env={env}
@@ -382,7 +382,7 @@ describe('ModelList', () => {
     var hideConnectingMask = sinon.stub();
     var addNotification = sinon.stub();
     var component = jsTestUtils.shallowRender(
-      <juju.components.ModelList
+      <juju.components.UserProfileModelList
         addNotification={addNotification}
         canCreateNew={true}
         env={env}
@@ -421,7 +421,7 @@ describe('ModelList', () => {
     var showConnectingMask = sinon.stub();
     env.createModel = sinon.stub();
     var component = jsTestUtils.shallowRender(
-      <juju.components.ModelList
+      <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={true}
         env={env}
@@ -461,7 +461,7 @@ describe('ModelList', () => {
     var listModelsAbort = sinon.stub();
     var listModels = sinon.stub().returns({abort: listModelsAbort});
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.ModelList
+      <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={false}
         currentModel={'model1'}

@@ -18,9 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('agreement-list', function() {
+YUI.add('user-profile-agreement-list', function() {
 
-  juju.components.AgreementList = React.createClass({
+  juju.components.UserProfileAgreementList = React.createClass({
     propTypes: {
       getAgreements: React.PropTypes.func.isRequired,
       user: React.PropTypes.object,

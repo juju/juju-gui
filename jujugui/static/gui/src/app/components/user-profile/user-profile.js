@@ -119,7 +119,7 @@ YUI.add('user-profile', function() {
       var props = this.props;
       return (
         <div>
-          <juju.components.ModelList
+          <juju.components.UserProfileModelList
             addNotification={props.addNotification}
             canCreateNew={props.canCreateNew}
             currentModel={props.currentModel}
@@ -131,24 +131,24 @@ YUI.add('user-profile', function() {
             switchModel={props.switchModel}
             user={props.user}
             users={props.users} />
-          <juju.components.EntityList
+          <juju.components.UserProfileEntityList
             changeState={props.changeState}
             charmstore={props.charmstore}
             getDiagramURL={props.getDiagramURL}
             type='bundle'
             user={props.user}
             users={props.users} />
-          <juju.components.EntityList
+          <juju.components.UserProfileEntityList
             changeState={props.changeState}
             charmstore={props.charmstore}
             getDiagramURL={props.getDiagramURL}
             type='charm'
             user={props.user}
             users={props.users} />
-          <juju.components.AgreementList
+          <juju.components.UserProfileAgreementList
             getAgreements={props.getAgreements}
             user={props.user} />
-          <juju.components.BudgetList
+          <juju.components.UserProfileBudgetList
             listBudgets={props.listBudgets}
             user={props.user} />
         </div>);
@@ -202,14 +202,14 @@ YUI.add('user-profile', function() {
 
 }, '', {
   requires: [
-    'agreement-list',
-    'budget-list',
-    'entity-list',
     'generic-input',
     'loading-spinner',
-    'model-list',
     'panel-component',
+    'user-profile-agreement-list',
+    'user-profile-budget-list',
     'user-profile-entity',
+    'user-profile-entity-list',
+    'user-profile-model-list',
     'user-profile-header'
   ]
 });

@@ -20,12 +20,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
-describe('BudgetList', () => {
+describe('UserProfileBudgetList', () => {
   var users;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
-    YUI().use('budget-list', () => { done(); });
+    YUI().use('user-profile-budget-list', () => { done(); });
   });
 
   beforeEach(() => {
@@ -37,7 +37,7 @@ describe('BudgetList', () => {
 
   it('renders the empty state', () => {
     var component = jsTestUtils.shallowRender(
-      <juju.components.BudgetList
+      <juju.components.UserProfileBudgetList
         listBudgets={sinon.stub().callsArgWith(0, null, [])}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -46,7 +46,7 @@ describe('BudgetList', () => {
 
   it('displays loading spinner when loading', () => {
     var component = jsTestUtils.shallowRender(
-      <juju.components.BudgetList
+      <juju.components.UserProfileBudgetList
         listBudgets={sinon.stub()}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -69,7 +69,7 @@ describe('BudgetList', () => {
     }]};
     var listBudgets = sinon.stub().callsArgWith(0, null, data);
     var component = jsTestUtils.shallowRender(
-      <juju.components.BudgetList
+      <juju.components.UserProfileBudgetList
         listBudgets={listBudgets}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -127,7 +127,7 @@ describe('BudgetList', () => {
     var listBudgetsAbort = sinon.stub();
     var listBudgets = sinon.stub().returns({abort: listBudgetsAbort});
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.BudgetList
+      <juju.components.UserProfileBudgetList
         listBudgets={listBudgets}
         user={users.charmstore} />, true);
     renderer.unmount();

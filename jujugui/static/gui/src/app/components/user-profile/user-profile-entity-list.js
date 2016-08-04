@@ -18,9 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('entity-list', function() {
+YUI.add('user-profile-entity-list', function() {
 
-  juju.components.EntityList = React.createClass({
+  juju.components.UserProfileEntityList = React.createClass({
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,

@@ -18,9 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('model-list', function() {
+YUI.add('user-profile-model-list', function() {
 
-  juju.components.ModelList = React.createClass({
+  juju.components.UserProfileModelList = React.createClass({
     propTypes: {
       addNotification: React.PropTypes.func.isRequired,
       canCreateNew: React.PropTypes.bool.isRequired,
