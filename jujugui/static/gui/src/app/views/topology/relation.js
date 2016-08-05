@@ -545,29 +545,33 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     addRelationDragStart: function(evt) {
-      var d = evt.service;
-      // Create a pending drag-line.
-      var vis = this.get('component').vis;
-      var dragline = vis.insert('line',':first-child')
-                        .attr('class',
-                              'relation pending-relation dragline dragging');
-      var self = this;
+      // Only start a new drag line if no an active dragline. Sometimes a line
+      // a relation begins while dragging which shouldnt start a new line.
+      if (!this.dragline) {
+        var d = evt.service;
+        // Create a pending drag-line.
+        var vis = this.get('component').vis;
+        var dragline = vis.insert('line',':first-child')
+                          .attr('class',
+                                'relation pending-relation dragline dragging');
+        var self = this;
 
-      // Start the line between the cursor and the nearest connector
-      // point on the service.
-      this.set('dragplane', Y.one('.the-canvas g').getDOMNode());
-      var mouse = d3.mouse(this.get('dragplane'));
-      self.cursorBox = new views.BoundingBox();
-      self.cursorBox.pos = {x: mouse[0], y: mouse[1], w: 0, h: 0};
-      var point = self.cursorBox.getConnectorPair(d);
-      dragline.attr('x1', point[0][0])
-              .attr('y1', point[0][1])
-              .attr('x2', point[1][0])
-              .attr('y2', point[1][1]);
-      self.dragline = dragline;
-      vis.select('.plus-service').classed('fade', true);
-      // Start the add-relation process.
-      self.addRelationStart(d, self);
+        // Start the line between the cursor and the nearest connector
+        // point on the service.
+        this.set('dragplane', Y.one('.the-canvas g').getDOMNode());
+        var mouse = d3.mouse(this.get('dragplane'));
+        self.cursorBox = new views.BoundingBox();
+        self.cursorBox.pos = {x: mouse[0], y: mouse[1], w: 0, h: 0};
+        var point = self.cursorBox.getConnectorPair(d);
+        dragline.attr('x1', point[0][0])
+                .attr('y1', point[0][1])
+                .attr('x2', point[1][0])
+                .attr('y2', point[1][1]);
+        self.dragline = dragline;
+        vis.select('.plus-service').classed('fade', true);
+        // Start the add-relation process.
+        self.addRelationStart(d, self);
+      }
     },
 
     addRelationDrag: function(evt) {
