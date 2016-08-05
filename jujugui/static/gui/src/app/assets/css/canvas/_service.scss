@@ -191,21 +191,14 @@ g.service {
 }
 
 .visibility-classes {
-    transition: opacity 0.4s ease;
+    transition: opacity .4s ease;
 
     &.show {
         opacity: 1;
-        visibility: visible;
     }
 
     &.fade {
-        /*
-          Put visibility on a delay so it gets hidden after the opacity is
-          finished transitioning.
-        */
-        transition: visibility 0s linear 0.4s, opacity 0.4s ease;
-        opacity: 0;
-        visibility: hidden;
+        opacity: .3;
     }
 
     &.hide {
