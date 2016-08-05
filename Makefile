@@ -305,12 +305,11 @@ test-python: $(JUJUGUI) $(PYTEST)
 
 .PHONY: test-js
 test-js: gui
-	$(NODE_MODULES)/.bin/karma start karma.conf.js --single-run --browsers PhantomJS --log-level warn --reporters mocha
+	./scripts/test-js.sh
 
 .PHONY: test-js-old
 test-js-old: gui
 	./scripts/test-js-old.sh
-
 
 .PHONY: start-karma
 start-karma:
