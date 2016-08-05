@@ -49,8 +49,7 @@ STATIC_CSS_FILES = \
 
 LSB_RELEASE = $(shell lsb_release -cs)
 
-# libfontconfig1 is required by phantom.
-SYSDEPS = coreutils g++ git inotify-tools libfontconfig1 nodejs \
+SYSDEPS = coreutils g++ git inotify-tools nodejs \
 	python-virtualenv realpath xvfb chromium-browser
 
 .PHONY: help

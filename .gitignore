@@ -21,7 +21,6 @@ include/
 jujugui.egg-info/
 jujugui/static/build/*
 jujugui/static/gui/build/
-karma-mocha-phantom.conf.js
 lib/
 libpeerconnection.log
 local/
