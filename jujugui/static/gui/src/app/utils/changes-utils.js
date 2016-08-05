@@ -25,6 +25,26 @@ YUI.add('changes-utils', function(Y) {
   var removeBrackets = /^\(?(.{0,}?)\)?$/;
 
   /**
+    Filter a changeset by a parent change.
+
+    @method filterByParent
+    @param {Object} changeSet The change set to apply the filter to.
+    @param {String} parentId The id of the parent change to filter by.
+    @returns {Object} The filtered changes.
+  */
+  ChangesUtils.filterByParent = function(changeSet, parentId) {
+    var changes = {};
+    Object.keys(changeSet).forEach((key) => {
+      var change = changeSet[key];
+      var parents = change.parents || [];
+      if (parents.indexOf(parentId) >= 0) {
+        changes[key] = change;
+      }
+    }, this);
+    return changes;
+  };
+
+  /**
     Return the counts for each type of ecs change.
 
     @method getChangeCounts

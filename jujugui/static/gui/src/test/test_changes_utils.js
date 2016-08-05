@@ -272,4 +272,16 @@ describe('ChangesUtils', function() {
       }
     });
   });
+
+  it('can filter the changeset by parent', function() {
+    var changeSet = {
+      one: {parents: ['parent1']},
+      two: {parents: ['parent2']},
+      three: {parents: ['parent1', 'parent2']}
+    };
+    assert.deepEqual(changesUtils.filterByParent(changeSet, 'parent1'), {
+      one: {parents: ['parent1']},
+      three: {parents: ['parent1', 'parent2']}
+    });
+  });
 });
