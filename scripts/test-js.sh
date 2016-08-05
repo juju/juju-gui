@@ -16,4 +16,12 @@ finished () {
 # Capture ctrl-c
 trap 'finished' SIGINT SIGQUIT SIGTERM SIGCHLD
 
-DISPLAY=:99 CHROME_BIN='/usr/bin/chromium-browser' node_modules/.bin/karma start karma.conf.js --single-run --browsers Chrome --log-level warn --reporters mocha
+SINGLE_RUN="--single-run"
+# If this script is started with MULTI_RUN then do not
+# shut down the runner after the suite completes.
+if [ -n "$MULTI_RUN" ]; then
+  echo "Starting multi-run."
+  SINGLE_RUN=""
+fi
+
+DISPLAY=:99 CHROME_BIN='/usr/bin/chromium-browser' node_modules/.bin/karma start karma.conf.js $SINGLE_RUN --browsers Chrome --log-level warn --reporters mocha

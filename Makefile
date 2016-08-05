@@ -312,7 +312,7 @@ test-js-old: gui
 
 .PHONY: start-karma
 start-karma:
-	$(NODE_MODULES)/.bin/karma start karma.conf.js
+	MULTI_RUN=true ./scripts/test-js.sh
 
 .PHONY: test-selenium
 # This fails with a spurious error and because we don't actually test anything
