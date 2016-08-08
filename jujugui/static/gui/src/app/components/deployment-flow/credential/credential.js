@@ -99,6 +99,9 @@ YUI.add('deployment-credential', function() {
         // If there are no credentials then display the form to add credentials.
         showAdd: !credentials || credentials.length === 0
       });
+      if (credentials && credentials.length > 0) {
+        this.props.setCredential(credentials[0].path);
+      }
     },
 
     /**

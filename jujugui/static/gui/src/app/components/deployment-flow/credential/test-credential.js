@@ -249,6 +249,28 @@ describe('DeploymentCredential', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('selects an initial credential', function() {
+    var setCredential = sinon.stub();
+    var setRegion = sinon.stub();
+    jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredential
+        acl={acl}
+        addTemplate={sinon.stub()}
+        cloud="azure"
+        clouds={clouds}
+        listRegions={
+          sinon.stub().callsArgWith(1, null, regions)}
+        listTemplates={
+          sinon.stub().callsArgWith(0, null, credentials)}
+        setCredential={setCredential}
+        setRegion={setRegion}
+        setTemplate={sinon.stub()}
+        users={{}}
+        validateForm={sinon.stub()} />, true);
+    assert.equal(setCredential.callCount, 1);
+    assert.equal(setCredential.args[0][0], 'owner/test-cred');
+  });
+
   it('can disable controls when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     var setCredential = sinon.stub();
