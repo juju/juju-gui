@@ -100,6 +100,61 @@ describe('BudgetTableRow', function() {
             $1
           </div>
           {undefined}
+          {undefined}
+        </div>
+        <div>
+          {undefined}
+        </div>
+      </juju.components.ExpandingRow>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can display extra info', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.BudgetTableRow
+        acl={acl}
+        allocationEditable={false}
+        extraInfo={<span>extra</span>}
+        listPlansForCharm={listPlansForCharm}
+        plansEditable={false}
+        service={service}
+        showExtra={true} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.ExpandingRow
+        classes={{
+          'budget-table-row': true,
+          'twelve-col': true
+        }}
+        clickable={false}
+        expanded={false}>
+        <div>
+          <div>
+            <div className="three-col no-margin-bottom">
+              <img className="budget-table__charm-icon"
+                src="landscape.svg" />
+              Landscape
+            </div>
+            <div className="one-col no-margin-bottom">
+              {4}
+            </div>
+          </div>
+          <div className="three-col no-margin-bottom">
+            <span>You need to select a plan</span>
+          </div>
+          <div className="two-col no-margin-bottom">
+            $1
+          </div>
+          <div className="two-col no-margin-bottom">
+            <span onClick={undefined}>$1</span>
+          </div>
+          <div className="one-col no-margin-bottom last-col">
+            $1
+          </div>
+          {undefined}
+          <div className="twelve-col no-margin-bottom">
+            <span>extra</span>
+          </div>
         </div>
         <div>
           {undefined}
@@ -171,6 +226,7 @@ describe('BudgetTableRow', function() {
             $1
           </div>
           {undefined}
+          {undefined}
         </div>
         <div>
           {undefined}
@@ -220,6 +276,7 @@ describe('BudgetTableRow', function() {
           <div className="one-col no-margin-bottom">
             $1
           </div>
+          {undefined}
           {undefined}
         </div>
         <div>
@@ -279,6 +336,7 @@ describe('BudgetTableRow', function() {
                 title="Change plan" />
             </div>
           </div>
+          {undefined}
         </div>
         <div>
           <div>
@@ -397,6 +455,7 @@ describe('BudgetTableRow', function() {
                 title="Change plan" />
             </div>
           </div>
+          {undefined}
         </div>
         <div>
           <div>

@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentServices', function() {
-  var acl, changes, servicesGetById;
+  var acl, groupedChanges, servicesGetById;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,7 +33,7 @@ describe('DeploymentServices', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    changes = {
+    groupedChanges = {
       '_deploy': {
         'add1': {command: {options: {modelId: 'apache2'}}},
         'add2': {command: {options: {modelId: 'mysql'}}}
@@ -49,19 +49,39 @@ describe('DeploymentServices', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentServices
         acl={acl}
-        changes={changes}
+        changesFilterByParent={sinon.stub()}
+        generateAllChangeDescriptions={sinon.stub().returns([{id: 'change1'}])}
+        groupedChanges={groupedChanges}
         cloud='azure'
         listPlansForCharm={listPlansForCharm}
-        servicesGetById={servicesGetById} />, true);
+        servicesGetById={servicesGetById}
+        showChangelogs={false} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div>
         <juju.components.BudgetTable
           acl={acl}
           allocationEditable={true}
+          extraInfo={{
+            'apache2': (
+              <ul className="deployment-services__changes">
+                {[<juju.components.DeploymentChangeItem
+                  change={{id: 'change1'}}
+                  key="change1"
+                  showTime={false} />]}
+              </ul>),
+            'mysql': (
+              <ul className="deployment-services__changes">
+                {[<juju.components.DeploymentChangeItem
+                  change={{id: 'change1'}}
+                  key="change1"
+                  showTime={false} />]}
+              </ul>)
+          }}
           listPlansForCharm={listPlansForCharm}
           plansEditable={true}
-          services={[{service: 'apache2'}, {service: 'mysql'}]} />
+          services={[{service: 'apache2'}, {service: 'mysql'}]}
+          showExtra={false} />
         <div className="prepend-seven">
           Maximum monthly spend:&nbsp;
           <span className="deployment-services__max">

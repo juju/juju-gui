@@ -37,7 +37,9 @@ describe('DeploymentFlow', function() {
 
   it('can render', function() {
     var addTemplate = sinon.stub();
+    var changesFilterByParent = sinon.stub();
     var changeState = sinon.stub();
+    var generateAllChangeDescriptions = sinon.stub();
     var listBudgets = sinon.stub();
     var listClouds = sinon.stub();
     var listPlansForCharm = sinon.stub();
@@ -48,8 +50,10 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addTemplate={addTemplate}
+        changesFilterByParent={changesFilterByParent}
         changeState={changeState}
-        changes={{}}
+        groupedChanges={{}}
+        generateAllChangeDescriptions={generateAllChangeDescriptions}
         listBudgets={listBudgets}
         listClouds={listClouds}
         listPlansForCharm={listPlansForCharm}
@@ -138,7 +142,10 @@ describe('DeploymentFlow', function() {
                     </span>}>
                   <juju.components.DeploymentServices
                     acl={acl}
-                    changes={{}}
+                    changesFilterByParent={changesFilterByParent}
+                    generateAllChangeDescriptions={
+                      generateAllChangeDescriptions}
+                    groupedChanges={{}}
                     cloud={null}
                     listPlansForCharm={listPlansForCharm}
                     servicesGetById={servicesGetById}
@@ -204,8 +211,10 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addTemplate={sinon.stub()}
+        changesFilterByParent={sinon.stub()}
         changeState={changeState}
-        changes={{}}
+        generateAllChangeDescriptions={sinon.stub()}
+        groupedChanges={{}}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}

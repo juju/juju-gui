@@ -44,7 +44,8 @@ YUI.add('budget-table', function() {
             acl={this.props.acl}
             key={i}
             allocationEditable={this.props.allocationEditable}
-            extraInfo={this.props.extraInfo[service.get('id')]}
+            extraInfo={
+              this.props.extraInfo && this.props.extraInfo[service.get('id')]}
             listPlansForCharm={this.props.listPlansForCharm}
             plansEditable={this.props.plansEditable}
             service={service}
