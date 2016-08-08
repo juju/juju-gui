@@ -238,8 +238,8 @@ describe('ChangesUtils', function() {
         'generateChangeDescription');
     this._cleanups.push(stubDescription.reset);
     ecs.changeSet = { foo: { index: 0 }, bar: { index: 0 } };
-    changesUtils.generateAllChangeDescriptions(ecs.changeSet, db.services,
-        db.units);
+    changesUtils.generateAllChangeDescriptions(
+        db.services, db.units, ecs.changeSet);
     assert.equal(stubDescription.callCount(), 2);
   });
 

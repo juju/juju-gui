@@ -96,12 +96,12 @@ YUI.add('changes-utils', function(Y) {
     Return a list of all change descriptions.
 
     @method generateAllChangeDescriptions
-    @param {Object} changeSet The current environment change set.
     @param {Object} services The list of services from the db.
     @param {Object} units The list of units from the db.
+    @param {Object} changeSet The current environment change set.
   */
-  ChangesUtils.generateAllChangeDescriptions = function(changeSet, services,
-                                                        units) {
+  ChangesUtils.generateAllChangeDescriptions = function(services, units,
+                                                        changeSet) {
     var changes = [],
         change;
     Object.keys(changeSet).forEach(function(key) {
