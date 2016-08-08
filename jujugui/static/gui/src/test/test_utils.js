@@ -1508,10 +1508,10 @@ describe('utilities', function() {
       ];
 
       assert.deepEqual(
-        versions.sort(utils.compareSemver), [
+        versions.slice().sort(utils.compareSemver), [
           '1.2.3',
-          '1.5.5',
           '1.5.5-foo',
+          '1.5.5',
           '1.5.19',
           '2.0-alpha-foo-bar',
           '2.3.1',

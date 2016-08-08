@@ -49,9 +49,8 @@ STATIC_CSS_FILES = \
 
 LSB_RELEASE = $(shell lsb_release -cs)
 
-# libfontconfig1 is required by phantom.
-SYSDEPS = coreutils g++ git inotify-tools libfontconfig1 nodejs \
-	python-virtualenv realpath
+SYSDEPS = coreutils g++ git inotify-tools nodejs \
+	python-virtualenv realpath xvfb chromium-browser
 
 .PHONY: help
 help:
@@ -305,16 +304,15 @@ test-python: $(JUJUGUI) $(PYTEST)
 
 .PHONY: test-js
 test-js: gui
-	$(NODE_MODULES)/.bin/karma start karma.conf.js --single-run --browsers PhantomJS --log-level warn --reporters mocha
+	./scripts/test-js.sh
 
 .PHONY: test-js-old
 test-js-old: gui
 	./scripts/test-js-old.sh
 
-
 .PHONY: start-karma
 start-karma:
-	$(NODE_MODULES)/.bin/karma start karma.conf.js
+	MULTI_RUN=true ./scripts/test-js.sh
 
 .PHONY: test-selenium
 # This fails with a spurious error and because we don't actually test anything

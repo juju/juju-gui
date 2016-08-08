@@ -192,7 +192,7 @@ describe('Bakery', function() {
       assert.equal(callback.callCount(), 1);
       assert.equal(
         callback.lastArguments()[0].message,
-        'JSON Parse error: Unexpected identifier "invalidjson"');
+        'Unexpected token i in JSON at position 0');
       assert.equal(authStub.callCount(), 0);
     });
 
