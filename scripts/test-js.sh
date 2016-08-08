@@ -9,7 +9,7 @@ Xvfb :99 & echo $! > $XVFB_PID
 
 finished () {
   echo "Shutting down Xvfb."
-  kill -9 `cat xvfb_pid`
+  kill -9 `cat $XVFB_PID`
   rm $XVFB_PID
 }
 

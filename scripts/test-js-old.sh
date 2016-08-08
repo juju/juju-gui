@@ -24,9 +24,9 @@ bin/pserve test.ini test_port=$PORT & echo $! > $SERVE_PID
 
 finished () {
   echo "Shutting down Xvfb."
-  kill -9 `cat xvfb_pid`
+  kill -9 `cat $XVFB_PID`
   echo "Shutting down server."
-  kill -9 `cat serve_pid`
+  kill -9 `cat $SERVE_PID`
   rm $SERVE_PID
   rm $XVFB_PID
 }
