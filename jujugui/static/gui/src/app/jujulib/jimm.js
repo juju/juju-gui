@@ -1,9 +1,9 @@
 /* Copyright (C) 2016 Canonical Ltd. */
+'use strict';
 
 var module = module;
 
 (function (exports) {
-  'use strict';
 
   var jujulib = exports.jujulib;
 

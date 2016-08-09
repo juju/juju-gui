@@ -8,7 +8,7 @@ describe('jujulib charmstore', function() {
   beforeEach(function() {
     var bakery = {
       sendGetRequest: sinon.stub()
-    }
+    };
     charmstore = new window.jujulib.charmstore('local/', bakery);
   });
 
@@ -79,17 +79,17 @@ describe('jujulib charmstore', function() {
       };
       charmstore.processEntity = function (data) {
         if (data.entityType === 'charm') {
-          return "It's a charm.";
+          return 'It\'s a charm.';
         } else {
-          return "It's a bundle.";
+          return 'It\'s a bundle.';
         }
-      }
+      };
       charmstore._transformQueryResults(cb, null, data);
       var models = cb.lastCall.args[1];
-      assert.equal(models[0], "It's a charm.");
-      assert.equal(models[1], "It's a charm.");
-      assert.equal(models[2], "It's a charm.");
-      assert.equal(models[3], "It's a bundle.");
+      assert.equal(models[0], 'It\'s a charm.');
+      assert.equal(models[1], 'It\'s a charm.');
+      assert.equal(models[2], 'It\'s a charm.');
+      assert.equal(models[3], 'It\'s a bundle.');
     });
   });
 
@@ -273,7 +273,7 @@ describe('jujulib charmstore', function() {
   });
 
   describe('search', function() {
-    var generatePath, makeRequest;
+    var generatePath;
 
     beforeEach(function() {
       generatePath = sinon.stub(charmstore, '_generatePath').returns('path');

@@ -1,9 +1,9 @@
 /* Copyright (C) 2016 Canonical Ltd. */
+'use strict';
 
 var module = module;
 
 (function (exports) {
-  'use strict';
 
   var jujulib = exports.jujulib;
 
@@ -57,7 +57,7 @@ var module = module;
         'plan-url': planUrl,
         'budget': budget,
         'limit': limit
-      }
+      };
       return jujulib._makeRequest(this.bakery, url, 'POST', payload, callback);
     },
 
@@ -167,7 +167,7 @@ var module = module;
       var payload = {
         'budget': budget,
         'limit': limit
-      }
+      };
       return jujulib._makeRequest(this.bakery, url, 'POST', payload, callback);
     },
 
@@ -302,7 +302,7 @@ var module = module;
         'limit': limit,
         'default-budget': defaultBudget,
         'default-budget-limit': defaultLimit
-      }
+      };
       return jujulib._makeRequest(this.bakery, url, 'POST', payload, callback);
     },
 
