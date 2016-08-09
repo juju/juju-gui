@@ -1,9 +1,9 @@
 /* Copyright (C) 2016 Canonical Ltd. */
+'use strict';
 
 var module = module;
 
 (function (exports) {
-  'use strict';
 
   var jujulib = exports.jujulib;
 
@@ -118,13 +118,13 @@ var module = module;
           return self._formatTerm(term);
         });
         callback(null, terms);
-      }
+      };
       var url = this.url + '/agreement';
       var payload = terms.map(function(term) {
         return {
           termname: term.name,
           termrevision: term.revision
-        }
+        };
       });
       return jujulib._makeRequest(this.bakery, url, 'POST', payload, handler);
     },
@@ -158,7 +158,7 @@ var module = module;
           return self._formatTerm(term);
         });
         callback(null, terms);
-      }
+      };
       var url = this.url + '/agreements';
       return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
     }

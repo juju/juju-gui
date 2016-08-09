@@ -83,7 +83,7 @@ describe('jujulib intelligent model manager', function() {
   it('lists controllers', function(done) {
     var bakery = {
       sendGetRequest: function(path, success, failure) {
-        assert.equal(path, 'http://example.com/v2/controller')
+        assert.equal(path, 'http://example.com/v2/controller');
         var xhr = _makeXHRRequest({controllers: [{
           path: 'path',
           'provider-type': 'aws',
@@ -110,7 +110,7 @@ describe('jujulib intelligent model manager', function() {
     var err = 'bad wolf';
     var bakery = {
       sendGetRequest: function(path, success, failure) {
-        assert.equal(path, 'http://example.com/v2/controller')
+        assert.equal(path, 'http://example.com/v2/controller');
         var xhr = _makeXHRRequest({Message: err});
         failure(xhr);
       }
@@ -126,7 +126,7 @@ describe('jujulib intelligent model manager', function() {
   it('gets model data', function(done) {
     var bakery = {
       sendGetRequest: function(path, success, failure) {
-        assert.equal(path, 'http://example.com/v2/model/rose/fnord')
+        assert.equal(path, 'http://example.com/v2/model/rose/fnord');
         var xhr = _makeXHRRequest({
           path: 'path',
           user: 'usr',
@@ -161,7 +161,7 @@ describe('jujulib intelligent model manager', function() {
     var err = 'bad wolf';
     var bakery = {
       sendGetRequest: function(path, success, failure) {
-        assert.equal(path, 'http://example.com/v2/model/rose/fnord')
+        assert.equal(path, 'http://example.com/v2/model/rose/fnord');
         var xhr = _makeXHRRequest({Message: err});
         failure(xhr);
       }
@@ -282,7 +282,7 @@ describe('jujulib intelligent model manager', function() {
   it('retrieves clouds', function(done) {
     var bakery = {
       sendGetRequest: function(path, success, failure) {
-        assert.equal(path, 'http://example.com/v2/location/cloud')
+        assert.equal(path, 'http://example.com/v2/location/cloud');
         var xhr = _makeXHRRequest({Values: ['aws', 'ec2']});
         success(xhr);
       }
@@ -298,7 +298,7 @@ describe('jujulib intelligent model manager', function() {
   it('handles errors retrieving clouds', function(done) {
     var bakery = {
       sendGetRequest: function(path, success, failure) {
-        assert.equal(path, 'http://example.com/v2/location/cloud')
+        assert.equal(path, 'http://example.com/v2/location/cloud');
         var xhr = _makeXHRRequest({Message: 'bad wolf'});
         failure(xhr);
       }
@@ -314,7 +314,7 @@ describe('jujulib intelligent model manager', function() {
   it('retrieves regions for a cloud', function(done) {
     var bakery = {
       sendGetRequest: function(path, success, failure) {
-        assert.equal(path, 'http://example.com/v2/location/region?cloud=aws')
+        assert.equal(path, 'http://example.com/v2/location/region?cloud=aws');
         var xhr = _makeXHRRequest({
           Values: ['eu-east-1', 'moon-serenity-42']
         });
@@ -332,7 +332,7 @@ describe('jujulib intelligent model manager', function() {
   it('handles errors retrieving regions', function(done) {
     var bakery = {
       sendGetRequest: function(path, success, failure) {
-        assert.equal(path, 'http://example.com/v2/location/region?cloud=lxd')
+        assert.equal(path, 'http://example.com/v2/location/region?cloud=lxd');
         var xhr = _makeXHRRequest({Message: 'bad wolf'});
         failure(xhr);
       }
@@ -416,7 +416,7 @@ describe('jujulib intelligent model manager', function() {
     var err = 'bad wolf';
     var bakery = {
       sendGetRequest: function(path, success, failure, redirect) {
-        assert.equal(path, 'http://example.com/v2/template')
+        assert.equal(path, 'http://example.com/v2/template');
         var xhr = _makeXHRRequest({Message: err});
         failure(xhr);
       }
@@ -450,7 +450,7 @@ describe('jujulib intelligent model manager', function() {
     var err = 'bad wolf';
     var bakery = {
       sendPutRequest: function(path, data, success, failure, redirect) {
-        assert.equal(path, 'http://example.com/v2/template/rose/mytmpl')
+        assert.equal(path, 'http://example.com/v2/template/rose/mytmpl');
         assert.deepEqual(JSON.parse(data), {controller: 'ctl'});
         var xhr = _makeXHRRequest({Message: err});
         failure(xhr);
@@ -483,7 +483,7 @@ describe('jujulib intelligent model manager', function() {
     var err = 'bad wolf';
     var bakery = {
       sendDeleteRequest: function(path, success, failure, redirect) {
-        assert.equal(path, 'http://example.com/v2/template/rose/template')
+        assert.equal(path, 'http://example.com/v2/template/rose/template');
         var xhr = _makeXHRRequest({Message: err});
         failure(xhr);
       }

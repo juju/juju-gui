@@ -241,22 +241,22 @@ describe('jujulib plans service', function() {
 
   it('lists budgets', function(done) {
     var budgets = {
-    'budgets': [{
-      'owner': 'spinach',
-      'budget': 'my-budget',
-      'limit': 99,
-      'allocated': 77,
-      'unallocated': 22,
-      'available': 22,
-      'consumed': 55,
+      'budgets': [{
+        'owner': 'spinach',
+        'budget': 'my-budget',
+        'limit': 99,
+        'allocated': 77,
+        'unallocated': 22,
+        'available': 22,
+        'consumed': 55,
       }],
-    'total': {
-      'limit': 999,
-      'allocated': 777,
-      'unallocated': 222,
-      'consumed': 55,
-      'available': 22,
-    }};
+      'total': {
+        'limit': 999,
+        'allocated': 777,
+        'unallocated': 222,
+        'consumed': 55,
+        'available': 22,
+      }};
     var bakery = {
       sendGetRequest: function(path, success, failure) {
         assert.equal(

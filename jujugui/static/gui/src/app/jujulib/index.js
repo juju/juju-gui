@@ -1,3 +1,4 @@
+'use strict';
 /*
 Copyright (C) 2016 Canonical Ltd.
 
@@ -20,7 +21,6 @@ var module = module;
   - the Romulus terms service.
 */
 (function (exports) {
-  'use strict';
 
   /**
      Utility function for making requests via the bakery.
@@ -30,7 +30,8 @@ var module = module;
      @param path {String} The JEM endpoint to make the request from,
          e.g. '/model'
      @param method {String} The type of http method to use, e.g. GET or POST.
-     @param params {Object} Optional data object to sent with e.g. POST commands.
+     @param params {Object} Optional data object to sent with e.g. POST
+        commands.
      @param callback {Function} A callback to handle errors or accept the data
          from the request. Must accept an error message or null as its first
          parameter and the response data as its second.
