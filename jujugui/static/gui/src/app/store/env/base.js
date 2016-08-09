@@ -261,7 +261,7 @@ YUI.add('juju-env-base', function(Y) {
       if (conn) {
         this.ws = conn;
       } else {
-        this.ws = new Y.ReconnectingWebSocket(this.get('socket_url'));
+        this.ws = new jujulib.ReconnectingWebSocket(this.get('socket_url'));
       }
       this.ws.debug = this.get('debug');
       this.ws.onmessage = Y.bind(this.on_message, this);
@@ -446,7 +446,6 @@ YUI.add('juju-env-base', function(Y) {
   requires: [
     'base',
     'json-parse',
-    'json-stringify',
-    'reconnecting-websocket'
+    'json-stringify'
   ]
 });

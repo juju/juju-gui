@@ -1194,7 +1194,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       // The getBundleChanges functionality still needs to be possible when
       // deployed via charm and in sandbox mode.
       // TODO frankban: use the new external service to get bundle changes.
-      var ws = new Y.ReconnectingWebSocket(this.get('socket_url'));
+      var ws = new jujulib.ReconnectingWebSocket(this.get('socket_url'));
       ws.onopen = this._changeSetWsOnOpen.bind(this, ws, data);
       ws.onmessage = this._changeSetWsOnMessage.bind(this, ws, data, client);
       // Because it's possible (and likely) that a user will drop a charm while
@@ -1272,7 +1272,6 @@ YUI.add('juju-env-sandbox', function(Y) {
     'js-yaml',
     'json-parse',
     'juju-env-api',
-    'reconnecting-websocket',
     'timers'
   ]
 });
