@@ -1,0 +1,22 @@
+.deployment-change-item {
+    padding: 8px 20px;
+    margin-bottom: 0;
+
+    &__change,
+    &__time {
+        display: inline-block;
+    }
+
+    &__change {
+        width: 66.666%;
+    }
+
+    &__time {
+        width: 33.333%;
+    }
+
+    &__icon {
+        @extend %icon--small;
+        margin-right: 10px;
+    }
+}

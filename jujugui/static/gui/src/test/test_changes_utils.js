@@ -238,8 +238,8 @@ describe('ChangesUtils', function() {
         'generateChangeDescription');
     this._cleanups.push(stubDescription.reset);
     ecs.changeSet = { foo: { index: 0 }, bar: { index: 0 } };
-    changesUtils.generateAllChangeDescriptions(ecs.changeSet, db.services,
-        db.units);
+    changesUtils.generateAllChangeDescriptions(
+        db.services, db.units, ecs.changeSet);
     assert.equal(stubDescription.callCount(), 2);
   });
 
@@ -270,6 +270,18 @@ describe('ChangesUtils', function() {
         one: {command: {method: 'addMachine'}},
         three: {command: {method: 'addMachine'}}
       }
+    });
+  });
+
+  it('can filter the changeset by parent', function() {
+    var changeSet = {
+      one: {parents: ['parent1']},
+      two: {parents: ['parent2']},
+      three: {parents: ['parent1', 'parent2']}
+    };
+    assert.deepEqual(changesUtils.filterByParent(changeSet, 'parent1'), {
+      one: {parents: ['parent1']},
+      three: {parents: ['parent1', 'parent2']}
     });
   });
 });

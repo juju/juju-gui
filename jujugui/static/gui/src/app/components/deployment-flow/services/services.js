@@ -23,8 +23,10 @@ YUI.add('deployment-services', function() {
   juju.components.DeploymentServices = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      changes: React.PropTypes.object.isRequired,
+      changesFilterByParent: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.string,
+      generateAllChangeDescriptions: React.PropTypes.func.isRequired,
+      groupedChanges: React.PropTypes.object.isRequired,
       listPlansForCharm: React.PropTypes.func.isRequired,
       servicesGetById: React.PropTypes.func.isRequired,
       showChangelogs: React.PropTypes.bool
@@ -37,7 +39,7 @@ YUI.add('deployment-services', function() {
       @returns {Array} A list of services.
     */
     _getServices: function() {
-      var addedServices = this.props.changes['_deploy'];
+      var addedServices = this.props.groupedChanges['_deploy'];
       if (!addedServices) {
         return [];
       }
@@ -47,15 +49,46 @@ YUI.add('deployment-services', function() {
       });
     },
 
+    /**
+      Generate the list of extra info markup.
+
+      @method _generateExtraInfo
+      @returns {Array} A list of elements by service.
+    */
+    _generateExtraInfo: function() {
+      var addedServices = this.props.groupedChanges['_deploy'] || [];
+      var infos = {};
+      Object.keys(addedServices).forEach((change) => {
+        var serviceId = addedServices[change].command.options.modelId;
+        var changeId = addedServices[change].id;
+        var changes = this.props.changesFilterByParent(changeId);
+        var descriptions = this.props.generateAllChangeDescriptions(changes);
+        var items = descriptions.map(change => {
+          return (
+            <juju.components.DeploymentChangeItem
+              change={change}
+              key={change.id}
+              showTime={false} />);
+        });
+        infos[serviceId] = (
+          <ul className="deployment-services__changes">
+            {items}
+          </ul>);
+      });
+      return infos;
+    },
+
     render: function() {
       return (
         <div>
           <juju.components.BudgetTable
             acl={this.props.acl}
             allocationEditable={true}
+            extraInfo={this._generateExtraInfo()}
             listPlansForCharm={this.props.listPlansForCharm}
             plansEditable={true}
-            services={this._getServices()} />
+            services={this._getServices()}
+            showExtra={this.props.showChangelogs} />
           <div className="prepend-seven">
             Maximum monthly spend:&nbsp;
             <span className="deployment-services__max">
@@ -70,6 +103,7 @@ YUI.add('deployment-services', function() {
 
 }, '0.1.0', {
   requires: [
-    'budget-table'
+    'budget-table',
+    'deployment-change-item'
   ]
 });

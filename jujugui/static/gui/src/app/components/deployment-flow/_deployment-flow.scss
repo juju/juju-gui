@@ -53,6 +53,12 @@
             width: auto;
             color: $ubuntu-orange;
             font-size: $base;
+
+            &:focus,
+            &:active,
+            &:hover {
+                background-color: transparent;
+            }
         }
     }
 

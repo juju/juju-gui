@@ -900,7 +900,7 @@ YUI.add('juju-gui', function(Y) {
       var changesUtils = this.changesUtils;
       var currentChangeSet = ecs.getCurrentChangeSet();
       var changeDescriptions = changesUtils.generateAllChangeDescriptions(
-          currentChangeSet, services, units);
+          services, units, currentChangeSet);
       var jem = this.jem;
       var metadata = metadata || {};
       var activeComponent = metadata.activeComponent;
@@ -928,8 +928,13 @@ YUI.add('juju-gui', function(Y) {
         <window.juju.components.DeploymentFlow
           acl={this.acl}
           addTemplate={jem.addTemplate.bind(jem)}
-          changes={changesUtils.getGroupedChanges(currentChangeSet)}
+          changesFilterByParent={
+            changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
           changeState={this.changeState.bind(this)}
+          generateAllChangeDescriptions={
+            changesUtils.generateAllChangeDescriptions.bind(
+              changesUtils, services, units)}
+          groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listClouds={jem.listClouds.bind(jem)}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}

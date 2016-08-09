@@ -25,7 +25,9 @@ YUI.add('deployment-flow', function() {
       acl: React.PropTypes.object.isRequired,
       addTemplate: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
-      changes: React.PropTypes.object.isRequired,
+      changesFilterByParent: React.PropTypes.func.isRequired,
+      generateAllChangeDescriptions: React.PropTypes.func.isRequired,
+      groupedChanges: React.PropTypes.object.isRequired,
       listBudgets: React.PropTypes.func.isRequired,
       listClouds: React.PropTypes.func.isRequired,
       listPlansForCharm: React.PropTypes.func.isRequired,
@@ -190,7 +192,8 @@ YUI.add('deployment-flow', function() {
           <juju.components.GenericButton
             action={this._toggleChangelogs}
             type="base"
-            title="Show changelog" />
+            title={this.state.showChangelogs ?
+              'Hide changelog' : 'Show changelog'} />
         </span>);
     },
 
@@ -268,8 +271,11 @@ YUI.add('deployment-flow', function() {
                     title={this._generateChangelogTitle()}>
                     <juju.components.DeploymentServices
                       acl={this.props.acl}
-                      changes={this.props.changes}
+                      changesFilterByParent={this.props.changesFilterByParent}
                       cloud={cloud}
+                      generateAllChangeDescriptions={
+                        this.props.generateAllChangeDescriptions}
+                      groupedChanges={this.props.groupedChanges}
                       listPlansForCharm={this.props.listPlansForCharm}
                       servicesGetById={this.props.servicesGetById}
                       showChangelogs={this.state.showChangelogs} />

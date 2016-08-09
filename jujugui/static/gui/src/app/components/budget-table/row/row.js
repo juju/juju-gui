@@ -24,9 +24,11 @@ YUI.add('budget-table-row', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       allocationEditable: React.PropTypes.bool,
+      extraInfo: React.PropTypes.object,
       listPlansForCharm: React.PropTypes.func,
       plansEditable: React.PropTypes.bool,
-      service: React.PropTypes.object.isRequired
+      service: React.PropTypes.object.isRequired,
+      showExtra: React.PropTypes.bool
     },
 
     plansXHR: null,
@@ -250,6 +252,22 @@ YUI.add('budget-table-row', function() {
       }
     },
 
+    /**
+      Generate the extra info section.
+
+      @method _generateExtra
+      @returns {Object} The extra info markup.
+    */
+    _generateExtra: function() {
+      if (!this.props.showExtra) {
+        return;
+      }
+      return (
+        <div className="twelve-col no-margin-bottom">
+          {this.props.extraInfo}
+        </div>);
+    },
+
     render: function() {
       var plansEditable = this.props.plansEditable;
       var classes = {
@@ -279,6 +297,7 @@ YUI.add('budget-table-row', function() {
               $1
             </div>
             {this._generateEdit()}
+            {this._generateExtra()}
           </div>
           <div>
             {this._generateChangePlan()}

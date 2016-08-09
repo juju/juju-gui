@@ -25,6 +25,26 @@ YUI.add('changes-utils', function(Y) {
   var removeBrackets = /^\(?(.{0,}?)\)?$/;
 
   /**
+    Filter a changeset by a parent change.
+
+    @method filterByParent
+    @param {Object} changeSet The change set to apply the filter to.
+    @param {String} parentId The id of the parent change to filter by.
+    @returns {Object} The filtered changes.
+  */
+  ChangesUtils.filterByParent = function(changeSet, parentId) {
+    var changes = {};
+    Object.keys(changeSet).forEach((key) => {
+      var change = changeSet[key];
+      var parents = change.parents || [];
+      if (parents.indexOf(parentId) >= 0) {
+        changes[key] = change;
+      }
+    }, this);
+    return changes;
+  };
+
+  /**
     Return the counts for each type of ecs change.
 
     @method getChangeCounts
@@ -76,12 +96,12 @@ YUI.add('changes-utils', function(Y) {
     Return a list of all change descriptions.
 
     @method generateAllChangeDescriptions
-    @param {Object} changeSet The current environment change set.
     @param {Object} services The list of services from the db.
     @param {Object} units The list of units from the db.
+    @param {Object} changeSet The current environment change set.
   */
-  ChangesUtils.generateAllChangeDescriptions = function(changeSet, services,
-                                                        units) {
+  ChangesUtils.generateAllChangeDescriptions = function(services, units,
+                                                        changeSet) {
     var changes = [],
         change;
     Object.keys(changeSet).forEach(function(key) {

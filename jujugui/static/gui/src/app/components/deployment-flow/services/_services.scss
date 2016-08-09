@@ -2,4 +2,11 @@
     &__max {
         font-size: 1.4em;
     }
+
+    &__changes {
+        @extend %list-style;
+        margin: 15px 0 0 0;
+        padding-top: 7px;
+        border-top: 1px dotted $light-mid-grey;
+    }
 }

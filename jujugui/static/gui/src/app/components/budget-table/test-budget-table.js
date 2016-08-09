@@ -71,16 +71,20 @@ describe('BudgetTable', function() {
             acl={acl}
             key={0}
             allocationEditable={false}
+            extraInfo={undefined}
             listPlansForCharm={listPlansForCharm}
             plansEditable={false}
-            service={{}} />,
+            service={{}}
+            showExtra={undefined} />,
           <juju.components.BudgetTableRow
             acl={acl}
             key={1}
             allocationEditable={false}
+            extraInfo={undefined}
             listPlansForCharm={listPlansForCharm}
             plansEditable={false}
-            service={{}} />]}
+            service={{}}
+            showExtra={undefined} />]}
       </div>);
     assert.deepEqual(output, expected);
   });
@@ -121,16 +125,20 @@ describe('BudgetTable', function() {
             acl={acl}
             key={0}
             allocationEditable={false}
+            extraInfo={undefined}
             listPlansForCharm={listPlansForCharm}
             plansEditable={true}
-            service={{}} />,
+            service={{}}
+            showExtra={undefined} />,
           <juju.components.BudgetTableRow
-              acl={acl}
-              key={1}
-              allocationEditable={false}
-              listPlansForCharm={listPlansForCharm}
-              plansEditable={true}
-              service={{}} />]}
+            acl={acl}
+            key={1}
+            allocationEditable={false}
+            extraInfo={undefined}
+            listPlansForCharm={listPlansForCharm}
+            plansEditable={true}
+            service={{}}
+            showExtra={undefined} />]}
       </div>);
     assert.deepEqual(output, expected);
   });
