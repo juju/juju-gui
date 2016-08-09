@@ -1568,6 +1568,9 @@ YUI.add('juju-topology-service', function(Y) {
           stroke: '#888888',
           'stroke-width': 1.1
         })
+        .on('mousedown', function(d) {
+          self.get('component').fire('addRelationDragStart', { service: d });
+        })
         .on('click', function(d) {
           self.get('component').fire('addRelationDragStart', { service: d });
         });
