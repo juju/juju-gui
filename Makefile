@@ -125,23 +125,18 @@ $(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(BUILT_RAWJSFILES) $(MIN_JS_FILES) $(
 	bin/python scripts/generate_modules.py -n YUI_MODULES -s $(GUIBUILD)/app -o $(MODULES) -x "(-min.js)|(\/yui\/)|(javascripts\/d3\.js)"
 	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(MODULES) -o $(MODULESMIN)
 
-.PHONY: modules-js
-modules-js: $(MODULESMIN)
-
 # fast-babel is simply passed an input and output folder which dramatically
 # speeds up the build time because it doesn't need to spin up a new instance
 # for every file.
 .PHONY: fast-babel
 fast-babel: $(NODE_MODULES)
-	$(NODE_MODULES)/.bin/babel $(GUISRC)/app --out-dir $(GUIBUILD)/app \
-		--ignore /assets/javascripts/ --compact
+	FILE_LIST="$(RAWJSFILES)" ./scripts/transpile.js
 
 $(GUIBUILD)/app/%-min.js: $(GUIBUILD)/app/%.js $(NODE_MODULES)
-	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(GUIBUILD)/app/$*.js -o $@
+	FILE_LIST="$(GUISRC)/app/$*.js" ./scripts/transpile.js
 
 $(GUIBUILD)/app/%.js: $(GUISRC)/app/%.js $(NODE_MODULES)
-	mkdir -p $(@D)
-	$(NODE_MODULES)/.bin/babel $(GUISRC)/app/$*.js --out-file=$(GUIBUILD)/app/$*.js
+	FILE_LIST="$(GUISRC)/app/$*.js" ./scripts/transpile.js
 
 $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	mkdir -p $(GUIBUILD)/app/assets
