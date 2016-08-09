@@ -1003,15 +1003,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                    'service does not have the ' + cssClass + ' class');
     }
 
-    it('should fade services and relations', function(done) {
-      view.render();
-      view.topo.after('fade', function() {
-        assertClassPresent('fade');
-        done();
-      });
-      view.topo.fire('fade', {serviceNames: ['mysql']});
-    });
-
     it('should show services and relations', function(done) {
       view.render();
       view.topo.after('show', function() {

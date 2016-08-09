@@ -23,11 +23,7 @@
     }
 
     &.pending-relation {
-        stroke: #faaf40;
-
-        &.dragging {
-            stroke: #fa6a40
-        }
+        stroke: $uncommitted;
     }
 
     &.unused {
@@ -85,4 +81,15 @@
 
 .rel-indicator {
     cursor: pointer;
+}
+
+.dragline__indicator,
+.dragline__indicator-image {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.dragging ~ .dragline__indicator,
+.dragging ~ .dragline__indicator-image {
+    opacity: 1;
 }

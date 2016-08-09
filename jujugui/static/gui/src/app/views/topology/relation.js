@@ -114,7 +114,7 @@ YUI.add('juju-topology-relation', function(Y) {
           @event fade
           @param {Object} An object with a service name to hide
         */
-        fade: 'fade',
+        fade: 'hide',
         /**
           Ensure that mousemove events bubble to canvas when moving over a
           relation line/label.
@@ -523,7 +523,7 @@ YUI.add('juju-topology-relation', function(Y) {
             this.get('addRelationStart_service'));
         var s = connectors[0];
         var t = connectors[1];
-        this.dragline.attr('x1', t[0])
+        this.dragline.select('line').attr('x1', t[0])
         .attr('y1', t[1])
         .attr('x2', s[0])
         .attr('y2', s[1])
@@ -536,7 +536,7 @@ YUI.add('juju-topology-relation', function(Y) {
       this.clearRelationSettings();
 
       if (this.dragline) {
-        this.dragline.attr('class',
+        this.dragline.select('line').attr('class',
             'relation pending-relation dragline dragging');
         this.draglineOverService = false;
         this.clickAddRelation = true;
@@ -548,12 +548,34 @@ YUI.add('juju-topology-relation', function(Y) {
       // Only start a new drag line if no an active dragline. Sometimes a line
       // a relation begins while dragging which shouldnt start a new line.
       if (!this.dragline) {
+        var staticURL = this.get('component').get('staticURL') || '';
+        if (staticURL) {
+          staticURL += '/';
+        }
+        var basePath = `${staticURL}static/gui/build/app`;
         var d = evt.service;
         // Create a pending drag-line.
         var vis = this.get('component').vis;
-        var dragline = vis.insert('line',':first-child')
-                          .attr('class',
-                                'relation pending-relation dragline dragging');
+        var dragline = vis.insert('g', ':first-child')
+                          .attr('class', 'drag-relation-group');
+        dragline.insert('line')
+                .attr('class', 'relation pending-relation dragline dragging');
+        dragline.append('circle')
+          .attr('class', 'dragline__indicator')
+          .attr({
+            r: 15,
+            fill: '#ffffff',
+            stroke: '#888888',
+            'stroke-width': 1.1
+          });
+        dragline.append('image')
+          .attr('class', 'dragline__indicator-image')
+          .attr({
+            'xlink:href': `${basePath}/assets/svgs/build-relation_16.svg`,
+            width: 16,
+            height: 16,
+            transform: 'translate(-8, -8)'
+          });
         var self = this;
 
         // Start the line between the cursor and the nearest connector
@@ -563,10 +585,20 @@ YUI.add('juju-topology-relation', function(Y) {
         self.cursorBox = new views.BoundingBox();
         self.cursorBox.pos = {x: mouse[0], y: mouse[1], w: 0, h: 0};
         var point = self.cursorBox.getConnectorPair(d);
-        dragline.attr('x1', point[0][0])
+        var imagePos = (point[0][0] - 8) + ', ' + (point[0][1] - 8);
+
+        dragline.select('line')
+                .classed('dragline__line', true)
+                .attr('x1', point[0][0])
                 .attr('y1', point[0][1])
                 .attr('x2', point[1][0])
                 .attr('y2', point[1][1]);
+        dragline.select('circle')
+                .attr('cx', point[0][0])
+                .attr('cy', point[0][1]);
+        dragline.select('image')
+                .attr('transform',
+                  'translate(' + imagePos + ')');
         self.dragline = dragline;
         vis.select('.plus-service').classed('fade', true);
         // Start the add-relation process.
@@ -593,14 +625,22 @@ YUI.add('juju-topology-relation', function(Y) {
         }
         this.cursorBox.pos = {x: d3.event.x, y: d3.event.y, w: 0, h: 0};
 
+        var imagePos = (d3.event.x - 8) + ', ' + (d3.event.y - 8);
         // Draw the relation line from the connector point nearest the
         // cursor to the cursor itself.
         var connectors = this.cursorBox.getConnectorPair(d),
             s = connectors[1];
-        this.dragline.attr('x1', s[0])
+        this.dragline.select('line')
+              .attr('x1', s[0])
               .attr('y1', s[1])
               .attr('x2', d3.event.x)
               .attr('y2', d3.event.y);
+        this.dragline.select('circle')
+              .attr('cx', d3.event.x)
+              .attr('cy', d3.event.y);
+        this.dragline.select('image')
+              .attr('transform',
+                'translate(' + imagePos + ')');
       }
     },
     addRelationDragEnd: function() {
