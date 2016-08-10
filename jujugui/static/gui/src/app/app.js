@@ -506,6 +506,7 @@ YUI.add('juju-gui', function(Y) {
         fakebackend: new environments.FakeBackend({
           charmstore: this.get('charmstore')
         }),
+        isLegacyJuju: this.isLegacyJuju(),
         hideDragOverNotification: this._hideDragOverNotification.bind(this)
       });
 
