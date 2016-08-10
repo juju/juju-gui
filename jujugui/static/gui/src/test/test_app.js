@@ -444,6 +444,7 @@ describe('App', function() {
       }
       config.container = container;
       config.viewContainer = container;
+      config.jujuCoreVersion = '2.0.0';
 
       app = new Y.juju.App(config);
       return app;
@@ -853,7 +854,11 @@ describe('App', function() {
         assert.isTrue(e.data.result, true);
         done();
       };
-      var app = new Y.juju.App({ env: env, viewContainer: container });
+      var app = new Y.juju.App({
+        env: env,
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0'
+      });
       env.connect();
       this._cleanups.push(env.close.bind(env));
       app.env.userIsAuthenticated = true;
@@ -1108,7 +1113,11 @@ describe('App', function() {
 
     function constructAppInstance() {
       var noop = function() {return this;};
-      var app = new juju.App({env: env, container: container});
+      var app = new juju.App({
+        env: env,
+        container: container,
+        jujuCoreVersion: '2.0.0'
+      });
       app.showView(new Y.View());
       // Mock the database.
       app.db = {

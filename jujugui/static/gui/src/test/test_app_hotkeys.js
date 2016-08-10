@@ -49,7 +49,8 @@ describe('application hotkeys', function() {
     app = new Y.juju.App({
       env: env,
       container: container,
-      viewContainer: container
+      viewContainer: container,
+      jujuCoreVersion: '2.0.0'
     });
     app.showView(new Y.View());
     app.activateHotkeys();
