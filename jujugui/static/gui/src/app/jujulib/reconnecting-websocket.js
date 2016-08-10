@@ -139,7 +139,6 @@ var module = module;
         if (self.debug || ReconnectingWebSocket.debugAll) {
           console.debug('ReconnectingWebSocket', 'onmessage', url, event.data);
         }
-        Y.fire('websocketReceive', event.data);
         self.onmessage(event);
       };
       ws.onerror = function(event) {
@@ -170,7 +169,6 @@ var module = module;
         if (self.debug || ReconnectingWebSocket.debugAll) {
           console.debug('ReconnectingWebSocket', 'send', url, data);
         }
-        Y.fire('websocketSend', data);
         return ws.send(data);
       } else {
         throw 'INVALID_STATE_ERR : Pausing to reconnect websocket';

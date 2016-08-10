@@ -356,10 +356,6 @@ YUI.add('juju-gui', function(Y) {
         }
       }
 
-      if (window.flags && window.flags.websocket_capture) {
-        this.websocketLogging = new Y.juju.WebsocketLogging();
-      }
-
       /**
 
         Reference to the juju.Cookies instance.
@@ -2606,7 +2602,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-landscape',
     // end juju-views group
     'autodeploy-extension',
-    'juju-websocket-logging',
     'io',
     'json-parse',
     'app-base',
