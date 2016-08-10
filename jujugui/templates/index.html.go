@@ -347,7 +347,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <script data-manual src="{{.comboURL}}?app/assets/javascripts/react-with-addons.min.js&app/assets/javascripts/react-dom.min.js&app/assets/javascripts/classnames-min.js&app/assets/javascripts/clipboard.min.js&app/assets/javascripts/react-click-outside.js&app/assets/javascripts/ReactDnD.min.js&app/assets/javascripts/ReactDnDHTML5Backend.min.js&app/assets/javascripts/marked.min.js&app/assets/javascripts/prism.min.js&app/assets/javascripts/prism-languages-min.js"></script>
     <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui-min.js&app/assets/javascripts/yui/loader/loader-min.js&app/assets/javascripts/d3-min.js"></script>
     <script src="{{.comboURL}}?modules-min.js"></script>
-    <script src="{{.comboURL}}?app/store/env/bakery-min.js&app/jujulib/index-min.js&app/jujulib/charmstore-min.js&app/jujulib/jimm-min.js&app/jujulib/plans-min.js&app/jujulib/terms-min.js"></script>
+    <script src="{{.comboURL}}?app/store/env/bakery-min.js&app/jujulib/index-min.js&app/jujulib/charmstore-min.js&app/jujulib/jimm-min.js&app/jujulib/plans-min.js&app/jujulib/terms-min.js&app/jujulib/reconnecting-websocket-min.js"></script>
     {{end}}
 
     <script>
