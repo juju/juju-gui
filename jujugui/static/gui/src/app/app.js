@@ -936,6 +936,7 @@ YUI.add('juju-gui', function(Y) {
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
           listRegions={jem.listRegions.bind(jem)}
           listTemplates={jem.listTemplates.bind(jem)}
+          modelCommitted={this.env.get('connected')}
           servicesGetById={services.getById.bind(services)}
           user={this._getAuth()}
           users={users} />,

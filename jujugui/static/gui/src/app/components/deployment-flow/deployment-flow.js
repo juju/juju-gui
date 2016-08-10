@@ -33,6 +33,7 @@ YUI.add('deployment-flow', function() {
       listPlansForCharm: React.PropTypes.func.isRequired,
       listRegions: React.PropTypes.func.isRequired,
       listTemplates: React.PropTypes.func.isRequired,
+      modelCommitted: React.PropTypes.bool,
       servicesGetById: React.PropTypes.func.isRequired,
       user: React.PropTypes.object,
       users: React.PropTypes.object.isRequired
@@ -78,6 +79,63 @@ YUI.add('deployment-flow', function() {
         template: null,
         region: null,
         showChangelogs: false
+      };
+    },
+
+    /**
+      Use the props and state to figure out if a section should be visible,
+      disabled or completed.
+
+      @method _getSectionStatus
+      @param {String} section The name of the section you want data for.
+      @returns {Object} The object with completed, disabled and visible params.
+    */
+    _getSectionStatus: function(section) {
+      var completed;
+      var disabled;
+      var visible;
+      var hasCloud = !!this.state.cloud;
+      var hasCredential = !!this.state.credential;
+      var mode = this.props.modelCommitted ? 'commit' : 'deploy';
+      // XXX: Need to find a way to check if any newly added applications have
+      // plans.
+      var includesPlans = true;
+      switch (section) {
+        case 'cloud':
+          completed = hasCloud && hasCredential;
+          disabled = false;
+          visible = true;
+          break;
+        case 'credential':
+          completed = false;
+          disabled = !hasCloud;
+          visible = true;
+          break;
+        case 'machines':
+          completed = false;
+          disabled = !hasCloud || !hasCredential;
+          visible = true;
+          break;
+        case 'services':
+          completed = false;
+          disabled = !hasCloud || !hasCredential;
+          visible = true;
+          break;
+        case 'budget':
+          completed = false;
+          disabled = !hasCloud || !hasCredential;
+          visible = includesPlans;
+          break;
+        case 'agreements':
+          completed = false;
+          disabled = false;
+          visible = mode === 'deploy';
+          break;
+      }
+      return {
+        completed: completed,
+        disabled: disabled,
+        visible: visible
       };
     },
 
@@ -197,9 +255,197 @@ YUI.add('deployment-flow', function() {
         </span>);
     },
 
-    render: function() {
+    /**
+      Generate the cloud section.
+
+      @method _generateCloudSection
+      @returns {Object} The markup.
+    */
+    _generateCloudSection: function() {
+      var status = this._getSectionStatus('cloud');
+      if (!status.visible) {
+        return;
+      }
+      var cloud = this.state.cloud;
+      return (
+        <juju.components.DeploymentSection
+          buttons={this._generateCloudAction()}
+          completed={status.completed}
+          disabled={status.disabled}
+          instance="deployment-cloud"
+          showCheck={true}
+          title={
+            cloud ? 'Chosen cloud' : 'Choose cloud to deploy to'}>
+          <juju.components.DeploymentCloud
+            acl={this.props.acl}
+            cloud={cloud}
+            clouds={this.CLOUDS}
+            listClouds={this.props.listClouds}
+            setCloud={this._setCloud} />
+        </juju.components.DeploymentSection>);
+    },
+
+    /**
+      Generate the credentials section.
+
+      @method _generateCredentialSection
+      @returns {Object} The markup.
+    */
+    _generateCredentialSection: function() {
+      var status = this._getSectionStatus('credential');
+      if (!status.visible) {
+        return;
+      }
       var cloud = this.state.cloud;
       var credential = this.state.credential;
+      return (
+        <juju.components.DeploymentSection
+          completed={status.completed}
+          disabled={status.disabled}
+          instance="deployment-credential"
+          showCheck={false}>
+          <juju.components.DeploymentCredential
+            acl={this.props.acl}
+            addTemplate={this.props.addTemplate}
+            credential={credential}
+            cloud={cloud}
+            clouds={this.CLOUDS}
+            listRegions={this.props.listRegions}
+            listTemplates={this.props.listTemplates}
+            region={this.state.region}
+            setCredential={this._setCredential}
+            setRegion={this._setRegion}
+            setTemplate={this._setTemplate}
+            template={this.state.template}
+            users={this.props.users}
+            validateForm={this._validateForm} />
+        </juju.components.DeploymentSection>);
+    },
+
+    /**
+      Generate the machines section.
+
+      @method _generateMachinesSection
+      @returns {Object} The markup.
+    */
+    _generateMachinesSection: function() {
+      var status = this._getSectionStatus('machines');
+      if (!status.visible) {
+        return;
+      }
+      var cloud = this.state.cloud;
+      return (
+        <juju.components.DeploymentSection
+          completed={status.completed}
+          disabled={status.disabled}
+          instance="deployment-machines"
+          showCheck={false}
+          title="Machines to be deployed">
+          <juju.components.DeploymentMachines
+            acl={this.props.acl}
+            cloud={cloud && this.CLOUDS[cloud]} />
+        </juju.components.DeploymentSection>);
+    },
+
+    /**
+      Generate the services section.
+
+      @method _generateServicesSection
+      @returns {Object} The markup.
+    */
+    _generateServicesSection: function() {
+      var status = this._getSectionStatus('services');
+      if (!status.visible) {
+        return;
+      }
+      var cloud = this.state.cloud;
+      return (
+        <juju.components.DeploymentSection
+          completed={status.completed}
+          disabled={status.disabled}
+          instance="deployment-services"
+          showCheck={true}
+          title={this._generateChangelogTitle()}>
+          <juju.components.DeploymentServices
+            acl={this.props.acl}
+            changesFilterByParent={this.props.changesFilterByParent}
+            cloud={cloud}
+            generateAllChangeDescriptions={
+              this.props.generateAllChangeDescriptions}
+            groupedChanges={this.props.groupedChanges}
+            listPlansForCharm={this.props.listPlansForCharm}
+            servicesGetById={this.props.servicesGetById}
+            showChangelogs={this.state.showChangelogs} />
+        </juju.components.DeploymentSection>);
+    },
+
+    /**
+      Generate the budget section.
+
+      @method _generateBudgetSection
+      @returns {Object} The markup.
+    */
+    _generateBudgetSection: function() {
+      var status = this._getSectionStatus('budget');
+      if (!status.visible) {
+        return;
+      }
+      return (
+        <juju.components.DeploymentSection
+          completed={status.completed}
+          disabled={status.disabled}
+          instance="deployment-budget"
+          showCheck={true}
+          title="Confirm budget">
+          <juju.components.DeploymentBudget
+            acl={this.props.acl}
+            listBudgets={this.props.listBudgets}
+            user={this.props.user} />
+        </juju.components.DeploymentSection>);
+    },
+
+    /**
+      Generate the agreements section.
+
+      @method _generateAgreementsSection
+      @returns {Object} The markup.
+    */
+    _generateAgreementsSection: function() {
+      var status = this._getSectionStatus('agreements');
+      if (!status.visible) {
+        return;
+      }
+      var disabled = this.props.acl.isReadOnly();
+      return (
+        <div>
+          <div className="deployment-flow__deploy-option">
+            <input className="deployment-flow__deploy-checkbox"
+              disabled={disabled}
+              id="emails"
+              type="checkbox" />
+            <label className="deployment-flow__deploy-label"
+              htmlFor="emails">
+              Please email me updates regarding feature
+              announcements, performance suggestions, feedback
+              surveys and special offers.
+            </label>
+          </div>
+          <div className="deployment-flow__deploy-option">
+            <input className="deployment-flow__deploy-checkbox"
+              disabled={disabled}
+              id="terms"
+              type="checkbox" />
+            <label className="deployment-flow__deploy-label"
+              htmlFor="terms">
+              I agree that my use of any services and related APIs
+              is subject to my compliance with the applicable&nbsp;
+              <a href="" target="_blank">Terms of service</a>.
+            </label>
+          </div>
+        </div>);
+    },
+
+    render: function() {
       var disabled = this.props.acl.isReadOnly();
       return (
         <juju.components.Panel
@@ -217,110 +463,18 @@ YUI.add('deployment-flow', function() {
             <div className="deployment-flow__content">
               <div className="twelve-col">
                 <div className="inner-wrapper">
-                  <juju.components.DeploymentSection
-                    buttons={this._generateCloudAction()}
-                    completed={!!cloud && !!credential}
-                    disabled={false}
-                    instance="deployment-cloud"
-                    showCheck={true}
-                    title={
-                      cloud ? 'Chosen cloud' : 'Choose cloud to deploy to'}>
-                    <juju.components.DeploymentCloud
-                      acl={this.props.acl}
-                      cloud={cloud}
-                      clouds={this.CLOUDS}
-                      listClouds={this.props.listClouds}
-                      setCloud={this._setCloud} />
-                  </juju.components.DeploymentSection>
-                  <juju.components.DeploymentSection
-                    completed={false}
-                    disabled={!cloud}
-                    instance="deployment-credential"
-                    showCheck={false}>
-                    <juju.components.DeploymentCredential
-                      acl={this.props.acl}
-                      addTemplate={this.props.addTemplate}
-                      credential={credential}
-                      cloud={cloud}
-                      clouds={this.CLOUDS}
-                      listRegions={this.props.listRegions}
-                      listTemplates={this.props.listTemplates}
-                      region={this.state.region}
-                      setCredential={this._setCredential}
-                      setRegion={this._setRegion}
-                      setTemplate={this._setTemplate}
-                      template={this.state.template}
-                      users={this.props.users}
-                      validateForm={this._validateForm} />
-                  </juju.components.DeploymentSection>
-                  <juju.components.DeploymentSection
-                    completed={false}
-                    disabled={!cloud || !credential}
-                    instance="deployment-machines"
-                    showCheck={false}
-                    title="Machines to be deployed">
-                    <juju.components.DeploymentMachines
-                      acl={this.props.acl}
-                      cloud={cloud && this.CLOUDS[cloud]} />
-                  </juju.components.DeploymentSection>
-                  <juju.components.DeploymentSection
-                    completed={false}
-                    disabled={!cloud || !credential}
-                    instance="deployment-services"
-                    showCheck={true}
-                    title={this._generateChangelogTitle()}>
-                    <juju.components.DeploymentServices
-                      acl={this.props.acl}
-                      changesFilterByParent={this.props.changesFilterByParent}
-                      cloud={cloud}
-                      generateAllChangeDescriptions={
-                        this.props.generateAllChangeDescriptions}
-                      groupedChanges={this.props.groupedChanges}
-                      listPlansForCharm={this.props.listPlansForCharm}
-                      servicesGetById={this.props.servicesGetById}
-                      showChangelogs={this.state.showChangelogs} />
-                  </juju.components.DeploymentSection>
-                  <juju.components.DeploymentSection
-                    completed={false}
-                    disabled={!cloud || !credential}
-                    instance="deployment-budget"
-                    showCheck={true}
-                    title="Confirm budget">
-                    <juju.components.DeploymentBudget
-                      acl={this.props.acl}
-                      listBudgets={this.props.listBudgets}
-                      user={this.props.user} />
-                  </juju.components.DeploymentSection>
+                  {this._generateCloudSection()}
+                  {this._generateCredentialSection()}
+                  {this._generateMachinesSection()}
+                  {this._generateServicesSection()}
+                  {this._generateBudgetSection()}
                   <div className="twelve-col">
                     <div className="deployment-flow__deploy">
-                      <div className="deployment-flow__deploy-option">
-                        <input className="deployment-flow__deploy-checkbox"
-                          disabled={disabled || !cloud}
-                          id="emails"
-                          type="checkbox" />
-                        <label className="deployment-flow__deploy-label"
-                          htmlFor="emails">
-                          Please email me updates regarding feature
-                          announcements, performance suggestions, feedback
-                          surveys and special offers.
-                        </label>
-                      </div>
-                      <div className="deployment-flow__deploy-option">
-                        <input className="deployment-flow__deploy-checkbox"
-                          disabled={disabled || !cloud}
-                          id="terms"
-                          type="checkbox" />
-                        <label className="deployment-flow__deploy-label"
-                          htmlFor="terms">
-                          I agree that my use of any services and related APIs
-                          is subject to my compliance with the applicable&nbsp;
-                          <a href="" target="_blank">Terms of service</a>.
-                        </label>
-                      </div>
+                      {this._generateAgreementsSection()}
                       <div className="deployment-flow__deploy-action">
                         <juju.components.GenericButton
                           action={undefined}
-                          disabled={disabled || !cloud}
+                          disabled={disabled || !this.state.cloud}
                           type="positive"
                           title="Deploy" />
                       </div>

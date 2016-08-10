@@ -164,29 +164,31 @@ describe('DeploymentFlow', function() {
                 </juju.components.DeploymentSection>
                 <div className="twelve-col">
                   <div className="deployment-flow__deploy">
-                    <div className="deployment-flow__deploy-option">
-                      <input className="deployment-flow__deploy-checkbox"
-                        disabled={true}
-                        id="emails"
-                        type="checkbox" />
-                      <label className="deployment-flow__deploy-label"
-                        htmlFor="emails">
-                        Please email me updates regarding feature
-                        announcements, performance suggestions, feedback
-                        surveys and special offers.
-                      </label>
-                    </div>
-                    <div className="deployment-flow__deploy-option">
-                      <input className="deployment-flow__deploy-checkbox"
-                        disabled={true}
-                        id="terms"
-                        type="checkbox" />
-                      <label className="deployment-flow__deploy-label"
-                        htmlFor="terms">
-                        I agree that my use of any services and related APIs
-                        is subject to my compliance with the applicable&nbsp;
-                        <a href="" target="_blank">Terms of service</a>.
-                      </label>
+                    <div>
+                      <div className="deployment-flow__deploy-option">
+                        <input className="deployment-flow__deploy-checkbox"
+                          disabled={false}
+                          id="emails"
+                          type="checkbox" />
+                        <label className="deployment-flow__deploy-label"
+                          htmlFor="emails">
+                          Please email me updates regarding feature
+                          announcements, performance suggestions, feedback
+                          surveys and special offers.
+                        </label>
+                      </div>
+                      <div className="deployment-flow__deploy-option">
+                        <input className="deployment-flow__deploy-checkbox"
+                          disabled={false}
+                          id="terms"
+                          type="checkbox" />
+                        <label className="deployment-flow__deploy-label"
+                          htmlFor="terms">
+                          I agree that my use of any services and related APIs
+                          is subject to my compliance with the applicable&nbsp;
+                          <a href="" target="_blank">Terms of service</a>.
+                        </label>
+                      </div>
                     </div>
                     <div className="deployment-flow__deploy-action">
                       <juju.components.GenericButton
@@ -234,5 +236,161 @@ describe('DeploymentFlow', function() {
         metadata: {}
       }
     });
+  });
+
+  it('can display the cloud section as complete', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        addTemplate={sinon.stub()}
+        changeState={sinon.stub()}
+        changes={{}}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        listRegions={sinon.stub()}
+        listTemplates={sinon.stub()}
+        servicesGetById={sinon.stub()}
+        user={{}}
+        users={{}}>
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    instance._setCloud('cloud');
+    instance._setCredential('cred');
+    var output = renderer.getRenderOutput();
+    var sections = output.props.children.props.children[1].props.children
+      .props.children.props.children;
+    assert.isTrue(sections[0].props.completed);
+  });
+
+  it('can enable the credential section', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        addTemplate={sinon.stub()}
+        changeState={sinon.stub()}
+        changes={{}}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        listRegions={sinon.stub()}
+        listTemplates={sinon.stub()}
+        servicesGetById={sinon.stub()}
+        user={{}}
+        users={{}}>
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    instance._setCloud('cloud');
+    var output = renderer.getRenderOutput();
+    var sections = output.props.children.props.children[1].props.children
+      .props.children.props.children;
+    assert.isFalse(sections[1].props.disabled);
+  });
+
+  it('can enable the machines section', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        addTemplate={sinon.stub()}
+        changeState={sinon.stub()}
+        changes={{}}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        listRegions={sinon.stub()}
+        listTemplates={sinon.stub()}
+        servicesGetById={sinon.stub()}
+        user={{}}
+        users={{}}>
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    instance._setCloud('cloud');
+    instance._setCredential('cred');
+    var output = renderer.getRenderOutput();
+    var sections = output.props.children.props.children[1].props.children
+      .props.children.props.children;
+    assert.isFalse(sections[2].props.disabled);
+  });
+
+  it('can enable the services section', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        addTemplate={sinon.stub()}
+        changeState={sinon.stub()}
+        changes={{}}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        listRegions={sinon.stub()}
+        listTemplates={sinon.stub()}
+        servicesGetById={sinon.stub()}
+        user={{}}
+        users={{}}>
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    instance._setCloud('cloud');
+    instance._setCredential('cred');
+    var output = renderer.getRenderOutput();
+    var sections = output.props.children.props.children[1].props.children
+      .props.children.props.children;
+    assert.isFalse(sections[3].props.disabled);
+  });
+
+  it('can enable the budget section', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        addTemplate={sinon.stub()}
+        changeState={sinon.stub()}
+        changes={{}}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        listRegions={sinon.stub()}
+        listTemplates={sinon.stub()}
+        servicesGetById={sinon.stub()}
+        user={{}}
+        users={{}}>
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    instance._setCloud('cloud');
+    instance._setCredential('cred');
+    var output = renderer.getRenderOutput();
+    var sections = output.props.children.props.children[1].props.children
+      .props.children.props.children;
+    assert.isFalse(sections[4].props.disabled);
+  });
+
+  it('can hide the agreements section', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        addTemplate={sinon.stub()}
+        changeState={sinon.stub()}
+        changes={{}}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        listRegions={sinon.stub()}
+        listTemplates={sinon.stub()}
+        modelCommitted={true}
+        servicesGetById={sinon.stub()}
+        user={{}}
+        users={{}}>
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    instance._setCloud('cloud');
+    instance._setCredential('cred');
+    var output = renderer.getRenderOutput();
+    var sections = output.props.children.props.children[1].props.children
+      .props.children.props.children;
+    assert.isUndefined(sections[5].props.children.props.children[0]);
   });
 });
