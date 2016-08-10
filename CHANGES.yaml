@@ -1,3 +1,32 @@
+- 2.1.9:
+
+    - Fix login with USSO.
+    - Inspector relations: do not fail when the app has peer relations.
+    - New deployment flow HTML/CSS.
+    - Fail gracefully when plans are not fetched.
+    - Add credentials component.
+    - Choose cloud component.
+    - Add Charmstore v5 and multi-series support.
+    - Fix bundle deployment in the charm store v5 world.
+    - Use real credentials in the deployment flow.
+    - Split AgreementList out from UserProfile.
+    - Display real plans in the deployment flowOnly show the promulgated charms if they exist.
+    - Updated the applications/machines switcher.
+    - Remove hardcoded URLs from store page and use changeState to display details.
+    - Get the list of clouds for the deployment flow.
+    - Fix build relation when relation exists between different applications.
+    - Update node deps inc React 15.3.
+    - Enable the new flow when using the blues flag.
+    - Create a util for deploying or committing to models.
+    - Update juju logo.
+    - Remove old blues deployment flowFade a unrelatable service instead of hiding it.
+    - Replace PhantomJS with XVFB run Chromium browserSet the credential on load if there is one.
+    - Display changelogs on services.
+    - Add mousedown drag to build a relation.
+    - Use babel to minify instead of Uglify.
+    - Move jujulib into the root tree.
+    - Remove the WebSocket logger.
+
 - 2.1.8:
     - Add support for Juju 2 API.
     - Various UI fixes.
