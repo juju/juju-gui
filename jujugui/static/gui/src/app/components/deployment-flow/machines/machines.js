@@ -72,7 +72,7 @@ YUI.add('deployment-machines', function() {
 
     render: function() {
       var chargeMessage;
-      if (this.props.cloud.id !== 'local') {
+      if (this.props.cloud && this.props.cloud.id !== 'local') {
         chargeMessage = 'You will incur a charge from your cloud provider.';
       }
       return (

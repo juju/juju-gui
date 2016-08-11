@@ -264,6 +264,79 @@ describe('DeploymentFlow', function() {
     assert.isTrue(sections[0].props.completed);
   });
 
+  it('correctly sets the cloud title if no cloud is chosen', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        addTemplate={sinon.stub()}
+        changeState={sinon.stub()}
+        changes={{}}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        listRegions={sinon.stub()}
+        listTemplates={sinon.stub()}
+        servicesGetById={sinon.stub()}
+        user={{}}
+        users={{}}>
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var output = renderer.getRenderOutput();
+    var sections = output.props.children.props.children[1].props.children
+      .props.children.props.children;
+    assert.equal(sections[0].props.title, 'Choose cloud to deploy to');
+  });
+
+  it('correctly sets the cloud title if a public cloud is chosen', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        addTemplate={sinon.stub()}
+        changeState={sinon.stub()}
+        changes={{}}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        listRegions={sinon.stub()}
+        listTemplates={sinon.stub()}
+        servicesGetById={sinon.stub()}
+        user={{}}
+        users={{}}>
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    instance._setCloud('azure');
+    var output = renderer.getRenderOutput();
+    var sections = output.props.children.props.children[1].props.children
+      .props.children.props.children;
+    assert.equal(sections[0].props.title, 'Public cloud');
+  });
+
+  it('correctly sets the cloud title if local is chosen', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        addTemplate={sinon.stub()}
+        changeState={sinon.stub()}
+        changes={{}}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        listRegions={sinon.stub()}
+        listTemplates={sinon.stub()}
+        servicesGetById={sinon.stub()}
+        user={{}}
+        users={{}}>
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    instance._setCloud('local');
+    var output = renderer.getRenderOutput();
+    var sections = output.props.children.props.children[1].props.children
+      .props.children.props.children;
+    assert.equal(sections[0].props.title, 'Local cloud');
+  });
+
   it('can enable the credential section', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentFlow

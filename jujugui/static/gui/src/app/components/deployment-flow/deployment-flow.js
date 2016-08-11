@@ -256,6 +256,23 @@ YUI.add('deployment-flow', function() {
     },
 
     /**
+      Generate the appropriate cloud title based on the state.
+
+      @method _generateCloudTitle
+      @returns {String} The cloud title.
+    */
+    _generateCloudTitle: function() {
+      var cloud = this.state.cloud;
+      if (!cloud) {
+        return 'Choose cloud to deploy to';
+      } else if (cloud === 'local') {
+        return 'Local cloud';
+      } else {
+        return 'Public cloud';
+      }
+    },
+
+    /**
       Generate the cloud section.
 
       @method _generateCloudSection
@@ -274,8 +291,7 @@ YUI.add('deployment-flow', function() {
           disabled={status.disabled}
           instance="deployment-cloud"
           showCheck={true}
-          title={
-            cloud ? 'Chosen cloud' : 'Choose cloud to deploy to'}>
+          title={this._generateCloudTitle()}>
           <juju.components.DeploymentCloud
             acl={this.props.acl}
             cloud={cloud}
