@@ -100,7 +100,7 @@ describe('DeploymentMachines', function() {
         <p className="deployment-machines__message">
           These machines will be provisioned on&nbsp;
           {'Local'}.
-          {undefined}
+          {''}
         </p>
         <ul className="deployment-machines__list">
           <li className="deployment-flow__row-header twelve-col">

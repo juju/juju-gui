@@ -222,9 +222,9 @@ YUI.add('deployment-flow', function() {
     /**
       Handle clearing the chosen cloud.
 
-      @method _changeCloud
+      @method _clearCloud
     */
-    _changeCloud: function() {
+    _clearCloud: function() {
       this._setCloud(null);
       // Also reset the chose credential.
       this._setCredential(null);
@@ -241,7 +241,7 @@ YUI.add('deployment-flow', function() {
         return;
       }
       return [{
-        action: this._changeCloud,
+        action: this._clearCloud,
         disabled: this.props.acl.isReadOnly(),
         title: 'Change cloud',
         type: 'neutral'
