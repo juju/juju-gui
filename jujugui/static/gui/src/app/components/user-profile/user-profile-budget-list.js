@@ -18,11 +18,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('agreement-list', function() {
+YUI.add('user-profile-budget-list', function() {
 
-  juju.components.AgreementList = React.createClass({
+  juju.components.UserProfileBudgetList = React.createClass({
     propTypes: {
-      getAgreements: React.PropTypes.func.isRequired,
+      listBudgets: React.PropTypes.func.isRequired,
       user: React.PropTypes.object,
     },
 
@@ -30,13 +30,13 @@ YUI.add('agreement-list', function() {
       this.xhrs = [];
 
       return {
-        agreementList: [],
-        loadingAgreements: false,
+        budgetList: [],
+        loadingBudgets: false,
       };
     },
 
     componentWillMount: function() {
-      this._getAgreements();
+      this._getBudgets();
     },
 
     componentWillUnmount: function() {
@@ -48,62 +48,75 @@ YUI.add('agreement-list', function() {
     componentWillReceiveProps: function(nextProps) {
       // If the user has changed then update the data.
       var props = this.props;
-      if (nextProps.user.user !== props.user.user) {
-        this._getAgreements();
+      var currentUser = props.user && props.user.user;
+      var nextUser = nextProps.user && nextProps.user.user;
+      if (nextUser !== currentUser) {
+        this._getBudgets();
       }
     },
 
     /**
-      Get the agreements for the authenticated user.
+      Get the budgets for the authenticated user.
 
-      @method _getAgreements
+      @method _getBudgets
     */
-    _getAgreements: function() {
+    _getBudgets: function() {
       // Delay the call until after the state change to prevent race
       // conditions.
-      this.setState({loadingAgreements: true}, () => {
-        var xhr = this.props.getAgreements(this._getAgreementsCallback);
+      this.setState({loadingBudgets: true}, () => {
+        var xhr = this.props.listBudgets(this._getBudgetsCallback);
         this.xhrs.push(xhr);
       });
     },
 
     /**
-      Callback for the terms API call to get agreements.
+      Callback for the plans API call to get budgets.
 
-      @method _getAgreementsCallback
+      @method _getBudgetsCallback
       @param {String} error The error from the request, or null.
       @param {Object} data The data from the request.
     */
-    _getAgreementsCallback: function(error, data) {
-      this.setState({loadingAgreements: false});
-      if (error) {
-        // TODO frankban: notify the user with the error.
-        console.error('cannot retrieve terms:', error);
-        return;
-      }
-      this.setState({agreementList: data});
+    _getBudgetsCallback: function(error, data) {
+      this.setState({loadingBudgets: false}, () => {
+        if (error) {
+          if (error.indexOf('not found') === -1) {
+            // A "profile not found" error is expected, and it means the user
+            // does not have a credit limit yet. Notify any other errors.
+            // TODO huwshimi: notify the user with the error.
+            console.error('cannot retrieve budgets:', error);
+          }
+          return;
+        }
+        this.setState({budgetList: data.budgets});
+      });
     },
 
     /**
-      Generate the details for the provided agreement.
+      Generate the details for the provided budget.
 
       @method _generateRow
-      @param {Object} agreement A agreement object.
+      @param {Object} budget A budget object.
       @returns {Array} The markup for the row.
     */
-    _generateRow: function(agreement) {
-      var term = agreement.term;
+    _generateRow: function(budget) {
       return (
         <li className="user-profile__list-row twelve-col"
-          key={term + agreement.revision}>
-          <span className="user-profile__list-col eight-col">
-            {term}
-          </span>
-          <span className="user-profile__list-col four-col last-col">
-            <juju.components.DateDisplay
-              date={agreement.createdAt}
-              relative={true} />
-          </span>
+          key={budget.budget}>
+            <span className="user-profile__list-col three-col">
+              {budget.budget}
+            </span>
+            <span className="user-profile__list-col two-col">
+              ${budget.allocated}
+            </span>
+            <span className="user-profile__list-col two-col">
+              ${budget.limit}
+            </span>
+            <span className="user-profile__list-col four-col">
+              ${budget.available}
+            </span>
+            <span className="user-profile__list-col one-col last-col">
+              ${budget.consumed}
+            </span>
         </li>);
     },
 
@@ -116,32 +129,41 @@ YUI.add('agreement-list', function() {
     _generateHeader: function() {
       return (
         <li className="user-profile__list-header twelve-col">
-          <span className="user-profile__list-col eight-col">
+          <span className="user-profile__list-col three-col">
             Name
           </span>
-          <span className="user-profile__list-col four-col last-col">
-            Date signed
+          <span className="user-profile__list-col two-col">
+            Budget
+          </span>
+          <span className="user-profile__list-col two-col">
+            Limit
+          </span>
+          <span className="user-profile__list-col four-col">
+            Credit
+          </span>
+          <span className="user-profile__list-col one-col last-col">
+            Spend
           </span>
         </li>);
     },
 
     render: function() {
-      if (this.state.loadingAgreements) {
+      if (this.state.loadingBudgets) {
         return (
-          <div className="user-profile__agreement-list twelve-col">
+          <div className="user-profile__budget-list twelve-col">
             <juju.components.Spinner />
           </div>
         );
       }
-      var list = this.state.agreementList;
+      var list = this.state.budgetList;
       if (!list || list.length === 0) {
         return null;
       }
       var rows = list.map(this._generateRow);
       return (
-        <div className="user-profile__agreement-list">
+        <div className="user-profile__budget-list">
           <div className="user-profile__header twelve-col no-margin-bottom">
-            Terms &amp; conditions
+            Budgets
             <span className="user-profile__size">
               ({list.length})
             </span>
@@ -158,7 +180,6 @@ YUI.add('agreement-list', function() {
 
 }, '', {
   requires: [
-    'date-display',
     'loading-spinner'
   ]
 });

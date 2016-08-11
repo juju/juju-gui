@@ -21,8 +21,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('user-profile', function() {
 
   juju.components.UserProfile = React.createClass({
-    xhrs: [],
-
     propTypes: {
       addNotification: React.PropTypes.func.isRequired,
       canCreateNew: React.PropTypes.bool.isRequired,
@@ -44,252 +42,6 @@ YUI.add('user-profile', function() {
       switchModel: React.PropTypes.func.isRequired,
       user: React.PropTypes.object,
       users: React.PropTypes.object.isRequired
-    },
-
-    getInitialState: function() {
-      return {
-        budgetList: [],
-        envList: [],
-        charmList: [],
-        bundleList: [],
-        loadingBudgets: false,
-        loadingBundles: false,
-        loadingCharms: false,
-        loadingModels: false,
-        createNewModelActive: false
-      };
-    },
-
-    componentWillMount: function() {
-      var props = this.props,
-          users = props.users;
-      this._getBudgets();
-      this._fetchEnvironments();
-      if (users.charmstore && users.charmstore.user) {
-        this._fetchEntities('charm', props);
-        this._fetchEntities('bundle', props);
-      }
-    },
-
-    componentWillUnmount: function() {
-      this.xhrs.forEach((xhr) => {
-        xhr && xhr.abort && xhr.abort();
-      });
-    },
-
-    componentWillReceiveProps: function(nextProps) {
-      // If the user has changed then update the data.
-      var props = this.props;
-      if (nextProps.user.user !== props.user.user) {
-        this._getBudgets();
-        this._fetchEnvironments();
-      }
-      // Compare next and previous charmstore users in a data-safe manner.
-      var prevCSUser = props.users.charmstore || {};
-      var nextCSUser = nextProps.users.charmstore || {};
-      if (nextCSUser.user !== prevCSUser.user) {
-        this._fetchEntities('charm', nextProps);
-        this._fetchEntities('bundle', nextProps);
-      }
-    },
-
-    /**
-      Get the budgets for the authenticated user.
-
-      @method _getBudgets
-    */
-    _getBudgets: function() {
-      // Delay the call until after the state change to prevent race
-      // conditions.
-      this.setState({loadingBudgets: true}, () => {
-        var xhr = this.props.listBudgets(this._listBudgetsCallback);
-        this.xhrs.push(xhr);
-      });
-    },
-
-    /**
-      Callback for the plans API call to get budgets.
-
-      @method _listBudgetsCallback
-      @param {String} error The error from the request, or null.
-      @param {Object} data The data from the request.
-    */
-    _listBudgetsCallback: function(error, data) {
-      this.setState({loadingBudgets: false});
-      if (error) {
-        if (error.indexOf('not found') === -1) {
-          // A "profile not found" error is expected, and it means the user
-          // does not have a credit limit yet. Notify any other errors.
-          // TODO huwshimi: notify the user with the error.
-          console.error('cannot retrieve budgets:', error);
-        }
-        return;
-      }
-      this.setState({budgetList: data.budgets});
-    },
-
-    /**
-      Makes a request of JEM or JES to fetch the users availble environments.
-
-      @method _fetchEnvironments
-    */
-    _fetchEnvironments: function() {
-      // Delay the call until after the state change to prevent race
-      // conditions.
-      this.setState({loadingModels: true}, () => {
-        var xhr = this.props.listModels(this._fetchModelsCallback);
-        this.xhrs.push(xhr);
-      });
-    },
-
-    /**
-      Callback for the JEM and JES list models call.
-
-      @method _fetchModelsCallback
-      @param {String} error The error from the request, or null.
-      @param {Object} data The data from the request.
-    */
-    _fetchModelsCallback: function(error, data) {
-      this.setState({loadingModels: false});
-      // We need to coerce error types returned by JES vs JEM into one error.
-      var err = data.err || error;
-      if (err) {
-        console.error(err);
-        return;
-      }
-      // data.models is only populated by Juju controllers, when using JEM
-      // the models are in the top level 'data' object.
-      var modelList;
-      if (data.models) {
-        modelList = data.models.map(function(model) {
-          // XXX frankban: owner should be the ownerTag without the 'user-'
-          // prefix here.
-          model.owner = model.ownerTag;
-          return model;
-        });
-      } else if (data.map) {
-        modelList = data.map(function(model) {
-          // XXX kadams54: JEM models don't *currently* have a name or owner.
-          // They have a path which is a combination of both, but that format
-          // may change on down the road. Hence this big comment.
-          model.name = model.path;
-          model.owner = model.path.split('/')[0];
-          model.lastConnection = 'N/A';
-          // XXX frankban: does JEM provide lifecycle indications?
-          model.isAlive = true;
-          return model;
-        });
-      }
-      this.setState({envList: modelList});
-    },
-
-    /**
-      Requests a list from charmstore of the user's entities.
-
-      @method _fetchEntities
-      @param {String} type the entity type, charm or bundle
-      @param {Object} props the properties to use when connection to charmstore
-    */
-    _fetchEntities:  function(type, props) {
-      var callback = this._fetchEntitiesCallback.bind(this, type);
-      var charmstore = props.charmstore;
-      var username = props.users.charmstore && props.users.charmstore.user;
-      if (charmstore && charmstore.list && username) {
-        var state = {};
-        if (type === 'charm') {
-          state.loadingCharms = true;
-        } else {
-          state.loadingBundles = true;
-        }
-        this.setState(state, () => {
-          // Delay the call until after the state change to prevent race
-          // conditions.
-          var xhr = charmstore.list(username, callback, type);
-          this.xhrs.push(xhr);
-        });
-      }
-    },
-
-    /**
-      Callback for the request to list a user's entities.
-
-      @method _fetchEntitiesCallback
-      @param {String} error The error from the request, or null.
-      @param {Object} data The data from the request.
-    */
-    _fetchEntitiesCallback: function(type, error, data) {
-      // Turn off the loader, regardless of success or error.
-      if (type === 'charm') {
-        this.setState({loadingCharms: false});
-      } else if (type === 'bundle') {
-        this.setState({loadingBundles: false});
-      }
-      if (error) {
-        console.log(error);
-        return;
-      }
-      // Pull out just the data we need to display.
-      if (type === 'charm') {
-        this.setState({charmList: data});
-      } else if (type === 'bundle') {
-        this.setState({bundleList: data});
-      }
-    },
-    /**
-
-      Take the supplied UUID, fetch the username and password then call the
-      passed in switchModel method. If the UUID and name are null, simply
-      disconnect without reconnecting to a new model.
-
-      @method switchModel
-      @param {String} uuid The model UUID.
-      @param {String} name The model name.
-      @param {Function} callback The function to be called once the model has
-        been switched and logged into. Takes the following parameters:
-        {Object} env The env that has been switched to.
-    */
-    switchModel: function(uuid, name, callback) {
-      var props = this.props;
-      props.switchModel(uuid, this.state.envList, name, callback);
-    },
-
-    /**
-      Fetches the model name from the modelName ref and then creates a model
-      then switches to it.
-      @method createAndSwitch
-      @param {Object} e The event handler from a form submission.
-    */
-    createAndSwitch: function(e) {
-      if (e && e.preventDefault) {
-        e.preventDefault();
-      }
-      // The supplied new model name needs to be valid.
-      var modelName = this.refs.modelName;
-      if (!modelName.validate()) {
-        // Only continue if the validation passes.
-        return;
-      }
-      // Because this will automatically connect to the model lets show
-      // the connecting mask right now.
-      this.props.showConnectingMask();
-      // XXX This is only for the JIMM flow.
-      this.props.env.createModel(
-        modelName.getValue(),
-        this.props.user.user,
-        data => {
-          var err = data.err;
-          if (err) {
-            this.props.addNotification({
-              title: 'Failed to create new Model',
-              message: err,
-              level: 'error'
-            });
-            console.error(err);
-            this.props.hideConnectingMask(false);
-            return;
-          }
-          this.switchModel(data.uuid, data.name);
-        });
     },
 
     /**
@@ -318,464 +70,18 @@ YUI.add('user-profile', function() {
     },
 
     /**
-      Generate the details for the provided model.
-
-      @method _generateModelRow
-      @param {Object} model A model object.
-      @returns {Array} The markup for the row.
-    */
-    _generateModelRow: function(model) {
-      var uuid = model.uuid;
-      var isCurrent = uuid === this.props.currentModel;
-      if (!model.isAlive) {
-        return (
-          <li className="user-profile__entity user-profile__list-row"
-            key={uuid}>
-            {model.name} is being destroyed.
-          </li>);
-      }
-      return (
-        <juju.components.UserProfileEntity
-          entity={model}
-          expanded={isCurrent}
-          key={uuid}
-          switchModel={this.switchModel}
-          type="model">
-          <span className="user-profile__list-col three-col">
-            {model.name || '--'}
-          </span>
-          <span className="user-profile__list-col four-col">
-            --
-          </span>
-          <span className="user-profile__list-col two-col">
-            {model.lastConnection || '--'}
-          </span>
-          <span className="user-profile__list-col one-col">
-            --
-          </span>
-          <span className="user-profile__list-col two-col last-col">
-            {model.owner || '--'}
-          </span>
-        </juju.components.UserProfileEntity>);
-    },
-
-    /**
-      Generate the header for the models.
-
-      @method _generateModelHeader
-      @returns {Array} The markup for the header.
-    */
-    _generateModelHeader: function() {
-      return (
-        <li className="user-profile__list-header twelve-col">
-          <span className="user-profile__list-col three-col">
-            Name
-          </span>
-          <span className="user-profile__list-col four-col">
-            Credential
-          </span>
-          <span className="user-profile__list-col two-col">
-            Last accessed
-          </span>
-          <span className="user-profile__list-col one-col">
-            Units
-          </span>
-          <span className={
-            'user-profile__list-col two-col last-col'}>
-            Owner
-          </span>
-        </li>);
-    },
-
-    /**
-      Generate a list of tags.
-
-      @method _generateTags
-      @param {Array} tags A list of tags.
-      @param {String} id The id of the entity.
-      @returns {Object} A list of tag components.
-    */
-    _generateTags: function(tagList, id) {
-      if (!tagList) {
-        return;
-      }
-      var tags = [];
-      tagList.forEach((tag) => {
-        tags.push(
-          <li className="user-profile__comma-item"
-            key={id + '-' + tag}>
-            {tag}
-          </li>);
-      });
-      return (
-        <ul className="user-profile__list-tags">
-          {tags}
-        </ul>);
-    },
-
-    /**
-      Generate a list of series.
-
-      @method _generateSeries
-      @param {Array} series A list of series.
-      @param {String} id The id of the entity.
-      @returns {Object} A list of series components.
-    */
-    _generateSeries: function(series, id) {
-      if (!series) {
-        return;
-      }
-      var listItems = [];
-      series.forEach((release) => {
-        listItems.push(
-          <li className="user-profile__comma-item"
-            key={id + '-' + release}>
-            {release}
-          </li>);
-      });
-      return (
-        <ul className="user-profile__list-series">
-          {listItems}
-        </ul>);
-    },
-    /**
-      Construct the URL for a service icon.
-
-      @method _getIcon
-      @param {String} id The service ID.
-      @returns {String} The icon URL.
-    */
-    _getIcon: function(id) {
-      if (!id) {
-        return;
-      }
-      var cs = this.props.charmstore;
-      var path = id.replace('cs:', '');
-      return `${cs.url}/${path}/icon.svg`;
-    },
-
-    /**
-      Depending on the existance of jem this will either switch to a
-      disconnected model or open up the UI to allow the user to create a
-      new model.
-      @method _nextCreateStep
-    */
-    _nextCreateStep: function() {
-      if (this.props.jem) {
-        // Switch to a disconnected model
-        this.switchModel();
-      } else {
-        // Open up the UI to specify a model name for the Controller.
-        this.setState({ createNewModelActive: true }, _ => {
-          this.refs.modelName.refs.field.focus();
-        });
-      }
-    },
-
-    /**
-      Generates the elements required for the create new button
-      @method _generateCreateNew
-      @param {String} className The class you'd like to have applied to the
-        container.
-    */
-    _generateCreateNew: function(className) {
-      var classes = classNames(
-        'user-profile__create-new',
-        className,
-        {
-          collapsed: !this.state.createNewModelActive
-        });
-      return (
-        <div className={classes}>
-          <form onSubmit={this.createAndSwitch}>
-            <juju.components.GenericButton
-              action={this._nextCreateStep}
-              type="inline-neutral first"
-              title="Create new" />
-            <juju.components.GenericInput
-              placeholder="untitled_model"
-              required={true}
-              ref="modelName"
-              validate={[{
-                regex: /\S+/,
-                error: 'This field is required.'
-              }, {
-                regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
-                error: 'This field must only contain upper and lowercase ' +
-                  'letters, numbers, and hyphens. It must not start or ' +
-                  'end with a hyphen.'
-              }]} />
-            <juju.components.GenericButton
-              action={this.createAndSwitch}
-              type="inline-neutral second"
-              title="Submit" />
-          </form>
-        </div>
-      );
-    },
-
-    /**
-      Generate the details for the provided bundle.
-
-      @method _generateBundleRow
-      @param {Object} bundle A bundle object.
-      @returns {Array} The markup for the row.
-    */
-    _generateBundleRow: function(bundle) {
-      var id = bundle.id;
-      var services = [];
-      var applications = bundle.applications || bundle.services || {};
-      var serviceNames = Object.keys(applications);
-      serviceNames.forEach((serviceName, idx) => {
-        var service = applications[serviceName];
-        var id = service.charm;
-        var key = `icon-${idx}-${id}`;
-        services.push(
-          <img className="user-profile__list-icon"
-            key={key}
-            src={this._getIcon(id)}
-            title={service.charm} />);
-      });
-      var unitCount = bundle.unitCount || <span>&nbsp;</span>;
-      return (
-        <juju.components.UserProfileEntity
-          changeState={this.props.changeState}
-          entity={bundle}
-          getDiagramURL={this.props.getDiagramURL}
-          key={id}
-          type="bundle">
-          <span className={'user-profile__list-col five-col ' +
-            'user-profile__list-name'}>
-            {bundle.name}
-            {this._generateTags(bundle.tags, id)}
-          </span>
-          <span className={'user-profile__list-col three-col ' +
-            'user-profile__list-icons'}>
-            {services}
-          </span>
-          <span className="user-profile__list-col one-col prepend-one">
-            {unitCount}
-          </span>
-          <span className="user-profile__list-col two-col last-col">
-            {bundle.owner}
-          </span>
-        </juju.components.UserProfileEntity>);
-    },
-
-    /**
-      Generate the header for the bundles.
-
-      @method _generateBundleHeader
-      @returns {Array} The markup for the header.
-    */
-    _generateBundleHeader: function() {
-      return (
-        <li className="user-profile__list-header twelve-col">
-          <span className="user-profile__list-col five-col">
-            Name
-          </span>
-          <span className={'user-profile__list-col three-col ' +
-            'user-profile__list-icons'}>
-            Charms
-          </span>
-          <span className="user-profile__list-col one-col prepend-one">
-            Units
-          </span>
-          <span className={
-            'user-profile__list-col two-col last-col'}>
-            Owner
-          </span>
-        </li>);
-    },
-
-    /**
-      Generate the details for the provided charm.
-
-      @method _generateCharmRow
-      @param {Object} charm A charm object.
-      @returns {Array} The markup for the row.
-    */
-    _generateCharmRow: function(charm) {
-      var id = charm.id;
-      // Ensure the icon is set.
-      charm.icon = charm.icon || this._getIcon(id);
-      return (
-        <juju.components.UserProfileEntity
-          changeState={this.props.changeState}
-          entity={charm}
-          key={id}
-          type="charm">
-          <span className={'user-profile__list-col three-col ' +
-            'user-profile__list-name'}>
-            {charm.name}
-            {this._generateTags(charm.tags, id)}
-          </span>
-          <span className="user-profile__list-col four-col">
-            {this._generateSeries(charm.series, id)}
-          </span>
-          <span className={'user-profile__list-col one-col ' +
-            'user-profile__list-icons'}>
-            <img className="user-profile__list-icon"
-              src={charm.icon}
-              title={charm.name} />
-          </span>
-          <span className={'user-profile__list-col two-col ' +
-            'prepend-two last-col'}>
-            {charm.owner}
-          </span>
-        </juju.components.UserProfileEntity>);
-    },
-
-    /**
-      Generate the details for the provided budget.
-
-      @method _generateBudgetRow
-      @param {Object} budget A budget object.
-      @returns {Array} The markup for the row.
-    */
-    _generateBudgetRow: function(budget) {
-      return (
-        <li className="user-profile__list-row twelve-col"
-          key={budget.budget}>
-            <span className="user-profile__list-col three-col">
-              {budget.budget}
-            </span>
-            <span className="user-profile__list-col two-col">
-              ${budget.allocated}
-            </span>
-            <span className="user-profile__list-col two-col">
-              ${budget.limit}
-            </span>
-            <span className="user-profile__list-col four-col">
-              ${budget.available}
-            </span>
-            <span className="user-profile__list-col one-col last-col">
-              ${budget.consumed}
-            </span>
-        </li>);
-    },
-
-    /**
-      Generate the header for the charms.
-
-      @method _generateCharmHeader
-      @returns {Array} The markup for the header.
-    */
-    _generateCharmHeader: function() {
-      return (
-        <li className="user-profile__list-header twelve-col">
-          <span className="user-profile__list-col three-col">
-            Name
-          </span>
-          <span className="user-profile__list-col seven-col">
-            Series
-          </span>
-          <span className="user-profile__list-col two-col last-col">
-            Owner
-          </span>
-        </li>);
-    },
-
-    /**
-      Generate the header for the budgets.
-
-      @method _generateBudgetHeader
-      @returns {Array} The markup for the header.
-    */
-    _generateBudgetHeader: function() {
-      return (
-        <li className="user-profile__list-header twelve-col">
-          <span className="user-profile__list-col three-col">
-            Name
-          </span>
-          <span className="user-profile__list-col two-col">
-            Budget
-          </span>
-          <span className="user-profile__list-col two-col">
-            Limit
-          </span>
-          <span className="user-profile__list-col four-col">
-            Credit
-          </span>
-          <span className="user-profile__list-col one-col last-col">
-            Spend
-          </span>
-        </li>);
-    },
-
-    /**
-      Generate the rows of for the provided entity.
-
-      @method _generateRows
-      @param {String} type The type of entity.
-      @param {Array} list The list of entities.
-      @param {Boolean} loading Whether the data is loading.
-      @returns {Array} The markup for the rows.
-    */
-    _generateRows: function(type, list, loading) {
-      if (loading) {
-        return (
-          <div className="twelve-col">
-            <juju.components.Spinner />
-          </div>);
-      }
-      if (!list || list.length === 0) {
-        return;
-      }
-      var generateRow;
-      var header;
-      var rows = [];
-      var title;
-      var createNewButton;
-      if (type === 'models') {
-        generateRow = this._generateModelRow;
-        header = this._generateModelHeader();
-        title = 'Models';
-        if (this.props.canCreateNew) {
-          createNewButton = this._generateCreateNew();
-        }
-      } else if (type === 'bundles') {
-        generateRow = this._generateBundleRow;
-        header = this._generateBundleHeader();
-        title = 'Bundles';
-      } else if (type === 'charms') {
-        generateRow = this._generateCharmRow;
-        header = this._generateCharmHeader();
-        title = 'Charms';
-      } else if (type === 'budgets') {
-        generateRow = this._generateBudgetRow;
-        header = this._generateBudgetHeader();
-        title = 'Budgets';
-      }
-      list.forEach((model) => {
-        rows.push(generateRow(model));
-      });
-      return (
-        <div>
-          <div className="user-profile__header twelve-col no-margin-bottom">
-            {title}
-            <span className="user-profile__size">
-              ({list.length})
-            </span>
-            {createNewButton}
-          </div>
-          <ul className="user-profile__list twelve-col">
-            {header}
-            {rows}
-          </ul>
-        </div>);
-    },
-
-    /**
       Return a list's length or default to 0, in a manner that doesn't fall
       over when confronted with a null list.
 
       @method _safeCount
       @returns {Array} The list.
     */
+    /* XXX: Disabled until we solve the problem of getting counts from the
+       child list components.
     _safeCount: function(list) {
       return (list && list.length) || 0;
     },
+    */
 
     /**
       Generate the content for the panel.
@@ -784,23 +90,12 @@ YUI.add('user-profile', function() {
       @returns {Array} The markup for the content.
     */
     _generateContent: function() {
+      /*
+       * XXX: Re-enable this onboarding message by using the SectionLoadWatcher
+       * component from https://github.com/juju/juju-gui/pull/1878
+       */
+      /*
       var state = this.state;
-      // We can't be loading anything, and all the lists must be empty.
-      var isLoaded = !state.loadingBundles
-                     && !state.loadingAgreements
-                     && !state.loadingBudgets
-                     && !state.loadingCharms
-                     && !state.loadingModels;
-      var agreementCount = this._safeCount(state.agreementList);
-      var budgetCount = this._safeCount(state.budgetList);
-      var bundleCount = this._safeCount(state.bundleList);
-      var charmCount = this._safeCount(state.charmList);
-      var envCount = this._safeCount(state.envList);
-      var isEmpty = agreementCount === 0
-                    && budgetCount === 0
-                    && bundleCount === 0
-                    && charmCount === 0
-                    && envCount === 0;
       if (isLoaded && isEmpty) {
         var header = 'Your profile is currently empty';
         var message = 'Your models, bundles and charms will appear here when'
@@ -820,26 +115,56 @@ YUI.add('user-profile', function() {
             </div>
           </div>);
       }
+      */
+      var props = this.props;
       return (
         <div>
-          {this._generateRows('models', state.envList, state.loadingModels)}
-          {this._generateRows(
-            'bundles', state.bundleList, state.loadingBundles)}
-          {this._generateRows('charms', state.charmList, state.loadingCharms)}
-          <juju.components.AgreementList
-            getAgreements={this.props.getAgreements}
-            user={this.props.user} />
-          {this._generateRows(
-            'budgets', state.budgetList, state.loadingBudgets)}
+          <juju.components.UserProfileModelList
+            addNotification={props.addNotification}
+            canCreateNew={props.canCreateNew}
+            currentModel={props.currentModel}
+            env={props.env}
+            hideConnectingMask={props.hideConnectingMask}
+            jem={props.jem}
+            listModels={props.listModels}
+            showConnectingMask={props.showConnectingMask}
+            switchModel={props.switchModel}
+            user={props.user}
+            users={props.users} />
+          <juju.components.UserProfileEntityList
+            changeState={props.changeState}
+            charmstore={props.charmstore}
+            getDiagramURL={props.getDiagramURL}
+            type='bundle'
+            user={props.user}
+            users={props.users} />
+          <juju.components.UserProfileEntityList
+            changeState={props.changeState}
+            charmstore={props.charmstore}
+            getDiagramURL={props.getDiagramURL}
+            type='charm'
+            user={props.user}
+            users={props.users} />
+          <juju.components.UserProfileAgreementList
+            getAgreements={props.getAgreements}
+            user={props.user} />
+          <juju.components.UserProfileBudgetList
+            listBudgets={props.listBudgets}
+            user={props.user} />
         </div>);
     },
 
     render: function() {
       var username = this.props.user && this.props.user.usernameDisplay;
+      /* XXX Find some way to percolate these up from the child components. */
+      /*
       var state = this.state;
       var bundleCount = this._safeCount(state.bundleList);
       var charmCount = this._safeCount(state.charmList);
       var modelCount = this._safeCount(state.envList);
+      */
+      /* XXX Should include agreements, budgets, etc. in these links. */
+      /*
       var pluralize = this.props.pluralize;
       var links = [{
         label: `${modelCount} ${pluralize('model', modelCount)}`
@@ -848,6 +173,11 @@ YUI.add('user-profile', function() {
       }, {
         label: `${charmCount} ${pluralize('charm', charmCount)}`
       }];
+      var links = [{
+        label: `${modelCount} ${pluralize('model', modelCount)}`
+      }];
+      */
+      var links = [];
       return (
         <juju.components.Panel
           instanceName="user-profile"
@@ -872,11 +202,14 @@ YUI.add('user-profile', function() {
 
 }, '', {
   requires: [
-    'agreement-list',
     'generic-input',
     'loading-spinner',
     'panel-component',
+    'user-profile-agreement-list',
+    'user-profile-budget-list',
     'user-profile-entity',
+    'user-profile-entity-list',
+    'user-profile-model-list',
     'user-profile-header'
   ]
 });

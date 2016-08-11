@@ -20,12 +20,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
-describe('AgreementList', () => {
+describe('UserProfileBudgetList', () => {
   var users;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
-    YUI().use('agreement-list', () => { done(); });
+    YUI().use('user-profile-budget-list', () => { done(); });
   });
 
   beforeEach(() => {
@@ -37,8 +37,8 @@ describe('AgreementList', () => {
 
   it('renders the empty state', () => {
     var component = jsTestUtils.shallowRender(
-      <juju.components.AgreementList
-        getAgreements={sinon.stub().callsArgWith(0, null, [])}
+      <juju.components.UserProfileBudgetList
+        listBudgets={sinon.stub().callsArgWith(0, null, [])}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
     assert.equal(output, null);
@@ -46,57 +46,76 @@ describe('AgreementList', () => {
 
   it('displays loading spinner when loading', () => {
     var component = jsTestUtils.shallowRender(
-      <juju.components.AgreementList
-        getAgreements={sinon.stub()}
+      <juju.components.UserProfileBudgetList
+        listBudgets={sinon.stub()}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
     assert.deepEqual(output, (
-      <div className="user-profile__agreement-list twelve-col">
+      <div className="user-profile__budget-list twelve-col">
         <juju.components.Spinner />
       </div>
     ));
   });
 
-  it('renders a list of agreements', () => {
-    var agreements = [{
-      user: 'spinach',
-      term: 'One fancy term',
-      revision: 47,
-      createdAt: new Date(1465510044000)
-    }];
-    var getAgreements = sinon.stub().callsArgWith(0, null, agreements);
+  it('renders a list of budgets', () => {
+    var data = {budgets: [{
+      'owner': 'spinach',
+      'budget': 'my-budget',
+      'limit': '99',
+      'allocated': '77',
+      'unallocated': '22',
+      'available': '22',
+      'consumed': '55'
+    }]};
+    var listBudgets = sinon.stub().callsArgWith(0, null, data);
     var component = jsTestUtils.shallowRender(
-      <juju.components.AgreementList
-        getAgreements={getAgreements}
+      <juju.components.UserProfileBudgetList
+        listBudgets={listBudgets}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
     var expected = (
-      <div className="user-profile__agreement-list">
+      <div className="user-profile__budget-list">
         <div className="user-profile__header twelve-col no-margin-bottom">
-          Terms &amp; conditions
+          Budgets
           <span className="user-profile__size">
             ({1})
           </span>
         </div>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
-            <span className="user-profile__list-col eight-col">
+            <span className="user-profile__list-col three-col">
               Name
             </span>
-            <span className="user-profile__list-col four-col last-col">
-              Date signed
+            <span className="user-profile__list-col two-col">
+              Budget
+            </span>
+            <span className="user-profile__list-col two-col">
+              Limit
+            </span>
+            <span className="user-profile__list-col four-col">
+              Credit
+            </span>
+            <span className="user-profile__list-col one-col last-col">
+              Spend
             </span>
           </li>
           {[<li className="user-profile__list-row twelve-col"
-            key="One fancy term47">
-            <span className="user-profile__list-col eight-col">
-              One fancy term
-            </span>
-            <span className="user-profile__list-col four-col last-col">
-            <juju.components.DateDisplay
-              date={agreements[0].createdAt}
-              relative={true} />
-            </span>
+            key="my-budget">
+              <span className="user-profile__list-col three-col">
+                my-budget
+              </span>
+              <span className="user-profile__list-col two-col">
+                ${'77'}
+              </span>
+              <span className="user-profile__list-col two-col">
+                ${'99'}
+              </span>
+              <span className="user-profile__list-col four-col">
+                ${'22'}
+              </span>
+              <span className="user-profile__list-col one-col last-col">
+                ${'55'}
+              </span>
           </li>]}
         </ul>
       </div>
@@ -105,13 +124,13 @@ describe('AgreementList', () => {
   });
 
   it('will abort the requests when unmounting', function() {
-    var getAgreementsAbort = sinon.stub();
-    var getAgreements = sinon.stub().returns({abort: getAgreementsAbort});
+    var listBudgetsAbort = sinon.stub();
+    var listBudgets = sinon.stub().returns({abort: listBudgetsAbort});
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.AgreementList
-        getAgreements={getAgreements}
+      <juju.components.UserProfileBudgetList
+        listBudgets={listBudgets}
         user={users.charmstore} />, true);
     renderer.unmount();
-    assert.equal(getAgreementsAbort.callCount, 1);
+    assert.equal(listBudgetsAbort.callCount, 1);
   });
 });
