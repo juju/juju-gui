@@ -220,6 +220,17 @@ YUI.add('deployment-flow', function() {
     },
 
     /**
+      Handle clearing the chosen cloud.
+
+      @method _clearCloud
+    */
+    _clearCloud: function() {
+      this._setCloud(null);
+      // Also reset the chose credential.
+      this._setCredential(null);
+    },
+
+    /**
       Generate a change cloud action if a cloud has been selected.
 
       @method _generateCloudAction
@@ -230,7 +241,7 @@ YUI.add('deployment-flow', function() {
         return;
       }
       return [{
-        action: this._setCloud.bind(null, null),
+        action: this._clearCloud,
         disabled: this.props.acl.isReadOnly(),
         title: 'Change cloud',
         type: 'neutral'
@@ -256,6 +267,23 @@ YUI.add('deployment-flow', function() {
     },
 
     /**
+      Generate the appropriate cloud title based on the state.
+
+      @method _generateCloudTitle
+      @returns {String} The cloud title.
+    */
+    _generateCloudTitle: function() {
+      var cloud = this.state.cloud;
+      if (!cloud) {
+        return 'Choose cloud to deploy to';
+      } else if (cloud === 'local') {
+        return 'Local cloud';
+      } else {
+        return 'Public cloud';
+      }
+    },
+
+    /**
       Generate the cloud section.
 
       @method _generateCloudSection
@@ -274,8 +302,7 @@ YUI.add('deployment-flow', function() {
           disabled={status.disabled}
           instance="deployment-cloud"
           showCheck={true}
-          title={
-            cloud ? 'Chosen cloud' : 'Choose cloud to deploy to'}>
+          title={this._generateCloudTitle()}>
           <juju.components.DeploymentCloud
             acl={this.props.acl}
             cloud={cloud}
