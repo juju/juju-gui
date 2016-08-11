@@ -337,6 +337,36 @@ describe('DeploymentFlow', function() {
     assert.equal(sections[0].props.title, 'Local cloud');
   });
 
+  it('can clear the cloud and credential when changing clouds', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        addTemplate={sinon.stub()}
+        changeState={sinon.stub()}
+        changes={{}}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        listRegions={sinon.stub()}
+        listTemplates={sinon.stub()}
+        servicesGetById={sinon.stub()}
+        user={{}}
+        users={{}}>
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    instance._setCloud('local');
+    instance._setCredential('local');
+    var output = renderer.getRenderOutput();
+    var sections = output.props.children.props.children[1].props.children
+      .props.children.props.children;
+    assert.isNotNull(instance.state.cloud);
+    assert.isNotNull(instance.state.credential);
+    sections[0].props.buttons[0].action();
+    assert.isNull(instance.state.cloud);
+    assert.isNull(instance.state.credential);
+  });
+
   it('can enable the credential section', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentFlow
