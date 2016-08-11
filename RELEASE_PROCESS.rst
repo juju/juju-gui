@@ -86,8 +86,9 @@ Test it in the charm on juju 1.25...
 ...and in juju 2
 
 ::
+
     make dist
-    cp dist/jujugui-*.tar.bz2 $REPO/juju-gui-charm/releasespushd $REPO/juju-gui-charm
+    cp dist/jujugui-*.tar.bz2 $REPO/juju-gui-charm/releases
     pushd $REPO/juju-gui-charm
     juju bootstrap aws aws
     juju deploy . --series=trusty
