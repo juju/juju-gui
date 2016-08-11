@@ -51,7 +51,11 @@ describe('Relation endpoints logic', function() {
     ecs = new juju.EnvironmentChangeSet();
     env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
     env.connect();
-    app = new Y.juju.App({env: env, consoleEnabled: true});
+    app = new Y.juju.App({
+      env: env,
+      consoleEnabled: true,
+      jujuCoreVersion: '2.0.0'
+    });
     app.navigate = function() { return true; };
     app.showView(new Y.View());
     db = app.db;
@@ -365,7 +369,8 @@ describe('Endpoints map handlers', function() {
     app = new Y.juju.App({
       env: env,
       consoleEnabled: true,
-      charmstore: factory.makeFakeCharmstore()
+      charmstore: factory.makeFakeCharmstore(),
+      jujuCoreVersion: '2.0.0'
     });
     app.showView(new Y.View());
     destroyMe.push(app);
@@ -559,7 +564,11 @@ describe('Application config handlers', function() {
     env.connect();
     env.set('facades', {Application: [1]});
     this._cleanups.push(env.close.bind(env));
-    app = new Y.juju.App({env: env, consoleEnabled: true });
+    app = new Y.juju.App({
+      env: env,
+      consoleEnabled: true,
+      jujuCoreVersion: '2.0.0'
+    });
     destroyMe.push(app);
     app.showView(new Y.View());
     controller = app.endpointsController;
