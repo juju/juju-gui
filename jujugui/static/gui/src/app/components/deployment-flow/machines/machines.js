@@ -71,12 +71,16 @@ YUI.add('deployment-machines', function() {
     },
 
     render: function() {
+      var chargeMessage;
+      if (this.props.cloud.id !== 'local') {
+        chargeMessage = 'You will incur a charge from your cloud provider.';
+      }
       return (
         <div>
           <p className="deployment-machines__message">
             These machines will be provisioned on&nbsp;
             {this.props.cloud && this.props.cloud.title}.
-            You will incur a charge from your cloud provider.
+            {chargeMessage}
           </p>
           {this._generateMachines()}
         </div>

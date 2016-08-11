@@ -39,14 +39,68 @@ describe('DeploymentMachines', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentMachines
         acl={acl}
-        cloud={{title: 'My cloud'}} />, true);
+        cloud={{title: 'My cloud', id: 'azure'}} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div>
         <p className="deployment-machines__message">
           These machines will be provisioned on&nbsp;
           {'My cloud'}.
-          You will incur a charge from your cloud provider.
+          {'You will incur a charge from your cloud provider.'}
+        </p>
+        <ul className="deployment-machines__list">
+          <li className="deployment-flow__row-header twelve-col">
+            <div className="eight-col">
+              Type
+            </div>
+            <div className="three-col">
+              Provider
+            </div>
+            <div className="one-col last-col">
+              Quantity
+            </div>
+          </li>
+          {[<li className="deployment-flow__row twelve-col"
+            key={0}>
+            <div className="eight-col">
+              Trusty, 1x1GHz, 1.70GB, 8.00GB
+            </div>
+            <div className="three-col">
+              Google
+            </div>
+            <div className="one-col last-col">
+              4
+            </div>
+          </li>,
+          <li className="deployment-flow__row twelve-col"
+            key={1}>
+            <div className="eight-col">
+              Trusty, 1x1GHz, 1.70GB, 8.00GB
+            </div>
+            <div className="three-col">
+              Google
+            </div>
+            <div className="one-col last-col">
+              4
+            </div>
+          </li>]}
+        </ul>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render for a local cloud', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentMachines
+        acl={acl}
+        cloud={{title: 'Local', id: 'local'}} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div>
+        <p className="deployment-machines__message">
+          These machines will be provisioned on&nbsp;
+          {'Local'}.
+          {undefined}
         </p>
         <ul className="deployment-machines__list">
           <li className="deployment-flow__row-header twelve-col">

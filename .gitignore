@@ -42,5 +42,6 @@ uitest/
 upload_release.py
 .vagrant
 virtualenv
+xvfb_pid
 yuidoc
 yui-macaroon.js
