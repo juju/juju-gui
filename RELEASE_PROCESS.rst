@@ -81,6 +81,7 @@ Test it in the charm on juju 1.25...
     JUJU_GUI_BRANCH=$REPO/juju-gui make package 
     # Ensure you have a link from $JUJU_REPOSITORY/trusty/juju-gui to $REPO/juju-gui-charm.
     juju-1 deploy local:juju-gui
+    juju-1 expose juju-gui
     # Test, test test.
     juju-1 destroy-enviroment -y <your env>
     popd
