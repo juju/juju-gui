@@ -78,7 +78,9 @@ Test it in the charm on juju 1.25...
     # is your release number:
     pushd $REPO/juju-gui-charm
     juju-1 bootstrap
-    JUJU_GUI_BRANCH=$REPO/juju-gui make package deploy
+    JUJU_GUI_BRANCH=$REPO/juju-gui make package 
+    # Ensure you have a link from $JUJU_REPOSITORY/trusty/juju-gui to $REPO/juju-gui-charm.
+    juju-1 deploy local:juju-gui
     # Test, test test.
     juju-1 destroy-enviroment -y <your env>
     popd
