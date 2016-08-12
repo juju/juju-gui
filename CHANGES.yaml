@@ -1,3 +1,11 @@
+- 2.1.10:
+
+    - Various UX fixes for DF cloud section.
+    - Split BudgetList and EntityList components out of UserProfile.
+    - Create Section load watcher component
+    - Fix bundle deploy with juju 1
+    - Handle DF section display
+
 - 2.1.9:
 
     - Fix login with USSO.
