@@ -52,7 +52,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     test('successful login event marks user as authenticated', function() {
-      var data = {response: {facades: [], 'user-info': {}}};
+      var data = {response: {
+        facades: [{name: 'ModelManager', versions: [2]}],
+        'user-info': {}
+      }};
       env.handleLogin(data);
       assert.isTrue(env.userIsAuthenticated);
     });

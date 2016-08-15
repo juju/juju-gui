@@ -492,7 +492,8 @@ YUI.add('juju-env-api', function(Y) {
         this.set('facades', facades);
         var userInfo = response['user-info'];
         this.set('readOnly', !!userInfo['read-only']);
-        this.currentModelInfo();
+        this.set('modelTag', response['model-tag']);
+        this.currentModelInfo(this._handleCurrentModelInfo.bind(this));
         this._watchAll();
         // Start pinging the server.
         // XXX frankban: this is only required as a temporary workaround to
@@ -699,25 +700,25 @@ YUI.add('juju-env-api', function(Y) {
     },
 
     /**
-     * Store the model info coming from the server.
-     *
-     * @method _handleCurrentModelInfo
-     * @param {Object} data The response returned by the server.
-     * @return {undefined} Nothing.
-     */
+      Store the model info coming from the server.
+
+      @method _handleCurrentModelInfo
+      @param {Object} data The response returned by the server
+        (see the currentModelInfo method below).
+      @return {undefined} Nothing.
+    */
     _handleCurrentModelInfo: function(data) {
-      if (data.error) {
-        console.warn('error retrieving model information');
+      if (data.err) {
+        console.error('error retrieving model information: ' + data.err);
         return;
       }
       // Store default series and provider type in the env.
-      var response = data.response;
-      this.set('defaultSeries', response['default-series']);
-      this.set('providerType', response['provider-type']);
-      this.set('environmentName', response.name);
-      this.set('modelUUID', response.uuid);
+      this.set('defaultSeries', data.series);
+      this.set('providerType', data.provider);
+      this.set('environmentName', data.name);
+      this.set('modelUUID', data.uuid);
       // For now we only need to call modelGet if the provider is MAAS.
-      if (response['provider-type'] !== 'maas') {
+      if (data.provider !== 'maas') {
         // Set the MAAS server to null, so that subscribers waiting for this
         // attribute to be set can be released.
         this.set('maasServer', null);
@@ -733,17 +734,44 @@ YUI.add('juju-env-api', function(Y) {
     },
 
     /**
-     * Send a request for base details about the current Juju model, for
-     * instance default series and provider type.
-     *
-     * @method currentModelInfo
-     * @return {undefined} Nothing.
-     */
-    currentModelInfo: function() {
-      this._send_rpc({
-        type: 'Client',
-        request: 'ModelInfo'
-      }, this._handleCurrentModelInfo);
+      Send a request for base details about the current Juju model, for
+      instance default series and provider type.
+
+      @method currentModelInfo
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred). Otherwise, if everything went well, it will receive an
+        object with the following fields:
+        - tag: the Juju model tag;
+        - name: the model name, like "admin" or "mymodel";
+        - series: the model default series, like "trusty" or "xenial";
+        - provider: the provider type, like "lxd" or "aws";
+        - uuid: the model unique identifier;
+        - serverUuid: the corresponding controller unique identifier;
+        - ownerTag: the Juju tag of the user owning the model;
+        - life: the lifecycle status of the model: "alive", "dying" or "dead";
+        - isAlive: whether the model is alive or dying/dead;
+        - isAdmin: whether the model is an admin model;
+     @return {undefined} Nothing.
+    */
+    currentModelInfo: function(callback) {
+      this.modelInfo([this.get('modelTag')], (response) => {
+        if (!callback) {
+          console.log('current model info response:', response);
+          return;
+        }
+        if (response.err) {
+          callback({err: response.err});
+          return;
+        }
+        var info = response.models[0];
+        if (info.err) {
+          callback({err: info.err});
+          return;
+        }
+        callback(info);
+      });
     },
 
     /**
