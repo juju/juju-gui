@@ -52,12 +52,14 @@
 @import "../../components/inspector/expose/expose";
 @import "../../components/inspector/expose/unit/unit";
 @import "../../components/inspector/header/header";
+@import "../../components/inspector/overview-action/overview-action";
 @import "../../components/inspector/plan/plan";
 @import "../../components/inspector/plan/plans/plans";
 @import "../../components/inspector/relate-to/relate-to";
 @import "../../components/inspector/relate-to/endpoint/endpoint";
 @import "../../components/inspector/relations/details/details";
 @import "../../components/inspector/relations/relations";
+@import "../../components/inspector/scale-service/scale-service";
 @import "../../components/inspector/service-overview/service-overview";
 @import "../../components/inspector/unit-details/unit-details";
 @import "../../components/inspector/unit-list/unit-list";
@@ -74,9 +76,7 @@
 @import "../../components/more-menu/more-menu";
 @import "../../components/notification-list/notification-list";
 @import "../../components/notification-list/item/item";
-@import "../../components/overview-action/overview-action";
 @import "../../components/panel/panel";
-@import "../../components/scale-service/scale-service";
 @import "../../components/search-results/search-results";
 @import "../../components/spinner/spinner";
 @import "../../components/store/store";
