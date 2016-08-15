@@ -102,6 +102,7 @@ def config(request):
         # The external services' URLs.
         'charmstoreURL': settings['jujugui.charmstore_url'],
         'jemURL': settings['jujugui.jem_url'],
+        'jimmURL': settings['jujugui.jimm_url'],
         'plansURL': settings['jujugui.plans_url'],
         'termsURL': settings['jujugui.terms_url'],
         # Any provided macaroons.
