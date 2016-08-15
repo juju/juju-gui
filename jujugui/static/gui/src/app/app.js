@@ -454,11 +454,19 @@ YUI.add('juju-gui', function(Y) {
           // requests to the juju-core API.
           envOptions.webHandler = new webModule.WebHandler();
         }
-        var environment = environments.GoEnvironment;
+
+        let modelAPI, controllerAPI;
         if (this.isLegacyJuju()) {
-          environment = environments.GoLegacyEnvironment;
+          modelAPI = new environments.GoLegacyEnvironment(envOptions);
+        } else {
+          modelAPI = new environments.GoEnvironment(envOptions);
+          controllerAPI = new environments.GoEnvironment(
+            // Clone the envOptions for now, in the future we may want more
+            // fine grained control over these options. They should be made
+            // in the setUpControllerAPI method.
+            Object.assign({}, envOptions));
         }
-        this._init(cfg, new environment(envOptions), state);
+        this._init(cfg, modelAPI, controllerAPI);
       });
     },
 
@@ -469,7 +477,7 @@ YUI.add('juju-gui', function(Y) {
      * @param {Object} cfg Application configuration data.
      * @param {Object} env The environment instance.
      */
-    _init: function(cfg, env) {
+    _init: function(cfg, env, controllerAPI) {
       // If the user closed the GUI when they were on a different env than
       // their default then it would show them the login screen. This sets
       // the credentials to the environment that they are logging into
@@ -487,13 +495,12 @@ YUI.add('juju-gui', function(Y) {
           macaroons = credentials.macaroons;
         }
       }
-      env.setCredentials({
-        user: user,
-        password: password,
-        macaroons: macaroons
-      });
+      env.setCredentials({ user, password, macaroons });
       this.env = env;
-
+      // If we're in legacy Juju (Juju 1) then we'll only require
+      // a single websocket connection.
+      this.controllerAPI = this.setUpControllerAPI(
+        controllerAPI, user, password, macaroons);
       // Set the env in the model controller here so
       // that we know that it's been setup.
       this.modelController.set('env', this.env);
@@ -658,6 +665,7 @@ YUI.add('juju-gui', function(Y) {
                               (this.get('socket_url') || this.get('sandbox')));
         if (isNotGISFSandbox || isNotConnected) {
           this.env.connect();
+          this.controllerAPI.connect();
         }
         this.dispatch();
         this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
@@ -666,6 +674,58 @@ YUI.add('juju-gui', function(Y) {
       this.zoomMessageHandler = Y.one(Y.config.win).on('resize', function(e) {
         this._handleZoomMessage();
       }, this);
+    },
+
+    /**
+      Creates the second instance of the websocket for communication with
+      the Juju controller if it's necessary. A username and password must be
+      supplied if you're connecting to a standalone Juju controller and not to
+      one which requires macaroon authentication.
+
+      @method setUpControllerAPI
+      @param {Object} controllerAPI Instance of the GoEnvironment class.
+      @param {String} user The username if not using macaroons.
+      @param {String} password The password if not using macaroons.
+      @param {Array} macaroons A list of macaroons that the user has saved.
+      @return {environments.GoEnvironment} An instance of the environment class
+        with the necessary events attached and values set. Or undefined if
+        we're in a legacy juju model and no controllerAPI instance was supplied.
+    */
+    setUpControllerAPI: function(controllerAPI, user, password, macaroons) {
+      // If no instance was supplied to us then we're in a legacy Juju
+      // and this connection is not necessary.
+      if (!controllerAPI) { return; }
+
+      controllerAPI.setAttrs({ user, password });
+      controllerAPI.setCredentials({ user, password, macaroons });
+
+      controllerAPI.after('login', e => {
+        this.controllerAPI.listModelsWithInfo((err, data) => {
+          console.log(err, data);
+        });
+      });
+
+      controllerAPI.after('connectedChange', e => {
+        // If we're in a JIMM controlled environment then use the macaroon
+        // login. If not then uses the standard u/p method.
+        if (this.get('jimmURL')) {
+          this.controllerAPI.loginWithMacaroon(
+            new Y.juju.environments.web.Bakery({
+              webhandler: new Y.juju.environments.web.WebHandler(),
+              interactive: true,
+              serviceName: 'juju',
+              dischargeStore: window.localStorage
+            }));
+        } else {
+          this.controllerAPI.login();
+        }
+      });
+      // If we're in JIMM then use a jimmURL, else use a socket_url without the
+      // model uuid.
+      controllerAPI.set(
+        'socket_url',
+        this.get('jimmURL') || this.get('apiAddress'));
+      return controllerAPI;
     },
 
     /**
