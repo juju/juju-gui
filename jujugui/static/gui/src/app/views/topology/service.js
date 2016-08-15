@@ -1144,9 +1144,11 @@ YUI.add('juju-topology-service', function(Y) {
         // Sometimes mouseover is fired after the mousedown, so ensure
         // we have the correct event in d3.event for d3.mouse().
         d3.event = e;
-
-        // Start the process of adding a relation
-        topo.fire('addRelationDragStart', {service: box});
+        if (!topo.buildingRelation) {
+          // Start the process of adding a relation if not already building a
+          // relation
+          topo.fire('addRelationDragStart', {service: box});
+        }
       }, [box, evt], false);
     },
 
@@ -1174,6 +1176,12 @@ YUI.add('juju-topology-service', function(Y) {
     dragstart: function(box, self) {
       box.inDrag = views.DRAG_START;
       self._raiseToTop(box.id);
+      this.clickTimer = false;
+      window.clearTimeout(this.timeout);
+      // Timer to block the dragend on click
+      this.timeout = setTimeout(() => {
+        this.clickTimer = true;
+      }, 100);
     },
 
     dragend: function(box,  self) {
@@ -1184,7 +1192,7 @@ YUI.add('juju-topology-service', function(Y) {
           return;
         }
       }
-      if (topo.buildingRelation) {
+      if (topo.buildingRelation && this.clickTimer) {
         topo.ignoreServiceClick = true;
         topo.fire('addRelationDragEnd');
       } else {
@@ -1569,6 +1577,9 @@ YUI.add('juju-topology-service', function(Y) {
           'stroke-width': 1.1
         })
         .on('mousedown', function(d) {
+          self.get('component').fire('addRelationDragStart', { service: d });
+        })
+        .on('click', function(d) {
           self.get('component').fire('addRelationDragStart', { service: d });
         });
 
