@@ -7,10 +7,17 @@
         margin: 0 20px;
         padding: 10px 0;
         border-bottom: 1px solid $light-mid-grey;
+
+        &-name {
+            display: inline-block;
+            margin-left: 40px;
+            font-weight: 400;
+        }
     }
 
     &__close {
         @extend %link;
+        display: inline-block;
         color: $cool-grey;
 
         .button--neutral {

@@ -34,6 +34,7 @@ YUI.add('deployment-flow', function() {
       listRegions: React.PropTypes.func.isRequired,
       listTemplates: React.PropTypes.func.isRequired,
       modelCommitted: React.PropTypes.bool,
+      modelName: React.PropTypes.string.isRequired,
       servicesGetById: React.PropTypes.func.isRequired,
       user: React.PropTypes.object,
       users: React.PropTypes.object.isRequired
@@ -485,6 +486,9 @@ YUI.add('deployment-flow', function() {
                   action={this._handleClose}
                   type="neutral"
                   title="Back to canvas" />
+              </div>
+              <div className="deployment-flow__header-name">
+                {this.props.modelName}
               </div>
             </div>
             <div className="deployment-flow__content">

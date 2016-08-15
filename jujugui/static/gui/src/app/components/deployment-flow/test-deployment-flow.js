@@ -59,6 +59,7 @@ describe('DeploymentFlow', function() {
         listPlansForCharm={listPlansForCharm}
         listRegions={listRegions}
         listTemplates={listTemplates}
+        modelName="Pavlova"
         servicesGetById={servicesGetById}
         user={{}}
         users={{}}>
@@ -77,6 +78,9 @@ describe('DeploymentFlow', function() {
                 action={instance._handleClose}
                 type="neutral"
                 title="Back to canvas" />
+            </div>
+            <div className="deployment-flow__header-name">
+              Pavlova
             </div>
           </div>
           <div className="deployment-flow__content">
@@ -222,12 +226,13 @@ describe('DeploymentFlow', function() {
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
         listTemplates={sinon.stub()}
+        modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
         users={{}}>
         <span>content</span>
       </juju.components.DeploymentFlow>);
-    output.props.children.props.children[0].props.children.props.children
+    output.props.children.props.children[0].props.children[0].props.children
       .props.action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -250,6 +255,7 @@ describe('DeploymentFlow', function() {
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
         listTemplates={sinon.stub()}
+        modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
         users={{}}>
@@ -276,6 +282,7 @@ describe('DeploymentFlow', function() {
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
         listTemplates={sinon.stub()}
+        modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
         users={{}}>
@@ -299,6 +306,7 @@ describe('DeploymentFlow', function() {
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
         listTemplates={sinon.stub()}
+        modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
         users={{}}>
@@ -324,6 +332,7 @@ describe('DeploymentFlow', function() {
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
         listTemplates={sinon.stub()}
+        modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
         users={{}}>
@@ -349,6 +358,7 @@ describe('DeploymentFlow', function() {
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
         listTemplates={sinon.stub()}
+        modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
         users={{}}>
@@ -379,6 +389,7 @@ describe('DeploymentFlow', function() {
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
         listTemplates={sinon.stub()}
+        modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
         users={{}}>
@@ -404,6 +415,7 @@ describe('DeploymentFlow', function() {
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
         listTemplates={sinon.stub()}
+        modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
         users={{}}>
@@ -430,6 +442,7 @@ describe('DeploymentFlow', function() {
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
         listTemplates={sinon.stub()}
+        modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
         users={{}}>
@@ -456,6 +469,7 @@ describe('DeploymentFlow', function() {
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
         listTemplates={sinon.stub()}
+        modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
         users={{}}>
@@ -483,6 +497,7 @@ describe('DeploymentFlow', function() {
         listRegions={sinon.stub()}
         listTemplates={sinon.stub()}
         modelCommitted={true}
+        modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
         users={{}}>
