@@ -1130,7 +1130,7 @@ YUI.add('juju-topology-service', function(Y) {
     serviceAddRelMouseDown: function(box, context) {
       var evt = d3.event;
       var topo = context.get('component');
-      context.longClickTimer = Y.later(750, this, function(d, e) {
+      context.longClickTimer = Y.later(250, this, function(d, e) {
         // Provide some leeway for accidental dragging.
         if ((Math.abs(box.x - box.px) + Math.abs(box.y - box.py)) /
                 2 > 5) {
@@ -1569,9 +1569,6 @@ YUI.add('juju-topology-service', function(Y) {
           'stroke-width': 1.1
         })
         .on('mousedown', function(d) {
-          self.get('component').fire('addRelationDragStart', { service: d });
-        })
-        .on('click', function(d) {
           self.get('component').fire('addRelationDragStart', { service: d });
         });
 
