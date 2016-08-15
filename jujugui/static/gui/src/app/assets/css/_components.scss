@@ -14,7 +14,7 @@
 @import "../../components/constraints/constraints";
 @import "../../components/copy-to-clipboard/copy-to-clipboard";
 @import "../../components/deployment-bar/deployment-bar";
-@import "../../components/deployment-bar-notification/deployment-bar-notification";
+@import "../../components/deployment-bar/notification/notification";
 @import "../../components/deployment-flow/deployment-flow";
 @import "../../components/deployment-flow/section/section";
 @import "../../components/deployment-flow/budget/budget";
@@ -25,7 +25,7 @@
 @import "../../components/deployment-flow/machines/machines";
 @import "../../components/deployment-flow/services/services";
 @import "../../components/deployment-summary/deployment-summary";
-@import "../../components/deployment-summary-change-item/deployment-summary-change-item";
+@import "../../components/deployment-summary/change-item/change-item";
 @import "../../components/env-size-display/env-size-display";
 @import "../../components/env-list/env-list";
 @import "../../components/env-switcher/env-switcher";
