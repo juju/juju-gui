@@ -473,8 +473,50 @@ YUI.add('deployment-flow', function() {
         </div>);
     },
 
-    render: function() {
+    /**
+      Generate panel content.
+
+      @method _generateContent
+      @returns {Object} The content markup.
+    */
+    _generateContent: function() {
+      var groupedChanges = this.props.groupedChanges;
+      if (!groupedChanges || Object.keys(groupedChanges).length === 0) {
+        return (
+          <div>
+            <h2>
+              No changes
+            </h2>
+            <p>
+              There are no changes to deploy. Make some changes to your model
+              and try again.
+            </p>
+          </div>);
+      }
       var disabled = this.props.acl.isReadOnly();
+      return (
+        <div>
+          {this._generateCloudSection()}
+          {this._generateCredentialSection()}
+          {this._generateMachinesSection()}
+          {this._generateServicesSection()}
+          {this._generateBudgetSection()}
+          <div className="twelve-col">
+            <div className="deployment-flow__deploy">
+              {this._generateAgreementsSection()}
+              <div className="deployment-flow__deploy-action">
+                <juju.components.GenericButton
+                  action={undefined}
+                  disabled={disabled || !this.state.cloud}
+                  type="positive"
+                  title="Deploy" />
+              </div>
+            </div>
+          </div>
+        </div>);
+    },
+
+    render: function() {
       return (
         <juju.components.Panel
           instanceName="deployment-flow-panel"
@@ -494,23 +536,7 @@ YUI.add('deployment-flow', function() {
             <div className="deployment-flow__content">
               <div className="twelve-col">
                 <div className="inner-wrapper">
-                  {this._generateCloudSection()}
-                  {this._generateCredentialSection()}
-                  {this._generateMachinesSection()}
-                  {this._generateServicesSection()}
-                  {this._generateBudgetSection()}
-                  <div className="twelve-col">
-                    <div className="deployment-flow__deploy">
-                      {this._generateAgreementsSection()}
-                      <div className="deployment-flow__deploy-action">
-                        <juju.components.GenericButton
-                          action={undefined}
-                          disabled={disabled || !this.state.cloud}
-                          type="positive"
-                          title="Deploy" />
-                      </div>
-                    </div>
-                  </div>
+                  {this._generateContent()}
                 </div>
               </div>
             </div>
