@@ -938,7 +938,7 @@ YUI.add('juju-gui', function(Y) {
           listRegions={jem.listRegions.bind(jem)}
           listTemplates={jem.listTemplates.bind(jem)}
           modelCommitted={this.env.get('connected')}
-          modelName={this.db.environment.get('name')}
+          modelName={db.environment.get('name')}
           servicesGetById={services.getById.bind(services)}
           user={this._getAuth()}
           users={users} />,
