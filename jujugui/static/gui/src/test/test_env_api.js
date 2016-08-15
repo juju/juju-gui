@@ -298,7 +298,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
         env.login();
         // Assume login to be the first request.
-        conn.msg({'request-id': 1, response: {'user-info': {}}});
+        conn.msg({
+          'request-id': 1,
+          response: {
+            'user-info': {},
+            facades: [{name: 'ModelManager', versions: [2]}]
+          }
+        });
         assert.isTrue(loginFired);
         assert.isTrue(result);
       });
@@ -307,7 +313,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.failedAuthentication = true;
         env.login();
         // Assume login to be the first request.
-        conn.msg({'request-id': 1, response: {'user-info': {}}});
+        conn.msg({
+          'request-id': 1,
+          response: {
+            'user-info': {},
+            facades: [{name: 'ModelManager', versions: [2]}]
+          }
+        });
         assert.isFalse(env.failedAuthentication);
       });
 
@@ -335,23 +347,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.login();
         // Assume login to be the first request.
         conn.msg({'request-id': 1, response: {
-          facades: [{name: 'Client', versions: [0]}],
-          'user-info': {}
+          facades: [
+            {name: 'Client', versions: [0]},
+            {name: 'ModelManager', versions: [2]}
+          ],
+          'user-info': {},
+          'model-tag': 'model-my-model'
         }});
         var currentModelInfoMessage = conn.last_message(2);
-        // EnvironmentInfo is the second request.
+        // ModelInfo is the second request.
         var currentModelInfoExpected = {
-          type: 'Client',
+          type: 'ModelManager',
           request: 'ModelInfo',
           // Note that facade version here is 0 because the login mock response
           // below is empty.
-          version: 0,
+          version: 2,
           'request-id': 2,
-          params: {}
+          params: {entities: [{tag: 'model-my-model'}]}
         };
-        assert.deepEqual(currentModelInfoExpected, currentModelInfoMessage);
+        console.log(currentModelInfoMessage);
+        assert.deepEqual(currentModelInfoMessage, currentModelInfoExpected);
         var watchAllMessage = conn.last_message();
-        // EnvironmentInfo is the second request.
+        // ModelInfo is the second request.
         var watchAllExpected = {
           type: 'Client',
           request: 'WatchAll',
@@ -361,14 +378,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'request-id': 3,
           params: {}
         };
-        assert.deepEqual(watchAllExpected, watchAllMessage);
+        assert.deepEqual(watchAllMessage, watchAllExpected);
       });
 
       it('stores user information', function() {
         env.login();
         // Assume login to be the first request.
         conn.msg({'request-id': 1, response: {
-          facades: [{name: 'Client', versions: [0]}],
+          facades: [
+            {name: 'Client', versions: [0]},
+            {name: 'ModelManager', versions: [2]}
+          ],
           'user-info': {'read-only': true}
         }});
         assert.strictEqual(env.get('readOnly'), true);
@@ -493,7 +513,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'request-id': requestId,
           response: {
             'user-info': {identity: 'who'},
-            facades: [{name: 'Client', versions: [42, 47]}]
+            facades: [
+              {name: 'Client', versions: [42, 47]},
+              {name: 'ModelManager', versions: [2]}
+            ]
           }
         });
         assert.strictEqual(error, null);
@@ -501,7 +524,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(creds.user, 'user-who');
         assert.strictEqual(creds.password, '');
         assert.deepEqual(creds.macaroons, ['macaroon', 'discharge']);
-        assert.deepEqual(env.get('facades'), {Client: [42, 47]});
+        assert.deepEqual(env.get('facades'), {
+          Client: [42, 47],
+          ModelManager: [2]
+        });
       });
 
       it('succeeds with already stored macaroons', function() {
@@ -514,7 +540,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'request-id': requestId,
           response: {
             'user-info': {identity: 'dalek'},
-            facades: [{name: 'Client', versions: [0]}]
+            facades: [
+              {name: 'Client', versions: [0]},
+              {name: 'ModelManager', versions: [2]}
+            ]
           }
         });
         assert.strictEqual(error, null);
@@ -522,7 +551,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(creds.user, 'user-dalek');
         assert.strictEqual(creds.password, '');
         assert.deepEqual(creds.macaroons, ['already stored', 'macaroons']);
-        assert.deepEqual(env.get('facades'), {Client: [0]});
+        assert.deepEqual(env.get('facades'), {
+          Client: [0],
+          ModelManager: [2]
+        });
       });
 
     });
@@ -542,47 +574,82 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sends the correct request for model info', function() {
+      env.set('modelTag', 'my-model-tag');
       env.currentModelInfo();
       var lastMessage = conn.last_message();
       var expected = {
-        type: 'Client',
+        type: 'ModelManager',
         request: 'ModelInfo',
-        version: 1,
+        version: 2,
         'request-id': 1,
-        params: {}
+        params: {entities: [{tag: 'my-model-tag'}]}
       };
       assert.deepEqual(expected, lastMessage);
     });
 
-    it('warns on model info errors', function() {
-      env.currentModelInfo();
-      // Mock "console.warn" so that it is possible to collect warnings.
-      var original = console.warn;
-      var warning = null;
-      console.warn = function(msg) {
-        warning = msg;
+    it('logs an error on current model info errors', function() {
+      env.set('modelTag', 'my-model-tag');
+      env.currentModelInfo(env._handleCurrentModelInfo.bind(env));
+      // Mock "console.error" so that it is possible to collect logged errors.
+      var original = console.error;
+      var err = null;
+      console.error = function(msg) {
+        err = msg;
       };
       // Assume currentModelInfo to be the first request.
-      conn.msg({'request-id': 1, error: 'Error retrieving env info.'});
-      assert.include(warning, 'error');
-      // Restore the original "console.warn".
-      console.warn = original;
+      conn.msg({'request-id': 1, error: {message: 'bad wolf'}});
+      assert.strictEqual(err, 'error retrieving model information: bad wolf');
+      // Restore the original "console.error".
+      console.error = original;
     });
 
-    it('stores model info into env attributes', function() {
-      env.currentModelInfo();
+    it('logs an error on current model info internal errors', function() {
+      env.set('modelTag', 'my-model-tag');
+      env.currentModelInfo(env._handleCurrentModelInfo.bind(env));
+      // Mock "console.error" so that it is possible to collect logged errors.
+      var original = console.error;
+      var err = null;
+      console.error = function(msg) {
+        err = msg;
+      };
       // Assume currentModelInfo to be the first request.
       conn.msg({
         'request-id': 1,
         response: {
-          'default-series': 'precise',
-          'provider-type': 'ec2',
-          'name': 'envname'
+          results: [{
+            error: {message: 'bad wolf'}
+          }]
         }
       });
-      assert.equal('precise', env.get('defaultSeries'));
-      assert.equal('ec2', env.get('providerType'));
-      assert.equal('envname', env.get('environmentName'));
+      assert.strictEqual(err, 'error retrieving model information: bad wolf');
+      // Restore the original "console.error".
+      console.error = original;
+    });
+
+    it('stores model info into env attributes', function() {
+      env.set('modelTag', 'my-model-tag');
+      env.currentModelInfo(env._handleCurrentModelInfo.bind(env));
+      // Assume currentModelInfo to be the first request.
+      conn.msg({
+        'request-id': 1,
+        response: {
+          results: [{
+            result: {
+              'default-series': 'xenial',
+              name: 'my-model',
+              'provider-type': 'aws',
+              uuid: '5bea955d-7a43-47d3-89dd-tag1',
+              'controller-uuid': '5bea955d-7a43-47d3-89dd-tag1',
+              life: 'alive',
+              'owner-tag': 'user-admin@local'
+            }
+          }]
+        }
+      });
+      assert.equal(env.get('defaultSeries'), 'xenial');
+      assert.equal(env.get('providerType'), 'aws');
+      assert.equal(env.get('environmentName'), 'my-model');
+      assert.equal(env.get('modelUUID'), '5bea955d-7a43-47d3-89dd-tag1');
     });
 
     it('sends the correct ModelGet request', function() {
@@ -598,7 +665,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('warns on ModelGet errors', function() {
-      env.currentModelInfo();
+      env.set('modelTag', 'my-model-tag');
+      env.currentModelInfo(env._handleCurrentModelInfo.bind(env));
       // Mock "console.warn" so that it is possible to collect warnings.
       var original = console.warn;
       var warning = null;
@@ -608,9 +676,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({
         'request-id': 1,
         response: {
-          'default-series': 'precise',
-          'provider-type': 'maas',
-          'name': 'envname'
+          results: [{
+            result: {
+              'default-series': 'xenial',
+              name: 'my-model',
+              'provider-type': 'maas',
+              uuid: '5bea955d-7a43-47d3-89dd-tag1',
+              'controller-uuid': '5bea955d-7a43-47d3-89dd-tag1',
+              life: 'alive',
+              'owner-tag': 'user-admin@local'
+            }
+          }]
         }
       });
       conn.msg({'request-id': 2, error: 'bad wolf'});
@@ -620,13 +696,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('stores the MAAS server on ModelGet results on MAAS', function() {
-      env.currentModelInfo();
+      env.set('modelTag', 'my-model-tag');
+      env.currentModelInfo(env._handleCurrentModelInfo.bind(env));
       conn.msg({
         'request-id': 1,
         response: {
-          'default-series': 'trusty',
-          'provider-type': 'maas',
-          'name': 'envname'
+          results: [{
+            result: {
+              'default-series': 'xenial',
+              name: 'my-model',
+              'provider-type': 'maas',
+              uuid: '5bea955d-7a43-47d3-89dd-tag1',
+              'controller-uuid': '5bea955d-7a43-47d3-89dd-tag1',
+              life: 'alive',
+              'owner-tag': 'user-admin@local'
+            }
+          }]
         }
       });
       conn.msg({
@@ -647,18 +732,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           config: {'maas-server': '1.2.3.4/MAAS'}
         }
       });
-      assert.isUndefined(env.get('maasServer'));
+      assert.strictEqual(env.get('maasServer'), undefined);
     });
 
     it('calls ModelGet after ModelInfo on MAAS', function() {
-      // Simulate an EnvironmentInfo request/response.
-      env.currentModelInfo();
+      // Simulate a ModelInfo request/response.
+      env.set('modelTag', 'my-model-tag');
+      env.currentModelInfo(env._handleCurrentModelInfo.bind(env));
       conn.msg({
         'request-id': 1,
         response: {
-          'default-series': 'utopic',
-          'provider-type': 'maas',
-          'name': 'envname'
+          results: [{
+            result: {
+              'default-series': 'xenial',
+              name: 'my-model',
+              'provider-type': 'maas',
+              uuid: '5bea955d-7a43-47d3-89dd-tag1',
+              'controller-uuid': '5bea955d-7a43-47d3-89dd-tag1',
+              life: 'alive',
+              'owner-tag': 'user-admin@local'
+            }
+          }]
         }
       });
       assert.lengthOf(conn.messages, 2);
@@ -674,20 +768,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('does not call ModelGet after Info when not on MAAS', function() {
       // The MAAS server attribute is initially undefined.
-      assert.isUndefined(env.get('maasServer'));
-      // Simulate an EnvironmentInfo request/response.
-      env.currentModelInfo();
+      assert.strictEqual(env.get('maasServer'), undefined);
+      // Simulate a ModelInfo request/response.
+      env.set('modelTag', 'my-model-tag');
+      env.currentModelInfo(env._handleCurrentModelInfo.bind(env));
       conn.msg({
         'request-id': 1,
         response: {
-          'default-series': 'utopic',
-          'provider-type': 'ec2',
-          'name': 'envname'
+          results: [{
+            result: {
+              'default-series': 'xenial',
+              name: 'my-model',
+              'provider-type': 'aws',
+              uuid: '5bea955d-7a43-47d3-89dd-tag1',
+              'controller-uuid': '5bea955d-7a43-47d3-89dd-tag1',
+              life: 'alive',
+              'owner-tag': 'user-admin@local'
+            }
+          }]
         }
       });
       assert.lengthOf(conn.messages, 1);
       // The MAAS server attribute has been set to null.
-      assert.isNull(env.get('maasServer'));
+      assert.strictEqual(env.get('maasServer'), null);
     });
 
     it('destroys models', function(done) {
