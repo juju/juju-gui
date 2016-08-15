@@ -58,6 +58,9 @@
 @import "../../components/inspector/relate-to/endpoint/endpoint";
 @import "../../components/inspector/relations/details/details";
 @import "../../components/inspector/relations/relations";
+@import "../../components/inspector/service-overview/service-overview";
+@import "../../components/inspector/unit-details/unit-details";
+@import "../../components/inspector/unit-list/unit-list";
 @import "../../components/local-inspector/local-inspector";
 @import "../../components/login/login";
 @import "../../components/machine-view/add-machine/add-machine";
@@ -75,13 +78,10 @@
 @import "../../components/panel/panel";
 @import "../../components/scale-service/scale-service";
 @import "../../components/search-results/search-results";
-@import "../../components/service-overview/service-overview";
 @import "../../components/spinner/spinner";
 @import "../../components/store/store";
 @import "../../components/string-config/string-config";
 @import "../../components/svg-icon/svg-icon";
-@import "../../components/unit-details/unit-details";
-@import "../../components/unit-list/unit-list";
 @import "../../components/user-profile/user-profile";
 @import "../../components/user-profile/entity/entity";
 @import "../../components/user-profile-header/user-profile-header";
