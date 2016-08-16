@@ -901,6 +901,8 @@ YUI.add('juju-gui', function(Y) {
       var jem = this.jem;
       var metadata = metadata || {};
       var activeComponent = metadata.activeComponent;
+      var autoPlaceUnits = this._autoPlaceUnits.bind(this);
+      var modelCommitted = this.env.get('connected');
       if (!window.flags || !window.flags.blues) {
         // Display the old deploy summary if we're not using the feature flag
         // for the new deployment flow.
@@ -911,7 +913,7 @@ YUI.add('juju-gui', function(Y) {
           <window.juju.components.DeploymentSummaryClassic
             acl={this.acl}
             autoPlaceDefault={!localStorage.getItem('disable-auto-place')}
-            autoPlaceUnits={this._autoPlaceUnits.bind(this)}
+            autoPlaceUnits={autoPlaceUnits}
             changeDescriptions={changeDescriptions}
             changeState={this.changeState.bind(this)}
             ecsClear={ecs.clear.bind(ecs)}
@@ -942,6 +944,10 @@ YUI.add('juju-gui', function(Y) {
           changesFilterByParent={
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
           changeState={this.changeState.bind(this)}
+          deploy={utils.deploy.bind(
+            utils, env, jem, users, autoPlaceUnits,
+            this.createSocketURL.bind(this), this.set.bind(this),
+            modelCommitted)}
           generateAllChangeDescriptions={
             changesUtils.generateAllChangeDescriptions.bind(
               changesUtils, services, units)}
@@ -951,7 +957,7 @@ YUI.add('juju-gui', function(Y) {
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
           listRegions={jem.listRegions.bind(jem)}
           listTemplates={jem.listTemplates.bind(jem)}
-          modelCommitted={this.env.get('connected')}
+          modelCommitted={modelCommitted}
           modelName={db.environment.get('name')}
           servicesGetById={services.getById.bind(services)}
           user={this._getAuth()}
