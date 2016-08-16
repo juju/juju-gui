@@ -729,7 +729,7 @@ YUI.add('juju-env-api', function(Y) {
           console.warn('error calling ModelGet API: ' + data.err);
           return;
         }
-        this.set('maasServer', data.config['maas-server']);
+        this.set('maasServer', data.config['maas-server'].value);
       });
     },
 
@@ -936,43 +936,37 @@ YUI.add('juju-env-api', function(Y) {
     },
 
     /**
-      Send a client ModelGet request to retrieve info about the model.
+      Send a ModelConfig.ModelGet request to retrieve info about the model.
 
       @method modelGet
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an object with an "err"
         attribute containing a string describing the problem (if an error
         occurred), or with the "config" attribute if everything went well.
+        Every config value is an object composed of two fields:
+        - source indicating the source for the config value;
+        - value with the actual config value.
       @return {undefined} Sends a message to the server only.
     */
     modelGet: function(callback) {
-      var intermediateCallback;
-      if (callback) {
-        // Capture the callback. No context is passed.
-        intermediateCallback = this._handleModelGet.bind(null, callback);
-      }
+      // Define the API request callback wrapper.
+      var handler = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by model get API call:', data);
+          return;
+        }
+        if (data.error) {
+          userCallback({err: data.error});
+          return;
+        }
+        userCallback({config: data.response.config});
+      }.bind(this, callback);
+
+      // Send the API request.
       this._send_rpc({
-        type: 'Client',
+        type: 'ModelConfig',
         request: 'ModelGet'
-      }, intermediateCallback);
-    },
-
-    /**
-      Handle the results of calling the ModelGet API endpoint.
-
-      @method _handleModelGet
-      @param {Function} callback The originally submitted callback.
-      @param {Object} data The response returned by the server.
-    */
-    _handleModelGet: function(callback, data) {
-      var transformedData = {
-        err: data.error,
-      };
-      if (!data.error) {
-        transformedData.config = data.response.config;
-      }
-      // Call the original user callback.
-      callback(transformedData);
+      }, handler);
     },
 
     /**
@@ -2787,6 +2781,8 @@ YUI.add('juju-env-api', function(Y) {
       @return {undefined} Sends a message to the server only.
     */
     destroyModel: function(callback) {
+      // TODO frankban: remove this method, as it is deprecated.
+      // Clients should use the "destroyModels" method below instead.
       // Decorate the user supplied callback.
       var handler = function(userCallback, data) {
         if (!userCallback) {
@@ -2800,6 +2796,63 @@ YUI.add('juju-env-api', function(Y) {
       this._send_rpc({
         type: 'Client',
         request: 'DestroyModel'
+      }, handler);
+    },
+
+    /**
+      Destroy the models with the given tags.
+
+      This method will try to destroy the specified models.
+      It is possible to destroy either other models in the same controller or
+      the current connected model, in which case clients, sooner or later after
+      the server response is received, will likely want to switch to another
+      model not being killed.
+
+      Note that all applications withing the specified models will be destroyed
+      as well, and it's not possible to recover from model's removal.
+      Also note that currently (2016-08-16) nothing prevents this call from
+      destroying the controller model, therefore also disconnecting or even
+      auto-destroying the GUI itself, for instance in the GUI in Juju scenario.
+      For this reason callers are responsible of checking whether a model tag
+      identifies a controller model before calling this method.
+
+      @method destroyModels
+      @param {Array} tags The Juju tags of the models, each one being a string,
+        for instance "model-5bea955d-7a43-47d3-89dd-b02c923e2447".
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err" field
+        if a global API error occurred. Otherwise, the returned object will
+        have a "results" field as an object mapping model tags to possible
+        error strings, or to null if the deletion of that model succeeded.
+      @return {undefined} Sends a message to the server only.
+    */
+    destroyModels: function(tags, callback) {
+      // Decorate the user supplied callback.
+      var handler = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by destroy models API call:', data);
+          return;
+        }
+        if (data.error) {
+          userCallback({err: data.error});
+          return;
+        }
+        var results = data.response.results.reduce((prev, result, index) => {
+          var tag = tags[index];
+          prev[tag] = result.error ? result.error.message : null;
+          return prev;
+        }, {});
+        userCallback({results: results});
+      }.bind(this, callback);
+
+      // Send the API request.
+      var entities = tags.map(function(tag) {
+        return {tag: tag};
+      });
+      this._send_rpc({
+        type: 'ModelManager',
+        request: 'DestroyModels',
+        params: {entities: entities}
       }, handler);
     },
 
