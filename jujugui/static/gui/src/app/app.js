@@ -901,6 +901,7 @@ YUI.add('juju-gui', function(Y) {
       var jem = this.jem;
       var metadata = metadata || {};
       var activeComponent = metadata.activeComponent;
+      var groupedChanges = changesUtils.getGroupedChanges(currentChangeSet);
       if (!window.flags || !window.flags.blues) {
         // Display the old deploy summary if we're not using the feature flag
         // for the new deployment flow.
@@ -921,6 +922,20 @@ YUI.add('juju-gui', function(Y) {
           document.getElementById('deployment-container'));
         return;
       }
+      if (!groupedChanges || Object.keys(groupedChanges).length === 0) {
+        // If there are no changes then close the deployment flow. This is to
+        // prevent showing the deployment flow if the user clicks back in the
+        // browser or navigates directly to the url. This changeState needs to
+        // happen in app.js, not the component otherwise it will have to try and
+        // interrupt the mount to unmount the component.
+        this.changeState({
+          sectionC: {
+            component: null,
+            metadata: null
+          }
+        });
+        return;
+      }
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
@@ -931,7 +946,7 @@ YUI.add('juju-gui', function(Y) {
           generateAllChangeDescriptions={
             changesUtils.generateAllChangeDescriptions.bind(
               changesUtils, services, units)}
-          groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
+          groupedChanges={groupedChanges}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listClouds={jem.listClouds.bind(jem)}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
