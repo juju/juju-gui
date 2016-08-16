@@ -700,8 +700,24 @@ YUI.add('juju-gui', function(Y) {
       controllerAPI.setCredentials({ user, password, macaroons });
 
       controllerAPI.after('login', e => {
-        this.controllerAPI.listModelsWithInfo((err, data) => {
-          console.log(err, data);
+        this.controllerAPI.listModelsWithInfo((err, response) => {
+          if (err) {
+            console.error('Unable to list models', err);
+            this.db.notifications.add({
+              title: 'Unable to list models',
+              message: 'Unable to list models: ' + err,
+              level: 'error'
+            });
+            return;
+          }
+          const modelList = response.models;
+          this.set('environmentList', modelList);
+          // If the modelList has no models in it then we have to drop the
+          // user into an uncommitted state.
+          if (modelList.length === 0) {
+            // XXX Drop the user into the uncommitted state.
+          }
+          const selectedModel = this._pickModel(modelList);
         });
       });
 
@@ -1441,14 +1457,12 @@ YUI.add('juju-gui', function(Y) {
       // XXX This picks the first environment if one is not provided by
       // config, but we'll want to default to sandbox mode then allow the
       // user to choose a model if one isn't provided in config.
-      var envName = this.get('jujuEnvUUID');
-      var user = this.get('user');
-      var matchingModels = [];
+      const envName = this.get('jujuEnvUUID');
+      const user = this.controllerAPI.get('user');
+      let matchingModels = [];
       if (envName && user) {
-        var path = user + '/' + envName;
-        matchingModels = modelList.filter(function(model) {
-          return model.path === path;
-        });
+        matchingModels = modelList.filter(
+          model => model.path === `${user}/${envName}`);
       }
       if (matchingModels.length !== 0) {
         return matchingModels[0];
