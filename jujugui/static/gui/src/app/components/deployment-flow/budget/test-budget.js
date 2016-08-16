@@ -44,6 +44,7 @@ describe('DeploymentBudget', function() {
       <juju.components.DeploymentBudget
         acl={acl}
         listBudgets={sinon.stub()}
+        setBudget={sinon.stub()}
         user={{user: 'spinach'}} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -58,7 +59,9 @@ describe('DeploymentBudget', function() {
       <juju.components.DeploymentBudget
         acl={acl}
         listBudgets={sinon.stub().callsArgWith(0, null, budgets)}
+        setBudget={sinon.stub()}
         user={{user: 'spinach'}} />, true);
+    var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
       <div>
@@ -67,6 +70,7 @@ describe('DeploymentBudget', function() {
             <juju.components.InsetSelect
               disabled={false}
               label="Budget"
+              onChange={instance._handleBudgetChange}
               options={[{
                 label: 'Big budget ($20)',
                 value: 'Big budget'
@@ -90,7 +94,9 @@ describe('DeploymentBudget', function() {
       <juju.components.DeploymentBudget
         acl={acl}
         listBudgets={sinon.stub().callsArgWith(0, null, budgets)}
+        setBudget={sinon.stub()}
         user={{user: 'spinach'}} />, true);
+    var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
       <div>
@@ -99,6 +105,7 @@ describe('DeploymentBudget', function() {
             <juju.components.InsetSelect
               disabled={true}
               label="Budget"
+              onChange={instance._handleBudgetChange}
               options={[{
                 label: 'Big budget ($20)',
                 value: 'Big budget'
@@ -122,6 +129,7 @@ describe('DeploymentBudget', function() {
       <juju.components.DeploymentBudget
         acl={acl}
         listBudgets={listBudgets}
+        setBudget={sinon.stub()}
         user={{}} />, true);
     renderer.getRenderOutput();
     assert.deepEqual(listBudgets.callCount, 0);
@@ -133,6 +141,7 @@ describe('DeploymentBudget', function() {
       <juju.components.DeploymentBudget
         acl={acl}
         listBudgets={listBudgets}
+        setBudget={sinon.stub()}
         user={{}} />, true);
     renderer.getRenderOutput();
     assert.deepEqual(listBudgets.callCount, 0);
@@ -140,6 +149,7 @@ describe('DeploymentBudget', function() {
       <juju.components.DeploymentBudget
         acl={acl}
         listBudgets={listBudgets}
+        setBudget={sinon.stub()}
         user={{user: 'spinach'}} />, true);
     assert.deepEqual(listBudgets.callCount, 1);
   });
@@ -151,8 +161,36 @@ describe('DeploymentBudget', function() {
       <juju.components.DeploymentBudget
         acl={acl}
         listBudgets={listBudgets}
+        setBudget={sinon.stub()}
         user={{user: 'spinach'}} />, true);
     renderer.unmount();
     assert.deepEqual(abort.callCount, 1);
+  });
+
+  it('can set the initial budget', function() {
+    var setBudget = sinon.stub();
+    jsTestUtils.shallowRender(
+      <juju.components.DeploymentBudget
+        acl={acl}
+        listBudgets={sinon.stub().callsArgWith(0, null, budgets)}
+        setBudget={setBudget}
+        user={{user: 'spinach'}} />);
+    assert.equal(setBudget.callCount, 1);
+    assert.equal(setBudget.args[0][0], 'Big budget');
+  });
+
+  it('can change the budget', function() {
+    var setBudget = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentBudget
+        acl={acl}
+        listBudgets={sinon.stub().callsArgWith(0, null, budgets)}
+        setBudget={setBudget}
+        user={{user: 'spinach'}} />, true);
+    var output = renderer.getRenderOutput();
+    output.props.children[0].props.children[0].props.children.props.onChange(
+      'new-budget');
+    assert.equal(setBudget.callCount, 2);
+    assert.equal(setBudget.args[1][0], 'new-budget');
   });
 });

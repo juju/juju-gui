@@ -24,6 +24,7 @@ YUI.add('deployment-budget', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       listBudgets: React.PropTypes.func.isRequired,
+      setBudget: React.PropTypes.func.isRequired,
       user: React.PropTypes.object,
     },
 
@@ -91,6 +92,9 @@ YUI.add('deployment-budget', function() {
           return;
         }
         this.setState({budgets: data});
+        if (data && data.budgets && data.budgets.length > 0) {
+          this.props.setBudget(data.budgets[0].budget);
+        }
       });
     },
 
@@ -112,6 +116,16 @@ YUI.add('deployment-budget', function() {
       });
     },
 
+    /**
+      Set the budget value.
+
+      @method _handleBudgetChange
+      @param {String} The select value.
+    */
+    _handleBudgetChange: function(value) {
+      this.props.setBudget(value);
+    },
+
     render: function() {
       if (this.state.loadingBudgets) {
         return (
@@ -127,6 +141,7 @@ YUI.add('deployment-budget', function() {
               <juju.components.InsetSelect
                 disabled={disabled}
                 label="Budget"
+                onChange={this._handleBudgetChange}
                 options={this._generateBudgetOptions()} />
             </div>
             <div className="three-col">

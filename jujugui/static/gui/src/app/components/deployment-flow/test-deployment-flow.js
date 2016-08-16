@@ -164,6 +164,7 @@ describe('DeploymentFlow', function() {
                   <juju.components.DeploymentBudget
                     acl={acl}
                     listBudgets={listBudgets}
+                    setBudget={instance._setBudget}
                     user={{}} />
                 </juju.components.DeploymentSection>
                 <div className="twelve-col">
