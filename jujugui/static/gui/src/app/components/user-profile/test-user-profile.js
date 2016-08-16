@@ -211,38 +211,42 @@ describe('UserProfile', () => {
           links={links}
           username={users.charmstore.usernameDisplay} />
         <div>
-          <juju.components.UserProfileModelList
-            addNotification={addNotification}
-            canCreateNew={canCreateNew}
-            currentModel={undefined}
-            env={env}
-            hideConnectingMask={hideConnectingMask}
-            jem={undefined}
-            listModels={listModels}
-            showConnectingMask={showConnectingMask}
-            switchModel={switchModel}
-            user={user}
-            users={users} />
-          <juju.components.UserProfileEntityList
-            changeState={changeState}
-            charmstore={charmstore}
-            getDiagramURL={getDiagramURL}
-            type='bundle'
-            user={user}
-            users={users} />
-          <juju.components.UserProfileEntityList
-            changeState={changeState}
-            charmstore={charmstore}
-            getDiagramURL={getDiagramURL}
-            type='charm'
-            user={user}
-            users={users} />
-          <juju.components.UserProfileAgreementList
-            getAgreements={getAgreements}
-            user={user} />
-          <juju.components.UserProfileBudgetList
-            listBudgets={listBudgets}
-            user={user} />
+          <juju.components.SectionLoadWatcher
+            EmptyComponent={juju.components.EmptyUserProfile}
+            timeout={10}>
+            <juju.components.UserProfileModelList
+              addNotification={addNotification}
+              canCreateNew={canCreateNew}
+              currentModel={undefined}
+              env={env}
+              hideConnectingMask={hideConnectingMask}
+              jem={undefined}
+              listModels={listModels}
+              showConnectingMask={showConnectingMask}
+              switchModel={switchModel}
+              user={user}
+              users={users} />
+            <juju.components.UserProfileEntityList
+              changeState={changeState}
+              charmstore={charmstore}
+              getDiagramURL={getDiagramURL}
+              type='bundle'
+              user={user}
+              users={users} />
+            <juju.components.UserProfileEntityList
+              changeState={changeState}
+              charmstore={charmstore}
+              getDiagramURL={getDiagramURL}
+              type='charm'
+              user={user}
+              users={users} />
+            <juju.components.UserProfileAgreementList
+              getAgreements={getAgreements}
+              user={user} />
+            <juju.components.UserProfileBudgetList
+              listBudgets={listBudgets}
+              user={user} />
+          </juju.components.SectionLoadWatcher>
         </div>
       </div>);
     assert.deepEqual(content, expected);

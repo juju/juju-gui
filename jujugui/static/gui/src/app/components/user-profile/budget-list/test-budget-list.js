@@ -38,6 +38,7 @@ describe('UserProfileBudgetList', () => {
   it('renders the empty state', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileBudgetList
+        broadcastStatus={sinon.stub()}
         listBudgets={sinon.stub().callsArgWith(0, null, [])}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -47,6 +48,7 @@ describe('UserProfileBudgetList', () => {
   it('displays loading spinner when loading', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileBudgetList
+        broadcastStatus={sinon.stub()}
         listBudgets={sinon.stub()}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -70,6 +72,7 @@ describe('UserProfileBudgetList', () => {
     var listBudgets = sinon.stub().callsArgWith(0, null, data);
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileBudgetList
+        broadcastStatus={sinon.stub()}
         listBudgets={listBudgets}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -128,6 +131,7 @@ describe('UserProfileBudgetList', () => {
     var listBudgets = sinon.stub().returns({abort: listBudgetsAbort});
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileBudgetList
+        broadcastStatus={sinon.stub()}
         listBudgets={listBudgets}
         user={users.charmstore} />, true);
     renderer.unmount();

@@ -61,6 +61,7 @@ describe('UserProfileModelList', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        broadcastStatus={sinon.stub()}
         canCreateNew={false}
         currentModel={'model1'}
         env={env}
@@ -79,6 +80,7 @@ describe('UserProfileModelList', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        broadcastStatus={sinon.stub()}
         canCreateNew={false}
         currentModel={'model1'}
         env={env}
@@ -102,6 +104,7 @@ describe('UserProfileModelList', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        broadcastStatus={sinon.stub()}
         canCreateNew={true}
         currentModel={'model1'}
         env={env}
@@ -200,6 +203,7 @@ describe('UserProfileModelList', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        broadcastStatus={sinon.stub()}
         canCreateNew={false}
         currentModel={'model1'}
         env={env}
@@ -228,6 +232,7 @@ describe('UserProfileModelList', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        broadcastStatus={sinon.stub()}
         canCreateNew={true}
         currentModel={'model1'}
         env={env}
@@ -260,6 +265,7 @@ describe('UserProfileModelList', () => {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        broadcastStatus={sinon.stub()}
         canCreateNew={true}
         env={env}
         hideConnectingMask={sinon.stub()}
@@ -281,6 +287,7 @@ describe('UserProfileModelList', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        broadcastStatus={sinon.stub()}
         canCreateNew={false}
         env={env}
         hideConnectingMask={sinon.stub()}
@@ -301,6 +308,7 @@ describe('UserProfileModelList', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        broadcastStatus={sinon.stub()}
         canCreateNew={true}
         env={env}
         hideConnectingMask={sinon.stub()}
@@ -339,6 +347,7 @@ describe('UserProfileModelList', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        broadcastStatus={sinon.stub()}
         canCreateNew={true}
         env={env}
         hideConnectingMask={sinon.stub()}
@@ -384,6 +393,7 @@ describe('UserProfileModelList', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={addNotification}
+        broadcastStatus={sinon.stub()}
         canCreateNew={true}
         env={env}
         hideConnectingMask={hideConnectingMask}
@@ -423,6 +433,7 @@ describe('UserProfileModelList', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        broadcastStatus={sinon.stub()}
         canCreateNew={true}
         env={env}
         hideConnectingMask={sinon.stub()}
@@ -463,6 +474,7 @@ describe('UserProfileModelList', () => {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
+        broadcastStatus={sinon.stub()}
         canCreateNew={false}
         currentModel={'model1'}
         env={env}

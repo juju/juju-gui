@@ -22,6 +22,7 @@ YUI.add('user-profile-entity-list', function() {
 
   juju.components.UserProfileEntityList = React.createClass({
     propTypes: {
+      broadcastStatus: React.PropTypes.func,
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
@@ -34,6 +35,7 @@ YUI.add('user-profile-entity-list', function() {
       this.xhrs = [];
 
       return {
+        broadcastStatus: function() {},
         entityList: [],
         loadingEntities: false,
       };
@@ -73,6 +75,7 @@ YUI.add('user-profile-entity-list', function() {
       var charmstore = props.charmstore;
       var username = props.users.charmstore && props.users.charmstore.user;
       if (charmstore && charmstore.list && username) {
+        this.props.broadcastStatus('starting');
         // Delay the call until after the state change to prevent race
         // conditions.
         this.setState({loadingEntities: true}, () => {
@@ -91,9 +94,16 @@ YUI.add('user-profile-entity-list', function() {
     */
     _fetchEntitiesCallback: function(error, data) {
       this.setState({loadingEntities: false}, () => {
+        var broadcastStatus = this.props.broadcastStatus;
         if (error) {
+          broadcastStatus('error');
           console.error('Can not retrieve entities: ', error);
           return;
+        }
+        if (!data || !data.length || data.length === 0) {
+          broadcastStatus('empty');
+        } else {
+          broadcastStatus('ok');
         }
         this.setState({entityList: data});
       });

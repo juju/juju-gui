@@ -23,6 +23,7 @@ YUI.add('user-profile-model-list', function() {
   juju.components.UserProfileModelList = React.createClass({
     propTypes: {
       addNotification: React.PropTypes.func.isRequired,
+      broadcastStatus: React.PropTypes.func,
       canCreateNew: React.PropTypes.bool.isRequired,
       currentModel: React.PropTypes.string,
       env: React.PropTypes.object.isRequired,
@@ -39,6 +40,7 @@ YUI.add('user-profile-model-list', function() {
       this.xhrs = [];
 
       return {
+        broadcastStatus: function() {},
         modelList: [],
         loadingModels: false,
         createNewModelActive: false
@@ -70,6 +72,7 @@ YUI.add('user-profile-model-list', function() {
       @method _fetchModels
     */
     _fetchModels:  function() {
+      this.props.broadcastStatus('starting');
       // Delay the call until after the state change to prevent race
       // conditions.
       this.setState({loadingModels: true}, () => {
@@ -87,9 +90,11 @@ YUI.add('user-profile-model-list', function() {
     */
     _fetchModelsCallback: function(error, data) {
       this.setState({loadingModels: false}, () => {
+        var broadcastStatus = this.props.broadcastStatus;
         // We need to coerce error types returned by JES vs JEM into one error.
         var err = data.err || error;
         if (err) {
+          broadcastStatus('error');
           console.error(err);
           return;
         }
@@ -115,6 +120,11 @@ YUI.add('user-profile-model-list', function() {
             model.isAlive = true;
             return model;
           });
+        }
+        if (!modelList || !modelList.length || modelList.length === 0) {
+          broadcastStatus('empty');
+        } else {
+          broadcastStatus('ok');
         }
         this.setState({modelList: modelList});
       });

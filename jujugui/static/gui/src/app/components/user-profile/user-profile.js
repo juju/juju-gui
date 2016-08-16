@@ -90,67 +90,45 @@ YUI.add('user-profile', function() {
       @returns {Array} The markup for the content.
     */
     _generateContent: function() {
-      /*
-       * XXX: Re-enable this onboarding message by using the SectionLoadWatcher
-       * component from https://github.com/juju/juju-gui/pull/1878
-       */
-      /*
-      var state = this.state;
-      if (isLoaded && isEmpty) {
-        var header = 'Your profile is currently empty';
-        var message = 'Your models, bundles and charms will appear here when'
-                      + ' you create them.';
-        var staticURL = this.props.staticURL || '';
-        var basePath = `${staticURL}/static/gui/build/app`;
-        return (
-          <div className="user-profile__empty twelve-col no-margin-bottom">
-            {this._generateCreateNew('user-profile__empty-button')}
-            <div className="clearfix">
-              <img alt="Empty profile"
-                className="user-profile__empty-image"
-                src=
-                  {`${basePath}/assets/images/non-sprites/empty_profile.png`} />
-              <h2 className="user-profile__empty-title">{header}</h2>
-              <p className="user-profile__empty-text">{message}</p>
-            </div>
-          </div>);
-      }
-      */
       var props = this.props;
       return (
         <div>
-          <juju.components.UserProfileModelList
-            addNotification={props.addNotification}
-            canCreateNew={props.canCreateNew}
-            currentModel={props.currentModel}
-            env={props.env}
-            hideConnectingMask={props.hideConnectingMask}
-            jem={props.jem}
-            listModels={props.listModels}
-            showConnectingMask={props.showConnectingMask}
-            switchModel={props.switchModel}
-            user={props.user}
-            users={props.users} />
-          <juju.components.UserProfileEntityList
-            changeState={props.changeState}
-            charmstore={props.charmstore}
-            getDiagramURL={props.getDiagramURL}
-            type='bundle'
-            user={props.user}
-            users={props.users} />
-          <juju.components.UserProfileEntityList
-            changeState={props.changeState}
-            charmstore={props.charmstore}
-            getDiagramURL={props.getDiagramURL}
-            type='charm'
-            user={props.user}
-            users={props.users} />
-          <juju.components.UserProfileAgreementList
-            getAgreements={props.getAgreements}
-            user={props.user} />
-          <juju.components.UserProfileBudgetList
-            listBudgets={props.listBudgets}
-            user={props.user} />
+          <juju.components.SectionLoadWatcher
+            EmptyComponent={juju.components.EmptyUserProfile}
+            timeout={10}>
+            <juju.components.UserProfileModelList
+              addNotification={props.addNotification}
+              canCreateNew={props.canCreateNew}
+              currentModel={props.currentModel}
+              env={props.env}
+              hideConnectingMask={props.hideConnectingMask}
+              jem={props.jem}
+              listModels={props.listModels}
+              showConnectingMask={props.showConnectingMask}
+              switchModel={props.switchModel}
+              user={props.user}
+              users={props.users} />
+            <juju.components.UserProfileEntityList
+              changeState={props.changeState}
+              charmstore={props.charmstore}
+              getDiagramURL={props.getDiagramURL}
+              type='bundle'
+              user={props.user}
+              users={props.users} />
+            <juju.components.UserProfileEntityList
+              changeState={props.changeState}
+              charmstore={props.charmstore}
+              getDiagramURL={props.getDiagramURL}
+              type='charm'
+              user={props.user}
+              users={props.users} />
+            <juju.components.UserProfileAgreementList
+              getAgreements={props.getAgreements}
+              user={props.user} />
+            <juju.components.UserProfileBudgetList
+              listBudgets={props.listBudgets}
+              user={props.user} />
+          </juju.components.SectionLoadWatcher>
         </div>);
     },
 
@@ -202,6 +180,7 @@ YUI.add('user-profile', function() {
 
 }, '', {
   requires: [
+    'empty-user-profile',
     'generic-input',
     'loading-spinner',
     'panel-component',
