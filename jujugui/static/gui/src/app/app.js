@@ -921,6 +921,20 @@ YUI.add('juju-gui', function(Y) {
           document.getElementById('deployment-container'));
         return;
       }
+      if (Object.keys(currentChangeSet).length === 0) {
+        // If there are no changes then close the deployment flow. This is to
+        // prevent showing the deployment flow if the user clicks back in the
+        // browser or navigates directly to the url. This changeState needs to
+        // happen in app.js, not the component otherwise it will have to try and
+        // interrupt the mount to unmount the component.
+        this.changeState({
+          sectionC: {
+            component: null,
+            metadata: null
+          }
+        });
+        return;
+      }
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
