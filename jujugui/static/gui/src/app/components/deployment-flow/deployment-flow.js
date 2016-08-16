@@ -144,6 +144,7 @@ YUI.add('deployment-flow', function() {
       Store the selected cloud in state.
 
       @method _setCloud
+      @param {String} cloud The selected cloud.
     */
     _setCloud: function(cloud) {
       this.setState({cloud: cloud});
@@ -153,6 +154,7 @@ YUI.add('deployment-flow', function() {
       Store the selected credential in state.
 
       @method _setCredential
+      @param {String} credential The selected credential.
     */
     _setCredential: function(credential) {
       this.setState({credential: credential});
@@ -162,6 +164,7 @@ YUI.add('deployment-flow', function() {
       Store the selected template in state.
 
       @method _setTemplate
+      @param {String} template The selected template.
     */
     _setTemplate: function(template) {
       this.setState({template: template});
@@ -171,9 +174,20 @@ YUI.add('deployment-flow', function() {
       Store the selected region in state.
 
       @method _setRegion
+      @param {String} region The selected region.
     */
     _setRegion: function(region) {
       this.setState({region: region});
+    },
+
+    /**
+      Store the selected budget in state.
+
+      @method _setBudget
+      @param {String} budget The selected budget.
+    */
+    _setBudget: function(budget) {
+      this.setState({budget: budget});
     },
 
     /**
@@ -428,6 +442,7 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentBudget
             acl={this.props.acl}
             listBudgets={this.props.listBudgets}
+            setBudget={this._setBudget}
             user={this.props.user} />
         </juju.components.DeploymentSection>);
     },
