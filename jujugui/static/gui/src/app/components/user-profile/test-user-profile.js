@@ -50,123 +50,6 @@ describe('UserProfile', () => {
     };
   });
 
-  /* eslint-disable max-len */
-  /**
-   XXX Re-enable after the SectionLoadWatcher component is integrated.
-  it('renders the empty state', () => {
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfile
-        addNotification={sinon.stub()}
-        users={users}
-        canCreateNew={true}
-        charmstore={{}}
-        env={env}
-        getAgreements={sinon.stub()}
-        getDiagramURL={sinon.stub()}
-        listBudgets={sinon.stub()}
-        listModels={sinon.stub()}
-        switchModel={sinon.stub()}
-        interactiveLogin={true}
-        changeState={sinon.stub()}
-        pluralize={pluralize}
-        hideConnectingMask={sinon.stub()}
-        showConnectingMask={sinon.stub()}
-        storeUser={sinon.stub()}
-        user={users.charmstore} />, true);
-    var instance = component.getMountedInstance();
-    var output = component.getRenderOutput();
-    // eslint-disable max-len
-    var expected = (
-      <juju.components.Panel
-        instanceName="user-profile"
-        visible={true}>
-        <div className="twelve-col">
-          <div className="inner-wrapper">
-            <juju.components.UserProfileHeader
-              users={users}
-              avatar=""
-              interactiveLogin={instance._interactiveLogin}
-              links={links}
-              username={users.charmstore.usernameDisplay} />
-            <div className="user-profile__empty twelve-col no-margin-bottom">
-              <div className="user-profile__create-new user-profile__empty-button collapsed">
-                <form onSubmit={instance.createAndSwitch}>
-                  <juju.components.GenericButton
-                    action={instance._nextCreateStep}
-                    type='inline-neutral first'
-                    title='Create new' />
-                  <juju.components.GenericInput
-                    placeholder="untitled_model"
-                    required={true}
-                    ref="modelName"
-                    validate={[{
-                      regex: /\S+/,
-                      error: 'This field is required.'
-                    }, {
-                      regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
-                      error: 'This field must only contain upper and lowercase ' +
-                        'letters, numbers, and hyphens. It must not start or ' +
-                        'end with a hyphen.'
-                    }]} />
-                  <juju.components.GenericButton
-                    action={instance.createAndSwitch}
-                    type='inline-neutral second'
-                    title='Submit' />
-                </form>
-              </div>
-              <div className="clearfix">
-                <img alt="Empty profile"
-                  className="user-profile__empty-image"
-                  src="/static/gui/build/app/assets/images/non-sprites/empty_profile.png" />
-                <h2 className="user-profile__empty-title">
-                  Your profile is currently empty
-                </h2>
-                <p className="user-profile__empty-text">
-                  Your models, bundles and charms will appear here when you create
-                  them.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </juju.components.Panel>
-    );
-    // eslint-disable max-len
-    assert.deepEqual(output, expected);
-  });
-  **/
-  /* eslint-disable max-len */
-
-  /**
-   XXX Re-enable after the SectionLoadWatcher component is integrated.
-  it('displays the empty_profile asset with a staticURL provided', () => {
-    var output = jsTestUtils.shallowRender(
-      <juju.components.UserProfile
-        addNotification={sinon.stub()}
-        users={users}
-        canCreateNew={true}
-        charmstore={{}}
-        env={env}
-        getAgreements={sinon.stub()}
-        getDiagramURL={sinon.stub()}
-        listBudgets={sinon.stub()}
-        listModels={sinon.stub().callsArgWith(0, null, [])}
-        switchModel={sinon.stub()}
-        interactiveLogin={true}
-        changeState={sinon.stub()}
-        pluralize={sinon.stub()}
-        staticURL='surl'
-        hideConnectingMask={sinon.stub()}
-        showConnectingMask={sinon.stub()}
-        storeUser={sinon.stub()}
-        user={users.charmstore} />);
-    assert.equal(
-      output.props.children.props.children.props.children[1].props
-        .children[1].props.children[0].props.src,
-      'surl/static/gui/build/app/assets/images/non-sprites/empty_profile.png');
-  });
-  **/
-
   it('renders a populated user profile page', () => {
     var links = [];
     var addNotification = sinon.stub();
@@ -215,6 +98,7 @@ describe('UserProfile', () => {
             EmptyComponent={juju.components.EmptyUserProfile}
             timeout={10}>
             <juju.components.UserProfileModelList
+              ref="modelList"
               addNotification={addNotification}
               canCreateNew={canCreateNew}
               currentModel={undefined}
@@ -227,6 +111,7 @@ describe('UserProfile', () => {
               user={user}
               users={users} />
             <juju.components.UserProfileEntityList
+              ref="bundleList"
               changeState={changeState}
               charmstore={charmstore}
               getDiagramURL={getDiagramURL}
@@ -234,6 +119,7 @@ describe('UserProfile', () => {
               user={user}
               users={users} />
             <juju.components.UserProfileEntityList
+              ref="charmList"
               changeState={changeState}
               charmstore={charmstore}
               getDiagramURL={getDiagramURL}
@@ -241,9 +127,11 @@ describe('UserProfile', () => {
               user={user}
               users={users} />
             <juju.components.UserProfileAgreementList
+              ref="agreementList"
               getAgreements={getAgreements}
               user={user} />
             <juju.components.UserProfileBudgetList
+              ref="budgetList"
               listBudgets={listBudgets}
               user={user} />
           </juju.components.SectionLoadWatcher>
