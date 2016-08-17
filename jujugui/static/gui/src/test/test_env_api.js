@@ -794,36 +794,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.strictEqual(env.get('maasServer'), null);
     });
 
-    it('destroys a single model (deprecated)', function(done) {
-      // Perform the request.
-      env.destroyModel(function(err) {
-        assert.strictEqual(err, null);
-        assert.equal(conn.messages.length, 1);
-        assert.deepEqual(conn.last_message(), {
-          type: 'Client',
-          version: 1,
-          request: 'DestroyModel',
-          params: {},
-          'request-id': 1
-        });
-        done();
-      });
-
-      // Mimic response.
-      conn.msg({'request-id': 1, response: {}});
-    });
-
-    it('handles failures while destroying single model', function(done) {
-      // Perform the request.
-      env.destroyModel(function(err) {
-        assert.strictEqual(err, 'bad wolf');
-        done();
-      });
-
-      // Mimic response.
-      conn.msg({'request-id': 1, error: 'bad wolf'});
-    });
-
     it('destroys models', function(done) {
       // Perform the request.
       env.destroyModels(['model-tag-1'], function(response) {

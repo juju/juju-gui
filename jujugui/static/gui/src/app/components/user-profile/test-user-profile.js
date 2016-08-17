@@ -34,7 +34,6 @@ describe('UserProfile', () => {
       usernameDisplay: 'test owner'
     }};
     env = {
-      destroyModel: sinon.stub().callsArg(0),
       findFacadeVersion: sinon.stub(),
       get: sinon.stub().returns('default'),
       createModel: (modelName, userName, callback) => {
