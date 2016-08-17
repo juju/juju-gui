@@ -97,6 +97,7 @@ YUI.add('user-profile', function() {
             EmptyComponent={juju.components.EmptyUserProfile}
             timeout={10}>
             <juju.components.UserProfileModelList
+              ref='modelList'
               addNotification={props.addNotification}
               canCreateNew={props.canCreateNew}
               currentModel={props.currentModel}
@@ -109,6 +110,7 @@ YUI.add('user-profile', function() {
               user={props.user}
               users={props.users} />
             <juju.components.UserProfileEntityList
+              ref='bundleList'
               changeState={props.changeState}
               charmstore={props.charmstore}
               getDiagramURL={props.getDiagramURL}
@@ -116,6 +118,7 @@ YUI.add('user-profile', function() {
               user={props.user}
               users={props.users} />
             <juju.components.UserProfileEntityList
+              ref='charmList'
               changeState={props.changeState}
               charmstore={props.charmstore}
               getDiagramURL={props.getDiagramURL}
@@ -123,9 +126,11 @@ YUI.add('user-profile', function() {
               user={props.user}
               users={props.users} />
             <juju.components.UserProfileAgreementList
+              ref='agreementList'
               getAgreements={props.getAgreements}
               user={props.user} />
             <juju.components.UserProfileBudgetList
+              ref='budgetList'
               listBudgets={props.listBudgets}
               user={props.user} />
           </juju.components.SectionLoadWatcher>
@@ -184,6 +189,7 @@ YUI.add('user-profile', function() {
     'generic-input',
     'loading-spinner',
     'panel-component',
+    'section-load-watcher',
     'user-profile-agreement-list',
     'user-profile-budget-list',
     'user-profile-entity',
