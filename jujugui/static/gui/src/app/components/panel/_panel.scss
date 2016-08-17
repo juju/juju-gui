@@ -71,6 +71,7 @@
 }
 
 .panel-component.account,
+.panel-component.isv-profile,
 .panel-component.user-profile {
     @extend %scroll-children;
     z-index: index($z-indexed-elements, top-page);

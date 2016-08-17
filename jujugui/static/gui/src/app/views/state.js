@@ -473,6 +473,10 @@ YUI.add('juju-app-state', function(Y) {
           state.sectionB = this._addToSection({
             component: 'profile'
           });
+        } else if (part.indexOf('isv') === 0) {
+          state.sectionB = this._addToSection({
+            component: 'isv'
+          });
         } else if (part.indexOf('account') === 0) {
           state.sectionB = this._addToSection({
             component: 'account'
@@ -698,6 +702,7 @@ YUI.add('juju-app-state', function(Y) {
         'applications',
         'machine',
         'inspector',
+        'isv',
         'profile',
         'account',
         'deploy'
