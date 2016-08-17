@@ -400,10 +400,7 @@ YUI.add('juju-gui', function(Y) {
         charmstore: this.get('charmstore')
       });
 
-      var environments = Y.namespace('juju.environments');
-      var state = new environments.FakeBackend({
-        charmstore: this.get('charmstore')
-      });
+      let environments = juju.environments;
       this._setupUIState(cfg.sandbox, cfg.baseUrl);
       cfg.state = this.state;
       // Create an environment facade to interact with.
@@ -416,58 +413,48 @@ YUI.add('juju-gui', function(Y) {
       var ecs = new juju.EnvironmentChangeSet({db: this.db});
       ecs.on('changeSetModified', this._renderDeploymentBar.bind(this));
       ecs.on('currentCommitFinished', this._renderDeploymentBar.bind(this));
-      // Instantiate the Juju environment.
-      this._generateSocketUrl(function(socketUrl, user, password) {
-        this.set('socket_url', socketUrl);
-        var envOptions = {
-          ecs: ecs,
-          socket_url: socketUrl,
-          user: user,
-          password: password,
-          readOnly: this.get('readOnly'),
-          conn: this.get('conn'),
-          jujuCoreVersion: this.get('jujuCoreVersion')
-        };
-        var webModule = environments.web;
-        if (this.get('sandbox')) {
-          envOptions.socket_url = this.get('sandboxSocketURL');
-          // The GUI is running in sandbox mode.
-          var sandboxModule = environments.sandbox;
-          if (envOptions.user && envOptions.password) {
-            var credentials = state.get('authorizedUsers');
-            credentials['user-' + envOptions.user] = envOptions.password;
-            state.set('authorizedUsers', credentials);
-          }
-          envOptions.conn = new sandboxModule.ClientConnection({
-            juju: new sandboxModule.GoJujuAPI({
-              state: state,
-              socket_url: envOptions.socket_url
-            })
-          });
-          // Instantiate a fake Web handler, which simulates the
-          // request/response communication between the GUI and the juju-core
-          // HTTPS API.
-          envOptions.webHandler = new webModule.WebSandbox({state: state});
-        } else {
-          // The GUI is connected to a real Juju environment.
-          // Instantiate a Web handler allowing to perform asynchronous HTTPS
-          // requests to the juju-core API.
-          envOptions.webHandler = new webModule.WebHandler();
-        }
 
-        let modelAPI, controllerAPI;
-        if (this.isLegacyJuju()) {
-          modelAPI = new environments.GoLegacyEnvironment(envOptions);
-        } else {
-          modelAPI = new environments.GoEnvironment(envOptions);
+      let envOptions = {
+        ecs: ecs,
+        user: this.get('user'),
+        password: this.get('password'),
+        readOnly: this.get('readOnly'),
+        conn: this.get('conn'),
+        jujuCoreVersion: this.get('jujuCoreVersion')
+      };
+
+      const jujuEnvUUID = window.juju_config && window.juju_config.jujuEnvUUID;
+      if (this.get('sandbox')) {
+        envOptions = this.createSandboxConnection(envOptions);
+      } else {
+        if (jujuEnvUUID) {
+          // If we have a uuid provided in the config then connect directly
+          // to that instead of waiting for the model list from the controller
+          // connection.
+          const socketURL = this.createSocketURL(jujuEnvUUID);
+          envOptions.socket_url = socketURL;
+          this.set('socket_url', socketURL);
+        }
+        // The GUI is connected to a real Juju environment.
+        // Instantiate a Web handler allowing to perform asynchronous HTTPS
+        // requests to the juju-core API.
+        envOptions.webHandler = new environments.web.WebHandler();
+      }
+
+      let modelAPI, controllerAPI;
+      if (this.isLegacyJuju()) {
+        modelAPI = new environments.GoLegacyEnvironment(envOptions);
+      } else {
+        modelAPI = new environments.GoEnvironment(envOptions);
+        if (!this.get('sandbox')) {
           controllerAPI = new environments.GoEnvironment(
             // Clone the envOptions for now, in the future we may want more
             // fine grained control over these options. They should be made
             // in the setUpControllerAPI method.
             Object.assign({}, envOptions));
         }
-        this._init(cfg, modelAPI, controllerAPI);
-      });
+      }
+      this._init(cfg, modelAPI, controllerAPI);
     },
 
     /**
@@ -665,7 +652,11 @@ YUI.add('juju-gui', function(Y) {
                               (this.get('socket_url') || this.get('sandbox')));
         if (isNotGISFSandbox || isNotConnected) {
           this.env.connect();
-          this.controllerAPI.connect();
+          if (this.controllerAPI) {
+            // We won't have a controller API connection in Juju 1 or in
+            // sandbox mode.
+            this.controllerAPI.connect();
+          }
         }
         this.dispatch();
         this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
@@ -674,6 +665,41 @@ YUI.add('juju-gui', function(Y) {
       this.zoomMessageHandler = Y.one(Y.config.win).on('resize', function(e) {
         this._handleZoomMessage();
       }, this);
+    },
+
+    /**
+      Creates a sandbox connection backend for use with the GoJujuAPI
+
+      @method createSandboxConnection
+      @param {Object} cfg The configuration object to use and modify with the
+        sandbox connection instance.
+      @return {Object} cfg A modified version of the passed in cfg which
+        constains the sandbox connection.
+    */
+    createSandboxConnection: function(cfg) {
+      cfg.socket_url = this.get('sandboxSocketURL');
+      let environments = juju.environments;
+      let sandboxModule = environments.sandbox;
+      const fakebackend = new environments.FakeBackend({
+        charmstore: this.get('charmstore')
+      });
+      if (cfg.user && cfg.password) {
+        let credentials = fakebackend.get('authorizedUsers');
+        credentials['user-' + cfg.user] = cfg.password;
+        fakebackend.set('authorizedUsers', credentials);
+      }
+      cfg.conn = new sandboxModule.ClientConnection({
+        juju: new sandboxModule.GoJujuAPI({
+          state: fakebackend,
+          socket_url: cfg.socket_url
+        })
+      });
+      // Instantiate a fake Web handler, which simulates the
+      // request/response communication between the GUI and the juju-core
+      // HTTPS API.
+      cfg.webHandler =
+        new environments.web.WebSandbox({state: fakebackend});
+      return cfg;
     },
 
     /**
@@ -718,6 +744,7 @@ YUI.add('juju-gui', function(Y) {
             // XXX Drop the user into the uncommitted state.
           }
           const selectedModel = this._pickModel(modelList);
+          this.switchEnv(this.createSocketURL(selectedModel.uuid));
         });
       });
 
