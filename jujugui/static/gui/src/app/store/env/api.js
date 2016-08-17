@@ -2763,43 +2763,6 @@ YUI.add('juju-env-api', function(Y) {
     },
 
     /**
-      Destroy the current connected model.
-
-      Callers should switch the WebSocket connection to an alive model after
-      receiving a successful response in the provided callback. Keeping a
-      WebSocket connection to a zombie model could lead to a broken GUI state
-      and exotic errors difficult to debug.
-      Note that at the time the callback is called the destroyed model may
-      still be included in the list of models returned by listModels or
-      listModelsWithInfo calls. In the latter call, the model "isAlive"
-      attribute will be false.
-
-      @method destroyModel
-      @param {Function} callback A callable that must be called once the
-        operation is performed. It will receive an error string if an error
-        occurred or null if the model deletion succeeded.
-      @return {undefined} Sends a message to the server only.
-    */
-    destroyModel: function(callback) {
-      // TODO frankban: remove this method, as it is deprecated.
-      // Clients should use the "destroyModels" method below instead.
-      // Decorate the user supplied callback.
-      var handler = function(userCallback, data) {
-        if (!userCallback) {
-          console.log('data returned by destroy model API call:', data);
-          return;
-        }
-        userCallback(data.error || null);
-      }.bind(this, callback);
-
-      // Send the API request.
-      this._send_rpc({
-        type: 'Client',
-        request: 'DestroyModel'
-      }, handler);
-    },
-
-    /**
       Destroy the models with the given tags.
 
       This method will try to destroy the specified models.
