@@ -124,8 +124,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Charms: [3],
         Client: [1],
         CrossModelRelations: [1],
-        ModelManager: [2],
         GUIToken: [46, 47],
+        ModelConfig: [41, 42],
+        ModelManager: [2],
         Pinger: [42]
       });
       env.set('modelUUID', 'this-is-a-uuid');
@@ -655,9 +656,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('sends the correct ModelGet request', function() {
       env.modelGet();
       var expectedMessage = {
-        type: 'Client',
+        type: 'ModelConfig',
         request: 'ModelGet',
-        version: 1,
+        version: 42,
         'request-id': 1,
         params: {}
       };
@@ -717,7 +718,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({
         'request-id': 2,
         response: {
-          config: {'maas-server': '1.2.3.4/MAAS'}
+          config: {'maas-server': {value: '1.2.3.4/MAAS'}}
         }
       });
       assert.equal(env.get('maasServer'), '1.2.3.4/MAAS');
@@ -757,9 +758,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       assert.lengthOf(conn.messages, 2);
       var expectedMessage = {
-        type: 'Client',
+        type: 'ModelConfig',
         request: 'ModelGet',
-        version: 1,
+        version: 42,
         'request-id': 2,
         params: {}
       };
@@ -793,7 +794,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.strictEqual(env.get('maasServer'), null);
     });
 
-    it('destroys models', function(done) {
+    it('destroys a single model (deprecated)', function(done) {
       // Perform the request.
       env.destroyModel(function(err) {
         assert.strictEqual(err, null);
@@ -812,13 +813,101 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({'request-id': 1, response: {}});
     });
 
-    it('handles request failures while destroying models', function(done) {
+    it('handles failures while destroying single model', function(done) {
       // Perform the request.
       env.destroyModel(function(err) {
         assert.strictEqual(err, 'bad wolf');
         done();
       });
 
+      // Mimic response.
+      conn.msg({'request-id': 1, error: 'bad wolf'});
+    });
+
+    it('destroys models', function(done) {
+      // Perform the request.
+      env.destroyModels(['model-tag-1'], function(response) {
+        assert.strictEqual(response.err, undefined);
+        assert.deepEqual(response.results, {
+          'model-tag-1': null
+        });
+        assert.strictEqual(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          type: 'ModelManager',
+          version: 2,
+          request: 'DestroyModels',
+          params: {entities: [
+            {tag: 'model-tag-1'}
+          ]},
+          'request-id': 1
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: [{}]}
+      });
+    });
+
+    it('destroys multiple models', function(done) {
+      // Perform the request.
+      env.destroyModels(['model-tag-1', 'model-tag-2'], function(response) {
+        assert.strictEqual(response.err, undefined);
+        assert.deepEqual(response.results, {
+          'model-tag-1': null,
+          'model-tag-2': null
+        });
+        assert.strictEqual(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          type: 'ModelManager',
+          version: 2,
+          request: 'DestroyModels',
+          params: {entities: [
+            {tag: 'model-tag-1'},
+            {tag: 'model-tag-2'}
+          ]},
+          'request-id': 1
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: [{}, {}]}
+      });
+    });
+
+    it('handles local failures while destroying models', function(done) {
+      // Perform the request.
+      var tags = ['model-tag-1', 'model-tag-2', 'model-tag-3'];
+      env.destroyModels(tags, function(response) {
+        assert.strictEqual(response.err, undefined);
+        assert.deepEqual(response.results, {
+          'model-tag-1': 'bad wolf',
+          'model-tag-2': null,
+          'model-tag-3': 'end of the universe'
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: [
+          {error: {message: 'bad wolf'}},
+          {},
+          {error: {message: 'end of the universe'}}
+        ]}
+      });
+    });
+
+    it('handles global failures while destroying models', function(done) {
+      // Perform the request.
+      env.destroyModels(['model-tag-1'], function(response) {
+        assert.strictEqual(response.err, 'bad wolf');
+        assert.strictEqual(response.results, undefined);
+        done();
+      });
       // Mimic response.
       conn.msg({'request-id': 1, error: 'bad wolf'});
     });
