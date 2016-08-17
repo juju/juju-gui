@@ -80,7 +80,7 @@ YUI.add('user-profile-entity-list', function() {
       @param {Object} props the component properties to use.
     */
     _fetchEntities:  function(props) {
-      var callback = this._fetchEntitiesCallback.bind(this);
+      var callback = this._fetchEntitiesCallback;
       var charmstore = props.charmstore;
       var username = props.users.charmstore && props.users.charmstore.user;
       if (charmstore && charmstore.list && username) {
