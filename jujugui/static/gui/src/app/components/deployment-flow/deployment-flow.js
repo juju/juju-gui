@@ -26,6 +26,7 @@ YUI.add('deployment-flow', function() {
       addTemplate: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       changesFilterByParent: React.PropTypes.func.isRequired,
+      deploy: React.PropTypes.func.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
       groupedChanges: React.PropTypes.object.isRequired,
       listBudgets: React.PropTypes.func.isRequired,
@@ -243,6 +244,17 @@ YUI.add('deployment-flow', function() {
       this._setCloud(null);
       // Also reset the chose credential.
       this._setCredential(null);
+    },
+
+    /**
+      Handle deploying the model.
+
+      @method _handleDeploy
+    */
+    _handleDeploy: function() {
+      this.props.deploy(
+        this._handleClose, true, this.props.modelName, this.state.credential,
+        this.state.cloud, this.state.region);
     },
 
     /**
@@ -519,7 +531,7 @@ YUI.add('deployment-flow', function() {
                       {this._generateAgreementsSection()}
                       <div className="deployment-flow__deploy-action">
                         <juju.components.GenericButton
-                          action={undefined}
+                          action={this._handleDeploy}
                           disabled={disabled || !this.state.cloud}
                           type="positive"
                           title="Deploy" />
