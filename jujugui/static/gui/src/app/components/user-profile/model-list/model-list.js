@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('user-profile-model-list', function() {
 
   juju.components.UserProfileModelList = React.createClass({
+    // broadcastStatus is necessary for communicating loading status back to
+    // the parent SectionLoadWatcher.
     propTypes: {
       addNotification: React.PropTypes.func.isRequired,
       broadcastStatus: React.PropTypes.func,
@@ -47,6 +49,8 @@ YUI.add('user-profile-model-list', function() {
     },
 
     getDefaultProps: function() {
+      // Just in case broadcastStatus isn't passed in (e.g., in tests), calls
+      // to it should not fail, so default to an empty function.
       return {
         broadcastStatus: function() {}
       };

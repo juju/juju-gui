@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('user-profile-entity-list', function() {
 
   juju.components.UserProfileEntityList = React.createClass({
+    // broadcastStatus is necessary for communicating loading status back to
+    // the parent SectionLoadWatcher.
     propTypes: {
       broadcastStatus: React.PropTypes.func,
       changeState: React.PropTypes.func.isRequired,
@@ -41,6 +43,8 @@ YUI.add('user-profile-entity-list', function() {
     },
 
     getDefaultProps: function() {
+      // Just in case broadcastStatus isn't passed in (e.g., in tests), calls
+      // to it should not fail, so default to an empty function.
       return {
         broadcastStatus: function() {}
       };

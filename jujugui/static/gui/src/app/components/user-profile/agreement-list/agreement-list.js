@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('user-profile-agreement-list', function() {
 
   juju.components.UserProfileAgreementList = React.createClass({
+    // broadcastStatus is necessary for communicating loading status back to
+    // the parent SectionLoadWatcher.
     propTypes: {
       broadcastStatus: React.PropTypes.func,
       getAgreements: React.PropTypes.func.isRequired,
@@ -37,6 +39,8 @@ YUI.add('user-profile-agreement-list', function() {
     },
 
     getDefaultProps: function() {
+      // Just in case broadcastStatus isn't passed in (e.g., in tests), calls
+      // to it should not fail, so default to an empty function.
       return {
         broadcastStatus: function() {}
       };
