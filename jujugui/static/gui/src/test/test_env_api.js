@@ -3797,6 +3797,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    it('handles empty/null data while listing models', function(done) {
+      env.listModels('user-who', function(data) {
+        assert.deepEqual([{}], data.envs);
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {
+          'user-models': [{
+            model: null
+          }]
+        }
+      });
+    });
+
     it('handles failures while listing models', function(done) {
       env.listModels('user-dalek', function(data) {
         assert.strictEqual(data.err, 'bad wolf');
