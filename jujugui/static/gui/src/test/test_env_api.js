@@ -358,15 +358,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var currentModelInfoMessage = conn.last_message(2);
         // ModelInfo is the second request.
         var currentModelInfoExpected = {
-          type: 'ModelManager',
+          type: 'Client',
           request: 'ModelInfo',
           // Note that facade version here is 0 because the login mock response
           // below is empty.
-          version: 2,
+          version: 0,
           'request-id': 2,
-          params: {entities: [{tag: 'model-my-model'}]}
+          params: {}
         };
-        console.log(currentModelInfoMessage);
         assert.deepEqual(currentModelInfoMessage, currentModelInfoExpected);
         var watchAllMessage = conn.last_message();
         // ModelInfo is the second request.
@@ -579,11 +578,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.currentModelInfo();
       var lastMessage = conn.last_message();
       var expected = {
-        type: 'ModelManager',
+        type: 'Client',
         request: 'ModelInfo',
-        version: 2,
+        version: 1,
         'request-id': 1,
-        params: {entities: [{tag: 'my-model-tag'}]}
+        params: {}
       };
       assert.deepEqual(expected, lastMessage);
     });
@@ -598,30 +597,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         err = msg;
       };
       // Assume currentModelInfo to be the first request.
-      conn.msg({'request-id': 1, error: {message: 'bad wolf'}});
-      assert.strictEqual(err, 'error retrieving model information: bad wolf');
-      // Restore the original "console.error".
-      console.error = original;
-    });
-
-    it('logs an error on current model info internal errors', function() {
-      env.set('modelTag', 'my-model-tag');
-      env.currentModelInfo(env._handleCurrentModelInfo.bind(env));
-      // Mock "console.error" so that it is possible to collect logged errors.
-      var original = console.error;
-      var err = null;
-      console.error = function(msg) {
-        err = msg;
-      };
-      // Assume currentModelInfo to be the first request.
-      conn.msg({
-        'request-id': 1,
-        response: {
-          results: [{
-            error: {message: 'bad wolf'}
-          }]
-        }
-      });
+      conn.msg({'request-id': 1, error: 'bad wolf'});
       assert.strictEqual(err, 'error retrieving model information: bad wolf');
       // Restore the original "console.error".
       console.error = original;
@@ -634,17 +610,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({
         'request-id': 1,
         response: {
-          results: [{
-            result: {
-              'default-series': 'xenial',
-              name: 'my-model',
-              'provider-type': 'aws',
-              uuid: '5bea955d-7a43-47d3-89dd-tag1',
-              'controller-uuid': '5bea955d-7a43-47d3-89dd-tag1',
-              life: 'alive',
-              'owner-tag': 'user-admin@local'
-            }
-          }]
+          'default-series': 'xenial',
+          name: 'my-model',
+          'provider-type': 'aws',
+          uuid: '5bea955d-7a43-47d3-89dd-tag1',
+          life: 'alive',
+          'owner-tag': 'user-admin@local'
         }
       });
       assert.equal(env.get('defaultSeries'), 'xenial');
@@ -677,17 +648,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({
         'request-id': 1,
         response: {
-          results: [{
-            result: {
-              'default-series': 'xenial',
-              name: 'my-model',
-              'provider-type': 'maas',
-              uuid: '5bea955d-7a43-47d3-89dd-tag1',
-              'controller-uuid': '5bea955d-7a43-47d3-89dd-tag1',
-              life: 'alive',
-              'owner-tag': 'user-admin@local'
-            }
-          }]
+          'default-series': 'xenial',
+          name: 'my-model',
+          'provider-type': 'maas',
+          uuid: '5bea955d-7a43-47d3-89dd-tag1',
+          life: 'alive',
+          'owner-tag': 'user-admin@local'
         }
       });
       conn.msg({'request-id': 2, error: 'bad wolf'});
@@ -702,17 +668,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({
         'request-id': 1,
         response: {
-          results: [{
-            result: {
-              'default-series': 'xenial',
-              name: 'my-model',
-              'provider-type': 'maas',
-              uuid: '5bea955d-7a43-47d3-89dd-tag1',
-              'controller-uuid': '5bea955d-7a43-47d3-89dd-tag1',
-              life: 'alive',
-              'owner-tag': 'user-admin@local'
-            }
-          }]
+          'default-series': 'xenial',
+          name: 'my-model',
+          'provider-type': 'maas',
+          uuid: '5bea955d-7a43-47d3-89dd-tag1',
+          life: 'alive',
+          'owner-tag': 'user-admin@local'
         }
       });
       conn.msg({
@@ -743,17 +704,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({
         'request-id': 1,
         response: {
-          results: [{
-            result: {
-              'default-series': 'xenial',
-              name: 'my-model',
-              'provider-type': 'maas',
-              uuid: '5bea955d-7a43-47d3-89dd-tag1',
-              'controller-uuid': '5bea955d-7a43-47d3-89dd-tag1',
-              life: 'alive',
-              'owner-tag': 'user-admin@local'
-            }
-          }]
+          'default-series': 'xenial',
+          name: 'my-model',
+          'provider-type': 'maas',
+          uuid: '5bea955d-7a43-47d3-89dd-tag1',
+          life: 'alive',
+          'owner-tag': 'user-admin@local'
         }
       });
       assert.lengthOf(conn.messages, 2);

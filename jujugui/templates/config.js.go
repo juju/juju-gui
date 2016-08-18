@@ -4,6 +4,7 @@ var juju_config = {
     "jujuCoreVersion": "{{.version}}",
     "jujuEnvUUID": "{{.uuid}}",
     "apiAddress": "wss://{{.host}}",
+    "controllerSocketTemplate": "{{.controllerSocket}}",
     "socketTemplate": "{{.socket}}",
     "socket_protocol": "wss",
     "charmstoreAPIPath": "v4",
