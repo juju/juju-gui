@@ -352,8 +352,8 @@ YUI.add('juju-env-sandbox', function(Y) {
           results: [{
             result: {
               name: 'sandbox',
-              'default-series': 'trusty',
-              'provider-type': 'lxd',
+              'default-series': state.get('defaultSeries'),
+              'provider-type': state.get('providerType'),
               uuid: 'sandboxuuid1',
               'controller-uuid': 'controlleruuid1',
               life: 'alive',
