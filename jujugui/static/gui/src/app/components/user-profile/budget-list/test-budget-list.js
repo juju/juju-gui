@@ -136,11 +136,11 @@ describe('UserProfileBudgetList', () => {
 
   it('broadcasts starting status', function() {
     var broadcastStatus = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    jsTestUtils.shallowRender(
       <juju.components.UserProfileBudgetList
         broadcastStatus={broadcastStatus}
         listBudgets={sinon.stub()}
-        user={users.charmstore} />, true);
+        user={users.charmstore} />);
     assert.equal(broadcastStatus.args[0][0], 'starting');
   });
 
@@ -155,31 +155,31 @@ describe('UserProfileBudgetList', () => {
       'consumed': '55'
     }]};
     var broadcastStatus = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    jsTestUtils.shallowRender(
       <juju.components.UserProfileBudgetList
         broadcastStatus={broadcastStatus}
         listBudgets={sinon.stub().callsArgWith(0, null, data)}
-        user={users.charmstore} />, true);
+        user={users.charmstore} />);
     assert.equal(broadcastStatus.args[1][0], 'ok');
   });
 
   it('broadcasts empty status', function() {
     var broadcastStatus = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    jsTestUtils.shallowRender(
       <juju.components.UserProfileBudgetList
         broadcastStatus={broadcastStatus}
         listBudgets={sinon.stub().callsArgWith(0, null, {budgets: []})}
-        user={users.charmstore} />, true);
+        user={users.charmstore} />);
     assert.equal(broadcastStatus.args[1][0], 'empty');
   });
 
   it('broadcasts error status', function() {
     var broadcastStatus = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    jsTestUtils.shallowRender(
       <juju.components.UserProfileBudgetList
         broadcastStatus={broadcastStatus}
         listBudgets={sinon.stub().callsArgWith(0, 'error', null)}
-        user={users.charmstore} />, true);
+        user={users.charmstore} />);
     assert.equal(broadcastStatus.args[1][0], 'error');
   });
 });

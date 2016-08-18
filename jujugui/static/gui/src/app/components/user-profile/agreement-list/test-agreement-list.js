@@ -117,11 +117,11 @@ describe('UserProfileAgreementList', () => {
 
   it('broadcasts starting status', function() {
     var broadcastStatus = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    jsTestUtils.shallowRender(
       <juju.components.UserProfileAgreementList
         broadcastStatus={broadcastStatus}
         getAgreements={sinon.stub()}
-        user={users.charmstore} />, true);
+        user={users.charmstore} />);
     assert.equal(broadcastStatus.args[0][0], 'starting');
   });
 
@@ -133,31 +133,31 @@ describe('UserProfileAgreementList', () => {
       createdAt: new Date(1465510044000)
     }];
     var broadcastStatus = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    jsTestUtils.shallowRender(
       <juju.components.UserProfileAgreementList
         broadcastStatus={broadcastStatus}
         getAgreements={sinon.stub().callsArgWith(0, null, agreements)}
-        user={users.charmstore} />, true);
+        user={users.charmstore} />);
     assert.equal(broadcastStatus.args[1][0], 'ok');
   });
 
   it('broadcasts empty status', function() {
     var broadcastStatus = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    jsTestUtils.shallowRender(
       <juju.components.UserProfileAgreementList
         broadcastStatus={broadcastStatus}
         getAgreements={sinon.stub().callsArgWith(0, null, [])}
-        user={users.charmstore} />, true);
+        user={users.charmstore} />);
     assert.equal(broadcastStatus.args[1][0], 'empty');
   });
 
   it('broadcasts error status', function() {
     var broadcastStatus = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    jsTestUtils.shallowRender(
       <juju.components.UserProfileAgreementList
         broadcastStatus={broadcastStatus}
         getAgreements={sinon.stub().callsArgWith(0, 'error', null)}
-        user={users.charmstore} />, true);
+        user={users.charmstore} />);
     assert.equal(broadcastStatus.args[1][0], 'error');
   });
 });

@@ -479,7 +479,7 @@ describe('UserProfileModelList', () => {
 
   it('broadcasts starting status', function() {
     var broadcastStatus = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         broadcastStatus={broadcastStatus}
@@ -498,7 +498,7 @@ describe('UserProfileModelList', () => {
 
   it('broadcasts ok status', function() {
     var broadcastStatus = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         broadcastStatus={broadcastStatus}
@@ -517,7 +517,7 @@ describe('UserProfileModelList', () => {
 
   it('broadcasts empty status', function() {
     var broadcastStatus = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         broadcastStatus={broadcastStatus}
@@ -536,7 +536,7 @@ describe('UserProfileModelList', () => {
 
   it('broadcasts error status', function() {
     var broadcastStatus = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         broadcastStatus={broadcastStatus}

@@ -305,7 +305,7 @@ describe('UserProfileEntityList', () => {
 
   it('broadcasts starting status', function() {
     var broadcastStatus = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
         broadcastStatus={broadcastStatus}
         changeState={sinon.stub()}
@@ -313,13 +313,13 @@ describe('UserProfileEntityList', () => {
         getDiagramURL={sinon.stub()}
         type='charm'
         users={users}
-        user={users.charmstore} />, true);
+        user={users.charmstore} />);
     assert.equal(broadcastStatus.args[0][0], 'starting');
   });
 
   it('broadcasts ok status', function() {
     var broadcastStatus = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
         broadcastStatus={broadcastStatus}
         changeState={sinon.stub()}
@@ -327,14 +327,14 @@ describe('UserProfileEntityList', () => {
         getDiagramURL={sinon.stub()}
         type='charm'
         users={users}
-        user={users.charmstore} />, true);
+        user={users.charmstore} />);
     assert.equal(broadcastStatus.args[1][0], 'ok');
   });
 
   it('broadcasts empty status', function() {
     charmstore.list = sinon.stub().callsArgWith(1, null, []);
     var broadcastStatus = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
         broadcastStatus={broadcastStatus}
         changeState={sinon.stub()}
@@ -342,14 +342,14 @@ describe('UserProfileEntityList', () => {
         getDiagramURL={sinon.stub()}
         type='charm'
         users={users}
-        user={users.charmstore} />, true);
+        user={users.charmstore} />);
     assert.equal(broadcastStatus.args[1][0], 'empty');
   });
 
   it('broadcasts error status', function() {
     charmstore.list = sinon.stub().callsArgWith(1, 'error', null);
     var broadcastStatus = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
         broadcastStatus={broadcastStatus}
         changeState={sinon.stub()}
@@ -357,7 +357,7 @@ describe('UserProfileEntityList', () => {
         getDiagramURL={sinon.stub()}
         type='charm'
         users={users}
-        user={users.charmstore} />, true);
+        user={users.charmstore} />);
     assert.equal(broadcastStatus.args[1][0], 'error');
   });
 });
