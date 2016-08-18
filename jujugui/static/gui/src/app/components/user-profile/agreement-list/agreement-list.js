@@ -21,7 +21,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('user-profile-agreement-list', function() {
 
   juju.components.UserProfileAgreementList = React.createClass({
+    // broadcastStatus is necessary for communicating loading status back to
+    // the parent SectionLoadWatcher.
     propTypes: {
+      broadcastStatus: React.PropTypes.func,
       getAgreements: React.PropTypes.func.isRequired,
       user: React.PropTypes.object,
     },
@@ -32,6 +35,14 @@ YUI.add('user-profile-agreement-list', function() {
       return {
         agreementList: [],
         loadingAgreements: false,
+      };
+    },
+
+    getDefaultProps: function() {
+      // Just in case broadcastStatus isn't passed in (e.g., in tests), calls
+      // to it should not fail, so default to an empty function.
+      return {
+        broadcastStatus: function() {}
       };
     },
 
@@ -61,6 +72,7 @@ YUI.add('user-profile-agreement-list', function() {
       @method _getAgreements
     */
     _getAgreements: function() {
+      this.props.broadcastStatus('starting');
       // Delay the call until after the state change to prevent race
       // conditions.
       this.setState({loadingAgreements: true}, () => {
@@ -78,10 +90,17 @@ YUI.add('user-profile-agreement-list', function() {
     */
     _getAgreementsCallback: function(error, data) {
       this.setState({loadingAgreements: false}, () => {
+        var broadcastStatus = this.props.broadcastStatus;
         if (error) {
+          broadcastStatus('error');
           // TODO frankban: notify the user with the error.
           console.error('cannot retrieve terms:', error);
           return;
+        }
+        if (!data || !data.length || data.length === 0) {
+          broadcastStatus('empty');
+        } else {
+          broadcastStatus('ok');
         }
         this.setState({agreementList: data});
       });

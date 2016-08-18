@@ -21,8 +21,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('user-profile-model-list', function() {
 
   juju.components.UserProfileModelList = React.createClass({
+    // broadcastStatus is necessary for communicating loading status back to
+    // the parent SectionLoadWatcher.
     propTypes: {
       addNotification: React.PropTypes.func.isRequired,
+      broadcastStatus: React.PropTypes.func,
       canCreateNew: React.PropTypes.bool.isRequired,
       currentModel: React.PropTypes.string,
       env: React.PropTypes.object.isRequired,
@@ -42,6 +45,14 @@ YUI.add('user-profile-model-list', function() {
         modelList: [],
         loadingModels: false,
         createNewModelActive: false
+      };
+    },
+
+    getDefaultProps: function() {
+      // Just in case broadcastStatus isn't passed in (e.g., in tests), calls
+      // to it should not fail, so default to an empty function.
+      return {
+        broadcastStatus: function() {}
       };
     },
 
@@ -70,6 +81,7 @@ YUI.add('user-profile-model-list', function() {
       @method _fetchModels
     */
     _fetchModels:  function() {
+      this.props.broadcastStatus('starting');
       // Delay the call until after the state change to prevent race
       // conditions.
       this.setState({loadingModels: true}, () => {
@@ -87,9 +99,11 @@ YUI.add('user-profile-model-list', function() {
     */
     _fetchModelsCallback: function(error, data) {
       this.setState({loadingModels: false}, () => {
+        var broadcastStatus = this.props.broadcastStatus;
         // We need to coerce error types returned by JES vs JEM into one error.
         var err = data.err || error;
         if (err) {
+          broadcastStatus('error');
           console.error(err);
           return;
         }
@@ -115,6 +129,11 @@ YUI.add('user-profile-model-list', function() {
             model.isAlive = true;
             return model;
           });
+        }
+        if (!modelList || !modelList.length || modelList.length === 0) {
+          broadcastStatus('empty');
+        } else {
+          broadcastStatus('ok');
         }
         this.setState({modelList: modelList});
       });

@@ -114,4 +114,50 @@ describe('UserProfileAgreementList', () => {
     renderer.unmount();
     assert.equal(getAgreementsAbort.callCount, 1);
   });
+
+  it('broadcasts starting status', function() {
+    var broadcastStatus = sinon.stub();
+    jsTestUtils.shallowRender(
+      <juju.components.UserProfileAgreementList
+        broadcastStatus={broadcastStatus}
+        getAgreements={sinon.stub()}
+        user={users.charmstore} />);
+    assert.equal(broadcastStatus.args[0][0], 'starting');
+  });
+
+  it('broadcasts ok status', function() {
+    var agreements = [{
+      user: 'spinach',
+      term: 'One fancy term',
+      revision: 47,
+      createdAt: new Date(1465510044000)
+    }];
+    var broadcastStatus = sinon.stub();
+    jsTestUtils.shallowRender(
+      <juju.components.UserProfileAgreementList
+        broadcastStatus={broadcastStatus}
+        getAgreements={sinon.stub().callsArgWith(0, null, agreements)}
+        user={users.charmstore} />);
+    assert.equal(broadcastStatus.args[1][0], 'ok');
+  });
+
+  it('broadcasts empty status', function() {
+    var broadcastStatus = sinon.stub();
+    jsTestUtils.shallowRender(
+      <juju.components.UserProfileAgreementList
+        broadcastStatus={broadcastStatus}
+        getAgreements={sinon.stub().callsArgWith(0, null, [])}
+        user={users.charmstore} />);
+    assert.equal(broadcastStatus.args[1][0], 'empty');
+  });
+
+  it('broadcasts error status', function() {
+    var broadcastStatus = sinon.stub();
+    jsTestUtils.shallowRender(
+      <juju.components.UserProfileAgreementList
+        broadcastStatus={broadcastStatus}
+        getAgreements={sinon.stub().callsArgWith(0, 'error', null)}
+        user={users.charmstore} />);
+    assert.equal(broadcastStatus.args[1][0], 'error');
+  });
 });

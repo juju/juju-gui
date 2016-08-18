@@ -21,7 +21,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('user-profile-budget-list', function() {
 
   juju.components.UserProfileBudgetList = React.createClass({
+    // broadcastStatus is necessary for communicating loading status back to
+    // the parent SectionLoadWatcher.
     propTypes: {
+      broadcastStatus: React.PropTypes.func,
       listBudgets: React.PropTypes.func.isRequired,
       user: React.PropTypes.object,
     },
@@ -32,6 +35,14 @@ YUI.add('user-profile-budget-list', function() {
       return {
         budgetList: [],
         loadingBudgets: false,
+      };
+    },
+
+    getDefaultProps: function() {
+      // Just in case broadcastStatus isn't passed in (e.g., in tests), calls
+      // to it should not fail, so default to an empty function.
+      return {
+        broadcastStatus: function() {}
       };
     },
 
@@ -61,6 +72,7 @@ YUI.add('user-profile-budget-list', function() {
       @method _getBudgets
     */
     _getBudgets: function() {
+      this.props.broadcastStatus('starting');
       // Delay the call until after the state change to prevent race
       // conditions.
       this.setState({loadingBudgets: true}, () => {
@@ -78,7 +90,9 @@ YUI.add('user-profile-budget-list', function() {
     */
     _getBudgetsCallback: function(error, data) {
       this.setState({loadingBudgets: false}, () => {
+        var broadcastStatus = this.props.broadcastStatus;
         if (error) {
+          broadcastStatus('error');
           if (error.indexOf('not found') === -1) {
             // A "profile not found" error is expected, and it means the user
             // does not have a credit limit yet. Notify any other errors.
@@ -86,6 +100,12 @@ YUI.add('user-profile-budget-list', function() {
             console.error('cannot retrieve budgets:', error);
           }
           return;
+        }
+        if (!data.budgets || !data.budgets.length
+            || data.budgets.length === 0) {
+          broadcastStatus('empty');
+        } else {
+          broadcastStatus('ok');
         }
         this.setState({budgetList: data.budgets});
       });
