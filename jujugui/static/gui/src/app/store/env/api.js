@@ -743,35 +743,43 @@ YUI.add('juju-env-api', function(Y) {
         attribute containing a string describing the problem (if an error
         occurred). Otherwise, if everything went well, it will receive an
         object with the following fields:
-        - tag: the Juju model tag;
         - name: the model name, like "admin" or "mymodel";
         - series: the model default series, like "trusty" or "xenial";
         - provider: the provider type, like "lxd" or "aws";
         - uuid: the model unique identifier;
-        - serverUuid: the corresponding controller unique identifier;
         - ownerTag: the Juju tag of the user owning the model;
         - life: the lifecycle status of the model: "alive", "dying" or "dead";
-        - isAlive: whether the model is alive or dying/dead;
-        - isAdmin: whether the model is an admin model;
+        - isAlive: whether the model is alive or dying/dead.
      @return {undefined} Nothing.
     */
     currentModelInfo: function(callback) {
-      this.modelInfo([this.get('modelTag')], (response) => {
-        if (!callback) {
-          console.log('current model info response:', response);
+      // Decorate the user supplied callback.
+      var handler = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by current model info API call:', data);
           return;
         }
-        if (response.err) {
-          callback({err: response.err});
+        if (data.error) {
+          userCallback({err: data.error});
           return;
         }
-        var info = response.models[0];
-        if (info.err) {
-          callback({err: info.err});
-          return;
-        }
-        callback(info);
-      });
+        var response = data.response;
+        userCallback({
+          name: response.name,
+          series: response['default-series'],
+          provider: response['provider-type'],
+          uuid: response.uuid,
+          ownerTag: response['owner-tag'],
+          life: response.life,
+          isAlive: response.life === 'alive'
+        });
+      }.bind(this, callback);
+
+      // Send the API request.
+      this._send_rpc({
+        type: 'Client',
+        request: 'ModelInfo'
+      }, handler);
     },
 
     /**

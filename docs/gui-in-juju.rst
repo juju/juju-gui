@@ -23,8 +23,8 @@ GUI assuming the following is true:
 - the "jujugui" directory includes a "templates/config.js.go" file which is
   used to render the Juju GUI configuration file. The template receives at
   least the following variables in its context: "base", "host", "socket",
-  "staticURL", "uuid" and "version". It might receive more variables but cannot
-  assume them to be always provided.
+  "controllerSocket", "staticURL", "uuid" and "version". It might receive more
+  variables but cannot assume them to be always provided.
 
 When working on new features or reviewing changes, please ensure that all the
 assumptions above are respected, and that the template files (index and config)
