@@ -53,7 +53,6 @@ describe('UserProfileEntityList', () => {
   it('renders the empty state', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
-        broadcastStatus={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={{}}
         getDiagramURL={sinon.stub()}
@@ -69,7 +68,6 @@ describe('UserProfileEntityList', () => {
     var type = 'charm';
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
-        broadcastStatus={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
@@ -89,7 +87,6 @@ describe('UserProfileEntityList', () => {
     var type = 'charm';
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
-        broadcastStatus={sinon.stub()}
         changeState={changeState}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
@@ -161,7 +158,6 @@ describe('UserProfileEntityList', () => {
     var getDiagramURL = sinon.stub();
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
-        broadcastStatus={sinon.stub()}
         changeState={changeState}
         charmstore={charmstore}
         getDiagramURL={getDiagramURL}
@@ -236,7 +232,6 @@ describe('UserProfileEntityList', () => {
   it('requests charms and updates state', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
-        broadcastStatus={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
@@ -255,7 +250,6 @@ describe('UserProfileEntityList', () => {
   it('requests bundles and updates state', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
-        broadcastStatus={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
@@ -276,7 +270,6 @@ describe('UserProfileEntityList', () => {
     charmstore.list = sinon.stub().returns({abort: charmstoreAbort});
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
-        broadcastStatus={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
@@ -292,7 +285,6 @@ describe('UserProfileEntityList', () => {
     var charmstore = {list: list};
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntityList
-        broadcastStatus={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
@@ -302,7 +294,6 @@ describe('UserProfileEntityList', () => {
     assert.equal(list.callCount, 0);
     component.render(
       <juju.components.UserProfileEntityList
-        broadcastStatus={sinon.stub()}
         changeState={sinon.stub()}
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}

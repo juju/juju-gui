@@ -35,9 +35,14 @@ YUI.add('user-profile-entity-list', function() {
       this.xhrs = [];
 
       return {
-        broadcastStatus: function() {},
         entityList: [],
         loadingEntities: false,
+      };
+    },
+
+    getDefaultProps: function() {
+      return {
+        broadcastStatus: function() {}
       };
     },
 

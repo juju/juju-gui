@@ -31,9 +31,14 @@ YUI.add('user-profile-agreement-list', function() {
       this.xhrs = [];
 
       return {
-        broadcastStatus: function() {},
         agreementList: [],
         loadingAgreements: false,
+      };
+    },
+
+    getDefaultProps: function() {
+      return {
+        broadcastStatus: function() {}
       };
     },
 

@@ -40,10 +40,15 @@ YUI.add('user-profile-model-list', function() {
       this.xhrs = [];
 
       return {
-        broadcastStatus: function() {},
         modelList: [],
         loadingModels: false,
         createNewModelActive: false
+      };
+    },
+
+    getDefaultProps: function() {
+      return {
+        broadcastStatus: function() {}
       };
     },
 

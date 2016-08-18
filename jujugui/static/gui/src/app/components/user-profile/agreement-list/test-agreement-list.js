@@ -38,7 +38,6 @@ describe('UserProfileAgreementList', () => {
   it('renders the empty state', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileAgreementList
-        broadcastStatus={sinon.stub()}
         getAgreements={sinon.stub().callsArgWith(0, null, [])}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -48,7 +47,6 @@ describe('UserProfileAgreementList', () => {
   it('displays loading spinner when loading', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileAgreementList
-        broadcastStatus={sinon.stub()}
         getAgreements={sinon.stub()}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -69,7 +67,6 @@ describe('UserProfileAgreementList', () => {
     var getAgreements = sinon.stub().callsArgWith(0, null, agreements);
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileAgreementList
-        broadcastStatus={sinon.stub()}
         getAgreements={getAgreements}
         user={users.charmstore} />, true);
     var output = component.getRenderOutput();
@@ -112,7 +109,6 @@ describe('UserProfileAgreementList', () => {
     var getAgreements = sinon.stub().returns({abort: getAgreementsAbort});
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileAgreementList
-        broadcastStatus={sinon.stub()}
         getAgreements={getAgreements}
         user={users.charmstore} />, true);
     renderer.unmount();

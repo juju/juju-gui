@@ -31,9 +31,14 @@ YUI.add('user-profile-budget-list', function() {
       this.xhrs = [];
 
       return {
-        broadcastStatus: function() {},
         budgetList: [],
         loadingBudgets: false,
+      };
+    },
+
+    getDefaultProps: function() {
+      return {
+        broadcastStatus: function() {}
       };
     },
 
