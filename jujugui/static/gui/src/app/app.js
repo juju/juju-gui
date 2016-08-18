@@ -813,6 +813,22 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Renders the ISV profile component.
+
+      @method _renderISVProfile
+    */
+    _renderISVProfile: function() {
+      if (!window.flags || !window.flags.blues) {
+        return;
+      }
+      ReactDOM.render(
+        <window.juju.components.ISVProfile />,
+        document.getElementById('top-page-container'));
+      // The model name should not be visible when viewing the profile.
+      this._renderBreadcrumb({ showEnvSwitcher: false });
+    },
+
+    /**
       Renders the account component.
 
       @method _renderAccount
@@ -1320,6 +1336,7 @@ YUI.add('juju-gui', function(Y) {
         account: this._renderAccount.bind(this),
         machine: this._renderMachineView.bind(this),
         profile: this._renderUserProfile.bind(this),
+        isv: this._renderISVProfile.bind(this),
         empty: this.emptySectionB.bind(this)
       };
       dispatchers.sectionC = {
@@ -2603,6 +2620,7 @@ YUI.add('juju-gui', function(Y) {
     'expanding-progress',
     'header-search',
     'inspector-component',
+    'isv-profile',
     'local-inspector',
     'machine-view',
     'login-component',
