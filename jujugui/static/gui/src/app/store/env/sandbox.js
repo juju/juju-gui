@@ -337,6 +337,34 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+    Handle ModelInfo messages.
+
+    @method handleModelManagerModelInfo
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleModelManagerModelInfo: function(data, client, state) {
+      client.receive({
+        'request-id': data['request-id'],
+        response: {
+          results: [{
+            result: {
+              name: 'sandbox',
+              'default-series': 'trusty',
+              'provider-type': 'lxd',
+              uuid: 'sandboxuuid1',
+              'controller-uuid': 'controlleruuid1',
+              life: 'alive',
+              'owner-tag': 'user-admin@local'
+            }
+          }]
+        }
+      });
+    },
+
+    /**
     Handle ModelGet messages.
 
     @method handleClientModelGet
