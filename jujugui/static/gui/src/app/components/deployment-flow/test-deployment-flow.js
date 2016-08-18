@@ -52,6 +52,7 @@ describe('DeploymentFlow', function() {
         addTemplate={addTemplate}
         changesFilterByParent={changesFilterByParent}
         changeState={changeState}
+        deploy={sinon.stub()}
         groupedChanges={{}}
         generateAllChangeDescriptions={generateAllChangeDescriptions}
         listBudgets={listBudgets}
@@ -197,7 +198,7 @@ describe('DeploymentFlow', function() {
                     </div>
                     <div className="deployment-flow__deploy-action">
                       <juju.components.GenericButton
-                        action={undefined}
+                        action={instance._handleDeploy}
                         disabled={true}
                         type="positive"
                         title="Deploy" />
@@ -220,6 +221,7 @@ describe('DeploymentFlow', function() {
         addTemplate={sinon.stub()}
         changesFilterByParent={sinon.stub()}
         changeState={changeState}
+        deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         groupedChanges={{}}
         listBudgets={sinon.stub()}
@@ -251,6 +253,7 @@ describe('DeploymentFlow', function() {
         addTemplate={sinon.stub()}
         changeState={sinon.stub()}
         changes={{}}
+        deploy={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -278,6 +281,7 @@ describe('DeploymentFlow', function() {
         addTemplate={sinon.stub()}
         changeState={sinon.stub()}
         changes={{}}
+        deploy={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -302,6 +306,7 @@ describe('DeploymentFlow', function() {
         addTemplate={sinon.stub()}
         changeState={sinon.stub()}
         changes={{}}
+        deploy={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -328,6 +333,7 @@ describe('DeploymentFlow', function() {
         addTemplate={sinon.stub()}
         changeState={sinon.stub()}
         changes={{}}
+        deploy={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -354,6 +360,7 @@ describe('DeploymentFlow', function() {
         addTemplate={sinon.stub()}
         changeState={sinon.stub()}
         changes={{}}
+        deploy={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -385,6 +392,7 @@ describe('DeploymentFlow', function() {
         addTemplate={sinon.stub()}
         changeState={sinon.stub()}
         changes={{}}
+        deploy={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -411,6 +419,7 @@ describe('DeploymentFlow', function() {
         addTemplate={sinon.stub()}
         changeState={sinon.stub()}
         changes={{}}
+        deploy={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -438,6 +447,7 @@ describe('DeploymentFlow', function() {
         addTemplate={sinon.stub()}
         changeState={sinon.stub()}
         changes={{}}
+        deploy={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -465,6 +475,7 @@ describe('DeploymentFlow', function() {
         addTemplate={sinon.stub()}
         changeState={sinon.stub()}
         changes={{}}
+        deploy={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -492,6 +503,7 @@ describe('DeploymentFlow', function() {
         addTemplate={sinon.stub()}
         changeState={sinon.stub()}
         changes={{}}
+        deploy={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -511,5 +523,43 @@ describe('DeploymentFlow', function() {
     var sections = output.props.children.props.children[1].props.children
       .props.children.props.children;
     assert.isUndefined(sections[5].props.children.props.children[0]);
+  });
+
+  it('can deploy', function() {
+    var deploy = sinon.stub().callsArg(0);
+    var changeState = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        addTemplate={sinon.stub()}
+        changeState={changeState}
+        changes={{}}
+        deploy={deploy}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        listRegions={sinon.stub()}
+        listTemplates={sinon.stub()}
+        modelCommitted={true}
+        modelName="Pavlova"
+        servicesGetById={sinon.stub()}
+        user={{}}
+        users={{}}>
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    instance._setCloud('cloud');
+    instance._setCredential('cred');
+    instance._setRegion('north');
+    var output = renderer.getRenderOutput();
+    output.props.children.props.children[1].props.children.props.children
+      .props.children[5].props.children.props.children[1].props.children
+      .props.action();
+    assert.equal(deploy.callCount, 1);
+    assert.equal(deploy.args[0][2], 'Pavlova');
+    assert.equal(deploy.args[0][3], 'cred');
+    assert.equal(deploy.args[0][4], 'cloud');
+    assert.equal(deploy.args[0][5], 'north');
+    assert.equal(changeState.callCount, 1);
   });
 });
