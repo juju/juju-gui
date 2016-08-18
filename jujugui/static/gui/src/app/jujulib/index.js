@@ -57,9 +57,17 @@ var module = module;
       }
       callback(error, data);
     };
-    var failure = function(xhr) {
-      var data = JSON.parse(xhr.target.responseText);
-      var error = data.Message || data.message || data.Error || data.error;
+    var failure = function(xhrOrMessage) {
+      // Check if this is an XHR object or a string message being passed in.
+      var error = '',
+          data = {};
+      if (typeof xhrOrMessage === 'string') {
+        data = { error: xhrOrMessage };
+        error = xhrOrMessage;
+      } else {
+        data = JSON.parse(xhrOrMessage.target.responseText);
+        error = data.Message || data.message || data.Error || data.error;
+      }
       callback(error, data);
     };
     switch (method) {
