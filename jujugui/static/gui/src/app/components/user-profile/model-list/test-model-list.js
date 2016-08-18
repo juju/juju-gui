@@ -476,4 +476,80 @@ describe('UserProfileModelList', () => {
     renderer.unmount();
     assert.equal(listModelsAbort.callCount, 1);
   });
+
+  it('broadcasts starting status', function() {
+    var broadcastStatus = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.UserProfileModelList
+        addNotification={sinon.stub()}
+        broadcastStatus={broadcastStatus}
+        canCreateNew={false}
+        currentModel={'model1'}
+        env={env}
+        hideConnectingMask={sinon.stub()}
+        jem={null}
+        listModels={sinon.stub()}
+        showConnectingMask={sinon.stub()}
+        switchModel={sinon.stub()}
+        user={users.charmstore}
+        users={users} />, true);
+    assert.equal(broadcastStatus.args[0][0], 'starting');
+  });
+
+  it('broadcasts ok status', function() {
+    var broadcastStatus = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.UserProfileModelList
+        addNotification={sinon.stub()}
+        broadcastStatus={broadcastStatus}
+        canCreateNew={false}
+        currentModel={'model1'}
+        env={env}
+        hideConnectingMask={sinon.stub()}
+        jem={null}
+        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
+        showConnectingMask={sinon.stub()}
+        switchModel={sinon.stub()}
+        user={users.charmstore}
+        users={users} />, true);
+    assert.equal(broadcastStatus.args[1][0], 'ok');
+  });
+
+  it('broadcasts empty status', function() {
+    var broadcastStatus = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.UserProfileModelList
+        addNotification={sinon.stub()}
+        broadcastStatus={broadcastStatus}
+        canCreateNew={false}
+        currentModel={'model1'}
+        env={env}
+        hideConnectingMask={sinon.stub()}
+        jem={null}
+        listModels={sinon.stub().callsArgWith(0, null, {models: []})}
+        showConnectingMask={sinon.stub()}
+        switchModel={sinon.stub()}
+        user={users.charmstore}
+        users={users} />, true);
+    assert.equal(broadcastStatus.args[1][0], 'empty');
+  });
+
+  it('broadcasts error status', function() {
+    var broadcastStatus = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.UserProfileModelList
+        addNotification={sinon.stub()}
+        broadcastStatus={broadcastStatus}
+        canCreateNew={false}
+        currentModel={'model1'}
+        env={env}
+        hideConnectingMask={sinon.stub()}
+        jem={null}
+        listModels={sinon.stub().callsArgWith(0, 'error', {})}
+        showConnectingMask={sinon.stub()}
+        switchModel={sinon.stub()}
+        user={users.charmstore}
+        users={users} />, true);
+    assert.equal(broadcastStatus.args[1][0], 'error');
+  });
 });
