@@ -27,6 +27,26 @@ YUI.add('isv-profile', function() {
 
   juju.components.ISVProfile = React.createClass({
     propTypes: {
+      d3: React.PropTypes.object.isRequired
+    },
+
+    /**
+      Placeholder function to get the data to render the plan usage chart
+
+      @method getDataSet
+      @returns {Array} Array of data points.
+    */
+    getDataSet: function() {
+      return [[{'date':new Date(2012,0,1), 'value': 300},
+          {'date':new Date(2012,0,3), 'value': 200},
+          {'date':new Date(2012,0,12), 'value': 330},
+          {'date':new Date(2012,0,21), 'value': 130},
+          {'date':new Date(2012,0,30), 'value': 230}],
+          [{'date':new Date(2012,0,1), 'value': 300},
+          {'date':new Date(2012,0,3), 'value': 220},
+          {'date':new Date(2012,0,12), 'value': 630},
+          {'date':new Date(2012,0,21), 'value': 230},
+          {'date':new Date(2012,0,30), 'value': 30}]];
     },
 
     render: function() {
@@ -89,10 +109,10 @@ YUI.add('isv-profile', function() {
                         <option value="value2">01/08/2016</option>
                         <option value="value3">01/08/2016</option>
                       </select>
-                      from:
+                      to:
                       <select name="select"
                         className="isv-profile__historic-data-input">
-                        <option value="value1">01/08/2016</option>
+                        <option value="value1">05/09/2016</option>
                         <option value="value2">01/08/2016</option>
                         <option value="value3">01/08/2016</option>
                       </select>
@@ -115,6 +135,9 @@ YUI.add('isv-profile', function() {
                       </h3>
                       <p className="isv-profile__box-stat">$500.00</p>
                     </div>
+                    <juju.components.PlansUsage
+                      d3={this.props.d3}
+                      dataset={this.getDataSet()} />
                   </div>
                 </div>
               </main>
@@ -123,11 +146,11 @@ YUI.add('isv-profile', function() {
         </juju.components.Panel>
       );
     }
-
   });
 
 }, '', {
   requires: [
     'panel-component',
+    'plans-usage'
   ]
 });
