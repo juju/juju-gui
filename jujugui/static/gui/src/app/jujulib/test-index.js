@@ -6,16 +6,6 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('jujulib utility functions', function() {
-  var env;
-
-  var _makeXHRRequest = function(obj) {
-    return {target: {responseText: JSON.stringify(obj)}};
-  };
-
-  afterEach(function () {
-    env = null;
-  });
-
   describe('_makeRequest', function() {
     var bakery;
 
