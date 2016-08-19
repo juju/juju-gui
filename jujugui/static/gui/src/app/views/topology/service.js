@@ -1130,7 +1130,7 @@ YUI.add('juju-topology-service', function(Y) {
     serviceAddRelMouseDown: function(box, context) {
       var evt = d3.event;
       var topo = context.get('component');
-      context.longClickTimer = Y.later(750, this, function(d, e) {
+      context.longClickTimer = Y.later(250, this, function(d, e) {
         // Provide some leeway for accidental dragging.
         if ((Math.abs(box.x - box.px) + Math.abs(box.y - box.py)) /
                 2 > 5) {
@@ -1144,9 +1144,11 @@ YUI.add('juju-topology-service', function(Y) {
         // Sometimes mouseover is fired after the mousedown, so ensure
         // we have the correct event in d3.event for d3.mouse().
         d3.event = e;
-
-        // Start the process of adding a relation
-        topo.fire('addRelationDragStart', {service: box});
+        if (!topo.buildingRelation) {
+          // Start the process of adding a relation if not already building a
+          // relation
+          topo.fire('addRelationDragStart', {service: box});
+        }
       }, [box, evt], false);
     },
 
@@ -1172,8 +1174,23 @@ YUI.add('juju-topology-service', function(Y) {
      * @method dragstart
      */
     dragstart: function(box, self) {
+      var topo = self.get('component');
       box.inDrag = views.DRAG_START;
       self._raiseToTop(box.id);
+      this.clickTimer = false;
+      // Clicking on a different appliaction skips the timeout
+      if (topo.lastBoxClicked && box.id !== topo.lastBoxClicked) {
+        this.clickTimer = true;
+        topo.lastBoxClicked = box.id;
+        return;
+      }
+
+      window.clearTimeout(this.timeout);
+      // Timer to block the dragend on click
+      this.timeout = setTimeout(() => {
+        this.clickTimer = true;
+        topo.lastBoxClicked = box.id;
+      }, 100);
     },
 
     dragend: function(box,  self) {
@@ -1184,9 +1201,10 @@ YUI.add('juju-topology-service', function(Y) {
           return;
         }
       }
-      if (topo.buildingRelation) {
+      if (topo.buildingRelation && this.clickTimer) {
         topo.ignoreServiceClick = true;
         topo.fire('addRelationDragEnd');
+        topo.lastBoxClicked = undefined;
       } else {
         // If the service hasn't been dragged (in the case of long-click to
         // add relation, or a double-fired event) or the old and new
