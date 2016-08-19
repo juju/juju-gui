@@ -196,9 +196,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'request-id': 42,
           response: {
             'user-models': [{
-              name: 'sandbox',
-              uuid: 'sandbox1',
-              'owner-tag': 'user-admin',
+              model: {
+                name: 'sandbox',
+                uuid: 'sandbox1',
+                'owner-tag': 'user-admin',
+              },
               'last-connection': 'today'
             }]
           }
