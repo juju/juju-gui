@@ -421,9 +421,11 @@ YUI.add('juju-env-sandbox', function(Y) {
         'request-id': data['request-id'],
         response: {
           'user-models': [{
-            name: 'sandbox',
-            uuid: 'sandbox1',
-            'owner-tag': 'user-admin',
+            model: {
+              name: 'sandbox',
+              uuid: 'sandbox1',
+              'owner-tag': 'user-admin'
+            },
             'last-connection': 'today'
           }]
         }

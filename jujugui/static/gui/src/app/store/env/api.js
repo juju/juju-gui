@@ -2861,9 +2861,6 @@ YUI.add('juju-env-api', function(Y) {
           var response = data.response;
           transformedData.envs = response['user-models'].map(function(value) {
             var model = value.model;
-            if (!model) {
-              return {};
-            }
             return {
               name: model.name,
               owner: model['owner-tag'],
