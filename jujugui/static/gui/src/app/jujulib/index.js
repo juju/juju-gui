@@ -41,6 +41,12 @@ var module = module;
   */
   var _makeRequest = function(
     bakery, path, method, params, callback, parse, redirect) {
+    /**
+       Success callback that attempts to parse any error messages out of the
+       JSON response.
+
+       @param xhr {Object} the XHR response object.
+    */
     var success = function(xhr) {
       var data = xhr.target.responseText,
           error = null;
@@ -57,19 +63,24 @@ var module = module;
       }
       callback(error, data);
     };
+    /**
+       Failure callback that attempts to parse any error messages out of the
+       JSON response, before invoking the user-specified callback.
+
+       @param xhrOrMessage {Object} the XHR response object; can also be a
+                                    plain error string.
+    */
     var failure = function(xhrOrMessage) {
-      // Check if this is an XHR object or a string message being passed in.
-      var error = '',
-          data = {};
-      if (typeof xhrOrMessage === 'string') {
-        data = { error: xhrOrMessage };
-        error = xhrOrMessage;
-      } else {
+      var data;
+      try {
         data = JSON.parse(xhrOrMessage.target.responseText);
-        error = data.Message || data.message || data.Error || data.error;
+      } catch (e) {
+        data = { error: xhrOrMessage };
       }
+      var error = data.Message || data.message || data.Error || data.error;
       callback(error, data);
     };
+    // Invoke the proper bakery function, based on request type.
     switch (method) {
       case 'GET':
         return bakery.sendGetRequest(path, success, failure, redirect);
