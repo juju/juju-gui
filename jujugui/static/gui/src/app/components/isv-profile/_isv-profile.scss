@@ -1,3 +1,42 @@
 .isv-profile {
+    &__navigation {
+        &-item--title {
+            font-size: 1.25rem;
+        }
+    }
 
+    &__live-data {
+        margin-bottom: 40px;
+    }
+
+    &__section-title {
+        margin-left: 20px;
+    }
+
+    &__box {
+        @extend %floating-panel;
+        padding: 20px;
+
+        &-title {
+            font-size: 1rem;
+        }
+
+        &-stat {
+            font-size: 2rem;
+            border-bottom: 1px solid $mid-grey;
+            margin-bottom: 0;
+        }
+    }
+
+    &__historic-data {
+        &-input {
+            display: inline;
+            margin: 0 20px;
+            width: auto;
+        }
+    }
+
+    .align-right {
+        text-align: right;
+    }
 }

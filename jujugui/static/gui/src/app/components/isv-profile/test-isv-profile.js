@@ -33,10 +33,89 @@ describe('ISVProfile', () => {
     var output = component.getRenderOutput();
     var content = output.props.children.props.children;
     var expected = (<div className="inner-wrapper">
-        <div className="isv-profile__header">
-          <h1>ISV Profile</h1>
+      <nav className="three-col isv-profile__navigation">
+        <ul className="isv-profile__navigation-list">
+          <li className="isv-profile__navigation-item--title">
+            <a href="">Acme Corp</a>
+          </li>
+          <li className="isv-profile__navigation-item">
+            <a href="">Charms</a>
+          </li>
+          <li className="isv-profile__navigation-item">
+            <a href="">Issues</a>
+          </li>
+          <li className="isv-profile__navigation-item">
+            <a href="">Revenue</a>
+          </li>
+        </ul>
+      </nav>
+      <main className="nine-col last-col">
+        <div className="isv-profile__live-data clearfix">
+          <h3 className="isv-profile__section-title">
+            03 September 2016 - 14:35
+          </h3>
+          <div className="three-col isv-profile__box">
+            <h3 className="isv-profile__box-title">
+              User this hour
+            </h3>
+            <p className="isv-profile__box-stat">23</p>
+          </div>
+          <div className="three-col isv-profile__box">
+            <h3 className="isv-profile__box-title">
+              Units this hour
+            </h3>
+            <p className="isv-profile__box-stat">64</p>
+          </div>
+          <div className="three-col last-col isv-profile__box">
+            <h3 className="isv-profile__box-title">
+              Net revenue to date
+            </h3>
+            <p className="isv-profile__box-stat">$1,500.00</p>
+          </div>
         </div>
-      </div>);
+        <div className="isv-profile__historic-data">
+          <h3 className="isv-profile__section-title">
+            Last six weeks
+          </h3>
+          <div className="twelve-col isv-profile__box">
+            <div className="twelve-col">
+              Show dates from:
+              <select name="select"
+                className="isv-profile__historic-data-input">
+                <option value="value1">01/08/2016</option>
+                <option value="value2">01/08/2016</option>
+                <option value="value3">01/08/2016</option>
+              </select>
+              from:
+              <select name="select"
+                className="isv-profile__historic-data-input">
+                <option value="value1">01/08/2016</option>
+                <option value="value2">01/08/2016</option>
+                <option value="value3">01/08/2016</option>
+              </select>
+            </div>
+            <div className="three-col">
+              <h3 className="isv-profile__box-title">
+                User this hour
+              </h3>
+              <p className="isv-profile__box-stat">1,034</p>
+            </div>
+            <div className="three-col">
+              <h3 className="isv-profile__box-title">
+                Units this hour
+              </h3>
+              <p className="isv-profile__box-stat">1,176</p>
+            </div>
+            <div className="three-col last-col align-right">
+              <h3 className="isv-profile__box-title">
+                Revenue
+              </h3>
+              <p className="isv-profile__box-stat">$500.00</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>);
     assert.deepEqual(content, expected);
   });
 });
