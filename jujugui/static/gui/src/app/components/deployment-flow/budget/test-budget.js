@@ -64,8 +64,14 @@ describe('DeploymentBudget', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div>
-        <div className="deployment-budget__form twelve-col">
+      <juju.components.ExpandingRow
+        classes={{
+          'deployment-budget__form': true,
+          'twelve-col': true
+        }}
+        clickable={false}
+        expanded={false}>
+        <div>
           <div className="four-col">
             <juju.components.InsetSelect
               disabled={false}
@@ -77,14 +83,67 @@ describe('DeploymentBudget', function() {
               }]} />
           </div>
           <div className="three-col">
-            <span className="deployment-budget__increase link">
-              Increase budget
+            <span className="deployment-budget__increase-button">
+              <juju.components.GenericButton
+                action={instance._toggleIncrease}
+                disabled={false}
+                type="base"
+                title="Increase budget" />
             </span>
           </div>
+          <juju.components.BudgetChart
+            budgets={budgets} />
         </div>
-        <juju.components.BudgetChart
-          budgets={budgets} />
-      </div>);
+        <div>
+          <div className="deployment-budget__increase-form">
+            <h4>Increase budget</h4>
+            <div className="two-col">
+              Credit limit: $100
+            </div>
+            <div className="ten-col last-col">
+              Available credit: $500
+            </div>
+            <div className="one-col">
+              Increase
+            </div>
+            <div className="three-col">
+              <juju.components.GenericInput
+                disabled={true}
+                label="Budget"
+                placeholder="Personal ($100)"
+                required={false} />
+            </div>
+            <div className="one-col">
+              to
+            </div>
+            <div className="three-col last-col">
+              <juju.components.GenericInput
+                disabled={true}
+                label="New budget amount"
+                required={false} />
+            </div>
+            <div>
+              <div className="eight-col">
+              <span className="link">Manage all budgets</span>
+              </div>
+              <div className="two-col">
+                <juju.components.GenericButton
+                  action={instance._toggleIncrease}
+                  disabled={false}
+                  type="base"
+                  title="Cancel" />
+                </div>
+                <div className="two-col last-col">
+                <juju.components.GenericButton
+                  action={instance._toggleIncrease}
+                  disabled={false}
+                  type="neutral"
+                  title="Confirm" />
+                </div>
+            </div>
+          </div>
+        </div>
+      </juju.components.ExpandingRow>);
     assert.deepEqual(output, expected);
   });
 
@@ -99,8 +158,14 @@ describe('DeploymentBudget', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div>
-        <div className="deployment-budget__form twelve-col">
+      <juju.components.ExpandingRow
+        classes={{
+          'deployment-budget__form': true,
+          'twelve-col': true
+        }}
+        clickable={false}
+        expanded={false}>
+        <div>
           <div className="four-col">
             <juju.components.InsetSelect
               disabled={true}
@@ -112,14 +177,67 @@ describe('DeploymentBudget', function() {
               }]} />
           </div>
           <div className="three-col">
-            <span className="deployment-budget__increase link">
-              Increase budget
+            <span className="deployment-budget__increase-button">
+              <juju.components.GenericButton
+                action={instance._toggleIncrease}
+                disabled={true}
+                type="base"
+                title="Increase budget" />
             </span>
           </div>
+          <juju.components.BudgetChart
+            budgets={budgets} />
         </div>
-        <juju.components.BudgetChart
-          budgets={budgets} />
-      </div>);
+        <div>
+          <div className="deployment-budget__increase-form">
+            <h4>Increase budget</h4>
+            <div className="two-col">
+              Credit limit: $100
+            </div>
+            <div className="ten-col last-col">
+              Available credit: $500
+            </div>
+            <div className="one-col">
+              Increase
+            </div>
+            <div className="three-col">
+              <juju.components.GenericInput
+                disabled={true}
+                label="Budget"
+                placeholder="Personal ($100)"
+                required={false} />
+            </div>
+            <div className="one-col">
+              to
+            </div>
+            <div className="three-col last-col">
+              <juju.components.GenericInput
+                disabled={true}
+                label="New budget amount"
+                required={false} />
+            </div>
+            <div>
+              <div className="eight-col">
+              <span className="link">Manage all budgets</span>
+              </div>
+              <div className="two-col">
+                <juju.components.GenericButton
+                  action={instance._toggleIncrease}
+                  disabled={true}
+                  type="base"
+                  title="Cancel" />
+                </div>
+                <div className="two-col last-col">
+                <juju.components.GenericButton
+                  action={instance._toggleIncrease}
+                  disabled={true}
+                  type="neutral"
+                  title="Confirm" />
+                </div>
+            </div>
+          </div>
+        </div>
+      </juju.components.ExpandingRow>);
     assert.deepEqual(output, expected);
   });
 
