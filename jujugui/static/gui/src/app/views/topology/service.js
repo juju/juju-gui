@@ -1174,13 +1174,22 @@ YUI.add('juju-topology-service', function(Y) {
      * @method dragstart
      */
     dragstart: function(box, self) {
+      var topo = self.get('component');
       box.inDrag = views.DRAG_START;
       self._raiseToTop(box.id);
       this.clickTimer = false;
+      // Clicking on a different appliaction skips the timeout
+      if (topo.lastBoxClicked && box.id !== topo.lastBoxClicked) {
+        this.clickTimer = true;
+        topo.lastBoxClicked = box.id;
+        return;
+      }
+
       window.clearTimeout(this.timeout);
       // Timer to block the dragend on click
       this.timeout = setTimeout(() => {
         this.clickTimer = true;
+        topo.lastBoxClicked = box.id;
       }, 100);
     },
 
@@ -1195,6 +1204,7 @@ YUI.add('juju-topology-service', function(Y) {
       if (topo.buildingRelation && this.clickTimer) {
         topo.ignoreServiceClick = true;
         topo.fire('addRelationDragEnd');
+        topo.lastBoxClicked = undefined;
       } else {
         // If the service hasn't been dragged (in the case of long-click to
         // add relation, or a double-fired event) or the old and new
