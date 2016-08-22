@@ -559,15 +559,9 @@ YUI.add('juju-gui', function(Y) {
           var credentials = this.env.getCredentials();
           if (credentials.areAvailable) {
             if (credentials.macaroons) {
-              var bakery = new Y.juju.environments.web.Bakery({
-                webhandler: new Y.juju.environments.web.WebHandler(),
-                interactive: true,
-                serviceName: 'juju',
-                dischargeStore: window.localStorage
-              });
-              this.env.loginWithMacaroon(bakery);
+              this.loginToAPIs(null, true, [this.env]);
             } else {
-              this.env.login();
+              this.loginToAPIs(null, false, [this.env]);
             }
           } else {
             // The user can also try to log in with an authentication token.
@@ -749,18 +743,20 @@ YUI.add('juju-gui', function(Y) {
       });
 
       controllerAPI.after('connectedChange', e => {
-        // If we're in a JIMM controlled environment then use the macaroon
-        // login. If not then uses the standard u/p method.
-        if (this.get('jimmURL')) {
-          this.controllerAPI.loginWithMacaroon(
-            new Y.juju.environments.web.Bakery({
-              webhandler: new Y.juju.environments.web.WebHandler(),
-              interactive: true,
-              serviceName: 'juju',
-              dischargeStore: window.localStorage
-            }));
+        const credentials = this.controllerAPI.getCredentials();
+        if (!credentials.areAvailable) {
+          // If we don't have credentials then do nothing as the env login
+          // check will have kicked the user to the login prompt already and
+          // we can wait until they have provided the credentials there.
+          return;
+        }
+        // If we're in a JIMM controlled environment or if we have macaroon
+        // credentials then use the macaroon login. If not then uses the
+        // standard u/p method.
+        if (this.get('jimmURL') || credentials.macaroons) {
+          this.loginToAPIs(null, true, [this.controllerAPI]);
         } else {
-          this.controllerAPI.login();
+          this.loginToAPIs(null, false, [this.controllerAPI]);
         }
       });
       // If we're in JIMM then use a jimmURL, else use a socket_url without the
@@ -806,6 +802,35 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Handles logging into both the env and controller api websockets.
+
+      @method loginToAPIs
+      @param {Object} credentials The credentials to pass to setCredentials.
+      @param {Boolean} useMacaroons If it should use the loginWithMacaroon
+        login methods.
+    */
+    loginToAPIs: function(
+      credentials, useMacaroons, apis=[this.env, this.controllerAPI]) {
+      if (useMacaroons) {
+        apis.forEach(api => {
+          api.loginWithMacaroon(new Y.juju.environments.web.Bakery({
+            webhandler: new Y.juju.environments.web.WebHandler(),
+            interactive: true,
+            serviceName: 'juju',
+            dischargeStore: window.localStorage
+          }));
+        });
+      } else {
+        apis.forEach(api => {
+          if (credentials) {
+            api.setCredentials(credentials);
+          }
+          api.login();
+        });
+      }
+    },
+
+    /**
       Renders the login component.
 
       @method _renderLogin
@@ -813,35 +838,12 @@ YUI.add('juju-gui', function(Y) {
         message must be displayed.
     */
     _renderLogin: function(err) {
-      var msg = (
-        <p>
-          Find your password with<br />
-          <code>juju api-info --password password</code>
-        </p>);
-      var loginWithMacaroon = null;
-      if (!this.isLegacyJuju()) {
-        // Use the new Juju 2 command to retrieve credentials.
-        msg = (
-          <p>
-            Find your username and password with<br />
-            <code>juju show-controller --show-password</code>
-          </p>);
-        // In Juju 2 logging in with macaroons could also be available.
-        var bakery = new Y.juju.environments.web.Bakery({
-          webhandler: new Y.juju.environments.web.WebHandler(),
-          interactive: true,
-          serviceName: 'juju',
-          dischargeStore: window.localStorage
-        });
-        loginWithMacaroon = this.env.loginWithMacaroon.bind(this.env, bakery);
-      }
       document.getElementById('loading-message').style.display = 'none';
       ReactDOM.render(
         <window.juju.components.Login
-          helpMessage={msg}
           setCredentials={this.env.setCredentials.bind(this.env)}
-          login={this.env.login.bind(this.env)}
-          loginWithMacaroon={loginWithMacaroon}
+          isLegacyJuju={this.isLegacyJuju()}
+          loginToAPIs={this.loginToAPIs.bind(this)}
           errorMessage={err} />,
         document.getElementById('login-container'));
     },

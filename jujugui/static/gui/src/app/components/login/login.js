@@ -24,9 +24,8 @@ YUI.add('login-component', function() {
 
     propTypes: {
       errorMessage: React.PropTypes.string,
-      helpMessage: React.PropTypes.object.isRequired,
-      login: React.PropTypes.func.isRequired,
-      loginWithMacaroon: React.PropTypes.func,
+      isLegacyJuju: React.PropTypes.bool.isRequired,
+      loginToAPIs: React.PropTypes.func.isRequired,
       setCredentials: React.PropTypes.func.isRequired
     },
 
@@ -46,12 +45,10 @@ YUI.add('login-component', function() {
       if (evt && evt.preventDefault){
         evt.preventDefault();
       }
-      var props = this.props;
-      props.setCredentials({
+      this.props.loginToAPIs({
         user: this.refs.username.value,
         password: this.refs.password.value
-      });
-      props.login();
+      }, false);
     },
 
     /**
@@ -65,7 +62,7 @@ YUI.add('login-component', function() {
       if (evt && evt.preventDefault){
         evt.preventDefault();
       }
-      this.props.loginWithMacaroon();
+      this.props.loginToAPIs(null, true);
     },
 
     /**
@@ -75,7 +72,7 @@ YUI.add('login-component', function() {
       @method _generateLoginWithMacaroonButton
     */
     _generateLoginWithMacaroonButton: function() {
-      if (this.props.loginWithMacaroon) {
+      if (!this.props.isLegacyJuju) {
         return ({
           action: this._handleLoginWithMacaroonSubmit,
           title: 'Login with USSO',
@@ -94,6 +91,25 @@ YUI.add('login-component', function() {
       if (msg) {
         return <div className="login__failure-message">{msg}</div>;
       }
+    },
+
+    /**
+      Generates the login help message based on if we're in legacy Juju or not.
+
+      @method _generateHelpMessage
+      @return {Object} The message.
+    */
+    _generateHelpMessage: function() {
+      return this.props.isLegacyJuju ?
+        (<p>
+            Find your password with<br />
+            <code>juju api-info --password password</code>
+          </p>)
+      :
+        (<p>
+            Find your username and password with<br />
+            <code>juju show-controller --show-password</code>
+          </p>);
     },
 
     render: function() {
@@ -144,7 +160,7 @@ YUI.add('login-component', function() {
             </form>
           </div>
           <div className="login__message">
-            {this.props.helpMessage}
+            {this._generateHelpMessage()}
             <div className="login__message-link">
               <a href="https://jujucharms.com" target="_blank">
                 jujucharms.com
