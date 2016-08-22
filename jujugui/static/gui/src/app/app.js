@@ -458,37 +458,40 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Complete the application initialization.
-     *
-     * @method _init
-     * @param {Object} cfg Application configuration data.
-     * @param {Object} env The environment instance.
-     */
-    _init: function(cfg, env, controllerAPI) {
+      Complete the application initialization.
+
+      @method _init
+      @param {Object} cfg Application configuration data.
+      @param {Object} modelAPI The environment instance.
+      @param {Object} controllerAPI The controller api instance.
+    */
+    _init: function(cfg, modelAPI, controllerAPI) {
       // If the user closed the GUI when they were on a different env than
       // their default then it would show them the login screen. This sets
       // the credentials to the environment that they are logging into
       // initially.
-      var user = env.get('user');
-      var password = env.get('password');
+      var user = modelAPI.get('user');
+      var password = modelAPI.get('password');
       var macaroons = null;
       if (!user || !password) {
         // No user and password credentials provided in config: proceed with
         // usual credentials handling.
-        var credentials = env.getCredentials();
+        var credentials = modelAPI.getCredentials();
         if (credentials.areAvailable) {
           user = credentials.user;
           password = credentials.password;
           macaroons = credentials.macaroons;
         }
       }
-      env.setCredentials({ user, password, macaroons });
-      this.env = env;
+      modelAPI.setCredentials({ user, password, macaroons });
+      this.env = modelAPI;
       // If we're in legacy Juju (Juju 1) then we'll only require
-      // a single websocket connection.
-      this.controllerAPI = this.setUpControllerAPI(
-        controllerAPI, user, password, macaroons);
-      // Set the env in the model controller here so
+      // a single WebSocket connection.
+      if (controllerAPI) {
+        this.controllerAPI = this.setUpControllerAPI(
+          controllerAPI, user, password, macaroons);
+      }
+      // Set the modelAPI in the model controller here so
       // that we know that it's been setup.
       this.modelController.set('env', this.env);
 
@@ -662,13 +665,13 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Creates a sandbox connection backend for use with the GoJujuAPI
+      Creates a sandbox connection backend for use with the GoJujuAPI.
 
       @method createSandboxConnection
       @param {Object} cfg The configuration object to use and modify with the
         sandbox connection instance.
-      @return {Object} cfg A modified version of the passed in cfg which
-        constains the sandbox connection.
+      @return {Object} A modified version of the passed in cfg which
+        contains the sandbox connection.
     */
     createSandboxConnection: function(cfg) {
       cfg.socket_url = this.get('sandboxSocketURL');
@@ -697,7 +700,7 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Creates the second instance of the websocket for communication with
+      Creates the second instance of the WebSocket for communication with
       the Juju controller if it's necessary. A username and password must be
       supplied if you're connecting to a standalone Juju controller and not to
       one which requires macaroon authentication.
@@ -712,17 +715,13 @@ YUI.add('juju-gui', function(Y) {
         we're in a legacy juju model and no controllerAPI instance was supplied.
     */
     setUpControllerAPI: function(controllerAPI, user, password, macaroons) {
-      // If no instance was supplied to us then we're in a legacy Juju
-      // and this connection is not necessary.
-      if (!controllerAPI) { return; }
-
       controllerAPI.setAttrs({ user, password });
       controllerAPI.setCredentials({ user, password, macaroons });
 
       controllerAPI.after('login', e => {
         this.controllerAPI.listModelsWithInfo((err, response) => {
           if (err) {
-            console.error('Unable to list models', err);
+            console.error('unable to list models', err);
             this.db.notifications.add({
               title: 'Unable to list models',
               message: 'Unable to list models: ' + err,
@@ -802,12 +801,15 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Handles logging into both the env and controller api websockets.
+      Handles logging into both the env and controller api WebSockets.
 
       @method loginToAPIs
-      @param {Object} credentials The credentials to pass to setCredentials.
-      @param {Boolean} useMacaroons If it should use the loginWithMacaroon
-        login methods.
+      @param {Object} credentials The credentials to pass to the instances
+        setCredentials method.
+      @param {Boolean} useMacaroons Whether to use macaroon based auth
+        (macaraq) or simple username/password auth.
+      @param {Array} apis The apis instances that we should be logging into.
+        Defaults to [this.env, this.controllerAPI].
     */
     loginToAPIs: function(
       credentials, useMacaroons, apis=[this.env, this.controllerAPI]) {
@@ -820,14 +822,14 @@ YUI.add('juju-gui', function(Y) {
             dischargeStore: window.localStorage
           }));
         });
-      } else {
-        apis.forEach(api => {
-          if (credentials) {
-            api.setCredentials(credentials);
-          }
-          api.login();
-        });
+        return;
       }
+      apis.forEach(api => {
+        if (credentials) {
+          api.setCredentials(credentials);
+        }
+        api.login();
+      });
     },
 
     /**
