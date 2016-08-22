@@ -431,7 +431,8 @@ YUI.add('juju-gui', function(Y) {
           // If we have a uuid provided in the config then connect directly
           // to that instead of waiting for the model list from the controller
           // connection.
-          const socketURL = this.createSocketURL(jujuEnvUUID);
+          const socketURL = this.createSocketURL(
+            this.get('socketTemplate'), jujuEnvUUID);
           envOptions.socket_url = socketURL;
           this.set('socket_url', socketURL);
         }
@@ -736,8 +737,15 @@ YUI.add('juju-gui', function(Y) {
           if (modelList.length === 0) {
             // XXX Drop the user into the uncommitted state.
           }
+          if (modelList.some(data => data.uuid === this.env.get('modelUUID'))) {
+            // If the user is already connected to a model in this list then
+            // leave it be.
+            return;
+          }
           const selectedModel = this._pickModel(modelList);
-          this.switchEnv(this.createSocketURL(selectedModel.uuid));
+          this.switchEnv(
+            this.createSocketURL(
+              this.get('socketTemplate'), selectedModel.uuid));
         });
       });
 
@@ -762,7 +770,8 @@ YUI.add('juju-gui', function(Y) {
       // model uuid.
       controllerAPI.set(
         'socket_url',
-        this.get('jimmURL') || this.get('apiAddress'));
+        this.get('jimmURL') ||
+          this.createSocketURL(this.get('controllerSocketTemplate')));
       return controllerAPI;
     },
 
@@ -906,9 +915,9 @@ YUI.add('juju-gui', function(Y) {
           pluralize={utils.pluralize.bind(this)}
           staticURL={window.juju_config.staticURL}
           storeUser={this.storeUser.bind(this)}
-          switchModel={utils.switchModel.bind(
-            this, this.createSocketURL.bind(this), this.switchEnv.bind(this),
-            this.env)}
+          switchModel={utils.switchModel.bind(this,
+            this.createSocketURL.bind(this, this.get('socketTemplate')),
+            this.switchEnv.bind(this), this.env)}
           showConnectingMask={this.showConnectingMask.bind(this)}
           hideConnectingMask={this.hideConnectingMask.bind(this)}
           user={user}
@@ -1069,7 +1078,8 @@ YUI.add('juju-gui', function(Y) {
           changeState={this.changeState.bind(this)}
           deploy={utils.deploy.bind(
             utils, env, jem, users, autoPlaceUnits,
-            this.createSocketURL.bind(this), this.set.bind(this),
+            this.createSocketURL.bind(this, this.get('socketTemplate')),
+            this.set.bind(this),
             modelCommitted)}
           generateAllChangeDescriptions={
             changesUtils.generateAllChangeDescriptions.bind(
@@ -2012,6 +2022,7 @@ YUI.add('juju-gui', function(Y) {
       Create the new socket URL based on the socket template and model details.
 
       @method createSocketURL
+      @param {String} template The template to use to generate the url.
       @param {String} uuid The unique identifier for the model.
       @param {String} server The optional API server host address for the
         model. If not provided, defaults to the host name included in the
@@ -2021,11 +2032,10 @@ YUI.add('juju-gui', function(Y) {
         option.
       @return {String} The resulting fully qualified WebSocket URL.
     */
-    createSocketURL: function(uuid, server, port) {
+    createSocketURL: function(template, uuid, server, port) {
       var baseUrl = '';
-      var url = this.get('socketTemplate');
       var sandbox = this.get('sandbox');
-      if (url[0] === '/' || sandbox) {
+      if (template[0] === '/' || sandbox) {
         // We either are in sandbox mode or only the WebSocket path is passed.
         // In both cases, we need to calculate the base URL.
         var schema = this.get('socket_protocol') || 'wss';
@@ -2040,10 +2050,10 @@ YUI.add('juju-gui', function(Y) {
         }
       }
       var defaults = this.get('apiAddress').replace('wss://', '').split(':');
-      url = url.replace('$uuid', uuid);
-      url = url.replace('$server', server || defaults[0]);
-      url = url.replace('$port', port || defaults[1]);
-      return baseUrl + url;
+      template = template.replace('$uuid', uuid);
+      template = template.replace('$server', server || defaults[0]);
+      template = template.replace('$port', port || defaults[1]);
+      return baseUrl + template;
     },
 
     /**
