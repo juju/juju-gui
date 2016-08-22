@@ -30,72 +30,8 @@ describe('LoginComponent', function() {
   it('renders', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
-        helpMessage={<span>Exterminate!</span>}
-        setCredentials={sinon.stub()}
-        login={sinon.stub()}/>, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <div className="login">
-        <div className="login__logo">
-          <juju.components.SvgIcon width="75" height="30" name="juju-logo" />
-        </div>
-        <div className="login__full-form">
-          <div className="login__env-name">
-            Login
-          </div>
-          {undefined}
-          <form
-            className="login__form"
-            ref="form"
-            onSubmit={instance._handleLoginSubmit}>
-            <label
-              className="login__label">
-              Username
-              <input
-                className="login__input"
-                type="text"
-                name="username"
-                ref="username" />
-            </label>
-            <label
-              className="login__label">
-              Password
-              <input
-                className="login__input"
-                type="password"
-                name="password"
-                ref="password" />
-            </label>
-            <juju.components.ButtonRow
-              buttons={[{
-                action: instance._handleLoginSubmit,
-                submit: true,
-                title: 'Login',
-                type: 'positive'
-              }]} />
-          </form>
-        </div>
-        <div className="login__message">
-          <span>Exterminate!</span>
-          <div className="login__message-link">
-            <a href="https://jujucharms.com" target="_blank">
-              jujucharms.com
-            </a>
-          </div>
-        </div>
-      </div>
-    );
-    assert.deepEqual(output, expected);
-  });
-
-  it('renders including a "Login with USSO" button', function() {
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.Login
-        helpMessage={<span>Exterminate!</span>}
-        setCredentials={sinon.stub()}
-        loginWithMacaroon={sinon.stub()}
-        login={sinon.stub()}/>, true);
+        isLegacyJuju={false}
+        loginToAPIs={sinon.stub()}/>, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -144,7 +80,74 @@ describe('LoginComponent', function() {
           </form>
         </div>
         <div className="login__message">
-          <span>Exterminate!</span>
+          <p>
+            Find your username and password with<br />
+            <code>juju show-controller --show-password</code>
+          </p>
+          <div className="login__message-link">
+            <a href="https://jujucharms.com" target="_blank">
+              jujucharms.com
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+    assert.deepEqual(output, expected);
+  });
+
+  it('renders for legacy Juju', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Login
+        isLegacyJuju={true}
+        loginToAPIs={sinon.stub()}/>, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="login">
+        <div className="login__logo">
+          <juju.components.SvgIcon width="75" height="30" name="juju-logo" />
+        </div>
+        <div className="login__full-form">
+          <div className="login__env-name">
+            Login
+          </div>
+          {undefined}
+          <form
+            className="login__form"
+            ref="form"
+            onSubmit={instance._handleLoginSubmit}>
+            <label
+              className="login__label">
+              Username
+              <input
+                className="login__input"
+                type="text"
+                name="username"
+                ref="username" />
+            </label>
+            <label
+              className="login__label">
+              Password
+              <input
+                className="login__input"
+                type="password"
+                name="password"
+                ref="password" />
+            </label>
+            <juju.components.ButtonRow
+              buttons={[{
+                action: instance._handleLoginSubmit,
+                submit: true,
+                title: 'Login',
+                type: 'positive'
+              }]} />
+          </form>
+        </div>
+        <div className="login__message">
+          <p>
+            Find your password with<br />
+            <code>juju api-info --password password</code>
+          </p>
           <div className="login__message-link">
             <a href="https://jujucharms.com" target="_blank">
               jujucharms.com
@@ -159,57 +162,50 @@ describe('LoginComponent', function() {
   it('can display a login error message', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.Login
-        helpMessage={<span>Exterminate!</span>}
-        setCredentials={sinon.stub()}
-        login={sinon.stub()}
-        errorMessage='bad wolf' />);
+        errorMessage='bad wolf'
+        isLegacyJuju={false}
+        loginToAPIs={sinon.stub()}/>);
     var expected = <div className="login__failure-message">bad wolf</div>;
     assert.deepEqual(output.props.children[1].props.children[1], expected);
   });
 
   it('calls to log the user in on submit', function() {
-    var setCredentials = sinon.stub();
-    var login = sinon.stub();
+    var loginToAPIs = sinon.stub();
     var component = testUtils.renderIntoDocument(
       <juju.components.Login
-        helpMessage={<span>Exterminate!</span>}
-        setCredentials={setCredentials}
-        login={login} />);
+        isLegacyJuju={false}
+        loginToAPIs={loginToAPIs}/>);
     component.refs.username.value = 'foo';
     component.refs.password.value = 'bar';
 
     testUtils.Simulate.submit(component.refs.form);
 
-    assert.equal(setCredentials.callCount, 1, 'setCredentials never called');
-    assert.deepEqual(setCredentials.args[0][0], {
+    assert.equal(loginToAPIs.callCount, 1, 'loginToAPIs never called');
+    assert.deepEqual(loginToAPIs.args[0], [{
       user: 'foo',
       password: 'bar'
-    });
-    assert.equal(login.callCount, 1, 'login never called');
+    }, false]);
   });
 
   it('calls to log the user in with USSO', function() {
-    var loginWithMacaroon = sinon.stub();
+    const loginToAPIs = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
-        helpMessage={<span>Exterminate!</span>}
-        setCredentials={sinon.stub()}
-        loginWithMacaroon={loginWithMacaroon}
-        login={sinon.stub()}/>, true);
+        isLegacyJuju={false}
+        loginToAPIs={loginToAPIs}/>, true);
     var output = renderer.getRenderOutput();
     var buttons = output.props.children[1].props.children[2].props.children[2];
     buttons.props.buttons[1].action();
-    assert.equal(loginWithMacaroon.callCount, 1, 'login never called');
+    assert.equal(loginToAPIs.callCount, 1, 'loginToAPIs never called');
+    assert.deepEqual(loginToAPIs.args[0], [null, true]);
   });
 
   it('can focus on the username field', function() {
     var focus = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
-        helpMessage={<span>Exterminate!</span>}
-        setCredentials={sinon.stub()}
-        login={sinon.stub()}
-        loginFailure={true} />, true);
+        isLegacyJuju={false}
+        loginToAPIs={sinon.stub()}/>, true);
     var instance = renderer.getMountedInstance();
     instance.refs = {username: {focus: focus}};
     instance.componentDidMount();
