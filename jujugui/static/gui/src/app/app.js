@@ -423,9 +423,12 @@ YUI.add('juju-gui', function(Y) {
         jujuCoreVersion: this.get('jujuCoreVersion')
       };
 
-      const jujuEnvUUID = window.juju_config && window.juju_config.jujuEnvUUID;
+      const jujuEnvUUID =
+        this.get('jujuEnvUUID') ||
+        (window.juju_config && window.juju_config.jujuEnvUUID);
       if (this.get('sandbox')) {
-        envOptions = this.createSandboxConnection(envOptions);
+        envOptions = this.createSandboxConnection(
+          Object.assign({}, envOptions));
       } else {
         if (jujuEnvUUID) {
           // If we have a uuid provided in the config then connect directly
@@ -1755,7 +1758,7 @@ YUI.add('juju-gui', function(Y) {
         this._keybindings.detach();
       }
       Y.each(
-          [this.env, this.db, this.endpointsController],
+          [this.env, this.db, this.endpointsController, this.controllerAPI],
           function(o) {
             if (o && o.destroy) {
               o.detachAll();

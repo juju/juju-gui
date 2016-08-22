@@ -1383,13 +1383,22 @@ describe('App', function() {
   });
 
   describe('getUser', function() {
-    var Y;
+    var stub, testUtils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
+
+    beforeEach(function() {
+      stub = testUtils.makeStubMethod(
+        Y.juju.App.prototype, 'setUpControllerAPI');
+      this._cleanups.push(stub);
+    });
+
+    afterEach(function() {});
 
     it('gets the set user for the supplied service', function() {
       container = Y.Node.create('<div id="test" class="container"></div>');
@@ -1410,13 +1419,22 @@ describe('App', function() {
   });
 
   describe('clearUser', function() {
-    var Y;
+    var stub, testUtils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
+
+    beforeEach(function() {
+      stub = testUtils.makeStubMethod(
+        Y.juju.App.prototype, 'setUpControllerAPI');
+      this._cleanups.push(stub);
+    });
+
+    afterEach(function() {});
 
     it('clears the set user for the supplied service', function() {
       container = Y.Node.create('<div id="test" class="container"></div>');
@@ -1438,7 +1456,7 @@ describe('App', function() {
   });
 
   describe('storeUser', function() {
-    var Y, app, csStub, jemStub, testUtils;
+    var Y, app, csStub, jemStub, stub, testUtils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
@@ -1448,6 +1466,9 @@ describe('App', function() {
     });
 
     beforeEach(function() {
+      stub = testUtils.makeStubMethod(
+        Y.juju.App.prototype, 'setUpControllerAPI');
+      this._cleanups.push(stub);
       container = Y.Node.create('<div id="test" class="container"></div>');
       app = new Y.juju.App({
         viewContainer: container,
@@ -1491,7 +1512,7 @@ describe('App', function() {
   });
 
   describe('_getAuth', function() {
-    var Y, app, credStub, utils;
+    var Y, app, credStub, stub, utils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
@@ -1504,6 +1525,9 @@ describe('App', function() {
     });
 
     beforeEach(function() {
+      stub = utils.makeStubMethod(
+        Y.juju.App.prototype, 'setUpControllerAPI');
+      this._cleanups.push(stub);
       container = Y.Node.create('<div id="test" class="container"></div>');
       app = new Y.juju.App({
         viewContainer: container,
@@ -1544,7 +1568,7 @@ describe('App', function() {
   });
 
   describe('Application sandbox mode', function() {
-    var Y, app;
+    var app, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
@@ -1557,18 +1581,16 @@ describe('App', function() {
     });
 
     afterEach(function() {
-      if (app) {
-        app.destroy({remove: true});
-      }
+      window.sessionStorage.removeItem('credentials');
+      app.destroy({remove: true});
     });
 
     it('instantiates correctly', function() {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
         charmstorestore: new window.jujulib.charmstore('http://1.2.3.4/'),
-        consoleEnabled: true,
         container: container,
-        jujuCoreVersion: '1.21.1.1-trusty-amd64',
+        jujuCoreVersion: '2.1.1',
         password: 'admin',
         sandboxSocketURL: 'ws://host:port/ws/environment/undefined/api',
         sandbox: true,
@@ -1611,7 +1633,7 @@ describe('App', function() {
         socketTemplate: '/environment/$uuid/api',
         viewContainer: container
       });
-      var socketUrl = app.createSocketURL();
+      var socketUrl = app.createSocketURL(app.get('socketTemplate'));
       var expected = [
         'wss://',
         window.location.hostname,
@@ -1625,11 +1647,9 @@ describe('App', function() {
   });
 
   describe('configuration parsing', function() {
-
-    var Y, app, getLocation;
+    var app, getLocation, Y;
 
     before(function(done) {
-      console.log('Loading App prefetch test code');
       Y = YUI(GlobalConfig).use(
           ['juju-gui'], function(Y) {
             done();
@@ -1651,17 +1671,18 @@ describe('App', function() {
       app.destroy();
     });
 
-    it('can pick the right environment from a list based on config',
+    it('can pick the right model from a list based on config',
         function() {
           app = new Y.juju.App({
             apiAddress: 'example.com:17070',
             conn: {close: function() {}},
             container: container,
-            jujuCoreVersion: '1.21.1.1-trusty-amd64',
+            jujuCoreVersion: '2.1.1',
             jujuEnvUUID: 'tardis',
             user: 'rose',
             socket_protocol: 'ws',
             socketTemplate: '/juju/api/$server/$port/$uuid',
+            controllerSocketTemplate: '/api',
             viewContainer: container
           });
           var fakeEnvList = [{
@@ -1675,16 +1696,17 @@ describe('App', function() {
           assert.equal('rose/tardis', envData.path);
         });
 
-    it('picks the first environment in a list without config',
+    it('picks the first model in a list without config',
         function() {
           app = new Y.juju.App({
             apiAddress: 'example.com:17070',
             conn: {close: function() {}},
             container: container,
-            jujuCoreVersion: '1.21.1.1-trusty-amd64',
+            jujuCoreVersion: '2.1.1',
             user: 'rose',
             socket_protocol: 'ws',
             socketTemplate: '/juju/api/$server/$port/$uuid',
+            controllerSocketTemplate: '/api',
             viewContainer: container
           });
           var fakeEnvList = [{
@@ -1710,10 +1732,11 @@ describe('App', function() {
         apiAddress: 'example.com:17070',
         conn: {close: function() {}},
         container: container,
-        jujuCoreVersion: '1.21.1.1-trusty-amd64',
+        jujuCoreVersion: '2.1.1',
         jujuEnvUUID: '1234-1234',
         socket_protocol: 'ws',
         socketTemplate: '/juju/api/$server/$port/$uuid',
+        controllerSocketTemplate: '/api',
         viewContainer: container
       });
       app.showView(new Y.View());
@@ -1725,10 +1748,11 @@ describe('App', function() {
         apiAddress: 'example.com:17070',
         conn: {close: function() {}},
         container: container,
-        jujuCoreVersion: '1.21.1.1-trusty-amd64',
+        jujuCoreVersion: '2.1.1',
         jujuEnvUUID: '1234-1234',
         socket_protocol: 'ws',
         socketTemplate: 'wss://my.$server:$port/model/$uuid/api',
+        controllerSocketTemplate: '/api',
         viewContainer: container
       });
       app.showView(new Y.View());
@@ -1739,7 +1763,7 @@ describe('App', function() {
   });
 
   describe('checkUserCredentials', function() {
-    var Y, app, testUtils;
+    var app, stub, testUtils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
@@ -1753,6 +1777,9 @@ describe('App', function() {
     });
 
     beforeEach(function() {
+      stub = testUtils.makeStubMethod(
+        Y.juju.App.prototype, 'setUpControllerAPI');
+      this._cleanups.push(stub);
       app = new Y.juju.App({
         consoleEnabled: true,
         jujuCoreVersion: '2.0.0',
@@ -1780,15 +1807,19 @@ describe('App', function() {
   });
 
   describe('isLegacyJuju', function() {
-    var Y, app;
+    var app, stub, testUtils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
 
     beforeEach(function() {
+      stub = testUtils.makeStubMethod(
+        Y.juju.App.prototype, 'setUpControllerAPI');
+      this._cleanups.push(stub);
       app = new Y.juju.App({
         viewContainer: container,
         jujuCoreVersion: '2.0.0'
