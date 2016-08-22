@@ -24,45 +24,7 @@ YUI.add('inspector-plan', function() {
 
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      changeState: React.PropTypes.func.isRequired,
       currentPlan: React.PropTypes.object,
-      service: React.PropTypes.object.isRequired
-    },
-
-    /**
-      Navigates to the Choose Plans UI.
-
-      @method _navigatePlans
-    */
-    _navigatePlans: function() {
-      this.props.changeState({
-        sectionA: {
-          component: 'inspector',
-          metadata: {
-            id: this.props.service.get('id'),
-            activeComponent: 'plans'
-          }
-        }
-      });
-    },
-
-    /**
-      Generates the footer buttons for the UI depending on if the application
-      has a selected plan or not.
-
-      @method _generateButtons
-      @return {Function} The React elements for the UI.
-    */
-    _generateButtons: function() {
-      var currentPlan = this.props.currentPlan;
-      var buttons = [{
-        title: currentPlan ? 'Change plan' : 'Choose plan',
-        action: this._navigatePlans,
-        type: 'neutral'
-      }];
-      return (
-        <juju.components.ButtonRow
-          buttons={buttons}/>);
     },
 
     /**
@@ -101,7 +63,6 @@ YUI.add('inspector-plan', function() {
         <div className="inspector-plan">
           {this.props.currentPlan ?
             this._generatePlanDetails() : this._generateNoPlans()}
-          {this._generateButtons()}
         </div>
       );
     }

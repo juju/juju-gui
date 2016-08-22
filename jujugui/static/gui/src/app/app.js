@@ -1156,7 +1156,6 @@ YUI.add('juju-gui', function(Y) {
             getServiceByName=
               {this.db.services.getServiceByName.bind(this.db.services)}
             linkify={utils.linkify}
-            listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
             appState={state.get('current')}
             appPreviousState={state.get('previous')} />
         );

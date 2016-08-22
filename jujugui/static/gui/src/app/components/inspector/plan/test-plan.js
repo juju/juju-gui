@@ -23,7 +23,7 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('InspectorPlans', () => {
+describe('InspectorPlan', () => {
   var acl;
 
   beforeAll(function(done) {
@@ -56,12 +56,6 @@ describe('InspectorPlans', () => {
             {currentPlan.description}
           </div>
         </div>
-        <juju.components.ButtonRow
-          buttons={[{
-            title: 'Change plan',
-            action: output.props.children[1].props.buttons[0].action,
-            type: 'neutral'
-          }]}/>
       </div>);
     assert.deepEqual(output, expected);
   });
@@ -78,12 +72,6 @@ describe('InspectorPlans', () => {
         <div className="inspector-plan__no-plan">
           You have no active plan
         </div>
-        <juju.components.ButtonRow
-          buttons={[{
-            title: 'Choose plan',
-            action: output.props.children[1].props.buttons[0].action,
-            type: 'neutral'
-          }]}/>
       </div>);
     assert.deepEqual(output, expected);
   });
