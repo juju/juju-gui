@@ -84,7 +84,6 @@ describe('Inspector', function() {
           getUnitStatusCounts={getUnitStatusCounts}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          listPlansForCharm={sinon.stub()}
           modelUUID="abc123"
           relatableApplications={[]}
           service={service}
@@ -176,7 +175,6 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          listPlansForCharm={sinon.stub()}
           modelUUID="abc123"
           relatableApplications={[]}
           service={service}
@@ -265,7 +263,6 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={getYAMLConfig}
           linkify={linkify}
-          listPlansForCharm={sinon.stub()}
           modelUUID="abc123"
           relatableApplications={[]}
           service={service}
@@ -361,7 +358,6 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          listPlansForCharm={sinon.stub()}
           modelUUID="abc123"
           relatableApplications={[]}
           service={service}
@@ -446,7 +442,6 @@ describe('Inspector', function() {
         getUnitStatusCounts={sinon.stub()}
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
-        listPlansForCharm={sinon.stub()}
         modelUUID="abc123"
         relatableApplications={[]}
         service={service}
@@ -499,7 +494,6 @@ describe('Inspector', function() {
         getUnitStatusCounts={sinon.stub()}
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
-        listPlansForCharm={sinon.stub()}
         modelUUID="abc123"
         relatableApplications={[]}
         service={service}
@@ -576,7 +570,6 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          listPlansForCharm={sinon.stub()}
           modelUUID="abc123"
           relatableApplications={[]}
           service={service}
@@ -646,7 +639,6 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          listPlansForCharm={sinon.stub()}
           modelUUID="abc123"
           relatableApplications={[]}
           service={service}
@@ -726,7 +718,6 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          listPlansForCharm={sinon.stub()}
           modelUUID="abc123"
           relatableApplications={[]}
           service={service}
@@ -793,7 +784,6 @@ describe('Inspector', function() {
         getUnitStatusCounts={sinon.stub()}
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
-        listPlansForCharm={sinon.stub()}
         modelUUID="abc123"
         relatableApplications={[]}
         service={service}
@@ -876,7 +866,6 @@ describe('Inspector', function() {
         getUnitStatusCounts={sinon.stub()}
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
-        listPlansForCharm={sinon.stub()}
         modelUUID="abc123"
         relatableApplications={[]}
         service={service}
@@ -958,7 +947,6 @@ describe('Inspector', function() {
         getUnitStatusCounts={sinon.stub()}
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
-        listPlansForCharm={sinon.stub()}
         modelUUID="abc123"
         relatableApplications={[]}
         service={service}
@@ -1036,7 +1024,6 @@ describe('Inspector', function() {
         getUnitStatusCounts={sinon.stub()}
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
-        listPlansForCharm={sinon.stub()}
         modelUUID="abc123"
         relatableApplications={['apps']}
         service={service}
@@ -1118,7 +1105,6 @@ describe('Inspector', function() {
         getUnitStatusCounts={sinon.stub()}
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
-        listPlansForCharm={sinon.stub()}
         modelUUID="abc123"
         relatableApplications={['apps']}
         service={service}
@@ -1204,7 +1190,6 @@ describe('Inspector', function() {
         getUnitStatusCounts={sinon.stub()}
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
-        listPlansForCharm={sinon.stub()}
         modelUUID="abc123"
         relatableApplications={[]}
         service={service}
@@ -1233,9 +1218,7 @@ describe('Inspector', function() {
     assert.deepEqual(children,
         <juju.components.InspectorPlan
           acl={acl}
-          changeState={changeState}
-          currentPlan={activePlan}
-          service={service} />);
+          currentPlan={activePlan} />);
   });
 
   it('displays Change versions when the app state calls for it', function() {
@@ -1288,7 +1271,6 @@ describe('Inspector', function() {
         getUnitStatusCounts={sinon.stub()}
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
-        listPlansForCharm={sinon.stub()}
         modelUUID="abc123"
         relatableApplications={[]}
         service={service}
@@ -1374,7 +1356,6 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          listPlansForCharm={sinon.stub()}
           modelUUID="abc123"
           relatableApplications={[]}
           service={service}
@@ -1448,7 +1429,6 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          listPlansForCharm={sinon.stub()}
           modelUUID="abc123"
           relatableApplications={[]}
           service={service}
@@ -1518,7 +1498,6 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          listPlansForCharm={sinon.stub()}
           modelUUID="abc123"
           relatableApplications={[]}
           service={service}
@@ -1579,7 +1558,6 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          listPlansForCharm={sinon.stub()}
           modelUUID="abc123"
           relatableApplications={[]}
           service={service}
@@ -1640,7 +1618,6 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          listPlansForCharm={sinon.stub()}
           modelUUID="abc123"
           relatableApplications={[]}
           service={service}
@@ -1707,7 +1684,6 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          listPlansForCharm={sinon.stub()}
           modelUUID="abc123"
           relatableApplications={[]}
           service={service}
@@ -1755,7 +1731,6 @@ describe('Inspector', function() {
           getUnitStatusCounts={sinon.stub()}
           getYAMLConfig={sinon.stub()}
           linkify={sinon.stub()}
-          listPlansForCharm={sinon.stub()}
           modelUUID="abc123"
           relatableApplications={[]}
           service={service}

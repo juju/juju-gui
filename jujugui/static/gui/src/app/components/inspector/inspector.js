@@ -48,7 +48,6 @@ YUI.add('inspector-component', function() {
       getUnitStatusCounts: React.PropTypes.func.isRequired,
       getYAMLConfig: React.PropTypes.func.isRequired,
       linkify: React.PropTypes.func.isRequired,
-      listPlansForCharm: React.PropTypes.func.isRequired,
       modelUUID: React.PropTypes.string.isRequired,
       relatableApplications: React.PropTypes.array.isRequired,
       service: React.PropTypes.object.isRequired,
@@ -407,36 +406,13 @@ YUI.add('inspector-component', function() {
             component:
               <juju.components.InspectorPlan
                 acl={this.props.acl}
-                changeState={this.props.changeState}
-                currentPlan={this.props.service.get('activePlan')}
-                service={service} />,
+                currentPlan={this.props.service.get('activePlan')} />,
             backState: {
               sectionA: {
                 component: 'inspector',
                 metadata: {
                   id: serviceId,
                   activeComponent: undefined
-                }}}};
-          break;
-        case 'plans':
-          // DEMO-WARE DEMO-WARE DEMO-WARE DEMO-WARE DEMO-WARE DEMO-WARE!
-          // If you see this code and it's after July 2016 you can remove this
-          // and the component. Seriously, just do it.
-          state.activeChild = {
-            title: 'Plans',
-            icon: service.get('icon'),
-            component:
-              <juju.components.InspectorPlans
-                acl={this.props.acl}
-                changeState={this.props.changeState}
-                listPlansForCharm={this.props.listPlansForCharm}
-                service={service} />,
-            backState: {
-              sectionA: {
-                component: 'inspector',
-                metadata: {
-                  id: serviceId,
-                  activeComponent: 'plan'
                 }}}};
           break;
       }
