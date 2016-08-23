@@ -39,16 +39,13 @@ describe('Controller API', function() {
     });
     controllerAPI.connect();
     controllerAPI.set('facades', {
-      AllWatcher: [0],
-      Annotations: [2],
-      Application: [7],
-      Charms: [3],
-      Client: [1],
-      CrossModelRelations: [1],
-      GUIToken: [46, 47],
-      ModelConfig: [41, 42],
+      AllModelWatcher: [2],
+      Cloud: [1],
+      Controller: [3],
+      MigrationTarget: [1],
       ModelManager: [2],
-      Pinger: [42]
+      Pinger: [1],
+      UserManager: [1]
     });
     this._cleanups.push(controllerAPI.close.bind(controllerAPI));
     cleanups = [];
@@ -367,7 +364,7 @@ describe('Controller API', function() {
       // Set the readyState to 2 for CLOSING.
       conn.readyState = 2;
       controllerAPI._send_rpc({
-        type: 'Client',
+        type: 'ModelManager',
         request: 'ModelInfo',
         version: 1,
         'request-id': 1,
@@ -382,7 +379,7 @@ describe('Controller API', function() {
       var expectedMessage = {
         type: 'Pinger',
         request: 'Ping',
-        version: 42,
+        version: 1,
         'request-id': 1,
         params: {}
       };
@@ -391,7 +388,7 @@ describe('Controller API', function() {
 
     it('provides for a missing Params', function() {
       // If no "Params" are provided in an RPC call an empty one is added.
-      var op = {type: 'Client'};
+      var op = {type: 'ModelManager'};
       controllerAPI._send_rpc(op);
       assert.deepEqual(op.params, {});
     });
