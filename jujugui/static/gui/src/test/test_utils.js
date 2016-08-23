@@ -46,6 +46,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           views.utils.generateHash('qumquat'));
     });
 
+    it('generates the correct export file name', function() {
+      var envName = 'foobar';
+      var date = new Date('October 13, 2014 11:13:00');
+      var exportFilename =
+        views.utils._genereateBundleExportFileName(envName, date);
+      assert.equal(exportFilename, 'foobar-2014-10-13.yaml');
+
+      var envName = 'foo-bar';
+      var date = new Date('January 13, 2014 11:13:00');
+      var exportFilename =
+        views.utils._genereateBundleExportFileName(envName, date);
+      assert.equal(exportFilename, 'foo-bar-2014-01-13.yaml');
+
+      var envName = 'sandbox';
+      var date = new Date('October 1, 2014 11:13:00');
+      var exportFilename =
+        views.utils._genereateBundleExportFileName(envName, date);
+      assert.equal(exportFilename, 'sandbox-2014-10-01.yaml');
+    });
+
     it('can generate safe relation ids', function() {
       var relationId;
       relationId = 'foo:Bar relation-00000006!@#';
@@ -1777,23 +1797,6 @@ describe('utilities', function() {
       assert.deepEqual(utils._hidePopup.callCount(), 1);
       assert.deepEqual(ecs.clear.callCount(), 1);
     });
-  });
-
-  it('generates the correct export file name', function() {
-    var envName = 'foobar';
-    var date = new Date('October 13, 2014 11:13:00');
-    var exportFilename = utils._genereateBundleExportFileName(envName, date);
-    assert.equal(exportFilename, 'foobar-2014-10-13.yaml');
-
-    var envName = 'foo-bar';
-    var date = new Date('January 13, 2014 11:13:00');
-    var exportFilename = utils._genereateBundleExportFileName(envName, date);
-    assert.equal(exportFilename, 'foo-bar-2014-01-13.yaml');
-
-    var envName = 'sandbox';
-    var date = new Date('October 1, 2014 11:13:00');
-    var exportFilename = utils._genereateBundleExportFileName(envName, date);
-    assert.equal(exportFilename, 'sandbox-2014-10-01.yaml');
   });
 
   describe('createRelation', function() {

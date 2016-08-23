@@ -61,20 +61,20 @@ describe('App Renderer Extension', function() {
       getCurrentChangeSet: utils.makeStubFunction({})
     };
     var Env = Y.Base.create('env', Y.Base, [], {
-      findFacadeVersion: utils.makeStubFunction('foo')
     }, {
       ATTRS: {
         ecs: {}
       }
     });
     renderer.env = new Env({ecs: ecs});
-    renderer.env.listModelsWithInfo = utils.makeStubFunction();
-    renderer.jem = {
-      listModels: utils.makeStubFunction()
+    renderer.controllerAPI = {
+      findFacadeVersion: utils.makeStubFunction(),
+      listModelsWithInfo: utils.makeStubFunction()
     };
+
     renderer.set('sandbox', false);
     renderer._getAuth = utils.makeStubFunction({user: 'test'});
-    renderer.set('jujuEnvUUID', 'test');
+
     renderer.state = {
       getState: utils.makeStubFunction()
     };
@@ -119,8 +119,8 @@ describe('App Renderer Extension', function() {
                    'The showEnvSwitcher prop was not set properly.');
     });
 
-    it('hides the switcher when env is not set', function() {
-      renderer.env = null;
+    it('hides the switcher when controllerAPI is not set', function() {
+      renderer.controllerAPI = null;
       renderer._renderBreadcrumb();
       var props = createElementStub.lastArguments()[1];
       assert.equal(props['showEnvSwitcher'], false,
@@ -128,7 +128,8 @@ describe('App Renderer Extension', function() {
     });
 
     it('hides the switcher when facade versions are not set', function() {
-      renderer.env.findFacadeVersion = utils.makeStubFunction(null, null);
+      renderer.controllerAPI.findFacadeVersion =
+        utils.makeStubFunction(null, null);
       renderer._renderBreadcrumb();
       var props = createElementStub.lastArguments()[1];
       assert.equal(props['showEnvSwitcher'], false,
@@ -137,37 +138,18 @@ describe('App Renderer Extension', function() {
 
     it('hides the switcher when in sandbox mode', function() {
       renderer.set('sandbox', true);
-      renderer.jem = null;
       renderer._renderBreadcrumb();
       var props = createElementStub.lastArguments()[1];
       assert.equal(props['showEnvSwitcher'], false,
                    'The showEnvSwitcher prop was not set properly.');
     });
 
-    it('shows the switcher when no env and gisf is true', function() {
+    it('shows the switcher when gisf is true', function() {
       renderer.set('gisf', true);
-      renderer.jem = null;
       renderer._renderBreadcrumb();
       var props = createElementStub.lastArguments()[1];
       assert.equal(props['showEnvSwitcher'], true,
                    'The showEnvSwitcher prop was not set properly.');
-    });
-
-    it('sets the model listing method if JEM is available', function() {
-      renderer._renderBreadcrumb();
-      var props = createElementStub.lastArguments()[1];
-      // We can't validate that this is the correct function as the method
-      // context is bound in app-renderer-extension.js.
-      assert.isFunction(props['listModels']);
-    });
-
-    it('sets the env model listing method if JEM is unavailable', function() {
-      renderer._renderBreadcrumb();
-      renderer.jem = null;
-      var props = createElementStub.lastArguments()[1];
-      // We can't validate that this is the correct function as the method
-      // context is bound in app-renderer-extension.js.
-      assert.isFunction(props['listModels']);
     });
   });
 });

@@ -44,6 +44,8 @@ YUI.add('app-renderer-extension', function(Y) {
       const controller = this.controllerAPI;
       const utils = views.utils;
       const state = this.state;
+      let listModels =
+        controller && controller.listModelsWithInfo.bind(this.controllerAPI);
       // If controller is undefined then do not render the switcher because
       // there is no controller to connect to. It will be undefined when the
       // breadcrumb is initially rendered because it hasn't yet been given
@@ -67,8 +69,7 @@ YUI.add('app-renderer-extension', function(Y) {
           envList={this.get('environmentList')}
           getAppState={state.getState.bind(state)}
           authDetails={this._getAuth()}
-          listModels={
-            this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
+          listModels={listModels}
           showEnvSwitcher={showEnvSwitcher}
           showProfile={utils.showProfile.bind(
             this, env && env.get('ecs'), this.changeState.bind(this))}
