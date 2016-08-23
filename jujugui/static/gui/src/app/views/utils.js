@@ -2236,49 +2236,6 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
-    Makes a request of JEM or JES to fetch the users available models.
-
-    @method listModels
-    @param {Object} env Reference to the app env.
-    @param {Object} jem Reference to jem.
-    @param {Object} user The currently authorised user.
-    @param {Boolean} gisf The gisf flag.
-    @param {Function} callback The function to be called once the model list
-      list has been received.
-    @returns {Object} the XHR request.
-  */
-  utils.listModels = function(env, jem, user, gisf, callback) {
-    // If gisf is enabled then we won't be connected to a model to know
-    // what facades are supported but we can reliably assume it'll be Juju 2
-    // or higher which will support the necessary api calls.
-    if (!gisf && (!env ||
-      env.findFacadeVersion('ModelManager') === null &&
-      env.findFacadeVersion('EnvironmentManager') === null)) {
-      // If we're on Juju < 2 then pass the default model to the list.
-      var environmentName = env.get('environmentName');
-      var username = user && user.usernameDisplay;
-      callback(null, {
-        models: [{
-          name: environmentName,
-          ownerTag: username,
-          // Leave the UUID blank so that it navigates to the default
-          // model when selected.
-          uuid: '',
-          lastConnection: 'now'
-        }]
-      });
-      return;
-    }
-    var xhr;
-    if (jem) {
-      xhr = jem.listModels(callback);
-    } else {
-      xhr = env.listModelsWithInfo(callback);
-    }
-    return xhr;
-  };
-
-  /**
     Deploy or commit to a model.
 
     @method deploy

@@ -1779,82 +1779,21 @@ describe('utilities', function() {
     });
   });
 
-  describe('listModels', function() {
-    var utils, testUtils;
+  it('generates the correct export file name', function() {
+    var envName = 'foobar';
+    var date = new Date('October 13, 2014 11:13:00');
+    var exportFilename = utils._genereateBundleExportFileName(envName, date);
+    assert.equal(exportFilename, 'foobar-2014-10-13.yaml');
 
-    before(function(done) {
-      YUI(GlobalConfig).use('juju-view-utils', 'juju-tests-utils', function(Y) {
-        utils = Y.namespace('juju.views.utils');
-        testUtils = Y.namespace('juju-tests.utils');
-        done();
-      });
-    });
+    var envName = 'foo-bar';
+    var date = new Date('January 13, 2014 11:13:00');
+    var exportFilename = utils._genereateBundleExportFileName(envName, date);
+    assert.equal(exportFilename, 'foo-bar-2014-01-13.yaml');
 
-    it('requests jem envs if jem is provided', function() {
-      var env = {};
-      var listModels = testUtils.makeStubFunction();
-      var jem = {listModels: listModels};
-      var user = {usernameDisplay: 'test owner'};
-      var callback = testUtils.makeStubFunction();
-      utils.set = testUtils.makeStubFunction();
-      utils.listModels(env, jem, user, true, callback);
-      assert.equal(listModels.callCount(), 1);
-    });
-
-    it('requests controller models if no jem is passed', function() {
-      var listModelsWithInfo = testUtils.makeStubFunction();
-      var env = {listModelsWithInfo: listModelsWithInfo};
-      var user = {usernameDisplay: 'test owner'};
-      var callback = testUtils.makeStubFunction();
-      utils.set = testUtils.makeStubFunction();
-      utils.listModels(env, null, user, true, callback);
-      assert.equal(listModelsWithInfo.callCount(), 1);
-      assert.equal(listModelsWithInfo.lastArguments().length, 1);
-      assert.equal(typeof listModelsWithInfo.lastArguments()[0], 'function');
-    });
-
-    it('gets the default model for older versions of Juju', function() {
-      var env = {
-        findFacadeVersion: function(val) {
-          if (val === 'ModelManager') {
-            return null;
-          } else if (val === 'EnvironmentManager') {
-            return null;
-          }
-        },
-        get: testUtils.makeStubFunction('default')
-      };
-      var jem = {};
-      var user = {usernameDisplay: 'test owner'};
-      var callback = testUtils.makeStubFunction();
-      utils.set = testUtils.makeStubFunction();
-      utils.listModels(env, jem, user, false, callback);
-      assert.equal(callback.callCount(), 1);
-      var callbackArgs = callback.lastArguments();
-      assert.deepEqual(callbackArgs[1].models[0], {
-        name: 'default',
-        ownerTag: 'test owner',
-        uuid: '',
-        lastConnection: 'now'
-      });
-    });
-
-    it('generates the correct export file name', function() {
-      var envName = 'foobar';
-      var date = new Date('October 13, 2014 11:13:00');
-      var exportFilename = utils._genereateBundleExportFileName(envName, date);
-      assert.equal(exportFilename, 'foobar-2014-10-13.yaml');
-
-      var envName = 'foo-bar';
-      var date = new Date('January 13, 2014 11:13:00');
-      var exportFilename = utils._genereateBundleExportFileName(envName, date);
-      assert.equal(exportFilename, 'foo-bar-2014-01-13.yaml');
-
-      var envName = 'sandbox';
-      var date = new Date('October 1, 2014 11:13:00');
-      var exportFilename = utils._genereateBundleExportFileName(envName, date);
-      assert.equal(exportFilename, 'sandbox-2014-10-01.yaml');
-    });
+    var envName = 'sandbox';
+    var date = new Date('October 1, 2014 11:13:00');
+    var exportFilename = utils._genereateBundleExportFileName(envName, date);
+    assert.equal(exportFilename, 'sandbox-2014-10-01.yaml');
   });
 
   describe('createRelation', function() {
