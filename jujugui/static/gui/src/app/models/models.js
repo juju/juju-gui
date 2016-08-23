@@ -2713,6 +2713,7 @@ YUI.add('juju-models', function(Y) {
     _collapseMachineConstraints: function(constraints) {
       var constraint = '';
       var constraintMap = {
+        availabilityZone: 'availability-zone',
         cpuCores: 'cpu-cores',
         cpuPower: 'cpu-power',
         disk: 'root-disk'
