@@ -41,16 +41,24 @@ YUI.add('app-renderer-extension', function(Y) {
     */
     _renderBreadcrumb: function({ showEnvSwitcher=true } = {}) {
       const env = this.env;
+      const controller = this.controllerAPI;
       const utils = views.utils;
       const state = this.state;
-      // If this.env is undefined then do not render the switcher because there
-      // is no env to connect to. It will be undefined when the breadcrumb
-      // is rendered in the callback for generateSocketUrl because an env
-      // has not yet been created.
-      if (!this.controllerAPI || (this.get('sandbox') && !this.get('gisf'))) {
+      // If controller is undefined then do not render the switcher because
+      // there is no controller to connect to. It will be undefined when the
+      // breadcrumb is initially rendered because it hasn't yet been given
+      // time to connect and login.
+      if (!controller || (this.get('sandbox') && !this.get('gisf'))) {
         // We do not want to show the model switcher if it isn't supported as
         // it throws an error in the browser console and confuses the user
         // as it's visible but not functional.
+        showEnvSwitcher = false;
+      }
+      // It's possible that we have a controller instance and no facade if
+      // we've connected but have not yet successfully logged in. This will
+      // prevent the model switcher from rendering but after the login this
+      // component will be re-rendered.
+      if (controller && controller.findFacadeVersion('ModelManager') === null) {
         showEnvSwitcher = false;
       }
       ReactDOM.render(

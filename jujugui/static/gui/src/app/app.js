@@ -723,6 +723,16 @@ YUI.add('juju-gui', function(Y) {
       controllerAPI.setCredentials({ user, password, macaroons });
 
       controllerAPI.after('login', e => {
+        // After logging in trigger the app to dispatch to re-render the
+        // components that require an active connection to the controllerAPI.
+        this.dispatch();
+        // If the user is connected to a model then the modelList will be
+        // fetched by the modelswitcher component.
+        if (this.env.get('modelUUID')) {
+          return;
+        }
+        // If the user isn't currently connected to a model then fetch the
+        // available models so that we can connect to an available one.
         this.controllerAPI.listModelsWithInfo((err, response) => {
           if (err) {
             console.error('unable to list models', err);
