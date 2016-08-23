@@ -219,6 +219,19 @@ describe('Bundle Importer', function() {
         assert.strictEqual(args[1], null);
       });
 
+      it('can import v4 bundles with applications key', function() {
+        var yaml = '{"applications":{}}';
+        var getBundleChanges = utils.makeStubMethod(
+            bundleImporter.env, 'getBundleChanges');
+        this._cleanups.push(getBundleChanges.reset);
+        bundleImporter.fetchDryRun(yaml, null);
+        assert.equal(getBundleChanges.callCount(), 1);
+        var args = getBundleChanges.lastArguments();
+        assert.equal(args.length, 3);
+        assert.equal(args[0], '{"applications":{}}');
+        assert.strictEqual(args[1], null);
+      });
+
       it('calls to the env to get bundle changes from a token', function() {
         var token = 'foo';
         var getBundleChanges = utils.makeStubMethod(

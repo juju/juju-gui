@@ -2713,16 +2713,16 @@ YUI.add('juju-models', function(Y) {
     _collapseMachineConstraints: function(constraints) {
       var constraint = '';
       var constraintMap = {
-        arch: 'arch',
+        availabilityZone: 'availability-zone',
         cpuCores: 'cpu-cores',
         cpuPower: 'cpu-power',
-        mem: 'mem',
         disk: 'root-disk'
       };
       Object.keys(constraints).forEach(function(key) {
         var value = constraints[key];
         if (value) {
-          constraint += constraintMap[key] + '=' + value + ' ';
+          var property = constraintMap[key] || key;
+          constraint += property + '=' + value + ' ';
         }
       });
       return constraint.trim();

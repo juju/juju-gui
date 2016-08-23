@@ -104,7 +104,8 @@ YUI.add('bundle-importer', function(Y) {
     _ensureV4Format: function(bundleYAML) {
       try {
         var bundle = jsyaml.safeLoad(bundleYAML);
-        if (bundle.services && !bundle.services.services) {
+        if (bundle.services && !bundle.services.services ||
+          bundle.applications) {
           return bundleYAML;
         } else {
           // Fetch the first bundle in the v3 bundle basket.
