@@ -433,7 +433,7 @@ YUI.add('bundle-importer', function(Y) {
           var charmSeries = charm.get('series');
           // If we're using legacy Juju the bundlechangeslib does not return
           // the series of the charms so we need to consider that and munge the
-          // record arguments accordingly. When we deicde to drop support for
+          // record arguments accordingly. When we decide to drop support for
           // Juju 1, or if we update bundlechangeslib to supply the series this
           // block can be removed.
           if (this.isLegacyJuju) {
