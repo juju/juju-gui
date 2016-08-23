@@ -915,11 +915,11 @@ YUI.add('juju-gui', function(Y) {
           addNotification={
             this.db.notifications.add.bind(this.db.notifications)}
           canCreateNew={this.env.get('connected')}
+          controllerAPI={this.controllerAPI}
           currentModel={this.get('jujuEnvUUID')}
-          env={this.env}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
-          listModels={utils.listModels.bind(
-            this, this.env, this.jem, user, this.get('gisf'))}
+          listModels={
+            this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
           changeState={this.changeState.bind(this)}
           getAgreements={this.terms.getAgreements.bind(this.terms)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}

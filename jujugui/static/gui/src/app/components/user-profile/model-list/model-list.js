@@ -27,8 +27,8 @@ YUI.add('user-profile-model-list', function() {
       addNotification: React.PropTypes.func.isRequired,
       broadcastStatus: React.PropTypes.func,
       canCreateNew: React.PropTypes.bool.isRequired,
+      controllerAPI: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
-      env: React.PropTypes.object.isRequired,
       hideConnectingMask: React.PropTypes.func.isRequired,
       jem: React.PropTypes.object,
       listModels: React.PropTypes.func.isRequired,
@@ -175,8 +175,7 @@ YUI.add('user-profile-model-list', function() {
       // Because this will automatically connect to the model lets show
       // the connecting mask right now.
       this.props.showConnectingMask();
-      // XXX This is only for the JIMM flow.
-      this.props.env.createModel(
+      this.props.controllerAPI.createModel(
         modelName.getValue(),
         this.props.user.user,
         data => {
