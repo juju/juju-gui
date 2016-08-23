@@ -33,6 +33,7 @@ YUI.add('deployment-budget', function() {
 
       return {
         budgets: null,
+        increaseExpanded: false,
         loadingBudgets: false,
       };
     },
@@ -126,6 +127,15 @@ YUI.add('deployment-budget', function() {
       this.props.setBudget(value);
     },
 
+    /**
+     Toggle the increase form expanded state.
+
+     @method _toggleIncrease
+    */
+    _toggleIncrease: function() {
+      this.setState({increaseExpanded: !this.state.increaseExpanded});
+    },
+
     render: function() {
       if (this.state.loadingBudgets) {
         return (
@@ -134,9 +144,16 @@ YUI.add('deployment-budget', function() {
           </div>);
       }
       var disabled = this.props.acl.isReadOnly();
+      var classes = {
+        'deployment-budget__form': true,
+        'twelve-col': true
+      };
       return (
-        <div>
-          <div className="deployment-budget__form twelve-col">
+        <juju.components.ExpandingRow
+          classes={classes}
+          clickable={false}
+          expanded={this.state.increaseExpanded}>
+          <div>
             <div className="four-col">
               <juju.components.InsetSelect
                 disabled={disabled}
@@ -145,14 +162,67 @@ YUI.add('deployment-budget', function() {
                 options={this._generateBudgetOptions()} />
             </div>
             <div className="three-col">
-              <span className="deployment-budget__increase link">
-                Increase budget
+              <span className="deployment-budget__increase-button">
+                <juju.components.GenericButton
+                  action={this._toggleIncrease}
+                  disabled={disabled}
+                  type="base"
+                  title="Increase budget" />
               </span>
             </div>
+            <juju.components.BudgetChart
+              budgets={this.state.budgets} />
           </div>
-          <juju.components.BudgetChart
-            budgets={this.state.budgets} />
-        </div>
+          <div>
+            <div className="deployment-budget__increase-form">
+              <h4>Increase budget</h4>
+              <div className="two-col">
+                Credit limit: $100
+              </div>
+              <div className="ten-col last-col">
+                Available credit: $500
+              </div>
+              <div className="one-col">
+                Increase
+              </div>
+              <div className="three-col">
+                <juju.components.GenericInput
+                  disabled={true}
+                  label="Budget"
+                  placeholder="Personal ($100)"
+                  required={false} />
+              </div>
+              <div className="one-col">
+                to
+              </div>
+              <div className="three-col last-col">
+                <juju.components.GenericInput
+                  disabled={true}
+                  label="New budget amount"
+                  required={false} />
+              </div>
+              <div>
+                <div className="eight-col">
+                  <span className="link">Manage all budgets</span>
+                </div>
+                <div className="two-col">
+                  <juju.components.GenericButton
+                    action={this._toggleIncrease}
+                    disabled={disabled}
+                    type="base"
+                    title="Cancel" />
+                  </div>
+                  <div className="two-col last-col">
+                  <juju.components.GenericButton
+                    action={this._toggleIncrease}
+                    disabled={disabled}
+                    type="neutral"
+                    title="Confirm" />
+                  </div>
+              </div>
+            </div>
+          </div>
+        </juju.components.ExpandingRow>
       );
     }
 
@@ -161,6 +231,8 @@ YUI.add('deployment-budget', function() {
 }, '0.1.0', {
   requires: [
     'budget-chart',
+    'expanding-row',
+    'generic-button',
     'inset-select',
     'loading-spinner'
   ]
