@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('UserProfileModelList', () => {
-  var env, models, users;
+  var controllerAPI, models, users;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -29,7 +29,7 @@ describe('UserProfileModelList', () => {
   });
 
   beforeEach(() => {
-    env = {
+    controllerAPI = {
       findFacadeVersion: sinon.stub(),
       get: sinon.stub().returns('default'),
       createModel: (modelName, userName, callback) => {
@@ -61,8 +61,8 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={false}
+        controllerAPI={controllerAPI}
         currentModel={'model1'}
-        env={env}
         hideConnectingMask={sinon.stub()}
         jem={null}
         listModels={sinon.stub().callsArgWith(0, null, [])}
@@ -79,8 +79,8 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={false}
+        controllerAPI={controllerAPI}
         currentModel={'model1'}
-        env={env}
         hideConnectingMask={sinon.stub()}
         jem={null}
         listModels={sinon.stub()}
@@ -102,8 +102,8 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={true}
+        controllerAPI={controllerAPI}
         currentModel={'model1'}
-        env={env}
         hideConnectingMask={sinon.stub()}
         jem={null}
         listModels={listModels}
@@ -200,8 +200,8 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={false}
+        controllerAPI={controllerAPI}
         currentModel={'model1'}
-        env={env}
         hideConnectingMask={sinon.stub()}
         jem={null}
         listModels={listModels}
@@ -228,8 +228,8 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={true}
+        controllerAPI={controllerAPI}
         currentModel={'model1'}
-        env={env}
         hideConnectingMask={sinon.stub()}
         jem={null}
         listModels={listModels}
@@ -260,7 +260,7 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={true}
-        env={env}
+        controllerAPI={controllerAPI}
         hideConnectingMask={sinon.stub()}
         listModels={sinon.stub()}
         showConnectingMask={sinon.stub()}
@@ -281,7 +281,7 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={false}
-        env={env}
+        controllerAPI={controllerAPI}
         hideConnectingMask={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         showConnectingMask={sinon.stub()}
@@ -301,7 +301,7 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={true}
-        env={env}
+        controllerAPI={controllerAPI}
         hideConnectingMask={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         showConnectingMask={showConnectingMask}
@@ -339,7 +339,7 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={true}
-        env={env}
+        controllerAPI={controllerAPI}
         hideConnectingMask={sinon.stub()}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         showConnectingMask={showConnectingMask}
@@ -368,7 +368,7 @@ describe('UserProfileModelList', () => {
   it('gracefully handles errors when creating new model', () => {
     // This test doesn't check the user interactions and animations, that
     // will need to be done with the uitest suite.
-    env.createModel = (modelName, userName, callback) => {
+    controllerAPI.createModel = (modelName, userName, callback) => {
       assert.equal(modelName, 'newmodelname', 'model name not set properly');
       assert.equal(userName, 'test-owner', 'user name not set properly');
       // Simulate the model being created.
@@ -384,7 +384,7 @@ describe('UserProfileModelList', () => {
       <juju.components.UserProfileModelList
         addNotification={addNotification}
         canCreateNew={true}
-        env={env}
+        controllerAPI={controllerAPI}
         hideConnectingMask={hideConnectingMask}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         showConnectingMask={sinon.stub()}
@@ -418,12 +418,12 @@ describe('UserProfileModelList', () => {
   it('swtches models by switching to disconnected with JIMM', () => {
     var switchModel = sinon.stub();
     var showConnectingMask = sinon.stub();
-    env.createModel = sinon.stub();
+    controllerAPI.createModel = sinon.stub();
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
         canCreateNew={true}
-        env={env}
+        controllerAPI={controllerAPI}
         hideConnectingMask={sinon.stub()}
         jem={{}}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
@@ -437,7 +437,8 @@ describe('UserProfileModelList', () => {
       .props.action();
     // It should not try to create a model.
     assert.equal(showConnectingMask.callCount, 0, 'should not show mask');
-    assert.equal(env.createModel.callCount, 0, 'it should not create model');
+    assert.equal(
+      controllerAPI.createModel.callCount, 0, 'it should not create model');
     // Switching models.
     assert.equal(switchModel.callCount, 1, 'it should have called switchModel');
     assert.deepEqual(
@@ -464,7 +465,7 @@ describe('UserProfileModelList', () => {
         addNotification={sinon.stub()}
         canCreateNew={false}
         currentModel={'model1'}
-        env={env}
+        controllerAPI={controllerAPI}
         hideConnectingMask={sinon.stub()}
         jem={null}
         listModels={listModels}
@@ -483,8 +484,8 @@ describe('UserProfileModelList', () => {
         addNotification={sinon.stub()}
         broadcastStatus={broadcastStatus}
         canCreateNew={false}
+        controllerAPI={controllerAPI}
         currentModel={'model1'}
-        env={env}
         hideConnectingMask={sinon.stub()}
         jem={null}
         listModels={sinon.stub()}
@@ -502,8 +503,8 @@ describe('UserProfileModelList', () => {
         addNotification={sinon.stub()}
         broadcastStatus={broadcastStatus}
         canCreateNew={false}
+        controllerAPI={controllerAPI}
         currentModel={'model1'}
-        env={env}
         hideConnectingMask={sinon.stub()}
         jem={null}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
@@ -521,8 +522,8 @@ describe('UserProfileModelList', () => {
         addNotification={sinon.stub()}
         broadcastStatus={broadcastStatus}
         canCreateNew={false}
+        controllerAPI={controllerAPI}
         currentModel={'model1'}
-        env={env}
         hideConnectingMask={sinon.stub()}
         jem={null}
         listModels={sinon.stub().callsArgWith(0, null, {models: []})}
@@ -540,8 +541,8 @@ describe('UserProfileModelList', () => {
         addNotification={sinon.stub()}
         broadcastStatus={broadcastStatus}
         canCreateNew={false}
+        controllerAPI={controllerAPI}
         currentModel={'model1'}
-        env={env}
         hideConnectingMask={sinon.stub()}
         jem={null}
         listModels={sinon.stub().callsArgWith(0, 'error', {})}
