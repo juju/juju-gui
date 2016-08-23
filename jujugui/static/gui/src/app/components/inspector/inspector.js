@@ -449,7 +449,6 @@ YUI.add('inspector-component', function() {
     'inspector-header',
     'inspector-config',
     'inspector-plan',
-    'inspector-plans',
     'inspector-relate-to',
     'inspector-relate-to-endpoint',
     'inspector-relations',

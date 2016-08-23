@@ -451,7 +451,7 @@ YUI.add('juju-gui', function(Y) {
       } else {
         modelAPI = new environments.GoEnvironment(envOptions);
         if (!this.get('sandbox')) {
-          controllerAPI = new environments.GoEnvironment(
+          controllerAPI = new Y.juju.ControllerAPI(
             // Clone the envOptions for now, in the future we may want more
             // fine grained control over these options. They should be made
             // in the setUpControllerAPI method.
@@ -2625,6 +2625,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-app-state',
     'juju-charm-models',
     'juju-bundle-models',
+    'juju-controller-api',
     'juju-endpoints-controller',
     'juju-env-bakery',
     'juju-env-base',

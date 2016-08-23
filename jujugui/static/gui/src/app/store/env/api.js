@@ -290,7 +290,7 @@ YUI.add('juju-env-api', function(Y) {
       if (!op.params) {
         op.params = {};
       }
-      var msg = Y.JSON.stringify(op);
+      var msg = JSON.stringify(op);
       this.ws.send(msg);
     },
 
@@ -2942,8 +2942,6 @@ YUI.add('juju-env-api', function(Y) {
 }, '0.1.0', {
   requires: [
     'base',
-    'json-parse',
-    'json-stringify',
     'juju-env-base',
     'juju-view-utils'
   ]
