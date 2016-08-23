@@ -203,7 +203,7 @@ YUI.add('deployment-budget', function() {
               </div>
               <div>
                 <div className="eight-col">
-                <span className="link">Manage all budgets</span>
+                  <span className="link">Manage all budgets</span>
                 </div>
                 <div className="two-col">
                   <juju.components.GenericButton
