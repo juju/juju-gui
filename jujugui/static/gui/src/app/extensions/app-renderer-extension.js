@@ -37,44 +37,30 @@ YUI.add('app-renderer-extension', function(Y) {
 
       @method _renderBreadcrumb
       @param {Object} options
-        showEnvSwitcher: false
+        showEnvSwitcher: true
     */
     _renderBreadcrumb: function({ showEnvSwitcher=true } = {}) {
+      const env = this.env;
+      const utils = views.utils;
+      const state = this.state;
       // If this.env is undefined then do not render the switcher because there
       // is no env to connect to. It will be undefined when the breadcrumb
       // is rendered in the callback for generateSocketUrl because an env
       // has not yet been created.
-      var env = this.env;
-      var jem = this.jem;
-      var utils = views.utils;
-      // If gisf is enabled then we won't be connected to a model to know
-      // what facades are supported but we can reliably assume it'll be Juju 2
-      // or higher which will support the necessary API calls.
-      if (!this.get('gisf')) {
-        if(!env || env.findFacadeVersion('ModelManager') === null &&
-           env.findFacadeVersion('EnvironmentManager') === null) {
-          // We do not want to show the model switcher if it isn't supported as
-          // it throws an error in the browser console and confuses the user
-          // as it's visible but not functional.
-          showEnvSwitcher = false;
-        }
-      }
-      // If we're in sandbox we don't want to display the switcher.
-      if (this.get('sandbox') && !jem) {
+      if (!this.controllerAPI || (this.get('sandbox') && !this.get('gisf'))) {
+        // We do not want to show the model switcher if it isn't supported as
+        // it throws an error in the browser console and confuses the user
+        // as it's visible but not functional.
         showEnvSwitcher = false;
       }
-      var auth = this._getAuth();
-      var envName = this.db.environment.get('name');
-      var state = this.state;
-      var listModels = jem && jem.listModels.bind(jem) ||
-        env.listModelsWithInfo.bind(env);
       ReactDOM.render(
         <juju.components.HeaderBreadcrumb
-          envName={envName}
+          envName={this.db.environment.get('name')}
           envList={this.get('environmentList')}
           getAppState={state.getState.bind(state)}
-          authDetails={auth}
-          listModels={listModels}
+          authDetails={this._getAuth()}
+          listModels={
+            this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
           showEnvSwitcher={showEnvSwitcher}
           showProfile={utils.showProfile.bind(
             this, env && env.get('ecs'), this.changeState.bind(this))}
