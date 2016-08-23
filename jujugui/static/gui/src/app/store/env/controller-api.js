@@ -1,0 +1,683 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://github.com/juju/juju-gui).
+Copyright (C) 2016 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+'use strict';
+
+YUI.add('juju-controller-api', function(Y) {
+
+  // Define the pinger interval in seconds.
+  var PING_INTERVAL = 10;
+
+  // Define the Admin API facade version.
+  var ADMIN_FACADE_VERSION = 3;
+
+  /**
+   * The Go Juju environment.
+   *
+   * This class handles the WebSocket connection to the GoJuju API backend.
+   *
+   * @class ControllerAPI
+   */
+  function ControllerAPI(config) {
+    // Invoke Base constructor, passing through arguments.
+    ControllerAPI.superclass.constructor.apply(this, arguments);
+  }
+
+  ControllerAPI.NAME = 'controller-api';
+
+  Y.extend(ControllerAPI, Y.juju.environments.BaseEnvironment, {
+
+    /**
+     * Go environment constructor.
+     *
+     * @method initializer
+     * @return {undefined} Nothing.
+     */
+    initializer: function() {
+      // Define the default user name for this environment. It will appear as
+      // predefined value in the login mask.
+      this.defaultUser = 'admin';
+      this._pinger = null;
+      // pendingLoginResponse is set to true when the login process is running.
+      this.pendingLoginResponse = false;
+    },
+
+    /**
+     * See "app.store.env.base.BaseEnvironment.dispatch_result".
+     *
+     * @method dispatch_result
+     * @param {Object} data The JSON contents returned by the API backend.
+     * @return {undefined} Dispatches only.
+     */
+    dispatch_result: function(data) {
+      var tid = data['request-id'];
+      if (tid in this._txn_callbacks) {
+        this._txn_callbacks[tid].call(this, data);
+        delete this._txn_callbacks[tid];
+      }
+    },
+
+    /**
+     * Send a message to the server using the WebSocket connection.
+     *
+     * @method _send_rpc
+     * @private
+     * @param {Object} op The operation to perform (compatible with the
+         juju-core format specification, see "/doc/draft/api.txt" in
+         lp:~rogpeppe/juju-core/212-api-doc).
+     * @param {Function} callback A callable that must be called once the
+         backend returns results.
+     * @return {undefined} Sends a message to the server only.
+     */
+    _send_rpc: function(op, callback) {
+      var facade = op.type;
+      // The facades info is only available after logging in (as the facades
+      // are sent as part of the login response). For this reason, do not
+      // check if the "Admin" facade is supported, but just assume it is,
+      // otherwise even logging in ("Admin.Login") would be impossible.
+      var version = op.version;
+      if (facade !== 'Admin') {
+        version = this.findFacadeVersion(facade, version);
+      }
+      if (version === null) {
+        var err = 'api client: operation not supported: ' + JSON.stringify(op);
+        console.error(err);
+        if (callback) {
+          callback({error: err});
+        }
+        return;
+      }
+      if (this.ws.readyState !== 1) {
+        console.log(
+          'Websocket is not open, dropping request. ' +
+          'readyState: ' + this.ws.readyState, op);
+        return;
+      }
+      op.version = version;
+      var tid = this._counter += 1;
+      if (callback) {
+        this._txn_callbacks[tid] = callback;
+      }
+      op['request-id'] = tid;
+      if (!op.params) {
+        op.params = {};
+      }
+      var msg = JSON.stringify(op);
+      this.ws.send(msg);
+    },
+
+    /**
+     * React to the results of sending a login message to the server.
+     *
+     * @method handleLogin
+     * @param {Object} data The response returned by the server.
+     * @return {undefined} Nothing.
+     */
+    handleLogin: function(data) {
+      this.pendingLoginResponse = false;
+      this.userIsAuthenticated = !data.error;
+      if (this.userIsAuthenticated) {
+        var response = data.response;
+        // If login succeeded store the facades and user information, and
+        // retrieve model info.
+        var facadeList = response.facades || [];
+        var facades = facadeList.reduce(function(previous, current) {
+          previous[current.name] = current.versions;
+          return previous;
+        }, {});
+        this.set('facades', facades);
+        var userInfo = response['user-info'];
+        this.set('readOnly', !!userInfo['read-only']);
+        this.set('serverTag', response['server-tag']);
+        // Start pinging the server.
+        // XXX frankban: this is only required as a temporary workaround to
+        // prevent Apache to disconnect the WebSocket in the embedded Juju.
+        if (!this._pinger) {
+          this._pinger = setInterval(
+            this.ping.bind(this), PING_INTERVAL * 1000);
+        }
+        // Clean up for log out text.
+        this.failedAuthentication = false;
+      } else {
+        // If the credentials were rejected remove them.
+        this.setCredentials(null);
+        this.failedAuthentication = true;
+      }
+      this.fire('login', {data: {
+        result: this.userIsAuthenticated,
+        error: data.error || null
+      }});
+    },
+
+    /**
+      Return a version for the given facade name which is supported by the
+      current Juju controller. If a version is provided, return the version
+      number itself if supported, or null if that specific version is not
+      served by the controller. Otherwise, if no version is specified, return
+      the most recent supported version or null if the facade is not found.
+
+      @method findFacadeVersion
+      @param {String} name The facade name (for instance "Application").
+      @param {Int} version The optional facade version (for instance 1 or 2).
+      @return {Int} The facade version or null if facade is not supported.
+    */
+    findFacadeVersion: function(name, version) {
+      var facades = this.get('facades') || {};
+      var versions = facades[name] || [];
+      if (!versions.length) {
+        return null;
+      }
+      if (version === undefined || version === null) {
+        return versions[versions.length - 1];
+      }
+      if (versions.indexOf(version) > -1) {
+        return version;
+      }
+      return null;
+    },
+
+    /**
+     * Attempt to log the user in.  Credentials must have been previously
+     * stored on the environment.
+     *
+     * @method login
+     * @return {undefined} Nothing.
+     */
+    login: function() {
+      // If the user is already authenticated there is nothing to do.
+      if (this.userIsAuthenticated) {
+        this.fire('login', {data: {result: true}});
+        return;
+      }
+      if (this.pendingLoginResponse) {
+        return;
+      }
+      var credentials = this.getCredentials();
+      if (!credentials.user || !credentials.password) {
+        console.warn('attempted login without providing credentials');
+        this.fire('login', {data: {result: false}});
+        return;
+      }
+      this._send_rpc({
+        type: 'Admin',
+        request: 'Login',
+        params: {
+          'auth-tag': credentials.user,
+          credentials: credentials.password
+        },
+        version: ADMIN_FACADE_VERSION
+      }, this.handleLogin);
+      this.pendingLoginResponse = true;
+    },
+
+    /**
+      Log into the Juju API using macaroon authentication if provided.
+
+      @method loginWithMacaroon
+      @param {Object} bakery The bakery client to use to handle macaroons.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an error string if an error
+        occurred or null if authentication succeeded.
+      @return {undefined} Sends a message to the server only.
+    */
+    loginWithMacaroon: function(bakery, callback) {
+      if (this.pendingLoginResponse) {
+        return;
+      }
+
+      // Ensure we always have a callback.
+      var cback = function(err, response) {
+        this.handleLogin({error: err, response: response});
+        if (callback) {
+          callback(err);
+          return;
+        }
+        if (err) {
+          console.warn('macaroon authentication failed:', err);
+          return;
+        }
+        console.debug('macaroon authentication succeeded');
+      }.bind(this);
+
+      // Define the handler reacting to Juju controller login responses.
+      var handleResponse = function(bakery, macaroons, cback, data) {
+        if (data.error) {
+          // Macaroon authentication failed or macaroons based authentication
+          // not supported by this controller. In the latter case, the
+          // controller was probably not bootstrapped with an identity manager,
+          // for instance by providing the following parameter to bootstrap:
+          // "--config identity-url=https://api.jujucharms.com/identity".
+          cback('authentication failed: ' + data.error);
+          return;
+        }
+
+        var response = data.response;
+        var macaroon = response['discharge-required'];
+        if (macaroon) {
+          // This is a discharge required response.
+          bakery.discharge(macaroon, (macaroons) => {
+            // Send the login request again including the discharge macaroon.
+            sendLoginRequest(
+              macaroons, handleResponse.bind(this, bakery, macaroons, cback));
+          }, (msg) => {
+            cback('macaroon discharge failed: ' + msg);
+          });
+          return;
+        }
+
+        // Macaroon authentication succeeded!
+        var user = response['user-info'] && response['user-info'].identity;
+        if (!user) {
+          // This is a beta version of Juju 2 which does not include user info
+          // in the macaroons based login response. Unfortunately, we did all
+          // of this for nothing.
+          cback('authentication failed: use a proper Juju 2 release');
+          return;
+        }
+        this.setCredentials({macaroons: macaroons, user: user});
+        cback(null, response);
+      };
+
+
+      // Define the function used to send the login request.
+      var sendLoginRequest = function(macaroons, callback) {
+        var request = {
+          type: 'Admin',
+          request: 'Login',
+          version: ADMIN_FACADE_VERSION
+        };
+        if (macaroons) {
+          request.params = {macaroons: [macaroons]};
+        }
+        this._send_rpc(request, callback);
+      }.bind(this);
+
+      // Perform the API call.
+      var macaroons = this.getCredentials().macaroons;
+      sendLoginRequest(
+        macaroons,
+        handleResponse.bind(this, bakery, macaroons, cback)
+      );
+      this.pendingLoginResponse = true;
+    },
+
+    /**
+      Define optional operations to be performed before closing the WebSocket
+      connection. Operations performed:
+        - the pinger interval is stopped;
+
+      @method beforeClose
+      @param {Function} callback A callable that must be called by the
+        function and that actually closes the connection.
+    */
+    beforeClose: function(callback) {
+      if (this._pinger) {
+        clearInterval(this._pinger);
+        this._pinger = null;
+      }
+    },
+
+    /**
+      Send a ping request to the server. The response is ignored.
+
+      @method ping
+      @return {undefined} Sends a message to the server only.
+    */
+    ping: function() {
+      this._send_rpc({type: 'Pinger', request: 'Ping'});
+    },
+
+    /**
+      Return information about Juju models, such as their names, series, and
+      provider types, by performing a ModelManager.ModelInfo Juju API request.
+
+      @method modelInfo
+      @param {Array} tags The Juju tags of the models, each one being a string,
+        for instance "model-5bea955d-7a43-47d3-89dd-b02c923e2447".
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred). Otherwise, if everything went well, it will receive an
+        object with a "models" attribute containing an array of model info,
+        each one with the following fields :
+        - tag: the original Juju model tag;
+        - name: the model name, like "admin" or "mymodel";
+        - series: the model default series, like "trusty" or "xenial";
+        - provider: the provider type, like "lxd" or "aws";
+        - uuid: the model unique identifier;
+        - serverUuid: the corresponding controller unique identifier;
+        - ownerTag: the Juju tag of the user owning the model;
+        - life: the lifecycle status of the model: "alive", "dying" or "dead";
+        - isAlive: whether the model is alive or dying/dead;
+        - isAdmin: whether the model is an admin model;
+        - err: a message describing a specific model error, or undefined.
+      @return {undefined} Sends a message to the server only.
+    */
+    modelInfo: function(tags, callback) {
+      // Decorate the user supplied callback.
+      var handler = function(userCallback, tags, data) {
+        if (!userCallback) {
+          console.log('data returned by model info API call:', data);
+          return;
+        }
+        var err = data.error && data.error.message;
+        if (err) {
+          userCallback({err: err});
+          return;
+        }
+        var results = data.response.results;
+        if (results.length !== tags.length) {
+          // Sanity check: this should never happen.
+          userCallback({
+            err: 'unexpected results: ' + JSON.stringify(results)
+          });
+          return;
+        }
+        var models = results.map(function(result, index) {
+          err = result.error && result.error.message;
+          if (err) {
+            return {tag: tags[index], err: err};
+          }
+          result = result.result;
+          return {
+            tag: tags[index],
+            name: result.name,
+            series: result['default-series'],
+            provider: result['provider-type'],
+            uuid: result.uuid,
+            serverUuid: result['controller-uuid'],
+            ownerTag: result['owner-tag'],
+            life: result.life,
+            isAlive: result.life === 'alive',
+            isAdmin: result.uuid === result['controller-uuid']
+          };
+        });
+        userCallback({models: models});
+      }.bind(this, callback, tags);
+
+      // Send the API request.
+      var entities = tags.map(function(tag) {
+        return {tag: tag};
+      });
+      this._send_rpc({
+        type: 'ModelManager',
+        request: 'ModelInfo',
+        params: {entities: entities}
+      }, handler);
+    },
+
+    /**
+      Return detailed information about Juju models available for current user.
+      Under the hood, this call leverages the ModelManager ListModels and
+      ModelInfo endpoints.
+
+      @method listModelsWithInfo
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive two arguments, the first
+        an error or null and the second an object with a "models" attribute
+        containing an array of model info, each one with the following fields:
+        - tag: the original Juju model tag;
+        - name: the model name, like "admin" or "mymodel";
+        - series: the model default series, like "trusty" or "xenial";
+        - provider: the provider type, like "lxd" or "aws";
+        - uuid: the model unique identifier;
+        - serverUuid: the corresponding controller unique identifier;
+        - ownerTag: the Juju tag of the user owning the model;
+        - life: the lifecycle status of the model: "alive", "dying" or "dead";
+        - isAlive: whether the model is alive or dying/dead;
+        - isAdmin: whether the model is an admin model;
+        - lastConnection: the date of the last connection as a string, e.g.:
+          '2015-09-24T10:08:50Z' or null if the model was never connected to;
+        - err: a message describing a specific model error, or undefined.
+      @return {undefined} Sends a message to the server only.
+    */
+    listModelsWithInfo: function(callback) {
+      // Ensure we always have a callback.
+      if (!callback) {
+        callback = function(err, data) {
+          console.log('listModelsWithInfo: No callback provided');
+          if (err) {
+            console.log('listModelsWithInfo: API call error:', err);
+          } else {
+            console.log('listModelsWithInfo: API call data:', data);
+          }
+        };
+      }
+
+      // Retrieve the current user tag.
+      var credentials = this.getCredentials();
+      if (!credentials.user) {
+        callback('called without credentials', null);
+        return;
+      }
+
+      // Perform the API calls.
+      this.listModels(credentials.user, (listData) => {
+        if (listData.err) {
+          callback(listData.err, null);
+          return;
+        }
+        var tags = listData.envs.map(function(model) {
+          return model.tag;
+        });
+        this.modelInfo(tags, (infoData) => {
+          if (infoData.err) {
+            callback(infoData.err, null);
+            return;
+          }
+          var models = infoData.models.map(function(model, index) {
+            if (model.err) {
+              return {tag: model.tag, err: model.err};
+            }
+            return {
+              tag: model.tag,
+              name: model.name,
+              series: model.series,
+              provider: model.provider,
+              uuid: model.uuid,
+              serverUuid: model.serverUuid,
+              ownerTag: model.ownerTag,
+              life: model.life,
+              isAlive: model.isAlive,
+              isAdmin: model.isAdmin,
+              lastConnection: listData.envs[index].lastConnection
+            };
+          });
+          callback(null, {models: models});
+        });
+      });
+    },
+
+    /**
+      Create a new model within this controller, using the given name.
+
+      @method createModel
+      @param {String} name The name of the new model.
+      @param {String} userTag The name of the new model owner, including the
+        "user-" prefix.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred), or with the following attributes if everything went well:
+        - name: the name of the new model;
+        - uuid: the unique identifier of the new model;
+        - owner: the model owner tag;
+        - region: the cloud region.
+
+      @return {undefined} Sends a message to the server only.
+    */
+    createModel: function(name, userTag, callback) {
+      // Define the API callback.
+      var handler = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by CreateModel API call:', data);
+          return;
+        }
+        if (data.error) {
+          userCallback({err: data.error});
+          return;
+        }
+        var response = data.response;
+        userCallback({
+          name: response.name,
+          uuid: response.uuid,
+          owner: response['owner-tag'],
+          region: response['cloud-region']
+        });
+      }.bind(this, callback);
+
+      // Prepare API call params.
+      if (userTag.indexOf('@') === -1) {
+        userTag += '@local';
+      }
+      var config = {
+        // XXX frankban: juju-core should not require clients to provide SSH
+        // keys at this point, but only when strictly necessary. Provide an
+        // invalid one for now.
+        'authorized-keys': 'ssh-rsa INVALID (set by the Juju GUI)'
+      };
+
+      // Send the API call.
+      this._send_rpc({
+        type: 'ModelManager',
+        request: 'CreateModel',
+        params: {name: name, 'owner-tag': userTag, config: config}
+      }, handler);
+    },
+
+    /**
+      Destroy the models with the given tags.
+
+      This method will try to destroy the specified models.
+      It is possible to destroy either other models in the same controller or
+      the current connected model, in which case clients, sooner or later after
+      the server response is received, will likely want to switch to another
+      model not being killed.
+
+      Note that all applications withing the specified models will be destroyed
+      as well, and it's not possible to recover from model's removal.
+      Also note that currently (2016-08-16) nothing prevents this call from
+      destroying the controller model, therefore also disconnecting or even
+      auto-destroying the GUI itself, for instance in the GUI in Juju scenario.
+      For this reason callers are responsible of checking whether a model tag
+      identifies a controller model before calling this method.
+
+      @method destroyModels
+      @param {Array} tags The Juju tags of the models, each one being a string,
+        for instance "model-5bea955d-7a43-47d3-89dd-b02c923e2447".
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err" field
+        if a global API error occurred. Otherwise, the returned object will
+        have a "results" field as an object mapping model tags to possible
+        error strings, or to null if the deletion of that model succeeded.
+      @return {undefined} Sends a message to the server only.
+    */
+    destroyModels: function(tags, callback) {
+      // Decorate the user supplied callback.
+      var handler = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by destroy models API call:', data);
+          return;
+        }
+        if (data.error) {
+          userCallback({err: data.error});
+          return;
+        }
+        var results = data.response.results.reduce((prev, result, index) => {
+          var tag = tags[index];
+          prev[tag] = result.error ? result.error.message : null;
+          return prev;
+        }, {});
+        userCallback({results: results});
+      }.bind(this, callback);
+
+      // Send the API request.
+      var entities = tags.map(function(tag) {
+        return {tag: tag};
+      });
+      this._send_rpc({
+        type: 'ModelManager',
+        request: 'DestroyModels',
+        params: {entities: entities}
+      }, handler);
+    },
+
+  /**
+      List all models the user can access on the current controller.
+
+      @method listModels
+      @param {String} userTag The name of the new model owner, including the
+        "user-" prefix.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred), or with the "envs" attribute if everything went well. The
+        "envs" field will contain a list of objects, each one representing a
+        model with the following attributes:
+        - name: the name of the model;
+        - tag: the model tag, like "model-de1b2c16-0151-4e63-87e9-9f0950a";
+        - owner: the model owner tag;
+        - uuid: the unique identifier of the model;
+        - lastConnection: the date of the last connection as a string, e.g.:
+          '2015-09-24T10:08:50Z' or null if the model has been never
+          connected to;
+      @return {undefined} Sends a message to the server only.
+    */
+    listModels: function(userTag, callback) {
+      var handleListModels = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by listModels API call:', data);
+          return;
+        }
+        var transformedData = {
+          err: data.error,
+        };
+        if (!data.error) {
+          var response = data.response;
+          transformedData.envs = response['user-models'].map(function(value) {
+            var model = value.model;
+            return {
+              name: model.name,
+              owner: model['owner-tag'],
+              tag: 'model-' + model.uuid,
+              uuid: model.uuid,
+              lastConnection: value['last-connection']
+            };
+          });
+        }
+        // Call the original user callback.
+        userCallback(transformedData);
+      }.bind(this, callback);
+
+      this._send_rpc({
+        type: 'ModelManager',
+        request: 'ListModels',
+        params: {tag: userTag}
+      }, handleListModels);
+    }
+
+  });
+
+  Y.namespace('juju').ControllerAPI = ControllerAPI;
+
+}, '0.1.0', {
+  requires: [
+    'base',
+    'juju-env-base'
+  ]
+});
