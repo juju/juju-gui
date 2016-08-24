@@ -61,6 +61,7 @@ describe('UserProfile', () => {
     var showConnectingMask = sinon.stub();
     var switchModel = sinon.stub();
     var getAgreements = sinon.stub();
+    var staticURL = 'test-url';
     var user = users.charmstore;
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
@@ -79,11 +80,22 @@ describe('UserProfile', () => {
         pluralize={sinon.stub()}
         hideConnectingMask={hideConnectingMask}
         showConnectingMask={showConnectingMask}
+        staticURL={staticURL}
         storeUser={sinon.stub()}
         user={user} />, true);
     var instance = component.getMountedInstance();
     var output = component.getRenderOutput();
     var content = output.props.children.props.children;
+    var emptyComponent = (
+      <juju.components.EmptyUserProfile
+        addNotification={addNotification}
+        controllerAPI={controllerAPI}
+        hideConnectingMask={hideConnectingMask}
+        showConnectingMask={showConnectingMask}
+        staticURL={staticURL}
+        switchModel={switchModel}
+        user={user} />
+    );
     var expected = (
       <div className="inner-wrapper">
         <juju.components.UserProfileHeader
@@ -94,7 +106,7 @@ describe('UserProfile', () => {
           username={users.charmstore.usernameDisplay} />
         <div>
           <juju.components.SectionLoadWatcher
-            EmptyComponent={juju.components.EmptyUserProfile}
+            EmptyComponent={emptyComponent}
             timeout={10}>
             <juju.components.UserProfileModelList
               ref="modelList"
@@ -103,7 +115,6 @@ describe('UserProfile', () => {
               controllerAPI={controllerAPI}
               currentModel={undefined}
               hideConnectingMask={hideConnectingMask}
-              jem={undefined}
               listModels={listModels}
               showConnectingMask={showConnectingMask}
               switchModel={switchModel}

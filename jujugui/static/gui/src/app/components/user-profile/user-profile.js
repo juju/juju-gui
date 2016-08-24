@@ -32,7 +32,6 @@ YUI.add('user-profile', function() {
       getDiagramURL: React.PropTypes.func.isRequired,
       hideConnectingMask: React.PropTypes.func.isRequired,
       interactiveLogin: React.PropTypes.bool,
-      jem: React.PropTypes.object,
       listBudgets: React.PropTypes.func.isRequired,
       listModels: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
@@ -91,10 +90,20 @@ YUI.add('user-profile', function() {
     */
     _generateContent: function() {
       var props = this.props;
+      var emptyComponent = (
+        <juju.components.EmptyUserProfile
+          addNotification={props.addNotification}
+          controllerAPI={props.controllerAPI}
+          hideConnectingMask={props.hideConnectingMask}
+          showConnectingMask={props.showConnectingMask}
+          staticURL={props.staticURL}
+          switchModel={props.switchModel}
+          user={props.user} />
+      );
       return (
         <div>
           <juju.components.SectionLoadWatcher
-            EmptyComponent={juju.components.EmptyUserProfile}
+            EmptyComponent={emptyComponent}
             timeout={10}>
             <juju.components.UserProfileModelList
               ref='modelList'
@@ -103,7 +112,6 @@ YUI.add('user-profile', function() {
               controllerAPI={props.controllerAPI}
               currentModel={props.currentModel}
               hideConnectingMask={props.hideConnectingMask}
-              jem={props.jem}
               listModels={props.listModels}
               showConnectingMask={props.showConnectingMask}
               switchModel={props.switchModel}

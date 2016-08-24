@@ -446,6 +446,7 @@ YUI.add('juju-gui', function(Y) {
         // Instantiate a Web handler allowing to perform asynchronous HTTPS
         // requests to the juju-core API.
         modelOptions.webHandler = new environments.web.WebHandler();
+        controllerOptions.jimmURL = this.get('jimmURL');
       }
 
       let modelAPI, controllerAPI;
@@ -922,7 +923,6 @@ YUI.add('juju-gui', function(Y) {
           getAgreements={this.terms.getAgreements.bind(this.terms)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           interactiveLogin={this.get('interactiveLogin')}
-          jem={this.jem}
           pluralize={utils.pluralize.bind(this)}
           staticURL={window.juju_config.staticURL}
           storeUser={this.storeUser.bind(this)}

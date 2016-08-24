@@ -64,7 +64,6 @@ describe('UserProfileModelList', () => {
         controllerAPI={controllerAPI}
         currentModel={'model1'}
         hideConnectingMask={sinon.stub()}
-        jem={null}
         listModels={sinon.stub().callsArgWith(0, null, [])}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}
@@ -82,7 +81,6 @@ describe('UserProfileModelList', () => {
         controllerAPI={controllerAPI}
         currentModel={'model1'}
         hideConnectingMask={sinon.stub()}
-        jem={null}
         listModels={sinon.stub()}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}
@@ -98,16 +96,18 @@ describe('UserProfileModelList', () => {
 
   it('renders a list of models', () => {
     var listModels = sinon.stub().callsArgWith(0, null, {models: models});
+    var addNotification = sinon.stub();
+    var hideConnectingMask = sinon.stub();
+    var showConnectingMask = sinon.stub();
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
-        addNotification={sinon.stub()}
+        addNotification={addNotification}
         canCreateNew={true}
         controllerAPI={controllerAPI}
         currentModel={'model1'}
-        hideConnectingMask={sinon.stub()}
-        jem={null}
+        hideConnectingMask={hideConnectingMask}
         listModels={listModels}
-        showConnectingMask={sinon.stub()}
+        showConnectingMask={showConnectingMask}
         switchModel={sinon.stub()}
         user={users.charmstore}
         users={users} />, true);
@@ -120,31 +120,13 @@ describe('UserProfileModelList', () => {
           <span className="user-profile__size">
             ({1})
           </span>
-          <div className="user-profile__create-new collapsed">
-            <form onSubmit={instance.createAndSwitch}>
-              <juju.components.GenericButton
-                action={instance._nextCreateStep}
-                type='inline-neutral first'
-                title='Create new' />
-              <juju.components.GenericInput
-                placeholder="untitled_model"
-                required={true}
-                ref="modelName"
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }, {
-                  regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
-                  error: 'This field must only contain upper and lowercase ' +
-                    'letters, numbers, and hyphens. It must not start or ' +
-                    'end with a hyphen.'
-                }]} />
-              <juju.components.GenericButton
-                action={instance.createAndSwitch}
-                type='inline-neutral second'
-                title='Submit' />
-            </form>
-          </div>
+          <juju.components.CreateModelButton
+            addNotification={addNotification}
+            controllerAPI={controllerAPI}
+            hideConnectingMask={hideConnectingMask}
+            showConnectingMask={showConnectingMask}
+            switchModel={instance.switchModel}
+            user={users.charmstore} />
         </div>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
@@ -203,7 +185,6 @@ describe('UserProfileModelList', () => {
         controllerAPI={controllerAPI}
         currentModel={'model1'}
         hideConnectingMask={sinon.stub()}
-        jem={null}
         listModels={listModels}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}
@@ -231,7 +212,6 @@ describe('UserProfileModelList', () => {
         controllerAPI={controllerAPI}
         currentModel={'model1'}
         hideConnectingMask={sinon.stub()}
-        jem={null}
         listModels={listModels}
         showConnectingMask={sinon.stub()}
         switchModel={switchModel}
@@ -292,171 +272,6 @@ describe('UserProfileModelList', () => {
     assert.isUndefined(output.props.children[0].props.children[2]);
   });
 
-  it('creates then switches to newly created models', () => {
-    // This test doesn't check the user interactions and animations, that
-    // will need to be done with the uitest suite.
-    var showConnectingMask = sinon.stub();
-    var switchModel = sinon.stub();
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
-        addNotification={sinon.stub()}
-        canCreateNew={true}
-        controllerAPI={controllerAPI}
-        hideConnectingMask={sinon.stub()}
-        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
-        showConnectingMask={showConnectingMask}
-        switchModel={switchModel}
-        users={users}
-        user={users.charmstore} />, true);
-    var output = component.getRenderOutput();
-    var instance = component.getMountedInstance();
-    // Set up the component to simulate user action.
-    instance.refs = {
-      modelName: {
-        validate: _ => true,
-        getValue: _ => 'newmodelname'
-      }
-    };
-    var preventable = { preventDefault: sinon.stub() };
-    // Call the action method in the proper element.
-    output.props.children[0].props.children[2].props.children.props.children[2]
-      .props.action(preventable);
-    assert.equal(preventable.preventDefault.callCount, 1,
-                 'default not prevented');
-    assert.equal(showConnectingMask.callCount, 1, 'mask not shown');
-    // Make sure that it switches to the model after it's created.
-    assert.equal(switchModel.callCount, 1, 'model not switched to');
-    assert.equal(switchModel.args[0][0], 'abc123', 'uuid not passed through');
-    assert.equal(switchModel.args[0][2], 'newmodelname', 'model name not set');
-  });
-
-  it('does not submit to create new if name does not validate', () => {
-    // This test doesn't check the user interactions and animations, that
-    // will need to be done with the uitest suite.
-    var showConnectingMask = sinon.stub();
-    var switchModel = sinon.stub();
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
-        addNotification={sinon.stub()}
-        canCreateNew={true}
-        controllerAPI={controllerAPI}
-        hideConnectingMask={sinon.stub()}
-        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
-        showConnectingMask={showConnectingMask}
-        switchModel={switchModel}
-        users={users}
-        user={users.charmstore} />, true);
-    var output = component.getRenderOutput();
-    var instance = component.getMountedInstance();
-    // Set up the component to simulate user action.
-    instance.refs = {
-      modelName: {
-        validate: _ => false
-      }
-    };
-    var preventable = { preventDefault: sinon.stub() };
-    // Call the action method in the proper element.
-    output.props.children[0].props.children[2].props.children.props.children[2]
-      .props.action(preventable);
-    assert.equal(
-      preventable.preventDefault.callCount, 1, 'default not prevented');
-    assert.equal(showConnectingMask.callCount, 0, 'mask shown');
-    // Make sure that it switches to the model after it's created.
-    assert.equal(switchModel.callCount, 0, 'model should not be switched to');
-  });
-
-  it('gracefully handles errors when creating new model', () => {
-    // This test doesn't check the user interactions and animations, that
-    // will need to be done with the uitest suite.
-    controllerAPI.createModel = (modelName, userName, callback) => {
-      assert.equal(modelName, 'newmodelname', 'model name not set properly');
-      assert.equal(userName, 'test-owner', 'user name not set properly');
-      // Simulate the model being created.
-      callback({
-        err: 'this is an error',
-        uuid: 'abc123',
-        name: modelName
-      });
-    };
-    var hideConnectingMask = sinon.stub();
-    var addNotification = sinon.stub();
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
-        addNotification={addNotification}
-        canCreateNew={true}
-        controllerAPI={controllerAPI}
-        hideConnectingMask={hideConnectingMask}
-        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
-        showConnectingMask={sinon.stub()}
-        switchModel={sinon.stub()}
-        users={users}
-        user={users.charmstore} />, true);
-    var output = component.getRenderOutput();
-    var instance = component.getMountedInstance();
-    // Set up the component to simulate user action.
-    instance.refs = {
-      modelName: {
-        validate: _ => true,
-        getValue: _ => 'newmodelname'
-      }
-    };
-    var preventable = { preventDefault: sinon.stub() };
-    // Call the action method in the proper element.
-    output.props.children[0].props.children[2].props.children.props.children[2]
-      .props.action(preventable);
-    // Make sure that the mask is hidden and that a notification was added
-    // with the error message.
-    assert.equal(hideConnectingMask.callCount, 1, 'mask not hidden');
-    assert.equal(addNotification.callCount, 1, 'notification not added');
-    assert.deepEqual(addNotification.args[0][0], {
-      title: 'Failed to create new Model',
-      message: 'this is an error',
-      level: 'error'
-    });
-  });
-
-  it('swtches models by switching to disconnected with JIMM', () => {
-    var switchModel = sinon.stub();
-    var showConnectingMask = sinon.stub();
-    controllerAPI.createModel = sinon.stub();
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
-        addNotification={sinon.stub()}
-        canCreateNew={true}
-        controllerAPI={controllerAPI}
-        hideConnectingMask={sinon.stub()}
-        jem={{}}
-        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
-        showConnectingMask={showConnectingMask}
-        switchModel={switchModel}
-        users={users}
-        user={users.charmstore} />, true);
-    var output = component.getRenderOutput();
-    // Click the button.
-    output.props.children[0].props.children[2].props.children.props.children[0]
-      .props.action();
-    // It should not try to create a model.
-    assert.equal(showConnectingMask.callCount, 0, 'should not show mask');
-    assert.equal(
-      controllerAPI.createModel.callCount, 0, 'it should not create model');
-    // Switching models.
-    assert.equal(switchModel.callCount, 1, 'it should have called switchModel');
-    assert.deepEqual(
-      switchModel.args[0], [
-        undefined,
-        [{
-          uuid: 'model1',
-          name: 'spinach/sandbox',
-          lastConnection: 'today',
-          ownerTag: 'test-owner',
-          isAlive: true,
-          owner: 'test-owner'
-        }],
-        undefined,
-        undefined
-      ]);
-  });
-
   it('will abort the requests when unmounting', function() {
     var listModelsAbort = sinon.stub();
     var listModels = sinon.stub().returns({abort: listModelsAbort});
@@ -467,7 +282,6 @@ describe('UserProfileModelList', () => {
         currentModel={'model1'}
         controllerAPI={controllerAPI}
         hideConnectingMask={sinon.stub()}
-        jem={null}
         listModels={listModels}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}
@@ -487,7 +301,6 @@ describe('UserProfileModelList', () => {
         controllerAPI={controllerAPI}
         currentModel={'model1'}
         hideConnectingMask={sinon.stub()}
-        jem={null}
         listModels={sinon.stub()}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}
@@ -506,7 +319,6 @@ describe('UserProfileModelList', () => {
         controllerAPI={controllerAPI}
         currentModel={'model1'}
         hideConnectingMask={sinon.stub()}
-        jem={null}
         listModels={sinon.stub().callsArgWith(0, null, {models: models})}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}
@@ -525,7 +337,6 @@ describe('UserProfileModelList', () => {
         controllerAPI={controllerAPI}
         currentModel={'model1'}
         hideConnectingMask={sinon.stub()}
-        jem={null}
         listModels={sinon.stub().callsArgWith(0, null, {models: []})}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}
@@ -544,7 +355,6 @@ describe('UserProfileModelList', () => {
         controllerAPI={controllerAPI}
         currentModel={'model1'}
         hideConnectingMask={sinon.stub()}
-        jem={null}
         listModels={sinon.stub().callsArgWith(0, 'error', {})}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}

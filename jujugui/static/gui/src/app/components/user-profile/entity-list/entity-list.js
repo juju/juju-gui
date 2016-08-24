@@ -51,7 +51,7 @@ YUI.add('user-profile-entity-list', function() {
     },
 
     componentWillMount: function() {
-      var users = this.props.users;
+      const users = this.props.users;
       if (users.charmstore && users.charmstore.user) {
         this._fetchEntities(this.props);
       }
@@ -64,10 +64,10 @@ YUI.add('user-profile-entity-list', function() {
     },
 
     componentWillReceiveProps: function(nextProps) {
-      var props = this.props;
+      const props = this.props;
       // Compare next and previous charmstore users in a data-safe manner.
-      var prevCSUser = props.users.charmstore || {};
-      var nextCSUser = nextProps.users.charmstore || {};
+      const prevCSUser = props.users.charmstore || {};
+      const nextCSUser = nextProps.users.charmstore || {};
       if (nextCSUser.user !== prevCSUser.user) {
         this._fetchEntities(nextProps);
       }
@@ -80,15 +80,15 @@ YUI.add('user-profile-entity-list', function() {
       @param {Object} props the component properties to use.
     */
     _fetchEntities:  function(props) {
-      var callback = this._fetchEntitiesCallback;
-      var charmstore = props.charmstore;
-      var username = props.users.charmstore && props.users.charmstore.user;
+      const callback = this._fetchEntitiesCallback;
+      const charmstore = props.charmstore;
+      const username = props.users.charmstore && props.users.charmstore.user;
       if (charmstore && charmstore.list && username) {
         this.props.broadcastStatus('starting');
         // Delay the call until after the state change to prevent race
         // conditions.
         this.setState({loadingEntities: true}, () => {
-          var xhr = charmstore.list(username, callback, props.type);
+          const xhr = charmstore.list(username, callback, props.type);
           this.xhrs.push(xhr);
         });
       }
@@ -103,7 +103,7 @@ YUI.add('user-profile-entity-list', function() {
     */
     _fetchEntitiesCallback: function(error, data) {
       this.setState({loadingEntities: false}, () => {
-        var broadcastStatus = this.props.broadcastStatus;
+        const broadcastStatus = this.props.broadcastStatus;
         if (error) {
           broadcastStatus('error');
           console.error('Can not retrieve entities: ', error);
@@ -130,7 +130,7 @@ YUI.add('user-profile-entity-list', function() {
       if (!tagList) {
         return;
       }
-      var tags = [];
+      const tags = [];
       tagList.forEach((tag) => {
         tags.push(
           <li className="user-profile__comma-item"
@@ -156,7 +156,7 @@ YUI.add('user-profile-entity-list', function() {
       if (!series) {
         return;
       }
-      var listItems = [];
+      const listItems = [];
       series.forEach((release) => {
         listItems.push(
           <li className="user-profile__comma-item"
@@ -181,8 +181,8 @@ YUI.add('user-profile-entity-list', function() {
       if (!id) {
         return;
       }
-      var cs = this.props.charmstore;
-      var path = id.replace('cs:', '');
+      const cs = this.props.charmstore;
+      const path = id.replace('cs:', '');
       return `${cs.url}/${path}/icon.svg`;
     },
 
@@ -194,21 +194,21 @@ YUI.add('user-profile-entity-list', function() {
       @returns {Array} The markup for the row.
     */
     _generateBundleRow: function(bundle) {
-      var id = bundle.id;
-      var services = [];
-      var applications = bundle.applications || bundle.services || {};
-      var serviceNames = Object.keys(applications);
+      const id = bundle.id;
+      const services = [];
+      const applications = bundle.applications || bundle.services || {};
+      const serviceNames = Object.keys(applications);
       serviceNames.forEach((serviceName, idx) => {
-        var service = applications[serviceName];
-        var id = service.charm;
-        var key = `icon-${idx}-${id}`;
+        const service = applications[serviceName];
+        const id = service.charm;
+        const key = `icon-${idx}-${id}`;
         services.push(
           <img className="user-profile__list-icon"
             key={key}
             src={this._getIcon(id)}
             title={service.charm} />);
       });
-      var unitCount = bundle.unitCount || <span>&nbsp;</span>;
+      const unitCount = bundle.unitCount || <span>&nbsp;</span>;
       return (
         <juju.components.UserProfileEntity
           changeState={this.props.changeState}
@@ -268,7 +268,7 @@ YUI.add('user-profile-entity-list', function() {
       @returns {Array} The markup for the row.
     */
     _generateCharmRow: function(charm) {
-      var id = charm.id;
+      const id = charm.id;
       // Ensure the icon is set.
       charm.icon = charm.icon || this._getIcon(id);
       return (
@@ -320,8 +320,8 @@ YUI.add('user-profile-entity-list', function() {
     },
 
     render: function() {
-      var type = this.props.type;
-      var classes = classNames(
+      const type = this.props.type;
+      const classes = classNames(
         `user-profile__${type}-list`,
         { 'twelve-col': this.state.loadingEntities }
       );
@@ -332,11 +332,11 @@ YUI.add('user-profile-entity-list', function() {
           </div>
         );
       }
-      var list = this.state.entityList;
+      const list = this.state.entityList;
       if (!list || list.length === 0) {
         return null;
       }
-      var generateRow,
+      let generateRow,
           header,
           title;
       if (type === 'bundle') {
@@ -348,7 +348,7 @@ YUI.add('user-profile-entity-list', function() {
         header = this._generateCharmHeader();
         title = 'Charms';
       }
-      var rows = list.map(generateRow);
+      const rows = list.map(generateRow);
       return (
         <div className={classes}>
           <div className="user-profile__header twelve-col no-margin-bottom">

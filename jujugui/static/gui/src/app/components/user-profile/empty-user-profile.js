@@ -22,14 +22,53 @@ YUI.add('empty-user-profile', function() {
 
   juju.components.EmptyUserProfile = React.createClass({
     propTypes: {
-      staticURL: React.PropTypes.string
+      addNotification: React.PropTypes.func.isRequired,
+      controllerAPI: React.PropTypes.object.isRequired,
+      hideConnectingMask: React.PropTypes.func.isRequired,
+      showConnectingMask: React.PropTypes.func.isRequired,
+      staticURL: React.PropTypes.string,
+      switchModel: React.PropTypes.func.isRequired,
+      user: React.PropTypes.object
     },
 
+    getDefaultProps: function() {
+      return {
+        staticURL: ''
+      };
+    },
+
+    /**
+
+      A simply wrapper around the passed-in switchModel function; all the
+      wrapper does in pass an empty modelList into the provied switchModel.
+      After all, this is an EmptyUserProfile component; by definition we know
+      the modelList is empty.
+
+      @method switchModel
+      @param {String} uuid The model UUID.
+      @param {String} name The model name.
+      @param {Function} callback The function to be called once the model has
+        been switched and logged into. Takes the following parameters:
+        {Object} env The env that has been switched to.
+    */
+    switchModel: function(uuid, name, callback) {
+      this.props.switchModel(uuid, [], name, callback);
+    },
+
+
     render: function() {
-      var staticURL = this.props.staticURL || '';
-      var basePath = `${staticURL}/static/gui/build/app`;
+      var props = this.props;
+      var basePath = `${props.staticURL}/static/gui/build/app`;
       return (
         <div className="user-profile__empty twelve-col no-margin-bottom">
+          <juju.components.CreateModelButton
+            addNotification={props.addNotification}
+            controllerAPI={props.controllerAPI}
+            className='user-profile__empty-button'
+            hideConnectingMask={props.hideConnectingMask}
+            showConnectingMask={props.showConnectingMask}
+            switchModel={this.switchModel}
+            user={props.user} />
           <div className="clearfix">
             <img alt="Empty profile"
               className="user-profile__empty-image"
