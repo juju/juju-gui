@@ -145,7 +145,10 @@ YUI.add('ghost-deployer-extension', function(Y) {
       @param {String} series The series of the service.
     */
     _addSeriesToCharmId: function(charmId, series) {
-      let charmIdParts = charmId.replace('cs:', '').split('/');
+      let storeParts = charmId.split(':');
+      let store = storeParts[0];
+      let id = storeParts[1];
+      let charmIdParts = id.split('/');
       if (
         // If we're in Juju 2 then just return the charmId as it can
         // support both single and multi-series charms.
@@ -162,7 +165,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
       charmIdParts.length === 2 ?
         charmIdParts.splice(1, 0, series) :
         charmIdParts.unshift(series);
-      return `cs:${charmIdParts.join('/')}`;
+      return `${store}:${charmIdParts.join('/')}`;
     },
 
     /**

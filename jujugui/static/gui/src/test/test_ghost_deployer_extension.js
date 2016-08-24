@@ -81,9 +81,9 @@ describe('Ghost Deployer Extension', function() {
   });
 
   // Create and return a charm model instance.
-  var makeCharm = function() {
+  var makeCharm = function(id='cs:trusty/django-42') {
     return new Y.Model({
-      id: 'cs:trusty/django-42',
+      id: id,
       name: 'django',
       package_name: 'django',
       is_subordinate: false,
@@ -166,6 +166,14 @@ describe('Ghost Deployer Extension', function() {
     ghostDeployer.deployService(charm);
     var args = ghostDeployer.env.deploy.lastArguments();
     assert.strictEqual(args[0], 'cs:trusty/django-42'); // Charm URL.
+  });
+
+  it('properly adds the series to local Juju 1 applications', function() {
+    var charm = makeCharm('local:trusty/django-42');
+    ghostDeployer.isLegacyJuju = function() { return true; };
+    ghostDeployer.deployService(charm);
+    var args = ghostDeployer.env.deploy.lastArguments();
+    assert.strictEqual(args[0], 'local:trusty/django-42'); // Charm URL.
   });
 
   it('properly adds the series to userspace Juju 1 applications', function() {
