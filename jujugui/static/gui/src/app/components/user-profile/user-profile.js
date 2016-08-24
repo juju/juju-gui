@@ -26,8 +26,8 @@ YUI.add('user-profile', function() {
       canCreateNew: React.PropTypes.bool.isRequired,
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
+      controllerAPI: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
-      env: React.PropTypes.object.isRequired,
       getAgreements: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       hideConnectingMask: React.PropTypes.func.isRequired,
@@ -100,8 +100,8 @@ YUI.add('user-profile', function() {
               ref='modelList'
               addNotification={props.addNotification}
               canCreateNew={props.canCreateNew}
+              controllerAPI={props.controllerAPI}
               currentModel={props.currentModel}
-              env={props.env}
               hideConnectingMask={props.hideConnectingMask}
               jem={props.jem}
               listModels={props.listModels}

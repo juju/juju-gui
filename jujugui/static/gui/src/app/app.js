@@ -451,7 +451,7 @@ YUI.add('juju-gui', function(Y) {
       } else {
         modelAPI = new environments.GoEnvironment(envOptions);
         if (!this.get('sandbox')) {
-          controllerAPI = new environments.GoEnvironment(
+          controllerAPI = new Y.juju.ControllerAPI(
             // Clone the envOptions for now, in the future we may want more
             // fine grained control over these options. They should be made
             // in the setUpControllerAPI method.
@@ -723,6 +723,16 @@ YUI.add('juju-gui', function(Y) {
       controllerAPI.setCredentials({ user, password, macaroons });
 
       controllerAPI.after('login', e => {
+        // After logging in trigger the app to dispatch to re-render the
+        // components that require an active connection to the controllerAPI.
+        this.dispatch();
+        // If the user is connected to a model then the modelList will be
+        // fetched by the modelswitcher component.
+        if (this.env.get('modelUUID')) {
+          return;
+        }
+        // If the user isn't currently connected to a model then fetch the
+        // available models so that we can connect to an available one.
         this.controllerAPI.listModelsWithInfo((err, response) => {
           if (err) {
             console.error('unable to list models', err);
@@ -905,11 +915,11 @@ YUI.add('juju-gui', function(Y) {
           addNotification={
             this.db.notifications.add.bind(this.db.notifications)}
           canCreateNew={this.env.get('connected')}
+          controllerAPI={this.controllerAPI}
           currentModel={this.get('jujuEnvUUID')}
-          env={this.env}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
-          listModels={utils.listModels.bind(
-            this, this.env, this.jem, user, this.get('gisf'))}
+          listModels={
+            this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
           changeState={this.changeState.bind(this)}
           getAgreements={this.terms.getAgreements.bind(this.terms)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
@@ -2625,6 +2635,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-app-state',
     'juju-charm-models',
     'juju-bundle-models',
+    'juju-controller-api',
     'juju-endpoints-controller',
     'juju-env-bakery',
     'juju-env-base',

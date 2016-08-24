@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('UserProfile', () => {
-  var charmstore, users, env;
+  var charmstore, controllerAPI, users;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -33,7 +33,7 @@ describe('UserProfile', () => {
       user: 'test-owner',
       usernameDisplay: 'test owner'
     }};
-    env = {
+    controllerAPI = {
       findFacadeVersion: sinon.stub(),
       get: sinon.stub().returns('default'),
       createModel: (modelName, userName, callback) => {
@@ -67,8 +67,8 @@ describe('UserProfile', () => {
         addNotification={addNotification}
         users={users}
         canCreateNew={canCreateNew}
+        controllerAPI={controllerAPI}
         charmstore={charmstore}
-        env={env}
         getAgreements={getAgreements}
         getDiagramURL={getDiagramURL}
         listBudgets={listBudgets}
@@ -100,8 +100,8 @@ describe('UserProfile', () => {
               ref="modelList"
               addNotification={addNotification}
               canCreateNew={canCreateNew}
+              controllerAPI={controllerAPI}
               currentModel={undefined}
-              env={env}
               hideConnectingMask={hideConnectingMask}
               jem={undefined}
               listModels={listModels}
@@ -153,7 +153,6 @@ describe('UserProfile', () => {
         listBudgets={sinon.stub()}
         listModels={sinon.stub()}
         changeState={sinon.stub()}
-        env={env}
         getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         interactiveLogin={false}
@@ -192,7 +191,6 @@ describe('UserProfile', () => {
         canCreateNew={true}
         changeState={sinon.stub()}
         charmstore={charmstore}
-        env={env}
         getAgreements={sinon.stub()}
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}

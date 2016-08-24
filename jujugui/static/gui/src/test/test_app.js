@@ -622,7 +622,7 @@ describe('App', function() {
 
 
   describe('Application authentication', function() {
-    var conn, destroyMe, ecs, env, juju, utils, Y;
+    var conn, destroyMe, ecs, env, controller, juju, utils, Y;
     var requirements = [
       'juju-gui', 'juju-tests-utils', 'juju-views', 'environment-change-set'];
 
@@ -643,8 +643,13 @@ describe('App', function() {
         user: 'user',
         password: 'password'
       });
+      controller = new juju.ControllerAPI({
+        conn: conn,
+        user: 'user',
+        password: 'password'
+      });
       env.setCredentials({user: 'user', password: 'password'});
-      destroyMe = [env, ecs];
+      destroyMe = [env, ecs, controller];
       done();
     });
 
@@ -663,6 +668,7 @@ describe('App', function() {
         jujuCoreVersion: '2.0.0',
         viewContainer: container
       });
+      app.controllerAPI = controller;
       app.navigate = function() { return true; };
       if (connect) {
         env.connect();
