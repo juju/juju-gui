@@ -658,6 +658,12 @@ YUI.add('juju-gui', function(Y) {
             this.controllerAPI.connect();
           }
         }
+        // If we're in gisf mode then we need to rely on the controllerAPI
+        // connection and subsequent switchModel call once we have all of the
+        // necessary information.
+        if (this.get('gisf')) {
+          this.controllerAPI.connect();
+        }
         this.dispatch();
         this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       }, this);
@@ -755,15 +761,18 @@ YUI.add('juju-gui', function(Y) {
             return;
           }
           const selectedModel = this._pickModel(modelList);
+          let socketTemplate = this.get('socketTemplate');
+          if (this.get('gisf')) {
+            socketTemplate = this.get('jimmURL') + socketTemplate;
+          }
           this.switchEnv(
-            this.createSocketURL(
-              this.get('socketTemplate'), selectedModel.uuid));
+            this.createSocketURL(socketTemplate, selectedModel.uuid));
         });
       });
 
       controllerAPI.after('connectedChange', e => {
         const credentials = this.controllerAPI.getCredentials();
-        if (!credentials.areAvailable) {
+        if (!credentials.areAvailable && !this.get('gisf')) {
           // If we don't have credentials then do nothing as the env login
           // check will have kicked the user to the login prompt already and
           // we can wait until they have provided the credentials there.
@@ -841,7 +850,23 @@ YUI.add('juju-gui', function(Y) {
             interactive: true,
             serviceName: 'juju',
             dischargeStore: window.localStorage
-          }));
+          }), (err, response) => {
+            // If we have a response and we have a redirection required error
+            // then we need to modify the connection information and try again.
+            if (response && err.indexOf('redirection required') > -1) {
+              const servers = response.servers[0];
+              // Loop through the available servers and find the public IP.
+              let server = servers.filter(server => server.scope === 'public');
+              const selectedModel = this._pickModel(this.get('environmentList'));
+              let socketTemplate = this.get('socketTemplate');
+              if (this.get('gisf')) {
+                socketTemplate =  'wss://' + server[0].value + ':' + server[0].port + socketTemplate;
+              }
+              const socketURL = this.createSocketURL(
+                socketTemplate, selectedModel.uuid, server.value, server.port);
+              this.switchEnv(socketURL);
+            }
+          });
         });
         return;
       }
