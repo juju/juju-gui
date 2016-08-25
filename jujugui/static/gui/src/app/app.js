@@ -850,23 +850,7 @@ YUI.add('juju-gui', function(Y) {
             interactive: true,
             serviceName: 'juju',
             dischargeStore: window.localStorage
-          }), (err, response) => {
-            // If we have a response and we have a redirection required error
-            // then we need to modify the connection information and try again.
-            if (response && err.indexOf('redirection required') > -1) {
-              const servers = response.servers[0];
-              // Loop through the available servers and find the public IP.
-              let server = servers.filter(server => server.scope === 'public');
-              const selectedModel = this._pickModel(this.get('environmentList'));
-              let socketTemplate = this.get('socketTemplate');
-              if (this.get('gisf')) {
-                socketTemplate =  'wss://' + server[0].value + ':' + server[0].port + socketTemplate;
-              }
-              const socketURL = this.createSocketURL(
-                socketTemplate, selectedModel.uuid, server.value, server.port);
-              this.switchEnv(socketURL);
-            }
-          });
+          }), this._handleRedirectionRequired.bind(this));
         });
         return;
       }
@@ -876,6 +860,39 @@ YUI.add('juju-gui', function(Y) {
         }
         api.login();
       });
+    },
+
+    /**
+      Handles redirecting to a new model when attempting to log in.
+
+      @method _handleRedirectionRequired
+      @param {String} err The error message string.
+      @param {Object} resp The response value containing the available server
+        details.
+    */
+    _handleRedirectionRequired: function(err, resp) {
+      // If we have a response and we have a redirection required error
+      // then we need to modify the connection information and try again.
+      // Otherwise we just carry on not doing anything.
+      if (resp && (err && err.indexOf('redirection required') > -1)) {
+        // Loop through the available servers and find the public IP.
+        const server = resp.servers[0].filter(
+          server => server.scope === 'public');
+        // The environmentList will be populated by the model listing
+        // request after the controllerAPI call has connected.
+        const selectedModel = this._pickModel(
+          this.get('environmentList'));
+        let socketTemplate = this.get('socketTemplate');
+        // When connecting to a model using JIMM and a redirection, the socket
+        // template base differs from the default so we must provide
+        // it here when creating the socket url.
+        if (this.get('gisf')) {
+          socketTemplate =
+            `wss://${server[0].value}:${server[0].port}${socketTemplate}`;
+        }
+        this.switchEnv(this.createSocketURL(
+          socketTemplate, selectedModel.uuid, server.value, server.port));
+      }
     },
 
     /**
