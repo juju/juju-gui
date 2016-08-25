@@ -28,7 +28,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-endpoints', function(Y) {
 
   var models = Y.namespace('juju.models');
-  var utils = Y.namespace('juju.views.utils');
+  var relationUtils = window.juju.utils.RelationUtils;
 
   /**
    * Find available relation targets for a service.
@@ -92,7 +92,8 @@ YUI.add('juju-endpoints', function(Y) {
           // Subordinate relations are slightly different:
           // a subordinate typically acts as a client to many services,
           // against the implicitly provided juju-info interface.
-          if (svc.get('subordinate') && utils.isSubordinateRelation(rdata)) {
+          if (svc.get('subordinate') &&
+            relationUtils.isSubordinateRelation(rdata)) {
             return requires.push(ep);
           }
           if (db.relations.has_relation_for_endpoint(ep)) {
@@ -138,7 +139,8 @@ YUI.add('juju-endpoints', function(Y) {
             // to many services. We check if a subordinate relation
             // exists between this subordinate endpoint and the origin
             // service.
-            if (tgt.get('subordinate') && utils.isSubordinateRelation(rdata)) {
+            if (tgt.get('subordinate') &&
+              relationUtils.isSubordinateRelation(rdata)) {
               if (db.relations.has_relation_for_endpoint(ep, sid)) {
                 return;
               }
@@ -177,5 +179,7 @@ YUI.add('juju-endpoints', function(Y) {
   };
 
 }, '', {
-  requires: []
+  requires: [
+    'relation-utils'
+  ]
 });

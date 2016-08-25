@@ -29,6 +29,7 @@ YUI.add('juju-topology-service', function(Y) {
   var d3 = Y.namespace('d3'),
       components = Y.namespace('d3-components'),
       models = Y.namespace('juju.models'),
+      relationUtils = window.juju.utils.RelationUtils,
       topoUtils = Y.namespace('juju.topology.utils'),
       utils = Y.namespace('juju.views.utils'),
       views = Y.namespace('juju.views'),
@@ -1724,7 +1725,7 @@ YUI.add('juju-topology-service', function(Y) {
       // Get related services and add to serviceNames.
       if (evt.highlightRelated) {
         var service = topo.service_boxes[serviceNames[0]].model;
-        var relationData = utils.getRelationDataForService(
+        var relationData = relationUtils.getRelationDataForService(
             topo.get('db'), service);
         relationData.forEach(function(relation) {
           serviceNames.push(relation.far.service);
@@ -1754,7 +1755,7 @@ YUI.add('juju-topology-service', function(Y) {
       // Get related services and add to serviceNames.
       if (evt.unhighlightRelated) {
         var service = topo.service_boxes[serviceNames[0]].model;
-        var relationData = utils.getRelationDataForService(
+        var relationData = relationUtils.getRelationDataForService(
             topo.get('db'), service);
         relationData.forEach(function(relation) {
           serviceNames.push(relation.far.service);
@@ -1896,6 +1897,7 @@ YUI.add('juju-topology-service', function(Y) {
     'd3',
     'd3-components',
     'juju-models',
+    'relation-utils',
     'zip-utils'
   ]
 });

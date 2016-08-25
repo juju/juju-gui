@@ -19,16 +19,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('topology relation module', function() {
-  var Y, utils, views, view, container, topo, models;
+  var Y, utils, views, view, container, topo, models, relationUtils;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        ['juju-tests-utils', 'juju-topology', 'node',
-          'node-event-simulate', 'juju-view-utils', 'juju-models'],
+        ['juju-tests-utils', 'juju-topology', 'node', 'relation-utils',
+          'node-event-simulate', 'juju-models'],
         function(Y) {
           views = Y.namespace('juju.views');
           utils = Y.namespace('juju-tests.utils');
           models = Y.namespace('juju.models');
+          relationUtils = window.juju.utils.RelationUtils;
           done();
         });
   });
@@ -190,7 +191,7 @@ describe('topology relation module', function() {
     };
     view.removeRelation.call(fauxView, relation, fauxView, undefined);
     assert.equal(
-        requestedSelector, '#' + views.utils.generateSafeDOMId(relationId));
+        requestedSelector, '#' + relationUtils.generateSafeDOMId(relationId));
   });
 
   it('fires "changeState" topo event for clicking a relation endpoint',

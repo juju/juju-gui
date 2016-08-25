@@ -515,6 +515,7 @@ YUI.add('juju-gui', function(Y) {
       this.acl = new Y.juju.generateAcl(this.env);
 
       this.changesUtils = window.juju.utils.ChangesUtils;
+      this.relationUtils = window.juju.utils.RelationUtils;
 
       this.on('*:navigateTo', function(e) {
         this.navigate(e.url);
@@ -1222,6 +1223,7 @@ YUI.add('juju-gui', function(Y) {
         how to render.
     */
     _renderInspector: function(metadata) {
+      var relationUtils = this.relationUtils;
       var state = this.state;
       var utils = views.utils;
       var topo = this.views.environment.instance.topo;
@@ -1237,7 +1239,7 @@ YUI.add('juju-gui', function(Y) {
         // Select the service token.
         topo.modules.ServiceModule.selectService(service.get('id'));
         var charm = app.db.charms.getById(service.get('charm'));
-        var relatableApplications = utils.getRelatableApplications(
+        var relatableApplications = relationUtils.getRelatableApplications(
           this.db, models.getEndpoints(service, this.endpointsController));
         const ecs = this.env.get('ecs');
         inspector = (
@@ -1249,7 +1251,8 @@ YUI.add('juju-gui', function(Y) {
               {this.db.notifications.add.bind(this.db.notifications)}
             setConfig={this.env.set_config.bind(this.env)}
             envResolved={this.env.resolved.bind(this.env)}
-            serviceRelations={utils.getRelationDataForService(this.db, service)}
+            serviceRelations={
+              relationUtils.getRelationDataForService(this.db, service)}
             addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(
                 this, this.db, this.env, service)}
             createMachinesPlaceUnits={utils.createMachinesPlaceUnits.bind(
@@ -1257,11 +1260,12 @@ YUI.add('juju-gui', function(Y) {
             destroyService={utils.destroyService.bind(
                 this, this.db, this.env, service)}
             destroyUnits={utils.destroyUnits.bind(this, this.env)}
-            destroyRelations={utils.destroyRelations.bind(
+            destroyRelations={this.relationUtils.destroyRelations.bind(
               this, this.db, this.env)}
             relatableApplications={relatableApplications}
             clearState={utils.clearState.bind(this, topo)}
-            createRelation={utils.createRelation.bind(this, this.db, this.env)}
+            createRelation={
+              relationUtils.createRelation.bind(this, this.db, this.env)}
             getYAMLConfig={utils.getYAMLConfig.bind(this)}
             changeState={this.changeState.bind(this)}
             exposeService={this.env.expose.bind(this.env)}
@@ -1269,7 +1273,7 @@ YUI.add('juju-gui', function(Y) {
             unplaceServiceUnits={ecs.unplaceServiceUnits.bind(ecs)}
             getAvailableVersions={charmstore.getAvailableVersions.bind(
                 charmstore)}
-            getAvailableEndpoints={utils.getAvailableEndpoints.bind(
+            getAvailableEndpoints={relationUtils.getAvailableEndpoints.bind(
               this, this.endpointsController, this.db, models.getEndpoints)}
             getMacaroon={charmstore.bakery.getMacaroon.bind(charmstore.bakery)}
             addCharm={this.env.addCharm.bind(this.env)}
@@ -2699,6 +2703,7 @@ YUI.add('juju-gui', function(Y) {
     'FileSaver',
     'ghost-deployer-extension',
     'local-charm-import-helpers',
-    'environment-change-set'
+    'environment-change-set',
+    'relation-utils'
   ]
 });

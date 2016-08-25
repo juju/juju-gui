@@ -31,7 +31,8 @@ YUI.add('juju-topology-relation', function(Y) {
       utils = Y.namespace('juju.views.utils'),
       topoUtils = Y.namespace('juju.topology.utils'),
       d3 = Y.namespace('d3'),
-      components = Y.namespace('d3-components');
+      components = Y.namespace('d3-components'),
+      relationUtils = window.juju.utils.RelationUtils;
 
   /**
    * Manage relation rendering and events.
@@ -247,13 +248,13 @@ YUI.add('juju-topology-relation', function(Y) {
           if (!source || !target) {
             return;
           }
-          var decoratedRelation = views.DecoratedRelation(
+          var decoratedRelation = relationUtils.DecoratedRelation(
               relation, source, target);
           // Copy the relation type to the box.
           decorated.push(decoratedRelation);
         }
       });
-      return utils.toRelationCollections(decorated);
+      return relationUtils.toRelationCollections(decorated);
     },
 
     updateLinks: function() {
@@ -297,7 +298,7 @@ YUI.add('juju-topology-relation', function(Y) {
           ), function(relation) {
         // Select only the pertinent relation groups.
         var rel_group = topo.vis.select(
-            '#' + utils.generateSafeDOMId(relation.id, parentId));
+            '#' + relationUtils.generateSafeDOMId(relation.id, parentId));
         var connectors = relation.source.getConnectorPair(relation.target);
         var s = connectors[0];
         var t = connectors[1];
@@ -332,7 +333,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var enter = g.enter()
         .insert('g', 'g.service')
         .attr('id', function(d) {
-          return utils.generateSafeDOMId(d.id, parentId);
+          return relationUtils.generateSafeDOMId(d.id, parentId);
         })
         .classed('rel-group', true);
       enter.append('svg:line', 'g.service')
@@ -680,7 +681,8 @@ YUI.add('juju-topology-relation', function(Y) {
       // At this time, relations may have been redrawn, so here we have to
       // retrieve the relation DOM element again.
       var relationElement = view.get('container')
-        .one('#' + utils.generateSafeDOMId(relation.relation_id, topo._yuid));
+        .one('#' + relationUtils.generateSafeDOMId(
+          relation.relation_id, topo._yuid));
       utils.addSVGClass(relationElement, 'to-remove pending-relation');
       env.remove_relation(relation.endpoints[0], relation.endpoints[1],
           Y.bind(this._removeRelationCallback, this, view,
@@ -1151,8 +1153,9 @@ YUI.add('juju-topology-relation', function(Y) {
           endpoint2 = endpoints[1][0];
       var idBlock = `${endpoint1}${endpoint2}`;
       var interfaceBlock = `${endpoints[0][1].name}${endpoints[1][1].name}`;
-      var endpointData = utils.parseEndpointStrings(db, [endpoint1, endpoint2]);
-      var match = utils.findEndpointMatch(endpointData);
+      var endpointData = relationUtils.parseEndpointStrings(
+        db, [endpoint1, endpoint2]);
+      var match = relationUtils.findEndpointMatch(endpointData);
       // Add the relation to the database.
       var relation = db.relations.add({
         relation_id: `pending-${idBlock}${interfaceBlock}`,
@@ -1179,7 +1182,7 @@ YUI.add('juju-topology-relation', function(Y) {
       // Remove our pending relation from the DB, error or no.
       db.relations.remove(
           db.relations.getById(relation_id));
-      vis.select('#' + utils.generateSafeDOMId(relation_id, topo._yuid))
+      vis.select('#' + relationUtils.generateSafeDOMId(relation_id, topo._yuid))
         .remove();
       if (ev.err) {
         db.notifications.add({
@@ -1391,6 +1394,7 @@ YUI.add('juju-topology-relation', function(Y) {
     'event',
     'juju-models',
     'juju-topology-utils',
-    'relation-menu'
+    'relation-menu',
+    'relation-utils'
   ]
 });
