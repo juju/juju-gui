@@ -22,7 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('juju environment view', function() {
     var view, views, models, Y, container, d3, db, conn,
-        juju, charm, ecs, env, testUtils, fakeStore;
+        juju, charm, ecs, env, relationUtils, testUtils, fakeStore;
 
     var environment_delta = {
       'result': [
@@ -215,12 +215,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'juju-views', 'juju-tests-utils', 'charmstore-api',
         'd3', 'node-event-simulate', 'juju-gui',
         'landscape', 'dump', 'juju-view-utils',
-        'juju-charm-models', 'environment-change-set'
+        'juju-charm-models', 'environment-change-set', 'relation-utils'
       ], function(Y) {
         testUtils = Y.namespace('juju-tests.utils');
         views = Y.namespace('juju.views');
         models = Y.namespace('juju.models');
         d3 = Y.namespace('d3');
+        relationUtils = window.juju.utils.RelationUtils;
         conn = new testUtils.SocketStub();
         juju = Y.namespace('juju');
         db = new models.Database();
@@ -452,7 +453,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // Verify that the node id has been munged as expected from the
           // relation id. This is particularly important for Juju Core.
           var node = container.one(
-              '#' + views.utils.generateSafeDOMId(
+              '#' + relationUtils.generateSafeDOMId(
                   'puppet:juju-info wordpress:juju-info', getParentId(view)));
           assert.isNotNull(node);
           assert.isDefined(node);
@@ -1128,7 +1129,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          }).render();
 
          var relation = container.one(
-              '#' + views.utils.generateSafeDOMId('mysql:db wordpress:db',
+              '#' + relationUtils.generateSafeDOMId('mysql:db wordpress:db',
          getParentId(view)) +
               ' .rel-indicator'),
              menu;
@@ -1150,7 +1151,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Single relation
       var relation = container.one(
-          '#' + views.utils.generateSafeDOMId('mysql:db wordpress:db',
+          '#' + relationUtils.generateSafeDOMId('mysql:db wordpress:db',
           getParentId(view)) +
           ' .rel-indicator'),
           menu;
@@ -1169,7 +1170,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Multiple relations
       relation = container.one(
           '#' +
-          views.utils.generateSafeDOMId('mysql:db mediawiki:db',
+          relationUtils.generateSafeDOMId('mysql:db mediawiki:db',
           getParentId(view)) +
           ' .rel-indicator');
       relation.simulate('click');
@@ -1267,7 +1268,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           '<div id="bws-sidebar"><div class="bws-content"></div></div>');
       // Single relation.
       var relation = container.one(
-          '#' + views.utils.generateSafeDOMId('mysql:db wordpress:db',
+          '#' + relationUtils.generateSafeDOMId('mysql:db wordpress:db',
           getParentId(view)) +
           ' .rel-indicator'),
           menu;
@@ -1323,7 +1324,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Multiple relations.
         relation = container.one(
             '#' +
-            views.utils.generateSafeDOMId('mysql:db mediawiki:db',
+            relationUtils.generateSafeDOMId('mysql:db mediawiki:db',
             getParentId(view)) +
             ' .rel-indicator');
         relation.simulate('click');
@@ -1352,7 +1353,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Single relation.
       var relation = container.one(
-          '#' + views.utils.generateSafeDOMId('mysql:db wordpress:db',
+          '#' + relationUtils.generateSafeDOMId('mysql:db wordpress:db',
           getParentId(view)) +
           ' .rel-indicator'),
           menu;
@@ -1375,7 +1376,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
          // Get a subordinate relation.
           var relation = container.one(
-              '#' + views.utils.generateSafeDOMId(
+              '#' + relationUtils.generateSafeDOMId(
                   'puppet:juju-info wordpress:juju-info',
          getParentId(view)) +
               ' .rel-indicator'),

@@ -29,7 +29,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
   var models = Y.namespace('juju.models');
   var ziputils = Y.namespace('juju.ziputils');
-  var viewUtils = Y.namespace('juju.views.utils');
+  var relationUtils = window.juju.utils.RelationUtils;
 
   var UNAUTHENTICATED_ERROR = {error: 'Please log in.'};
 
@@ -1220,7 +1220,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       // Parses the endpoint strings to extract all required data.
-      var endpointData = viewUtils.parseEndpointStrings(this.db,
+      var endpointData = relationUtils.parseEndpointStrings(this.db,
                                                         [endpointA, endpointB]);
 
       // This error should never be hit but it's here JIC
@@ -1229,7 +1229,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       // If there are matching interfaces this will contain an object of the
       // charm interface type and scope (if supplied).
-      var match = viewUtils.findEndpointMatch(endpointData);
+      var match = relationUtils.findEndpointMatch(endpointData);
 
       // If there is an error fetching a valid interface and scope
       if (match.error) { return match; }
@@ -1311,7 +1311,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       // Parses the endpoint strings to extract all required data.
-      var endpointData = viewUtils.parseEndpointStrings(
+      var endpointData = relationUtils.parseEndpointStrings(
           this.db, [endpointA, endpointB]);
 
       // This error should never be hit but it's here JIC
@@ -1884,8 +1884,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
     'js-yaml',
     'juju-models',
     'promise',
+    'relation-utils',
     'zip-utils',
-    'jujulib-utils',
-    'juju-view-utils'
+    'jujulib-utils'
   ]
 });

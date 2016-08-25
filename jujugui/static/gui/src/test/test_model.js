@@ -104,19 +104,19 @@ describe('test_model.js', function() {
   });
 
   describe('juju models', function() {
-    var models, Y, utils, viewUtils;
+    var models, Y, utils, relationUtils;
     var requirements = [
       'juju-models',
       'juju-charm-models',
       'juju-tests-utils',
-      'juju-view-utils'
+      'relation-utils'
     ];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
         utils = Y.namespace('juju-tests.utils');
-        viewUtils = Y.namespace('juju.views.utils');
+        relationUtils = window.juju.utils.RelationUtils;
         done();
       });
     });
@@ -213,8 +213,8 @@ describe('test_model.js', function() {
       var relations = [
         {far: {service: 'wordpress'}}
       ];
-      var stub = utils.makeStubMethod(viewUtils, 'getRelationDataForService',
-                                      relations);
+      var stub = utils.makeStubMethod(
+        relationUtils, 'getRelationDataForService', relations);
       this._cleanups.push(stub.reset);
       var related = db.findRelatedServices(service);
       related.each(function(s) {
@@ -236,8 +236,8 @@ describe('test_model.js', function() {
       var relations = [
         {far: {service: 'wordpress'}}
       ];
-      var stub = utils.makeStubMethod(viewUtils, 'getRelationDataForService',
-                                      relations);
+      var stub = utils.makeStubMethod(
+        relationUtils, 'getRelationDataForService', relations);
       this._cleanups.push(stub.reset);
       var unrelated = db.findUnrelatedServices(service);
       assert.equal(unrelated.size(), 1);
@@ -253,8 +253,8 @@ describe('test_model.js', function() {
         {id: 'haproxy', name: 'haproxy'}
       ]);
       var relations = [{}];
-      var stub = utils.makeStubMethod(viewUtils, 'getRelationDataForService',
-                                      relations);
+      var stub = utils.makeStubMethod(
+        relationUtils, 'getRelationDataForService', relations);
       this._cleanups.push(stub.reset);
       var unrelated = db.findUnrelatedServices(service);
       assert.equal(unrelated.size(), 2);
