@@ -23,6 +23,24 @@ YUI.add('relation-utils', function(Y) {
   var RelationUtils = {};
 
   /**
+    Create a hash of a string. From stackoverflow: http://goo.gl/PEOgF
+
+    @method generateHash
+    @param {String} value The string to hash.
+    @return {Integer} The hash of the string.
+   */
+  var generateHash = function(value) {
+    return value.split('').reduce(
+        function(hash, character) {
+          hash = ((hash << 5) - hash) + character.charCodeAt(0);
+          return hash & hash;
+        },
+        0
+    );
+  };
+  RelationUtils.generateHash = generateHash;
+
+  /**
     Create a stable, safe DOM id given an arbitrary string.
     See details and discussion in
     https://bugs.launchpad.net/juju-gui/+bug/1167295

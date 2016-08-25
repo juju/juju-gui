@@ -30,22 +30,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
     });
 
-    it('can generate a hash', function() {
-      // We aren't testing the algorithm here, just basic hash characteristics.
-      // It's a number.
-      assert.strictEqual(views.utils.generateHash(''), 0);
-      assert.isNumber(views.utils.generateHash('kumquat'));
-      assert.isNumber(views.utils.generateHash('qumquat'));
-      // It's stable.
-      assert.strictEqual(
-          views.utils.generateHash('kumquat'),
-          views.utils.generateHash('kumquat'));
-      // Different values hash differently.
-      assert.notEqual(
-          views.utils.generateHash('kumquat'),
-          views.utils.generateHash('qumquat'));
-    });
-
     it('generates the correct export file name', function() {
       var envName = 'foobar';
       var date = new Date('October 13, 2014 11:13:00');

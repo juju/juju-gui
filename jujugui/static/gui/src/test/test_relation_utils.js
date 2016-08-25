@@ -24,10 +24,7 @@ describe('RelationUtils', function() {
 
   before(function(done) {
     var requirements = [
-      'event-simulate',
       'juju-models',
-      'node',
-      'node-event-simulate',
       'relation-utils',
       'juju-tests-utils'
     ];
@@ -40,6 +37,22 @@ describe('RelationUtils', function() {
   });
 
   describe('generateSafeDOMId', function() {
+    it('can generate a hash', function() {
+      // We aren't testing the algorithm here, just basic hash characteristics.
+      // It's a number.
+      assert.strictEqual(relationUtils.generateHash(''), 0);
+      assert.isNumber(relationUtils.generateHash('kumquat'));
+      assert.isNumber(relationUtils.generateHash('qumquat'));
+      // It's stable.
+      assert.strictEqual(
+          relationUtils.generateHash('kumquat'),
+          relationUtils.generateHash('kumquat'));
+      // Different values hash differently.
+      assert.notEqual(
+          relationUtils.generateHash('kumquat'),
+          relationUtils.generateHash('qumquat'));
+    });
+
     it('can generate safe relation ids', function() {
       var relationId;
       relationId = 'foo:Bar relation-00000006!@#';
@@ -700,7 +713,7 @@ describe('RelationUtils', function() {
       var getEndpoints = testUtils.makeStubFunction(endpointData);
       var applicationFrom = vals.applicationFrom || {};
       var applicationTo = { get: function() { return vals.applicationToId; } };
-      var dataStub = testUtils.makeStubMethod(utils,
+      var dataStub = testUtils.makeStubMethod(relationUtils,
         'getRelationDataForService',
         JSON.parse(vals.getRelationDataForService));
       context._cleanups.push(dataStub.reset);

@@ -59,24 +59,6 @@ YUI.add('juju-view-utils', function(Y) {
     };
   };
 
-  /**
-    Create a hash of a string. From stackoverflow: http://goo.gl/PEOgF
-
-    @method generateHash
-    @param {String} value The string to hash.
-    @return {Integer} The hash of the string.
-   */
-  var generateHash = function(value) {
-    return value.split('').reduce(
-        function(hash, character) {
-          hash = ((hash << 5) - hash) + character.charCodeAt(0);
-          return hash & hash;
-        },
-        0
-    );
-  };
-  utils.generateHash = generateHash;
-
   var timestrings = {
     prefixAgo: null,
     prefixFromNow: null,
