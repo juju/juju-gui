@@ -504,12 +504,11 @@ YUI.add('relation-utils', function(Y) {
     @param {Function} callback A function to call after removal.
   */
   RelationUtils.destroyRelations = function(db, env, relations, callback) {
-    for (var i = 0; relations.length > i; i++) {
-      var relationId = relations[i];
+    relations.forEach(relationId => {
       var relation = db.relations.getById(relationId);
       var endpoints = relation.get('endpoints');
       env.remove_relation(endpoints[0], endpoints[1], callback);
-    }
+    });
   };
 
   /**

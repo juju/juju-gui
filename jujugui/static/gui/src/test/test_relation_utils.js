@@ -799,4 +799,24 @@ describe('RelationUtils', function() {
         [service1], relationUtils.getRelatableApplications(db, endpoints));
     });
   });
+
+  describe('destroyRelations', function() {
+    it('can destroy a list of relations', function() {
+      const db = {
+        relations: {
+          getById: sinon.stub().returns({
+            get: sinon.stub().returns(['endpoint1', 'endpoint2'])
+          })
+        }
+      };
+      const env = {remove_relation: sinon.stub()};
+      const callback = testUtils.makeStubFunction();
+      relationUtils.destroyRelations(db, env, ['relation1'], callback);
+      assert.equal(env.remove_relation.callCount, 1);
+      const args = env.remove_relation.args[0];
+      assert.equal(args[0], 'endpoint1');
+      assert.equal(args[1], 'endpoint2');
+      assert.equal(args[2], callback);
+    });
+  });
 });
