@@ -666,66 +666,6 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     /**
-      Calls remove relation on the env
-
-      @method removeRelation
-      @param {Object} relation The relation model instance.
-      @param {Object} view The topology RelationModule instance
-      @param {Object} confirmButton A reference to the confirmButton node
-        element in the popup alert.
-    */
-    removeRelation: function(relation, view, confirmButton) {
-      var topo = this.get('component');
-      var env = topo.get('env');
-      topo.fire('clearState');
-      // At this time, relations may have been redrawn, so here we have to
-      // retrieve the relation DOM element again.
-      var relationElement = view.get('container')
-        .one('#' + relationUtils.generateSafeDOMId(
-          relation.relation_id, topo._yuid));
-      utils.addSVGClass(relationElement, 'to-remove pending-relation');
-      env.remove_relation(relation.endpoints[0], relation.endpoints[1],
-          Y.bind(this._removeRelationCallback, this, view,
-          relationElement, relation.relation_id, confirmButton));
-    },
-
-    _removeRelationCallback: function(view,
-            relationElement, relationId, confirmButton, ev) {
-      var topo = this.get('component'),
-          db = topo.get('db');
-      if (ev.err) {
-        db.notifications.add({
-          title: 'Error deleting relation',
-          message: 'Relation ' + ev.endpoint_a + ' to ' + ev.endpoint_b,
-          level: 'error'
-        });
-        utils.removeSVGClass(this.relationElement,
-            'to-remove pending-relation');
-      } else {
-        var relation = db.relations.getById(relationId);
-        // Because we keep a copy of the relation models on each service we
-        // also need to remove the relation from those models.
-        var service;
-        relation.get('endpoints').forEach(function(endpoint) {
-          // Some of the tests pass fake data with invalid endpoints
-          // this check just makes sure it doesn't blow up.
-          // fixTests
-          if (!endpoint) {
-            console.error('invalid endpoints on relation');
-            return;
-          }
-          service = db.services.getById(endpoint[0]);
-          service.removeRelations(relation.get('relation_id'));
-        });
-        // Remove the relation from the DB.
-        db.relations.remove(relation);
-        // Redraw the graph and reattach events.
-        topo.update();
-      }
-      topo.fire('clearState');
-    },
-
-    /**
      * Clear any states such as building a relation or showing
      * relation menu.
      *
@@ -1313,11 +1253,14 @@ YUI.add('juju-topology-relation', function(Y) {
       var relationId = Y.one(this).get('parentNode').getData('relationid');
       var relation = db.relations.getById(relationId);
       relation = self.decorateRelations([relation])[0];
+      topo.fire('clearState');
       if (relation.isSubordinate) {
-        topo.fire('clearState');
         self.showSubRelDialog();
       } else {
-        self.removeRelation(relation.relations[0], self);
+        relationUtils.destroyRelations(
+          topo.get('db'), topo.get('env'), [relationId]);
+        // The state needs to be cleared after the relation is destroyed as well
+        // to hide the destroy relation popup.
         topo.fire('clearState');
       }
     },

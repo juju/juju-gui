@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('topology relation module', function() {
-  var Y, utils, views, view, container, topo, models, relationUtils;
+  var Y, utils, views, view, container, topo, models;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
@@ -29,7 +29,6 @@ describe('topology relation module', function() {
           views = Y.namespace('juju.views');
           utils = Y.namespace('juju-tests.utils');
           models = Y.namespace('juju.models');
-          relationUtils = window.juju.utils.RelationUtils;
           done();
         });
   });
@@ -157,41 +156,6 @@ describe('topology relation module', function() {
     view.rerender();
     assert.equal(stubRemove.calledOnce(), true, 'Remove was not called');
     assert.equal(stubUpdate.calledOnce(), true, 'Update was not called');
-  });
-
-  it('retrieves the current relation DOM element when removing', function() {
-    var requestedSelector;
-    var container = {
-      one: function(selector) {
-        requestedSelector = selector;
-      }
-    };
-    var env = {
-      remove_relation: function() {}
-    };
-    var topo = {
-      get: function() {
-        return env;
-      },
-      fire: function() {}
-    };
-    var fauxView = {
-      get: function(name) {
-        if (name === 'component') {
-          return topo;
-        } else if (name === 'container') {
-          return container;
-        }
-      }
-    };
-    var relationId = 'the ID of this relation';
-    var relation = {
-      relation_id: relationId,
-      endpoints: [null, null]
-    };
-    view.removeRelation.call(fauxView, relation, fauxView, undefined);
-    assert.equal(
-        requestedSelector, '#' + relationUtils.generateSafeDOMId(relationId));
   });
 
   it('fires "changeState" topo event for clicking a relation endpoint',
