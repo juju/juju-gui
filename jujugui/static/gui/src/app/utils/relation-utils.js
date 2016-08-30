@@ -504,12 +504,11 @@ YUI.add('relation-utils', function(Y) {
     @param {Function} callback A function to call after removal.
   */
   RelationUtils.destroyRelations = function(db, env, relations, callback) {
-    for (var i = 0; relations.length > i; i++) {
-      var relationId = relations[i];
+    relations.forEach(relationId => {
       var relation = db.relations.getById(relationId);
       var endpoints = relation.get('endpoints');
       env.remove_relation(endpoints[0], endpoints[1], callback);
-    }
+    });
   };
 
   /**
@@ -518,29 +517,21 @@ YUI.add('relation-utils', function(Y) {
     @method createRelation
     @param {Object} db Reference to the db instance.
     @param {Object} env The current environment.
-    @param {Array} relations A list of relation endpoints.
+    @param {Array} endpoints A list of relation endpoints.
     @param {Function} callback A function to call after removal.
   */
-  RelationUtils.createRelation = function(db, env, relations, callback) {
-    var endpoints = [[
-      relations[0].service, {
-        name: relations[0].name,
-        role: 'client'
-      }
-    ], [
-      relations[1].service, {
-        name: relations[1].name,
-        role: 'server'
-      }
-    ]];
-    var relationId = 'pending-' + endpoints[0][0] + ':' + endpoints[0][1].name +
-                      endpoints[1][0] + ':' + endpoints[1][1].name;
+  RelationUtils.createRelation = function(db, env, endpoints, callback) {
+    var endpointData = RelationUtils.parseEndpointStrings(
+      db, [endpoints[0][0], endpoints[1][0]]);
+    var match = RelationUtils.findEndpointMatch(endpointData);
+    var relationId = `pending-${endpoints[0][0]}:${endpoints[0][1].name}` +
+      `${endpoints[1][0]}:${endpoints[1][1].name}`;
     db.relations.add({
       relation_id: relationId,
-      'interface': endpoints[0][1].name,
+      'interface': match.interface,
       endpoints: endpoints,
       pending: true,
-      scope: 'global', // XXX check the charms to see if this is a subordinate
+      scope: match.scope || 'global',
       display_name: 'pending'
     });
     env.add_relation(
@@ -590,7 +581,7 @@ YUI.add('relation-utils', function(Y) {
   };
 
   /**
-    Returns a list of relatible applications
+    Returns a list of relatable applications
 
     @method getRelatableApplications
     @param {Object} db Reference to the db instance.

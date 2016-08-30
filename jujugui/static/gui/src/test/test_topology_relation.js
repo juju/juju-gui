@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('topology relation module', function() {
-  var Y, utils, views, view, container, topo, models, relationUtils;
+  var Y, utils, views, view, container, topo, models;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
@@ -29,7 +29,6 @@ describe('topology relation module', function() {
           views = Y.namespace('juju.views');
           utils = Y.namespace('juju-tests.utils');
           models = Y.namespace('juju.models');
-          relationUtils = window.juju.utils.RelationUtils;
           done();
         });
   });
@@ -101,39 +100,6 @@ describe('topology relation module', function() {
         'canceled or completed');
   });
 
-  it('gracefully handles errors on creation', function() {
-    var stubNotification = utils.makeStubFunction();
-    var topo = {
-      get: function() {
-        return {
-          get: function() {
-            return {
-              relations: {
-                remove: function() {},
-                getById: function() {}
-              },
-              notifications: {
-                add: stubNotification
-              }
-            };
-          },
-          vis: {
-            select: function() {
-              return {
-                remove: function() {}
-              };
-            }
-          },
-          update: function() {},
-          bindAllD3Events: function() {}
-        };
-      }
-    };
-    view._addRelationCallback(topo, 'foo', {err: 'Oh no!'});
-    assert.equal(stubNotification.calledOnce(), true,
-        'Notification of error not created');
-  });
-
   it('has a list of relations', function() {
     assert.deepEqual(view.relations, []);
   });
@@ -157,41 +123,6 @@ describe('topology relation module', function() {
     view.rerender();
     assert.equal(stubRemove.calledOnce(), true, 'Remove was not called');
     assert.equal(stubUpdate.calledOnce(), true, 'Update was not called');
-  });
-
-  it('retrieves the current relation DOM element when removing', function() {
-    var requestedSelector;
-    var container = {
-      one: function(selector) {
-        requestedSelector = selector;
-      }
-    };
-    var env = {
-      remove_relation: function() {}
-    };
-    var topo = {
-      get: function() {
-        return env;
-      },
-      fire: function() {}
-    };
-    var fauxView = {
-      get: function(name) {
-        if (name === 'component') {
-          return topo;
-        } else if (name === 'container') {
-          return container;
-        }
-      }
-    };
-    var relationId = 'the ID of this relation';
-    var relation = {
-      relation_id: relationId,
-      endpoints: [null, null]
-    };
-    view.removeRelation.call(fauxView, relation, fauxView, undefined);
-    assert.equal(
-        requestedSelector, '#' + relationUtils.generateSafeDOMId(relationId));
   });
 
   it('fires "changeState" topo event for clicking a relation endpoint',
@@ -269,102 +200,6 @@ describe('topology relation module', function() {
       });
       assert.deepEqual(show.lastArguments()[0], { serviceNames: ['foo3'] });
     });
-  });
-
-  describe('_addPendingRelation', function() {
-    var db, endpoints, mockAddRelation1, mockAddRelation2, models;
-
-    before(function() {
-      models = Y.namespace('juju.models');
-    });
-
-    beforeEach(function() {
-      // Create a mock topology object.
-      mockAddRelation1 = utils.makeStubFunction();
-      mockAddRelation2 = utils.makeStubFunction();
-      var service1 = {relations: {add: mockAddRelation1}};
-      var service2 = {relations: {add: mockAddRelation2}};
-      db = new models.Database();
-      db.services.add({
-        id: 'service1',
-        charm: 'cs:precise/wordpress-0'
-      });
-      db.services.add({
-        id: 'service2',
-        charm: 'cs:precise/mysql-0'
-      });
-      db.charms.add({
-        id: 'cs:precise/wordpress-0',
-        provides: {
-          website: {
-            interface: 'http' }
-        },
-        requires: {
-          cache: {
-            interface: 'memcache' },
-          db: {
-            interface: 'mysql' },
-          nfs: {
-            interface: 'mount' }
-        }
-      });
-      db.charms.add({
-        id: 'cs:precise/mysql-0',
-        requires: {
-          ceph: {
-            interface: 'ceph-client' }
-        },
-        provides: {
-          db: {
-            interface: 'mysql' }
-        }
-      });
-      var topo = {
-        get: utils.makeStubFunction(db),
-        service_boxes: {service1: service1, service2: service2}
-      };
-      view.set('component', topo);
-      // Create the endpoints.
-      endpoints = [
-        ['service1', { name: 'db', role: 'server' }],
-        ['service2', { name: 'db', role: 'client' }]
-      ];
-    });
-
-    afterEach(function() {
-      db.destroy();
-    });
-
-    // Ensure the given relation includes the expected fields.
-    var assertRelation = function(relation) {
-      assert.strictEqual(
-          relation.get('relation_id'), 'pending-service1service2dbdb');
-      assert.strictEqual(relation.get('display_name'), 'pending');
-      assert.deepEqual(relation.get('endpoints'), endpoints);
-      assert.strictEqual(relation.get('pending'), true);
-    };
-
-    it('adds the pending relation to the database', function() {
-      view._addPendingRelation(endpoints);
-      assert.strictEqual(db.relations.size(), 1);
-      assertRelation(db.relations.item(0));
-    });
-
-    it('adds the pending relation to the services', function() {
-      view._addPendingRelation(endpoints);
-      // The relation has been added to the first service.
-      assert.strictEqual(mockAddRelation1.callCount(), 1);
-      assertRelation(mockAddRelation1.lastArguments()[0]);
-      // The relation has been added to the second service.
-      assert.strictEqual(mockAddRelation2.callCount(), 1);
-      assertRelation(mockAddRelation2.lastArguments()[0]);
-    });
-
-    it('returns the newly created relation object', function() {
-      var relation = view._addPendingRelation(endpoints);
-      assertRelation(relation);
-    });
-
   });
 
   describe('ambiguousAddRelationCheck', function() {

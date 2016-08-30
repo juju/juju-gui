@@ -1105,19 +1105,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('must be able to remove a relation between services',
        function(done) {
          var oldRemove = env.remove_relation;
+         let remove_called = false;
          env.remove_relation = function() {
-           container.all('.to-remove')
-                .size()
-                .should.equal(1);
-           view.topo.modules.RelationModule.
-           _removeRelationCallback(view, relation, 'mysql:db wordpress:db',
-               null, {});
-           assert.equal(db.relations.getById('mysql:db wordpress:db'), null,
-               'Relation not removed from db');
-           assert.deepEqual(db.services.getById('wordpress').get('relations')
-               .getById('mysql:db wordpress:db'), null,
-               'Relation not removed from services');
-           view.destroy();
+           remove_called = true;
            env.remove_relation = oldRemove;
            done();
          };
@@ -1137,6 +1127,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          relation.simulate('click');
          menu = container.one('#relation-menu');
          menu.one('.relation-remove').simulate('click');
+         assert.isTrue(remove_called);
        });
 
     it('builds a menu of relations in a collection', function() {
@@ -1291,78 +1282,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       endpoint.simulate('click');
-    });
-
-    it('allows deletion of relations within collections', function(done) {
-      db.onDelta({data: additionalRelations});
-      var oldRemove = env.remove_relation;
-      var removeCallCount = 0;
-      var step1Count = 0;
-      var step2Count = 0;
-      env.remove_relation = function() {
-        removeCallCount += 1;
-        if (removeCallCount === 1) {
-          step1();
-        }
-        if (removeCallCount === 2) {
-          step2();
-          env.remove_relation = oldRemove;
-          if (step2Count < 2) {
-            done();
-          }
-        }
-      };
-
-      function step1() {
-        step1Count += 1;
-        if (step1Count !== 1) {
-          return;
-        }
-        container.all('.to-remove')
-             .size()
-             .should.equal(1);
-        // Multiple relations.
-        relation = container.one(
-            '#' +
-            relationUtils.generateSafeDOMId('mysql:db mediawiki:db',
-            getParentId(view)) +
-            ' .rel-indicator');
-        relation.simulate('click');
-        menu = Y.one('#relation-menu .menu');
-        // Click the first relation.
-        menu.one('.relation-remove').simulate('click');
-      }
-
-      function step2() {
-        // Note that there should now be two .to-remove relations due to the
-        // previous case having added one of those classes. We're simply looking
-        // for the number to have increased.
-        step2Count += 1;
-        if (step2Count !== 1) {
-          return;
-        }
-        view.destroy();
-      }
-
-      view = new views.environment({
-        container: container,
-        db: db,
-        env: env,
-        charmstore: fakeStore
-      }).render();
-
-      // Single relation.
-      var relation = container.one(
-          '#' + relationUtils.generateSafeDOMId('mysql:db wordpress:db',
-          getParentId(view)) +
-          ' .rel-indicator'),
-          menu;
-
-      relation.simulate('click');
-      menu = Y.one('#relation-menu .menu');
-
-      // Click the first relation.
-      menu.one('.relation-remove').simulate('click');
     });
 
     it('must not allow removing a subordinate relation between services',

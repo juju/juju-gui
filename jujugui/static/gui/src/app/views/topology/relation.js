@@ -666,66 +666,6 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     /**
-      Calls remove relation on the env
-
-      @method removeRelation
-      @param {Object} relation The relation model instance.
-      @param {Object} view The topology RelationModule instance
-      @param {Object} confirmButton A reference to the confirmButton node
-        element in the popup alert.
-    */
-    removeRelation: function(relation, view, confirmButton) {
-      var topo = this.get('component');
-      var env = topo.get('env');
-      topo.fire('clearState');
-      // At this time, relations may have been redrawn, so here we have to
-      // retrieve the relation DOM element again.
-      var relationElement = view.get('container')
-        .one('#' + relationUtils.generateSafeDOMId(
-          relation.relation_id, topo._yuid));
-      utils.addSVGClass(relationElement, 'to-remove pending-relation');
-      env.remove_relation(relation.endpoints[0], relation.endpoints[1],
-          Y.bind(this._removeRelationCallback, this, view,
-          relationElement, relation.relation_id, confirmButton));
-    },
-
-    _removeRelationCallback: function(view,
-            relationElement, relationId, confirmButton, ev) {
-      var topo = this.get('component'),
-          db = topo.get('db');
-      if (ev.err) {
-        db.notifications.add({
-          title: 'Error deleting relation',
-          message: 'Relation ' + ev.endpoint_a + ' to ' + ev.endpoint_b,
-          level: 'error'
-        });
-        utils.removeSVGClass(this.relationElement,
-            'to-remove pending-relation');
-      } else {
-        var relation = db.relations.getById(relationId);
-        // Because we keep a copy of the relation models on each service we
-        // also need to remove the relation from those models.
-        var service;
-        relation.get('endpoints').forEach(function(endpoint) {
-          // Some of the tests pass fake data with invalid endpoints
-          // this check just makes sure it doesn't blow up.
-          // fixTests
-          if (!endpoint) {
-            console.error('invalid endpoints on relation');
-            return;
-          }
-          service = db.services.getById(endpoint[0]);
-          service.removeRelations(relation.get('relation_id'));
-        });
-        // Remove the relation from the DB.
-        db.relations.remove(relation);
-        // Redraw the graph and reattach events.
-        topo.update();
-      }
-      topo.fire('clearState');
-    },
-
-    /**
      * Clear any states such as building a relation or showing
      * relation menu.
      *
@@ -1115,99 +1055,11 @@ YUI.add('juju-topology-relation', function(Y) {
       module.clearRelationSettings();
       // Get the vis, and links, build the new relation.
       var topo = module.get('component');
-      var env = topo.get('env');
       // Ignore peer relations
       if (endpoints[0][0] === endpoints[1][0]) {
         return;
       }
-      // Create a pending relation in the database between the two services.
-      var relation = this._addPendingRelation(endpoints);
-      // Firing the update event on the db will properly redraw the
-      // graph and reattach events.
-      topo.update();
-      topo.bindAllD3Events();
-      // Fire event to add relation in juju.
-      // This needs to specify interface in the future.
-      env.add_relation(endpoints[0], endpoints[1],
-          Y.bind(this._addRelationCallback, this,
-                 module, relation.get('relation_id')),
-          {modelId: relation.get('id')}
-      );
-    },
-
-    /**
-      Add a pending relation to the db.
-      The relation is added to db.relations and to the relations model list
-      included in the services between which the relation is established.
-
-      @method _addPendingRelation
-      @param {Array} endpoints The relation endpoints, each one being an array
-        like the following: [service_id, {name: 'db', role: 'server'}].
-      @return {Object} The newly created relation model instance.
-    */
-    _addPendingRelation: function(endpoints) {
-      var topo = this.get('component');
-      var db = topo.get('db');
-      // Set up the relation data.
-      var endpoint1 = endpoints[0][0],
-          endpoint2 = endpoints[1][0];
-      var idBlock = `${endpoint1}${endpoint2}`;
-      var interfaceBlock = `${endpoints[0][1].name}${endpoints[1][1].name}`;
-      var endpointData = relationUtils.parseEndpointStrings(
-        db, [endpoint1, endpoint2]);
-      var match = relationUtils.findEndpointMatch(endpointData);
-      // Add the relation to the database.
-      var relation = db.relations.add({
-        relation_id: `pending-${idBlock}${interfaceBlock}`,
-        'interface': match['interface'],
-        endpoints: endpoints,
-        pending: true,
-        scope: match.scope || 'global',
-        display_name: 'pending'
-      });
-      // Also add the relation to the relations model lists included in the two
-      // services. This way the relation line follows the service blocks when
-      // they are moved.
-      endpoints.forEach(function(endpoint) {
-        var serviceBox = topo.service_boxes[endpoint[0]];
-        serviceBox.relations.add(relation);
-      });
-      return relation;
-    },
-
-    _addRelationCallback: function(module, relation_id, ev) {
-      var topo = module.get('component');
-      var db = topo.get('db');
-      var vis = topo.vis;
-      // Remove our pending relation from the DB, error or no.
-      db.relations.remove(
-          db.relations.getById(relation_id));
-      vis.select('#' + relationUtils.generateSafeDOMId(relation_id, topo._yuid))
-        .remove();
-      if (ev.err) {
-        db.notifications.add({
-          title: 'Error adding relation',
-          message: 'Relation ' + ev.endpoint_a +
-              ' to ' + ev.endpoint_b + ': ' + ev.err,
-          level: 'error'
-        });
-      } else {
-        // Create a relation in the database between the two services.
-        var result = ev.result;
-        var endpoints = Y.Array.map(result.endpoints, function(item) {
-          var id = Y.Object.keys(item)[0];
-          return [id, item[id]];
-        });
-        db.relations.create({
-          relation_id: result.id,
-          type: result['interface'],
-          endpoints: endpoints,
-          pending: false,
-          scope: result.scope
-        });
-      }
-      topo.update();
-      topo.bindAllD3Events();
+      relationUtils.createRelation(topo.get('db'), topo.get('env'), endpoints);
     },
 
     /*
@@ -1313,11 +1165,14 @@ YUI.add('juju-topology-relation', function(Y) {
       var relationId = Y.one(this).get('parentNode').getData('relationid');
       var relation = db.relations.getById(relationId);
       relation = self.decorateRelations([relation])[0];
+      topo.fire('clearState');
       if (relation.isSubordinate) {
-        topo.fire('clearState');
         self.showSubRelDialog();
       } else {
-        self.removeRelation(relation.relations[0], self);
+        relationUtils.destroyRelations(
+          topo.get('db'), topo.get('env'), [relationId]);
+        // The state needs to be cleared after the relation is destroyed as well
+        // to hide the destroy relation popup.
         topo.fire('clearState');
       }
     },
