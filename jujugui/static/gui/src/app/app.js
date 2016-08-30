@@ -886,7 +886,7 @@ YUI.add('juju-gui', function(Y) {
         // When connecting to a model using JIMM and a redirection, the socket
         // template base differs from the default so we must provide
         // it here when creating the socket url.
-        if (this.get('gisf')) {
+        if (this.get('jimmURL')) {
           socketTemplate =
             `wss://${server[0].value}:${server[0].port}${socketTemplate}`;
         }
