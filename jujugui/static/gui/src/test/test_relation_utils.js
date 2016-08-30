@@ -639,12 +639,42 @@ describe('RelationUtils', function() {
 
     it('properly creates a relation', function() {
       var relationId = 'pending-19984570$:db23212464$:db';
+      var charmGet = sinon.stub();
+      charmGet.withArgs('requires').onFirstCall().returns({
+        db: {
+          interface: 'db',
+          scope: 'global'
+        }
+      });
+      charmGet.withArgs('requires').onSecondCall().returns({
+        misc: {
+          interface: 'misc',
+          scope: 'global'
+        }
+      });
+      charmGet.withArgs('provides').returns({
+        db: {
+          interface: 'db',
+          scope: 'global'
+        }
+      });
       var db = {
+        charms: {
+          getById: sinon.stub().returns({
+            get: charmGet
+          }),
+          size: sinon.stub()
+        },
         relations: {
           add: testUtils.makeStubFunction(),
           remove: testUtils.makeStubFunction(),
           create: testUtils.makeStubFunction(),
           getById: testUtils.makeStubFunction(relationId)
+        },
+        services: {
+          getById: sinon.stub().returns({
+            get: sinon.stub()
+          })
         }
       };
       var env = {
@@ -672,7 +702,7 @@ describe('RelationUtils', function() {
       ];
       assert.deepEqual(db.relations.add.lastArguments()[0], {
         relation_id: relationId,
-        'interface': 'db',
+        interface: 'db',
         endpoints: endpoints,
         pending: true,
         scope: 'global',

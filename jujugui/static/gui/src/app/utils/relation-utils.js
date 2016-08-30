@@ -532,14 +532,17 @@ YUI.add('relation-utils', function(Y) {
         role: 'server'
       }
     ]];
-    var relationId = 'pending-' + endpoints[0][0] + ':' + endpoints[0][1].name +
-                      endpoints[1][0] + ':' + endpoints[1][1].name;
+    var endpointData = RelationUtils.parseEndpointStrings(
+      db, [relations[0].service, relations[1].service]);
+    var match = RelationUtils.findEndpointMatch(endpointData);
+    var relationId = `pending-${endpoints[0][0]}:${endpoints[0][1].name}` +
+      `${endpoints[1][0]}:${endpoints[1][1].name}`;
     db.relations.add({
       relation_id: relationId,
-      'interface': endpoints[0][1].name,
+      interface: match.interface,
       endpoints: endpoints,
       pending: true,
-      scope: 'global', // XXX check the charms to see if this is a subordinate
+      scope: match.scope || 'global',
       display_name: 'pending'
     });
     env.add_relation(
@@ -589,7 +592,7 @@ YUI.add('relation-utils', function(Y) {
   };
 
   /**
-    Returns a list of relatible applications
+    Returns a list of relatable applications
 
     @method getRelatableApplications
     @param {Object} db Reference to the db instance.
