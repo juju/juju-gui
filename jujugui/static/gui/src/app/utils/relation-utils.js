@@ -517,23 +517,12 @@ YUI.add('relation-utils', function(Y) {
     @method createRelation
     @param {Object} db Reference to the db instance.
     @param {Object} env The current environment.
-    @param {Array} relations A list of relation endpoints.
+    @param {Array} endpoints A list of relation endpoints.
     @param {Function} callback A function to call after removal.
   */
-  RelationUtils.createRelation = function(db, env, relations, callback) {
-    var endpoints = [[
-      relations[0].service, {
-        name: relations[0].name,
-        role: 'client'
-      }
-    ], [
-      relations[1].service, {
-        name: relations[1].name,
-        role: 'server'
-      }
-    ]];
+  RelationUtils.createRelation = function(db, env, endpoints, callback) {
     var endpointData = RelationUtils.parseEndpointStrings(
-      db, [relations[0].service, relations[1].service]);
+      db, [endpoints[0][0], endpoints[1][0]]);
     var match = RelationUtils.findEndpointMatch(endpointData);
     var relationId = `pending-${endpoints[0][0]}:${endpoints[0][1].name}` +
       `${endpoints[1][0]}:${endpoints[1][1].name}`;

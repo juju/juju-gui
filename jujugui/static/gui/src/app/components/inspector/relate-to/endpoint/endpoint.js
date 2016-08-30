@@ -92,7 +92,18 @@ YUI.add('inspector-relate-to-endpoint', function() {
         var isInstance = ref.split('-')[0] === 'InspectorRelateToEndpoint';
         if (isInstance && refs[ref].state.checked) {
           var relationName = ref.slice(ref.indexOf('-') + 1);
-          props.createRelation(props.endpoints[relationName]);
+          var relations = props.endpoints[relationName];
+          props.createRelation([[
+            relations[0].service, {
+              name: relations[0].name,
+              role: 'client'
+            }
+          ], [
+            relations[1].service, {
+              name: relations[1].name,
+              role: 'server'
+            }
+          ]]);
         }
       });
       props.changeState(props.backState);

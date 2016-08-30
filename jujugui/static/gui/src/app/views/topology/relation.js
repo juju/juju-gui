@@ -1055,99 +1055,11 @@ YUI.add('juju-topology-relation', function(Y) {
       module.clearRelationSettings();
       // Get the vis, and links, build the new relation.
       var topo = module.get('component');
-      var env = topo.get('env');
       // Ignore peer relations
       if (endpoints[0][0] === endpoints[1][0]) {
         return;
       }
-      // Create a pending relation in the database between the two services.
-      var relation = this._addPendingRelation(endpoints);
-      // Firing the update event on the db will properly redraw the
-      // graph and reattach events.
-      topo.update();
-      topo.bindAllD3Events();
-      // Fire event to add relation in juju.
-      // This needs to specify interface in the future.
-      env.add_relation(endpoints[0], endpoints[1],
-          Y.bind(this._addRelationCallback, this,
-                 module, relation.get('relation_id')),
-          {modelId: relation.get('id')}
-      );
-    },
-
-    /**
-      Add a pending relation to the db.
-      The relation is added to db.relations and to the relations model list
-      included in the services between which the relation is established.
-
-      @method _addPendingRelation
-      @param {Array} endpoints The relation endpoints, each one being an array
-        like the following: [service_id, {name: 'db', role: 'server'}].
-      @return {Object} The newly created relation model instance.
-    */
-    _addPendingRelation: function(endpoints) {
-      var topo = this.get('component');
-      var db = topo.get('db');
-      // Set up the relation data.
-      var endpoint1 = endpoints[0][0],
-          endpoint2 = endpoints[1][0];
-      var idBlock = `${endpoint1}${endpoint2}`;
-      var interfaceBlock = `${endpoints[0][1].name}${endpoints[1][1].name}`;
-      var endpointData = relationUtils.parseEndpointStrings(
-        db, [endpoint1, endpoint2]);
-      var match = relationUtils.findEndpointMatch(endpointData);
-      // Add the relation to the database.
-      var relation = db.relations.add({
-        relation_id: `pending-${idBlock}${interfaceBlock}`,
-        'interface': match['interface'],
-        endpoints: endpoints,
-        pending: true,
-        scope: match.scope || 'global',
-        display_name: 'pending'
-      });
-      // Also add the relation to the relations model lists included in the two
-      // services. This way the relation line follows the service blocks when
-      // they are moved.
-      endpoints.forEach(function(endpoint) {
-        var serviceBox = topo.service_boxes[endpoint[0]];
-        serviceBox.relations.add(relation);
-      });
-      return relation;
-    },
-
-    _addRelationCallback: function(module, relation_id, ev) {
-      var topo = module.get('component');
-      var db = topo.get('db');
-      var vis = topo.vis;
-      // Remove our pending relation from the DB, error or no.
-      db.relations.remove(
-          db.relations.getById(relation_id));
-      vis.select('#' + relationUtils.generateSafeDOMId(relation_id, topo._yuid))
-        .remove();
-      if (ev.err) {
-        db.notifications.add({
-          title: 'Error adding relation',
-          message: 'Relation ' + ev.endpoint_a +
-              ' to ' + ev.endpoint_b + ': ' + ev.err,
-          level: 'error'
-        });
-      } else {
-        // Create a relation in the database between the two services.
-        var result = ev.result;
-        var endpoints = Y.Array.map(result.endpoints, function(item) {
-          var id = Y.Object.keys(item)[0];
-          return [id, item[id]];
-        });
-        db.relations.create({
-          relation_id: result.id,
-          type: result['interface'],
-          endpoints: endpoints,
-          pending: false,
-          scope: result.scope
-        });
-      }
-      topo.update();
-      topo.bindAllD3Events();
+      relationUtils.createRelation(topo.get('db'), topo.get('env'), endpoints);
     },
 
     /*

@@ -120,7 +120,17 @@ describe('InspectorRelateToEndpoint', () => {
     output.props.children[1].props.buttons[0].action();
     // Validate create relation.
     assert.equal(createRelation.callCount, 1);
-    assert.deepEqual(createRelation.args[0][0], endpoints[0]);
+    assert.deepEqual(createRelation.args[0][0], [[
+      '55173389$', {
+        name: 'db',
+        role: 'client'
+      }
+    ], [
+      '59672078$', {
+        name: 'db',
+        role: 'server'
+      }
+    ]]);
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], backState);
   });

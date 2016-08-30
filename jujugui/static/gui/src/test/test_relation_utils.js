@@ -689,8 +689,19 @@ describe('RelationUtils', function() {
         name: 'db',
         type: 'mysql'
       }];
+      var endpoints = [[
+        relations[0].service, {
+          name: relations[0].name,
+          role: 'client'
+        }
+      ], [
+        relations[1].service, {
+          name: relations[1].name,
+          role: 'server'
+        }
+      ]];
       relationUtils.createRelation(
-        db, env, relations, testUtils.makeStubFunction());
+        db, env, endpoints, testUtils.makeStubFunction());
       assert.equal(db.relations.add.callCount(), 1);
       var endpoints = [[
         '19984570$', {
