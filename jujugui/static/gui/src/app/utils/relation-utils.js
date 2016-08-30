@@ -204,9 +204,9 @@ YUI.add('relation-utils', function(Y) {
       // Identify the candidates.
       var providingEndpoint = endpoints[providedIndex];
       // The merges here result in a shallow copy.
-      var provides = Y.merge(providingEndpoint.charm.get('provides') || {}),
+      var provides = Object.assign({}, providingEndpoint.charm.get('provides')),
           requiringEndpoint = endpoints[!providedIndex + 0],
-          requires = Y.merge(requiringEndpoint.charm.get('requires') || {});
+          requires = Object.assign({}, requiringEndpoint.charm.get('requires'));
       if (!provides['juju-info']) {
         provides['juju-info'] = {'interface': 'juju-info',
                                   scope: 'container'};
@@ -265,8 +265,8 @@ YUI.add('relation-utils', function(Y) {
     } else {
       result = matches[0];
       // Specify the type for implicit relations.
-      result.provides = Y.merge(result.provides);
-      result.requires = Y.merge(result.requires);
+      result.provides = Object.assign({}, result.provides);
+      result.requires = Object.assign({}, result.requires);
       result.provides.type = result.provideType;
       result.requires.type = result.requireType;
     }
@@ -371,7 +371,7 @@ YUI.add('relation-utils', function(Y) {
     decorated.hasRelationError = function() {
       return this.sourceHasError() || this.targetHasError();
     };
-    Y.mix(decorated, relation.getAttrs());
+    Object.assign(decorated, relation.getAttrs());
     decorated.isSubordinate = RelationUtils.isSubordinateRelation(decorated);
     return decorated;
   };
