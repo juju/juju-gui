@@ -528,7 +528,7 @@ YUI.add('relation-utils', function(Y) {
       `${endpoints[1][0]}:${endpoints[1][1].name}`;
     db.relations.add({
       relation_id: relationId,
-      interface: match.interface,
+      'interface': match.interface,
       endpoints: endpoints,
       pending: true,
       scope: match.scope || 'global',
