@@ -658,10 +658,10 @@ YUI.add('juju-gui', function(Y) {
             this.controllerAPI.connect();
           }
         }
-        // If we're in gisf mode then we need to rely on the controllerAPI
+        // If we have a jimmURL then we need to rely on the controllerAPI
         // connection and subsequent switchModel call once we have all of the
         // necessary information.
-        if (this.get('gisf')) {
+        if (this.get('jimmURL')) {
           this.controllerAPI.connect();
         }
         this.dispatch();
@@ -761,9 +761,11 @@ YUI.add('juju-gui', function(Y) {
             return;
           }
           const selectedModel = this._pickModel(modelList);
+          const jimmURL = this.get('jimmURL');
           let socketTemplate = this.get('socketTemplate');
-          if (this.get('gisf')) {
-            socketTemplate = this.get('jimmURL') + socketTemplate;
+
+          if (jimmURL) {
+            socketTemplate = `${jimmURL}${socketTemplate}`;
           }
           this.switchEnv(
             this.createSocketURL(socketTemplate, selectedModel.uuid));
@@ -772,7 +774,8 @@ YUI.add('juju-gui', function(Y) {
 
       controllerAPI.after('connectedChange', e => {
         const credentials = this.controllerAPI.getCredentials();
-        if (!credentials.areAvailable && !this.get('gisf')) {
+        const jimmURL = this.get('jimmURL');
+        if (!credentials.areAvailable && !jimmURL) {
           // If we don't have credentials then do nothing as the env login
           // check will have kicked the user to the login prompt already and
           // we can wait until they have provided the credentials there.
@@ -781,7 +784,7 @@ YUI.add('juju-gui', function(Y) {
         // If we're in a JIMM controlled environment or if we have macaroon
         // credentials then use the macaroon login. If not then uses the
         // standard u/p method.
-        if (this.get('jimmURL') || credentials.macaroons) {
+        if (jimmURL || credentials.macaroons) {
           this.loginToAPIs(null, true, [this.controllerAPI]);
         } else {
           this.loginToAPIs(null, false, [this.controllerAPI]);
@@ -791,8 +794,7 @@ YUI.add('juju-gui', function(Y) {
       // model uuid.
       controllerAPI.set(
         'socket_url',
-        this.get('jimmURL') ||
-          this.createSocketURL(this.get('controllerSocketTemplate')));
+        jimmURL || this.createSocketURL(this.get('controllerSocketTemplate')));
       return controllerAPI;
     },
 
