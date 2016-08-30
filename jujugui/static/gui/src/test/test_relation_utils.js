@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('RelationUtils', function() {
-  var models, relationUtils, testUtils, Y;
+  var models, relationUtils, testUtils;
 
   before(function(done) {
     var requirements = [
@@ -28,7 +28,7 @@ describe('RelationUtils', function() {
       'relation-utils',
       'juju-tests-utils'
     ];
-    Y = YUI(GlobalConfig).use(requirements, function(Y) {
+    YUI(GlobalConfig).use(requirements, function(Y) {
       models = Y.namespace('juju.models');
       relationUtils = window.juju.utils.RelationUtils;
       testUtils = Y.namespace('juju-tests.utils');
@@ -525,8 +525,8 @@ describe('RelationUtils', function() {
     });
 
     it('can tell when a relation is in error', function() {
-      source._units = [Y.clone(unit)];
-      target._units = [Y.clone(unit)];
+      source._units = [Object.assign({}, unit)];
+      target._units = [Object.assign({}, unit)];
       var relation = relationUtils.DecoratedRelation(
         inputRelation, source, target);
       // Test no error scenario.
@@ -579,9 +579,9 @@ describe('RelationUtils', function() {
 
     it('can aggregate relation statuses', function() {
       // Mock a service with one unit in error.
-      var thirdModel = Y.clone(source);
+      var thirdModel = Object.assign({}, source);
       thirdModel.modelId = 'third-id';
-      thirdModel._units = [Y.clone(unit)];
+      thirdModel._units = [Object.assign({}, unit)];
       thirdModel._units[0].agent_state = 'error';
       thirdModel._units[0].agent_state_data.hook = 'endpoint-1-relation';
       thirdModel.units = { toArray: function() { return thirdModel._units; } };

@@ -162,7 +162,7 @@ YUI.add('relation-utils', function(Y) {
     the charms authors name for the relation type.
    */
   RelationUtils.parseEndpointStrings = function(db, endpoints) {
-    return Y.Array.map(endpoints, function(endpoint) {
+    return endpoints.map(endpoint => {
       var epData = endpoint.split(':');
       var result = {};
       if (epData.length > 1) {
@@ -200,13 +200,13 @@ YUI.add('relation-utils', function(Y) {
    */
   RelationUtils.findEndpointMatch = function(endpoints) {
     var matches = [], result;
-    Y.each([0, 1], function(providedIndex) {
+    [0, 1].forEach(providedIndex => {
       // Identify the candidates.
       var providingEndpoint = endpoints[providedIndex];
       // The merges here result in a shallow copy.
-      var provides = Y.merge(providingEndpoint.charm.get('provides') || {}),
+      var provides = Object.assign({}, providingEndpoint.charm.get('provides')),
           requiringEndpoint = endpoints[!providedIndex + 0],
-          requires = Y.merge(requiringEndpoint.charm.get('requires') || {});
+          requires = Object.assign({}, requiringEndpoint.charm.get('requires'));
       if (!provides['juju-info']) {
         provides['juju-info'] = {'interface': 'juju-info',
                                   scope: 'container'};
@@ -216,16 +216,16 @@ YUI.add('relation-utils', function(Y) {
       if (providingEndpoint.type) {
         candidateProvideTypes = [providingEndpoint.type];
       } else {
-        candidateProvideTypes = Y.Object.keys(provides);
+        candidateProvideTypes = Object.keys(provides);
       }
       if (requiringEndpoint.type) {
         candidateRequireTypes = [requiringEndpoint.type];
       } else {
-        candidateRequireTypes = Y.Object.keys(requires);
+        candidateRequireTypes = Object.keys(requires);
       }
       // Find matches for candidates and evaluate them.
-      Y.each(candidateProvideTypes, function(provideType) {
-        Y.each(candidateRequireTypes, function(requireType) {
+      candidateProvideTypes.forEach(provideType => {
+        candidateRequireTypes.forEach(requireType => {
           var provideMatch = provides[provideType],
               requireMatch = requires[requireType];
           if (provideMatch &&
@@ -244,8 +244,9 @@ YUI.add('relation-utils', function(Y) {
       });
     });
     if (matches.length === 0) {
-      console.log(endpoints);
-      result = {error: 'Specified relation is unavailable.'};
+      const message = 'Specified relation is unavailable.';
+      console.error(message, endpoints);
+      result = {error: message};
     } else if (matches.length > 1) {
       // It's only a problem if there's more than one explicit relation.
       // Otherwise, filter out the implicit relations and just return the
@@ -253,8 +254,9 @@ YUI.add('relation-utils', function(Y) {
       var explicitRelations = matches.filter(
         rel => rel['provideType'] !== 'juju-info');
       if (explicitRelations.length === 0) {
-        console.log(endpoints);
-        result = {error: 'No explicitly specified relations are available.'};
+        const message = 'No explicitly specified relations are available.';
+        console.error(message, endpoints);
+        result = {error: message};
       } else if (explicitRelations.length > 1) {
         result = {error: 'Ambiguous relationship is not allowed.'};
       } else {
@@ -263,8 +265,8 @@ YUI.add('relation-utils', function(Y) {
     } else {
       result = matches[0];
       // Specify the type for implicit relations.
-      result.provides = Y.merge(result.provides);
-      result.requires = Y.merge(result.requires);
+      result.provides = Object.assign({}, result.provides);
+      result.requires = Object.assign({}, result.requires);
       result.provides.type = result.provideType;
       result.requires.type = result.requireType;
     }
@@ -287,7 +289,7 @@ YUI.add('relation-utils', function(Y) {
     // In some instances, notably in tests, a relation is a POJO already;
     // handle this case gracefully.
     var endpoints = relation.endpoints || relation.get('endpoints');
-    var hasRelations = Y.Lang.isValue(endpoints);
+    var hasRelations = !!endpoints;
     var decorated = {
       source: source,
       target: target,
@@ -319,7 +321,7 @@ YUI.add('relation-utils', function(Y) {
       // heavily on short-circuit logic: 'some' will short-circuit at the first
       // match, '&&' will short-circuit out on any unit not in error, and the
       // '||' will short-circuit if the source units are in error.
-      return Y.Array.some(service.units.toArray(), function(unit) {
+      return service.units.toArray().some(unit => {
         // Figure out whether or not the unit is in error.
         var relationName = endpoint[1].name + '-' + 'relation',
             relationError = false,
@@ -369,7 +371,7 @@ YUI.add('relation-utils', function(Y) {
     decorated.hasRelationError = function() {
       return this.sourceHasError() || this.targetHasError();
     };
-    Y.mix(decorated, relation.getAttrs());
+    Object.assign(decorated, relation.getAttrs());
     decorated.isSubordinate = RelationUtils.isSubordinateRelation(decorated);
     return decorated;
   };
@@ -406,7 +408,7 @@ YUI.add('relation-utils', function(Y) {
         // Return pending if any of the relations are pending.
         // Note that by "pending" in this context we mean the relation is added
         // between two ghost/uncommitted services.
-        var pending = Y.Array.some(this.relations, function(relation) {
+        var pending = this.relations.some(relation => {
           return relation.pending;
         });
         if (pending) {
@@ -414,10 +416,10 @@ YUI.add('relation-utils', function(Y) {
         }
         // Return unhealthy regardless of subordinate status if any of the
         // relations are in error.
-        var unhealthy = Y.Array.some(this.relations, function(relation) {
+        var unhealthy = this.relations.some(relation => {
           return relation.hasRelationError();
         });
-        var pendingDeletion = Y.Array.some(this.relations, function(relation) {
+        var pendingDeletion = this.relations.some(relation => {
           return relation.deleted;
         });
         if (unhealthy) {
@@ -434,7 +436,7 @@ YUI.add('relation-utils', function(Y) {
     },
     isSubordinate: {
       get: function() {
-        return Y.Array.every(this.relations, function(relation) {
+        return this.relations.every(relation => {
           return relation.isSubordinate;
         });
       }
@@ -491,7 +493,7 @@ YUI.add('relation-utils', function(Y) {
     });
     // Dump just the collections; the keys are not needed for the data that
     // is used in the view, which only expects an array of relationships.
-    return Y.Object.values(collections);
+    return Object.keys(collections).map(key => collections[key]);
   };
 
   /**
