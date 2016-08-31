@@ -49,7 +49,7 @@ YUI.add('user-profile', function() {
       @method _interactiveLogin
     */
     _interactiveLogin: function() {
-      var bakery = this.props.charmstore.bakery;
+      const bakery = this.props.charmstore.bakery;
       bakery.fetchMacaroonFromStaticPath(this._fetchMacaroonCallback);
     },
 
@@ -89,8 +89,8 @@ YUI.add('user-profile', function() {
       @returns {Array} The markup for the content.
     */
     _generateContent: function() {
-      var props = this.props;
-      var emptyComponent = (
+      const props = this.props;
+      const emptyComponent = (
         <juju.components.EmptyUserProfile
           addNotification={props.addNotification}
           controllerAPI={props.controllerAPI}
@@ -146,29 +146,26 @@ YUI.add('user-profile', function() {
     },
 
     render: function() {
-      var username = this.props.user && this.props.user.usernameDisplay;
+      const username = this.props.user && this.props.user.usernameDisplay;
       /* XXX Find some way to percolate these up from the child components. */
       /*
-      var state = this.state;
-      var bundleCount = this._safeCount(state.bundleList);
-      var charmCount = this._safeCount(state.charmList);
-      var modelCount = this._safeCount(state.envList);
+      const state = this.state;
+      const bundleCount = this._safeCount(state.bundleList);
+      const charmCount = this._safeCount(state.charmList);
+      const modelCount = this._safeCount(state.envList);
       */
       /* XXX Should include agreements, budgets, etc. in these links. */
       /*
-      var pluralize = this.props.pluralize;
-      var links = [{
+      const pluralize = this.props.pluralize;
+      const links = [{
         label: `${modelCount} ${pluralize('model', modelCount)}`
       }, {
         label: `${bundleCount} ${pluralize('bundle', bundleCount)}`
       }, {
         label: `${charmCount} ${pluralize('charm', charmCount)}`
       }];
-      var links = [{
-        label: `${modelCount} ${pluralize('model', modelCount)}`
-      }];
       */
-      var links = [];
+      const links = [];
       return (
         <juju.components.Panel
           instanceName="user-profile"
