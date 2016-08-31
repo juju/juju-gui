@@ -792,9 +792,9 @@ YUI.add('juju-gui', function(Y) {
       });
       // If we're in JIMM then use a jimmURL, else use a socket_url without the
       // model uuid.
-      controllerAPI.set(
-        'socket_url',
-        jimmURL || this.createSocketURL(this.get('controllerSocketTemplate')));
+      controllerAPI.set('socket_url',
+        this.get('jimmURL') ||
+          this.createSocketURL(this.get('controllerSocketTemplate')));
       return controllerAPI;
     },
 
