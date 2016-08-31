@@ -1238,7 +1238,7 @@ YUI.add('juju-gui', function(Y) {
       if (service) {
         // Select the service token.
         topo.modules.ServiceModule.selectService(service.get('id'));
-        var charm = app.db.charms.getById(service.get('charm'));
+        var charm = this.db.charms.getById(service.get('charm'));
         var relatableApplications = relationUtils.getRelatableApplications(
           this.db, models.getEndpoints(service, this.endpointsController));
         const ecs = this.env.get('ecs');
@@ -1892,7 +1892,7 @@ YUI.add('juju-gui', function(Y) {
         // logged in and connected to a real model.
         this.set('loggedIn', true);
         this.maskVisibility(false);
-        app._emptySectionApp();
+        this._emptySectionApp();
         next();
       }
       // If the Juju environment is not connected, exit without letting the
