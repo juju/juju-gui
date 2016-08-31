@@ -47,6 +47,8 @@ YUI.add('juju-endpoints', function(Y) {
         sid = svc.get('id'),
         db = controller.get('db'),
         ep_map = controller.endpointsMap;
+    const appIsSubordinate = svc.get('subordinate');
+    const appSeries = svc.get('series');
 
     // Bail out if the map doesn't yet exist for this service.  The charm may
     // not be loaded yet.
@@ -111,7 +113,7 @@ YUI.add('juju-endpoints', function(Y) {
         });
 
     // Every non subordinate service implicitly provides this.
-    if (!svc.get('subordinate')) {
+    if (!appIsSubordinate) {
       provides.push(convert(
           sid, {'interface': 'juju-info', 'name': 'juju-info'}));
     }
@@ -120,6 +122,7 @@ YUI.add('juju-endpoints', function(Y) {
     Y.each(db.services, function(tgt) {
       var tid = tgt.get('id'),
           tprovides = ep_map[tid].provides.concat();
+      const targetIsSubordinate = tgt.get('subordinate');
 
       // Ignore ourselves, peer relations are automatically
       // established when a service is deployed. The gui only needs to
@@ -127,7 +130,16 @@ YUI.add('juju-endpoints', function(Y) {
       if (tid === sid) {
         return;
       }
-
+      // If the provided service is a subordinate it should only match targets
+      // with the same series.
+      if (appIsSubordinate && appSeries !== tgt.get('series')) {
+        return;
+      }
+      // If the target is a subordinate it needs to have a matching series to
+      // the provided app.
+      if (targetIsSubordinate && appSeries !== tgt.get('series')) {
+        return;
+      }
       // Process each of the service's required endpoints. It is only
       // considered a valid target if it is not satisfied by an existing
       // relation.
@@ -139,7 +151,7 @@ YUI.add('juju-endpoints', function(Y) {
             // to many services. We check if a subordinate relation
             // exists between this subordinate endpoint and the origin
             // service.
-            if (tgt.get('subordinate') &&
+            if (targetIsSubordinate &&
               relationUtils.isSubordinateRelation(rdata)) {
               if (db.relations.has_relation_for_endpoint(ep, sid)) {
                 return;
