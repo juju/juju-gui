@@ -1,6 +1,7 @@
 env:
   browser: true
   node: true
+  es6: true
 plugins:
   - react
 parserOptions:
@@ -19,7 +20,45 @@ rules:
   indent: [2, 2, {SwitchCase: 1, VariableDeclarator: 2}]
   no-single-tests: 2
   no-test-utils: 2
+  no-undef: 2
   react/jsx-key: 2
   react/jsx-no-duplicate-props: 2
   react/prop-types: 2
   react/sort-prop-types: 2
+globals:
+  after: true
+  afterAll: true
+  afterEach: true
+  assert: true
+  before: true
+  beforeAll: true
+  beforeEach: true
+  chai: true
+  classNames: true
+  Clipboard: true
+  consoleManager: true
+  describe: true
+  enhanceWithClickOutside: true
+  Exception: true
+  fail: true
+  GlobalConfig: true
+  it: true
+  JsDiff: true
+  jsTestUtils: true
+  jsyaml: true
+  juju: true
+  jujulib: true
+  marked: true
+  nacl: true
+  Prism: true
+  queryComponentSelector: true
+  React: true
+  ReactDnD: true
+  ReactDnDHTML5Backend: true
+  ReactDOM: true
+  renderIntoDocument: true
+  saveAs: true
+  sinon: true
+  testUtils: true
+  YUI: true
+  zip: true

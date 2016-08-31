@@ -107,7 +107,8 @@ YUI.add('deployment-credential-add', function() {
         console.error('Unable to add template', error);
         return;
       }
-      var templateName = this.refs.templateName.getValue();
+      const templateName = this.refs.templateName.getValue();
+      const user = this.props.users.jem.user;
       this.props.setCredential(`${user}/${templateName}`);
       this.props.setRegion(this._getRegion());
       this.props.setTemplate(this._generateTemplate());
