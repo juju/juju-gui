@@ -523,7 +523,7 @@ YUI.add('juju-controller-api', function(Y) {
     */
     createModel: function(name, userTag, callback) {
       // Define the API callback.
-      var handler = function(userCallback, data) {
+      const handler = function(userCallback, data) {
         if (!userCallback) {
           console.log('data returned by CreateModel API call:', data);
           return;
@@ -532,7 +532,7 @@ YUI.add('juju-controller-api', function(Y) {
           userCallback({err: data.error});
           return;
         }
-        var response = data.response;
+        const response = data.response;
         userCallback({
           name: response.name,
           uuid: response.uuid,
@@ -545,18 +545,12 @@ YUI.add('juju-controller-api', function(Y) {
       if (userTag.indexOf('@') === -1) {
         userTag += '@local';
       }
-      var config = {
-        // XXX frankban: juju-core should not require clients to provide SSH
-        // keys at this point, but only when strictly necessary. Provide an
-        // invalid one for now.
-        'authorized-keys': 'ssh-rsa INVALID (set by the Juju GUI)'
-      };
 
       // Send the API call.
       this._send_rpc({
         type: 'ModelManager',
         request: 'CreateModel',
-        params: {name: name, 'owner-tag': userTag, config: config}
+        params: {name: name, 'owner-tag': userTag}
       }, handler);
     },
 
