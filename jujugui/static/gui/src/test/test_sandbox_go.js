@@ -26,10 +26,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       'juju-tests-factory', 'juju-env-api', 'juju-models', 'promise'
     ];
     var client, env, ecs, environmentsModule, factory, juju,
-        sandboxModule, state, Y, ns;
+        sandboxModule, state, ns;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(requires, function(Y) {
+      YUI(GlobalConfig).use(requires, function(Y) {
         sandboxModule = Y.namespace('juju.environments.sandbox');
         environmentsModule = Y.namespace('juju.environments');
         factory = Y.namespace('juju-tests.factory');
@@ -122,7 +122,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       client.open();
-      client.send(Y.JSON.stringify(data));
+      client.send(JSON.stringify(data));
     });
 
     it('refuses to dispatch when closed.', function() {
@@ -152,14 +152,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           facades: sandboxModule.facades,
           'user-info': {'read-only': false}
         };
-        assert.deepEqual(Y.JSON.parse(received.data), data);
+        assert.deepEqual(JSON.parse(received.data), data);
         assert.isTrue(state.get('authenticated'));
         done();
       };
       state.logout();
       assert.isFalse(state.get('authenticated'));
       client.open();
-      client.send(Y.JSON.stringify(data));
+      client.send(JSON.stringify(data));
     });
 
     it('can log in (environment integration).', function(done) {
@@ -188,11 +188,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'provider-type': state.get('providerType'),
             'default-series': state.get('defaultSeries'),
             name: 'sandbox'}};
-        assert.deepEqual(Y.JSON.parse(received.data), expected);
+        assert.deepEqual(JSON.parse(received.data), expected);
         done();
       };
       client.open();
-      client.send(Y.JSON.stringify(data));
+      client.send(JSON.stringify(data));
     });
 
     it('returns ModelGet responses', function(done) {
@@ -208,11 +208,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             config: {'maas-server': state.get('maasServer')}
           }
         };
-        assert.deepEqual(Y.JSON.parse(received.data), expected);
+        assert.deepEqual(JSON.parse(received.data), expected);
         done();
       };
       client.open();
-      client.send(Y.JSON.stringify(data));
+      client.send(JSON.stringify(data));
     });
 
     it('can start the AllWatcher', function(done) {
@@ -223,14 +223,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'request-id': 1066
       };
       client.onmessage = function(received) {
-        var receivedData = Y.JSON.parse(received.data);
+        var receivedData = JSON.parse(received.data);
         assert.equal(receivedData.response.AllWatcherId, 42);
         assert.equal(receivedData['request-id'], 1066);
         assert.isUndefined(client.get('juju').get('nextRequestId'));
         done();
       };
       client.open();
-      client.send(Y.JSON.stringify(data));
+      client.send(JSON.stringify(data));
     });
 
     it('can listen for deltas with Next', function(done) {
@@ -243,7 +243,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       state.deploy('cs:precise/wordpress-27', function() {});
       client.onmessage = function(received) {
-        var receivedData = Y.JSON.parse(received.data);
+        var receivedData = JSON.parse(received.data);
         assert.equal(receivedData['request-id'], 1067);
         assert.isNotNull(receivedData.response.deltas);
         var deltas = receivedData.response.deltas;
@@ -254,7 +254,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       client.open();
-      client.send(Y.JSON.stringify(data));
+      client.send(JSON.stringify(data));
     });
 
     it('structures deltas properly', function(done) {
@@ -267,7 +267,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       state.deploy('cs:precise/wordpress-27', function() {});
       client.onmessage = function(received) {
-        var receivedData = Y.JSON.parse(received.data);
+        var receivedData = JSON.parse(received.data);
         var deltas = receivedData.response.deltas;
         assert.equal(deltas.length, 3);
         var applicationChange = deltas[0];
@@ -334,7 +334,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       client.open();
-      client.send(Y.JSON.stringify(data));
+      client.send(JSON.stringify(data));
     });
 
     it('can deploy', function(done) {
@@ -352,7 +352,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'request-id': 42
       };
       client.onmessage = function(received) {
-        var receivedData = Y.JSON.parse(received.data);
+        var receivedData = JSON.parse(received.data);
         assert.equal(receivedData['request-id'], data['request-id']);
         assert.isUndefined(receivedData.error);
         assert.isObject(
@@ -371,7 +371,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       client.open();
-      client.send(Y.JSON.stringify(data));
+      client.send(JSON.stringify(data));
     });
 
     it('can deploy (environment integration).', function(done) {
@@ -469,7 +469,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'request-id': 42
       };
       client.onmessage = function(response) {
-        var data = Y.JSON.parse(response.data);
+        var data = JSON.parse(response.data);
         assert.isUndefined(data.error);
         assert.strictEqual(data['request-id'], 42);
         var expectedMachines = [
@@ -481,7 +481,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       client.open();
-      client.send(Y.JSON.stringify(request));
+      client.send(JSON.stringify(request));
     });
 
     it('can add machines (environment integration)', function(done) {
@@ -526,13 +526,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'request-id': 42
       };
       client.onmessage = function(response) {
-        var data = Y.JSON.parse(response.data);
+        var data = JSON.parse(response.data);
         assert.isUndefined(data.error);
         assert.strictEqual(data['request-id'], 42);
         done();
       };
       client.open();
-      client.send(Y.JSON.stringify(request));
+      client.send(JSON.stringify(request));
     });
 
     it('can destroy machines (environment integration)', function(done) {
@@ -568,7 +568,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'request-id': 42
         };
         client.onmessage = function(received) {
-          var receivedData = Y.JSON.parse(received.data);
+          var receivedData = JSON.parse(received.data);
           assert.equal(receivedData['request-id'], data['request-id']);
           assert.isUndefined(receivedData.error);
           assert.equal(state.db.services.size(), 0);
@@ -576,7 +576,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         };
         client.open();
-        client.send(Y.JSON.stringify(data));
+        client.send(JSON.stringify(data));
       });
     });
 
@@ -604,7 +604,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'request-id': 42
         };
         client.onmessage = function(received) {
-          var receivedData = Y.JSON.parse(received.data);
+          var receivedData = JSON.parse(received.data);
           assert.equal(receivedData['request-id'], data['request-id']);
           // fakebackend defaults error and warning to [] which carries
           // through.
@@ -613,7 +613,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         };
         client.open();
-        client.send(Y.JSON.stringify(data));
+        client.send(JSON.stringify(data));
       });
     });
 
@@ -639,13 +639,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'request-id': 42
       };
       client.onmessage = function(received) {
-        var receivedData = Y.JSON.parse(received.data);
+        var receivedData = JSON.parse(received.data);
         assert.isUndefined(receivedData.error);
         assert.isObject(receivedData.response);
         done();
       };
       client.open();
-      client.send(Y.JSON.stringify(data));
+      client.send(JSON.stringify(data));
     });
 
     it('can set annotations', function(done) {
@@ -662,13 +662,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'request-id': 42
         };
         client.onmessage = function(received) {
-          var receivedData = Y.JSON.parse(received.data);
+          var receivedData = JSON.parse(received.data);
           assert.isUndefined(receivedData.error);
           assert.deepEqual(receivedData.response, {});
           done();
         };
         client.open();
-        client.send(Y.JSON.stringify(data));
+        client.send(JSON.stringify(data));
       });
     });
 
@@ -726,7 +726,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'request-id': 42
         };
         client.onmessage = function(received) {
-          var receivedData = Y.JSON.parse(received.data);
+          var receivedData = JSON.parse(received.data);
           assert.isUndefined(receivedData.error);
           var application = state.db.services.getById('wordpress');
           assert.equal(application.get('constraintsStr'), 'mem=2');
@@ -734,7 +734,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         };
         client.open();
-        client.send(Y.JSON.stringify(data));
+        client.send(JSON.stringify(data));
       });
     });
 
@@ -765,7 +765,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'request-id': 42
         };
         client.onmessage = function(received) {
-          var receivedData = Y.JSON.parse(received.data);
+          var receivedData = JSON.parse(received.data);
           assert.isUndefined(receivedData.error);
           var application = state.db.services.getById('wordpress');
           assert.deepEqual(application.get('config'), {
@@ -777,7 +777,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         };
         client.open();
-        client.send(Y.JSON.stringify(data));
+        client.send(JSON.stringify(data));
       });
     });
 
@@ -812,7 +812,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'request-id': 42
         };
         client.onmessage = function(received) {
-          var receivedData = Y.JSON.parse(received.data);
+          var receivedData = JSON.parse(received.data);
           // Running resolved on fakebackend for just a unit does not do
           // anything much, as no hooks were run in starting the unit.
           // Additionally, resolved does not actually clear the unit error,
@@ -822,7 +822,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         };
         client.open();
-        client.send(Y.JSON.stringify(data));
+        client.send(JSON.stringify(data));
       });
     });
 
@@ -853,14 +853,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'request-id': 42
       };
       client.onmessage = function(received) {
-        var receivedData = Y.JSON.parse(received.data);
+        var receivedData = JSON.parse(received.data);
         assert.isUndefined(receivedData.err);
         var application = state.db.services.getById('wordpress');
         assert.equal(application.get('charm'), 'cs:precise/mediawiki-18');
         done();
       };
       client.open();
-      client.send(Y.JSON.stringify(data));
+      client.send(JSON.stringify(data));
     });
 
     it('can set a charm (environment integration).', function(done) {
@@ -903,7 +903,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           callback(received);
         };
         client.open();
-        client.send(Y.JSON.stringify(data));
+        client.send(JSON.stringify(data));
       });
     }
 
@@ -961,7 +961,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           callback(rec);
         };
         client.open();
-        client.send(Y.JSON.stringify(command));
+        client.send(JSON.stringify(command));
       }, { unitCount: 1 });
     }
 
@@ -998,7 +998,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       function testForAddedUnits(received) {
         var application = state.db.services.getById('wordpress'),
             units = application.get('units').toArray(),
-            data = Y.JSON.parse(received.data),
+            data = JSON.parse(received.data),
             mock = {response: {units: ['wordpress/1', 'wordpress/2']}};
         // Do we have enough total units?
         assert.lengthOf(units, 3);
@@ -1026,13 +1026,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             state.nextChanges();
             client.onmessage = function() {
               client.onmessage = function(received) {
-                var data = Y.JSON.parse(received.data);
+                var data = JSON.parse(received.data);
 
                 // If there is no error data.err will be undefined
                 assert.equal(true, !!data.error);
                 done();
               };
-              client.send(Y.JSON.stringify(data));
+              client.send(JSON.stringify(data));
             };
             client.open();
             client.onmessage();
@@ -1053,7 +1053,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can expose an application', function(done) {
       function checkExposedApplication(rec) {
         var applicationName = 'wordpress';
-        var data = Y.JSON.parse(rec.data),
+        var data = JSON.parse(rec.data),
             mock = {response: {}};
         var application = state.db.services.getById(applicationName);
         assert.equal(application.get('exposed'), true);
@@ -1078,7 +1078,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('fails silently when exposing an exposed application', function(done) {
       function checkExposedApplication(rec) {
         var applicationName = 'wordpress',
-            data = Y.JSON.parse(rec.data),
+            data = JSON.parse(rec.data),
             application = state.db.services.getById(applicationName),
             command = {
               type: 'Application',
@@ -1091,7 +1091,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.equal(application.get('exposed'), true);
           done();
         };
-        client.send(Y.JSON.stringify(command));
+        client.send(JSON.stringify(command));
       }
       generateAndExposeApplication(checkExposedApplication);
     });
@@ -1106,13 +1106,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             };
             state.nextChanges();
             client.onmessage = function(rec) {
-              var data = Y.JSON.parse(rec.data);
+              var data = JSON.parse(rec.data);
               assert.equal(data.error,
                  '"foobar" is an invalid application name.');
               done();
             };
             client.open();
-            client.send(Y.JSON.stringify(command));
+            client.send(JSON.stringify(command));
           }, { unitCount: 1 });
         }
     );
@@ -1127,14 +1127,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             };
         state.nextChanges();
         client.onmessage = function(rec) {
-          var data = Y.JSON.parse(rec.data),
+          var data = JSON.parse(rec.data),
               application = state.db.services.getById('wordpress'),
               mock = {response: {}};
           assert.equal(application.get('exposed'), false);
           assert.deepEqual(data, mock);
           done();
         };
-        client.send(Y.JSON.stringify(command));
+        client.send(JSON.stringify(command));
       }
       generateAndExposeApplication(unexposeApplication);
     });
@@ -1165,14 +1165,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             };
             state.nextChanges();
             client.onmessage = function(rec) {
-              var data = Y.JSON.parse(rec.data),
+              var data = JSON.parse(rec.data),
                   application = state.db.services.getById(applicationName);
               assert.equal(application.get('exposed'), false);
               assert.equal(data.err, undefined);
               done();
             };
             client.open();
-            client.send(Y.JSON.stringify(command));
+            client.send(JSON.stringify(command));
           }, { unitCount: 1 });
         }
     );
@@ -1187,12 +1187,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             };
             state.nextChanges();
             client.onmessage = function(rec) {
-              var data = Y.JSON.parse(rec.data);
+              var data = JSON.parse(rec.data);
               assert.equal(
                 data.error, '"foobar" is an invalid application name.');
               done();
             };
-            client.send(Y.JSON.stringify(command));
+            client.send(JSON.stringify(command));
           }
           generateAndExposeApplication(unexposeApplication);
         }
@@ -1211,7 +1211,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           };
           client.onmessage = function(received) {
-            var recData = Y.JSON.parse(received.data);
+            var recData = JSON.parse(received.data);
             assert.equal(recData['request-id'], data['request-id']);
             assert.equal(recData.error, undefined);
             assert.isObject(
@@ -1224,7 +1224,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             done();
           };
           client.open();
-          client.send(Y.JSON.stringify(data));
+          client.send(JSON.stringify(data));
         });
       });
     });
@@ -1264,7 +1264,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           };
           client.onmessage = function(received) {
-            var recData = Y.JSON.parse(received.data);
+            var recData = JSON.parse(received.data);
             assert.equal(recData['request-id'], data['request-id']);
             assert.equal(recData.error, undefined);
             var recEndpoints = recData.response.endpoints;
@@ -1275,7 +1275,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             done();
           };
           client.open();
-          client.send(Y.JSON.stringify(data));
+          client.send(JSON.stringify(data));
         });
       });
     });
@@ -1292,14 +1292,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         };
         client.onmessage = function(received) {
-          var recData = Y.JSON.parse(received.data);
+          var recData = JSON.parse(received.data);
           assert.equal(recData['request-id'], data['request-id']);
           assert.equal(recData.error,
               'Two string endpoint names required to establish a relation');
           done();
         };
         client.open();
-        client.send(Y.JSON.stringify(data));
+        client.send(JSON.stringify(data));
       });
     });
 
@@ -1315,13 +1315,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         };
         client.onmessage = function(received) {
-          var recData = Y.JSON.parse(received.data);
+          var recData = JSON.parse(received.data);
           assert.equal(recData['request-id'], data['request-id']);
           assert.equal(recData.error, 'Charm not loaded.');
           done();
         };
         client.open();
-        client.send(Y.JSON.stringify(data));
+        client.send(JSON.stringify(data));
       });
     });
 
@@ -1340,13 +1340,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           };
           client.onmessage = function(received) {
-            var recData = Y.JSON.parse(received.data);
+            var recData = JSON.parse(received.data);
             assert.equal(recData['request-id'], data['request-id']);
             assert.equal(recData.error, undefined);
             done();
           };
           client.open();
-          client.send(Y.JSON.stringify(data));
+          client.send(JSON.stringify(data));
         });
       });
     });
@@ -1372,6 +1372,103 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                   }, {immediate: true});
                 }, {immediate: true});
           }, {immediate: true});
+    });
+
+    describe('Cloud facade', function() {
+
+      it('can list available clouds', function(done) {
+        client.onmessage = function(received) {
+          const data = JSON.parse(received.data);
+          assert.deepEqual(data, {
+            'request-id': 42,
+            response: {
+              clouds: {
+                'cloud-demonstration': {
+                  'auth-types': ['empty'],
+                  regions: [{name: 'localhost'}],
+                  type: 'demonstration'
+                }
+              }
+            }
+          });
+          done();
+        };
+        client.open();
+        client.send(JSON.stringify({
+          'request-id': 42,
+          type: 'Cloud',
+          request: 'Clouds',
+          params: {}
+        }));
+      });
+
+      it('can retrieves clouds by tag', function(done) {
+        client.onmessage = function(received) {
+          const data = JSON.parse(received.data);
+          assert.deepEqual(data, {
+            'request-id': 42,
+            response: {
+              results: [{
+                error: {message: 'cloud cloud-no-such not found'}
+              }, {
+                cloud: {
+                  'auth-types': ['empty'],
+                  regions: [{name: 'localhost'}],
+                  type: 'demonstration'
+                }
+              }]
+            }
+          });
+          done();
+        };
+        client.open();
+        client.send(JSON.stringify({
+          'request-id': 42,
+          type: 'Cloud',
+          request: 'Cloud',
+          params: {entities: [
+            {tag: 'cloud-no-such'},
+            {tag: 'cloud-demonstration'},
+          ]}
+        }));
+      });
+
+      it('can returns no results for no tags', function(done) {
+        client.onmessage = function(received) {
+          const data = JSON.parse(received.data);
+          assert.deepEqual(data, {
+            'request-id': 47,
+            response: {results: []}
+          });
+          done();
+        };
+        client.open();
+        client.send(JSON.stringify({
+          'request-id': 47,
+          type: 'Cloud',
+          request: 'Cloud',
+          params: {entities: []}
+        }));
+      });
+
+      it('can return the default cloud tag', function(done) {
+        client.onmessage = function(received) {
+          const data = JSON.parse(received.data);
+          assert.deepEqual(data, {
+            'request-id': 1,
+            response: {result: 'cloud-demonstration'}
+          });
+          done();
+        };
+        client.open();
+        client.send(JSON.stringify({
+          'request-id': 1,
+          type: 'Cloud',
+          request: 'DefaultCloud',
+          params: {}
+        }));
+      });
+
     });
 
   });

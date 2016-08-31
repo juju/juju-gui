@@ -127,6 +127,8 @@ def config(request):
         # Set a juju-core version so the GUI can adapt its available features.
         'jujuCoreVersion': settings.get('jujugui.jujuCoreVersion', ''),
         'apiAddress': settings.get('jujugui.apiAddress', ''),
+        'controllerSocketTemplate': settings[
+            'jujugui.controllerSocketTemplate'],
         'socketTemplate': settings['jujugui.socketTemplate'],
         'gisf': settings['jujugui.gisf'],
     }

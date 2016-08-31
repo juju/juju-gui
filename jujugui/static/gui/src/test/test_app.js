@@ -1594,13 +1594,14 @@ describe('App', function() {
     it('instantiates correctly', function() {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
-        charmstorestore: new window.jujulib.charmstore('http://1.2.3.4/'),
+        charmstore: new window.jujulib.charmstore('http://1.2.3.4/'),
         container: container,
         jujuCoreVersion: '2.1.1',
         password: 'admin',
-        sandboxSocketURL: 'ws://host:port/ws/environment/undefined/api',
+        sandboxSocketURL: 'ws://host:port/ws/model/undefined/api',
         sandbox: true,
-        socketTemplate: '/environment/$uuid/api',
+        controllerSocketTemplate: '/api',
+        socketTemplate: '/model/$uuid/api',
         user: 'admin',
         viewContainer: container
       });
@@ -1608,25 +1609,32 @@ describe('App', function() {
       // This simply walks through the hierarchy to show that all the
       // necessary parts are there.
       assert.isObject(app.env.get('conn').get('juju').get('state'));
+      assert.isObject(app.controllerAPI.get('conn').get('juju').get('state'));
       // Assert we have a default websocket url.
       assert.equal(
           app.env.get('conn').get('juju').get('socket_url'),
-          'ws://host:port/ws/environment/undefined/api');
+          'ws://host:port/ws/model/undefined/api');
+      assert.equal(
+          app.controllerAPI.get('conn').get('juju').get('socket_url'),
+          'ws://host:port/ws/model/undefined/api');
     });
 
-    it('passes a fake web handler to the environment', function() {
+    it('passes a fake web handler to the model', function() {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
         charmstore: new window.jujulib.charmstore('http://1.2.3.4/'),
         container: container,
         jujuCoreVersion: '1.21.1.1-trusty-amd64',
         sandbox: true,
-        socketTemplate: '/environment/$uuid/api',
+        controllerSocketTemplate: '/api',
+        socketTemplate: '/model/$uuid/api',
         viewContainer: container
       });
       app.showView(new Y.View());
-      var webHandler = app.env.get('webHandler');
-      assert.strictEqual(webHandler.name, 'sandbox-web-handler');
+      assert.strictEqual(
+        app.env.get('webHandler').name, 'sandbox-web-handler');
+      // There is no controller connection on juju 1.
+      assert.strictEqual(app.controllerAPI, undefined);
     });
 
     it('creates a placeholder socketUrl', function() {
@@ -1634,20 +1642,19 @@ describe('App', function() {
         apiAddress: 'http://example.com:17070',
         charmstore: new window.jujulib.charmstore('http://1.2.3.4/'),
         container: container,
-        jujuCoreVersion: '1.21.1.1-trusty-amd64',
+        jujuCoreVersion: '2.0.0',
         sandbox: true,
-        socketTemplate: '/environment/$uuid/api',
+        controllerSocketTemplate: '/api',
+        socketTemplate: '/model/$uuid/api',
         viewContainer: container
       });
-      var socketUrl = app.createSocketURL(app.get('socketTemplate'));
-      var expected = [
-        'wss://',
-        window.location.hostname,
-        ':',
-        window.location.port,
-        '/sandbox'
-      ].join('');
-      assert.equal(expected, socketUrl);
+      const host = window.location.hostname;
+      const port = window.location.port;
+      let socketUrl = app.createSocketURL(app.get('socketTemplate'));
+      assert.strictEqual(socketUrl, `wss://${host}:${port}/sandbox`);
+      socketUrl = app.createSocketURL(app.get('controllerSocketTemplate'));
+      assert.strictEqual(
+        socketUrl, `wss://${host}:${port}/sandbox-controller`);
     });
 
   });

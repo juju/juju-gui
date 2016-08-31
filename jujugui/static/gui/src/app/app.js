@@ -414,7 +414,7 @@ YUI.add('juju-gui', function(Y) {
       ecs.on('changeSetModified', this._renderDeploymentBar.bind(this));
       ecs.on('currentCommitFinished', this._renderDeploymentBar.bind(this));
 
-      let envOptions = {
+      let modelOptions = {
         ecs: ecs,
         user: this.get('user'),
         password: this.get('password'),
@@ -422,13 +422,16 @@ YUI.add('juju-gui', function(Y) {
         conn: this.get('conn'),
         jujuCoreVersion: this.get('jujuCoreVersion')
       };
+      let controllerOptions = Object.assign({}, modelOptions);
 
       const jujuEnvUUID =
         this.get('jujuEnvUUID') ||
         (window.juju_config && window.juju_config.jujuEnvUUID);
       if (this.get('sandbox')) {
-        envOptions = this.createSandboxConnection(
-          Object.assign({}, envOptions));
+        modelOptions = this.createSandboxConnection(
+          Object.assign({}, modelOptions));
+        controllerOptions = this.createSandboxConnection(
+          Object.assign({}, controllerOptions));
       } else {
         if (jujuEnvUUID) {
           // If we have a uuid provided in the config then connect directly
@@ -436,27 +439,21 @@ YUI.add('juju-gui', function(Y) {
           // connection.
           const socketURL = this.createSocketURL(
             this.get('socketTemplate'), jujuEnvUUID);
-          envOptions.socket_url = socketURL;
+          modelOptions.socket_url = socketURL;
           this.set('socket_url', socketURL);
         }
         // The GUI is connected to a real Juju environment.
         // Instantiate a Web handler allowing to perform asynchronous HTTPS
         // requests to the juju-core API.
-        envOptions.webHandler = new environments.web.WebHandler();
+        modelOptions.webHandler = new environments.web.WebHandler();
       }
 
       let modelAPI, controllerAPI;
       if (this.isLegacyJuju()) {
-        modelAPI = new environments.GoLegacyEnvironment(envOptions);
+        modelAPI = new environments.GoLegacyEnvironment(modelOptions);
       } else {
-        modelAPI = new environments.GoEnvironment(envOptions);
-        if (!this.get('sandbox')) {
-          controllerAPI = new Y.juju.ControllerAPI(
-            // Clone the envOptions for now, in the future we may want more
-            // fine grained control over these options. They should be made
-            // in the setUpControllerAPI method.
-            Object.assign({}, envOptions));
-        }
+        modelAPI = new environments.GoEnvironment(modelOptions);
+        controllerAPI = new Y.juju.ControllerAPI(controllerOptions);
       }
       this._init(cfg, modelAPI, controllerAPI);
     },
@@ -2049,12 +2046,12 @@ YUI.add('juju-gui', function(Y) {
       @return {String} The resulting fully qualified WebSocket URL.
     */
     createSocketURL: function(template, uuid, server, port) {
-      var baseUrl = '';
-      var sandbox = this.get('sandbox');
+      let baseUrl = '';
+      const sandbox = this.get('sandbox');
       if (template[0] === '/' || sandbox) {
         // We either are in sandbox mode or only the WebSocket path is passed.
         // In both cases, we need to calculate the base URL.
-        var schema = this.get('socket_protocol') || 'wss';
+        const schema = this.get('socket_protocol') || 'wss';
         baseUrl = schema + '://' + window.location.hostname;
         if (window.location.port !== '') {
           baseUrl += ':' + window.location.port;
@@ -2062,10 +2059,13 @@ YUI.add('juju-gui', function(Y) {
         if (sandbox) {
           // We don't actually use a WebSocket in sandbox mode; create a
           // placeholder that makes it reasonably clear that this isn't real.
+          if (template === this.get('controllerSocketTemplate')) {
+            return baseUrl + '/sandbox-controller';
+          }
           return baseUrl + '/sandbox';
         }
       }
-      var defaults = this.get('apiAddress').replace('wss://', '').split(':');
+      const defaults = this.get('apiAddress').replace('wss://', '').split(':');
       template = template.replace('$uuid', uuid);
       template = template.replace('$server', server || defaults[0]);
       template = template.replace('$port', port || defaults[1]);

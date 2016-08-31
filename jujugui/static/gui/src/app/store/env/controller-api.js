@@ -663,6 +663,184 @@ YUI.add('juju-controller-api', function(Y) {
         request: 'ListModels',
         params: {tag: userTag}
       }, handleListModels);
+    },
+
+    /**
+      Return the definitions of all clouds supported by the controller.
+
+      @method listClouds
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred). Otherwise, if everything went well, it will receive an
+        object with a "clouds" attribute containing a map of cloud tags to
+        cloud attributes, including:
+        - name: the cloud name, like "lxd" or "google";
+        - cloudType: the cloud type, like "lxd" or "gce";
+        - authTypes: optional supported authentication systems, like "jsonfile"
+          or "oauth2" in the google compute example;
+        - endpoint: optional cloud endpoint, like "https://www.googleapis.com";
+        - identityEndpoint: optional URL of the identity manager;
+        - storageEndpoint: optional storage endpoint;
+        - regions: the list of regions supported by the cloud, each one being
+          an object with the following fields: name, endpoint, identityEndpoint
+          and storageEndpoint.
+      A cloud tag is a cloud name prefixed with "cloud-", like "cloud-lxd" or
+      "cloud-google".
+    */
+    listClouds: function(callback) {
+      // Decorate the user supplied callback.
+      const handler = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by Cloud.Clouds API call:', data);
+          return;
+        }
+        if (data.error) {
+          userCallback({err: data.error});
+          return;
+        }
+        const results = data.response.clouds;
+        const clouds = Object.keys(results).reduce((prev, tag) => {
+          prev[tag] = this._parseCloudResult(tag, results[tag]);
+          return prev;
+        }, {});
+        userCallback({clouds: clouds});
+      }.bind(this, callback);
+      // Send the API request.
+      this._send_rpc({type: 'Cloud', request: 'Clouds'}, handler);
+    },
+
+    /**
+      Return the definitions of the clouds with the given tags.
+
+      @method getClouds
+      @param {Array} tags The Juju tags of the clouds, each one being a string,
+        for instance "cloud-lxd" or "cloud-google.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred). Otherwise, if everything went well, it will receive an
+        object with a "clouds" attribute containing a map of cloud tags to
+        cloud attributes, including:
+        - err: a possible cloud specific error, in which case all subsequent
+          fields are omitted;
+        - name: the cloud name, like "lxd" or "google";
+        - cloudType: the cloud type, like "lxd" or "gce";
+        - authTypes: optional supported authentication systems, like "jsonfile"
+          or "oauth2" in the google compute example;
+        - endpoint: optional cloud endpoint, like "https://www.googleapis.com";
+        - identityEndpoint: optional URL of the identity manager;
+        - storageEndpoint: optional storage endpoint;
+        - regions: the list of regions supported by the cloud, each one being
+          an object with the following fields: name, endpoint, identityEndpoint
+          and storageEndpoint.
+      A cloud tag is a cloud name prefixed with "cloud-", like "cloud-lxd" or
+      "cloud-google".
+    */
+    getClouds: function(tags, callback) {
+      // Decorate the user supplied callback.
+      const handler = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by Cloud.Cloud API call:', data);
+          return;
+        }
+        if (data.error) {
+          userCallback({err: data.error});
+          return;
+        }
+        const results = data.response.results;
+        if (!results) {
+          userCallback({clouds: {}});
+          return;
+        }
+        const clouds = results.reduce((prev, result, index) => {
+          const tag = tags[index];
+          const err = result.error && result.error.message;
+          if (err) {
+            prev[tag] = {err: err};
+            return prev;
+          }
+          prev[tag] = this._parseCloudResult(tag, result.cloud);
+          return prev;
+        }, {});
+        userCallback({clouds: clouds});
+      }.bind(this, callback);
+      // Send the API request.
+      if (!tags.length) {
+        tags = [];
+      }
+      const entities = tags.map(function(tag) {
+        return {tag: tag};
+      });
+      this._send_rpc({
+        type: 'Cloud',
+        request: 'Cloud',
+        params: {entities: entities}
+      }, handler);
+    },
+
+    /**
+      Return the tag of the cloud that models will be created in by default in
+      this controller.
+
+      @method getDefaultCloudTag
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive the cloud tag and an error,
+        for instance ('cloud-google', null) when the operation succeeds or
+        ('', 'error message') in case of errors.
+      A cloud tag is a cloud name prefixed with "cloud-", like "cloud-lxd" or
+      "cloud-google".
+    */
+    getDefaultCloudTag: function(callback) {
+      // Decorate the user supplied callback.
+      const handler = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by Cloud.DefaultCloud API call:', data);
+          return;
+        }
+        if (data.error) {
+          userCallback('', data.error);
+          return;
+        }
+        const response = data.response;
+        const error = response.error && response.error.message;
+        if (error) {
+          userCallback('', error);
+          return;
+        }
+        userCallback(response.result, null);
+      }.bind(this, callback);
+      // Send the API request.
+      this._send_rpc({type: 'Cloud', request: 'DefaultCloud'}, handler);
+    },
+
+    /**
+      Parse a single cloud result retrieved by requesting endpoints on the
+      Cloud facade.
+
+      @method _parseCloudResult
+      @param {String} tag The cloud tag identifying the result.
+      @param {Object} result The cloud result.
+      @returns {Object} the parsed/modified result.
+    */
+    _parseCloudResult: function(tag, result) {
+      const regions = result.regions.map(region => {
+        return {
+          name: region.name,
+          endpoint: region.endpoint || '',
+          identityEndpoint: region['identity-endpoint'] || '',
+          storageEndpoint: region['storage-endpoint'] || ''
+        };
+      });
+      return {
+        name: tag.slice('cloud-'.length),
+        cloudType: result.type,
+        authTypes: result['auth-types'] || [],
+        endpoint: result.endpoint || '',
+        identityEndpoint: result['identity-endpoint'] || '',
+        storageEndpoint: result['storage-endpoint'] || '',
+        regions: regions
+      };
     }
 
   });

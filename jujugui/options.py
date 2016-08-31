@@ -25,6 +25,7 @@ def update(settings):
     _update(settings, 'jujugui.GTM_enabled', default=False)
     _update(settings, 'jujugui.password', default=None)
     _update(settings, 'jujugui.user', default=None)
+    _update(settings, 'jujugui.controllerSocketTemplate', default='/api')
     _update(settings, 'jujugui.socketTemplate', default='/model/$uuid/api')
     _update(settings, 'jujugui.jem_url', default=None)
     _update(settings, 'jujugui.jimm_url', default=None)

@@ -1080,4 +1080,282 @@ describe('Controller API', function() {
     });
   });
 
+  describe('listClouds', function() {
+    it('retrieves the definitions of supported clouds', function(done) {
+      // Perform the request.
+      controllerAPI.listClouds(data => {
+        assert.strictEqual(data.err, undefined);
+        assert.deepEqual(data.clouds, {
+          'cloud-lxd': {
+            name: 'lxd',
+            cloudType: 'lxd',
+            authTypes: ['empty'],
+            endpoint: 'https://1.2.3.4/lxd-api',
+            identityEndpoint: 'https://1.2.3.4/lxd-identity',
+            storageEndpoint: 'https://1.2.3.4/lxd-storage',
+            regions: [{
+              name: 'localhost',
+              endpoint: 'https://1.2.3.4/lxd-api-region1',
+              identityEndpoint: 'https://1.2.3.4/lxd-identity-region1',
+              storageEndpoint: 'https://1.2.3.4/lxd-storage-region1'
+            }]
+          },
+          'cloud-google': {
+            name: 'google',
+            cloudType: 'gce',
+            authTypes: ['userpass', 'oauth2'],
+            endpoint: 'https://1.2.3.4/google-api',
+            identityEndpoint: 'https://1.2.3.4/google-identity',
+            storageEndpoint: 'https://1.2.3.4/google-storage',
+            regions: [{
+              name: 'federation space',
+              endpoint: 'https://1.2.3.4/lxd-api-alpha-beta-quadrants',
+              identityEndpoint: 'https://1.2.3.4/lxd-identity-region2',
+              storageEndpoint: 'https://1.2.3.4/lxd-storage-region2'
+            }, {
+              name: 'dominion',
+              endpoint: 'https://1.2.3.4/lxd-api-gamma-quadrant',
+              identityEndpoint: 'https://1.2.3.4/lxd-identity-region1',
+              storageEndpoint: 'https://1.2.3.4/lxd-storage-region1'
+            }]
+          }
+        });
+        const msg = conn.last_message();
+        assert.deepEqual(msg, {
+          'request-id': 1,
+          type: 'Cloud',
+          request: 'Clouds',
+          version: 1,
+          params: {}
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {
+          clouds: {
+            'cloud-lxd': {
+              type: 'lxd',
+              'auth-types': ['empty'],
+              endpoint: 'https://1.2.3.4/lxd-api',
+              'identity-endpoint': 'https://1.2.3.4/lxd-identity',
+              'storage-endpoint': 'https://1.2.3.4/lxd-storage',
+              regions: [{
+                name: 'localhost',
+                endpoint: 'https://1.2.3.4/lxd-api-region1',
+                'identity-endpoint': 'https://1.2.3.4/lxd-identity-region1',
+                'storage-endpoint': 'https://1.2.3.4/lxd-storage-region1'
+              }]
+            },
+            'cloud-google': {
+              type: 'gce',
+              'auth-types': ['userpass', 'oauth2'],
+              endpoint: 'https://1.2.3.4/google-api',
+              'identity-endpoint': 'https://1.2.3.4/google-identity',
+              'storage-endpoint': 'https://1.2.3.4/google-storage',
+              regions: [{
+                name: 'federation space',
+                endpoint: 'https://1.2.3.4/lxd-api-alpha-beta-quadrants',
+                'identity-endpoint': 'https://1.2.3.4/lxd-identity-region2',
+                'storage-endpoint': 'https://1.2.3.4/lxd-storage-region2'
+              }, {
+                name: 'dominion',
+                endpoint: 'https://1.2.3.4/lxd-api-gamma-quadrant',
+                'identity-endpoint': 'https://1.2.3.4/lxd-identity-region1',
+                'storage-endpoint': 'https://1.2.3.4/lxd-storage-region1'
+              }]
+            }
+          }
+        }
+      });
+    });
+
+    it('handles request failures while listing clouds', function(done) {
+      // Perform the request.
+      controllerAPI.listClouds(data => {
+        assert.strictEqual(data.err, 'bad wolf');
+        assert.strictEqual(data.clouds, undefined);
+        done();
+      });
+      // Mimic response.
+      conn.msg({'request-id': 1, error: 'bad wolf'});
+    });
+
+  });
+
+  describe('getClouds', function() {
+    it('retrieves the requested cloud definitions', function(done) {
+      // Perform the request.
+      const tags = ['cloud-lxd', 'cloud-google', 'cloud-no-such'];
+      controllerAPI.getClouds(tags, data => {
+        assert.strictEqual(data.err, undefined);
+        assert.deepEqual(data.clouds, {
+          'cloud-lxd': {
+            name: 'lxd',
+            cloudType: 'lxd',
+            authTypes: ['empty'],
+            endpoint: 'https://1.2.3.4/lxd-api',
+            identityEndpoint: 'https://1.2.3.4/lxd-identity',
+            storageEndpoint: 'https://1.2.3.4/lxd-storage',
+            regions: [{
+              name: 'localhost',
+              endpoint: 'https://1.2.3.4/lxd-api-region1',
+              identityEndpoint: 'https://1.2.3.4/lxd-identity-region1',
+              storageEndpoint: 'https://1.2.3.4/lxd-storage-region1'
+            }]
+          },
+          'cloud-google': {
+            name: 'google',
+            cloudType: 'gce',
+            authTypes: ['userpass', 'oauth2'],
+            endpoint: 'https://1.2.3.4/google-api',
+            identityEndpoint: 'https://1.2.3.4/google-identity',
+            storageEndpoint: 'https://1.2.3.4/google-storage',
+            regions: [{
+              name: 'federation space',
+              endpoint: 'https://1.2.3.4/lxd-api-alpha-beta-quadrants',
+              identityEndpoint: 'https://1.2.3.4/lxd-identity-region2',
+              storageEndpoint: 'https://1.2.3.4/lxd-storage-region2'
+            }, {
+              name: 'dominion',
+              endpoint: 'https://1.2.3.4/lxd-api-gamma-quadrant',
+              identityEndpoint: 'https://1.2.3.4/lxd-identity-region1',
+              storageEndpoint: 'https://1.2.3.4/lxd-storage-region1'
+            }]
+          },
+          'cloud-no-such': {err: 'no such cloud'}
+        });
+        const msg = conn.last_message();
+        assert.deepEqual(msg, {
+          'request-id': 1,
+          type: 'Cloud',
+          request: 'Cloud',
+          version: 1,
+          params: {entities: [
+            {tag: 'cloud-lxd'},
+            {tag: 'cloud-google'},
+            {tag: 'cloud-no-such'}
+          ]}
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {
+          results: [{
+            cloud: {
+              type: 'lxd',
+              'auth-types': ['empty'],
+              endpoint: 'https://1.2.3.4/lxd-api',
+              'identity-endpoint': 'https://1.2.3.4/lxd-identity',
+              'storage-endpoint': 'https://1.2.3.4/lxd-storage',
+              regions: [{
+                name: 'localhost',
+                endpoint: 'https://1.2.3.4/lxd-api-region1',
+                'identity-endpoint': 'https://1.2.3.4/lxd-identity-region1',
+                'storage-endpoint': 'https://1.2.3.4/lxd-storage-region1'
+              }]
+            }
+          }, {
+            cloud: {
+              type: 'gce',
+              'auth-types': ['userpass', 'oauth2'],
+              endpoint: 'https://1.2.3.4/google-api',
+              'identity-endpoint': 'https://1.2.3.4/google-identity',
+              'storage-endpoint': 'https://1.2.3.4/google-storage',
+              regions: [{
+                name: 'federation space',
+                endpoint: 'https://1.2.3.4/lxd-api-alpha-beta-quadrants',
+                'identity-endpoint': 'https://1.2.3.4/lxd-identity-region2',
+                'storage-endpoint': 'https://1.2.3.4/lxd-storage-region2'
+              }, {
+                name: 'dominion',
+                endpoint: 'https://1.2.3.4/lxd-api-gamma-quadrant',
+                'identity-endpoint': 'https://1.2.3.4/lxd-identity-region1',
+                'storage-endpoint': 'https://1.2.3.4/lxd-storage-region1'
+              }]
+            }
+          }, {
+            error: {message: 'no such cloud'}
+          }]
+        }
+      });
+    });
+
+    it('handles request failures while getting clouds', function(done) {
+      // Perform the request.
+      controllerAPI.getClouds(['cloud-lxd'], data => {
+        assert.strictEqual(data.err, 'bad wolf');
+        assert.strictEqual(data.clouds, undefined);
+        done();
+      });
+      // Mimic response.
+      conn.msg({'request-id': 1, error: 'bad wolf'});
+    });
+
+    it('returns no results if no tags are provided', function(done) {
+      // Perform the request.
+      controllerAPI.getClouds(['cloud-lxd'], data => {
+        assert.strictEqual(data.err, undefined);
+        assert.deepEqual(data.clouds, {});
+        done();
+      });
+      // Mimic response.
+      conn.msg({'request-id': 1, response: {}});
+    });
+
+  });
+
+  describe('getDefaultCloudTag', function() {
+    it('retrieves the default cloud tag', function(done) {
+      // Perform the request.
+      controllerAPI.getDefaultCloudTag((tag, err) => {
+        assert.strictEqual(err, null);
+        assert.strictEqual(tag, 'cloud-lxd');
+        const msg = conn.last_message();
+        assert.deepEqual(msg, {
+          'request-id': 1,
+          type: 'Cloud',
+          request: 'DefaultCloud',
+          version: 1,
+          params: {}
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {result: 'cloud-lxd'},
+      });
+    });
+
+    it('handles request failures while getting default tag', function(done) {
+      // Perform the request.
+      controllerAPI.getDefaultCloudTag((tag, err) => {
+        assert.strictEqual(err, 'bad wolf');
+        assert.strictEqual(tag, '');
+        done();
+      });
+      // Mimic response.
+      conn.msg({'request-id': 1, error: 'bad wolf'});
+    });
+
+    it('handles API failures while getting default tag', function(done) {
+      // Perform the request.
+      controllerAPI.getDefaultCloudTag((tag, err) => {
+        assert.strictEqual(err, 'bad wolf');
+        assert.strictEqual(tag, '');
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {error: {message: 'bad wolf'}}
+      });
+    });
+
+  });
+
 });
