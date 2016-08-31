@@ -27,8 +27,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-endpoints', function(Y) {
 
-  var models = Y.namespace('juju.models');
-  var relationUtils = window.juju.utils.RelationUtils;
+  const models = Y.namespace('juju.models');
+  const relationUtils = window.juju.utils.RelationUtils;
 
   /**
     Get the series for a service. Pending subordinates should return all the
@@ -56,25 +56,25 @@ YUI.add('juju-endpoints', function(Y) {
    * Find available relation targets for a service.
    *
    * @method getEndpoints
-   * @param {Object} svc A service object.
+   * @param {Object} application A service object.
    * @param {Object} controller The endpoints controller.
    *
    * @return {Object} A mapping with keys of valid relation service targets
    *   and values consisting of a list of valid endpoints for each.
    */
-  models.getEndpoints = function(svc, controller) {
-    var targets = {},
+  models.getEndpoints = function(application, controller) {
+    const targets = {},
         requires = [],
         provides = [],
-        sid = svc.get('id'),
+        appId = application.get('id'),
         db = controller.get('db'),
-        ep_map = controller.endpointsMap;
-    const appIsSubordinate = svc.get('subordinate');
-    const appSeries = models._getSeries(db, svc);
+        endpointsMap = controller.endpointsMap;
+    const appIsSubordinate = application.get('subordinate');
+    const appSeries = models._getSeries(db, application);
 
     // Bail out if the map doesn't yet exist for this service.  The charm may
     // not be loaded yet.
-    if (!ep_map[sid]) {
+    if (!endpointsMap[appId]) {
       return targets;
     }
     /**
@@ -83,9 +83,9 @@ YUI.add('juju-endpoints', function(Y) {
      *
      * @method getEndpoints.convert
      */
-    function convert(svcName, relInfo) {
+    function convert(applicationName, relInfo) {
       return {
-        service: svcName,
+        service: applicationName,
         name: relInfo.name,
         type: relInfo['interface']
       };
@@ -95,62 +95,58 @@ YUI.add('juju-endpoints', function(Y) {
      * Store endpoints for a relation to target the given service.
      *
      * @method getEndpoints.add
-     * @param {Object} tep Target endpoint.
-     * @param {Object} oep Origin endpoint.
+     * @param {Object} targetEndpoint Target endpoint.
+     * @param {Object} originEndpoint Origin endpoint.
      */
-    function add(svcName, oep, tep) {
-      if (!Y.Object.owns(targets, svcName)) {
-        targets[svcName] = [];
+    function add(applicationName, originEndpoint, targetEndpoint) {
+      if (!targets.hasOwnProperty(applicationName)) {
+        targets[applicationName] = [];
       }
-      targets[svcName].push([oep, tep]);
+      targets[applicationName].push([originEndpoint, targetEndpoint]);
     }
 
     // First we process all the endpoints of the origin service.
     //
     // For required interfaces, we consider them valid for new relations
     // only if they are not already satisfied by an existing relation.
-    Y.each(
-        ep_map[sid].requires,
-        function(rdata) {
-          var ep = convert(sid, rdata);
-          // Subordinate relations are slightly different:
-          // a subordinate typically acts as a client to many services,
-          // against the implicitly provided juju-info interface.
-          if (svc.get('subordinate') &&
-            relationUtils.isSubordinateRelation(rdata)) {
-            return requires.push(ep);
-          }
-          if (db.relations.has_relation_for_endpoint(ep)) {
-            return;
-          }
-          requires.push(ep);
-        });
+    endpointsMap[appId].requires.forEach(rdata => {
+      const endpoint = convert(appId, rdata);
+      // Subordinate relations are slightly different:
+      // a subordinate typically acts as a client to many services,
+      // against the implicitly provided juju-info interface.
+      if (application.get('subordinate') &&
+        relationUtils.isSubordinateRelation(rdata)) {
+        return requires.push(endpoint);
+      }
+      if (db.relations.has_relation_for_endpoint(endpoint)) {
+        return;
+      }
+      requires.push(endpoint);
+    });
 
     // Process origin provides endpoints, a bit simpler, as they are
     // always one to many.
-    Y.each(
-        ep_map[sid].provides,
-        function(pdata) {
-          provides.push(convert(sid, pdata));
-        });
+    endpointsMap[appId].provides.forEach(pdata => {
+      provides.push(convert(appId, pdata));
+    });
 
     // Every non subordinate service implicitly provides this.
     if (!appIsSubordinate) {
       provides.push(convert(
-          sid, {'interface': 'juju-info', 'name': 'juju-info'}));
+          appId, {'interface': 'juju-info', 'name': 'juju-info'}));
     }
 
     // Now check every other service to see if it can be a valid target.
-    Y.each(db.services, function(tgt) {
-      var tid = tgt.get('id'),
-          tprovides = ep_map[tid].provides.concat();
-      const targetIsSubordinate = tgt.get('subordinate');
-      const targetSeries = models._getSeries(db, tgt);
+    db.services.each(target => {
+      const targetId = target.get('id'),
+          targetProvides = endpointsMap[targetId].provides.concat();
+      const targetIsSubordinate = target.get('subordinate');
+      const targetSeries = models._getSeries(db, target);
 
       // Ignore ourselves, peer relations are automatically
-      // established when a service is deployed. The gui only needs to
+      // established when a service is dendpointloyed. The gui only needs to
       // concern itself with client/server relations.
-      if (tid === sid) {
+      if (targetId === appId) {
         return;
       }
       // If the provided service is a subordinate it should only match targets
@@ -166,49 +162,43 @@ YUI.add('juju-endpoints', function(Y) {
       // Process each of the service's required endpoints. It is only
       // considered a valid target if it is not satisfied by an existing
       // relation.
-      Y.each(
-          ep_map[tid].requires,
-          function(rdata) {
-            var ep = convert(tid, rdata);
-            // Subordinates are exceptions again as they are a client
-            // to many services. We check if a subordinate relation
-            // exists between this subordinate endpoint and the origin
-            // service.
-            if (targetIsSubordinate &&
-              relationUtils.isSubordinateRelation(rdata)) {
-              if (db.relations.has_relation_for_endpoint(ep, sid)) {
-                return;
-              }
-            } else if (db.relations.has_relation_for_endpoint(ep)) {
-              return;
-            }
-            // If the origin provides it then it is a valid target.
-            Y.Array.filter(provides, function(oep) {
-              if (oep.type === ep.type) {
-                add(tid, oep, ep);
-              }
-            });
-          });
+      endpointsMap[targetId].requires.forEach(rdata => {
+        const endpoint = convert(targetId, rdata);
+        // Subordinates are excendpointtions again as they are a client
+        // to many services. We check if a subordinate relation
+        // exists between this subordinate endpoint and the origin
+        // service.
+        if (targetIsSubordinate &&
+          relationUtils.isSubordinateRelation(rdata)) {
+          if (db.relations.has_relation_for_endpoint(endpoint, appId)) {
+            return;
+          }
+        } else if (db.relations.has_relation_for_endpoint(endpoint)) {
+          return;
+        }
+        // If the origin provides it then it is a valid target.
+        provides.filter(originEndpoint => {
+          if (originEndpoint.type === endpoint.type) {
+            add(targetId, originEndpoint, endpoint);
+          }
+        });
+      });
 
       // Check against the implicit interface juju-info, but not for
       // subordinates.
-      if (!tgt.get('subordinate')) {
-        tprovides.push({'interface': 'juju-info', 'name': 'juju-info'});
+      if (!target.get('subordinate')) {
+        targetProvides.push({'interface': 'juju-info', 'name': 'juju-info'});
       }
-
-      Y.each(
-          tprovides,
-          function(pdata) {
-            var ep = convert(tid, pdata);
-            Y.Array.each(requires,
-               function(oep) {
-                 if (oep.type !== ep.type ||
-                     db.relations.has_relation_for_endpoint(ep, sid)) {
-                   return;
-                 }
-                 add(tid, oep, ep);
-               });
-          });
+      targetProvides.forEach(pdata => {
+        const endpoint = convert(targetId, pdata);
+        requires.forEach(originEndpoint => {
+          if (originEndpoint.type !== endpoint.type ||
+              db.relations.has_relation_for_endpoint(endpoint, appId)) {
+            return;
+          }
+          add(targetId, originEndpoint, endpoint);
+        });
+      });
     });
     return targets;
   };

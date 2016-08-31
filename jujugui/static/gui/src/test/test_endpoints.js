@@ -87,7 +87,7 @@ describe('Relation endpoints logic', function() {
     loadDelta(false);
     app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('mediawiki'),
-        available_svcs = Y.Object.keys(models.getEndpoints(
+        available_svcs = Object.keys(models.getEndpoints(
             service, app.endpointsController));
     available_svcs.sort();
     available_svcs.should.eql(
@@ -100,7 +100,7 @@ describe('Relation endpoints logic', function() {
     var service = db.services.getById('memcached'),
         available = models.getEndpoints(service, app.endpointsController),
         available_svcs;
-    available_svcs = Y.Object.keys(available);
+    available_svcs = Object.keys(available);
     available_svcs.sort();
     available_svcs.should.eql(
         ['mediawiki', 'puppet', 'rsyslog-forwarder-ha', 'wordpress']);
@@ -231,7 +231,7 @@ describe('Relation endpoints logic', function() {
     app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('mysql'),
         available = models.getEndpoints(service, app.endpointsController),
-        available_svcs = Y.Object.keys(available);
+        available_svcs = Object.keys(available);
     available_svcs.sort();
     available_svcs.should.eql(['mediawiki']);
     // mediawiki has two possible relations (read slave or write master)
@@ -261,7 +261,7 @@ describe('Relation endpoints logic', function() {
     app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('wordpress');
     var available = models.getEndpoints(service, app.endpointsController);
-    var available_svcs = Y.Object.keys(available);
+    var available_svcs = Object.keys(available);
     available_svcs.sort();
     available_svcs.should.eql(['memcached']);
   });
@@ -271,7 +271,7 @@ describe('Relation endpoints logic', function() {
     app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('puppet');
     var available = models.getEndpoints(service, app.endpointsController);
-    var available_svcs = Y.Object.keys(available);
+    var available_svcs = Object.keys(available);
     available_svcs.sort();
     available_svcs.should.eql(
         ['mediawiki', 'memcached', 'mysql', 'puppetmaster', 'rsyslog',
@@ -279,7 +279,7 @@ describe('Relation endpoints logic', function() {
 
     service = db.services.getById('rsyslog-forwarder-ha');
     available = models.getEndpoints(service, app.endpointsController);
-    available_svcs = Y.Object.keys(available);
+    available_svcs = Object.keys(available);
 
     available_svcs.sort();
     available_svcs.should.eql(
@@ -499,7 +499,7 @@ describe('Endpoints map handlers', function() {
   });
 
   afterEach(function() {
-    Y.each(destroyMe, function(thing) {
+    destroyMe.forEach(thing => {
       thing.destroy();
     });
   });
@@ -695,7 +695,7 @@ describe('Application config handlers', function() {
   });
 
   afterEach(function() {
-    Y.each(destroyMe, function(thing) {
+    destroyMe.forEach(thing => {
       thing.destroy();
     });
   });
