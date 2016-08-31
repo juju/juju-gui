@@ -30,7 +30,6 @@ YUI.add('user-profile-model-list', function() {
       controllerAPI: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
       hideConnectingMask: React.PropTypes.func.isRequired,
-      jem: React.PropTypes.object,
       listModels: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
@@ -44,7 +43,6 @@ YUI.add('user-profile-model-list', function() {
       return {
         modelList: [],
         loadingModels: false,
-        createNewModelActive: false
       };
     },
 
@@ -67,16 +65,16 @@ YUI.add('user-profile-model-list', function() {
     },
 
     componentWillReceiveProps: function(nextProps) {
-      var props = this.props;
-      var currentUser = props.user && props.user.user;
-      var nextUser = nextProps.user && nextProps.user.user;
+      const props = this.props;
+      const currentUser = props.user && props.user.user;
+      const nextUser = nextProps.user && nextProps.user.user;
       if (nextUser !== currentUser) {
         this._fetchModels();
       }
     },
 
     /**
-      Makes a request of JEM or JES to fetch the user's availble models.
+      Makes a request of JIMM or JES to fetch the user's availble models.
 
       @method _fetchModels
     */
@@ -85,13 +83,13 @@ YUI.add('user-profile-model-list', function() {
       // Delay the call until after the state change to prevent race
       // conditions.
       this.setState({loadingModels: true}, () => {
-        var xhr = this.props.listModels(this._fetchModelsCallback);
+        const xhr = this.props.listModels(this._fetchModelsCallback);
         this.xhrs.push(xhr);
       });
     },
 
     /**
-      Callback for the JEM and JES list models call.
+      Callback for the JIMM and JES list models call.
 
       @method _fetchModelsCallback
       @param {String} error The error from the request, or null.
@@ -99,17 +97,17 @@ YUI.add('user-profile-model-list', function() {
     */
     _fetchModelsCallback: function(error, data) {
       this.setState({loadingModels: false}, () => {
-        var broadcastStatus = this.props.broadcastStatus;
-        // We need to coerce error types returned by JES vs JEM into one error.
-        var err = data.err || error;
+        const broadcastStatus = this.props.broadcastStatus;
+        // We need to coerce error types returned by JES vs JIMM into one error.
+        const err = (data && data.err) || error;
         if (err) {
           broadcastStatus('error');
           console.error(err);
           return;
         }
-        // data.models is only populated by Juju controllers, when using JEM
+        // data.models is only populated by Juju controllers, when using JIMM
         // the models are in the top level 'data' object.
-        var modelList;
+        let modelList;
         if (data.models) {
           modelList = data.models.map(function(model) {
             // XXX frankban: owner should be the ownerTag without the 'user-'
@@ -119,13 +117,13 @@ YUI.add('user-profile-model-list', function() {
           });
         } else if (data.map) {
           modelList = data.map(function(model) {
-            // XXX kadams54: JEM models don't *currently* have a name or owner.
+            // XXX kadams54: JIMM models don't *currently* have a name or owner.
             // They have a path which is a combination of both, but that format
             // may change on down the road. Hence this big comment.
             model.name = model.path;
             model.owner = model.path.split('/')[0];
             model.lastConnection = 'N/A';
-            // XXX frankban: does JEM provide lifecycle indications?
+            // XXX frankban: does JIMM provide lifecycle indications?
             model.isAlive = true;
             return model;
           });
@@ -157,44 +155,6 @@ YUI.add('user-profile-model-list', function() {
     },
 
     /**
-      Fetches the model name from the modelName ref and then creates a model
-      then switches to it.
-      @method createAndSwitch
-      @param {Object} e The event handler from a form submission.
-    */
-    createAndSwitch: function(e) {
-      if (e && e.preventDefault) {
-        e.preventDefault();
-      }
-      // The supplied new model name needs to be valid.
-      var modelName = this.refs.modelName;
-      if (!modelName.validate()) {
-        // Only continue if the validation passes.
-        return;
-      }
-      // Because this will automatically connect to the model lets show
-      // the connecting mask right now.
-      this.props.showConnectingMask();
-      this.props.controllerAPI.createModel(
-        modelName.getValue(),
-        this.props.user.user,
-        data => {
-          var err = data.err;
-          if (err) {
-            this.props.addNotification({
-              title: 'Failed to create new Model',
-              message: err,
-              level: 'error'
-            });
-            console.error(err);
-            this.props.hideConnectingMask(false);
-            return;
-          }
-          this.switchModel(data.uuid, data.name);
-        });
-    },
-
-    /**
       Generate the details for the provided model.
 
       @method _generateRow
@@ -202,8 +162,8 @@ YUI.add('user-profile-model-list', function() {
       @returns {Array} The markup for the row.
     */
     _generateRow: function(model) {
-      var uuid = model.uuid;
-      var isCurrent = uuid === this.props.currentModel;
+      const uuid = model.uuid;
+      const isCurrent = uuid === this.props.currentModel;
       if (!model.isAlive) {
         if (model.name) {
           return (
@@ -268,69 +228,6 @@ YUI.add('user-profile-model-list', function() {
         </li>);
     },
 
-    /**
-      Depending on the existance of jem this will either switch to a
-      disconnected model or open up the UI to allow the user to create a
-      new model.
-      @method _nextCreateStep
-    */
-    _nextCreateStep: function() {
-      if (this.props.jem) {
-        // Switch to a disconnected model
-        this.switchModel();
-      } else {
-        // Open up the UI to specify a model name for the Controller.
-        this.setState({ createNewModelActive: true }, () => {
-          var input = this.refs.modelName;
-          if (input && input.refs.field) {
-            input.refs.field.focus();
-          }
-        });
-      }
-    },
-
-    /**
-      Generates the elements required for the create new button
-      @method _generateCreateNew
-      @param {String} className The class you'd like to have applied to the
-        container.
-    */
-    _generateCreateNew: function(className) {
-      var classes = classNames(
-        'user-profile__create-new',
-        className,
-        {
-          collapsed: !this.state.createNewModelActive
-        });
-      return (
-        <div className={classes}>
-          <form onSubmit={this.createAndSwitch}>
-            <juju.components.GenericButton
-              action={this._nextCreateStep}
-              type="inline-neutral first"
-              title="Create new" />
-            <juju.components.GenericInput
-              placeholder="untitled_model"
-              required={true}
-              ref="modelName"
-              validate={[{
-                regex: /\S+/,
-                error: 'This field is required.'
-              }, {
-                regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
-                error: 'This field must only contain upper and lowercase ' +
-                  'letters, numbers, and hyphens. It must not start or ' +
-                  'end with a hyphen.'
-              }]} />
-            <juju.components.GenericButton
-              action={this.createAndSwitch}
-              type="inline-neutral second"
-              title="Submit" />
-          </form>
-        </div>
-      );
-    },
-
     render: function() {
       if (this.state.loadingModels) {
         return (
@@ -339,14 +236,23 @@ YUI.add('user-profile-model-list', function() {
           </div>
         );
       }
-      var list = this.state.modelList;
+      const list = this.state.modelList;
       if (!list || list.length === 0) {
         return null;
       }
-      var rows = list.map(this._generateRow);
-      var createNewButton;
-      if (this.props.canCreateNew) {
-        createNewButton = this._generateCreateNew();
+      const rows = list.map(this._generateRow);
+      const props = this.props;
+      let createNewButton;
+      if (props.canCreateNew) {
+        createNewButton = (
+          <juju.components.CreateModelButton
+            addNotification={props.addNotification}
+            controllerAPI={props.controllerAPI}
+            hideConnectingMask={props.hideConnectingMask}
+            showConnectingMask={props.showConnectingMask}
+            switchModel={this.switchModel}
+            user={props.user} />
+        );
       }
       return (
         <div className="user-profile__model-list">
@@ -369,6 +275,7 @@ YUI.add('user-profile-model-list', function() {
 
 }, '', {
   requires: [
+    'create-model-button',
     'generic-button',
     'generic-input',
     'loading-spinner',

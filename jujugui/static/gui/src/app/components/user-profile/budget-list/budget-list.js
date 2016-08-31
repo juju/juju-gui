@@ -58,9 +58,9 @@ YUI.add('user-profile-budget-list', function() {
 
     componentWillReceiveProps: function(nextProps) {
       // If the user has changed then update the data.
-      var props = this.props;
-      var currentUser = props.user && props.user.user;
-      var nextUser = nextProps.user && nextProps.user.user;
+      const props = this.props;
+      const currentUser = props.user && props.user.user;
+      const nextUser = nextProps.user && nextProps.user.user;
       if (nextUser !== currentUser) {
         this._getBudgets();
       }
@@ -76,7 +76,7 @@ YUI.add('user-profile-budget-list', function() {
       // Delay the call until after the state change to prevent race
       // conditions.
       this.setState({loadingBudgets: true}, () => {
-        var xhr = this.props.listBudgets(this._getBudgetsCallback);
+        const xhr = this.props.listBudgets(this._getBudgetsCallback);
         this.xhrs.push(xhr);
       });
     },
@@ -90,7 +90,7 @@ YUI.add('user-profile-budget-list', function() {
     */
     _getBudgetsCallback: function(error, data) {
       this.setState({loadingBudgets: false}, () => {
-        var broadcastStatus = this.props.broadcastStatus;
+        const broadcastStatus = this.props.broadcastStatus;
         if (error) {
           broadcastStatus('error');
           if (error.indexOf('not found') === -1) {
@@ -101,13 +101,13 @@ YUI.add('user-profile-budget-list', function() {
           }
           return;
         }
-        if (!data.budgets || !data.budgets.length
-            || data.budgets.length === 0) {
+        const budgets = data && data.budgets;
+        if (!budgets || !budgets.length || budgets.length === 0) {
           broadcastStatus('empty');
         } else {
           broadcastStatus('ok');
         }
-        this.setState({budgetList: data.budgets});
+        this.setState({budgetList: budgets});
       });
     },
 
@@ -175,11 +175,11 @@ YUI.add('user-profile-budget-list', function() {
           </div>
         );
       }
-      var list = this.state.budgetList;
+      const list = this.state.budgetList;
       if (!list || list.length === 0) {
         return null;
       }
-      var rows = list.map(this._generateRow);
+      const rows = list.map(this._generateRow);
       return (
         <div className="user-profile__budget-list">
           <div className="user-profile__header twelve-col no-margin-bottom">

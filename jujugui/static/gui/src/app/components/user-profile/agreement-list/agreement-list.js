@@ -58,9 +58,9 @@ YUI.add('user-profile-agreement-list', function() {
 
     componentWillReceiveProps: function(nextProps) {
       // If the user has changed then update the data.
-      var props = this.props;
-      var currentUser = props.user && props.user.user;
-      var nextUser = nextProps.user && nextProps.user.user;
+      const props = this.props;
+      const currentUser = props.user && props.user.user;
+      const nextUser = nextProps.user && nextProps.user.user;
       if (nextUser !== currentUser) {
         this._getAgreements();
       }
@@ -76,7 +76,7 @@ YUI.add('user-profile-agreement-list', function() {
       // Delay the call until after the state change to prevent race
       // conditions.
       this.setState({loadingAgreements: true}, () => {
-        var xhr = this.props.getAgreements(this._getAgreementsCallback);
+        const xhr = this.props.getAgreements(this._getAgreementsCallback);
         this.xhrs.push(xhr);
       });
     },
@@ -90,7 +90,7 @@ YUI.add('user-profile-agreement-list', function() {
     */
     _getAgreementsCallback: function(error, data) {
       this.setState({loadingAgreements: false}, () => {
-        var broadcastStatus = this.props.broadcastStatus;
+        const broadcastStatus = this.props.broadcastStatus;
         if (error) {
           broadcastStatus('error');
           // TODO frankban: notify the user with the error.
@@ -114,7 +114,7 @@ YUI.add('user-profile-agreement-list', function() {
       @returns {Array} The markup for the row.
     */
     _generateRow: function(agreement) {
-      var term = agreement.term;
+      const term = agreement.term;
       return (
         <li className="user-profile__list-row twelve-col"
           key={term + agreement.revision}>
@@ -155,11 +155,11 @@ YUI.add('user-profile-agreement-list', function() {
           </div>
         );
       }
-      var list = this.state.agreementList;
+      const list = this.state.agreementList;
       if (!list || list.length === 0) {
         return null;
       }
-      var rows = list.map(this._generateRow);
+      const rows = list.map(this._generateRow);
       return (
         <div className="user-profile__agreement-list">
           <div className="user-profile__header twelve-col no-margin-bottom">

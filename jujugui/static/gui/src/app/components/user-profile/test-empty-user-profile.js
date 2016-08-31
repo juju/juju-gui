@@ -27,13 +27,35 @@ describe('EmptyUserProfile', () => {
   });
 
   it('renders the empty state', () => {
+    var addNotification = sinon.stub();
+    var controllerAPI = {};
+    var hideConnectingMask = sinon.stub();
+    var showConnectingMask = sinon.stub();
+    var user = {};
+    var staticURL = 'test-url';
     var component = jsTestUtils.shallowRender(
-      <juju.components.EmptyUserProfile />, true);
-    var src = '/static/gui/build/app'
+      <juju.components.EmptyUserProfile
+       addNotification={addNotification}
+       controllerAPI={controllerAPI}
+       hideConnectingMask={hideConnectingMask}
+       showConnectingMask={showConnectingMask}
+       switchModel={sinon.stub()}
+       user={user}
+       staticURL={staticURL} />, true);
+    var src = staticURL + '/static/gui/build/app'
               + '/assets/images/non-sprites/empty_profile.png';
     var output = component.getRenderOutput();
+    var instance = component.getMountedInstance();
     var expected = (
       <div className="user-profile__empty twelve-col no-margin-bottom">
+        <juju.components.CreateModelButton
+          addNotification={addNotification}
+          className='user-profile__empty-button'
+          controllerAPI={controllerAPI}
+          hideConnectingMask={hideConnectingMask}
+          showConnectingMask={showConnectingMask}
+          switchModel={instance.switchModel}
+          user={user} />
         <div className="clearfix">
           <img alt="Empty profile"
             className="user-profile__empty-image"
@@ -56,7 +78,7 @@ describe('EmptyUserProfile', () => {
       <juju.components.EmptyUserProfile
        staticURL='test' />);
     assert.equal(
-      output.props.children.props.children[0].props.src,
+      output.props.children[1].props.children[0].props.src,
       'test/static/gui/build/app/assets/images/non-sprites/empty_profile.png');
   });
 });

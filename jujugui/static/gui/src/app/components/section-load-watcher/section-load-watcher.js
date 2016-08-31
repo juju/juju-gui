@@ -93,9 +93,9 @@ YUI.add('section-load-watcher', function(Y) {
     */
     _renderContent: function() {
       if (this.state.renderEmpty) {
-        return <this.props.EmptyComponent />;
+        return this.props.EmptyComponent;
       } else if (this.state.renderError) {
-        return <this.props.ErrorComponent />;
+        return this.props.ErrorComponent;
       } else {
         // Augment the children with the broadcastStatus method
         const children = React.Children.map(this.props.children, child => {

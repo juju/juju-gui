@@ -69,7 +69,7 @@ describe('SectionLoadWatcher', () => {
   it('renders the empty component when all children report empty', () => {
     const renderer = jsTestUtils.shallowRender(
       <SectionLoadWatcher
-        EmptyComponent={EmptyComponent}>
+        EmptyComponent={<EmptyComponent/>}>
         <TestComponent ref="test1"/>
         <TestComponent ref="test2"/>
       </SectionLoadWatcher>, true);
@@ -84,7 +84,7 @@ describe('SectionLoadWatcher', () => {
   it('renders the error component when all children report an error', () => {
     const renderer = jsTestUtils.shallowRender(
       <SectionLoadWatcher
-        ErrorComponent={ErrorComponent}>
+        ErrorComponent={<ErrorComponent/>}>
         <TestComponent ref="test1"/>
         <TestComponent ref="test2"/>
       </SectionLoadWatcher>, true);
