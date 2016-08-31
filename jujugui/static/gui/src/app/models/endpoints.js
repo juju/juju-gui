@@ -31,6 +31,28 @@ YUI.add('juju-endpoints', function(Y) {
   var relationUtils = window.juju.utils.RelationUtils;
 
   /**
+    Get the series for a service. Pending subordinates should return all the
+    available series from the charm.
+
+    @method _getSeries
+    @param {Object} db A reference to the application database.
+    @param {Object} app An application object.
+    @return {Array} A list of available series.
+  */
+  models._getSeries = function(db, app) {
+    let series = app.get('series');
+    // Pending subordinates should be checked against all their available
+    // series.
+    if (app.get('subordinate') && app.get('pending')) {
+      series = db.charms.getById(app.get('charm')).get('series');
+    }
+    if (!Array.isArray(series)) {
+      series = [series];
+    }
+    return series;
+  },
+
+  /**
    * Find available relation targets for a service.
    *
    * @method getEndpoints
@@ -48,7 +70,7 @@ YUI.add('juju-endpoints', function(Y) {
         db = controller.get('db'),
         ep_map = controller.endpointsMap;
     const appIsSubordinate = svc.get('subordinate');
-    const appSeries = svc.get('series');
+    const appSeries = models._getSeries(db, svc);
 
     // Bail out if the map doesn't yet exist for this service.  The charm may
     // not be loaded yet.
@@ -123,6 +145,7 @@ YUI.add('juju-endpoints', function(Y) {
       var tid = tgt.get('id'),
           tprovides = ep_map[tid].provides.concat();
       const targetIsSubordinate = tgt.get('subordinate');
+      const targetSeries = models._getSeries(db, tgt);
 
       // Ignore ourselves, peer relations are automatically
       // established when a service is deployed. The gui only needs to
@@ -131,14 +154,14 @@ YUI.add('juju-endpoints', function(Y) {
         return;
       }
       // If the provided service is a subordinate it should only match targets
-      // with the same series.
-      if (appIsSubordinate && appSeries !== tgt.get('series')) {
-        return;
-      }
-      // If the target is a subordinate it needs to have a matching series to
-      // the provided app.
-      if (targetIsSubordinate && appSeries !== tgt.get('series')) {
-        return;
+      // with the same series. Or, if the target is a subordinate it needs to
+      // have a matching series to the provided app.
+      if (targetIsSubordinate || appIsSubordinate) {
+        // If there is no match beween the app and target series then exit out
+        // so this target does not get included in the list.
+        if (!appSeries.some(series => targetSeries.indexOf(series) > -1)) {
+          return;
+        }
       }
       // Process each of the service's required endpoints. It is only
       // considered a valid target if it is not satisfied by an existing
