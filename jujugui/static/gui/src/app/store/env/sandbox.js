@@ -183,6 +183,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     {name: 'Application', versions: [1]},
     {name: 'Charms', versions: [2]},
     {name: 'Client', versions: [1]},
+    {name: 'Cloud', versions: [1]},
     {name: 'ModelManager', versions: [2]},
     {name: 'Pinger', versions: [1]}
   ];
@@ -1210,6 +1211,90 @@ YUI.add('juju-env-sandbox', function(Y) {
       var result = state.removeRelation(data.params.endpoints[0],
           data.params.endpoints[1]);
       this._basicReceive(data, client, result);
+    },
+
+    /**
+      Handle Cloud.Clouds messages.
+
+      @method handleCloudClouds
+      @param {Object} data The contents of the API arguments.
+      @param {Object} client The active ClientConnection.
+      @param {Object} state An instance of FakeBackend.
+    */
+    handleCloudClouds: function(data, client, state) {
+      const info = this._getCloudInfo(state);
+      const clouds = {};
+      clouds[info.tag] = info.cloud;
+      client.receive({
+        'request-id': data['request-id'],
+        response: {clouds: clouds}
+      });
+    },
+
+    /**
+      Handle Cloud.Cloud messages.
+
+      @method handleCloudCloud
+      @param {Object} data The contents of the API arguments.
+      @param {Object} client The active ClientConnection.
+      @param {Object} state An instance of FakeBackend.
+    */
+    handleCloudCloud: function(data, client, state) {
+      const entities = data.params.entities;
+      if (!entities.length) {
+        client.receive({
+          'request-id': data['request-id'],
+          response: {results: []}
+        });
+        return;
+      }
+      const info = this._getCloudInfo(state);
+      const results = entities.map(entity => {
+        if (entity.tag === info.tag) {
+          return {cloud: info.cloud};
+        }
+        return {error: {message: 'cloud ' + entity.tag + ' not found'}};
+      });
+      client.receive({
+        'request-id': data['request-id'],
+        response: {results: results}
+      });
+    },
+
+    /**
+      Handle Cloud.DefaultCloud messages.
+
+      @method this
+      @param {Object} data The contents of the API arguments.
+      @param {Object} client The active ClientConnection.
+      @param {Object} state An instance of FakeBackend.
+    */
+    handleCloudDefaultCloud: function(data, client, state) {
+      const info = this._getCloudInfo(state);
+      client.receive({
+        'request-id': data['request-id'],
+        response: {result: info.tag}
+      });
+    },
+
+    /**
+      Return information about the current sandbox cloud.
+
+      @method _getCloudInfo
+      @param {Object} state An instance of FakeBackend.
+      @return {Object} An object with two fields: "tag" holding the cloud tag
+        and "cloud" with the information returned by the simulated server.
+    */
+    _getCloudInfo: function(state) {
+      const provider = state.get('providerType');
+      return {
+        tag: 'cloud-' + provider,
+        cloud: {
+          'auth-types': ['empty'],
+          regions: [{name: 'localhost'}],
+          type: provider
+        }
+      };
     },
 
     /**
