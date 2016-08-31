@@ -968,10 +968,7 @@ describe('Controller API', function() {
           request: 'CreateModel',
           params: {
             name: 'mymodel',
-            'owner-tag': 'user-who@external',
-            config: {
-              'authorized-keys': 'ssh-rsa INVALID (set by the Juju GUI)'
-            }
+            'owner-tag': 'user-who@external'
           },
           'request-id': 1
         });
