@@ -28,7 +28,6 @@ def update(settings):
     _update(settings, 'jujugui.controllerSocketTemplate', default='/api')
     _update(settings, 'jujugui.socketTemplate', default='/model/$uuid/api')
     _update(settings, 'jujugui.jem_url', default=None)
-    _update(settings, 'jujugui.jimm_url', default=None)
     _update_bool(settings, 'jujugui.interactive_login', default=False)
     _update_bool(settings, 'jujugui.sandbox', default=False)
     _update_bool(settings, 'jujugui.raw', default=False)
