@@ -69,20 +69,6 @@ YUI.add('user-profile', function() {
     },
 
     /**
-      Return a list's length or default to 0, in a manner that doesn't fall
-      over when confronted with a null list.
-
-      @method _safeCount
-      @returns {Array} The list.
-    */
-    /* XXX: Disabled until we solve the problem of getting counts from the
-       child list components.
-    _safeCount: function(list) {
-      return (list && list.length) || 0;
-    },
-    */
-
-    /**
       Generate the content for the panel.
 
       @method _generateContent
@@ -100,71 +86,87 @@ YUI.add('user-profile', function() {
           switchModel={props.switchModel}
           user={props.user} />
       );
+      // All possible components that can be rendered on the profile page;
+      // these may be filtered down to a smaller list depending on the context.
+      const lists = [
+        <juju.components.UserProfileModelList
+          key='modelList'
+          ref='modelList'
+          addNotification={props.addNotification}
+          canCreateNew={props.canCreateNew}
+          controllerAPI={props.controllerAPI}
+          currentModel={props.currentModel}
+          hideConnectingMask={props.hideConnectingMask}
+          listModels={props.listModels}
+          showConnectingMask={props.showConnectingMask}
+          switchModel={props.switchModel}
+          user={props.user}
+          users={props.users} />,
+        <juju.components.UserProfileEntityList
+          key='bundleList'
+          ref='bundleList'
+          changeState={props.changeState}
+          charmstore={props.charmstore}
+          getDiagramURL={props.getDiagramURL}
+          type='bundle'
+          user={props.user}
+          users={props.users} />,
+        <juju.components.UserProfileEntityList
+          key='charmList'
+          ref='charmList'
+          changeState={props.changeState}
+          charmstore={props.charmstore}
+          getDiagramURL={props.getDiagramURL}
+          type='charm'
+          user={props.user}
+          users={props.users} />,
+        <juju.components.UserProfileAgreementList
+          key='agreementList'
+          ref='agreementList'
+          getAgreements={props.getAgreements}
+          user={props.user} />,
+        <juju.components.UserProfileBudgetList
+          key='budgetList'
+          ref='budgetList'
+          listBudgets={props.listBudgets}
+          user={props.user} />
+      ];
+      // The original list of sections to render, regardless of what other
+      // decisions are made.
+      const toRender = [
+        'modelList',
+        'agreementList'
+      ];
+      // Exclude/include sections that are not public.
+      if (window.flags && window.flags.blues) {
+        toRender.push('budgetList');
+      }
+      // Exclude/include sections that require charmstore authentication.
+      const charmstoreUser = props.users.charmstore;
+      const authenticated = charmstoreUser && charmstoreUser.user;
+      if (!props.interactiveLogin || authenticated) {
+        toRender.push('bundleList');
+        toRender.push('charmList');
+      }
+      // Filter the original list of components based on which sections are in
+      // and which are out.
+      const componentsToRender = lists.filter(list => {
+        return toRender.indexOf(list.key) >= 0;
+      });
       return (
         <div>
           <juju.components.SectionLoadWatcher
             EmptyComponent={emptyComponent}
             timeout={10}>
-            <juju.components.UserProfileModelList
-              ref='modelList'
-              addNotification={props.addNotification}
-              canCreateNew={props.canCreateNew}
-              controllerAPI={props.controllerAPI}
-              currentModel={props.currentModel}
-              hideConnectingMask={props.hideConnectingMask}
-              listModels={props.listModels}
-              showConnectingMask={props.showConnectingMask}
-              switchModel={props.switchModel}
-              user={props.user}
-              users={props.users} />
-            <juju.components.UserProfileEntityList
-              ref='bundleList'
-              changeState={props.changeState}
-              charmstore={props.charmstore}
-              getDiagramURL={props.getDiagramURL}
-              type='bundle'
-              user={props.user}
-              users={props.users} />
-            <juju.components.UserProfileEntityList
-              ref='charmList'
-              changeState={props.changeState}
-              charmstore={props.charmstore}
-              getDiagramURL={props.getDiagramURL}
-              type='charm'
-              user={props.user}
-              users={props.users} />
-            <juju.components.UserProfileAgreementList
-              ref='agreementList'
-              getAgreements={props.getAgreements}
-              user={props.user} />
-            <juju.components.UserProfileBudgetList
-              ref='budgetList'
-              listBudgets={props.listBudgets}
-              user={props.user} />
+            {componentsToRender}
           </juju.components.SectionLoadWatcher>
         </div>);
     },
 
     render: function() {
       const username = this.props.user && this.props.user.usernameDisplay;
-      /* XXX Find some way to percolate these up from the child components. */
-      /*
-      const state = this.state;
-      const bundleCount = this._safeCount(state.bundleList);
-      const charmCount = this._safeCount(state.charmList);
-      const modelCount = this._safeCount(state.envList);
-      */
-      /* XXX Should include agreements, budgets, etc. in these links. */
-      /*
-      const pluralize = this.props.pluralize;
-      const links = [{
-        label: `${modelCount} ${pluralize('model', modelCount)}`
-      }, {
-        label: `${bundleCount} ${pluralize('bundle', bundleCount)}`
-      }, {
-        label: `${charmCount} ${pluralize('charm', charmCount)}`
-      }];
-      */
+      // XXX kadams54 2016-09-05: Will need to restore the header links and
+      // counts functionality here.
       const links = [];
       return (
         <juju.components.Panel
