@@ -837,9 +837,8 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Transform endpoints into a list of relatable services (to the
       // service).
-      var possible_relations = Y.Array.map(
-          Y.Array.flatten(Y.Object.values(endpoints)),
-          function(ep) {return ep.service;});
+      var possible_relations = Y.Array.flatten(Y.Object.values(endpoints)).map(
+        ep => {return ep.service;});
       var invalidRelationTargets = {};
 
       // Iterate services and invert the possibles list.

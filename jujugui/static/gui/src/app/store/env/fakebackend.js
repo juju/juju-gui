@@ -1248,11 +1248,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       // The ordering of requires and provides is stable in Juju Core, and not
       // specified in PyJuju.
-      var endpoints = Y.Array.map(
-          [match.requires, match.provides],
-          function(endpoint) {
-            return [endpoint.name, {name: endpoint.type}];
-          });
+      var endpoints = [match.requires, match.provides].map(endpoint => {
+        return [endpoint.name, {name: endpoint.type}];
+      });
       // Explicit Role labelling.
       endpoints[0][1].role = 'client';
       endpoints[1][1].role = 'server';
