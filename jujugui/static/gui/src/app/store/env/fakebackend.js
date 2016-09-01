@@ -945,7 +945,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           error: 'Application "' + applicationName + '" does not exist.'};
       }
       var isSubordinate = application.get('subordinate');
-      if (Y.Lang.isUndefined(numUnits)) {
+      if (numUnits === undefined) {
         numUnits = isSubordinate ? 0 : 1;
       }
       if (!Y.Lang.isNumber(numUnits) ||
