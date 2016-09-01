@@ -1083,9 +1083,9 @@ describe('Controller API', function() {
   describe('listClouds', function() {
     it('retrieves the definitions of supported clouds', function(done) {
       // Perform the request.
-      controllerAPI.listClouds(data => {
-        assert.strictEqual(data.err, undefined);
-        assert.deepEqual(data.clouds, {
+      controllerAPI.listClouds((err, clouds) => {
+        assert.strictEqual(err, null);
+        assert.deepEqual(clouds, {
           'cloud-lxd': {
             name: 'lxd',
             cloudType: 'lxd',
@@ -1173,9 +1173,9 @@ describe('Controller API', function() {
 
     it('handles request failures while listing clouds', function(done) {
       // Perform the request.
-      controllerAPI.listClouds(data => {
-        assert.strictEqual(data.err, 'bad wolf');
-        assert.strictEqual(data.clouds, undefined);
+      controllerAPI.listClouds((err, clouds) => {
+        assert.strictEqual(err, 'bad wolf');
+        assert.deepEqual(clouds, {});
         done();
       });
       // Mimic response.
@@ -1188,9 +1188,9 @@ describe('Controller API', function() {
     it('retrieves the requested cloud definitions', function(done) {
       // Perform the request.
       const tags = ['cloud-lxd', 'cloud-google', 'cloud-no-such'];
-      controllerAPI.getClouds(tags, data => {
-        assert.strictEqual(data.err, undefined);
-        assert.deepEqual(data.clouds, {
+      controllerAPI.getClouds(tags, (err, clouds) => {
+        assert.strictEqual(err, null);
+        assert.deepEqual(clouds, {
           'cloud-lxd': {
             name: 'lxd',
             cloudType: 'lxd',
@@ -1286,9 +1286,9 @@ describe('Controller API', function() {
 
     it('handles request failures while getting clouds', function(done) {
       // Perform the request.
-      controllerAPI.getClouds(['cloud-lxd'], data => {
-        assert.strictEqual(data.err, 'bad wolf');
-        assert.strictEqual(data.clouds, undefined);
+      controllerAPI.getClouds(['cloud-lxd'], (err, clouds) => {
+        assert.strictEqual(err, 'bad wolf');
+        assert.deepEqual(clouds, {});
         done();
       });
       // Mimic response.
@@ -1297,9 +1297,9 @@ describe('Controller API', function() {
 
     it('returns no results if no tags are provided', function(done) {
       // Perform the request.
-      controllerAPI.getClouds(['cloud-lxd'], data => {
-        assert.strictEqual(data.err, undefined);
-        assert.deepEqual(data.clouds, {});
+      controllerAPI.getClouds(['cloud-lxd'], (err, clouds) => {
+        assert.strictEqual(err, null);
+        assert.deepEqual(clouds, {});
         done();
       });
       // Mimic response.
@@ -1311,7 +1311,7 @@ describe('Controller API', function() {
   describe('getDefaultCloudTag', function() {
     it('retrieves the default cloud tag', function(done) {
       // Perform the request.
-      controllerAPI.getDefaultCloudTag((tag, err) => {
+      controllerAPI.getDefaultCloudTag((err, tag) => {
         assert.strictEqual(err, null);
         assert.strictEqual(tag, 'cloud-lxd');
         const msg = conn.last_message();
@@ -1333,7 +1333,7 @@ describe('Controller API', function() {
 
     it('handles request failures while getting default tag', function(done) {
       // Perform the request.
-      controllerAPI.getDefaultCloudTag((tag, err) => {
+      controllerAPI.getDefaultCloudTag((err, tag) => {
         assert.strictEqual(err, 'bad wolf');
         assert.strictEqual(tag, '');
         done();
@@ -1344,7 +1344,7 @@ describe('Controller API', function() {
 
     it('handles API failures while getting default tag', function(done) {
       // Perform the request.
-      controllerAPI.getDefaultCloudTag((tag, err) => {
+      controllerAPI.getDefaultCloudTag((err, tag) => {
         assert.strictEqual(err, 'bad wolf');
         assert.strictEqual(tag, '');
         done();
