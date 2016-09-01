@@ -289,50 +289,6 @@ YUI.add('juju-view-utils', function(Y) {
 
   views.JujuBaseView = JujuBaseView;
 
-
-  views.createModalPanel = function(
-      body_content, render_target, action_label, action_cb) {
-    var panel = new Y.Panel({
-      bodyContent: body_content,
-      width: 400,
-      zIndex: 5,
-      centered: true,
-      show: false,
-      classNames: 'modal',
-      modal: true,
-      render: render_target,
-      buttons: []
-    });
-    if (action_label && action_cb) {
-      views.setModalButtons(panel, action_label, action_cb);
-    }
-    return panel;
-  };
-
-  views.setModalButtons = function(panel, action_label, action_cb) {
-    panel.set('buttons', []);
-    panel.addButton(
-        { value: action_label,
-          section: Y.WidgetStdMod.FOOTER,
-          action: action_cb,
-          classNames: ['button']
-        });
-    panel.addButton(
-        { value: 'Cancel',
-          section: Y.WidgetStdMod.FOOTER,
-          action: function(e) {
-            e.preventDefault();
-            panel.hide();
-          },
-          classNames: ['button']
-        });
-
-    // The default YUI CSS conflicts with the CSS effect we want.
-    panel.get('boundingBox').all('.yui3-button').removeClass('yui3-button');
-    return panel;
-  };
-
-
   /*
    * snapToPoles if set to true will snap the relation lines to the
    * closest top, left, bottom or right edge of the service block.
