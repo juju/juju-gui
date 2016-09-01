@@ -65,11 +65,6 @@ YUI.add('app-renderer-extension', function(Y) {
         controllerAPI.findFacadeVersion('ModelManager') === null) {
         showEnvSwitcher = false;
       }
-      let socketTemplate = this.get('socketTemplate');
-      const jimmURL = this.get('jimmURL');
-      if (jimmURL) {
-        socketTemplate = `${jimmURL}${socketTemplate}`;
-      }
       ReactDOM.render(
         <juju.components.HeaderBreadcrumb
           envName={this.db.environment.get('name')}
@@ -81,7 +76,7 @@ YUI.add('app-renderer-extension', function(Y) {
           showProfile={utils.showProfile.bind(
             this, env && env.get('ecs'), this.changeState.bind(this))}
           switchModel={utils.switchModel.bind(
-            this, this.createSocketURL.bind(this, socketTemplate),
+            this, this.createSocketURL.bind(this, this.get('socketTemplate')),
             this.switchEnv.bind(this), env)} />,
         document.getElementById('header-breadcrumb'));
     },

@@ -446,7 +446,6 @@ YUI.add('juju-gui', function(Y) {
         // Instantiate a Web handler allowing to perform asynchronous HTTPS
         // requests to the juju-core API.
         modelOptions.webHandler = new environments.web.WebHandler();
-        controllerOptions.jimmURL = this.get('jimmURL');
       }
 
       let modelAPI, controllerAPI;
@@ -652,18 +651,8 @@ YUI.add('juju-gui', function(Y) {
                               (this.get('socket_url') || this.get('sandbox')));
         if (isNotGISFSandbox || isNotConnected) {
           this.env.connect();
-          if (this.controllerAPI) {
-            // We won't have a controller API connection in Juju 1 or in
-            // sandbox mode.
-            this.controllerAPI.connect();
-          }
         }
-        // If we have a jimmURL then we need to rely on the controllerAPI
-        // connection and subsequent switchModel call once we have all of the
-        // necessary information.
-        if (this.get('jimmURL')) {
-          this.controllerAPI.connect();
-        }
+        this.controllerAPI.connect();
         this.dispatch();
         this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       }, this);
@@ -754,28 +743,35 @@ YUI.add('juju-gui', function(Y) {
           // user into an uncommitted state.
           if (modelList.length === 0) {
             // XXX Drop the user into the uncommitted state.
+            console.log('No models available, using sandbox mode.');
+            return;
           }
           if (modelList.some(data => data.uuid === this.env.get('modelUUID'))) {
             // If the user is already connected to a model in this list then
             // leave it be.
             return;
           }
+          // Pick a model to connect to.
           const selectedModel = this._pickModel(modelList);
-          const jimmURL = this.get('jimmURL');
-          let socketTemplate = this.get('socketTemplate');
-
-          if (jimmURL) {
-            socketTemplate = `${jimmURL}${socketTemplate}`;
+          // Set the selected uuid as the active model in the GUI. If this is
+          // not set here then the subsequent code will not know what the
+          // uuid of the model we're supposed to connect to is.
+          if (!selectedModel) {
+            console.log('Cannot select available model, using sandbox mode.');
+            // XXX Drop the user into the uncommitted state.
+            return;
           }
+          this.set('jujuEnvUUID', selectedModel.uuid);
+          // Generate the valid socket URL and switch to this model.
           this.switchEnv(
-            this.createSocketURL(socketTemplate, selectedModel.uuid));
+            this.createSocketURL(
+              this.get('socketTemplate'), selectedModel.uuid));
         });
       });
 
       controllerAPI.after('connectedChange', e => {
         const credentials = this.controllerAPI.getCredentials();
-        const jimmURL = this.get('jimmURL');
-        if (!credentials.areAvailable && !jimmURL) {
+        if (!credentials.areAvailable && !this.get('gisf')) {
           // If we don't have credentials then do nothing as the env login
           // check will have kicked the user to the login prompt already and
           // we can wait until they have provided the credentials there.
@@ -784,17 +780,14 @@ YUI.add('juju-gui', function(Y) {
         // If we're in a JIMM controlled environment or if we have macaroon
         // credentials then use the macaroon login. If not then uses the
         // standard u/p method.
-        if (jimmURL || credentials.macaroons) {
+        if (this.get('gisf') || credentials.macaroons) {
           this.loginToAPIs(null, true, [this.controllerAPI]);
         } else {
           this.loginToAPIs(null, false, [this.controllerAPI]);
         }
       });
-      // If we're in JIMM then use a jimmURL, else use a socket_url without the
-      // model uuid.
       controllerAPI.set('socket_url',
-        this.get('jimmURL') ||
-          this.createSocketURL(this.get('controllerSocketTemplate')));
+        this.createSocketURL(this.get('controllerSocketTemplate')));
       return controllerAPI;
     },
 
@@ -880,20 +873,10 @@ YUI.add('juju-gui', function(Y) {
         // Loop through the available servers and find the public IP.
         const server = resp.servers[0].filter(
           server => server.scope === 'public');
-        // The environmentList will be populated by the model listing
-        // request after the controllerAPI call has connected.
-        const selectedModel = this._pickModel(
-          this.get('environmentList'));
-        let socketTemplate = this.get('socketTemplate');
-        // When connecting to a model using JIMM and a redirection, the socket
-        // template base differs from the default so we must provide
-        // it here when creating the socket url.
-        if (this.get('jimmURL')) {
-          socketTemplate =
-            `wss://${server[0].value}:${server[0].port}${socketTemplate}`;
-        }
+        // Switch to the redirected model.
         this.switchEnv(this.createSocketURL(
-          socketTemplate, selectedModel.uuid, server.value, server.port));
+          this.get('socketTemplate'),
+          this.get('jujuEnvUUID'), server[0].value, server[0].port));
       }
     },
 
@@ -1545,7 +1528,7 @@ YUI.add('juju-gui', function(Y) {
       this.navigate(url);
     },
 
-    /** Chooses an env to connect to from the env list based on config.
+    /** Chooses a model to connect to from the model list based on config.
 
       @method _pickModel
       @param {Array} modelList The list of models to pick from.
