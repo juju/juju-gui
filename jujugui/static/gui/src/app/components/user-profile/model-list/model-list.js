@@ -39,6 +39,7 @@ YUI.add('user-profile-model-list', function() {
 
     getInitialState: function() {
       this.xhrs = [];
+      this.statusSubscribers = [];
 
       return {
         modelList: [],
@@ -71,6 +72,24 @@ YUI.add('user-profile-model-list', function() {
       if (nextUser !== currentUser) {
         this._fetchModels();
       }
+    },
+
+    subscribeStatusListener: function(callback) {
+      this.statusSubscribers.push(callback);
+    },
+
+    unsubscribeStatusListener: function(callback) {
+      const subscribers = this.statusSubscribers;
+      const position = subscribers.indexOf(callback);
+      if (position >= 0) {
+        subscribers.splice(position, 1);
+      }
+    },
+
+    _notifyStatusListeners: function(status, data) {
+      this.statusSubscribers.forEach((callback) => {
+        callback(status, data);
+      });
     },
 
     /**
@@ -132,6 +151,8 @@ YUI.add('user-profile-model-list', function() {
           broadcastStatus('empty');
         } else {
           broadcastStatus('ok');
+          const modelCount = (modelList && modelList.length) || 0;
+          this._notifyStatusListeners('ok', {count: modelCount});
         }
         this.setState({modelList: modelList});
       });

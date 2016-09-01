@@ -93,7 +93,7 @@ YUI.add('user-profile-budget-list', function() {
         const broadcastStatus = this.props.broadcastStatus;
         if (error) {
           broadcastStatus('error');
-          if (error.indexOf('not found') === -1) {
+          if (error.indexOf && error.indexOf('not found') === -1) {
             // A "profile not found" error is expected, and it means the user
             // does not have a credit limit yet. Notify any other errors.
             // TODO huwshimi: notify the user with the error.

@@ -43,6 +43,24 @@ YUI.add('user-profile', function() {
       users: React.PropTypes.object.isRequired
     },
 
+    getInitialState: function() {
+      return {
+        modelCount: 0,
+      };
+    },
+
+    componentDidMount: function() {
+      const refs = this.refs;
+      refs.modelList.subscribeStatusListener(
+        this._updateCounts.bind(this, 'modelCount'));
+    },
+
+    componentWillUnmount: function() {
+      const refs = this.refs;
+      refs.modelList.unsubscribeStatusListener(
+        this._updateCounts.bind(this, 'modelCount'));
+    },
+
     /**
       Calls the bakery to get a charmstore macaroon.
 
@@ -68,19 +86,13 @@ YUI.add('user-profile', function() {
       }
     },
 
-    /**
-      Return a list's length or default to 0, in a manner that doesn't fall
-      over when confronted with a null list.
-
-      @method _safeCount
-      @returns {Array} The list.
-    */
-    /* XXX: Disabled until we solve the problem of getting counts from the
-       child list components.
-    _safeCount: function(list) {
-      return (list && list.length) || 0;
+    _updateCounts: function(key, status, data) {
+      if (status === 'ok' && data.count) {
+        const state = {};
+        state[key] = data.count;
+        this.setState(state);
+      }
     },
-    */
 
     /**
       Generate the content for the panel.
@@ -147,28 +159,11 @@ YUI.add('user-profile', function() {
 
     render: function() {
       var username = this.props.user && this.props.user.usernameDisplay;
-      /* XXX Find some way to percolate these up from the child components. */
-      /*
       var state = this.state;
-      var bundleCount = this._safeCount(state.bundleList);
-      var charmCount = this._safeCount(state.charmList);
-      var modelCount = this._safeCount(state.envList);
-      */
-      /* XXX Should include agreements, budgets, etc. in these links. */
-      /*
       var pluralize = this.props.pluralize;
       var links = [{
-        label: `${modelCount} ${pluralize('model', modelCount)}`
-      }, {
-        label: `${bundleCount} ${pluralize('bundle', bundleCount)}`
-      }, {
-        label: `${charmCount} ${pluralize('charm', charmCount)}`
+        label: `${state.modelCount} ${pluralize('model', state.modelCount)}`
       }];
-      var links = [{
-        label: `${modelCount} ${pluralize('model', modelCount)}`
-      }];
-      */
-      var links = [];
       return (
         <juju.components.Panel
           instanceName="user-profile"
