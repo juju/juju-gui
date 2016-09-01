@@ -611,16 +611,6 @@ YUI.add('juju-env-api', function(Y) {
 
       // Define the handler reacting to Juju controller login responses.
       var handleResponse = function(bakery, macaroons, cback, data) {
-        // When using JIMM it's possible that the url we have for the model is
-        // not the correct host and we need to fetch the correct path to be
-        // able to connect to the model.
-        if (data.error && data.error === 'redirection required') {
-          this.redirectInfo(resp =>
-            // We need to bail on this request and try again at new location.
-            cback(`authentication failed: ${data.error}`, resp.response)
-          );
-          return;
-        }
         if (data.error) {
           // Macaroon authentication failed or macaroons based authentication
           // not supported by this controller. In the latter case, the
@@ -688,12 +678,18 @@ YUI.add('juju-env-api', function(Y) {
       @param {Function} callback The callback to call with the response.
     */
     redirectInfo: function(callback) {
-      let request = {
+      this._send_rpc({
         type: 'Admin',
         request: 'RedirectInfo',
         version: ADMIN_FACADE_VERSION
-      };
-      this._send_rpc(request, callback);
+      }, resp => {
+        const error = resp.response.error;
+        if (error) {
+          callback(error, resp);
+          return;
+        }
+        callback(null, resp.response.servers);
+      });
     },
 
     /**

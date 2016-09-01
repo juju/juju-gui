@@ -845,7 +845,7 @@ YUI.add('juju-gui', function(Y) {
             interactive: true,
             serviceName: 'juju',
             dischargeStore: window.localStorage
-          }), this._handleRedirectionRequired.bind(this));
+          }), this._apiLoginHandler.bind(this, api));
         });
         return;
       }
@@ -858,25 +858,42 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Handles redirecting to a new model when attempting to log in.
+      Callback handler for the api loginWithMacaroon method which hanadles
+      the "redirection required" error message.
 
-      @method _handleRedirectionRequired
-      @param {String} err The error message string.
-      @param {Object} resp The response value containing the available server
-        details.
+      @method _apiLoginHandler
+      @param {Object} api The API that the user is attempting to log into.
+      @param {String} err The login error message, if any.
+      @param {Object} data The login request response data, if any.
     */
-    _handleRedirectionRequired: function(err, resp) {
-      // If we have a response and we have a redirection required error
-      // then we need to modify the connection information and try again.
-      // Otherwise we just carry on not doing anything.
-      if (resp && (err && err.indexOf('redirection required') > -1)) {
-        // Loop through the available servers and find the public IP.
-        const server = resp.servers[0].filter(
-          server => server.scope === 'public');
-        // Switch to the redirected model.
-        this.switchEnv(this.createSocketURL(
-          this.get('socketTemplate'),
-          this.get('jujuEnvUUID'), server[0].value, server[0].port));
+    _apiLoginHandler: function(api, err, data) {
+      const errorNotify = function(err) {
+        this.db.notifications.add({
+          title: 'Unable to log into model',
+          message: `unable to log into model: ${err}`,
+          level: 'error'
+        });
+      };
+
+      if (err === 'authentication failed: redirection required') {
+        // If the error is that redirection is required then we have to
+        // make a request to get the appropriate model connection information.
+        api.redirectInfo((err, servers) => {
+          if (err) {
+            errorNotify(err);
+            return;
+          }
+          // Loop through the available servers and find the public IP.
+          const server = servers[0].filter(
+            server => server.scope === 'public');
+          // Switch to the redirected model.
+          this.switchEnv(this.createSocketURL(
+            this.get('socketTemplate'),
+            this.get('jujuEnvUUID'), server[0].value, server[0].port));
+        });
+        return;
+      } else if (err) {
+        errorNotify(err);
       }
     },
 
