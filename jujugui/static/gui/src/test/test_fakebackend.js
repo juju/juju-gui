@@ -1804,10 +1804,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var result = fakebackend.addUnit('wordpress');
         assert.lengthOf(result.units, 1);
         var changes = fakebackend.nextChanges();
-        assert.lengthOf(Y.Object.keys(changes.applications), 0);
-        assert.lengthOf(Y.Object.keys(changes.units), 1);
-        assert.lengthOf(Y.Object.keys(changes.machines), 1);
-        assert.lengthOf(Y.Object.keys(changes.relations), 0);
+        assert.lengthOf(Object.keys(changes.applications), 0);
+        assert.lengthOf(Object.keys(changes.units), 1);
+        assert.lengthOf(Object.keys(changes.machines), 1);
+        assert.lengthOf(Object.keys(changes.relations), 0);
         assert.deepEqual(
             changes.units['wordpress/1'], [result.units[0], true]);
         assert.deepEqual(
@@ -1819,27 +1819,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         fakebackend.deploy('cs:precise/wordpress-27', callback);
         assert.isUndefined(deployResult.error);
         var changes = fakebackend.nextChanges();
-        assert.lengthOf(Y.Object.keys(changes.applications), 1);
+        assert.lengthOf(Object.keys(changes.applications), 1);
         assert.deepEqual(
             changes.applications.wordpress, [deployResult.application, true]);
-        assert.lengthOf(Y.Object.keys(changes.units), 1);
+        assert.lengthOf(Object.keys(changes.units), 1);
         assert.deepEqual(
             changes.units['wordpress/0'], [deployResult.units[0], true]);
-        assert.lengthOf(Y.Object.keys(changes.machines), 1);
+        assert.lengthOf(Object.keys(changes.machines), 1);
         assert.deepEqual(
             changes.machines[deployResult.machines[0].id],
             [deployResult.machines[0], true]);
-        assert.lengthOf(Y.Object.keys(changes.relations), 0);
+        assert.lengthOf(Object.keys(changes.relations), 0);
       });
 
       it('reports a deploy of multiple units correctly.', function() {
         fakebackend.deploy('cs:precise/wordpress-27', callback, {unitCount: 5});
         assert.isUndefined(deployResult.error);
         var changes = fakebackend.nextChanges();
-        assert.lengthOf(Y.Object.keys(changes.applications), 1);
-        assert.lengthOf(Y.Object.keys(changes.units), 5);
-        assert.lengthOf(Y.Object.keys(changes.machines), 5);
-        assert.lengthOf(Y.Object.keys(changes.relations), 0);
+        assert.lengthOf(Object.keys(changes.applications), 1);
+        assert.lengthOf(Object.keys(changes.units), 5);
+        assert.lengthOf(Object.keys(changes.machines), 5);
+        assert.lengthOf(Object.keys(changes.relations), 0);
       });
 
       it('reports no changes when no changes have occurred.',

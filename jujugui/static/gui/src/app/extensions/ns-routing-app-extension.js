@@ -53,7 +53,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
    **/
   function pairs(o) {
     var result = [],
-        keys = Y.Object.keys(o).sort();
+        keys = Object.keys(o).sort();
 
     Y.each(keys, function(k) {
       result.push([k, o[k]]);
@@ -256,7 +256,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
 
       // Sort base properties such
       // that output ordering is uniform.
-      var keys = Y.Object.keys(base).sort();
+      var keys = Object.keys(base).sort();
       Y.each(keys, function(ns) {
         url = slash(url);
         var bases;
@@ -323,7 +323,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
         output[k] = v;
       });
 
-      Y.Array.each(Y.Object.keys(incoming), function(ns) {
+      Y.Array.each(Object.keys(incoming), function(ns) {
         var current = output[ns];
         var merge = (combineFlags === true || (
             combineFlags && combineFlags[ns] === true));

@@ -276,7 +276,7 @@ YUI.add('juju-bundle-models', function(Y) {
         */
         setter: function(value) {
           var relations = [];
-          Y.Object.keys(value).forEach(function(key) {
+          Object.keys(value).forEach(function(key) {
             relations.push(value[key]);
           });
           return relations;
@@ -301,7 +301,7 @@ YUI.add('juju-bundle-models', function(Y) {
       serviceCount: {
         'getter': function() {
           if (this.get('applications')) {
-            return Y.Object.keys(this.get('applications')).length;
+            return Object.keys(this.get('applications')).length;
           }
         }
       },
