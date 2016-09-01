@@ -1134,7 +1134,7 @@ YUI.add('juju-models', function(Y) {
             'use db.addUnits() instead'
         );
       }
-      if (Y.Lang.isArray(models)) {
+      if (Array.isArray(models)) {
         models.forEach(this._setDefaultsAndCalculatedValues, this);
       } else {
         this._setDefaultsAndCalculatedValues(models);
@@ -1611,7 +1611,7 @@ YUI.add('juju-models', function(Y) {
       @return {Object|Object[]} The newly created model instance(s).
     */
     add: function(models, options) {
-      if (Y.Lang.isArray(models)) {
+      if (Array.isArray(models)) {
         models.forEach(this._setDefaultsAndCalculatedValues, this);
       } else {
         this._setDefaultsAndCalculatedValues(models);
@@ -2085,7 +2085,7 @@ YUI.add('juju-models', function(Y) {
       modelId: {
         setter: function(model) {
           if (!model) {return null;}
-          if (Y.Lang.isArray(model)) {return model;}
+          if (Array.isArray(model)) {return model;}
           return Y.mix(
               [model.name,
                (model instanceof Y.Model) ? model.get('id') : model.id]);
@@ -2741,7 +2741,7 @@ YUI.add('juju-models', function(Y) {
     */
     addUnits: function(models) {
       var unitOrUnits = this.units.add(models, true);
-      var units = Y.Lang.isArray(unitOrUnits) ? unitOrUnits : [unitOrUnits];
+      var units = Array.isArray(unitOrUnits) ? unitOrUnits : [unitOrUnits];
       // Update the units model list included in the corresponding services.
       units.forEach(function(unit) {
         var service = this.services.getById(unit.service);
@@ -2764,7 +2764,7 @@ YUI.add('juju-models', function(Y) {
     */
     removeUnits: function(models) {
       var unitOrUnits = this.units.remove(models, true);
-      var units = Y.Lang.isArray(unitOrUnits) ? unitOrUnits : [unitOrUnits];
+      var units = Array.isArray(unitOrUnits) ? unitOrUnits : [unitOrUnits];
       // Update the units model list included in the corresponding services.
       units.forEach(function(unit) {
         var service = this.services.getById(unit.service);

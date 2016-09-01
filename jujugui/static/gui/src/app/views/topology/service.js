@@ -1718,7 +1718,7 @@ YUI.add('juju-topology-service', function(Y) {
     */
     highlight: function(evt) {
       var serviceNames = [evt.serviceName];
-      if (Y.Lang.isArray(evt.serviceName)) {
+      if (Array.isArray(evt.serviceName)) {
         serviceNames = evt.serviceName;
       }
       var topo = this.get('component');
@@ -1747,7 +1747,7 @@ YUI.add('juju-topology-service', function(Y) {
     */
     unhighlight: function(evt) {
       var serviceNames = [evt.serviceName];
-      if (Y.Lang.isArray(evt.serviceName)) {
+      if (Array.isArray(evt.serviceName)) {
         serviceNames = evt.serviceName;
       }
 

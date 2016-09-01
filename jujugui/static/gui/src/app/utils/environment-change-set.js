@@ -928,7 +928,7 @@ YUI.add('environment-change-set', function(Y) {
         onParentResults: function(record, results) {
           if (record.command.method === '_deploy') {
             this.args.forEach(function(arg, index) {
-              if (Y.Lang.isArray(arg) &&
+              if (Array.isArray(arg) &&
                   record.command.options.modelId === arg[0]) {
                 this.args[index][0] = results[0].applicationName;
               }

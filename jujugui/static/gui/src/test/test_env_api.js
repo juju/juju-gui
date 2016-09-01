@@ -2718,7 +2718,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var providerFeatures = Y.juju.environments.providerFeatures;
       providers.forEach(function(provider) {
         assert.equal(
-            Y.Lang.isArray(providerFeatures[provider].supportedContainerTypes),
+            Array.isArray(providerFeatures[provider].supportedContainerTypes),
             true);
       });
     });

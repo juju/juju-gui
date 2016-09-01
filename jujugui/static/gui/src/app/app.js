@@ -589,7 +589,7 @@ YUI.add('juju-gui', function(Y) {
             var authtoken = qs.authtoken;
             if (Y.Lang.isValue(authtoken)) {
               // De-dupe if necessary.
-              if (Y.Lang.isArray(authtoken)) {
+              if (Array.isArray(authtoken)) {
                 authtoken = authtoken[0];
               }
               // Try a token login.
@@ -2012,7 +2012,7 @@ YUI.add('juju-gui', function(Y) {
         var changesToken = qs.changestoken;
         if (Y.Lang.isValue(changesToken)) {
           // De-dupe if necessary.
-          if (Y.Lang.isArray(changesToken)) {
+          if (Array.isArray(changesToken)) {
             changesToken = changesToken[0];
           }
           // Try to create a bundle uncommitted state using the token.
