@@ -86,7 +86,7 @@ YUI.add('juju-bundle-models', function(Y) {
     */
     parseNameEmail: function(author) {
       var parts = /^([^<]+?) <(.+)>$/.exec(author);
-      if (Y.Lang.isNull(parts)) {
+      if (!parts) {
         parts = [null, author, 'n/a'];
       }
       return [parts[1], parts[2]];
