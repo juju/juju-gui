@@ -147,8 +147,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.connect();
       env.set('facades', {Deployer: [0]});
       this._cleanups.push(env.close.bind(env));
-      db = {notifications: {add: testUtils.makeStubFunction()}};
-      bundleNotifications._watchDeployment = testUtils.makeStubFunction();
+      db = {notifications: {add: sinon.stub()}};
+      bundleNotifications._watchDeployment = sinon.stub();
     });
 
     afterEach(function()  {
@@ -299,7 +299,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      db = {notifications: {add: testUtils.makeStubFunction()}};
+      db = {notifications: {add: sinon.stub()}};
     });
 
     // Ensure the expected notification has been added to the database.

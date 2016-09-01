@@ -1624,7 +1624,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('retrieves local charms icons from the Juju env', function() {
       var fakeEnv = {
-        getLocalCharmFileUrl: testUtils.makeStubFunction('local charm icon')
+        getLocalCharmFileUrl: sinon.stub().returns('local charm icon')
       };
       var services = new models.ServiceList();
       services.add([

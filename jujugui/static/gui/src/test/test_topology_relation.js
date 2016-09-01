@@ -109,7 +109,7 @@ describe('topology relation module', function() {
   });
 
   it('has a rerender method which removes and updates relations', function() {
-    var stubRemove = utils.makeStubFunction();
+    var stubRemove = sinon.stub();
     var topo = {
       vis: {
         selectAll: function() {
@@ -128,7 +128,7 @@ describe('topology relation module', function() {
   it('fires "changeState" topo event for clicking a relation endpoint',
       function() {
         var topo = {
-          fire: utils.makeStubFunction()
+          fire: sinon.stub()
         };
         view.set('component', topo);
         view.inspectRelationClick.call(container, undefined, view);
@@ -342,8 +342,8 @@ describe('topology relation module', function() {
     });
 
     it('attaches the click events for the menu', function() {
-      var delegate = utils.makeStubFunction();
-      var on = utils.makeStubFunction();
+      var delegate = sinon.stub();
+      var on = sinon.stub();
       var menu = {
         one: function() {
           return {
@@ -358,20 +358,20 @@ describe('topology relation module', function() {
     });
 
     it('calls to position the menu to the terminating endpoint', function() {
-      var setStyle = utils.makeStubFunction();
-      var addClass = utils.makeStubFunction();
-      var set = utils.makeStubFunction();
+      var setStyle = sinon.stub();
+      var addClass = sinon.stub();
+      var set = sinon.stub();
       var menu = {
         setStyle: setStyle,
         addClass: addClass
       };
       var topo = {
         zoom: {
-          translate: utils.makeStubFunction('translate'),
-          scale: utils.makeStubFunction('scale')
+          translate: sinon.stub().returns('translate'),
+          scale: sinon.stub().returns('scale')
         },
         set: set,
-        fire: utils.makeStubFunction()
+        fire: sinon.stub()
       };
       var locate = utils.makeStubMethod(
           Y.juju.topology.utils, 'locateRelativePointOnCanvas',

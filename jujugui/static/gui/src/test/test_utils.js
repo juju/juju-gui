@@ -497,14 +497,14 @@ describe('utilities', function() {
         }
       };
       var db = {
-        addUnits: testUtils.makeStubFunction(),
-        removeUnits: testUtils.makeStubFunction()
+        addUnits: sinon.stub(),
+        removeUnits: sinon.stub()
       };
       var env = {
-        add_unit: testUtils.makeStubFunction()
+        add_unit: sinon.stub()
       };
       var unitCount = 2;
-      var callback = testUtils.makeStubFunction();
+      var callback = sinon.stub();
 
       var units = utils.addGhostAndEcsUnits(
           db, env, service, unitCount, callback);
@@ -561,9 +561,9 @@ describe('utilities', function() {
     it('properly removes the ghost units on env add_unit callback', function() {
       var ghostUnit = { ghostUnit: 'I am' };
       var db = {
-        removeUnits: testUtils.makeStubFunction()
+        removeUnits: sinon.stub()
       };
-      var callback = testUtils.makeStubFunction();
+      var callback = sinon.stub();
       var e = {
         applicationName: 'appName'
       };
@@ -643,7 +643,7 @@ describe('utilities', function() {
           }
         },
         relations: {
-          remove: testUtils.makeStubFunction()
+          remove: sinon.stub()
         }
       };
 
@@ -855,12 +855,12 @@ describe('utilities', function() {
 
     beforeEach(function() {
       _hidePopup = utils._hidePopup;
-      utils._hidePopup = testUtils.makeStubFunction();
+      utils._hidePopup = sinon.stub();
       _showUncommittedConfirm = utils._showUncommittedConfirm;
-      utils._showUncommittedConfirm = testUtils.makeStubFunction();
-      utils.changeState = testUtils.makeStubFunction();
-      utils.set = testUtils.makeStubFunction();
-      utils.showConnectingMask = testUtils.makeStubFunction();
+      utils._showUncommittedConfirm = sinon.stub();
+      utils.changeState = sinon.stub();
+      utils.set = sinon.stub();
+      utils.showConnectingMask = sinon.stub();
       models = [{
         uuid: 'uuid1',
         user: 'spinach',
@@ -875,16 +875,16 @@ describe('utilities', function() {
     });
 
     it('can switch directly if there are no uncommitted changes', function() {
-      var createSocketURL = testUtils.makeStubFunction('newaddress:80');
-      var switchEnv = testUtils.makeStubFunction();
+      var createSocketURL = sinon.stub().returns('newaddress:80');
+      var switchEnv = sinon.stub();
       var env = {
-        get: testUtils.makeStubFunction({
-          getCurrentChangeSet: testUtils.makeStubFunction({})
+        get: sinon.stub().returns({
+          getCurrentChangeSet: sinon.stub().returns({})
         })
       };
-      var callback = testUtils.makeStubFunction();
+      var callback = sinon.stub();
       var _switchModel = utils._switchModel;
-      utils._switchModel = testUtils.makeStubFunction();
+      utils._switchModel = sinon.stub();
       utils.switchModel(
         createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
       assert.deepEqual(utils._switchModel.callCount(), 1);
@@ -895,16 +895,16 @@ describe('utilities', function() {
     });
 
     it('can show a confirmation if there are uncommitted changes', function() {
-      var createSocketURL = testUtils.makeStubFunction('newaddress:80');
-      var switchEnv = testUtils.makeStubFunction();
+      var createSocketURL = sinon.stub().returns('newaddress:80');
+      var switchEnv = sinon.stub();
       var env = {
-        get: testUtils.makeStubFunction({
-          getCurrentChangeSet: testUtils.makeStubFunction({change: 'a change'})
+        get: sinon.stub().returns({
+          getCurrentChangeSet: sinon.stub().returns({change: 'a change'})
         })
       };
-      var callback = testUtils.makeStubFunction();
+      var callback = sinon.stub();
       var _switchModel = utils._switchModel;
-      utils._switchModel = testUtils.makeStubFunction();
+      utils._switchModel = sinon.stub();
       utils.switchModel(
         createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
       assert.deepEqual(utils._showUncommittedConfirm.callCount(), 1);
@@ -913,10 +913,10 @@ describe('utilities', function() {
     });
 
     it('can switch models', function() {
-      var createSocketURL = testUtils.makeStubFunction('newaddress:80');
-      var switchEnv = testUtils.makeStubFunction();
-      var env = {set: testUtils.makeStubFunction()};
-      var callback = testUtils.makeStubFunction();
+      var createSocketURL = sinon.stub().returns('newaddress:80');
+      var switchEnv = sinon.stub();
+      var env = {set: sinon.stub()};
+      var callback = sinon.stub();
       utils._switchModel(
         createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
 
@@ -944,9 +944,9 @@ describe('utilities', function() {
     });
 
     it('just disconnects if uuid is missing', function() {
-      var createSocketURL = testUtils.makeStubFunction();
-      var switchEnv = testUtils.makeStubFunction();
-      var env = {set: testUtils.makeStubFunction()};
+      var createSocketURL = sinon.stub();
+      var switchEnv = sinon.stub();
+      var env = {set: sinon.stub()};
       utils._switchModel(createSocketURL, switchEnv, env, undefined, models);
       assert.deepEqual(createSocketURL.callCount(), 0);
       assert.deepEqual(switchEnv.callCount(), 1);
@@ -955,9 +955,9 @@ describe('utilities', function() {
     });
 
     it('just disconnects if modelList is missing', function() {
-      var createSocketURL = testUtils.makeStubFunction();
-      var switchEnv = testUtils.makeStubFunction();
-      var env = {set: testUtils.makeStubFunction()};
+      var createSocketURL = sinon.stub();
+      var switchEnv = sinon.stub();
+      var env = {set: sinon.stub()};
       utils._switchModel(createSocketURL, switchEnv, env, 'model1', undefined);
       assert.deepEqual(createSocketURL.callCount(), 0);
       assert.deepEqual(switchEnv.callCount(), 1);
@@ -979,9 +979,9 @@ describe('utilities', function() {
 
     beforeEach(function() {
       _hidePopup = utils._hidePopup;
-      utils._hidePopup = testUtils.makeStubFunction();
+      utils._hidePopup = sinon.stub();
       _showUncommittedConfirm = utils._showUncommittedConfirm;
-      utils._showUncommittedConfirm = testUtils.makeStubFunction();
+      utils._showUncommittedConfirm = sinon.stub();
     });
 
     afterEach(function() {
@@ -991,9 +991,9 @@ describe('utilities', function() {
 
     it('can show the profile if there are no uncommitted changes', function() {
       var ecs = {
-        getCurrentChangeSet: testUtils.makeStubFunction({})
+        getCurrentChangeSet: sinon.stub().returns({})
       };
-      var changeState = testUtils.makeStubFunction();
+      var changeState = sinon.stub();
       utils.showProfile(ecs, changeState);
       assert.deepEqual(changeState.callCount(), 1);
       assert.deepEqual(utils._showUncommittedConfirm.callCount(), 0);
@@ -1001,9 +1001,9 @@ describe('utilities', function() {
 
     it('can show a confirmation if there are uncommitted changes', function() {
       var ecs = {
-        getCurrentChangeSet: testUtils.makeStubFunction({change: 'one'})
+        getCurrentChangeSet: sinon.stub().returns({change: 'one'})
       };
-      var changeState = testUtils.makeStubFunction();
+      var changeState = sinon.stub();
       utils.showProfile(ecs, changeState);
       assert.deepEqual(changeState.callCount(), 0);
       assert.deepEqual(utils._showUncommittedConfirm.callCount(), 1);
@@ -1011,10 +1011,10 @@ describe('utilities', function() {
 
     it('can show a confirmation and clear changes', function() {
       var ecs = {
-        clear: testUtils.makeStubFunction(),
-        getCurrentChangeSet: testUtils.makeStubFunction({change: 'one'})
+        clear: sinon.stub(),
+        getCurrentChangeSet: sinon.stub().returns({change: 'one'})
       };
-      var changeState = testUtils.makeStubFunction();
+      var changeState = sinon.stub();
       utils._showProfile(ecs, changeState, true);
       assert.deepEqual(changeState.callCount(), 1);
       assert.deepEqual(changeState.lastArguments()[0], {
@@ -1041,23 +1041,23 @@ describe('utilities', function() {
     });
 
     beforeEach(function() {
-      autoPlaceUnits = testUtils.makeStubFunction();
-      appSet = testUtils.makeStubFunction();
-      callback = testUtils.makeStubFunction();
-      commit = testUtils.makeStubFunction();
-      createSocketURL = testUtils.makeStubFunction('wss://socket-url');
-      envSet = testUtils.makeStubFunction();
+      autoPlaceUnits = sinon.stub();
+      appSet = sinon.stub();
+      callback = sinon.stub();
+      commit = sinon.stub();
+      createSocketURL = sinon.stub().returns('wss://socket-url');
+      envSet = sinon.stub();
       env = {
-        connect: testUtils.makeStubFunction(),
-        get: testUtils.makeStubFunction({
+        connect: sinon.stub(),
+        get: sinon.stub().returns({
           commit: commit
         }),
-        on: testUtils.makeStubFunction(),
+        on: sinon.stub(),
         set: envSet,
-        setCredentials: testUtils.makeStubFunction()
+        setCredentials: sinon.stub()
       };
       jem = {
-        newModel: testUtils.makeStubFunction(),
+        newModel: sinon.stub(),
       };
       users = {
         jem : {

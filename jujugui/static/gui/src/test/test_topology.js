@@ -137,7 +137,7 @@ describe('topology', function() {
     var annotations, update_annotations;
 
     beforeEach(function() {
-      update_annotations = utils.makeStubFunction();
+      update_annotations = sinon.stub();
       var env = {
         update_annotations: update_annotations
       };

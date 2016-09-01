@@ -35,44 +35,44 @@ describe('Ghost Deployer Extension', function() {
   beforeEach(function() {
     GhostDeployer = Y.Base.create(
         'deployer', Y.Base, [juju.GhostDeployer], {
-          isLegacyJuju: utils.makeStubFunction(false),
+          isLegacyJuju: sinon.stub().returns(false),
           views: {
             environment: {
               instance: {
                 topo: {service_boxes: {}},
-                createServiceInspector: utils.makeStubFunction()
+                createServiceInspector: sinon.stub()
               }
             }
           },
           env: {
-            deploy: utils.makeStubFunction(),
-            add_unit: utils.makeStubFunction(),
-            addCharm: utils.makeStubFunction()
+            deploy: sinon.stub(),
+            add_unit: sinon.stub(),
+            addCharm: sinon.stub()
           }
         }, {
           ATTRS: {
             charmstore: {
               value: {
                 bakery: {
-                  getMacaroon: utils.makeStubFunction('cookies are better')
+                  getMacaroon: sinon.stub().returns('cookies are better')
                 }
               }
             }
           }
         });
     ghostDeployer = new GhostDeployer();
-    var getMethod = utils.makeStubFunction();
+    var getMethod = sinon.stub();
     ghostDeployer.db = {
-      charms: { add: utils.makeStubFunction({ get: getMethod }) },
+      charms: { add: sinon.stub().returns({ get: getMethod }) },
       services: {
-        ghostService: utils.makeStubFunction({
-          get: utils.makeStubFunction('ghost-service-id'),
-          set: utils.makeStubFunction()
+        ghostService: sinon.stub().returns({
+          get: sinon.stub().returns('ghost-service-id'),
+          set: sinon.stub()
         })
       },
-      notifications: { add: utils.makeStubFunction() },
-      addUnits: utils.makeStubFunction(),
-      removeUnits: utils.makeStubFunction()
+      notifications: { add: sinon.stub() },
+      addUnits: sinon.stub(),
+      removeUnits: sinon.stub()
     };
   });
 
@@ -198,7 +198,7 @@ describe('Ghost Deployer Extension', function() {
 
   it('creates a ghost service', function() {
     var charm = makeCharm();
-    ghostDeployer.fire = utils.makeStubFunction();
+    ghostDeployer.fire = sinon.stub();
     ghostDeployer.deployService(charm);
     var services = ghostDeployer.db.services;
     assert.strictEqual(services.ghostService.calledOnce(), true);
@@ -355,7 +355,7 @@ describe('Ghost Deployer Extension', function() {
       config: {}
     });
     var topo = ghostDeployer.views.environment.instance.topo;
-    topo.annotateBoxPosition = utils.makeStubFunction();
+    topo.annotateBoxPosition = sinon.stub();
     topo.service_boxes.ghostid = {};
     ghostDeployer._deployCallbackHandler(ghostService, {});
     var attrs = ghostService.getAttrs();

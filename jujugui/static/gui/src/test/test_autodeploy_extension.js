@@ -36,18 +36,18 @@ describe('Autodeploy Extension', function() {
     Widget = Y.Base.create(
         'autodeployer', Y.Base, [juju.widgets.AutodeployExtension], {});
     widget = new Widget();
-    setAttrsStub = utils.makeStubFunction();
-    reviveStub = utils.makeStubFunction({
-      set: utils.makeStubFunction(),
+    setAttrsStub = sinon.stub();
+    reviveStub = sinon.stub().returns({
+      set: sinon.stub(),
       setAttrs: setAttrsStub
     });
     widget.set('db', {
-      fire: utils.makeStubFunction(),
+      fire: sinon.stub(),
       machines: {
-        updateModelId: utils.makeStubFunction(),
+        updateModelId: sinon.stub(),
         revive: reviveStub,
-        free: utils.makeStubFunction(),
-        _createMachine: utils.makeStubFunction()
+        free: sinon.stub(),
+        _createMachine: sinon.stub()
       },
       services: {
         getById: function() {

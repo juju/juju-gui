@@ -666,7 +666,7 @@ describe.skip('service module events', function() {
 
     beforeEach(function() {
       fileObj = { name: 'foo' };
-      topoFireStub = utils.makeStubFunction();
+      topoFireStub = sinon.stub();
       topoObj = { fire: topoFireStub };
       envObj = { env: 'foo' };
       contentsObj = { metadata: 'foo' };
@@ -691,7 +691,7 @@ describe.skip('service module events', function() {
     it('calls to show the upgrade or new inspector', function() {
       setup(this);
 
-      getServicesStub = utils.makeStubFunction(['service']);
+      getServicesStub = sinon.stub().returns(['service']);
       dbObj = { services: { getServicesFromCharmName: getServicesStub }};
 
       serviceModule._checkForExistingServices(
@@ -706,7 +706,7 @@ describe.skip('service module events', function() {
     it('calls to deploy the local charm', function() {
       setup(this);
 
-      getServicesStub = utils.makeStubFunction(['service']);
+      getServicesStub = sinon.stub().returns(['service']);
       dbObj = { services: { getServicesFromCharmName: getServicesStub }};
 
       serviceModule._checkForExistingServices(
@@ -747,7 +747,7 @@ describe.skip('service module events', function() {
     var services = [{ getAttrs: function() {} }];
 
     serviceModule.set('component', {
-      fire: utils.makeStubFunction()
+      fire: sinon.stub()
     });
 
     var fireStub = serviceModule.get('component').fire;
@@ -774,7 +774,7 @@ describe.skip('service module events', function() {
     var envObj = { env: 'env' };
 
     serviceModule.set('component', {
-      fire: utils.makeStubFunction()
+      fire: sinon.stub()
     });
 
     var fireStub = serviceModule.get('component').fire;

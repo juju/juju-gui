@@ -126,7 +126,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request progress', function() {
-        var progressCallback = utils.makeStubFunction();
+        var progressCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPostRequest(
             '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
@@ -134,7 +134,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request completion', function() {
-        var completedCallback = utils.makeStubFunction();
+        var completedCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPostRequest(
             '/path/', {}, 'data', 'user', 'passwd', false,
@@ -179,7 +179,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request progress', function() {
-        var progressCallback = utils.makeStubFunction();
+        var progressCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPutRequest(
             '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
@@ -187,7 +187,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request completion', function() {
-        var completedCallback = utils.makeStubFunction();
+        var completedCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPutRequest(
             '/path/', {}, 'data', 'user', 'passwd', false,
@@ -229,7 +229,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request progress', function() {
-        var progressCallback = utils.makeStubFunction();
+        var progressCallback = sinon.stub();
         // Make a GET request.
         webHandler.sendGetRequest(
             '/path/', {}, 'user', 'passwd', false, progressCallback);
@@ -237,7 +237,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request completion', function() {
-        var completedCallback = utils.makeStubFunction();
+        var completedCallback = sinon.stub();
         // Make a GET request.
         webHandler.sendGetRequest(
             '/path/', {}, 'user', 'passwd', false,
@@ -282,7 +282,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request progress', function() {
-        var progressCallback = utils.makeStubFunction();
+        var progressCallback = sinon.stub();
         // Make a PATCH request.
         webHandler.sendPatchRequest(
             '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
@@ -290,7 +290,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request completion', function() {
-        var completedCallback = utils.makeStubFunction();
+        var completedCallback = sinon.stub();
         // Make a PATCH request.
         webHandler.sendPatchRequest(
             '/path/', {}, 'data', 'user', 'passwd', false,

@@ -199,7 +199,7 @@ describe('App', function() {
       constructAppInstance({
         jujuCoreVersion: '1.21.1.1-trusty-amd64'
       }, this);
-      app._autoPlaceUnits = utils.makeStubFunction();
+      app._autoPlaceUnits = sinon.stub();
       app._autoplaceAndCommitAll();
       assert.equal(app._autoPlaceUnits.callCount(), 1);
     });
@@ -541,7 +541,7 @@ describe('App', function() {
     describe('UI notifications', function() {
 
       it('_renderDragOverNotification renders drop UI', function() {
-        var fade = testUtils.makeStubFunction();
+        var fade = sinon.stub();
         var reactdom = testUtils.makeStubMethod(ReactDOM, 'render');
         this._cleanups.push(reactdom.reset);
         app._renderDragOverNotification.call({
@@ -557,7 +557,7 @@ describe('App', function() {
       });
 
       it('_hideDragOverNotification hides drop UI', function() {
-        var fade = testUtils.makeStubFunction();
+        var fade = sinon.stub();
         var reactdom = testUtils.makeStubMethod(
           ReactDOM, 'unmountComponentAtNode');
         this._cleanups.push(reactdom.reset);
@@ -1136,7 +1136,7 @@ describe('App', function() {
           on: noop,
           size: function() {return 0;}
         },
-        reset: testUtils.makeStubFunction()
+        reset: sinon.stub()
       };
       app.dispatch = function() {};
       return app;
@@ -1160,7 +1160,7 @@ describe('App', function() {
         user: 'user',
         password: 'password'
       }),
-      env.login = testUtils.makeStubFunction();
+      env.login = sinon.stub();
     });
 
     afterEach(function() {
@@ -1183,7 +1183,7 @@ describe('App', function() {
     });
 
     it('should connect to model when GISF', function(done) {
-      env.connect = testUtils.makeStubFunction();
+      env.connect = sinon.stub();
       app = constructAppInstance();
       app.set('gisf', true);
       app.set('jujuEnvUUID', 'foobar');
@@ -1194,7 +1194,7 @@ describe('App', function() {
     });
 
     it('should not connect to model when GISF sandbox', function(done) {
-      env.connect = testUtils.makeStubFunction();
+      env.connect = sinon.stub();
       app = constructAppInstance();
       app.set('gisf', true);
       app.set('jujuEnvUUID', 'sandbox');
@@ -1205,7 +1205,7 @@ describe('App', function() {
     });
 
     it('should connect to model when URL is present', function(done) {
-      env.connect = testUtils.makeStubFunction();
+      env.connect = sinon.stub();
       app = constructAppInstance();
       app.set('gisf', false);
       app.set('socket_url', 'http://example.org');
@@ -1217,7 +1217,7 @@ describe('App', function() {
     });
 
     it('should connect to model when in sandbox', function(done) {
-      env.connect = testUtils.makeStubFunction();
+      env.connect = sinon.stub();
       app = constructAppInstance();
       app.set('gisf', false);
       app.set('socket_url', '');
@@ -1229,7 +1229,7 @@ describe('App', function() {
     });
 
     it('should not connect to model w/o URL or fake backend', function(done) {
-      env.connect = testUtils.makeStubFunction();
+      env.connect = sinon.stub();
       app = constructAppInstance();
       app.set('gisf', false);
       app.set('socket_url', '');
@@ -1311,7 +1311,7 @@ describe('App', function() {
       };
       app.env = fake_env;
       app.db = fake_db;
-      app._renderBreadcrumb = Y['juju-tests'].utils.makeStubFunction();
+      app._renderBreadcrumb = sinon.stub();
       return app;
     };
 
@@ -1481,7 +1481,7 @@ describe('App', function() {
         consoleEnabled: true,
         jujuCoreVersion: '2.0.0'
       });
-      jemStub = testUtils.makeStubFunction();
+      jemStub = sinon.stub();
       app.jem = {
         whoami: jemStub
       };
@@ -1806,7 +1806,7 @@ describe('App', function() {
 
     it('should proceed to next if disconnected but jem is set', function() {
       var req = {}, res = {};
-      var next = testUtils.makeStubFunction();
+      var next = sinon.stub();
       var maskVisibility = testUtils.makeStubMethod(app, 'maskVisibility');
       this._cleanups.push(maskVisibility.reset);
       // Ensure jem is set.

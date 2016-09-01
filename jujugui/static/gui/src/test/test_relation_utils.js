@@ -666,10 +666,10 @@ describe('RelationUtils', function() {
           size: sinon.stub()
         },
         relations: {
-          add: testUtils.makeStubFunction(),
-          remove: testUtils.makeStubFunction(),
-          create: testUtils.makeStubFunction(),
-          getById: testUtils.makeStubFunction(relationId)
+          add: sinon.stub(),
+          remove: sinon.stub(),
+          create: sinon.stub(),
+          getById: sinon.stub().returns(relationId)
         },
         services: {
           getById: sinon.stub().returns({
@@ -678,7 +678,7 @@ describe('RelationUtils', function() {
         }
       };
       var env = {
-        add_relation: testUtils.makeStubFunction()
+        add_relation: sinon.stub()
       };
       var relations = [{
         service: '19984570$',
@@ -701,7 +701,7 @@ describe('RelationUtils', function() {
         }
       ]];
       relationUtils.createRelation(
-        db, env, endpoints, testUtils.makeStubFunction());
+        db, env, endpoints, sinon.stub());
       assert.equal(db.relations.add.callCount(), 1);
       var endpoints = [[
         '19984570$', {
@@ -751,7 +751,7 @@ describe('RelationUtils', function() {
       var db = 'db';
       var endpointData = {};
       endpointData[vals.applicationToId] = JSON.parse(vals.getEndpoints);
-      var getEndpoints = testUtils.makeStubFunction(endpointData);
+      var getEndpoints = sinon.stub().returns(endpointData);
       var applicationFrom = vals.applicationFrom || {};
       var applicationTo = { get: function() { return vals.applicationToId; } };
       var dataStub = testUtils.makeStubMethod(relationUtils,
@@ -851,7 +851,7 @@ describe('RelationUtils', function() {
         }
       };
       const env = {remove_relation: sinon.stub()};
-      const callback = testUtils.makeStubFunction();
+      const callback = sinon.stub();
       relationUtils.destroyRelations(db, env, ['relation1'], callback);
       assert.equal(env.remove_relation.callCount, 1);
       const args = env.remove_relation.args[0];

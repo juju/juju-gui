@@ -58,7 +58,7 @@ describe('App Renderer Extension', function() {
     this._cleanups.push(createElementStub.reset);
     // Bootstrap various renderer attributes and properties.
     var ecs = {
-      getCurrentChangeSet: utils.makeStubFunction({})
+      getCurrentChangeSet: sinon.stub().returns({})
     };
     var Env = Y.Base.create('env', Y.Base, [], {
     }, {
@@ -68,25 +68,25 @@ describe('App Renderer Extension', function() {
     });
     renderer.env = new Env({ecs: ecs});
     renderer.controllerAPI = {
-      findFacadeVersion: utils.makeStubFunction(),
-      listModelsWithInfo: utils.makeStubFunction()
+      findFacadeVersion: sinon.stub(),
+      listModelsWithInfo: sinon.stub()
     };
 
     renderer.set('sandbox', false);
-    renderer._getAuth = utils.makeStubFunction({user: 'test'});
+    renderer._getAuth = sinon.stub().returns({user: 'test'});
 
     renderer.state = {
-      getState: utils.makeStubFunction()
+      getState: sinon.stub()
     };
     renderer.db = {
       environment: {
-        set: utils.makeStubFunction(),
-        get: utils.makeStubFunction('test-model')
+        set: sinon.stub(),
+        get: sinon.stub().returns('test-model')
       }
     };
-    renderer.changeState = utils.makeStubFunction();
-    renderer.switchEnv = utils.makeStubFunction();
-    renderer.createSocketURL = utils.makeStubFunction();
+    renderer.changeState = sinon.stub();
+    renderer.switchEnv = sinon.stub();
+    renderer.createSocketURL = sinon.stub();
   });
 
   afterEach(function() {
@@ -129,7 +129,7 @@ describe('App Renderer Extension', function() {
 
     it('hides the switcher when facade versions are not set', function() {
       renderer.controllerAPI.findFacadeVersion =
-        utils.makeStubFunction(null, null);
+        sinon.stub().returns(null, null);
       renderer._renderBreadcrumb();
       var props = createElementStub.lastArguments()[1];
       assert.equal(props['showEnvSwitcher'], false,

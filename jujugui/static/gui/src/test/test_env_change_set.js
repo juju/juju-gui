@@ -78,7 +78,7 @@ describe('Environment Change Set', function() {
           'foo-1': {
             parents: ['bar-1'],
             command: {
-              onParentResults: testUtils.makeStubFunction()
+              onParentResults: sinon.stub()
             }
           }
         };
@@ -103,7 +103,7 @@ describe('Environment Change Set', function() {
             id: 'addUnits-1',
             parents: ['service-1', 'addMachines-1'],
             command: {
-              onParentResults: testUtils.makeStubFunction()
+              onParentResults: sinon.stub()
             }
           },
           'service-2': {
@@ -115,7 +115,7 @@ describe('Environment Change Set', function() {
             id: 'addUnits-2',
             parents: ['service-2', 'addMachines-2'],
             command: {
-              onParentResults: testUtils.makeStubFunction()
+              onParentResults: sinon.stub()
             }
           },
           'addRelation-1': {
@@ -181,7 +181,7 @@ describe('Environment Change Set', function() {
       });
 
       it('strips the ecs options argument off the end', function(done) {
-        var stub = testUtils.makeStubFunction();
+        var stub = sinon.stub();
         var args = [1, 2, 'foo', 'bar', stub, { options: 'foo'}];
         function test() {
           var result = ecs._getArgs(arguments);
@@ -283,7 +283,7 @@ describe('Environment Change Set', function() {
 
     describe('_wrapCallback', function() {
       it('wraps the callback provided in the record object', function() {
-        var callback = testUtils.makeStubFunction('real cb');
+        var callback = sinon.stub().returns('real cb');
         var record = {
           id: 'service-123',
           parents: undefined,
@@ -310,7 +310,7 @@ describe('Environment Change Set', function() {
 
     describe('_execute', function() {
       it('calls to wrap the callback then executes on the env', function() {
-        var callback = testUtils.makeStubFunction();
+        var callback = sinon.stub();
         var record = {
           id: 'service-123',
           parents: undefined,
@@ -329,14 +329,14 @@ describe('Environment Change Set', function() {
       it('executes the command prepare callable if defined', function() {
         var db = {'mock': 'db'};
         ecs.set('db', db);
-        var prepare = testUtils.makeStubFunction();
+        var prepare = sinon.stub();
         var record = {
           id: 'service-123',
           parents: undefined,
           executed: false,
           command: {
             method: '_deploy',
-            args: [1, 2, 'foo', testUtils.makeStubFunction()],
+            args: [1, 2, 'foo', sinon.stub()],
             prepare: prepare
           }
         };
@@ -528,7 +528,7 @@ describe('Environment Change Set', function() {
         var fire = testUtils.makeStubMethod(ecs, 'fire');
         this._cleanups.push(fire.reset);
         ecs.levelRecordCount = 0;
-        ecs.levelTimer = { cancel: testUtils.makeStubFunction() };
+        ecs.levelTimer = { cancel: sinon.stub() };
         ecs._waitOnLevel(null, 0);
         assert.equal(fire.lastArguments()[0], 'currentCommitFinished');
         assert.deepEqual(fire.lastArguments()[1], {index: 0});
@@ -608,7 +608,7 @@ describe('Environment Change Set', function() {
 
     it('undeletes deleted services', function() {
       var db = ecs.get('db');
-      var stubSet = testUtils.makeStubFunction();
+      var stubSet = sinon.stub();
       db.services = {
         getById: function() {
           return {
@@ -650,7 +650,7 @@ describe('Environment Change Set', function() {
 
     it('backs out config changes', function() {
       var db = ecs.get('db');
-      var setStub = testUtils.makeStubFunction();
+      var setStub = sinon.stub();
       var getStub = function(key) {
         if (key === 'config') {
           return {
@@ -688,7 +688,7 @@ describe('Environment Change Set', function() {
 
     it('undeletes deleted relations', function() {
       var db = ecs.get('db');
-      var stubSet = testUtils.makeStubFunction();
+      var stubSet = sinon.stub();
       db.relations = {
         getRelationFromEndpoints: function() {
           return {
@@ -714,7 +714,7 @@ describe('Environment Change Set', function() {
 
     it('unexposes exposed services', function() {
       var db = ecs.get('db');
-      var stubSet = testUtils.makeStubFunction();
+      var stubSet = sinon.stub();
       db.services = {
         getById: function() {
           return {
@@ -728,7 +728,7 @@ describe('Environment Change Set', function() {
 
     it('exposes unexposed services', function() {
       var db = ecs.get('db');
-      var stubSet = testUtils.makeStubFunction();
+      var stubSet = sinon.stub();
       db.services = {
         getById: function() {
           return {
@@ -801,7 +801,7 @@ describe('Environment Change Set', function() {
 
       it('retrieves the updated application name on preparation', function() {
         var options = {modelId: 'new1'};
-        var callback = testUtils.makeStubFunction();
+        var callback = sinon.stub();
         var args = [
           'cs:precise/django-42', 'precise', 'django', {}, null, 1, {}, null,
           callback, options
@@ -819,7 +819,7 @@ describe('Environment Change Set', function() {
 
       it('retrieves the updated application series on preparation', function() {
         var options = {modelId: 'new1'};
-        var callback = testUtils.makeStubFunction();
+        var callback = sinon.stub();
         var args = [
           'cs:precise/django-42', 'precise', 'django', {}, null, 1, {}, null,
           callback, options
@@ -837,7 +837,7 @@ describe('Environment Change Set', function() {
 
       it('filters out any undefined settings on commit', function() {
         var options = {modelId: 'new1'};
-        var callback = testUtils.makeStubFunction();
+        var callback = sinon.stub();
         var args = [
           'cs:precise/django-42', 'precise', 'django', {
             foo: 'bar',
@@ -865,7 +865,7 @@ describe('Environment Change Set', function() {
     describe('lazyDestroyApplication', function() {
       it('creates a new destroy record', function(done) {
         var args = ['foo', done, {modelId: 'baz'}];
-        var setStub = testUtils.makeStubFunction();
+        var setStub = sinon.stub();
         ecs.set('db', {
           services: {
             getById: function(arg) {
@@ -898,9 +898,9 @@ describe('Environment Change Set', function() {
       });
 
       it('destroys create records for undeployed services', function() {
-        var stubRemove = testUtils.makeStubFunction();
-        var stubDestroy = testUtils.makeStubFunction();
-        var stubUpdateSubordinates = testUtils.makeStubFunction();
+        var stubRemove = sinon.stub();
+        var stubDestroy = sinon.stub();
+        var stubUpdateSubordinates = sinon.stub();
         var db = ecs.get('db');
         var fakeUnits = new Y.LazyModelList();
         fakeUnits.add({});
@@ -917,7 +917,7 @@ describe('Environment Change Set', function() {
           }
         };
         db.relations = {
-          remove: testUtils.makeStubFunction()
+          remove: sinon.stub()
         };
         var stubRemoveUnits = testUtils.makeStubMethod(db, 'removeUnits');
         this._cleanups.push(stubRemoveUnits.reset);
@@ -947,7 +947,7 @@ describe('Environment Change Set', function() {
                 get: function() {
                   return units;
                 },
-                set: testUtils.makeStubFunction()
+                set: sinon.stub()
               };
             }
           }
@@ -984,7 +984,7 @@ describe('Environment Change Set', function() {
             reset: function() {},
             detachAll: function() {},
             destroy: function() {},
-            free: testUtils.makeStubFunction()
+            free: sinon.stub()
           },
           units: {
             detachAll: function() {},
@@ -1010,7 +1010,7 @@ describe('Environment Change Set', function() {
       });
 
       it('destroys create records for undeployed services', function() {
-        var stubRemove = testUtils.makeStubFunction();
+        var stubRemove = sinon.stub();
         ecs.get('db').machines = {
           getById: function() {
             return {};
@@ -1061,7 +1061,7 @@ describe('Environment Change Set', function() {
       });
 
       it('removes uncommitted units from machines', function() {
-        var stubRemove = testUtils.makeStubFunction();
+        var stubRemove = sinon.stub();
         ecs.get('db').machines = {
           detachAll: function() {},
           destroy: function() {},
@@ -1098,7 +1098,7 @@ describe('Environment Change Set', function() {
       });
 
       it('removes machines from uncommitted units', function() {
-        var stubSet = testUtils.makeStubFunction();
+        var stubSet = sinon.stub();
         var db = ecs.get('db');
         var unit = { machine: 'foo'};
         db.machines = {
@@ -1107,7 +1107,7 @@ describe('Environment Change Set', function() {
           },
           revive: function() {
             return {
-              set: testUtils.makeStubFunction()
+              set: sinon.stub()
             };
           },
           filterByAncestor: function() {
@@ -1116,7 +1116,7 @@ describe('Environment Change Set', function() {
           reset: function() {},
           detachAll: function() {},
           destroy: function() {},
-          free: testUtils.makeStubFunction()
+          free: sinon.stub()
         };
         db.units = {
           revive: function() { return { set: stubSet }; },
@@ -1255,7 +1255,7 @@ describe('Environment Change Set', function() {
       var stubUpdateSubordinates;
 
       beforeEach(function() {
-        stubUpdateSubordinates = testUtils.makeStubFunction();
+        stubUpdateSubordinates = sinon.stub();
         ecs.get('db').services.getServiceByName = function() {
           return {
             updateSubordinateUnits: stubUpdateSubordinates
@@ -1328,9 +1328,9 @@ describe('Environment Change Set', function() {
         var db = ecs.get('db');
         db.units = {
           _idMap: {},
-          fire: testUtils.makeStubFunction()
+          fire: sinon.stub()
         };
-        db.services.getById = testUtils.makeStubFunction();
+        db.services.getById = sinon.stub();
         var unit = {
           id: '756482$/3',
           number: '3'
@@ -1367,7 +1367,7 @@ describe('Environment Change Set', function() {
       beforeEach(function() {
         service = {
           _dirtyFields: [],
-          setAttrs: testUtils.makeStubFunction(),
+          setAttrs: sinon.stub(),
           get: function(key) {
             if (key === '_dirtyFields') {
               return service._dirtyFields;
@@ -1380,7 +1380,7 @@ describe('Environment Change Set', function() {
           }
         };
         ecs.get('db').services = {
-          getById: testUtils.makeStubFunction(service)
+          getById: sinon.stub().returns(service)
         };
       });
 
@@ -1430,7 +1430,7 @@ describe('Environment Change Set', function() {
 
       it('sets the changed values to the service model', function() {
         var args = ['mysql', { foo: 'bar' }, null, { foo: 'baz', bax: 'qux' }];
-        service.set = testUtils.makeStubFunction();
+        service.set = sinon.stub();
         ecs._lazySetConfig(args);
         assert.equal(service.set.callCount(), 2);
         assert.deepEqual(service.set.lastArguments()[1], { foo: 'bar' });
@@ -1461,7 +1461,7 @@ describe('Environment Change Set', function() {
             }
           }
         };
-        var stubUpdateSubordinates = testUtils.makeStubFunction();
+        var stubUpdateSubordinates = sinon.stub();
         ecs.get('db').services.getServiceByName = function() {
           return {
             updateSubordinateUnits: stubUpdateSubordinates
@@ -1494,9 +1494,9 @@ describe('Environment Change Set', function() {
     describe('_lazyRemoveRelation', function() {
       it('can remove a ghost relation from the changeset', function() {
         ecs.get('db').relations = {
-          compareRelationEndpoints: testUtils.makeStubFunction(true),
-          getRelationFromEndpoints: testUtils.makeStubFunction(),
-          remove: testUtils.makeStubFunction()
+          compareRelationEndpoints: sinon.stub().returns(true),
+          getRelationFromEndpoints: sinon.stub(),
+          remove: sinon.stub()
         };
         ecs.changeSet['addRelation-982'] = {
           command: {
@@ -1517,10 +1517,10 @@ describe('Environment Change Set', function() {
       });
 
       it('can add a remove relation record into the changeset', function() {
-        var setStub = testUtils.makeStubFunction();
+        var setStub = sinon.stub();
         var db = ecs.get('db');
         db.relations = {
-          getRelationFromEndpoints: testUtils.makeStubFunction({
+          getRelationFromEndpoints: sinon.stub().returns({
             set: setStub
           })
         };
@@ -1547,7 +1547,7 @@ describe('Environment Change Set', function() {
 
     describe('_lazyRemoveUnit', function() {
       it('can remove a ghost unit from the changeset', function() {
-        ecs.get('db').removeUnits = testUtils.makeStubFunction();
+        ecs.get('db').removeUnits = sinon.stub();
         ecs.get('db').units = {
           getById: function() {
             return {
@@ -1555,7 +1555,7 @@ describe('Environment Change Set', function() {
             };
           }
         };
-        var stubUpdateSubordinates = testUtils.makeStubFunction();
+        var stubUpdateSubordinates = sinon.stub();
         ecs.get('db').services.getServiceByName = function() {
           return {
             updateSubordinateUnits: stubUpdateSubordinates
@@ -1588,7 +1588,7 @@ describe('Environment Change Set', function() {
               }
             };
           },
-          free: testUtils.makeStubFunction()
+          free: sinon.stub()
         };
         var record = ecs._lazyRemoveUnit([['args1', 'args2']]);
         assert.equal(record.split('-')[0], 'removeUnit');
@@ -1608,7 +1608,7 @@ describe('Environment Change Set', function() {
 
     describe('lazyExpose', function() {
       it('can add an expose record into the changeset', function() {
-        var stubSet = testUtils.makeStubFunction();
+        var stubSet = sinon.stub();
         ecs.get('db').services = {
           getById: function() {
             return { set: stubSet };
@@ -1632,7 +1632,7 @@ describe('Environment Change Set', function() {
 
     describe('lazyUnexpose', function() {
       it('can add an unexpose record into the changeset', function() {
-        var stubSet = testUtils.makeStubFunction();
+        var stubSet = sinon.stub();
         ecs.get('db').services = {
           getById: function() {
             return { set: stubSet };
@@ -1654,7 +1654,7 @@ describe('Environment Change Set', function() {
       });
 
       it('can remove an existing expose record', function() {
-        var stubSet = testUtils.makeStubFunction();
+        var stubSet = sinon.stub();
         ecs.get('db').services = {
           getById: function() {
             return { set: stubSet };
@@ -1682,7 +1682,7 @@ describe('Environment Change Set', function() {
       it('can immediately add a charm via the env', function() {
         var lazyAddCharm = testUtils.makeStubMethod(ecs, '_lazyAddCharm');
         this._cleanups.push(lazyAddCharm.reset);
-        var callback = testUtils.makeStubFunction();
+        var callback = sinon.stub();
         var args = [1, 2, callback, { immediate: true}];
         envObj.addCharm.apply(envObj, args);
         assert.equal(envObj._addCharm.calledOnce(), true);
@@ -1697,7 +1697,7 @@ describe('Environment Change Set', function() {
       it('can add a `addCharm` command to the changeSet', function() {
         var lazyAddCharm = testUtils.makeStubMethod(ecs, '_lazyAddCharm');
         this._cleanups.push(lazyAddCharm. reset);
-        var callback = testUtils.makeStubFunction();
+        var callback = sinon.stub();
         var args = [1, 2, callback];
         envObj.addCharm.apply(envObj, args);
         var lazyAddCharmArgs = lazyAddCharm.lastArguments()[0];
@@ -1715,7 +1715,7 @@ describe('Environment Change Set', function() {
       it('can immediately deploy a charm via the env', function() {
         var lazyDeploy = testUtils.makeStubMethod(ecs, '_lazyDeploy');
         this._cleanups.push(lazyDeploy.reset);
-        var callback = testUtils.makeStubFunction();
+        var callback = sinon.stub();
         var args = [1, 2, 3, 4, 5, 6, 7, 8, callback, { immediate: true}];
         envObj.deploy.apply(envObj, args);
         assert.equal(envObj._deploy.calledOnce(), true);
@@ -1730,7 +1730,7 @@ describe('Environment Change Set', function() {
       it('can add a `deploy` command to the changeSet', function() {
         var lazyDeploy = testUtils.makeStubMethod(ecs, '_lazyDeploy');
         this._cleanups.push(lazyDeploy.reset);
-        var callback = testUtils.makeStubFunction();
+        var callback = sinon.stub();
         var args = [1, 2, 3, 4, 5, 6, 7, callback];
         envObj.deploy.apply(envObj, args);
         var lazyDeployArgs = lazyDeploy.lastArguments()[0];
@@ -1748,7 +1748,7 @@ describe('Environment Change Set', function() {
       it('can immediately set config to a deployed service', function() {
         var lazySetConfig = testUtils.makeStubMethod(ecs, '_lazySetConfig');
         this._cleanups.push(lazySetConfig.reset);
-        var callback = testUtils.makeStubFunction();
+        var callback = sinon.stub();
         var args = ['service', {key: 'value'}, callback, { immediate: true}];
         envObj.set_config.apply(envObj, args);
         assert.equal(envObj._set_config.calledOnce(), true);
@@ -1764,7 +1764,7 @@ describe('Environment Change Set', function() {
       it('throws if immediately setting config to queued app', function() {
         var lazySetConfig = testUtils.makeStubMethod(ecs, '_lazySetConfig');
         this._cleanups.push(lazySetConfig.reset);
-        var callback = testUtils.makeStubFunction();
+        var callback = sinon.stub();
         ecs.changeSet.foo = {};
         assert.throws(
             // this is using bind instead of apply because of how the
@@ -1780,7 +1780,7 @@ describe('Environment Change Set', function() {
       it('can add a `set_config` command to the changeSet', function() {
         var lazySetConfig = testUtils.makeStubMethod(ecs, '_lazySetConfig');
         this._cleanups.push(lazySetConfig.reset);
-        var callback = testUtils.makeStubFunction();
+        var callback = sinon.stub();
         var args = [1, 2, 3, 4, callback];
         envObj.set_config.apply(envObj, args);
         assert.deepEqual(lazySetConfig.lastArguments()[0], args);
@@ -1804,7 +1804,7 @@ describe('Environment Change Set', function() {
             }
           }
         };
-        var callback = testUtils.makeStubFunction();
+        var callback = sinon.stub();
         var args = ['serviceId1$', {}, {}, {}, callback];
         var key = ecs._lazySetConfig(args);
         var record = ecs.changeSet[key];
@@ -1822,7 +1822,7 @@ describe('Environment Change Set', function() {
       it('can immediately call `add_relation`', function() {
         var lazyAddRelation = testUtils.makeStubMethod(ecs, '_lazyAddRelation');
         this._cleanups.push(lazyAddRelation.reset);
-        var callback = testUtils.makeStubFunction();
+        var callback = sinon.stub();
         var args = [1, 2, callback, {immediate: true}];
         envObj.add_relation.apply(envObj, args);
         assert.equal(lazyAddRelation.calledOnce(), false);
@@ -1834,7 +1834,7 @@ describe('Environment Change Set', function() {
       it('can add a `add_relation` command to the changeSet', function() {
         var lazyAddRelation = testUtils.makeStubMethod(ecs, '_lazyAddRelation');
         this._cleanups.push(lazyAddRelation.reset);
-        var callback = testUtils.makeStubFunction();
+        var callback = sinon.stub();
         var args = [1, 2, callback];
         envObj.add_relation.apply(envObj, args);
         assert.deepEqual(lazyAddRelation.lastArguments()[0], args);
@@ -1849,14 +1849,14 @@ describe('Environment Change Set', function() {
       beforeEach(function() {
         machineId = '0';
         // Set up a mock db object.
-        mockSet = testUtils.makeStubFunction();
+        mockSet = sinon.stub();
         ecs.set('db', {
           units: {
-            free: testUtils.makeStubFunction(),
-            revive: testUtils.makeStubFunction({set: mockSet})
+            free: sinon.stub(),
+            revive: sinon.stub().returns({set: mockSet})
           },
           machines: {
-            getById: testUtils.makeStubFunction({
+            getById: sinon.stub().returns({
               id: machineId
             })
           }
@@ -1953,7 +1953,7 @@ describe('Environment Change Set', function() {
       });
 
       it('does not apply changes if unit placement is not valid', function() {
-        var addStub = testUtils.makeStubFunction();
+        var addStub = sinon.stub();
         ecs.get('db').notifications = {add: addStub};
         mockValidateUnitPlacement = testUtils.makeStubMethod(
             ecs, 'validateUnitPlacement', 'bad wolf');

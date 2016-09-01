@@ -36,9 +36,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     beforeEach(function() {
       // Instantiate a web sandbox passing a mock state object.
       mockState = {
-        getLocalCharmFileUrl: utils.makeStubFunction('file-url'),
-        handleLocalCharmFileRequest: utils.makeStubFunction(),
-        handleUploadLocalCharm: utils.makeStubFunction()
+        getLocalCharmFileUrl: sinon.stub().returns('file-url'),
+        handleLocalCharmFileRequest: sinon.stub(),
+        handleUploadLocalCharm: sinon.stub()
       };
       webSandbox = new webModule.WebSandbox({state: mockState});
     });

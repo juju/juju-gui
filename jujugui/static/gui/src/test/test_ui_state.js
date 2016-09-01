@@ -150,15 +150,15 @@ describe('UI State object', function() {
       beforeEach(function() {
         dispatchers = {
           app: {
-            deployTarget: testUtils.makeStubFunction()
+            deployTarget: sinon.stub()
           },
           sectionA: {
-            charmbrowser: testUtils.makeStubFunction(),
-            empty: testUtils.makeStubFunction()
+            charmbrowser: sinon.stub(),
+            empty: sinon.stub()
           },
           sectionB: {
-            machine: testUtils.makeStubFunction(),
-            empty: testUtils.makeStubFunction()
+            machine: sinon.stub(),
+            empty: sinon.stub()
           }
         };
         state.set('dispatchers', dispatchers);

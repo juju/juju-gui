@@ -2409,7 +2409,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Set up the ziputils.getEntries and the completedCallback mocks.
       mockGetEntries = testUtils.makeStubMethod(ziputils, 'getEntries');
       this._cleanups.push(mockGetEntries.reset);
-      completedCallback = testUtils.makeStubFunction();
+      completedCallback = sinon.stub();
     });
 
     afterEach(function() {
@@ -2554,8 +2554,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Instantiate a fake backend.
       fakebackend = new environmentsModule.FakeBackend();
       // Set up the callback and errback mocks.
-      callback = testUtils.makeStubFunction();
-      errback = testUtils.makeStubFunction();
+      callback = sinon.stub();
+      errback = sinon.stub();
     });
 
     afterEach(function() {
@@ -2660,7 +2660,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Instantiate a fake backend.
       fakebackend = new environmentsModule.FakeBackend();
       // Set up the callback mock.
-      callback = testUtils.makeStubFunction();
+      callback = sinon.stub();
     });
 
     afterEach(function() {

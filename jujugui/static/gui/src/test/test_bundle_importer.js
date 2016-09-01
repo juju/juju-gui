@@ -102,7 +102,7 @@ describe('Bundle Importer', function() {
     describe('importBundleFile', function() {
 
       it('sets up and loads the FileReader', function() {
-        var asText = utils.makeStubFunction();
+        var asText = sinon.stub();
         var generate = utils.makeStubMethod(
             bundleImporter, '_generateFileReader', {
               onload: '',

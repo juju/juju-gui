@@ -42,8 +42,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Patch the zip library.
         createReaderMock = testUtils.makeStubMethod(zip, 'createReader');
         // Set up the callback and errback mocks.
-        callback = testUtils.makeStubFunction();
-        errback = testUtils.makeStubFunction();
+        callback = sinon.stub();
+        errback = sinon.stub();
       });
 
       afterEach(function() {
@@ -76,8 +76,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var args = getCreateReaderArgs();
         // Set up a reader mock.
         var reader = {
-          getEntries: testUtils.makeStubFunction(),
-          close: testUtils.makeStubFunction()
+          getEntries: sinon.stub(),
+          close: sinon.stub()
         };
         // Call the callback used to build the zip reader.
         args.callback(reader);
@@ -247,7 +247,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Create and return a mock entry object.
       var makeEntry = function() {
-        return {getData: testUtils.makeStubFunction()};
+        return {getData: sinon.stub()};
       };
 
       // Retrieve the callback passed to the getData method of the given mock
@@ -259,7 +259,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       beforeEach(function() {
         // Set up the callback and entries mocks.
-        callback = testUtils.makeStubFunction();
+        callback = sinon.stub();
         entries = {file1: makeEntry(), file2: makeEntry()};
       });
 

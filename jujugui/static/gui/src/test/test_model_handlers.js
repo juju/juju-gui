@@ -260,7 +260,7 @@ describe('Juju delta handlers', function() {
         subordinate: true
       };
       var oldUpdateConfig = models.Service.prototype.updateConfig;
-      models.Service.prototype.updateConfig = testUtils.makeStubFunction();
+      models.Service.prototype.updateConfig = sinon.stub();
       applicationInfo(db, 'add', change);
       assert.strictEqual(db.services.size(), 1);
       // Retrieve the application from the database.
@@ -412,8 +412,8 @@ describe('Juju delta handlers', function() {
     });
 
     it('executes collected application hooks on change', function() {
-      var hook1 = testUtils.makeStubFunction();
-      var hook2 = testUtils.makeStubFunction();
+      var hook1 = sinon.stub();
+      var hook2 = sinon.stub();
       models._applicationChangedHooks.django = [hook1, hook2];
       var change = {
         name: 'django',

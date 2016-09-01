@@ -884,7 +884,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('uses the correct endpoint when served from juju', function() {
         window.juju_config = { staticURL: '/static-url'};
         env.userIsAuthenticated = true;
-        var mockWebHandler = {sendPostRequest: utils.makeStubFunction()};
+        var mockWebHandler = {sendPostRequest: sinon.stub()};
         env.set('webHandler', mockWebHandler);
         env.uploadLocalCharm(
           'a zip file', 'trusty',
@@ -920,7 +920,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('uses the stored webHandler to perform requests', function() {
         env.userIsAuthenticated = true;
-        var mockWebHandler = {sendPostRequest: utils.makeStubFunction()};
+        var mockWebHandler = {sendPostRequest: sinon.stub()};
         env.set('webHandler', mockWebHandler);
         env.uploadLocalCharm(
             'a zip file', 'trusty',
@@ -950,7 +950,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('getLocalCharmFileUrl', function() {
 
       it('uses the stored webHandler to retrieve the file URL', function() {
-        var mockWebHandler = {getUrl: utils.makeStubFunction('myurl')};
+        var mockWebHandler = {getUrl: sinon.stub().returns('myurl')};
         env.set('webHandler', mockWebHandler);
         var url = env.getLocalCharmFileUrl(
             'local:trusty/django-42', 'icon.svg');
@@ -972,7 +972,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('listLocalCharmFiles', function() {
 
       it('uses the stored webHandler to retrieve the file list', function() {
-        var mockWebHandler = {sendGetRequest: utils.makeStubFunction()};
+        var mockWebHandler = {sendGetRequest: sinon.stub()};
         env.set('webHandler', mockWebHandler);
         env.listLocalCharmFiles(
             'local:trusty/django-42',
@@ -1000,7 +1000,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('getLocalCharmFileContents', function() {
 
       it('uses the stored webHandler to retrieve the contents', function() {
-        var mockWebHandler = {sendGetRequest: utils.makeStubFunction()};
+        var mockWebHandler = {sendGetRequest: sinon.stub()};
         env.set('webHandler', mockWebHandler);
         env.getLocalCharmFileContents(
             'local:trusty/django-42', 'hooks/install',
@@ -1171,7 +1171,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var charmUrl = 'trusty/rethinkdb-1';
         var forceUnits = false;
         var forceSeries = true;
-        var cb = utils.makeStubFunction();
+        var cb = sinon.stub();
         env.setCharm(applicationName, charmUrl, forceUnits, forceSeries, cb);
         var lastMessage = conn.last_message();
         var expected = {
@@ -2567,7 +2567,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // This is normally set by _watchAll, we'll fake it here.
       env._allWatcherId = 42;
       // Make the request.
-      var callback = utils.makeStubFunction();
+      var callback = sinon.stub();
       env._stopWatching(callback);
       // Mimic response.
       conn.msg({'request-id': 1, response: {}});
@@ -2725,7 +2725,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('requests the changes from Juju using a YAML', function() {
       var yaml = 'foo:\n  bar: baz';
-      var callback = utils.makeStubFunction();
+      var callback = sinon.stub();
       env.getBundleChanges(yaml, null, callback);
       msg = conn.last_message();
       assert.deepEqual(msg, {
@@ -2738,7 +2738,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('ignores token requests for bundle changes', function() {
-      var callback = utils.makeStubFunction();
+      var callback = sinon.stub();
       env.getBundleChanges(null, 'TOKEN', callback);
       msg = conn.last_message();
       assert.deepEqual(msg, {
@@ -2752,7 +2752,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles processing the bundle changes response', function() {
       var yaml = 'foo:\n  bar: baz';
-      var callback = utils.makeStubFunction();
+      var callback = sinon.stub();
       env.getBundleChanges(yaml, null, callback);
       msg = conn.last_message();
       env.dispatch_result({
@@ -2768,7 +2768,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles bundle changes error response', function() {
       var yaml = 'foo:\n  bar: baz';
-      var callback = utils.makeStubFunction();
+      var callback = sinon.stub();
       env.getBundleChanges(yaml, null, callback);
       msg = conn.last_message();
       env.dispatch_result({
@@ -2784,7 +2784,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles yaml parsing errors from the GUI server', function() {
       var yaml = 'foo:\n  bar: baz';
-      var callback = utils.makeStubFunction();
+      var callback = sinon.stub();
       env.getBundleChanges(yaml, null, callback);
       msg = conn.last_message();
       env.dispatch_result({
