@@ -262,7 +262,7 @@ YUI.add('d3-components', function(Y) {
               // context as third argument.
               var target = self,
                   callback = Y.bind(handler.callback, handler.context);
-              if (Y.Array.indexOf(['windowresize'], name) !== -1) {
+              if (['windowresize'].indexOf(name) !== -1) {
                 target = Y;
                 handler.context = null;
               } else {

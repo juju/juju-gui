@@ -843,8 +843,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Iterate services and invert the possibles list.
       db.services.each(function(s) {
-        if (Y.Array.indexOf(possible_relations,
-            s.get('id')) === -1) {
+        if (possible_relations.indexOf(s.get('id')) === -1) {
           invalidRelationTargets[s.get('id')] = true;
         }
       });
