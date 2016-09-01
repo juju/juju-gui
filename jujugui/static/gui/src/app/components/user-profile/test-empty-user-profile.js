@@ -37,6 +37,7 @@ describe('EmptyUserProfile', () => {
       <juju.components.EmptyUserProfile
        addNotification={addNotification}
        controllerAPI={controllerAPI}
+       gisf={false}
        hideConnectingMask={hideConnectingMask}
        showConnectingMask={showConnectingMask}
        switchModel={sinon.stub()}
@@ -52,6 +53,7 @@ describe('EmptyUserProfile', () => {
           addNotification={addNotification}
           className='user-profile__empty-button'
           controllerAPI={controllerAPI}
+          gisf={false}
           hideConnectingMask={hideConnectingMask}
           showConnectingMask={showConnectingMask}
           switchModel={instance.switchModel}
