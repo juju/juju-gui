@@ -52,7 +52,7 @@ YUI.add('event-tracker', function(Y) {
      *
      */
     _detachEvents: function(complete) {
-      Y.Array.each(this._events, function(ev) {
+      this._events.forEach(ev => {
         ev.detach();
       });
 

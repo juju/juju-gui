@@ -2025,20 +2025,18 @@ YUI.add('juju-models', function(Y) {
             svc_matched = ep_matched = false;
 
             // Match endpoint and svc name across endpoints of a relation.
-            Y.Array.each(
-                rel.get('endpoints'),
-                function(rep) {
-                  if (ep.type !== rel.get('interface')) {
-                    return;
-                  }
-                  if (!ep_matched) {
-                    ep_matched = (ep.service === rep[0] &&
-                        ep.name === rep[1].name);
-                  }
-                  if (svc_name && !svc_matched && rep[0] === svc_name) {
-                    svc_matched = true;
-                  }
-                });
+            rel.get('endpoints').forEach(rep => {
+              if (ep.type !== rel.get('interface')) {
+                return;
+              }
+              if (!ep_matched) {
+                ep_matched = (ep.service === rep[0] &&
+                    ep.name === rep[1].name);
+              }
+              if (svc_name && !svc_matched && rep[0] === svc_name) {
+                svc_matched = true;
+              }
+            });
 
             if (!svc_name && ep_matched) {
               return true;

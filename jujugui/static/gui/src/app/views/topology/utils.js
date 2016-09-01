@@ -65,7 +65,7 @@ YUI.add('juju-topology-utils', function(Y) {
 
       // Find the node furthest from the origin in the set of hull vertices.
       var furthestDistance = 0, furthestVertex = [0, 0];
-      Y.Array.each(hull, function(vertex) {
+      hull.forEach(vertex => {
         var distance = Math.sqrt(
             Math.pow(vertex[0], 2) +
             Math.pow(vertex[1], 2));

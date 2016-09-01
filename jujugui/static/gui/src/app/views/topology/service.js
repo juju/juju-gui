@@ -1050,7 +1050,7 @@ YUI.add('juju-topology-service', function(Y) {
       var dropXY = [evt.clientX, (evt.clientY - 71)];
 
       // Take the x,y offset (translation) of the topology view into account.
-      Y.Array.each(dropXY, function(_, index) {
+      dropXY.forEach((_, index) => {
         ghostAttributes.coordinates[index] =
             (dropXY[index] - translation[index]) / scale;
       });

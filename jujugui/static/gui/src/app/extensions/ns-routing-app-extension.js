@@ -265,7 +265,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
         } else {
           bases = [base[ns]];
         }
-        Y.Array.each(bases, function(frag) {
+        bases.forEach(frag => {
           if (!(frag === '/' && options.excludeRootPaths)) {
             url += ':' + ns + ':' + frag;
           }
@@ -323,7 +323,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
         output[k] = v;
       });
 
-      Y.Array.each(Object.keys(incoming), function(ns) {
+      Object.keys(incoming).forEach(ns => {
         var current = output[ns];
         var merge = (combineFlags === true || (
             combineFlags && combineFlags[ns] === true));
@@ -336,7 +336,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
           next = [next];
         }
         // We know both are arrays. We can append elements.
-        Y.Array.each(next, function(u) {
+        next.forEach(u => {
           if (merge) {
             output[ns].push(u);
           } else {
@@ -572,7 +572,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
      */
     _setRoutes: function(routes) {
       this._routes = [];
-      Y.Array.each(routes, function(route) {
+      routes.forEach(route => {
         // Additionally pass route as options. This is needed to pass through
         // the attribute setter.
         // Callback can be an array. We push a state tracker to the head of
@@ -583,7 +583,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
         }
         // Tag each callback such that we can resolve it in
         // the state tracker.
-        Y.Array.each(callbacks, function(cb) {Y.stamp(cb);});
+        callbacks.forEach(cb => {Y.stamp(cb);});
         // Inject our state tracker.
         if (callbacks[0] !== '_routeStateTracker') {
           callbacks.unshift('_routeStateTracker');
