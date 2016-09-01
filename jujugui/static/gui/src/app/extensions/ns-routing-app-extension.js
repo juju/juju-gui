@@ -26,7 +26,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
   Y.Router._parseQuery = Y.QueryString.parse;
 
   function _trim(s, char, leading, trailing) {
-    if (Y.Lang.isArray(s) && s.length === 1) {
+    if (Array.isArray(s) && s.length === 1) {
       // Special case single item arrays, this is every combine with
       // combineFlags off.
       s = s[0];
@@ -53,7 +53,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
    **/
   function pairs(o) {
     var result = [],
-        keys = Y.Object.keys(o).sort();
+        keys = Object.keys(o).sort();
 
     Y.each(keys, function(k) {
       result.push([k, o[k]]);
@@ -220,7 +220,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
           result.defaultNamespacePresent = true;
         }
         var cleanURL = rtrim(val, '/') + '/';
-        if (Y.Lang.isArray(result[ns])) {
+        if (Array.isArray(result[ns])) {
           result[ns].push(cleanURL);
         } else {
           result[ns] = cleanURL;
@@ -256,16 +256,16 @@ YUI.add('ns-routing-app-extension', function(Y) {
 
       // Sort base properties such
       // that output ordering is uniform.
-      var keys = Y.Object.keys(base).sort();
+      var keys = Object.keys(base).sort();
       Y.each(keys, function(ns) {
         url = slash(url);
         var bases;
-        if (Y.Lang.isArray(base[ns])) {
+        if (Array.isArray(base[ns])) {
           bases = base[ns];
         } else {
           bases = [base[ns]];
         }
-        Y.Array.each(bases, function(frag) {
+        bases.forEach(frag => {
           if (!(frag === '/' && options.excludeRootPaths)) {
             url += ':' + ns + ':' + frag;
           }
@@ -300,10 +300,10 @@ YUI.add('ns-routing-app-extension', function(Y) {
 
       combineFlags = Y.mix(this.combineFlags || {}, combineFlags, true);
 
-      if (Y.Lang.isString(orig)) {
+      if (typeof orig === 'string') {
         orig = this.parse(orig);
       }
-      if (Y.Lang.isString(incoming)) {
+      if (typeof incoming === 'string') {
         incoming = this.parse(incoming);
       }
 
@@ -317,13 +317,13 @@ YUI.add('ns-routing-app-extension', function(Y) {
       }
       var output = new Routes();
       Y.each(orig, function(v, k) {
-        if (v && !Y.Lang.isArray(v)) {
+        if (v && !Array.isArray(v)) {
           v = [v];
         }
         output[k] = v;
       });
 
-      Y.Array.each(Y.Object.keys(incoming), function(ns) {
+      Object.keys(incoming).forEach(ns => {
         var current = output[ns];
         var merge = (combineFlags === true || (
             combineFlags && combineFlags[ns] === true));
@@ -332,11 +332,11 @@ YUI.add('ns-routing-app-extension', function(Y) {
           current = [];
         }
         var next = incoming[ns];
-        if (!Y.Lang.isArray(next)) {
+        if (!Array.isArray(next)) {
           next = [next];
         }
         // We know both are arrays. We can append elements.
-        Y.Array.each(next, function(u) {
+        next.forEach(u => {
           if (merge) {
             output[ns].push(u);
           } else {
@@ -460,7 +460,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
       this._routeSeen = {};
 
       Y.each(namespaces, function(fragmentSet, namespace) {
-        if (!Y.Lang.isArray(fragmentSet)) {
+        if (!Array.isArray(fragmentSet)) {
           fragmentSet = [fragmentSet];
         }
         Y.each(fragmentSet, function(fragment) {
@@ -552,7 +552,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
         namespace = defaultNS;
       }
 
-      return Y.Array.filter(this._routes, function(route) {
+      return this._routes.filter(route => {
         var routeNS = route.namespace || defaultNS;
         if (path.search(route.regex) > -1) {
           if (routeNS === namespace) {
@@ -572,18 +572,18 @@ YUI.add('ns-routing-app-extension', function(Y) {
      */
     _setRoutes: function(routes) {
       this._routes = [];
-      Y.Array.each(routes, function(route) {
+      routes.forEach(route => {
         // Additionally pass route as options. This is needed to pass through
         // the attribute setter.
         // Callback can be an array. We push a state tracker to the head of
         // each callback chain.
         var callbacks = route.callbacks || route.callback;
-        if (!Y.Lang.isArray(callbacks)) {
+        if (!Array.isArray(callbacks)) {
           callbacks = [callbacks];
         }
         // Tag each callback such that we can resolve it in
         // the state tracker.
-        Y.Array.each(callbacks, function(cb) {Y.stamp(cb);});
+        callbacks.forEach(cb => {Y.stamp(cb);});
         // Inject our state tracker.
         if (callbacks[0] !== '_routeStateTracker') {
           callbacks.unshift('_routeStateTracker');

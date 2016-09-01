@@ -254,7 +254,7 @@ YUI.add('d3-components', function(Y) {
             resolvedHandler[name] = handler;
           }, this);
           // Bind resolved event handlers as a group.
-          if (Y.Object.keys(resolvedHandler).length) {
+          if (Object.keys(resolvedHandler).length) {
             Y.each(resolvedHandler, function(handler, name) {
               // DOM and synthetic events are subscribed using Y.on with
               // this signature: Y.on(event, callback, target, context).
@@ -262,7 +262,7 @@ YUI.add('d3-components', function(Y) {
               // context as third argument.
               var target = self,
                   callback = Y.bind(handler.callback, handler.context);
-              if (Y.Array.indexOf(['windowresize'], name) !== -1) {
+              if (['windowresize'].indexOf(name) !== -1) {
                 target = Y;
                 handler.context = null;
               } else {
@@ -294,7 +294,7 @@ YUI.add('d3-components', function(Y) {
         eventSet = filtered;
       }
 
-      Y.each(Y.Object.keys(eventSet), function(name) {
+      Y.each(Object.keys(eventSet), function(name) {
         this.events[name].subscriptions = this._bindEvents(name);
       }, this);
       return this;

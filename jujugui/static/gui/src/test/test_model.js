@@ -419,7 +419,7 @@ describe('test_model.js', function() {
     it('services are instantiated with _dirtyFields property', function() {
       var service = new models.Service();
       var dirtyFields = service.get('_dirtyFields');
-      assert.equal(Y.Lang.isArray(dirtyFields), true);
+      assert.equal(Array.isArray(dirtyFields), true);
       assert.equal(dirtyFields.length, 0);
     });
 
@@ -440,9 +440,12 @@ describe('test_model.js', function() {
                 // This means that it will update the aggregate
                 // relations for databinding
                 handler.detach();
-                var isObject = Y.Lang.isObject;
+                const relationChangeTrigger = service.get(
+                  'relationChangeTrigger');
                 assert.equal(
-                    isObject(service.get('relationChangeTrigger')), true);
+                  typeof relationChangeTrigger === 'object' &&
+                  relationChangeTrigger !== null,
+                  true);
                 done();
               });
           relations.add(new models.Relation());

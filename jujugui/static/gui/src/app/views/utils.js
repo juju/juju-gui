@@ -228,7 +228,7 @@ YUI.add('juju-view-utils', function(Y) {
       formatted to be included in exported docs.
     */
     function substitute(stringOrFunction, number) {
-      var string = Y.Lang.isFunction(stringOrFunction) ?
+      var string = typeof stringOrFunction === 'function' ?
           stringOrFunction(number, distanceMillis) : stringOrFunction,
           value = (l.numbers && l.numbers[number]) || number;
       return string.replace(/%d/i, value);
@@ -246,7 +246,7 @@ YUI.add('juju-view-utils', function(Y) {
         years < 1.5 && substitute(l.year, 1) ||
         substitute(l.years, Math.round(years));
 
-    return Y.Lang.trim([prefix, words, suffix].join(' '));
+    return [prefix, words, suffix].join(' ').trim();
   };
   views.humanizeTimestamp = humanizeTimestamp;
 

@@ -92,8 +92,8 @@ YUI.add('environment-change-set', function(Y) {
       var cut;
       // If there is an object after the callback it's the
       // configuration object for ECS.
-      if (Y.Lang.isObject(lastParam) &&
-          Y.Lang.isFunction(args[args.length - 2])) {
+      if (typeof lastParam === 'object' && lastParam !== null &&
+          typeof args[args.length - 2] === 'function') {
         cut = -1;
       }
       // Deep copy the resulting array of arguments, in order to prevent
@@ -152,7 +152,7 @@ YUI.add('environment-change-set', function(Y) {
       this.changeSet[key] = {
         id: key,
         index: this.currentIndex,
-        parents: Y.Array.filter(parents, function(parent) {
+        parents: parents.filter(parent => {
           return !!parent;
         }),
         executed: false,
@@ -192,7 +192,7 @@ YUI.add('environment-change-set', function(Y) {
       // need to supply one and increment the index that the wrapper gets
       // placed in. The wrapper must execute as it's required to keep the
       // changeset in sync.
-      if (Y.Lang.isFunction(args[index])) {
+      if (typeof args[index] === 'function') {
         callback = args[index];
       } else {
         callback = function() {};
@@ -928,7 +928,7 @@ YUI.add('environment-change-set', function(Y) {
         onParentResults: function(record, results) {
           if (record.command.method === '_deploy') {
             this.args.forEach(function(arg, index) {
-              if (Y.Lang.isArray(arg) &&
+              if (Array.isArray(arg) &&
                   record.command.options.modelId === arg[0]) {
                 this.args[index][0] = results[0].applicationName;
               }

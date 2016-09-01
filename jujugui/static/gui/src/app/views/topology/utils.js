@@ -65,7 +65,7 @@ YUI.add('juju-topology-utils', function(Y) {
 
       // Find the node furthest from the origin in the set of hull vertices.
       var furthestDistance = 0, furthestVertex = [0, 0];
-      Y.Array.each(hull, function(vertex) {
+      hull.forEach(vertex => {
         var distance = Math.sqrt(
             Math.pow(vertex[0], 2) +
             Math.pow(vertex[1], 2));
@@ -112,7 +112,7 @@ YUI.add('juju-topology-utils', function(Y) {
     @return {array} A list of coordinate pairs.
   */
   utils.serviceBoxesToVertices = function(serviceBoxes) {
-    return Y.Array.map(Y.Object.values(serviceBoxes), function(box) {
+    return Y.Object.values(serviceBoxes).map(box => {
       var center = box.center || [false, false];
       // Default undefined x/y attributes to 0.
       return [center[0] || box.x || 0, center[1] || box.y || 0];

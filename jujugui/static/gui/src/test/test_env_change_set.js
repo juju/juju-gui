@@ -157,8 +157,8 @@ describe('Environment Change Set', function() {
         var args = [1, 2, 'foo', 'bar', function() {}];
         function test() {
           var result = ecs._getArgs(arguments);
-          assert.equal(Y.Lang.isArray(arguments), false);
-          assert.equal(Y.Lang.isArray(result), true);
+          assert.equal(Array.isArray(arguments), false);
+          assert.equal(Array.isArray(result), true);
           assert.deepEqual(result, args);
           done();
         }
@@ -185,8 +185,8 @@ describe('Environment Change Set', function() {
         var args = [1, 2, 'foo', 'bar', stub, { options: 'foo'}];
         function test() {
           var result = ecs._getArgs(arguments);
-          assert.equal(Y.Lang.isArray(arguments), false);
-          assert.equal(Y.Lang.isArray(result), true);
+          assert.equal(Array.isArray(arguments), false);
+          assert.equal(Array.isArray(result), true);
           var chopped = Array.prototype.slice.call(
               [1, 2, 'foo', 'bar', stub, { options: 'foo'}], 0, -1);
           assert.deepEqual(result, chopped);

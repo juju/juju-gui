@@ -42,7 +42,7 @@ YUI.add('juju-models', function(Y) {
   // This is a helper function used by all of the process_delta methods.
   var _process_delta = function(list, action, change_data, change_base) {
     var instanceId;
-    if (Y.Lang.isObject(change_data)) {
+    if (typeof change_data === 'object') {
       if ('id' in change_data) {
         instanceId = change_data.id;
       } else {
@@ -1134,7 +1134,7 @@ YUI.add('juju-models', function(Y) {
             'use db.addUnits() instead'
         );
       }
-      if (Y.Lang.isArray(models)) {
+      if (Array.isArray(models)) {
         models.forEach(this._setDefaultsAndCalculatedValues, this);
       } else {
         this._setDefaultsAndCalculatedValues(models);
@@ -1280,8 +1280,8 @@ YUI.add('juju-models', function(Y) {
      */
     update_service_unit_aggregates: function(service) {
       var aggregate = this.get_informative_states_for_service(service);
-      var sum = Y.Array.reduce(
-          Y.Object.values(aggregate[0]), 0, function(a, b) {return a + b;});
+      var sum = Y.Object.values(aggregate[0]).reduce(
+        (a, b) => {return a + b;}, 0);
       var previous_unit_count = service.get('unit_count');
       service.set('unit_count', sum);
       service.set('aggregated_status', aggregate[0]);
@@ -1611,7 +1611,7 @@ YUI.add('juju-models', function(Y) {
       @return {Object|Object[]} The newly created model instance(s).
     */
     add: function(models, options) {
-      if (Y.Lang.isArray(models)) {
+      if (Array.isArray(models)) {
         models.forEach(this._setDefaultsAndCalculatedValues, this);
       } else {
         this._setDefaultsAndCalculatedValues(models);
@@ -1879,7 +1879,7 @@ YUI.add('juju-models', function(Y) {
       if (action === 'remove') {
         var endpoints;
         // PyJuju returns a single string as data to remove relations
-        if (Y.Lang.isString(data)) {
+        if (typeof data === 'string') {
           db.relations.each(function(relation) {
             if (relation.get('id') === data) {
               endpoints = relation.get('endpoints');
@@ -2025,20 +2025,18 @@ YUI.add('juju-models', function(Y) {
             svc_matched = ep_matched = false;
 
             // Match endpoint and svc name across endpoints of a relation.
-            Y.Array.each(
-                rel.get('endpoints'),
-                function(rep) {
-                  if (ep.type !== rel.get('interface')) {
-                    return;
-                  }
-                  if (!ep_matched) {
-                    ep_matched = (ep.service === rep[0] &&
-                        ep.name === rep[1].name);
-                  }
-                  if (svc_name && !svc_matched && rep[0] === svc_name) {
-                    svc_matched = true;
-                  }
-                });
+            rel.get('endpoints').forEach(rep => {
+              if (ep.type !== rel.get('interface')) {
+                return;
+              }
+              if (!ep_matched) {
+                ep_matched = (ep.service === rep[0] &&
+                    ep.name === rep[1].name);
+              }
+              if (svc_name && !svc_matched && rep[0] === svc_name) {
+                svc_matched = true;
+              }
+            });
 
             if (!svc_name && ep_matched) {
               return true;
@@ -2052,11 +2050,9 @@ YUI.add('juju-models', function(Y) {
     get_relations_for_service: function(service, asList) {
       var service_id = service.get('id');
       return this.filter({asList: Boolean(asList)}, function(relation) {
-        return Y.Array.some(
-            relation.get('endpoints'),
-            function(endpoint) {
-              return endpoint[0] === service_id;
-            });
+        return relation.get('endpoints').some(endpoint => {
+          return endpoint[0] === service_id;
+        });
       });
     }
   }, {
@@ -2085,7 +2081,7 @@ YUI.add('juju-models', function(Y) {
       modelId: {
         setter: function(model) {
           if (!model) {return null;}
-          if (Y.Lang.isArray(model)) {return model;}
+          if (Array.isArray(model)) {return model;}
           return Y.mix(
               [model.name,
                (model instanceof Y.Model) ? model.get('id') : model.id]);
@@ -2741,7 +2737,7 @@ YUI.add('juju-models', function(Y) {
     */
     addUnits: function(models) {
       var unitOrUnits = this.units.add(models, true);
-      var units = Y.Lang.isArray(unitOrUnits) ? unitOrUnits : [unitOrUnits];
+      var units = Array.isArray(unitOrUnits) ? unitOrUnits : [unitOrUnits];
       // Update the units model list included in the corresponding services.
       units.forEach(function(unit) {
         var service = this.services.getById(unit.service);
@@ -2764,7 +2760,7 @@ YUI.add('juju-models', function(Y) {
     */
     removeUnits: function(models) {
       var unitOrUnits = this.units.remove(models, true);
-      var units = Y.Lang.isArray(unitOrUnits) ? unitOrUnits : [unitOrUnits];
+      var units = Array.isArray(unitOrUnits) ? unitOrUnits : [unitOrUnits];
       // Update the units model list included in the corresponding services.
       units.forEach(function(unit) {
         var service = this.services.getById(unit.service);

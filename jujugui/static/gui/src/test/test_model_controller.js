@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Model Controller Promises', function() {
-  var aEach, cleanups, conn, db, env, environment, factory,
+  var cleanups, conn, db, env, environment, factory,
       getApplicationConfig, load, modelController, serviceError, utils, yui;
 
   before(function(done) {
@@ -31,7 +31,6 @@ describe('Model Controller Promises', function() {
           yui = Y;
           load = Y.juju.models.Charm.prototype.load;
           getApplicationConfig = goenv.prototype.getApplicationConfig;
-          aEach = Y.Array.each;
           utils = Y.namespace('juju-tests.utils');
           factory = Y.namespace('juju-tests.factory');
           done();
@@ -54,7 +53,7 @@ describe('Model Controller Promises', function() {
   afterEach(function() {
     serviceError = false;
     env.close();
-    aEach([env, db, modelController], function(instance) {
+    [env, db, modelController].forEach(instance => {
       instance.destroy();
     });
     yui.Array.each(cleanups, function(cleanup) {

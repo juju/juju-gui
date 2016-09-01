@@ -1050,7 +1050,7 @@ YUI.add('juju-topology-service', function(Y) {
       var dropXY = [evt.clientX, (evt.clientY - 71)];
 
       // Take the x,y offset (translation) of the topology view into account.
-      Y.Array.each(dropXY, function(_, index) {
+      dropXY.forEach((_, index) => {
         ghostAttributes.coordinates[index] =
             (dropXY[index] - translation[index]) / scale;
       });
@@ -1718,7 +1718,7 @@ YUI.add('juju-topology-service', function(Y) {
     */
     highlight: function(evt) {
       var serviceNames = [evt.serviceName];
-      if (Y.Lang.isArray(evt.serviceName)) {
+      if (Array.isArray(evt.serviceName)) {
         serviceNames = evt.serviceName;
       }
       var topo = this.get('component');
@@ -1747,7 +1747,7 @@ YUI.add('juju-topology-service', function(Y) {
     */
     unhighlight: function(evt) {
       var serviceNames = [evt.serviceName];
-      if (Y.Lang.isArray(evt.serviceName)) {
+      if (Array.isArray(evt.serviceName)) {
         serviceNames = evt.serviceName;
       }
 

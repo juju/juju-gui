@@ -379,7 +379,7 @@ YUI.add('juju-charm-models', function(Y) {
     ATTRS: {
       id: {
         validator: function(val) {
-          return Y.Lang.isString(val) && !!charmIdRe.exec(val);
+          return typeof val === 'string' && !!charmIdRe.exec(val);
         }
       },
       /**
@@ -391,7 +391,7 @@ YUI.add('juju-charm-models', function(Y) {
        */
       storeId: {
         validator: function(val) {
-          return Y.Lang.isString(val) && !!charmIdRe.exec(val);
+          return typeof val === 'string' && !!charmIdRe.exec(val);
         }
       },
       bzr_branch: {},
@@ -493,7 +493,7 @@ YUI.add('juju-charm-models', function(Y) {
          * @method files.setter
          */
         setter: function(value) {
-          if (Y.Lang.isArray(value)) {
+          if (Array.isArray(value)) {
             // This sort has several properties that are different than a
             // standard lexicographic sort.
             // * Filenames in the root are grouped together, rather than
@@ -569,7 +569,7 @@ YUI.add('juju-charm-models', function(Y) {
          */
         valueFn: function() {
           var files = this.get('files') || [];
-          if (!Y.Lang.isArray(files)) {
+          if (!Array.isArray(files)) {
             // On some codepaths files is the list of objects and on
             // others its a mapping of filename to content.
             // XXX: Normalize handling here (without resolving root issue).

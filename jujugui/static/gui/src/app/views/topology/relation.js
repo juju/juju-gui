@@ -288,14 +288,10 @@ YUI.add('juju-topology-relation', function(Y) {
         return;
       }
 
-      Y.each(
-          Y.Array.filter(
-              self.relations,
-              function(relation) {
-                return relation.source.id === service.id ||
-                   relation.target.id === service.id;
-              }
-          ), function(relation) {
+      self.relations.filter(relation => {
+        return relation.source.id === service.id ||
+           relation.target.id === service.id;
+      }).forEach(relation => {
         // Select only the pertinent relation groups.
         var rel_group = topo.vis.select(
             '#' + relationUtils.generateSafeDOMId(relation.id, parentId));
@@ -841,15 +837,13 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Transform endpoints into a list of relatable services (to the
       // service).
-      var possible_relations = Y.Array.map(
-          Y.Array.flatten(Y.Object.values(endpoints)),
-          function(ep) {return ep.service;});
+      var possible_relations = Y.Array.flatten(Y.Object.values(endpoints)).map(
+        ep => {return ep.service;});
       var invalidRelationTargets = {};
 
       // Iterate services and invert the possibles list.
       db.services.each(function(s) {
-        if (Y.Array.indexOf(possible_relations,
-            s.get('id')) === -1) {
+        if (possible_relations.indexOf(s.get('id')) === -1) {
           invalidRelationTargets[s.get('id')] = true;
         }
       });
