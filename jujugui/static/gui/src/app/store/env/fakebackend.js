@@ -408,7 +408,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           options.name + ').'});
       }
       if (options.configYAML) {
-        if (!Y.Lang.isString(options.configYAML)) {
+        if (typeof options.configYAML !== 'string') {
           console.log(options);
           return callback(
               {error: 'Developer error: configYAML is not a string.'});

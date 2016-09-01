@@ -1879,7 +1879,7 @@ YUI.add('juju-models', function(Y) {
       if (action === 'remove') {
         var endpoints;
         // PyJuju returns a single string as data to remove relations
-        if (Y.Lang.isString(data)) {
+        if (typeof data === 'string') {
           db.relations.each(function(relation) {
             if (relation.get('id') === data) {
               endpoints = relation.get('endpoints');

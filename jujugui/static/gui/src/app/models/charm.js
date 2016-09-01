@@ -379,7 +379,7 @@ YUI.add('juju-charm-models', function(Y) {
     ATTRS: {
       id: {
         validator: function(val) {
-          return Y.Lang.isString(val) && !!charmIdRe.exec(val);
+          return typeof val === 'string' && !!charmIdRe.exec(val);
         }
       },
       /**
@@ -391,7 +391,7 @@ YUI.add('juju-charm-models', function(Y) {
        */
       storeId: {
         validator: function(val) {
-          return Y.Lang.isString(val) && !!charmIdRe.exec(val);
+          return typeof val === 'string' && !!charmIdRe.exec(val);
         }
       },
       bzr_branch: {},

@@ -153,7 +153,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.strictEqual(application, result.application);
       var attrs = application.getAttrs();
       // clientId varies.
-      assert.isTrue(Y.Lang.isString(attrs.clientId));
+      assert.isTrue(typeof attrs.clientId === 'string');
       delete attrs.clientId;
       // when doing a deep equals on an object which contains a LazyModelList
       // call toArray() on it first else it will fail and it won't tell you why.

@@ -300,10 +300,10 @@ YUI.add('ns-routing-app-extension', function(Y) {
 
       combineFlags = Y.mix(this.combineFlags || {}, combineFlags, true);
 
-      if (Y.Lang.isString(orig)) {
+      if (typeof orig === 'string') {
         orig = this.parse(orig);
       }
-      if (Y.Lang.isString(incoming)) {
+      if (typeof incoming === 'string') {
         incoming = this.parse(incoming);
       }
 
