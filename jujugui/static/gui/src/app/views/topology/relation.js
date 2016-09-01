@@ -288,14 +288,10 @@ YUI.add('juju-topology-relation', function(Y) {
         return;
       }
 
-      Y.each(
-          Y.Array.filter(
-              self.relations,
-              function(relation) {
-                return relation.source.id === service.id ||
-                   relation.target.id === service.id;
-              }
-          ), function(relation) {
+      self.relations.filter(relation => {
+        return relation.source.id === service.id ||
+           relation.target.id === service.id;
+      }).forEach(relation => {
         // Select only the pertinent relation groups.
         var rel_group = topo.vis.select(
             '#' + relationUtils.generateSafeDOMId(relation.id, parentId));

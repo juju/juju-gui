@@ -152,7 +152,7 @@ YUI.add('environment-change-set', function(Y) {
       this.changeSet[key] = {
         id: key,
         index: this.currentIndex,
-        parents: Y.Array.filter(parents, function(parent) {
+        parents: parents.filter(parent => {
           return !!parent;
         }),
         executed: false,

@@ -552,7 +552,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
         namespace = defaultNS;
       }
 
-      return Y.Array.filter(this._routes, function(route) {
+      return this._routes.filter(route => {
         var routeNS = route.namespace || defaultNS;
         if (path.search(route.regex) > -1) {
           if (routeNS === namespace) {

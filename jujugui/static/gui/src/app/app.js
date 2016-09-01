@@ -2349,7 +2349,7 @@ YUI.add('juju-gui', function(Y) {
 
       // See if intent is in the match. Because the default is to match routes
       // without intent (undefined), this test can always be applied.
-      matches = Y.Array.filter(matches, function(match) {
+      matches = matches.filter(match => {
         return match.intent === intent;
       });
 
