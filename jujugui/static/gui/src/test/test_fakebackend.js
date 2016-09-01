@@ -100,10 +100,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
       'juju-charm-models'
     ];
-    var Y, factory, fakebackend, utils, result, callback, models;
+    var factory, fakebackend, utils, result, callback, models;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(requires, function(Y) {
+      YUI(GlobalConfig).use(requires, function(Y) {
         utils = Y.namespace('juju-tests.utils');
         factory = Y.namespace('juju-tests.factory');
         models = Y.namespace('juju.models');
@@ -1767,10 +1767,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       'node', 'juju-tests-factory', 'juju-models',
       'juju-charm-models'
     ];
-    var Y, factory, fakebackend, deployResult, callback;
+    var factory, fakebackend, deployResult, callback;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(requires, function(Y) {
+      YUI(GlobalConfig).use(requires, function(Y) {
         factory = Y.namespace('juju-tests.factory');
         done();
       });
