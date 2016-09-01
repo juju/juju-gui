@@ -92,7 +92,7 @@ YUI.add('environment-change-set', function(Y) {
       var cut;
       // If there is an object after the callback it's the
       // configuration object for ECS.
-      if (Y.Lang.isObject(lastParam) &&
+      if (typeof lastParam === 'object' &&
           Y.Lang.isFunction(args[args.length - 2])) {
         cut = -1;
       }

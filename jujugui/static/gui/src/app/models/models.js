@@ -42,7 +42,7 @@ YUI.add('juju-models', function(Y) {
   // This is a helper function used by all of the process_delta methods.
   var _process_delta = function(list, action, change_data, change_base) {
     var instanceId;
-    if (Y.Lang.isObject(change_data)) {
+    if (typeof change_data === 'object') {
       if ('id' in change_data) {
         instanceId = change_data.id;
       } else {

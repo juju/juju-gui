@@ -440,9 +440,9 @@ describe('test_model.js', function() {
                 // This means that it will update the aggregate
                 // relations for databinding
                 handler.detach();
-                var isObject = Y.Lang.isObject;
                 assert.equal(
-                    isObject(service.get('relationChangeTrigger')), true);
+                  typeof service.get('relationChangeTrigger') === 'object',
+                  true);
                 done();
               });
           relations.add(new models.Relation());
