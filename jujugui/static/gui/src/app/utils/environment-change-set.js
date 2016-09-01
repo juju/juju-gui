@@ -93,7 +93,7 @@ YUI.add('environment-change-set', function(Y) {
       // If there is an object after the callback it's the
       // configuration object for ECS.
       if (typeof lastParam === 'object' &&
-          Y.Lang.isFunction(args[args.length - 2])) {
+          typeof args[args.length - 2] === 'function') {
         cut = -1;
       }
       // Deep copy the resulting array of arguments, in order to prevent
@@ -192,7 +192,7 @@ YUI.add('environment-change-set', function(Y) {
       // need to supply one and increment the index that the wrapper gets
       // placed in. The wrapper must execute as it's required to keep the
       // changeset in sync.
-      if (Y.Lang.isFunction(args[index])) {
+      if (typeof args[index] === 'function') {
         callback = args[index];
       } else {
         callback = function() {};

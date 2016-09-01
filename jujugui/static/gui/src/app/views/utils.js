@@ -228,7 +228,7 @@ YUI.add('juju-view-utils', function(Y) {
       formatted to be included in exported docs.
     */
     function substitute(stringOrFunction, number) {
-      var string = Y.Lang.isFunction(stringOrFunction) ?
+      var string = typeof stringOrFunction === 'function' ?
           stringOrFunction(number, distanceMillis) : stringOrFunction,
           value = (l.numbers && l.numbers[number]) || number;
       return string.replace(/%d/i, value);
