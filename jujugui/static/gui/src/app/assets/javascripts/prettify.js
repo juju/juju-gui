@@ -50,7 +50,7 @@ ns.prettyPrint = prettyPrint;
  * @param {String} code The code being rendered.
  */
 ns.renderPrettyPrintedFile = function(container, code) {
-  var content = `<pre class="prettyprint linenums hidden">${code}</pre>`;
+  var content = '<pre class="prettyprint linenums hidden">' + code + '</pre>';
   container.setHTML(content);
   ns.prettyPrint();
   Y.one('.prettyprint').removeClass('hidden');
