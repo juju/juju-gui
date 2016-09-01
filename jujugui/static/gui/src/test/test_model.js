@@ -440,8 +440,11 @@ describe('test_model.js', function() {
                 // This means that it will update the aggregate
                 // relations for databinding
                 handler.detach();
+                const relationChangeTrigger = service.get(
+                  'relationChangeTrigger');
                 assert.equal(
-                  typeof service.get('relationChangeTrigger') === 'object',
+                  typeof relationChangeTrigger === 'object' &&
+                  relationChangeTrigger !== null,
                   true);
                 done();
               });
