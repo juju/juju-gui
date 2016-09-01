@@ -1284,7 +1284,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       endpoint.simulate('click');
     });
 
-    it('must not allow removing a subordinate relation between services',
+    it('must not remove a deployed subordinate relation between services',
         function() {
           view = new views.environment({
             container: container,
@@ -1292,6 +1292,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             env: env,
             charmstore: fakeStore
           }).render();
+          assert.equal(db.notifications.size(), 0);
 
          // Get a subordinate relation.
           var relation = container.one(
@@ -1299,20 +1300,36 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                   'puppet:juju-info wordpress:juju-info',
          getParentId(view)) +
               ' .rel-indicator'),
-              menu,
-              panel;
+              menu;
 
           relation.simulate('click');
           menu = container.one('#relation-menu');
           menu.one('.relation-remove').simulate('click');
-          panel = Y.one('#rmsubrelation-modal-panel');
+          assert.equal(db.notifications.size(), 1);
+        });
 
-         // There should only be a cancel button on the warning dialog.
-          panel.all('button').size().should.equal(1);
+    it('should remove a pending subordinate relation between services',
+        function() {
+          view = new views.environment({
+            container: container,
+            db: db,
+            env: env,
+            charmstore: fakeStore
+          }).render();
+          db.relations.item(1).set('pending', true);
 
-         // Clicking cancel will hide the dialog.
-          panel.one('button').simulate('click');
-          panel.all('button').size().should.equal(0);
+         // Get a subordinate relation.
+          var relation = container.one(
+              '#' + relationUtils.generateSafeDOMId(
+                  'puppet:juju-info wordpress:juju-info',
+         getParentId(view)) +
+              ' .rel-indicator'),
+              menu;
+
+          relation.simulate('click');
+          menu = container.one('#relation-menu');
+          menu.one('.relation-remove').simulate('click');
+          assert.equal(db.notifications.size(), 0);
         });
 
     it('should stop creating a relation if the background is clicked',
