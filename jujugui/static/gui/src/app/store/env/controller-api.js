@@ -670,11 +670,11 @@ YUI.add('juju-controller-api', function(Y) {
 
       @method listClouds
       @param {Function} callback A callable that must be called once the
-        operation is performed. It will receive an object with an "err"
-        attribute containing a string describing the problem (if an error
-        occurred). Otherwise, if everything went well, it will receive an
-        object with a "clouds" attribute containing a map of cloud tags to
-        cloud attributes, including:
+        operation is performed. It will receive two parameters: an error (as a
+        string describing the problem) and an object mapping cloud tags to
+        cloud attributes. If no errors occur, the error parameter is null.
+        Otherwise, in case of errors, the second argument is an empty object.
+        Cloud attributes are returned as an object with the following fields:
         - name: the cloud name, like "lxd" or "google";
         - cloudType: the cloud type, like "lxd" or "gce";
         - authTypes: optional supported authentication systems, like "jsonfile"
@@ -696,7 +696,7 @@ YUI.add('juju-controller-api', function(Y) {
           return;
         }
         if (data.error) {
-          userCallback({err: data.error});
+          userCallback(data.error, {});
           return;
         }
         const results = data.response.clouds;
@@ -704,7 +704,7 @@ YUI.add('juju-controller-api', function(Y) {
           prev[tag] = this._parseCloudResult(tag, results[tag]);
           return prev;
         }, {});
-        userCallback({clouds: clouds});
+        userCallback(null, clouds);
       }.bind(this, callback);
       // Send the API request.
       this._send_rpc({type: 'Cloud', request: 'Clouds'}, handler);
@@ -717,11 +717,11 @@ YUI.add('juju-controller-api', function(Y) {
       @param {Array} tags The Juju tags of the clouds, each one being a string,
         for instance "cloud-lxd" or "cloud-google.
       @param {Function} callback A callable that must be called once the
-        operation is performed. It will receive an object with an "err"
-        attribute containing a string describing the problem (if an error
-        occurred). Otherwise, if everything went well, it will receive an
-        object with a "clouds" attribute containing a map of cloud tags to
-        cloud attributes, including:
+        operation is performed. It will receive two parameters: an error (as a
+        string describing the problem) and an object mapping cloud tags to
+        cloud attributes. If no errors occur, the error parameter is null.
+        Otherwise, in case of errors, the second argument is an empty object.
+        Cloud attributes are returned as an object with the following fields:
         - err: a possible cloud specific error, in which case all subsequent
           fields are omitted;
         - name: the cloud name, like "lxd" or "google";
@@ -745,12 +745,12 @@ YUI.add('juju-controller-api', function(Y) {
           return;
         }
         if (data.error) {
-          userCallback({err: data.error});
+          userCallback(data.error, {});
           return;
         }
         const results = data.response.results;
         if (!results) {
-          userCallback({clouds: {}});
+          userCallback(null, {});
           return;
         }
         const clouds = results.reduce((prev, result, index) => {
@@ -763,7 +763,7 @@ YUI.add('juju-controller-api', function(Y) {
           prev[tag] = this._parseCloudResult(tag, result.cloud);
           return prev;
         }, {});
-        userCallback({clouds: clouds});
+        userCallback(null, clouds);
       }.bind(this, callback);
       // Send the API request.
       if (!tags.length) {
@@ -785,9 +785,9 @@ YUI.add('juju-controller-api', function(Y) {
 
       @method getDefaultCloudTag
       @param {Function} callback A callable that must be called once the
-        operation is performed. It will receive the cloud tag and an error,
-        for instance ('cloud-google', null) when the operation succeeds or
-        ('', 'error message') in case of errors.
+        operation is performed. It will receive an error and the cloud tag,
+        for instance (null, 'cloud-google') when the operation succeeds or
+        ('error message', '') in case of errors.
       A cloud tag is a cloud name prefixed with "cloud-", like "cloud-lxd" or
       "cloud-google".
     */
@@ -799,16 +799,16 @@ YUI.add('juju-controller-api', function(Y) {
           return;
         }
         if (data.error) {
-          userCallback('', data.error);
+          userCallback(data.error, '');
           return;
         }
         const response = data.response;
         const error = response.error && response.error.message;
         if (error) {
-          userCallback('', error);
+          userCallback(error , '');
           return;
         }
-        userCallback(response.result, null);
+        userCallback(null, response.result);
       }.bind(this, callback);
       // Send the API request.
       this._send_rpc({type: 'Cloud', request: 'DefaultCloud'}, handler);
