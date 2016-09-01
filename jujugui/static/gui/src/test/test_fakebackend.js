@@ -1695,9 +1695,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           warning: undefined
         });
         // The db.removeUnits method has been called once.
-        assert.strictEqual(mockRemoveUnits.callCount(), 1);
+        assert.strictEqual(mockRemoveUnits.callCount, 1);
         // The unit to be removed has been passed.
-        var args = mockRemoveUnits.lastArguments();
+        var args = mockRemoveUnits.lastCall.args;
         assert.lengthOf(args, 1);
         assert.strictEqual(args[0].id, unitId);
       });
@@ -1717,9 +1717,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           warning: undefined
         });
         // The db.removeUnits method has been called twice.
-        assert.strictEqual(mockRemoveUnits.callCount(), 2);
+        assert.strictEqual(mockRemoveUnits.callCount, 2);
         // The units to be removed have been passed.
-        var args = mockRemoveUnits.allArguments();
+        var args = mockRemoveUnits.args;
         assert.strictEqual(args[0][0].id, unitIds[0]);
         assert.strictEqual(args[1][0].id, unitIds[1]);
       }, {unitCount: 2});
@@ -1741,7 +1741,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           warning: undefined
         });
         // No units have been removed.
-        assert.strictEqual(mockRemoveUnits.called(), false);
+        assert.strictEqual(mockRemoveUnits.called, false);
       });
     });
 
@@ -2206,9 +2206,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var addRelation = utils.makeStubMethod(fakebackend, 'addRelation', 'foo');
       var result = fakebackend.addRelations('bar:baz', 'bax:qux', true);
       assert.equal(result, 'foo');
-      assert.equal(addRelation.callCount(), 1);
+      assert.equal(addRelation.callCount, 1);
       assert.deepEqual(
-          addRelation.lastArguments(),
+          addRelation.lastCall.args,
           ['bar:baz', 'bax:qux', true]);
     });
 
@@ -2218,12 +2218,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var result = fakebackend.addRelations(
           'bar:baz', ['bax:qux', 'foo:bar'], true);
       assert.deepEqual(result, ['foo', 'bar']);
-      assert.equal(addRelation.callCount(), 2);
+      assert.equal(addRelation.callCount, 2);
       assert.deepEqual(
-          addRelation.allArguments()[0],
+          addRelation.args[0],
           ['bar:baz', 'bax:qux', true]);
       assert.deepEqual(
-          addRelation.allArguments()[1],
+          addRelation.args[1],
           ['bar:baz', 'foo:bar', true]);
 
     });
@@ -2419,8 +2419,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     // Return an dict mapping arg names to arguments used to call the
     // ziputils.getEntries mock object.
     var retrieveGetEntriesArgs = function() {
-      assert.strictEqual(mockGetEntries.callCount(), 1);
-      var args = mockGetEntries.lastArguments();
+      assert.strictEqual(mockGetEntries.callCount, 1);
+      var args = mockGetEntries.lastCall.args;
       assert.strictEqual(args.length, 3);
       return {file: args[0], callback: args[1], errback: args[2]};
     };
@@ -2459,8 +2459,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       callback([configEntry, metadataEntry]);
       // Ensure readCharmEntries has been called passing the entries and a
       // callback.
-      assert.strictEqual(mockReadCharmEntries.callCount(), 1);
-      var readCharmEntriesArgs = mockReadCharmEntries.lastArguments();
+      assert.strictEqual(mockReadCharmEntries.callCount, 1);
+      var readCharmEntriesArgs = mockReadCharmEntries.lastCall.args;
       assert.strictEqual(readCharmEntriesArgs.length, 2);
       assert.deepEqual(readCharmEntriesArgs[0], expectedEntries);
       assert.strictEqual(typeof readCharmEntriesArgs[1], 'function');
@@ -2490,7 +2490,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       callback(allEntries);
       // Ensure readCharmEntries has been called passing only the required
       // entries.
-      var entries = mockReadCharmEntries.lastArguments()[0];
+      var entries = mockReadCharmEntries.lastCall.args[0];
       assert.deepEqual(entries, expectedEntries);
     });
 
@@ -2505,10 +2505,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var callback = retrieveGetEntriesArgs().callback;
       callback([makeEntry('config.yaml')]);
       // Ensure readCharmEntries has not been called.
-      assert.strictEqual(mockReadCharmEntries.callCount(), 0);
+      assert.strictEqual(mockReadCharmEntries.callCount, 0);
       // The completedCallback has been called passing an error.
-      assert.strictEqual(completedCallback.callCount(), 1);
-      var completedCallbackArgs = completedCallback.lastArguments();
+      assert.strictEqual(completedCallback.callCount, 1);
+      var completedCallbackArgs = completedCallback.lastCall.args;
       assert.strictEqual(completedCallbackArgs.length, 1);
       var evt = completedCallbackArgs[0];
       assert.strictEqual(evt.type, 'error');
@@ -2528,8 +2528,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var errback = retrieveGetEntriesArgs().errback;
       errback('bad wolf');
       // The completedCallback has been called passing an error.
-      assert.strictEqual(completedCallback.callCount(), 1);
-      var completedCallbackArgs = completedCallback.lastArguments();
+      assert.strictEqual(completedCallback.callCount, 1);
+      var completedCallbackArgs = completedCallback.lastCall.args;
       assert.strictEqual(completedCallbackArgs.length, 1);
       var evt = completedCallbackArgs[0];
       assert.strictEqual(evt.type, 'error');
@@ -2539,13 +2539,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('FakeBackend._handleLocalCharmEntries', function() {
-    var callback, environmentsModule, errback, fakebackend, testUtils;
-    var requirements = ['js-yaml', 'juju-env-fakebackend', 'juju-tests-utils'];
+    var callback, environmentsModule, errback, fakebackend;
+    var requirements = ['js-yaml', 'juju-env-fakebackend'];
 
     before(function(done) {
       YUI(GlobalConfig).use(requirements, function(Y) {
         environmentsModule = Y.namespace('juju.environments');
-        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
@@ -2576,13 +2575,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var contents = {metadata: '{'};
       fakebackend._handleLocalCharmEntries(
           contents, 'trusty', callback, errback);
-      assert.strictEqual(errback.callCount(), 1);
-      var errbackArgs = errback.lastArguments();
+      assert.strictEqual(errback.callCount, 1);
+      var errbackArgs = errback.lastCall.args;
       assert.strictEqual(errbackArgs.length, 1);
       var expectedErr = 'Invalid charm archive: invalid metadata: JS-YAML:';
       assert.strictEqual(errbackArgs[0].indexOf(expectedErr), 0);
       // The callback has not been called.
-      assert.strictEqual(callback.callCount(), 0);
+      assert.strictEqual(callback.callCount, 0);
       // No new charm has been added to the db.
       assert.strictEqual(fakebackend.db.charms.size(), 0);
     });
@@ -2591,15 +2590,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var contents = {metadata: '{}'};
       fakebackend._handleLocalCharmEntries(
           contents, 'trusty', callback, errback);
-      assert.strictEqual(errback.callCount(), 1);
-      var errbackArgs = errback.lastArguments();
+      assert.strictEqual(errback.callCount, 1);
+      var errbackArgs = errback.lastCall.args;
       assert.strictEqual(errbackArgs.length, 1);
       assert.strictEqual(
           errbackArgs[0],
           'Invalid charm archive: invalid metadata: ' +
           'missing name, missing summary, missing description');
       // The callback has not been called.
-      assert.strictEqual(callback.callCount(), 0);
+      assert.strictEqual(callback.callCount, 0);
       // No new charm has been added to the db.
       assert.strictEqual(fakebackend.db.charms.size(), 0);
     });
@@ -2608,13 +2607,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var contents = {metadata: makeMetadata(), config: '{'};
       fakebackend._handleLocalCharmEntries(
           contents, 'trusty', callback, errback);
-      assert.strictEqual(errback.callCount(), 1);
-      var errbackArgs = errback.lastArguments();
+      assert.strictEqual(errback.callCount, 1);
+      var errbackArgs = errback.lastCall.args;
       assert.strictEqual(errbackArgs.length, 1);
       var expectedErr = 'Invalid charm archive: invalid options: JS-YAML:';
       assert.strictEqual(errbackArgs[0].indexOf(expectedErr), 0);
       // The callback has not been called.
-      assert.strictEqual(callback.callCount(), 0);
+      assert.strictEqual(callback.callCount, 0);
       // No new charm has been added to the db.
       assert.strictEqual(fakebackend.db.charms.size(), 0);
     });
@@ -2625,33 +2624,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           contents, 'trusty', callback, errback);
       assert.strictEqual(fakebackend.db.charms.size(), 1);
       // The errback has not been called.
-      assert.strictEqual(errback.callCount(), 0);
+      assert.strictEqual(errback.callCount, 0);
     });
 
     it('calls the callback passing the newly created charm URL', function() {
       var contents = {metadata: makeMetadata()};
       fakebackend._handleLocalCharmEntries(
           contents, 'trusty', callback, errback);
-      assert.strictEqual(callback.callCount(), 1);
-      var callbackArgs = callback.lastArguments();
+      assert.strictEqual(callback.callCount, 1);
+      var callbackArgs = callback.lastCall.args;
       assert.strictEqual(callbackArgs.length, 1);
       var expectedEvt = fakebackend._createSuccessEvent(
           '{"CharmURL":"local:trusty/mycharm-0"}');
       assert.deepEqual(callbackArgs[0], expectedEvt);
       // The errback has not been called.
-      assert.strictEqual(errback.callCount(), 0);
+      assert.strictEqual(errback.callCount, 0);
     });
 
   });
 
   describe('FakeBackend.handleLocalCharmFileRequest', function() {
-    var callback, environmentsModule, fakebackend, testUtils;
-    var requirements = ['juju-env-fakebackend', 'juju-tests-utils'];
+    var callback, environmentsModule, fakebackend;
+    var requirements = ['juju-env-fakebackend'];
 
     before(function(done) {
       YUI(GlobalConfig).use(requirements, function(Y) {
         environmentsModule = Y.namespace('juju.environments');
-        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
@@ -2671,8 +2669,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend.handleLocalCharmFileRequest(
           'local:trusty/rails-42', null, callback);
       // The callback has been called.
-      assert.strictEqual(callback.callCount(), 1);
-      var lastArguments = callback.lastArguments();
+      assert.strictEqual(callback.callCount, 1);
+      var lastArguments = callback.lastCall.args;
       assert.lengthOf(lastArguments, 1);
       // An error event has been sent.
       var evt = lastArguments[0];
@@ -2694,8 +2692,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend.handleLocalCharmFileRequest(
           'local:trusty/rails-42', 'hooks/install', callback);
       // The callback has been called.
-      assert.strictEqual(callback.callCount(), 1);
-      var lastArguments = callback.lastArguments();
+      assert.strictEqual(callback.callCount, 1);
+      var lastArguments = callback.lastCall.args;
       assert.lengthOf(lastArguments, 1);
       // An error event has been sent.
       var evt = lastArguments[0];
@@ -2713,8 +2711,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend.handleLocalCharmFileRequest(
           'local:trusty/rails-42', null, callback);
       // The callback has been called.
-      assert.strictEqual(callback.callCount(), 1);
-      var lastArguments = callback.lastArguments();
+      assert.strictEqual(callback.callCount, 1);
+      var lastArguments = callback.lastCall.args;
       assert.lengthOf(lastArguments, 1);
       // An empty list has been sent.
       var evt = lastArguments[0];
@@ -2770,8 +2768,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend.getLocalCharmFileUrl('local:trusty/django-42', 'readme');
       mockError.reset();
       // An error has been printed to the console.
-      assert.strictEqual(mockError.callCount(), 1);
-      var lastArguments = mockError.lastArguments();
+      assert.strictEqual(mockError.callCount, 1);
+      var lastArguments = mockError.lastCall.args;
       assert.lengthOf(lastArguments, 1);
       assert.strictEqual(
           'unexpected getLocalCharmFileUrl request for readme',

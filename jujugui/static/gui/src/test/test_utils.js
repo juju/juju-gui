@@ -453,12 +453,11 @@ describe('utilities', function() {
   });
 
   describe('addGhostAndEcsUnits', function() {
-    var utils, testUtils;
+    var utils;
 
     before(function(done) {
-      YUI(GlobalConfig).use('juju-view-utils', 'juju-tests-utils', function(Y) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
         utils = Y.namespace('juju.views.utils');
-        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
@@ -509,8 +508,8 @@ describe('utilities', function() {
       var units = utils.addGhostAndEcsUnits(
           db, env, service, unitCount, callback);
       // Test the db.addUnits call.
-      assert.equal(db.addUnits.callCount(), 2, 'db addUnits not called');
-      var addUnitsArgs = db.addUnits.allArguments();
+      assert.equal(db.addUnits.callCount, 2, 'db addUnits not called');
+      var addUnitsArgs = db.addUnits.args;
       // The numbers for the id's are important. The mocks have existing units
       // having indexes of 1 and 2. There was a bug where the next value wasn't
       // being properly computed when there was no 0 unit.
@@ -527,8 +526,8 @@ describe('utilities', function() {
         subordinate: false
       }, 'addUnits second not called with proper data');
       // Test the env.add_unit call.
-      assert.equal(env.add_unit.callCount(), 2, 'add unit not called');
-      var add_unit_args = env.add_unit.allArguments();
+      assert.equal(env.add_unit.callCount, 2, 'add unit not called');
+      var add_unit_args = env.add_unit.args;
       assert.equal(add_unit_args[0][0], applicationName);
       assert.equal(add_unit_args[0][1], 1);
       assert.strictEqual(add_unit_args[0][2], null);
@@ -568,21 +567,20 @@ describe('utilities', function() {
         applicationName: 'appName'
       };
       utils.removeGhostAddUnitCallback(ghostUnit, db, callback, e);
-      assert.equal(db.removeUnits.calledOnce(), true);
-      assert.equal(db.removeUnits.lastArguments()[0].service, 'appName');
-      assert.equal(callback.calledOnce(), true);
-      assert.deepEqual(callback.lastArguments(), [e, db, ghostUnit]);
+      assert.equal(db.removeUnits.calledOnce, true);
+      assert.equal(db.removeUnits.lastCall.args[0].service, 'appName');
+      assert.equal(callback.calledOnce, true);
+      assert.deepEqual(callback.lastCall.args, [e, db, ghostUnit]);
     });
 
   });
 
   describe('destroyService', function() {
-    var utils, testUtils;
+    var utils;
 
     before(function(done) {
-      YUI(GlobalConfig).use('juju-view-utils', 'juju-tests-utils', function(Y) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
         utils = Y.namespace('juju.views.utils');
-        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
@@ -650,7 +648,7 @@ describe('utilities', function() {
       utils._destroyServiceCallback(service, db, null, evt);
       assert.isTrue(notificationAdded);
       // Check that relations were removed.
-      assert.equal(db.relations.remove.calledOnce(), true,
+      assert.equal(db.relations.remove.calledOnce, true,
           'Remove relations not called');
     });
   });
@@ -842,13 +840,12 @@ describe('utilities', function() {
   });
 
   describe('switchModel', function() {
-    var utils, testUtils, _showUncommittedConfirm, _hidePopup,
+    var utils, _showUncommittedConfirm, _hidePopup,
         models;
 
     before(function(done) {
-      YUI(GlobalConfig).use('juju-view-utils', 'juju-tests-utils', function(Y) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
         utils = Y.namespace('juju.views.utils');
-        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
@@ -887,8 +884,8 @@ describe('utilities', function() {
       utils._switchModel = sinon.stub();
       utils.switchModel(
         createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
-      assert.deepEqual(utils._switchModel.callCount(), 1);
-      var switchArgs = utils._switchModel.lastArguments();
+      assert.deepEqual(utils._switchModel.callCount, 1);
+      var switchArgs = utils._switchModel.lastCall.args;
       assert.deepEqual(switchArgs, [
         createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback]);
       utils._switchModel = _switchModel;
@@ -907,8 +904,8 @@ describe('utilities', function() {
       utils._switchModel = sinon.stub();
       utils.switchModel(
         createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
-      assert.deepEqual(utils._showUncommittedConfirm.callCount(), 1);
-      assert.deepEqual(utils._switchModel.callCount(), 0);
+      assert.deepEqual(utils._showUncommittedConfirm.callCount, 1);
+      assert.deepEqual(utils._switchModel.callCount, 0);
       utils._switchModel = _switchModel;
     });
 
@@ -920,27 +917,27 @@ describe('utilities', function() {
       utils._switchModel(
         createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
 
-      assert.deepEqual(utils._hidePopup.callCount(), 1);
-      assert.deepEqual(createSocketURL.callCount(), 1);
-      var socketArgs = createSocketURL.lastArguments();
+      assert.deepEqual(utils._hidePopup.callCount, 1);
+      assert.deepEqual(createSocketURL.callCount, 1);
+      var socketArgs = createSocketURL.lastCall.args;
       assert.deepEqual(socketArgs[0], models[0].uuid);
       assert.deepEqual(socketArgs[1], 'localhost');
       assert.deepEqual(socketArgs[2], '80');
 
-      assert.deepEqual(switchEnv.callCount(), 1);
-      var switchEnvArgs = switchEnv.lastArguments();
+      assert.deepEqual(switchEnv.callCount, 1);
+      var switchEnvArgs = switchEnv.lastCall.args;
       assert.deepEqual(switchEnvArgs[0], 'newaddress:80');
       assert.deepEqual(switchEnvArgs[1], models[0].user);
       assert.deepEqual(switchEnvArgs[2], models[0].password);
       assert.deepEqual(switchEnvArgs[3], callback);
 
-      assert.deepEqual(env.set.callCount(), 1);
-      var envSet = env.set.lastArguments();
+      assert.deepEqual(env.set.callCount, 1);
+      var envSet = env.set.lastCall.args;
       assert.deepEqual(envSet[0], 'environmentName');
       assert.deepEqual(envSet[1], 'ev');
 
-      assert.deepEqual(utils.showConnectingMask.callCount(), 1);
-      assert.deepEqual(utils.changeState.callCount(), 1);
+      assert.deepEqual(utils.showConnectingMask.callCount, 1);
+      assert.deepEqual(utils.changeState.callCount, 1);
     });
 
     it('just disconnects if uuid is missing', function() {
@@ -948,10 +945,10 @@ describe('utilities', function() {
       var switchEnv = sinon.stub();
       var env = {set: sinon.stub()};
       utils._switchModel(createSocketURL, switchEnv, env, undefined, models);
-      assert.deepEqual(createSocketURL.callCount(), 0);
-      assert.deepEqual(switchEnv.callCount(), 1);
+      assert.deepEqual(createSocketURL.callCount, 0);
+      assert.deepEqual(switchEnv.callCount, 1);
       assert.deepEqual(
-        switchEnv.lastArguments(), [null, null, null, undefined]);
+        switchEnv.lastCall.args, [null, null, null, undefined]);
     });
 
     it('just disconnects if modelList is missing', function() {
@@ -959,20 +956,19 @@ describe('utilities', function() {
       var switchEnv = sinon.stub();
       var env = {set: sinon.stub()};
       utils._switchModel(createSocketURL, switchEnv, env, 'model1', undefined);
-      assert.deepEqual(createSocketURL.callCount(), 0);
-      assert.deepEqual(switchEnv.callCount(), 1);
+      assert.deepEqual(createSocketURL.callCount, 0);
+      assert.deepEqual(switchEnv.callCount, 1);
       assert.deepEqual(
-        switchEnv.lastArguments(), [null, null, null, undefined]);
+        switchEnv.lastCall.args, [null, null, null, undefined]);
     });
   });
 
   describe('showProfile', function() {
-    var utils, testUtils, _showUncommittedConfirm, _hidePopup;
+    var utils, _showUncommittedConfirm, _hidePopup;
 
     before(function(done) {
-      YUI(GlobalConfig).use('juju-view-utils', 'juju-tests-utils', function(Y) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
         utils = Y.namespace('juju.views.utils');
-        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
@@ -995,8 +991,8 @@ describe('utilities', function() {
       };
       var changeState = sinon.stub();
       utils.showProfile(ecs, changeState);
-      assert.deepEqual(changeState.callCount(), 1);
-      assert.deepEqual(utils._showUncommittedConfirm.callCount(), 0);
+      assert.deepEqual(changeState.callCount, 1);
+      assert.deepEqual(utils._showUncommittedConfirm.callCount, 0);
     });
 
     it('can show a confirmation if there are uncommitted changes', function() {
@@ -1005,8 +1001,8 @@ describe('utilities', function() {
       };
       var changeState = sinon.stub();
       utils.showProfile(ecs, changeState);
-      assert.deepEqual(changeState.callCount(), 0);
-      assert.deepEqual(utils._showUncommittedConfirm.callCount(), 1);
+      assert.deepEqual(changeState.callCount, 0);
+      assert.deepEqual(utils._showUncommittedConfirm.callCount, 1);
     });
 
     it('can show a confirmation and clear changes', function() {
@@ -1016,26 +1012,25 @@ describe('utilities', function() {
       };
       var changeState = sinon.stub();
       utils._showProfile(ecs, changeState, true);
-      assert.deepEqual(changeState.callCount(), 1);
-      assert.deepEqual(changeState.lastArguments()[0], {
+      assert.deepEqual(changeState.callCount, 1);
+      assert.deepEqual(changeState.lastCall.args[0], {
         sectionB: {
           component: 'profile',
           metadata: null
         }
       });
-      assert.deepEqual(utils._hidePopup.callCount(), 1);
-      assert.deepEqual(ecs.clear.callCount(), 1);
+      assert.deepEqual(utils._hidePopup.callCount, 1);
+      assert.deepEqual(ecs.clear.callCount, 1);
     });
   });
 
   describe('deploy util', function() {
     var callback, commit, env, envSet, jem, users, autoPlaceUnits, appSet,
-        createSocketURL, testUtils, utils;
+        createSocketURL, utils;
 
     before(function(done) {
-      YUI(GlobalConfig).use('juju-view-utils', 'juju-tests-utils', function(Y) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
         utils = Y.namespace('juju.views.utils');
-        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
@@ -1070,33 +1065,33 @@ describe('utilities', function() {
       utils.deploy(
         env, jem, users, autoPlaceUnits, createSocketURL, appSet, false,
         callback, true);
-      assert.equal(autoPlaceUnits.callCount(), 1);
+      assert.equal(autoPlaceUnits.callCount, 1);
     });
 
     it('does not auto place when requested', function() {
       utils.deploy(
         env, jem, users, autoPlaceUnits, createSocketURL, appSet, false,
         callback, false);
-      assert.equal(autoPlaceUnits.callCount(), 0);
+      assert.equal(autoPlaceUnits.callCount, 0);
     });
 
     it('can commit to an existing model', function() {
       utils.deploy(
         env, jem, users, autoPlaceUnits, createSocketURL, appSet, true,
         callback);
-      assert.equal(commit.callCount(), 1);
-      assert.equal(callback.callCount(), 1);
-      assert.equal(jem.newModel.callCount(), 0);
+      assert.equal(commit.callCount, 1);
+      assert.equal(callback.callCount, 1);
+      assert.equal(jem.newModel.callCount, 0);
     });
 
     it('can create a new model', function() {
       utils.deploy(
         env, jem, users, autoPlaceUnits, createSocketURL, appSet, false,
         callback, true, 'new-model', 'the-credential', 'azure', 'north');
-      assert.equal(commit.callCount(), 0);
-      assert.equal(callback.callCount(), 0);
-      assert.equal(jem.newModel.callCount(), 1);
-      var args = jem.newModel.allArguments()[0];
+      assert.equal(commit.callCount, 0);
+      assert.equal(callback.callCount, 0);
+      assert.equal(jem.newModel.callCount, 1);
+      var args = jem.newModel.args[0];
       assert.equal(args[0], 'spinach');
       assert.equal(args[1], 'new-model');
       assert.equal(args[2], 'the-credential');
@@ -1117,27 +1112,27 @@ describe('utilities', function() {
       };
       utils._newModelCallback(
         env, createSocketURL, appSet, callback, null, model);
-      assert.equal(env.setCredentials.callCount(), 1);
-      assert.deepEqual(env.setCredentials.allArguments()[0][0], {
+      assert.equal(env.setCredentials.callCount, 1);
+      assert.deepEqual(env.setCredentials.args[0][0], {
         user: 'user-spinach',
         password: 'taquitos123!'
       });
-      assert.equal(createSocketURL.callCount(), 1);
-      var createSocketURLArgs = createSocketURL.allArguments()[0];
+      assert.equal(createSocketURL.callCount, 1);
+      var createSocketURLArgs = createSocketURL.args[0];
       assert.equal(createSocketURLArgs[0], 'uuid123');
       assert.equal(createSocketURLArgs[1], 'http');
       assert.equal(createSocketURLArgs[2], '80');
-      assert.equal(appSet.callCount(), 2);
-      var appSetArgs = appSet.allArguments();
+      assert.equal(appSet.callCount, 2);
+      var appSetArgs = appSet.args;
       assert.equal(appSetArgs[0][0], 'jujuEnvUUID');
       assert.equal(appSetArgs[0][1], 'uuid123');
       assert.equal(appSetArgs[1][0], 'socket_url');
       assert.equal(appSetArgs[1][1], 'wss://socket-url');
-      assert.equal(envSet.callCount(), 1);
-      var envSetArgs = envSet.allArguments()[0];
+      assert.equal(envSet.callCount, 1);
+      var envSetArgs = envSet.args[0];
       assert.equal(envSetArgs[0], 'socket_url');
       assert.equal(envSetArgs[1], 'wss://socket-url');
-      assert.equal(env.connect.callCount(), 1);
+      assert.equal(env.connect.callCount, 1);
     });
   });
 

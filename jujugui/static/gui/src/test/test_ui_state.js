@@ -94,8 +94,8 @@ describe('UI State object', function() {
       state.saveState(newState, true);
       assert.deepEqual(state.get('previous'), {});
       assert.deepEqual(state.get('current'), newState);
-      assert.equal(dispatchStub.calledOnce(), true);
-      assert.deepEqual(dispatchStub.lastArguments()[0], newState);
+      assert.equal(dispatchStub.calledOnce, true);
+      assert.deepEqual(dispatchStub.lastCall.args[0], newState);
     });
   });
 
@@ -122,8 +122,8 @@ describe('UI State object', function() {
         // bit of an integration test.
         state.dispatch(newState);
         // It shouldn't empty the section if the component didn't change.
-        assert.equal(emptyStub.callCount(), 0);
-        assert.equal(dispatchSectionStub.callCount(), 2);
+        assert.equal(emptyStub.callCount, 0);
+        assert.equal(dispatchSectionStub.callCount, 2);
       });
 
       it('leaves sections when components don\'t change', function() {
@@ -139,8 +139,8 @@ describe('UI State object', function() {
         // Also calls hasChanged() internally but not stubbing to make it a
         // bit of an integration test.
         state.dispatch(newState);
-        assert.equal(emptyStub.callCount(), 0);
-        assert.equal(dispatchSectionStub.callCount(), 2);
+        assert.equal(emptyStub.callCount, 0);
+        assert.equal(dispatchSectionStub.callCount, 2);
       });
     });
 
@@ -171,8 +171,8 @@ describe('UI State object', function() {
         };
         state._dispatchSection('sectionA', newState);
         var charmbrowser = dispatchers.sectionA.charmbrowser;
-        assert.equal(charmbrowser.calledOnce(), true);
-        assert.equal(charmbrowser.lastArguments()[0], newState.metadata);
+        assert.equal(charmbrowser.calledOnce, true);
+        assert.equal(charmbrowser.lastCall.args[0], newState.metadata);
       });
 
       it('clears its flash storage after dispatch', function() {
@@ -196,8 +196,8 @@ describe('UI State object', function() {
         };
         state._dispatchSection('sectionB', newState);
         var machine = dispatchers.sectionB.machine;
-        assert.equal(machine.calledOnce(), true);
-        assert.equal(machine.lastArguments()[0], newState.metadata);
+        assert.equal(machine.calledOnce, true);
+        assert.equal(machine.lastCall.args[0], newState.metadata);
       });
 
       it('_dispatchSection: calls registered app dispatchers', function() {
@@ -206,15 +206,15 @@ describe('UI State object', function() {
         };
         state._dispatchSection('app', newState);
         var deployTarget = dispatchers.app.deployTarget;
-        assert.equal(deployTarget.callCount(), 1);
-        assert.equal(deployTarget.lastArguments()[0], 'bundle:foo/4/bar');
+        assert.equal(deployTarget.callCount, 1);
+        assert.equal(deployTarget.lastCall.args[0], 'bundle:foo/4/bar');
       });
 
       it('_emptySection: calls registered empty dispatcher', function() {
         state._emptySection('sectionA');
-        assert.equal(dispatchers.sectionA.empty.calledOnce(), true);
+        assert.equal(dispatchers.sectionA.empty.calledOnce, true);
         state._emptySection('sectionB');
-        assert.equal(dispatchers.sectionB.empty.calledOnce(), true);
+        assert.equal(dispatchers.sectionB.empty.calledOnce, true);
       });
 
     });
@@ -1156,7 +1156,7 @@ describe('UI State object', function() {
             urls[key],
             key + ' did not parse correctly');
         assert.equal(
-            saveStub.callCount(),
+            saveStub.callCount,
             loopcount,
             'saveState was not called on every request');
       });

@@ -892,7 +892,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           function() {return 'completed';});
         // Ensure the web handler's sendPostRequest method has been called with
         // the correct charm endpoint
-        var lastArguments = mockWebHandler.sendPostRequest.lastArguments();
+        var lastArguments = mockWebHandler.sendPostRequest.lastCall.args;
         assert.strictEqual(
           lastArguments[0],
           '/model/this-is-a-uuid/charms?series=trusty'); // Path.
@@ -928,8 +928,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             function() {return 'completed';});
         // Ensure the web handler's sendPostRequest method has been called with
         // the expected arguments.
-        assert.strictEqual(mockWebHandler.sendPostRequest.callCount(), 1);
-        var lastArguments = mockWebHandler.sendPostRequest.lastArguments();
+        assert.strictEqual(mockWebHandler.sendPostRequest.callCount, 1);
+        var lastArguments = mockWebHandler.sendPostRequest.lastCall.args;
         assert.strictEqual(lastArguments.length, 7);
         assert.strictEqual(
             lastArguments[0],
@@ -957,8 +957,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(url, 'myurl');
         // Ensure the web handler's getUrl method has been called with the
         // expected arguments.
-        assert.strictEqual(mockWebHandler.getUrl.callCount(), 1);
-        var lastArguments = mockWebHandler.getUrl.lastArguments();
+        assert.strictEqual(mockWebHandler.getUrl.callCount, 1);
+        var lastArguments = mockWebHandler.getUrl.lastCall.args;
         assert.lengthOf(lastArguments, 3);
         var expected = '/juju-core/model/this-is-a-uuid/charms?' +
             'url=local:trusty/django-42&file=icon.svg';
@@ -980,8 +980,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             function() {return 'completed';});
         // Ensure the web handler's sendGetRequest method has been called with
         // the expected arguments.
-        assert.strictEqual(mockWebHandler.sendGetRequest.callCount(), 1);
-        var lastArguments = mockWebHandler.sendGetRequest.lastArguments();
+        assert.strictEqual(mockWebHandler.sendGetRequest.callCount, 1);
+        var lastArguments = mockWebHandler.sendGetRequest.lastCall.args;
         assert.lengthOf(lastArguments, 6);
         var expected = '/juju-core/model/this-is-a-uuid/charms' +
             '?url=local:trusty/django-42';
@@ -1008,8 +1008,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             function() {return 'completed';});
         // Ensure the web handler's sendGetRequest method has been called with
         // the expected arguments.
-        assert.strictEqual(mockWebHandler.sendGetRequest.callCount(), 1);
-        var lastArguments = mockWebHandler.sendGetRequest.lastArguments();
+        assert.strictEqual(mockWebHandler.sendGetRequest.callCount, 1);
+        var lastArguments = mockWebHandler.sendGetRequest.lastCall.args;
         assert.lengthOf(lastArguments, 6);
         var expected = '/juju-core/model/this-is-a-uuid/charms?' +
             'url=local:trusty/django-42&file=hooks/install';
@@ -1189,8 +1189,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(lastMessage, expected);
         // Trigger the message.
         conn.msg(expected);
-        assert.equal(cb.callCount(), 1);
-        assert.deepEqual(cb.lastArguments(), [{
+        assert.equal(cb.callCount, 1);
+        assert.deepEqual(cb.lastCall.args, [{
           err: undefined,
           applicationName: applicationName,
           charmUrl: charmUrl
@@ -2116,7 +2116,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var lazy = utils.makeStubMethod(env.get('ecs'), '_lazyRemoveRelation');
       this._cleanups.push(lazy.reset);
       env.remove_relation([], [], function() {});
-      assert.equal(lazy.calledOnce(), true);
+      assert.equal(lazy.calledOnce, true);
     });
 
     it('successfully removes a relation', function() {
@@ -2159,7 +2159,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var lazy = utils.makeStubMethod(env.get('ecs'), '_lazyRemoveUnit');
       this._cleanups.push(lazy.reset);
       env.remove_units([], function() {});
-      assert.equal(lazy.calledOnce(), true);
+      assert.equal(lazy.calledOnce, true);
     });
 
     it('sends the correct CharmInfo message', function() {
@@ -2572,7 +2572,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Mimic response.
       conn.msg({'request-id': 1, response: {}});
       // The callback has been called.
-      assert.strictEqual(callback.calledOnce(), true, 'callback not');
+      assert.strictEqual(callback.calledOnce, true, 'callback not');
       assert.strictEqual(env._allWatcherId, null);
       // The request has been properly sent.
       assert.deepEqual({
@@ -2759,8 +2759,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'request-id': msg['request-id'],
         response: {changes: ['foo']}
       });
-      assert.equal(callback.callCount(), 1);
-      assert.deepEqual(callback.lastArguments()[0], {
+      assert.equal(callback.callCount, 1);
+      assert.deepEqual(callback.lastCall.args[0], {
         changes: ['foo'],
         errors: undefined
       });
@@ -2775,8 +2775,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'request-id': msg['request-id'],
         response: {errors: ['bad wolf']}
       });
-      assert.equal(callback.callCount(), 1);
-      assert.deepEqual(callback.lastArguments()[0], {
+      assert.equal(callback.callCount, 1);
+      assert.deepEqual(callback.lastCall.args[0], {
         changes: undefined,
         errors: ['bad wolf']
       });
@@ -2791,8 +2791,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'request-id': msg['request-id'],
         error: 'bad wolf'
       });
-      assert.equal(callback.callCount(), 1);
-      assert.deepEqual(callback.lastArguments()[0], {
+      assert.equal(callback.callCount, 1);
+      assert.deepEqual(callback.lastCall.args[0], {
         changes: undefined,
         errors: ['bad wolf']
       });

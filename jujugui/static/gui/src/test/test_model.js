@@ -341,7 +341,7 @@ describe('test_model.js', function() {
       this._cleanups.push(stub.reset);
       db.services.add({id: 'mysql'});
       db.addUnits(service_unit);
-      assert.equal(stub.calledOnce(), true);
+      assert.equal(stub.calledOnce, true);
     });
 
     it('should be able to aggregate unit by status', function() {
@@ -609,7 +609,7 @@ describe('test_model.js', function() {
         db.onDelta({data: {result: [
           ['unitInfo', 'remove', {'machine-id': '0'}]
         ]}});
-        var args = machinesStub.lastArguments();
+        var args = machinesStub.lastCall.args;
         assert.equal(args[0], 'change',
                      'the expected action was not applied to machines');
         assert.equal(args[1].id, '0',
@@ -672,7 +672,7 @@ describe('test_model.js', function() {
         db.onDelta({data: {result: [
           ['fakeDelta', 'add', {}]
         ]}});
-        assert.equal(handler.callCount(), 1);
+        assert.equal(handler.callCount, 1);
       });
 
       // XXX - We no longer use relation_errors but this test should remain

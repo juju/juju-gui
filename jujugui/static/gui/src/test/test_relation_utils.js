@@ -702,7 +702,7 @@ describe('RelationUtils', function() {
       ]];
       relationUtils.createRelation(
         db, env, endpoints, sinon.stub());
-      assert.equal(db.relations.add.callCount(), 1);
+      assert.equal(db.relations.add.callCount, 1);
       var endpoints = [[
         '19984570$', {
           name: 'db', role: 'client'
@@ -711,7 +711,7 @@ describe('RelationUtils', function() {
           name: 'db', role: 'server'
         }]
       ];
-      assert.deepEqual(db.relations.add.lastArguments()[0], {
+      assert.deepEqual(db.relations.add.lastCall.args[0], {
         relation_id: relationId,
         interface: 'db',
         endpoints: endpoints,
@@ -719,18 +719,18 @@ describe('RelationUtils', function() {
         scope: 'global',
         display_name: 'pending'
       });
-      assert.equal(env.add_relation.callCount(), 1);
-      assert.deepEqual(env.add_relation.lastArguments()[0], endpoints[0]);
-      assert.deepEqual(env.add_relation.lastArguments()[1], endpoints[1]);
+      assert.equal(env.add_relation.callCount, 1);
+      assert.deepEqual(env.add_relation.lastCall.args[0], endpoints[0]);
+      assert.deepEqual(env.add_relation.lastCall.args[1], endpoints[1]);
       // Call the add_relation callback.
-      env.add_relation.lastArguments()[2]({
+      env.add_relation.lastCall.args[2]({
         result: { id: 'foo', 'interface': 'bar', scope: 'global' }
       });
       // Callback method assertions.
-      assert.equal(db.relations.remove.callCount(), 1);
-      assert.equal(db.relations.remove.lastArguments()[0], relationId);
-      assert.equal(db.relations.create.callCount(), 1);
-      assert.deepEqual(db.relations.create.lastArguments()[0], {
+      assert.equal(db.relations.remove.callCount, 1);
+      assert.equal(db.relations.remove.lastCall.args[0], relationId);
+      assert.equal(db.relations.create.callCount, 1);
+      assert.deepEqual(db.relations.create.lastCall.args[0], {
         relation_id: 'foo',
         type: 'bar',
         endpoints: endpoints,

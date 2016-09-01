@@ -121,8 +121,8 @@ describe('topology relation module', function() {
     var stubUpdate = utils.makeStubMethod(view, 'update');
     this._cleanups.push(stubUpdate.reset);
     view.rerender();
-    assert.equal(stubRemove.calledOnce(), true, 'Remove was not called');
-    assert.equal(stubUpdate.calledOnce(), true, 'Update was not called');
+    assert.equal(stubRemove.calledOnce, true, 'Remove was not called');
+    assert.equal(stubUpdate.calledOnce, true, 'Update was not called');
   });
 
   it('fires "changeState" topo event for clicking a relation endpoint',
@@ -132,8 +132,8 @@ describe('topology relation module', function() {
         };
         view.set('component', topo);
         view.inspectRelationClick.call(container, undefined, view);
-        assert.equal(topo.fire.lastArguments()[0], 'changeState');
-        assert.deepEqual(topo.fire.lastArguments()[1], {
+        assert.equal(topo.fire.lastCall.args[0], 'changeState');
+        assert.deepEqual(topo.fire.lastCall.args[1], {
           sectionA: {
             component: 'inspector',
             metadata: { id: container.get('text').split(':')[0].trim() }
@@ -160,7 +160,7 @@ describe('topology relation module', function() {
           };
         }});
       view.update.call(view);
-      assert.equal(updateVis.callCount(), 1);
+      assert.equal(updateVis.callCount, 1);
     });
 
     it('categorizes and calls the appropriate vis method', function() {
@@ -189,16 +189,16 @@ describe('topology relation module', function() {
           };
         }});
       view.updateRelationVisibility();
-      assert.equal(fade.callCount(), 1);
-      assert.equal(hide.callCount(), 1);
-      assert.equal(show.callCount(), 1);
-      assert.deepEqual(fade.lastArguments()[0], {
+      assert.equal(fade.callCount, 1);
+      assert.equal(hide.callCount, 1);
+      assert.equal(show.callCount, 1);
+      assert.deepEqual(fade.lastCall.args[0], {
         serviceNames: ['foo1', 'foo4']
       });
-      assert.deepEqual(hide.lastArguments()[0], {
+      assert.deepEqual(hide.lastCall.args[0], {
         serviceNames: ['foo2', 'foo4']
       });
-      assert.deepEqual(show.lastArguments()[0], { serviceNames: ['foo3'] });
+      assert.deepEqual(show.lastCall.args[0], { serviceNames: ['foo3'] });
     });
   });
 
@@ -227,11 +227,11 @@ describe('topology relation module', function() {
         }]]
       });
       view.ambiguousAddRelationCheck({id: 'mysql'}, view);
-      assert.equal(addRelationEnd.callCount(), 1);
-      assert.equal(getDisplayName.callCount(), 0);
-      assert.equal(menuStub.callCount(), 0);
-      assert.equal(relSelect.callCount(), 0);
-      assert.equal(posMenu.callCount(), 0);
+      assert.equal(addRelationEnd.callCount, 1);
+      assert.equal(getDisplayName.callCount, 0);
+      assert.equal(menuStub.callCount, 0);
+      assert.equal(relSelect.callCount, 0);
+      assert.equal(posMenu.callCount, 0);
     });
 
     it('calls the util methods to show ambiguous select menu', function() {
@@ -256,13 +256,13 @@ describe('topology relation module', function() {
         }]]
       });
       view.ambiguousAddRelationCheck({id: 'postgresql'}, view);
-      assert.equal(addRelationEnd.callCount(), 0);
-      assert.equal(getDisplayName.callCount(), 1);
-      assert.equal(menuStub.callCount(), 1);
-      assert.equal(relSelect.callCount(), 1);
-      assert.equal(posMenu.callCount(), 1);
+      assert.equal(addRelationEnd.callCount, 0);
+      assert.equal(getDisplayName.callCount, 1);
+      assert.equal(menuStub.callCount, 1);
+      assert.equal(relSelect.callCount, 1);
+      assert.equal(posMenu.callCount, 1);
       // The endpoints need to be sorted alphabetically
-      assert.deepEqual(getDisplayName.lastArguments()[0], [[{
+      assert.deepEqual(getDisplayName.lastCall.args[0], [[{
         service: 'python-django', name: 'pgsql', type: 'pgsql'
       },{
         service: 'postgresql', name: 'db-admin', type: 'pgsql'
@@ -353,8 +353,8 @@ describe('topology relation module', function() {
         }
       };
       view._attachAmbiguousReleationSelect(menu);
-      assert.equal(delegate.callCount(), 1);
-      assert.equal(on.callCount(), 1);
+      assert.equal(delegate.callCount, 1);
+      assert.equal(on.callCount, 1);
     });
 
     it('calls to position the menu to the terminating endpoint', function() {
@@ -380,22 +380,22 @@ describe('topology relation module', function() {
 
       view._positionAmbiguousRelationMenu(menu, topo, 'm', 'context');
 
-      assert.equal(locate.callCount(), 1, 'locateRelativePointOnCanvas');
-      assert.deepEqual(locate.lastArguments(), ['m', 'translate', 'scale']);
-      assert.equal(setStyle.callCount(), 2);
-      assert.deepEqual(setStyle.allArguments(), [
+      assert.equal(locate.callCount, 1, 'locateRelativePointOnCanvas');
+      assert.deepEqual(locate.lastCall.args, ['m', 'translate', 'scale']);
+      assert.equal(setStyle.callCount, 2);
+      assert.deepEqual(setStyle.args, [
         ['left', 'locate1'],
         ['top', 'locate2']
       ]);
-      assert.equal(addClass.callCount(), 1, 'addClass');
-      assert.equal(addClass.lastArguments()[0], 'active');
-      assert.equal(set.callCount(), 2);
-      assert.deepEqual(set.allArguments(), [
+      assert.equal(addClass.callCount, 1, 'addClass');
+      assert.equal(addClass.lastCall.args[0], 'active');
+      assert.equal(set.callCount, 2);
+      assert.deepEqual(set.args, [
         ['active_service', 'm'],
         ['active_context', 'context']
       ]);
-      assert.equal(topo.fire.callCount(), 1, 'fire');
-      assert.equal(topo.fire.lastArguments()[0], 'resized');
+      assert.equal(topo.fire.callCount, 1, 'fire');
+      assert.equal(topo.fire.lastCall.args[0], 'resized');
     });
   });
 

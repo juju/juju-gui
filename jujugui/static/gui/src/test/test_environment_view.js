@@ -1435,16 +1435,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('view model support infrastructure', function() {
-    var views, models, module, service, testUtils, viewUtils;
+    var views, models, module, service, viewUtils;
 
     before(function(done) {
       YUI(GlobalConfig).use(
-          ['juju-views', 'juju-models', 'charmstore-api', 'juju-tests-utils',
+          ['juju-views', 'juju-models', 'charmstore-api',
           'juju-view-utils'],
           function(Y) {
             views = Y.namespace('juju.views');
             models = Y.namespace('juju.models');
-            testUtils = Y.namespace('juju-tests').utils;
             viewUtils = Y.namespace('juju.views.utils');
             done();
           });

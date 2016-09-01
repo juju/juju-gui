@@ -201,7 +201,7 @@ describe('App', function() {
       }, this);
       app._autoPlaceUnits = sinon.stub();
       app._autoplaceAndCommitAll();
-      assert.equal(app._autoPlaceUnits.callCount(), 1);
+      assert.equal(app._autoPlaceUnits.callCount, 1);
     });
 
     it('should display a zoom message on small browsers', function() {
@@ -345,7 +345,7 @@ describe('App', function() {
             ecs: new juju.EnvironmentChangeSet()
           })
         }, this);
-        assert.equal(setup.callCount(), 1);
+        assert.equal(setup.callCount, 1);
       });
 
       it('is idempotent', function() {
@@ -455,8 +455,8 @@ describe('App', function() {
         var stub = testUtils.makeStubMethod(document, 'addEventListener');
         this._cleanups.push(stub.reset);
         constructAppInstance({}, this);
-        assert.equal(stub.callCount(), 3);
-        var args = stub.allArguments();
+        assert.equal(stub.callCount, 3);
+        var args = stub.args;
         assert.equal(args[0][0], 'dragenter');
         assert.isFunction(args[0][1]);
         assert.equal(args[1][0], 'dragover');
@@ -471,8 +471,8 @@ describe('App', function() {
         constructAppInstance({}, this);
 
         app.after('destroy', function() {
-          assert.equal(stub.callCount(), 3);
-          var args = stub.allArguments();
+          assert.equal(stub.callCount, 3);
+          var args = stub.args;
           assert.equal(args[0][0], 'dragenter');
           assert.isFunction(args[0][1]);
           assert.equal(args[1][0], 'dragover');
@@ -551,9 +551,9 @@ describe('App', function() {
                 fadeHelpIndicator: fade
               }}}
         });
-        assert.equal(fade.callCount(), 1);
-        assert.equal(fade.lastArguments()[0], true);
-        assert.equal(reactdom.callCount(), 1);
+        assert.equal(fade.callCount, 1);
+        assert.equal(fade.lastCall.args[0], true);
+        assert.equal(reactdom.callCount, 1);
       });
 
       it('_hideDragOverNotification hides drop UI', function() {
@@ -568,9 +568,9 @@ describe('App', function() {
                 fadeHelpIndicator: fade
               }}}
         });
-        assert.equal(fade.callCount(), 1);
-        assert.equal(fade.lastArguments()[0], false);
-        assert.equal(reactdom.callCount(), 1);
+        assert.equal(fade.callCount, 1);
+        assert.equal(fade.lastCall.args[0], false);
+        assert.equal(reactdom.callCount, 1);
       });
     });
 
@@ -601,10 +601,10 @@ describe('App', function() {
       app._appDragOverHandler(ev2);
       app._appDragOverHandler(ev3);
 
-      assert.equal(determineFileTypeStub.callCount(), 3);
-      assert.equal(renderDragOverStub.calledOnce(), true);
-      assert.equal(dragTimerControlStub.callCount(), 3);
-      var args = dragTimerControlStub.allArguments();
+      assert.equal(determineFileTypeStub.callCount, 3);
+      assert.equal(renderDragOverStub.calledOnce, true);
+      assert.equal(dragTimerControlStub.callCount, 3);
+      var args = dragTimerControlStub.args;
       assert.equal(args[0][0], 'start');
       assert.equal(args[1][0], 'start');
       assert.equal(args[2][0], 'stop');
@@ -695,8 +695,8 @@ describe('App', function() {
         app.after('ready', function() {
           // Log out so that the login form is displayed.
           app.logout();
-          assert.strictEqual(render.calledOnce(), true, 'render not called');
-          var node = render.lastArguments()[0];
+          assert.strictEqual(render.calledOnce, true, 'render not called');
+          var node = render.lastCall.args[0];
           assert.strictEqual(
             node.props.helpMessage,
             'Find your username and password with ' +
@@ -717,8 +717,8 @@ describe('App', function() {
         app.after('ready', function() {
           // Log out so that the login form is displayed.
           app.logout();
-          assert.strictEqual(render.calledOnce(), true, 'render not called');
-          var node = render.lastArguments()[0];
+          assert.strictEqual(render.calledOnce, true, 'render not called');
+          var node = render.lastCall.args[0];
           assert.strictEqual(
             node.props.helpMessage,
             'Find your password with `juju api-info --password password`');
@@ -843,8 +843,8 @@ describe('App', function() {
         conn.msg({'request-id': 1, error: 'bad wolf'});
         assert.equal(1, conn.messages.length);
         assertIsLogin(conn.last_message());
-        assert.equal(loginStub.callCount(), 1);
-        assert.deepEqual(loginStub.lastArguments(), ['bad wolf']);
+        assert.equal(loginStub.callCount, 1);
+        assert.deepEqual(loginStub.lastCall.args, ['bad wolf']);
         done();
       });
     });
@@ -884,13 +884,13 @@ describe('App', function() {
       stubit(app, 'navigate');
       stubit(app, 'dispatch');
       app.onLogin({ data: { result: true } });
-      assert.equal(app.navigate.calledOnce(), true);
-      assert.deepEqual(app.navigate.lastArguments(), [
+      assert.equal(app.navigate.calledOnce, true);
+      assert.deepEqual(app.navigate.lastCall.args, [
         '/foo/bar',
         { overrideAllNamespaces: true }]);
       // dispatch should not be called if there is no hash in the url.
       // dispatch should be called in the test below where there is a hash.
-      assert.equal(app.dispatch.calledOnce(), false);
+      assert.equal(app.dispatch.calledOnce, false);
     });
 
     it('does not navigate to requested url on login with gisf', function() {
@@ -904,7 +904,7 @@ describe('App', function() {
       stubit(app, 'navigate');
       stubit(app, 'dispatch');
       app.onLogin({ data: { result: true } });
-      assert.equal(app.navigate.calledOnce(), false,
+      assert.equal(app.navigate.calledOnce, false,
         'navigate should not be called in gisf mode here');
     });
 
@@ -926,23 +926,23 @@ describe('App', function() {
         // Clean up.
         this.reset();
         // Begin assertions.
-        var e = this.lastArguments()[0];
+        var e = this.lastCall.args[0];
         // These two really simply verify that our test prep did what we
         // expected.
         assert.equal(e.data.result, true);
         assert.equal(e.data.fromToken, true);
         this.passThroughToOriginalMethod(app);
-        assert.equal(app.maskVisibility.calledOnce(), true);
-        assert.equal(app.env.onceAfter.calledOnce(), true);
-        var onceAfterArgs = app.env.onceAfter.lastArguments();
+        assert.equal(app.maskVisibility.calledOnce, true);
+        assert.equal(app.env.onceAfter.calledOnce, true);
+        var onceAfterArgs = app.env.onceAfter.lastCall.args;
         assert.equal(onceAfterArgs[0], 'environmentNameChange');
         // Call the event handler so we can verify what it does.
         onceAfterArgs[1].call(onceAfterArgs[2]);
         assert.equal(
             app.db.notifications.item(0).get('title'),
             'Logged in with Token');
-        assert.equal(app.navigate.calledOnce(), true);
-        var navigateArgs = app.navigate.lastArguments();
+        assert.equal(app.navigate.calledOnce, true);
+        var navigateArgs = app.navigate.lastCall.args;
         assert.equal(navigateArgs[0], '/foo/bar/');
         assert.deepEqual(navigateArgs[1], {overrideAllNamespaces: true});
         done();
@@ -1173,13 +1173,13 @@ describe('App', function() {
       env.connect();
       conn.open();
       // We need to fake the connection event.
-      assert.equal(app.db.reset.callCount(), 1);
-      assert.equal(env.login.calledOnce(), true);
+      assert.equal(app.db.reset.callCount, 1);
+      assert.equal(env.login.calledOnce, true);
 
       // Trigger a second time and verify.
       conn.transient_close();
       conn.open();
-      assert.equal(app.db.reset.callCount(), 2);
+      assert.equal(app.db.reset.callCount, 2);
     });
 
     it('should connect to model when GISF', function(done) {
@@ -1188,7 +1188,7 @@ describe('App', function() {
       app.set('gisf', true);
       app.set('jujuEnvUUID', 'foobar');
       app.after('ready', function() {
-        assert.equal(env.connect.callCount(), 1);
+        assert.equal(env.connect.callCount, 1);
         done();
       });
     });
@@ -1199,7 +1199,7 @@ describe('App', function() {
       app.set('gisf', true);
       app.set('jujuEnvUUID', 'sandbox');
       app.after('ready', function() {
-        assert.equal(env.connect.callCount(), 0);
+        assert.equal(env.connect.callCount, 0);
         done();
       });
     });
@@ -1211,7 +1211,7 @@ describe('App', function() {
       app.set('socket_url', 'http://example.org');
       app.set('sandbox', false);
       app.after('ready', function() {
-        assert.equal(env.connect.callCount(), 1);
+        assert.equal(env.connect.callCount, 1);
         done();
       });
     });
@@ -1223,7 +1223,7 @@ describe('App', function() {
       app.set('socket_url', '');
       app.set('sandbox', true);
       app.after('ready', function() {
-        assert.equal(env.connect.callCount(), 1);
+        assert.equal(env.connect.callCount, 1);
         done();
       });
     });
@@ -1235,7 +1235,7 @@ describe('App', function() {
       app.set('socket_url', '');
       app.set('sandbox', false);
       app.after('ready', function() {
-        assert.equal(env.connect.callCount(), 0);
+        assert.equal(env.connect.callCount, 0);
         done();
       });
     });
@@ -1384,7 +1384,7 @@ describe('App', function() {
       // set (implicit).
       app.switchEnv('', '', '', false);
       app.switchEnv();
-      assert.equal(connect.callCount(), 0);
+      assert.equal(connect.callCount, 0);
     });
   });
 
@@ -1497,9 +1497,9 @@ describe('App', function() {
     it('calls jem whoami for jem users', function() {
       var user = {user: 'test'};
       app.storeUser('jem');
-      assert.equal(jemStub.callCount(), 1);
-      assert.equal(csStub.callCount(), 0);
-      var cb = jemStub.lastArguments()[0];
+      assert.equal(jemStub.callCount, 1);
+      assert.equal(csStub.callCount, 0);
+      var cb = jemStub.lastCall.args[0];
       cb(null, user);
       var users = app.get('users');
       assert.deepEqual(users['jem'], user);
@@ -1508,9 +1508,9 @@ describe('App', function() {
     it('calls charmstore whoami for charmstore users', function() {
       var user = {user: 'test'};
       app.storeUser('charmstore');
-      assert.equal(csStub.callCount(), 1);
-      assert.equal(jemStub.callCount(), 0);
-      var cb = csStub.lastArguments()[0];
+      assert.equal(csStub.callCount, 1);
+      assert.equal(jemStub.callCount, 0);
+      var cb = csStub.lastCall.args[0];
       cb(null, user);
       var users = app.get('users');
       assert.deepEqual(users['charmstore'], user);
@@ -1812,10 +1812,10 @@ describe('App', function() {
       // Ensure jem is set.
       app.jem = true;
       app.checkUserCredentials(req, res, next);
-      var args = maskVisibility.allArguments();
+      var args = maskVisibility.args;
       assert.equal(args[0][0], false);
-      assert.equal(maskVisibility.callCount(), 1, 'Visibility mask not hidden');
-      assert.equal(next.callCount(), 1, 'Next not invoked.');
+      assert.equal(maskVisibility.callCount, 1, 'Visibility mask not hidden');
+      assert.equal(next.callCount, 1, 'Next not invoked.');
     });
   });
 

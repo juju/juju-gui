@@ -23,48 +23,6 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
   var jujuTests = Y.namespace('juju-tests');
 
   jujuTests.utils = {
-
-    /**
-     * Make a stub function.  Pass in 0 or more arguments to become responses
-     * that the function cycles through.
-     *
-     * @method makeStubFunction
-     * @return {Function} the new stub function.
-     */
-    makeStubFunction: function() {
-      var responses = Array.prototype.slice.call(arguments, 0);
-      if (responses.length === 0) {
-        responses.push(undefined);
-      }
-      var f = function() {
-        var response = responses[(f._allArguments.length) % responses.length];
-        f._allArguments.push(Array.prototype.slice.call(arguments, 0));
-        f._callbacks.forEach(function(cb) {cb.call(f);});
-        return response;
-      };
-      f._allArguments = [];
-      f._callbacks = [];
-      f.called = function() {
-        return !!f._allArguments.length;
-      };
-      f.calledOnce = function() {
-        return f._allArguments.length === 1;
-      };
-      f.callCount = function() {
-        return f._allArguments.length;
-      };
-      f.lastArguments = function() {
-        return f._allArguments[f._allArguments.length - 1];
-      };
-      f.allArguments = function() {
-        return f._allArguments.slice(0);
-      };
-      f.addCallback = function(cb) {
-        f._callbacks.push(cb);
-      };
-      return f;
-    },
-
     /**
      * Make a stub method.  Pass in 0 or more arguments to become responses
      * that the method cycles through.
@@ -78,21 +36,30 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
      * @param {String} name the name to be replaced.
      * @return {Function} the new stub function.
      */
-    makeStubMethod: function(context, name) {
-      var responses = Array.prototype.slice.call(arguments, 2);
-      var original = context[name];
-      var f = context[name] = jujuTests.utils.makeStubFunction.apply(
-          jujuTests.utils, responses);
-      f.reset = function() {
+    makeStubMethod: function(context, name, args) {
+      const responses = Array.prototype.slice.call(arguments, 2);
+      const mockMethod = sinon.stub();
+      if (responses.length === 1) {
+        // If only one reponse is supplied then return that every time the
+        // method is called.
+        mockMethod.returns(responses[0]);
+      } else {
+        responses.forEach((response, i) => {
+          mockMethod.onCall(i).returns(response);
+        });
+      }
+      const original = context[name];
+      context[name] = mockMethod;
+      mockMethod.reset = function() {
         context[name] = original;
       };
-      f.passThroughToOriginalMethod = function(instance) {
+      mockMethod.passThroughToOriginalMethod = function(instance) {
         if (!Y.Lang.isValue(instance)) {
           instance = context;
         }
-        return original.apply(instance, f.lastArguments());
+        return original.apply(instance, mockMethod.lastCall.args);
       };
-      return f;
+      return mockMethod;
     },
 
     makeContainer: function(ctx, id, visibleContainer) {
