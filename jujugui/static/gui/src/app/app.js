@@ -949,6 +949,7 @@ YUI.add('juju-gui', function(Y) {
           changeState={this.changeState.bind(this)}
           getAgreements={this.terms.getAgreements.bind(this.terms)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
+          gisf={this.get('gisf')}
           interactiveLogin={this.get('interactiveLogin')}
           pluralize={utils.pluralize.bind(this)}
           staticURL={window.juju_config.staticURL}
@@ -2151,6 +2152,10 @@ YUI.add('juju-gui', function(Y) {
       if (this.env.ws) {
         this.env.ws.onclose = onclose;
         this.env.close();
+        // If we are already disconnected then connect if we're supposed to.
+        if (!this.env.get('connected') && reconnect) {
+          this.env.connect();
+        }
       } else {
         this.env.close(onclose);
       }
