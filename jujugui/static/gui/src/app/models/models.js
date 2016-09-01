@@ -2050,11 +2050,9 @@ YUI.add('juju-models', function(Y) {
     get_relations_for_service: function(service, asList) {
       var service_id = service.get('id');
       return this.filter({asList: Boolean(asList)}, function(relation) {
-        return Y.Array.some(
-            relation.get('endpoints'),
-            function(endpoint) {
-              return endpoint[0] === service_id;
-            });
+        return relation.get('endpoints').some(endpoint => {
+          return endpoint[0] === service_id;
+        });
       });
     }
   }, {

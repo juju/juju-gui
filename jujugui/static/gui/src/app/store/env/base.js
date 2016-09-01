@@ -353,7 +353,7 @@ YUI.add('juju-env-base', function(Y) {
       var title = 'Permission denied';
       var message = ('GUI is in read-only mode and this operation ' +
           'requires a model modification');
-      var silent = Y.Array.some(this.get('_silentFailureOps'), function(v) {
+      var silent = this.get('_silentFailureOps').some(v => {
         return v === op.op;
       });
       console.warn(title + ': ' + message + '. Attempted operation: ', op);
