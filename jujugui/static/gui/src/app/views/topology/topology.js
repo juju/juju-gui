@@ -284,19 +284,6 @@ YUI.add('juju-topology', function(Y) {
     },
 
     /**
-     Show the menu for a given service
-
-     @method showMenu
-     @param {String} serviceId
-    */
-    showMenu: function(serviceId) {
-      var serviceModule = this.modules.ServiceModule;
-      if (!serviceModule) { return;}
-      var boxModel = this.service_boxes[serviceId];
-      serviceModule.showServiceMenu(boxModel);
-    },
-
-    /**
      Record a new box position on the backend. This maintains the proper drag
      state. This method also transitions the viewModel to a DRAG_ENDING state.
 
