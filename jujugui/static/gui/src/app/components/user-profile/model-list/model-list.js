@@ -29,6 +29,7 @@ YUI.add('user-profile-model-list', function() {
       canCreateNew: React.PropTypes.bool.isRequired,
       controllerAPI: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
+      gisf: React.PropTypes.bool,
       hideConnectingMask: React.PropTypes.func.isRequired,
       listModels: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
@@ -50,7 +51,8 @@ YUI.add('user-profile-model-list', function() {
       // Just in case broadcastStatus isn't passed in (e.g., in tests), calls
       // to it should not fail, so default to an empty function.
       return {
-        broadcastStatus: function() {}
+        broadcastStatus: function() {},
+        gisf: false
       };
     },
 
@@ -248,6 +250,7 @@ YUI.add('user-profile-model-list', function() {
           <juju.components.CreateModelButton
             addNotification={props.addNotification}
             controllerAPI={props.controllerAPI}
+            gisf={props.gisf}
             hideConnectingMask={props.hideConnectingMask}
             showConnectingMask={props.showConnectingMask}
             switchModel={this.switchModel}

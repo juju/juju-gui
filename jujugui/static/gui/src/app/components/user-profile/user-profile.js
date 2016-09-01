@@ -30,6 +30,7 @@ YUI.add('user-profile', function() {
       currentModel: React.PropTypes.string,
       getAgreements: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
+      gisf: React.PropTypes.bool,
       hideConnectingMask: React.PropTypes.func.isRequired,
       interactiveLogin: React.PropTypes.bool,
       listBudgets: React.PropTypes.func.isRequired,
@@ -80,6 +81,7 @@ YUI.add('user-profile', function() {
         <juju.components.EmptyUserProfile
           addNotification={props.addNotification}
           controllerAPI={props.controllerAPI}
+          gisf={props.gisf}
           hideConnectingMask={props.hideConnectingMask}
           showConnectingMask={props.showConnectingMask}
           staticURL={props.staticURL}
@@ -96,6 +98,7 @@ YUI.add('user-profile', function() {
           canCreateNew={props.canCreateNew}
           controllerAPI={props.controllerAPI}
           currentModel={props.currentModel}
+          gisf={props.gisf}
           hideConnectingMask={props.hideConnectingMask}
           listModels={props.listModels}
           showConnectingMask={props.showConnectingMask}
