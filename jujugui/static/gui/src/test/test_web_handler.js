@@ -58,34 +58,34 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     // Ensure the progress event is correctly handled.
     var assertProgressHandled = function(progressCallback) {
       // Retrieve the registered progress handler.
-      var args = mockXhr.addEventListener.allArguments();
+      var args = mockXhr.addEventListener.args;
       var progressHandler = args[0][1];
       // Set up a progress event and call the progress handler.
       var evt = {type: 'progress'};
       progressHandler(evt);
       // The progress callback has been correctly called.
-      assert.strictEqual(progressCallback.callCount(), 1);
-      assert.deepEqual(progressCallback.lastArguments(), [evt]);
+      assert.strictEqual(progressCallback.callCount, 1);
+      assert.deepEqual(progressCallback.lastCall.args, [evt]);
       // The event listeners are only removed when the completed callback is
       // called.
-      assert.strictEqual(mockXhr.removeEventListener.called(), false);
+      assert.strictEqual(mockXhr.removeEventListener.called, false);
     };
 
     // Ensure the completed event is correctly handled.
     var assertCompletedHandled = function(completedCallback) {
       // Retrieve the registered handlers.
-      var args = mockXhr.addEventListener.allArguments();
+      var args = mockXhr.addEventListener.args;
       var progressHandler = args[0][1];
       var completedHandler = args[1][1];
       // Set up a load event and call the completed handler.
       var evt = {type: 'load'};
       completedHandler(evt);
       // The completion callback has been correctly called.
-      assert.strictEqual(completedCallback.callCount(), 1);
-      assert.deepEqual(completedCallback.lastArguments(), [evt]);
+      assert.strictEqual(completedCallback.callCount, 1);
+      assert.deepEqual(completedCallback.lastCall.args, [evt]);
       // The event listeners have been removed.
-      assert.strictEqual(mockXhr.removeEventListener.callCount(), 3);
-      args = mockXhr.removeEventListener.allArguments();
+      assert.strictEqual(mockXhr.removeEventListener.callCount, 3);
+      args = mockXhr.removeEventListener.args;
       assert.deepEqual(args[0], ['progress', progressHandler]);
       assert.deepEqual(args[1], ['error', completedHandler]);
       assert.deepEqual(args[2], ['load', completedHandler]);
@@ -102,31 +102,31 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             path, headers, data, 'user', 'passwd', false,
             function() {return 'progress';}, function() {return 'completed';});
         // Ensure the xhr instance has been used properly.
-        assert.strictEqual(mockXhr.addEventListener.callCount(), 3);
+        assert.strictEqual(mockXhr.addEventListener.callCount, 3);
         // Two events listeners are added, one for request's progress and one
         // for request's completion.
-        var args = mockXhr.addEventListener.allArguments();
+        var args = mockXhr.addEventListener.args;
         assert.strictEqual(args[0][0], 'progress');
         assert.strictEqual(args[1][0], 'error');
         assert.strictEqual(args[2][0], 'load');
         // The xhr is then asynchronously opened.
-        assert.strictEqual(mockXhr.open.callCount(), 1);
-        assert.deepEqual(mockXhr.open.lastArguments(), ['POST', path, true]);
+        assert.strictEqual(mockXhr.open.callCount, 1);
+        assert.deepEqual(mockXhr.open.lastCall.args, ['POST', path, true]);
         // Headers are properly set up.
-        assert.strictEqual(mockXhr.setRequestHeader.callCount(), 2);
-        args = mockXhr.setRequestHeader.allArguments();
+        assert.strictEqual(mockXhr.setRequestHeader.callCount, 2);
+        args = mockXhr.setRequestHeader.args;
         assert.deepEqual(args[0], ['Content-Type', 'application/zip']);
         assert.deepEqual(args[1], ['Authorization', 'Basic dXNlcjpwYXNzd2Q=']);
         // The zip file is then correctly sent.
-        assert.strictEqual(mockXhr.send.callCount(), 1);
-        assert.deepEqual(mockXhr.send.lastArguments(), ['a zip file object']);
+        assert.strictEqual(mockXhr.send.callCount, 1);
+        assert.deepEqual(mockXhr.send.lastCall.args, ['a zip file object']);
         // The event listeners are only removed when the completed callback is
         // called.
-        assert.strictEqual(mockXhr.removeEventListener.called(), false);
+        assert.strictEqual(mockXhr.removeEventListener.called, false);
       });
 
       it('handles request progress', function() {
-        var progressCallback = utils.makeStubFunction();
+        var progressCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPostRequest(
             '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
@@ -134,7 +134,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request completion', function() {
-        var completedCallback = utils.makeStubFunction();
+        var completedCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPostRequest(
             '/path/', {}, 'data', 'user', 'passwd', false,
@@ -155,31 +155,31 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             path, headers, data, 'user', 'passwd', false,
             function() {return 'progress';}, function() {return 'completed';});
         // Ensure the xhr instance has been used properly.
-        assert.strictEqual(mockXhr.addEventListener.callCount(), 3);
+        assert.strictEqual(mockXhr.addEventListener.callCount, 3);
         // Two events listeners are added, one for request's progress and one
         // for request's completion.
-        var args = mockXhr.addEventListener.allArguments();
+        var args = mockXhr.addEventListener.args;
         assert.strictEqual(args[0][0], 'progress');
         assert.strictEqual(args[1][0], 'error');
         assert.strictEqual(args[2][0], 'load');
         // The xhr is then asynchronously opened.
-        assert.strictEqual(mockXhr.open.callCount(), 1);
-        assert.deepEqual(mockXhr.open.lastArguments(), ['PUT', path, true]);
+        assert.strictEqual(mockXhr.open.callCount, 1);
+        assert.deepEqual(mockXhr.open.lastCall.args, ['PUT', path, true]);
         // Headers are properly set up.
-        assert.strictEqual(mockXhr.setRequestHeader.callCount(), 2);
-        args = mockXhr.setRequestHeader.allArguments();
+        assert.strictEqual(mockXhr.setRequestHeader.callCount, 2);
+        args = mockXhr.setRequestHeader.args;
         assert.deepEqual(args[0], ['Content-Type', 'application/zip']);
         assert.deepEqual(args[1], ['Authorization', 'Basic dXNlcjpwYXNzd2Q=']);
         // The zip file is then correctly sent.
-        assert.strictEqual(mockXhr.send.callCount(), 1);
-        assert.deepEqual(mockXhr.send.lastArguments(), ['a zip file object']);
+        assert.strictEqual(mockXhr.send.callCount, 1);
+        assert.deepEqual(mockXhr.send.lastCall.args, ['a zip file object']);
         // The event listeners are only removed when the completed callback is
         // called.
-        assert.strictEqual(mockXhr.removeEventListener.called(), false);
+        assert.strictEqual(mockXhr.removeEventListener.called, false);
       });
 
       it('handles request progress', function() {
-        var progressCallback = utils.makeStubFunction();
+        var progressCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPutRequest(
             '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
@@ -187,7 +187,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request completion', function() {
-        var completedCallback = utils.makeStubFunction();
+        var completedCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPutRequest(
             '/path/', {}, 'data', 'user', 'passwd', false,
@@ -206,30 +206,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             path, null, 'user', 'passwd', false,
             function() {return 'progress';}, function() {return 'completed';});
         // Ensure the xhr instance has been used properly.
-        assert.strictEqual(mockXhr.addEventListener.callCount(), 3);
+        assert.strictEqual(mockXhr.addEventListener.callCount, 3);
         // Two events listeners are added, one for request's progress and one
         // for request's completion.
-        var args = mockXhr.addEventListener.allArguments();
+        var args = mockXhr.addEventListener.args;
         assert.strictEqual(args[0][0], 'progress');
         assert.strictEqual(args[1][0], 'error');
         assert.strictEqual(args[2][0], 'load');
         // The xhr is then asynchronously opened.
-        assert.strictEqual(mockXhr.open.callCount(), 1);
-        assert.deepEqual(mockXhr.open.lastArguments(), ['GET', path, true]);
+        assert.strictEqual(mockXhr.open.callCount, 1);
+        assert.deepEqual(mockXhr.open.lastCall.args, ['GET', path, true]);
         // Headers are properly set up.
-        assert.strictEqual(mockXhr.setRequestHeader.callCount(), 1);
-        args = mockXhr.setRequestHeader.allArguments();
+        assert.strictEqual(mockXhr.setRequestHeader.callCount, 1);
+        args = mockXhr.setRequestHeader.args;
         assert.deepEqual(args[0], ['Authorization', 'Basic dXNlcjpwYXNzd2Q=']);
         // The zip file is then correctly sent.
-        assert.strictEqual(mockXhr.send.callCount(), 1);
-        assert.lengthOf(mockXhr.send.lastArguments(), 0);
+        assert.strictEqual(mockXhr.send.callCount, 1);
+        assert.lengthOf(mockXhr.send.lastCall.args, 0);
         // The event listeners are only removed when the completed callback is
         // called.
-        assert.strictEqual(mockXhr.removeEventListener.called(), false);
+        assert.strictEqual(mockXhr.removeEventListener.called, false);
       });
 
       it('handles request progress', function() {
-        var progressCallback = utils.makeStubFunction();
+        var progressCallback = sinon.stub();
         // Make a GET request.
         webHandler.sendGetRequest(
             '/path/', {}, 'user', 'passwd', false, progressCallback);
@@ -237,7 +237,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request completion', function() {
-        var completedCallback = utils.makeStubFunction();
+        var completedCallback = sinon.stub();
         // Make a GET request.
         webHandler.sendGetRequest(
             '/path/', {}, 'user', 'passwd', false,
@@ -258,31 +258,31 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             path, headers, data, 'user', 'passwd', false,
             function() {return 'progress';}, function() {return 'completed';});
         // Ensure the xhr instance has been used properly.
-        assert.strictEqual(mockXhr.addEventListener.callCount(), 3);
+        assert.strictEqual(mockXhr.addEventListener.callCount, 3);
         // Two events listeners are added, one for request's progress and one
         // for request's completion.
-        var args = mockXhr.addEventListener.allArguments();
+        var args = mockXhr.addEventListener.args;
         assert.strictEqual(args[0][0], 'progress');
         assert.strictEqual(args[1][0], 'error');
         assert.strictEqual(args[2][0], 'load');
         // The xhr is then asynchronously opened.
-        assert.strictEqual(mockXhr.open.callCount(), 1);
-        assert.deepEqual(mockXhr.open.lastArguments(), ['PATCH', path, true]);
+        assert.strictEqual(mockXhr.open.callCount, 1);
+        assert.deepEqual(mockXhr.open.lastCall.args, ['PATCH', path, true]);
         // Headers are properly set up.
-        assert.strictEqual(mockXhr.setRequestHeader.callCount(), 2);
-        args = mockXhr.setRequestHeader.allArguments();
+        assert.strictEqual(mockXhr.setRequestHeader.callCount, 2);
+        args = mockXhr.setRequestHeader.args;
         assert.deepEqual(args[0], ['Content-Type', 'application/zip']);
         assert.deepEqual(args[1], ['Authorization', 'Basic dXNlcjpwYXNzd2Q=']);
         // The zip file is then correctly sent.
-        assert.strictEqual(mockXhr.send.callCount(), 1);
-        assert.deepEqual(mockXhr.send.lastArguments(), ['a zip file object']);
+        assert.strictEqual(mockXhr.send.callCount, 1);
+        assert.deepEqual(mockXhr.send.lastCall.args, ['a zip file object']);
         // The event listeners are only removed when the completed callback is
         // called.
-        assert.strictEqual(mockXhr.removeEventListener.called(), false);
+        assert.strictEqual(mockXhr.removeEventListener.called, false);
       });
 
       it('handles request progress', function() {
-        var progressCallback = utils.makeStubFunction();
+        var progressCallback = sinon.stub();
         // Make a PATCH request.
         webHandler.sendPatchRequest(
             '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
@@ -290,7 +290,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('handles request completion', function() {
-        var completedCallback = utils.makeStubFunction();
+        var completedCallback = sinon.stub();
         // Make a PATCH request.
         webHandler.sendPatchRequest(
             '/path/', {}, 'data', 'user', 'passwd', false,

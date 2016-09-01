@@ -19,15 +19,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Juju delta handlers', function() {
-  var db, models, handlers, testUtils;
+  var db, models, handlers;
   var requirements = [
-    'juju-models', 'juju-delta-handlers', 'juju-tests-utils'];
+    'juju-models', 'juju-delta-handlers'];
 
   before(function(done) {
     YUI(GlobalConfig).use(requirements, function(Y) {
       models = Y.namespace('juju.models');
       handlers = models.handlers;
-      testUtils = Y.namespace('juju-tests.utils');
       done();
     });
   });
@@ -260,7 +259,7 @@ describe('Juju delta handlers', function() {
         subordinate: true
       };
       var oldUpdateConfig = models.Service.prototype.updateConfig;
-      models.Service.prototype.updateConfig = testUtils.makeStubFunction();
+      models.Service.prototype.updateConfig = sinon.stub();
       applicationInfo(db, 'add', change);
       assert.strictEqual(db.services.size(), 1);
       // Retrieve the application from the database.
@@ -271,7 +270,7 @@ describe('Juju delta handlers', function() {
       // The config on the application is initially set to the customized
       // subset in the delta stream. The full config will be gotten via a call
       // to the Application.Get API.
-      assert.equal(db.services.item(0).updateConfig.callCount(), 1);
+      assert.equal(db.services.item(0).updateConfig.callCount, 1);
       models.Service.prototype.updateConfig = oldUpdateConfig;
       assert.strictEqual(application.get('life'), 'alive');
       assert.strictEqual(application.get('subordinate'), true, 'subordinate');
@@ -412,8 +411,8 @@ describe('Juju delta handlers', function() {
     });
 
     it('executes collected application hooks on change', function() {
-      var hook1 = testUtils.makeStubFunction();
-      var hook2 = testUtils.makeStubFunction();
+      var hook1 = sinon.stub();
+      var hook2 = sinon.stub();
       models._applicationChangedHooks.django = [hook1, hook2];
       var change = {
         name: 'django',
@@ -425,10 +424,10 @@ describe('Juju delta handlers', function() {
       };
       applicationInfo(db, 'change', change);
       // The two hooks have been called.
-      assert.strictEqual(hook1.calledOnce(), true);
-      assert.strictEqual(hook1.lastArguments().length, 0);
-      assert.strictEqual(hook2.calledOnce(), true);
-      assert.strictEqual(hook2.lastArguments().length, 0);
+      assert.strictEqual(hook1.calledOnce, true);
+      assert.strictEqual(hook1.lastCall.args.length, 0);
+      assert.strictEqual(hook2.calledOnce, true);
+      assert.strictEqual(hook2.lastCall.args.length, 0);
       // The hooks have been garbage collected.
       assert.deepEqual(models._applicationChangedHooks, {});
     });

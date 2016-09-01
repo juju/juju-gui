@@ -147,8 +147,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.connect();
       env.set('facades', {Deployer: [0]});
       this._cleanups.push(env.close.bind(env));
-      db = {notifications: {add: testUtils.makeStubFunction()}};
-      bundleNotifications._watchDeployment = testUtils.makeStubFunction();
+      db = {notifications: {add: sinon.stub()}};
+      bundleNotifications._watchDeployment = sinon.stub();
     });
 
     afterEach(function()  {
@@ -176,10 +176,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Error: 'bad wolf'
       });
       // No bundles are being watched.
-      assert.strictEqual(bundleNotifications._watchDeployment.called(), false);
+      assert.strictEqual(bundleNotifications._watchDeployment.called, false);
       // An error notification has been added.
-      assert.strictEqual(db.notifications.add.calledOnce(), true);
-      var args = db.notifications.add.lastArguments();
+      assert.strictEqual(db.notifications.add.calledOnce, true);
+      var args = db.notifications.add.lastCall.args;
       assert.lengthOf(args, 1);
       var expectedNotification = {
         title: 'Unable to retrieve bundle deployment statuses',
@@ -202,12 +202,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       });
       // We started observing the two bundles.
-      assert.strictEqual(bundleNotifications._watchDeployment.callCount(), 2);
-      var allArgs = bundleNotifications._watchDeployment.allArguments();
+      assert.strictEqual(bundleNotifications._watchDeployment.callCount, 2);
+      var allArgs = bundleNotifications._watchDeployment.args;
       assert.deepEqual([3, env, db], allArgs[0], 'first bundle');
       assert.deepEqual([5, env, db], allArgs[1], 'second bundle');
       // No notifications have been added.
-      assert.strictEqual(db.notifications.add.called(), false);
+      assert.strictEqual(db.notifications.add.called, false);
     });
 
     it('notifies deployment errors occurred in the last hour', function() {
@@ -223,10 +223,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       });
       // No bundles are being watched.
-      assert.strictEqual(bundleNotifications._watchDeployment.called(), false);
+      assert.strictEqual(bundleNotifications._watchDeployment.called, false);
       // An error notification has been added.
-      assert.strictEqual(db.notifications.add.calledOnce(), true);
-      var args = db.notifications.add.lastArguments();
+      assert.strictEqual(db.notifications.add.calledOnce, true);
+      var args = db.notifications.add.lastCall.args;
       assert.lengthOf(args, 1);
       var expectedNotification = {
         title: 'Updated status for deployment id: 7',
@@ -246,9 +246,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       });
       // No bundles are being watched.
-      assert.strictEqual(bundleNotifications._watchDeployment.called(), false);
+      assert.strictEqual(bundleNotifications._watchDeployment.called, false);
       // No notifications have been added.
-      assert.strictEqual(db.notifications.add.called(), false);
+      assert.strictEqual(db.notifications.add.called, false);
     });
 
     it('ignores old failures', function() {
@@ -264,9 +264,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       });
       // No bundles are being watched.
-      assert.strictEqual(bundleNotifications._watchDeployment.called(), false);
+      assert.strictEqual(bundleNotifications._watchDeployment.called, false);
       // No notifications have been added.
-      assert.strictEqual(db.notifications.add.called(), false);
+      assert.strictEqual(db.notifications.add.called, false);
     });
 
     it('ignores cancelled deployments', function() {
@@ -279,33 +279,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       });
       // No bundles are being watched.
-      assert.strictEqual(bundleNotifications._watchDeployment.called(), false);
+      assert.strictEqual(bundleNotifications._watchDeployment.called, false);
       // No notifications have been added.
-      assert.strictEqual(db.notifications.add.called(), false);
+      assert.strictEqual(db.notifications.add.called, false);
     });
 
   });
 
   describe('bundle helpers _notifyDeploymentChange', function() {
-    var bundleNotifications, db, testUtils;
-    var requirements = ['bundle-import-notifications', 'juju-tests-utils'];
+    var bundleNotifications, db;
+    var requirements = ['bundle-import-notifications'];
 
     before(function(done) {
       YUI(GlobalConfig).use(requirements, function(Y) {
         bundleNotifications = Y.namespace('juju').BundleNotifications;
-        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
 
     beforeEach(function() {
-      db = {notifications: {add: testUtils.makeStubFunction()}};
+      db = {notifications: {add: sinon.stub()}};
     });
 
     // Ensure the expected notification has been added to the database.
     var assertNotification = function(expectedNotification) {
-      assert.strictEqual(db.notifications.add.calledOnce(), true);
-      var args = db.notifications.add.lastArguments();
+      assert.strictEqual(db.notifications.add.calledOnce, true);
+      var args = db.notifications.add.lastCall.args;
       assert.lengthOf(args, 1);
       assert.deepEqual(args[0], expectedNotification);
     };

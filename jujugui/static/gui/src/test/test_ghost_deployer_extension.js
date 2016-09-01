@@ -20,14 +20,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('Ghost Deployer Extension', function() {
 
-  var Y, juju, utils, ghostDeployer, GhostDeployer;
+  var Y, juju, ghostDeployer, GhostDeployer;
 
   before(function(done) {
     var requires = ['base', 'base-build', 'model', 'ghost-deployer-extension',
-      'juju-tests-utils'];
+      'juju-models'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
       juju = Y.namespace('juju');
-      utils = Y.namespace('juju-tests.utils');
       done();
     });
   });
@@ -35,44 +34,44 @@ describe('Ghost Deployer Extension', function() {
   beforeEach(function() {
     GhostDeployer = Y.Base.create(
         'deployer', Y.Base, [juju.GhostDeployer], {
-          isLegacyJuju: utils.makeStubFunction(false),
+          isLegacyJuju: sinon.stub().returns(false),
           views: {
             environment: {
               instance: {
                 topo: {service_boxes: {}},
-                createServiceInspector: utils.makeStubFunction()
+                createServiceInspector: sinon.stub()
               }
             }
           },
           env: {
-            deploy: utils.makeStubFunction(),
-            add_unit: utils.makeStubFunction(),
-            addCharm: utils.makeStubFunction()
+            deploy: sinon.stub(),
+            add_unit: sinon.stub(),
+            addCharm: sinon.stub()
           }
         }, {
           ATTRS: {
             charmstore: {
               value: {
                 bakery: {
-                  getMacaroon: utils.makeStubFunction('cookies are better')
+                  getMacaroon: sinon.stub().returns('cookies are better')
                 }
               }
             }
           }
         });
     ghostDeployer = new GhostDeployer();
-    var getMethod = utils.makeStubFunction();
+    var getMethod = sinon.stub();
     ghostDeployer.db = {
-      charms: { add: utils.makeStubFunction({ get: getMethod }) },
+      charms: { add: sinon.stub().returns({ get: getMethod }) },
       services: {
-        ghostService: utils.makeStubFunction({
-          get: utils.makeStubFunction('ghost-service-id'),
-          set: utils.makeStubFunction()
+        ghostService: sinon.stub().returns({
+          get: sinon.stub().returns('ghost-service-id'),
+          set: sinon.stub()
         })
       },
-      notifications: { add: utils.makeStubFunction() },
-      addUnits: utils.makeStubFunction(),
-      removeUnits: utils.makeStubFunction()
+      notifications: { add: sinon.stub() },
+      addUnits: sinon.stub(),
+      removeUnits: sinon.stub()
     };
   });
 
@@ -138,19 +137,19 @@ describe('Ghost Deployer Extension', function() {
       assert.deepEqual(opt, {
         applicationId: 'ghost-service-id'
       });
-      assert.equal(ghostDeployer.env.deploy.callCount(), 0,
+      assert.equal(ghostDeployer.env.deploy.callCount, 0,
         'deploy should not have been called before charm was added');
     };
     ghostDeployer.deployService(charm);
     assert.equal(addCharmCalled, true);
-    assert.equal(ghostDeployer.env.deploy.callCount(), 1);
+    assert.equal(ghostDeployer.env.deploy.callCount, 1);
   });
 
   it('calls the env deploy method with default charm data', function() {
     var charm = makeCharm();
     ghostDeployer.deployService(charm);
-    assert.strictEqual(ghostDeployer.env.deploy.calledOnce(), true);
-    var args = ghostDeployer.env.deploy.lastArguments();
+    assert.strictEqual(ghostDeployer.env.deploy.calledOnce, true);
+    var args = ghostDeployer.env.deploy.lastCall.args;
     assert.strictEqual(args[0], 'cs:trusty/django-42'); // Charm URL.
     assert.strictEqual(args[1], 'trusty'); // service series.
     assert.strictEqual(args[2], 'ghost-service-id'); // Service name.
@@ -164,7 +163,7 @@ describe('Ghost Deployer Extension', function() {
     var charm = makeCharm();
     ghostDeployer.isLegacyJuju = function() { return true; };
     ghostDeployer.deployService(charm);
-    var args = ghostDeployer.env.deploy.lastArguments();
+    var args = ghostDeployer.env.deploy.lastCall.args;
     assert.strictEqual(args[0], 'cs:trusty/django-42'); // Charm URL.
   });
 
@@ -172,7 +171,7 @@ describe('Ghost Deployer Extension', function() {
     var charm = makeCharm('local:trusty/django-42');
     ghostDeployer.isLegacyJuju = function() { return true; };
     ghostDeployer.deployService(charm);
-    var args = ghostDeployer.env.deploy.lastArguments();
+    var args = ghostDeployer.env.deploy.lastCall.args;
     assert.strictEqual(args[0], 'local:trusty/django-42'); // Charm URL.
   });
 
@@ -181,15 +180,15 @@ describe('Ghost Deployer Extension', function() {
     charm.set('id', 'cs:~thedr/django-42');
     ghostDeployer.isLegacyJuju = function() { return true; };
     ghostDeployer.deployService(charm);
-    var args = ghostDeployer.env.deploy.lastArguments();
+    var args = ghostDeployer.env.deploy.lastCall.args;
     assert.strictEqual(args[0], 'cs:~thedr/trusty/django-42'); // Charm URL.
   });
 
   it('adds the ECS modelId option when deploying the charm', function() {
     var charm = makeCharm();
     ghostDeployer.deployService(charm);
-    assert.strictEqual(ghostDeployer.env.deploy.calledOnce(), true);
-    var args = ghostDeployer.env.deploy.lastArguments();
+    assert.strictEqual(ghostDeployer.env.deploy.calledOnce, true);
+    var args = ghostDeployer.env.deploy.lastCall.args;
     var options = args[args.length - 1];
     assert.property(options, 'modelId');
     // The model id is the ghost service identifier.
@@ -198,16 +197,16 @@ describe('Ghost Deployer Extension', function() {
 
   it('creates a ghost service', function() {
     var charm = makeCharm();
-    ghostDeployer.fire = utils.makeStubFunction();
+    ghostDeployer.fire = sinon.stub();
     ghostDeployer.deployService(charm);
     var services = ghostDeployer.db.services;
-    assert.strictEqual(services.ghostService.calledOnce(), true);
-    var args = services.ghostService.lastArguments();
+    assert.strictEqual(services.ghostService.calledOnce, true);
+    var args = services.ghostService.lastCall.args;
     assert.lengthOf(args, 1);
     assert.deepEqual(args[0], charm);
     var fire = ghostDeployer.fire;
-    assert.equal(fire.calledOnce(), true);
-    var fireArgs = fire.lastArguments();
+    assert.equal(fire.calledOnce, true);
+    var fireArgs = fire.lastCall.args;
     assert.equal(fireArgs[0], 'changeState');
     assert.deepEqual(fireArgs[1], {
       sectionA: {
@@ -316,8 +315,8 @@ describe('Ghost Deployer Extension', function() {
     var charm = makeCharm();
     ghostDeployer.deployService(charm);
     var db = ghostDeployer.db;
-    assert.strictEqual(db.addUnits.calledOnce(), true);
-    var args = db.addUnits.lastArguments();
+    assert.strictEqual(db.addUnits.calledOnce, true);
+    var args = db.addUnits.lastCall.args;
     assert.lengthOf(args, 1);
     var expectedUnit = {
       id: 'ghost-service-id/0',
@@ -333,7 +332,7 @@ describe('Ghost Deployer Extension', function() {
     charm.set('is_subordinate', true);
     ghostDeployer.deployService(charm);
     var db = ghostDeployer.db;
-    assert.strictEqual(db.addUnits.callCount(), 0);
+    assert.strictEqual(db.addUnits.callCount, 0);
   });
 
   it('deploys the ghost unit using the ECS', function() {
@@ -341,8 +340,8 @@ describe('Ghost Deployer Extension', function() {
     ghostDeployer.deployService(charm);
     var env = ghostDeployer.env;
     // Ensure env.add_unit has been called with the expected arguments.
-    assert.strictEqual(env.add_unit.calledOnce(), true);
-    var args = env.add_unit.lastArguments();
+    assert.strictEqual(env.add_unit.calledOnce, true);
+    var args = env.add_unit.lastCall.args;
     assert.strictEqual(args[0], 'ghost-service-id'); // The service name.
     assert.strictEqual(args[1], 1); // The number of units.
     assert.isNull(args[2]); // The unit is not yet placed.
@@ -355,7 +354,7 @@ describe('Ghost Deployer Extension', function() {
       config: {}
     });
     var topo = ghostDeployer.views.environment.instance.topo;
-    topo.annotateBoxPosition = utils.makeStubFunction();
+    topo.annotateBoxPosition = sinon.stub();
     topo.service_boxes.ghostid = {};
     ghostDeployer._deployCallbackHandler(ghostService, {});
     var attrs = ghostService.getAttrs();
@@ -369,7 +368,7 @@ describe('Ghost Deployer Extension', function() {
       id: 'django',
       pending: false
     });
-    assert.equal(topo.annotateBoxPosition.calledOnce(), true);
+    assert.equal(topo.annotateBoxPosition.calledOnce, true);
   });
 
   it('notifies add_unit success', function() {
@@ -377,8 +376,8 @@ describe('Ghost Deployer Extension', function() {
     var evt = {err: 'bad wolf'};
     ghostDeployer._addUnitCallback(ghostUnit, evt);
     var notifications = ghostDeployer.db.notifications;
-    assert.strictEqual(notifications.add.calledOnce(), true);
-    var notification = notifications.add.lastArguments()[0];
+    assert.strictEqual(notifications.add.calledOnce, true);
+    var notification = notifications.add.lastCall.args[0];
     assert.equal(notification.title, 'Error adding unit django/42');
     assert.equal(
         notification.message,
@@ -391,8 +390,8 @@ describe('Ghost Deployer Extension', function() {
     var evt = {applicationName: 'django'};
     ghostDeployer._addUnitCallback(ghostUnit, evt);
     var notifications = ghostDeployer.db.notifications;
-    assert.strictEqual(notifications.add.calledOnce(), true);
-    var notification = notifications.add.lastArguments()[0];
+    assert.strictEqual(notifications.add.calledOnce, true);
+    var notification = notifications.add.lastCall.args[0];
     assert.equal(notification.title, 'Added unit django/42');
     assert.equal(
         notification.message,
@@ -405,8 +404,8 @@ describe('Ghost Deployer Extension', function() {
     var evt = {applicationName: 'django'};
     ghostDeployer._addUnitCallback(ghostUnit, evt);
     var db = ghostDeployer.db;
-    assert.strictEqual(db.removeUnits.calledOnce(), true);
-    var args = db.removeUnits.lastArguments();
+    assert.strictEqual(db.removeUnits.calledOnce, true);
+    var args = db.removeUnits.lastCall.args;
     assert.lengthOf(args, 1);
     var expectedUnit = {
       displayName: 'django/42',

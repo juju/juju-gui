@@ -113,21 +113,21 @@ describe('Bakery', function() {
     it('can return a saved macaroon', function() {
       var getStub = utils.makeStubMethod(bakery, 'getMacaroon', 'macaroons');
       this._cleanups.push(getStub.reset);
-      var callback = utils.makeStubFunction();
+      var callback = sinon.stub();
       bakery.fetchMacaroonFromStaticPath(callback);
-      assert.equal(callback.callCount(), 1);
-      assert.deepEqual(callback.lastArguments(), [null, 'macaroons']);
+      assert.equal(callback.callCount, 1);
+      assert.deepEqual(callback.lastCall.args, [null, 'macaroons']);
     });
 
     it('fails gracefully if no static path is defined', function() {
       var getStub = utils.makeStubMethod(bakery, 'getMacaroon', null);
       this._cleanups.push(getStub.reset);
-      var callback = utils.makeStubFunction();
+      var callback = sinon.stub();
       bakery.staticMacaroonPath = false;
       bakery.fetchMacaroonFromStaticPath(callback);
-      assert.equal(callback.callCount(), 1);
+      assert.equal(callback.callCount, 1);
       assert.deepEqual(
-        callback.lastArguments(), ['Static macaroon path was not defined.']);
+        callback.lastCall.args, ['Static macaroon path was not defined.']);
     });
 
     it('sends get request to fetch macaroon', function() {
@@ -135,17 +135,17 @@ describe('Bakery', function() {
       var sendGet = utils.makeStubMethod(bakery.webhandler, 'sendGetRequest');
       this._cleanups.push(sendGet.reset);
       this._cleanups.push(getStub.reset);
-      var callback = utils.makeStubFunction();
+      var callback = sinon.stub();
       bakery.staticMacaroonPath = 'path/to/macaroon';
       bakery.fetchMacaroonFromStaticPath(callback);
-      assert.equal(sendGet.callCount(), 1);
-      assert.equal(sendGet.lastArguments()[0], bakery.staticMacaroonPath);
-      assert.equal(sendGet.lastArguments()[1], null);
-      assert.equal(sendGet.lastArguments()[2], null);
-      assert.equal(sendGet.lastArguments()[3], null);
-      assert.equal(sendGet.lastArguments()[4], false);
-      assert.equal(sendGet.lastArguments()[5], null);
-      assert.equal(typeof sendGet.lastArguments()[6], 'function');
+      assert.equal(sendGet.callCount, 1);
+      assert.equal(sendGet.lastCall.args[0], bakery.staticMacaroonPath);
+      assert.equal(sendGet.lastCall.args[1], null);
+      assert.equal(sendGet.lastCall.args[2], null);
+      assert.equal(sendGet.lastCall.args[3], null);
+      assert.equal(sendGet.lastCall.args[4], false);
+      assert.equal(sendGet.lastCall.args[5], null);
+      assert.equal(typeof sendGet.lastCall.args[6], 'function');
     });
 
     it('authenticates the macaroon after fetching', function() {
@@ -154,7 +154,7 @@ describe('Bakery', function() {
       var authStub = utils.makeStubMethod(bakery, '_authenticate');
       var sendGet = utils.makeStubMethod(bakery.webhandler, 'sendGetRequest');
       this._cleanups.concat([sendGet.reset, getStub.reset, authStub.reset]);
-      var callback = utils.makeStubFunction();
+      var callback = sinon.stub();
       bakery.staticMacaroonPath = 'path/to/macaroon';
       bakery.fetchMacaroonFromStaticPath(callback);
       var responseText = '{"valid": "json"}';
@@ -163,15 +163,15 @@ describe('Bakery', function() {
           responseText: responseText
         }
       };
-      sendGet.lastArguments()[6](response); // Call the get request callback
-      assert.equal(authStub.callCount(), 1);
-      assert.deepEqual(authStub.lastArguments()[0], JSON.parse(responseText));
-      assert.equal(typeof authStub.lastArguments()[1], 'function');
-      assert.equal(typeof authStub.lastArguments()[2], 'function');
+      sendGet.lastCall.args[6](response); // Call the get request callback
+      assert.equal(authStub.callCount, 1);
+      assert.deepEqual(authStub.lastCall.args[0], JSON.parse(responseText));
+      assert.equal(typeof authStub.lastCall.args[1], 'function');
+      assert.equal(typeof authStub.lastCall.args[2], 'function');
       // Call the authenticate callback
-      authStub.lastArguments()[1]();
-      assert.equal(callback.callCount(), 1);
-      assert.deepEqual(callback.lastArguments(), [null, 'macaroons']);
+      authStub.lastCall.args[1]();
+      assert.equal(callback.callCount, 1);
+      assert.deepEqual(callback.lastCall.args, [null, 'macaroons']);
     });
 
     it('fails gracefully if it cannot parse the macaroon response', function() {
@@ -180,7 +180,7 @@ describe('Bakery', function() {
       var authStub = utils.makeStubMethod(bakery, '_authenticate');
       var sendGet = utils.makeStubMethod(bakery.webhandler, 'sendGetRequest');
       this._cleanups.concat([sendGet.reset, getStub.reset, authStub.reset]);
-      var callback = utils.makeStubFunction();
+      var callback = sinon.stub();
       bakery.staticMacaroonPath = 'path/to/macaroon';
       bakery.fetchMacaroonFromStaticPath(callback);
       var response = {
@@ -188,12 +188,12 @@ describe('Bakery', function() {
           responseText: 'invalidjson'
         }
       };
-      sendGet.lastArguments()[6](response); // Call the get request callback
-      assert.equal(callback.callCount(), 1);
+      sendGet.lastCall.args[6](response); // Call the get request callback
+      assert.equal(callback.callCount, 1);
       assert.equal(
-        callback.lastArguments()[0].message,
+        callback.lastCall.args[0].message,
         'Unexpected token i in JSON at position 0');
-      assert.equal(authStub.callCount(), 0);
+      assert.equal(authStub.callCount, 0);
     });
 
   });
@@ -202,24 +202,24 @@ describe('Bakery', function() {
     var success, failure;
 
     beforeEach(function() {
-      success = utils.makeStubFunction();
-      failure = utils.makeStubFunction();
+      success = sinon.stub();
+      failure = sinon.stub();
     });
 
     it('calls the failure callback if status > 400', function() {
       bakery._requestHandler(success, failure, {
         target: { status: 404 }
       });
-      assert.equal(success.callCount(), 0);
-      assert.equal(failure.callCount(), 1);
+      assert.equal(success.callCount, 0);
+      assert.equal(failure.callCount, 1);
     });
 
     it('calls the success callback if status < 400', function() {
       bakery._requestHandler(success, failure, {
         target: { status: 200 }
       });
-      assert.equal(success.callCount(), 1);
-      assert.equal(failure.callCount(), 0);
+      assert.equal(success.callCount, 1);
+      assert.equal(failure.callCount, 0);
     });
   });
 
@@ -227,8 +227,8 @@ describe('Bakery', function() {
     var success, failure;
 
     beforeEach(function() {
-      success = utils.makeStubFunction();
-      failure = utils.makeStubFunction();
+      success = sinon.stub();
+      failure = sinon.stub();
     });
 
     it('calls original send with macaroon without auth needed', function() {
@@ -426,7 +426,7 @@ describe('Bakery', function() {
 
       it('calls original send with macaroon with third party ' +
         'and with interaction', function () {
-        var visitMethod = utils.makeStubFunction();
+        var visitMethod = sinon.stub();
         bakery = new Y.juju.environments.web.Bakery({
           webhandler: new Y.juju.environments.web.WebHandler(),
           visitMethod: visitMethod,
@@ -505,7 +505,7 @@ describe('Bakery', function() {
 
         assert.equal(postCalled, 1);
         assert.equal(postSuccess, true);
-        assert.equal(visitMethod.callCount(), 1);
+        assert.equal(visitMethod.callCount, 1);
         assert.equal(getCalled, 1);
         assert.equal(getSuccess, true);
         assert.equal(originalCalled, 1);
@@ -557,7 +557,7 @@ describe('Bakery', function() {
           }
         }
       );
-      assert.equal(requestHandler.callCount(), 1);
+      assert.equal(requestHandler.callCount, 1);
     });
   });
 });

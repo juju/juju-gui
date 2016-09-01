@@ -36,9 +36,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     beforeEach(function() {
       // Instantiate a web sandbox passing a mock state object.
       mockState = {
-        getLocalCharmFileUrl: utils.makeStubFunction('file-url'),
-        handleLocalCharmFileRequest: utils.makeStubFunction(),
-        handleUploadLocalCharm: utils.makeStubFunction()
+        getLocalCharmFileUrl: sinon.stub().returns('file-url'),
+        handleLocalCharmFileRequest: sinon.stub(),
+        handleUploadLocalCharm: sinon.stub()
       };
       webSandbox = new webModule.WebSandbox({state: mockState});
     });
@@ -59,8 +59,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             path, headers, data, 'user', 'passwd', function() {},
             function() {return 'completed';});
         // Ensure the state has been called with the expected arguments.
-        assert.strictEqual(mockState.handleUploadLocalCharm.callCount(), 1);
-        var lastArguments = mockState.handleUploadLocalCharm.lastArguments();
+        assert.strictEqual(mockState.handleUploadLocalCharm.callCount, 1);
+        var lastArguments = mockState.handleUploadLocalCharm.lastCall.args;
         assert.strictEqual(lastArguments.length, 3);
         var zipFile = lastArguments[0];
         var series = lastArguments[1];
@@ -78,10 +78,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             '/no-such-resource/', {}, 'data', 'user', 'passwd');
         mockError.reset();
         // The state object has not been used.
-        assert.strictEqual(mockState.handleUploadLocalCharm.called(), false);
+        assert.strictEqual(mockState.handleUploadLocalCharm.called, false);
         // An error has been printed to the console.
-        assert.strictEqual(mockError.callCount(), 1);
-        var lastArguments = mockError.lastArguments();
+        assert.strictEqual(mockError.callCount, 1);
+        var lastArguments = mockError.lastCall.args;
         assert.strictEqual(lastArguments.length, 1);
         assert.strictEqual(
             'unexpected POST request to /no-such-resource/', lastArguments[0]);
@@ -100,8 +100,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             function() {return 'completed';});
         // Ensure the state has been called with the expected arguments.
         var method = mockState.handleLocalCharmFileRequest;
-        assert.strictEqual(method.callCount(), 1);
-        var lastArguments = method.lastArguments();
+        assert.strictEqual(method.callCount, 1);
+        var lastArguments = method.lastCall.args;
         assert.strictEqual(lastArguments.length, 3);
         var charmUrl = lastArguments[0];
         var filename = lastArguments[1];
@@ -120,8 +120,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             function() {return 'completed';});
         // Ensure the state has been called with the expected arguments.
         var method = mockState.handleLocalCharmFileRequest;
-        assert.strictEqual(method.callCount(), 1);
-        var lastArguments = method.lastArguments();
+        assert.strictEqual(method.callCount, 1);
+        var lastArguments = method.lastCall.args;
         assert.strictEqual(lastArguments.length, 3);
         var charmUrl = lastArguments[0];
         var filename = lastArguments[1];
@@ -139,10 +139,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         mockError.reset();
         // The state object has not been used.
         assert.strictEqual(
-            mockState.handleLocalCharmFileRequest.called(), false);
+            mockState.handleLocalCharmFileRequest.called, false);
         // An error has been printed to the console.
-        assert.strictEqual(mockError.callCount(), 1);
-        var lastArguments = mockError.lastArguments();
+        assert.strictEqual(mockError.callCount, 1);
+        var lastArguments = mockError.lastCall.args;
         assert.strictEqual(lastArguments.length, 1);
         assert.strictEqual(
             'unexpected GET request to /no-such-resource/', lastArguments[0]);
@@ -158,8 +158,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var url = webSandbox.getUrl(path, 'myuser', 'mypassword');
         assert.strictEqual(url, 'file-url');
         // Ensure the state has been called with the expected arguments.
-        assert.strictEqual(mockState.getLocalCharmFileUrl.callCount(), 1);
-        var lastArguments = mockState.getLocalCharmFileUrl.lastArguments();
+        assert.strictEqual(mockState.getLocalCharmFileUrl.callCount, 1);
+        var lastArguments = mockState.getLocalCharmFileUrl.lastCall.args;
         assert.lengthOf(lastArguments, 2);
         var charmUrl = lastArguments[0];
         var filename = lastArguments[1];
@@ -174,8 +174,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         webSandbox.getUrl('/no-such-resource/', 'myuser', 'mypassword');
         mockError.reset();
         // An error has been printed to the console.
-        assert.strictEqual(mockError.callCount(), 1);
-        var lastArguments = mockError.lastArguments();
+        assert.strictEqual(mockError.callCount, 1);
+        var lastArguments = mockError.lastCall.args;
         assert.lengthOf(lastArguments, 1);
         assert.strictEqual(
             'unexpected getUrl request to /no-such-resource/',

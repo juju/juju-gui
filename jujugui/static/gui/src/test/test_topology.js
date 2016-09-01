@@ -137,7 +137,7 @@ describe('topology', function() {
     var annotations, update_annotations;
 
     beforeEach(function() {
-      update_annotations = utils.makeStubFunction();
+      update_annotations = sinon.stub();
       var env = {
         update_annotations: update_annotations
       };
@@ -165,12 +165,12 @@ describe('topology', function() {
     it('updates annotations on pending services', function() {
       topo.annotateBoxPosition({x: 1, y: 1, pending: true});
       assert.deepEqual(annotations, {'gui-x': 1, 'gui-y': 1});
-      assert.equal(update_annotations.called(), false);
+      assert.equal(update_annotations.called, false);
     });
 
     it('updates annotations on committed services', function() {
       topo.annotateBoxPosition({x: 1, y: 1});
-      assert.equal(update_annotations.calledOnce(), true);
+      assert.equal(update_annotations.calledOnce, true);
     });
   });
 

@@ -72,13 +72,13 @@ describe('Bundle Importer', function() {
           bundleImporter.db.notifications, 'add');
         this._cleanups.concat([fetch.reset, notify.reset]);
         bundleImporter.importBundleYAML('foo: bar');
-        assert.equal(fetch.callCount(), 1);
-        var args = fetch.lastArguments();
+        assert.equal(fetch.callCount, 1);
+        var args = fetch.lastCall.args;
         assert.equal(args.length, 2);
         assert.equal(args[0], 'foo: bar');
         assert.strictEqual(args[1], null);
-        assert.equal(notify.callCount(), 1);
-        assert.deepEqual(notify.lastArguments()[0], {
+        assert.equal(notify.callCount, 1);
+        assert.deepEqual(notify.lastCall.args[0], {
           title: 'Fetching bundle data',
           message: 'Fetching detailed bundle data, this may take some time',
           level: 'important'
@@ -91,8 +91,8 @@ describe('Bundle Importer', function() {
         var fetch = utils.makeStubMethod(bundleImporter, 'fetchDryRun');
         this._cleanups.push(fetch.reset);
         bundleImporter.importChangesToken('TOKEN');
-        assert.equal(fetch.callCount(), 1);
-        var args = fetch.lastArguments();
+        assert.equal(fetch.callCount, 1);
+        var args = fetch.lastCall.args;
         assert.equal(args.length, 2);
         assert.strictEqual(args[0], null);
         assert.equal(args[1], 'TOKEN');
@@ -102,7 +102,7 @@ describe('Bundle Importer', function() {
     describe('importBundleFile', function() {
 
       it('sets up and loads the FileReader', function() {
-        var asText = utils.makeStubFunction();
+        var asText = sinon.stub();
         var generate = utils.makeStubMethod(
             bundleImporter, '_generateFileReader', {
               onload: '',
@@ -113,12 +113,12 @@ describe('Bundle Importer', function() {
         var onload = utils.makeStubMethod(bundleImporter, '_fileReaderOnload');
         this._cleanups.concat([generate.reset, onload.reset]);
         var reader = bundleImporter.importBundleFile('path/to/file');
-        assert.equal(generate.callCount(), 1);
-        assert.equal(asText.callCount(), 1);
+        assert.equal(generate.callCount, 1);
+        assert.equal(asText.callCount, 1);
         reader.onload();
-        assert.equal(onload.callCount(), 1);
+        assert.equal(onload.callCount, 1);
         // Make sure we hide the bundle drag over notification.
-        assert.equal(hideNotification.callCount(), 1);
+        assert.equal(hideNotification.callCount, 1);
       });
 
       describe('FileReader onload callback', function() {
@@ -130,8 +130,8 @@ describe('Bundle Importer', function() {
           bundleImporter._fileReaderOnload(file, {
             target: { result: '[invalid json]' }
           });
-          assert.equal(notification.callCount(), 1);
-          assert.equal(notification.lastArguments()[0].level, 'error');
+          assert.equal(notification.callCount, 1);
+          assert.equal(notification.lastCall.args[0].level, 'error');
         });
 
         it('shows notification before kicking off import', function() {
@@ -143,17 +143,17 @@ describe('Bundle Importer', function() {
           bundleImporter._fileReaderOnload(file, {
             target: { result: '["valid", "json"]' }
           });
-          assert.equal(notification.callCount(), 1);
-          assert.equal(notification.lastArguments()[0].level, 'important');
-          assert.equal(importStub.callCount(), 1);
+          assert.equal(notification.callCount, 1);
+          assert.equal(notification.lastCall.args[0].level, 'important');
+          assert.equal(importStub.callCount, 1);
         });
 
         it('calls fetchDryRun if yaml file', function() {
           var fetch = utils.makeStubMethod(bundleImporter, 'fetchDryRun');
           var yamlFile = { name: 'path/to/file.yaml' };
           bundleImporter._fileReaderOnload(yamlFile, {target: {result: 'foo'}});
-          assert.equal(fetch.callCount(), 1);
-          var args = fetch.lastArguments();
+          assert.equal(fetch.callCount, 1);
+          var args = fetch.lastCall.args;
           assert.equal(args.length, 2);
           assert.equal(args[0], 'foo');
           assert.strictEqual(args[1], null);
@@ -186,8 +186,8 @@ describe('Bundle Importer', function() {
         this._cleanups.push(execute.reset);
         bundleImporter.importBundleDryRun(unsortedRecords);
         assert.deepEqual(bundleImporter.recordSet, sortedRecords);
-        assert.equal(execute.callCount(), 1);
-        assert.deepEqual(execute.lastArguments()[0], sortedRecords);
+        assert.equal(execute.callCount, 1);
+        assert.deepEqual(execute.lastCall.args[0], sortedRecords);
       });
     });
 
@@ -199,8 +199,8 @@ describe('Bundle Importer', function() {
             bundleImporter.env, 'getBundleChanges');
         this._cleanups.push(getBundleChanges.reset);
         bundleImporter.fetchDryRun(yaml, null);
-        assert.equal(getBundleChanges.callCount(), 1);
-        var args = getBundleChanges.lastArguments();
+        assert.equal(getBundleChanges.callCount, 1);
+        var args = getBundleChanges.lastCall.args;
         assert.equal(args.length, 3);
         assert.equal(args[0], yaml);
         assert.strictEqual(args[1], null);
@@ -212,8 +212,8 @@ describe('Bundle Importer', function() {
             bundleImporter.env, 'getBundleChanges');
         this._cleanups.push(getBundleChanges.reset);
         bundleImporter.fetchDryRun(yaml, null);
-        assert.equal(getBundleChanges.callCount(), 1);
-        var args = getBundleChanges.lastArguments();
+        assert.equal(getBundleChanges.callCount, 1);
+        var args = getBundleChanges.lastCall.args;
         assert.equal(args.length, 3);
         assert.equal(args[0], '{"services":{}}');
         assert.strictEqual(args[1], null);
@@ -225,8 +225,8 @@ describe('Bundle Importer', function() {
             bundleImporter.env, 'getBundleChanges');
         this._cleanups.push(getBundleChanges.reset);
         bundleImporter.fetchDryRun(yaml, null);
-        assert.equal(getBundleChanges.callCount(), 1);
-        var args = getBundleChanges.lastArguments();
+        assert.equal(getBundleChanges.callCount, 1);
+        var args = getBundleChanges.lastCall.args;
         assert.equal(args.length, 3);
         assert.equal(args[0], '{"applications":{}}');
         assert.strictEqual(args[1], null);
@@ -238,8 +238,8 @@ describe('Bundle Importer', function() {
             bundleImporter.env, 'getBundleChanges');
         this._cleanups.push(getBundleChanges.reset);
         bundleImporter.fetchDryRun(null, token);
-        assert.equal(getBundleChanges.callCount(), 1);
-        var args = getBundleChanges.lastArguments();
+        assert.equal(getBundleChanges.callCount, 1);
+        var args = getBundleChanges.lastCall.args;
         assert.equal(args.length, 3);
         assert.strictEqual(args[0], null);
         assert.equal(args[1], token);
@@ -253,10 +253,10 @@ describe('Bundle Importer', function() {
         this._cleanups.concat([dryRun.reset, getBundleChanges.reset]);
         var changes = [{foo: 'bar'}];
         bundleImporter.fetchDryRun(yaml);
-        var callback = getBundleChanges.lastArguments()[2];
+        var callback = getBundleChanges.lastCall.args[2];
         callback({changes: changes});
-        assert.equal(dryRun.callCount(), 1);
-        assert.deepEqual(dryRun.lastArguments()[0], changes);
+        assert.equal(dryRun.callCount, 1);
+        assert.deepEqual(dryRun.lastCall.args[0], changes);
       });
     });
   });
@@ -332,8 +332,8 @@ describe('Bundle Importer', function() {
       execute.passThroughToOriginalMethod();
       // the executor should only be called once at which time it'll throw a
       // notification instead of continuing on.
-      assert.equal(execute.callCount(), 1, 'execute not called');
-      assert.equal(notification.callCount(), 1, 'notification not added');
+      assert.equal(execute.callCount, 1, 'execute not called');
+      assert.equal(notification.callCount, 1, 'notification not added');
     });
   });
 

@@ -36,18 +36,18 @@ describe('Autodeploy Extension', function() {
     Widget = Y.Base.create(
         'autodeployer', Y.Base, [juju.widgets.AutodeployExtension], {});
     widget = new Widget();
-    setAttrsStub = utils.makeStubFunction();
-    reviveStub = utils.makeStubFunction({
-      set: utils.makeStubFunction(),
+    setAttrsStub = sinon.stub();
+    reviveStub = sinon.stub().returns({
+      set: sinon.stub(),
       setAttrs: setAttrsStub
     });
     widget.set('db', {
-      fire: utils.makeStubFunction(),
+      fire: sinon.stub(),
       machines: {
-        updateModelId: utils.makeStubFunction(),
+        updateModelId: sinon.stub(),
         revive: reviveStub,
-        free: utils.makeStubFunction(),
-        _createMachine: utils.makeStubFunction()
+        free: sinon.stub(),
+        _createMachine: sinon.stub()
       },
       services: {
         getById: function() {
@@ -77,14 +77,14 @@ describe('Autodeploy Extension', function() {
         createStub = utils.makeStubMethod(widget, '_createMachine', {id: id}),
         placeStub = utils.makeStubMethod(env, 'placeUnit');
     widget._autoPlaceUnits();
-    assert.equal(filterStub.called(), true,
+    assert.equal(filterStub.called, true,
                  'did not query DB for unplaced units');
-    assert.equal(createStub.callCount(), units.length,
+    assert.equal(createStub.callCount, units.length,
                  'did not create a machine for each unit');
-    assert.deepEqual(createStub.lastArguments(), [null, null, 'xenial', null]);
-    assert.equal(placeStub.callCount(), units.length,
+    assert.deepEqual(createStub.lastCall.args, [null, null, 'xenial', null]);
+    assert.equal(placeStub.callCount, units.length,
                  'did not place each unit');
-    var allArgs = placeStub.allArguments();
+    var allArgs = placeStub.args;
     units.forEach(function(expectedUnit, index) {
       var actualUnit = allArgs[index][0],
           actualId = allArgs[index][1];
@@ -99,7 +99,7 @@ describe('Autodeploy Extension', function() {
     var ghostStub = utils.makeStubMethod(db.machines, 'addGhost', {id: '0'});
     utils.makeStubMethod(env, 'addMachines');
     widget._createMachine();
-    assert.equal(ghostStub.calledOnce(), true, 'ghost not added');
+    assert.equal(ghostStub.calledOnce, true, 'ghost not added');
   });
 
   it('adds each new machine to the environment', function() {
@@ -109,9 +109,9 @@ describe('Autodeploy Extension', function() {
     utils.makeStubMethod(db.machines, 'addGhost', {id: id});
     var addStub = utils.makeStubMethod(env, 'addMachines');
     widget._createMachine();
-    assert.equal(addStub.calledOnce(), true,
+    assert.equal(addStub.calledOnce, true,
                  'machine not added');
-    assert.deepEqual(addStub.lastArguments()[2], {modelId: id},
+    assert.deepEqual(addStub.lastCall.args[2], {modelId: id},
                      'incorrect machine ID');
   });
 
@@ -126,14 +126,14 @@ describe('Autodeploy Extension', function() {
     var notifyStub = utils.makeStubMethod(db.notifications, 'add'),
         removeStub = utils.makeStubMethod(db.machines, 'remove');
     widget._onMachineCreated({}, response);
-    assert.equal(notifyStub.calledOnce(), true,
+    assert.equal(notifyStub.calledOnce, true,
                  'error notification not added to the DB');
-    var notification = notifyStub.lastArguments()[0];
+    var notification = notifyStub.lastCall.args[0];
     assert.equal(notification.title, 'Error creating the new machine',
                  'unexpected error title');
     assert.equal(notification.message.indexOf(message) > 0, true,
                  'unexpected error message');
-    assert.equal(removeStub.calledOnce(), true,
+    assert.equal(removeStub.calledOnce, true,
                  'did not remove machine');
   });
 
@@ -147,14 +147,14 @@ describe('Autodeploy Extension', function() {
     var notifyStub = utils.makeStubMethod(db.notifications, 'add'),
         removeStub = utils.makeStubMethod(db.machines, 'remove');
     widget._onMachineCreated({}, response);
-    assert.equal(notifyStub.calledOnce(), true,
+    assert.equal(notifyStub.calledOnce, true,
                  'error notification not added to the DB');
-    var notification = notifyStub.lastArguments()[0];
+    var notification = notifyStub.lastCall.args[0];
     assert.equal(notification.title.indexOf('Error creating machine') === 0,
                  true, 'unexpected error title');
     assert.equal(notification.message.indexOf(message) > 0, true,
                  'unexpected error message');
-    assert.equal(removeStub.calledOnce(), true,
+    assert.equal(removeStub.calledOnce, true,
                  'did not remove machine');
   });
 
@@ -164,13 +164,13 @@ describe('Autodeploy Extension', function() {
       machines: [{name: 'test/lxc/0'}]
     };
     widget._onMachineCreated({}, response);
-    assert.equal(db.machines.updateModelId.callCount(), 1);
+    assert.equal(db.machines.updateModelId.callCount, 1);
     assert.deepEqual(
-        db.machines.updateModelId.lastArguments(),
+        db.machines.updateModelId.lastCall.args,
         [{}, 'test/lxc/0', true]);
-    assert.equal(setAttrsStub.callCount(), 1);
+    assert.equal(setAttrsStub.callCount, 1);
     assert.deepEqual(
-        setAttrsStub.lastArguments(),
+        setAttrsStub.lastCall.args,
         [{
           displayName: 'test/lxc/0',
           parentId: 'test'

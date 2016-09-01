@@ -240,7 +240,7 @@ describe('ChangesUtils', function() {
     ecs.changeSet = { foo: { index: 0 }, bar: { index: 0 } };
     changesUtils.generateAllChangeDescriptions(
         db.services, db.units, ecs.changeSet);
-    assert.equal(stubDescription.callCount(), 2);
+    assert.equal(stubDescription.callCount, 2);
   });
 
   it('can get the counts of each type of ecs change', function() {

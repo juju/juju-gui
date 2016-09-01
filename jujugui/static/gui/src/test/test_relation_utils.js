@@ -666,10 +666,10 @@ describe('RelationUtils', function() {
           size: sinon.stub()
         },
         relations: {
-          add: testUtils.makeStubFunction(),
-          remove: testUtils.makeStubFunction(),
-          create: testUtils.makeStubFunction(),
-          getById: testUtils.makeStubFunction(relationId)
+          add: sinon.stub(),
+          remove: sinon.stub(),
+          create: sinon.stub(),
+          getById: sinon.stub().returns(relationId)
         },
         services: {
           getById: sinon.stub().returns({
@@ -678,7 +678,7 @@ describe('RelationUtils', function() {
         }
       };
       var env = {
-        add_relation: testUtils.makeStubFunction()
+        add_relation: sinon.stub()
       };
       var relations = [{
         service: '19984570$',
@@ -701,8 +701,8 @@ describe('RelationUtils', function() {
         }
       ]];
       relationUtils.createRelation(
-        db, env, endpoints, testUtils.makeStubFunction());
-      assert.equal(db.relations.add.callCount(), 1);
+        db, env, endpoints, sinon.stub());
+      assert.equal(db.relations.add.callCount, 1);
       var endpoints = [[
         '19984570$', {
           name: 'db', role: 'client'
@@ -711,7 +711,7 @@ describe('RelationUtils', function() {
           name: 'db', role: 'server'
         }]
       ];
-      assert.deepEqual(db.relations.add.lastArguments()[0], {
+      assert.deepEqual(db.relations.add.lastCall.args[0], {
         relation_id: relationId,
         interface: 'db',
         endpoints: endpoints,
@@ -719,18 +719,18 @@ describe('RelationUtils', function() {
         scope: 'global',
         display_name: 'pending'
       });
-      assert.equal(env.add_relation.callCount(), 1);
-      assert.deepEqual(env.add_relation.lastArguments()[0], endpoints[0]);
-      assert.deepEqual(env.add_relation.lastArguments()[1], endpoints[1]);
+      assert.equal(env.add_relation.callCount, 1);
+      assert.deepEqual(env.add_relation.lastCall.args[0], endpoints[0]);
+      assert.deepEqual(env.add_relation.lastCall.args[1], endpoints[1]);
       // Call the add_relation callback.
-      env.add_relation.lastArguments()[2]({
+      env.add_relation.lastCall.args[2]({
         result: { id: 'foo', 'interface': 'bar', scope: 'global' }
       });
       // Callback method assertions.
-      assert.equal(db.relations.remove.callCount(), 1);
-      assert.equal(db.relations.remove.lastArguments()[0], relationId);
-      assert.equal(db.relations.create.callCount(), 1);
-      assert.deepEqual(db.relations.create.lastArguments()[0], {
+      assert.equal(db.relations.remove.callCount, 1);
+      assert.equal(db.relations.remove.lastCall.args[0], relationId);
+      assert.equal(db.relations.create.callCount, 1);
+      assert.deepEqual(db.relations.create.lastCall.args[0], {
         relation_id: 'foo',
         type: 'bar',
         endpoints: endpoints,
@@ -751,7 +751,7 @@ describe('RelationUtils', function() {
       var db = 'db';
       var endpointData = {};
       endpointData[vals.applicationToId] = JSON.parse(vals.getEndpoints);
-      var getEndpoints = testUtils.makeStubFunction(endpointData);
+      var getEndpoints = sinon.stub().returns(endpointData);
       var applicationFrom = vals.applicationFrom || {};
       var applicationTo = { get: function() { return vals.applicationToId; } };
       var dataStub = testUtils.makeStubMethod(relationUtils,
@@ -851,7 +851,7 @@ describe('RelationUtils', function() {
         }
       };
       const env = {remove_relation: sinon.stub()};
-      const callback = testUtils.makeStubFunction();
+      const callback = sinon.stub();
       relationUtils.destroyRelations(db, env, ['relation1'], callback);
       assert.equal(env.remove_relation.callCount, 1);
       const args = env.remove_relation.args[0];

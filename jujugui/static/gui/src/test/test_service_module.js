@@ -363,7 +363,7 @@ describe.skip('service module events', function() {
     ]);
     serviceModule.update();
     db.fire('bundleImportComplete', {services: [db.services.item(0)]});
-    assert.equal(stubFindCentroid.calledOnce(), true,
+    assert.equal(stubFindCentroid.calledOnce, true,
         'findCentroid not called');
   });
 
@@ -488,8 +488,8 @@ describe.skip('service module events', function() {
 
     serviceModule.canvasDropHandler(fakeEventObject);
 
-    assert.equal(extractCharmMetadata.calledOnce(), true);
-    var args = extractCharmMetadata.lastArguments();
+    assert.equal(extractCharmMetadata.calledOnce, true);
+    var args = extractCharmMetadata.lastCall.args;
     assert.deepEqual(args[0], fakeFile);
     assert.deepEqual(args[1], topo);
     assert.deepEqual(args[2], topo.get('env'));
@@ -521,8 +521,8 @@ describe.skip('service module events', function() {
 
     serviceModule.canvasDropHandler(fakeEventObject);
 
-    assert.equal(extractCharmMetadata.calledOnce(), true);
-    var args = extractCharmMetadata.lastArguments();
+    assert.equal(extractCharmMetadata.calledOnce, true);
+    var args = extractCharmMetadata.lastCall.args;
     assert.deepEqual(args[0], fakeFile);
     assert.deepEqual(args[1], topo);
     assert.deepEqual(args[2], topo.get('env'));
@@ -545,22 +545,22 @@ describe.skip('service module events', function() {
 
     serviceModule._extractCharmMetadata(fileObj, topoObj, envObj, dbObj);
 
-    assert.equal(getEntries.calledOnce(), true);
-    var getEntriesArgs = getEntries.lastArguments();
+    assert.equal(getEntries.calledOnce, true);
+    var getEntriesArgs = getEntries.lastCall.args;
     assert.equal(getEntriesArgs[0], fileObj);
     assert.isFunction(getEntriesArgs[1]);
     assert.isFunction(getEntriesArgs[2]);
     // Check that the callbacks have the proper data bound to them
     // Call the success callback
     getEntriesArgs[1]();
-    var findCharmArgs = findCharmEntries.lastArguments();
+    var findCharmArgs = findCharmEntries.lastCall.args;
     assert.deepEqual(findCharmArgs[0], fileObj);
     assert.deepEqual(findCharmArgs[1], topoObj);
     assert.deepEqual(findCharmArgs[2], envObj);
     assert.deepEqual(findCharmArgs[3], dbObj);
     //Call the fail callback
     getEntriesArgs[2]();
-    var zipErrorArgs = zipExtractionError.lastArguments();
+    var zipErrorArgs = zipExtractionError.lastCall.args;
     assert.deepEqual(zipErrorArgs[0], dbObj);
   });
 
@@ -591,10 +591,10 @@ describe.skip('service module events', function() {
 
       serviceModule._findCharmEntries(fileObj, topoObj, envObj, dbObj, {});
 
-      assert.equal(findEntries.calledOnce(), true);
-      assert.deepEqual(findEntries.lastArguments()[0], {});
-      assert.equal(readEntries.calledOnce(), true);
-      var readEntriesArgs = readEntries.lastArguments();
+      assert.equal(findEntries.calledOnce, true);
+      assert.deepEqual(findEntries.lastCall.args[0], {});
+      assert.equal(readEntries.calledOnce, true);
+      var readEntriesArgs = readEntries.lastCall.args;
       assert.deepEqual(readEntriesArgs[0], fileObj);
       assert.deepEqual(readEntriesArgs[1], topoObj);
       assert.deepEqual(readEntriesArgs[2], envObj);
@@ -613,15 +613,15 @@ describe.skip('service module events', function() {
 
       serviceModule._findCharmEntries(fileObj, topoObj, envObj, dbObj, {});
 
-      assert.equal(findEntries.calledOnce(), true);
-      assert.deepEqual(findEntries.lastArguments()[0], {});
+      assert.equal(findEntries.calledOnce, true);
+      assert.deepEqual(findEntries.lastCall.args[0], {});
       assert.deepEqual(notificationParams, {
         title: 'Import failed',
         message: 'Import from "' + fileObj.name + '" failed. Invalid charm ' +
             'file, missing metadata.yaml',
         level: 'error'
       });
-      assert.equal(readEntries.calledOnce(), false);
+      assert.equal(readEntries.calledOnce, false);
     });
   });
 
@@ -640,22 +640,22 @@ describe.skip('service module events', function() {
 
     serviceModule._readCharmEntries(fileObj, topoObj, envObj, dbObj, {});
 
-    assert.equal(readEntries.calledOnce(), true);
-    var readEntriesArgs = readEntries.lastArguments();
+    assert.equal(readEntries.calledOnce, true);
+    var readEntriesArgs = readEntries.lastCall.args;
     assert.deepEqual(readEntriesArgs[0], {});
     assert.isFunction(readEntriesArgs[1]);
     assert.isFunction(readEntriesArgs[2]);
     // Check that the callbacks have the proper data bound to them
     // Call the success callback
     readEntriesArgs[1]();
-    var existingServicesArgs = existingServices.lastArguments();
+    var existingServicesArgs = existingServices.lastCall.args;
     assert.deepEqual(existingServicesArgs[0], fileObj);
     assert.deepEqual(existingServicesArgs[1], topoObj);
     assert.deepEqual(existingServicesArgs[2], envObj);
     assert.deepEqual(existingServicesArgs[3], dbObj);
     //Call the fail callback
     readEntriesArgs[2]();
-    var zipErrorArgs = extractionError.lastArguments();
+    var zipErrorArgs = extractionError.lastCall.args;
     assert.deepEqual(zipErrorArgs[0], dbObj);
     assert.deepEqual(zipErrorArgs[1], fileObj);
   });
@@ -666,7 +666,7 @@ describe.skip('service module events', function() {
 
     beforeEach(function() {
       fileObj = { name: 'foo' };
-      topoFireStub = utils.makeStubFunction();
+      topoFireStub = sinon.stub();
       topoObj = { fire: topoFireStub };
       envObj = { env: 'foo' };
       contentsObj = { metadata: 'foo' };
@@ -683,15 +683,15 @@ describe.skip('service module events', function() {
     }
 
     function sharedAssert() {
-      assert.equal(jsYamlMock.calledOnce(), true);
-      assert.equal(getServicesStub.calledOnce(), true);
-      assert.equal(topoFireStub.calledOnce(), true);
+      assert.equal(jsYamlMock.calledOnce, true);
+      assert.equal(getServicesStub.calledOnce, true);
+      assert.equal(topoFireStub.calledOnce, true);
     }
 
     it('calls to show the upgrade or new inspector', function() {
       setup(this);
 
-      getServicesStub = utils.makeStubFunction(['service']);
+      getServicesStub = sinon.stub().returns(['service']);
       dbObj = { services: { getServicesFromCharmName: getServicesStub }};
 
       serviceModule._checkForExistingServices(
@@ -699,14 +699,14 @@ describe.skip('service module events', function() {
 
       sharedAssert();
 
-      assert.equal(showInspector.calledOnce(), true);
-      assert.equal(deployCharm.calledOnce(), false);
+      assert.equal(showInspector.calledOnce, true);
+      assert.equal(deployCharm.calledOnce, false);
     });
 
     it('calls to deploy the local charm', function() {
       setup(this);
 
-      getServicesStub = utils.makeStubFunction(['service']);
+      getServicesStub = sinon.stub().returns(['service']);
       dbObj = { services: { getServicesFromCharmName: getServicesStub }};
 
       serviceModule._checkForExistingServices(
@@ -714,8 +714,8 @@ describe.skip('service module events', function() {
 
       sharedAssert();
 
-      assert.equal(showInspector.calledOnce(), true);
-      assert.equal(deployCharm.calledOnce(), false);
+      assert.equal(showInspector.calledOnce, true);
+      assert.equal(deployCharm.calledOnce, false);
     });
   });
 
@@ -747,15 +747,15 @@ describe.skip('service module events', function() {
     var services = [{ getAttrs: function() {} }];
 
     serviceModule.set('component', {
-      fire: utils.makeStubFunction()
+      fire: sinon.stub()
     });
 
     var fireStub = serviceModule.get('component').fire;
 
     serviceModule._showUpgradeOrNewInspector(services, fileObj, envObj, dbObj);
-    assert.equal(fireStub.callCount(), 1);
-    assert.equal(fireStub.lastArguments()[0], 'changeState');
-    assert.deepEqual(fireStub.lastArguments()[1], {
+    assert.equal(fireStub.callCount, 1);
+    assert.equal(fireStub.lastCall.args[0], 'changeState');
+    assert.deepEqual(fireStub.lastCall.args[1], {
       sectionA: {
         component: 'inspector',
         metadata: {
@@ -774,15 +774,15 @@ describe.skip('service module events', function() {
     var envObj = { env: 'env' };
 
     serviceModule.set('component', {
-      fire: utils.makeStubFunction()
+      fire: sinon.stub()
     });
 
     var fireStub = serviceModule.get('component').fire;
 
     serviceModule._deployLocalCharm(fileObj, envObj, dbObj);
-    assert.equal(fireStub.callCount(), 1);
-    assert.equal(fireStub.lastArguments()[0], 'changeState');
-    assert.deepEqual(fireStub.lastArguments()[1], {
+    assert.equal(fireStub.callCount, 1);
+    assert.equal(fireStub.lastCall.args[0], 'changeState');
+    assert.deepEqual(fireStub.lastCall.args[1], {
       sectionA: {
         component: 'inspector',
         metadata: {
@@ -962,7 +962,7 @@ describe('updateElementVisibility', function() {
     this._cleanups.push(updateData.reset);
     this._cleanups.push(update.reset);
     serviceModule.update();
-    assert.equal(update.callCount(), 1);
+    assert.equal(update.callCount, 1);
   });
 
   it('categorizes and calls the appropriate vis method', function() {
@@ -994,20 +994,20 @@ describe('updateElementVisibility', function() {
         };
       }});
     serviceModule.updateElementVisibility();
-    assert.equal(fade.callCount(), 1);
-    assert.deepEqual(fade.lastArguments()[0], { serviceNames: ['foo1'] });
-    assert.equal(hide.callCount(), 1);
-    assert.deepEqual(hide.lastArguments()[0], { serviceNames: ['foo2'] });
-    assert.equal(show.callCount(), 3);
-    assert.deepEqual(show.allArguments(), [
+    assert.equal(fade.callCount, 1);
+    assert.deepEqual(fade.lastCall.args[0], { serviceNames: ['foo1'] });
+    assert.equal(hide.callCount, 1);
+    assert.deepEqual(hide.lastCall.args[0], { serviceNames: ['foo2'] });
+    assert.equal(show.callCount, 3);
+    assert.deepEqual(show.args, [
       [{ serviceNames: ['foo1'] }],
       [{ serviceNames: ['foo3'] }],
       [{ serviceNames: ['foo4'] }]
     ]);
-    assert.equal(highlight.callCount(), 1);
-    assert.deepEqual(highlight.lastArguments()[0], { serviceName: ['foo3'] });
-    assert.equal(unhighlight.callCount(), 3);
-    assert.deepEqual(unhighlight.allArguments(), [
+    assert.equal(highlight.callCount, 1);
+    assert.deepEqual(highlight.lastCall.args[0], { serviceName: ['foo3'] });
+    assert.equal(unhighlight.callCount, 3);
+    assert.deepEqual(unhighlight.args, [
       [{ serviceName: ['foo1'] }],
       [{ serviceName: ['foo2'] }],
       [{ serviceName: ['foo4'] }]

@@ -58,7 +58,7 @@ describe('App Renderer Extension', function() {
     this._cleanups.push(createElementStub.reset);
     // Bootstrap various renderer attributes and properties.
     var ecs = {
-      getCurrentChangeSet: utils.makeStubFunction({})
+      getCurrentChangeSet: sinon.stub().returns({})
     };
     var Env = Y.Base.create('env', Y.Base, [], {
     }, {
@@ -68,25 +68,25 @@ describe('App Renderer Extension', function() {
     });
     renderer.env = new Env({ecs: ecs});
     renderer.controllerAPI = {
-      findFacadeVersion: utils.makeStubFunction(),
-      listModelsWithInfo: utils.makeStubFunction()
+      findFacadeVersion: sinon.stub(),
+      listModelsWithInfo: sinon.stub()
     };
 
     renderer.set('sandbox', false);
-    renderer._getAuth = utils.makeStubFunction({user: 'test'});
+    renderer._getAuth = sinon.stub().returns({user: 'test'});
 
     renderer.state = {
-      getState: utils.makeStubFunction()
+      getState: sinon.stub()
     };
     renderer.db = {
       environment: {
-        set: utils.makeStubFunction(),
-        get: utils.makeStubFunction('test-model')
+        set: sinon.stub(),
+        get: sinon.stub().returns('test-model')
       }
     };
-    renderer.changeState = utils.makeStubFunction();
-    renderer.switchEnv = utils.makeStubFunction();
-    renderer.createSocketURL = utils.makeStubFunction();
+    renderer.changeState = sinon.stub();
+    renderer.switchEnv = sinon.stub();
+    renderer.createSocketURL = sinon.stub();
   });
 
   afterEach(function() {
@@ -102,9 +102,9 @@ describe('App Renderer Extension', function() {
 
     it('renders a normal breadcrumb', function() {
       renderer._renderBreadcrumb();
-      assert.equal(renderStub.callCount(), 1,
+      assert.equal(renderStub.callCount, 1,
                    'React\'s render was not invoked.');
-      var props = createElementStub.lastArguments()[1];
+      var props = createElementStub.lastCall.args[1];
       assert.equal(props['showEnvSwitcher'], true,
                    'The showEnvSwitcher prop was not set properly.');
       assert.equal(props['envName'], 'test-model',
@@ -114,7 +114,7 @@ describe('App Renderer Extension', function() {
     it('passes args through to the component', function() {
       var showEnvSwitcher = false;
       renderer._renderBreadcrumb({showEnvSwitcher: showEnvSwitcher});
-      var props = createElementStub.lastArguments()[1];
+      var props = createElementStub.lastCall.args[1];
       assert.equal(props['showEnvSwitcher'], showEnvSwitcher,
                    'The showEnvSwitcher prop was not set properly.');
     });
@@ -122,16 +122,15 @@ describe('App Renderer Extension', function() {
     it('hides the switcher when controllerAPI is not set', function() {
       renderer.controllerAPI = null;
       renderer._renderBreadcrumb();
-      var props = createElementStub.lastArguments()[1];
+      var props = createElementStub.lastCall.args[1];
       assert.equal(props['showEnvSwitcher'], false,
                    'The showEnvSwitcher prop was not set properly.');
     });
 
     it('hides the switcher when facade versions are not set', function() {
-      renderer.controllerAPI.findFacadeVersion =
-        utils.makeStubFunction(null, null);
+      renderer.controllerAPI.findFacadeVersion = sinon.stub().returns(null);
       renderer._renderBreadcrumb();
-      var props = createElementStub.lastArguments()[1];
+      var props = createElementStub.lastCall.args[1];
       assert.equal(props['showEnvSwitcher'], false,
                    'The showEnvSwitcher prop was not set properly.');
     });
@@ -139,7 +138,7 @@ describe('App Renderer Extension', function() {
     it('hides the switcher when in sandbox mode', function() {
       renderer.set('sandbox', true);
       renderer._renderBreadcrumb();
-      var props = createElementStub.lastArguments()[1];
+      var props = createElementStub.lastCall.args[1];
       assert.equal(props['showEnvSwitcher'], false,
                    'The showEnvSwitcher prop was not set properly.');
     });
@@ -147,7 +146,7 @@ describe('App Renderer Extension', function() {
     it('shows the switcher when gisf is true', function() {
       renderer.set('gisf', true);
       renderer._renderBreadcrumb();
-      var props = createElementStub.lastArguments()[1];
+      var props = createElementStub.lastCall.args[1];
       assert.equal(props['showEnvSwitcher'], true,
                    'The showEnvSwitcher prop was not set properly.');
     });
