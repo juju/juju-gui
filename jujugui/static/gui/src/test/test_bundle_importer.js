@@ -379,8 +379,8 @@ describe('Bundle Importer', function() {
         assert.equal(db.machines.item(0).id, 'new0');
         assert.equal(db.machines.item(1).id, 'new1');
         assert.equal(db.machines.item(2).id, 'new4');
-        assert.equal(db.machines.item(3).id, 'new0/lxc/new3');
-        assert.equal(db.machines.item(4).id, 'new1/lxc/new2');
+        assert.equal(db.machines.item(3).id, 'new0/lxd/new3');
+        assert.equal(db.machines.item(4).id, 'new1/lxd/new2');
         // Relations
         assert.equal(
             db.relations.item(0).get('id'),
@@ -395,6 +395,18 @@ describe('Bundle Importer', function() {
         assert.equal(db.services.item(3).get('exposed'), false);
         done();
       });
+      bundleImporter.importBundleDryRun(data);
+    });
+
+    it('does not coerce lxc into lxd in legacy', function(done) {
+      var data = utils.loadFixture(
+          'data/wordpress-bundle-recordset.json', true);
+      bundleImporter.db.after('bundleImportComplete', function() {
+        assert.equal(db.machines.item(3).id, 'new0/lxc/new3');
+        assert.equal(db.machines.item(4).id, 'new1/lxc/new2');
+        done();
+      });
+      bundleImporter.isLegacyJuju = true;
       bundleImporter.importBundleDryRun(data);
     });
 
