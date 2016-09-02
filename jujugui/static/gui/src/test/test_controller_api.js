@@ -1297,7 +1297,7 @@ describe('Controller API', function() {
 
     it('returns no results if no tags are provided', function(done) {
       // Perform the request.
-      controllerAPI.getClouds(['cloud-lxd'], (err, clouds) => {
+      controllerAPI.getClouds([], (err, clouds) => {
         assert.strictEqual(err, null);
         assert.deepEqual(clouds, {});
         done();
@@ -1354,6 +1354,163 @@ describe('Controller API', function() {
         'request-id': 1,
         response: {error: {message: 'bad wolf'}}
       });
+    });
+
+  });
+
+  describe('getTagsForCloudCredentials', function() {
+    it('retrieves tags for cloud credentials', function(done) {
+      // Perform the request.
+      const pairs = [
+        ['user-who@gallifrey', 'cloud-lxd'],
+        ['user-dalek@skaro', 'cloud-google'],
+        ['user-rose@earth', 'cloud-google']
+      ];
+      controllerAPI.getTagsForCloudCredentials(pairs, (err, results) => {
+        assert.strictEqual(err, null);
+        assert.deepEqual(results, [
+          {tags: ['cloudcred-1', 'cloudcred-2']},
+          {err: 'bad wolf'},
+          {tags: ['cloudcred-3']},
+        ]);
+        const msg = conn.last_message();
+        assert.deepEqual(msg, {
+          'request-id': 1,
+          type: 'Cloud',
+          request: 'UserCredentials',
+          version: 1,
+          params: {'user-clouds': [
+            {'user-tag': 'user-who@gallifrey', 'cloud-tag': 'cloud-lxd'},
+            {'user-tag': 'user-dalek@skaro', 'cloud-tag': 'cloud-google'},
+            {'user-tag': 'user-rose@earth', 'cloud-tag': 'cloud-google'}
+          ]}
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {
+          results: [{
+            result: ['cloudcred-1', 'cloudcred-2'],
+          }, {
+            error: {message: 'bad wolf'},
+          }, {
+            result: ['cloudcred-3'],
+          }]
+        }
+      });
+    });
+
+    it('handles request failures while getting tags', function(done) {
+      // Perform the request.
+      const pairs = [['user-who@gallifrey', 'cloud-lxd']];
+      controllerAPI.getTagsForCloudCredentials(pairs, (err, results) => {
+        assert.strictEqual(err, 'bad wolf');
+        assert.deepEqual(results, []);
+        done();
+      });
+      // Mimic response.
+      conn.msg({'request-id': 1, error: 'bad wolf'});
+    });
+
+    it('returns no results if no user/cloud pairs are passed', function(done) {
+      // Perform the request.
+      controllerAPI.getTagsForCloudCredentials([], (err, results) => {
+        assert.strictEqual(err, null);
+        assert.deepEqual(results, []);
+        done();
+      });
+      // Mimic response.
+      conn.msg({'request-id': 1, response: {}});
+    });
+
+  });
+
+  describe('getCloudCredentials', function() {
+    it('retrieves the requested credentials by tag', function(done) {
+      // Perform the request.
+      const tags = ['cloudcred-1', 'cloudcred-2', 'cloudcred-no-such'];
+      controllerAPI.getCloudCredentials(tags, (err, creds) => {
+        assert.strictEqual(err, null);
+        assert.deepEqual(creds, {
+          'cloudcred-1': {
+            name: '1',
+            authType: 'jsonfile',
+            attrs: {
+              type: 'service_account',
+              project_id: 'juju-42',
+              private_key_id: 'my-private-key-id'
+            },
+            redacted: ['secret', 'confidential']
+          },
+          'cloudcred-2': {
+            name: '2',
+            authType: 'oauth2',
+            attrs: {},
+            redacted: []
+          },
+          'cloudcred-no-such': {err: 'no such credentials'}
+        });
+        const msg = conn.last_message();
+        assert.deepEqual(msg, {
+          'request-id': 1,
+          type: 'Cloud',
+          request: 'Credential',
+          version: 1,
+          params: {entities: [
+            {tag: 'cloudcred-1'},
+            {tag: 'cloudcred-2'},
+            {tag: 'cloudcred-no-such'}
+          ]}
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {
+          results: [{
+            result: {
+              'auth-type': 'jsonfile',
+              attrs: {
+                type: 'service_account',
+                project_id: 'juju-42',
+                private_key_id: 'my-private-key-id'
+              },
+              redacted: ['secret', 'confidential']
+            }
+          }, {
+            result: {
+              'auth-type': 'oauth2',
+            }
+          }, {
+            error: {message: 'no such credentials'}
+          }]
+        }
+      });
+    });
+
+    it('handles request failures while getting credentials', function(done) {
+      // Perform the request.
+      controllerAPI.getCloudCredentials(['cloudcred-1'], (err, creds) => {
+        assert.strictEqual(err, 'bad wolf');
+        assert.deepEqual(creds, {});
+        done();
+      });
+      // Mimic response.
+      conn.msg({'request-id': 1, error: 'bad wolf'});
+    });
+
+    it('returns no results if no tags are provided', function(done) {
+      // Perform the request.
+      controllerAPI.getCloudCredentials([], (err, creds) => {
+        assert.strictEqual(err, null);
+        assert.deepEqual(creds, {});
+        done();
+      });
+      // Mimic response.
+      conn.msg({'request-id': 1, response: {}});
     });
 
   });

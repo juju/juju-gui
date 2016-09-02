@@ -1402,7 +1402,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }));
       });
 
-      it('can retrieves clouds by tag', function(done) {
+      it('can retrieve clouds by tag', function(done) {
         client.onmessage = function(received) {
           const data = JSON.parse(received.data);
           assert.deepEqual(data, {
@@ -1433,7 +1433,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }));
       });
 
-      it('can returns no results for no tags', function(done) {
+      it('returns no results for no cloud tags', function(done) {
         client.onmessage = function(received) {
           const data = JSON.parse(received.data);
           assert.deepEqual(data, {
@@ -1468,6 +1468,104 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           params: {}
         }));
       });
+
+      it('can retrieve tags for credentials', function(done) {
+        client.onmessage = function(received) {
+          const data = JSON.parse(received.data);
+          assert.deepEqual(data, {
+            'request-id': 42,
+            response: {
+              results: [{
+                error: {message: 'invalid user tag provided: user-no-such'}
+              }, {
+                error: {message: 'invalid cloud tag provided: cloud-no-such'}
+              }, {
+                result: ['cloudcred-demonstration_admin@local_demonstration']
+              }]
+            }
+          });
+          done();
+        };
+        client.open();
+        client.send(JSON.stringify({
+          'request-id': 42,
+          type: 'Cloud',
+          request: 'UserCredentials',
+          params: {'user-clouds': [
+            {'user-tag': 'user-no-such', 'cloud-tag': 'cloud-demonstration'},
+            {'user-tag': 'user-admin@local', 'cloud-tag': 'cloud-no-such'},
+            {'user-tag': 'user-admin', 'cloud-tag': 'cloud-demonstration'},
+          ]}
+        }));
+      });
+
+      it('returns no results for no user/cloud pairs', function(done) {
+        client.onmessage = function(received) {
+          const data = JSON.parse(received.data);
+          assert.deepEqual(data, {
+            'request-id': 47,
+            response: {results: []}
+          });
+          done();
+        };
+        client.open();
+        client.send(JSON.stringify({
+          'request-id': 47,
+          type: 'Cloud',
+          request: 'UserCredentials',
+          params: {'user-clouds': []}
+        }));
+      });
+
+      it('can retrieve credentials by tag', function(done) {
+        client.onmessage = function(received) {
+          const data = JSON.parse(received.data);
+          assert.deepEqual(data, {
+            'request-id': 42,
+            response: {
+              results: [{
+                error: {message: 'credentials cloudcred-no-such not found'}
+              }, {
+                result: {
+                  'auth-type': 'empty',
+                  attrs: {engine: 'JavaScript'},
+                  redacted: ['bad-parts']
+                }
+              }]
+            }
+          });
+          done();
+        };
+        client.open();
+        client.send(JSON.stringify({
+          'request-id': 42,
+          type: 'Cloud',
+          request: 'Credential',
+          params: {entities: [
+            {tag: 'cloudcred-no-such'},
+            {tag: 'cloudcred-demonstration_admin@local_demonstration'},
+          ]}
+        }));
+      });
+
+      it('returns no results for no credential tags', function(done) {
+        client.onmessage = function(received) {
+          const data = JSON.parse(received.data);
+          assert.deepEqual(data, {
+            'request-id': 47,
+            response: {results: []}
+          });
+          done();
+        };
+        client.open();
+        client.send(JSON.stringify({
+          'request-id': 47,
+          type: 'Cloud',
+          request: 'Credential',
+          params: {entities: []}
+        }));
+      });
+
 
     });
 
