@@ -391,10 +391,14 @@ YUI.add('bundle-importer', function(Y) {
         }
         record.args[0].parentId = parentId;
       }
+      let containerType = record.args[0].containerType;
+      if (containerType === 'lxc' && !this.isLegacyJuju) {
+        containerType = 'lxd';
+      }
       // XXX This code is duplicated from scale-up.js:191. We need to create a
       // layer where we create ghosts and handle cleaning them up.
       var machine = this.db.machines.addGhost(
-          record.args[0].parentId, record.args[0].containerType);
+          record.args[0].parentId, containerType);
       this.env.addMachines(record.args, function(machine) {
         this.db.machines.remove(machine);
       }.bind(this, machine), { modelId: machine.id});
