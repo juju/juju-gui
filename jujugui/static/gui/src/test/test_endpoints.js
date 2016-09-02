@@ -487,9 +487,16 @@ describe('Endpoints map handlers', function() {
     this._cleanups.push(_renderComponents.reset);
     app = new Y.juju.App({
       env: env,
+      controllerAPI: new juju.ControllerAPI({
+        conn: utils.SocketStub(),
+        user: 'user',
+        password: 'password'
+      }),
       consoleEnabled: true,
       charmstore: factory.makeFakeCharmstore(),
-      jujuCoreVersion: '2.0.0'
+      jujuCoreVersion: '2.0.0',
+      socketTemplate: '/model/$uuid/api',
+      controllerSocketTemplate: '/api'
     });
     app.showView(new Y.View());
     destroyMe.push(app);

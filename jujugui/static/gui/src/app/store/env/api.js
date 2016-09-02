@@ -507,7 +507,7 @@ YUI.add('juju-env-api', function(Y) {
       } else if (
         !data.error || data.error.indexOf('redirection required') === -1) {
         // If we are requiring to do a redirect to properly connect to the
-        // model then do not set credentials or the failed authentication
+        // model then do not reset credentials or the failed authentication
         // flags yet.
         // If the credentials were rejected remove them.
         this.setCredentials(null);

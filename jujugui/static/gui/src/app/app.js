@@ -407,7 +407,7 @@ YUI.add('juju-gui', function(Y) {
       // Allow "env" as an attribute/option to ease testing.
       var env = this.get('env');
       if (env) {
-        this._init(cfg, env);
+        this._init(cfg, env, this.get('controllerAPI'));
         return;
       }
       var ecs = new juju.EnvironmentChangeSet({db: this.db});
