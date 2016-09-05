@@ -1224,7 +1224,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     handleCloudClouds: function(data, client, state) {
       const info = this._getCloudInfo(state);
       const clouds = {};
-      clouds[info.tag] = info.cloud;
+      clouds[info.cloudTag] = info.cloud;
       client.receive({
         'request-id': data['request-id'],
         response: {clouds: clouds}
@@ -1250,7 +1250,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       }
       const info = this._getCloudInfo(state);
       const results = entities.map(entity => {
-        if (entity.tag === info.tag) {
+        if (entity.tag === info.cloudTag) {
           return {cloud: info.cloud};
         }
         return {error: {message: 'cloud ' + entity.tag + ' not found'}};
@@ -1273,7 +1273,75 @@ YUI.add('juju-env-sandbox', function(Y) {
       const info = this._getCloudInfo(state);
       client.receive({
         'request-id': data['request-id'],
-        response: {result: info.tag}
+        response: {result: info.cloudTag}
+      });
+    },
+
+    /**
+      Handle Cloud.UserCredentials messages.
+
+      @method handleCloudUserCredentials
+      @param {Object} data The contents of the API arguments.
+      @param {Object} client The active ClientConnection.
+      @param {Object} state An instance of FakeBackend.
+    */
+    handleCloudUserCredentials: function(data, client, state) {
+      const userClouds = data.params['user-clouds'];
+      if (!userClouds.length) {
+        client.receive({
+          'request-id': data['request-id'],
+          response: {results: []}
+        });
+        return;
+      }
+      const info = this._getCloudInfo(state);
+      const results = userClouds.map(userCloud => {
+        const userTag = userCloud['user-tag'];
+        if (userTag !== 'user-admin@local' && userTag !== 'user-admin') {
+          return {error: {
+            message: 'invalid user tag provided: ' + userTag}
+          };
+        }
+        if (userCloud['cloud-tag'] !== info.cloudTag) {
+          return {error: {
+            message: 'invalid cloud tag provided: ' + userCloud['cloud-tag']}
+          };
+        }
+        return {result: [info.credentialsTag]};
+      });
+      client.receive({
+        'request-id': data['request-id'],
+        response: {results: results}
+      });
+    },
+
+    /**
+      Handle Cloud.Credential messages.
+
+      @method handleCloudCredential
+      @param {Object} data The contents of the API arguments.
+      @param {Object} client The active ClientConnection.
+      @param {Object} state An instance of FakeBackend.
+    */
+    handleCloudCredential: function(data, client, state) {
+      const entities = data.params.entities;
+      if (!entities.length) {
+        client.receive({
+          'request-id': data['request-id'],
+          response: {results: []}
+        });
+        return;
+      }
+      const info = this._getCloudInfo(state);
+      const results = entities.map(entity => {
+        if (entity.tag === info.credentialsTag) {
+          return {result: info.credentials};
+        }
+        return {error: {message: 'credentials ' + entity.tag + ' not found'}};
+      });
+      client.receive({
+        'request-id': data['request-id'],
+        response: {results: results}
       });
     },
 
@@ -1282,17 +1350,26 @@ YUI.add('juju-env-sandbox', function(Y) {
 
       @method _getCloudInfo
       @param {Object} state An instance of FakeBackend.
-      @return {Object} An object with two fields: "tag" holding the cloud tag
-        and "cloud" with the information returned by the simulated server.
+      @return {Object} An object with the following fields:
+        - cloudTag holding the cloud tag;
+        - cloud with the cloud information returned by the simulated server;
+        - credentialsTag holding the tag for sandbox credentials;
+        - credentials with the credentials info for the simulated server.
     */
     _getCloudInfo: function(state) {
       const provider = state.get('providerType');
       return {
-        tag: 'cloud-' + provider,
+        cloudTag: 'cloud-' + provider,
         cloud: {
           'auth-types': ['empty'],
           regions: [{name: 'localhost'}],
           type: provider
+        },
+        credentialsTag: 'cloudcred-' + provider + '_admin@local_' + provider,
+        credentials: {
+          'auth-type': 'empty',
+          attrs: {engine: 'JavaScript'},
+          redacted: ['bad-parts']
         }
       };
     },

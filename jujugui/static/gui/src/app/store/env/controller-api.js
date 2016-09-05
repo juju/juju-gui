@@ -841,6 +841,138 @@ YUI.add('juju-controller-api', function(Y) {
         storageEndpoint: result['storage-endpoint'] || '',
         regions: regions
       };
+    },
+
+    /**
+      Returns the tags of cloud credentials for a set of users.
+
+      @method getTagsForCloudCredentials
+      @param {Array} userCloudPairs A list of (user-tag, cloud-tag) pairs for
+        which to retrieve the credentials, like
+        [['user-admin', 'cloud-google'], ['user-who@external', 'cloud-lxd']].
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive two parameters: an error (as a
+        string describing the problem) and a sequence of results. In the
+        sequence of results each result refers to the corresponding provided
+        user/cloud pair and holds an object with the following fields:
+        - err: a possible result specific error, in which case all subsequent
+          fields are omitted;
+        - tags: the list of tags that identify cloud credentials corresponding
+          to the user/cloud pair provided as input.
+        If no errors occur, error parameters are null. Otherwise, in case of
+        errors, the second argument is an empty array.
+    */
+    getTagsForCloudCredentials: function(userCloudPairs, callback) {
+      // Decorate the user supplied callback.
+      const handler = function(userCallback, data) {
+        if (!userCallback) {
+          console.log(
+            'data returned by Cloud.UserCredentials API call:', data);
+          return;
+        }
+        if (data.error) {
+          userCallback(data.error, []);
+          return;
+        }
+        const results = data.response.results;
+        if (!results) {
+          userCallback(null, []);
+          return;
+        }
+        const credentials = results.map(result => {
+          const err = result.error && result.error.message;
+          if (err) {
+            return {err: err};
+          }
+          return {tags: result.result || []};
+        });
+        userCallback(null, credentials);
+      }.bind(this, callback);
+      // Send the API request.
+      if (!userCloudPairs.length) {
+        userCloudPairs = [];
+      }
+      const userClouds = userCloudPairs.map(userCloud => {
+        return {'user-tag': userCloud[0], 'cloud-tag': userCloud[1]};
+      });
+      this._send_rpc({
+        type: 'Cloud',
+        request: 'UserCredentials',
+        params: {'user-clouds': userClouds}
+      }, handler);
+    },
+
+    /**
+      Return the specified cloud credentials for each tag, minus secrets.
+
+      @method getCloudCredentials
+      @param {Array} tags The Juju tags of the credentials, each one being a
+        string, for instance "cloudcred-google_dalek@local_google". Tags for
+        credentials are usually retrieved by calling the
+        getTagsForCloudCredentials method (see above).
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive two parameters: an error (as a
+        string describing the problem) and an object mapping credentials tags
+        to corresponding cloud credentials info. If no errors occur, the error
+        parameter is null. Otherwise, in case of errors, the second argument is
+        an empty object. Credentials info is returned as objects with the
+        following fields:
+        - err: a possible credentials specific error, in which case all
+          subsequent fields are omitted;
+        - name: the cloud credentials name, like "google_dalek@local_google";
+        - authType: the authentication type (as a string, like 'jsonfile');
+        - attrs: non-secret credential values as an object mapping strings to
+          strings. Keys there are based on the cloud type;
+        - redacted: a list of names of redacted attributes.
+        If no errors occur, error parameters are null. Otherwise, in case of
+        errors, the second argument is an empty object.
+    */
+    getCloudCredentials: function(tags, callback) {
+      // Decorate the user supplied callback.
+      const handler = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by Cloud.Credential API call:', data);
+          return;
+        }
+        if (data.error) {
+          userCallback(data.error, {});
+          return;
+        }
+        const results = data.response.results;
+        if (!results) {
+          userCallback(null, {});
+          return;
+        }
+        const credentials = results.reduce((prev, result, index) => {
+          const tag = tags[index];
+          const err = result.error && result.error.message;
+          if (err) {
+            prev[tag] = {err: err};
+            return prev;
+          }
+          const entry = result.result;
+          prev[tag] = {
+            name: tag.slice('cloudcred-'.length),
+            authType: entry['auth-type'] || '',
+            attrs: entry.attrs || {},
+            redacted: entry.redacted || []
+          };
+          return prev;
+        }, {});
+        userCallback(null, credentials);
+      }.bind(this, callback);
+      // Send the API request.
+      if (!tags.length) {
+        tags = [];
+      }
+      const entities = tags.map(tag => {
+        return {tag: tag};
+      });
+      this._send_rpc({
+        type: 'Cloud',
+        request: 'Credential',
+        params: {entities: entities}
+      }, handler);
     }
 
   });
