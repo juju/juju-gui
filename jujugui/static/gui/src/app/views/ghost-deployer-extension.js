@@ -74,12 +74,14 @@ YUI.add('ghost-deployer-extension', function(Y) {
       var serviceName = ghostService.get('name');
       var charmId = this._addSeriesToCharmId(charm.get('id'), activeSeries);
       var constraints = {};
-      // TODO frankban: add support for fetching delegatable macaroons that can
-      // be used to add private charms.
-      this.env.addCharm(
-        charmId, null, this._addCharmCallbackHandler.bind(this, charm),
-        // Options used by ECS, ignored by environment.
-        {applicationId: ghostServiceId});
+      if (this.isLegacyJuju() || charm.get('id').indexOf('local:') === -1) {
+        // TODO frankban: add support for fetching delegatable macaroons that
+        // can be used to add private charms.
+        this.env.addCharm(
+          charmId, null, this._addCharmCallbackHandler.bind(this, charm),
+          // Options used by ECS, ignored by environment.
+          {applicationId: ghostServiceId});
+      }
       this.env.deploy(
           charmId,
           activeSeries,
