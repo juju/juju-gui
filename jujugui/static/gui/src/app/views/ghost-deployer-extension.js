@@ -74,7 +74,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
       var serviceName = ghostService.get('name');
       var charmId = this._addSeriesToCharmId(charm.get('id'), activeSeries);
       var constraints = {};
-      if (this.isLegacyJuju() || charm.get('id').indexOf('local:') === -1) {
+      if (charm.get('id').indexOf('local:') === -1) {
         // TODO frankban: add support for fetching delegatable macaroons that
         // can be used to add private charms.
         this.env.addCharm(
