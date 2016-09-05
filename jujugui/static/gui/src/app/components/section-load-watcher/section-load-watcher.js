@@ -25,8 +25,8 @@ YUI.add('section-load-watcher', function(Y) {
     propTypes: {
       // The eslint propType sorting requires that capital letters come
       // before lower case.
-      EmptyComponent: React.PropTypes.func,
-      ErrorComponent: React.PropTypes.func,
+      EmptyComponent: React.PropTypes.object,
+      ErrorComponent: React.PropTypes.object,
       children: React.PropTypes.oneOfType([
         React.PropTypes.object,
         React.PropTypes.array
