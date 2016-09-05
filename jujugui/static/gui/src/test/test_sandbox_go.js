@@ -23,9 +23,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   describe('sandbox.JujuAPI', function() {
     var requires = [
       'jsyaml', 'juju-env-sandbox', 'environment-change-set',
-      'juju-tests-factory', 'juju-env-api', 'juju-models', 'promise'
+      'juju-tests-factory', 'juju-controller-api', 'juju-env-api',
+      'juju-models', 'promise'
     ];
-    var client, env, ecs, environmentsModule, factory, juju,
+    var client, controllerAPI, env, ecs, environmentsModule, factory, juju,
         sandboxModule, state, ns;
 
     before(function(done) {
@@ -46,21 +47,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       client = new sandboxModule.ClientConnection({juju: juju});
       ecs = new ns.EnvironmentChangeSet({db: state.db});
+      controllerAPI = new ns.ControllerAPI({conn: client, ecs: ecs});
       env = new environmentsModule.GoEnvironment({conn: client, ecs: ecs});
       var facades = sandboxModule.facades.reduce(function(collected, facade) {
         collected[facade.name] = facade.versions;
         return collected;
       }, {});
+      controllerAPI.set('facades', facades);
       env.set('facades', facades);
     });
 
     afterEach(function() {
       // We need to clear any credentials stored in sessionStorage.
-      if (env.get('connected')) {
-        env.close();
-      }
-      env.setCredentials(null);
-      env.destroy();
+      const destroyAPI = api => {
+        if (api.get('connected')) {
+          api.close();
+        }
+        api.setCredentials(null);
+        api.destroy();
+      };
+      destroyAPI(controllerAPI);
+      destroyAPI(env);
       client.destroy();
       juju.destroy();
       state.destroy();
@@ -1375,7 +1382,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     describe('Cloud facade', function() {
-
       it('can list available clouds', function(done) {
         client.onmessage = function(received) {
           const data = JSON.parse(received.data);
@@ -1566,7 +1572,143 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }));
       });
 
+      it('can create/update credentials', function(done) {
+        client.onmessage = function(received) {
+          // The expected response is returned.
+          const data = JSON.parse(received.data);
+          assert.deepEqual(data, {
+            'request-id': 42,
+            response: {
+              results: [
+                {error: {message: 'bad-wolf is not a valid tag'}},
+                {},
+                {}
+              ]
+            }
+          });
+          controllerAPI.connect();
+          // The new credential has been added, in addition to the initial one.
+          const pairs = [['user-admin@local', 'cloud-demonstration']];
+          controllerAPI.getTagsForCloudCredentials(pairs, (err, results) => {
+            assert.strictEqual(err, null);
+            const tags = [
+              'cloudcred-demonstration_admin@local_demonstration',
+              'cloudcred-new-one'
+            ];
+            assert.deepEqual(results[0].tags.sort(), tags);
+            // The data for both credentials has been properly set.
+            controllerAPI.getCloudCredentials(tags, (err, results) => {
+              assert.strictEqual(err, null);
+              assert.deepEqual(
+                results['cloudcred-demonstration_admin@local_demonstration'], {
+                  name: 'demonstration_admin@local_demonstration',
+                  authType: 'empty',
+                  attrs: {answer: '42'},
+                  redacted: []
+                }
+              );
+              assert.deepEqual(
+                results['cloudcred-new-one'], {
+                  name: 'new-one',
+                  authType: 'oauth2',
+                  attrs: {number: '47'},
+                  redacted: []
+                }
+              );
+              done();
+            });
+          });
+        };
+        client.open();
+        client.send(JSON.stringify({
+          'request-id': 42,
+          type: 'Cloud',
+          request: 'UpdateCredentials',
+          params: {credentials: [{
+            tag: 'bad-wolf',
+            credential: {'auth-type': 'empty', attrs: {}}
+          }, {
+            tag: 'cloudcred-demonstration_admin@local_demonstration',
+            credential: {'auth-type': 'empty', attrs: {answer: '42'}}
+          }, {
+            tag: 'cloudcred-new-one',
+            credential: {'auth-type': 'oauth2', attrs: {number: '47'}}
+          }]}
+        }));
+      });
 
+      it('returns no results while updating credentials', function(done) {
+        client.onmessage = function(received) {
+          const data = JSON.parse(received.data);
+          assert.deepEqual(data, {
+            'request-id': 47,
+            response: {results: []}
+          });
+          done();
+        };
+        client.open();
+        client.send(JSON.stringify({
+          'request-id': 47,
+          type: 'Cloud',
+          request: 'UpdateCredentials',
+          params: {credentials: []}
+        }));
+      });
+
+      it('can revoke credentials', function(done) {
+        client.onmessage = function(received) {
+          const data = JSON.parse(received.data);
+          assert.deepEqual(data, {
+            'request-id': 42,
+            response: {
+              results: [
+                {error: {message: 'bad-wolf is not a valid tag'}},
+                {},
+                {}
+              ]
+            }
+          });
+          controllerAPI.connect();
+          // The initial credential has been removed.
+          const pairs = [['user-admin@local', 'cloud-demonstration']];
+          controllerAPI.getTagsForCloudCredentials(pairs, (err, results) => {
+            assert.strictEqual(err, null);
+            assert.deepEqual(results[0].tags, []);
+            done();
+          });
+        };
+        client.open();
+        client.send(JSON.stringify({
+          'request-id': 42,
+          type: 'Cloud',
+          request: 'RevokeCredentials',
+          params: {entities: [{
+            tag: 'bad-wolf',
+          }, {
+            tag: 'cloudcred-demonstration_admin@local_demonstration',
+          }, {
+            tag: 'cloudcred-no-such'
+          }]}
+        }));
+      });
+
+      it('returns no results while revoking credentials', function(done) {
+        client.onmessage = function(received) {
+          const data = JSON.parse(received.data);
+          assert.deepEqual(data, {
+            'request-id': 47,
+            response: {results: []}
+          });
+          done();
+        };
+        client.open();
+        client.send(JSON.stringify({
+          'request-id': 47,
+          type: 'Cloud',
+          request: 'RevokeCredentials',
+          params: {entities: []}
+        }));
+      });
     });
 
   });

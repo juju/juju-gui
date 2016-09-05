@@ -973,6 +973,104 @@ YUI.add('juju-controller-api', function(Y) {
         request: 'Credential',
         params: {entities: entities}
       }, handler);
+    },
+
+    /**
+      Create or update a single cloud credential.
+
+      @method updateCloudCredential
+      @param {String} tag The Juju tag of the credential as a string, for
+        instance "cloudcred-google_dalek@local_google". Tags for credentials
+        are usually retrieved by calling the getTagsForCloudCredentials method.
+      @params {String} authType The authentication type, like "userpass",
+        "oauth2" or just "empty".
+      @params {Object} attrs Attributes containing credential values, as an
+        object mapping strings to strings.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an error message or null if the
+        credential creation/update succeeded.
+    */
+    updateCloudCredential: function(tag, authType, attrs, callback) {
+      // Decorate the user supplied callback.
+      const handler = function(userCallback, data) {
+        if (!userCallback) {
+          console.log(
+            'data returned by Cloud.UpdateCredentials API call:', data);
+          return;
+        }
+        if (data.error) {
+          userCallback(data.error);
+          return;
+        }
+        const results = data.response.results;
+        if (!results || results.length !== 1) {
+          // This should never happen.
+          userCallback(
+            'invalid results returned by Juju: ' + JSON.stringify(results));
+          return;
+        }
+        const err = results[0].error && results[0].error.message;
+        if (err) {
+          userCallback(err);
+          return;
+        }
+        userCallback(null);
+      }.bind(this, callback);
+      // Send the API request.
+      const credentials = [{
+        tag: tag,
+        credential: {'auth-type': authType || '', attrs: attrs || {}}
+      }];
+      this._send_rpc({
+        type: 'Cloud',
+        request: 'UpdateCredentials',
+        params: {credentials: credentials}
+      }, handler);
+    },
+
+    /**
+      Revoke the cloud credential with the given tag.
+
+      @method revokeCloudCredential
+      @param {String} tag The Juju tag of the credential as a string, for
+        instance "cloudcred-google_dalek@local_google". Tags for credentials
+        are usually retrieved by calling the getTagsForCloudCredentials method.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an error message or null if the
+        credential revocation succeeded.
+    */
+    revokeCloudCredential: function(tag, callback) {
+      // Decorate the user supplied callback.
+      const handler = function(userCallback, data) {
+        if (!userCallback) {
+          console.log(
+            'data returned by Cloud.RevokeCredentials API call:', data);
+          return;
+        }
+        if (data.error) {
+          userCallback(data.error);
+          return;
+        }
+        const results = data.response.results;
+        if (!results || results.length !== 1) {
+          // This should never happen.
+          userCallback(
+            'invalid results returned by Juju: ' + JSON.stringify(results));
+          return;
+        }
+        const err = results[0].error && results[0].error.message;
+        if (err) {
+          userCallback(err);
+          return;
+        }
+        userCallback(null);
+      }.bind(this, callback);
+      // Send the API request.
+      this._send_rpc({
+        type: 'Cloud',
+        request: 'RevokeCredentials',
+        params: {entities: [{tag: tag}]}
+      }, handler);
     }
 
   });

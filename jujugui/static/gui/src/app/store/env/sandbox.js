@@ -26,9 +26,9 @@ Sandbox APIs mimicking communications with the Go and Python backends.
 
 YUI.add('juju-env-sandbox', function(Y) {
 
-  var sandboxModule = Y.namespace('juju.environments.sandbox');
-  var models = Y.namespace('juju.models');
-  var CLOSEDERROR = 'INVALID_STATE_ERR : Connection is closed.';
+  const sandboxModule = Y.namespace('juju.environments.sandbox');
+  const models = Y.namespace('juju.models');
+  const CLOSEDERROR = 'INVALID_STATE_ERR : Connection is closed.';
 
   /**
   A client connection for interacting with a sandbox environment.
@@ -217,6 +217,11 @@ YUI.add('juju-env-sandbox', function(Y) {
     initializer: function() {
       this.connected = false;
       this.wsFailureCount = 0;
+      // Define an in-memory storage for cloud credentials. When the storage is
+      // initialized it holds an object mapping credential tags with the
+      // corresponding credential info. Do not access this attribute directly,
+      // use the _getCredentialsStorage method below.
+      this._cloudCredentialsStorage = null;
     },
 
     /**
@@ -1294,6 +1299,7 @@ YUI.add('juju-env-sandbox', function(Y) {
         });
         return;
       }
+      const cloudCredentialsStorage = this._getCredentialsStorage(state);
       const info = this._getCloudInfo(state);
       const results = userClouds.map(userCloud => {
         const userTag = userCloud['user-tag'];
@@ -1307,7 +1313,7 @@ YUI.add('juju-env-sandbox', function(Y) {
             message: 'invalid cloud tag provided: ' + userCloud['cloud-tag']}
           };
         }
-        return {result: [info.credentialsTag]};
+        return {result: Object.keys(cloudCredentialsStorage)};
       });
       client.receive({
         'request-id': data['request-id'],
@@ -1332,10 +1338,11 @@ YUI.add('juju-env-sandbox', function(Y) {
         });
         return;
       }
-      const info = this._getCloudInfo(state);
+      const cloudCredentialsStorage = this._getCredentialsStorage(state);
       const results = entities.map(entity => {
-        if (entity.tag === info.credentialsTag) {
-          return {result: info.credentials};
+        const credentials = cloudCredentialsStorage[entity.tag];
+        if (credentials) {
+          return {result: credentials};
         }
         return {error: {message: 'credentials ' + entity.tag + ' not found'}};
       });
@@ -1346,15 +1353,99 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+      Handle Cloud.UpdateCredentials messages.
+
+      @method handleCloudUpdateCredentials
+      @param {Object} data The contents of the API arguments.
+      @param {Object} client The active ClientConnection.
+      @param {Object} state An instance of FakeBackend.
+    */
+    handleCloudUpdateCredentials: function(data, client, state) {
+      const entries = data.params.credentials;
+      if (!entries.length) {
+        client.receive({
+          'request-id': data['request-id'],
+          response: {results: []}
+        });
+        return;
+      }
+      const cloudCredentialsStorage = this._getCredentialsStorage(state);
+      const results = entries.map(entry => {
+        if (!entry.tag.startsWith('cloudcred-')) {
+          return {error: {message: entry.tag + ' is not a valid tag'}};
+        }
+        cloudCredentialsStorage[entry.tag] = entry.credential;
+        return {};
+      });
+      client.receive({
+        'request-id': data['request-id'],
+        response: {results: results}
+      });
+    },
+
+    /**
+      Handle Cloud.RevokeCredentials messages.
+
+      @method handleCloudRevokeCredentials
+      @param {Object} data The contents of the API arguments.
+      @param {Object} client The active ClientConnection.
+      @param {Object} state An instance of FakeBackend.
+    */
+    handleCloudRevokeCredentials: function(data, client, state) {
+      const entities = data.params.entities;
+      if (!entities.length) {
+        client.receive({
+          'request-id': data['request-id'],
+          response: {results: []}
+        });
+        return;
+      }
+      const cloudCredentialsStorage = this._getCredentialsStorage(state);
+      const results = entities.map(entity => {
+        if (!entity.tag.startsWith('cloudcred-')) {
+          return {error: {message: entity.tag + ' is not a valid tag'}};
+        }
+        delete cloudCredentialsStorage[entity.tag];
+        return {};
+      });
+      client.receive({
+        'request-id': data['request-id'],
+        response: {results: results}
+      });
+    },
+
+    /**
+      Initialize and return the in-memory credentials storage.
+
+      @method _getCredentialsStorage
+      @param {Object} state An instance of FakeBackend.
+      @return {Object} The in-memory cloud credentials storage, mapping
+        credential tags to credential info.
+    */
+    _getCredentialsStorage: function(state) {
+      if (this._cloudCredentialsStorage !== null) {
+        // The-in memory credentials storage is already initialized.
+        return this._cloudCredentialsStorage;
+      }
+      this._cloudCredentialsStorage = {};
+      const provider = state.get('providerType');
+      const tag = 'cloudcred-' + provider + '_admin@local_' + provider;
+      this._cloudCredentialsStorage[tag] = {
+        'auth-type': 'empty',
+        attrs: {engine: 'JavaScript'},
+        redacted: ['bad-parts']
+      };
+      return this._cloudCredentialsStorage;
+    },
+
+    /**
       Return information about the current sandbox cloud.
 
       @method _getCloudInfo
       @param {Object} state An instance of FakeBackend.
       @return {Object} An object with the following fields:
         - cloudTag holding the cloud tag;
-        - cloud with the cloud information returned by the simulated server;
-        - credentialsTag holding the tag for sandbox credentials;
-        - credentials with the credentials info for the simulated server.
+        - cloud with the cloud information returned by the simulated server.
     */
     _getCloudInfo: function(state) {
       const provider = state.get('providerType');
@@ -1364,12 +1455,6 @@ YUI.add('juju-env-sandbox', function(Y) {
           'auth-types': ['empty'],
           regions: [{name: 'localhost'}],
           type: provider
-        },
-        credentialsTag: 'cloudcred-' + provider + '_admin@local_' + provider,
-        credentials: {
-          'auth-type': 'empty',
-          attrs: {engine: 'JavaScript'},
-          redacted: ['bad-parts']
         }
       };
     },
