@@ -18,33 +18,82 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('ACL', function() {
-  var Y;
+  let Y;
 
-  beforeAll(function(done) {
-    // By loading this file it has the acl instance
+  beforeAll(done => {
+    // By loading this file it has the ACL instance.
     YUI().use('acl', function(y) { Y = y; done(); });
   });
 
-  it('returns valid readOnly statuses', function() {
-    var env = {
-      get: sinon.stub().withArgs('readOnly').returns(false)
+  // Create and return an ACL instance.
+  const makeACL = (controllerAccess, controllerAccessOnModel, modelAccess) => {
+    const controllerAPI = {
+      get: sinon.stub().withArgs('controllerAccess').returns(controllerAccess)
     };
-    assert.equal(
-      Y.juju.generateAcl(env).isReadOnly(), false,
-      'isReadOnly should have been false');
+    const modelAPI = {
+      get: name => {
+        return {
+          controllerAccess: controllerAccessOnModel,
+          modelAccess: modelAccess
+        }[name];
+      }
+    };
+    return Y.juju.generateAcl(controllerAPI, modelAPI);
+  };
 
-    env = {
-      get: sinon.stub().withArgs('readOnly').returns(true)
-    };
-    assert.equal(
-      Y.juju.generateAcl(env).isReadOnly(), true,
-      'isReadOnly should have been true');
+  it('isReadOnly', () => {
+    let acl = makeACL('', '', 'read');
+    assert.strictEqual(acl.isReadOnly(), true);
+    acl = makeACL('', '', 'write');
+    assert.strictEqual(acl.isReadOnly(), false);
+    acl = makeACL('', '', 'admin');
+    assert.strictEqual(acl.isReadOnly(), false);
+    acl = makeACL('', '', '');
+    assert.strictEqual(acl.isReadOnly(), false);
   });
 
+  it('canAddModels', () => {
+    let acl = makeACL('superuser', 'superuser', '');
+    assert.strictEqual(acl.canAddModels(), true);
+    acl = makeACL('superuser', '', '');
+    assert.strictEqual(acl.canAddModels(), true);
+    acl = makeACL('addmodel', 'addmodel', '');
+    assert.strictEqual(acl.canAddModels(), true);
+    acl = makeACL('', 'addmodel', '');
+    assert.strictEqual(acl.canAddModels(), true);
+    acl = makeACL('login', 'login', '');
+    assert.strictEqual(acl.canAddModels(), false);
+    acl = makeACL('login', '', '');
+    assert.strictEqual(acl.canAddModels(), false);
+    acl = makeACL('', '', '');
+    assert.strictEqual(acl.canAddModels(), false);
+  });
+
+  it('canShareModel', () => {
+    let acl = makeACL('', '', 'read');
+    assert.strictEqual(acl.canShareModel(), false);
+    acl = makeACL('', '', 'write');
+    assert.strictEqual(acl.canShareModel(), false);
+    acl = makeACL('', '', 'admin');
+    assert.strictEqual(acl.canShareModel(), true);
+    acl = makeACL('', '', '');
+    assert.strictEqual(acl.canShareModel(), false);
+  });
+
+  it('canRemoveModel', () => {
+    let acl = makeACL('', '', 'read');
+    assert.strictEqual(acl.canRemoveModel(), false);
+    acl = makeACL('', '', 'write');
+    assert.strictEqual(acl.canRemoveModel(), false);
+    acl = makeACL('', '', 'admin');
+    assert.strictEqual(acl.canRemoveModel(), true);
+    acl = makeACL('', '', '');
+    assert.strictEqual(acl.canRemoveModel(), false);
+  });
 });

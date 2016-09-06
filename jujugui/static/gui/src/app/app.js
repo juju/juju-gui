@@ -418,7 +418,6 @@ YUI.add('juju-gui', function(Y) {
         ecs: ecs,
         user: this.get('user'),
         password: this.get('password'),
-        readOnly: this.get('readOnly'),
         conn: this.get('conn'),
         jujuCoreVersion: this.get('jujuCoreVersion')
       };
@@ -510,7 +509,7 @@ YUI.add('juju-gui', function(Y) {
       });
 
       // Create the ACL object.
-      this.acl = new Y.juju.generateAcl(this.env);
+      this.acl = new Y.juju.generateAcl(this.controllerAPI, this.env);
 
       this.changesUtils = window.juju.utils.ChangesUtils;
       this.relationUtils = window.juju.utils.RelationUtils;

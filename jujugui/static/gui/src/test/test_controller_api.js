@@ -189,9 +189,9 @@ describe('Controller API', function() {
           {name: 'Client', versions: [0]},
           {name: 'ModelManager', versions: [2]}
         ],
-        'user-info': {'read-only': true}
+        'user-info': {'controller-access': 'addmodel', 'model-access': ''}
       }});
-      assert.strictEqual(controllerAPI.get('readOnly'), true);
+      assert.strictEqual(controllerAPI.get('controllerAccess'), 'addmodel');
     });
   });
 

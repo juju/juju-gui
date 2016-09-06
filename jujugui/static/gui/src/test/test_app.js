@@ -157,18 +157,6 @@ describe('App', function() {
           });
         });
 
-    it('propagates the readOnly option from the configuration', function() {
-      app = new Y.juju.App({
-        container: container,
-        readOnly: true,
-        viewContainer: container,
-        conn: {close: function() {}},
-        jujuCoreVersion: '1.21.1.1-trusty-amd64',
-        ecs: new juju.EnvironmentChangeSet()
-      });
-      assert.isTrue(app.env.get('readOnly'));
-    });
-
     it('should produce a valid index', function() {
       constructAppInstance({
         env: new juju.environments.GoEnvironment({

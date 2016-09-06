@@ -20,15 +20,70 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('acl', function(Y) {
 
-  var juju = Y.namespace('juju');
+  const juju = Y.namespace('juju');
 
   /**
-    Acl factory.
+    Implement the ACL object interface that can be used to check permissions
+    and the ability to manipulate the connected Juju model and controller.
+
+    Note that the controller access is described by the following values:
+    - "login": users can log into the controller and only list the models they
+      own;
+    - "addmodel": users can add models;
+    - "superuser": users can do everything they want with the controller,
+      including listing/removing all models owned by any users.
+    The model access holds the following values:
+    - "read": users can only access the model in read-only mode;
+    - "write": users can modify the model but not delete or share it;
+    - "admin": users can modify the model, including deleting and sharing it
+      with someone else.
+
     @function generateAcl
-    @param env {Object} The env instance.
+    @param controllerAPI {Object} The controller API connection instance.
+    @param modelAPI {Object} The model API connection instance.
+    @return {Object} A namespace providing access to ACLs checkers (see below).
   */
-  juju.generateAcl = env => ({
-    isReadOnly: () => !!env.get('readOnly')
+  juju.generateAcl = (controllerAPI, modelAPI) => ({
+
+    /**
+      Report whether the model interaction is read-only, in which case it is
+      not possible to interact with the model, just watch it.
+
+      @function isReadOnly
+      @return {Boolean} Whether the user has read-only access.
+    */
+    isReadOnly: () => modelAPI.get('modelAccess') === 'read',
+
+    /**
+      Report whether the current user can create models.
+
+      @function canAddModels
+      @return {Boolean} Whether the user can add models.
+    */
+    canAddModels: () => {
+      const access = (
+        modelAPI.get('controllerAccess') ||
+        controllerAPI.get('controllerAccess')
+      );
+      return access === 'addmodel' || access === 'superuser';
+    },
+
+    /**
+      Report whether the user can share the current model.
+
+      @function canShareModel
+      @return {Boolean} Whether the user can share the current model.
+    */
+    canShareModel: () => modelAPI.get('modelAccess') === 'admin',
+
+    /**
+      Report whether the user can destroy the current model.
+
+      @function canRemoveModel
+      @return {Boolean} Whether the user can destroy the current model.
+    */
+    canRemoveModel: () => modelAPI.get('modelAccess') === 'admin'
+
   });
 
 }, '0.1.0', {

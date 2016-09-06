@@ -152,12 +152,19 @@ YUI.add('juju-env-base', function(Y) {
     */
     'debug': {value: false},
     /**
-      Whether or not to run in read-only mode
+      The controller access level (see "app/store/env/acl.js").
 
-      @attribute readOnly
-      @type {boolean}
+      @attribute controllerAccess
+      @type {String}
     */
-    'readOnly': {value: false},
+    'controllerAccess': {value: ''},
+    /**
+      The model access level (see "app/store/env/acl.js").
+
+      @attribute modelAccess
+      @type {String}
+    */
+    'modelAccess': {value: ''},
     /**
       The default series (e.g.: precise) as provided by juju.
 
