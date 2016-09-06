@@ -28,12 +28,13 @@ YUI.add('deployment-flow', function() {
       changesFilterByParent: React.PropTypes.func.isRequired,
       deploy: React.PropTypes.func.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
+      getCloudCredentials: React.PropTypes.func.isRequired,
+      getTagsForCloudCredentials: React.PropTypes.func.isRequired,
       groupedChanges: React.PropTypes.object.isRequired,
       listBudgets: React.PropTypes.func.isRequired,
       listClouds: React.PropTypes.func.isRequired,
       listPlansForCharm: React.PropTypes.func.isRequired,
       listRegions: React.PropTypes.func.isRequired,
-      listTemplates: React.PropTypes.func.isRequired,
       modelCommitted: React.PropTypes.bool,
       modelName: React.PropTypes.string.isRequired,
       servicesGetById: React.PropTypes.func.isRequired,
@@ -364,8 +365,9 @@ YUI.add('deployment-flow', function() {
             credential={credential}
             cloud={cloud}
             clouds={this.CLOUDS}
+            getCloudCredentials={this.props.getCloudCredentials}
+            getTagsForCloudCredentials={this.props.getTagsForCloudCredentials}
             listRegions={this.props.listRegions}
-            listTemplates={this.props.listTemplates}
             region={this.state.region}
             setCredential={this._setCredential}
             setRegion={this._setRegion}

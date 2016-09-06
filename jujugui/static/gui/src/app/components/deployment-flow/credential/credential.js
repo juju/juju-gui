@@ -27,8 +27,9 @@ YUI.add('deployment-credential', function() {
       cloud: React.PropTypes.string,
       clouds: React.PropTypes.object.isRequired,
       credential: React.PropTypes.string,
+      getCloudCredentials: React.PropTypes.func.isRequired,
+      getTagsForCloudCredentials: React.PropTypes.func.isRequired,
       listRegions: React.PropTypes.func.isRequired,
-      listTemplates: React.PropTypes.func.isRequired,
       region: React.PropTypes.string,
       setCredential: React.PropTypes.func.isRequired,
       setRegion: React.PropTypes.func.isRequired,
@@ -58,6 +59,7 @@ YUI.add('deployment-credential', function() {
 
     componentDidUpdate: function(prevProps) {
       if (prevProps.cloud !== this.props.cloud) {
+        this._getCredentials();
         this._getRegions();
       }
     },
@@ -77,12 +79,40 @@ YUI.add('deployment-credential', function() {
       @method _getCredentials
     */
     _getCredentials: function() {
-      this.credentialXHR = this.props.listTemplates(
-        this._getCredentialsCallback);
+      const cloud = this.props.cloud;
+      if (!cloud) {
+        return;
+      }
+      const user = this.props.users.jem.user;
+      if (user) {
+        this.props.getTagsForCloudCredentials(
+          [[user, `cloud-${cloud}`]],
+          this._getTagsCallback);
+      }
     },
 
     /**
-      The method to be called when the credentials reponse has been received.
+      The method to be called when the credentials tags reponse has been
+      received.
+
+      @method _getTagsCallback
+      @param {String} error An error message, or null if there's no error.
+      @param {Array} tags A list of the tags found.
+    */
+    _getTagsCallback: function(error, tags) {
+      if (error) {
+        console.error('Unable to get tags for credentials', error);
+        return;
+      }
+      const tagList = [];
+      tags.forEach(tag => {
+        tagList = tagList.concat(tag.tags);
+      });
+      this.props.getCloudCredentials(tagList, this._getCredentialsCallback);
+    },
+
+    /**
+      The method to be called when the credentials response has been received.
 
       @method _getCredentialsCallback
       @param {String} error An error message, or null if there's no error.
@@ -90,17 +120,19 @@ YUI.add('deployment-credential', function() {
     */
     _getCredentialsCallback: function(error, credentials) {
       if (error) {
-        console.error('Unable to list templates', error);
+        console.error('Unable to get credentials', error);
         return;
       }
+      const credentialList = Object.keys(credentials).map(
+        credential => credentials[credential].name);
       this.setState({
-        credentials: credentials,
+        credentials: credentialList,
         credentialsLoading: false,
         // If there are no credentials then display the form to add credentials.
-        showAdd: !credentials || credentials.length === 0
+        showAdd: !credentials || credentialList.length === 0
       });
-      if (credentials && credentials.length > 0) {
-        this.props.setCredential(credentials[0].path);
+      if (credentials && credentialList.length > 0) {
+        this.props.setCredential(credentialList[0].path);
       }
     },
 
@@ -156,10 +188,9 @@ YUI.add('deployment-credential', function() {
     */
     _generateCredentials: function() {
       var credentials = this.state.credentials.map((credential) => {
-        var path = credential.path;
         return {
-          label: path,
-          value: path
+          label: credential,
+          value: credential
         };
       });
       credentials.push({

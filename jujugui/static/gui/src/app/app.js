@@ -1103,6 +1103,7 @@ YUI.add('juju-gui', function(Y) {
       var activeComponent = metadata.activeComponent;
       var autoPlaceUnits = this._autoPlaceUnits.bind(this);
       var modelCommitted = this.env.get('connected');
+      const controllerAPI = this.controllerAPI;
       if (!window.flags || !window.flags.blues) {
         // Display the old deploy summary if we're not using the feature flag
         // for the new deployment flow.
@@ -1152,12 +1153,15 @@ YUI.add('juju-gui', function(Y) {
           generateAllChangeDescriptions={
             changesUtils.generateAllChangeDescriptions.bind(
               changesUtils, services, units)}
+          getCloudCredentials={
+            controllerAPI.getCloudCredentials.bind(controllerAPI)}
+          getTagsForCloudCredentials={
+            controllerAPI.getTagsForCloudCredentials.bind(controllerAPI)}
           groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
-          listClouds={jem.listClouds.bind(jem)}
+          listClouds={controllerAPI.listClouds.bind(controllerAPI)}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
           listRegions={jem.listRegions.bind(jem)}
-          listTemplates={jem.listTemplates.bind(jem)}
           modelCommitted={modelCommitted}
           modelName={db.environment.get('name')}
           servicesGetById={services.getById.bind(services)}
