@@ -505,7 +505,7 @@ YUI.add('juju-env-api', function(Y) {
         // Clean up for log out text.
         this.failedAuthentication = false;
       } else if (
-        !data.error || data.error.indexOf('redirection required') === -1) {
+        !data.error || !utils.isRedirectError(data.error)) {
         // If we are requiring to do a redirect to properly connect to the
         // model then do not reset credentials or the failed authentication
         // flags yet.
@@ -586,8 +586,8 @@ YUI.add('juju-env-api', function(Y) {
       @method loginWithMacaroon
       @param {Object} bakery The bakery client to use to handle macaroons.
       @param {Function} callback A callable that must be called once the
-        operation is performed. It will receive an error string if an error
-        occurred or null if authentication succeeded.
+        operation is performed. It will receive an error string and the
+        response if an error occurred or null if authentication succeeded.
       @return {undefined} Sends a message to the server only.
     */
     loginWithMacaroon: function(bakery, callback) {
@@ -675,7 +675,10 @@ YUI.add('juju-env-api', function(Y) {
       Performs the RedirectInfo request.
 
       @method redirectInfo
-      @param {Function} callback The callback to call with the response.
+      @param {Function} callback The callback to call with the response. It
+        is called with the error string as the first parameter or null if there
+        is no error. The second parameter is either the full error response or
+        the list of servers.
     */
     redirectInfo: function(callback) {
       this._send_rpc({
@@ -683,6 +686,10 @@ YUI.add('juju-env-api', function(Y) {
         request: 'RedirectInfo',
         version: ADMIN_FACADE_VERSION
       }, resp => {
+        if (!callback) {
+          console.log('data returned by Admin.RedirectInfo API call:', resp);
+          return;
+        }
         const error = resp.response.error;
         if (error) {
           callback(error, resp);

@@ -1136,4 +1136,27 @@ describe('utilities', function() {
     });
   });
 
+  describe('isRedirectError', function() {
+    let utils;
+
+    before(function(done) {
+      YUI().use('juju-view-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('returns true if it is a redirect error', function() {
+      assert.equal(
+        utils.isRedirectError('authentication failed: redirection required'),
+        true);
+    });
+
+    it('returns false if it is not a redirect error', function() {
+      assert.equal(
+        utils.isRedirectError('it broke'),
+        false);
+    });
+  });
+
 })();

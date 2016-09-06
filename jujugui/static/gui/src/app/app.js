@@ -652,7 +652,10 @@ YUI.add('juju-gui', function(Y) {
         if (isNotGISFSandbox || isNotConnected) {
           this.env.connect();
         }
-        this.controllerAPI.connect();
+        if (this.controllerAPI) {
+          // We won't have a controller API connection in Juju 1 or in sandbox.
+          this.controllerAPI.connect();
+        }
         this.dispatch();
         this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       }, this);
@@ -743,7 +746,7 @@ YUI.add('juju-gui', function(Y) {
           // user into an uncommitted state.
           if (modelList.length === 0) {
             // XXX Drop the user into the uncommitted state.
-            console.log('No models available, using sandbox mode.');
+            console.log('No models available, using unconnected mode.');
             return;
           }
           if (modelList.some(data => data.uuid === this.env.get('modelUUID'))) {
@@ -757,7 +760,8 @@ YUI.add('juju-gui', function(Y) {
           // not set here then the subsequent code will not know what the
           // uuid of the model we're supposed to connect to is.
           if (!selectedModel) {
-            console.log('Cannot select available model, using sandbox mode.');
+            console.log(
+              'Cannot select available model, using unconnected mode.');
             // XXX Drop the user into the uncommitted state.
             return;
           }
@@ -858,24 +862,25 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Callback handler for the api loginWithMacaroon method which hanadles
+      Callback handler for the API loginWithMacaroon method which handles
       the "redirection required" error message.
 
       @method _apiLoginHandler
       @param {Object} api The API that the user is attempting to log into.
+        ex) this.env or this.controllerAPI
       @param {String} err The login error message, if any.
       @param {Object} data The login request response data, if any.
     */
     _apiLoginHandler: function(api, err, data) {
       const errorNotify = function(err) {
         this.db.notifications.add({
-          title: 'Unable to log into model',
-          message: `unable to log into model: ${err}`,
+          title: 'Unable to log into Juju',
+          message: `unable to log into Juju: ${err}`,
           level: 'error'
         });
       };
 
-      if (err === 'authentication failed: redirection required') {
+      if (views.utils.isRedirectError(err)) {
         // If the error is that redirection is required then we have to
         // make a request to get the appropriate model connection information.
         api.redirectInfo((err, servers) => {
