@@ -2,6 +2,27 @@ YUI.add('d3', function(Y) {
   Y.namespace('d3');
   Y.d3 = (function(){
     var d3 = {version: "3.5.16"}; // semver
+d3.extent = function(array, f) {
+  var i = -1,
+      n = array.length,
+      a,
+      b,
+      c;
+  if (arguments.length === 1) {
+    while (++i < n) if ((b = array[i]) != null && b >= b) { a = c = b; break; }
+    while (++i < n) if ((b = array[i]) != null) {
+      if (a > b) a = b;
+      if (c < b) c = b;
+    }
+  } else {
+    while (++i < n) if ((b = f.call(array, array[i], i)) != null && b >= b) { a = c = b; break; }
+    while (++i < n) if ((b = f.call(array, array[i], i)) != null) {
+      if (a > b) a = b;
+      if (c < b) c = b;
+    }
+  }
+  return [a, c];
+};
 var d3_arraySlice = [].slice,
     d3_array = function(list) { return d3_arraySlice.call(list); }; // conversion for NodeLists
 var d3_document = this.document;
@@ -3692,6 +3713,198 @@ function d3_scale_log(linear, base, positive, domain) {
 var d3_scale_logFormat = d3.format(".0e"),
     d3_scale_logNiceNegative = {floor: function(x) { return -Math.ceil(-x); }, ceil: function(x) { return -Math.floor(-x); }};
 
+var d3_time_format = d3_time.format = d3_locale_enUS.timeFormat;
+function d3_true() {
+  return true;
+}
+
+d3_time.hour = d3_time_interval(function(date) {
+  var timezone = date.getTimezoneOffset() / 60;
+  return new d3_date((Math.floor(date / 36e5 - timezone) + timezone) * 36e5);
+}, function(date, offset) {
+  date.setTime(date.getTime() + Math.floor(offset) * 36e5); // DST breaks setHours
+}, function(date) {
+  return date.getHours();
+});
+
+d3_time.hours = d3_time.hour.range;
+d3_time.hours.utc = d3_time.hour.utc.range;
+
+d3_time.minute = d3_time_interval(function(date) {
+  return new d3_date(Math.floor(date / 6e4) * 6e4);
+}, function(date, offset) {
+  date.setTime(date.getTime() + Math.floor(offset) * 6e4); // DST breaks setMinutes
+}, function(date) {
+  return date.getMinutes();
+});
+
+d3_time.minutes = d3_time.minute.range;
+d3_time.minutes.utc = d3_time.minute.utc.range;
+
+d3_time.month = d3_time_interval(function(date) {
+  date = d3_time.day(date);
+  date.setDate(1);
+  return date;
+}, function(date, offset) {
+  date.setMonth(date.getMonth() + offset);
+}, function(date) {
+  return date.getMonth();
+});
+
+d3_time.months = d3_time.month.range;
+d3_time.months.utc = d3_time.month.utc.range;
+
+d3_time.second = d3_time_interval(function(date) {
+  return new d3_date(Math.floor(date / 1e3) * 1e3);
+}, function(date, offset) {
+  date.setTime(date.getTime() + Math.floor(offset) * 1e3); // DST breaks setSeconds
+}, function(date) {
+  return date.getSeconds();
+});
+
+d3_time.seconds = d3_time.second.range;
+d3_time.seconds.utc = d3_time.second.utc.range;
+
+function d3_time_scale(linear, methods, format) {
+
+  function scale(x) {
+    return linear(x);
+  }
+
+  scale.invert = function(x) {
+    return d3_time_scaleDate(linear.invert(x));
+  };
+
+  scale.domain = function(x) {
+    if (!arguments.length) return linear.domain().map(d3_time_scaleDate);
+    linear.domain(x);
+    return scale;
+  };
+
+  function tickMethod(extent, count) {
+    var span = extent[1] - extent[0],
+        target = span / count,
+        i = d3.bisect(d3_time_scaleSteps, target);
+    return i == d3_time_scaleSteps.length ? [methods.year, d3_scale_linearTickRange(extent.map(function(d) { return d / 31536e6; }), count)[2]]
+        : !i ? [d3_time_scaleMilliseconds, d3_scale_linearTickRange(extent, count)[2]]
+        : methods[target / d3_time_scaleSteps[i - 1] < d3_time_scaleSteps[i] / target ? i - 1 : i];
+  }
+
+  scale.nice = function(interval, skip) {
+    var domain = scale.domain(),
+        extent = d3_scaleExtent(domain),
+        method = interval == null ? tickMethod(extent, 10)
+          : typeof interval === "number" && tickMethod(extent, interval);
+
+    if (method) interval = method[0], skip = method[1];
+
+    function skipped(date) {
+      return !isNaN(date) && !interval.range(date, d3_time_scaleDate(+date + 1), skip).length;
+    }
+
+    return scale.domain(d3_scale_nice(domain, skip > 1 ? {
+      floor: function(date) {
+        while (skipped(date = interval.floor(date))) date = d3_time_scaleDate(date - 1);
+        return date;
+      },
+      ceil: function(date) {
+        while (skipped(date = interval.ceil(date))) date = d3_time_scaleDate(+date + 1);
+        return date;
+      }
+    } : interval));
+  };
+
+  scale.ticks = function(interval, skip) {
+    var extent = d3_scaleExtent(scale.domain()),
+        method = interval == null ? tickMethod(extent, 10)
+          : typeof interval === "number" ? tickMethod(extent, interval)
+          : !interval.range && [{range: interval}, skip]; // assume deprecated range function
+
+    if (method) interval = method[0], skip = method[1];
+
+    return interval.range(extent[0], d3_time_scaleDate(+extent[1] + 1), skip < 1 ? 1 : skip); // inclusive upper bound
+  };
+
+  scale.tickFormat = function() {
+    return format;
+  };
+
+  scale.copy = function() {
+    return d3_time_scale(linear.copy(), methods, format);
+  };
+
+  return d3_scale_linearRebind(scale, linear);
+}
+
+function d3_time_scaleDate(t) {
+  return new Date(t);
+}
+
+var d3_time_scaleSteps = [
+  1e3,    // 1-second
+  5e3,    // 5-second
+  15e3,   // 15-second
+  3e4,    // 30-second
+  6e4,    // 1-minute
+  3e5,    // 5-minute
+  9e5,    // 15-minute
+  18e5,   // 30-minute
+  36e5,   // 1-hour
+  108e5,  // 3-hour
+  216e5,  // 6-hour
+  432e5,  // 12-hour
+  864e5,  // 1-day
+  1728e5, // 2-day
+  6048e5, // 1-week
+  2592e6, // 1-month
+  7776e6, // 3-month
+  31536e6 // 1-year
+];
+
+var d3_time_scaleLocalMethods = [
+  [d3_time.second, 1],
+  [d3_time.second, 5],
+  [d3_time.second, 15],
+  [d3_time.second, 30],
+  [d3_time.minute, 1],
+  [d3_time.minute, 5],
+  [d3_time.minute, 15],
+  [d3_time.minute, 30],
+  [d3_time.hour, 1],
+  [d3_time.hour, 3],
+  [d3_time.hour, 6],
+  [d3_time.hour, 12],
+  [d3_time.day, 1],
+  [d3_time.day, 2],
+  [d3_time.week, 1],
+  [d3_time.month, 1],
+  [d3_time.month, 3],
+  [d3_time.year, 1]
+];
+
+var d3_time_scaleLocalFormat = d3_time_format.multi([
+  [".%L", function(d) { return d.getMilliseconds(); }],
+  [":%S", function(d) { return d.getSeconds(); }],
+  ["%I:%M", function(d) { return d.getMinutes(); }],
+  ["%I %p", function(d) { return d.getHours(); }],
+  ["%a %d", function(d) { return d.getDay() && d.getDate() != 1; }],
+  ["%b %d", function(d) { return d.getDate() != 1; }],
+  ["%B", function(d) { return d.getMonth(); }],
+  ["%Y", d3_true]
+]);
+
+var d3_time_scaleMilliseconds = {
+  range: function(start, stop, step) { return d3.range(Math.ceil(start / step) * step, +stop, step).map(d3_time_scaleDate); },
+  floor: d3_identity,
+  ceil: d3_identity
+};
+
+d3_time_scaleLocalMethods.year = d3_time.year;
+
+d3_time.scale = function() {
+  return d3_time_scale(d3.scale.linear(), d3_time_scaleLocalMethods, d3_time_scaleLocalFormat);
+};
+
 d3.transform = function(string) {
   var g = d3_document.createElementNS(d3.ns.prefix.svg, "g");
   return (d3.transform = function(string) {
@@ -3809,9 +4022,6 @@ function d3_interpolateTransform(a, b) {
     while (++i < n) s[(o = q[i]).i] = o.x(t);
     return s.join("");
   };
-}
-function d3_true() {
-  return true;
 }
 
 var d3_timer_queueHead,
@@ -5134,6 +5344,158 @@ function d3_svg_arcCornerTangents(p0, p1, r1, rc, cw) {
     [cx0 - ox, cy0 - oy],
     [cx0 * r1 / r, cy0 * r1 / r]
   ];
+}
+
+d3.svg.axis = function() {
+  var scale = d3.scale.linear(),
+      orient = d3_svg_axisDefaultOrient,
+      innerTickSize = 6,
+      outerTickSize = 6,
+      tickPadding = 3,
+      tickArguments_ = [10],
+      tickValues = null,
+      tickFormat_;
+
+  function axis(g) {
+    g.each(function() {
+      var g = d3.select(this);
+
+      // Stash a snapshot of the new scale, and retrieve the old snapshot.
+      var scale0 = this.__chart__ || scale,
+          scale1 = this.__chart__ = scale.copy();
+
+      // Ticks, or domain values for ordinal scales.
+      var ticks = tickValues == null ? (scale1.ticks ? scale1.ticks.apply(scale1, tickArguments_) : scale1.domain()) : tickValues,
+          tickFormat = tickFormat_ == null ? (scale1.tickFormat ? scale1.tickFormat.apply(scale1, tickArguments_) : d3_identity) : tickFormat_,
+          tick = g.selectAll(".tick").data(ticks, scale1),
+          tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick").style("opacity", ε),
+          tickExit = d3.transition(tick.exit()).style("opacity", ε).remove(),
+          tickUpdate = d3.transition(tick.order()).style("opacity", 1),
+          tickSpacing = Math.max(innerTickSize, 0) + tickPadding,
+          tickTransform;
+
+      // Domain.
+      var range = d3_scaleRange(scale1),
+          path = g.selectAll(".domain").data([0]),
+          pathUpdate = (path.enter().append("path").attr("class", "domain"), d3.transition(path));
+
+      tickEnter.append("line");
+      tickEnter.append("text");
+
+      var lineEnter = tickEnter.select("line"),
+          lineUpdate = tickUpdate.select("line"),
+          text = tick.select("text").text(tickFormat),
+          textEnter = tickEnter.select("text"),
+          textUpdate = tickUpdate.select("text"),
+          sign = orient === "top" || orient === "left" ? -1 : 1,
+          x1, x2, y1, y2;
+
+      if (orient === "bottom" || orient === "top") {
+        tickTransform = d3_svg_axisX, x1 = "x", y1 = "y", x2 = "x2", y2 = "y2";
+        text.attr("dy", sign < 0 ? "0em" : ".71em").style("text-anchor", "middle");
+        pathUpdate.attr("d", "M" + range[0] + "," + sign * outerTickSize + "V0H" + range[1] + "V" + sign * outerTickSize);
+      } else {
+        tickTransform = d3_svg_axisY, x1 = "y", y1 = "x", x2 = "y2", y2 = "x2";
+        text.attr("dy", ".32em").style("text-anchor", sign < 0 ? "end" : "start");
+        pathUpdate.attr("d", "M" + sign * outerTickSize + "," + range[0] + "H0V" + range[1] + "H" + sign * outerTickSize);
+      }
+
+      lineEnter.attr(y2, sign * innerTickSize);
+      textEnter.attr(y1, sign * tickSpacing);
+      lineUpdate.attr(x2, 0).attr(y2, sign * innerTickSize);
+      textUpdate.attr(x1, 0).attr(y1, sign * tickSpacing);
+
+      // If either the new or old scale is ordinal,
+      // entering ticks are undefined in the old scale,
+      // and so can fade-in in the new scale’s position.
+      // Exiting ticks are likewise undefined in the new scale,
+      // and so can fade-out in the old scale’s position.
+      if (scale1.rangeBand) {
+        var x = scale1, dx = x.rangeBand() / 2;
+        scale0 = scale1 = function(d) { return x(d) + dx; };
+      } else if (scale0.rangeBand) {
+        scale0 = scale1;
+      } else {
+        tickExit.call(tickTransform, scale1, scale0);
+      }
+
+      tickEnter.call(tickTransform, scale0, scale1);
+      tickUpdate.call(tickTransform, scale1, scale1);
+    });
+  }
+
+  axis.scale = function(x) {
+    if (!arguments.length) return scale;
+    scale = x;
+    return axis;
+  };
+
+  axis.orient = function(x) {
+    if (!arguments.length) return orient;
+    orient = x in d3_svg_axisOrients ? x + "" : d3_svg_axisDefaultOrient;
+    return axis;
+  };
+
+  axis.ticks = function() {
+    if (!arguments.length) return tickArguments_;
+    tickArguments_ = d3_array(arguments);
+    return axis;
+  };
+
+  axis.tickValues = function(x) {
+    if (!arguments.length) return tickValues;
+    tickValues = x;
+    return axis;
+  };
+
+  axis.tickFormat = function(x) {
+    if (!arguments.length) return tickFormat_;
+    tickFormat_ = x;
+    return axis;
+  };
+
+  axis.tickSize = function(x) {
+    var n = arguments.length;
+    if (!n) return innerTickSize;
+    innerTickSize = +x;
+    outerTickSize = +arguments[n - 1];
+    return axis;
+  };
+
+  axis.innerTickSize = function(x) {
+    if (!arguments.length) return innerTickSize;
+    innerTickSize = +x;
+    return axis;
+  };
+
+  axis.outerTickSize = function(x) {
+    if (!arguments.length) return outerTickSize;
+    outerTickSize = +x;
+    return axis;
+  };
+
+  axis.tickPadding = function(x) {
+    if (!arguments.length) return tickPadding;
+    tickPadding = +x;
+    return axis;
+  };
+
+  axis.tickSubdivide = function() {
+    return arguments.length && axis;
+  };
+
+  return axis;
+};
+
+var d3_svg_axisDefaultOrient = "bottom",
+    d3_svg_axisOrients = {top: 1, right: 1, bottom: 1, left: 1};
+
+function d3_svg_axisX(selection, x0, x1) {
+  selection.attr("transform", function(d) { var v0 = x0(d); return "translate(" + (isFinite(v0) ? v0 : x1(d)) + ",0)"; });
+}
+
+function d3_svg_axisY(selection, y0, y1) {
+  selection.attr("transform", function(d) { var v0 = y0(d); return "translate(0," + (isFinite(v0) ? v0 : y1(d)) + ")"; });
 }
 d3.layout = {};
 d3.merge = function(arrays) {

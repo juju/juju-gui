@@ -37,7 +37,8 @@ YUI.add('juju-gui', function(Y) {
   var juju = Y.namespace('juju'),
       models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
-      widgets = Y.namespace('juju.widgets');
+      widgets = Y.namespace('juju.widgets'),
+      d3 = Y.namespace('d3');
 
   var components = window.juju.components; // eslint-disable-line no-unused-vars
 
@@ -949,7 +950,8 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       ReactDOM.render(
-        <window.juju.components.ISVProfile />,
+        <window.juju.components.ISVProfile
+          d3={d3} />,
         document.getElementById('top-page-container'));
       // The model name should not be visible when viewing the profile.
       this._renderBreadcrumb({ showEnvSwitcher: false });
