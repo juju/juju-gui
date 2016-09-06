@@ -408,7 +408,7 @@ YUI.add('juju-gui', function(Y) {
       // Allow "env" as an attribute/option to ease testing.
       var env = this.get('env');
       if (env) {
-        this._init(cfg, env);
+        this._init(cfg, env, this.get('controllerAPI'));
         return;
       }
       var ecs = new juju.EnvironmentChangeSet({db: this.db});
@@ -447,7 +447,6 @@ YUI.add('juju-gui', function(Y) {
         // Instantiate a Web handler allowing to perform asynchronous HTTPS
         // requests to the juju-core API.
         modelOptions.webHandler = new environments.web.WebHandler();
-        controllerOptions.jimmURL = this.get('jimmURL');
       }
 
       let modelAPI, controllerAPI;
@@ -653,11 +652,10 @@ YUI.add('juju-gui', function(Y) {
                               (this.get('socket_url') || this.get('sandbox')));
         if (isNotGISFSandbox || isNotConnected) {
           this.env.connect();
-          if (this.controllerAPI) {
-            // We won't have a controller API connection in Juju 1 or in
-            // sandbox mode.
-            this.controllerAPI.connect();
-          }
+        }
+        if (this.controllerAPI) {
+          // We won't have a controller API connection in Juju 1 or in sandbox.
+          this.controllerAPI.connect();
         }
         this.dispatch();
         this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
@@ -749,13 +747,27 @@ YUI.add('juju-gui', function(Y) {
           // user into an uncommitted state.
           if (modelList.length === 0) {
             // XXX Drop the user into the uncommitted state.
+            console.log('No models available, using unconnected mode.');
+            return;
           }
           if (modelList.some(data => data.uuid === this.env.get('modelUUID'))) {
             // If the user is already connected to a model in this list then
             // leave it be.
             return;
           }
+          // Pick a model to connect to.
           const selectedModel = this._pickModel(modelList);
+          // Set the selected uuid as the active model in the GUI. If this is
+          // not set here then the subsequent code will not know what the
+          // uuid of the model we're supposed to connect to is.
+          if (!selectedModel) {
+            console.log(
+              'Cannot select available model, using unconnected mode.');
+            // XXX Drop the user into the uncommitted state.
+            return;
+          }
+          this.set('jujuEnvUUID', selectedModel.uuid);
+          // Generate the valid socket URL and switch to this model.
           this.switchEnv(
             this.createSocketURL(
               this.get('socketTemplate'), selectedModel.uuid));
@@ -764,7 +776,7 @@ YUI.add('juju-gui', function(Y) {
 
       controllerAPI.after('connectedChange', e => {
         const credentials = this.controllerAPI.getCredentials();
-        if (!credentials.areAvailable) {
+        if (!credentials.areAvailable && !this.get('gisf')) {
           // If we don't have credentials then do nothing as the env login
           // check will have kicked the user to the login prompt already and
           // we can wait until they have provided the credentials there.
@@ -773,18 +785,14 @@ YUI.add('juju-gui', function(Y) {
         // If we're in a JIMM controlled environment or if we have macaroon
         // credentials then use the macaroon login. If not then uses the
         // standard u/p method.
-        if (this.get('jimmURL') || credentials.macaroons) {
+        if (this.get('gisf') || credentials.macaroons) {
           this.loginToAPIs(null, true, [this.controllerAPI]);
         } else {
           this.loginToAPIs(null, false, [this.controllerAPI]);
         }
       });
-      // If we're in JIMM then use a jimmURL, else use a socket_url without the
-      // model uuid.
-      controllerAPI.set(
-        'socket_url',
-        this.get('jimmURL') ||
-          this.createSocketURL(this.get('controllerSocketTemplate')));
+      controllerAPI.set('socket_url',
+        this.createSocketURL(this.get('controllerSocketTemplate')));
       return controllerAPI;
     },
 
@@ -842,7 +850,7 @@ YUI.add('juju-gui', function(Y) {
             interactive: true,
             serviceName: 'juju',
             dischargeStore: window.localStorage
-          }));
+          }), this._apiLoginHandler.bind(this, api));
         });
         return;
       }
@@ -852,6 +860,46 @@ YUI.add('juju-gui', function(Y) {
         }
         api.login();
       });
+    },
+
+    /**
+      Callback handler for the API loginWithMacaroon method which handles
+      the "redirection required" error message.
+
+      @method _apiLoginHandler
+      @param {Object} api The API that the user is attempting to log into.
+        ex) this.env or this.controllerAPI
+      @param {String} err The login error message, if any.
+    */
+    _apiLoginHandler: function(api, err) {
+      const errorNotify = function(err) {
+        this.db.notifications.add({
+          title: 'Unable to log into Juju',
+          message: `unable to log into Juju: ${err}`,
+          level: 'error'
+        });
+      };
+
+      if (views.utils.isRedirectError(err)) {
+        // If the error is that redirection is required then we have to
+        // make a request to get the appropriate model connection information.
+        api.redirectInfo((err, servers) => {
+          if (err) {
+            errorNotify(err);
+            return;
+          }
+          // Loop through the available servers and find the public IP.
+          const server = servers[0].filter(
+            server => server.scope === 'public');
+          // Switch to the redirected model.
+          this.switchEnv(this.createSocketURL(
+            this.get('socketTemplate'),
+            this.get('jujuEnvUUID'), server[0].value, server[0].port));
+        });
+        return;
+      } else if (err) {
+        errorNotify(err);
+      }
     },
 
     /**
@@ -923,6 +971,7 @@ YUI.add('juju-gui', function(Y) {
           changeState={this.changeState.bind(this)}
           getAgreements={this.terms.getAgreements.bind(this.terms)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
+          gisf={this.get('gisf')}
           interactiveLogin={this.get('interactiveLogin')}
           pluralize={utils.pluralize.bind(this)}
           staticURL={window.juju_config.staticURL}
@@ -1503,7 +1552,7 @@ YUI.add('juju-gui', function(Y) {
       this.navigate(url);
     },
 
-    /** Chooses an env to connect to from the env list based on config.
+    /** Chooses a model to connect to from the model list based on config.
 
       @method _pickModel
       @param {Array} modelList The list of models to pick from.
@@ -2126,6 +2175,10 @@ YUI.add('juju-gui', function(Y) {
       if (this.env.ws) {
         this.env.ws.onclose = onclose;
         this.env.close();
+        // If we are already disconnected then connect if we're supposed to.
+        if (!this.env.get('connected') && reconnect) {
+          this.env.connect();
+        }
       } else {
         this.env.close(onclose);
       }

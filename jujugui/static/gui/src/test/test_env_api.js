@@ -559,6 +559,37 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     });
 
+    describe('redirectInfo', function() {
+      it('makes appropriate request to fetch model redirect info', function() {
+        env.redirectInfo();
+        var lastMessage = conn.last_message();
+        var expected = {
+          params: {},
+          request: 'RedirectInfo',
+          'request-id': 1,
+          type: 'Admin',
+          version: 3
+        };
+        assert.deepEqual(expected, lastMessage);
+      });
+
+      it('responds with only the server data if no error', function() {
+        const callback = sinon.stub();
+        env.redirectInfo(callback);
+        conn.msg({ 'request-id': 1, response: { servers: 'servers' }});
+        assert.equal(callback.callCount, 1);
+        assert.deepEqual(callback.args[0], [null, 'servers']);
+      });
+
+      it('responds with the error if error', function() {
+        const callback = sinon.stub();
+        env.redirectInfo(callback);
+        conn.msg({ 'request-id': 1, response: { error: 'error' }});
+        assert.equal(callback.callCount, 1);
+        assert.deepEqual(callback.args[0][0], 'error');
+      });
+    });
+
     it('ignores rpc requests when websocket is not connected', function() {
       // Set the readyState to 2 for CLOSING.
       conn.readyState = 2;

@@ -504,7 +504,11 @@ YUI.add('juju-env-api', function(Y) {
         }
         // Clean up for log out text.
         this.failedAuthentication = false;
-      } else {
+      } else if (
+        !data.error || !utils.isRedirectError(data.error)) {
+        // If we are requiring to do a redirect to properly connect to the
+        // model then do not reset credentials or the failed authentication
+        // flags yet.
         // If the credentials were rejected remove them.
         this.setCredentials(null);
         this.failedAuthentication = true;
@@ -665,6 +669,34 @@ YUI.add('juju-env-api', function(Y) {
         handleResponse.bind(this, bakery, macaroons, cback)
       );
       this.pendingLoginResponse = true;
+    },
+
+    /**
+      Performs the RedirectInfo request.
+
+      @method redirectInfo
+      @param {Function} callback The callback to call with the response. It
+        is called with the error string as the first parameter or null if there
+        is no error. The second parameter is either the full error response or
+        the list of servers.
+    */
+    redirectInfo: function(callback) {
+      this._send_rpc({
+        type: 'Admin',
+        request: 'RedirectInfo',
+        version: ADMIN_FACADE_VERSION
+      }, resp => {
+        if (!callback) {
+          console.log('data returned by Admin.RedirectInfo API call:', resp);
+          return;
+        }
+        const error = resp.response.error;
+        if (error) {
+          callback(error, resp);
+          return;
+        }
+        callback(null, resp.response.servers);
+      });
     },
 
     /**

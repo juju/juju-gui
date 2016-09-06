@@ -24,6 +24,7 @@ YUI.add('empty-user-profile', function() {
     propTypes: {
       addNotification: React.PropTypes.func.isRequired,
       controllerAPI: React.PropTypes.object.isRequired,
+      gisf: React.PropTypes.bool,
       hideConnectingMask: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
       staticURL: React.PropTypes.string,
@@ -33,7 +34,8 @@ YUI.add('empty-user-profile', function() {
 
     getDefaultProps: function() {
       return {
-        staticURL: ''
+        staticURL: '',
+        gisf: false
       };
     },
 
@@ -65,6 +67,7 @@ YUI.add('empty-user-profile', function() {
             addNotification={props.addNotification}
             controllerAPI={props.controllerAPI}
             className='user-profile__empty-button'
+            gisf={props.gisf}
             hideConnectingMask={props.hideConnectingMask}
             showConnectingMask={props.showConnectingMask}
             switchModel={this.switchModel}

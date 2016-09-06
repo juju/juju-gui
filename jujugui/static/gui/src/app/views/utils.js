@@ -1671,6 +1671,17 @@ YUI.add('juju-view-utils', function(Y) {
     }
   };
 
+  /**
+    Parses the error string and determines if the error is a redirect error.
+
+    @method isRedirectError
+    @param {String} error The error string returned from the api server.
+    @return {Boolean} Whether it is a redirect error or not.
+  */
+  utils.isRedirectError = function(error) {
+    return error === 'authentication failed: redirection required';
+  };
+
 }, '0.1.0', {
   requires: [
     'base-build',

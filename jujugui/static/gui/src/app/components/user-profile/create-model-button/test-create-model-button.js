@@ -55,6 +55,7 @@ describe('CreateModelButton', () => {
         addNotification={sinon.stub()}
         className={'test'}
         controllerAPI={controllerAPI}
+        gisf={false}
         hideConnectingMask={sinon.stub()}
         jem={null}
         showConnectingMask={sinon.stub()}
@@ -101,6 +102,7 @@ describe('CreateModelButton', () => {
       <juju.components.CreateModelButton
         addNotification={sinon.stub()}
         controllerAPI={controllerAPI}
+        gisf={false}
         hideConnectingMask={sinon.stub()}
         showConnectingMask={showConnectingMask}
         switchModel={switchModel}
@@ -125,6 +127,24 @@ describe('CreateModelButton', () => {
     assert.equal(switchModel.args[0][1], 'newmodelname', 'model name not set');
   });
 
+  it('switches to an unconnected state if in gisf mode', () => {
+    const switchModel = sinon.stub();
+    const component = jsTestUtils.shallowRender(
+      <juju.components.CreateModelButton
+        addNotification={sinon.stub()}
+        controllerAPI={controllerAPI}
+        gisf={true}
+        hideConnectingMask={sinon.stub()}
+        showConnectingMask={sinon.stub()}
+        switchModel={switchModel}
+        user={users.charmstore} />, true);
+    const instance = component.getMountedInstance();
+    instance._nextCreateStep();
+    // Make sure that it switches to the model after it's created.
+    assert.equal(switchModel.callCount, 1, 'model not switched to');
+    assert.deepEqual(switchModel.args[0], [], 'not switching to uncommitted');
+  });
+
   it('does not submit to create new if name does not validate', () => {
     // This test doesn't check the user interactions and animations, that
     // will need to be done with the uitest suite.
@@ -134,6 +154,7 @@ describe('CreateModelButton', () => {
       <juju.components.CreateModelButton
         addNotification={sinon.stub()}
         controllerAPI={controllerAPI}
+        gisf={false}
         hideConnectingMask={sinon.stub()}
         showConnectingMask={showConnectingMask}
         switchModel={switchModel}
@@ -174,6 +195,7 @@ describe('CreateModelButton', () => {
       <juju.components.CreateModelButton
         addNotification={addNotification}
         controllerAPI={controllerAPI}
+        gisf={false}
         hideConnectingMask={hideConnectingMask}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}

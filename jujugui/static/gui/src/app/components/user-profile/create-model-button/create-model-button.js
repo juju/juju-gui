@@ -25,6 +25,7 @@ YUI.add('create-model-button', function() {
       addNotification: React.PropTypes.func.isRequired,
       className: React.PropTypes.string,
       controllerAPI: React.PropTypes.object.isRequired,
+      gisf: React.PropTypes.bool,
       hideConnectingMask: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
@@ -39,7 +40,8 @@ YUI.add('create-model-button', function() {
 
     getDefaultProps: function() {
       return {
-        className: ''
+        className: '',
+        gisf: false
       };
     },
 
@@ -88,14 +90,13 @@ YUI.add('create-model-button', function() {
     },
 
     /**
-      Depending on the existance of jimm this will either switch to a
+      Depending on if we're in gisf mode this will either switch to a
       disconnected model or open up the UI to allow the user to create a
       new model.
       @method _nextCreateStep
     */
     _nextCreateStep: function() {
-      const controllerAPI = this.props.controllerAPI;
-      if (controllerAPI && controllerAPI.get('jimmURL')) {
+      if (this.props.gisf) {
         // Switch to a disconnected model
         this.props.switchModel();
       } else {
