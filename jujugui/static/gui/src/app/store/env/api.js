@@ -586,8 +586,8 @@ YUI.add('juju-env-api', function(Y) {
       @method loginWithMacaroon
       @param {Object} bakery The bakery client to use to handle macaroons.
       @param {Function} callback A callable that must be called once the
-        operation is performed. It will receive an error string and the
-        response if an error occurred or null if authentication succeeded.
+        operation is performed. It will receive an error string if an error
+        occurred or null if authentication succeeded.
       @return {undefined} Sends a message to the server only.
     */
     loginWithMacaroon: function(bakery, callback) {
@@ -599,7 +599,7 @@ YUI.add('juju-env-api', function(Y) {
       var cback = function(err, response) {
         this.handleLogin({error: err, response: response});
         if (callback) {
-          callback(err, response);
+          callback(err);
           return;
         }
         if (err) {

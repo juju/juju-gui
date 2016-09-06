@@ -869,9 +869,8 @@ YUI.add('juju-gui', function(Y) {
       @param {Object} api The API that the user is attempting to log into.
         ex) this.env or this.controllerAPI
       @param {String} err The login error message, if any.
-      @param {Object} data The login request response data, if any.
     */
-    _apiLoginHandler: function(api, err, data) {
+    _apiLoginHandler: function(api, err) {
       const errorNotify = function(err) {
         this.db.notifications.add({
           title: 'Unable to log into Juju',
