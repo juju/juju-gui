@@ -145,6 +145,24 @@ describe('Ghost Deployer Extension', function() {
     assert.equal(ghostDeployer.env.deploy.callCount, 1);
   });
 
+  it('does not call addCharm for local charms and juju 2', function() {
+    const charm = makeCharm('local:trusty/django-42');
+    ghostDeployer.isLegacyJuju = function() { return false; };
+    ghostDeployer.env.addCharm = sinon.stub();
+    ghostDeployer.deployService(charm);
+    assert.equal(ghostDeployer.env.addCharm.callCount, 0);
+    assert.equal(ghostDeployer.env.deploy.callCount, 1);
+  });
+
+  it('does not call addCharm for local charms and juju 1', function() {
+    const charm = makeCharm('local:trusty/django-42');
+    ghostDeployer.isLegacyJuju = function() { return true; };
+    ghostDeployer.env.addCharm = sinon.stub();
+    ghostDeployer.deployService(charm);
+    assert.equal(ghostDeployer.env.addCharm.callCount, 0);
+    assert.equal(ghostDeployer.env.deploy.callCount, 1);
+  });
+
   it('calls the env deploy method with default charm data', function() {
     var charm = makeCharm();
     ghostDeployer.deployService(charm);
