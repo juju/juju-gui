@@ -39,7 +39,6 @@ YUI.add('deployment-credential', function() {
       validateForm: React.PropTypes.func.isRequired
     },
 
-    credentialXHR: null,
     regionsXHR: null,
 
     getInitialState: function() {
@@ -65,9 +64,6 @@ YUI.add('deployment-credential', function() {
     },
 
     componentWillUnmount: function() {
-      if (this.credentialXHR) {
-        this.credentialXHR.abort();
-      }
       if (this.regionsXHR) {
         this.regionsXHR.abort();
       }
@@ -80,9 +76,6 @@ YUI.add('deployment-credential', function() {
     */
     _getCredentials: function() {
       const cloud = this.props.cloud;
-      if (!cloud) {
-        return;
-      }
       const user = this.props.users.jem.user;
       if (user) {
         this.props.getTagsForCloudCredentials(
@@ -132,7 +125,7 @@ YUI.add('deployment-credential', function() {
         showAdd: !credentials || credentialList.length === 0
       });
       if (credentials && credentialList.length > 0) {
-        this.props.setCredential(credentialList[0].path);
+        this.props.setCredential(credentialList[0]);
       }
     },
 

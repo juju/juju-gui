@@ -74,7 +74,7 @@ describe('DeploymentCloud', function() {
         cloud={null}
         clouds={clouds}
         listClouds={sinon.stub().callsArgWith(
-          0, null, ['google', 'azure', 'aws'])}
+          0, null, [{name: 'google'}, {name: 'azure'}, {name: 'aws'}])}
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var options = output.props.children[0].props.children;
@@ -181,7 +181,7 @@ describe('DeploymentCloud', function() {
         cloud={null}
         clouds={clouds}
         listClouds={sinon.stub().callsArgWith(
-          0, null, ['google', 'azure', 'aws'])}
+          0, null, [{name: 'google'}, {name: 'azure'}, {name: 'aws'}])}
         setCloud={setCloud} />, true);
     var output = renderer.getRenderOutput();
     output.props.children[0].props.children[0].props.onClick();

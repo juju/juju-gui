@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentCredential', function() {
-  var acl, clouds, credentials, regions;
+  var acl, clouds, credentials, regions, tags, users;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -32,8 +32,14 @@ describe('DeploymentCredential', function() {
   });
 
   beforeEach(function() {
-    credentials = [{path: 'owner/test-cred'}];
+    credentials = {
+      'cloudcred-lxd_admin@local_default': {
+        name: 'cloudcred-lxd_admin@local_default'
+      }
+    };
     regions = ['test-region'];
+    tags = [{tags: ['cloudcred-lxd_admin@local_default']}];
+    users = {jem: {user: 'admin'}};
   });
 
   beforeEach(() => {
@@ -79,12 +85,13 @@ describe('DeploymentCredential', function() {
         addTemplate={sinon.stub()}
         cloud="azure"
         clouds={clouds}
+        getCloudCredentials={sinon.stub()}
+        getTagsForCloudCredentials={sinon.stub()}
         listRegions={sinon.stub()}
-        listTemplates={sinon.stub()}
         setCredential={sinon.stub()}
         setRegion={sinon.stub()}
         setTemplate={sinon.stub()}
-        users={{}}
+        users={users}
         validateForm={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -101,7 +108,6 @@ describe('DeploymentCredential', function() {
     var setCredential = sinon.stub();
     var setRegion = sinon.stub();
     var setTemplate = sinon.stub();
-    var users = {};
     var validateForm = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
@@ -109,10 +115,10 @@ describe('DeploymentCredential', function() {
         addTemplate={addTemplate}
         cloud="azure"
         clouds={clouds}
-        listRegions={
-          sinon.stub().callsArgWith(1, null, [])}
-        listTemplates={
-          sinon.stub().callsArgWith(0, null, [])}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, [])}
+        getTagsForCloudCredentials={
+          sinon.stub().callsArgWith(1, null, tags)}
+        listRegions={sinon.stub().callsArgWith(1, null, [])}
         setCredential={setCredential}
         setRegion={setRegion}
         setTemplate={setTemplate}
@@ -149,7 +155,6 @@ describe('DeploymentCredential', function() {
     var setCredential = sinon.stub();
     var setRegion = sinon.stub();
     var setTemplate = sinon.stub();
-    var users = {};
     var validateForm = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
@@ -157,10 +162,10 @@ describe('DeploymentCredential', function() {
         addTemplate={addTemplate}
         cloud={null}
         clouds={clouds}
-        listRegions={
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, {})}
+        getTagsForCloudCredentials={
           sinon.stub().callsArgWith(1, null, [])}
-        listTemplates={
-          sinon.stub().callsArgWith(0, null, [])}
+        listRegions={sinon.stub().callsArgWith(1, null, [])}
         setCredential={setCredential}
         setRegion={setRegion}
         setTemplate={setTemplate}
@@ -201,14 +206,14 @@ describe('DeploymentCredential', function() {
         addTemplate={sinon.stub()}
         cloud="azure"
         clouds={clouds}
-        listRegions={
-          sinon.stub().callsArgWith(1, null, regions)}
-        listTemplates={
-          sinon.stub().callsArgWith(0, null, credentials)}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
+        getTagsForCloudCredentials={
+          sinon.stub().callsArgWith(1, null, tags)}
+        listRegions={sinon.stub().callsArgWith(1, null, regions)}
         setCredential={setCredential}
         setRegion={setRegion}
         setTemplate={sinon.stub()}
-        users={{}}
+        users={users}
         validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -225,8 +230,8 @@ describe('DeploymentCredential', function() {
                 label="Credential"
                 onChange={instance._handleCredentialChange}
                 options={[{
-                  label: 'owner/test-cred',
-                  value: 'owner/test-cred'
+                  label: 'cloudcred-lxd_admin@local_default',
+                  value: 'cloudcred-lxd_admin@local_default'
                 }, {
                   label: 'Add credential...',
                   value: 'add-credential'
@@ -258,17 +263,17 @@ describe('DeploymentCredential', function() {
         addTemplate={sinon.stub()}
         cloud="azure"
         clouds={clouds}
-        listRegions={
-          sinon.stub().callsArgWith(1, null, regions)}
-        listTemplates={
-          sinon.stub().callsArgWith(0, null, credentials)}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
+        getTagsForCloudCredentials={
+          sinon.stub().callsArgWith(1, null, tags)}
+        listRegions={sinon.stub().callsArgWith(1, null, regions)}
         setCredential={setCredential}
         setRegion={setRegion}
         setTemplate={sinon.stub()}
-        users={{}}
+        users={users}
         validateForm={sinon.stub()} />, true);
     assert.equal(setCredential.callCount, 1);
-    assert.equal(setCredential.args[0][0], 'owner/test-cred');
+    assert.equal(setCredential.args[0][0], 'cloudcred-lxd_admin@local_default');
   });
 
   it('can disable controls when read only', function() {
@@ -281,14 +286,13 @@ describe('DeploymentCredential', function() {
         addTemplate={sinon.stub()}
         cloud="azure"
         clouds={clouds}
-        listRegions={
-          sinon.stub().callsArgWith(1, null, regions)}
-        listTemplates={
-          sinon.stub().callsArgWith(0, null, credentials)}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
+        getTagsForCloudCredentials={sinon.stub().callsArgWith(1, null, tags)}
+        listRegions={sinon.stub().callsArgWith(1, null, regions)}
         setCredential={setCredential}
         setRegion={setRegion}
         setTemplate={sinon.stub()}
-        users={{}}
+        users={users}
         validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -305,8 +309,8 @@ describe('DeploymentCredential', function() {
                 label="Credential"
                 onChange={instance._handleCredentialChange}
                 options={[{
-                  label: 'owner/test-cred',
-                  value: 'owner/test-cred'
+                  label: 'cloudcred-lxd_admin@local_default',
+                  value: 'cloudcred-lxd_admin@local_default'
                 }, {
                   label: 'Add credential...',
                   value: 'add-credential'
@@ -331,7 +335,6 @@ describe('DeploymentCredential', function() {
 
   it('will abort the request when unmounting', function() {
     var abort = sinon.stub();
-    var listTemplates = sinon.stub().returns({abort: abort});
     var listRegions = sinon.stub().returns({abort: abort});
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
@@ -339,15 +342,16 @@ describe('DeploymentCredential', function() {
         addTemplate={sinon.stub()}
         cloud="azure"
         clouds={clouds}
+        getCloudCredentials={sinon.stub()}
+        getTagsForCloudCredentials={sinon.stub()}
         listRegions={listRegions}
-        listTemplates={listTemplates}
         setCredential={sinon.stub()}
         setRegion={sinon.stub()}
         setTemplate={sinon.stub()}
-        users={{}}
+        users={users}
         validateForm={sinon.stub()} />, true);
     renderer.unmount();
-    assert.equal(abort.callCount, 2);
+    assert.equal(abort.callCount, 1);
   });
 
   it('can navigate to the add credentials form', function() {
@@ -355,7 +359,6 @@ describe('DeploymentCredential', function() {
     var setCredential = sinon.stub();
     var setRegion = sinon.stub();
     var setTemplate = sinon.stub();
-    var users = {};
     var validateForm = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
@@ -363,10 +366,10 @@ describe('DeploymentCredential', function() {
         addTemplate={addTemplate}
         cloud="azure"
         clouds={clouds}
-        listRegions={
-          sinon.stub().callsArgWith(1, null, regions)}
-        listTemplates={
-          sinon.stub().callsArgWith(0, null, credentials)}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
+        getTagsForCloudCredentials={
+          sinon.stub().callsArgWith(1, null, tags)}
+        listRegions={sinon.stub().callsArgWith(1, null, regions)}
         setCredential={setCredential}
         setRegion={setRegion}
         setTemplate={setTemplate}
@@ -375,7 +378,6 @@ describe('DeploymentCredential', function() {
     var instance = renderer.getMountedInstance();
     instance._handleCredentialChange('add-credential');
     var output = renderer.getRenderOutput();
-    // output = renderer.render();
     var expected = (
       <div>
         <juju.components.ExpandingRow
