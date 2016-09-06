@@ -1081,34 +1081,6 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     /**
-     * Show the 'cannot destroy sub rel' dialog.
-     *
-     * @method showSubRelDialog
-     */
-    showSubRelDialog: function() {
-      var subRelDialog = views.createModalPanel(
-          'You may not remove a subordinate relation.',
-          '#rmsubrelation-modal-panel');
-      subRelDialog.addButton(
-          { value: 'Cancel',
-            section: Y.WidgetStdMod.FOOTER,
-            /**
-             * @method action Hides the dialog on click.
-             * @param {object} e The click event.
-             * @return {undefined} nothing.
-             */
-            action: function(e) {
-              e.preventDefault();
-              subRelDialog.hide();
-              subRelDialog.destroy();
-            },
-            classNames: ['button']
-          });
-      subRelDialog.get('boundingBox').all('.yui3-button')
-              .removeClass('yui3-button');
-    },
-
-    /**
      * Show the menu containing all of the relations for a given relation
      * collection.
      *
@@ -1160,15 +1132,19 @@ YUI.add('juju-topology-relation', function(Y) {
       var relation = db.relations.getById(relationId);
       relation = self.decorateRelations([relation])[0];
       topo.fire('clearState');
-      if (relation.isSubordinate) {
-        self.showSubRelDialog();
+      if (relation.isSubordinate && !relation.relations[0].pending) {
+        db.notifications.add({
+          title: 'Subordinate relations can\'t be removed',
+          message: 'Subordinate relations can\'t be removed',
+          level: 'error'
+        });
       } else {
         relationUtils.destroyRelations(
           topo.get('db'), topo.get('env'), [relationId]);
-        // The state needs to be cleared after the relation is destroyed as well
-        // to hide the destroy relation popup.
-        topo.fire('clearState');
       }
+      // The state needs to be cleared after the relation is destroyed as well
+      // to hide the destroy relation popup.
+      topo.fire('clearState');
     },
 
     /**

@@ -65,6 +65,7 @@ describe('Configuration', function() {
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
         service={service}
+        serviceRelations={[]}
         setConfig={setConfig}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />);
@@ -108,6 +109,7 @@ describe('Configuration', function() {
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
         service={service}
+        serviceRelations={[]}
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />);
@@ -146,6 +148,7 @@ describe('Configuration', function() {
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
         service={service}
+        serviceRelations={[]}
         setConfig={setConfig}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()}/>);
@@ -209,6 +212,7 @@ describe('Configuration', function() {
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
         service={service}
+        serviceRelations={[]}
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={updateUnit}/>);
@@ -271,6 +275,7 @@ describe('Configuration', function() {
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
         service={service}
+        serviceRelations={[]}
         setConfig={setConfig}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
@@ -281,7 +286,74 @@ describe('Configuration', function() {
         <span>Choose Series</span>
         <select
           className="inspector-config__select"
+          disabled={false}
           onChange={instance._handleSeriesChange}
+          title={undefined}
+          value='trusty'>
+          {[<option key="precise" value="precise">precise</option>,
+            <option key="trusty" value="trusty">trusty</option>]}
+        </select>
+        <span className="inspector-config__series-select-description">
+          Choose the series to deploy. This cannot be
+          changed once the application is deployed.
+        </span>
+      </div>);
+    assert.deepEqual(output.props.children[0].props.children[1], expected);
+  });
+
+  it('disables the series select if there are existing relations', function() {
+    var option1 = { key: 'option1key', type: 'string' };
+    var option1key = 'string body value';
+    var charm = {
+      get: function(val) {
+        // Return the charm options.
+        if (val === 'options') {
+          return { option1: option1 };
+        }
+        if (val === 'series') {
+          return ['precise', 'trusty'];
+        }
+      }};
+    var service = {
+      get: function(val) {
+        if (val === 'id') {
+          return 'abc123';
+        }
+        if (val === 'series') {
+          return 'trusty';
+        }
+        if (val === 'pending') {
+          return true;
+        }
+        // Return the config options
+        return { option1: option1key };
+      }};
+    var setConfig = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Configuration
+        acl={acl}
+        addNotification={sinon.stub()}
+        changeState={sinon.stub()}
+        charm={charm}
+        getServiceByName={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
+        service={service}
+        serviceRelations={['one']}
+        setConfig={setConfig}
+        unplaceServiceUnits={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
+    var output = renderer.getRenderOutput();
+    var instance = renderer.getMountedInstance();
+    var expected = (
+      <div className="inspector-config__series-select">
+        <span>Choose Series</span>
+        <select
+          className="inspector-config__select"
+          disabled={true}
+          onChange={instance._handleSeriesChange}
+          title={'The series for this subordinate has been set ' +
+            'to the application it is related to.'}
           value='trusty'>
           {[<option key="precise" value="precise">precise</option>,
             <option key="trusty" value="trusty">trusty</option>]}
@@ -331,6 +403,7 @@ describe('Configuration', function() {
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
         service={service}
+        serviceRelations={[]}
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />);
@@ -378,6 +451,7 @@ describe('Configuration', function() {
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
         service={service}
+        serviceRelations={[]}
         setConfig={sinon.stub()}
         unplaceServiceUnits={unplaceServiceUnits}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
@@ -430,6 +504,7 @@ describe('Configuration', function() {
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
         service={service}
+        serviceRelations={[]}
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={updateUnit}/>);
@@ -478,6 +553,7 @@ describe('Configuration', function() {
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
         service={service}
+        serviceRelations={[]}
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()}/>);
@@ -503,6 +579,7 @@ describe('Configuration', function() {
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
         service={service}
+        serviceRelations={[]}
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()}/>);
@@ -537,6 +614,7 @@ describe('Configuration', function() {
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
         service={service}
+        serviceRelations={[]}
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()}/>, true);
@@ -569,6 +647,7 @@ describe('Configuration', function() {
         getYAMLConfig={getYAMLConfig}
         linkify={sinon.stub()}
         service={service}
+        serviceRelations={[]}
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
@@ -614,6 +693,7 @@ describe('Configuration', function() {
         getYAMLConfig={getYAMLConfig}
         linkify={sinon.stub()}
         service={service}
+        serviceRelations={[]}
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
@@ -669,6 +749,7 @@ describe('Configuration', function() {
         getYAMLConfig={getYAMLConfig}
         linkify={sinon.stub()}
         service={service}
+        serviceRelations={[]}
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);
@@ -720,6 +801,7 @@ describe('Configuration', function() {
         getYAMLConfig={sinon.stub()}
         linkify={sinon.stub()}
         service={service}
+        serviceRelations={[]}
         setConfig={setConfig}
         unplaceServiceUnits={sinon.stub()}
         updateServiceUnitsDisplayname={sinon.stub()} />, true);

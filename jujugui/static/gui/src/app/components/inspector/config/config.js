@@ -30,6 +30,7 @@ YUI.add('inspector-config', function() {
       getYAMLConfig: React.PropTypes.func.isRequired,
       linkify: React.PropTypes.func.isRequired,
       service: React.PropTypes.object.isRequired,
+      serviceRelations: React.PropTypes.array.isRequired,
       setConfig: React.PropTypes.func.isRequired,
       unplaceServiceUnits: React.PropTypes.func.isRequired,
       updateServiceUnitsDisplayname: React.PropTypes.func.isRequired
@@ -333,7 +334,8 @@ YUI.add('inspector-config', function() {
       @method _generateMultiSeriesSelector
     */
     _generateMultiSeriesSelector: function() {
-      var series = this.props.charm.get('series');
+      const series = this.props.charm.get('series');
+      const hasRelations = this.props.serviceRelations.length > 0;
       if (!this.props.service.get('pending') || !Array.isArray(series)) {
         // If the application is deployed or if it's not a multi-series
         // charm then nothing needs to happen here.
@@ -344,7 +346,11 @@ YUI.add('inspector-config', function() {
           <span>Choose Series</span>
           <select
             className="inspector-config__select"
+            disabled={hasRelations}
             onChange={this._handleSeriesChange}
+            title={
+              hasRelations ? 'The series for this subordinate has been set ' +
+              'to the application it is related to.' : undefined}
             value={this.state.series}>
             {series.map(name =>
               <option key={name} value={name}>{name}</option>)}

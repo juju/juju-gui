@@ -680,37 +680,20 @@ describe('RelationUtils', function() {
       var env = {
         add_relation: sinon.stub()
       };
-      var relations = [{
-        service: '19984570$',
-        name: 'db',
-        type: 'mysql'
-      }, {
-        service: '23212464$',
-        name: 'db',
-        type: 'mysql'
-      }];
       var endpoints = [[
-        relations[0].service, {
-          name: relations[0].name,
+        '19984570$', {
+          name: 'db',
           role: 'client'
         }
       ], [
-        relations[1].service, {
-          name: relations[1].name,
+        '23212464$', {
+          name: 'db',
           role: 'server'
         }
       ]];
       relationUtils.createRelation(
         db, env, endpoints, sinon.stub());
       assert.equal(db.relations.add.callCount, 1);
-      var endpoints = [[
-        '19984570$', {
-          name: 'db', role: 'client'
-        }],
-        ['23212464$', {
-          name: 'db', role: 'server'
-        }]
-      ];
       assert.deepEqual(db.relations.add.lastCall.args[0], {
         relation_id: relationId,
         interface: 'db',
@@ -737,6 +720,286 @@ describe('RelationUtils', function() {
         pending: false,
         scope: 'global'
       });
+    });
+
+    it('relates a subordinate with a matching series', function() {
+      var relationId = 'pending-19984570$:db23212464$:db';
+      var charmGet = sinon.stub();
+      charmGet.withArgs('requires').onFirstCall().returns({
+        db: {
+          interface: 'db',
+          scope: 'global'
+        }
+      });
+      charmGet.withArgs('requires').onSecondCall().returns({
+        misc: {
+          interface: 'misc',
+          scope: 'global'
+        }
+      });
+      charmGet.withArgs('provides').returns({
+        db: {
+          interface: 'db',
+          scope: 'global'
+        }
+      });
+      var serviceSet = sinon.stub();
+      var serviceGet = sinon.stub();
+      serviceGet.withArgs('subordinate').onFirstCall().returns(true);
+      serviceGet.withArgs('subordinate').onSecondCall().returns(false);
+      serviceGet.withArgs('series').returns('xenial');
+      var db = {
+        charms: {
+          getById: sinon.stub().returns({
+            get: charmGet
+          }),
+          size: sinon.stub()
+        },
+        relations: {
+          add: sinon.stub(),
+          remove: sinon.stub(),
+          create: sinon.stub(),
+          getById: sinon.stub().returns(relationId)
+        },
+        services: {
+          getById: sinon.stub().returns({
+            get: serviceGet,
+            set: serviceSet
+          })
+        }
+      };
+      var env = {
+        add_relation: sinon.stub()
+      };
+      var endpoints = [[
+        '19984570$', {
+          name: 'db',
+          role: 'client'
+        }
+      ], [
+        '23212464$', {
+          name: 'db',
+          role: 'server'
+        }
+      ]];
+      relationUtils.createRelation(
+        db, env, endpoints, sinon.stub());
+      assert.equal(db.relations.add.callCount, 1);
+      assert.deepEqual(db.relations.add.lastCall.args[0], {
+        relation_id: relationId,
+        interface: 'db',
+        endpoints: endpoints,
+        pending: true,
+        scope: 'global',
+        display_name: 'pending'
+      });
+      assert.equal(env.add_relation.callCount, 1);
+      assert.deepEqual(env.add_relation.lastCall.args[0], endpoints[0]);
+      assert.deepEqual(env.add_relation.lastCall.args[1], endpoints[1]);
+      // Call the add_relation callback.
+      env.add_relation.lastCall.args[2]({
+        result: { id: 'foo', 'interface': 'bar', scope: 'global' }
+      });
+      // Callback method assertions.
+      assert.equal(db.relations.remove.callCount, 1);
+      assert.equal(db.relations.remove.lastCall.args[0], relationId);
+      assert.equal(db.relations.create.callCount, 1);
+      assert.deepEqual(db.relations.create.lastCall.args[0], {
+        relation_id: 'foo',
+        type: 'bar',
+        endpoints: endpoints,
+        pending: false,
+        scope: 'global'
+      });
+      assert.equal(serviceSet.callCount, 0);
+    });
+
+    it('relates multi-series subordinate with non-matching series', function() {
+      var relationId = 'pending-19984570$:db23212464$:db';
+      var charmGet = sinon.stub();
+      charmGet.withArgs('requires').onFirstCall().returns({
+        db: {
+          interface: 'db',
+          scope: 'global'
+        }
+      });
+      charmGet.withArgs('requires').onSecondCall().returns({
+        misc: {
+          interface: 'misc',
+          scope: 'global'
+        }
+      });
+      charmGet.withArgs('provides').returns({
+        db: {
+          interface: 'db',
+          scope: 'global'
+        }
+      });
+      var serviceSet = sinon.stub();
+      var serviceGet = sinon.stub();
+      serviceGet.withArgs('subordinate').onFirstCall().returns(true);
+      serviceGet.withArgs('subordinate').onSecondCall().returns(false);
+      serviceGet.withArgs('series').onFirstCall().returns('trusty');
+      serviceGet.withArgs('series').onSecondCall().returns('xenial');
+      var db = {
+        charms: {
+          getById: sinon.stub().returns({
+            get: charmGet
+          }),
+          size: sinon.stub()
+        },
+        relations: {
+          add: sinon.stub(),
+          remove: sinon.stub(),
+          create: sinon.stub(),
+          getById: sinon.stub().returns(relationId),
+          get_relations_for_service: sinon.stub().returns([])
+        },
+        services: {
+          getById: sinon.stub().returns({
+            get: serviceGet,
+            set: serviceSet
+          })
+        }
+      };
+      var env = {
+        add_relation: sinon.stub()
+      };
+      var endpoints = [[
+        '19984570$', {
+          name: 'db',
+          role: 'client'
+        }
+      ], [
+        '23212464$', {
+          name: 'db',
+          role: 'server'
+        }
+      ]];
+      relationUtils.createRelation(
+        db, env, endpoints, sinon.stub());
+      assert.equal(db.relations.add.callCount, 1);
+      assert.deepEqual(db.relations.add.lastCall.args[0], {
+        relation_id: relationId,
+        interface: 'db',
+        endpoints: endpoints,
+        pending: true,
+        scope: 'global',
+        display_name: 'pending'
+      });
+      assert.equal(env.add_relation.callCount, 1);
+      assert.deepEqual(env.add_relation.lastCall.args[0], endpoints[0]);
+      assert.deepEqual(env.add_relation.lastCall.args[1], endpoints[1]);
+      // Call the add_relation callback.
+      env.add_relation.lastCall.args[2]({
+        result: { id: 'foo', 'interface': 'bar', scope: 'global' }
+      });
+      // Callback method assertions.
+      assert.equal(db.relations.remove.callCount, 1);
+      assert.equal(db.relations.remove.lastCall.args[0], relationId);
+      assert.equal(db.relations.create.callCount, 1);
+      assert.deepEqual(db.relations.create.lastCall.args[0], {
+        relation_id: 'foo',
+        type: 'bar',
+        endpoints: endpoints,
+        pending: false,
+        scope: 'global'
+      });
+      assert.equal(serviceSet.callCount, 1);
+      assert.equal(serviceSet.args[0][0], 'series');
+      assert.equal(serviceSet.args[0][1], 'trusty');
+    });
+
+    it('does not relate a multi-series subordinate with relation', function() {
+      var relationId = 'pending-19984570$:db23212464$:db';
+      var charmGet = sinon.stub();
+      charmGet.withArgs('requires').onFirstCall().returns({
+        db: {
+          interface: 'db',
+          scope: 'global'
+        }
+      });
+      charmGet.withArgs('requires').onSecondCall().returns({
+        misc: {
+          interface: 'misc',
+          scope: 'global'
+        }
+      });
+      charmGet.withArgs('provides').returns({
+        db: {
+          interface: 'db',
+          scope: 'global'
+        }
+      });
+      var serviceSet = sinon.stub();
+      var serviceGet = sinon.stub();
+      serviceGet.withArgs('subordinate').onFirstCall().returns(true);
+      serviceGet.withArgs('subordinate').onSecondCall().returns(false);
+      serviceGet.withArgs('series').onFirstCall().returns('trusty');
+      serviceGet.withArgs('series').onSecondCall().returns('xenial');
+      var db = {
+        charms: {
+          getById: sinon.stub().returns({
+            get: charmGet
+          }),
+          size: sinon.stub()
+        },
+        notifications: {
+          add: sinon.stub()
+        },
+        relations: {
+          add: sinon.stub(),
+          remove: sinon.stub(),
+          create: sinon.stub(),
+          getById: sinon.stub().returns(relationId),
+          get_relations_for_service: sinon.stub().returns([{
+            getAttrs: sinon.stub().returns({
+              endpoints: [[{
+                role: 'role',
+                name: 'name'
+              }, {
+                role: 'role',
+                name: 'name'
+              }], [{
+                role: 'role',
+                name: 'name'
+              }, {
+                role: 'role',
+                name: 'name'
+              }]],
+              relation_id: 'relid'
+            })
+          }])
+        },
+        services: {
+          getById: sinon.stub().returns({
+            get: serviceGet,
+            set: serviceSet
+          })
+        }
+      };
+      var env = {
+        add_relation: sinon.stub()
+      };
+      var endpoints = [[
+        '19984570$', {
+          name: 'db',
+          role: 'client'
+        }
+      ], [
+        '23212464$', {
+          name: 'db',
+          role: 'server'
+        }
+      ]];
+      relationUtils.createRelation(
+        db, env, endpoints, sinon.stub());
+      assert.equal(db.relations.add.callCount, 0);
+      assert.equal(env.add_relation.callCount, 0);
+      assert.equal(db.relations.remove.callCount, 0);
+      assert.equal(db.relations.create.callCount, 0);
+      assert.equal(serviceSet.callCount, 0);
+      assert.equal(db.notifications.add.callCount, 1);
     });
   });
 

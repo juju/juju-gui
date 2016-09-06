@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('relation-utils', function(Y) {
 
-  var RelationUtils = {};
+  const RelationUtils = {};
 
   /**
     Create a hash of a string. From stackoverflow: http://goo.gl/PEOgF
@@ -523,11 +523,53 @@ YUI.add('relation-utils', function(Y) {
     @param {Function} callback A function to call after removal.
   */
   RelationUtils.createRelation = function(db, env, endpoints, callback) {
-    var endpointData = RelationUtils.parseEndpointStrings(
+    const endpointData = RelationUtils.parseEndpointStrings(
       db, [endpoints[0][0], endpoints[1][0]]);
-    var match = RelationUtils.findEndpointMatch(endpointData);
-    var relationId = `pending-${endpoints[0][0]}:${endpoints[0][1].name}` +
+    const match = RelationUtils.findEndpointMatch(endpointData);
+    const relationId = `pending-${endpoints[0][0]}:${endpoints[0][1].name}` +
       `${endpoints[1][0]}:${endpoints[1][1].name}`;
+    const service1 = endpointData[0].service;
+    const service2 = endpointData[1].service;
+    let subordinate;
+    let application;
+    // Figure out if one of the services is a subordinate.
+    if (service1.get('subordinate')) {
+      subordinate = service1;
+      application = service2;
+    } else if (service2.get('subordinate')) {
+      subordinate = service2;
+      application = service1;
+    }
+    if (subordinate) {
+      const appSeries = application.get('series');
+      // If there selected subordinate series does not match the application we
+      // are relating it to then it must be a multi-series subordinate and we
+      // need to update the series to match.
+      if (subordinate.get('series') !== appSeries) {
+        const existingRelations = RelationUtils.getRelationDataForService(
+          db, subordinate);
+        // If there is an existing relation then we don't want to update the
+        // relation otherwise it will not match the existing application.
+        if (existingRelations.length === 0) {
+          // Update the subordinate series to match the application. We know
+          // that the subordinate is a multi-series charm with a series that
+          // matches the application otherwise we would not have got matching
+          // endpoints.
+          subordinate.set('series', appSeries);
+        } else {
+          // If there is an existing relation then show an error and cancel
+          // adding the relation.
+          db.notifications.add({
+            title: 'Subordinate series does not match',
+            message: 'Subordinates can only be related to applications with ' +
+              'the same series. This subordinate already has a relation to an' +
+              ' application with a different series.',
+            level: 'error'
+          });
+          return;
+        }
+      }
+    }
     db.relations.add({
       relation_id: relationId,
       'interface': match.interface,

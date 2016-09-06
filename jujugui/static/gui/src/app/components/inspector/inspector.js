@@ -268,6 +268,7 @@ YUI.add('inspector-component', function() {
                 addNotification={this.props.addNotification}
                 linkify={this.props.linkify}
                 unplaceServiceUnits={this.props.unplaceServiceUnits}
+                serviceRelations={this.props.serviceRelations}
                 setConfig={nextProps.setConfig} />,
             backState: {
               sectionA: {

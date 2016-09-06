@@ -302,7 +302,8 @@ describe('Inspector', function() {
           addNotification={addNotification}
           unplaceServiceUnits={unplaceServiceUnits}
           linkify={linkify}
-          getServiceByName={getServiceByName} />);
+          getServiceByName={getServiceByName}
+          serviceRelations={[]} />);
   });
 
   it('displays the unit details when the app state calls for it', function() {
