@@ -23,7 +23,7 @@ YUI.add('env-switcher', function() {
   var EnvSwitcher = React.createClass({
     propTypes: {
       environmentName: React.PropTypes.string,
-      listModels: React.PropTypes.func.isRequired,
+      listModels: React.PropTypes.func,
       showProfile: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired
     },
