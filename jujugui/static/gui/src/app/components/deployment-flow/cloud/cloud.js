@@ -23,7 +23,7 @@ YUI.add('deployment-cloud', function() {
   juju.components.DeploymentCloud = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      cloud: React.PropTypes.string,
+      cloud: React.PropTypes.object,
       clouds: React.PropTypes.object.isRequired,
       listClouds: React.PropTypes.func.isRequired,
       setCloud: React.PropTypes.func.isRequired
@@ -44,9 +44,16 @@ YUI.add('deployment-cloud', function() {
         }
         const cloudList = [];
         if (clouds) {
-          cloudList = Object.keys(clouds).map(cloud => clouds[cloud].name);
+          cloudList = Object.keys(clouds).map(id => {
+            const cloud = clouds[id];
+            cloud.id = id;
+            return cloud;
+          });
         }
-        cloudList.push('local');
+        cloudList.push({
+          id: 'local',
+          name: 'Local'
+        });
         this.setState({
           clouds: cloudList,
           cloudsLoading: false
@@ -78,7 +85,7 @@ YUI.add('deployment-cloud', function() {
           {'last-col': i % 3 === 2});
         clouds.push(
           <li className={classes}
-            key={cloud}
+            key={cloud.id}
             onClick={this.props.setCloud.bind(null, cloud)}
             role="button"
             tabIndex="0">
@@ -114,22 +121,19 @@ YUI.add('deployment-cloud', function() {
       Generate the logo for a cloud;
 
       @method _generateLogo
-      @param {String} id A cloud id.
+      @param {Object} cloud A cloud.
       @returns {Array} The logo.
     */
-    _generateLogo: function(id) {
-      if (!id) {
-        return;
+    _generateLogo: function(cloud) {
+      var info = this.props.clouds[cloud.id.replace('cloud-', '')];
+      if (!info) {
+        return cloud.name;
       }
-      var cloud = this.props.clouds[id];
-      if (!cloud) {
-        return id;
-      }
-      return cloud.showLogo ? (
+      return info.showLogo ? (
         <juju.components.SvgIcon
-        height={cloud.svgHeight}
-        name={cloud.id}
-        width={cloud.svgWidth} />) : cloud.title;
+        height={info.svgHeight}
+        name={info.id}
+        width={info.svgWidth} />) : info.title;
     },
 
     render: function() {

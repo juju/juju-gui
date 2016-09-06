@@ -269,7 +269,7 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
-    instance._setCloud('cloud');
+    instance._setCloud({id: 'cloud'});
     instance._setCredential('cred');
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
@@ -349,7 +349,7 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
-    instance._setCloud('local');
+    instance._setCloud({id: 'local'});
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
       .props.children.props.children;
@@ -408,7 +408,7 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
-    instance._setCloud('cloud');
+    instance._setCloud({id: 'cloud'});
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
       .props.children.props.children;
@@ -435,7 +435,7 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
-    instance._setCloud('cloud');
+    instance._setCloud({id: 'cloud'});
     instance._setCredential('cred');
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
@@ -463,7 +463,7 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
-    instance._setCloud('cloud');
+    instance._setCloud({id: 'cloud'});
     instance._setCredential('cred');
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
@@ -491,7 +491,7 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
-    instance._setCloud('cloud');
+    instance._setCloud({id: 'cloud'});
     instance._setCredential('cred');
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
@@ -520,7 +520,7 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
-    instance._setCloud('cloud');
+    instance._setCloud({id: 'cloud'});
     instance._setCredential('cred');
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
@@ -551,7 +551,7 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
-    instance._setCloud('cloud');
+    instance._setCloud({id: 'cloud'});
     instance._setCredential('cred');
     instance._setRegion('north');
     var output = renderer.getRenderOutput();

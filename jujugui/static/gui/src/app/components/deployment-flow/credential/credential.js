@@ -24,7 +24,7 @@ YUI.add('deployment-credential', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addTemplate: React.PropTypes.func.isRequired,
-      cloud: React.PropTypes.string,
+      cloud: React.PropTypes.object,
       clouds: React.PropTypes.object.isRequired,
       credential: React.PropTypes.string,
       getCloudCredentials: React.PropTypes.func.isRequired,
@@ -57,7 +57,9 @@ YUI.add('deployment-credential', function() {
     },
 
     componentDidUpdate: function(prevProps) {
-      if (prevProps.cloud !== this.props.cloud) {
+      const prevId = prevProps.cloud && prevProps.cloud.id;
+      const newId = this.props.cloud && this.props.cloud.id;
+      if (newId !== prevId) {
         this._getCredentials();
         this._getRegions();
       }
@@ -75,12 +77,11 @@ YUI.add('deployment-credential', function() {
       @method _getCredentials
     */
     _getCredentials: function() {
-      const cloud = this.props.cloud;
+      const cloud = this.props.cloud && this.props.cloud.id;
       const user = this.props.users.jem.user;
       if (user) {
         this.props.getTagsForCloudCredentials(
-          [[user, `cloud-${cloud}`]],
-          this._getTagsCallback);
+          [[user, cloud]], this._getTagsCallback);
       }
     },
 

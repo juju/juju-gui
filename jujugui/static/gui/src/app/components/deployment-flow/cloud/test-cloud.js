@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentCloud', function() {
-  var acl, clouds;
+  let acl, clouds, cloudList;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -65,6 +65,11 @@ describe('DeploymentCloud', function() {
         title: 'Local'
       }
     };
+    cloudList = {
+      'cloud-google': {name: 'google'},
+      'cloud-azure': {name: 'azure'},
+      'cloud-aws': {name: 'aws'}
+    };
   });
 
   it('can render', function() {
@@ -73,8 +78,7 @@ describe('DeploymentCloud', function() {
         acl={acl}
         cloud={null}
         clouds={clouds}
-        listClouds={sinon.stub().callsArgWith(
-          0, null, [{name: 'google'}, {name: 'azure'}, {name: 'aws'}])}
+        listClouds={sinon.stub().callsArgWith(0, null, cloudList)}
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var options = output.props.children[0].props.children;
@@ -82,7 +86,7 @@ describe('DeploymentCloud', function() {
       <div>
         <ul className="deployment-cloud__list">
           <li className="deployment-cloud__cloud four-col"
-            key="google"
+            key="cloud-google"
             onClick={options[0].props.onClick}
             role="button"
             tabIndex="0">
@@ -94,7 +98,7 @@ describe('DeploymentCloud', function() {
             </span>
           </li>
           <li className="deployment-cloud__cloud four-col"
-            key="azure"
+            key="cloud-azure"
             onClick={options[1].props.onClick}
             role="button"
             tabIndex="0">
@@ -106,7 +110,7 @@ describe('DeploymentCloud', function() {
             </span>
           </li>
           <li className="deployment-cloud__cloud four-col last-col"
-            key="aws"
+            key="cloud-aws"
             onClick={options[2].props.onClick}
             role="button"
             tabIndex="0">
@@ -155,9 +159,9 @@ describe('DeploymentCloud', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCloud
         acl={acl}
-        cloud='google'
+        cloud={{name: 'google', id: 'cloud-google'}}
         clouds={clouds}
-        listClouds={sinon.stub().callsArgWith(0, null, [])}
+        listClouds={sinon.stub().callsArgWith(0, null, {})}
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -180,12 +184,11 @@ describe('DeploymentCloud', function() {
         acl={acl}
         cloud={null}
         clouds={clouds}
-        listClouds={sinon.stub().callsArgWith(
-          0, null, [{name: 'google'}, {name: 'azure'}, {name: 'aws'}])}
+        listClouds={sinon.stub().callsArgWith(0, null, cloudList)}
         setCloud={setCloud} />, true);
     var output = renderer.getRenderOutput();
     output.props.children[0].props.children[0].props.onClick();
     assert.equal(setCloud.callCount, 1);
-    assert.equal(setCloud.args[0][0], 'google');
+    assert.deepEqual(setCloud.args[0][0], {name: 'google', id: 'cloud-google'});
   });
 });
