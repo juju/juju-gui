@@ -1181,7 +1181,6 @@ describe('Controller API', function() {
       // Mimic response.
       conn.msg({'request-id': 1, error: 'bad wolf'});
     });
-
   });
 
   describe('getClouds', function() {
@@ -1305,7 +1304,6 @@ describe('Controller API', function() {
       // Mimic response.
       conn.msg({'request-id': 1, response: {}});
     });
-
   });
 
   describe('getDefaultCloudTag', function() {
@@ -1355,10 +1353,10 @@ describe('Controller API', function() {
         response: {error: {message: 'bad wolf'}}
       });
     });
-
   });
 
   describe('getTagsForCloudCredentials', function() {
+
     it('retrieves tags for cloud credentials', function(done) {
       // Perform the request.
       const pairs = [
@@ -1424,7 +1422,6 @@ describe('Controller API', function() {
       // Mimic response.
       conn.msg({'request-id': 1, response: {}});
     });
-
   });
 
   describe('getCloudCredentials', function() {
@@ -1512,7 +1509,158 @@ describe('Controller API', function() {
       // Mimic response.
       conn.msg({'request-id': 1, response: {}});
     });
+  });
 
+  describe('updateCloudCredential', function() {
+    it('updates cloud credentials', function(done) {
+      // Perform the request.
+      const tag = 'cloudcred-banna';
+      const authType = 'empty';
+      const attrs = {answer: '42'};
+      controllerAPI.updateCloudCredential(tag, authType, attrs, err => {
+        assert.strictEqual(err, null);
+        const msg = conn.last_message();
+        assert.deepEqual(msg, {
+          'request-id': 1,
+          type: 'Cloud',
+          request: 'UpdateCredentials',
+          version: 1,
+          params: {credentials: [{
+            tag: tag,
+            credential: {'auth-type': authType, attrs: attrs}
+          }]}
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: [{}]}
+      });
+    });
+
+    it('handles request failures while updating credentials', function(done) {
+      // Perform the request.
+      controllerAPI.updateCloudCredential('cloudcred-42', '', {}, err => {
+        assert.strictEqual(err, 'bad wolf');
+        done();
+      });
+      // Mimic response.
+      conn.msg({'request-id': 1, error: 'bad wolf'});
+    });
+
+    it('handles API failures while updating credentials', function(done) {
+      // Perform the request.
+      controllerAPI.updateCloudCredential('cloudcred-42', '', {}, err => {
+        assert.strictEqual(err, 'bad wolf');
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: [{error: {message: 'bad wolf'}}]}
+      });
+    });
+
+    it('fails for unexpected results updating credentials', function(done) {
+      // Perform the request.
+      controllerAPI.updateCloudCredential('cloudcred-42', '', {}, err => {
+        assert.strictEqual(err, 'invalid results returned by Juju: [{},{}]');
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: [{}, {}]}
+      });
+    });
+
+    it('fails for no results updating credentials', function(done) {
+      // Perform the request.
+      controllerAPI.updateCloudCredential('cloudcred-42', '', {}, err => {
+        assert.strictEqual(err, 'invalid results returned by Juju: []');
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: []}
+      });
+    });
+  });
+
+  describe('revokeCloudCredential', function() {
+    it('revokes cloud credentials', function(done) {
+      // Perform the request.
+      controllerAPI.revokeCloudCredential('cloudcred-banna', err => {
+        assert.strictEqual(err, null);
+        const msg = conn.last_message();
+        assert.deepEqual(msg, {
+          'request-id': 1,
+          type: 'Cloud',
+          request: 'RevokeCredentials',
+          version: 1,
+          params: {entities: [{
+            tag: 'cloudcred-banna',
+          }]}
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: [{}]}
+      });
+    });
+
+    it('handles request failures while revoking credentials', function(done) {
+      // Perform the request.
+      controllerAPI.revokeCloudCredential('cloudcred-42', err => {
+        assert.strictEqual(err, 'bad wolf');
+        done();
+      });
+      // Mimic response.
+      conn.msg({'request-id': 1, error: 'bad wolf'});
+    });
+
+    it('handles API failures while revoking credentials', function(done) {
+      // Perform the request.
+      controllerAPI.revokeCloudCredential('cloudcred-42', err => {
+        assert.strictEqual(err, 'bad wolf');
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: [{error: {message: 'bad wolf'}}]}
+      });
+    });
+
+    it('fails for unexpected results revoking credentials', function(done) {
+      // Perform the request.
+      controllerAPI.revokeCloudCredential('cloudcred-42', err => {
+        assert.strictEqual(err, 'invalid results returned by Juju: [{},{}]');
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: [{}, {}]}
+      });
+    });
+
+    it('fails for no results revoking credentials', function(done) {
+      // Perform the request.
+      controllerAPI.revokeCloudCredential('cloudcred-42', err => {
+        assert.strictEqual(err, 'invalid results returned by Juju: []');
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: []}
+      });
+    });
   });
 
 });
