@@ -26,7 +26,7 @@ YUI.add('header-breadcrumb', function() {
       envList: React.PropTypes.array,
       envName: React.PropTypes.string.isRequired,
       getAppState: React.PropTypes.func.isRequired,
-      listModels: React.PropTypes.func.isRequired,
+      listModels: React.PropTypes.func,
       showEnvSwitcher: React.PropTypes.bool.isRequired,
       showProfile: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
