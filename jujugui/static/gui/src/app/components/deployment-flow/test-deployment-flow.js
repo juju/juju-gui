@@ -44,7 +44,8 @@ describe('DeploymentFlow', function() {
     var listClouds = sinon.stub();
     var listPlansForCharm = sinon.stub();
     var listRegions = sinon.stub();
-    var listTemplates = sinon.stub();
+    var getCloudCredentials = sinon.stub();
+    var getTagsForCloudCredentials = sinon.stub();
     var servicesGetById = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentFlow
@@ -53,13 +54,14 @@ describe('DeploymentFlow', function() {
         changesFilterByParent={changesFilterByParent}
         changeState={changeState}
         deploy={sinon.stub()}
-        groupedChanges={{}}
         generateAllChangeDescriptions={generateAllChangeDescriptions}
+        getCloudCredentials={getCloudCredentials}
+        getTagsForCloudCredentials={getTagsForCloudCredentials}
+        groupedChanges={{}}
         listBudgets={listBudgets}
         listClouds={listClouds}
         listPlansForCharm={listPlansForCharm}
         listRegions={listRegions}
-        listTemplates={listTemplates}
         modelName="Pavlova"
         servicesGetById={servicesGetById}
         user={{}}
@@ -109,11 +111,12 @@ describe('DeploymentFlow', function() {
                   <juju.components.DeploymentCredential
                     acl={acl}
                     addTemplate={addTemplate}
-                    credential={null}
                     cloud={null}
                     clouds={instance.CLOUDS}
+                    credential={null}
+                    getCloudCredentials={getCloudCredentials}
+                    getTagsForCloudCredentials={getTagsForCloudCredentials}
                     listRegions={listRegions}
-                    listTemplates={listTemplates}
                     region={null}
                     setCredential={instance._setCredential}
                     setRegion={instance._setRegion}
@@ -223,12 +226,12 @@ describe('DeploymentFlow', function() {
         changeState={changeState}
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         groupedChanges={{}}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
-        listTemplates={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
@@ -251,14 +254,14 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addTemplate={sinon.stub()}
-        changeState={sinon.stub()}
         changes={{}}
+        changeState={sinon.stub()}
         deploy={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
-        listTemplates={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
@@ -279,14 +282,14 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addTemplate={sinon.stub()}
-        changeState={sinon.stub()}
         changes={{}}
+        changeState={sinon.stub()}
         deploy={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
-        listTemplates={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
@@ -304,14 +307,14 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addTemplate={sinon.stub()}
-        changeState={sinon.stub()}
         changes={{}}
+        changeState={sinon.stub()}
         deploy={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
-        listTemplates={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
@@ -331,14 +334,14 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addTemplate={sinon.stub()}
-        changeState={sinon.stub()}
         changes={{}}
+        changeState={sinon.stub()}
         deploy={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
-        listTemplates={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
@@ -358,14 +361,14 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addTemplate={sinon.stub()}
-        changeState={sinon.stub()}
         changes={{}}
+        changeState={sinon.stub()}
         deploy={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
-        listTemplates={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
@@ -390,14 +393,14 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addTemplate={sinon.stub()}
-        changeState={sinon.stub()}
         changes={{}}
+        changeState={sinon.stub()}
         deploy={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
-        listTemplates={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
@@ -417,14 +420,14 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addTemplate={sinon.stub()}
-        changeState={sinon.stub()}
         changes={{}}
+        changeState={sinon.stub()}
         deploy={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
-        listTemplates={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
@@ -445,14 +448,14 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addTemplate={sinon.stub()}
-        changeState={sinon.stub()}
         changes={{}}
+        changeState={sinon.stub()}
         deploy={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
-        listTemplates={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
@@ -473,14 +476,14 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addTemplate={sinon.stub()}
-        changeState={sinon.stub()}
         changes={{}}
+        changeState={sinon.stub()}
         deploy={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
-        listTemplates={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
         user={{}}
@@ -501,14 +504,14 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addTemplate={sinon.stub()}
-        changeState={sinon.stub()}
         changes={{}}
+        changeState={sinon.stub()}
         deploy={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
-        listTemplates={sinon.stub()}
         modelCommitted={true}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
@@ -532,14 +535,14 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addTemplate={sinon.stub()}
-        changeState={changeState}
         changes={{}}
+        changeState={changeState}
         deploy={deploy}
+        getCloudCredentials={sinon.stub()}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         listRegions={sinon.stub()}
-        listTemplates={sinon.stub()}
         modelCommitted={true}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
