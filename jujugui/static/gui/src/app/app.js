@@ -845,20 +845,26 @@ YUI.add('juju-gui', function(Y) {
       credentials, useMacaroons, apis=[this.env, this.controllerAPI]) {
       if (useMacaroons) {
         apis.forEach(api => {
-          api.loginWithMacaroon(new Y.juju.environments.web.Bakery({
-            webhandler: new Y.juju.environments.web.WebHandler(),
-            interactive: true,
-            serviceName: 'juju',
-            dischargeStore: window.localStorage
-          }), this._apiLoginHandler.bind(this, api));
+          // The api may be unset if the model does not support it.
+          if (api) {
+            api.loginWithMacaroon(new Y.juju.environments.web.Bakery({
+              webhandler: new Y.juju.environments.web.WebHandler(),
+              interactive: true,
+              serviceName: 'juju',
+              dischargeStore: window.localStorage
+            }), this._apiLoginHandler.bind(this, api));
+          }
         });
         return;
       }
       apis.forEach(api => {
-        if (credentials) {
-          api.setCredentials(credentials);
+        // The api may be unset if the model does not support it.
+        if (api) {
+          if (credentials) {
+            api.setCredentials(credentials);
+          }
+          api.login();
         }
-        api.login();
       });
     },
 
