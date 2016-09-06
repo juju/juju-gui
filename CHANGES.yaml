@@ -1,3 +1,17 @@
+- 2.1.11:
+
+    - Update the API facades to match the latest changes from Juju 2.
+    - Bundles now use "applications" top level key instead of "services".
+    - Use a different WebSocket connection for the model and controller.
+    - Create New Model buton moved into the user profile.
+    - Deploying bundles with lxc placements automatically convert to lxd.
+    - >
+      Multi-series subordinates now have their series locked to the series
+      of the first related parent application.
+    - (Fix) Local charms now deploy without issuing error about charm location.
+    - (Fix) Exported bundles now include the "availability-zone" constraint.
+    - (Fix) When relating to subordinates, invalid targets are now faded.
+
 - 2.1.10:
 
     - Various UX fixes for DF cloud section.
