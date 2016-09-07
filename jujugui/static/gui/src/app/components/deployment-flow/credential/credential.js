@@ -102,7 +102,7 @@ YUI.add('deployment-credential', function() {
       // pairs were passed to getTagsForCloudCredentials. As we're only passing
       // one pair we can safely assume that we only need the first item in the
       // array.
-      const tagList = tags && tags[0] && tags[0].tags || [];
+      const tagList = tags.length && tags[0].tags || [];
       this.props.getCloudCredentials(tagList, this._getCredentialsCallback);
     },
 
