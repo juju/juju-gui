@@ -98,10 +98,11 @@ YUI.add('deployment-credential', function() {
         console.error('Unable to get tags for credentials', error);
         return;
       }
-      const tagList = [];
-      tags.forEach(tag => {
-        tagList = tagList.concat(tag.tags);
-      });
+      // The resulting array of tags will be in the order that the cloud/user
+      // pairs were passed to getTagsForCloudCredentials. As we're only passing
+      // one pair we can safely assume that we only need the first item in the
+      // array.
+      const tagList = tags && tags[0] && tags[0].tags || [];
       this.props.getCloudCredentials(tagList, this._getCredentialsCallback);
     },
 
