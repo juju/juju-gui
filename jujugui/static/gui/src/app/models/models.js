@@ -2708,17 +2708,22 @@ YUI.add('juju-models', function(Y) {
       @return {String} The constraints in a string format.
     */
     _collapseMachineConstraints: function(constraints) {
-      var constraint = '';
-      var constraintMap = {
+      let constraint = '';
+      const constraintMap = {
         availabilityZone: 'availability-zone',
         cpuCores: 'cpu-cores',
         cpuPower: 'cpu-power',
         disk: 'root-disk'
       };
-      Object.keys(constraints).forEach(function(key) {
-        var value = constraints[key];
+      Object.keys(constraints).forEach(key => {
+        if (key === 'availabilityZone') {
+          // We do not want to export the availability-zone in the bundle
+          // export because it makes the bundles less sharable.
+          return;
+        }
+        const value = constraints[key];
         if (value) {
-          var property = constraintMap[key] || key;
+          const property = constraintMap[key] || key;
           constraint += property + '=' + value + ' ';
         }
       });
