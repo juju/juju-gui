@@ -121,15 +121,6 @@ describe('DeploymentCloud', function() {
                 width={120} />
             </span>
           </li>
-          <li className="deployment-cloud__cloud four-col"
-            key="local"
-            onClick={options[3].props.onClick}
-            role="button"
-            tabIndex="0">
-            <span className="deployment-cloud__cloud-logo">
-              Local
-            </span>
-          </li>
         </ul>
         {undefined}
       </div>);
