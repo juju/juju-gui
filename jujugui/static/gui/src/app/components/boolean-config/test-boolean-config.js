@@ -41,6 +41,7 @@ describe('BooleanConfig', function() {
         label="Test"
         option={option} />
     );
+    var input = output.props.children[0].props.children[1].props.children[0];
     var expected = (
       <div className="boolean-config">
         <div className="boolean-config--toggle-container">
@@ -50,8 +51,8 @@ describe('BooleanConfig', function() {
               disabled={false}
               type="checkbox"
               id={option.key}
-              onClick={output.props.children[0].props.children[1].props.children[0].props.onClick}
-              onChange={output.props.children[0].props.children[1].props.children[0].props.onChange}
+              onClick={input.props.onClick}
+              onChange={input.props.onChange}
               checked={true}
               className="boolean-config--input" />
             <label
@@ -80,6 +81,7 @@ describe('BooleanConfig', function() {
         label="Test"
         option={option} />
     );
+    var input = output.props.children[0].props.children[1].props.children[0];
     assert.deepEqual(output,
       <div className="boolean-config">
         <div className="boolean-config--toggle-container">
@@ -89,8 +91,8 @@ describe('BooleanConfig', function() {
               disabled={false}
               type="checkbox"
               id={option.key}
-              onClick={output.props.children[0].props.children[1].props.children[0].props.onClick}
-              onChange={output.props.children[0].props.children[1].props.children[0].props.onChange}
+              onClick={input.props.onClick}
+              onChange={input.props.onChange}
               checked={false}
               className="boolean-config--input" />
             <label
@@ -117,6 +119,7 @@ describe('BooleanConfig', function() {
         label="Test"
         option={option} />
     );
+    var input = output.props.children[0].props.children[1].props.children[0];
     assert.deepEqual(output,
       <div className="boolean-config">
         <div className="boolean-config--toggle-container">
@@ -126,8 +129,8 @@ describe('BooleanConfig', function() {
               disabled={false}
               type="checkbox"
               id={option.key}
-              onClick={output.props.children[0].props.children[1].props.children[0].props.onClick}
-              onChange={output.props.children[0].props.children[1].props.children[0].props.onChange}
+              onClick={input.props.onClick}
+              onChange={input.props.onChange}
               checked={true}
               className="boolean-config--input" />
             <label
@@ -154,6 +157,7 @@ describe('BooleanConfig', function() {
         label="Test"
         option={option} />
     );
+    var input = output.props.children[0].props.children[1].props.children[0];
     assert.deepEqual(output,
       <div className="boolean-config">
         <div className="boolean-config--toggle-container">
@@ -163,8 +167,8 @@ describe('BooleanConfig', function() {
               disabled={false}
               type="checkbox"
               id={option.key}
-              onClick={output.props.children[0].props.children[1].props.children[0].props.onClick}
-              onChange={output.props.children[0].props.children[1].props.children[0].props.onChange}
+              onClick={input.props.onClick}
+              onChange={input.props.onChange}
               checked={false}
               className="boolean-config--input" />
             <label
@@ -193,7 +197,8 @@ describe('BooleanConfig', function() {
         onChange={onChange}
         option={option} />
     );
-    output.props.children[0].props.children[1].props.children[0].props.onChange({
+    var input = output.props.children[0].props.children[1].props.children[0];
+    input.props.onChange({
       target: {
         checked: true
       }
@@ -233,15 +238,16 @@ describe('BooleanConfig', function() {
         label="Test"
         option={option} />
     );
+    var input = output.props.children[0].props.children[1].props.children[0];
     var expected = (
       <input
         disabled={true}
         type="checkbox"
         id={option.key}
-        onClick={output.props.children[0].props.children[1].props.children[0].props.onClick}
-        onChange={output.props.children[0].props.children[1].props.children[0].props.onChange}
+        onClick={input.props.onClick}
+        onChange={input.props.onChange}
         checked={true}
         className="boolean-config--input" />);
-    assert.deepEqual(output.props.children[0].props.children[1].props.children[0], expected);
+    assert.deepEqual(input, expected);
   });
 });
