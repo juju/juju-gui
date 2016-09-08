@@ -504,24 +504,46 @@ YUI.add('juju-controller-api', function(Y) {
     },
 
     /**
-      Create a new model within this controller, using the given name.
+      Create a new model within this controller, using the given name, account
+      and config.
 
       @method createModel
       @param {String} name The name of the new model.
       @param {String} userTag The name of the new model owner, including the
-        "user-" prefix.
+        "user-" prefix. If the user tag represents a local user, that user must
+        exist.
+      @param {Object} args Any other optional argument that can be provided
+        when creating a new model. This includes the following fields:
+        - config: the optional model config;
+        - cloudTag: the tag of the cloud to create the model in. If this is
+          empty/undefined the model will be created in the same cloud as the
+          controller model. A cloud tag is a cloud name prefixed with "cloud-";
+        - region: the name of the cloud region to create the model in. If the
+          cloud does not support regions, this must be empty/undefined. If this
+          is empty/undefined, and cloudTag is empty/undefined, the model will
+          be created in the same region as the controller model;
+        - credentialTag: the tag of the cloud credential to use for managing
+          the model's resources. If the cloud does not require credentials
+          this may be empty/undefined. If this is empty/undefined and the
+          owner is the controller owner then the same credential used for the
+          controller model will be used. A credential tag is a credential name
+          prefixed with "cloudcred-".
       @param {Function} callback A callable that must be called once the
-        operation is performed. It will receive an object with an "err"
-        attribute containing a string describing the problem (if an error
-        occurred), or with the following attributes if everything went well:
+        operation is performed. It will receive an error (as a string
+        describing the problem if any occurred, or null) and an object with the
+        following attributes:
         - name: the name of the new model;
         - uuid: the unique identifier of the new model;
-        - owner: the model owner tag;
-        - region: the cloud region.
-
+        - ownerTag: the model owner tag;
+        - provider: the model provider type;
+        - series: the model default series;
+        - cloud: the name of the cloud;
+        - region: the cloud region;
+        - credentialTag: the tag of the cloud credential used to create the
+          model.
       @return {undefined} Sends a message to the server only.
     */
-    createModel: function(name, userTag, callback) {
+    createModel: function(name, userTag, args, callback) {
       // Define the API callback.
       const handler = function(userCallback, data) {
         if (!userCallback) {
@@ -529,15 +551,19 @@ YUI.add('juju-controller-api', function(Y) {
           return;
         }
         if (data.error) {
-          userCallback({err: data.error});
+          userCallback(data.error, {});
           return;
         }
         const response = data.response;
-        userCallback({
+        userCallback(null, {
           name: response.name,
           uuid: response.uuid,
-          owner: response['owner-tag'],
-          region: response['cloud-region']
+          ownerTag: response['owner-tag'],
+          provider: response['provider-type'],
+          series: response['default-series'],
+          cloud: response.cloud,
+          region: response['cloud-region'],
+          credentialTag: response['cloud-credential-tag']
         });
       }.bind(this, callback);
 
@@ -550,7 +576,14 @@ YUI.add('juju-controller-api', function(Y) {
       this._send_rpc({
         type: 'ModelManager',
         request: 'CreateModel',
-        params: {name: name, 'owner-tag': userTag}
+        params: {
+          name: name,
+          'owner-tag': userTag,
+          config: args.config || undefined,
+          'cloud-tag': args.cloudTag || undefined,
+          region: args.region || undefined,
+          credential: args.credentialTag || undefined
+        }
       }, handler);
     },
 

@@ -2181,10 +2181,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('successfully creates a local model (legacy)', function(done) {
       env.set('providerType', 'local');
       env.set('facades', {'EnvironmentManager': [1]});
-      env.createModel('myenv', 'user-who', function(data) {
-        assert.strictEqual(data.err, undefined);
+      env.createModel('myenv', 'user-who', {}, (err, data) => {
+        assert.strictEqual(err, null);
         assert.strictEqual(data.name, 'myenv');
-        assert.strictEqual(data.owner, 'user-rose');
+        assert.strictEqual(data.ownerTag, 'user-rose');
         assert.strictEqual(data.uuid, 'unique-id');
         assert.equal(conn.messages.length, 3);
         assert.deepEqual(conn.messages[0], {
@@ -2241,9 +2241,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles failures while retrieving model skeleton', function(done) {
-      env.createModel('bad-env', 'user-dalek', function(data) {
-        assert.strictEqual(
-          data.err, 'cannot get configuration skeleton: bad wolf');
+      env.createModel('bad-env', 'user-dalek', {}, (err, data) => {
+        assert.strictEqual(err, 'cannot get configuration skeleton: bad wolf');
+        assert.deepEqual(data, {});
         done();
       });
       // Mimic the first response to ModelManager.ConfigSkeleton.
@@ -2251,9 +2251,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles failures while retrieving model config', function(done) {
-      env.createModel('bad-env', 'user-dalek', function(data) {
-        assert.strictEqual(
-          data.err, 'cannot get model configuration: bad wolf');
+      env.createModel('bad-env', 'user-dalek', {}, (err, data) => {
+        assert.strictEqual(err, 'cannot get model configuration: bad wolf');
+        assert.deepEqual(data, {});
         done();
       });
       // Mimic the first response to ModelManager.ConfigSkeleton.
@@ -2267,8 +2267,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles failures while creating models', function(done) {
       env.set('providerType', 'local');
-      env.createModel('bad-env', 'user-dalek', function(data) {
-        assert.strictEqual(data.err, 'bad wolf');
+      env.createModel('bad-env', 'user-dalek', {}, (err, data) => {
+        assert.strictEqual(err, 'bad wolf');
+        assert.deepEqual(data, {});
         done();
       });
       // Mimic the first response to ModelManager.ConfigSkeleton.

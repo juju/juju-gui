@@ -32,12 +32,12 @@ describe('UserProfileModelList', () => {
     controllerAPI = {
       findFacadeVersion: sinon.stub(),
       get: sinon.stub().returns('default'),
-      createModel: (modelName, userName, callback) => {
+      createModel: (modelName, userTag, args, callback) => {
         assert.equal(modelName, 'newmodelname', 'model name not set properly');
-        assert.equal(userName, 'test-owner', 'user name not set properly');
+        assert.equal(userTag, 'user-who', 'user name not set properly');
+        assert.deepEqual(args, {});
         // Simulate the model being created.
-        callback({
-          err: null,
+        callback(null, {
           uuid: 'abc123',
           name: modelName
         });
@@ -47,11 +47,11 @@ describe('UserProfileModelList', () => {
       uuid: 'model1',
       name: 'spinach/sandbox',
       lastConnection: 'today',
-      ownerTag: 'test-owner',
+      ownerTag: 'user-who',
       isAlive: true
     }];
     users = {charmstore: {
-      user: 'test-owner',
+      user: 'user-who',
       usernameDisplay: 'test owner'
     }};
   });
@@ -169,7 +169,7 @@ describe('UserProfileModelList', () => {
               --
             </span>
             <span className="user-profile__list-col two-col last-col">
-              test-owner
+              user-who
             </span>
           </juju.components.UserProfileEntity>]}
         </ul>
@@ -233,9 +233,9 @@ describe('UserProfileModelList', () => {
       uuid: 'model1',
       name: 'spinach/sandbox',
       lastConnection: 'today',
-      ownerTag: 'test-owner',
+      ownerTag: 'user-who',
       isAlive: true,
-      owner: 'test-owner'
+      owner: 'user-who'
     }], 'modelname', undefined]);
   });
 

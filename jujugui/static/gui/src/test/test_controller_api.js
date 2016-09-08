@@ -955,20 +955,36 @@ describe('Controller API', function() {
 
   describe('createModel', function() {
     it('successfully creates a model', function(done) {
-      controllerAPI.createModel('mymodel', 'user-who@external', function(data) {
-        assert.strictEqual(data.err, undefined);
+      const user = 'user-dalek@skaro';
+      const args = {
+        config: {answer: '42'},
+        cloudTag: 'cloud-lxd',
+        region: 'galaxy',
+        credentialTag: 'cloudcred-dalek'
+      };
+      controllerAPI.createModel('mymodel', user, args, (err, data) => {
+        assert.strictEqual(err, null);
         assert.strictEqual(data.name, 'mymodel');
         assert.strictEqual(data.uuid, 'unique-id');
-        assert.strictEqual(data.owner, 'user-rose@external');
+        assert.strictEqual(data.ownerTag, 'user-rose@external');
+        assert.strictEqual(data.provider, 'lxd');
+        assert.strictEqual(data.series, 'xenial');
+        assert.strictEqual(data.cloud, 'proxima-centauri');
         assert.strictEqual(data.region, 'alpha-quadrant');
+        assert.strictEqual(data.credentialTag, 'cloudcred-dalek');
         assert.equal(conn.messages.length, 1);
-        assert.deepEqual(conn.last_message(), {
+        const msg = conn.last_message();
+        assert.deepEqual(msg, {
           type: 'ModelManager',
           version: 2,
           request: 'CreateModel',
           params: {
             name: 'mymodel',
-            'owner-tag': 'user-who@external'
+            'owner-tag': user,
+            config: args.config,
+            'cloud-tag': args.cloudTag,
+            region: args.region,
+            credential: args.credentialTag
           },
           'request-id': 1
         });
@@ -981,18 +997,32 @@ describe('Controller API', function() {
           name: 'mymodel',
           uuid: 'unique-id',
           'owner-tag': 'user-rose@external',
-          'cloud-region': 'alpha-quadrant'
+          'provider-type': 'lxd',
+          'default-series': 'xenial',
+          cloud: 'proxima-centauri',
+          'cloud-region': 'alpha-quadrant',
+          'cloud-credential-tag': 'cloudcred-dalek'
         }
       });
     });
 
     it('adds local user domain when creating a model', function(done) {
-      controllerAPI.createModel('mymodel', 'user-cyberman', function(data) {
-        assert.strictEqual(data.err, undefined);
+      // Here we also check that empty/undefined/null args are ignored.
+      const args = {config: null, cloudTag: ''};
+      controllerAPI.createModel('mymodel', 'user-who', args, (err, data) => {
+        assert.strictEqual(err, null);
         assert.equal(conn.messages.length, 1);
-        var message = conn.last_message();
-        assert.strictEqual(
-          message.params['owner-tag'], 'user-cyberman@local');
+        const msg = conn.last_message();
+        assert.deepEqual(msg, {
+          type: 'ModelManager',
+          version: 2,
+          request: 'CreateModel',
+          params: {
+            name: 'mymodel',
+            'owner-tag': 'user-who@local'
+          },
+          'request-id': 1
+        });
         done();
       });
       // Mimic the response to ModelManager.CreateModel.
@@ -1002,14 +1032,19 @@ describe('Controller API', function() {
           name: 'mymodel',
           uuid: 'unique-id',
           'owner-tag': 'user-rose@local',
-          'cloud-region': 'delta-quadrant'
+          'provider-type': 'lxd',
+          'default-series': 'xenial',
+          cloud: 'proxima-centauri',
+          'cloud-region': 'delta-quadrant',
+          'cloud-credential-tag': 'cloudcred-dalek'
         }
       });
     });
 
     it('handles failures while creating models', function(done) {
-      controllerAPI.createModel('bad-model', 'user-dalek', function(data) {
-        assert.strictEqual(data.err, 'bad wolf');
+      controllerAPI.createModel('bad-model', 'user-dalek', {}, (err, data) => {
+        assert.strictEqual(err, 'bad wolf');
+        assert.deepEqual(data, {});
         done();
       });
       // Mimic the response to ModelManager.CreateModel.

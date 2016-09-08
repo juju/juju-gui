@@ -70,23 +70,22 @@ YUI.add('create-model-button', function() {
       // Because this will automatically connect to the model lets show
       // the connecting mask right now.
       props.showConnectingMask();
-      props.controllerAPI.createModel(
-        modelName.getValue(),
-        props.user.user,
-        data => {
-          const err = data.err;
-          if (err) {
-            props.addNotification({
-              title: 'Failed to create new Model',
-              message: err,
-              level: 'error'
-            });
-            console.error(err);
-            props.hideConnectingMask(false);
-            return;
-          }
+      const name = modelName.getValue();
+      const userTag = props.user.user;
+      const attrs = {};
+      props.controllerAPI.createModel(name, userTag, attrs, (err, data) => {
+        if (!err) {
           props.switchModel(data.uuid, data.name);
+          return;
+        }
+        props.addNotification({
+          title: 'Failed to create new model',
+          message: err,
+          level: 'error'
         });
+        console.error(err);
+        props.hideConnectingMask(false);
+      });
     },
 
     /**
