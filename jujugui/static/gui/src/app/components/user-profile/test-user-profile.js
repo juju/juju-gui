@@ -30,18 +30,18 @@ describe('UserProfile', () => {
 
   beforeEach(() => {
     users = {charmstore: {
-      user: 'test-owner',
+      user: 'user-dalek',
       usernameDisplay: 'test owner'
     }};
     controllerAPI = {
       findFacadeVersion: sinon.stub(),
       get: sinon.stub().returns('default'),
-      createModel: (modelName, userName, callback) => {
+      createModel: (modelName, userTag, args, callback) => {
         assert.equal(modelName, 'newmodelname', 'model name not set properly');
-        assert.equal(userName, 'test-owner', 'user name not set properly');
+        assert.equal(userTag, 'user-dalek', 'user name not set properly');
+        assert.deepEqual(args, {});
         // Simulate the model being created.
-        callback({
-          err: null,
+        callback(null, {
           uuid: 'abc123',
           name: modelName
         });

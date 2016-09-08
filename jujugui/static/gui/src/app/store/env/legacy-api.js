@@ -2399,35 +2399,42 @@ YUI.add('juju-env-legacy-api', function(Y) {
       @param {String} name The name of the new model.
       @param {String} userTag The name of the new model owner, including the
         "user-" prefix.
+      @param {Object} args Ignored and only present for forward compatibility
+        with the new Juju API.
       @param {Function} callback A callable that must be called once the
-        operation is performed. It will receive an object with an "err"
-        attribute containing a string describing the problem (if an error
-        occurred), or with the following attributes if everything went well:
+        operation is performed. It will receive an error (as a string
+        describing the problem if any occurred, or null) and an object with the
+        following attributes:
         - name: the name of the new model;
-        - owner: the model owner tag;
-        - uuid: the unique identifier of the new model.
+        - uuid: the unique identifier of the new model;
+        - ownerTag: the model owner tag.
       @return {undefined} Sends a message to the server only.
     */
-    createModel: function(name, userTag, callback) {
-      var intermediateCallback;
-      if (callback) {
-        // Capture the callback. No context is passed.
-        intermediateCallback = this._handleCreateModel.bind(null, callback);
-      } else {
-        intermediateCallback = function(callback, data) {
-          console.log('createModel done: err:', data.Error);
-        };
-      }
-      var facade = 'EnvironmentManager';
-      var request = 'CreateEnvironment';
+    createModel: function(name, userTag, args, callback) {
+      const handler = function(userCallback, data) {
+        if (!userCallback) {
+          console.log('data returned by CreateModel API call:', data);
+          return;
+        }
+        if (data.Error) {
+          userCallback(data.Error, {});
+          return;
+        }
+        const response = data.Response;
+        userCallback(null, {
+          name: response.Name,
+          uuid: response.UUID,
+          ownerTag: response.OwnerTag
+        });
+      }.bind(this, callback);
       // In order to create a new model, we first need to retrieve the
       // configuration skeleton for this provider.
       this._send_rpc({
-        Type: facade,
+        Type: 'EnvironmentManager',
         Request: 'ConfigSkeleton',
       }, data => {
         if (data.Error) {
-          intermediateCallback({
+          handler({
             Error: 'cannot get configuration skeleton: ' + data.Error
           });
           return;
@@ -2437,7 +2444,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
         // options for this specific model.
         this.environmentGet(data => {
           if (data.err) {
-            intermediateCallback({
+            handler({
               Error: 'cannot get model configuration: ' + data.err
             });
             return;
@@ -2456,35 +2463,12 @@ YUI.add('juju-env-legacy-api', function(Y) {
           // At this point, having both skeleton and model options, we
           // are ready to create the new model in this system.
           this._send_rpc({
-            Type: facade,
-            Request: request,
+            Type: 'EnvironmentManager',
+            Request: 'CreateEnvironment',
             Params: {OwnerTag: userTag, Config: config}
-          }, intermediateCallback);
+          }, handler);
         });
       });
-    },
-
-    /**
-      Transform the data returned from the juju-core createModel call into that
-      suitable for the user callback.
-
-      @method _handleCreateModel
-      @static
-      @param {Function} callback The originally submitted callback.
-      @param {Object} data The response returned by the server.
-    */
-    _handleCreateModel: function(callback, data) {
-      var transformedData = {
-        err: data.Error,
-      };
-      if (!data.Error) {
-        var response = data.Response;
-        transformedData.name = response.Name;
-        transformedData.owner = response.OwnerTag;
-        transformedData.uuid = response.UUID;
-      }
-      // Call the original user callback.
-      callback(transformedData);
     },
 
   /**

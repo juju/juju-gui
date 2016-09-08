@@ -32,19 +32,19 @@ describe('CreateModelButton', () => {
     controllerAPI = {
       findFacadeVersion: sinon.stub(),
       get: sinon.stub().returns('default'),
-      createModel: (modelName, userName, callback) => {
+      createModel: (modelName, userTag, args, callback) => {
         assert.equal(modelName, 'newmodelname', 'model name not set properly');
-        assert.equal(userName, 'test-owner', 'user name not set properly');
+        assert.equal(userTag, 'user-dalek', 'user tag not set properly');
+        assert.deepEqual(args, {});
         // Simulate the model being created.
-        callback({
-          err: null,
+        callback(null, {
           uuid: 'abc123',
           name: modelName
         });
       }
     };
     users = {charmstore: {
-      user: 'test-owner',
+      user: 'user-dalek',
       usernameDisplay: 'test owner'
     }};
   });
@@ -179,12 +179,12 @@ describe('CreateModelButton', () => {
   it('gracefully handles errors when creating new model', () => {
     // This test doesn't check the user interactions and animations, that
     // will need to be done with the uitest suite.
-    controllerAPI.createModel = (modelName, userName, callback) => {
+    controllerAPI.createModel = (modelName, userTag, args, callback) => {
       assert.equal(modelName, 'newmodelname', 'model name not set properly');
-      assert.equal(userName, 'test-owner', 'user name not set properly');
+      assert.equal(userTag, 'user-dalek', 'user name not set properly');
+      assert.deepEqual(args, {});
       // Simulate the model being created.
-      callback({
-        err: 'this is an error',
+      callback('this is an error', {
         uuid: 'abc123',
         name: modelName
       });
@@ -216,7 +216,7 @@ describe('CreateModelButton', () => {
     assert.equal(hideConnectingMask.callCount, 1, 'mask not hidden');
     assert.equal(addNotification.callCount, 1, 'notification not added');
     assert.deepEqual(addNotification.args[0][0], {
-      title: 'Failed to create new Model',
+      title: 'Failed to create new model',
       message: 'this is an error',
       level: 'error'
     });
