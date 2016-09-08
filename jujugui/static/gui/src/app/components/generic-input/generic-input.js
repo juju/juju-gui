@@ -25,7 +25,7 @@ YUI.add('generic-input', function() {
     propTypes: {
       disabled: React.PropTypes.bool,
       label: React.PropTypes.string,
-      placeholder: React.PropTypes.string.isRequired,
+      placeholder: React.PropTypes.string,
       required: React.PropTypes.bool,
       validate: React.PropTypes.array,
       value: React.PropTypes.string,

@@ -23,37 +23,31 @@ YUI.add('deployment-credential', function() {
   juju.components.DeploymentCredential = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      addTemplate: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.object,
       clouds: React.PropTypes.object.isRequired,
       credential: React.PropTypes.string,
       getCloudCredentials: React.PropTypes.func.isRequired,
       getTagsForCloudCredentials: React.PropTypes.func.isRequired,
-      listRegions: React.PropTypes.func.isRequired,
       region: React.PropTypes.string,
       setCredential: React.PropTypes.func.isRequired,
       setRegion: React.PropTypes.func.isRequired,
       setTemplate: React.PropTypes.func.isRequired,
       template: React.PropTypes.string,
-      users: React.PropTypes.object.isRequired,
+      updateCloudCredential: React.PropTypes.func.isRequired,
+      user: React.PropTypes.string,
       validateForm: React.PropTypes.func.isRequired
     },
-
-    regionsXHR: null,
 
     getInitialState: function() {
       return {
         credentials: [],
         credentialsLoading: true,
-        regions: [],
-        regionsLoading: true,
         showAdd: true
       };
     },
 
     componentWillMount: function() {
       this._getCredentials();
-      this._getRegions();
     },
 
     componentDidUpdate: function(prevProps) {
@@ -61,13 +55,6 @@ YUI.add('deployment-credential', function() {
       const newId = this.props.cloud && this.props.cloud.id;
       if (newId !== prevId) {
         this._getCredentials();
-        this._getRegions();
-      }
-    },
-
-    componentWillUnmount: function() {
-      if (this.regionsXHR) {
-        this.regionsXHR.abort();
       }
     },
 
@@ -78,7 +65,7 @@ YUI.add('deployment-credential', function() {
     */
     _getCredentials: function() {
       const cloud = this.props.cloud && this.props.cloud.id;
-      const user = this.props.users.jem.user;
+      const user = this.props.user;
       if (user) {
         this.props.getTagsForCloudCredentials(
           [[user, cloud]], this._getTagsCallback);
@@ -118,6 +105,7 @@ YUI.add('deployment-credential', function() {
         console.error('Unable to get credentials', error);
         return;
       }
+      console.log(credentials);
       const credentialList = Object.keys(credentials).map(
         credential => credentials[credential].name);
       this.setState({
@@ -129,41 +117,6 @@ YUI.add('deployment-credential', function() {
       if (credentials && credentialList.length > 0) {
         this.props.setCredential(credentialList[0]);
       }
-    },
-
-    /**
-      Request regions from JEM.
-
-      @method _getRegions
-    */
-    _getRegions: function() {
-      var props = this.props;
-      var cloud = props.cloud;
-      if (!cloud) {
-        this.setState({
-          regionsLoading: false
-        });
-        return;
-      }
-      this.regionsXHR = props.listRegions(cloud, this._getRegionsCallback);
-    },
-
-    /**
-      The method to be called when the regions reponse has been received.
-
-      @method _getRegionsCallback
-      @param {String} error An error message, or null if there's no error.
-      @param {Array} regions A list of the regions found.
-    */
-    _getRegionsCallback: function(error, regions) {
-      if (error) {
-        console.error('Unable to list templates', error);
-        return;
-      }
-      this.setState({
-        regions: regions,
-        regionsLoading: false
-      });
     },
 
     /**
@@ -216,10 +169,10 @@ YUI.add('deployment-credential', function() {
       @returns {Array} The list of region options.
     */
     _generateRegions: function() {
-      return this.state.regions.map((region) => {
+      return this.props.cloud.regions.map((region) => {
         return {
-          label: region,
-          value: region
+          label: region.name,
+          value: region.name
         };
       });
     },
@@ -267,15 +220,15 @@ YUI.add('deployment-credential', function() {
       return (
         <juju.components.DeploymentCredentialAdd
           acl={this.props.acl}
-          addTemplate={this.props.addTemplate}
           close={this._toggleAdd}
           cloud={this.props.cloud}
           clouds={this.props.clouds}
-          regions={this.state.regions}
+          regions={this.props.cloud && this.props.cloud.regions || []}
           setCredential={this.props.setCredential}
           setRegion={this.props.setRegion}
           setTemplate={this.props.setTemplate}
-          users={this.props.users}
+          updateCloudCredential={this.props.updateCloudCredential}
+          user={this.props.user}
           validateForm={this.props.validateForm} />);
     },
 
@@ -286,7 +239,7 @@ YUI.add('deployment-credential', function() {
       @returns {Object} The dom elements.
     */
     _generateContent: function() {
-      if (this.state.credentialsLoading || this.state.regionsLoading) {
+      if (this.state.credentialsLoading) {
         return (
           <div className="deployment-credential__loading">
             <juju.components.Spinner />

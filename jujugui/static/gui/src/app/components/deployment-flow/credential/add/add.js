@@ -23,15 +23,15 @@ YUI.add('deployment-credential-add', function() {
   juju.components.DeploymentCredentialAdd = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      addTemplate: React.PropTypes.func.isRequired,
       close: React.PropTypes.func.isRequired,
-      cloud: React.PropTypes.string,
+      cloud: React.PropTypes.object,
       clouds: React.PropTypes.object.isRequired,
       regions: React.PropTypes.array.isRequired,
       setCredential: React.PropTypes.func.isRequired,
       setRegion: React.PropTypes.func.isRequired,
       setTemplate: React.PropTypes.func.isRequired,
-      users: React.PropTypes.object.isRequired,
+      updateCloudCredential: React.PropTypes.func.isRequired,
+      user: React.PropTypes.string,
       validateForm: React.PropTypes.func.isRequired
     },
 
@@ -89,26 +89,28 @@ YUI.add('deployment-credential-add', function() {
         return;
       }
       // Add template
-      var user = this.props.users.jem.user;
+      var user = this.props.user;
       var templateName = this.refs.templateName.getValue();
       var template = this._generateTemplate();
-      this.props.addTemplate(
-        user, templateName, template, this._addTemplateCallback);
+      // TODO: update this call to pass the correct parameters for the new API.
+      this.props.updateCloudCredential(
+        user, templateName, template, this._updateCloudCredentialCallback);
     },
 
     /**
-      The method to be called once the addTemplate request is complete.
+      The method to be called once the updateCloudCredential request is
+      complete.
 
-      @method _addTemplateCallback
+      @method _updateCloudCredentialCallback
       @param {String} error An error message, or null if there's no error.
     */
-    _addTemplateCallback: function(error) {
+    _updateCloudCredentialCallback: function(error) {
       if (error) {
         console.error('Unable to add template', error);
         return;
       }
       const templateName = this.refs.templateName.getValue();
-      const user = this.props.users.jem.user;
+      const user = this.props.user;
       this.props.setCredential(`${user}/${templateName}`);
       this.props.setRegion(this._getRegion());
       this.props.setTemplate(this._generateTemplate());
@@ -133,7 +135,8 @@ YUI.add('deployment-credential-add', function() {
             used and manage or remove them via the account page.
           </p>
         </div>);
-      switch (this.props.cloud || this.DEFAULTCLOUD) {
+      const cloud = this.props.cloud;
+      switch (cloud && cloud.id || this.DEFAULTCLOUD) {
         case 'aws':
           return (
             <div>
@@ -237,8 +240,8 @@ YUI.add('deployment-credential-add', function() {
       }
       return regions.map((region) => {
         return {
-          label: region,
-          value: region
+          label: region.name,
+          value: region.name
         };
       });
     },
@@ -257,15 +260,17 @@ YUI.add('deployment-credential-add', function() {
       // If no cloud has been selected we set a default so that the disabled
       // form will display correctly as the next step.
       var isReadOnly = this.props.acl.isReadOnly();
-      var cloud = this.props.clouds[this.props.cloud || this.DEFAULTCLOUD];
-      var title = cloud.title;
-      var credentialName = cloud.id === 'google' ?
+      const cloud = this.props.cloud;
+      const id = cloud && cloud.id || this.DEFAULTCLOUD;
+      var info = this.props.clouds[id];
+      var title = info && info.title || cloud.name;
+      var credentialName = id === 'google' ?
         'Project ID (credential name)' : 'Credential name';
       return (
         <div className="deployment-credential-add twelve-col">
           <h4>{`Create new ${title} credential`}</h4>
           <div className="twelve-col deployment-credential-add__signup">
-            <a href={cloud.signupUrl}
+            <a href={info && info.signupUrl}
               target="_blank">
               Sign up for {title}
               &nbsp;

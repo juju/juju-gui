@@ -25,7 +25,7 @@ YUI.add('deployment-budget', function() {
       acl: React.PropTypes.object.isRequired,
       listBudgets: React.PropTypes.func.isRequired,
       setBudget: React.PropTypes.func.isRequired,
-      user: React.PropTypes.object,
+      user: React.PropTypes.string,
     },
 
     getInitialState: function() {
@@ -39,7 +39,7 @@ YUI.add('deployment-budget', function() {
     },
 
     componentWillMount: function() {
-      if (this.props.user && this.props.user.user) {
+      if (this.props.user) {
         this._getBudgets();
       }
     },
@@ -53,8 +53,8 @@ YUI.add('deployment-budget', function() {
     componentWillReceiveProps: function(nextProps) {
       // If the user has changed then update the data.
       var props = this.props;
-      var currentUser = props.user && props.user.user;
-      var nextUser = nextProps.user && nextProps.user.user;
+      var currentUser = props.user;
+      var nextUser = nextProps.user;
       if (nextUser !== currentUser) {
         this._getBudgets();
       }
@@ -233,6 +233,7 @@ YUI.add('deployment-budget', function() {
     'budget-chart',
     'expanding-row',
     'generic-button',
+    'generic-input',
     'inset-select',
     'loading-spinner'
   ]
