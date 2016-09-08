@@ -45,7 +45,7 @@ describe('DeploymentBudget', function() {
         acl={acl}
         listBudgets={sinon.stub()}
         setBudget={sinon.stub()}
-        user={{user: 'spinach'}} />, true);
+        user="user-admin" />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-budget__loading">
@@ -60,7 +60,7 @@ describe('DeploymentBudget', function() {
         acl={acl}
         listBudgets={sinon.stub().callsArgWith(0, null, budgets)}
         setBudget={sinon.stub()}
-        user={{user: 'spinach'}} />, true);
+        user="user-admin" />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -154,7 +154,7 @@ describe('DeploymentBudget', function() {
         acl={acl}
         listBudgets={sinon.stub().callsArgWith(0, null, budgets)}
         setBudget={sinon.stub()}
-        user={{user: 'spinach'}} />, true);
+        user="user-admin" />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -248,7 +248,7 @@ describe('DeploymentBudget', function() {
         acl={acl}
         listBudgets={listBudgets}
         setBudget={sinon.stub()}
-        user={{}} />, true);
+        user={null} />, true);
     renderer.getRenderOutput();
     assert.deepEqual(listBudgets.callCount, 0);
   });
@@ -260,7 +260,7 @@ describe('DeploymentBudget', function() {
         acl={acl}
         listBudgets={listBudgets}
         setBudget={sinon.stub()}
-        user={{}} />, true);
+        user={null} />, true);
     renderer.getRenderOutput();
     assert.deepEqual(listBudgets.callCount, 0);
     renderer.render(
@@ -268,7 +268,7 @@ describe('DeploymentBudget', function() {
         acl={acl}
         listBudgets={listBudgets}
         setBudget={sinon.stub()}
-        user={{user: 'spinach'}} />, true);
+        user="user-admin" />, true);
     assert.deepEqual(listBudgets.callCount, 1);
   });
 
@@ -280,7 +280,7 @@ describe('DeploymentBudget', function() {
         acl={acl}
         listBudgets={listBudgets}
         setBudget={sinon.stub()}
-        user={{user: 'spinach'}} />, true);
+        user="user-admin" />, true);
     renderer.unmount();
     assert.deepEqual(abort.callCount, 1);
   });
@@ -292,7 +292,7 @@ describe('DeploymentBudget', function() {
         acl={acl}
         listBudgets={sinon.stub().callsArgWith(0, null, budgets)}
         setBudget={setBudget}
-        user={{user: 'spinach'}} />);
+        user="user-admin" />);
     assert.equal(setBudget.callCount, 1);
     assert.equal(setBudget.args[0][0], 'Big budget');
   });
@@ -304,7 +304,7 @@ describe('DeploymentBudget', function() {
         acl={acl}
         listBudgets={sinon.stub().callsArgWith(0, null, budgets)}
         setBudget={setBudget}
-        user={{user: 'spinach'}} />, true);
+        user="user-admin" />, true);
     var output = renderer.getRenderOutput();
     output.props.children[0].props.children[0].props.children.props.onChange(
       'new-budget');
