@@ -142,7 +142,7 @@ YUI.add('juju-controller-api', function(Y) {
         }, {});
         this.set('facades', facades);
         var userInfo = response['user-info'];
-        this.set('readOnly', !!userInfo['read-only']);
+        this.set('controllerAccess', userInfo['controller-access']);
         this.set('serverTag', response['server-tag']);
         // Start pinging the server.
         // XXX frankban: this is only required as a temporary workaround to

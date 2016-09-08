@@ -389,9 +389,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             {name: 'Client', versions: [0]},
             {name: 'ModelManager', versions: [2]}
           ],
-          'user-info': {'read-only': true}
+          'user-info': {'controller-access': 'login', 'model-access': 'read'}
         }});
-        assert.strictEqual(env.get('readOnly'), true);
+        assert.strictEqual(env.get('controllerAccess'), 'login');
+        assert.strictEqual(env.get('modelAccess'), 'read');
       });
 
     });

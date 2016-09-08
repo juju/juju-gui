@@ -142,7 +142,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can log in.', function(done) {
       // See FakeBackend's authorizedUsers for these default authentication
       // values.
-      var data = {
+      const data = {
         type: 'Admin',
         request: 'Login',
         params: {
@@ -157,7 +157,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         data.error = false;
         data.response = {
           facades: sandboxModule.facades,
-          'user-info': {'read-only': false}
+          'user-info': {
+            'controller-access': 'superuser',
+            'model-access': 'admin'
+          }
         };
         assert.deepEqual(JSON.parse(received.data), data);
         assert.isTrue(state.get('authenticated'));
@@ -173,7 +176,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state.logout();
       env.after('login', function() {
         assert.deepEqual(env.userIsAuthenticated, true);
-        assert.deepEqual(env.get('readOnly'), false);
+        assert.strictEqual(env.get('controllerAccess'), 'superuser');
+        assert.strictEqual(env.get('modelAccess'), 'admin');
         done();
       });
       env.connect();

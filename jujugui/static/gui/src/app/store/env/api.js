@@ -491,7 +491,8 @@ YUI.add('juju-env-api', function(Y) {
         }, {});
         this.set('facades', facades);
         var userInfo = response['user-info'];
-        this.set('readOnly', !!userInfo['read-only']);
+        this.set('modelAccess', userInfo['model-access']);
+        this.set('controllerAccess', userInfo['controller-access']);
         this.set('modelTag', response['model-tag']);
         this.currentModelInfo(this._handleCurrentModelInfo.bind(this));
         this._watchAll();

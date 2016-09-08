@@ -304,7 +304,10 @@ YUI.add('juju-env-sandbox', function(Y) {
         data.params['auth-tag'], data.params.credentials);
       data.response = {
         facades: sandboxModule.facades,
-        'user-info': {'read-only': false}
+        'user-info': {
+          'controller-access': 'superuser',
+          'model-access': 'admin'
+        }
       };
       client.receive(data);
     },
