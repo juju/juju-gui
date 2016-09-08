@@ -67,7 +67,7 @@ YUI.add('boolean-config', function() {
       @param {Object} The change event from the checkbox.
     */
     _handleChange: function(e) {
-      var onChange = this.props.onChange;
+      const onChange = this.props.onChange;
       // Due to a bug in React we must use target here because we aren't able
       // to simulate changes on currentTarget.
       // https://github.com/facebook/react/issues/4950
