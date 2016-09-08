@@ -50,10 +50,6 @@ YUI.add('deployment-cloud', function() {
             return cloud;
           });
         }
-        cloudList.push({
-          id: 'local',
-          name: 'Local'
-        });
         this.setState({
           clouds: cloudList,
           cloudsLoading: false
