@@ -90,21 +90,23 @@ YUI.add('boolean-config', function() {
     render: function() {
       return (
         <div className="boolean-config">
-          <div className="boolean-config--title">{this.props.label}</div>
-          <div className="boolean-config--toggle">
-            <input
-              disabled={this.props.disabled}
-              type="checkbox"
-              id={this.props.option.key}
-              onClick={this._stopBubble}
-              onChange={this._handleChange}
-              checked={this.state.value}
-              className="boolean-config--input" />
-            <label
-              htmlFor={this.props.option.key}
-              className="boolean-config--label">
-              <div className="boolean-config--handle"></div>
-            </label>
+          <div className="boolean-config--toggle-container">
+            <div className="boolean-config--title">{this.props.label}</div>
+            <div className="boolean-config--toggle">
+              <input
+                disabled={this.props.disabled}
+                type="checkbox"
+                id={this.props.option.key}
+                onClick={this._stopBubble}
+                onChange={this._handleChange}
+                checked={this.state.value}
+                className="boolean-config--input" />
+              <label
+                htmlFor={this.props.option.key}
+                className="boolean-config--label">
+                <div className="boolean-config--handle"></div>
+              </label>
+            </div>
           </div>
           <div className="boolean-config--description"
             dangerouslySetInnerHTML={{__html: this.props.option.description}}>
