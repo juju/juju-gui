@@ -52,7 +52,6 @@ describe('DeploymentServices', function() {
         changesFilterByParent={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub().returns([{id: 'change1'}])}
         groupedChanges={groupedChanges}
-        cloud='azure'
         listPlansForCharm={listPlansForCharm}
         servicesGetById={servicesGetById}
         showChangelogs={false} />, true);

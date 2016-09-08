@@ -1098,7 +1098,6 @@ YUI.add('juju-gui', function(Y) {
       var currentChangeSet = ecs.getCurrentChangeSet();
       var changeDescriptions = changesUtils.generateAllChangeDescriptions(
           services, units, currentChangeSet);
-      var jem = this.jem;
       var metadata = metadata || {};
       var activeComponent = metadata.activeComponent;
       var autoPlaceUnits = this._autoPlaceUnits.bind(this);
@@ -1141,12 +1140,11 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
-          addTemplate={jem.addTemplate.bind(jem)}
           changesFilterByParent={
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
           changeState={this.changeState.bind(this)}
           deploy={utils.deploy.bind(
-            utils, env, jem, users, autoPlaceUnits,
+            utils, env, this.jem, users, autoPlaceUnits,
             this.createSocketURL.bind(this, this.get('socketTemplate')),
             this.set.bind(this),
             modelCommitted)}
@@ -1161,12 +1159,12 @@ YUI.add('juju-gui', function(Y) {
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listClouds={controllerAPI.listClouds.bind(controllerAPI)}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
-          listRegions={jem.listRegions.bind(jem)}
           modelCommitted={modelCommitted}
           modelName={db.environment.get('name')}
           servicesGetById={services.getById.bind(services)}
-          user={this._getAuth()}
-          users={users} />,
+          updateCloudCredential={
+            controllerAPI.updateCloudCredential.bind(controllerAPI)}
+          user={this.controllerAPI.get('user')} />,
         document.getElementById('deployment-container'));
     },
 

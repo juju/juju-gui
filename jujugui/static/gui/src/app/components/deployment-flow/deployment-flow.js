@@ -23,7 +23,6 @@ YUI.add('deployment-flow', function() {
   juju.components.DeploymentFlow = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      addTemplate: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       changesFilterByParent: React.PropTypes.func.isRequired,
       deploy: React.PropTypes.func.isRequired,
@@ -34,12 +33,11 @@ YUI.add('deployment-flow', function() {
       listBudgets: React.PropTypes.func.isRequired,
       listClouds: React.PropTypes.func.isRequired,
       listPlansForCharm: React.PropTypes.func.isRequired,
-      listRegions: React.PropTypes.func.isRequired,
       modelCommitted: React.PropTypes.bool,
       modelName: React.PropTypes.string.isRequired,
       servicesGetById: React.PropTypes.func.isRequired,
-      user: React.PropTypes.object,
-      users: React.PropTypes.object.isRequired
+      updateCloudCredential: React.PropTypes.func.isRequired,
+      user: React.PropTypes.string,
     },
 
     CLOUDS: {
@@ -361,19 +359,18 @@ YUI.add('deployment-flow', function() {
           showCheck={false}>
           <juju.components.DeploymentCredential
             acl={this.props.acl}
-            addTemplate={this.props.addTemplate}
             credential={credential}
             cloud={cloud}
             clouds={this.CLOUDS}
             getCloudCredentials={this.props.getCloudCredentials}
             getTagsForCloudCredentials={this.props.getTagsForCloudCredentials}
-            listRegions={this.props.listRegions}
             region={this.state.region}
             setCredential={this._setCredential}
             setRegion={this._setRegion}
             setTemplate={this._setTemplate}
             template={this.state.template}
-            users={this.props.users}
+            updateCloudCredential={this.props.updateCloudCredential}
+            user={this.props.user}
             validateForm={this._validateForm} />
         </juju.components.DeploymentSection>);
     },
@@ -414,7 +411,6 @@ YUI.add('deployment-flow', function() {
       if (!status.visible) {
         return;
       }
-      var cloud = this.state.cloud;
       return (
         <juju.components.DeploymentSection
           completed={status.completed}
@@ -425,7 +421,6 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentServices
             acl={this.props.acl}
             changesFilterByParent={this.props.changesFilterByParent}
-            cloud={cloud}
             generateAllChangeDescriptions={
               this.props.generateAllChangeDescriptions}
             groupedChanges={this.props.groupedChanges}
