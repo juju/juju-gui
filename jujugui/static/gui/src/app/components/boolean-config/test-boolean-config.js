@@ -43,21 +43,23 @@ describe('BooleanConfig', function() {
     );
     var expected = (
       <div className="boolean-config">
-        <div className="boolean-config--title">Test</div>
-        <div className="boolean-config--toggle">
-          <input
-            disabled={false}
-            type="checkbox"
-            id={option.key}
-            onClick={output.props.children[1].props.children[0].props.onClick}
-            onChange={output.props.children[1].props.children[0].props.onChange}
-            checked={true}
-            className="boolean-config--input" />
-          <label
-            htmlFor={option.key}
-            className="boolean-config--label">
-            <div className="boolean-config--handle"></div>
-          </label>
+        <div className="boolean-config--toggle-container">
+          <div className="boolean-config--title">Test</div>
+          <div className="boolean-config--toggle">
+            <input
+              disabled={false}
+              type="checkbox"
+              id={option.key}
+              onClick={output.props.children[0].props.children[1].props.children[0].props.onClick}
+              onChange={output.props.children[0].props.children[1].props.children[0].props.onChange}
+              checked={true}
+              className="boolean-config--input" />
+            <label
+              htmlFor={option.key}
+              className="boolean-config--label">
+              <div className="boolean-config--handle"></div>
+            </label>
+          </div>
         </div>
         <div className="boolean-config--description"
           dangerouslySetInnerHTML={{__html: option.description}}>
@@ -80,21 +82,23 @@ describe('BooleanConfig', function() {
     );
     assert.deepEqual(output,
       <div className="boolean-config">
-        <div className="boolean-config--title">Test</div>
-        <div className="boolean-config--toggle">
-          <input
-            disabled={false}
-            type="checkbox"
-            id={option.key}
-            onClick={output.props.children[1].props.children[0].props.onClick}
-            onChange={output.props.children[1].props.children[0].props.onChange}
-            checked={false}
-            className="boolean-config--input" />
-          <label
-            htmlFor={option.key}
-            className="boolean-config--label">
-            <div className="boolean-config--handle"></div>
-          </label>
+        <div className="boolean-config--toggle-container">
+          <div className="boolean-config--title">Test</div>
+          <div className="boolean-config--toggle">
+            <input
+              disabled={false}
+              type="checkbox"
+              id={option.key}
+              onClick={output.props.children[0].props.children[1].props.children[0].props.onClick}
+              onChange={output.props.children[0].props.children[1].props.children[0].props.onChange}
+              checked={false}
+              className="boolean-config--input" />
+            <label
+              htmlFor={option.key}
+              className="boolean-config--label">
+              <div className="boolean-config--handle"></div>
+            </label>
+          </div>
         </div>
         <div className="boolean-config--description"
           dangerouslySetInnerHTML={{__html: option.description}}>
@@ -115,21 +119,23 @@ describe('BooleanConfig', function() {
     );
     assert.deepEqual(output,
       <div className="boolean-config">
-        <div className="boolean-config--title">Test</div>
-        <div className="boolean-config--toggle">
-          <input
-            disabled={false}
-            type="checkbox"
-            id={option.key}
-            onClick={output.props.children[1].props.children[0].props.onClick}
-            onChange={output.props.children[1].props.children[0].props.onChange}
-            checked={true}
-            className="boolean-config--input" />
-          <label
-            htmlFor={option.key}
-            className="boolean-config--label">
-            <div className="boolean-config--handle"></div>
-          </label>
+        <div className="boolean-config--toggle-container">
+          <div className="boolean-config--title">Test</div>
+          <div className="boolean-config--toggle">
+            <input
+              disabled={false}
+              type="checkbox"
+              id={option.key}
+              onClick={output.props.children[0].props.children[1].props.children[0].props.onClick}
+              onChange={output.props.children[0].props.children[1].props.children[0].props.onChange}
+              checked={true}
+              className="boolean-config--input" />
+            <label
+              htmlFor={option.key}
+              className="boolean-config--label">
+              <div className="boolean-config--handle"></div>
+            </label>
+          </div>
         </div>
         <div className="boolean-config--description"
           dangerouslySetInnerHTML={{__html: option.description}}>
@@ -150,21 +156,23 @@ describe('BooleanConfig', function() {
     );
     assert.deepEqual(output,
       <div className="boolean-config">
-        <div className="boolean-config--title">Test</div>
-        <div className="boolean-config--toggle">
-          <input
-            disabled={false}
-            type="checkbox"
-            id={option.key}
-            onClick={output.props.children[1].props.children[0].props.onClick}
-            onChange={output.props.children[1].props.children[0].props.onChange}
-            checked={false}
-            className="boolean-config--input" />
-          <label
-            htmlFor={option.key}
-            className="boolean-config--label">
-            <div className="boolean-config--handle"></div>
-          </label>
+        <div className="boolean-config--toggle-container">
+          <div className="boolean-config--title">Test</div>
+          <div className="boolean-config--toggle">
+            <input
+              disabled={false}
+              type="checkbox"
+              id={option.key}
+              onClick={output.props.children[0].props.children[1].props.children[0].props.onClick}
+              onChange={output.props.children[0].props.children[1].props.children[0].props.onChange}
+              checked={false}
+              className="boolean-config--input" />
+            <label
+              htmlFor={option.key}
+              className="boolean-config--label">
+              <div className="boolean-config--handle"></div>
+            </label>
+          </div>
         </div>
         <div className="boolean-config--description"
           dangerouslySetInnerHTML={{__html: option.description}}>
@@ -185,7 +193,7 @@ describe('BooleanConfig', function() {
         onChange={onChange}
         option={option} />
     );
-    output.props.children[1].props.children[0].props.onChange({
+    output.props.children[0].props.children[1].props.children[0].props.onChange({
       target: {
         checked: true
       }
@@ -230,10 +238,10 @@ describe('BooleanConfig', function() {
         disabled={true}
         type="checkbox"
         id={option.key}
-        onClick={output.props.children[1].props.children[0].props.onClick}
-        onChange={output.props.children[1].props.children[0].props.onChange}
+        onClick={output.props.children[0].props.children[1].props.children[0].props.onClick}
+        onChange={output.props.children[0].props.children[1].props.children[0].props.onChange}
         checked={true}
         className="boolean-config--input" />);
-    assert.deepEqual(output.props.children[1].props.children[0], expected);
+    assert.deepEqual(output.props.children[0].props.children[1].props.children[0], expected);
   });
 });
