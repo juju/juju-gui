@@ -28,12 +28,13 @@ YUI.add('deployment-flow', function() {
       changesFilterByParent: React.PropTypes.func.isRequired,
       deploy: React.PropTypes.func.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
+      getCloudCredentials: React.PropTypes.func.isRequired,
+      getTagsForCloudCredentials: React.PropTypes.func.isRequired,
       groupedChanges: React.PropTypes.object.isRequired,
       listBudgets: React.PropTypes.func.isRequired,
       listClouds: React.PropTypes.func.isRequired,
       listPlansForCharm: React.PropTypes.func.isRequired,
       listRegions: React.PropTypes.func.isRequired,
-      listTemplates: React.PropTypes.func.isRequired,
       modelCommitted: React.PropTypes.bool,
       modelName: React.PropTypes.string.isRequired,
       servicesGetById: React.PropTypes.func.isRequired,
@@ -254,7 +255,7 @@ YUI.add('deployment-flow', function() {
     _handleDeploy: function() {
       this.props.deploy(
         this._handleClose, true, this.props.modelName, this.state.credential,
-        this.state.cloud, this.state.region);
+        this.state.cloud.id, this.state.region);
     },
 
     /**
@@ -303,7 +304,7 @@ YUI.add('deployment-flow', function() {
       var cloud = this.state.cloud;
       if (!cloud) {
         return 'Choose cloud to deploy to';
-      } else if (cloud === 'local') {
+      } else if (cloud.id === 'local') {
         return 'Local cloud';
       } else {
         return 'Public cloud';
@@ -364,8 +365,9 @@ YUI.add('deployment-flow', function() {
             credential={credential}
             cloud={cloud}
             clouds={this.CLOUDS}
+            getCloudCredentials={this.props.getCloudCredentials}
+            getTagsForCloudCredentials={this.props.getTagsForCloudCredentials}
             listRegions={this.props.listRegions}
-            listTemplates={this.props.listTemplates}
             region={this.state.region}
             setCredential={this._setCredential}
             setRegion={this._setRegion}
