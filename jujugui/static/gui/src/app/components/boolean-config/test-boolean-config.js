@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
@@ -31,33 +31,36 @@ describe('BooleanConfig', function() {
   });
 
   it('renders a checked input based on config prop', function() {
-    var option = {
+    const option = {
       key: 'testcheck',
       description: 'it is a test config option',
     };
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.BooleanConfig
         config={true}
         label="Test"
         option={option} />
     );
-    var expected = (
+    const input = output.props.children[0].props.children[1].props.children[0];
+    const expected = (
       <div className="boolean-config">
-        <div className="boolean-config--title">Test</div>
-        <div className="boolean-config--toggle">
-          <input
-            disabled={false}
-            type="checkbox"
-            id={option.key}
-            onClick={output.props.children[1].props.children[0].props.onClick}
-            onChange={output.props.children[1].props.children[0].props.onChange}
-            checked={true}
-            className="boolean-config--input" />
-          <label
-            htmlFor={option.key}
-            className="boolean-config--label">
-            <div className="boolean-config--handle"></div>
-          </label>
+        <div className="boolean-config--toggle-container">
+          <div className="boolean-config--title">Test</div>
+          <div className="boolean-config--toggle">
+            <input
+              disabled={false}
+              type="checkbox"
+              id={option.key}
+              onClick={input.props.onClick}
+              onChange={input.props.onChange}
+              checked={true}
+              className="boolean-config--input" />
+            <label
+              htmlFor={option.key}
+              className="boolean-config--label">
+              <div className="boolean-config--handle"></div>
+            </label>
+          </div>
         </div>
         <div className="boolean-config--description"
           dangerouslySetInnerHTML={{__html: option.description}}>
@@ -68,33 +71,36 @@ describe('BooleanConfig', function() {
   });
 
   it('renders an unchecked input based on config prop', function() {
-    var option = {
+    const option = {
       key: 'testcheck',
       description: 'it is a test config option',
     };
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.BooleanConfig
         config={false}
         label="Test"
         option={option} />
     );
+    const input = output.props.children[0].props.children[1].props.children[0];
     assert.deepEqual(output,
       <div className="boolean-config">
-        <div className="boolean-config--title">Test</div>
-        <div className="boolean-config--toggle">
-          <input
-            disabled={false}
-            type="checkbox"
-            id={option.key}
-            onClick={output.props.children[1].props.children[0].props.onClick}
-            onChange={output.props.children[1].props.children[0].props.onChange}
-            checked={false}
-            className="boolean-config--input" />
-          <label
-            htmlFor={option.key}
-            className="boolean-config--label">
-            <div className="boolean-config--handle"></div>
-          </label>
+        <div className="boolean-config--toggle-container">
+          <div className="boolean-config--title">Test</div>
+          <div className="boolean-config--toggle">
+            <input
+              disabled={false}
+              type="checkbox"
+              id={option.key}
+              onClick={input.props.onClick}
+              onChange={input.props.onChange}
+              checked={false}
+              className="boolean-config--input" />
+            <label
+              htmlFor={option.key}
+              className="boolean-config--label">
+              <div className="boolean-config--handle"></div>
+            </label>
+          </div>
         </div>
         <div className="boolean-config--description"
           dangerouslySetInnerHTML={{__html: option.description}}>
@@ -103,33 +109,36 @@ describe('BooleanConfig', function() {
   });
 
   it('supports string boolean config props (true)', function() {
-    var option = {
+    const option = {
       key: 'testcheck',
       description: 'it is a test config option',
     };
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.BooleanConfig
         config="True"
         label="Test"
         option={option} />
     );
+    const input = output.props.children[0].props.children[1].props.children[0];
     assert.deepEqual(output,
       <div className="boolean-config">
-        <div className="boolean-config--title">Test</div>
-        <div className="boolean-config--toggle">
-          <input
-            disabled={false}
-            type="checkbox"
-            id={option.key}
-            onClick={output.props.children[1].props.children[0].props.onClick}
-            onChange={output.props.children[1].props.children[0].props.onChange}
-            checked={true}
-            className="boolean-config--input" />
-          <label
-            htmlFor={option.key}
-            className="boolean-config--label">
-            <div className="boolean-config--handle"></div>
-          </label>
+        <div className="boolean-config--toggle-container">
+          <div className="boolean-config--title">Test</div>
+          <div className="boolean-config--toggle">
+            <input
+              disabled={false}
+              type="checkbox"
+              id={option.key}
+              onClick={input.props.onClick}
+              onChange={input.props.onChange}
+              checked={true}
+              className="boolean-config--input" />
+            <label
+              htmlFor={option.key}
+              className="boolean-config--label">
+              <div className="boolean-config--handle"></div>
+            </label>
+          </div>
         </div>
         <div className="boolean-config--description"
           dangerouslySetInnerHTML={{__html: option.description}}>
@@ -138,33 +147,36 @@ describe('BooleanConfig', function() {
   });
 
   it('supports string boolean config props (false)', function() {
-    var option = {
+    const option = {
       key: 'testcheck',
       description: 'it is a test config option',
     };
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.BooleanConfig
         config="False"
         label="Test"
         option={option} />
     );
+    const input = output.props.children[0].props.children[1].props.children[0];
     assert.deepEqual(output,
       <div className="boolean-config">
-        <div className="boolean-config--title">Test</div>
-        <div className="boolean-config--toggle">
-          <input
-            disabled={false}
-            type="checkbox"
-            id={option.key}
-            onClick={output.props.children[1].props.children[0].props.onClick}
-            onChange={output.props.children[1].props.children[0].props.onChange}
-            checked={false}
-            className="boolean-config--input" />
-          <label
-            htmlFor={option.key}
-            className="boolean-config--label">
-            <div className="boolean-config--handle"></div>
-          </label>
+        <div className="boolean-config--toggle-container">
+          <div className="boolean-config--title">Test</div>
+          <div className="boolean-config--toggle">
+            <input
+              disabled={false}
+              type="checkbox"
+              id={option.key}
+              onClick={input.props.onClick}
+              onChange={input.props.onChange}
+              checked={false}
+              className="boolean-config--input" />
+            <label
+              htmlFor={option.key}
+              className="boolean-config--label">
+              <div className="boolean-config--handle"></div>
+            </label>
+          </div>
         </div>
         <div className="boolean-config--description"
           dangerouslySetInnerHTML={{__html: option.description}}>
@@ -173,19 +185,20 @@ describe('BooleanConfig', function() {
   });
 
   it('can call an onChange method if supplied', function() {
-    var onChange = sinon.stub();
-    var option = {
+    const onChange = sinon.stub();
+    const option = {
       key: 'testcheck',
       description: 'it is a test config option',
     };
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.BooleanConfig
         config="False"
         label="Test"
         onChange={onChange}
         option={option} />
     );
-    output.props.children[1].props.children[0].props.onChange({
+    const input = output.props.children[0].props.children[1].props.children[0];
+    input.props.onChange({
       target: {
         checked: true
       }
@@ -194,16 +207,16 @@ describe('BooleanConfig', function() {
   });
 
   it('can update when new config is provided', function() {
-    var option = {
+    const option = {
       key: 'testcheck',
       description: 'it is a test config option',
     };
-    var shallowRenderer = jsTestUtils.shallowRender(
+    const shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.BooleanConfig
         config={true}
         label="Test"
         option={option} />, true);
-    var instance = shallowRenderer.getMountedInstance();
+    const instance = shallowRenderer.getMountedInstance();
     assert.isTrue(instance.state.value);
     shallowRenderer.render(
       <juju.components.BooleanConfig
@@ -214,26 +227,27 @@ describe('BooleanConfig', function() {
   });
 
   it('can be disabled', function() {
-    var option = {
+    const option = {
       key: 'testcheck',
       description: 'it is a test config option',
     };
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.BooleanConfig
         config={true}
         disabled={true}
         label="Test"
         option={option} />
     );
-    var expected = (
+    const input = output.props.children[0].props.children[1].props.children[0];
+    const expected = (
       <input
         disabled={true}
         type="checkbox"
         id={option.key}
-        onClick={output.props.children[1].props.children[0].props.onClick}
-        onChange={output.props.children[1].props.children[0].props.onChange}
+        onClick={input.props.onClick}
+        onChange={input.props.onChange}
         checked={true}
         className="boolean-config--input" />);
-    assert.deepEqual(output.props.children[1].props.children[0], expected);
+    assert.deepEqual(input, expected);
   });
 });

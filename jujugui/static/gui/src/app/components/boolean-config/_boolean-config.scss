@@ -4,13 +4,15 @@
     position: relative;
 
     &--title {
-      padding-top: 8px;
+        margin: auto auto auto 0;
     }
 
     &--toggle {
-      position:absolute;
-      right: 0;
-      top: 0;
+        margin: auto 0 auto 4px;
+
+        &-container {
+            display: flex;
+        }
     }
 
     &--input {
