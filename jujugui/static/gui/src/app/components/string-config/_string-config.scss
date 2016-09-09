@@ -2,7 +2,8 @@
     @extend %stagger-fade-in;
     margin: 10px 20px 14px 20px;
 
-    &--value, &--disabled {
+    &--value,
+    &--disabled {
         @extend %input;
         min-height: $base;
         margin: 10px 0;

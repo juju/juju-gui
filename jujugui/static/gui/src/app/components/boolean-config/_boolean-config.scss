@@ -4,14 +4,11 @@
     position: relative;
 
     &--title {
-        margin: auto;
-        margin-left: 0;
+        margin: auto auto auto 0;
     }
 
     &--toggle {
-        margin: auto;
-        margin-left: 4px;
-        margin-right: 0;
+        margin: auto 0 auto 4px;
 
         &-container {
             display: flex;
