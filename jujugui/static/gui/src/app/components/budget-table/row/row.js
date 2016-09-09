@@ -28,7 +28,8 @@ YUI.add('budget-table-row', function() {
       listPlansForCharm: React.PropTypes.func,
       plansEditable: React.PropTypes.bool,
       service: React.PropTypes.object.isRequired,
-      showExtra: React.PropTypes.bool
+      showExtra: React.PropTypes.bool,
+      withPlans: React.PropTypes.bool
     },
 
     plansXHR: null,
@@ -268,14 +269,43 @@ YUI.add('budget-table-row', function() {
         </div>);
     },
 
+    /**
+      Generate plan cols.
+
+      @method _generatePlanCols
+      @returns {Object} The plan cols markup.
+    */
+    _generatePlanCols: function() {
+      if (!this.props.withPlans) {
+        return;
+      }
+      const plansEditable = this.props.plansEditable;
+      const editableWidth = !plansEditable ? 'two-col' : 'one-col';
+      return (
+        <div>
+          <div className="three-col no-margin-bottom">
+            {this._generateSelectedPlan()}
+          </div>
+          <div className={editableWidth + ' no-margin-bottom'}>
+            $1
+          </div>
+          <div className={editableWidth + ' no-margin-bottom'}>
+            {this._generateAllocation()}
+          </div>
+          <div className={
+            'one-col no-margin-bottom' + (plansEditable ? '' : ' last-col')}>
+            $1
+          </div>
+          {this._generateEdit()}
+        </div>
+      );
+    },
+
     render: function() {
-      var plansEditable = this.props.plansEditable;
       var classes = {
         'budget-table-row': true,
         'twelve-col': true
       };
-      var editableWidth = !plansEditable ?
-        'two-col' : 'one-col';
       return (
         <juju.components.ExpandingRow
           classes={classes}
@@ -283,20 +313,7 @@ YUI.add('budget-table-row', function() {
           expanded={this.state.expanded}>
           <div>
             {this._generateSharedFields()}
-            <div className="three-col no-margin-bottom">
-              {this._generateSelectedPlan()}
-            </div>
-            <div className={editableWidth + ' no-margin-bottom'}>
-              $1
-            </div>
-            <div className={editableWidth + ' no-margin-bottom'}>
-              {this._generateAllocation()}
-            </div>
-            <div className={
-              'one-col no-margin-bottom' + (plansEditable ? '' : ' last-col')}>
-              $1
-            </div>
-            {this._generateEdit()}
+            {this._generatePlanCols()}
             {this._generateExtra()}
           </div>
           <div>

@@ -1163,7 +1163,8 @@ YUI.add('juju-gui', function(Y) {
           servicesGetById={services.getById.bind(services)}
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
-          user={this.controllerAPI.get('user')} />,
+          user={`user-${this.controllerAPI.get('user')}`}
+          withPlans={false} />,
         document.getElementById('deployment-container'));
     },
 

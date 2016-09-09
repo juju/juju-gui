@@ -38,6 +38,7 @@ YUI.add('deployment-flow', function() {
       servicesGetById: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func.isRequired,
       user: React.PropTypes.string,
+      withPlans: React.PropTypes.bool
     },
 
     CLOUDS: {
@@ -98,9 +99,7 @@ YUI.add('deployment-flow', function() {
       var hasCloud = !!this.state.cloud;
       var hasCredential = !!this.state.credential;
       var mode = this.props.modelCommitted ? 'commit' : 'deploy';
-      // XXX: Need to find a way to check if any newly added applications have
-      // plans.
-      var includesPlans = true;
+      var includesPlans = this.props.withPlans;
       switch (section) {
         case 'cloud':
           completed = hasCloud && hasCredential;
@@ -396,7 +395,7 @@ YUI.add('deployment-flow', function() {
           title="Machines to be deployed">
           <juju.components.DeploymentMachines
             acl={this.props.acl}
-            cloud={cloud && this.CLOUDS[cloud]} />
+            cloud={cloud} />
         </juju.components.DeploymentSection>);
     },
 
@@ -426,7 +425,8 @@ YUI.add('deployment-flow', function() {
             groupedChanges={this.props.groupedChanges}
             listPlansForCharm={this.props.listPlansForCharm}
             servicesGetById={this.props.servicesGetById}
-            showChangelogs={this.state.showChangelogs} />
+            showChangelogs={this.state.showChangelogs}
+            withPlans={this.props.withPlans} />
         </juju.components.DeploymentSection>);
     },
 

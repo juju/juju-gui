@@ -28,7 +28,8 @@ YUI.add('budget-table', function() {
       listPlansForCharm: React.PropTypes.func,
       plansEditable: React.PropTypes.bool,
       services: React.PropTypes.array.isRequired,
-      showExtra: React.PropTypes.bool
+      showExtra: React.PropTypes.bool,
+      withPlans: React.PropTypes.bool
     },
 
     /**
@@ -49,12 +50,41 @@ YUI.add('budget-table', function() {
             listPlansForCharm={this.props.listPlansForCharm}
             plansEditable={this.props.plansEditable}
             service={service}
-            showExtra={this.props.showExtra} />);
+            showExtra={this.props.showExtra}
+            withPlans={this.props.withPlans} />);
       });
     },
 
+    /**
+      Generate plan headers.
+
+      @method _generatePlanHeaders
+      @returns {Object} The plan headers markup.
+    */
+    _generatePlanHeaders: function() {
+      if (!this.props.withPlans) {
+        return;
+      }
+      const plansEditable = this.props.plansEditable;
+      return (
+        <div>
+          <div className="three-col">
+            Details
+          </div>
+          <div className={plansEditable ? 'one-col' : 'two-col'}>
+            Usage
+          </div>
+          <div className={plansEditable ? 'one-col' : 'two-col'}>
+            Allocation
+          </div>
+          <div className="one-col last-col">
+            Spend
+          </div>
+        </div>
+      );
+    },
+
     render: function() {
-      var plansEditable = this.props.plansEditable;
       return (
         <div className="budget-table">
           <div className="budget-table__row-header twelve-col">
@@ -64,18 +94,7 @@ YUI.add('budget-table', function() {
             <div className="one-col">
               Units
             </div>
-            <div className="three-col">
-              Details
-            </div>
-            <div className={plansEditable ? 'one-col' : 'two-col'}>
-              Usage
-            </div>
-            <div className={plansEditable ? 'one-col' : 'two-col'}>
-              Allocation
-            </div>
-            <div className="one-col last-col">
-              Spend
-            </div>
+            {this._generatePlanHeaders()}
           </div>
           {this._generateServices()}
         </div>

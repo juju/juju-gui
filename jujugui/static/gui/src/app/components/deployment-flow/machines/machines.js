@@ -79,7 +79,7 @@ YUI.add('deployment-machines', function() {
         <div>
           <p className="deployment-machines__message">
             These machines will be provisioned on&nbsp;
-            {this.props.cloud && this.props.cloud.title}.
+            {this.props.cloud && this.props.cloud.name}.
             {chargeMessage}
           </p>
           {this._generateMachines()}
