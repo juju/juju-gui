@@ -645,6 +645,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'default-series': 'xenial',
           name: 'my-model',
           'provider-type': 'aws',
+          'cloud': 'aws',
+          'cloud-region': 'us-east-1',
+          'cloud-credential-tag': 'cloudcred-aws_admin@local_aws',
           uuid: '5bea955d-7a43-47d3-89dd-tag1',
           life: 'alive',
           'owner-tag': 'user-admin@local'
@@ -654,6 +657,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(env.get('providerType'), 'aws');
       assert.equal(env.get('environmentName'), 'my-model');
       assert.equal(env.get('modelUUID'), '5bea955d-7a43-47d3-89dd-tag1');
+      assert.equal(env.get('cloud'), 'aws');
+      assert.equal(env.get('region'), 'us-east-1');
+      assert.equal(env.get('credentialTag'), 'cloudcred-aws_admin@local_aws');
     });
 
     it('sends the correct ModelGet request', function() {
