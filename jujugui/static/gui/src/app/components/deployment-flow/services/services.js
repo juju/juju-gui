@@ -28,7 +28,8 @@ YUI.add('deployment-services', function() {
       groupedChanges: React.PropTypes.object.isRequired,
       listPlansForCharm: React.PropTypes.func.isRequired,
       servicesGetById: React.PropTypes.func.isRequired,
-      showChangelogs: React.PropTypes.bool
+      showChangelogs: React.PropTypes.bool,
+      withPlans: React.PropTypes.bool
     },
 
     /**
@@ -77,6 +78,26 @@ YUI.add('deployment-services', function() {
       return infos;
     },
 
+    /**
+      Generate spend summary.
+
+      @method _generateSpend
+      @returns {Object} The spend markup.
+    */
+    _generateSpend: function() {
+      if (!this.props.withPlans) {
+        return;
+      }
+      return (
+        <div className="prepend-seven">
+          Maximum monthly spend:&nbsp;
+          <span className="deployment-services__max">
+            $100
+          </span>
+        </div>
+      );
+    },
+
     render: function() {
       return (
         <div>
@@ -87,13 +108,9 @@ YUI.add('deployment-services', function() {
             listPlansForCharm={this.props.listPlansForCharm}
             plansEditable={true}
             services={this._getServices()}
-            showExtra={this.props.showChangelogs} />
-          <div className="prepend-seven">
-            Maximum monthly spend:&nbsp;
-            <span className="deployment-services__max">
-              $100
-            </span>
-          </div>
+            showExtra={this.props.showChangelogs}
+            withPlans={this.props.withPlans} />
+          {this._generateSpend()}
         </div>
       );
     }

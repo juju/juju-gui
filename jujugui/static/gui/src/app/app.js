@@ -1136,6 +1136,9 @@ YUI.add('juju-gui', function(Y) {
         });
         return;
       }
+      // Auto place the units. This is probably not be best UX, but is required
+      // to display the machines in the deployment flow.
+      autoPlaceUnits();
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
@@ -1163,7 +1166,8 @@ YUI.add('juju-gui', function(Y) {
           servicesGetById={services.getById.bind(services)}
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
-          user={this.controllerAPI.get('user')} />,
+          user={`user-${this.controllerAPI.get('user')}`}
+          withPlans={false} />,
         document.getElementById('deployment-container'));
     },
 

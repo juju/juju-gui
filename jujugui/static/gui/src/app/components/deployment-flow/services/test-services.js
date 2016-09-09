@@ -54,7 +54,8 @@ describe('DeploymentServices', function() {
         groupedChanges={groupedChanges}
         listPlansForCharm={listPlansForCharm}
         servicesGetById={servicesGetById}
-        showChangelogs={false} />, true);
+        showChangelogs={false}
+        withPlans={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div>
@@ -80,13 +81,58 @@ describe('DeploymentServices', function() {
           listPlansForCharm={listPlansForCharm}
           plansEditable={true}
           services={[{service: 'apache2'}, {service: 'mysql'}]}
-          showExtra={false} />
+          showExtra={false}
+          withPlans={true} />
         <div className="prepend-seven">
           Maximum monthly spend:&nbsp;
           <span className="deployment-services__max">
             $100
           </span>
         </div>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render without plans', function() {
+    var listPlansForCharm = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentServices
+        acl={acl}
+        changesFilterByParent={sinon.stub()}
+        generateAllChangeDescriptions={sinon.stub().returns([{id: 'change1'}])}
+        groupedChanges={groupedChanges}
+        listPlansForCharm={listPlansForCharm}
+        servicesGetById={servicesGetById}
+        showChangelogs={false}
+        withPlans={false} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div>
+        <juju.components.BudgetTable
+          acl={acl}
+          allocationEditable={true}
+          extraInfo={{
+            'apache2': (
+              <ul className="deployment-services__changes">
+                {[<juju.components.DeploymentChangeItem
+                  change={{id: 'change1'}}
+                  key="change1"
+                  showTime={false} />]}
+              </ul>),
+            'mysql': (
+              <ul className="deployment-services__changes">
+                {[<juju.components.DeploymentChangeItem
+                  change={{id: 'change1'}}
+                  key="change1"
+                  showTime={false} />]}
+              </ul>)
+          }}
+          listPlansForCharm={listPlansForCharm}
+          plansEditable={true}
+          services={[{service: 'apache2'}, {service: 'mysql'}]}
+          showExtra={false}
+          withPlans={false} />
+        {undefined}
       </div>);
     assert.deepEqual(output, expected);
   });
