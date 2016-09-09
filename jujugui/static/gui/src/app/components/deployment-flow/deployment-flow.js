@@ -100,6 +100,7 @@ YUI.add('deployment-flow', function() {
       var hasCredential = !!this.state.credential;
       var mode = this.props.modelCommitted ? 'commit' : 'deploy';
       var includesPlans = this.props.withPlans;
+      const groupedChanges = this.props.groupedChanges;
       switch (section) {
         case 'cloud':
           completed = hasCloud && hasCredential;
@@ -112,14 +113,16 @@ YUI.add('deployment-flow', function() {
           visible = true;
           break;
         case 'machines':
+          const addMachines = groupedChanges._addMachines;
           completed = false;
           disabled = !hasCloud || !hasCredential;
-          visible = true;
+          visible = addMachines && Object.keys(addMachines).length > 0;
           break;
         case 'services':
+          const deploys = groupedChanges._deploy;
           completed = false;
           disabled = !hasCloud || !hasCredential;
-          visible = true;
+          visible = deploys && Object.keys(deploys).length > 0;
           break;
         case 'budget':
           completed = false;
