@@ -23,7 +23,8 @@ YUI.add('deployment-machines', function() {
   juju.components.DeploymentMachines = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      cloud: React.PropTypes.object
+      cloud: React.PropTypes.object,
+      machines: React.PropTypes.object
     },
 
     /**
@@ -33,23 +34,52 @@ YUI.add('deployment-machines', function() {
       @returns {Object} The list of machines.
     */
     _generateMachines: function() {
-      // Create a fake list of machines until we can get the correct data.
-      var machines = [1, 2];
-      if (!machines || machines.length === 0) {
+      const machines = this.props.machines;
+      if (!machines || Object.keys(machines).length === 0) {
         return;
       }
-      var machineList = machines.map((machine, i) => {
+      let machineDetails = {};
+      Object.keys(machines).forEach(key => {
+        const machine = machines[key];
+        let constraintsDetails;
+        let seriesDetails = '';
+        const args = machine.command.args[0][0];
+        const series = args.series;
+        const constraints = args.constraints;
+        const cpu = constraints.cpu;
+        const disk = constraints.disk;
+        const mem = constraints.mem;
+        const cores = constraints.cores;
+        if (cores && cpu && disk && mem) {
+          cpu = cpu / 100;
+          disk = disk / 1024;
+          mem = mem / 1024;
+          constraintsDetails = `${cores}x${cpu}GHz, ${mem.toFixed(2)}GB, ` +
+            `${disk.toFixed(2)}GB`;
+        } else {
+          constraintsDetails = '(constraints not set)';
+        }
+        if (series) {
+          seriesDetails = `${series}, `;
+        }
+        const info = seriesDetails + constraintsDetails;
+        const current = machineDetails[info] || 0;
+        machineDetails[info] = current + 1;
+      });
+      const cloud = this.props.cloud && this.props.cloud.name;
+      const machineList = Object.keys(machineDetails).map(machine => {
+        const count = machineDetails[machine];
         return (
           <li className="deployment-flow__row twelve-col"
-            key={i}>
+            key={machine}>
             <div className="eight-col">
-              Trusty, 1x1GHz, 1.70GB, 8.00GB
+              {machine}
             </div>
             <div className="three-col">
-              Google
+              {cloud}
             </div>
             <div className="one-col last-col">
-              4
+              {count}
             </div>
           </li>);
       });

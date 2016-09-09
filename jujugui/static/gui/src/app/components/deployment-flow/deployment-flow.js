@@ -395,7 +395,8 @@ YUI.add('deployment-flow', function() {
           title="Machines to be deployed">
           <juju.components.DeploymentMachines
             acl={this.props.acl}
-            cloud={cloud} />
+            cloud={cloud}
+            machines={this.props.groupedChanges._addMachines} />
         </juju.components.DeploymentSection>);
     },
 
