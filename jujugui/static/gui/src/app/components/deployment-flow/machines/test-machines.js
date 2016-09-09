@@ -39,7 +39,7 @@ describe('DeploymentMachines', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentMachines
         acl={acl}
-        cloud={{title: 'My cloud', id: 'azure'}} />, true);
+        cloud={{name: 'My cloud', id: 'azure'}} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div>
@@ -93,7 +93,7 @@ describe('DeploymentMachines', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentMachines
         acl={acl}
-        cloud={{title: 'Local', id: 'local'}} />, true);
+        cloud={{name: 'Local', id: 'local'}} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div>

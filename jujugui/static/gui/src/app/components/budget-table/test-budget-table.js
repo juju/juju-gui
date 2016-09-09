@@ -43,7 +43,8 @@ describe('BudgetTable', function() {
         allocationEditable={false}
         listPlansForCharm={listPlansForCharm}
         plansEditable={false}
-        services={[{}, {}]} />, true);
+        services={[{}, {}]}
+        withPlans={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="budget-table">
@@ -54,17 +55,19 @@ describe('BudgetTable', function() {
           <div className="one-col">
             Units
           </div>
-          <div className="three-col">
-            Details
-          </div>
-          <div className="two-col">
-            Usage
-          </div>
-          <div className="two-col">
-            Allocation
-          </div>
-          <div className="one-col last-col">
-            Spend
+          <div>
+            <div className="three-col">
+              Details
+            </div>
+            <div className="two-col">
+              Usage
+            </div>
+            <div className="two-col">
+              Allocation
+            </div>
+            <div className="one-col last-col">
+              Spend
+            </div>
           </div>
         </div>
         {[<juju.components.BudgetTableRow
@@ -75,7 +78,8 @@ describe('BudgetTable', function() {
             listPlansForCharm={listPlansForCharm}
             plansEditable={false}
             service={{}}
-            showExtra={undefined} />,
+            showExtra={undefined}
+            withPlans={true} />,
           <juju.components.BudgetTableRow
             acl={acl}
             key={1}
@@ -84,7 +88,54 @@ describe('BudgetTable', function() {
             listPlansForCharm={listPlansForCharm}
             plansEditable={false}
             service={{}}
-            showExtra={undefined} />]}
+            showExtra={undefined}
+            withPlans={true} />]}
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render without plans', function() {
+    var listPlansForCharm = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.BudgetTable
+        acl={acl}
+        allocationEditable={false}
+        listPlansForCharm={listPlansForCharm}
+        plansEditable={false}
+        services={[{}, {}]}
+        withPlans={false} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="budget-table">
+        <div className="budget-table__row-header twelve-col">
+          <div className="three-col">
+            Name
+          </div>
+          <div className="one-col">
+            Units
+          </div>
+          {undefined}
+        </div>
+        {[<juju.components.BudgetTableRow
+            acl={acl}
+            key={0}
+            allocationEditable={false}
+            extraInfo={undefined}
+            listPlansForCharm={listPlansForCharm}
+            plansEditable={false}
+            service={{}}
+            showExtra={undefined}
+            withPlans={false} />,
+          <juju.components.BudgetTableRow
+            acl={acl}
+            key={1}
+            allocationEditable={false}
+            extraInfo={undefined}
+            listPlansForCharm={listPlansForCharm}
+            plansEditable={false}
+            service={{}}
+            showExtra={undefined}
+            withPlans={false} />]}
       </div>);
     assert.deepEqual(output, expected);
   });
@@ -97,7 +148,8 @@ describe('BudgetTable', function() {
         allocationEditable={false}
         listPlansForCharm={listPlansForCharm}
         plansEditable={true}
-        services={[{}, {}]} />, true);
+        services={[{}, {}]}
+        withPlans={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="budget-table">
@@ -108,17 +160,19 @@ describe('BudgetTable', function() {
           <div className="one-col">
             Units
           </div>
-          <div className="three-col">
-            Details
-          </div>
-          <div className="one-col">
-            Usage
-          </div>
-          <div className="one-col">
-            Allocation
-          </div>
-          <div className="one-col last-col">
-            Spend
+          <div>
+            <div className="three-col">
+              Details
+            </div>
+            <div className="one-col">
+              Usage
+            </div>
+            <div className="one-col">
+              Allocation
+            </div>
+            <div className="one-col last-col">
+              Spend
+            </div>
           </div>
         </div>
         {[<juju.components.BudgetTableRow
@@ -129,7 +183,8 @@ describe('BudgetTable', function() {
             listPlansForCharm={listPlansForCharm}
             plansEditable={true}
             service={{}}
-            showExtra={undefined} />,
+            showExtra={undefined}
+            withPlans={true} />,
           <juju.components.BudgetTableRow
             acl={acl}
             key={1}
@@ -138,7 +193,8 @@ describe('BudgetTable', function() {
             listPlansForCharm={listPlansForCharm}
             plansEditable={true}
             service={{}}
-            showExtra={undefined} />]}
+            showExtra={undefined}
+            withPlans={true} />]}
       </div>);
     assert.deepEqual(output, expected);
   });

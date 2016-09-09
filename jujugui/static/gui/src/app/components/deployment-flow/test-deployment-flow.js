@@ -62,7 +62,8 @@ describe('DeploymentFlow', function() {
         listPlansForCharm={listPlansForCharm}
         modelName="Pavlova"
         servicesGetById={servicesGetById}
-        user="user-admin">
+        user="user-admin"
+        withPlans={true}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
@@ -152,7 +153,8 @@ describe('DeploymentFlow', function() {
                     groupedChanges={{}}
                     listPlansForCharm={listPlansForCharm}
                     servicesGetById={servicesGetById}
-                    showChangelogs={false} />
+                    showChangelogs={false}
+                    withPlans={true} />
                 </juju.components.DeploymentSection>
                 <juju.components.DeploymentSection
                   completed={false}
@@ -462,7 +464,8 @@ describe('DeploymentFlow', function() {
         listPlansForCharm={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
-        user="user-admin">
+        user="user-admin"
+        withPlans={true}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();

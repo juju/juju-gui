@@ -66,7 +66,8 @@ describe('BudgetTableRow', function() {
         allocationEditable={false}
         listPlansForCharm={listPlansForCharm}
         plansEditable={false}
-        service={service} />, true);
+        service={service}
+        withPlans={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.ExpandingRow
@@ -87,17 +88,58 @@ describe('BudgetTableRow', function() {
               {4}
             </div>
           </div>
-          <div className="three-col no-margin-bottom">
-            <span>You need to select a plan</span>
+          <div>
+            <div className="three-col no-margin-bottom">
+              <span>You need to select a plan</span>
+            </div>
+            <div className="two-col no-margin-bottom">
+              $1
+            </div>
+            <div className="two-col no-margin-bottom">
+              <span onClick={undefined}>$1</span>
+            </div>
+            <div className="one-col no-margin-bottom last-col">
+              $1
+            </div>
+            {undefined}
           </div>
-          <div className="two-col no-margin-bottom">
-            $1
-          </div>
-          <div className="two-col no-margin-bottom">
-            <span onClick={undefined}>$1</span>
-          </div>
-          <div className="one-col no-margin-bottom last-col">
-            $1
+          {undefined}
+        </div>
+        <div>
+          {undefined}
+        </div>
+      </juju.components.ExpandingRow>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render without plans', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.BudgetTableRow
+        acl={acl}
+        allocationEditable={false}
+        listPlansForCharm={listPlansForCharm}
+        plansEditable={false}
+        service={service}
+        withPlans={false} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.ExpandingRow
+        classes={{
+          'budget-table-row': true,
+          'twelve-col': true
+        }}
+        clickable={false}
+        expanded={false}>
+        <div>
+          <div>
+            <div className="three-col no-margin-bottom">
+              <img className="budget-table__charm-icon"
+                src="landscape.svg" />
+              Landscape
+            </div>
+            <div className="one-col no-margin-bottom">
+              {4}
+            </div>
           </div>
           {undefined}
           {undefined}
@@ -118,7 +160,8 @@ describe('BudgetTableRow', function() {
         listPlansForCharm={listPlansForCharm}
         plansEditable={false}
         service={service}
-        showExtra={true} />, true);
+        showExtra={true}
+        withPlans={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.ExpandingRow
@@ -139,19 +182,21 @@ describe('BudgetTableRow', function() {
               {4}
             </div>
           </div>
-          <div className="three-col no-margin-bottom">
-            <span>You need to select a plan</span>
+          <div>
+            <div className="three-col no-margin-bottom">
+              <span>You need to select a plan</span>
+            </div>
+            <div className="two-col no-margin-bottom">
+              $1
+            </div>
+            <div className="two-col no-margin-bottom">
+              <span onClick={undefined}>$1</span>
+            </div>
+            <div className="one-col no-margin-bottom last-col">
+              $1
+            </div>
+            {undefined}
           </div>
-          <div className="two-col no-margin-bottom">
-            $1
-          </div>
-          <div className="two-col no-margin-bottom">
-            <span onClick={undefined}>$1</span>
-          </div>
-          <div className="one-col no-margin-bottom last-col">
-            $1
-          </div>
-          {undefined}
           <div className="twelve-col no-margin-bottom">
             <span>extra</span>
           </div>
@@ -192,7 +237,8 @@ describe('BudgetTableRow', function() {
         allocationEditable={false}
         listPlansForCharm={listPlansForCharm}
         plansEditable={false}
-        service={service} />, true);
+        service={service}
+        withPlans={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.ExpandingRow
@@ -213,19 +259,21 @@ describe('BudgetTableRow', function() {
               {4}
             </div>
           </div>
-          <div className="three-col no-margin-bottom">
-            <span>{'plan 1'} ({'$5'})</span>
+          <div>
+            <div className="three-col no-margin-bottom">
+              <span>{'plan 1'} ({'$5'})</span>
+            </div>
+            <div className="two-col no-margin-bottom">
+              $1
+            </div>
+            <div className="two-col no-margin-bottom">
+              <span onClick={undefined}>$1</span>
+            </div>
+            <div className="one-col no-margin-bottom last-col">
+              $1
+            </div>
+            {undefined}
           </div>
-          <div className="two-col no-margin-bottom">
-            $1
-          </div>
-          <div className="two-col no-margin-bottom">
-            <span onClick={undefined}>$1</span>
-          </div>
-          <div className="one-col no-margin-bottom last-col">
-            $1
-          </div>
-          {undefined}
           {undefined}
         </div>
         <div>
@@ -243,7 +291,8 @@ describe('BudgetTableRow', function() {
         allocationEditable={false}
         listPlansForCharm={listPlansForCharm}
         plansEditable={true}
-        service={service} />, true);
+        service={service}
+        withPlans={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <juju.components.ExpandingRow
@@ -264,19 +313,21 @@ describe('BudgetTableRow', function() {
               {4}
             </div>
           </div>
-          <div className="three-col no-margin-bottom">
-            <span>-</span>
+          <div>
+            <div className="three-col no-margin-bottom">
+              <span>-</span>
+            </div>
+            <div className="one-col no-margin-bottom">
+              $1
+            </div>
+            <div className="one-col no-margin-bottom">
+              <span onClick={undefined}>$1</span>
+            </div>
+            <div className="one-col no-margin-bottom">
+              $1
+            </div>
+            {undefined}
           </div>
-          <div className="one-col no-margin-bottom">
-            $1
-          </div>
-          <div className="one-col no-margin-bottom">
-            <span onClick={undefined}>$1</span>
-          </div>
-          <div className="one-col no-margin-bottom">
-            $1
-          </div>
-          {undefined}
           {undefined}
         </div>
         <div>
@@ -293,7 +344,8 @@ describe('BudgetTableRow', function() {
         allocationEditable={false}
         listPlansForCharm={listPlansForCharm}
         plansEditable={true}
-        service={service} />, true);
+        service={service}
+        withPlans={true} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -315,25 +367,27 @@ describe('BudgetTableRow', function() {
               {4}
             </div>
           </div>
-          <div className="three-col no-margin-bottom">
-            <span>You need to select a plan</span>
-          </div>
-          <div className="one-col no-margin-bottom">
-            $1
-          </div>
-          <div className="one-col no-margin-bottom">
-            <span onClick={undefined}>$1</span>
-          </div>
-          <div className="one-col no-margin-bottom">
-            $1
-          </div>
-          <div className="two-col last-col no-margin-bottom">
-            <div className="budget-table__edit">
-              <juju.components.GenericButton
-                action={instance._toggle}
-                disabled={false}
-                type="neutral"
-                title="Change plan" />
+          <div>
+            <div className="three-col no-margin-bottom">
+              <span>You need to select a plan</span>
+            </div>
+            <div className="one-col no-margin-bottom">
+              $1
+            </div>
+            <div className="one-col no-margin-bottom">
+              <span onClick={undefined}>$1</span>
+            </div>
+            <div className="one-col no-margin-bottom">
+              $1
+            </div>
+            <div className="two-col last-col no-margin-bottom">
+              <div className="budget-table__edit">
+                <juju.components.GenericButton
+                  action={instance._toggle}
+                  disabled={false}
+                  type="neutral"
+                  title="Change plan" />
+              </div>
             </div>
           </div>
           {undefined}
@@ -412,7 +466,8 @@ describe('BudgetTableRow', function() {
         allocationEditable={false}
         listPlansForCharm={listPlansForCharm}
         plansEditable={true}
-        service={service} />, true);
+        service={service}
+        withPlans={true} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -434,25 +489,27 @@ describe('BudgetTableRow', function() {
               {4}
             </div>
           </div>
-          <div className="three-col no-margin-bottom">
-            <span>You need to select a plan</span>
-          </div>
-          <div className="one-col no-margin-bottom">
-            $1
-          </div>
-          <div className="one-col no-margin-bottom">
-            <span onClick={undefined}>$1</span>
-          </div>
-          <div className="one-col no-margin-bottom">
-            $1
-          </div>
-          <div className="two-col last-col no-margin-bottom">
-            <div className="budget-table__edit">
-              <juju.components.GenericButton
-                action={instance._toggle}
-                disabled={true}
-                type="neutral"
-                title="Change plan" />
+          <div>
+            <div className="three-col no-margin-bottom">
+              <span>You need to select a plan</span>
+            </div>
+            <div className="one-col no-margin-bottom">
+              $1
+            </div>
+            <div className="one-col no-margin-bottom">
+              <span onClick={undefined}>$1</span>
+            </div>
+            <div className="one-col no-margin-bottom">
+              $1
+            </div>
+            <div className="two-col last-col no-margin-bottom">
+              <div className="budget-table__edit">
+                <juju.components.GenericButton
+                  action={instance._toggle}
+                  disabled={true}
+                  type="neutral"
+                  title="Change plan" />
+              </div>
             </div>
           </div>
           {undefined}
@@ -532,7 +589,8 @@ describe('BudgetTableRow', function() {
         allocationEditable={false}
         listPlansForCharm={listPlansForCharm}
         plansEditable={false}
-        service={service} />, true);
+        service={service}
+        withPlans={true} />, true);
     renderer.unmount();
     assert.equal(abort.callCount, 1);
   });
