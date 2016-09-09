@@ -130,7 +130,8 @@ describe('DeploymentFlow', function() {
                   title="Machines to be deployed">
                   <juju.components.DeploymentMachines
                     acl={acl}
-                    cloud={null} />
+                    cloud={null}
+                    machines={undefined} />
                 </juju.components.DeploymentSection>
                 <juju.components.DeploymentSection
                   completed={false}
@@ -253,6 +254,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         getCloudCredentials={sinon.stub()}
+        groupedChanges={{}}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -279,6 +281,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         getCloudCredentials={sinon.stub()}
+        groupedChanges={{}}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -302,6 +305,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         getCloudCredentials={sinon.stub()}
+        groupedChanges={{}}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -327,6 +331,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         getCloudCredentials={sinon.stub()}
+        groupedChanges={{}}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -352,6 +357,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         getCloudCredentials={sinon.stub()}
+        groupedChanges={{}}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -382,6 +388,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         getCloudCredentials={sinon.stub()}
+        groupedChanges={{}}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -407,6 +414,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         getCloudCredentials={sinon.stub()}
+        groupedChanges={{}}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -433,6 +441,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         getCloudCredentials={sinon.stub()}
+        groupedChanges={{}}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -459,6 +468,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         getCloudCredentials={sinon.stub()}
+        groupedChanges={{}}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -486,6 +496,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         getCloudCredentials={sinon.stub()}
+        groupedChanges={{}}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
@@ -515,6 +526,7 @@ describe('DeploymentFlow', function() {
         changeState={changeState}
         deploy={deploy}
         getCloudCredentials={sinon.stub()}
+        groupedChanges={{}}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}

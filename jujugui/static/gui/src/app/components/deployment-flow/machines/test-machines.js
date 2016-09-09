@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentMachines', function() {
-  var acl;
+  var acl, machines;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,13 +33,49 @@ describe('DeploymentMachines', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    machines = {
+      machine1: {
+        command: {
+          args: [[{
+            constraints: {},
+            series: 'xenial'
+          }]]
+        }
+      },
+      machine2: {
+        command: {
+          args: [[{
+            constraints: {
+              cores: 2,
+              cpu: 3,
+              disk: 4096,
+              mem: 1024
+            },
+            series: null
+          }]]
+        }
+      },
+      machine3: {
+        command: {
+          args: [[{
+            constraints: {
+              cores: 2,
+              cpu: 3,
+              disk: 4096,
+              mem: 1024
+            }
+          }]]
+        }
+      }
+    };
   });
 
   it('can render', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentMachines
         acl={acl}
-        cloud={{name: 'My cloud', id: 'azure'}} />, true);
+        cloud={{name: 'My cloud', id: 'azure'}}
+        machines={machines} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <div>
@@ -61,27 +97,27 @@ describe('DeploymentMachines', function() {
             </div>
           </li>
           {[<li className="deployment-flow__row twelve-col"
-            key={0}>
+            key="xenial, (constraints not set)">
             <div className="eight-col">
-              Trusty, 1x1GHz, 1.70GB, 8.00GB
+              xenial, (constraints not set)
             </div>
             <div className="three-col">
-              Google
+              My cloud
             </div>
             <div className="one-col last-col">
-              4
+              {1}
             </div>
           </li>,
           <li className="deployment-flow__row twelve-col"
-            key={1}>
+            key="2x0.03GHz, 1.00GB, 4.00GB">
             <div className="eight-col">
-              Trusty, 1x1GHz, 1.70GB, 8.00GB
+              2x0.03GHz, 1.00GB, 4.00GB
             </div>
             <div className="three-col">
-              Google
+              My cloud
             </div>
             <div className="one-col last-col">
-              4
+              {2}
             </div>
           </li>]}
         </ul>
@@ -93,53 +129,15 @@ describe('DeploymentMachines', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentMachines
         acl={acl}
-        cloud={{name: 'Local', id: 'local'}} />, true);
+        cloud={{name: 'Local', id: 'local'}}
+        machines={machines} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <div>
-        <p className="deployment-machines__message">
-          These machines will be provisioned on&nbsp;
-          {'Local'}.
-          {''}
-        </p>
-        <ul className="deployment-machines__list">
-          <li className="deployment-flow__row-header twelve-col">
-            <div className="eight-col">
-              Type
-            </div>
-            <div className="three-col">
-              Provider
-            </div>
-            <div className="one-col last-col">
-              Quantity
-            </div>
-          </li>
-          {[<li className="deployment-flow__row twelve-col"
-            key={0}>
-            <div className="eight-col">
-              Trusty, 1x1GHz, 1.70GB, 8.00GB
-            </div>
-            <div className="three-col">
-              Google
-            </div>
-            <div className="one-col last-col">
-              4
-            </div>
-          </li>,
-          <li className="deployment-flow__row twelve-col"
-            key={1}>
-            <div className="eight-col">
-              Trusty, 1x1GHz, 1.70GB, 8.00GB
-            </div>
-            <div className="three-col">
-              Google
-            </div>
-            <div className="one-col last-col">
-              4
-            </div>
-          </li>]}
-        </ul>
-      </div>);
-    assert.deepEqual(output, expected);
+      <p className="deployment-machines__message">
+        These machines will be provisioned on&nbsp;
+        {'Local'}.
+        {''}
+      </p>);
+    assert.deepEqual(output.props.children[0], expected);
   });
 });
