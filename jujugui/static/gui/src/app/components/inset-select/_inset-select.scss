@@ -17,4 +17,13 @@
         border-radius: 0;
         box-shadow: none;
     }
+
+    &--disabled {
+        background-color: $light-grey;
+
+        .inset-select__field {
+            background-image: none;
+            background-color: $light-grey;
+        }
+    }
 }

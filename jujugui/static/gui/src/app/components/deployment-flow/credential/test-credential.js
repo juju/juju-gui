@@ -34,39 +34,8 @@ describe('DeploymentCredential', function() {
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
     regions = [{name: 'test-region'}];
-    cloud = {id: 'azure', regions: regions};
-    clouds = {
-      google: {
-        id: 'google',
-        showLogo: true,
-        signupUrl: 'https://console.cloud.google.com/billing/freetrial',
-        svgHeight: 33,
-        svgWidth: 256,
-        title: 'Google Compute Engine'
-      },
-      azure: {
-        id: 'azure',
-        showLogo: true,
-        signupUrl: 'https://azure.microsoft.com/en-us/free/',
-        svgHeight: 24,
-        svgWidth: 204,
-        title: 'Microsoft Azure'
-      },
-      aws: {
-        id: 'aws',
-        showLogo: true,
-        signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
-        'registration/index.html',
-        svgHeight: 48,
-        svgWidth: 120,
-        title: 'Amazon Web Services'
-      },
-      local: {
-        id: 'local',
-        showLogo: false,
-        title: 'Local'
-      }
-    };
+    cloud = {id: 'azure', id: 'azure', regions: regions};
+    clouds = {cloud: 'one'};
     credentials = {
       'cloudcred-lxd_admin@local_default': {
         name: 'cloudcred-lxd_admin@local_default'
@@ -83,6 +52,7 @@ describe('DeploymentCredential', function() {
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
         clouds={clouds}
+        editable={true}
         getCloudCredentials={sinon.stub()}
         getTagsForCloudCredentials={sinon.stub()}
         setCredential={sinon.stub()}
@@ -112,6 +82,7 @@ describe('DeploymentCredential', function() {
         updateCloudCredential={updateCloudCredential}
         cloud={cloud}
         clouds={clouds}
+        editable={true}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, [])}
         getTagsForCloudCredentials={
           sinon.stub().callsArgWith(1, null, tags)}
@@ -146,6 +117,68 @@ describe('DeploymentCredential', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('can render when not editable', function() {
+    var updateCloudCredential = sinon.stub();
+    var setCredential = sinon.stub();
+    var setRegion = sinon.stub();
+    var setTemplate = sinon.stub();
+    var validateForm = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredential
+        acl={acl}
+        updateCloudCredential={updateCloudCredential}
+        cloud={cloud}
+        clouds={clouds}
+        credential="current@local"
+        editable={false}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, [])}
+        getTagsForCloudCredentials={
+          sinon.stub().callsArgWith(1, null, tags)}
+        region="north-north-west"
+        setCredential={setCredential}
+        setRegion={setRegion}
+        setTemplate={setTemplate}
+        user={user}
+        validateForm={validateForm} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div>
+        <juju.components.ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={false}>
+          <form className="deployment-credential__form">
+            <div className="prepend-two four-col">
+              <juju.components.InsetSelect
+                disabled={true}
+                label="Credential"
+                onChange={instance._handleCredentialChange}
+                options={[{
+                  label: 'current@local',
+                  value: 'current@local'
+                }, {
+                  label: 'Add credential...',
+                  value: 'add-credential'
+                }]} />
+            </div>
+            <div className="four-col">
+              <juju.components.InsetSelect
+                disabled={true}
+                label="Region"
+                onChange={setRegion}
+                options={[{
+                  label: 'north-north-west',
+                  value: 'north-north-west'
+                }]} />
+            </div>
+          </form>
+          {undefined}
+        </juju.components.ExpandingRow>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
   it('can render without a cloud', function() {
     var updateCloudCredential = sinon.stub();
     var setCredential = sinon.stub();
@@ -158,6 +191,7 @@ describe('DeploymentCredential', function() {
         updateCloudCredential={updateCloudCredential}
         cloud={null}
         clouds={clouds}
+        editable={true}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, {})}
         getTagsForCloudCredentials={
           sinon.stub().callsArgWith(1, null, [])}
@@ -201,6 +235,7 @@ describe('DeploymentCredential', function() {
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
         clouds={clouds}
+        editable={true}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getTagsForCloudCredentials={
           sinon.stub().callsArgWith(1, null, tags)}
@@ -257,6 +292,7 @@ describe('DeploymentCredential', function() {
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
         clouds={clouds}
+        editable={true}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getTagsForCloudCredentials={
           sinon.stub().callsArgWith(1, null, tags)}
@@ -279,6 +315,7 @@ describe('DeploymentCredential', function() {
         updateCloudCredential={sinon.stub()}
         cloud={cloud}
         clouds={clouds}
+        editable={true}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getTagsForCloudCredentials={sinon.stub().callsArgWith(1, null, tags)}
         setCredential={setCredential}
@@ -337,6 +374,7 @@ describe('DeploymentCredential', function() {
         updateCloudCredential={updateCloudCredential}
         cloud={cloud}
         clouds={clouds}
+        editable={true}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getTagsForCloudCredentials={
           sinon.stub().callsArgWith(1, null, tags)}

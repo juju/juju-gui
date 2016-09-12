@@ -24,7 +24,10 @@ YUI.add('deployment-flow', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
+      changes: React.PropTypes.object.isRequired,
       changesFilterByParent: React.PropTypes.func.isRequired,
+      cloud: React.PropTypes.object,
+      credential: React.PropTypes.string,
       deploy: React.PropTypes.func.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
       getCloudCredentials: React.PropTypes.func.isRequired,
@@ -35,6 +38,7 @@ YUI.add('deployment-flow', function() {
       listPlansForCharm: React.PropTypes.func.isRequired,
       modelCommitted: React.PropTypes.bool,
       modelName: React.PropTypes.string.isRequired,
+      region: React.PropTypes.string,
       servicesGetById: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func.isRequired,
       user: React.PropTypes.string,
@@ -75,11 +79,13 @@ YUI.add('deployment-flow', function() {
     },
 
     getInitialState: function() {
+      // Set up the cloud, credential and region from props, as if they exist at
+      // mount they can't be changed.
       return {
-        cloud: null,
-        credential: null,
+        cloud: this.props.cloud || null,
+        credential: this.props.credential || null,
         template: null,
-        region: null,
+        region: this.props.region || null,
         showChangelogs: false
       };
     },
@@ -128,6 +134,11 @@ YUI.add('deployment-flow', function() {
           completed = false;
           disabled = !hasCloud || !hasCredential;
           visible = includesPlans;
+          break;
+        case 'changes':
+          completed = false;
+          disabled = !hasCloud || !hasCredential;
+          visible = true;
           break;
         case 'agreements':
           completed = false;
@@ -265,7 +276,7 @@ YUI.add('deployment-flow', function() {
       @returns {Array} The list of actions.
     */
     _generateCloudAction: function() {
-      if (!this.state.cloud) {
+      if (!this.state.cloud || this.props.modelCommitted) {
         return;
       }
       return [{
@@ -364,6 +375,7 @@ YUI.add('deployment-flow', function() {
             credential={credential}
             cloud={cloud}
             clouds={this.CLOUDS}
+            editable={!this.props.modelCommitted}
             getCloudCredentials={this.props.getCloudCredentials}
             getTagsForCloudCredentials={this.props.getTagsForCloudCredentials}
             region={this.state.region}
@@ -461,6 +473,31 @@ YUI.add('deployment-flow', function() {
     },
 
     /**
+      Generate the changes section.
+
+      @method _generateChangeSection
+      @returns {Object} The markup.
+    */
+    _generateChangeSection: function() {
+      var status = this._getSectionStatus('changes');
+      if (!status.visible) {
+        return;
+      }
+      return (
+        <juju.components.DeploymentSection
+          completed={status.completed}
+          disabled={status.disabled}
+          instance="deployment-changes"
+          showCheck={false}
+          title="Model changes">
+          <juju.components.DeploymentChanges
+          changes={this.props.changes}
+          generateAllChangeDescriptions={
+            this.props.generateAllChangeDescriptions} />
+        </juju.components.DeploymentSection>);
+    },
+
+    /**
       Generate the agreements section.
 
       @method _generateAgreementsSection
@@ -527,6 +564,7 @@ YUI.add('deployment-flow', function() {
                   {this._generateMachinesSection()}
                   {this._generateServicesSection()}
                   {this._generateBudgetSection()}
+                  {this._generateChangeSection()}
                   <div className="twelve-col">
                     <div className="deployment-flow__deploy">
                       {this._generateAgreementsSection()}
@@ -552,6 +590,7 @@ YUI.add('deployment-flow', function() {
 }, '0.1.0', {
   requires: [
     'deployment-budget',
+    'deployment-changes',
     'deployment-cloud',
     'deployment-credential',
     'deployment-machines',

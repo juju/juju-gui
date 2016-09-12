@@ -50,10 +50,12 @@ describe('DeploymentFlow', function() {
     var getCloudCredentials = sinon.stub();
     var getTagsForCloudCredentials = sinon.stub();
     var servicesGetById = sinon.stub();
+    const changes = {};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentFlow
         acl={acl}
         updateCloudCredential={updateCloudCredential}
+        changes={changes}
         changesFilterByParent={changesFilterByParent}
         changeState={changeState}
         deploy={sinon.stub()}
@@ -116,6 +118,7 @@ describe('DeploymentFlow', function() {
                     cloud={null}
                     clouds={instance.CLOUDS}
                     credential={null}
+                    editable={true}
                     getCloudCredentials={getCloudCredentials}
                     getTagsForCloudCredentials={getTagsForCloudCredentials}
                     region={null}
@@ -173,6 +176,17 @@ describe('DeploymentFlow', function() {
                     setBudget={instance._setBudget}
                     user="user-admin" />
                 </juju.components.DeploymentSection>
+                <juju.components.DeploymentSection
+                  completed={false}
+                  disabled={true}
+                  instance="deployment-changes"
+                  showCheck={false}
+                  title="Model changes">
+                  <juju.components.DeploymentChanges
+                  changes={changes}
+                  generateAllChangeDescriptions={
+                    generateAllChangeDescriptions} />
+                </juju.components.DeploymentSection>
                 <div className="twelve-col">
                   <div className="deployment-flow__deploy">
                     <div>
@@ -223,6 +237,7 @@ describe('DeploymentFlow', function() {
     var output = jsTestUtils.shallowRender(
       <juju.components.DeploymentFlow
         acl={acl}
+        changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={changeState}
         deploy={sinon.stub()}
@@ -547,7 +562,7 @@ describe('DeploymentFlow', function() {
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
       .props.children.props.children;
-    assert.isUndefined(sections[5].props.children.props.children[0]);
+    assert.isUndefined(sections[6].props.children.props.children[0]);
   });
 
   it('can deploy', function() {
@@ -580,7 +595,7 @@ describe('DeploymentFlow', function() {
     instance._setRegion('north');
     var output = renderer.getRenderOutput();
     output.props.children.props.children[1].props.children.props.children
-      .props.children[5].props.children.props.children[1].props.children
+      .props.children[6].props.children.props.children[1].props.children
       .props.action();
     assert.equal(deploy.callCount, 1);
     assert.equal(deploy.args[0][2], 'Pavlova');

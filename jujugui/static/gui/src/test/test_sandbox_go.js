@@ -198,7 +198,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           response: {
             'provider-type': state.get('providerType'),
             'default-series': state.get('defaultSeries'),
-            name: 'sandbox'}};
+            name: 'sandbox',
+            cloud: 'demonstration',
+            'cloud-credential-tag':
+              'cloudcred-demonstration_admin@local_demonstration',
+            'cloud-region': 'demo-west'}};
         assert.deepEqual(JSON.parse(received.data), expected);
         done();
       };

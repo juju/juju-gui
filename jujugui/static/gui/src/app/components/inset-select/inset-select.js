@@ -92,10 +92,25 @@ YUI.add('inset-select', function() {
       });
     },
 
+    /**
+      Generate the classes for the field.
+
+      @method _generateClasses
+      @returns {String} The list classes.
+    */
+    _generateClasses: function() {
+      return classNames(
+        'inset-select',
+        {
+          'inset-select--disabled': this.props.disabled
+        }
+      );
+    },
+
     render: function() {
       var {labelElement, id} = this._generateLabel();
       return (
-        <div className='inset-select'>
+        <div className={this._generateClasses()}>
           {labelElement}
           <select className="inset-select__field"
             defaultValue={this.props.value}

@@ -1139,12 +1139,21 @@ YUI.add('juju-gui', function(Y) {
       // Auto place the units. This is probably not be best UX, but is required
       // to display the machines in the deployment flow.
       autoPlaceUnits();
+      const credentialTag = env.get('credentialTag');
+      let cloud = env.get('cloud');
+      if (cloud) {
+        cloud = {id: cloud, name: cloud};
+      }
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
           changesFilterByParent={
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
           changeState={this.changeState.bind(this)}
+          cloud={cloud}
+          credential={
+            credentialTag ? credentialTag.replace('cloudcred-', '') : undefined}
+          changes={currentChangeSet}
           deploy={utils.deploy.bind(
             utils, env, this.jem, users, autoPlaceUnits,
             this.createSocketURL.bind(this, this.get('socketTemplate')),
@@ -1163,6 +1172,7 @@ YUI.add('juju-gui', function(Y) {
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
           modelCommitted={modelCommitted}
           modelName={db.environment.get('name')}
+          region={env.get('region')}
           servicesGetById={services.getById.bind(services)}
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
