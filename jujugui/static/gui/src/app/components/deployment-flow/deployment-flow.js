@@ -24,6 +24,7 @@ YUI.add('deployment-flow', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
+      changes: React.PropTypes.object.isRequired,
       changesFilterByParent: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.object,
       credential: React.PropTypes.string,
@@ -133,6 +134,11 @@ YUI.add('deployment-flow', function() {
           completed = false;
           disabled = !hasCloud || !hasCredential;
           visible = includesPlans;
+          break;
+        case 'changes':
+          completed = false;
+          disabled = !hasCloud || !hasCredential;
+          visible = true;
           break;
         case 'agreements':
           completed = false;
@@ -467,6 +473,31 @@ YUI.add('deployment-flow', function() {
     },
 
     /**
+      Generate the changes section.
+
+      @method _generateChangeSection
+      @returns {Object} The markup.
+    */
+    _generateChangeSection: function() {
+      var status = this._getSectionStatus('changes');
+      if (!status.visible) {
+        return;
+      }
+      return (
+        <juju.components.DeploymentSection
+          completed={status.completed}
+          disabled={status.disabled}
+          instance="deployment-changes"
+          showCheck={false}
+          title="Model changes">
+          <juju.components.DeploymentChanges
+          changes={this.props.changes}
+          generateAllChangeDescriptions={
+            this.props.generateAllChangeDescriptions} />
+        </juju.components.DeploymentSection>);
+    },
+
+    /**
       Generate the agreements section.
 
       @method _generateAgreementsSection
@@ -533,6 +564,7 @@ YUI.add('deployment-flow', function() {
                   {this._generateMachinesSection()}
                   {this._generateServicesSection()}
                   {this._generateBudgetSection()}
+                  {this._generateChangeSection()}
                   <div className="twelve-col">
                     <div className="deployment-flow__deploy">
                       {this._generateAgreementsSection()}
@@ -558,6 +590,7 @@ YUI.add('deployment-flow', function() {
 }, '0.1.0', {
   requires: [
     'deployment-budget',
+    'deployment-changes',
     'deployment-cloud',
     'deployment-credential',
     'deployment-machines',

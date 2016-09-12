@@ -1153,6 +1153,7 @@ YUI.add('juju-gui', function(Y) {
           cloud={cloud}
           credential={
             credentialTag ? credentialTag.replace('cloudcred-', '') : undefined}
+          changes={currentChangeSet}
           deploy={utils.deploy.bind(
             utils, env, this.jem, users, autoPlaceUnits,
             this.createSocketURL.bind(this, this.get('socketTemplate')),
