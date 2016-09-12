@@ -180,50 +180,6 @@ describe('UserProfileModelList', () => {
     assert.deepEqual(output, expected);
   });
 
-  it('renders a model missing its last accessed date', () => {
-    delete models[0].lastConnection;
-    var listModels = sinon.stub().callsArgWith(0, null, {models: models});
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
-        addNotification={sinon.stub()}
-        canCreateNew={true}
-        controllerAPI={controllerAPI}
-        currentModel={'model1'}
-        gisf={false}
-        hideConnectingMask={sinon.stub()}
-        listModels={listModels}
-        showConnectingMask={sinon.stub()}
-        switchModel={sinon.stub()}
-        user={users.charmstore}
-        users={users} />, true);
-    var output = component.getRenderOutput();
-    var timestamp = output.props.children[1].props.children[1][0]
-      .props.children[2];
-    assert.equal(timestamp.props.children, '--');
-  });
-
-  it('renders a model with a non-date last accessed value', () => {
-    models[0].lastConnection = 'today';
-    var listModels = sinon.stub().callsArgWith(0, null, {models: models});
-    var component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
-        addNotification={sinon.stub()}
-        canCreateNew={true}
-        controllerAPI={controllerAPI}
-        currentModel={'model1'}
-        gisf={false}
-        hideConnectingMask={sinon.stub()}
-        listModels={listModels}
-        showConnectingMask={sinon.stub()}
-        switchModel={sinon.stub()}
-        user={users.charmstore}
-        users={users} />, true);
-    var output = component.getRenderOutput();
-    var timestamp = output.props.children[1].props.children[1][0]
-      .props.children[2];
-    assert.equal(timestamp.props.children, 'today');
-  });
-
   it('can render models that are being destroyed', () => {
     models[0].isAlive = false;
     var listModels = sinon.stub().callsArgWith(0, null, {models: models});
