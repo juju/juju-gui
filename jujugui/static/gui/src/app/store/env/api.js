@@ -514,10 +514,7 @@ YUI.add('juju-env-api', function(Y) {
         this.setCredentials(null);
         this.failedAuthentication = true;
       }
-      this.fire('login', {data: {
-        result: this.userIsAuthenticated,
-        error: data.error || null
-      }});
+      this.fire('login', {err: data.error || null});
     },
 
     /**
@@ -557,7 +554,7 @@ YUI.add('juju-env-api', function(Y) {
     login: function() {
       // If the user is already authenticated there is nothing to do.
       if (this.userIsAuthenticated) {
-        this.fire('login', {data: {result: true}});
+        this.fire('login', {err: null});
         return;
       }
       if (this.pendingLoginResponse) {
@@ -565,8 +562,7 @@ YUI.add('juju-env-api', function(Y) {
       }
       var credentials = this.getCredentials();
       if (!credentials.user || !credentials.password) {
-        console.warn('attempted login without providing credentials');
-        this.fire('login', {data: {result: false}});
+        this.fire('login', {err: 'invalid username or password'});
         return;
       }
       this._send_rpc({
@@ -871,8 +867,7 @@ YUI.add('juju-env-api', function(Y) {
     uploadLocalCharm: function(file, series, progress, callback) {
       // Ensure that they are logged in and authenticated before uploading.
       if (!this.userIsAuthenticated) {
-        console.warn('Attempted upload files without providing credentials.');
-        this.fire('login', {data: {result: false}});
+        this.fire('login', {err: 'cannot upload files anonymously'});
         return;
       }
       var credentials = this.getCredentials();

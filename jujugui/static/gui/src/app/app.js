@@ -585,8 +585,8 @@ YUI.add('juju-gui', function(Y) {
             // minutes of this writing.
             var querystring = this.location.search.substring(1);
             var qs = Y.QueryString.parse(querystring);
-            var authtoken = qs.authtoken;
-            if (Y.Lang.isValue(authtoken)) {
+            var authtoken = qs.authtoken || '';
+            if (authtoken || authtoken.length) {
               // De-dupe if necessary.
               if (Array.isArray(authtoken)) {
                 authtoken = authtoken[0];
@@ -719,7 +719,11 @@ YUI.add('juju-gui', function(Y) {
       controllerAPI.setAttrs({ user, password });
       controllerAPI.setCredentials({ user, password, macaroons });
 
-      controllerAPI.after('login', e => {
+      controllerAPI.after('login', evt => {
+        if (evt.err) {
+          this._renderLogin(evt.err);
+          return;
+        }
         // After logging in trigger the app to dispatch to re-render the
         // components that require an active connection to the controllerAPI.
         this.dispatch();
@@ -877,34 +881,29 @@ YUI.add('juju-gui', function(Y) {
       @param {String} err The login error message, if any.
     */
     _apiLoginHandler: function(api, err) {
-      const errorNotify = function(err) {
-        this.db.notifications.add({
-          title: 'Unable to log into Juju',
-          message: `unable to log into Juju: ${err}`,
-          level: 'error'
-        });
-      };
-
-      if (views.utils.isRedirectError(err)) {
-        // If the error is that redirection is required then we have to
-        // make a request to get the appropriate model connection information.
-        api.redirectInfo((err, servers) => {
-          if (err) {
-            errorNotify(err);
-            return;
-          }
-          // Loop through the available servers and find the public IP.
-          const server = servers[0].filter(
-            server => server.scope === 'public');
-          // Switch to the redirected model.
-          this.switchEnv(this.createSocketURL(
-            this.get('socketTemplate'),
-            this.get('jujuEnvUUID'), server[0].value, server[0].port));
-        });
+      if (!views.utils.isRedirectError(err)) {
+        // There is nothing to do in this case, and the user is already
+        // prompted with the error in the login view.
         return;
-      } else if (err) {
-        errorNotify(err);
       }
+      // If the error is that redirection is required then we have to
+      // make a request to get the appropriate model connection information.
+      api.redirectInfo((err, servers) => {
+        if (err) {
+          this.db.notifications.add({
+            title: 'Unable to log into Juju',
+            message: err,
+            level: 'error'
+          });
+          return;
+        }
+        // Loop through the available servers and find the public IP.
+        const server = servers[0].filter(server => server.scope === 'public');
+        // Switch to the redirected model.
+        this.switchEnv(this.createSocketURL(
+          this.get('socketTemplate'),
+          this.get('jujuEnvUUID'), server[0].value, server[0].port));
+      });
     },
 
     /**
@@ -1938,6 +1937,7 @@ YUI.add('juju-gui', function(Y) {
       }
       this.set('loggedIn', false);
       this.env.logout();
+      this.controllerAPI.logout();
       this.maskVisibility(true);
       this._renderLogin(null);
       return;
@@ -2017,15 +2017,15 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-    Get the path to which we should redirect after logging in.  Clear it out
-    afterwards so it is clear that we've consumed it.
+      Get the path to which we should redirect after logging in.  Clear it out
+      afterwards so it is clear that we've consumed it.
 
-    This is logic from the onLogin method factored out to make it easier to
-    test.
+      This is logic from the onLogin method factored out to make it easier to
+      test.
 
-    @method popLoginRedirectPath
-    @private
-    @return {String} the path to which we should redirect.
+      @method popLoginRedirectPath
+      @private
+      @return {String} the path to which we should redirect.
     */
     popLoginRedirectPath: function() {
       var result = this.redirectPath;
@@ -2042,64 +2042,65 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Hide the login mask and redispatch the router.
-     *
-     * When the environment gets a response from a login attempt,
-     * it fires a login event, to which this responds.
-     *
-     * @method onLogin
-     * @param {Object} e An event object (with a "data.result" attribute).
-     * @private
-     */
-    onLogin: function(e) {
-      if (e.data.result) {
-        // The login was a success.
-        this.maskVisibility(false);
-        this._emptySectionApp();
-        this.set('loggedIn', true);
-        // Handle token authentication.
-        if (e.data.fromToken) {
-          // Alert the user.  In the future, we might want to call out the
-          // password so the user can note it.  That will probably want a
-          // modal or similar.
-          this.env.onceAfter('environmentNameChange', function() {
-            this.db.notifications.add(
-                new models.Notification({
-                  title: 'Logged in with Token',
-                  message: ('You have successfully logged in with a ' +
-                            'single-use authentication token.'),
-                  level: 'important'
-                })
-            );
-          }, this);
+      Hide the login mask and redispatch the router.
+
+      When the environment gets a response from a login attempt,
+      it fires a login event, to which this responds.
+
+      @method onLogin
+      @param {Object} evt An event object that includes an "err" attribute
+        with an error if the authentication failed.
+      @private
+    */
+    onLogin: function(evt) {
+      if (evt.err) {
+        this._renderLogin(evt.err);
+        return;
+      }
+      // The login was a success.
+      this.maskVisibility(false);
+      this._emptySectionApp();
+      this.set('loggedIn', true);
+      // Handle token authentication.
+      if (evt.fromToken) {
+        // Alert the user.  In the future, we might want to call out the
+        // password so the user can note it.  That will probably want a
+        // modal or similar.
+        this.env.onceAfter('environmentNameChange', function() {
+          this.db.notifications.add(
+              new models.Notification({
+                title: 'Logged in with Token',
+                message: ('You have successfully logged in with a ' +
+                          'single-use authentication token.'),
+                level: 'important'
+              })
+          );
+        }, this);
+      }
+      // Handle the change set token if provided in the query.
+      // The change set token identifies a collections of changes required
+      // to deploy a bundle. Those changes are assumed to be already
+      // registered in the GUI server (via a ChangeSet:SetChanges request).
+      // Doing that is usually responsibility of a separate system
+      // (most of the times, it is Juju Quickstart).
+      var querystring = this.location.search.substring(1);
+      var qs = Y.QueryString.parse(querystring);
+      var changesToken = qs.changestoken || '';
+      if (changesToken || changesToken.length) {
+        // De-dupe if necessary.
+        if (Array.isArray(changesToken)) {
+          changesToken = changesToken[0];
         }
-        // Handle the change set token if provided in the query.
-        // The change set token identifies a collections of changes required
-        // to deploy a bundle. Those changes are assumed to be already
-        // registered in the GUI server (via a ChangeSet:SetChanges request).
-        // Doing that is usually responsibility of a separate system
-        // (most of the times, it is Juju Quickstart).
-        var querystring = this.location.search.substring(1);
-        var qs = Y.QueryString.parse(querystring);
-        var changesToken = qs.changestoken;
-        if (Y.Lang.isValue(changesToken)) {
-          // De-dupe if necessary.
-          if (Array.isArray(changesToken)) {
-            changesToken = changesToken[0];
-          }
-          // Try to create a bundle uncommitted state using the token.
-          this.bundleImporter.importChangesToken(changesToken);
-        }
-        // If we are in GISF mode then we do not want to store and redirect
-        // on login because the user has already logged into their models
-        // and will frequently be switching between models and logging in to
-        // them. We rely exclusively on the state system to update the paths.
-        if (!this.get('gisf')) {
-          var redirectPath = this.popLoginRedirectPath();
-          this.navigate(redirectPath, {overrideAllNamespaces: true});
-        }
-      } else {
-        this._renderLogin(e.data.error);
+        // Try to create a bundle uncommitted state using the token.
+        this.bundleImporter.importChangesToken(changesToken);
+      }
+      // If we are in GISF mode then we do not want to store and redirect
+      // on login because the user has already logged into their models
+      // and will frequently be switching between models and logging in to
+      // them. We rely exclusively on the state system to update the paths.
+      if (!this.get('gisf')) {
+        var redirectPath = this.popLoginRedirectPath();
+        this.navigate(redirectPath, {overrideAllNamespaces: true});
       }
     },
 
@@ -2179,8 +2180,7 @@ YUI.add('juju-gui', function(Y) {
         };
         // Delay the callback until after the env login as everything should be
         // set up by then.
-        this.env.onceAfter(
-          'login', onLogin.bind(this, callback), this);
+        this.env.onceAfter('login', onLogin.bind(this, callback), this);
       }
       // Tell the environment to use the new socket URL when reconnecting.
       this.env.set('socket_url', socketUrl);

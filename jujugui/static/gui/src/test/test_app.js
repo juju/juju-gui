@@ -846,17 +846,17 @@ describe('App', function() {
     });
 
     it('login method handler is called after successful login', function(done) {
-      var oldOnLogin = Y.juju.App.prototype.onLogin;
-      Y.juju.App.prototype.onLogin = function(e) {
+      const oldOnLogin = Y.juju.App.prototype.onLogin;
+      Y.juju.App.prototype.onLogin = evt => {
         // Clean up.
         Y.juju.App.prototype.onLogin = oldOnLogin;
         // Begin assertions.
         assert.equal(conn.messages.length, 1);
         assertIsLogin(conn.last_message());
-        assert.isTrue(e.data.result, true);
+        assert.strictEqual(evt.err, null);
         done();
       };
-      var app = new Y.juju.App({
+      const app = new Y.juju.App({
         env: env,
         viewContainer: container,
         jujuCoreVersion: '2.0.0'
@@ -999,7 +999,7 @@ describe('App', function() {
       env.connect();
       this._cleanups.push(env.close.bind(env));
       env.logout();
-      assert.equal(env.userIsAuthenticated, false);
+      assert.strictEqual(env.userIsAuthenticated, false);
       assert.deepEqual(
         env.getCredentials(), {user: '', password: '', macaroons: null});
     });

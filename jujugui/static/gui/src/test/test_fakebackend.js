@@ -29,7 +29,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     };
   };
 
-
   describe('FakeBackend.login', function() {
     var requires = ['node', 'juju-env-fakebackend'];
     var environmentsModule, fakebackend;
