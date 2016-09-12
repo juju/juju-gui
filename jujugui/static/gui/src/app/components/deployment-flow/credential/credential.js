@@ -26,6 +26,7 @@ YUI.add('deployment-credential', function() {
       cloud: React.PropTypes.object,
       clouds: React.PropTypes.object.isRequired,
       credential: React.PropTypes.string,
+      editable: React.PropTypes.bool,
       getCloudCredentials: React.PropTypes.func.isRequired,
       getTagsForCloudCredentials: React.PropTypes.func.isRequired,
       region: React.PropTypes.string,
@@ -39,21 +40,24 @@ YUI.add('deployment-credential', function() {
     },
 
     getInitialState: function() {
+      const editable = this.props.editable;
       return {
-        credentials: [],
-        credentialsLoading: true,
-        showAdd: true
+        credentials: editable ? [] : [this.props.credential],
+        credentialsLoading: editable,
+        showAdd: editable
       };
     },
 
     componentWillMount: function() {
-      this._getCredentials();
+      if (this.props.editable) {
+        this._getCredentials();
+      }
     },
 
     componentDidUpdate: function(prevProps) {
       const prevId = prevProps.cloud && prevProps.cloud.id;
       const newId = this.props.cloud && this.props.cloud.id;
-      if (newId !== prevId) {
+      if (this.props.editable && newId !== prevId) {
         this._getCredentials();
       }
     },
@@ -168,6 +172,13 @@ YUI.add('deployment-credential', function() {
       @returns {Array} The list of region options.
     */
     _generateRegions: function() {
+      if (!this.props.editable) {
+        const region = this.props.region;
+        return [{
+          label: region,
+          value: region
+        }];
+      }
       return this.props.cloud.regions.map((region) => {
         return {
           label: region.name,
@@ -186,7 +197,7 @@ YUI.add('deployment-credential', function() {
       if (this.state.showAdd) {
         return;
       }
-      var disabled = this.props.acl.isReadOnly();
+      var disabled = this.props.acl.isReadOnly() || !this.props.editable;
       return (
         <form className="deployment-credential__form">
           <div className="prepend-two four-col">

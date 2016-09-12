@@ -25,6 +25,8 @@ YUI.add('deployment-flow', function() {
       acl: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       changesFilterByParent: React.PropTypes.func.isRequired,
+      cloud: React.PropTypes.object,
+      credential: React.PropTypes.string,
       deploy: React.PropTypes.func.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
       getCloudCredentials: React.PropTypes.func.isRequired,
@@ -35,6 +37,7 @@ YUI.add('deployment-flow', function() {
       listPlansForCharm: React.PropTypes.func.isRequired,
       modelCommitted: React.PropTypes.bool,
       modelName: React.PropTypes.string.isRequired,
+      region: React.PropTypes.string,
       servicesGetById: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func.isRequired,
       user: React.PropTypes.string,
@@ -75,11 +78,13 @@ YUI.add('deployment-flow', function() {
     },
 
     getInitialState: function() {
+      // Set up the cloud, credential and region from props, as if they exist at
+      // mount they can't be changed.
       return {
-        cloud: null,
-        credential: null,
+        cloud: this.props.cloud || null,
+        credential: this.props.credential || null,
         template: null,
-        region: null,
+        region: this.props.region || null,
         showChangelogs: false
       };
     },
@@ -265,7 +270,7 @@ YUI.add('deployment-flow', function() {
       @returns {Array} The list of actions.
     */
     _generateCloudAction: function() {
-      if (!this.state.cloud) {
+      if (!this.state.cloud || this.props.modelCommitted) {
         return;
       }
       return [{
@@ -364,6 +369,7 @@ YUI.add('deployment-flow', function() {
             credential={credential}
             cloud={cloud}
             clouds={this.CLOUDS}
+            editable={!this.props.modelCommitted}
             getCloudCredentials={this.props.getCloudCredentials}
             getTagsForCloudCredentials={this.props.getTagsForCloudCredentials}
             region={this.state.region}

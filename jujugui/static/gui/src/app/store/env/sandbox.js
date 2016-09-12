@@ -340,7 +340,11 @@ YUI.add('juju-env-sandbox', function(Y) {
         response: {
           'provider-type': state.get('providerType'),
           'default-series': state.get('defaultSeries'),
-          name: 'sandbox'
+          name: 'sandbox',
+          cloud: 'demonstration',
+          'cloud-credential-tag':
+            'cloudcred-demonstration_admin@local_demonstration',
+          'cloud-region': 'demo-west'
         }
       });
     },
