@@ -116,6 +116,7 @@ describe('DeploymentFlow', function() {
                     cloud={null}
                     clouds={instance.CLOUDS}
                     credential={null}
+                    editable={true}
                     getCloudCredentials={getCloudCredentials}
                     getTagsForCloudCredentials={getTagsForCloudCredentials}
                     region={null}
