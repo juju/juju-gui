@@ -177,6 +177,16 @@ YUI.add('user-profile-model-list', function() {
           return null;
         }
       }
+      let lastConnection = model.lastConnection || '--';
+      // Verify that whether we have a valid date; invalid dates will return
+      // NaN.
+      if (!isNaN(Date.parse(lastConnection))) {
+        lastConnection = (
+          <juju.components.DateDisplay
+            date={model.lastConnection}
+            relative={true} />
+        );
+      }
       return (
         <juju.components.UserProfileEntity
           entity={model}
@@ -191,7 +201,7 @@ YUI.add('user-profile-model-list', function() {
             --
           </span>
           <span className="user-profile__list-col two-col">
-            {model.lastConnection || '--'}
+            {lastConnection}
           </span>
           <span className="user-profile__list-col one-col">
             --
