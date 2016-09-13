@@ -1642,7 +1642,7 @@ YUI.add('juju-view-utils', function(Y) {
     Generates a valid cloud credential tag using the supplied arguments.
 
     @method generateCloudCredentialTag
-    @param {String} cloudName Mame of the cloud that this credential applies.
+    @param {String} cloudName Name of the cloud that this credential applies.
       ex: "aws", "google"
     @param {String} userId Full user id.
       ex: "user-admin@local", "admin@local"

@@ -41,7 +41,7 @@ YUI.add('deployment-credential-add', function() {
     getInitialState: function() {
       const info = this._getInfo();
       return {
-        authType: info && Object.keys(info.forms)[0] || ''
+        authType: info && info.forms && Object.keys(info.forms)[0] || ''
       };
     },
 
@@ -59,12 +59,10 @@ YUI.add('deployment-credential-add', function() {
       Generate a full credential object in the expected format.
 
       @method _generateCredentials
+      @returns {Object} The collection of field values.
     */
-    _generateCredentials: function(id) {
+    _generateCredentials: function() {
       const info = this._getInfo();
-      if (!info) {
-        return;
-      }
       const fields = {};
       info.forms[this.state.authType].forEach(field => {
         fields[field.id] = this.refs[field.id].getValue();
@@ -80,6 +78,9 @@ YUI.add('deployment-credential-add', function() {
     _handleAddCredentials: function() {
       const props = this.props;
       const info = this._getInfo();
+      if (!info || !info.forms) {
+        return;
+      }
       let fields = info.forms[this.state.authType].map(field => field.id);
       fields.push('templateName');
       var valid = props.validateForm(fields, this.refs);
@@ -130,7 +131,8 @@ YUI.add('deployment-credential-add', function() {
       Generate the form select if the cloud has multiple forms.
 
       @method _generateAuthSelect
-      @returns {Object} The cloud info if available.
+      @returns {Object} The auth type select component or undefined if there is
+        only one auth type.
     */
     _generateAuthSelect: function() {
       const info = this._getInfo();
@@ -171,7 +173,7 @@ YUI.add('deployment-credential-add', function() {
     _generateCredentialsFields: function() {
       var isReadOnly = this.props.acl.isReadOnly();
       const info = this._getInfo();
-      if (!info) {
+      if (!info || !info.forms) {
         return;
       }
       const fields = info.forms[this.state.authType].map(field => {
