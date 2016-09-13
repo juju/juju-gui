@@ -53,7 +53,50 @@ YUI.add('deployment-flow', function() {
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',
         svgHeight: 33,
         svgWidth: 256,
-        title: 'Google Compute Engine'
+        title: 'Google Compute Engine',
+        forms: {
+          oauth2: {
+            'client-id': {
+              title: 'Client ID'
+            },
+            'client-email': {
+              title: 'Client e-mail address'
+            },
+            'private-key': {
+              title: 'Client secret'
+            },
+            'project-id': {
+              title: 'Project ID'
+            }
+          },
+          jsonfile: {
+            file: {
+              title: 'Google Compute Engine project credentials .json file',
+              json: true
+            }
+          }
+        },
+        message: (
+          <p>
+            The GCE provider uses OAauth to Authenticate. This requires that
+            you set it up and get the relevant credentials. For more
+            information see
+            &nbsp;<a className="deployment-panel__link"
+              href={'https://cloud.google.com/copmute/dosc/api/how-tos/' +
+                'authorization'}
+              target="_blank">
+              https://cloud.google.com/copmute/dosc/api/how-tos/
+              authorization
+            </a>.
+            The key information can be downloaded as a JSON file, or copied
+            from
+            &nbsp;<a className="deployment-panel__link"
+              href={'https://console.developers.google.com/project/apiui/' +
+                'credential'}
+              target="_blank">
+              https://console.developers.google.com/project/apiui/credential
+            </a>.
+          </p>)
       },
       azure: {
         id: 'azure',
@@ -61,7 +104,34 @@ YUI.add('deployment-flow', function() {
         signupUrl: 'https://azure.microsoft.com/en-us/free/',
         svgHeight: 24,
         svgWidth: 204,
-        title: 'Microsoft Azure'
+        title: 'Microsoft Azure',
+        forms: {
+          userpass: {
+            'application-id': {
+              title: 'Azure Active Directory application ID'
+            },
+            'subscription-id': {
+              title: 'Azure subscription ID'
+            },
+            'tenant-id': {
+              title: 'Azure Active Directory tenant ID'
+            },
+            'application-password': {
+              title: 'Azure Active Directory application password'
+            }
+          }
+        },
+        message: (
+          <p>
+            The following fields require your Windows Azure management
+            information. For more information please see:&nbsp;
+            <a className="deployment-panel__link"
+              href="https://msdn.microsoft.com/en-us/library/windowsazure"
+              target="_blank">
+              https://msdn.microsoft.com/en-us/library/windowsazure
+            </a>
+            &nbsp;for details.
+          </p>)
       },
       aws: {
         id: 'aws',
@@ -70,7 +140,60 @@ YUI.add('deployment-flow', function() {
         'registration/index.html',
         svgHeight: 48,
         svgWidth: 120,
-        title: 'Amazon Web Services'
+        title: 'Amazon Web Services',
+        forms: {
+          'access-key': {
+            'access-key': {
+              title: 'The EC2 access key'
+            },
+            'secret-key': {
+              title: 'The EC2 secret key'
+            }
+          }
+        },
+        message: (
+          <p>
+            You can obtain your AWS credentials at:<br />
+            <a className="deployment-panel__link"
+              href={'https://console.aws.amazon.com/iam/home?region=' +
+                'eu-west-1#security_credential'}
+              target="_blank">
+              https://console.aws.amazon.com/iam/home?region=eu-west-1#
+              security_credential
+            </a>
+          </p>)
+      },
+      openstack: {
+        id: 'openstack',
+        showLogo: false,
+        title: 'OpenStack',
+        forms: {
+          userpass: {
+            'username': {
+              title: 'Username'
+            },
+            'password': {
+              title: 'Password'
+            },
+            'tenant-name': {
+              title: 'Tenant name'
+            },
+            'domain-name': {
+              title: 'Domain name'
+            }
+          },
+          'access-key': {
+            'access-key': {
+              title: 'Access key'
+            },
+            'secret-key': {
+              title: 'Secret key'
+            },
+            'tenant-name': {
+              title: 'Tenant name'
+            }
+          }
+        }
       },
       local: {
         id: 'local',
