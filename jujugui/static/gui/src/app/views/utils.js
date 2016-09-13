@@ -1223,6 +1223,21 @@ YUI.add('juju-view-utils', function(Y) {
     return path;
   };
 
+  /**
+    Displays a confirmation when closing window if there are uncommitted
+    changes
+
+    @method unloadWindow
+    @param {Object} env Reference to the app env.
+  */
+  utils.unloadWindow = function() {
+    var currentChangeSet = this.env.get('ecs').getCurrentChangeSet();
+    if (Object.keys(currentChangeSet).length > 0) {
+      return 'You have uncommitted changes to your model. You will ' +
+        'lose these changes if you continue.';
+    }
+  };
+
   // Modified for Javascript from https://gist.github.com/gruber/8891611 - I
   // escaped the forward slashes and removed the negative-lookbehind, which JS
   // does not support. See line 46 in Gruber's gist; that's the line/feature

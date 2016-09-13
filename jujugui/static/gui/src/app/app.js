@@ -514,6 +514,9 @@ YUI.add('juju-gui', function(Y) {
       this.changesUtils = window.juju.utils.ChangesUtils;
       this.relationUtils = window.juju.utils.RelationUtils;
 
+      // Listen for window unloads and trigger the unloadWindow function.
+      window.onbeforeunload = views.utils.unloadWindow.bind(this);
+
       this.on('*:navigateTo', function(e) {
         this.navigate(e.url);
       }, this);
