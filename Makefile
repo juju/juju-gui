@@ -329,6 +329,10 @@ ci-check: clean-downloadcache deps fast-babel check
 bumpversion: deps
 	bin/bumpversion $(VPART)
 
+.PHONY: version
+version:
+	python setup.py --version | sed -e "s/.*/'&'/" > $(GUIBUILD)/app/version.js
+
 .PHONY: dist
 dist: clean-all fast-dist
 
