@@ -1106,4 +1106,21 @@ describe('utilities', function() {
     });
   });
 
+  describe('generateCloudCredentialTag', function() {
+    let utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('can generate a cloud credential tag', function() {
+      assert.equal(
+        utils.generateCloudCredentialTag('azure', 'user-spinach', 'super-cred'),
+        'cloudcred-azure_spinach_super-cred');
+    });
+  });
+
 })();
