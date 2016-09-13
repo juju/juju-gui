@@ -179,6 +179,8 @@ YUI.add('juju-topology-service', function(Y) {
           is_uncommitted = false,
           is_erroring = false;
 
+      // The stroke attributes need to be set for when the service first
+      // appears on the canvas. Just setting the class is not sufficient.
       if (d.subordinate) {
         curr_node.attr({
           'stroke': '#888888',
@@ -189,6 +191,7 @@ YUI.add('juju-topology-service', function(Y) {
           'stroke': '#19b6ee',
           'stroke-width': 3
         });
+        is_uncommitted = true;
         rerenderRelations = true;
       } else if (d.highlighted) {
         rerenderRelations = true;
@@ -204,30 +207,30 @@ YUI.add('juju-topology-service', function(Y) {
             is_uncommitted = true;
           }
         });
-
-        // Add the current state class
-        if (is_erroring) {
-          parent_node.classed('is-erroring', true)
-            .classed('is-pending', false)
-            .classed('is-uncommitted', false)
-            .classed('is-running', false);
-        } else if (is_pending) {
-          parent_node.classed('is-pending', true)
-            .classed('is-erroring', false)
-            .classed('is-uncommitted', false)
-            .classed('is-running', false);
-        } else if (is_uncommitted) {
-          parent_node.classed('is-uncommitted', true)
-            .classed('is-erroring', false)
-            .classed('is-pending', false)
-            .classed('is-running', false);
-        } else {
-          parent_node.classed('is-running', true)
-            .classed('is-erroring', false)
-            .classed('is-uncommitted', false)
-            .classed('is-pending', false);
-        }
         rerenderRelations = true;
+      }
+
+      // Add the current state class
+      if (is_erroring) {
+        parent_node.classed('is-erroring', true)
+          .classed('is-pending', false)
+          .classed('is-uncommitted', false)
+          .classed('is-running', false);
+      } else if (is_pending) {
+        parent_node.classed('is-pending', true)
+          .classed('is-erroring', false)
+          .classed('is-uncommitted', false)
+          .classed('is-running', false);
+      } else if (is_uncommitted) {
+        parent_node.classed('is-uncommitted', true)
+          .classed('is-erroring', false)
+          .classed('is-pending', false)
+          .classed('is-running', false);
+      } else {
+        parent_node.classed('is-running', true)
+          .classed('is-erroring', false)
+          .classed('is-uncommitted', false)
+          .classed('is-pending', false);
       }
 
       curr_node.attr({
