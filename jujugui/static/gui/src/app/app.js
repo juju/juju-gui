@@ -1162,6 +1162,7 @@ YUI.add('juju-gui', function(Y) {
           generateAllChangeDescriptions={
             changesUtils.generateAllChangeDescriptions.bind(
               changesUtils, services, units)}
+          generateCloudCredentialTag={utils.generateCloudCredentialTag}
           getCloudCredentials={
             controllerAPI.getCloudCredentials.bind(controllerAPI)}
           getTagsForCloudCredentials={
@@ -1176,7 +1177,7 @@ YUI.add('juju-gui', function(Y) {
           servicesGetById={services.getById.bind(services)}
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
-          user={`user-${this.controllerAPI.get('user')}`}
+          user={`${this.controllerAPI.get('user')}`}
           withPlans={false} />,
         document.getElementById('deployment-container'));
     },
