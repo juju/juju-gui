@@ -26,6 +26,7 @@ YUI.add('deployment-credential-add', function() {
       close: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.object,
       clouds: React.PropTypes.object.isRequired,
+      generateCloudCredentialTag: React.PropTypes.func.isRequired,
       regions: React.PropTypes.array.isRequired,
       setCredential: React.PropTypes.func.isRequired,
       setRegion: React.PropTypes.func.isRequired,
@@ -53,17 +54,9 @@ YUI.add('deployment-credential-add', function() {
       @method _generateTemplate
     */
     _generateTemplate: function(id) {
-      var cloud = this.props.cloud;
-      var region = this._getRegion();
       return {
-        location: {region, cloud},
-        config: {
-          'access-key': this.refs.templateAccessKey.getValue(),
-          'secret-key': this.refs.templateSecretKey.getValue(),
-          // XXX This is a 'hack' to make Juju not complain about being
-          // able to find ssh keys.
-          'authorized-keys': 'fake'
-        }
+        'access-key': this.refs.templateAccessKey.getValue(),
+        'secret-key': this.refs.templateSecretKey.getValue()
       };
     },
 
@@ -73,28 +66,28 @@ YUI.add('deployment-credential-add', function() {
       @method _handleCloudClick
     */
     _handleAddCredentials: function() {
-      var fields = [
+      const props = this.props;
+      let fields = [
         'templateName'
       ];
-      if (this.props.cloud === 'aws') {
+      if (props.cloud.name === 'aws') {
         fields = fields.concat([
           'templateAccessKey',
           'templateSecretKey'
         ]);
       }
-      var valid = this.props.validateForm(fields, this.refs);
+      var valid = props.validateForm(fields, this.refs);
       if (!valid) {
         // If there are any form validation errors then stop adding the
         // credentials.
         return;
       }
-      // Add template
-      var user = this.props.user;
-      var templateName = this.refs.templateName.getValue();
-      var template = this._generateTemplate();
-      // TODO: update this call to pass the correct parameters for the new API.
-      this.props.updateCloudCredential(
-        user, templateName, template, this._updateCloudCredentialCallback);
+      props.updateCloudCredential(
+        props.generateCloudCredentialTag(
+          props.cloud.name, props.user, this.refs.templateName.getValue()),
+        'access-key',
+        this._generateTemplate(),
+        this._updateCloudCredentialCallback);
     },
 
     /**
@@ -137,7 +130,7 @@ YUI.add('deployment-credential-add', function() {
         </div>);
       const cloud = this.props.cloud;
       switch (cloud && cloud.id || this.DEFAULTCLOUD) {
-        case 'aws':
+        case 'cloud-aws':
           return (
             <div>
               <div className="six-col">
@@ -175,7 +168,7 @@ YUI.add('deployment-credential-add', function() {
               {notice}
             </div>);
           break;
-        case 'google':
+        case 'cloud-google':
           return (
             <div className="twelve-col">
               <p className="deployment-add-credentials__p six-col">
@@ -205,7 +198,7 @@ YUI.add('deployment-credential-add', function() {
               </div>
             </div>);
           break;
-        case 'azure':
+        case 'cloud-azure':
           return (
             <div className="twelve-col">
               <p className="deployment-add-credentials__p six-col">

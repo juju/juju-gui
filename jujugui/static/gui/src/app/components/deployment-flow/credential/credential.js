@@ -27,6 +27,7 @@ YUI.add('deployment-credential', function() {
       clouds: React.PropTypes.object.isRequired,
       credential: React.PropTypes.string,
       editable: React.PropTypes.bool,
+      generateCloudCredentialTag: React.PropTypes.func.isRequired,
       getCloudCredentials: React.PropTypes.func.isRequired,
       getTagsForCloudCredentials: React.PropTypes.func.isRequired,
       region: React.PropTypes.string,
@@ -233,6 +234,7 @@ YUI.add('deployment-credential', function() {
           close={this._toggleAdd}
           cloud={this.props.cloud}
           clouds={this.props.clouds}
+          generateCloudCredentialTag={this.props.generateCloudCredentialTag}
           regions={this.props.cloud && this.props.cloud.regions || []}
           setCredential={this.props.setCredential}
           setRegion={this.props.setRegion}

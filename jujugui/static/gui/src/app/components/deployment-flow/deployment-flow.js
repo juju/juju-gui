@@ -30,6 +30,7 @@ YUI.add('deployment-flow', function() {
       credential: React.PropTypes.string,
       deploy: React.PropTypes.func.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
+      generateCloudCredentialTag: React.PropTypes.func.isRequired,
       getCloudCredentials: React.PropTypes.func.isRequired,
       getTagsForCloudCredentials: React.PropTypes.func.isRequired,
       groupedChanges: React.PropTypes.object.isRequired,
@@ -376,6 +377,7 @@ YUI.add('deployment-flow', function() {
             cloud={cloud}
             clouds={this.CLOUDS}
             editable={!this.props.modelCommitted}
+            generateCloudCredentialTag={this.props.generateCloudCredentialTag}
             getCloudCredentials={this.props.getCloudCredentials}
             getTagsForCloudCredentials={this.props.getTagsForCloudCredentials}
             region={this.state.region}
