@@ -46,7 +46,7 @@ describe('UserProfileModelList', () => {
     models = [{
       uuid: 'model1',
       name: 'spinach/sandbox',
-      lastConnection: 'today',
+      lastConnection: '2016-09-12T15:42:09Z',
       ownerTag: 'user-who',
       isAlive: true
     }];
@@ -163,7 +163,9 @@ describe('UserProfileModelList', () => {
               --
             </span>
             <span className="user-profile__list-col two-col">
-              today
+              <juju.components.DateDisplay
+                date='2016-09-12T15:42:09Z'
+                relative={true}/>
             </span>
             <span className="user-profile__list-col one-col">
               --
@@ -232,7 +234,7 @@ describe('UserProfileModelList', () => {
     assert.deepEqual(switchModel.args[0], ['abc123', [{
       uuid: 'model1',
       name: 'spinach/sandbox',
-      lastConnection: 'today',
+      lastConnection: '2016-09-12T15:42:09Z',
       ownerTag: 'user-who',
       isAlive: true,
       owner: 'user-who'

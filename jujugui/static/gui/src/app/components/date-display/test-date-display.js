@@ -264,6 +264,17 @@ describe('DateDisplay', () => {
     assert.equal(forceUpdate.callCount, 2);
   });
 
+  it('handles non-date strings passed in', () => {
+    var output = renderer.render(
+      <juju.components.DateDisplay
+        date='today'
+        relative={true} />);
+    var expected = (
+      <span>today</span>
+    );
+    assert.deepEqual(output, expected);
+  });
+
   it('clears the timer when it unmounts', () => {
     renderer.render(
       <juju.components.DateDisplay

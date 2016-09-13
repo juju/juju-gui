@@ -177,6 +177,7 @@ YUI.add('user-profile-model-list', function() {
           return null;
         }
       }
+      const lastConnection = model.lastConnection || '--';
       return (
         <juju.components.UserProfileEntity
           entity={model}
@@ -191,7 +192,9 @@ YUI.add('user-profile-model-list', function() {
             --
           </span>
           <span className="user-profile__list-col two-col">
-            {model.lastConnection || '--'}
+            <juju.components.DateDisplay
+              date={lastConnection}
+              relative={true} />
           </span>
           <span className="user-profile__list-col one-col">
             --

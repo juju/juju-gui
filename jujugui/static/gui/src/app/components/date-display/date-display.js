@@ -192,12 +192,20 @@ YUI.add('date-display', function() {
     },
 
     render: function() {
-      return (
-        <time dateTime={this._generateDate()}
-          title={this._generateTitle()}>
-          {this._generateContent()}
-        </time>
-      );
+      // Validate that the string passed in is actually a date; if it isn't,
+      // just return it without any date-parsing fun.
+      if (!isNaN(Date.parse(this.props.date))) {
+        return (
+          <time dateTime={this._generateDate()}
+            title={this._generateTitle()}>
+            {this._generateContent()}
+          </time>
+        );
+      } else {
+        return (
+          <span>{this.props.date}</span>
+        );
+      }
     }
 
   });
