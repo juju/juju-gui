@@ -721,6 +721,41 @@ describe('utilities', function() {
 
   });
 
+  describe('unloadWindow', function() {
+    var utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use(['juju-view-utils'], function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('does not block when no uncommitted changes', function() {
+      var context = {env: {
+        get: sinon.stub().returns({
+          getCurrentChangeSet: sinon.stub().returns({})
+        })
+      }};
+
+      var result = utils.unloadWindow.call(context);
+      assert.strictEqual(result, undefined);
+    });
+
+    it('does block when has uncommitted changes', function() {
+      var context = {env: {
+        get: sinon.stub().returns({
+          getCurrentChangeSet: sinon.stub().returns({foo: 'bar'})
+        })
+      }};
+
+      var expected = 'You have uncommitted changes to your model. You will ' +
+        'lose these changes if you continue.';
+      var result = utils.unloadWindow.call(context);
+      assert.strictEqual(result, expected);
+    });
+  });
+
   describe('linkify', function() {
     var utils;
 
