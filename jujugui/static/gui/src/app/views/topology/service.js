@@ -179,6 +179,8 @@ YUI.add('juju-topology-service', function(Y) {
           is_uncommitted = false,
           is_erroring = false;
 
+      // The stroke attributes need to be set for when the service first
+      // appears on the canvas. Just setting the class is not sufficient.
       if (d.subordinate) {
         curr_node.attr({
           'stroke': '#888888',
