@@ -553,6 +553,26 @@ YUI.add('juju-gui', function(Y) {
       // When the connection resets, reset the db, re-login (a delta will
       // arrive with successful authentication), and redispatch.
       this.env.after('connectedChange', function(ev) {
+        // Update the baseURL to match the newly connected model.
+        // There are different baseURL requirements for GISF, GIJoe and charm.
+        var newBaseURL = null;
+        var jujuEnvUUID = this.get('jujuEnvUUID');
+        if (this.get('gisf')) {
+          var auth = this._getAuth();
+          var envName = this.env.get('environmentName');
+          newBaseURL = `/u/${auth.user}/${envName}`;
+        } else if (this.get('staticURL')) {
+          // The staticURL config value is only provided in GiJoe. This is a
+          // very flimsy test to determine if we're in GiJoe but it's all we
+          // can rely on for now.
+          newBaseURL = `/gui/${jujuEnvUUID}`;
+        } else {
+          // We're deployed by the charm
+          newBaseURL = `/${jujuEnvUUID}`;
+        }
+        this.state.set('baseUrl', newBaseURL);
+        this.navigate(newBaseURL);
+
         if (ev.newVal === true) {
           // If we're in gisf we do not want to empty the db when we connect
           // because the user may have made changes to the temporary model.
