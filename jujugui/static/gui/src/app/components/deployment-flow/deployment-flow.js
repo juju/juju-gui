@@ -195,6 +195,101 @@ YUI.add('deployment-flow', function() {
           }
         }
       },
+      cloudsigma: {
+        id: 'cloudsigma',
+        showLogo: false,
+        title: 'CloudSigma',
+        forms: {
+          userpass: {
+            'username': {
+              title: 'Username'
+            },
+            'password': {
+              title: 'Password'
+            }
+          }
+        }
+      },
+      joyent: {
+        id: 'joyent',
+        showLogo: false,
+        title: 'Joyent',
+        forms: {
+          userpass: {
+            'sdc-user': {
+              title: 'SmartDataCenter user ID'
+            },
+            'sdc-key-id': {
+              title: 'SmartDataCenter key ID'
+            },
+            'private-key': {
+              title: 'Private key used to sign requests'
+            },
+            'algorithm': {
+              title: 'Algorithm used to generate the private key'
+            }
+          }
+        }
+      },
+      maas: {
+        id: 'maas',
+        showLogo: false,
+        title: 'MAAS',
+        forms: {
+          oauth1: {
+            'maas-oauth': {
+              title: 'OAuth/API-key credentials for MAAS'
+            }
+          }
+        }
+      },
+      rackspace: {
+        id: 'rackspace',
+        showLogo: false,
+        title: 'Rackspace',
+        forms: {
+          userpass: {
+            'username': {
+              title: 'Username'
+            },
+            'password': {
+              title: 'Password'
+            },
+            'tenant-name': {
+              title: 'Tenant name'
+            },
+            'domain-name': {
+              title: 'Domain name'
+            }
+          },
+          'access-key': {
+            'access-key': {
+              title: 'Access key'
+            },
+            'secret-key': {
+              title: 'Secret key'
+            },
+            'tenant-name': {
+              title: 'Tenant name'
+            }
+          }
+        }
+      },
+      vsphere: {
+        id: 'vsphere',
+        showLogo: false,
+        title: 'vSphere',
+        forms: {
+          userpass: {
+            'username': {
+              title: 'Username'
+            },
+            'password': {
+              title: 'Password'
+            }
+          }
+        }
+      },
       local: {
         id: 'local',
         showLogo: false,
