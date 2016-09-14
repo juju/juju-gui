@@ -1018,9 +1018,10 @@ YUI.add('juju-controller-api', function(Y) {
       @param {String} tag The Juju tag of the credential as a string, for
         instance "cloudcred-google_dalek@local_google". Tags for credentials
         are usually retrieved by calling the getTagsForCloudCredentials method.
-      @params {String} authType The authentication type, like "userpass",
-        "oauth2" or just "empty".
-      @params {Object} attrs Attributes containing credential values, as an
+      @param {String} authType The authentication type, like "userpass",
+        "oauth2" or just "empty". The full AuthType definition list can be
+        found: https://github.com/juju/juju/blob/master/cloud/clouds.go
+      @param {Object} attrs Attributes containing credential values, as an
         object mapping strings to strings.
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an error message or null if the

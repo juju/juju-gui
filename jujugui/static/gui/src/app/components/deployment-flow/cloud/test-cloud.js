@@ -34,24 +34,24 @@ describe('DeploymentCloud', function() {
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
     clouds = {
-      google: {
-        id: 'google',
+      'cloud-google': {
+        id: 'cloud-google',
         showLogo: true,
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',
         svgHeight: 33,
         svgWidth: 256,
         title: 'Google Compute Engine'
       },
-      azure: {
-        id: 'azure',
+      'cloud-azure': {
+        id: 'cloud-azure',
         showLogo: true,
         signupUrl: 'https://azure.microsoft.com/en-us/free/',
         svgHeight: 24,
         svgWidth: 204,
         title: 'Microsoft Azure'
       },
-      aws: {
-        id: 'aws',
+      'cloud-aws': {
+        id: 'cloud-aws',
         showLogo: true,
         signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
         'registration/index.html',

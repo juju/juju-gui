@@ -1128,7 +1128,10 @@ YUI.add('juju-gui', function(Y) {
       const credentialTag = env.get('credentialTag');
       let cloud = env.get('cloud');
       if (cloud) {
-        cloud = {id: cloud, name: cloud};
+        cloud = {
+          id: cloud.indexOf('cloud-') === 0 ? cloud : `cloud-${cloud}`,
+          name: cloud
+        };
       }
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
@@ -1148,6 +1151,7 @@ YUI.add('juju-gui', function(Y) {
           generateAllChangeDescriptions={
             changesUtils.generateAllChangeDescriptions.bind(
               changesUtils, services, units)}
+          generateCloudCredentialTag={utils.generateCloudCredentialTag}
           getCloudCredentials={
             controllerAPI.getCloudCredentials.bind(controllerAPI)}
           getTagsForCloudCredentials={
@@ -1162,7 +1166,7 @@ YUI.add('juju-gui', function(Y) {
           servicesGetById={services.getById.bind(services)}
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
-          user={`user-${this.controllerAPI.get('user')}`}
+          user={`${this.controllerAPI.get('user')}`}
           withPlans={false} />,
         document.getElementById('deployment-container'));
     },

@@ -51,6 +51,7 @@ describe('DeploymentFlow', function() {
     var getTagsForCloudCredentials = sinon.stub();
     var servicesGetById = sinon.stub();
     const changes = {};
+    const generateCloudCredentialTag = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentFlow
         acl={acl}
@@ -60,6 +61,7 @@ describe('DeploymentFlow', function() {
         changeState={changeState}
         deploy={sinon.stub()}
         generateAllChangeDescriptions={generateAllChangeDescriptions}
+        generateCloudCredentialTag={generateCloudCredentialTag}
         getCloudCredentials={getCloudCredentials}
         getTagsForCloudCredentials={getTagsForCloudCredentials}
         groupedChanges={groupedChanges}
@@ -119,13 +121,12 @@ describe('DeploymentFlow', function() {
                     clouds={instance.CLOUDS}
                     credential={null}
                     editable={true}
+                    generateCloudCredentialTag={generateCloudCredentialTag}
                     getCloudCredentials={getCloudCredentials}
                     getTagsForCloudCredentials={getTagsForCloudCredentials}
                     region={null}
                     setCredential={instance._setCredential}
                     setRegion={instance._setRegion}
-                    setTemplate={instance._setTemplate}
-                    template={null}
                     user="user-admin"
                     validateForm={instance._validateForm} />
                 </juju.components.DeploymentSection>
@@ -242,6 +243,7 @@ describe('DeploymentFlow', function() {
         changeState={changeState}
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialTag={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getTagsForCloudCredentials={sinon.stub()}
         groupedChanges={groupedChanges}
@@ -274,6 +276,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialTag={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getTagsForCloudCredentials={sinon.stub()}
         groupedChanges={groupedChanges}
@@ -304,6 +307,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialTag={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getTagsForCloudCredentials={sinon.stub()}
         groupedChanges={groupedChanges}
@@ -331,6 +335,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialTag={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getTagsForCloudCredentials={sinon.stub()}
         groupedChanges={groupedChanges}
@@ -360,6 +365,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialTag={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getTagsForCloudCredentials={sinon.stub()}
         groupedChanges={groupedChanges}
@@ -389,6 +395,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialTag={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getTagsForCloudCredentials={sinon.stub()}
         groupedChanges={groupedChanges}
@@ -423,6 +430,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialTag={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getTagsForCloudCredentials={sinon.stub()}
         groupedChanges={groupedChanges}
@@ -452,6 +460,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialTag={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getTagsForCloudCredentials={sinon.stub()}
         groupedChanges={groupedChanges}
@@ -482,6 +491,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialTag={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getTagsForCloudCredentials={sinon.stub()}
         groupedChanges={groupedChanges}
@@ -512,6 +522,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialTag={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getTagsForCloudCredentials={sinon.stub()}
         groupedChanges={groupedChanges}
@@ -543,6 +554,7 @@ describe('DeploymentFlow', function() {
         changeState={sinon.stub()}
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialTag={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getTagsForCloudCredentials={sinon.stub()}
         groupedChanges={groupedChanges}
@@ -576,6 +588,7 @@ describe('DeploymentFlow', function() {
         changeState={changeState}
         deploy={deploy}
         generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialTag={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getTagsForCloudCredentials={sinon.stub()}
         groupedChanges={groupedChanges}

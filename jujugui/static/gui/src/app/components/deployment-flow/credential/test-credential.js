@@ -57,7 +57,6 @@ describe('DeploymentCredential', function() {
         getTagsForCloudCredentials={sinon.stub()}
         setCredential={sinon.stub()}
         setRegion={sinon.stub()}
-        setTemplate={sinon.stub()}
         user={user}
         validateForm={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -74,8 +73,8 @@ describe('DeploymentCredential', function() {
     var updateCloudCredential = sinon.stub();
     var setCredential = sinon.stub();
     var setRegion = sinon.stub();
-    var setTemplate = sinon.stub();
     var validateForm = sinon.stub();
+    const generateCloudCredentialTag = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
@@ -83,12 +82,12 @@ describe('DeploymentCredential', function() {
         cloud={cloud}
         clouds={clouds}
         editable={true}
+        generateCloudCredentialTag={generateCloudCredentialTag}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, [])}
         getTagsForCloudCredentials={
           sinon.stub().callsArgWith(1, null, tags)}
         setCredential={setCredential}
         setRegion={setRegion}
-        setTemplate={setTemplate}
         user={user}
         validateForm={validateForm} />, true);
     var instance = renderer.getMountedInstance();
@@ -106,10 +105,11 @@ describe('DeploymentCredential', function() {
             close={instance._toggleAdd}
             cloud={cloud}
             clouds={clouds}
+            generateCloudCredentialTag={generateCloudCredentialTag}
+            getCredentials={instance._getCredentials}
             regions={regions}
             setCredential={setCredential}
             setRegion={setRegion}
-            setTemplate={setTemplate}
             user={user}
             validateForm={validateForm}/>
         </juju.components.ExpandingRow>
@@ -121,7 +121,6 @@ describe('DeploymentCredential', function() {
     var updateCloudCredential = sinon.stub();
     var setCredential = sinon.stub();
     var setRegion = sinon.stub();
-    var setTemplate = sinon.stub();
     var validateForm = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
@@ -131,13 +130,13 @@ describe('DeploymentCredential', function() {
         clouds={clouds}
         credential="current@local"
         editable={false}
+        generateCloudCredentialTag={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, [])}
         getTagsForCloudCredentials={
           sinon.stub().callsArgWith(1, null, tags)}
         region="north-north-west"
         setCredential={setCredential}
         setRegion={setRegion}
-        setTemplate={setTemplate}
         user={user}
         validateForm={validateForm} />, true);
     var instance = renderer.getMountedInstance();
@@ -183,8 +182,8 @@ describe('DeploymentCredential', function() {
     var updateCloudCredential = sinon.stub();
     var setCredential = sinon.stub();
     var setRegion = sinon.stub();
-    var setTemplate = sinon.stub();
     var validateForm = sinon.stub();
+    const generateCloudCredentialTag = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
@@ -192,12 +191,12 @@ describe('DeploymentCredential', function() {
         cloud={null}
         clouds={clouds}
         editable={true}
+        generateCloudCredentialTag={generateCloudCredentialTag}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, {})}
         getTagsForCloudCredentials={
           sinon.stub().callsArgWith(1, null, [])}
         setCredential={setCredential}
         setRegion={setRegion}
-        setTemplate={setTemplate}
         user={user}
         validateForm={validateForm} />, true);
     var instance = renderer.getMountedInstance();
@@ -215,10 +214,11 @@ describe('DeploymentCredential', function() {
             close={instance._toggleAdd}
             cloud={null}
             clouds={clouds}
+            generateCloudCredentialTag={generateCloudCredentialTag}
+            getCredentials={instance._getCredentials}
             regions={[]}
             setCredential={setCredential}
             setRegion={setRegion}
-            setTemplate={setTemplate}
             user={user}
             validateForm={validateForm} />
         </juju.components.ExpandingRow>
@@ -236,12 +236,12 @@ describe('DeploymentCredential', function() {
         cloud={cloud}
         clouds={clouds}
         editable={true}
+        generateCloudCredentialTag={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getTagsForCloudCredentials={
           sinon.stub().callsArgWith(1, null, tags)}
         setCredential={setCredential}
         setRegion={setRegion}
-        setTemplate={sinon.stub()}
         user={user}
         validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
@@ -293,12 +293,12 @@ describe('DeploymentCredential', function() {
         cloud={cloud}
         clouds={clouds}
         editable={true}
+        generateCloudCredentialTag={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getTagsForCloudCredentials={
           sinon.stub().callsArgWith(1, null, tags)}
         setCredential={setCredential}
         setRegion={setRegion}
-        setTemplate={sinon.stub()}
         user={user}
         validateForm={sinon.stub()} />, true);
     assert.equal(setCredential.callCount, 1);
@@ -316,11 +316,11 @@ describe('DeploymentCredential', function() {
         cloud={cloud}
         clouds={clouds}
         editable={true}
+        generateCloudCredentialTag={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getTagsForCloudCredentials={sinon.stub().callsArgWith(1, null, tags)}
         setCredential={setCredential}
         setRegion={setRegion}
-        setTemplate={sinon.stub()}
         user={user}
         validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
@@ -366,8 +366,8 @@ describe('DeploymentCredential', function() {
     var updateCloudCredential = sinon.stub();
     var setCredential = sinon.stub();
     var setRegion = sinon.stub();
-    var setTemplate = sinon.stub();
     var validateForm = sinon.stub();
+    const generateCloudCredentialTag = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
@@ -375,12 +375,12 @@ describe('DeploymentCredential', function() {
         cloud={cloud}
         clouds={clouds}
         editable={true}
+        generateCloudCredentialTag={generateCloudCredentialTag}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getTagsForCloudCredentials={
           sinon.stub().callsArgWith(1, null, tags)}
         setCredential={setCredential}
         setRegion={setRegion}
-        setTemplate={setTemplate}
         user={user}
         validateForm={validateForm} />, true);
     var instance = renderer.getMountedInstance();
@@ -399,10 +399,11 @@ describe('DeploymentCredential', function() {
             close={instance._toggleAdd}
             cloud={cloud}
             clouds={clouds}
+            generateCloudCredentialTag={generateCloudCredentialTag}
+            getCredentials={instance._getCredentials}
             regions={regions}
             setCredential={setCredential}
             setRegion={setRegion}
-            setTemplate={setTemplate}
             user={user}
             validateForm={validateForm}/>
         </juju.components.ExpandingRow>

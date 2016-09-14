@@ -26,16 +26,24 @@ YUI.add('deployment-credential-add', function() {
       close: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.object,
       clouds: React.PropTypes.object.isRequired,
+      generateCloudCredentialTag: React.PropTypes.func.isRequired,
+      getCredentials: React.PropTypes.func.isRequired,
       regions: React.PropTypes.array.isRequired,
       setCredential: React.PropTypes.func.isRequired,
       setRegion: React.PropTypes.func.isRequired,
-      setTemplate: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func.isRequired,
       user: React.PropTypes.string,
       validateForm: React.PropTypes.func.isRequired
     },
 
-    DEFAULTCLOUD: 'google',
+    DEFAULTCLOUD: 'cloud-google',
+
+    getInitialState: function() {
+      const info = this._getInfo();
+      return {
+        authType: info && info.forms && Object.keys(info.forms)[0] || ''
+      };
+    },
 
     /**
       Get the region value.
@@ -48,23 +56,18 @@ YUI.add('deployment-credential-add', function() {
     },
 
     /**
-      Generate a full template object in the expected format.
+      Generate a full credential object in the expected format.
 
-      @method _generateTemplate
+      @method _generateCredentials
+      @returns {Object} The collection of field values.
     */
-    _generateTemplate: function(id) {
-      var cloud = this.props.cloud;
-      var region = this._getRegion();
-      return {
-        location: {region, cloud},
-        config: {
-          'access-key': this.refs.templateAccessKey.getValue(),
-          'secret-key': this.refs.templateSecretKey.getValue(),
-          // XXX This is a 'hack' to make Juju not complain about being
-          // able to find ssh keys.
-          'authorized-keys': 'fake'
-        }
-      };
+    _generateCredentials: function() {
+      const info = this._getInfo();
+      const fields = {};
+      info.forms[this.state.authType].forEach(field => {
+        fields[field.id] = this.refs[field.id].getValue();
+      });
+      return fields;
     },
 
     /**
@@ -73,28 +76,25 @@ YUI.add('deployment-credential-add', function() {
       @method _handleCloudClick
     */
     _handleAddCredentials: function() {
-      var fields = [
-        'templateName'
-      ];
-      if (this.props.cloud === 'aws') {
-        fields = fields.concat([
-          'templateAccessKey',
-          'templateSecretKey'
-        ]);
+      const props = this.props;
+      const info = this._getInfo();
+      if (!info || !info.forms) {
+        return;
       }
-      var valid = this.props.validateForm(fields, this.refs);
+      let fields = info.forms[this.state.authType].map(field => field.id);
+      fields.push('credentialName');
+      var valid = props.validateForm(fields, this.refs);
       if (!valid) {
         // If there are any form validation errors then stop adding the
         // credentials.
         return;
       }
-      // Add template
-      var user = this.props.user;
-      var templateName = this.refs.templateName.getValue();
-      var template = this._generateTemplate();
-      // TODO: update this call to pass the correct parameters for the new API.
-      this.props.updateCloudCredential(
-        user, templateName, template, this._updateCloudCredentialCallback);
+      props.updateCloudCredential(
+        props.generateCloudCredentialTag(
+          props.cloud.name, props.user, this.refs.credentialName.getValue()),
+        this.state.authType,
+        this._generateCredentials(),
+        this._updateCloudCredentialCallback);
     },
 
     /**
@@ -106,15 +106,61 @@ YUI.add('deployment-credential-add', function() {
     */
     _updateCloudCredentialCallback: function(error) {
       if (error) {
-        console.error('Unable to add template', error);
+        console.error('Unable to add credential', error);
         return;
       }
-      const templateName = this.refs.templateName.getValue();
-      const user = this.props.user;
-      this.props.setCredential(`${user}/${templateName}`);
-      this.props.setRegion(this._getRegion());
-      this.props.setTemplate(this._generateTemplate());
+      // Load the credentials again so that the list will contain the newly
+      // added credential.
+      this.props.getCredentials();
       this.props.close();
+    },
+
+    /**
+      Set the authType state when the select changes.
+
+      @method _handleAuthChange
+      @param {String} authType The selected authType.
+    */
+    _handleAuthChange: function(authType) {
+      this.setState({authType: authType});
+    },
+
+    /**
+      Generate the form select if the cloud has multiple forms.
+
+      @method _generateAuthSelect
+      @returns {Object} The auth type select component or undefined if there is
+        only one auth type.
+    */
+    _generateAuthSelect: function() {
+      const info = this._getInfo();
+      if (Object.keys(info.forms).length === 1) {
+        return;
+      }
+      const authOptions = Object.keys(info.forms).map(auth => {
+        return {
+          label: auth,
+          value: auth
+        };
+      });
+      return (
+        <juju.components.InsetSelect
+          disabled={this.props.acl.isReadOnly()}
+          label="Authentication type"
+          onChange={this._handleAuthChange}
+          options={authOptions} />);
+    },
+
+    /**
+      Get the info for a cloud
+
+      @method _getInfo
+      @returns {Object} The cloud info if available.
+    */
+    _getInfo: function() {
+      const cloud = this.props.cloud;
+      const id = cloud && cloud.id || this.DEFAULTCLOUD;
+      return this.props.clouds[id];
     },
 
     /**
@@ -124,107 +170,48 @@ YUI.add('deployment-credential-add', function() {
     */
     _generateCredentialsFields: function() {
       var isReadOnly = this.props.acl.isReadOnly();
-      var notice = (
-        <div className="deployment-flow__notice six-col last-col">
-          <p className="deployment-flow__notice-content">
-            <juju.components.SvgIcon
-              name="general-action-blue"
-              size="16" />
-            Credentials are stored securely on our servers and we will
-            notify you by email whenever they are used. See where they are
-            used and manage or remove them via the account page.
-          </p>
-        </div>);
-      const cloud = this.props.cloud;
-      switch (cloud && cloud.id || this.DEFAULTCLOUD) {
-        case 'aws':
-          return (
-            <div>
-              <div className="six-col">
-                <p className="deployment-add-credentials__p">
-                  You can obtain your AWS credentials at:<br />
-                  <a className="deployment-panel__link"
-                    href={'https://console.aws.amazon.com/iam/home?region=' +
-                      'eu-west-1#security_credential'}
-                    target="_blank">
-                    https://console.aws.amazon.com/iam/home?region=eu-west-1#
-                    security_credential
-                  </a>
-                </p>
-                <juju.components.GenericInput
-                  disabled={isReadOnly}
-                  label="Access key"
-                  placeholder="TDFIWNDKF7UW6DVGX98X"
-                  required={true}
-                  ref="templateAccessKey"
-                  validate={[{
-                    regex: /\S+/,
-                    error: 'This field is required.'
-                  }]} />
-                <juju.components.GenericInput
-                  disabled={isReadOnly}
-                  label="Secret key"
-                  placeholder="p/hdU8TnOP5D7JNHrFiM8IO8f5GN6GhHj7tueBN9"
-                  required={true}
-                  ref="templateSecretKey"
-                  validate={[{
-                    regex: /\S+/,
-                    error: 'This field is required.'
-                  }]} />
-              </div>
-              {notice}
-            </div>);
-          break;
-        case 'google':
-          return (
-            <div className="twelve-col">
-              <p className="deployment-add-credentials__p six-col">
-                The GCE provider uses OAauth to Authenticate. This requires that
-                you set it up and get the relevant credentials. For more
-                information see
-                &nbsp;<a className="deployment-panel__link"
-                  href={'https://cloud.google.com/copmute/dosc/api/how-tos/' +
-                    'authorization'}
-                  target="_blank">
-                  https://cloud.google.com/copmute/dosc/api/how-tos/
-                  authorization
-                </a>.
-                The key information can be downloaded as a JSON file, or copied
-                from
-                &nbsp;<a className="deployment-panel__link"
-                  href={'https://console.developers.google.com/project/apiui/' +
-                    'credential'}
-                  target="_blank">
-                  https://console.developers.google.com/project/apiui/credential
-                </a>.
-              </p>
-              {notice}
-              <div className="deployment-add-credentials__upload twelve-col">
-                Upload GCE auth-file or&nbsp;
-                <span className="link">manually set the individual fields</span>
-              </div>
-            </div>);
-          break;
-        case 'azure':
-          return (
-            <div className="twelve-col">
-              <p className="deployment-add-credentials__p six-col">
-                The following fields require your Windows Azure management
-                information. For more information please see:&nbsp;
-                <a className="deployment-panel__link"
-                  href="https://msdn.microsoft.com/en-us/library/windowsazure"
-                  target="_blank">
-                  https://msdn.microsoft.com/en-us/library/windowsazure
-                </a>
-                &nbsp;for details.
-              </p>
-              {notice}
-              <div className="deployment-add-credentials__upload twelve-col">
-                Upload management certificate &rsaquo;
-              </div>
-            </div>);
-          break;
+      const info = this._getInfo();
+      if (!info || !info.forms) {
+        return;
       }
+      const fields = info.forms[this.state.authType].map(field => {
+        if (field.json) {
+          return (
+            <div className="deployment-credential-add__upload twelve-col"
+              key={field.id}>
+              Upload {info.title} auth-file.
+            </div>);
+        }
+        return (
+          <juju.components.GenericInput
+            disabled={isReadOnly}
+            key={field.id}
+            label={field.title}
+            required={true}
+            ref={field.id}
+            validate={[{
+              regex: /\S+/,
+              error: 'This field is required.'
+            }]} />);
+      });
+      return (
+        <div className="deployment-credential-add__credentials">
+          <div className="six-col">
+            {info.message}
+            {this._generateAuthSelect()}
+            {fields}
+          </div>
+          <div className="deployment-flow__notice six-col last-col">
+            <p className="deployment-flow__notice-content">
+              <juju.components.SvgIcon
+                name="general-action-blue"
+                size="16" />
+              Credentials are stored securely on our servers and we will
+              notify you by email whenever they are used. See where they are
+              used and manage or remove them via the account page.
+            </p>
+          </div>
+        </div>);
     },
 
     /**
@@ -262,9 +249,9 @@ YUI.add('deployment-credential-add', function() {
       var isReadOnly = this.props.acl.isReadOnly();
       const cloud = this.props.cloud;
       const id = cloud && cloud.id || this.DEFAULTCLOUD;
-      var info = this.props.clouds[id];
+      const info = this._getInfo();
       var title = info && info.title || cloud.name;
-      var credentialName = id === 'google' ?
+      var credentialName = id === 'cloud-google' ?
         'Project ID (credential name)' : 'Credential name';
       return (
         <div className="deployment-credential-add twelve-col">
@@ -286,7 +273,7 @@ YUI.add('deployment-credential-add', function() {
                 label={credentialName}
                 placeholder="cred-1"
                 required={true}
-                ref="templateName"
+                ref="credentialName"
                 validate={[{
                   regex: /\S+/,
                   error: 'This field is required.'

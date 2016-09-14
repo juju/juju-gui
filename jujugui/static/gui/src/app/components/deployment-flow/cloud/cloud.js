@@ -121,14 +121,15 @@ YUI.add('deployment-cloud', function() {
       @returns {Array} The logo.
     */
     _generateLogo: function(cloud) {
-      var info = this.props.clouds[cloud.id.replace('cloud-', '')];
+      var info = this.props.clouds[cloud.id];
       if (!info) {
         return cloud.name;
       }
+      const id = info.id.replace('cloud-', '');
       return info.showLogo ? (
         <juju.components.SvgIcon
         height={info.svgHeight}
-        name={info.id}
+        name={id}
         width={info.svgWidth} />) : info.title;
     },
 
