@@ -277,19 +277,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('fires a login event on successful login', function() {
-        var loginFired = false;
-        var result, fromToken;
-        env.on('login', function(evt) {
-          loginFired = true;
-          result = evt.data.result;
-          fromToken = evt.data.fromToken;
+        let fired = false;
+        let err;
+        let fromToken;
+        env.on('login', evt => {
+          fired = true;
+          err = evt.err;
+          fromToken = evt.fromToken;
         });
         env.login();
         // Assume login to be the first request.
         conn.msg({RequestId: 1, Response: {}});
-        assert.isTrue(loginFired);
-        assert.isTrue(result);
-        assert.isFalse(fromToken);
+        assert.strictEqual(fired, true);
+        assert.strictEqual(err, null);
+        assert.strictEqual(fromToken, false);
       });
 
       it('resets failed markers on successful login', function() {
@@ -302,17 +303,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('fires a login event on failed login', function() {
-        var loginFired = false;
-        var result;
-        env.on('login', function(evt) {
-          loginFired = true;
-          result = evt.data.result;
+        let fired = false;
+        let err;
+        env.on('login', evt => {
+          fired = true;
+          err = evt.err;
         });
         env.login();
         // Assume login to be the first request.
         conn.msg({RequestId: 1, Error: 'Invalid user or password'});
-        assert.isTrue(loginFired);
-        assert.isFalse(result);
+        assert.strictEqual(fired, true);
+        assert.strictEqual(err, 'Invalid user or password');
       });
 
       it('avoids sending login requests without credentials', function() {
@@ -382,24 +383,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('fires a login event on successful token login', function() {
-        var loginFired = false;
-        var result, fromToken;
-        env.on('login', function(evt) {
-          loginFired = true;
-          result = evt.data.result;
-          fromToken = evt.data.fromToken;
+        let fired = false;
+        let err;
+        let fromToken;
+        env.on('login', evt => {
+          fired = true;
+          err = evt.err;
+          fromToken = evt.fromToken;
         });
         env.tokenLogin('demoToken');
         // Assume login to be the first request.
         conn.msg({
           RequestId: 1,
           Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
-        assert.isTrue(loginFired);
-        assert.isTrue(result);
-        assert.isTrue(fromToken);
-        var credentials = env.getCredentials();
-        assert.equal('user-tokenuser', credentials.user);
-        assert.equal('tokenpasswd', credentials.password);
+        assert.strictEqual(fired, true);
+        assert.strictEqual(err, null);
+        assert.strictEqual(fromToken, true);
+        const credentials = env.getCredentials();
+        assert.strictEqual('user-tokenuser', credentials.user);
+        assert.strictEqual('tokenpasswd', credentials.password);
       });
 
       it('resets failed markers on successful login', function() {
@@ -414,11 +416,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('fires a login event on failed token login', function() {
-        var loginFired = false;
-        var result;
-        env.on('login', function(evt) {
-          loginFired = true;
-          result = evt.data.result;
+        let fired = false;
+        let err;
+        env.on('login', evt => {
+          fired = true;
+          err = evt.err;
         });
         env.tokenLogin('badToken');
         // Assume login to be the first request.
@@ -427,8 +429,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Error: 'unknown, fulfilled, or expired token',
           ErrorCode: 'unauthorized access'
         });
-        assert.isTrue(loginFired);
-        assert.isFalse(result);
+        assert.strictEqual(fired, true);
+        assert.strictEqual(err, 'unknown, fulfilled, or expired token');
       });
 
       it('calls environmentInfo and watchAll after token login', function() {
@@ -668,19 +670,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('prevents non authorized users from sending files', function(done) {
         env.userIsAuthenticated = false;
-        var warn = console.warn,
-            called = false;
-
-        console.warn = function(msg) {
-          assert.equal(
-              msg, 'Attempted upload files without providing credentials.');
-          called = true;
-        };
-        var handler = env.on('login', function(e) {
-          assert.deepEqual(e.data, {result: false});
-          assert.equal(called, true, 'Console warning not called');
+        const handler = env.on('login', evt => {
+          assert.strictEqual(evt.err, 'cannot upload files anonymously');
           handler.detach();
-          console.warn = warn;
           done();
         });
         env.uploadLocalCharm();

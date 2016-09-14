@@ -1623,7 +1623,7 @@ YUI.add('juju-view-utils', function(Y) {
     utils._detachOnLoginHandler();
     // After the model connects it will emit a login event, listen
     // for that event so that we know when to commit the changeset.
-    this._onLoginHandler = env.on('login', (model) => {
+    this._onLoginHandler = env.on('login', evt => {
       utils._detachOnLoginHandler();
       env.get('ecs').commit(env);
       callback();

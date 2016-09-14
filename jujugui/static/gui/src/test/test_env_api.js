@@ -291,11 +291,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('fires a login event on successful login', function() {
-        var loginFired = false;
-        var result;
-        env.on('login', function(evt) {
-          loginFired = true;
-          result = evt.data.result;
+        let fired = false;
+        let err;
+        env.on('login', evt => {
+          fired = true;
+          err = evt.err;;
         });
         env.login();
         // Assume login to be the first request.
@@ -306,8 +306,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             facades: [{name: 'ModelManager', versions: [2]}]
           }
         });
-        assert.isTrue(loginFired);
-        assert.isTrue(result);
+        assert.strictEqual(fired, true);
+        assert.strictEqual(err, null);
       });
 
       it('resets failed markers on successful login', function() {
@@ -325,17 +325,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('fires a login event on failed login', function() {
-        var loginFired = false;
-        var result;
-        env.on('login', function(evt) {
-          loginFired = true;
-          result = evt.data.result;
+        let fired = false;
+        let err;
+        env.on('login', evt => {
+          fired = true;
+          err = evt.err;;
         });
         env.login();
         // Assume login to be the first request.
         conn.msg({'request-id': 1, error: 'Invalid user or password'});
-        assert.isTrue(loginFired);
-        assert.isFalse(result);
+        assert.strictEqual(fired, true);
+        assert.strictEqual(err, 'Invalid user or password');
       });
 
       it('avoids sending login requests without credentials', function() {
@@ -942,19 +942,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('prevents non authorized users from sending files', function(done) {
         env.userIsAuthenticated = false;
-        var warn = console.warn,
-            called = false;
-
-        console.warn = function(msg) {
-          assert.equal(
-              msg, 'Attempted upload files without providing credentials.');
-          called = true;
-        };
-        var handler = env.on('login', function(e) {
-          assert.deepEqual(e.data, {result: false});
-          assert.equal(called, true, 'Console warning not called');
+        const handler = env.on('login', evt => {
+          assert.deepEqual(evt.err, 'cannot upload files anonymously');
           handler.detach();
-          console.warn = warn;
           done();
         });
         env.uploadLocalCharm();

@@ -128,11 +128,11 @@ describe('Controller API', function() {
     });
 
     it('fires a login event on successful login', function() {
-      var loginFired = false;
-      var result;
-      controllerAPI.on('login', function(evt) {
-        loginFired = true;
-        result = evt.data.result;
+      let fired = false;
+      let err;
+      controllerAPI.on('login', evt => {
+        fired = true;
+        err = evt.err;
       });
       controllerAPI.login();
       // Assume login to be the first request.
@@ -143,8 +143,8 @@ describe('Controller API', function() {
           facades: [{name: 'ModelManager', versions: [2]}]
         }
       });
-      assert.isTrue(loginFired);
-      assert.isTrue(result);
+      assert.strictEqual(fired, true);
+      assert.strictEqual(err, null);
     });
 
     it('resets failed markers on successful login', function() {
@@ -162,17 +162,17 @@ describe('Controller API', function() {
     });
 
     it('fires a login event on failed login', function() {
-      var loginFired = false;
-      var result;
-      controllerAPI.on('login', function(evt) {
-        loginFired = true;
-        result = evt.data.result;
+      let fired = false;
+      let err;
+      controllerAPI.on('login', evt => {
+        fired = true;
+        err = evt.err;
       });
       controllerAPI.login();
       // Assume login to be the first request.
       conn.msg({'request-id': 1, error: 'Invalid user or password'});
-      assert.isTrue(loginFired);
-      assert.isFalse(result);
+      assert.strictEqual(fired, true);
+      assert.strictEqual(err, 'Invalid user or password');
     });
 
     it('avoids sending login requests without credentials', function() {
