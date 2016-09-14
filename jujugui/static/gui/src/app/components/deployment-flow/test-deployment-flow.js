@@ -127,8 +127,6 @@ describe('DeploymentFlow', function() {
                     region={null}
                     setCredential={instance._setCredential}
                     setRegion={instance._setRegion}
-                    setTemplate={instance._setTemplate}
-                    template={null}
                     user="user-admin"
                     validateForm={instance._validateForm} />
                 </juju.components.DeploymentSection>

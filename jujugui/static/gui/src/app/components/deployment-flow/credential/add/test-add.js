@@ -78,10 +78,10 @@ describe('DeploymentCredentialAdd', function() {
         cloud={null}
         clouds={clouds}
         generateCloudCredentialTag={sinon.stub()}
+        getCredentials={sinon.stub()}
         regions={[{name: 'test-region'}]}
         setCredential={sinon.stub()}
         setRegion={sinon.stub()}
-        setTemplate={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
@@ -106,7 +106,7 @@ describe('DeploymentCredentialAdd', function() {
               label="Project ID (credential name)"
               placeholder="cred-1"
               required={true}
-              ref="templateName"
+              ref="credentialName"
               validate={[{
                 regex: /\S+/,
                 error: 'This field is required.'
@@ -225,10 +225,10 @@ describe('DeploymentCredentialAdd', function() {
         cloud={{id: 'google', name: 'google'}}
         clouds={clouds}
         generateCloudCredentialTag={sinon.stub()}
+        getCredentials={sinon.stub()}
         regions={[{name: 'test-region'}]}
         setCredential={sinon.stub()}
         setRegion={sinon.stub()}
-        setTemplate={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
@@ -253,7 +253,7 @@ describe('DeploymentCredentialAdd', function() {
               label="Project ID (credential name)"
               placeholder="cred-1"
               required={true}
-              ref="templateName"
+              ref="credentialName"
               validate={[{
                 regex: /\S+/,
                 error: 'This field is required.'
@@ -372,10 +372,10 @@ describe('DeploymentCredentialAdd', function() {
         cloud={{id: 'google', name: 'google'}}
         clouds={clouds}
         generateCloudCredentialTag={sinon.stub()}
+        getCredentials={sinon.stub()}
         regions={[{name: 'test-region'}]}
         setCredential={sinon.stub()}
         setRegion={sinon.stub()}
-        setTemplate={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
@@ -401,7 +401,7 @@ describe('DeploymentCredentialAdd', function() {
               label="Project ID (credential name)"
               placeholder="cred-1"
               required={true}
-              ref="templateName"
+              ref="credentialName"
               validate={[{
                 regex: /\S+/,
                 error: 'This field is required.'
@@ -485,10 +485,10 @@ describe('DeploymentCredentialAdd', function() {
         cloud={{id: 'google', name: 'google'}}
         clouds={clouds}
         generateCloudCredentialTag={sinon.stub()}
+        getCredentials={sinon.stub()}
         regions={[{name: 'test-region'}]}
         setCredential={sinon.stub()}
         setRegion={sinon.stub()}
-        setTemplate={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
@@ -513,7 +513,7 @@ describe('DeploymentCredentialAdd', function() {
               label="Project ID (credential name)"
               placeholder="cred-1"
               required={true}
-              ref="templateName"
+              ref="credentialName"
               validate={[{
                 regex: /\S+/,
                 error: 'This field is required.'
@@ -622,7 +622,8 @@ describe('DeploymentCredentialAdd', function() {
   });
 
   it('can add the credentials', function() {
-    var updateCloudCredential = sinon.stub();
+    var updateCloudCredential = sinon.stub().callsArg(3);
+    const getCredentials = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredentialAdd
           acl={acl}
@@ -631,15 +632,15 @@ describe('DeploymentCredentialAdd', function() {
           cloud={{id: 'google', name: 'google'}}
           clouds={clouds}
           generateCloudCredentialTag={sinon.stub().returns('new@test')}
+          getCredentials={getCredentials}
           regions={['us-east-1']}
           setCredential={sinon.stub()}
           setRegion={sinon.stub()}
-          setTemplate={sinon.stub()}
           user="user-admin"
           validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
     instance.refs = {
-      'templateName': {
+      'credentialName': {
         validate: sinon.stub().returns(true),
         getValue: sinon.stub().returns('new')
       },
@@ -670,6 +671,7 @@ describe('DeploymentCredentialAdd', function() {
       'private-key': 'private key',
       'project-id': 'project id'
     });
+    assert.equal(getCredentials.callCount, 1);
   });
 
   it('does not submit the form if there are validation errors', function() {
@@ -682,10 +684,10 @@ describe('DeploymentCredentialAdd', function() {
           cloud={{id: 'google', name: 'google'}}
           clouds={clouds}
           generateCloudCredentialTag={sinon.stub()}
+          getCredentials={sinon.stub()}
           regions={[{name: 'test-regiZon'}]}
           setCredential={sinon.stub()}
           setRegion={sinon.stub()}
-          setTemplate={sinon.stub()}
           user="user-admin"
           validateForm={sinon.stub().returns(false)} />, true);
     var instance = renderer.getMountedInstance();

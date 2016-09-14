@@ -55,26 +55,24 @@ YUI.add('deployment-flow', function() {
         svgWidth: 256,
         title: 'Google Compute Engine',
         forms: {
-          oauth2: {
-            'client-id': {
-              title: 'Client ID'
-            },
-            'client-email': {
-              title: 'Client e-mail address'
-            },
-            'private-key': {
-              title: 'Client secret'
-            },
-            'project-id': {
-              title: 'Project ID'
-            }
-          },
-          jsonfile: {
-            file: {
-              title: 'Google Compute Engine project credentials .json file',
-              json: true
-            }
-          }
+          oauth2: [{
+            id: 'client-id',
+            title: 'Client ID'
+          }, {
+            id: 'client-email',
+            title: 'Client e-mail address'
+          }, {
+            id: 'private-key',
+            title: 'Client secret'
+          }, {
+            id: 'project-id',
+            title: 'Project ID'
+          }],
+          jsonfile: [{
+            id: 'file',
+            title: 'Google Compute Engine project credentials .json file',
+            json: true
+          }]
         },
         message: (
           <p>
@@ -106,20 +104,19 @@ YUI.add('deployment-flow', function() {
         svgWidth: 204,
         title: 'Microsoft Azure',
         forms: {
-          userpass: {
-            'application-id': {
-              title: 'Azure Active Directory application ID'
-            },
-            'subscription-id': {
-              title: 'Azure subscription ID'
-            },
-            'tenant-id': {
-              title: 'Azure Active Directory tenant ID'
-            },
-            'application-password': {
-              title: 'Azure Active Directory application password'
-            }
-          }
+          userpass: [{
+            id: 'application-id',
+            title: 'Azure Active Directory application ID'
+          }, {
+            id: 'subscription-id',
+            title: 'Azure subscription ID'
+          }, {
+            id: 'tenant-id',
+            title: 'Azure Active Directory tenant ID'
+          }, {
+            id: 'application-password',
+            title: 'Azure Active Directory application password'
+          }]
         },
         message: (
           <p>
@@ -142,14 +139,13 @@ YUI.add('deployment-flow', function() {
         svgWidth: 120,
         title: 'Amazon Web Services',
         forms: {
-          'access-key': {
-            'access-key': {
-              title: 'The EC2 access key'
-            },
-            'secret-key': {
-              title: 'The EC2 secret key'
-            }
-          }
+          'access-key': [{
+            id: 'access-key',
+            title: 'The EC2 access key'
+          }, {
+            id: 'secret-key',
+            title: 'The EC2 secret key'
+          }]
         },
         message: (
           <p>
@@ -168,31 +164,29 @@ YUI.add('deployment-flow', function() {
         showLogo: false,
         title: 'OpenStack',
         forms: {
-          userpass: {
-            'username': {
-              title: 'Username'
-            },
-            'password': {
-              title: 'Password'
-            },
-            'tenant-name': {
-              title: 'Tenant name'
-            },
-            'domain-name': {
-              title: 'Domain name'
-            }
-          },
-          'access-key': {
-            'access-key': {
-              title: 'Access key'
-            },
-            'secret-key': {
-              title: 'Secret key'
-            },
-            'tenant-name': {
-              title: 'Tenant name'
-            }
-          }
+          userpass: [{
+            id: 'username',
+            title: 'Username'
+          }, {
+            id: 'password',
+            title: 'Password'
+          }, {
+            id: 'tenant-name',
+            title: 'Tenant name'
+          }, {
+            id: 'domain-name',
+            title: 'Domain name'
+          }],
+          'access-key': [{
+            id: 'access-key',
+            title: 'Access key'
+          }, {
+            id: 'secret-key',
+            title: 'Secret key'
+          }, {
+            id: 'tenant-name',
+            title: 'Tenant name'
+          }]
         }
       },
       cloudsigma: {
@@ -200,14 +194,13 @@ YUI.add('deployment-flow', function() {
         showLogo: false,
         title: 'CloudSigma',
         forms: {
-          userpass: {
-            'username': {
-              title: 'Username'
-            },
-            'password': {
-              title: 'Password'
-            }
-          }
+          userpass: [{
+          id: 'username',
+            title: 'Username'
+          }, {
+            id: 'password',
+            title: 'Password'
+          }]
         }
       },
       joyent: {
@@ -215,20 +208,19 @@ YUI.add('deployment-flow', function() {
         showLogo: false,
         title: 'Joyent',
         forms: {
-          userpass: {
-            'sdc-user': {
-              title: 'SmartDataCenter user ID'
-            },
-            'sdc-key-id': {
-              title: 'SmartDataCenter key ID'
-            },
-            'private-key': {
-              title: 'Private key used to sign requests'
-            },
-            'algorithm': {
-              title: 'Algorithm used to generate the private key'
-            }
-          }
+          userpass: [{
+            id: 'sdc-user',
+            title: 'SmartDataCenter user ID'
+          }, {
+            id: 'sdc-key-id',
+            title: 'SmartDataCenter key ID'
+          }, {
+            id: 'private-key',
+            title: 'Private key used to sign requests'
+          }, {
+            id: 'algorithm',
+            title: 'Algorithm used to generate the private key'
+          }]
         }
       },
       maas: {
@@ -236,11 +228,10 @@ YUI.add('deployment-flow', function() {
         showLogo: false,
         title: 'MAAS',
         forms: {
-          oauth1: {
-            'maas-oauth': {
-              title: 'OAuth/API-key credentials for MAAS'
-            }
-          }
+          oauth1: [{
+            id: 'maas-oauth',
+            title: 'OAuth/API-key credentials for MAAS'
+          }]
         }
       },
       rackspace: {
@@ -248,31 +239,29 @@ YUI.add('deployment-flow', function() {
         showLogo: false,
         title: 'Rackspace',
         forms: {
-          userpass: {
-            'username': {
-              title: 'Username'
-            },
-            'password': {
-              title: 'Password'
-            },
-            'tenant-name': {
-              title: 'Tenant name'
-            },
-            'domain-name': {
-              title: 'Domain name'
-            }
-          },
-          'access-key': {
-            'access-key': {
-              title: 'Access key'
-            },
-            'secret-key': {
-              title: 'Secret key'
-            },
-            'tenant-name': {
-              title: 'Tenant name'
-            }
-          }
+          userpass: [{
+            id: 'username',
+            title: 'Username'
+          }, {
+            id: 'password',
+            title: 'Password'
+          }, {
+            id: 'tenant-name',
+            title: 'Tenant name'
+          }, {
+            id: 'domain-name',
+            title: 'Domain name'
+          }],
+          'access-key': [{
+            id: 'access-key',
+            title: 'Access key'
+          }, {
+            id: 'secret-key',
+            title: 'Secret key'
+          }, {
+            id: 'tenant-name',
+            title: 'Tenant name'
+          }]
         }
       },
       vsphere: {
@@ -280,14 +269,13 @@ YUI.add('deployment-flow', function() {
         showLogo: false,
         title: 'vSphere',
         forms: {
-          userpass: {
-            'username': {
-              title: 'Username'
-            },
-            'password': {
-              title: 'Password'
-            }
-          }
+          userpass: [{
+            id: 'username',
+            title: 'Username'
+          }, {
+            id: 'password',
+            title: 'Password'
+          }]
         }
       },
       local: {
@@ -303,7 +291,6 @@ YUI.add('deployment-flow', function() {
       return {
         cloud: this.props.cloud || null,
         credential: this.props.credential || null,
-        template: null,
         region: this.props.region || null,
         showChangelogs: false
       };
@@ -390,16 +377,6 @@ YUI.add('deployment-flow', function() {
     */
     _setCredential: function(credential) {
       this.setState({credential: credential});
-    },
-
-    /**
-      Store the selected template in state.
-
-      @method _setTemplate
-      @param {String} template The selected template.
-    */
-    _setTemplate: function(template) {
-      this.setState({template: template});
     },
 
     /**
@@ -582,7 +559,6 @@ YUI.add('deployment-flow', function() {
         return;
       }
       var cloud = this.state.cloud;
-      var credential = this.state.credential;
       return (
         <juju.components.DeploymentSection
           completed={status.completed}
@@ -591,7 +567,7 @@ YUI.add('deployment-flow', function() {
           showCheck={false}>
           <juju.components.DeploymentCredential
             acl={this.props.acl}
-            credential={credential}
+            credential={this.state.credential}
             cloud={cloud}
             clouds={this.CLOUDS}
             editable={!this.props.modelCommitted}
@@ -601,8 +577,6 @@ YUI.add('deployment-flow', function() {
             region={this.state.region}
             setCredential={this._setCredential}
             setRegion={this._setRegion}
-            setTemplate={this._setTemplate}
-            template={this.state.template}
             updateCloudCredential={this.props.updateCloudCredential}
             user={this.props.user}
             validateForm={this._validateForm} />

@@ -27,10 +27,10 @@ YUI.add('deployment-credential-add', function() {
       cloud: React.PropTypes.object,
       clouds: React.PropTypes.object.isRequired,
       generateCloudCredentialTag: React.PropTypes.func.isRequired,
+      getCredentials: React.PropTypes.func.isRequired,
       regions: React.PropTypes.array.isRequired,
       setCredential: React.PropTypes.func.isRequired,
       setRegion: React.PropTypes.func.isRequired,
-      setTemplate: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func.isRequired,
       user: React.PropTypes.string,
       validateForm: React.PropTypes.func.isRequired
@@ -64,8 +64,8 @@ YUI.add('deployment-credential-add', function() {
     _generateCredentials: function() {
       const info = this._getInfo();
       const fields = {};
-      Object.keys(info.forms[this.state.authType]).forEach(id => {
-        fields[id] = this.refs[id].getValue();
+      info.forms[this.state.authType].forEach(field => {
+        fields[field.id] = this.refs[field.id].getValue();
       });
       return fields;
     },
@@ -81,8 +81,8 @@ YUI.add('deployment-credential-add', function() {
       if (!info || !info.forms) {
         return;
       }
-      const fields = Object.keys(info.forms[this.state.authType]).map(id => id);
-      fields.push('templateName');
+      let fields = info.forms[this.state.authType].map(field => field.id);
+      fields.push('credentialName');
       var valid = props.validateForm(fields, this.refs);
       if (!valid) {
         // If there are any form validation errors then stop adding the
@@ -91,7 +91,7 @@ YUI.add('deployment-credential-add', function() {
       }
       props.updateCloudCredential(
         props.generateCloudCredentialTag(
-          props.cloud.name, props.user, this.refs.templateName.getValue()),
+          props.cloud.name, props.user, this.refs.credentialName.getValue()),
         this.state.authType,
         this._generateCredentials(),
         this._updateCloudCredentialCallback);
@@ -106,14 +106,12 @@ YUI.add('deployment-credential-add', function() {
     */
     _updateCloudCredentialCallback: function(error) {
       if (error) {
-        console.error('Unable to add template', error);
+        console.error('Unable to add credential', error);
         return;
       }
-      const templateName = this.refs.templateName.getValue();
-      const user = this.props.user;
-      this.props.setCredential(`${user}/${templateName}`);
-      this.props.setRegion(this._getRegion());
-      this.props.setTemplate(this._generateCredentials());
+      // Load the credentials again so that the list will contain the newly
+      // added credential.
+      this.props.getCredentials();
       this.props.close();
     },
 
@@ -176,9 +174,7 @@ YUI.add('deployment-credential-add', function() {
       if (!info || !info.forms) {
         return;
       }
-      const form = info.forms[this.state.authType];
-      const fields = Object.keys(form).map(id => {
-        const field = form[id];
+      const fields = info.forms[this.state.authType].map(field => {
         if (field.json) {
           return (
             <div className="deployment-credential-add__upload twelve-col"
@@ -277,7 +273,7 @@ YUI.add('deployment-credential-add', function() {
                 label={credentialName}
                 placeholder="cred-1"
                 required={true}
-                ref="templateName"
+                ref="credentialName"
                 validate={[{
                   regex: /\S+/,
                   error: 'This field is required.'
