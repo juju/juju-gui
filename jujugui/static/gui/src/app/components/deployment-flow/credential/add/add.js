@@ -64,8 +64,8 @@ YUI.add('deployment-credential-add', function() {
     _generateCredentials: function() {
       const info = this._getInfo();
       const fields = {};
-      info.forms[this.state.authType].forEach(field => {
-        fields[field.id] = this.refs[field.id].getValue();
+      Object.keys(info.forms[this.state.authType]).forEach(id => {
+        fields[id] = this.refs[id].getValue();
       });
       return fields;
     },
@@ -81,7 +81,7 @@ YUI.add('deployment-credential-add', function() {
       if (!info || !info.forms) {
         return;
       }
-      let fields = info.forms[this.state.authType].map(field => field.id);
+      const fields = Object.keys(info.forms[this.state.authType]).map(id => id);
       fields.push('templateName');
       var valid = props.validateForm(fields, this.refs);
       if (!valid) {
