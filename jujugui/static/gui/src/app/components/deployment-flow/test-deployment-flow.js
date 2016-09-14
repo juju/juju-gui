@@ -68,6 +68,7 @@ describe('DeploymentFlow', function() {
         listBudgets={listBudgets}
         listClouds={listClouds}
         listPlansForCharm={listPlansForCharm}
+        modelCommitted={false}
         modelName="Pavlova"
         servicesGetById={servicesGetById}
         user="user-admin"
@@ -95,6 +96,24 @@ describe('DeploymentFlow', function() {
           <div className="deployment-flow__content">
             <div className="twelve-col">
               <div className="inner-wrapper">
+                <juju.components.DeploymentSection
+                  instance="deployment-model-name"
+                  showCheck={false}
+                  title="Model name">
+                  <div className="six-col">
+                    <juju.components.GenericInput
+                      disabled={false}
+                      key="modelName"
+                      label="Model name"
+                      required={true}
+                      ref="modelName"
+                      validate={[{
+                        regex: /\S+/,
+                        error: 'This field is required.'
+                      }]}
+                      value="Pavlova" />
+                  </div>
+                </juju.components.DeploymentSection>
                 <juju.components.DeploymentSection
                   buttons={undefined}
                   completed={false}
@@ -295,7 +314,7 @@ describe('DeploymentFlow', function() {
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
       .props.children.props.children;
-    assert.isTrue(sections[0].props.completed);
+    assert.isTrue(sections[1].props.completed);
   });
 
   it('correctly sets the cloud title if no cloud is chosen', function() {
@@ -323,7 +342,7 @@ describe('DeploymentFlow', function() {
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
       .props.children.props.children;
-    assert.equal(sections[0].props.title, 'Choose cloud to deploy to');
+    assert.equal(sections[1].props.title, 'Choose cloud to deploy to');
   });
 
   it('correctly sets the cloud title if a public cloud is chosen', function() {
@@ -353,7 +372,7 @@ describe('DeploymentFlow', function() {
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
       .props.children.props.children;
-    assert.equal(sections[0].props.title, 'Public cloud');
+    assert.equal(sections[1].props.title, 'Public cloud');
   });
 
   it('correctly sets the cloud title if local is chosen', function() {
@@ -383,7 +402,7 @@ describe('DeploymentFlow', function() {
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
       .props.children.props.children;
-    assert.equal(sections[0].props.title, 'Local cloud');
+    assert.equal(sections[1].props.title, 'Local cloud');
   });
 
   it('can clear the cloud and credential when changing clouds', function() {
@@ -416,7 +435,7 @@ describe('DeploymentFlow', function() {
       .props.children.props.children;
     assert.isNotNull(instance.state.cloud);
     assert.isNotNull(instance.state.credential);
-    sections[0].props.buttons[0].action();
+    sections[1].props.buttons[0].action();
     assert.isNull(instance.state.cloud);
     assert.isNull(instance.state.credential);
   });
@@ -448,7 +467,7 @@ describe('DeploymentFlow', function() {
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
       .props.children.props.children;
-    assert.isFalse(sections[1].props.disabled);
+    assert.isFalse(sections[2].props.disabled);
   });
 
   it('can enable the machines section', function() {
@@ -479,7 +498,7 @@ describe('DeploymentFlow', function() {
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
       .props.children.props.children;
-    assert.isFalse(sections[2].props.disabled);
+    assert.isFalse(sections[3].props.disabled);
   });
 
   it('can enable the services section', function() {
@@ -510,7 +529,7 @@ describe('DeploymentFlow', function() {
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
       .props.children.props.children;
-    assert.isFalse(sections[3].props.disabled);
+    assert.isFalse(sections[4].props.disabled);
   });
 
   it('can enable the budget section', function() {
@@ -542,7 +561,7 @@ describe('DeploymentFlow', function() {
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
       .props.children.props.children;
-    assert.isFalse(sections[4].props.disabled);
+    assert.isFalse(sections[5].props.disabled);
   });
 
   it('can hide the agreements section', function() {
@@ -574,7 +593,7 @@ describe('DeploymentFlow', function() {
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
       .props.children.props.children;
-    assert.isUndefined(sections[6].props.children.props.children[0]);
+    assert.isUndefined(sections[7].props.children.props.children[0]);
   });
 
   it('can deploy', function() {
@@ -603,15 +622,20 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
+    instance.refs = {
+      modelName: {
+        getValue: sinon.stub().returns('Lamington')
+      }
+    };
     instance._setCloud({id: 'cloud'});
     instance._setCredential('cred');
     instance._setRegion('north');
     var output = renderer.getRenderOutput();
     output.props.children.props.children[1].props.children.props.children
-      .props.children[6].props.children.props.children[1].props.children
+      .props.children[7].props.children.props.children[1].props.children
       .props.action();
     assert.equal(deploy.callCount, 1);
-    assert.equal(deploy.args[0][2], 'Pavlova');
+    assert.equal(deploy.args[0][2], 'Lamington');
     assert.equal(deploy.args[0][3], 'cred');
     assert.equal(deploy.args[0][4], 'cloud');
     assert.equal(deploy.args[0][5], 'north');
