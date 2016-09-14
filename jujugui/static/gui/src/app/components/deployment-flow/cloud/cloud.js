@@ -54,6 +54,10 @@ YUI.add('deployment-cloud', function() {
           clouds: cloudList,
           cloudsLoading: false
         });
+        // If there is only one cloud then automatically select it.
+        if (cloudList.length === 1) {
+          this.props.setCloud(cloudList[0]);
+        }
       });
     },
 

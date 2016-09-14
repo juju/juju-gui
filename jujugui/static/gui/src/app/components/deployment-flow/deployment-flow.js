@@ -288,10 +288,11 @@ YUI.add('deployment-flow', function() {
     getInitialState: function() {
       // Set up the cloud, credential and region from props, as if they exist at
       // mount they can't be changed.
+      const modelCommitted = this.props.modelCommitted;
       return {
-        cloud: this.props.cloud || null,
-        credential: this.props.credential || null,
-        region: this.props.region || null,
+        cloud: modelCommitted ? this.props.cloud : null,
+        credential: modelCommitted ? this.props.credential : null,
+        region: modelCommitted ? this.props.region : null,
         showChangelogs: false
       };
     },

@@ -168,6 +168,25 @@ describe('DeploymentCloud', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('can select a cloud if there is only one', function() {
+    cloudList = {
+      'cloud-google': {name: 'google'}
+    };
+    const setCloud = sinon.stub();
+    jsTestUtils.shallowRender(
+      <juju.components.DeploymentCloud
+        acl={acl}
+        cloud={null}
+        clouds={clouds}
+        listClouds={sinon.stub().callsArgWith(0, null, cloudList)}
+        setCloud={setCloud} />);
+    assert.equal(setCloud.callCount, 1);
+    assert.deepEqual(setCloud.args[0][0], {
+      id: 'cloud-google',
+      name: 'google'
+    });
+  });
+
   it('can select a cloud', function() {
     var setCloud = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
