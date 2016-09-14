@@ -150,7 +150,7 @@ describe('DeploymentCredential', function() {
           <form className="deployment-credential__form">
             <div className="prepend-two four-col">
               <juju.components.InsetSelect
-                disabled={true}
+                disabled={false}
                 label="Credential"
                 onChange={instance._handleCredentialChange}
                 options={[{

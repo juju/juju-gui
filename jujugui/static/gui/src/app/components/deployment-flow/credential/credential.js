@@ -196,7 +196,7 @@ YUI.add('deployment-credential', function() {
       if (this.state.showAdd) {
         return;
       }
-      var disabled = this.props.acl.isReadOnly() || !this.props.editable;
+      var disabled = this.props.acl.isReadOnly();
       return (
         <form className="deployment-credential__form">
           <div className="prepend-two four-col">
@@ -208,7 +208,7 @@ YUI.add('deployment-credential', function() {
           </div>
           <div className="four-col">
             <juju.components.InsetSelect
-              disabled={disabled}
+              disabled={disabled || !this.props.editable}
               label="Region"
               onChange={this.props.setRegion}
               options={this._generateRegions()} />
