@@ -74,17 +74,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     test('credentials passed to the constructor are stored', function() {
-      var user = 'Will Smith';
-      var password = 'I am legend!';
+      const user = 'jean-luc-picard';
+      const password = 'I am the real legend!';
       // Make sure that the session is empty from the 'beforeEach' instantiation
       sessionStorage.setItem('credentials', null);
-      var env = new juju.environments.GoEnvironment({
+      const env = new juju.environments.GoEnvironment({
         user: user,
         password: password,
         conn: conn
       });
-      var credentials = env.getCredentials();
-      assert.equal(credentials.user, 'user-' + user);
+      const credentials = env.getCredentials();
+      assert.equal(credentials.user, 'user-' + user + '@local');
       assert.equal(credentials.password, password);
       assert.equal(JSON.stringify({
         user: 'user-' + user,
@@ -108,7 +108,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.login();
       var message = conn.last_message();
       assert.equal(message.request, 'Login');
-      assert.equal(message.params['auth-tag'], 'user-admin');
+      assert.equal(message.params['auth-tag'], 'user-admin@local');
       assert.equal(message.params.credentials, 'password');
     });
 

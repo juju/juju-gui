@@ -48,8 +48,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
     authenticated: {value: false},
     authorizedUsers: {
       value: {
-        'user-admin': 'password',
-        'user-test': 'test'
+        'user-admin@local': 'password',
+        'user-test@local': 'test'
       }
     },
     defaultSeries: {value: 'trusty'},
@@ -173,8 +173,11 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @return {Bool} True if the authentication was successful.
     */
     login: function(username, submittedPassword) {
-      var password = this.get('authorizedUsers')[username],
-          authenticated = password === submittedPassword;
+      if (username.indexOf('@') === -1) {
+        username += '@local';
+      }
+      const password = this.get('authorizedUsers')[username];
+      const authenticated = password === submittedPassword;
       this.set('authenticated', authenticated);
       return authenticated;
     },

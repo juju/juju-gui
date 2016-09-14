@@ -423,31 +423,16 @@ YUI.add('juju-gui', function(Y) {
         jujuCoreVersion: this.get('jujuCoreVersion')
       };
       let controllerOptions = Object.assign({}, modelOptions);
-
-      const jujuEnvUUID =
-        this.get('jujuEnvUUID') ||
-        (window.juju_config && window.juju_config.jujuEnvUUID);
       if (this.get('sandbox')) {
         modelOptions = this.createSandboxConnection(
           Object.assign({}, modelOptions));
         controllerOptions = this.createSandboxConnection(
           Object.assign({}, controllerOptions));
       } else {
-        if (jujuEnvUUID) {
-          // If we have a uuid provided in the config then connect directly
-          // to that instead of waiting for the model list from the controller
-          // connection.
-          const socketURL = this.createSocketURL(
-            this.get('socketTemplate'), jujuEnvUUID);
-          modelOptions.socket_url = socketURL;
-          this.set('socket_url', socketURL);
-        }
-        // The GUI is connected to a real Juju environment.
-        // Instantiate a Web handler allowing to perform asynchronous HTTPS
-        // requests to the juju-core API.
+        // The GUI is connected to a real Juju environment. Instantiate a Web
+        // handler allowing to perform asynchronous HTTPS requests to Juju.
         modelOptions.webHandler = new environments.web.WebHandler();
       }
-
       let modelAPI, controllerAPI;
       if (this.isLegacyJuju()) {
         modelAPI = new environments.GoLegacyEnvironment(modelOptions);
@@ -555,53 +540,52 @@ YUI.add('juju-gui', function(Y) {
 
       // When the connection resets, reset the db, re-login (a delta will
       // arrive with successful authentication), and redispatch.
-      this.env.after('connectedChange', function(ev) {
-        if (ev.newVal === true) {
-          // If we're in gisf we do not want to empty the db when we connect
-          // because the user may have made changes to the temporary model.
-          if (!this.get('gisf')) {
-            this.db.reset();
-          }
-          this.env.userIsAuthenticated = false;
-          // Do not attempt environment login without credentials.
-          var credentials = this.env.getCredentials();
-          if (credentials.areAvailable) {
-            if (credentials.macaroons) {
-              this.loginToAPIs(null, true, [this.env]);
-            } else {
-              this.loginToAPIs(null, false, [this.env]);
-            }
-          } else {
-            // The user can also try to log in with an authentication token.
-            // This will look like ?authtoken=AUTHTOKEN.  For instance,
-            // in the sandbox, try logging in with ?authtoken=demoToken.
-            // To get a real token from the Juju GUI charm's environment
-            // proxy, within an authenticated websocket session, use a
-            // request like this:
-            // {
-            //   'RequestId': 42,
-            //   'Type': 'GUIToken',
-            //   'Request': 'Create',
-            //   'Params': {},
-            // }
-            // You can then use the token once until it expires, within two
-            // minutes of this writing.
-            var querystring = this.location.search.substring(1);
-            var qs = Y.QueryString.parse(querystring);
-            var authtoken = qs.authtoken || '';
-            if (authtoken || authtoken.length) {
-              // De-dupe if necessary.
-              if (Array.isArray(authtoken)) {
-                authtoken = authtoken[0];
-              }
-              // Try a token login.
-              this.env.tokenLogin(authtoken);
-            } else {
-              this._displayLogin();
-            }
-          }
+      this.env.after('connectedChange', evt => {
+        if (!evt.newVal) {
+          // The model is not connected, do nothing waiting for a reconnection.
+          return;
         }
-      }, this);
+        // If we're in GISF we do not want to empty the db when we connect
+        // because the user may have made changes to the temporary model.
+        if (!this.get('gisf')) {
+          this.db.reset();
+        }
+        this.env.userIsAuthenticated = false;
+        // Attempt to log in if we already have credentials available.
+        var credentials = this.env.getCredentials();
+        if (credentials.areAvailable) {
+          this.loginToAPIs(null, !!credentials.macaroons, [this.env]);
+          return;
+        }
+        // The user can also try to log in with an authentication token.
+        // This will look like ?authtoken=AUTHTOKEN.  For instance,
+        // in the sandbox, try logging in with ?authtoken=demoToken.
+        // To get a real token from the Juju GUI charm's environment
+        // proxy, within an authenticated websocket session, use a
+        // request like this:
+        // {
+        //   'RequestId': 42,
+        //   'Type': 'GUIToken',
+        //   'Request': 'Create',
+        //   'Params': {},
+        // }
+        // You can then use the token once until it expires, within two
+        // minutes of this writing.
+        var querystring = this.location.search.substring(1);
+        var qs = Y.QueryString.parse(querystring);
+        var authtoken = qs.authtoken || '';
+        if (authtoken || authtoken.length) {
+          // De-dupe if necessary.
+          if (Array.isArray(authtoken)) {
+            authtoken = authtoken[0];
+          }
+          // Try a token login.
+          this.env.tokenLogin(authtoken);
+        }
+        // There are no credentials. Do nothing in this case as the controller
+        // login check will have kicked the user to the login prompt already
+        // and we can wait until they have provided the credentials there.
+      });
 
       // If the database updates, redraw the view (distinct from model updates).
       // TODO: bound views will automatically update this on individual models.
@@ -647,11 +631,16 @@ YUI.add('juju-gui', function(Y) {
       this.once('ready', function(e) {
         // We only want to connect to the model on application load if we are
         // in a sandbox or real model and not in gisf.
-        var envUUID = this.get('jujuEnvUUID');
-        var isNotGISFSandbox = (this.get('gisf') &&
-                                envUUID && envUUID.toLowerCase() !== 'sandbox');
-        var isNotConnected = (!this.get('gisf') &&
-                              (this.get('socket_url') || this.get('sandbox')));
+        const modelUUID = this.get('modelUUID');
+        const isNotGISFSandbox = (
+          this.get('gisf') &&
+          modelUUID &&
+          modelUUID.toLowerCase() !== 'sandbox'
+        );
+        const isNotConnected = (
+          !this.get('gisf') &&
+          (this.get('socket_url') || this.get('sandbox'))
+        );
         if (isNotGISFSandbox || isNotConnected) {
           this.env.connect();
         }
@@ -763,16 +752,11 @@ YUI.add('juju-gui', function(Y) {
           }
           // Pick a model to connect to.
           const selectedModel = this._pickModel(modelList);
-          // Set the selected uuid as the active model in the GUI. If this is
-          // not set here then the subsequent code will not know what the
-          // uuid of the model we're supposed to connect to is.
-          if (!selectedModel) {
-            console.log(
-              'Cannot select available model, using unconnected mode.');
-            // XXX Drop the user into the uncommitted state.
+          if (selectedModel === null) {
+            console.log('cannot select a model: using unconnected mode');
+            // XXX Drop the user into the unconnected state.
             return;
           }
-          this.set('jujuEnvUUID', selectedModel.uuid);
           // Generate the valid socket URL and switch to this model.
           this.switchEnv(
             this.createSocketURL(
@@ -783,9 +767,7 @@ YUI.add('juju-gui', function(Y) {
       controllerAPI.after('connectedChange', e => {
         const credentials = this.controllerAPI.getCredentials();
         if (!credentials.areAvailable && !this.get('gisf')) {
-          // If we don't have credentials then do nothing as the env login
-          // check will have kicked the user to the login prompt already and
-          // we can wait until they have provided the credentials there.
+          this._displayLogin();
           return;
         }
         // If we're in a JIMM controlled environment or if we have macaroon
@@ -845,14 +827,15 @@ YUI.add('juju-gui', function(Y) {
       @param {Boolean} useMacaroons Whether to use macaroon based auth
         (macaraq) or simple username/password auth.
       @param {Array} apis The apis instances that we should be logging into.
-        Defaults to [this.env, this.controllerAPI].
+        Defaults to [this.controllerAPI, this.env].
     */
     loginToAPIs: function(
-      credentials, useMacaroons, apis=[this.env, this.controllerAPI]) {
+      credentials, useMacaroons, apis=[this.controllerAPI, this.env]) {
       if (useMacaroons) {
         apis.forEach(api => {
-          // The api may be unset if the model does not support it.
-          if (api) {
+          // The api may be unset if the current Juju does not support it.
+          if (api && api.get('connected')) {
+            console.log(`logging into ${api.name} with macaroons`);
             api.loginWithMacaroon(new Y.juju.environments.web.Bakery({
               webhandler: new Y.juju.environments.web.WebHandler(),
               interactive: true,
@@ -864,11 +847,12 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       apis.forEach(api => {
-        // The api may be unset if the model does not support it.
-        if (api) {
+        // The api may be unset if the current Juju does not support it.
+        if (api && api.get('connected')) {
           if (credentials) {
             api.setCredentials(credentials);
           }
+          console.log(`logging into ${api.name} with user and password`);
           api.login();
         }
       });
@@ -905,7 +889,7 @@ YUI.add('juju-gui', function(Y) {
         // Switch to the redirected model.
         this.switchEnv(this.createSocketURL(
           this.get('socketTemplate'),
-          this.get('jujuEnvUUID'), server[0].value, server[0].port));
+          this.get('modelUUID'), server[0].value, server[0].port));
       });
     },
 
@@ -971,7 +955,7 @@ YUI.add('juju-gui', function(Y) {
             this.db.notifications.add.bind(this.db.notifications)}
           canCreateNew={this.env.get('connected')}
           controllerAPI={this.controllerAPI}
-          currentModel={this.get('jujuEnvUUID')}
+          currentModel={this.get('modelUUID')}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listModels={
             this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
@@ -1251,10 +1235,14 @@ YUI.add('juju-gui', function(Y) {
       @param {String} hoveredId An id for a service.
     */
     _renderAddedServices: function(hoveredId) {
-      var utils = views.utils;
-      var db = this.db;
-      var topo = this.views.environment.instance.topo;
-      var ServiceModule = topo.modules.ServiceModule;
+      const instance = this.views.environment.instance;
+      if (!instance) {
+        // TODO frankban: investigate in what cases instance is undefined on
+        // the environment object. Is this some kind of race?
+        return;
+      }
+      const topo = instance.topo;
+      const ServiceModule = topo.modules.ServiceModule;
       // Set up a handler for syncing the service token hover. This needs to be
       // attached only when the component is visible otherwise the added
       // services component will try to render if the user hovers a service
@@ -1268,6 +1256,7 @@ YUI.add('juju-gui', function(Y) {
       // Deselect the active service token. This needs to happen so that when a
       // user closes the service details the service token deactivates.
       ServiceModule.deselectNodes();
+      const db = this.db;
       ReactDOM.render(
         <components.Panel
           instanceName="inspector-panel"
@@ -1278,7 +1267,7 @@ YUI.add('juju-gui', function(Y) {
             updateUnitFlags={db.updateUnitFlags.bind(db)}
             findRelatedServices={db.findRelatedServices.bind(db)}
             findUnrelatedServices={db.findUnrelatedServices.bind(db)}
-            getUnitStatusCounts={utils.getUnitStatusCounts}
+            getUnitStatusCounts={views.utils.getUnitStatusCounts}
             hoverService={ServiceModule.hoverService.bind(ServiceModule)}
             panToService={ServiceModule.panToService.bind(ServiceModule)}
             changeState={this.changeState.bind(this)} />
@@ -1350,7 +1339,7 @@ YUI.add('juju-gui', function(Y) {
             addCharm={this.env.addCharm.bind(this.env)}
             displayPlans={utils.compareSemver(
               this.get('jujuCoreVersion'), '2') > -1}
-            modelUUID={this.get('jujuEnvUUID')}
+            modelUUID={this.get('modelUUID')}
             showActivePlan={this.plans.showActivePlan.bind(this.plans)}
             setCharm={this.env.setCharm.bind(this.env)}
             getCharm={this.env.get_charm.bind(this.env)}
@@ -1575,27 +1564,31 @@ YUI.add('juju-gui', function(Y) {
       this.navigate(url);
     },
 
-    /** Chooses a model to connect to from the model list based on config.
+    /**
+      Chooses a model to connect to from the model list based on config and/or
+      model availability in this controller.
 
       @method _pickModel
       @param {Array} modelList The list of models to pick from.
-      @return {Object} The selected model.
+      @return {Object} The selected model, or null if there are no models
+        accessible by the user.
      */
     _pickModel: function(modelList) {
-      // XXX This picks the first environment if one is not provided by
-      // config, but we'll want to default to sandbox mode then allow the
-      // user to choose a model if one isn't provided in config.
-      const envName = this.get('jujuEnvUUID');
-      const user = this.controllerAPI.get('user');
-      let matchingModels = [];
-      if (envName && user) {
-        matchingModels = modelList.filter(
-          model => model.path === `${user}/${envName}`);
+      if (!modelList.length) {
+        return null;
       }
-      if (matchingModels.length !== 0) {
-        return matchingModels[0];
+      let matching = [];
+      const modelUUID = this.get('modelUUID') ||
+        (window.juju_config && window.juju_config.jujuEnvUUID);
+      if (modelUUID) {
+        matching = modelList.filter(model => model.uuid === modelUUID);
       }
-      return modelList[0];
+      // XXX This picks the first model if one is not provided by config or
+      // not available. We'll want to default to disconnected mode then allow
+      // the user to choose a model in this case.
+      const selectedModel = matching.length ? matching[0] : modelList[0];
+      this.set('modelUUID', selectedModel.uuid);
+      return selectedModel;
     },
 
     /**
@@ -2189,7 +2182,7 @@ YUI.add('juju-gui', function(Y) {
       this.env.set('socket_url', socketUrl);
       // Clear uncommitted state.
       this.env.get('ecs').clear();
-      // Disconnect and reconnect the environment.
+      // Disconnect and reconnect the model.
       var onclose = function() {
         this.on_close();
         if (reconnect) {
@@ -2209,8 +2202,12 @@ YUI.add('juju-gui', function(Y) {
       this.db.reset();
       this.db.fire('update');
       // Reset canvas centering to new env will center on load.
-      var topo = this.views.environment.instance.topo;
-      topo.modules.ServiceModule.centerOnLoad = true;
+      const instance = this.views.environment.instance;
+      // TODO frankban: investigate in what cases instance is undefined on the
+      // environment object. Is this some kind of race?
+      if (instance) {
+        instance.topo.modules.ServiceModule.centerOnLoad = true;
+      }
     },
 
     /**

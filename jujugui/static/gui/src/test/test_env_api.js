@@ -270,12 +270,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('sends the correct login message', function() {
         noopHandleLogin();
         env.login();
-        var lastMessage = conn.last_message();
-        var expected = {
+        const lastMessage = conn.last_message();
+        const expected = {
           type: 'Admin',
           request: 'Login',
           'request-id': 1,
-          params: {'auth-tag': 'user-user', credentials: 'password'},
+          params: {'auth-tag': 'user-user@local', credentials: 'password'},
+          version: 3
+        };
+        assert.deepEqual(expected, lastMessage);
+      });
+
+      it('sends the correct login message for external users', () => {
+        noopHandleLogin();
+        env.setCredentials({user: 'who@external', password: 'pswd'});
+        env.login();
+        const lastMessage = conn.last_message();
+        const expected = {
+          type: 'Admin',
+          request: 'Login',
+          'request-id': 1,
+          params: {'auth-tag': 'user-who@external', credentials: 'pswd'},
           version: 3
         };
         assert.deepEqual(expected, lastMessage);
@@ -496,13 +511,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('succeeds after discharge', function() {
-        var bakery = makeBakery(function(macaroon, success, fail) {
+        const bakery = makeBakery(function(macaroon, success, fail) {
           assert.strictEqual(macaroon, 'discharge-required-macaroon');
           success(['macaroon', 'discharge']);
         });
         env.loginWithMacaroon(bakery, callback);
         assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
-        var requestId = assertRequest(conn.last_message());
+        let requestId = assertRequest(conn.last_message());
         conn.msg({
           'request-id': requestId,
           response: {'discharge-required': 'discharge-required-macaroon'}
@@ -521,8 +536,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         });
         assert.strictEqual(error, null);
-        var creds = env.getCredentials();
-        assert.strictEqual(creds.user, 'user-who');
+        const creds = env.getCredentials();
+        assert.strictEqual(creds.user, 'user-who@local');
         assert.strictEqual(creds.password, '');
         assert.deepEqual(creds.macaroons, ['macaroon', 'discharge']);
         assert.deepEqual(env.get('facades'), {
@@ -535,7 +550,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.setCredentials({macaroons: ['already stored', 'macaroons']});
         env.loginWithMacaroon(makeBakery(), callback);
         assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
-        var requestId = assertRequest(
+        const requestId = assertRequest(
           conn.last_message(), ['already stored', 'macaroons']);
         conn.msg({
           'request-id': requestId,
@@ -548,8 +563,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         });
         assert.strictEqual(error, null);
-        var creds = env.getCredentials();
-        assert.strictEqual(creds.user, 'user-dalek');
+        const creds = env.getCredentials();
+        assert.strictEqual(creds.user, 'user-dalek@local');
         assert.strictEqual(creds.password, '');
         assert.deepEqual(creds.macaroons, ['already stored', 'macaroons']);
         assert.deepEqual(env.get('facades'), {
@@ -952,7 +967,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('uses the stored webHandler to perform requests', function() {
         env.userIsAuthenticated = true;
-        var mockWebHandler = {sendPostRequest: sinon.stub()};
+        const mockWebHandler = {sendPostRequest: sinon.stub()};
         env.set('webHandler', mockWebHandler);
         env.uploadLocalCharm(
             'a zip file', 'trusty',
@@ -961,7 +976,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Ensure the web handler's sendPostRequest method has been called with
         // the expected arguments.
         assert.strictEqual(mockWebHandler.sendPostRequest.callCount, 1);
-        var lastArguments = mockWebHandler.sendPostRequest.lastCall.args;
+        const lastArguments = mockWebHandler.sendPostRequest.lastCall.args;
         assert.strictEqual(lastArguments.length, 7);
         assert.strictEqual(
             lastArguments[0],
@@ -969,7 +984,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(
             lastArguments[1], {'Content-Type': 'application/zip'}); // Headers.
         assert.strictEqual(lastArguments[2], 'a zip file'); // Zip file object.
-        assert.strictEqual(lastArguments[3], 'user-user'); // User name.
+        assert.strictEqual(lastArguments[3], 'user-user@local'); // User name.
         assert.strictEqual(lastArguments[4], 'password'); // Password.
         assert.strictEqual(
             lastArguments[5](), 'progress'); // Progress callback.
@@ -982,20 +997,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('getLocalCharmFileUrl', function() {
 
       it('uses the stored webHandler to retrieve the file URL', function() {
-        var mockWebHandler = {getUrl: sinon.stub().returns('myurl')};
+        const mockWebHandler = {getUrl: sinon.stub().returns('myurl')};
         env.set('webHandler', mockWebHandler);
-        var url = env.getLocalCharmFileUrl(
+        const url = env.getLocalCharmFileUrl(
             'local:trusty/django-42', 'icon.svg');
         assert.strictEqual(url, 'myurl');
         // Ensure the web handler's getUrl method has been called with the
         // expected arguments.
         assert.strictEqual(mockWebHandler.getUrl.callCount, 1);
-        var lastArguments = mockWebHandler.getUrl.lastCall.args;
+        const lastArguments = mockWebHandler.getUrl.lastCall.args;
         assert.lengthOf(lastArguments, 3);
-        var expected = '/juju-core/model/this-is-a-uuid/charms?' +
+        const expected = '/juju-core/model/this-is-a-uuid/charms?' +
             'url=local:trusty/django-42&file=icon.svg';
         assert.strictEqual(lastArguments[0], expected);
-        assert.strictEqual(lastArguments[1], 'user-user'); // User name.
+        assert.strictEqual(lastArguments[1], 'user-user@local'); // User name.
         assert.strictEqual(lastArguments[2], 'password'); // Password.
       });
 
@@ -1003,8 +1018,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     describe('listLocalCharmFiles', function() {
 
-      it('uses the stored webHandler to retrieve the file list', function() {
-        var mockWebHandler = {sendGetRequest: sinon.stub()};
+      it('uses the stored webHandler to retrieve the contet', function() {
+        const mockWebHandler = {sendGetRequest: sinon.stub()};
         env.set('webHandler', mockWebHandler);
         env.listLocalCharmFiles(
             'local:trusty/django-42',
@@ -1013,13 +1028,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Ensure the web handler's sendGetRequest method has been called with
         // the expected arguments.
         assert.strictEqual(mockWebHandler.sendGetRequest.callCount, 1);
-        var lastArguments = mockWebHandler.sendGetRequest.lastCall.args;
+        const lastArguments = mockWebHandler.sendGetRequest.lastCall.args;
         assert.lengthOf(lastArguments, 6);
-        var expected = '/juju-core/model/this-is-a-uuid/charms' +
+        const expected = '/juju-core/model/this-is-a-uuid/charms' +
             '?url=local:trusty/django-42';
         assert.strictEqual(lastArguments[0], expected);
         assert.deepEqual(lastArguments[1], {}); // Headers.
-        assert.strictEqual(lastArguments[2], 'user-user'); // User name.
+        assert.strictEqual(lastArguments[2], 'user-user@local'); // User name.
         assert.strictEqual(lastArguments[3], 'password'); // Password.
         assert.strictEqual(
             lastArguments[4](), 'progress'); // Progress callback.
@@ -1032,7 +1047,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('getLocalCharmFileContents', function() {
 
       it('uses the stored webHandler to retrieve the contents', function() {
-        var mockWebHandler = {sendGetRequest: sinon.stub()};
+        const mockWebHandler = {sendGetRequest: sinon.stub()};
         env.set('webHandler', mockWebHandler);
         env.getLocalCharmFileContents(
             'local:trusty/django-42', 'hooks/install',
@@ -1041,13 +1056,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Ensure the web handler's sendGetRequest method has been called with
         // the expected arguments.
         assert.strictEqual(mockWebHandler.sendGetRequest.callCount, 1);
-        var lastArguments = mockWebHandler.sendGetRequest.lastCall.args;
+        const lastArguments = mockWebHandler.sendGetRequest.lastCall.args;
         assert.lengthOf(lastArguments, 6);
-        var expected = '/juju-core/model/this-is-a-uuid/charms?' +
+        const expected = '/juju-core/model/this-is-a-uuid/charms?' +
             'url=local:trusty/django-42&file=hooks/install';
         assert.strictEqual(lastArguments[0], expected);
         assert.deepEqual(lastArguments[1], {}); // Headers.
-        assert.strictEqual(lastArguments[2], 'user-user'); // User name.
+        assert.strictEqual(lastArguments[2], 'user-user@local'); // User name.
         assert.strictEqual(lastArguments[3], 'password'); // Password.
         assert.strictEqual(
             lastArguments[4](), 'progress'); // Progress callback.
@@ -2891,7 +2906,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(data.err, undefined);
         assert.strictEqual(data.applicationName, 'haproxy');
         assert.deepEqual(data.endpoints, ['proxy']);
-        assert.strictEqual(data.url, 'local:/u/user/myenv/haproxy');
+        assert.strictEqual(data.url, 'local:/u/user@local/myenv/haproxy');
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
           type: 'CrossModelRelations',
@@ -2901,7 +2916,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             offers: [{
               applicationname: 'haproxy',
               endpoints: ['proxy'],
-              applicationurl: 'local:/u/user/myenv/haproxy',
+              applicationurl: 'local:/u/user@local/myenv/haproxy',
               allowedusers: ['user-public'],
               applicationdescription: ''
             }]

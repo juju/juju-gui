@@ -404,6 +404,10 @@ YUI.add('juju-env-base', function(Y) {
         if (credentials.user.indexOf(API_USER_TAG) !== 0) {
           credentials.user = API_USER_TAG + credentials.user;
         }
+        // User names without a "@something" part are local Juju users.
+        if (credentials.user.indexOf('@') === -1) {
+          credentials.user += '@local';
+        }
       } else {
         credentials.user = '';
       }

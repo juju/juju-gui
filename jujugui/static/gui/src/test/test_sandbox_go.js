@@ -139,43 +139,58 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       );
     });
 
-    it('can log in.', function(done) {
-      // See FakeBackend's authorizedUsers for these default authentication
-      // values.
-      const data = {
-        type: 'Admin',
-        request: 'Login',
-        params: {
-          'auth-tag': 'user-admin',
-          credentials: 'password'
-        },
-        'request-id': 42
-      };
+    // Ensure the log in process with the given username and password either
+    // succeeds or fails based on the given expectSuccess argument.
+    const checkLogin = (done, username, password, expectSuccess) => {
       client.onmessage = function(received) {
-        // Add in the error indicator so the deepEqual is comparing apples to
-        // apples.
-        data.error = false;
-        data.response = {
-          facades: sandboxModule.facades,
-          'user-info': {
-            'controller-access': 'superuser',
-            'model-access': 'admin'
-          }
+        let expectedData = {
+          'request-id': 42,
+          error: 'invalid username or password'
         };
-        assert.deepEqual(JSON.parse(received.data), data);
-        assert.isTrue(state.get('authenticated'));
+        if (expectSuccess) {
+          expectedData = {
+            'request-id': 42,
+            response: {
+              facades: sandboxModule.facades,
+              'user-info': {
+                'controller-access': 'superuser',
+                'model-access': 'admin'
+              }
+            }
+          };
+        }
+        assert.deepEqual(JSON.parse(received.data), expectedData);
+        assert.strictEqual(state.get('authenticated'), expectSuccess);
         done();
       };
       state.logout();
-      assert.isFalse(state.get('authenticated'));
+      assert.strictEqual(state.get('authenticated'), false);
       client.open();
+      const data = {
+        'request-id': 42,
+        type: 'Admin',
+        request: 'Login',
+        params: {'auth-tag': username, credentials: password}
+      };
       client.send(JSON.stringify(data));
+    };
+
+    it('can log in', done => {
+      checkLogin(done, 'user-admin@local', 'password', true);
+    });
+
+    it('can log in (without local postfix)', done => {
+      checkLogin(done, 'user-admin', 'password', true);
+    });
+
+    it('fails to log in', done => {
+      checkLogin(done, 'user-admin', 'wrong-password', false);
     });
 
     it('can log in (environment integration).', function(done) {
       state.logout();
       env.after('login', function() {
-        assert.deepEqual(env.userIsAuthenticated, true);
+        assert.strictEqual(env.userIsAuthenticated, true);
         assert.strictEqual(env.get('controllerAccess'), 'superuser');
         assert.strictEqual(env.get('modelAccess'), 'admin');
         done();
@@ -199,7 +214,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'provider-type': state.get('providerType'),
             'default-series': state.get('defaultSeries'),
             name: 'sandbox',
-            cloud: 'demonstration',
+            'owner-tag': 'user-admin@local',
+            'cloud-tag': 'cloud-demonstration',
             'cloud-credential-tag':
               'cloudcred-demonstration_admin@local_demonstration',
             'cloud-region': 'demo-west'}};

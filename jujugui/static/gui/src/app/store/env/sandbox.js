@@ -300,16 +300,21 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleAdminLogin: function(data, client, state) {
-      data.error = !state.login(
-        data.params['auth-tag'], data.params.credentials);
-      data.response = {
-        facades: sandboxModule.facades,
-        'user-info': {
-          'controller-access': 'superuser',
-          'model-access': 'admin'
-        }
-      };
-      client.receive(data);
+      const username = data.params['auth-tag'];
+      const password = data.params.credentials;
+      const response = {'request-id': data['request-id']};
+      if (state.login(username, password)) {
+        response.response = {
+          facades: sandboxModule.facades,
+          'user-info': {
+            'controller-access': 'superuser',
+            'model-access': 'admin'
+          }
+        };
+      } else {
+        response.error = 'invalid username or password';
+      }
+      client.receive(response);
     },
 
     /**
@@ -341,7 +346,8 @@ YUI.add('juju-env-sandbox', function(Y) {
           'provider-type': state.get('providerType'),
           'default-series': state.get('defaultSeries'),
           name: 'sandbox',
-          cloud: 'demonstration',
+          'owner-tag': 'user-admin@local',
+          'cloud-tag': 'cloud-demonstration',
           'cloud-credential-tag':
             'cloudcred-demonstration_admin@local_demonstration',
           'cloud-region': 'demo-west'

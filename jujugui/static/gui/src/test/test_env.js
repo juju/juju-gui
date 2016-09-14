@@ -94,7 +94,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(setItemValue, {credentials: Y.JSON.stringify(value)});
       var creds = env.getCredentials();
       assert.strictEqual(creds.areAvailable, true);
-      assert.strictEqual(creds.user, 'user-foo');
+      assert.strictEqual(creds.user, 'user-foo@local');
       assert.strictEqual(creds.password, 'kumquat');
       assert.deepEqual(creds.macaroons, ['macaroon']);
       // Try with null value.

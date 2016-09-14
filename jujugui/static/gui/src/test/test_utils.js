@@ -1106,7 +1106,7 @@ describe('utilities', function() {
       assert.equal(createSocketURLArgs[2], '80');
       assert.equal(appSet.callCount, 2);
       var appSetArgs = appSet.args;
-      assert.equal(appSetArgs[0][0], 'jujuEnvUUID');
+      assert.equal(appSetArgs[0][0], 'modelUUID');
       assert.equal(appSetArgs[0][1], 'uuid123');
       assert.equal(appSetArgs[1][0], 'socket_url');
       assert.equal(appSetArgs[1][1], 'wss://socket-url');

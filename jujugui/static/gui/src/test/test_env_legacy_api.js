@@ -260,7 +260,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Type: 'Admin',
           Request: 'Login',
           RequestId: 1,
-          Params: {AuthTag: 'user-user', Password: 'password'},
+          Params: {AuthTag: 'user-user@local', Password: 'password'},
           Version: 0
         };
         assert.deepEqual(expected, lastMessage);
@@ -400,8 +400,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(err, null);
         assert.strictEqual(fromToken, true);
         const credentials = env.getCredentials();
-        assert.strictEqual('user-tokenuser', credentials.user);
-        assert.strictEqual('tokenpasswd', credentials.password);
+        assert.strictEqual(credentials.user, 'user-tokenuser@local');
+        assert.strictEqual(credentials.password, 'tokenpasswd');
       });
 
       it('resets failed markers on successful login', function() {
@@ -680,7 +680,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('uses the stored webHandler to perform requests', function() {
         env.userIsAuthenticated = true;
-        var mockWebHandler = {sendPostRequest: sinon.stub()};
+        const mockWebHandler = {sendPostRequest: sinon.stub()};
         env.set('webHandler', mockWebHandler);
         env.uploadLocalCharm(
             'a zip file', 'trusty',
@@ -689,14 +689,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Ensure the web handler's sendPostRequest method has been called with
         // the expected arguments.
         assert.strictEqual(mockWebHandler.sendPostRequest.callCount, 1);
-        var lastArguments = mockWebHandler.sendPostRequest.lastCall.args;
+        const lastArguments = mockWebHandler.sendPostRequest.lastCall.args;
         assert.strictEqual(lastArguments.length, 7);
         assert.strictEqual(
             lastArguments[0], '/juju-core/charms?series=trusty'); // Path.
         assert.deepEqual(
             lastArguments[1], {'Content-Type': 'application/zip'}); // Headers.
         assert.strictEqual(lastArguments[2], 'a zip file'); // Zip file object.
-        assert.strictEqual(lastArguments[3], 'user-user'); // User name.
+        assert.strictEqual(lastArguments[3], 'user-user@local'); // User name.
         assert.strictEqual(lastArguments[4], 'password'); // Password.
         assert.strictEqual(
             lastArguments[5](), 'progress'); // Progress callback.
@@ -709,20 +709,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('getLocalCharmFileUrl', function() {
 
       it('uses the stored webHandler to retrieve the file URL', function() {
-        var mockWebHandler = {getUrl: sinon.stub().returns('myurl')};
+        const mockWebHandler = {getUrl: sinon.stub().returns('myurl')};
         env.set('webHandler', mockWebHandler);
-        var url = env.getLocalCharmFileUrl(
+        const url = env.getLocalCharmFileUrl(
             'local:trusty/django-42', 'icon.svg');
         assert.strictEqual(url, 'myurl');
         // Ensure the web handler's getUrl method has been called with the
         // expected arguments.
         assert.strictEqual(mockWebHandler.getUrl.callCount, 1);
-        var lastArguments = mockWebHandler.getUrl.lastCall.args;
+        const lastArguments = mockWebHandler.getUrl.lastCall.args;
         assert.lengthOf(lastArguments, 3);
         assert.strictEqual(
             lastArguments[0],
             '/juju-core/charms?url=local:trusty/django-42&file=icon.svg');
-        assert.strictEqual(lastArguments[1], 'user-user'); // User name.
+        assert.strictEqual(lastArguments[1], 'user-user@local'); // User name.
         assert.strictEqual(lastArguments[2], 'password'); // Password.
       });
 
@@ -731,7 +731,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('listLocalCharmFiles', function() {
 
       it('uses the stored webHandler to retrieve the file list', function() {
-        var mockWebHandler = {sendGetRequest: sinon.stub()};
+        const mockWebHandler = {sendGetRequest: sinon.stub()};
         env.set('webHandler', mockWebHandler);
         env.listLocalCharmFiles(
             'local:trusty/django-42',
@@ -740,12 +740,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Ensure the web handler's sendGetRequest method has been called with
         // the expected arguments.
         assert.strictEqual(mockWebHandler.sendGetRequest.callCount, 1);
-        var lastArguments = mockWebHandler.sendGetRequest.lastCall.args;
+        const lastArguments = mockWebHandler.sendGetRequest.lastCall.args;
         assert.lengthOf(lastArguments, 6);
         assert.strictEqual(
             lastArguments[0], '/juju-core/charms?url=local:trusty/django-42');
         assert.deepEqual(lastArguments[1], {}); // Headers.
-        assert.strictEqual(lastArguments[2], 'user-user'); // User name.
+        assert.strictEqual(lastArguments[2], 'user-user@local'); // User name.
         assert.strictEqual(lastArguments[3], 'password'); // Password.
         assert.strictEqual(
             lastArguments[4](), 'progress'); // Progress callback.
@@ -758,7 +758,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('getLocalCharmFileContents', function() {
 
       it('uses the stored webHandler to retrieve the contents', function() {
-        var mockWebHandler = {sendGetRequest: sinon.stub()};
+        const mockWebHandler = {sendGetRequest: sinon.stub()};
         env.set('webHandler', mockWebHandler);
         env.getLocalCharmFileContents(
             'local:trusty/django-42', 'hooks/install',
@@ -767,13 +767,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Ensure the web handler's sendGetRequest method has been called with
         // the expected arguments.
         assert.strictEqual(mockWebHandler.sendGetRequest.callCount, 1);
-        var lastArguments = mockWebHandler.sendGetRequest.lastCall.args;
+        const lastArguments = mockWebHandler.sendGetRequest.lastCall.args;
         assert.lengthOf(lastArguments, 6);
         assert.strictEqual(
             lastArguments[0],
             '/juju-core/charms?url=local:trusty/django-42&file=hooks/install');
         assert.deepEqual(lastArguments[1], {}); // Headers.
-        assert.strictEqual(lastArguments[2], 'user-user'); // User name.
+        assert.strictEqual(lastArguments[2], 'user-user@local'); // User name.
         assert.strictEqual(lastArguments[3], 'password'); // Password.
         assert.strictEqual(
             lastArguments[4](), 'progress'); // Progress callback.
