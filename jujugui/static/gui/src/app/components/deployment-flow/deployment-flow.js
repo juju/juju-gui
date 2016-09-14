@@ -461,8 +461,8 @@ YUI.add('deployment-flow', function() {
     */
     _handleDeploy: function() {
       this.props.deploy(
-        this._handleClose, true, this.props.modelName, this.state.credential,
-        this.state.cloud.id, this.state.region);
+        this._handleClose, true, this.refs.modelName.getValue(),
+        this.state.credential, this.state.cloud.id, this.state.region);
     },
 
     /**
@@ -753,6 +753,24 @@ YUI.add('deployment-flow', function() {
             <div className="deployment-flow__content">
               <div className="twelve-col">
                 <div className="inner-wrapper">
+                  <juju.components.DeploymentSection
+                    instance="deployment-model-name"
+                    showCheck={false}
+                    title="Model name">
+                    <div className="six-col">
+                      <juju.components.GenericInput
+                        disabled={disabled || this.props.modelCommitted}
+                        key="modelName"
+                        label="Model name"
+                        required={true}
+                        ref="modelName"
+                        validate={[{
+                          regex: /\S+/,
+                          error: 'This field is required.'
+                        }]}
+                        value={this.props.modelName} />
+                    </div>
+                  </juju.components.DeploymentSection>
                   {this._generateCloudSection()}
                   {this._generateCredentialSection()}
                   {this._generateMachinesSection()}
@@ -791,6 +809,7 @@ YUI.add('deployment-flow', function() {
     'deployment-section',
     'deployment-services',
     'generic-button',
+    'generic-input',
     'panel-component'
   ]
 });
