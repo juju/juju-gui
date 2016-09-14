@@ -68,7 +68,6 @@ describe('LoginComponent', function() {
             </label>
             <juju.components.ButtonRow
               buttons={[{
-                action: instance._handleLoginSubmit,
                 submit: true,
                 title: 'Login',
                 type: 'positive'
@@ -136,7 +135,6 @@ describe('LoginComponent', function() {
             </label>
             <juju.components.ButtonRow
               buttons={[{
-                action: instance._handleLoginSubmit,
                 submit: true,
                 title: 'Login',
                 type: 'positive'
