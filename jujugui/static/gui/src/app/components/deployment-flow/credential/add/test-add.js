@@ -34,8 +34,8 @@ describe('DeploymentCredentialAdd', function() {
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
     clouds = {
-      google: {
-        id: 'google',
+      'cloud-google': {
+        id: 'cloud-google',
         showLogo: true,
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',
         svgHeight: 33,
@@ -68,7 +68,7 @@ describe('DeploymentCredentialAdd', function() {
   });
 
   it('can render without a cloud', function() {
-    var cloud = clouds.google;
+    var cloud = clouds['cloud-google'];
     var close = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
@@ -215,14 +215,14 @@ describe('DeploymentCredentialAdd', function() {
   });
 
   it('can render credential fields for a cloud', function() {
-    var cloud = clouds.google;
+    var cloud = clouds['cloud-google'];
     var close = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
         acl={acl}
         updateCloudCredential={sinon.stub()}
         close={close}
-        cloud={{id: 'google', name: 'google'}}
+        cloud={{id: 'cloud-google', name: 'google'}}
         clouds={clouds}
         generateCloudCredentialTag={sinon.stub()}
         getCredentials={sinon.stub()}
@@ -362,14 +362,14 @@ describe('DeploymentCredentialAdd', function() {
   });
 
   it('can render a cloud with a json field', function() {
-    var cloud = clouds.google;
+    var cloud = clouds['cloud-google'];
     var close = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
         acl={acl}
         updateCloudCredential={sinon.stub()}
         close={close}
-        cloud={{id: 'google', name: 'google'}}
+        cloud={{id: 'cloud-google', name: 'google'}}
         clouds={clouds}
         generateCloudCredentialTag={sinon.stub()}
         getCredentials={sinon.stub()}
@@ -475,14 +475,14 @@ describe('DeploymentCredentialAdd', function() {
 
   it('can disable controls when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
-    var cloud = clouds.google;
+    var cloud = clouds['cloud-google'];
     var close = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
         acl={acl}
         updateCloudCredential={sinon.stub()}
         close={close}
-        cloud={{id: 'google', name: 'google'}}
+        cloud={{id: 'cloud-google', name: 'google'}}
         clouds={clouds}
         generateCloudCredentialTag={sinon.stub()}
         getCredentials={sinon.stub()}
@@ -629,7 +629,7 @@ describe('DeploymentCredentialAdd', function() {
           acl={acl}
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
-          cloud={{id: 'google', name: 'google'}}
+          cloud={{id: 'cloud-google', name: 'google'}}
           clouds={clouds}
           generateCloudCredentialTag={sinon.stub().returns('new@test')}
           getCredentials={getCredentials}
@@ -681,7 +681,7 @@ describe('DeploymentCredentialAdd', function() {
           acl={acl}
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
-          cloud={{id: 'google', name: 'google'}}
+          cloud={{id: 'cloud-google', name: 'google'}}
           clouds={clouds}
           generateCloudCredentialTag={sinon.stub()}
           getCredentials={sinon.stub()}

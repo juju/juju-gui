@@ -36,7 +36,7 @@ YUI.add('deployment-credential-add', function() {
       validateForm: React.PropTypes.func.isRequired
     },
 
-    DEFAULTCLOUD: 'google',
+    DEFAULTCLOUD: 'cloud-google',
 
     getInitialState: function() {
       const info = this._getInfo();
@@ -249,9 +249,9 @@ YUI.add('deployment-credential-add', function() {
       var isReadOnly = this.props.acl.isReadOnly();
       const cloud = this.props.cloud;
       const id = cloud && cloud.id || this.DEFAULTCLOUD;
-      var info = this.props.clouds[id];
+      const info = this._getInfo();
       var title = info && info.title || cloud.name;
-      var credentialName = id === 'google' ?
+      var credentialName = id === 'cloud-google' ?
         'Project ID (credential name)' : 'Credential name';
       return (
         <div className="deployment-credential-add twelve-col">
