@@ -106,12 +106,27 @@ describe('Controller API', function() {
     it('sends the correct login message', function() {
       noopHandleLogin();
       controllerAPI.login();
-      var lastMessage = conn.last_message();
-      var expected = {
+      const lastMessage = conn.last_message();
+      const expected = {
         type: 'Admin',
         request: 'Login',
         'request-id': 1,
-        params: {'auth-tag': 'user-user', credentials: 'password'},
+        params: {'auth-tag': 'user-user@local', credentials: 'password'},
+        version: 3
+      };
+      assert.deepEqual(expected, lastMessage);
+    });
+
+    it('sends the correct login message for external users', () => {
+      noopHandleLogin();
+      controllerAPI.setCredentials({user: 'who@external', password: 'pswd'});
+      controllerAPI.login();
+      const lastMessage = conn.last_message();
+      const expected = {
+        type: 'Admin',
+        request: 'Login',
+        'request-id': 1,
+        params: {'auth-tag': 'user-who@external', credentials: 'pswd'},
         version: 3
       };
       assert.deepEqual(expected, lastMessage);
@@ -294,13 +309,13 @@ describe('Controller API', function() {
     });
 
     it('succeeds after discharge', function() {
-      var bakery = makeBakery(function(macaroon, success, fail) {
+      const bakery = makeBakery(function(macaroon, success, fail) {
         assert.strictEqual(macaroon, 'discharge-required-macaroon');
         success(['macaroon', 'discharge']);
       });
       controllerAPI.loginWithMacaroon(bakery, callback);
       assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
-      var requestId = assertRequest(conn.last_message());
+      let requestId = assertRequest(conn.last_message());
       conn.msg({
         'request-id': requestId,
         response: {'discharge-required': 'discharge-required-macaroon'}
@@ -319,8 +334,8 @@ describe('Controller API', function() {
         }
       });
       assert.strictEqual(error, null);
-      var creds = controllerAPI.getCredentials();
-      assert.strictEqual(creds.user, 'user-who');
+      const creds = controllerAPI.getCredentials();
+      assert.strictEqual(creds.user, 'user-who@local');
       assert.strictEqual(creds.password, '');
       assert.deepEqual(creds.macaroons, ['macaroon', 'discharge']);
       assert.deepEqual(controllerAPI.get('facades'), {
@@ -334,7 +349,7 @@ describe('Controller API', function() {
         {macaroons: ['already stored', 'macaroons']});
       controllerAPI.loginWithMacaroon(makeBakery(), callback);
       assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
-      var requestId = assertRequest(
+      const requestId = assertRequest(
         conn.last_message(), ['already stored', 'macaroons']);
       conn.msg({
         'request-id': requestId,
@@ -347,8 +362,8 @@ describe('Controller API', function() {
         }
       });
       assert.strictEqual(error, null);
-      var creds = controllerAPI.getCredentials();
-      assert.strictEqual(creds.user, 'user-dalek');
+      const creds = controllerAPI.getCredentials();
+      assert.strictEqual(creds.user, 'user-dalek@local');
       assert.strictEqual(creds.password, '');
       assert.deepEqual(creds.macaroons, ['already stored', 'macaroons']);
       assert.deepEqual(controllerAPI.get('facades'), {
@@ -660,13 +675,13 @@ describe('Controller API', function() {
   });
 
   describe('listModelsWithInfo', function() {
-    it('listModelsWithInfo: info for a single model', function(done) {
+    it('info for a single model', done => {
       controllerAPI.setCredentials({user: 'user-who', password: 'tardis'});
       // Perform the request.
       controllerAPI.listModelsWithInfo(function(err, data) {
         assert.strictEqual(err, null);
         assert.strictEqual(data.models.length, 1);
-        var result = data.models[0];
+        const result = data.models[0];
         assert.strictEqual(result.err, undefined);
         assert.strictEqual(result.tag, 'model-5bea955d-1');
         assert.strictEqual(result.name, 'admin');
@@ -684,7 +699,7 @@ describe('Controller API', function() {
           type: 'ModelManager',
           version: 2,
           request: 'ListModels',
-          params: {tag: 'user-who'},
+          params: {tag: 'user-who@local'},
           'request-id': 1
         });
         assert.deepEqual(conn.messages[1], {
@@ -730,14 +745,14 @@ describe('Controller API', function() {
       });
     });
 
-    it('listModelsWithInfo: info for multiple models', function(done) {
+    it('info for multiple models', done => {
       controllerAPI.setCredentials(
-        {user: 'user-dalek', password: 'exterminate'});
+        {user: 'user-dalek@external', password: 'exterminate'});
       // Perform the request.
       controllerAPI.listModelsWithInfo(function(err, data) {
         assert.strictEqual(err, null);
         assert.strictEqual(data.models.length, 3);
-        var result1 = data.models[0];
+        const result1 = data.models[0];
         assert.strictEqual(result1.err, undefined);
         assert.strictEqual(result1.tag, 'model-5bea955d-1');
         assert.strictEqual(result1.name, 'default');
@@ -750,7 +765,7 @@ describe('Controller API', function() {
         assert.strictEqual(result1.isAlive, false, 'unexpected alive model');
         assert.strictEqual(result1.isAdmin, false, 'unexpected admin model');
         assert.strictEqual(result1.lastConnection, 'today');
-        var result2 = data.models[1];
+        const result2 = data.models[1];
         assert.strictEqual(result2.err, undefined);
         assert.strictEqual(result2.tag, 'model-5bea955d-c');
         assert.strictEqual(result2.name, 'admin');
@@ -763,7 +778,7 @@ describe('Controller API', function() {
         assert.strictEqual(result2.isAlive, true, 'unexpected zombie model');
         assert.strictEqual(result2.isAdmin, true, 'unexpected regular model');
         assert.strictEqual(result2.lastConnection, 'yesterday');
-        var result3 = data.models[2];
+        const result3 = data.models[2];
         assert.strictEqual(result3.err, undefined);
         assert.strictEqual(result3.tag, 'model-5bea955d-3');
         assert.strictEqual(result3.name, 'mymodel');
@@ -781,7 +796,7 @@ describe('Controller API', function() {
           type: 'ModelManager',
           version: 2,
           request: 'ListModels',
-          params: {tag: 'user-dalek'},
+          params: {tag: 'user-dalek@external'},
           'request-id': 1
         });
         assert.deepEqual(conn.messages[1], {
@@ -865,7 +880,7 @@ describe('Controller API', function() {
       });
     });
 
-    it('listModelsWithInfo: credentials error', function(done) {
+    it('credentials error', done => {
       controllerAPI.setCredentials(null);
       // Perform the request.
       controllerAPI.listModelsWithInfo(function(err, data) {
@@ -874,7 +889,7 @@ describe('Controller API', function() {
       });
     });
 
-    it('listModelsWithInfo: list models error', function(done) {
+    it('list models error', done => {
       // Perform the request.
       controllerAPI.listModelsWithInfo(function(err, data) {
         assert.strictEqual(err, 'bad wolf');
@@ -888,7 +903,7 @@ describe('Controller API', function() {
       });
     });
 
-    it('listModelsWithInfo: model info error', function(done) {
+    it('model info error', done => {
       // Perform the request.
       controllerAPI.listModelsWithInfo(function(err, data) {
         assert.strictEqual(err, 'bad wolf');
@@ -916,7 +931,7 @@ describe('Controller API', function() {
       });
     });
 
-    it('listModelsWithInfo: specific model response error', function(done) {
+    it('specific model response error', done => {
       // Perform the request.
       controllerAPI.listModelsWithInfo(function(err, data) {
         assert.strictEqual(err, null);

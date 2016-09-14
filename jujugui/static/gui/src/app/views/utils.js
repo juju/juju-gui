@@ -1474,7 +1474,7 @@ YUI.add('juju-view-utils', function(Y) {
     // Update the model name. The onEnvironmentNameChange in app.js method will
     // update the name correctly accross components.
     env.set('environmentName', name);
-    this.set('jujuEnvUUID', uuid);
+    this.set('modelUUID', uuid);
     var username, password, address, port;
     if (uuid && modelList) {
       var found = modelList.some((model) => {
@@ -1613,7 +1613,7 @@ YUI.add('juju-view-utils', function(Y) {
       password: model.password
     });
     var socketURL = createSocketURL(model.uuid, pathParts[0], pathParts[1]);
-    appSet('jujuEnvUUID', model.uuid);
+    appSet('modelUUID', model.uuid);
     // Set the socket url in both the app and the env so we don't end
     // up with any confusion later on about which is which.
     appSet('socket_url', socketURL);

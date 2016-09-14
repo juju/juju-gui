@@ -158,7 +158,7 @@ describe('App', function() {
             ecs: new juju.EnvironmentChangeSet()});
           app.after('ready', function() {
             var credentials = app.env.getCredentials();
-            assert.equal(credentials.user, 'user-' + the_username);
+            assert.equal(credentials.user, 'user-' + the_username + '@local');
             assert.equal(credentials.password, the_password);
             done();
           });
@@ -1191,7 +1191,7 @@ describe('App', function() {
       env.connect = sinon.stub();
       app = constructAppInstance();
       app.set('gisf', true);
-      app.set('jujuEnvUUID', 'foobar');
+      app.set('modelUUID', 'foobar');
       app.after('ready', function() {
         assert.equal(env.connect.callCount, 1);
         done();
@@ -1202,7 +1202,7 @@ describe('App', function() {
       env.connect = sinon.stub();
       app = constructAppInstance();
       app.set('gisf', true);
-      app.set('jujuEnvUUID', 'sandbox');
+      app.set('modelUUID', 'sandbox');
       app.after('ready', function() {
         assert.equal(env.connect.callCount, 0);
         done();
@@ -1682,76 +1682,104 @@ describe('App', function() {
       app.destroy();
     });
 
-    it('can pick the right model from a list based on config',
-        function() {
-          app = new Y.juju.App({
-            apiAddress: 'example.com:17070',
-            conn: {close: function() {}},
-            container: container,
-            jujuCoreVersion: '2.1.1',
-            jujuEnvUUID: 'tardis',
-            user: 'rose',
-            socket_protocol: 'ws',
-            socketTemplate: '/juju/api/$server/$port/$uuid',
-            controllerSocketTemplate: '/api',
-            viewContainer: container
-          });
-          var fakeEnvList = [{
-            path: 'dalek/exterminate',
-          }, {
-            path: 'rose/badwolf',
-          }, {
-            path: 'rose/tardis'
-          }];
-          var envData = app._pickModel(fakeEnvList);
-          assert.equal('rose/tardis', envData.path);
+    describe('pickModel', () => {
+      it('can pick the right model from a list based on config', () => {
+        app = new Y.juju.App({
+          apiAddress: 'example.com:17070',
+          conn: {close: function() {}},
+          container: container,
+          jujuCoreVersion: '2.1.1',
+          modelUUID: 'who-uuid',
+          user: 'rose',
+          socket_protocol: 'ws',
+          socketTemplate: '/juju/api/$server/$port/$uuid',
+          controllerSocketTemplate: '/api',
+          viewContainer: container
         });
+        const fakeModelList = [{
+          uuid: 'dalek-uuid',
+        }, {
+          uuid: 'who-uuid',
+        }, {
+          uuid: 'rose-uuid'
+        }];
+        const model = app._pickModel(fakeModelList);
+        assert.strictEqual(model.uuid, 'who-uuid');
+        assert.strictEqual(app.get('modelUUID'), 'who-uuid');
+      });
 
-    it('picks the first model in a list without config',
-        function() {
-          app = new Y.juju.App({
-            apiAddress: 'example.com:17070',
-            conn: {close: function() {}},
-            container: container,
-            jujuCoreVersion: '2.1.1',
-            user: 'rose',
-            socket_protocol: 'ws',
-            socketTemplate: '/juju/api/$server/$port/$uuid',
-            controllerSocketTemplate: '/api',
-            viewContainer: container
-          });
-          var fakeEnvList = [{
-            path: 'dalek/exterminate',
-          }, {
-            path: 'rose/badwolf',
-          }, {
-            path: 'rose/tardis'
-          }];
-          var envData = app._pickModel(fakeEnvList);
-          assert.equal('dalek/exterminate', envData.path);
+      it('picks the first model in a list without config', () => {
+        app = new Y.juju.App({
+          apiAddress: 'example.com:17070',
+          conn: {close: function() {}},
+          container: container,
+          jujuCoreVersion: '2.1.1',
+          user: 'rose',
+          socket_protocol: 'ws',
+          socketTemplate: '/juju/api/$server/$port/$uuid',
+          controllerSocketTemplate: '/api',
+          viewContainer: container
         });
+        const fakeModelList = [{
+          uuid: 'dalek-uuid',
+        }, {
+          uuid: 'who-uuid',
+        }, {
+          uuid: 'rose-uuid'
+        }];
+        const model = app._pickModel(fakeModelList);
+        assert.strictEqual(model.uuid, 'dalek-uuid');
+        assert.strictEqual(app.get('modelUUID'), 'dalek-uuid');
+      });
+
+      it('picks the first model if no model matches', () => {
+        app = new Y.juju.App({
+          apiAddress: 'example.com:17070',
+          conn: {close: function() {}},
+          container: container,
+          jujuCoreVersion: '2.1.1',
+          modelUUID: 'bannakaffalatta-uuid',
+          user: 'rose',
+          socket_protocol: 'ws',
+          socketTemplate: '/juju/api/$server/$port/$uuid',
+          controllerSocketTemplate: '/api',
+          viewContainer: container
+        });
+        const fakeModelList = [{
+          uuid: 'dalek-uuid',
+        }, {
+          uuid: 'who-uuid',
+        }, {
+          uuid: 'rose-uuid'
+        }];
+        const model = app._pickModel(fakeModelList);
+        assert.strictEqual(model.uuid, 'dalek-uuid');
+        assert.strictEqual(app.get('modelUUID'), 'dalek-uuid');
+      });
+    });
 
     it('honors socket_protocol and uuid', function() {
-      var expected = [
+      app = new Y.juju.App({
+        apiAddress: 'example.com:17070',
+        conn: {close: function() {}},
+        container: container,
+        jujuCoreVersion: '2.1.1',
+        modelUUID: '1234-1234',
+        socket_protocol: 'ws',
+        socketTemplate: '/juju/api/$server/$port/$uuid',
+        controllerSocketTemplate: '/api',
+        viewContainer: container
+      });
+      const expected = [
         'ws://',
         window.location.hostname,
         ':',
         window.location.port,
         '/juju/api/example.com/17070/1234-1234'
       ].join('');
-      app = new Y.juju.App({
-        apiAddress: 'example.com:17070',
-        conn: {close: function() {}},
-        container: container,
-        jujuCoreVersion: '2.1.1',
-        jujuEnvUUID: '1234-1234',
-        socket_protocol: 'ws',
-        socketTemplate: '/juju/api/$server/$port/$uuid',
-        controllerSocketTemplate: '/api',
-        viewContainer: container
-      });
-      app.showView(new Y.View());
-      assert.equal(app.env.get('socket_url'), expected);
+      const url = app.createSocketURL(
+        app.get('socketTemplate'), app.get('modelUUID'));
+      assert.strictEqual(url, expected);
     });
 
     it('honors a fully qualified provided socket URL', function() {
@@ -1760,16 +1788,161 @@ describe('App', function() {
         conn: {close: function() {}},
         container: container,
         jujuCoreVersion: '2.1.1',
-        jujuEnvUUID: '1234-1234',
+        modelUUID: '1234-1234',
         socket_protocol: 'ws',
         socketTemplate: 'wss://my.$server:$port/model/$uuid/api',
         controllerSocketTemplate: '/api',
         viewContainer: container
       });
-      app.showView(new Y.View());
-      assert.equal(
-        app.env.get('socket_url'),
-        'wss://my.example.com:17070/model/1234-1234/api');
+      const url = app.createSocketURL(
+        app.get('socketTemplate'), app.get('modelUUID'));
+      assert.equal(url, 'wss://my.example.com:17070/model/1234-1234/api');
+    });
+  });
+
+  describe('loginToAPIs', function() {
+    var app;
+
+    beforeEach(function(done) {
+      YUI(GlobalConfig).use(['juju-gui'], Y => {
+        app = new Y.juju.App({
+          consoleEnabled: true,
+          jujuCoreVersion: '2.0.0',
+          viewContainer: container,
+          charmstoreURL: 'http://1.2.3.4/',
+          socketTemplate: '/model/$uuid/api',
+          controllerSocketTemplate: '/api'
+        });
+        done();
+      });
+    });
+
+    afterEach(function() {
+      app.destroy();
+    });
+
+    // Create and return a mock API connection.
+    // The API is connected if connected is true.
+    const makeAPIConnection = connected => {
+      return {
+        name: 'test-api',
+        get: sinon.stub().withArgs('connected').returns(connected),
+        login: sinon.stub(),
+        loginWithMacaroon: sinon.stub(),
+        setCredentials: sinon.stub()
+      };
+    };
+
+    // Check whether the given API connection mock (see makeAPIConnection) is
+    // authenticated, and if it is, check that the given credentials have been
+    // set as an attribute of the connection object.
+    const checkLoggedInWithCredentials = (api, loggedIn, credentials) => {
+      if (loggedIn) {
+        if (credentials) {
+          // Credentials have been set on the API.
+          assert.strictEqual(api.setCredentials.calledOnce, true);
+          assert.deepEqual(api.setCredentials.getCall(0).args, [credentials]);
+        }
+        // The API has been authenticated with credentials.
+        assert.strictEqual(api.login.calledOnce, true);
+        assert.strictEqual(api.login.getCall(0).args.length, 0);
+        return;
+      }
+      // No credentials have been set and login has not been called.
+      assert.strictEqual(api.setCredentials.called, false);
+      assert.strictEqual(api.login.called, false);
+    };
+
+    // Check whether the given API connection mock (see makeAPIConnection) is
+    // authenticated with macaroons.
+    const checkLoggedInWithMacaroons = (api, loggedIn) => {
+      if (loggedIn) {
+        // The API has been authenticated with macaroons.
+        assert.strictEqual(api.loginWithMacaroon.calledOnce, true);
+        // The loginWithMacaroon method receives the bakery instance and a
+        // callback.
+        assert.strictEqual(api.loginWithMacaroon.getCall(0).args.length, 2);
+        return;
+      }
+      // The loginWithMacaroon method has not been called.
+      assert.strictEqual(api.loginWithMacaroon.called, false);
+    };
+
+    it('logs into all connected API backends', () => {
+      const credentials = {user: 'user-who', password: 'passwd'};
+      const useMacaroons = false;
+      const controller = makeAPIConnection(true);
+      const model = makeAPIConnection(true);
+      app.loginToAPIs(credentials, useMacaroons, [controller, model]);
+      checkLoggedInWithCredentials(controller, true, credentials);
+      checkLoggedInWithCredentials(model, true, credentials);
+    });
+
+    it('logs into all default API backends', () => {
+      const credentials = {user: 'user-who', password: 'passwd'};
+      const useMacaroons = false;
+      app.controllerAPI = makeAPIConnection(true);
+      app.env = makeAPIConnection(true);
+      app.loginToAPIs(credentials, useMacaroons);
+      checkLoggedInWithCredentials(app.controllerAPI, true, credentials);
+      checkLoggedInWithCredentials(app.env, true, credentials);
+    });
+
+    it('only logs into APIs if they are connected', () => {
+      const credentials = {user: 'user-who', password: 'passwd'};
+      const useMacaroons = false;
+      const controller = makeAPIConnection(true);
+      const model = makeAPIConnection(false);
+      app.loginToAPIs(credentials, useMacaroons, [controller, model]);
+      checkLoggedInWithCredentials(controller, true, credentials);
+      checkLoggedInWithCredentials(model, false, null);
+    });
+
+    it('is a no-op if no API is connected', () => {
+      const credentials = {user: 'user-who', password: 'passwd'};
+      const useMacaroons = false;
+      app.controllerAPI = makeAPIConnection(false);
+      app.env = null;
+      app.loginToAPIs(credentials, useMacaroons);
+      checkLoggedInWithCredentials(app.controllerAPI, false, null);
+    });
+
+    it('does not set credentials if they are not provided', () => {
+      const credentials = null;
+      const useMacaroons = false;
+      const controller = makeAPIConnection(true);
+      app.loginToAPIs(credentials, useMacaroons, [controller]);
+      checkLoggedInWithCredentials(controller, true, null);
+    });
+
+    it('logs into all connected API backends (macaroons)', () => {
+      const credentials = {user: 'user-who', password: 'passwd'};
+      const useMacaroons = true;
+      const controller = makeAPIConnection(true);
+      const model = makeAPIConnection(true);
+      app.loginToAPIs(credentials, useMacaroons, [controller, model]);
+      checkLoggedInWithMacaroons(controller, true);
+      checkLoggedInWithMacaroons(model, true);
+    });
+
+    it('logs into all default API backends (macaroons)', () => {
+      const credentials = {user: 'user-who', password: 'passwd'};
+      const useMacaroons = true;
+      app.controllerAPI = makeAPIConnection(true);
+      app.env = makeAPIConnection(true);
+      app.loginToAPIs(credentials, useMacaroons);
+      checkLoggedInWithMacaroons(app.controllerAPI, true);
+      checkLoggedInWithMacaroons(app.env, true);
+    });
+
+    it('only logs into APIs if they are connected (macaroons)', () => {
+      const credentials = {user: 'user-who', password: 'passwd'};
+      const useMacaroons = true;
+      const controller = makeAPIConnection(true);
+      const model = makeAPIConnection(false);
+      app.loginToAPIs(credentials, useMacaroons, [controller, model]);
+      checkLoggedInWithMacaroons(controller, true);
+      checkLoggedInWithMacaroons(model, false);
     });
   });
 
