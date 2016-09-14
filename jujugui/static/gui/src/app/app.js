@@ -1955,45 +1955,23 @@ YUI.add('juju-gui', function(Y) {
      *
      */
     checkUserCredentials: function(req, res, next) {
-      if (this.get('gisf')) {
-        // If we're in gisf then we want to fake out that we're logged in for
-        // the GUI to continue to work as normal even if we haven't yet
-        // logged in and connected to a real model.
-        this.set('loggedIn', true);
-        this.maskVisibility(false);
-        this._emptySectionApp();
-        next();
-      }
-      // If the Juju environment is not connected, exit without letting the
-      // route dispatch proceed. On env connection change, the app will
-      // re-dispatch and this route callback will be executed again.
-      if (!this.env || !this.env.get('connected')) {
-        // If connected to a jem, we may be in a disconnected state while
-        // waiting for the new model to be defined as part of the deployment
-        // flow. In that case, carry on as normal.
-        if (this.jem) {
-          this.maskVisibility(false);
-          next();
+      const apis = [this.env, this.controllerAPI];
+      // Loop through each api connection and see if we are properly
+      // authenticated. If we aren't then display the login screen.
+      let shouldDisplayLogin = apis.some(api => {
+        if (!api || !api.get('connected')) {
+          // If we do not have an api instance or if we are not connected with
+          // it then we don't need to concern ourselves with being
+          // authenticated to it.
+          return false;
         }
+        return !api.userIsAuthenticated;
+      });
+      if (shouldDisplayLogin) {
+        this._displayLogin();
         return;
       }
-      // After re-arranging the execution order of our routes to support the
-      // new :gui: namespace we were unable to log out on prod build in Ubuntu
-      // chrome. It appeared to be because credentials was null so the log in
-      // form was never shown - this handles that edge case.
-      if (this.env.getCredentials().areAvailable) {
-        if (this.get('loggedIn')) {
-          next();
-        }
-        return;
-      }
-
-      // If there are no stored credentials the GUI needs to provide a way to
-      // log into Juju. Show the login mask, from which it is possible to:
-      // 1) perform a macaroon authentication;
-      // 2) perform a traditional username/password authentication.
-      // The former is not always available.
-      this._displayLogin();
+      next();
     },
 
     /**
