@@ -47,7 +47,7 @@ YUI.add('deployment-flow', function() {
     },
 
     CLOUDS: {
-      google: {
+      'cloud-google': {
         id: 'google',
         showLogo: true,
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',
@@ -96,7 +96,7 @@ YUI.add('deployment-flow', function() {
             </a>.
           </p>)
       },
-      azure: {
+      'cloud-azure': {
         id: 'azure',
         showLogo: true,
         signupUrl: 'https://azure.microsoft.com/en-us/free/',
@@ -130,7 +130,7 @@ YUI.add('deployment-flow', function() {
             &nbsp;for details.
           </p>)
       },
-      aws: {
+      'cloud-aws': {
         id: 'aws',
         showLogo: true,
         signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
@@ -159,7 +159,7 @@ YUI.add('deployment-flow', function() {
             </a>
           </p>)
       },
-      openstack: {
+      'cloud-openstack': {
         id: 'openstack',
         showLogo: false,
         title: 'OpenStack',
@@ -189,7 +189,7 @@ YUI.add('deployment-flow', function() {
           }]
         }
       },
-      cloudsigma: {
+      'cloud-cloudsigma': {
         id: 'cloudsigma',
         showLogo: false,
         title: 'CloudSigma',
@@ -203,7 +203,7 @@ YUI.add('deployment-flow', function() {
           }]
         }
       },
-      joyent: {
+      'cloud-joyent': {
         id: 'joyent',
         showLogo: false,
         title: 'Joyent',
@@ -223,7 +223,7 @@ YUI.add('deployment-flow', function() {
           }]
         }
       },
-      maas: {
+      'cloud-maas': {
         id: 'maas',
         showLogo: false,
         title: 'MAAS',
@@ -234,7 +234,7 @@ YUI.add('deployment-flow', function() {
           }]
         }
       },
-      rackspace: {
+      'cloud-rackspace': {
         id: 'rackspace',
         showLogo: false,
         title: 'Rackspace',
@@ -264,7 +264,7 @@ YUI.add('deployment-flow', function() {
           }]
         }
       },
-      vsphere: {
+      'cloud-vsphere': {
         id: 'vsphere',
         showLogo: false,
         title: 'vSphere',
