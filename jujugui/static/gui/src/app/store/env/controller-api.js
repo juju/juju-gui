@@ -534,13 +534,16 @@ YUI.add('juju-controller-api', function(Y) {
         following attributes:
         - name: the name of the new model;
         - uuid: the unique identifier of the new model;
-        - ownerTag: the model owner tag;
+        - ownerTag: the model owner tag (prefixed with "user-");
+        - owner: the name of the user owning the model;
         - provider: the model provider type;
         - series: the model default series;
+        - cloudTag: the cloud tag (prefixed with "cloud-");
         - cloud: the name of the cloud;
         - region: the cloud region;
         - credentialTag: the tag of the cloud credential used to create the
-          model.
+          model (prefixed with "cloudcred-");
+        - credential: the name of the credential used to create the model;
       @return {undefined} Sends a message to the server only.
     */
     createModel: function(name, userTag, args, callback) {
@@ -559,11 +562,15 @@ YUI.add('juju-controller-api', function(Y) {
           name: response.name,
           uuid: response.uuid,
           ownerTag: response['owner-tag'],
+          owner: response['owner-tag'].replace(/^user-/, ''),
           provider: response['provider-type'],
           series: response['default-series'],
-          cloud: response.cloud,
+          cloudTag: response['cloud-tag'],
+          cloud: response['cloud-tag'].replace(/^cloud-/, ''),
           region: response['cloud-region'],
-          credentialTag: response['cloud-credential-tag']
+          credentialTag: response['cloud-credential-tag'],
+          credential: response['cloud-credential-tag'].replace(
+            /^cloudcred-/, '')
         });
       }.bind(this, callback);
 

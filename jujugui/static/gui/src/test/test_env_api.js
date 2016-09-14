@@ -645,12 +645,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'default-series': 'xenial',
           name: 'my-model',
           'provider-type': 'aws',
-          'cloud': 'aws',
+          'cloud-tag': 'cloud-aws',
           'cloud-region': 'us-east-1',
           'cloud-credential-tag': 'cloudcred-aws_admin@local_aws',
           uuid: '5bea955d-7a43-47d3-89dd-tag1',
           life: 'alive',
-          'owner-tag': 'user-admin@local'
+          'owner-tag': 'user-admin@local',
         }
       });
       assert.equal(env.get('defaultSeries'), 'xenial');
@@ -691,7 +691,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'provider-type': 'maas',
           uuid: '5bea955d-7a43-47d3-89dd-tag1',
           life: 'alive',
-          'owner-tag': 'user-admin@local'
+          'owner-tag': 'user-admin@local',
+          'cloud-tag': 'cloud-maas',
+          'cloud-credential-tag': 'cloudcred-admin'
         }
       });
       conn.msg({'request-id': 2, error: 'bad wolf'});
@@ -711,7 +713,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'provider-type': 'maas',
           uuid: '5bea955d-7a43-47d3-89dd-tag1',
           life: 'alive',
-          'owner-tag': 'user-admin@local'
+          'owner-tag': 'user-admin@local',
+          'cloud-tag': 'cloud-maas',
+          'cloud-credential-tag': 'cloudcred-admin'
         }
       });
       conn.msg({
@@ -747,7 +751,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'provider-type': 'maas',
           uuid: '5bea955d-7a43-47d3-89dd-tag1',
           life: 'alive',
-          'owner-tag': 'user-admin@local'
+          'owner-tag': 'user-admin@local',
+          'cloud-tag': 'cloud-maas',
+          'cloud-credential-tag': 'cloudcred-admin'
         }
       });
       assert.lengthOf(conn.messages, 2);
@@ -770,17 +776,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({
         'request-id': 1,
         response: {
-          results: [{
-            result: {
-              'default-series': 'xenial',
-              name: 'my-model',
-              'provider-type': 'aws',
-              uuid: '5bea955d-7a43-47d3-89dd-tag1',
-              'controller-uuid': '5bea955d-7a43-47d3-89dd-tag1',
-              life: 'alive',
-              'owner-tag': 'user-admin@local'
-            }
-          }]
+          'default-series': 'xenial',
+          name: 'my-model',
+          'provider-type': 'aws',
+          uuid: '5bea955d-7a43-47d3-89dd-tag1',
+          'controller-uuid': '5bea955d-7a43-47d3-89dd-tag1',
+          life: 'alive',
+          'owner-tag': 'user-admin@local',
+          'cloud-tag': 'cloud-aws',
+          'cloud-credential-tag': 'cloudcred-admin'
         }
       });
       assert.lengthOf(conn.messages, 1);
