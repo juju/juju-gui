@@ -1142,7 +1142,10 @@ YUI.add('juju-gui', function(Y) {
       const credentialTag = env.get('credentialTag');
       let cloud = env.get('cloud');
       if (cloud) {
-        cloud = {id: cloud, name: cloud};
+        cloud = {
+          id: cloud.indexOf('cloud-') === 0 ? cloud : `cloud-${cloud}`,
+          name: cloud
+        };
       }
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
