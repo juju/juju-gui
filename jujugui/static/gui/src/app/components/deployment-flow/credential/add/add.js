@@ -176,7 +176,9 @@ YUI.add('deployment-credential-add', function() {
       if (!info || !info.forms) {
         return;
       }
-      const fields = info.forms[this.state.authType].map(field => {
+      const form = info.forms[this.state.authType];
+      const fields = Object.keys(form).map(id => {
+        const field = form[id];
         if (field.json) {
           return (
             <div className="deployment-credential-add__upload twelve-col"
