@@ -317,6 +317,35 @@ describe('DeploymentFlow', function() {
     assert.isTrue(sections[1].props.completed);
   });
 
+  it('does not show the model name when comitting', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        changes={{}}
+        changesFilterByParent={sinon.stub()}
+        changeState={sinon.stub()}
+        deploy={sinon.stub()}
+        generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialTag={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
+        getTagsForCloudCredentials={sinon.stub()}
+        groupedChanges={groupedChanges}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        modelCommitted={true}
+        modelName="Pavlova"
+        servicesGetById={sinon.stub()}
+        updateCloudCredential={sinon.stub()}
+        user="user-admin">
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var output = renderer.getRenderOutput();
+    var sections = output.props.children.props.children[1].props.children
+      .props.children.props.children;
+    assert.isUndefined(sections[0]);
+  });
+
   it('correctly sets the cloud title if no cloud is chosen', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentFlow

@@ -314,6 +314,11 @@ YUI.add('deployment-flow', function() {
       var includesPlans = this.props.withPlans;
       const groupedChanges = this.props.groupedChanges;
       switch (section) {
+        case 'model-name':
+          completed = false;
+          disabled = false;
+          visible = mode === 'deploy';
+          break;
         case 'cloud':
           completed = hasCloud && hasCredential;
           disabled = false;
@@ -499,6 +504,38 @@ YUI.add('deployment-flow', function() {
             title={this.state.showChangelogs ?
               'Hide changelog' : 'Show changelog'} />
         </span>);
+    },
+
+    /**
+      Generate the cloud section.
+
+      @method _generateModelNameSection
+      @returns {Object} The markup.
+    */
+    _generateModelNameSection: function() {
+      var status = this._getSectionStatus('model-name');
+      if (!status.visible) {
+        return;
+      }
+      return (
+        <juju.components.DeploymentSection
+          instance="deployment-model-name"
+          showCheck={false}
+          title="Model name">
+          <div className="six-col">
+            <juju.components.GenericInput
+              disabled={this.props.acl.isReadOnly()}
+              key="modelName"
+              label="Model name"
+              required={true}
+              ref="modelName"
+              validate={[{
+                regex: /\S+/,
+                error: 'This field is required.'
+              }]}
+              value={this.props.modelName} />
+          </div>
+        </juju.components.DeploymentSection>);
     },
 
     /**
@@ -753,24 +790,7 @@ YUI.add('deployment-flow', function() {
             <div className="deployment-flow__content">
               <div className="twelve-col">
                 <div className="inner-wrapper">
-                  <juju.components.DeploymentSection
-                    instance="deployment-model-name"
-                    showCheck={false}
-                    title="Model name">
-                    <div className="six-col">
-                      <juju.components.GenericInput
-                        disabled={disabled || this.props.modelCommitted}
-                        key="modelName"
-                        label="Model name"
-                        required={true}
-                        ref="modelName"
-                        validate={[{
-                          regex: /\S+/,
-                          error: 'This field is required.'
-                        }]}
-                        value={this.props.modelName} />
-                    </div>
-                  </juju.components.DeploymentSection>
+                  {this._generateModelNameSection()}
                   {this._generateCloudSection()}
                   {this._generateCredentialSection()}
                   {this._generateMachinesSection()}
