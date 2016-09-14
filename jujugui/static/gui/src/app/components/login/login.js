@@ -112,13 +112,14 @@ YUI.add('login-component', function() {
     },
 
     render: function() {
-      var buttons = [{
-        action: this._handleLoginSubmit,
+      const buttons = [{
+        // Since this is a submit button, there is no need for attaching the
+        // _handleLoginSubmit action here as well.
         submit: true,
         title: 'Login',
         type: 'positive'
       }];
-      var macaroonButton = this._generateLoginWithMacaroonButton();
+      const macaroonButton = this._generateLoginWithMacaroonButton();
       if (macaroonButton) {
         buttons.push(macaroonButton);
       }
