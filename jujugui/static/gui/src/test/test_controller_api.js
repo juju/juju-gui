@@ -967,11 +967,14 @@ describe('Controller API', function() {
         assert.strictEqual(data.name, 'mymodel');
         assert.strictEqual(data.uuid, 'unique-id');
         assert.strictEqual(data.ownerTag, 'user-rose@external');
+        assert.strictEqual(data.owner, 'rose@external');
         assert.strictEqual(data.provider, 'lxd');
         assert.strictEqual(data.series, 'xenial');
+        assert.strictEqual(data.cloudTag, 'cloud-proxima-centauri');
         assert.strictEqual(data.cloud, 'proxima-centauri');
         assert.strictEqual(data.region, 'alpha-quadrant');
         assert.strictEqual(data.credentialTag, 'cloudcred-dalek');
+        assert.strictEqual(data.credential, 'dalek');
         assert.equal(conn.messages.length, 1);
         const msg = conn.last_message();
         assert.deepEqual(msg, {
@@ -999,7 +1002,7 @@ describe('Controller API', function() {
           'owner-tag': 'user-rose@external',
           'provider-type': 'lxd',
           'default-series': 'xenial',
-          cloud: 'proxima-centauri',
+          'cloud-tag': 'cloud-proxima-centauri',
           'cloud-region': 'alpha-quadrant',
           'cloud-credential-tag': 'cloudcred-dalek'
         }
@@ -1034,7 +1037,7 @@ describe('Controller API', function() {
           'owner-tag': 'user-rose@local',
           'provider-type': 'lxd',
           'default-series': 'xenial',
-          cloud: 'proxima-centauri',
+          'cloud-tag': 'cloud-proxima-centauri',
           'cloud-region': 'delta-quadrant',
           'cloud-credential-tag': 'cloudcred-dalek'
         }

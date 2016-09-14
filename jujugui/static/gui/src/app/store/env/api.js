@@ -783,10 +783,13 @@ YUI.add('juju-env-api', function(Y) {
         - series: the model default series, like "trusty" or "xenial";
         - provider: the provider type, like "lxd" or "aws";
         - uuid: the model unique identifier;
-        - ownerTag: the Juju tag of the user owning the model;
+        - ownerTag: the tag of the user owning the model (with "user-" prefix);
+        - owner: the name of the user owning the model;
+        - cloudTag: the model cloud tag (prefixed with "cloud-");
         - cloud: the model cloud;
         - region: the cloud region in which the model is placed;
         - credentialTag: the cloud credential tag (prefixed with "cloudcred-");
+        - credential: the cloud credential name;
         - life: the lifecycle status of the model: "alive", "dying" or "dead";
         - isAlive: whether the model is alive or dying/dead.
      @return {undefined} Nothing.
@@ -809,9 +812,13 @@ YUI.add('juju-env-api', function(Y) {
           provider: response['provider-type'],
           uuid: response.uuid,
           ownerTag: response['owner-tag'],
-          cloud: response.cloud,
+          owner: response['owner-tag'].replace(/^user-/, ''),
+          cloudTag: response['cloud-tag'],
+          cloud: response['cloud-tag'].replace(/^cloud-/, ''),
           region: response['cloud-region'],
           credentialTag: response['cloud-credential-tag'],
+          credential: response['cloud-credential-tag'].replace(
+            /^cloudcred-/, ''),
           life: response.life,
           isAlive: response.life === 'alive'
         });
