@@ -1078,7 +1078,6 @@ YUI.add('juju-gui', function(Y) {
       var services = db.services;
       var units = db.units;
       var utils = views.utils;
-      var users = Y.clone(this.get('users'), true);
       var changesUtils = this.changesUtils;
       var currentChangeSet = ecs.getCurrentChangeSet();
       var changeDescriptions = changesUtils.generateAllChangeDescriptions(
