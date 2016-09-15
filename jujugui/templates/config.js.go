@@ -8,6 +8,7 @@ var juju_config = {
     "socketTemplate": "{{.socket}}",
     "socket_protocol": "wss",
     "charmstoreAPIPath": "v4",
+    "bundleserviceURL": "https://api.jujucharms.com/bundleservices/",
     "charmstoreURL": "https://api.jujucharms.com/charmstore/",
     "plansURL": "https://api.jujucharms.com/omnibus/",
     "termsURL": "https://api.jujucharms.com/terms/",
