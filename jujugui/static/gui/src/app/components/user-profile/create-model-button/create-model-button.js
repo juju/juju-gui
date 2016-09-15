@@ -25,7 +25,6 @@ YUI.add('create-model-button', function() {
       addNotification: React.PropTypes.func.isRequired,
       className: React.PropTypes.string,
       controllerAPI: React.PropTypes.object.isRequired,
-      gisf: React.PropTypes.bool,
       hideConnectingMask: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
@@ -40,8 +39,7 @@ YUI.add('create-model-button', function() {
 
     getDefaultProps: function() {
       return {
-        className: '',
-        gisf: false
+        className: ''
       };
     },
 
