@@ -30,7 +30,7 @@ YUI.add('user-profile-model-list', function() {
       controllerAPI: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
       hideConnectingMask: React.PropTypes.func.isRequired,
-      listModels: React.PropTypes.func.isRequired,
+      listModelsWithInfo: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
       user: React.PropTypes.object,
@@ -83,7 +83,7 @@ YUI.add('user-profile-model-list', function() {
       // Delay the call until after the state change to prevent race
       // conditions.
       this.setState({loadingModels: true}, () => {
-        const xhr = this.props.listModels(this._fetchModelsCallback);
+        const xhr = this.props.listModelsWithInfo(this._fetchModelsCallback);
         this.xhrs.push(xhr);
       });
     },
@@ -92,46 +92,21 @@ YUI.add('user-profile-model-list', function() {
       Callback for the JIMM and JES list models call.
 
       @method _fetchModelsCallback
-      @param {String} error The error from the request, or null.
-      @param {Object} data The data from the request.
+      @param {String} err The error from the request, or null.
+      @param {Array} modelList The list of models.
     */
-    _fetchModelsCallback: function(error, data) {
+    _fetchModelsCallback: function(err, modelList) {
       this.setState({loadingModels: false}, () => {
         const broadcastStatus = this.props.broadcastStatus;
-        // We need to coerce error types returned by JES vs JIMM into one error.
-        const err = (data && data.err) || error;
         if (err) {
           broadcastStatus('error');
           console.error(err);
           return;
         }
-        // data.models is only populated by Juju controllers, when using JIMM
-        // the models are in the top level 'data' object.
-        let modelList;
-        if (data.models) {
-          modelList = data.models.map(function(model) {
-            // XXX frankban: owner should be the ownerTag without the 'user-'
-            // prefix here.
-            model.owner = model.ownerTag;
-            return model;
-          });
-        } else if (data.map) {
-          modelList = data.map(function(model) {
-            // XXX kadams54: JIMM models don't *currently* have a name or owner.
-            // They have a path which is a combination of both, but that format
-            // may change on down the road. Hence this big comment.
-            model.name = model.path;
-            model.owner = model.path.split('/')[0];
-            model.lastConnection = 'N/A';
-            // XXX frankban: does JIMM provide lifecycle indications?
-            model.isAlive = true;
-            return model;
-          });
-        }
-        if (!modelList || !modelList.length || modelList.length === 0) {
-          broadcastStatus('empty');
-        } else {
+        if (modelList.length) {
           broadcastStatus('ok');
+        } else {
+          broadcastStatus('empty');
         }
         this.setState({modelList: modelList});
       });

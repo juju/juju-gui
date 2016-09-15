@@ -2280,24 +2280,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('lists models for a specific owner (legacy)', function(done) {
       env.set('facades', {'EnvironmentManager': [1]});
-      env.listModels('user-who', function(data) {
-        assert.strictEqual(data.err, undefined);
-        assert.deepEqual([
+      env.listModels('user-who', (err, models) => {
+        assert.strictEqual(err, null);
+        assert.deepEqual(models, [
           {
             name: 'env1',
             tag: 'model-unique1',
-            owner: 'user-who',
+            ownerTag: 'user-who',
+            owner: 'who',
             uuid: 'unique1',
             lastConnection: 'today'
           },
           {
             name: 'env2',
             tag: 'model-unique2',
-            owner: 'user-rose',
+            ownerTag: 'user-rose',
+            owner: 'rose',
             uuid: 'unique2',
             lastConnection: 'yesterday'
           }
-        ], data.envs);
+        ]);
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
           Type: 'EnvironmentManager',
@@ -2331,14 +2333,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles failures while listing models', function(done) {
-      env.listModels('user-dalek', function(data) {
-        assert.strictEqual(data.err, 'bad wolf');
+      env.listModels('user-dalek', (err, models) => {
+        assert.strictEqual(err, 'bad wolf');
+        assert.deepEqual(models, []);
         done();
       });
       // Mimic response.
       conn.msg({RequestId: 1, Error: 'bad wolf'});
     });
 
+    it('handles no models returned', done => {
+      env.listModels('user-dalek', (err, models) => {
+        assert.strictEqual(err, null);
+        assert.deepEqual(models, []);
+        done();
+      });
+      // Mimic response.
+      conn.msg({RequestId: 1, Response: {}});
+    });
   });
 
 })();

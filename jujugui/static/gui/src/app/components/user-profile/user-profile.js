@@ -33,7 +33,7 @@ YUI.add('user-profile', function() {
       hideConnectingMask: React.PropTypes.func.isRequired,
       interactiveLogin: React.PropTypes.bool,
       listBudgets: React.PropTypes.func.isRequired,
-      listModels: React.PropTypes.func.isRequired,
+      listModelsWithInfo: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
       staticURL: React.PropTypes.string,
@@ -97,7 +97,7 @@ YUI.add('user-profile', function() {
           controllerAPI={props.controllerAPI}
           currentModel={props.currentModel}
           hideConnectingMask={props.hideConnectingMask}
-          listModels={props.listModels}
+          listModelsWithInfo={props.listModelsWithInfo}
           showConnectingMask={props.showConnectingMask}
           switchModel={props.switchModel}
           user={props.user}

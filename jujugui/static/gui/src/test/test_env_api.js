@@ -677,6 +677,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(env.get('credentialTag'), 'cloudcred-aws_admin@local_aws');
     });
 
+    it('handles no cloud credential returned by ModelInfo', function() {
+      env.set('modelTag', 'my-model-tag');
+      env.currentModelInfo(env._handleCurrentModelInfo.bind(env));
+      // Assume currentModelInfo to be the first request.
+      conn.msg({
+        'request-id': 1,
+        response: {
+          'default-series': 'xenial',
+          name: 'my-model',
+          'provider-type': 'aws',
+          'cloud-tag': 'cloud-aws',
+          'cloud-region': 'us-east-1',
+          uuid: '5bea955d-7a43-47d3-89dd-tag1',
+          life: 'alive',
+          'owner-tag': 'user-admin@local',
+        }
+      });
+      assert.strictEqual(env.get('credentialTag'), '');
+    });
+
     it('sends the correct ModelGet request', function() {
       env.modelGet();
       var expectedMessage = {

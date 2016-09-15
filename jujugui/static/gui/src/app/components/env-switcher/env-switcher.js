@@ -23,7 +23,7 @@ YUI.add('env-switcher', function() {
   var EnvSwitcher = React.createClass({
     propTypes: {
       environmentName: React.PropTypes.string,
-      listModels: React.PropTypes.func,
+      listModelsWithInfo: React.PropTypes.func,
       showProfile: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired
     },
@@ -56,32 +56,25 @@ YUI.add('env-switcher', function() {
       @method updateEnvList
     */
     updateEnvList: function() {
-      this.props.listModels(this._updateModelListCallback);
+      this.props.listModelsWithInfo(this._updateModelListCallback);
     },
 
     /**
-      Sets the state with the supplied data from env.listModelsWithInfo and
-      jem.listModels calls.
+      Sets the state with the supplied data from the
+      controllerAPI.listModelsWithInfo call.
 
       @method _updateModelListCallback
-      @param {Object} data The data from the call.
+      @param {String} err The possible error from the call, or null.
+      @param {Array} models The list of models returned by the call.
     */
-    _updateModelListCallback: function(error, data) {
-      // We need to coerce error types returned by JES vs JEM into one error.
-      var err = data.err || error;
+    _updateModelListCallback: function(err, models) {
       if (err) {
         console.error(err);
         return;
       }
-
-      // data.models is only populated by the call to the controller; when
-      // using JEM the models are in the top level 'data' object.
-      var modelList = data;
-      if (data.models) {
-        modelList = data.models.filter(function(model) {
-          return model.isAlive;
-        });
-      }
+      const modelList = models.filter(model => {
+        return model.isAlive;
+      });
       this.setState({envList: modelList});
     },
 

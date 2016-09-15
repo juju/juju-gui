@@ -726,7 +726,7 @@ YUI.add('juju-gui', function(Y) {
         }
         // If the user isn't currently connected to a model then fetch the
         // available models so that we can connect to an available one.
-        this.controllerAPI.listModelsWithInfo((err, response) => {
+        this.controllerAPI.listModelsWithInfo((err, modelList) => {
           if (err) {
             console.error('unable to list models', err);
             this.db.notifications.add({
@@ -736,7 +736,6 @@ YUI.add('juju-gui', function(Y) {
             });
             return;
           }
-          const modelList = response.models;
           this.set('environmentList', modelList);
           // If the modelList has no models in it then we have to drop the
           // user into an uncommitted state.
@@ -958,7 +957,7 @@ YUI.add('juju-gui', function(Y) {
           controllerAPI={this.controllerAPI}
           currentModel={this.get('modelUUID')}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
-          listModels={
+          listModelsWithInfo={
             this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
           changeState={this.changeState.bind(this)}
           getAgreements={this.terms.getAgreements.bind(this.terms)}

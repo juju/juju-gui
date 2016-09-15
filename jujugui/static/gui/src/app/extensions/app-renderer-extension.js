@@ -44,7 +44,7 @@ YUI.add('app-renderer-extension', function(Y) {
       const controllerAPI = this.controllerAPI;
       const utils = views.utils;
       const state = this.state;
-      let listModels =
+      let listModelsWithInfo =
         controllerAPI &&
           controllerAPI.listModelsWithInfo.bind(this.controllerAPI);
       // If controller is undefined then do not render the switcher because
@@ -71,7 +71,7 @@ YUI.add('app-renderer-extension', function(Y) {
           envList={this.get('environmentList')}
           getAppState={state.getState.bind(state)}
           authDetails={this._getAuth()}
-          listModels={listModels}
+          listModelsWithInfo={listModelsWithInfo}
           showEnvSwitcher={showEnvSwitcher}
           showProfile={utils.showProfile.bind(
             this, env && env.get('ecs'), this.changeState.bind(this))}

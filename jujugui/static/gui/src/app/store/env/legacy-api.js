@@ -2475,14 +2475,15 @@ YUI.add('juju-env-legacy-api', function(Y) {
       @param {String} userTag The name of the new model owner, including the
         "user-" prefix.
       @param {Function} callback A callable that must be called once the
-        operation is performed. It will receive an object with an "err"
-        attribute containing a string describing the problem (if an error
-        occurred), or with the "envs" attribute if everything went well. The
-        "envs" field will contain a list of objects, each one representing a
-        model with the following attributes:
+        operation is performed. It will receive an error string and a list of
+        models. If an error occurs, the error string will describe the error
+        and the second argument will be an empty list. Otherwise, the error
+        will be null and the model list will be an array of objects, each one
+        with the following fields:
         - name: the name of the model;
         - tag: the model tag, like "model-de1b2c16-0151-4e63-87e9-9f0950a";
-        - owner: the model owner tag;
+        - ownerTag: the model owner tag (prefixed with "user-");
+        - owner: the model owner;
         - uuid: the unique identifier of the model;
         - lastConnection: the date of the last connection as a string, e.g.:
           '2015-09-24T10:08:50Z' or null if the model has been never
@@ -2490,37 +2491,32 @@ YUI.add('juju-env-legacy-api', function(Y) {
       @return {undefined} Sends a message to the server only.
     */
     listModels: function(userTag, callback) {
-      var facade = 'EnvironmentManager';
-      var request = 'ListEnvironments';
-      var results = 'UserEnvironments';
-
-      var handleListModels = function(userCallback, data) {
+      const handleListModels = function(userCallback, data) {
         if (!userCallback) {
-          console.log('data returned by listModels API call:', data);
+          console.log('data returned by ListEnvironments API call:', data);
           return;
         }
-        var transformedData = {
-          err: data.Error,
-        };
-        if (!data.Error) {
-          var response = data.Response;
-          transformedData.envs = response[results].map(function(value) {
-            return {
-              name: value.Name,
-              tag: 'model-' + value.UUID,
-              owner: value.OwnerTag,
-              uuid: value.UUID,
-              lastConnection: value.LastConnection
-            };
-          });
+        if (data.Error) {
+          userCallback(data.Error, []);
+          return;
         }
-        // Call the original user callback.
-        userCallback(transformedData);
+        const results = data.Response.UserEnvironments || [];
+        const models = results.map(value => {
+          return {
+            name: value.Name,
+            tag: 'model-' + value.UUID,
+            ownerTag: value.OwnerTag,
+            owner: value.OwnerTag.replace(/^user-/, ''),
+            uuid: value.UUID,
+            lastConnection: value.LastConnection
+          };
+        });
+        userCallback(null, models);
       }.bind(this, callback);
-
+      // Send the API request.
       this._send_rpc({
-        Type: facade,
-        Request: request,
+        Type: 'EnvironmentManager',
+        Request: 'ListEnvironments',
         Params: {Tag: userTag}
       }, handleListModels);
     },
@@ -2533,26 +2529,11 @@ YUI.add('juju-env-legacy-api', function(Y) {
       @method listModelsWithInfo
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive two arguments, the first
-        an error or null and the second an object with a "models" attribute
-        containing an array of model info, each one with the following fields:
-        - tag: the original Juju model tag;
-        - name: the model name, like "admin" or "mymodel";
-        - series: the model default series, like "trusty" or "xenial";
-        - provider: the provider type, like "lxd" or "aws";
-        - uuid: the model unique identifier;
-        - serverUuid: the corresponding controller unique identifier;
-        - ownerTag: the Juju tag of the user owning the model;
-        - life: the lifecycle status of the model: "alive", "dying" or "dead";
-        - isAlive: whether the model is alive or dying/dead;
-        - isAdmin: whether the model is an admin model;
-        - lastConnection: the date of the last connection as a string, e.g.:
-          '2015-09-24T10:08:50Z' or null if the model was never connected to;
-        - err: a message describing a specific model error, or undefined.
-      @return {undefined} Sends a message to the server only.
+        an error or null and the second a list of model objects.
     */
     listModelsWithInfo: function(callback) {
       // TODO frankban: implement by only using listModels.
-      callback('not implemented', null);
+      callback('not implemented', []);
     }
 
   });

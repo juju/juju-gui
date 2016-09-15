@@ -802,6 +802,8 @@ YUI.add('juju-env-api', function(Y) {
           return;
         }
         var response = data.response;
+        // Credentials are not required/returned by all clouds.
+        const credentialTag = response['cloud-credential-tag'] || '';
         userCallback({
           name: response.name,
           series: response['default-series'],
@@ -812,9 +814,8 @@ YUI.add('juju-env-api', function(Y) {
           cloudTag: response['cloud-tag'],
           cloud: response['cloud-tag'].replace(/^cloud-/, ''),
           region: response['cloud-region'],
-          credentialTag: response['cloud-credential-tag'],
-          credential: response['cloud-credential-tag'].replace(
-            /^cloudcred-/, ''),
+          credentialTag: credentialTag,
+          credential: credentialTag.replace(/^cloudcred-/, ''),
           life: response.life,
           isAlive: response.life === 'alive'
         });

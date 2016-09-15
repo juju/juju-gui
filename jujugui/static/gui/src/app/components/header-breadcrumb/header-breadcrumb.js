@@ -26,7 +26,7 @@ YUI.add('header-breadcrumb', function() {
       envList: React.PropTypes.array,
       envName: React.PropTypes.string.isRequired,
       getAppState: React.PropTypes.func.isRequired,
-      listModels: React.PropTypes.func,
+      listModelsWithInfo: React.PropTypes.func,
       showEnvSwitcher: React.PropTypes.bool.isRequired,
       showProfile: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
@@ -48,7 +48,7 @@ YUI.add('header-breadcrumb', function() {
             <window.juju.components.EnvSwitcher
               environmentName={this.props.envName}
               envList={this.props.envList}
-              listModels={this.props.listModels}
+              listModelsWithInfo={this.props.listModelsWithInfo}
               showProfile={this.props.showProfile}
               switchModel={this.props.switchModel}
               authDetails={this.props.authDetails} />
