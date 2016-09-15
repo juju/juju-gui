@@ -670,4 +670,46 @@ describe('DeploymentFlow', function() {
     assert.equal(deploy.args[0][5], 'north');
     assert.equal(changeState.callCount, 1);
   });
+
+  it('can deploy without a model name', function() {
+    var deploy = sinon.stub().callsArg(0);
+    var changeState = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        changes={{}}
+        changesFilterByParent={sinon.stub()}
+        changeState={changeState}
+        deploy={deploy}
+        generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialTag={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
+        getTagsForCloudCredentials={sinon.stub()}
+        groupedChanges={groupedChanges}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        modelCommitted={true}
+        modelName="Pavlova"
+        servicesGetById={sinon.stub()}
+        updateCloudCredential={sinon.stub()}
+        user="user-admin">
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {};
+    instance._setCloud({id: 'cloud'});
+    instance._setCredential('cred');
+    instance._setRegion('north');
+    var output = renderer.getRenderOutput();
+    output.props.children.props.children[1].props.children.props.children
+      .props.children[7].props.children.props.children[1].props.children
+      .props.action();
+    assert.equal(deploy.callCount, 1);
+    assert.equal(deploy.args[0][2], '');
+    assert.equal(deploy.args[0][3], 'cred');
+    assert.equal(deploy.args[0][4], 'cloud');
+    assert.equal(deploy.args[0][5], 'north');
+    assert.equal(changeState.callCount, 1);
+  });
 });
