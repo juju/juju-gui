@@ -145,17 +145,27 @@ describe('App', function() {
         function(done) {
           var the_username = 'nehi';
           var the_password = 'moonpie';
+          const conn = new utils.SocketStub();
+          const ecs = new juju.EnvironmentChangeSet();
+          const env = new juju.environments.GoEnvironment({
+            conn: conn,
+            ecs: ecs,
+            user: the_username,
+            password: the_password
+          });
+          env.connect();
           app = new Y.juju.App({
+            env: env,
             container: container,
             consoleEnabled: true,
             user: the_username,
             password: the_password,
             viewContainer: container,
-            conn: {close: function() {}},
+            conn: conn,
             jujuCoreVersion: '2.0-trusty-amd64',
             controllerSocketTemplate: '/api',
             socketTemplate: '/model/$uuid/api',
-            ecs: new juju.EnvironmentChangeSet()});
+            ecs: ecs});
           app.after('ready', function() {
             var credentials = app.env.getCredentials();
             assert.equal(credentials.user, 'user-' + the_username + '@local');
@@ -178,7 +188,11 @@ describe('App', function() {
 
     it('attaches a handler for autoplaceAndCommitAll event', function(done) {
       constructAppInstance({
-        jujuCoreVersion: '2.1.1-trusty-amd64'
+        jujuCoreVersion: '2.1.1-trusty-amd64',
+        env: new juju.environments.GoEnvironment({
+          conn: new utils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet()
+        })
       }, this);
       app._autoplaceAndCommitAll = function() {
         // This test will hang if this method is not called from the following
@@ -1394,27 +1408,45 @@ describe('App', function() {
     });
   });
 
-  describe.skip('getUser', function() {
-    var Y;
+  describe('getUser', function() {
+    var app, juju, utils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-gui', function() {
+      Y = YUI(GlobalConfig).use([
+        'juju-gui',
+        'juju-tests-utils',
+        'juju-view-utils',
+        'juju-views',
+        'environment-change-set'
+      ],
+      function(Y) {
+        juju = Y.namespace('juju');
+        utils = Y.namespace('juju-tests.utils');
         done();
       });
     });
 
-    beforeEach(function() {});
-    afterEach(function() {});
-
-    it('gets the set user for the supplied service', function() {
-      container = Y.Node.create('<div id="test" class="container"></div>');
-      var app = new Y.juju.App({
-        viewContainer: container,
+    beforeEach(() => {
+      const env = new juju.environments.GoEnvironment({
+        conn: new utils.SocketStub(),
+        ecs: new juju.EnvironmentChangeSet()
+      });
+      app = new juju.App({
+        env: env,
         consoleEnabled: true,
+        container: container,
         jujuCoreVersion: '2.0.0',
         socketTemplate: '/model/$uuid/api',
         controllerSocketTemplate: '/api'
       });
+    });
+
+    afterEach(() => {
+      app.destroy();
+    });
+
+    it('gets the set user for the supplied service', function() {
+      container = Y.Node.create('<div id="test" class="container"></div>');
       var charmstoreUser = {
         name: 'foo'
       };
@@ -1427,26 +1459,44 @@ describe('App', function() {
   });
 
   describe('clearUser', function() {
-    var Y;
+    var app, juju, utils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-gui', function() {
+      Y = YUI(GlobalConfig).use([
+        'juju-gui',
+        'juju-tests-utils',
+        'juju-view-utils',
+        'juju-views',
+        'environment-change-set'
+      ],
+      function(Y) {
+        juju = Y.namespace('juju');
+        utils = Y.namespace('juju-tests.utils');
         done();
       });
     });
-    // If these *Each aren't here this test hangs ¯\_(ツ)_/¯
-    beforeEach(() => {});
-    afterEach(() => {});
 
-    it('clears the set user for the supplied service', function() {
-      container = Y.Node.create('<div id="test" class="container"></div>');
-      var app = new Y.juju.App({
-        viewContainer: container,
+    beforeEach(() => {
+      const env = new juju.environments.GoEnvironment({
+        conn: new utils.SocketStub(),
+        ecs: new juju.EnvironmentChangeSet()
+      });
+      app = new juju.App({
+        env: env,
         consoleEnabled: true,
+        container: container,
         jujuCoreVersion: '2.0.0',
         socketTemplate: '/model/$uuid/api',
         controllerSocketTemplate: '/api'
       });
+    });
+
+    afterEach(() => {
+      app.destroy();
+    });
+
+    it('clears the set user for the supplied service', function() {
+      container = Y.Node.create('<div id="test" class="container"></div>');
       var charmstoreUser = {
         name: 'foo'
       };
@@ -1947,44 +1997,48 @@ describe('App', function() {
   });
 
   describe('checkUserCredentials', function() {
-    var app, testUtils, Y;
+    var app, juju, utils;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use([
+      YUI(GlobalConfig).use([
         'juju-gui',
-        'juju-tests-utils'
+        'juju-tests-utils',
+        'juju-view-utils',
+        'juju-views',
+        'environment-change-set'
       ],
       function(Y) {
-        testUtils = Y.namespace('juju-tests.utils');
+        juju = Y.namespace('juju');
+        utils = Y.namespace('juju-tests.utils');
         done();
       });
     });
 
-    beforeEach(function() {
-      app = new Y.juju.App({
+    beforeEach(() => {
+      const env = new juju.environments.GoEnvironment({
+        conn: new utils.SocketStub(),
+        ecs: new juju.EnvironmentChangeSet()
+      });
+      app = new juju.App({
+        env: env,
         consoleEnabled: true,
+        container: container,
         jujuCoreVersion: '2.0.0',
-        viewContainer: container,
         socketTemplate: '/model/$uuid/api',
         controllerSocketTemplate: '/api'
       });
     });
 
-    afterEach(function() {
+    afterEach(() => {
       app.destroy();
     });
 
     it('should proceed to next if disconnected but jem is set', function() {
       var req = {}, res = {};
       var next = sinon.stub();
-      var maskVisibility = testUtils.makeStubMethod(app, 'maskVisibility');
-      this._cleanups.push(maskVisibility.reset);
       // Ensure jem is set.
       app.jem = true;
       app.checkUserCredentials(req, res, next);
-      var args = maskVisibility.args;
-      assert.equal(args[0][0], false);
-      assert.equal(maskVisibility.callCount, 1, 'Visibility mask not hidden');
       assert.equal(next.callCount, 1, 'Next not invoked.');
     });
   });
