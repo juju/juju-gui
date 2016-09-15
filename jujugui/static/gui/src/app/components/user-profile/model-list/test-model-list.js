@@ -48,6 +48,7 @@ describe('UserProfileModelList', () => {
       name: 'spinach/sandbox',
       lastConnection: '2016-09-12T15:42:09Z',
       ownerTag: 'user-who',
+      owner: 'who',
       isAlive: true
     }];
     users = {charmstore: {
@@ -65,7 +66,7 @@ describe('UserProfileModelList', () => {
         currentModel={'model1'}
         gisf={false}
         hideConnectingMask={sinon.stub()}
-        listModels={sinon.stub().callsArgWith(0, null, [])}
+        listModelsWithInfo={sinon.stub().callsArgWith(0, null, [])}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}
         user={users.charmstore}
@@ -83,7 +84,7 @@ describe('UserProfileModelList', () => {
         currentModel={'model1'}
         gisf={false}
         hideConnectingMask={sinon.stub()}
-        listModels={sinon.stub()}
+        listModelsWithInfo={sinon.stub()}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}
         user={users.charmstore}
@@ -97,7 +98,7 @@ describe('UserProfileModelList', () => {
   });
 
   it('renders a list of models', () => {
-    var listModels = sinon.stub().callsArgWith(0, null, {models: models});
+    var listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     var addNotification = sinon.stub();
     var hideConnectingMask = sinon.stub();
     var showConnectingMask = sinon.stub();
@@ -109,7 +110,7 @@ describe('UserProfileModelList', () => {
         currentModel={'model1'}
         gisf={false}
         hideConnectingMask={hideConnectingMask}
-        listModels={listModels}
+        listModelsWithInfo={listModelsWithInfo}
         showConnectingMask={showConnectingMask}
         switchModel={sinon.stub()}
         user={users.charmstore}
@@ -171,7 +172,7 @@ describe('UserProfileModelList', () => {
               --
             </span>
             <span className="user-profile__list-col two-col last-col">
-              user-who
+              who
             </span>
           </juju.components.UserProfileEntity>]}
         </ul>
@@ -182,7 +183,7 @@ describe('UserProfileModelList', () => {
 
   it('can render models that are being destroyed', () => {
     models[0].isAlive = false;
-    var listModels = sinon.stub().callsArgWith(0, null, {models: models});
+    var listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
@@ -191,7 +192,7 @@ describe('UserProfileModelList', () => {
         currentModel={'model1'}
         gisf={false}
         hideConnectingMask={sinon.stub()}
-        listModels={listModels}
+        listModelsWithInfo={listModelsWithInfo}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}
         user={users.charmstore}
@@ -210,7 +211,7 @@ describe('UserProfileModelList', () => {
     // This method is passed down to child components and called from there.
     // We are just calling it directly here to unit test the method.
     var switchModel = sinon.stub();
-    var listModels = sinon.stub().callsArgWith(0, null, {models: models});
+    var listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
@@ -219,7 +220,7 @@ describe('UserProfileModelList', () => {
         currentModel={'model1'}
         gisf={false}
         hideConnectingMask={sinon.stub()}
-        listModels={listModels}
+        listModelsWithInfo={listModelsWithInfo}
         showConnectingMask={sinon.stub()}
         switchModel={switchModel}
         user={users.charmstore}
@@ -236,8 +237,8 @@ describe('UserProfileModelList', () => {
       name: 'spinach/sandbox',
       lastConnection: '2016-09-12T15:42:09Z',
       ownerTag: 'user-who',
-      isAlive: true,
-      owner: 'user-who'
+      owner: 'who',
+      isAlive: true
     }], 'modelname', undefined]);
   });
 
@@ -250,7 +251,7 @@ describe('UserProfileModelList', () => {
         controllerAPI={controllerAPI}
         gisf={false}
         hideConnectingMask={sinon.stub()}
-        listModels={sinon.stub()}
+        listModelsWithInfo={sinon.stub()}
         showConnectingMask={sinon.stub()}
         switchModel={utilsSwitchModel}
         users={users}
@@ -272,7 +273,7 @@ describe('UserProfileModelList', () => {
         controllerAPI={controllerAPI}
         gisf={false}
         hideConnectingMask={sinon.stub()}
-        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
+        listModelsWithInfo={sinon.stub().callsArgWith(0, null, models)}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}
         users={users}
@@ -282,8 +283,9 @@ describe('UserProfileModelList', () => {
   });
 
   it('will abort the requests when unmounting', function() {
-    var listModelsAbort = sinon.stub();
-    var listModels = sinon.stub().returns({abort: listModelsAbort});
+    var listModelsWithInfoAbort = sinon.stub();
+    var listModelsWithInfo = sinon.stub().returns(
+      {abort: listModelsWithInfoAbort});
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={sinon.stub()}
@@ -292,13 +294,13 @@ describe('UserProfileModelList', () => {
         controllerAPI={controllerAPI}
         gisf={false}
         hideConnectingMask={sinon.stub()}
-        listModels={listModels}
+        listModelsWithInfo={listModelsWithInfo}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}
         user={users.charmstore}
         users={users} />, true);
     renderer.unmount();
-    assert.equal(listModelsAbort.callCount, 1);
+    assert.equal(listModelsWithInfoAbort.callCount, 1);
   });
 
   it('broadcasts starting status', function() {
@@ -312,7 +314,7 @@ describe('UserProfileModelList', () => {
         currentModel={'model1'}
         gisf={false}
         hideConnectingMask={sinon.stub()}
-        listModels={sinon.stub()}
+        listModelsWithInfo={sinon.stub()}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}
         user={users.charmstore}
@@ -331,7 +333,7 @@ describe('UserProfileModelList', () => {
         currentModel={'model1'}
         gisf={false}
         hideConnectingMask={sinon.stub()}
-        listModels={sinon.stub().callsArgWith(0, null, {models: models})}
+        listModelsWithInfo={sinon.stub().callsArgWith(0, null, models)}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}
         user={users.charmstore}
@@ -350,7 +352,7 @@ describe('UserProfileModelList', () => {
         currentModel={'model1'}
         gisf={false}
         hideConnectingMask={sinon.stub()}
-        listModels={sinon.stub().callsArgWith(0, null, {models: []})}
+        listModelsWithInfo={sinon.stub().callsArgWith(0, null, [])}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}
         user={users.charmstore}
@@ -369,7 +371,7 @@ describe('UserProfileModelList', () => {
         currentModel={'model1'}
         gisf={false}
         hideConnectingMask={sinon.stub()}
-        listModels={sinon.stub().callsArgWith(0, 'error', {})}
+        listModelsWithInfo={sinon.stub().callsArgWith(0, 'bad wolf', [])}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}
         user={users.charmstore}

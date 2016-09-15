@@ -346,18 +346,19 @@ YUI.add('juju-controller-api', function(Y) {
       @param {Array} tags The Juju tags of the models, each one being a string,
         for instance "model-5bea955d-7a43-47d3-89dd-b02c923e2447".
       @param {Function} callback A callable that must be called once the
-        operation is performed. It will receive an object with an "err"
-        attribute containing a string describing the problem (if an error
-        occurred). Otherwise, if everything went well, it will receive an
-        object with a "models" attribute containing an array of model info,
-        each one with the following fields :
+        operation is performed. In case of errors, it will receive an error
+        containing a string describing the problem and an empty list of models.
+        Otherwise, if everything went well, it will receive null as first
+        argument and a list of model info objects, each one with the following
+        fields:
         - tag: the original Juju model tag;
         - name: the model name, like "admin" or "mymodel";
         - series: the model default series, like "trusty" or "xenial";
         - provider: the provider type, like "lxd" or "aws";
         - uuid: the model unique identifier;
         - serverUuid: the corresponding controller unique identifier;
-        - ownerTag: the Juju tag of the user owning the model;
+        - ownerTag: the tag of the user owning the model (with "user-" prefix);
+        - owner: the name of the user owning the model;
         - life: the lifecycle status of the model: "alive", "dying" or "dead";
         - isAlive: whether the model is alive or dying/dead;
         - isAdmin: whether the model is an admin model;
@@ -366,26 +367,23 @@ YUI.add('juju-controller-api', function(Y) {
     */
     modelInfo: function(tags, callback) {
       // Decorate the user supplied callback.
-      var handler = function(userCallback, tags, data) {
+      const handler = function(userCallback, tags, data) {
         if (!userCallback) {
           console.log('data returned by model info API call:', data);
           return;
         }
-        var err = data.error && data.error.message;
-        if (err) {
-          userCallback({err: err});
+        if (data.error) {
+          userCallback(data.error, []);
           return;
         }
-        var results = data.response.results;
+        const results = data.response.results;
         if (results.length !== tags.length) {
           // Sanity check: this should never happen.
-          userCallback({
-            err: 'unexpected results: ' + JSON.stringify(results)
-          });
+          userCallback('unexpected results: ' + JSON.stringify(results), []);
           return;
         }
-        var models = results.map(function(result, index) {
-          err = result.error && result.error.message;
+        const models = results.map((result, index) => {
+          const err = result.error && result.error.message;
           if (err) {
             return {tag: tags[index], err: err};
           }
@@ -398,16 +396,17 @@ YUI.add('juju-controller-api', function(Y) {
             uuid: result.uuid,
             serverUuid: result['controller-uuid'],
             ownerTag: result['owner-tag'],
+            owner: result['owner-tag'].replace(/^user-/, ''),
             life: result.life,
             isAlive: result.life === 'alive',
             isAdmin: result.uuid === result['controller-uuid']
           };
         });
-        userCallback({models: models});
+        userCallback(null, models);
       }.bind(this, callback, tags);
 
       // Send the API request.
-      var entities = tags.map(function(tag) {
+      const entities = tags.map(tag => {
         return {tag: tag};
       });
       this._send_rpc({
@@ -425,8 +424,9 @@ YUI.add('juju-controller-api', function(Y) {
       @method listModelsWithInfo
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive two arguments, the first
-        an error or null and the second an object with a "models" attribute
-        containing an array of model info, each one with the following fields:
+        an error (null for no errors, a string describing the error otherwise),
+        and the second an array of model info (or an empty array if an error
+        occurred), each one with the following fields:
         - tag: the original Juju model tag;
         - name: the model name, like "admin" or "mymodel";
         - series: the model default series, like "trusty" or "xenial";
@@ -434,6 +434,7 @@ YUI.add('juju-controller-api', function(Y) {
         - uuid: the model unique identifier;
         - serverUuid: the corresponding controller unique identifier;
         - ownerTag: the Juju tag of the user owning the model;
+        - owner: the name of the user owning the model;
         - life: the lifecycle status of the model: "alive", "dying" or "dead";
         - isAlive: whether the model is alive or dying/dead;
         - isAdmin: whether the model is an admin model;
@@ -445,38 +446,34 @@ YUI.add('juju-controller-api', function(Y) {
     listModelsWithInfo: function(callback) {
       // Ensure we always have a callback.
       if (!callback) {
-        callback = function(err, data) {
-          console.log('listModelsWithInfo: No callback provided');
+        callback = function(err, models) {
+          console.log('listModelsWithInfo: no callback provided');
           if (err) {
             console.log('listModelsWithInfo: API call error:', err);
           } else {
-            console.log('listModelsWithInfo: API call data:', data);
+            console.log('listModelsWithInfo: API call results:', models);
           }
         };
       }
-
       // Retrieve the current user tag.
-      var credentials = this.getCredentials();
+      const credentials = this.getCredentials();
       if (!credentials.user) {
-        callback('called without credentials', null);
+        callback('called without credentials', []);
         return;
       }
-
       // Perform the API calls.
-      this.listModels(credentials.user, (listData) => {
-        if (listData.err) {
-          callback(listData.err, null);
+      this.listModels(credentials.user, (err, listedModels) => {
+        if (err) {
+          callback(err, []);
           return;
         }
-        var tags = listData.envs.map(function(model) {
-          return model.tag;
-        });
-        this.modelInfo(tags, (infoData) => {
-          if (infoData.err) {
-            callback(infoData.err, null);
+        const tags = listedModels.map(model => model.tag);
+        this.modelInfo(tags, (err, infoModels) => {
+          if (err) {
+            callback(err, []);
             return;
           }
-          var models = infoData.models.map(function(model, index) {
+          const models = infoModels.map((model, index) => {
             if (model.err) {
               return {tag: model.tag, err: model.err};
             }
@@ -488,13 +485,14 @@ YUI.add('juju-controller-api', function(Y) {
               uuid: model.uuid,
               serverUuid: model.serverUuid,
               ownerTag: model.ownerTag,
+              owner: model.owner,
               life: model.life,
               isAlive: model.isAlive,
               isAdmin: model.isAdmin,
-              lastConnection: listData.envs[index].lastConnection
+              lastConnection: listedModels[index].lastConnection
             };
           });
-          callback(null, {models: models});
+          callback(null, models);
         });
       });
     },
@@ -554,6 +552,8 @@ YUI.add('juju-controller-api', function(Y) {
           return;
         }
         const response = data.response;
+        // Credentials are not required/returned by all clouds.
+        const credentialTag = response['cloud-credential-tag'] || '';
         userCallback(null, {
           name: response.name,
           uuid: response.uuid,
@@ -564,9 +564,8 @@ YUI.add('juju-controller-api', function(Y) {
           cloudTag: response['cloud-tag'],
           cloud: response['cloud-tag'].replace(/^cloud-/, ''),
           region: response['cloud-region'],
-          credentialTag: response['cloud-credential-tag'],
-          credential: response['cloud-credential-tag'].replace(
-            /^cloudcred-/, '')
+          credentialTag: credentialTag,
+          credential: credentialTag.replace(/^cloudcred-/, '')
         });
       }.bind(this, callback);
 
@@ -654,14 +653,15 @@ YUI.add('juju-controller-api', function(Y) {
       @param {String} userTag The name of the new model owner, including the
         "user-" prefix.
       @param {Function} callback A callable that must be called once the
-        operation is performed. It will receive an object with an "err"
-        attribute containing a string describing the problem (if an error
-        occurred), or with the "envs" attribute if everything went well. The
-        "envs" field will contain a list of objects, each one representing a
-        model with the following attributes:
+        operation is performed. It will receive an error string and a list of
+        models. If an error occurs, the error string will describe the error
+        and the second argument will be an empty list. Otherwise, the error
+        will be null and the model list will be an array of objects, each one
+        with the following fields:
         - name: the name of the model;
         - tag: the model tag, like "model-de1b2c16-0151-4e63-87e9-9f0950a";
-        - owner: the model owner tag;
+        - ownerTag: the model owner tag (prefixed with "user-");
+        - owner: the model owner;
         - uuid: the unique identifier of the model;
         - lastConnection: the date of the last connection as a string, e.g.:
           '2015-09-24T10:08:50Z' or null if the model has been never
@@ -669,29 +669,32 @@ YUI.add('juju-controller-api', function(Y) {
       @return {undefined} Sends a message to the server only.
     */
     listModels: function(userTag, callback) {
-      var handleListModels = function(userCallback, data) {
+      const handleListModels = function(userCallback, data) {
         if (!userCallback) {
-          console.log('data returned by listModels API call:', data);
+          console.log('data returned by ListModels API call:', data);
           return;
         }
-        var transformedData = {
-          err: data.error,
-        };
-        if (!data.error) {
-          var response = data.response;
-          transformedData.envs = response['user-models'].map(function(value) {
-            var model = value.model;
-            return {
-              name: model.name,
-              owner: model['owner-tag'],
-              tag: 'model-' + model.uuid,
-              uuid: model.uuid,
-              lastConnection: value['last-connection']
-            };
-          });
+        if (data.error) {
+          userCallback(data.error, []);
+          return;
         }
-        // Call the original user callback.
-        userCallback(transformedData);
+        const userModels = data.response['user-models'];
+        if (!userModels || !userModels.length) {
+          userCallback(null, []);
+          return;
+        }
+        const models = userModels.map(value => {
+          const model = value.model;
+          return {
+            name: model.name,
+            ownerTag: model['owner-tag'],
+            owner: model['owner-tag'].replace(/^user-/, ''),
+            tag: 'model-' + model.uuid,
+            uuid: model.uuid,
+            lastConnection: value['last-connection']
+          };
+        });
+        userCallback(null, models);
       }.bind(this, callback);
 
       this._send_rpc({
