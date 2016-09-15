@@ -89,13 +89,15 @@ YUI.add('create-model-button', function() {
     },
 
     /**
-      Depending on if we're in gisf mode this will either switch to a
+      Depending on if we're using the blues flag this will either switch to a
       disconnected model or open up the UI to allow the user to create a
       new model.
       @method _nextCreateStep
     */
     _nextCreateStep: function() {
-      if (this.props.gisf || (window.flags && window.flags.blues)) {
+      // XXX: When the blues flag is removed the ability to set a name should be
+      // removed and it should always take you to the disconnected model state.
+      if (window.flags && window.flags.blues) {
         // Switch to a disconnected model
         this.props.switchModel();
       } else {

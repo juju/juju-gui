@@ -754,6 +754,7 @@ YUI.add('juju-gui', function(Y) {
           const selectedModel = this._pickModel(modelList);
           if (selectedModel === null) {
             console.log('cannot select a model: using unconnected mode');
+            // Drop the user into the unconnected state.
             views.utils.switchModel();
             return;
           }
@@ -1958,7 +1959,7 @@ YUI.add('juju-gui', function(Y) {
       const apis = [this.env, this.controllerAPI];
       // Loop through each api connection and see if we are properly
       // authenticated. If we aren't then display the login screen.
-      let shouldDisplayLogin = apis.some(api => {
+      const shouldDisplayLogin = apis.some(api => {
         if (!api || !api.get('connected')) {
           // If we do not have an api instance or if we are not connected with
           // it then we don't need to concern ourselves with being
