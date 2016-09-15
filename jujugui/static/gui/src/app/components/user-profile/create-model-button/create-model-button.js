@@ -95,7 +95,7 @@ YUI.add('create-model-button', function() {
       @method _nextCreateStep
     */
     _nextCreateStep: function() {
-      if (this.props.gisf) {
+      if (this.props.gisf || (window.flags && window.flags.blues)) {
         // Switch to a disconnected model
         this.props.switchModel();
       } else {

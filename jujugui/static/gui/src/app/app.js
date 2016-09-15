@@ -754,7 +754,7 @@ YUI.add('juju-gui', function(Y) {
           const selectedModel = this._pickModel(modelList);
           if (selectedModel === null) {
             console.log('cannot select a model: using unconnected mode');
-            // XXX Drop the user into the unconnected state.
+            views.utils.switchModel();
             return;
           }
           // Generate the valid socket URL and switch to this model.
@@ -2174,6 +2174,7 @@ YUI.add('juju-gui', function(Y) {
       if (this.env.ws) {
         this.env.ws.onclose = onclose;
         this.env.close();
+        this.hideConnectingMask();
         // If we are already disconnected then connect if we're supposed to.
         if (!this.env.get('connected') && reconnect) {
           this.env.connect();
