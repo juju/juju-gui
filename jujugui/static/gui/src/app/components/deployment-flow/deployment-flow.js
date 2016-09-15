@@ -466,8 +466,12 @@ YUI.add('deployment-flow', function() {
       @method _handleDeploy
     */
     _handleDeploy: function() {
+      let modelName = '';
+      if (this.refs.modelName) {
+        modelName = this.refs.modelName.getValue();
+      }
       this.props.deploy(
-        this._handleClose, true, this.refs.modelName.getValue(),
+        this._handleClose, true, modelName,
         this.state.credential, this.state.cloud.id, this.state.region);
     },
 
