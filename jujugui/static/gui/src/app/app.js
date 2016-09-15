@@ -1133,6 +1133,7 @@ YUI.add('juju-gui', function(Y) {
           name: cloud
         };
       }
+      const user = this.controllerAPI.get('user');
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
@@ -1144,10 +1145,9 @@ YUI.add('juju-gui', function(Y) {
             credentialTag ? credentialTag.replace('cloudcred-', '') : undefined}
           changes={currentChangeSet}
           deploy={utils.deploy.bind(
-            utils, env, this.jem, users, autoPlaceUnits,
+            utils, env, controllerAPI, autoPlaceUnits,
             this.createSocketURL.bind(this, this.get('socketTemplate')),
-            this.set.bind(this),
-            modelCommitted)}
+            this.set.bind(this), modelCommitted, user)}
           generateAllChangeDescriptions={
             changesUtils.generateAllChangeDescriptions.bind(
               changesUtils, services, units)}
@@ -1166,7 +1166,7 @@ YUI.add('juju-gui', function(Y) {
           servicesGetById={services.getById.bind(services)}
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
-          user={`${this.controllerAPI.get('user')}`}
+          user={user}
           withPlans={false} />,
         document.getElementById('deployment-container'));
     },

@@ -1550,7 +1550,7 @@ YUI.add('juju-view-utils', function(Y) {
 
     @method deploy
     @param {Object} env Reference to the app env.
-    @param {Object} jem Reference to jem.
+    @param {Object} controllerAPI Reference to the controller api.
     @param {Object} users The currently authenticated user info.
     @param {Function} autoPlaceUnits The method used to auto place units.
     @param {Function} createSocketURL The method used to create a socket URL.
@@ -1565,8 +1565,8 @@ YUI.add('juju-view-utils', function(Y) {
     @param {String} region The cloud region to deploy to.
   */
   utils.deploy = function(
-    env, jem, users, autoPlaceUnits, createSocketURL, appSet, committed,
-    callback, autoplace=true, model, credential, cloud, region) {
+    env, controllerAPI, autoPlaceUnits, createSocketURL, appSet, committed,
+    user, callback, autoplace=true, model, credential, cloud, region) {
     if (autoplace) {
       autoPlaceUnits();
     }
@@ -1577,15 +1577,15 @@ YUI.add('juju-view-utils', function(Y) {
       return;
     }
 
-    jem.newModel(
-      users.jem.user,
+    controllerAPI.createModel(
       model,
-      credential,
+      cloud.indexOf('user-') === 0 ? user : `user-${user}`,
       {
-        cloud: cloud,
+        'credential-tag': cloud.indexOf('cloudcred-') === 0 ?
+          credential : `cloudcred-${credential}`,
+        'cloud-tag': cloud.indexOf('cloud-') === 0 ? cloud : `cloud-${cloud}`,
         region: region
       },
-      null, // Controller, using the location argument instead.
       utils._newModelCallback.bind(
         this, env, createSocketURL, appSet, callback));
   };
