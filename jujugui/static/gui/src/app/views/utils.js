@@ -1581,9 +1581,9 @@ YUI.add('juju-view-utils', function(Y) {
       model,
       cloud.indexOf('user-') === 0 ? user : `user-${user}`,
       {
-        'credential-tag': cloud.indexOf('cloudcred-') === 0 ?
+        credentialTag: credential.indexOf('cloudcred-') === 0 ?
           credential : `cloudcred-${credential}`,
-        'cloud-tag': cloud.indexOf('cloud-') === 0 ? cloud : `cloud-${cloud}`,
+        cloudTag: cloud.indexOf('cloud-') === 0 ? cloud : `cloud-${cloud}`,
         region: region
       },
       utils._newModelCallback.bind(

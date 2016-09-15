@@ -1073,8 +1073,8 @@ describe('utilities', function() {
       assert.equal(args[0], 'new-model');
       assert.equal(args[1], 'user-spinach');
       assert.deepEqual(args[2], {
-        'credential-tag': 'cloudcred-the-credential',
-        'cloud-tag': 'cloud-azure',
+        credentialTag: 'cloudcred-the-credential',
+        cloudTag: 'cloud-azure',
         region: 'north'
       });
       assert.isFunction(args[3]);
