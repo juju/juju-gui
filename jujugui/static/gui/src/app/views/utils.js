@@ -1579,10 +1579,13 @@ YUI.add('juju-view-utils', function(Y) {
 
     controllerAPI.createModel(
       model,
+      // Check that this is a user tag, if not turn it into one.
       cloud.indexOf('user-') === 0 ? user : `user-${user}`,
       {
+        // Check that this is a credential tag, if not turn it into one.
         credentialTag: credential.indexOf('cloudcred-') === 0 ?
           credential : `cloudcred-${credential}`,
+        // Check that this is a cloud tag, if not turn it into one.
         cloudTag: cloud.indexOf('cloud-') === 0 ? cloud : `cloud-${cloud}`,
         region: region
       },
