@@ -145,17 +145,27 @@ describe('App', function() {
         function(done) {
           var the_username = 'nehi';
           var the_password = 'moonpie';
+          const conn = new utils.SocketStub();
+          const ecs = new juju.EnvironmentChangeSet();
+          const env = new juju.environments.GoEnvironment({
+            conn: conn,
+            ecs: ecs,
+            user: the_username,
+            password: the_password
+          });
+          env.connect();
           app = new Y.juju.App({
+            env: env,
             container: container,
             consoleEnabled: true,
             user: the_username,
             password: the_password,
             viewContainer: container,
-            conn: {close: function() {}},
+            conn: conn,
             jujuCoreVersion: '2.0-trusty-amd64',
             controllerSocketTemplate: '/api',
             socketTemplate: '/model/$uuid/api',
-            ecs: new juju.EnvironmentChangeSet()});
+            ecs: ecs});
           app.after('ready', function() {
             var credentials = app.env.getCredentials();
             assert.equal(credentials.user, 'user-' + the_username + '@local');
@@ -178,7 +188,11 @@ describe('App', function() {
 
     it('attaches a handler for autoplaceAndCommitAll event', function(done) {
       constructAppInstance({
-        jujuCoreVersion: '2.1.1-trusty-amd64'
+        jujuCoreVersion: '2.1.1-trusty-amd64',
+        env: new juju.environments.GoEnvironment({
+          conn: new utils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet()
+        })
       }, this);
       app._autoplaceAndCommitAll = function() {
         // This test will hang if this method is not called from the following
