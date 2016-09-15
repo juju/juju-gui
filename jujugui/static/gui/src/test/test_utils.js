@@ -1007,8 +1007,8 @@ describe('utilities', function() {
   });
 
   describe('deploy util', function() {
-    var callback, commit, env, envSet, jem, users, autoPlaceUnits, appSet,
-        createSocketURL, utils;
+    var callback, commit, env, envSet, controllerAPI, autoPlaceUnits,
+        appSet, createSocketURL, utils;
 
     before(function(done) {
       YUI(GlobalConfig).use('juju-view-utils', function(Y) {
@@ -1033,56 +1033,51 @@ describe('utilities', function() {
         set: envSet,
         setCredentials: sinon.stub()
       };
-      jem = {
-        newModel: sinon.stub(),
-      };
-      users = {
-        jem : {
-          user: 'spinach'
-        }
+      controllerAPI = {
+        createModel: sinon.stub(),
       };
     });
 
     it('can auto place when requested', function() {
       utils.deploy(
-        env, jem, users, autoPlaceUnits, createSocketURL, appSet, false,
-        callback, true);
+        env, controllerAPI, autoPlaceUnits, createSocketURL, appSet, true,
+        'spinach', callback, true);
       assert.equal(autoPlaceUnits.callCount, 1);
     });
 
     it('does not auto place when requested', function() {
       utils.deploy(
-        env, jem, users, autoPlaceUnits, createSocketURL, appSet, false,
-        callback, false);
+        env, controllerAPI, autoPlaceUnits, createSocketURL, appSet, true,
+        'spinach', callback, false);
       assert.equal(autoPlaceUnits.callCount, 0);
     });
 
     it('can commit to an existing model', function() {
       utils.deploy(
-        env, jem, users, autoPlaceUnits, createSocketURL, appSet, true,
-        callback);
+        env, controllerAPI, autoPlaceUnits, createSocketURL, appSet, true,
+        'spinach', callback);
       assert.equal(commit.callCount, 1);
       assert.equal(callback.callCount, 1);
-      assert.equal(jem.newModel.callCount, 0);
+      assert.equal(controllerAPI.createModel.callCount, 0);
     });
 
     it('can create a new model', function() {
       utils.deploy(
-        env, jem, users, autoPlaceUnits, createSocketURL, appSet, false,
-        callback, true, 'new-model', 'the-credential', 'azure', 'north');
+        env, controllerAPI, autoPlaceUnits, createSocketURL, appSet, false,
+        'spinach', callback, true, 'new-model', 'the-credential', 'azure',
+        'north');
       assert.equal(commit.callCount, 0);
       assert.equal(callback.callCount, 0);
-      assert.equal(jem.newModel.callCount, 1);
-      var args = jem.newModel.args[0];
-      assert.equal(args[0], 'spinach');
-      assert.equal(args[1], 'new-model');
-      assert.equal(args[2], 'the-credential');
-      assert.deepEqual(args[3], {
-        cloud: 'azure',
+      assert.equal(controllerAPI.createModel.callCount, 1);
+      var args = controllerAPI.createModel.args[0];
+      assert.equal(args[0], 'new-model');
+      assert.equal(args[1], 'user-spinach');
+      assert.deepEqual(args[2], {
+        'credential-tag': 'cloudcred-the-credential',
+        'cloud-tag': 'cloud-azure',
         region: 'north'
       });
-      assert.equal(args[4], null);
-      assert.isFunction(args[5]);
+      assert.isFunction(args[3]);
     });
 
     it('can connect to a newly created model', function() {
