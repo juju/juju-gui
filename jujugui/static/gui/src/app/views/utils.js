@@ -1387,16 +1387,18 @@ YUI.add('juju-view-utils', function(Y) {
       {Object} env The env that has been switched to.
   */
   utils.switchModel = function(
-    createSocketURL, switchEnv, env, uuid, modelList, name, callback) {
+    createSocketURL, switchEnv, env, uuid, modelList, name, callback,
+    confirmUncommitted=true) {
     var switchModel = utils._switchModel.bind(this,
       createSocketURL, switchEnv, env, uuid, modelList, name, callback);
     var currentChangeSet = env.get('ecs').getCurrentChangeSet();
     // If there are uncommitted changes then show a confirmation popup.
-    if (Object.keys(currentChangeSet).length > 0) {
+    if (confirmUncommitted && Object.keys(currentChangeSet).length > 0) {
       utils._showUncommittedConfirm(switchModel);
       return;
     }
-    // If there are no uncommitted changes then switch right away.
+    // If there are no uncommitted changes or we don't want to confirm then
+    // switch right away.
     switchModel();
   };
 
@@ -1598,14 +1600,14 @@ YUI.add('juju-view-utils', function(Y) {
   utils._newModelCallback = function(app, callback, error, model) {
     if (error) throw error;
     const env = app.env;
-    utils.switchModel(
-      app.createSocketURL.bind(app, app.get('socketTemplate')),
-      app.switchEnv.bind(this), app.env, model.uuid, [model], model.name,
+    utils.switchModel.call(
+      app, app.createSocketURL.bind(app, app.get('socketTemplate')),
+      app.switchEnv.bind(app), app.env, model.uuid, [model], model.name,
       () => {
         console.log('commit!');
         env.get('ecs').commit(env);
         callback();
-      });
+      }, false);
   };
 
   /**
