@@ -1843,7 +1843,7 @@ YUI.add('juju-gui', function(Y) {
     */
     destructor: function() {
       if (this.dbChangedTimer) {
-        this.dbChangedTimer.cancel();
+        clearTimeout(this.dbChangedTimer);
       }
       if (this.zoomMessageHandler) {
         this.zoomMessageHandler.detach();
@@ -1884,11 +1884,12 @@ YUI.add('juju-gui', function(Y) {
      */
     on_database_changed: function(evt) {
       // This timeout helps to reduce the number of needless dispatches from
-      // upwards of 8 to 2. At least until we can move to the model bound views.
+      // upwards of 8 to 2. At least until we can move to the model bound
+      // views.
       if (this.dbChangedTimer) {
-        this.dbChangedTimer.cancel();
+        clearTimeout(this.dbChangedTimer);
       }
-      this.dbChangedTimer = Y.later(100, this, this._dbChangedHandler);
+      this.dbChangedTimer = setTimeout(this._dbChangedHandler.bind(this), 100);
       return;
     },
 
