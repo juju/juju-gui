@@ -2305,7 +2305,7 @@ YUI.add('juju-gui', function(Y) {
       // to display the model name.
       this.db.environment.set('name', environmentName);
       // Update the breadcrumb with the new model name.
-      this._renderBreadcrumb();
+      // this._renderBreadcrumb();
       // Update the page title.
       document.title = `${environmentName} - Juju GUI`;
     },
