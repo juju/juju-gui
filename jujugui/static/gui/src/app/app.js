@@ -1657,7 +1657,7 @@ YUI.add('juju-gui', function(Y) {
       @param {Object} jujulib The Juju API client library.
       @param {Object} storage The place where to store macaroons.
     */
-    _setupRomulusServices:function(config, jujulib, storage) {
+    _setupRomulusServices: function(config, jujulib, storage) {
       if (!config) {
         // We are probably running tests.
         config = {plansURL: '', termsURL: ''};
