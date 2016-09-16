@@ -49,7 +49,7 @@ function injectData(app, data) {
   return app;
 }
 
-describe('App', function() {
+describe.only('App', function() {
   var container, yui;
 
   before(function(done) {
@@ -1314,6 +1314,9 @@ describe('App', function() {
         setCredentials: function(obj) {
           this.setUser = obj.user;
           this.setPassword = obj.password;
+        },
+        getCredentials: function() {
+          return {user: this.setUser, password: this.setPassword}
         }
       };
       if (!noWebsocket) {

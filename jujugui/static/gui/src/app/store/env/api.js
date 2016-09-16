@@ -720,9 +720,9 @@ YUI.add('juju-env-api', function(Y) {
         this.setAttrs({
           controllerAccess: '',
           credentialTag: '',
-          defaultSeries: '',
-          cloud: '',
-          environmentName: '',
+          // defaultSeries: '',
+          // cloud: '',
+          // environmentName: '',
           facades: [],
           maasServer: null,
           modelAccess: '',

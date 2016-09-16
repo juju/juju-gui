@@ -1951,6 +1951,8 @@ YUI.add('juju-gui', function(Y) {
         this.controllerAPI.close(() => {
           this.controllerAPI.connect();
           this.maskVisibility(true);
+          //this.db.reset();
+          //this.db.fire('update');
           this._renderLogin(null);
         });
       });
@@ -2285,7 +2287,7 @@ YUI.add('juju-gui', function(Y) {
      * @method onDefaultSeriesChange
      */
     onDefaultSeriesChange: function(evt) {
-      this.db.environment.set('defaultSeries', evt.newVal);
+      // this.db.environment.set('defaultSeries', evt.newVal);
     },
 
     /**
