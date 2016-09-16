@@ -401,16 +401,12 @@ YUI.add('juju-env-api', function(Y) {
       @private
     */
     _stopWatching: function(callback) {
-      var cb = function() {
-        this._allWatcherId = null;
-        callback();
-      }.bind(this);
       this._allWatcherBeingStopped = true;
       this._send_rpc({
         type: 'AllWatcher',
         request: 'Stop',
         id: this._allWatcherId
-      }, cb);
+      }, callback);
     },
 
     /**
@@ -697,25 +693,55 @@ YUI.add('juju-env-api', function(Y) {
     },
 
     /**
-      Define optional operations to be performed before closing the WebSocket
-      connection. Operations performed:
+      Define optional operations to be performed before logging out.
+      Operations performed:
         - the pinger interval is stopped;
+        - connection attributes are reset;
         - the mega-watcher is stopped.
       Note that not stopping the mega-watcher before disconnecting causes
       server side disconnection to take a while, therefore preventing new
       connections from being established (for instance when switching between
       models in  controller).
+      Also note that this function is intended to be idempotent: clients must
+      be free to call this multiple times even on an already closed connection.
 
-      @method beforeClose
+      @method cleanup
       @param {Function} callback A callable that must be called by the
         function and that actually closes the connection.
     */
-    beforeClose: function(callback) {
+    cleanup: function(callback) {
+      console.log('cleaning up the model API connection');
       if (this._pinger) {
         clearInterval(this._pinger);
         this._pinger = null;
       }
-      this._stopWatching(callback);
+      const cb = () => {
+        // TODO frankban: find a more automated way to clean up attributes.
+        this.setAttrs({
+          controllerAccess: '',
+          credentialTag: '',
+          defaultSeries: '',
+          cloud: '',
+          environmentName: '',
+          facades: [],
+          maasServer: null,
+          modelAccess: '',
+          modelTag: '',
+          modelUUID: '',
+          providerType: '',
+          region: ''
+        });
+        callback();
+      };
+      if (this._allWatcherId) {
+        this._stopWatching(() => {
+          console.log('mega-watcher stopped');
+          cb();
+        });
+        this._allWatcherId = null;
+        return;
+      }
+      cb();
     },
 
     /**

@@ -266,9 +266,13 @@ YUI.add('juju-env-base', function(Y) {
       // Allow an external websocket to be passed in.
       var conn = this.get('conn');
       if (conn) {
+        // This is only used for testing purposes.
         this.ws = conn;
       } else {
-        this.ws = new jujulib.ReconnectingWebSocket(this.get('socket_url'));
+        const url = this.get('socket_url');
+        console.log('connecting to ' + url);
+        this.ws = new jujulib.ReconnectingWebSocket(url);
+        this._txn_callbacks = {};
       }
       this.ws.debug = this.get('debug');
       this.ws.onmessage = Y.bind(this.on_message, this);
@@ -297,26 +301,34 @@ YUI.add('juju-env-base', function(Y) {
       @param cb Optional callback.
     */
     close: function(cb) {
+      console.log(`closing the ${this.name} API connection`);
+      const callback = () => {
+        if (cb) {
+          cb();
+        }
+      };
       if (this.ws) {
-        this.beforeClose(this.ws.close.bind(this.ws));
+        this.logout(() => {
+          this.ws.close();
+          callback();
+        });
+        return;
       }
-      if (cb) {
-        cb();
-      }
+      callback();
     },
 
     /**
-      Define optional operations to be performed before closing the WebSocket
-      connection. This method, as defined here, only calls the given callback
-      as it is intended to be overridden by subclasses. Implementations are
-      responsible of calling the given callback that effectively closes the
-      WebSocket connection.
+      Define optional operations to be performed before logging out. This
+      method, as defined here, only calls the given callback as it is intended
+      to be overridden by subclasses. Implementations are responsible of
+      calling the given callback that effectively closes the WebSocket
+      connection. Concrete implementations are assumed to be idempotent.
 
-      @method beforeClose
+      @method cleanup
       @param {Function} callback A callable that must be called by the
         function and that actually closes the connection.
     */
-    beforeClose: function(callback) {
+    cleanup: function(callback) {
       callback();
     },
 
@@ -435,18 +447,20 @@ YUI.add('juju-env-base', function(Y) {
     },
 
     /**
-     * Clear login information.
-     *
-     * @method logout
-     * @return {undefined} Nothing.
-     */
-    logout: function() {
-      this.userIsAuthenticated = false;
-      this.setCredentials(null);
-      if (this.ws) {
-        this.ws.close();
-      }
-      this.connect();
+      Clear login information.
+
+      @method logout
+      @return {undefined} Nothing.
+    */
+    logout: function(cb) {
+      console.log(`logging out from ${this.name} API`);
+      this.cleanup(() => {
+        this.userIsAuthenticated = false;
+        this.setCredentials(null);
+        if (cb) {
+          cb();
+        }
+      });
     }
 
   });

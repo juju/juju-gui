@@ -764,7 +764,12 @@ YUI.add('juju-gui', function(Y) {
         });
       });
 
-      controllerAPI.after('connectedChange', e => {
+      controllerAPI.after('connectedChange', evt => {
+        if (!evt.newVal) {
+          // The controller is not connected, do nothing waiting for a
+          // reconnection.
+          return;
+        }
         const credentials = this.controllerAPI.getCredentials();
         if (!credentials.areAvailable && !this.get('gisf')) {
           this._displayLogin();
@@ -848,10 +853,15 @@ YUI.add('juju-gui', function(Y) {
       }
       apis.forEach(api => {
         // The api may be unset if the current Juju does not support it.
-        if (api && api.get('connected')) {
-          if (credentials) {
-            api.setCredentials(credentials);
-          }
+        if (!api) {
+          return;
+        }
+        if (credentials) {
+          // We set credentials even if the API is not connected: they will be
+          // used when the connection is eventually established.
+          api.setCredentials(credentials);
+        }
+        if (api.get('connected')) {
           console.log(`logging into ${api.name} with user and password`);
           api.login();
         }
@@ -1935,12 +1945,15 @@ YUI.add('juju-gui', function(Y) {
       if (environmentInstance) {
         environmentInstance.topo.update();
       }
+      this.set('modelUUID', '');
       this.set('loggedIn', false);
-      this.env.logout();
-      this.controllerAPI.logout();
-      this.maskVisibility(true);
-      this._renderLogin(null);
-      return;
+      this.env.close(() => {
+        this.controllerAPI.close(() => {
+          this.controllerAPI.connect();
+          this.maskVisibility(true);
+          this._renderLogin(null);
+        });
+      });
     },
 
     // Persistent Views
@@ -2143,6 +2156,7 @@ YUI.add('juju-gui', function(Y) {
       if (this.get('sandbox')) {
         console.log('switching models is not supported in sandbox');
       }
+      console.log('switching model connection');
       if (username && password) {
         // We don't always get a new username and password when switching
         // environments; only set new credentials if we've actually gotten them.
@@ -2152,32 +2166,39 @@ YUI.add('juju-gui', function(Y) {
           password: password
         });
       };
+      const credentials = this.env.getCredentials();
       if (callback) {
-        var onLogin = function(callback) {
+        const onLogin = function(callback) {
           callback(this.env);
         };
         // Delay the callback until after the env login as everything should be
         // set up by then.
         this.env.onceAfter('login', onLogin.bind(this, callback), this);
       }
-      // Tell the environment to use the new socket URL when reconnecting.
-      this.env.set('socket_url', socketUrl);
       // Clear uncommitted state.
       this.env.get('ecs').clear();
-      // Disconnect and reconnect the model.
-      var onclose = function() {
-        this.on_close();
+      const setUpModel = model => {
+        // Tell the model to use the new socket URL when reconnecting.
+        model.set('socket_url', socketUrl);
+        // Store the existing credentials so that they can be possibly reused.
+        model.setCredentials(credentials);
+        // Reconnect the model if required.
         if (reconnect) {
-          this.connect();
+          model.connect();
         }
+      };
+      // Disconnect and reconnect the model.
+      const onclose = function() {
+        this.on_close();
+        setUpModel(this);
       }.bind(this.env);
       if (this.env.ws) {
         this.env.ws.onclose = onclose;
         this.env.close();
         this.hideConnectingMask();
         // If we are already disconnected then connect if we're supposed to.
-        if (!this.env.get('connected') && reconnect) {
-          this.env.connect();
+        if (!this.env.get('connected')) {
+          setUpModel(this.env);
         }
       } else {
         this.env.close(onclose);

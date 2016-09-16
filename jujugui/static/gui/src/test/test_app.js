@@ -50,28 +50,37 @@ function injectData(app, data) {
 }
 
 describe('App', function() {
-  var container;
+  var container, yui;
 
   before(function(done) {
     YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+      yui = Y;
+      done();
+    });
+
+    beforeEach(() => {
       var elements = [
         'charmbrowser-container',
         'deployment-bar-container',
         'deployment-container',
+        'env-size-display-container',
         'login-container',
         'notifications-container',
         'loading-message',
         'header-breadcrumb'
       ];
-      container = Y.Node.create('<div>');
+      container = yui.Node.create('<div>');
       container.set('id', 'test-container');
       container.addClass('container');
       // Set up the elements needed to render the components.
       elements.forEach(function(id) {
-        container.appendChild(Y.Node.create('<div/>')).set('id', id);
+        container.appendChild(yui.Node.create('<div/>')).set('id', id);
       });
       container.appendTo(document.body);
-      done();
+    });
+
+    afterEach(() => {
+      container.remove(true);
     });
   });
 
@@ -120,7 +129,8 @@ describe('App', function() {
       app = new Y.juju.App(Y.mix(config, {
         consoleEnabled: true,
         socketTemplate: '/model/$uuid/api',
-        controllerSocketTemplate: '/api'
+        controllerSocketTemplate: '/api',
+        consoleEnabled: true
       }));
       app.navigate = function() {};
       app.showView(new Y.View());
