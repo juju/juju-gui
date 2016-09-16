@@ -1657,10 +1657,10 @@ YUI.add('juju-gui', function(Y) {
       @param {Object} jujulib The Juju API client library.
       @param {Object} storage The place where to store macaroons.
     */
-    _setupRomulusServices: function(config, jujulib, storage) {
+    _setupRomulusServices:function(config, jujulib, storage) {
       if (!config) {
         // We are probably running tests.
-        return;
+        config = {plansURL: '', termsURL: ''};
       }
       if (this.plans || this.terms) {
         console.error(
@@ -1951,8 +1951,8 @@ YUI.add('juju-gui', function(Y) {
         this.controllerAPI.close(() => {
           this.controllerAPI.connect();
           this.maskVisibility(true);
-          //this.db.reset();
-          //this.db.fire('update');
+          this.db.reset();
+          this.db.fire('update');
           this._renderLogin(null);
         });
       });
@@ -2287,7 +2287,7 @@ YUI.add('juju-gui', function(Y) {
      * @method onDefaultSeriesChange
      */
     onDefaultSeriesChange: function(evt) {
-      // this.db.environment.set('defaultSeries', evt.newVal);
+      this.db.environment.set('defaultSeries', evt.newVal);
     },
 
     /**
@@ -2305,7 +2305,7 @@ YUI.add('juju-gui', function(Y) {
       // to display the model name.
       this.db.environment.set('name', environmentName);
       // Update the breadcrumb with the new model name.
-      // this._renderBreadcrumb();
+      this._renderBreadcrumb();
       // Update the page title.
       document.title = `${environmentName} - Juju GUI`;
     },

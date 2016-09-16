@@ -298,23 +298,24 @@ YUI.add('juju-env-base', function(Y) {
       Close the WebSocket connection to the Juju API server.
 
       @method close
-      @param cb Optional callback.
+      @param callback Optional callback called once the connection has been
+        closed and the API cleaned up.
     */
-    close: function(cb) {
+    close: function(callback) {
       console.log(`closing the ${this.name} API connection`);
-      const callback = () => {
-        if (cb) {
-          cb();
-        }
-      };
-      if (this.ws) {
-        this.logout(() => {
-          this.ws.close();
-          callback();
-        });
+      if (!callback) {
+        callback = () => {};
+      }
+      if (!this.ws) {
+        callback();
         return;
       }
-      callback();
+      this.cleanup(() => {
+        this.userIsAuthenticated = false;
+        this.setCredentials(null);
+        this.ws.close();
+        callback();
+      });
     },
 
     /**
@@ -325,11 +326,11 @@ YUI.add('juju-env-base', function(Y) {
       connection. Concrete implementations are assumed to be idempotent.
 
       @method cleanup
-      @param {Function} callback A callable that must be called by the
-        function and that actually closes the connection.
+      @param {Function} done A callable that must be called by the function and
+        that actually closes the connection.
     */
-    cleanup: function(callback) {
-      callback();
+    cleanup: function(done) {
+      done();
     },
 
     /**
@@ -444,23 +445,6 @@ YUI.add('juju-env-base', function(Y) {
         }
       });
       return credentials;
-    },
-
-    /**
-      Clear login information.
-
-      @method logout
-      @return {undefined} Nothing.
-    */
-    logout: function(cb) {
-      console.log(`logging out from ${this.name} API`);
-      this.cleanup(() => {
-        this.userIsAuthenticated = false;
-        this.setCredentials(null);
-        if (cb) {
-          cb();
-        }
-      });
     }
 
   });

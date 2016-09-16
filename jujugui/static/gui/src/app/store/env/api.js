@@ -706,23 +706,23 @@ YUI.add('juju-env-api', function(Y) {
       be free to call this multiple times even on an already closed connection.
 
       @method cleanup
-      @param {Function} callback A callable that must be called by the
-        function and that actually closes the connection.
+      @param {Function} done A callable that must be called by the function and
+        that actually closes the connection.
     */
-    cleanup: function(callback) {
+    cleanup: function(done) {
       console.log('cleaning up the model API connection');
       if (this._pinger) {
         clearInterval(this._pinger);
         this._pinger = null;
       }
-      const cb = () => {
+      const callback = () => {
         // TODO frankban: find a more automated way to clean up attributes.
         this.setAttrs({
           controllerAccess: '',
           credentialTag: '',
-          // defaultSeries: '',
-          // cloud: '',
-          // environmentName: '',
+          defaultSeries: '',
+          cloud: '',
+          environmentName: '',
           facades: [],
           maasServer: null,
           modelAccess: '',
@@ -731,17 +731,17 @@ YUI.add('juju-env-api', function(Y) {
           providerType: '',
           region: ''
         });
-        callback();
+        done();
       };
-      if (this._allWatcherId) {
-        this._stopWatching(() => {
-          console.log('mega-watcher stopped');
-          cb();
-        });
-        this._allWatcherId = null;
+      if (!this._allWatcherId) {
+        callback();
         return;
       }
-      cb();
+      this._stopWatching(() => {
+        console.log('mega-watcher stopped');
+        callback();
+      });
+      this._allWatcherId = null;
     },
 
     /**

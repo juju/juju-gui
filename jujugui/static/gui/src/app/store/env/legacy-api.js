@@ -627,16 +627,16 @@ YUI.add('juju-env-legacy-api', function(Y) {
       be free to call this multiple times even on an already closed connection.
 
       @method cleanup
-      @param {Function} callback A callable that must be called by the
-        function and that actually closes the connection.
+      @param {Function} done A callable that must be called by the function and
+        that actually closes the connection.
     */
-    cleanup: function(callback) {
+    cleanup: function(done) {
       console.log('cleaning up the legacy model API connection');
       if (this._pinger) {
         clearInterval(this._pinger);
         this._pinger = null;
       }
-      this._stopWatching(callback);
+      this._stopWatching(done);
     },
 
     /**
