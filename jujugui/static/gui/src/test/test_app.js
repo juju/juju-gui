@@ -402,7 +402,7 @@ describe.only('App', function() {
     });
 
     describe('romulus services', function() {
-      it.skip('sets up API clients', function() {
+      it('sets up API clients', function() {
         app = constructAppInstance({
           env: new juju.environments.GoEnvironment({
             conn: new utils.SocketStub(),

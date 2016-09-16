@@ -331,13 +331,13 @@ YUI.add('juju-controller-api', function(Y) {
         clearInterval(this._pinger);
         this._pinger = null;
       }
-      done();
       // TODO frankban: find a more automated way to clean up attributes.
       this.setAttrs({
         controllerAccess: '',
         facades: [],
         serverTag: ''
       });
+      done();
     },
 
     /**
