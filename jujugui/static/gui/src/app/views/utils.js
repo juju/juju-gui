@@ -1604,12 +1604,11 @@ YUI.add('juju-view-utils', function(Y) {
     utils._detachOnLoginHandler();
     // After the model connects it will emit a login event, listen
     // for that event so that we know when to commit the changeset.
-    utils._onLoginHandler = env.on('login', evt => {
-      console.log('commit after login');
+    utils._onLoginHandler = env.on('login', function(ecs, evt) {
       utils._detachOnLoginHandler();
-      env.get('ecs').commit(env);
+      ecs.commit(env);
       callback();
-    });
+    }.bind(this, env.get('ecs')));
     utils.switchModel.call(
       app, app.createSocketURL.bind(app, app.get('socketTemplate')),
       app.switchEnv.bind(app), app.env, model.uuid, [model], model.name,
