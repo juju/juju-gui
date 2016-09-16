@@ -49,7 +49,7 @@ function injectData(app, data) {
   return app;
 }
 
-describe.only('App', function() {
+describe('App', function() {
   var container, yui;
 
   before(function(done) {
@@ -182,9 +182,6 @@ describe.only('App', function() {
             password: the_password
           });
           env.connect();
-          this._cleanups.push(() => {
-            env.close(app.destroy.bind(app));
-          });
           app = new Y.juju.App({
             env: env,
             container: container,
@@ -197,6 +194,9 @@ describe.only('App', function() {
             controllerSocketTemplate: '/api',
             socketTemplate: '/model/$uuid/api',
             ecs: ecs});
+          this._cleanups.push(() => {
+            env.close(app.destroy.bind(app));
+          });
           app.after('ready', function() {
             var credentials = app.env.getCredentials();
             assert.equal(credentials.user, 'user-' + the_username + '@local');
@@ -271,7 +271,7 @@ describe.only('App', function() {
       assert.equal(app.db.notifications.size(), 1);
     });
 
-    it.skip('should show the correct message on a mac', function() {
+    it('should show the correct message on a mac', function() {
       constructAppInstance({
         env: new juju.environments.GoEnvironment({
           conn: new utils.SocketStub(),
@@ -1027,13 +1027,15 @@ describe.only('App', function() {
       });
     });
 
-    it('should allow logging out', function() {
+    it('should allow closing the connection', function(done) {
       env.connect();
-      this._cleanups.push(env.close.bind(env));
-      env.logout();
-      assert.strictEqual(env.userIsAuthenticated, false);
-      assert.deepEqual(
-        env.getCredentials(), {user: '', password: '', macaroons: null});
+      env.close(() => {
+        assert.strictEqual(env.userIsAuthenticated, false);
+        assert.deepEqual(
+          env.getCredentials(), {user: '', password: '', macaroons: null});
+        done();
+      });
+
     });
 
     it('normally uses window.location', function() {
@@ -1101,9 +1103,9 @@ describe.only('App', function() {
       });
 
       // Ensure the given token is removed from the query string.
-      var checkTokenIgnored = function(token) {
+      var checkTokenIgnored = function(context, token) {
         var app = makeApp(false, this);
-        this._cleanups.push(app.destroy.bind(app));
+        context._cleanups.push(app.destroy.bind(app));
         var expected_path = '/foo/bar/';
         var expected_querystring = '';
         var expected_hash = '';
@@ -1134,14 +1136,14 @@ describe.only('App', function() {
         // This is intended to be the canonical current path.  This should
         // never include authtokens, which are transient and can never be
         // re-used.
-        checkTokenIgnored('authtoken');
+        checkTokenIgnored(this, 'authtoken');
       });
 
       it('ignores changestokens', function() {
         // This is intended to be the canonical current path.  This should
         // never include changestokens, which are transient and can never be
         // re-used.
-        checkTokenIgnored('changestoken');
+        checkTokenIgnored(this, 'changestoken');
       });
 
     });
@@ -1175,7 +1177,11 @@ describe.only('App', function() {
           on: noop,
           size: function() {return 0;}
         },
-        reset: sinon.stub()
+        reset: sinon.stub(),
+        environment: {
+          set: () => {},
+          get: () => {}
+        }
       };
       app.dispatch = function() {};
       return app;
@@ -1914,20 +1920,22 @@ describe.only('App', function() {
     // authenticated, and if it is, check that the given credentials have been
     // set as an attribute of the connection object.
     const checkLoggedInWithCredentials = (api, loggedIn, credentials) => {
+      if (credentials) {
+        // Credentials have been set on the API.
+        assert.strictEqual(api.setCredentials.calledOnce, true);
+        assert.deepEqual(api.setCredentials.getCall(0).args, [credentials]);
+      } else {
+        // No credentials have been set.
+        assert.strictEqual(api.setCredentials.called, false);
+      }
       if (loggedIn) {
-        if (credentials) {
-          // Credentials have been set on the API.
-          assert.strictEqual(api.setCredentials.calledOnce, true);
-          assert.deepEqual(api.setCredentials.getCall(0).args, [credentials]);
-        }
         // The API has been authenticated with credentials.
         assert.strictEqual(api.login.calledOnce, true);
         assert.strictEqual(api.login.getCall(0).args.length, 0);
-        return;
+      } else {
+        // Login has not been called.
+        assert.strictEqual(api.login.called, false);
       }
-      // No credentials have been set and login has not been called.
-      assert.strictEqual(api.setCredentials.called, false);
-      assert.strictEqual(api.login.called, false);
     };
 
     // Check whether the given API connection mock (see makeAPIConnection) is
@@ -1972,16 +1980,16 @@ describe.only('App', function() {
       const model = makeAPIConnection(false);
       app.loginToAPIs(credentials, useMacaroons, [controller, model]);
       checkLoggedInWithCredentials(controller, true, credentials);
-      checkLoggedInWithCredentials(model, false, null);
+      checkLoggedInWithCredentials(model, false, credentials);
     });
 
-    it('is a no-op if no API is connected', () => {
+    it('only sets credentials if no API is connected', () => {
       const credentials = {user: 'user-who', password: 'passwd'};
       const useMacaroons = false;
       app.controllerAPI = makeAPIConnection(false);
       app.env = null;
       app.loginToAPIs(credentials, useMacaroons);
-      checkLoggedInWithCredentials(app.controllerAPI, false, null);
+      checkLoggedInWithCredentials(app.controllerAPI, false, credentials);
     });
 
     it('does not set credentials if they are not provided', () => {

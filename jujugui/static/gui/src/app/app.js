@@ -1842,6 +1842,9 @@ YUI.add('juju-gui', function(Y) {
     @method destructor
     */
     destructor: function() {
+      if (this.dbChangedTimer) {
+        this.dbChangedTimer.cancel();
+      }
       if (this.zoomMessageHandler) {
         this.zoomMessageHandler.detach();
       }
