@@ -48,7 +48,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.destroy();
     });
 
-    it('calls "beforeClose" when the connection is closed', function() {
+    it('calls "cleanup" when the connection is closed', function() {
       var closed = false;
       var conn = new ClientConnection({
         juju: {
@@ -61,7 +61,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var env = new environments.BaseEnvironment({conn: conn});
       env.connect();
       var called = false;
-      env.beforeClose = function(callback) {
+      env.cleanup = function(callback) {
         called = true;
         // The connection is still open.
         assert.strictEqual(closed, false, 'connection unexpectedly closed');
@@ -70,7 +70,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(closed, true, 'connection not closed');
       };
       env.close();
-      // The beforeClose method has been called.
+      // The cleanup method has been called.
       assert.strictEqual(called, true, 'before hook not called');
       env.destroy();
     });
