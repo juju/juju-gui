@@ -1549,36 +1549,31 @@ YUI.add('juju-view-utils', function(Y) {
     Deploy or commit to a model.
 
     @method deploy
-    @param {Object} env Reference to the app env.
-    @param {Object} controllerAPI Reference to the controller api.
-    @param {Object} users The currently authenticated user info.
-    @param {Function} autoPlaceUnits The method used to auto place units.
-    @param {Function} createSocketURL The method used to create a socket URL.
-    @param {Function} appSet The method used to set parameters on the app.
-    @param {Boolean} committed Whether the model is already committed.
-    @param {Boolean} autoplace Whether the unplace units should be placed.
+    @param {Object} app The app instance itself.
     @param {Function} callback The function to be called once the deploy is
       complete.
+    @param {Boolean} autoplace Whether the unplace units should be placed.
     @param {String} model The name of the new model.
     @param {String} credential The credentials to be used with the new model.
     @param {String} cloud The cloud to deploy to.
     @param {String} region The cloud region to deploy to.
   */
   utils.deploy = function(
-    env, controllerAPI, autoPlaceUnits, createSocketURL, appSet, committed,
-    user, callback, autoplace=true, model, credential, cloud, region) {
+    app, callback, autoplace=true, model, credential, cloud, region) {
+    const env = app.env;
+    const controllerAPI = app.controllerAPI;
     if (autoplace) {
-      autoPlaceUnits();
+      app._autoPlaceUnits();
     }
     // If we're in a model which exists then just commit the ecs and return.
-    if (committed) {
+    if (env.get('connected')) {
       env.get('ecs').commit(env);
       callback();
       return;
     }
     controllerAPI.createModel(
       model,
-      user,
+      controllerAPI.get('user'),
       {
         // Check that this is a credential tag, if not turn it into one.
         credentialTag: credential.indexOf('cloudcred-') === 0 ?
@@ -1587,37 +1582,27 @@ YUI.add('juju-view-utils', function(Y) {
         cloudTag: cloud.indexOf('cloud-') === 0 ? cloud : `cloud-${cloud}`,
         region: region
       },
-      utils._newModelCallback.bind(
-        this, env, createSocketURL, appSet, callback));
+      utils._newModelCallback.bind(this, app, callback));
   };
 
   /**
     The function to call to connect to a new model once it has been created.
 
     @method _newModelCallback
-    @param {Object} env Reference to the app env.
-    @param {Function} createSocketURL The method used to create a socket URL.
-    @param {Function} appSet The method used to set parameters on the app.
+    @param {Object} app The app instance itself.
     @param {Function} callback The function to be called once the deploy is
       complete.
     @param {Object} error The model creation error.
     @param {Object} model The newly created model data.
   */
-  utils._newModelCallback = function(
-    env, createSocketURL, appSet, callback, error, model) {
+  utils._newModelCallback = function(app, callback, error, model) {
     if (error) throw error;
-    var pathParts = model.hostPorts[0].split(':');
-    // Set the credentials in the env so that the GUI
-    // is able to connect to the new model.
-    env.setCredentials({
-      user: 'user-' + model.user,
-      password: model.password
-    });
-    var socketURL = createSocketURL(model.uuid, pathParts[0], pathParts[1]);
-    appSet('modelUUID', model.uuid);
+    const env = app.env;
+    var socketURL = app.createSocketURL(app.get('socketTemplate'), model.uuid);
+    app.set('modelUUID', model.uuid);
     // Set the socket url in both the app and the env so we don't end
     // up with any confusion later on about which is which.
-    appSet('socket_url', socketURL);
+    app.set('socket_url', socketURL);
     env.set('socket_url', socketURL);
     env.connect();
     // If we already have a login handler attached then detach it.

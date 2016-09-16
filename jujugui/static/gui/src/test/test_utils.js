@@ -1007,8 +1007,7 @@ describe('utilities', function() {
   });
 
   describe('deploy util', function() {
-    var callback, commit, env, envSet, controllerAPI, autoPlaceUnits,
-        appSet, createSocketURL, utils;
+    let app, callback, commit, envGet, utils;
 
     before(function(done) {
       YUI(GlobalConfig).use('juju-view-utils', function(Y) {
@@ -1018,58 +1017,56 @@ describe('utilities', function() {
     });
 
     beforeEach(function() {
-      autoPlaceUnits = sinon.stub();
-      appSet = sinon.stub();
       callback = sinon.stub();
       commit = sinon.stub();
-      createSocketURL = sinon.stub().returns('wss://socket-url');
-      envSet = sinon.stub();
-      env = {
-        connect: sinon.stub(),
-        get: sinon.stub().returns({
-          commit: commit
-        }),
-        on: sinon.stub(),
-        set: envSet,
-        setCredentials: sinon.stub()
-      };
-      controllerAPI = {
-        createModel: sinon.stub(),
+      envGet = sinon.stub();
+      envGet.withArgs('ecs').returns({commit: commit});
+      envGet.withArgs('connected').returns(true);
+      app = {
+        env: {
+          connect: sinon.stub(),
+          get: envGet,
+          on: sinon.stub(),
+          set: sinon.stub(),
+          setCredentials: sinon.stub()
+        },
+        controllerAPI: {
+          createModel: sinon.stub(),
+          get: sinon.stub().returns('user-spinach'),
+        },
+        _autoPlaceUnits: sinon.stub(),
+        set: sinon.stub(),
+        createSocketURL: sinon.stub().returns('wss://socket-url'),
+        get: sinon.stub().returns('wss://socket-url')
       };
     });
 
     it('can auto place when requested', function() {
-      utils.deploy(
-        env, controllerAPI, autoPlaceUnits, createSocketURL, appSet, true,
-        'spinach', callback, true);
-      assert.equal(autoPlaceUnits.callCount, 1);
+      utils.deploy(app, callback, true);
+      assert.equal(app._autoPlaceUnits.callCount, 1);
     });
 
     it('does not auto place when requested', function() {
-      utils.deploy(
-        env, controllerAPI, autoPlaceUnits, createSocketURL, appSet, true,
-        'spinach', callback, false);
-      assert.equal(autoPlaceUnits.callCount, 0);
+      utils.deploy(app, callback, false);
+      assert.equal(app._autoPlaceUnits.callCount, 0);
     });
 
     it('can commit to an existing model', function() {
-      utils.deploy(
-        env, controllerAPI, autoPlaceUnits, createSocketURL, appSet, true,
-        'spinach', callback);
+      utils.deploy(app, callback);
       assert.equal(commit.callCount, 1);
       assert.equal(callback.callCount, 1);
-      assert.equal(controllerAPI.createModel.callCount, 0);
+      assert.equal(app.controllerAPI.createModel.callCount, 0);
     });
 
     it('can create a new model', function() {
+      envGet.withArgs('connected').returns(false);
       utils.deploy(
-        env, controllerAPI, autoPlaceUnits, createSocketURL, appSet, false,
-        'spinach', callback, true, 'new-model', 'the-credential', 'azure',
-        'north');
+        app, callback, true, 'new-model', 'the-credential',
+        'azure', 'north');
       assert.equal(commit.callCount, 0);
       assert.equal(callback.callCount, 0);
-      assert.equal(controllerAPI.createModel.callCount, 1);
-      var args = controllerAPI.createModel.args[0];
+      assert.equal(app.controllerAPI.createModel.callCount, 1);
+      var args = app.controllerAPI.createModel.args[0];
       assert.equal(args[0], 'new-model');
       assert.equal(args[1], 'user-spinach');
       assert.deepEqual(args[2], {
@@ -1082,34 +1079,24 @@ describe('utilities', function() {
 
     it('can connect to a newly created model', function() {
       var model = {
-        hostPorts: ['http:80', 'https:443'],
-        password: 'taquitos123!',
-        user: 'spinach',
         uuid: 'uuid123'
       };
-      utils._newModelCallback(
-        env, createSocketURL, appSet, callback, null, model);
-      assert.equal(env.setCredentials.callCount, 1);
-      assert.deepEqual(env.setCredentials.args[0][0], {
-        user: 'user-spinach',
-        password: 'taquitos123!'
-      });
-      assert.equal(createSocketURL.callCount, 1);
-      var createSocketURLArgs = createSocketURL.args[0];
-      assert.equal(createSocketURLArgs[0], 'uuid123');
-      assert.equal(createSocketURLArgs[1], 'http');
-      assert.equal(createSocketURLArgs[2], '80');
-      assert.equal(appSet.callCount, 2);
-      var appSetArgs = appSet.args;
+      utils._newModelCallback(app, callback, null, model);
+      assert.equal(app.createSocketURL.callCount, 1);
+      var createSocketURLArgs = app.createSocketURL.args[0];
+      assert.equal(createSocketURLArgs[0], 'wss://socket-url');
+      assert.equal(createSocketURLArgs[1], 'uuid123');
+      assert.equal(app.set.callCount, 2);
+      var appSetArgs = app.set.args;
       assert.equal(appSetArgs[0][0], 'modelUUID');
       assert.equal(appSetArgs[0][1], 'uuid123');
       assert.equal(appSetArgs[1][0], 'socket_url');
       assert.equal(appSetArgs[1][1], 'wss://socket-url');
-      assert.equal(envSet.callCount, 1);
-      var envSetArgs = envSet.args[0];
+      assert.equal(app.env.set.callCount, 1);
+      var envSetArgs = app.env.set.args[0];
       assert.equal(envSetArgs[0], 'socket_url');
       assert.equal(envSetArgs[1], 'wss://socket-url');
-      assert.equal(env.connect.callCount, 1);
+      assert.equal(app.env.connect.callCount, 1);
     });
   });
 
