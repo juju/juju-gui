@@ -2133,9 +2133,11 @@ YUI.add('juju-gui', function(Y) {
       @param {Boolean} reconnect Whether to reconnect to a new environment; by
                                  default, if the socketUrl is set, we assume we
                                  want to reconnect to the provided URL.
+      @param {Boolean} clearDB Whether to clear the database and ecs.
     */
     switchEnv: function(
-      socketUrl, username, password, callback, reconnect=!!socketUrl) {
+      socketUrl, username, password, callback, reconnect=!!socketUrl,
+      clearDB=true) {
       if (this.get('sandbox')) {
         console.log('switching models is not supported in sandbox');
       }
@@ -2158,8 +2160,10 @@ YUI.add('juju-gui', function(Y) {
       }
       // Tell the environment to use the new socket URL when reconnecting.
       this.env.set('socket_url', socketUrl);
-      // Clear uncommitted state.
-      this.env.get('ecs').clear();
+      if (clearDB) {
+        // Clear uncommitted state.
+        this.env.get('ecs').clear();
+      }
       // Disconnect and reconnect the model.
       var onclose = function() {
         this.on_close();
@@ -2178,8 +2182,10 @@ YUI.add('juju-gui', function(Y) {
       } else {
         this.env.close(onclose);
       }
-      this.db.reset();
-      this.db.fire('update');
+      if (clearDB) {
+        this.db.reset();
+        this.db.fire('update');
+      }
       // Reset canvas centering to new env will center on load.
       const instance = this.views.environment.instance;
       // TODO frankban: investigate in what cases instance is undefined on the

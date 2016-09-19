@@ -1385,12 +1385,17 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Function} callback The function to be called once the model has
       been switched and logged into. Takes the following parameters:
       {Object} env The env that has been switched to.
+    @param {Boolean} clearDB Whether to clear the database and ecs when
+      switching models.
+    @param {Boolean} confirmUncommitted Whether to show a confirmation if there
+      are uncommitted changes.
   */
   utils.switchModel = function(
     createSocketURL, switchEnv, env, uuid, modelList, name, callback,
-    confirmUncommitted=true) {
+    clearDB, confirmUncommitted=true) {
     var switchModel = utils._switchModel.bind(this,
-      createSocketURL, switchEnv, env, uuid, modelList, name, callback);
+      createSocketURL, switchEnv, env, uuid, modelList, name, callback,
+      clearDB);
     var currentChangeSet = env.get('ecs').getCurrentChangeSet();
     // If there are uncommitted changes then show a confirmation popup.
     if (confirmUncommitted && Object.keys(currentChangeSet).length > 0) {
@@ -1450,9 +1455,11 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Function} callback The function to be called once the model has
       been switched and logged into. Takes the following parameters:
       {Object} env The env that has been switched to.
+    @param {Boolean} clearDB Whether to clear the database and ecs when
+      switching models.
   */
   utils._switchModel = function(
-    createSocketURL, switchEnv, env, uuid, modelList, name, callback) {
+    createSocketURL, switchEnv, env, uuid, modelList, name, callback, clearDB) {
     // Remove the switch model confirmation popup if it has been displayed to
     // the user.
     utils._hidePopup();
@@ -1497,10 +1504,10 @@ YUI.add('juju-view-utils', function(Y) {
         console.log('No user credentials for model: ', uuid);
       }
       var socketUrl = createSocketURL(uuid, address, port);
-      switchEnv(socketUrl, username, password, callback);
+      switchEnv(socketUrl, username, password, callback, true, clearDB);
     } else {
       // Just reset without reconnecting to an env.
-      switchEnv(null, null, null, callback);
+      switchEnv(null, null, null, callback, true, clearDB);
     }
   };
 
@@ -1604,15 +1611,15 @@ YUI.add('juju-view-utils', function(Y) {
     utils._detachOnLoginHandler();
     // After the model connects it will emit a login event, listen
     // for that event so that we know when to commit the changeset.
-    utils._onLoginHandler = env.on('login', function(ecs, evt) {
+    utils._onLoginHandler = env.on('login', evt => {
       utils._detachOnLoginHandler();
-      ecs.commit(env);
+      env.get('ecs').commit(env);
       callback();
-    }.bind(this, env.get('ecs')));
+    });
     utils.switchModel.call(
       app, app.createSocketURL.bind(app, app.get('socketTemplate')),
       app.switchEnv.bind(app), app.env, model.uuid, [model], model.name,
-      null, false);
+      null, false, false);
   };
 
   /**

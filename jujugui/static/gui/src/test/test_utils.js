@@ -869,7 +869,8 @@ describe('utilities', function() {
       assert.deepEqual(utils._switchModel.callCount, 1);
       var switchArgs = utils._switchModel.lastCall.args;
       assert.deepEqual(switchArgs, [
-        createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback]);
+        createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback,
+        undefined]);
       utils._switchModel = _switchModel;
     });
 
@@ -930,7 +931,8 @@ describe('utilities', function() {
       assert.deepEqual(createSocketURL.callCount, 0);
       assert.deepEqual(switchEnv.callCount, 1);
       assert.deepEqual(
-        switchEnv.lastCall.args, [null, null, null, undefined]);
+        switchEnv.lastCall.args,
+        [null, null, null, undefined, true, undefined]);
     });
 
     it('just disconnects if modelList is missing', function() {
@@ -941,7 +943,8 @@ describe('utilities', function() {
       assert.deepEqual(createSocketURL.callCount, 0);
       assert.deepEqual(switchEnv.callCount, 1);
       assert.deepEqual(
-        switchEnv.lastCall.args, [null, null, null, undefined]);
+        switchEnv.lastCall.args,
+        [null, null, null, undefined, true, undefined]);
     });
   });
 
@@ -1007,7 +1010,7 @@ describe('utilities', function() {
   });
 
   describe('deploy util', function() {
-    let app, callback, commit, envGet, utils;
+    let app, callback, commit, envGet, switchModel, utils;
 
     before(function(done) {
       YUI(GlobalConfig).use('juju-view-utils', function(Y) {
@@ -1037,8 +1040,15 @@ describe('utilities', function() {
         _autoPlaceUnits: sinon.stub(),
         set: sinon.stub(),
         createSocketURL: sinon.stub().returns('wss://socket-url'),
-        get: sinon.stub().returns('wss://socket-url')
+        get: sinon.stub().returns('wss://socket-url'),
+        switchEnv: sinon.stub()
       };
+      switchModel = utils.switchModel;
+      utils.switchModel = sinon.stub();
+    });
+
+    afterEach(() => {
+      utils.switchModel = switchModel;
     });
 
     it('can auto place when requested', function() {
@@ -1079,24 +1089,20 @@ describe('utilities', function() {
 
     it('can connect to a newly created model', function() {
       var model = {
+        name: 'koala',
         uuid: 'uuid123'
       };
       utils._newModelCallback(app, callback, null, model);
-      assert.equal(app.createSocketURL.callCount, 1);
-      var createSocketURLArgs = app.createSocketURL.args[0];
-      assert.equal(createSocketURLArgs[0], 'wss://socket-url');
-      assert.equal(createSocketURLArgs[1], 'uuid123');
-      assert.equal(app.set.callCount, 2);
-      var appSetArgs = app.set.args;
-      assert.equal(appSetArgs[0][0], 'modelUUID');
-      assert.equal(appSetArgs[0][1], 'uuid123');
-      assert.equal(appSetArgs[1][0], 'socket_url');
-      assert.equal(appSetArgs[1][1], 'wss://socket-url');
-      assert.equal(app.env.set.callCount, 1);
-      var envSetArgs = app.env.set.args[0];
-      assert.equal(envSetArgs[0], 'socket_url');
-      assert.equal(envSetArgs[1], 'wss://socket-url');
-      assert.equal(app.env.connect.callCount, 1);
+      assert.equal(utils.switchModel.callCount, 1);
+      var switchArgs = utils.switchModel.args[0];
+      assert.isFunction(switchArgs[1]);
+      assert.deepEqual(switchArgs[2], app.env);
+      assert.equal(switchArgs[3], 'uuid123');
+      assert.deepEqual(switchArgs[4], [model]);
+      assert.equal(switchArgs[5], 'koala');
+      assert.isNull(switchArgs[6]);
+      assert.isFalse(switchArgs[7]);
+      assert.isFalse(switchArgs[8]);
     });
   });
 
