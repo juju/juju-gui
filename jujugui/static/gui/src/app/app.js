@@ -1078,7 +1078,6 @@ YUI.add('juju-gui', function(Y) {
       var services = db.services;
       var units = db.units;
       var utils = views.utils;
-      var users = Y.clone(this.get('users'), true);
       var changesUtils = this.changesUtils;
       var currentChangeSet = ecs.getCurrentChangeSet();
       var changeDescriptions = changesUtils.generateAllChangeDescriptions(
@@ -1126,13 +1125,15 @@ YUI.add('juju-gui', function(Y) {
       // to display the machines in the deployment flow.
       autoPlaceUnits();
       const credentialTag = env.get('credentialTag');
+      const credential = credentialTag ? credentialTag.replace(
+        /^cloudcred-/, '') : undefined;
       let cloud = env.get('cloud');
       if (cloud) {
-        cloud = {
-          id: cloud.indexOf('cloud-') === 0 ? cloud : `cloud-${cloud}`,
-          name: cloud
-        };
+        cloud = {name: cloud};
       }
+      const credentials = this.controllerAPI.getCredentials();
+      const user = credentials.user ?
+        credentials.user.replace(/^user-/, '') : undefined;
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
@@ -1140,14 +1141,9 @@ YUI.add('juju-gui', function(Y) {
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
           changeState={this.changeState.bind(this)}
           cloud={cloud}
-          credential={
-            credentialTag ? credentialTag.replace('cloudcred-', '') : undefined}
+          credential={credential}
           changes={currentChangeSet}
-          deploy={utils.deploy.bind(
-            utils, env, this.jem, users, autoPlaceUnits,
-            this.createSocketURL.bind(this, this.get('socketTemplate')),
-            this.set.bind(this),
-            modelCommitted)}
+          deploy={utils.deploy.bind(utils, this)}
           generateAllChangeDescriptions={
             changesUtils.generateAllChangeDescriptions.bind(
               changesUtils, services, units)}
@@ -1166,7 +1162,7 @@ YUI.add('juju-gui', function(Y) {
           servicesGetById={services.getById.bind(services)}
           updateCloudCredential={
             controllerAPI.updateCloudCredential.bind(controllerAPI)}
-          user={`${this.controllerAPI.get('user')}`}
+          user={user}
           withPlans={false} />,
         document.getElementById('deployment-container'));
     },
@@ -2137,9 +2133,11 @@ YUI.add('juju-gui', function(Y) {
       @param {Boolean} reconnect Whether to reconnect to a new environment; by
                                  default, if the socketUrl is set, we assume we
                                  want to reconnect to the provided URL.
+      @param {Boolean} clearDB Whether to clear the database and ecs.
     */
     switchEnv: function(
-      socketUrl, username, password, callback, reconnect=!!socketUrl) {
+      socketUrl, username, password, callback, reconnect=!!socketUrl,
+      clearDB=true) {
       if (this.get('sandbox')) {
         console.log('switching models is not supported in sandbox');
       }
@@ -2162,8 +2160,10 @@ YUI.add('juju-gui', function(Y) {
       }
       // Tell the environment to use the new socket URL when reconnecting.
       this.env.set('socket_url', socketUrl);
-      // Clear uncommitted state.
-      this.env.get('ecs').clear();
+      if (clearDB) {
+        // Clear uncommitted state.
+        this.env.get('ecs').clear();
+      }
       // Disconnect and reconnect the model.
       var onclose = function() {
         this.on_close();
@@ -2182,8 +2182,10 @@ YUI.add('juju-gui', function(Y) {
       } else {
         this.env.close(onclose);
       }
-      this.db.reset();
-      this.db.fire('update');
+      if (clearDB) {
+        this.db.reset();
+        this.db.fire('update');
+      }
       // Reset canvas centering to new env will center on load.
       const instance = this.views.environment.instance;
       // TODO frankban: investigate in what cases instance is undefined on the

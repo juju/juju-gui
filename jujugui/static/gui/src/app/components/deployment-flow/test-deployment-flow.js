@@ -309,7 +309,7 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
-    instance._setCloud({id: 'cloud'});
+    instance._setCloud({name: 'cloud'});
     instance._setCredential('cred');
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
@@ -397,7 +397,7 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
-    instance._setCloud({id: 'azure'});
+    instance._setCloud({name: 'azure'});
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
       .props.children.props.children;
@@ -427,7 +427,7 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
-    instance._setCloud({id: 'local'});
+    instance._setCloud({name: 'local'});
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
       .props.children.props.children;
@@ -457,7 +457,7 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
-    instance._setCloud({id: 'local'});
+    instance._setCloud({name: 'local'});
     instance._setCredential('local');
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
@@ -492,7 +492,7 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
-    instance._setCloud({id: 'cloud'});
+    instance._setCloud({name: 'cloud'});
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
       .props.children.props.children;
@@ -522,7 +522,7 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
-    instance._setCloud({id: 'cloud'});
+    instance._setCloud({name: 'cloud'});
     instance._setCredential('cred');
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
@@ -553,7 +553,7 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
-    instance._setCloud({id: 'cloud'});
+    instance._setCloud({name: 'cloud'});
     instance._setCredential('cred');
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
@@ -585,7 +585,7 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
-    instance._setCloud({id: 'cloud'});
+    instance._setCloud({name: 'cloud'});
     instance._setCredential('cred');
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
@@ -617,7 +617,7 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
-    instance._setCloud({id: 'cloud'});
+    instance._setCloud({name: 'cloud'});
     instance._setCredential('cred');
     var output = renderer.getRenderOutput();
     var sections = output.props.children.props.children[1].props.children
@@ -656,7 +656,7 @@ describe('DeploymentFlow', function() {
         getValue: sinon.stub().returns('Lamington')
       }
     };
-    instance._setCloud({id: 'cloud'});
+    instance._setCloud({name: 'cloud'});
     instance._setCredential('cred');
     instance._setRegion('north');
     var output = renderer.getRenderOutput();
@@ -698,7 +698,7 @@ describe('DeploymentFlow', function() {
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
     instance.refs = {};
-    instance._setCloud({id: 'cloud'});
+    instance._setCloud({name: 'cloud'});
     instance._setCredential('cred');
     instance._setRegion('north');
     var output = renderer.getRenderOutput();

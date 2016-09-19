@@ -1376,6 +1376,15 @@ describe('App', function() {
                     'canvas centering was not reset.');
     });
 
+    it('can not clear and reset the db, and ecs on change', function() {
+      app = _generateMockedApp();
+      app.switchEnv('uuid', 'user', 'password', null, true, false);
+      assert.isFalse(app.env.ecs.clearCalled, 'ecs was not cleared.');
+      assert.isTrue(app.env.closeCalled, 'env was not closed.');
+      assert.isFalse(app.db.resetCalled, 'db was not reset.');
+      assert.isNull(app.db.fireSignal);
+    });
+
     it('sets credentials based on existence of jem', function() {
       app = _generateMockedApp();
       app.jem = false;

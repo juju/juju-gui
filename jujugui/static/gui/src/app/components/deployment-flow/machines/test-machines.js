@@ -74,7 +74,7 @@ describe('DeploymentMachines', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentMachines
         acl={acl}
-        cloud={{name: 'My cloud', id: 'azure'}}
+        cloud={{name: 'My cloud'}}
         machines={machines} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -129,13 +129,13 @@ describe('DeploymentMachines', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentMachines
         acl={acl}
-        cloud={{name: 'Local', id: 'local'}}
+        cloud={{name: 'local'}}
         machines={machines} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
       <p className="deployment-machines__message">
         These machines will be provisioned on&nbsp;
-        {'Local'}.
+        {'local'}.
         {''}
       </p>);
     assert.deepEqual(output.props.children[0], expected);

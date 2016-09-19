@@ -54,24 +54,24 @@ YUI.add('deployment-credential', function() {
     },
 
     componentDidUpdate: function(prevProps) {
-      const prevId = prevProps.cloud && prevProps.cloud.id;
-      const newId = this.props.cloud && this.props.cloud.id;
+      const prevId = prevProps.cloud && prevProps.cloud.name;
+      const newId = this.props.cloud && this.props.cloud.name;
       if (this.props.editable && newId !== prevId) {
         this._getCredentials();
       }
     },
 
     /**
-      Request credentials from JEM.
+      Request credentials from the controller.
 
       @method _getCredentials
     */
     _getCredentials: function() {
-      const cloud = this.props.cloud && this.props.cloud.id;
+      const cloud = this.props.cloud && this.props.cloud.name;
       const user = this.props.user;
       if (user) {
         this.props.getTagsForCloudCredentials(
-          [[user, cloud]], this._getTagsCallback);
+          [[`user-${user}`, `cloud-${cloud}`]], this._getTagsCallback);
       }
     },
 
