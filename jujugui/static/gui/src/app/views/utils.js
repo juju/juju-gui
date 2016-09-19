@@ -1507,7 +1507,7 @@ YUI.add('juju-view-utils', function(Y) {
       switchEnv(socketUrl, username, password, callback, true, clearDB);
     } else {
       // Just reset without reconnecting to an env.
-      switchEnv(null, null, null, callback, true, clearDB);
+      switchEnv(null, null, null, callback, false, clearDB);
     }
   };
 

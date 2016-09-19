@@ -222,7 +222,7 @@ describe('DeploymentCredentialAdd', function() {
         acl={acl}
         updateCloudCredential={sinon.stub()}
         close={close}
-        cloud={{id: 'google', name: 'google'}}
+        cloud={{name: 'google'}}
         clouds={clouds}
         generateCloudCredentialTag={sinon.stub()}
         getCredentials={sinon.stub()}
@@ -369,7 +369,7 @@ describe('DeploymentCredentialAdd', function() {
         acl={acl}
         updateCloudCredential={sinon.stub()}
         close={close}
-        cloud={{id: 'google', name: 'google'}}
+        cloud={{name: 'google'}}
         clouds={clouds}
         generateCloudCredentialTag={sinon.stub()}
         getCredentials={sinon.stub()}
@@ -482,7 +482,7 @@ describe('DeploymentCredentialAdd', function() {
         acl={acl}
         updateCloudCredential={sinon.stub()}
         close={close}
-        cloud={{id: 'google', name: 'google'}}
+        cloud={{name: 'google'}}
         clouds={clouds}
         generateCloudCredentialTag={sinon.stub()}
         getCredentials={sinon.stub()}
@@ -629,7 +629,7 @@ describe('DeploymentCredentialAdd', function() {
           acl={acl}
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
-          cloud={{id: 'google', name: 'google'}}
+          cloud={{name: 'google'}}
           clouds={clouds}
           generateCloudCredentialTag={sinon.stub().returns('new@test')}
           getCredentials={getCredentials}
@@ -681,7 +681,7 @@ describe('DeploymentCredentialAdd', function() {
           acl={acl}
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
-          cloud={{id: 'google', name: 'google'}}
+          cloud={{name: 'google'}}
           clouds={clouds}
           generateCloudCredentialTag={sinon.stub()}
           getCredentials={sinon.stub()}

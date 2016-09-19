@@ -150,7 +150,7 @@ describe('DeploymentCloud', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCloud
         acl={acl}
-        cloud={{name: 'google', id: 'google'}}
+        cloud={{name: 'google'}}
         clouds={clouds}
         listClouds={sinon.stub().callsArgWith(0, null, {})}
         setCloud={sinon.stub()} />, true);
@@ -182,7 +182,6 @@ describe('DeploymentCloud', function() {
         setCloud={setCloud} />);
     assert.equal(setCloud.callCount, 1);
     assert.deepEqual(setCloud.args[0][0], {
-      id: 'google',
       name: 'google'
     });
   });
@@ -199,6 +198,6 @@ describe('DeploymentCloud', function() {
     var output = renderer.getRenderOutput();
     output.props.children[0].props.children[0].props.onClick();
     assert.equal(setCloud.callCount, 1);
-    assert.deepEqual(setCloud.args[0][0], {name: 'google', id: 'google'});
+    assert.deepEqual(setCloud.args[0][0], {name: 'google'});
   });
 });

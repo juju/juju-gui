@@ -932,7 +932,7 @@ describe('utilities', function() {
       assert.deepEqual(switchEnv.callCount, 1);
       assert.deepEqual(
         switchEnv.lastCall.args,
-        [null, null, null, undefined, true, undefined]);
+        [null, null, null, undefined, false, undefined]);
     });
 
     it('just disconnects if modelList is missing', function() {
@@ -944,7 +944,7 @@ describe('utilities', function() {
       assert.deepEqual(switchEnv.callCount, 1);
       assert.deepEqual(
         switchEnv.lastCall.args,
-        [null, null, null, undefined, true, undefined]);
+        [null, null, null, undefined, false, undefined]);
     });
   });
 
