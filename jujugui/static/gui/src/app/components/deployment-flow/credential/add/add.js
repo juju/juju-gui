@@ -159,7 +159,7 @@ YUI.add('deployment-credential-add', function() {
     */
     _getInfo: function() {
       const cloud = this.props.cloud;
-      const id = cloud && cloud.id || this.DEFAULTCLOUD;
+      const id = cloud && cloud.name || this.DEFAULTCLOUD;
       return this.props.clouds[id];
     },
 
@@ -248,7 +248,7 @@ YUI.add('deployment-credential-add', function() {
       // form will display correctly as the next step.
       var isReadOnly = this.props.acl.isReadOnly();
       const cloud = this.props.cloud;
-      const id = cloud && cloud.id || this.DEFAULTCLOUD;
+      const id = cloud && cloud.name || this.DEFAULTCLOUD;
       const info = this._getInfo();
       var title = info && info.title || cloud.name;
       var credentialName = id === 'google' ?

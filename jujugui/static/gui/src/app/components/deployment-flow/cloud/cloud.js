@@ -45,9 +45,7 @@ YUI.add('deployment-cloud', function() {
         const cloudList = [];
         if (clouds) {
           cloudList = Object.keys(clouds).map(id => {
-            const cloud = clouds[id];
-            cloud.id = id;
-            return cloud;
+            return clouds[id];
           });
         }
         this.setState({
@@ -85,7 +83,7 @@ YUI.add('deployment-cloud', function() {
           {'last-col': i % 3 === 2});
         clouds.push(
           <li className={classes}
-            key={cloud.id}
+            key={cloud.name}
             onClick={this.props.setCloud.bind(null, cloud)}
             role="button"
             tabIndex="0">
@@ -125,7 +123,7 @@ YUI.add('deployment-cloud', function() {
       @returns {Array} The logo.
     */
     _generateLogo: function(cloud) {
-      var info = this.props.clouds[cloud.id];
+      var info = this.props.clouds[cloud.name];
       if (!info) {
         return cloud.name;
       }

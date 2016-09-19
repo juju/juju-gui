@@ -472,7 +472,7 @@ YUI.add('deployment-flow', function() {
       }
       this.props.deploy(
         this._handleClose, true, modelName,
-        this.state.credential, this.state.cloud.id, this.state.region);
+        this.state.credential, this.state.cloud.name, this.state.region);
     },
 
     /**
@@ -553,7 +553,7 @@ YUI.add('deployment-flow', function() {
       var cloud = this.state.cloud;
       if (!cloud) {
         return 'Choose cloud to deploy to';
-      } else if (cloud.id === 'local') {
+      } else if (cloud.name === 'local') {
         return 'Local cloud';
       } else {
         return 'Public cloud';

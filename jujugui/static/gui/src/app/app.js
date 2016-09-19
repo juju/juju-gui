@@ -1125,18 +1125,15 @@ YUI.add('juju-gui', function(Y) {
       // to display the machines in the deployment flow.
       autoPlaceUnits();
       const credentialTag = env.get('credentialTag');
+      const credential = credentialTag ? credentialTag.replace(
+        /^cloudcred-/, '') : undefined;
       let cloud = env.get('cloud');
       if (cloud) {
-        cloud = {
-          id: cloud.indexOf('cloud-') === 0 ? cloud : `cloud-${cloud}`,
-          name: cloud
-        };
+        cloud = {name: cloud};
       }
       const credentials = this.controllerAPI.getCredentials();
-      let user;
-      if (credentials.user) {
-        user = credentials.user.replace(/^user-/, '');
-      }
+      const user = credentials.user ?
+        credentials.user.replace(/^user-/, '') : undefined;
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
@@ -1144,9 +1141,7 @@ YUI.add('juju-gui', function(Y) {
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
           changeState={this.changeState.bind(this)}
           cloud={cloud}
-          credential={
-            credentialTag ? credentialTag.replace(
-              /^cloudcred-/, '') : undefined}
+          credential={credential}
           changes={currentChangeSet}
           deploy={utils.deploy.bind(utils, this)}
           generateAllChangeDescriptions={
