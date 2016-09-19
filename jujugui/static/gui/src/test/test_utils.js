@@ -350,24 +350,22 @@ describe('utilities', function() {
   });
 
   describe('getIconPath', function() {
-    var config, utils;
+    let jujuConfig, utils;
 
     before(function(done) {
-      window.juju_config = {charmstoreURL: 'local/'};
-      YUI(GlobalConfig).use('juju-view-utils',
-          function(Y) {
-            utils = Y.namespace('juju.views.utils');
-            done();
-          });
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
     });
 
-    beforeEach(function() {
-      // Store the juju_config so that it can be reset after the test runs.
-      config = window.juju_config;
+    beforeEach(() => {
+      jujuConfig = window.juju_config;
+      window.juju_config = {charmstoreURL: 'http://4.3.2.1/'};
     });
 
-    afterEach(function() {
-      window.juju_config = config;
+    afterEach(() => {
+      window.juju_config = jujuConfig;
     });
 
     it('returns local default bundle icon location for bundles', function() {
@@ -391,11 +389,7 @@ describe('utilities', function() {
       var path = utils.getIconPath('~paulgear/precise/quassel-core-2');
       assert.equal(
           path,
-          'local/v5/~paulgear/precise/quassel-core-2/icon.svg');
-    });
-
-    after(function() {
-      delete window.juju_config;
+          'http://4.3.2.1/v5/~paulgear/precise/quassel-core-2/icon.svg');
     });
   });
 

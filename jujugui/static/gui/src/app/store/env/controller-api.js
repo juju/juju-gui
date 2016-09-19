@@ -313,19 +313,31 @@ YUI.add('juju-controller-api', function(Y) {
     },
 
     /**
-      Define optional operations to be performed before closing the WebSocket
-      connection. Operations performed:
+      Define optional operations to be performed before logging out.
+      Operations performed:
         - the pinger interval is stopped;
+        - connection attributes are reset.
 
-      @method beforeClose
-      @param {Function} callback A callable that must be called by the
-        function and that actually closes the connection.
+      Note that this function is intended to be idempotent: clients must be
+      free to call this multiple times even on an already closed connection.
+
+      @method cleanup
+      @param {Function} done A callable that must be called by the function and
+        that actually closes the connection.
     */
-    beforeClose: function(callback) {
+    cleanup: function(done) {
+      console.log('cleaning up the controller API connection');
       if (this._pinger) {
         clearInterval(this._pinger);
         this._pinger = null;
       }
+      // TODO frankban: find a more automated way to clean up attributes.
+      this.setAttrs({
+        controllerAccess: '',
+        facades: [],
+        serverTag: ''
+      });
+      done();
     },
 
     /**

@@ -33,8 +33,12 @@ Mocha.Suite.prototype.beforeEach = function(title, fn) {
 };
 
 Mocha.Suite.prototype.afterEach = function(func) {
-  var newAfterEach = function(done) {
-    func.apply(this, arguments);
+  const newAfterEach = function(done) {
+    let doneCalled = false;
+    const doneWrapper = () => {
+      done();
+      doneCalled = true;
+    };
     if (this._cleanups && this._cleanups.length) {
       while (this._cleanups.length > 0) {
         // Run the clean up method after popping it off the stack.
@@ -42,9 +46,11 @@ Mocha.Suite.prototype.afterEach = function(func) {
       }
       this._cleanups = [];
     }
-    done();
+    func.call(this, doneWrapper);
+    if (!doneCalled) {
+      done();
+    }
   }
-
   origAfterEach.call(this, newAfterEach);
 };
 

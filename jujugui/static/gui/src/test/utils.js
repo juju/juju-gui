@@ -97,6 +97,46 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       return container;
     },
 
+    /**
+      Create and return a container suitable for rendering the whole app.
+
+      Callers are responsible of removing the container from the document when
+      done.
+
+      @method makeAppContainer
+      @param {Object} yui The YUI instance.
+      @return {Object} The container element, already attached to the window
+        document.
+    */
+    makeAppContainer: (yui) => {
+      const elements = [
+        'charmbrowser-container',
+        'deployment-bar-container',
+        'deployment-container',
+        'drag-over-notification-container',
+        'env-size-display-container',
+        'full-screen-mask',
+        'header-breadcrumb',
+        'header-search-container',
+        'import-export-container',
+        'inspector-container',
+        'loading-message',
+        'login-container',
+        'machine-view',
+        'notifications-container',
+        'profile-link-container',
+        'top-page-container'
+      ];
+      const container = yui.Node.create('<div>');
+      container.set('id', 'test-container');
+      container.addClass('container');
+      elements.forEach(function(id) {
+        container.appendChild(yui.Node.create('<div/>')).set('id', id);
+      });
+      container.appendTo(document.body);
+      return container;
+    },
+
     SocketStub: function() {
       // The readyState needs to be defined because we check for its value
       // before sending any requests to avoid errors.

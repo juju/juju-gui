@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Entity Extension', function() {
-  var Y, EntityModel, entityModel, models, utils, config;
+  var Y, EntityModel, entityModel, jujuConfig, models, utils;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -33,8 +33,9 @@ describe('Entity Extension', function() {
   });
 
   beforeEach(function() {
-    EntityModel = Y.Base.create('entity-model', Y.Base,
-                                [models.EntityExtension], {});
+    jujuConfig = window.juju_config;
+    EntityModel = Y.Base.create(
+      'entity-model', Y.Base, [models.EntityExtension], {});
     entityModel = new EntityModel();
     var attrs = {
       id: '~owner/foobar',
@@ -47,13 +48,11 @@ describe('Entity Extension', function() {
       url: 'http://example.com/'
     };
     entityModel.setAttrs(attrs);
-    // Store the juju_config so that it can be reset after the test runs.
-    config = window.juju_config;
   });
 
   afterEach(function() {
     entityModel.destroy();
-    window.juju_config = config;
+    window.juju_config = jujuConfig;
   });
 
   it('parses owner from the ID', function() {

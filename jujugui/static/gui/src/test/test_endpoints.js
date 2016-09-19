@@ -22,7 +22,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 // the addition of puppet subordinate relations.
 
 describe('Relation endpoints logic', function() {
-  var Y, juju, utils, db, app, models, sample_endpoints, sample_env, env, ecs;
+  var Y, container, juju, utils, db, app, models, sample_endpoints, sample_env,
+      env, ecs;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['array-extras',
@@ -47,6 +48,7 @@ describe('Relation endpoints logic', function() {
   });
 
   beforeEach(function() {
+    container = utils.makeAppContainer(Y);
     var conn = new utils.SocketStub();
     ecs = new juju.EnvironmentChangeSet();
     env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
@@ -61,11 +63,12 @@ describe('Relation endpoints logic', function() {
     db = app.db;
   });
 
-  afterEach(function() {
-    app.destroy();
-    db.destroy();
-    env.close();
-    env.destroy();
+  afterEach(function(done) {
+    env.close(() => {
+      app.destroy();
+      container.remove(true);
+      done();
+    });
   });
 
   function loadDelta(relations) {
@@ -447,7 +450,7 @@ describe('Endpoints map', function() {
 });
 
 describe('Endpoints map handlers', function() {
-  var app, conn, controller, destroyMe, ecs,
+  var app, conn, container, controller, destroyMe, ecs,
       env, factory, juju, utils, Y;
 
   before(function(done) {
@@ -468,6 +471,7 @@ describe('Endpoints map handlers', function() {
 
   beforeEach(function() {
     destroyMe = [];
+    container = utils.makeAppContainer(Y);
     conn = new utils.SocketStub();
     ecs = new juju.EnvironmentChangeSet();
     env = new juju.environments.GoEnvironment({
@@ -477,8 +481,6 @@ describe('Endpoints map handlers', function() {
       conn: conn
     });
     env.connect();
-    this._cleanups.push(env.close.bind(env));
-    destroyMe.push(env);
     var _renderDeployerBarView = utils.makeStubMethod(
         Y.juju.App.prototype, '_renderDeployerBarView');
     this._cleanups.push(_renderDeployerBarView.reset);
@@ -505,9 +507,14 @@ describe('Endpoints map handlers', function() {
     destroyMe.push(controller);
   });
 
-  afterEach(function() {
-    destroyMe.forEach(thing => {
-      thing.destroy();
+  afterEach(function(done) {
+    env.close(() => {
+      app.destroy();
+      destroyMe.forEach(thing => {
+        thing.destroy();
+      });
+      container.remove(true);
+      done();
     });
   });
 
@@ -659,7 +666,7 @@ describe('Endpoints map handlers', function() {
 
 
 describe('Application config handlers', function() {
-  var Y, juju, utils, app, conn, env, controller, destroyMe;
+  var Y, container, juju, utils, app, conn, env, controller, destroyMe;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-gui',
@@ -679,6 +686,7 @@ describe('Application config handlers', function() {
 
   beforeEach(function() {
     destroyMe = [];
+    container = utils.makeAppContainer(Y);
     conn = new utils.SocketStub();
     var ecs = new juju.EnvironmentChangeSet();
     env = new juju.environments.GoEnvironment({
@@ -689,22 +697,26 @@ describe('Application config handlers', function() {
     });
     env.connect();
     env.set('facades', {Application: [1]});
-    this._cleanups.push(env.close.bind(env));
     app = new Y.juju.App({
       env: env,
       consoleEnabled: true,
       jujuCoreVersion: '2.0.0'
     });
-    destroyMe.push(app);
     app.showView(new Y.View());
     controller = app.endpointsController;
     destroyMe.push(controller);
   });
 
-  afterEach(function() {
-    destroyMe.forEach(thing => {
-      thing.destroy();
+  afterEach(function(done) {
+    env.close(() => {
+      app.destroy();
+      destroyMe.forEach(thing => {
+        thing.destroy();
+      });
+      container.remove(true);
+      done();
     });
+
   });
 
   // Ensure the last message in the connection is a ServiceGet request.

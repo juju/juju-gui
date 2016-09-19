@@ -582,9 +582,13 @@ YUI.add('juju-gui', function(Y) {
           // Try a token login.
           this.env.tokenLogin(authtoken);
         }
-        // There are no credentials. Do nothing in this case as the controller
-        // login check will have kicked the user to the login prompt already
-        // and we can wait until they have provided the credentials there.
+        // There are no credentials. Do nothing in this case if we are on Juju
+        // >= 2 as the controller login check will have kicked the user to the
+        // login prompt already and we can wait until they have provided the
+        // credentials there. In Juju 1 though we need to display the login.
+        if (!this.controllerAPI) {
+          this._displayLogin();
+        }
       });
 
       // If the database updates, redraw the view (distinct from model updates).
@@ -764,7 +768,12 @@ YUI.add('juju-gui', function(Y) {
         });
       });
 
-      controllerAPI.after('connectedChange', e => {
+      controllerAPI.after('connectedChange', evt => {
+        if (!evt.newVal) {
+          // The controller is not connected, do nothing waiting for a
+          // reconnection.
+          return;
+        }
         const credentials = this.controllerAPI.getCredentials();
         if (!credentials.areAvailable && !this.get('gisf')) {
           this._displayLogin();
@@ -848,10 +857,15 @@ YUI.add('juju-gui', function(Y) {
       }
       apis.forEach(api => {
         // The api may be unset if the current Juju does not support it.
-        if (api && api.get('connected')) {
-          if (credentials) {
-            api.setCredentials(credentials);
-          }
+        if (!api) {
+          return;
+        }
+        if (credentials) {
+          // We set credentials even if the API is not connected: they will be
+          // used when the connection is eventually established.
+          api.setCredentials(credentials);
+        }
+        if (api.get('connected')) {
           console.log(`logging into ${api.name} with user and password`);
           api.login();
         }
@@ -1828,21 +1842,30 @@ YUI.add('juju-gui', function(Y) {
     @method destructor
     */
     destructor: function() {
+      // Clear the database handler timer. Without this, the application could
+      // dispatch after it is destroyed, resulting in a dirty state and bugs
+      // difficult to debug, so please do not remove this code.
+      if (this.dbChangedTimer) {
+        clearTimeout(this.dbChangedTimer);
+      }
       if (this.zoomMessageHandler) {
         this.zoomMessageHandler.detach();
       }
       if (this._keybindings) {
         this._keybindings.detach();
       }
-      Y.each(
-          [this.env, this.db, this.endpointsController, this.controllerAPI],
-          function(o) {
-            if (o && o.destroy) {
-              o.detachAll();
-              o.destroy();
-            }
-          }
-      );
+      const toBeDestroyed = [
+        this.env,
+        this.controllerAPI,
+        this.db,
+        this.endpointsController
+      ];
+      toBeDestroyed.forEach(obj => {
+        if (obj && obj.destroy) {
+          obj.detachAll();
+          obj.destroy();
+        }
+      });
       ['dragenter', 'dragover', 'dragleave'].forEach((eventName) => {
         document.removeEventListener(eventName, this._boundAppDragOverHandler);
       });
@@ -1867,11 +1890,12 @@ YUI.add('juju-gui', function(Y) {
      */
     on_database_changed: function(evt) {
       // This timeout helps to reduce the number of needless dispatches from
-      // upwards of 8 to 2. At least until we can move to the model bound views.
+      // upwards of 8 to 2. At least until we can move to the model bound
+      // views.
       if (this.dbChangedTimer) {
-        this.dbChangedTimer.cancel();
+        clearTimeout(this.dbChangedTimer);
       }
-      this.dbChangedTimer = Y.later(100, this, this._dbChangedHandler);
+      this.dbChangedTimer = setTimeout(this._dbChangedHandler.bind(this), 100);
       return;
     },
 
@@ -1931,12 +1955,31 @@ YUI.add('juju-gui', function(Y) {
       if (environmentInstance) {
         environmentInstance.topo.update();
       }
+      this.set('modelUUID', '');
       this.set('loggedIn', false);
-      this.env.logout();
-      this.controllerAPI.logout();
-      this.maskVisibility(true);
-      this._renderLogin(null);
-      return;
+      // Close both controller and model API connections.
+      let closeController = callback => {
+        callback();
+      };
+      const controllerAPI = this.controllerAPI;
+      if (controllerAPI) {
+        closeController = controllerAPI.close.bind(controllerAPI);
+      }
+      this.env.close(() => {
+        closeController(() => {
+          if (controllerAPI) {
+            // Juju 2 connects to the controller and gets models from there.
+            controllerAPI.connect();
+          } else {
+            // Juju 1 is just connected to a model.
+            this.env.connect();
+          }
+          this.maskVisibility(true);
+          this.db.reset();
+          this.db.fire('update');
+          this._renderLogin(null);
+        });
+      });
     },
 
     // Persistent Views
@@ -2136,11 +2179,14 @@ YUI.add('juju-gui', function(Y) {
       @param {Boolean} clearDB Whether to clear the database and ecs.
     */
     switchEnv: function(
+      // TODO frankban: make the function defaults saner, for instance
+      // clearDB=true should really be preserveDB=false by default.
       socketUrl, username, password, callback, reconnect=!!socketUrl,
       clearDB=true) {
       if (this.get('sandbox')) {
         console.log('switching models is not supported in sandbox');
       }
+      console.log('switching model connection');
       if (username && password) {
         // We don't always get a new username and password when switching
         // environments; only set new credentials if we've actually gotten them.
@@ -2150,34 +2196,41 @@ YUI.add('juju-gui', function(Y) {
           password: password
         });
       };
+      const credentials = this.env.getCredentials();
       if (callback) {
-        var onLogin = function(callback) {
+        const onLogin = function(callback) {
           callback(this.env);
         };
         // Delay the callback until after the env login as everything should be
         // set up by then.
         this.env.onceAfter('login', onLogin.bind(this, callback), this);
       }
-      // Tell the environment to use the new socket URL when reconnecting.
-      this.env.set('socket_url', socketUrl);
       if (clearDB) {
         // Clear uncommitted state.
         this.env.get('ecs').clear();
       }
-      // Disconnect and reconnect the model.
-      var onclose = function() {
-        this.on_close();
+      const setUpModel = model => {
+        // Tell the model to use the new socket URL when reconnecting.
+        model.set('socket_url', socketUrl);
+        // Store the existing credentials so that they can be possibly reused.
+        model.setCredentials(credentials);
+        // Reconnect the model if required.
         if (reconnect) {
-          this.connect();
+          model.connect();
         }
+      };
+      // Disconnect and reconnect the model.
+      const onclose = function() {
+        this.on_close();
+        setUpModel(this);
       }.bind(this.env);
       if (this.env.ws) {
         this.env.ws.onclose = onclose;
         this.env.close();
         this.hideConnectingMask();
         // If we are already disconnected then connect if we're supposed to.
-        if (!this.env.get('connected') && reconnect) {
-          this.env.connect();
+        if (!this.env.get('connected')) {
+          setUpModel(this.env);
         }
       } else {
         this.env.close(onclose);

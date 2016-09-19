@@ -43,48 +43,55 @@ YUI.add('acl', function(Y) {
     @param modelAPI {Object} The model API connection instance.
     @return {Object} A namespace providing access to ACLs checkers (see below).
   */
-  juju.generateAcl = (controllerAPI, modelAPI) => ({
+  juju.generateAcl = (controllerAPI, modelAPI) => {
+    if (!controllerAPI) {
+      // The application is connected to a legacy Juju.
+      controllerAPI = {
+        get: (_) => ''
+      };
+    }
+    const acl = {
+      /**
+        Report whether the model interaction is read-only, in which case it is
+        not possible to interact with the model, just watch it.
 
-    /**
-      Report whether the model interaction is read-only, in which case it is
-      not possible to interact with the model, just watch it.
+        @function isReadOnly
+        @return {Boolean} Whether the user has read-only access.
+      */
+      isReadOnly: () => modelAPI.get('modelAccess') === 'read',
 
-      @function isReadOnly
-      @return {Boolean} Whether the user has read-only access.
-    */
-    isReadOnly: () => modelAPI.get('modelAccess') === 'read',
+      /**
+        Report whether the current user can create models.
 
-    /**
-      Report whether the current user can create models.
+        @function canAddModels
+        @return {Boolean} Whether the user can add models.
+      */
+      canAddModels: () => {
+        const access = (
+          modelAPI.get('controllerAccess') ||
+          controllerAPI.get('controllerAccess')
+        );
+        return access === 'addmodel' || access === 'superuser';
+      },
 
-      @function canAddModels
-      @return {Boolean} Whether the user can add models.
-    */
-    canAddModels: () => {
-      const access = (
-        modelAPI.get('controllerAccess') ||
-        controllerAPI.get('controllerAccess')
-      );
-      return access === 'addmodel' || access === 'superuser';
-    },
+      /**
+        Report whether the user can share the current model.
 
-    /**
-      Report whether the user can share the current model.
+        @function canShareModel
+        @return {Boolean} Whether the user can share the current model.
+      */
+      canShareModel: () => modelAPI.get('modelAccess') === 'admin',
 
-      @function canShareModel
-      @return {Boolean} Whether the user can share the current model.
-    */
-    canShareModel: () => modelAPI.get('modelAccess') === 'admin',
+      /**
+        Report whether the user can destroy the current model.
 
-    /**
-      Report whether the user can destroy the current model.
-
-      @function canRemoveModel
-      @return {Boolean} Whether the user can destroy the current model.
-    */
-    canRemoveModel: () => modelAPI.get('modelAccess') === 'admin'
-
-  });
+        @function canRemoveModel
+        @return {Boolean} Whether the user can destroy the current model.
+      */
+      canRemoveModel: () => modelAPI.get('modelAccess') === 'admin'
+    };
+    return acl;
+  };
 
 }, '0.1.0', {
   requires: []

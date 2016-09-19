@@ -50,33 +50,33 @@ function injectData(app, data) {
 }
 
 describe('App', function() {
-  var container;
+  var jujuConfig, container, testUtils, yui;
 
-  before(function(done) {
-    YUI(GlobalConfig).use(['juju-gui'], function(Y) {
-      var elements = [
-        'charmbrowser-container',
-        'deployment-bar-container',
-        'deployment-container',
-        'login-container',
-        'notifications-container',
-        'loading-message',
-        'header-breadcrumb'
-      ];
-      container = Y.Node.create('<div>');
-      container.set('id', 'test-container');
-      container.addClass('container');
-      // Set up the elements needed to render the components.
-      elements.forEach(function(id) {
-        container.appendChild(Y.Node.create('<div/>')).set('id', id);
-      });
-      container.appendTo(document.body);
+  before(done => {
+    YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils',], function(Y) {
+      yui = Y;
+      testUtils = Y.namespace('juju-tests.utils');
       done();
     });
   });
 
+  beforeEach(() => {
+    jujuConfig = window.juju_config;
+    window.juju_config = {
+      charmstoreURL: 'http://1.2.3.4/',
+      plansURL: 'http://plans.example.com/',
+      termsURL: 'http://terms.example.com/'
+    };
+    container = testUtils.makeAppContainer(yui);
+  });
+
+  afterEach(() => {
+    window.juju_config = jujuConfig;
+    container.remove(true);
+  });
+
   describe('Application basics', function() {
-    var Y, app, utils, juju;
+    var Y, app, juju;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
@@ -87,7 +87,6 @@ describe('App', function() {
         'environment-change-set'
       ],
       function(Y) {
-        utils = Y.namespace('juju-tests.utils');
         juju = Y.namespace('juju');
         done();
       });
@@ -103,25 +102,31 @@ describe('App', function() {
       app.after('destroy', function() {
         sessionStorage.setItem('credentials', null);
       });
-
-      app.destroy();
     });
 
     function constructAppInstance(config, context) {
       config = config || {};
       config.jujuCoreVersion = config.jujuCoreVersion || '2.0.0';
-      if (config.env && config.env.connect) {
-        config.env.connect();
-        context._cleanups.push(config.env.close.bind(config.env));
-        config.env.ecs = new juju.EnvironmentChangeSet();
-      }
       config.container = container;
       config.viewContainer = container;
       app = new Y.juju.App(Y.mix(config, {
         consoleEnabled: true,
         socketTemplate: '/model/$uuid/api',
-        controllerSocketTemplate: '/api'
+        controllerSocketTemplate: '/api',
+        consoleEnabled: true
       }));
+      if (config.env && config.env.connect) {
+        config.env.connect();
+        config.env.ecs = new juju.EnvironmentChangeSet();
+      }
+      context._cleanups.push(() => {
+        const env = config.env;
+        if (env && env.connect) {
+          env.close(app.destroy.bind(app));
+        } else {
+          app.destroy();
+        }
+      });
       app.navigate = function() {};
       app.showView(new Y.View());
       injectData(app);
@@ -130,10 +135,9 @@ describe('App', function() {
 
     it('should not have login credentials if missing from the configuration',
         function() {
-
           constructAppInstance({
             env: new juju.environments.GoEnvironment({
-              conn: new utils.SocketStub(),
+              conn: new testUtils.SocketStub(),
               ecs: new juju.EnvironmentChangeSet()
             })
           }, this);
@@ -145,7 +149,7 @@ describe('App', function() {
         function(done) {
           var the_username = 'nehi';
           var the_password = 'moonpie';
-          const conn = new utils.SocketStub();
+          const conn = new testUtils.SocketStub();
           const ecs = new juju.EnvironmentChangeSet();
           const env = new juju.environments.GoEnvironment({
             conn: conn,
@@ -166,6 +170,9 @@ describe('App', function() {
             controllerSocketTemplate: '/api',
             socketTemplate: '/model/$uuid/api',
             ecs: ecs});
+          this._cleanups.push(() => {
+            env.close(app.destroy.bind(app));
+          });
           app.after('ready', function() {
             var credentials = app.env.getCredentials();
             assert.equal(credentials.user, 'user-' + the_username + '@local');
@@ -177,7 +184,7 @@ describe('App', function() {
     it('should produce a valid index', function() {
       constructAppInstance({
         env: new juju.environments.GoEnvironment({
-          conn: new utils.SocketStub(),
+          conn: new testUtils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
       }, this);
@@ -190,7 +197,7 @@ describe('App', function() {
       constructAppInstance({
         jujuCoreVersion: '2.1.1-trusty-amd64',
         env: new juju.environments.GoEnvironment({
-          conn: new utils.SocketStub(),
+          conn: new testUtils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
       }, this);
@@ -216,7 +223,7 @@ describe('App', function() {
     it('should display a zoom message on small browsers', function() {
       constructAppInstance({
         env: new juju.environments.GoEnvironment({
-          conn: new utils.SocketStub(),
+          conn: new testUtils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
       }, this);
@@ -228,7 +235,7 @@ describe('App', function() {
     it('should not display the zoom message more than once', function() {
       constructAppInstance({
         env: new juju.environments.GoEnvironment({
-          conn: new utils.SocketStub(),
+          conn: new testUtils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
       }, this);
@@ -243,7 +250,7 @@ describe('App', function() {
     it('should show the correct message on a mac', function() {
       constructAppInstance({
         env: new juju.environments.GoEnvironment({
-          conn: new utils.SocketStub(),
+          conn: new testUtils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
       }, this);
@@ -255,7 +262,7 @@ describe('App', function() {
     it('should show the correct message for non mac', function() {
       constructAppInstance({
         env: new juju.environments.GoEnvironment({
-          conn: new utils.SocketStub(),
+          conn: new testUtils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         })
       }, this);
@@ -276,7 +283,7 @@ describe('App', function() {
         container.appendChild(maasNode);
         // Create the environment.
         env = new juju.environments.GoEnvironment({
-          conn: new utils.SocketStub(),
+          conn: new testUtils.SocketStub(),
           ecs: new juju.EnvironmentChangeSet()
         });
       });
@@ -339,18 +346,13 @@ describe('App', function() {
     });
 
     describe('_setupCharmstore', function() {
-
-      afterEach(function() {
-        delete window.juju_config;
-      });
-
       it('is called on application instantiation', function() {
-        var setup = utils.makeStubMethod(
+        var setup = testUtils.makeStubMethod(
             Y.juju.App.prototype, '_setupCharmstore');
         this._cleanups.push(setup.reset);
         constructAppInstance({
           env: new juju.environments.GoEnvironment({
-            conn: new utils.SocketStub(),
+            conn: new testUtils.SocketStub(),
             ecs: new juju.EnvironmentChangeSet()
           })
         }, this);
@@ -358,14 +360,9 @@ describe('App', function() {
       });
 
       it('is idempotent', function() {
-        window.juju_config = {
-          charmstoreURL: 'http://1.2.3.4/',
-          plansURL: 'http://plans.example.com/',
-          termsURL: 'http://terms.example.com/'
-        };
         constructAppInstance({
           env: new juju.environments.GoEnvironment({
-            conn: new utils.SocketStub(),
+            conn: new testUtils.SocketStub(),
             ecs: new juju.EnvironmentChangeSet()
           })
         }, this);
@@ -378,23 +375,13 @@ describe('App', function() {
             'http://1.2.3.4/v5',
             'It should only ever create a single instance of the charmstore');
       });
-
     });
 
     describe('romulus services', function() {
-
-      afterEach(function() {
-        delete window.juju_config;
-      });
-
       it('sets up API clients', function() {
-        window.juju_config = {
-          plansURL: 'http://plans.example.com/',
-          termsURL: 'http://terms.example.com/'
-        };
         app = constructAppInstance({
           env: new juju.environments.GoEnvironment({
-            conn: new utils.SocketStub(),
+            conn: new testUtils.SocketStub(),
             ecs: new juju.EnvironmentChangeSet()
           })
         }, this);
@@ -405,57 +392,47 @@ describe('App', function() {
         assert.strictEqual(app.terms.url, 'http://terms.example.com/v1');
         assert.strictEqual(app.terms.bakery.macaroonName, 'Macaroons-terms');
       });
-
     });
 
   });
 
 
   describe('File drag over notification system', function() {
-    var Y, app, testUtils, juju;
+    var Y, app, env, juju;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           ['juju-gui', 'juju-tests-utils', 'juju-view-utils', 'juju-views'],
           function(Y) {
-            testUtils = Y.namespace('juju-tests.utils');
             juju = Y.namespace('juju');
             done();
           });
     });
 
     beforeEach(function() {
-      // The context monkeypatching requires a beforeEach to be defined.
+      env = new juju.environments.GoEnvironment({
+        conn: new testUtils.SocketStub(),
+        ecs: new juju.EnvironmentChangeSet()
+      });
     });
 
-    afterEach(function() {
-      app.after('destroy', function() {
+    afterEach(function(done) {
+      env.close(() => {
+        app.destroy();
         sessionStorage.setItem('credentials', null);
+        done();
       });
-
-      app.destroy();
     });
 
     function constructAppInstance(config, context) {
       config = config || {};
-      if (!config.env) {
-        config.env = new juju.environments.GoEnvironment({
-          conn: {
-            send: function() {},
-            close: function() {}
-          },
-          ecs: new juju.EnvironmentChangeSet()
-        });
-      }
-      if (config.env && config.env.connect) {
-        config.env.connect();
-        context._cleanups.push(config.env.close.bind(config.env));
-      }
+      config.env = env;
       config.container = container;
       config.viewContainer = container;
       config.jujuCoreVersion = '2.0.0';
-
+      config.consoleEnabled = true;
       app = new Y.juju.App(config);
+      env.connect();
       return app;
     }
 
@@ -495,7 +472,7 @@ describe('App', function() {
     });
 
     describe('_determineFileType', function() {
-      before(function() {
+      beforeEach(function() {
         // This gets cleaned up by the parent after function.
         constructAppInstance({}, this);
       });
@@ -631,23 +608,29 @@ describe('App', function() {
 
 
   describe('Application authentication', function() {
-    var conn, conn2, destroyMe, ecs, env, controller, juju, utils, Y;
+    var app, conn, conn2, controller, destroyMe, ecs, env, juju, legacyApp,
+        legacyEnv, Y;
     var requirements = [
       'juju-gui', 'juju-tests-utils', 'juju-views', 'environment-change-set'];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
         juju = Y.namespace('juju');
         done();
       });
     });
 
     beforeEach(function(done) {
-      conn = new utils.SocketStub();
-      conn2 = new utils.SocketStub();
+      conn = new testUtils.SocketStub();
+      conn2 = new testUtils.SocketStub();
       ecs = new juju.EnvironmentChangeSet();
       env = new juju.environments.GoEnvironment({
+        conn: conn,
+        ecs: ecs,
+        user: 'user',
+        password: 'password'
+      });
+      legacyEnv = new juju.environments.GoLegacyEnvironment({
         conn: conn,
         ecs: ecs,
         user: 'user',
@@ -659,20 +642,7 @@ describe('App', function() {
         password: 'password'
       });
       env.setCredentials({user: 'user', password: 'password'});
-      destroyMe = [env, ecs, controller];
-      done();
-    });
-
-    afterEach(function() {
-      sessionStorage.setItem('credentials', null);
-      Y.each(destroyMe, function(item) {
-        item.destroy();
-      });
-    });
-
-    // Create and return a new app. If connect is True, also connect the env.
-    var makeApp = function(connect, context) {
-      var app = new Y.juju.App({
+      app = new Y.juju.App({
         consoleEnabled: true,
         env: env,
         jujuCoreVersion: '2.0.0',
@@ -680,18 +650,38 @@ describe('App', function() {
       });
       app.controllerAPI = controller;
       app.navigate = function() { return true; };
-      if (connect) {
-        env.connect();
-        context._cleanups.push(env.close.bind(env));
-      }
-      destroyMe.push(app);
-      return app;
-    };
+      legacyApp = new Y.juju.App({
+        consoleEnabled: true,
+        env: legacyEnv,
+        jujuCoreVersion: '1.25.6',
+        viewContainer: container
+      });
+      legacyApp.controllerAPI = controller;
+      legacyApp.navigate = function() { return true; };
+      destroyMe = [ecs, controller];
+      done();
+    });
+
+    afterEach(function(done) {
+      env.close(() => {
+        legacyEnv.close(() => {
+          controller.close(() => {
+            app.destroy();
+            legacyApp.destroy();
+            sessionStorage.setItem('credentials', null);
+            Y.each(destroyMe, function(item) {
+              item.destroy();
+            });
+            done();
+          });
+        });
+      });
+    });
 
     // Ensure the given message is a login request.
     var assertIsLogin = function(message) {
-      assert.equal('Admin', message.type);
-      assert.equal('Login', message.request);
+      assert.equal(message.type, 'Admin');
+      assert.equal(message.request, 'Login');
     };
 
     // These tests fail spuriously. It appears that even though ready is called
@@ -699,9 +689,9 @@ describe('App', function() {
     // app.js is no more.
     it.skip('renders the correct login help message for Juju >= 2',
       function(done) {
-        var render = utils.makeStubMethod(ReactDOM, 'render');
+        var render = testUtils.makeStubMethod(ReactDOM, 'render');
         this._cleanups.push(render.reset);
-        var app = makeApp(true, this);
+        env.connect();
         app.after('ready', function() {
           // Log out so that the login form is displayed.
           app.logout();
@@ -720,9 +710,9 @@ describe('App', function() {
     // app.js is no more.
     it.skip('renders the correct login help message for Juju < 2',
       function(done) {
-        var render = utils.makeStubMethod(ReactDOM, 'render');
+        var render = testUtils.makeStubMethod(ReactDOM, 'render');
         this._cleanups.push(render.reset);
-        var app = makeApp(true, this);
+        env.connect();
         app.set('jujuCoreVersion', '1.25.0');
         app.after('ready', function() {
           // Log out so that the login form is displayed.
@@ -737,16 +727,15 @@ describe('App', function() {
       });
 
     it('avoids trying to login if the env is not connected', function(done) {
-      var app = makeApp(false, this); // Create a disconnected app.
-      app.after('ready', function() {
+      app.after('ready', () => {
         assert.equal(0, conn.messages.length);
         done();
       });
     });
 
     it('tries to login if the env connection is established', function(done) {
-      var app = makeApp(true, this); // Create a connected app.
-      app.after('ready', function() {
+      app.after('ready', () => {
+        env.connect();
         assert.equal(1, conn.messages.length);
         assertIsLogin(conn.last_message());
         done();
@@ -759,7 +748,6 @@ describe('App', function() {
         user: null,
         password: null
       });
-      var app = makeApp(true, this); // Create a connected app.
       env.setCredentials(null);
       app.navigate = function() { return; };
       app.after('ready', function() {
@@ -770,20 +758,12 @@ describe('App', function() {
       });
     });
 
-    it('uses the authtoken when there are no credentials', function(done) {
-      env = new juju.environments.GoLegacyEnvironment({
-        conn: conn,
-        ecs: ecs,
-        user: 'user',
-        password: 'password'
-      });
-      var app = makeApp(false, this);
+    it('uses the auth token if there are no credentials', function(done) {
       // Override the local window.location object.
-      app.location = {search: '?authtoken=demoToken'};
-      env.setCredentials(null);
-      env.connect();
-      this._cleanups.push(env.close.bind(env));
-      app.after('ready', function() {
+      legacyApp.location = {search: '?authtoken=demoToken'};
+      legacyEnv.setCredentials(null);
+      legacyEnv.connect();
+      legacyApp.after('ready', function() {
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
           RequestId: 1,
@@ -797,19 +777,11 @@ describe('App', function() {
     });
 
     it('handles multiple authtokens', function(done) {
-      env = new juju.environments.GoLegacyEnvironment({
-        conn: conn,
-        ecs: ecs,
-        user: 'user',
-        password: 'password'
-      });
-      var app = makeApp(false, this);
       // Override the local window.location object.
-      app.location = {search: '?authtoken=demoToken&authtoken=discarded'};
-      env.setCredentials(null);
-      env.connect();
-      this._cleanups.push(env.close.bind(env));
-      app.after('ready', function() {
+      legacyApp.location = {search: '?authtoken=demoToken&authtoken=discarded'};
+      legacyEnv.setCredentials(null);
+      legacyEnv.connect();
+      legacyApp.after('ready', function() {
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
           RequestId: 1,
@@ -823,19 +795,11 @@ describe('App', function() {
     });
 
     it('ignores the authtoken if credentials exist', function(done) {
-      env = new juju.environments.GoLegacyEnvironment({
-        conn: conn,
-        ecs: ecs,
-        user: 'user',
-        password: 'password'
-      });
-      var app = makeApp(false, this);
       // Override the local window.location object.
-      app.location = {search: '?authtoken=demoToken'};
-      env.setCredentials({user: 'user', password: 'password'});
-      env.connect();
-      this._cleanups.push(env.close.bind(env));
-      app.after('ready', function() {
+      legacyApp.location = {search: '?authtoken=demoToken'};
+      legacyEnv.setCredentials({user: 'user', password: 'password'});
+      legacyEnv.connect();
+      legacyApp.after('ready', function() {
         assert.equal(1, conn.messages.length);
         var message = conn.last_message();
         assert.equal('Admin', message.Type);
@@ -845,8 +809,8 @@ describe('App', function() {
     });
 
     it('displays the login view if credentials are not valid', function(done) {
-      var app = makeApp(true, this); // Create a connected app.
-      var loginStub = utils.makeStubMethod(app, '_renderLogin');
+      env.connect();
+      var loginStub = testUtils.makeStubMethod(app, '_renderLogin');
       app.after('ready', function() {
         app.env.login();
         // Mimic a login failed response assuming login is the first request.
@@ -876,20 +840,18 @@ describe('App', function() {
         jujuCoreVersion: '2.0.0'
       });
       env.connect();
-      this._cleanups.push(env.close.bind(env));
       app.env.userIsAuthenticated = true;
       app.env.login();
-      app.destroy(true);
     });
 
     it('navigates to requested url on login', function() {
       // The difference between this test and the following one is that this
       // tests the path where there is no hash in the url.
-      var stubit = utils.makeStubMethod;
-      var popup = utils.makeStubMethod(
+      var stubit = testUtils.makeStubMethod;
+      var popup = testUtils.makeStubMethod(
           Y.juju.App.prototype, 'popLoginRedirectPath', '/foo/bar');
       this._cleanups.push(popup.reset);
-      var app = makeApp(true, this);
+      env.connect();
       stubit(app, 'maskVisibility');
       stubit(app, 'navigate');
       stubit(app, 'dispatch');
@@ -904,11 +866,11 @@ describe('App', function() {
     });
 
     it('does not navigate to requested url on login with gisf', function() {
-      var stubit = utils.makeStubMethod;
-      var popup = utils.makeStubMethod(
+      var stubit = testUtils.makeStubMethod;
+      var popup = testUtils.makeStubMethod(
           Y.juju.App.prototype, 'popLoginRedirectPath', '/foo/bar');
       this._cleanups.push(popup.reset);
-      var app = makeApp(true, this);
+      env.connect();
       app.set('gisf', true);
       stubit(app, 'maskVisibility');
       stubit(app, 'navigate');
@@ -923,15 +885,14 @@ describe('App', function() {
     it.skip('creates a notification if logged in with a token', function(done) {
       // We need to change the prototype before we instantiate.
       // See the "this.reset()" call in the callback below that cleans up.
-      var stub = utils.makeStubMethod(Y.juju.App.prototype, 'onLogin');
-      var app = makeApp(false, this);
-      utils.makeStubMethod(app, 'maskVisibility');
+      var stub = testUtils.makeStubMethod(Y.juju.App.prototype, 'onLogin');
+      testUtils.makeStubMethod(app, 'maskVisibility');
       app.redirectPath = '/foo/bar/';
       app.location = {
         toString: function() {return '/login/';},
         search: '?authtoken=demoToken'};
-      utils.makeStubMethod(app.env, 'onceAfter');
-      utils.makeStubMethod(app, 'navigate');
+      testUtils.makeStubMethod(app.env, 'onceAfter');
+      testUtils.makeStubMethod(app, 'navigate');
       stub.addCallback(function() {
         // Clean up.
         this.reset();
@@ -959,19 +920,15 @@ describe('App', function() {
       });
       env.setCredentials(null);
       env.connect();
-      this._cleanups.push(env.close.bind(env));
       conn.msg({
         'request-id': conn.last_message()['request-id'],
         Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
     });
 
     it('tries to log in on first connection', function(done) {
-      var self = this;
       // This is the case when credential are stashed.
-      var app = makeApp(false, this); // Create a disconnected app.
       app.after('ready', function() {
         env.connect();
-        self._cleanups.push(env.close.bind(env));
         assert.equal(1, conn.messages.length);
         assertIsLogin(conn.last_message());
         done();
@@ -980,7 +937,7 @@ describe('App', function() {
 
     it('tries to re-login on disconnections', function(done) {
       // This is the case when credential are stashed.
-      var app = makeApp(true, this); // Create a connected app.
+      env.connect();
       app.after('ready', function() {
         // Disconnect and reconnect the WebSocket.
         conn.transient_close();
@@ -994,7 +951,7 @@ describe('App', function() {
     it('tries to re-login with macaroons on disconnections', function(done) {
       sessionStorage.clear();
       env.setAttrs({user: null, password: null, jujuCoreVersion: '2.0.0'});
-      var app = makeApp(true, this); // Create a connected app.
+      env.connect();
       app.after('ready', function() {
         env.setCredentials({macaroons: ['macaroon']});
         // Disconnect and reconnect the WebSocket.
@@ -1009,13 +966,15 @@ describe('App', function() {
       });
     });
 
-    it('should allow logging out', function() {
+    it('should allow closing the connection', function(done) {
       env.connect();
-      this._cleanups.push(env.close.bind(env));
-      env.logout();
-      assert.strictEqual(env.userIsAuthenticated, false);
-      assert.deepEqual(
-        env.getCredentials(), {user: '', password: '', macaroons: null});
+      env.close(() => {
+        assert.strictEqual(env.userIsAuthenticated, false);
+        assert.deepEqual(
+          env.getCredentials(), {user: '', password: '', macaroons: null});
+        done();
+      });
+
     });
 
     it('normally uses window.location', function() {
@@ -1024,13 +983,11 @@ describe('App', function() {
       // the app copies window.location to app.location, so that we
       // can easily override it.  This test verifies that the initialization
       // actually does stash window.location as we exprect.
-      var app = makeApp(false, this);
       assert.strictEqual(window.location, app.location);
     });
 
     describe('popLoginRedirectPath', function() {
       it('returns and clears redirectPath', function() {
-        var app = makeApp(false, this);
         app.redirectPath = '/foo/bar/';
         app.location = {toString: function() {return '/login/';}};
         assert.equal(app.popLoginRedirectPath(), '/foo/bar/');
@@ -1038,7 +995,6 @@ describe('App', function() {
       });
 
       it('prefers the current path if not login', function() {
-        var app = makeApp(false, this);
         app.redirectPath = '/';
         app.location = {toString: function() {return '/foo/bar/';}};
         assert.equal(app.popLoginRedirectPath(), '/foo/bar/');
@@ -1046,7 +1002,6 @@ describe('App', function() {
       });
 
       it('uses root if the redirectPath is /login/', function() {
-        var app = makeApp(false, this);
         app.redirectPath = '/login/';
         app.location = {toString: function() {return '/login/';}};
         assert.equal(app.popLoginRedirectPath(), '/');
@@ -1054,7 +1009,6 @@ describe('App', function() {
       });
 
       it('uses root if the redirectPath is /login', function() {
-        var app = makeApp(false, this);
         // Missing trailing slash is only difference from previous test.
         app.redirectPath = '/login';
         app.location = {toString: function() {return '/login';}};
@@ -1065,7 +1019,6 @@ describe('App', function() {
 
     describe('currentUrl', function() {
       it('returns the full current path', function() {
-        var app = makeApp(false, this);
         var expected = '/foo/bar/';
         app.location = {
           toString: function() {return 'https://foo.com' + expected;}};
@@ -1077,8 +1030,7 @@ describe('App', function() {
       });
 
       // Ensure the given token is removed from the query string.
-      var checkTokenIgnored = function(token) {
-        var app = makeApp(false, this);
+      var checkTokenIgnored = function(context, token) {
         var expected_path = '/foo/bar/';
         var expected_querystring = '';
         var expected_hash = '';
@@ -1109,14 +1061,14 @@ describe('App', function() {
         // This is intended to be the canonical current path.  This should
         // never include authtokens, which are transient and can never be
         // re-used.
-        checkTokenIgnored('authtoken');
+        checkTokenIgnored(this, 'authtoken');
       });
 
       it('ignores changestokens', function() {
         // This is intended to be the canonical current path.  This should
         // never include changestokens, which are transient and can never be
         // re-used.
-        checkTokenIgnored('changestoken');
+        checkTokenIgnored(this, 'changestoken');
       });
 
     });
@@ -1125,7 +1077,7 @@ describe('App', function() {
 
 
   describe('Application Connection State', function() {
-    var Y, app, conn, controllerAPI, env, juju, testUtils;
+    var Y, app, conn, controllerAPI, env, juju;
 
     function constructAppInstance() {
       var noop = function() {return this;};
@@ -1150,7 +1102,11 @@ describe('App', function() {
           on: noop,
           size: function() {return 0;}
         },
-        reset: sinon.stub()
+        reset: sinon.stub(),
+        environment: {
+          set: () => {},
+          get: () => {}
+        }
       };
       app.dispatch = function() {};
       return app;
@@ -1160,7 +1116,6 @@ describe('App', function() {
       Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'],
           function(Y) {
             juju = Y.namespace('juju');
-            testUtils = Y.namespace('juju-tests.utils');
             container = Y.Node.create(
                 '<div id="test" class="container"></div>');
             done();
@@ -1182,9 +1137,11 @@ describe('App', function() {
       env.login = sinon.stub();
     });
 
-    afterEach(function() {
-      env.close();
-      app.destroy();
+    afterEach(function(done) {
+      env.close(() => {
+        app.destroy();
+        done();
+      });
     });
 
     it('should be able to handle env connection status changes', function() {
@@ -1261,7 +1218,7 @@ describe('App', function() {
   });
 
   describe('switchEnv', function() {
-    var Y, app, testUtils;
+    var Y, app;
     var _generateMockedApp = function(noWebsocket) {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
@@ -1304,6 +1261,9 @@ describe('App', function() {
         setCredentials: function(obj) {
           this.setUser = obj.user;
           this.setPassword = obj.password;
+        },
+        getCredentials: function() {
+          return {user: this.setUser, password: this.setPassword};
         }
       };
       if (!noWebsocket) {
@@ -1337,7 +1297,6 @@ describe('App', function() {
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
-        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
@@ -1418,7 +1377,7 @@ describe('App', function() {
   });
 
   describe('getUser', function() {
-    var app, juju, utils, Y;
+    var app, juju, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
@@ -1430,14 +1389,13 @@ describe('App', function() {
       ],
       function(Y) {
         juju = Y.namespace('juju');
-        utils = Y.namespace('juju-tests.utils');
         done();
       });
     });
 
     beforeEach(() => {
       const env = new juju.environments.GoEnvironment({
-        conn: new utils.SocketStub(),
+        conn: new testUtils.SocketStub(),
         ecs: new juju.EnvironmentChangeSet()
       });
       app = new juju.App({
@@ -1468,7 +1426,7 @@ describe('App', function() {
   });
 
   describe('clearUser', function() {
-    var app, juju, utils, Y;
+    var app, juju, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
@@ -1480,14 +1438,13 @@ describe('App', function() {
       ],
       function(Y) {
         juju = Y.namespace('juju');
-        utils = Y.namespace('juju-tests.utils');
         done();
       });
     });
 
     beforeEach(() => {
       const env = new juju.environments.GoEnvironment({
-        conn: new utils.SocketStub(),
+        conn: new testUtils.SocketStub(),
         ecs: new juju.EnvironmentChangeSet()
       });
       app = new juju.App({
@@ -1519,11 +1476,10 @@ describe('App', function() {
   });
 
   describe('storeUser', function() {
-    var Y, app, csStub, jemStub, stub, testUtils;
+    var Y, app, csStub, jemStub, stub;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
-        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
@@ -1575,20 +1531,19 @@ describe('App', function() {
   });
 
   describe('_getAuth', function() {
-    var Y, app, credStub, stub, utils;
+    var Y, app, credStub, stub;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
         'juju-gui',
         'juju-tests-utils'
       ], function(Y) {
-        utils = Y.namespace('juju-tests.utils');
         done();
       });
     });
 
     beforeEach(function() {
-      stub = utils.makeStubMethod(
+      stub = testUtils.makeStubMethod(
         Y.juju.App.prototype, 'setUpControllerAPI');
       this._cleanups.push(stub);
       container = Y.Node.create('<div id="test" class="container"></div>');
@@ -1597,7 +1552,8 @@ describe('App', function() {
         consoleEnabled: true,
         jujuCoreVersion: '2.0.0'
       });
-      credStub = utils.makeStubMethod(app.env, 'getCredentials', {user: ''});
+      credStub = testUtils.makeStubMethod(
+        app.env, 'getCredentials', {user: ''});
       this._cleanups.push(credStub.reset);
     });
 
@@ -1896,20 +1852,22 @@ describe('App', function() {
     // authenticated, and if it is, check that the given credentials have been
     // set as an attribute of the connection object.
     const checkLoggedInWithCredentials = (api, loggedIn, credentials) => {
+      if (credentials) {
+        // Credentials have been set on the API.
+        assert.strictEqual(api.setCredentials.calledOnce, true);
+        assert.deepEqual(api.setCredentials.getCall(0).args, [credentials]);
+      } else {
+        // No credentials have been set.
+        assert.strictEqual(api.setCredentials.called, false);
+      }
       if (loggedIn) {
-        if (credentials) {
-          // Credentials have been set on the API.
-          assert.strictEqual(api.setCredentials.calledOnce, true);
-          assert.deepEqual(api.setCredentials.getCall(0).args, [credentials]);
-        }
         // The API has been authenticated with credentials.
         assert.strictEqual(api.login.calledOnce, true);
         assert.strictEqual(api.login.getCall(0).args.length, 0);
-        return;
+      } else {
+        // Login has not been called.
+        assert.strictEqual(api.login.called, false);
       }
-      // No credentials have been set and login has not been called.
-      assert.strictEqual(api.setCredentials.called, false);
-      assert.strictEqual(api.login.called, false);
     };
 
     // Check whether the given API connection mock (see makeAPIConnection) is
@@ -1954,16 +1912,16 @@ describe('App', function() {
       const model = makeAPIConnection(false);
       app.loginToAPIs(credentials, useMacaroons, [controller, model]);
       checkLoggedInWithCredentials(controller, true, credentials);
-      checkLoggedInWithCredentials(model, false, null);
+      checkLoggedInWithCredentials(model, false, credentials);
     });
 
-    it('is a no-op if no API is connected', () => {
+    it('only sets credentials if no API is connected', () => {
       const credentials = {user: 'user-who', password: 'passwd'};
       const useMacaroons = false;
       app.controllerAPI = makeAPIConnection(false);
       app.env = null;
       app.loginToAPIs(credentials, useMacaroons);
-      checkLoggedInWithCredentials(app.controllerAPI, false, null);
+      checkLoggedInWithCredentials(app.controllerAPI, false, credentials);
     });
 
     it('does not set credentials if they are not provided', () => {
@@ -2006,7 +1964,7 @@ describe('App', function() {
   });
 
   describe('checkUserCredentials', function() {
-    var app, juju, utils;
+    var app, juju;
 
     before(function(done) {
       YUI(GlobalConfig).use([
@@ -2018,14 +1976,13 @@ describe('App', function() {
       ],
       function(Y) {
         juju = Y.namespace('juju');
-        utils = Y.namespace('juju-tests.utils');
         done();
       });
     });
 
     beforeEach(() => {
       const env = new juju.environments.GoEnvironment({
-        conn: new utils.SocketStub(),
+        conn: new testUtils.SocketStub(),
         ecs: new juju.EnvironmentChangeSet()
       });
       app = new juju.App({
@@ -2053,11 +2010,10 @@ describe('App', function() {
   });
 
   describe('isLegacyJuju', function() {
-    var app, stub, testUtils, Y;
+    var app, stub, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
-        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });

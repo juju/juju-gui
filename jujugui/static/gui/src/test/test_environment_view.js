@@ -21,8 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('juju environment view', function() {
-    var view, views, models, Y, container, d3, db, conn,
-        juju, charm, ecs, env, relationUtils, testUtils, fakeStore;
+    var view, views, models, Y, container, d3, db, conn, juju, jujuConfig,
+        charm, ecs, env, relationUtils, testUtils, fakeStore;
 
     var environment_delta = {
       'result': [
@@ -235,12 +235,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     after(function(done)  {
-      env.close();
-      env.destroy();
-      done();
+      env.close(() => {
+        env.destroy();
+        done();
+      });
     });
 
     beforeEach(function() {
+      jujuConfig = window.juju_config;
+      window.juju_config = {charmstoreURL: 'http://1.2.3.4/'};
       container = testUtils.makeContainer(this, 'content');
       // Use a clone to avoid any mutation
       // to the input set (as happens with processed
@@ -274,6 +277,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       if (!view.get('destroyed')) {
         view.destroy({remove: true});
       }
+      window.juju_config = jujuConfig;
     });
 
     function getParentId(view) {
@@ -476,23 +480,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
     );
 
-    it('must be able to render service icons',
-        function(done) {
-          // Create an instance of EnvironmentView with custom env
-          var view = new views.environment({
-            container: container,
-            db: db,
-            env: env,
-            charmstore: fakeStore
-          });
-          view.render();
-          var service = container.one('.service');
-          assert.equal(service.one('.service-icon').getAttribute('href'),
-            'v5/precise/wordpress-6/icon.svg');
-
-          done();
-        }
-    );
+    it('must be able to render service icons', function(done) {
+      // Create an instance of EnvironmentView with custom env
+      var view = new views.environment({
+        container: container,
+        db: db,
+        env: env,
+        charmstore: fakeStore
+      });
+      view.render();
+      var service = container.one('.service');
+      assert.equal(
+        service.one('.service-icon').getAttribute('href'),
+        'http://1.2.3.4/v5/precise/wordpress-6/icon.svg');
+      done();
+    });
 
     it('must be able to display service icons as pending deletion', function() {
       db.services.getById('wordpress').set('deleted', true);
@@ -1663,9 +1665,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           charm: 'cs:mysql-1'
         }
       };
-
       var boxes = views.toBoundingBoxes(module, services, existing, fakeEnv);
-
       assert.equal(boxes['local:ceph-1'].icon, 'local charm icon');
 
       // The mysql charm has an icon from on the server.
