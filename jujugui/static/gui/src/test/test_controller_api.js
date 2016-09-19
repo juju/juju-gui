@@ -68,7 +68,6 @@ describe('Controller API', function() {
   };
 
   describe('findFacadeVersion', function() {
-
     beforeEach(function() {
       controllerAPI.set('facades', {'Test': [0, 1]});
     });
@@ -99,7 +98,40 @@ describe('Controller API', function() {
     it('returns null if a facade version is not supported', function() {
       assert.strictEqual(controllerAPI.findFacadeVersion('BadWolf', 42), null);
     });
+  });
 
+  describe('close', () => {
+    it('stops the pinger', function(done) {
+      const originalClearInterval = clearInterval;
+      clearInterval = sinon.stub();
+      this._cleanups.push(() => {
+        clearInterval = originalClearInterval;
+      });
+      controllerAPI._pinger = 'I am the pinger';
+      controllerAPI.close(() => {
+        assert.strictEqual(clearInterval.calledOnce, true);
+        const pinger = clearInterval.getCall(0).args[0];
+        assert.strictEqual(pinger, 'I am the pinger');
+        assert.strictEqual(controllerAPI._pinger, null);
+        done();
+      });
+    });
+
+    it('resets attributes', done => {
+      controllerAPI.set('controllerAccess', 'test');
+      controllerAPI.close(() => {
+        assert.strictEqual(controllerAPI.get('controllerAccess'), '');
+        done();
+      });
+    });
+
+    it('properly disconnects the user', done => {
+      controllerAPI.userIsAuthenticated = true;
+      controllerAPI.close(() => {
+        assert.strictEqual(controllerAPI.userIsAuthenticated, false);
+        done();
+      });
+    });
   });
 
   describe('login', function() {

@@ -150,6 +150,53 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     };
 
+    describe('close', () => {
+      it('stops the pinger', function(done) {
+        const originalClearInterval = clearInterval;
+        clearInterval = sinon.stub();
+        this._cleanups.push(() => {
+          clearInterval = originalClearInterval;
+        });
+        env._pinger = 'I am the pinger';
+        env.close(() => {
+          assert.strictEqual(clearInterval.calledOnce, true);
+          const pinger = clearInterval.getCall(0).args[0];
+          assert.strictEqual(pinger, 'I am the pinger');
+          assert.strictEqual(env._pinger, null);
+          done();
+        });
+      });
+
+      it('stops the mega-watcher', done => {
+        env._allWatcherId = 42;
+        let called = false;
+        env._stopWatching = cb => {
+          called = true;
+          cb();
+        };
+        env.close(() => {
+          assert.strictEqual(called, true);
+          done();
+        });
+      });
+
+      it('resets attributes', done => {
+        env.set('environmentName', 'test');
+        env.close(() => {
+          assert.strictEqual(env.get('environmentName'), '');
+          done();
+        });
+      });
+
+      it('properly disconnects the user', done => {
+        env.userIsAuthenticated = true;
+        env.close(() => {
+          assert.strictEqual(env.userIsAuthenticated, false);
+          done();
+        });
+      });
+    });
+
     describe('findFacadeVersion', function() {
 
       beforeEach(function() {
@@ -953,9 +1000,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     describe('local charm upload support', function() {
+      let jujuConfig;
+
+      beforeEach(function() {
+        jujuConfig = window.juju_config;
+      });
 
       afterEach(function() {
-        delete window.juju_config;
+        window.juju_config = jujuConfig;
       });
 
       it('uses the correct endpoint when served from juju', function() {

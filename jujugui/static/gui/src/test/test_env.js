@@ -48,9 +48,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.destroy();
     });
 
-    it('calls "beforeClose" when the connection is closed', function() {
-      var closed = false;
-      var conn = new ClientConnection({
+    it('calls "cleanup" when the connection is closed', function() {
+      let closed = false;
+      const conn = new ClientConnection({
         juju: {
           open: function() {},
           close: function() {
@@ -58,20 +58,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         }
       });
-      var env = new environments.BaseEnvironment({conn: conn});
+      const env = new environments.BaseEnvironment({conn: conn});
       env.connect();
-      var called = false;
-      env.beforeClose = function(callback) {
+      // Simulate the connection is authenticated.
+      env.userIsAuthenticated = true;
+      env.setCredentials({user: 'who', 'password': 'tardis'});
+      let called = false;
+      env.cleanup = function(done) {
         called = true;
         // The connection is still open.
         assert.strictEqual(closed, false, 'connection unexpectedly closed');
         // Close the connection.
-        callback();
+        done();
+        // The underlaying WebSocket connection has been closed as well, and
+        // login data has been properly cleaned up.
         assert.strictEqual(closed, true, 'connection not closed');
+        assert.strictEqual(env.userIsAuthenticated, false);
+        assert.strictEqual(env.getCredentials().areAvailable, false);
       };
       env.close();
-      // The beforeClose method has been called.
-      assert.strictEqual(called, true, 'before hook not called');
+      // The cleanup method has been called.
+      assert.strictEqual(called, true, 'cleanup not called');
       env.destroy();
     });
 

@@ -2280,6 +2280,11 @@ YUI.add('juju-models', function(Y) {
       return this.resolveModelByName(model_id);
     },
 
+    /**
+      Reset all database collections.
+
+      @method reset
+    */
     reset: function() {
       this.services.reset();
       this.remoteServices.reset();
@@ -2288,6 +2293,7 @@ YUI.add('juju-models', function(Y) {
       this.relations.reset();
       this.notifications.reset();
       this.units.reset();
+      this.environment.reset();
     },
 
     /**
