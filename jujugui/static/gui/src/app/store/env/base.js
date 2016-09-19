@@ -275,9 +275,9 @@ YUI.add('juju-env-base', function(Y) {
         this._txn_callbacks = {};
       }
       this.ws.debug = this.get('debug');
-      this.ws.onmessage = Y.bind(this.on_message, this);
-      this.ws.onopen = Y.bind(this.on_open, this);
-      this.ws.onclose = Y.bind(this.on_close, this);
+      this.ws.onmessage = this.on_message.bind(this);
+      this.ws.onopen = this.on_open.bind(this);
+      this.ws.onclose = this.on_close.bind(this);
       // Our fake backends have "open" methods.  Call them, now that we have
       // set our listeners up.
       if (this.ws.open) {

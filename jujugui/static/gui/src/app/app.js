@@ -1842,6 +1842,9 @@ YUI.add('juju-gui', function(Y) {
     @method destructor
     */
     destructor: function() {
+      // Clear the database handler timer. Without this, the application could
+      // dispatch after it is destroyed, resulting in a dirty state and bugs
+      // difficult to debug, so please do not remove this code.
       if (this.dbChangedTimer) {
         clearTimeout(this.dbChangedTimer);
       }
