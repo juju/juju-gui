@@ -1035,7 +1035,7 @@ describe('utilities', function() {
         },
         controllerAPI: {
           createModel: sinon.stub(),
-          get: sinon.stub().returns('user-spinach'),
+          getCredentials: sinon.stub().returns({user: 'user-spinach'}),
         },
         _autoPlaceUnits: sinon.stub(),
         set: sinon.stub(),
@@ -1044,7 +1044,7 @@ describe('utilities', function() {
         switchEnv: sinon.stub()
       };
       switchModel = utils.switchModel;
-      utils.switchModel = sinon.stub();
+      utils.switchModel = sinon.stub().callsArgWith(6, app.env);
     });
 
     afterEach(() => {
@@ -1100,9 +1100,20 @@ describe('utilities', function() {
       assert.equal(switchArgs[3], 'uuid123');
       assert.deepEqual(switchArgs[4], [model]);
       assert.equal(switchArgs[5], 'koala');
-      assert.isNull(switchArgs[6]);
+      assert.isFunction(switchArgs[6]);
       assert.isFalse(switchArgs[7]);
       assert.isFalse(switchArgs[8]);
+    });
+
+    it('can commit changes after connecting to a new model', function() {
+      var model = {
+        name: 'koala',
+        uuid: 'uuid123'
+      };
+      utils._newModelCallback(app, callback, null, model);
+      assert.equal(commit.callCount, 1);
+      assert.deepEqual(commit.args[0][0], app.env);
+      assert.equal(callback.callCount, 1);
     });
   });
 

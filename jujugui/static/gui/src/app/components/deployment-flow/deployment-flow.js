@@ -47,8 +47,8 @@ YUI.add('deployment-flow', function() {
     },
 
     CLOUDS: {
-      'cloud-google': {
-        id: 'cloud-google',
+      'google': {
+        id: 'google',
         showLogo: true,
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',
         svgHeight: 33,
@@ -96,8 +96,8 @@ YUI.add('deployment-flow', function() {
             </a>.
           </p>)
       },
-      'cloud-azure': {
-        id: 'cloud-azure',
+      'azure': {
+        id: 'azure',
         showLogo: true,
         signupUrl: 'https://azure.microsoft.com/en-us/free/',
         svgHeight: 24,
@@ -130,8 +130,8 @@ YUI.add('deployment-flow', function() {
             &nbsp;for details.
           </p>)
       },
-      'cloud-aws': {
-        id: 'cloud-aws',
+      'aws': {
+        id: 'aws',
         showLogo: true,
         signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
         'registration/index.html',
@@ -159,8 +159,8 @@ YUI.add('deployment-flow', function() {
             </a>
           </p>)
       },
-      'cloud-openstack': {
-        id: 'cloud-openstack',
+      'openstack': {
+        id: 'openstack',
         showLogo: false,
         title: 'OpenStack',
         forms: {
@@ -189,8 +189,8 @@ YUI.add('deployment-flow', function() {
           }]
         }
       },
-      'cloud-cloudsigma': {
-        id: 'cloud-cloudsigma',
+      'cloudsigma': {
+        id: 'cloudsigma',
         showLogo: false,
         title: 'CloudSigma',
         forms: {
@@ -203,8 +203,8 @@ YUI.add('deployment-flow', function() {
           }]
         }
       },
-      'cloud-joyent': {
-        id: 'cloud-joyent',
+      'joyent': {
+        id: 'joyent',
         showLogo: false,
         title: 'Joyent',
         forms: {
@@ -223,8 +223,8 @@ YUI.add('deployment-flow', function() {
           }]
         }
       },
-      'cloud-maas': {
-        id: 'cloud-maas',
+      'maas': {
+        id: 'maas',
         showLogo: false,
         title: 'MAAS',
         forms: {
@@ -234,8 +234,8 @@ YUI.add('deployment-flow', function() {
           }]
         }
       },
-      'cloud-rackspace': {
-        id: 'cloud-rackspace',
+      'rackspace': {
+        id: 'rackspace',
         showLogo: false,
         title: 'Rackspace',
         forms: {
@@ -264,8 +264,8 @@ YUI.add('deployment-flow', function() {
           }]
         }
       },
-      'cloud-vsphere': {
-        id: 'cloud-vsphere',
+      'vsphere': {
+        id: 'vsphere',
         showLogo: false,
         title: 'vSphere',
         forms: {

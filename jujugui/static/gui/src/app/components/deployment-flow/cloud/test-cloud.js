@@ -34,24 +34,24 @@ describe('DeploymentCloud', function() {
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
     clouds = {
-      'cloud-google': {
-        id: 'cloud-google',
+      'google': {
+        id: 'google',
         showLogo: true,
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',
         svgHeight: 33,
         svgWidth: 256,
         title: 'Google Compute Engine'
       },
-      'cloud-azure': {
-        id: 'cloud-azure',
+      'azure': {
+        id: 'azure',
         showLogo: true,
         signupUrl: 'https://azure.microsoft.com/en-us/free/',
         svgHeight: 24,
         svgWidth: 204,
         title: 'Microsoft Azure'
       },
-      'cloud-aws': {
-        id: 'cloud-aws',
+      'aws': {
+        id: 'aws',
         showLogo: true,
         signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
         'registration/index.html',
@@ -66,9 +66,9 @@ describe('DeploymentCloud', function() {
       }
     };
     cloudList = {
-      'cloud-google': {name: 'google'},
-      'cloud-azure': {name: 'azure'},
-      'cloud-aws': {name: 'aws'}
+      'google': {name: 'google'},
+      'azure': {name: 'azure'},
+      'aws': {name: 'aws'}
     };
   });
 
@@ -86,7 +86,7 @@ describe('DeploymentCloud', function() {
       <div>
         <ul className="deployment-cloud__list">
           <li className="deployment-cloud__cloud four-col"
-            key="cloud-google"
+            key="google"
             onClick={options[0].props.onClick}
             role="button"
             tabIndex="0">
@@ -98,7 +98,7 @@ describe('DeploymentCloud', function() {
             </span>
           </li>
           <li className="deployment-cloud__cloud four-col"
-            key="cloud-azure"
+            key="azure"
             onClick={options[1].props.onClick}
             role="button"
             tabIndex="0">
@@ -110,7 +110,7 @@ describe('DeploymentCloud', function() {
             </span>
           </li>
           <li className="deployment-cloud__cloud four-col last-col"
-            key="cloud-aws"
+            key="aws"
             onClick={options[2].props.onClick}
             role="button"
             tabIndex="0">
@@ -150,7 +150,7 @@ describe('DeploymentCloud', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCloud
         acl={acl}
-        cloud={{name: 'google', id: 'cloud-google'}}
+        cloud={{name: 'google', id: 'google'}}
         clouds={clouds}
         listClouds={sinon.stub().callsArgWith(0, null, {})}
         setCloud={sinon.stub()} />, true);
@@ -170,7 +170,7 @@ describe('DeploymentCloud', function() {
 
   it('can select a cloud if there is only one', function() {
     cloudList = {
-      'cloud-google': {name: 'google'}
+      'google': {name: 'google'}
     };
     const setCloud = sinon.stub();
     jsTestUtils.shallowRender(
@@ -182,7 +182,7 @@ describe('DeploymentCloud', function() {
         setCloud={setCloud} />);
     assert.equal(setCloud.callCount, 1);
     assert.deepEqual(setCloud.args[0][0], {
-      id: 'cloud-google',
+      id: 'google',
       name: 'google'
     });
   });
@@ -199,6 +199,6 @@ describe('DeploymentCloud', function() {
     var output = renderer.getRenderOutput();
     output.props.children[0].props.children[0].props.onClick();
     assert.equal(setCloud.callCount, 1);
-    assert.deepEqual(setCloud.args[0][0], {name: 'google', id: 'cloud-google'});
+    assert.deepEqual(setCloud.args[0][0], {name: 'google', id: 'google'});
   });
 });

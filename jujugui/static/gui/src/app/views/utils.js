@@ -1582,13 +1582,10 @@ YUI.add('juju-view-utils', function(Y) {
     }
     controllerAPI.createModel(
       model,
-      controllerAPI.get('user'),
+      controllerAPI.getCredentials().user,
       {
-        // Check that this is a credential tag, if not turn it into one.
-        credentialTag: credential.indexOf('cloudcred-') === 0 ?
-          credential : `cloudcred-${credential}`,
-        // Check that this is a cloud tag, if not turn it into one.
-        cloudTag: cloud.indexOf('cloud-') === 0 ? cloud : `cloud-${cloud}`,
+        credentialTag: `cloudcred-${credential}`,
+        cloudTag: `cloud-${cloud}`,
         region: region
       },
       utils._newModelCallback.bind(this, app, callback));
@@ -1606,20 +1603,14 @@ YUI.add('juju-view-utils', function(Y) {
   */
   utils._newModelCallback = function(app, callback, error, model) {
     if (error) throw error;
-    const env = app.env;
-    // If we already have a login handler attached then detach it.
-    utils._detachOnLoginHandler();
-    // After the model connects it will emit a login event, listen
-    // for that event so that we know when to commit the changeset.
-    utils._onLoginHandler = env.on('login', evt => {
-      utils._detachOnLoginHandler();
-      env.get('ecs').commit(env);
-      callback();
-    });
     utils.switchModel.call(
       app, app.createSocketURL.bind(app, app.get('socketTemplate')),
       app.switchEnv.bind(app), app.env, model.uuid, [model], model.name,
-      null, false, false);
+      env => {
+        utils._detachOnLoginHandler();
+        env.get('ecs').commit(env);
+        callback();
+      }, false, false);
   };
 
   /**

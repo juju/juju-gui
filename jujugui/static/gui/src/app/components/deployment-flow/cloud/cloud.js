@@ -129,11 +129,10 @@ YUI.add('deployment-cloud', function() {
       if (!info) {
         return cloud.name;
       }
-      const id = info.id.replace('cloud-', '');
       return info.showLogo ? (
         <juju.components.SvgIcon
         height={info.svgHeight}
-        name={id}
+        name={info.id}
         width={info.svgWidth} />) : info.title;
     },
 
