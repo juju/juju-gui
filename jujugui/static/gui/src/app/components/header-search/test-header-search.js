@@ -91,7 +91,9 @@ describe('HeaderSearch', function() {
   it('gets cleared when closed', function() {
     var getAppState = sinon.stub();
     getAppState.withArgs(
-      'current', 'sectionC', 'component').returns('charmbrowser');
+      'current', 'sectionC', 'component').onFirstCall().returns('charmbrowser');
+    getAppState.withArgs(
+      'current', 'sectionC', 'component').onSecondCall().returns(null);
     getAppState.withArgs('current', 'sectionC', 'metadata')
                .onFirstCall().returns({ search: 'hexo' });
     getAppState.withArgs('current', 'sectionC', 'metadata')
@@ -123,7 +125,40 @@ describe('HeaderSearch', function() {
     // it now treats an undefined value as the input being 'uncontrolled',
     // so it was switching between controlled and uncontrolled throwing errors.
     assert.equal(input.props.value, '');
-    assert.equal(instance.refs.searchInput.focus.callCount, 1);
+    assert.equal(instance.refs.searchInput.focus.callCount, 0);
+  });
+
+  it('does not clear the search when rerendering', function() {
+    var getAppState = sinon.stub();
+    getAppState.withArgs(
+      'current', 'sectionC', 'component').returns('charmbrowser');
+    getAppState.withArgs('current', 'sectionC', 'metadata')
+               .onFirstCall().returns({ search: 'hexo' });
+    getAppState.withArgs('current', 'sectionC', 'metadata')
+               .onSecondCall().returns({ search: '' });
+    var changeState = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.HeaderSearch
+        getAppState={getAppState}
+        changeState={changeState} />, true);
+    var output = renderer.getRenderOutput();
+    var instance = renderer.getMountedInstance();
+    instance.refs = {
+      searchInput: {
+        focus: sinon.stub()
+      }
+    };
+    // The input should have the metadata search value
+    var input = output.props.children[0].props.children[1];
+    assert.equal(input.props.value, 'hexo');
+    // re-render which will get the new state.
+    renderer.render(
+      <juju.components.HeaderSearch
+        getAppState={getAppState}
+        changeState={changeState} />, true);
+    output = renderer.getRenderOutput();
+    input = output.props.children[0].props.children[1];
+    assert.equal(input.props.value, 'hexo');
   });
 
   it('becomes active when the input is focused', function() {
