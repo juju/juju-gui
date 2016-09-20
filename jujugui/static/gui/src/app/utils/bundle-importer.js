@@ -531,28 +531,39 @@ YUI.add('bundle-importer', function(Y) {
         move on to the next record.
     */
     _execute_addCharm: function(record, next) {
-      var db = this.db;
-      var charmId = record.args[0];
-      this.fakebackend._loadCharm(charmId, {
-        'success': function(charm) {
-          if (db.charms.getById(charm.get('id')) === null) {
-            // Mark the charm as loaded so that its endpoints get added to the
-            // map of available endpoints.
-            charm.loaded = true;
-            db.charms.add(charm);
-          }
-          this.env.addCharm(charmId, null, () => {});
-          this._saveModelToRequires(record.id, charm);
-          next();
-        }.bind(this),
-        'failure': function() {
-          db.notifications.add({
-            title: 'Unable to load charm',
-            message: 'Charm ' + charmId + ' was not able to be loaded.',
-            level: 'error'
+      const db = this.db;
+      const notify = msg => {
+        db.notifications.add({
+          title: 'Unable to load charm',
+          message: msg,
+          level: 'error'
+        });
+      };
+
+      this.fakebackend
+          .get('charmstore')
+          .getCanonicalId(record.args[0], (err, charmId) => {
+            if (err) {
+              notify(`Invalid charm id: ${record.args[0]}`);
+              return;
+            }
+            this.fakebackend._loadCharm(charmId, {
+              'success': function(charm) {
+                if (db.charms.getById(charm.get('id')) === null) {
+                  // Mark the charm as loaded so that its endpoints get added
+                  // to the map of available endpoints.
+                  charm.loaded = true;
+                  db.charms.add(charm);
+                }
+                this.env.addCharm(charmId, null, () => {});
+                this._saveModelToRequires(record.id, charm);
+                next();
+              }.bind(this),
+              'failure': function() {
+                notify(`Charm ${charmId} was not able to be loaded.`);
+              }
+            });
           });
-        }
-      });
     },
 
     /**

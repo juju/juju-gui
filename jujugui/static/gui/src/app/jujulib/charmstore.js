@@ -261,6 +261,32 @@ var module = module;
     },
 
     /**
+      Takes the entity id and returns the canonical id for the entity.
+
+      There are a number of variations on charm and bundle ids which are all
+      associated to a canonical id. Ex) cs:trusty/ghost === cs:ghost.
+
+      @method getCanonicalId
+      @param {String} entityId The id to use to fetch the canonical id of.
+      @param {Function} callback The callback which gets called with an error
+        or the canonical entity id.
+    */
+    getCanonicalId: function(entityId, callback) {
+      const handler = (error, data) => {
+        if (error) {
+          callback(error, null);
+          return;
+        }
+        callback(null, data.Id);
+      };
+      jujulib._makeRequest(
+        this.bakery,
+        this._generatePath(entityId.replace('cs:', ''), null, '/meta/id'),
+        'GET',
+        null,
+        handler);
+    },
+    /**
       Makes a request to the charmstore api for the supplied id. Whether that
       be a charm or bundle.
 

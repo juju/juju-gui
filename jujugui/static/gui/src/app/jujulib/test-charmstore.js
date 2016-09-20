@@ -498,6 +498,38 @@ describe('jujulib charmstore', function() {
     });
   });
 
+  describe('getCanonicalId', function() {
+    it('makes a request to fetch the canonical id for an entity', function() {
+      const callback = sinon.stub();
+      charmstore.getCanonicalId('cs:xenial/ghost-4', callback);
+      const sendGetRequest = charmstore.bakery.sendGetRequest;
+      assert.equal(sendGetRequest.callCount, 1);
+      const requestPath = sendGetRequest.args[0][0];
+      assert.equal(requestPath, 'local/v5/xenial/ghost-4/meta/id');
+      // Call the success request callback
+      sendGetRequest.args[0][1]({
+        target: {
+          responseText: '{"Id": "cs:ghost"}'
+        }
+      });
+      assert.equal(callback.callCount, 1);
+      assert.deepEqual(callback.args[0], [null, 'cs:ghost']);
+    });
+
+    it('properly calls the callback when there is an error', function() {
+      const callback = sinon.stub();
+      charmstore.getCanonicalId('cs:xenial/ghost-4', callback);
+      const sendGetRequest = charmstore.bakery.sendGetRequest;
+      assert.equal(sendGetRequest.callCount, 1);
+      const requestPath = sendGetRequest.args[0][0];
+      assert.equal(requestPath, 'local/v5/xenial/ghost-4/meta/id');
+      // Call the error request callback.
+      sendGetRequest.args[0][2]('not found');
+      assert.equal(callback.callCount, 1);
+      assert.deepEqual(callback.args[0], ['not found', null]);
+    });
+  });
+
   describe('getEntity', function() {
     it('strips cs from bundle IDs', function() {
       charmstore.getEntity('cs:foobar', sinon.stub());
