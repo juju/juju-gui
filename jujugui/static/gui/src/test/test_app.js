@@ -684,48 +684,6 @@ describe('App', function() {
       assert.equal(message.request, 'Login');
     };
 
-    // These tests fail spuriously. It appears that even though ready is called
-    // it's not actually ready. I expect that this will be a non issue when
-    // app.js is no more.
-    it.skip('renders the correct login help message for Juju >= 2',
-      function(done) {
-        var render = testUtils.makeStubMethod(ReactDOM, 'render');
-        this._cleanups.push(render.reset);
-        env.connect();
-        app.after('ready', function() {
-          // Log out so that the login form is displayed.
-          app.logout();
-          assert.strictEqual(render.calledOnce, true, 'render not called');
-          var node = render.lastCall.args[0];
-          assert.strictEqual(
-            node.props.helpMessage,
-            'Find your username and password with ' +
-            '`juju show-controller --show-password`'
-          );
-          done();
-        });
-      });
-    // These tests fail spuriously. It appears that even though ready is called
-    // it's not actually ready. I expect that this will be a non issue when
-    // app.js is no more.
-    it.skip('renders the correct login help message for Juju < 2',
-      function(done) {
-        var render = testUtils.makeStubMethod(ReactDOM, 'render');
-        this._cleanups.push(render.reset);
-        env.connect();
-        app.set('jujuCoreVersion', '1.25.0');
-        app.after('ready', function() {
-          // Log out so that the login form is displayed.
-          app.logout();
-          assert.strictEqual(render.calledOnce, true, 'render not called');
-          var node = render.lastCall.args[0];
-          assert.strictEqual(
-            node.props.helpMessage,
-            'Find your password with `juju api-info --password password`');
-          done();
-        });
-      });
-
     it('avoids trying to login if the env is not connected', function(done) {
       app.after('ready', () => {
         assert.equal(0, conn.messages.length);
@@ -1079,14 +1037,20 @@ describe('App', function() {
   describe('Application Connection State', function() {
     var Y, app, conn, controllerAPI, env, juju;
 
-    function constructAppInstance() {
-      var noop = function() {return this;};
-      var app = new juju.App({
+    function constructAppInstance(legacy) {
+      let version = '2.0.0';
+      let controller = controllerAPI;
+      if (legacy) {
+        version = '1.25.6';
+        controller = null;
+      }
+      const noop = function() {return this;};
+      const app = new juju.App({
         env: env,
-        controllerAPI: controllerAPI,
+        controllerAPI: controller,
         consoleEnabled: true,
         container: container,
-        jujuCoreVersion: '2.0.0',
+        jujuCoreVersion: version,
         socketTemplate: '/model/$uuid/api',
         controllerSocketTemplate: '/api'
       });
@@ -1103,6 +1067,7 @@ describe('App', function() {
           size: function() {return 0;}
         },
         reset: sinon.stub(),
+        fire: sinon.stub(),
         environment: {
           set: () => {},
           get: () => {}
@@ -1139,8 +1104,10 @@ describe('App', function() {
 
     afterEach(function(done) {
       env.close(() => {
-        app.destroy();
-        done();
+        controllerAPI.close(() => {
+          app.destroy();
+          done();
+        });
       });
     });
 
@@ -1158,63 +1125,155 @@ describe('App', function() {
       assert.equal(app.db.reset.callCount, 2);
     });
 
-    it('should connect to model when GISF', function(done) {
+    it('should connect to controller', function(done) {
+      controllerAPI.connect = sinon.stub();
       env.connect = sinon.stub();
       app = constructAppInstance();
-      app.set('gisf', true);
-      app.set('modelUUID', 'foobar');
-      app.after('ready', function() {
-        assert.equal(env.connect.callCount, 1);
+      app.after('ready', () => {
+        assert.strictEqual(controllerAPI.connect.callCount, 1, 'controller');
+        assert.strictEqual(env.connect.callCount, 0, 'model');
         done();
       });
     });
 
-    it('should not connect to model when GISF sandbox', function(done) {
+    it('should connect to the model in Juju 1', function(done) {
+      controllerAPI.connect = sinon.stub();
+      env.connect = sinon.stub();
+      app = constructAppInstance(true);
+      app.after('ready', () => {
+        assert.strictEqual(controllerAPI.connect.callCount, 0, 'controller');
+        assert.strictEqual(env.connect.callCount, 1, 'model');
+        done();
+      });
+    });
+
+    it('should connect to controller when in sandbox mode', function(done) {
+      controllerAPI.connect = sinon.stub();
       env.connect = sinon.stub();
       app = constructAppInstance();
-      app.set('gisf', true);
       app.set('modelUUID', 'sandbox');
       app.after('ready', function() {
-        assert.equal(env.connect.callCount, 0);
+        assert.strictEqual(controllerAPI.connect.callCount, 1, 'controller');
+        assert.strictEqual(env.connect.callCount, 0, 'model');
         done();
       });
     });
 
-    it('should connect to model when URL is present', function(done) {
-      env.connect = sinon.stub();
-      app = constructAppInstance();
-      app.set('gisf', false);
-      app.set('socket_url', 'http://example.org');
-      app.set('sandbox', false);
-      app.after('ready', function() {
-        assert.equal(env.connect.callCount, 1);
-        done();
+    describe('logout', () => {
+      it('logs out from API connections and then reconnects', function(done) {
+        let controllerClosed = false;
+        let modelClosed = false;
+        let controllerConnected = false;
+        let modelConnected = false;
+        // Create an application instance.
+        app = constructAppInstance();
+        app.after('ready', () => {
+          // Mock the API connections for the resulting application.
+          app.controllerAPI = {
+            close: (callback) => {
+              assert.strictEqual(
+                modelClosed, true,
+                'controller: close called before model close');
+              controllerClosed = true;
+              callback();
+            },
+            connect: () => {
+              assert.strictEqual(
+                controllerClosed, true,
+                'controller: connect called before close');
+              controllerConnected = true;
+            }
+          };
+          app.env = {
+            close: (callback) => {
+              modelClosed = true;
+              callback();
+            },
+            connect: () => {
+              assert.strictEqual(
+                modelClosed, true, 'model: connect called before close');
+              modelConnected = true;
+            }
+          };
+          this._cleanups.push(() => {
+            app.controllerAPI = controllerAPI;
+            app.env = env;
+          });
+          // Mock the app method used to render the login mask.
+          app._renderLogin = sinon.stub();
+          // Log out from the app.
+          app.logout();
+          // The API connections have been properly closed.
+          assert.strictEqual(controllerClosed, true, 'controller close');
+          assert.strictEqual(modelClosed, true, 'model closed');
+          assert.strictEqual(controllerConnected, true, 'controller connect');
+          assert.strictEqual(modelConnected, false, 'model connect');
+          // The database has been reset and updated.
+          assert.strictEqual(app.db.reset.calledOnce, true, 'db.reset');
+          assert.strictEqual(app.db.fire.calledOnce, true, 'db.fire');
+          assert.strictEqual(app.db.fire.lastCall.args[0], 'update');
+          // The login mask has been displayed.
+          assert.strictEqual(app._renderLogin.calledOnce, true, 'login');
+          done();
+        });
+      });
+
+      it('closes and reopens the model connection in Juju 1', function(done) {
+        let modelClosed = false;
+        let modelConnected = false;
+        // Create an application instance.
+        app = constructAppInstance(true);
+        app.after('ready', () => {
+          // Mock the API connections for the resulting application.
+          app.env = {
+            close: (callback) => {
+              modelClosed = true;
+              callback();
+            },
+            connect: () => {
+              assert.strictEqual(
+                modelClosed, true, 'model connect called before close');
+              modelConnected = true;
+            }
+          };
+          this._cleanups.push(() => {
+            app.env = env;
+          });
+          // Mock the app method used to render the login mask.
+          app._renderLogin = sinon.stub();
+          // Log out from the app.
+          app.logout();
+          // The API connections have been properly closed.
+          assert.strictEqual(modelClosed, true, 'model closed');
+          assert.strictEqual(modelConnected, true, 'model connect');
+          // The database has been reset and updated.
+          assert.strictEqual(app.db.reset.called, true, 'db.reset');
+          assert.strictEqual(app.db.fire.calledOnce, true, 'db.fire');
+          assert.strictEqual(app.db.fire.lastCall.args[0], 'update');
+          // The login mask has been displayed.
+          assert.strictEqual(app._renderLogin.calledOnce, true, 'login');
+          done();
+        });
       });
     });
 
-    it('should connect to model when in sandbox', function(done) {
-      env.connect = sinon.stub();
+    it('clears the db changed timer when the app is destroyed', function() {
+      // Set up the application instance.
       app = constructAppInstance();
-      app.set('gisf', false);
-      app.set('socket_url', '');
-      app.set('sandbox', true);
-      app.after('ready', function() {
-        assert.equal(env.connect.callCount, 1);
-        done();
+      app.dbChangedTimer = 'I am the timer!';
+      // Mock the clearTimeout builtin function.
+      const original = clearTimeout;
+      clearTimeout = sinon.stub();
+      this._cleanups.push(() => {
+        clearTimeout = original;
       });
+      // Destroy the application.
+      app.destroy();
+      // The timer has been canceled.
+      assert.strictEqual(clearTimeout.calledOnce, true, 'clear call');
+      assert.strictEqual(clearTimeout.lastCall.args[0], 'I am the timer!');
     });
 
-    it('should not connect to model w/o URL or fake backend', function(done) {
-      env.connect = sinon.stub();
-      app = constructAppInstance();
-      app.set('gisf', false);
-      app.set('socket_url', '');
-      app.set('sandbox', false);
-      app.after('ready', function() {
-        assert.equal(env.connect.callCount, 0);
-        done();
-      });
-    });
   });
 
   describe('switchEnv', function() {

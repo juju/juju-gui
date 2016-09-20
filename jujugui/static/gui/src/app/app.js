@@ -452,6 +452,10 @@ YUI.add('juju-gui', function(Y) {
       @param {Object} controllerAPI The controller api instance.
     */
     _init: function(cfg, modelAPI, controllerAPI) {
+      // Store the initial model UUID.
+      const modelUUID = this.get('modelUUID') ||
+          (window.juju_config && window.juju_config.jujuEnvUUID);
+      this.set('modelUUID', modelUUID);
       // If the user closed the GUI when they were on a different env than
       // their default then it would show them the login screen. This sets
       // the credentials to the environment that they are logging into
@@ -476,6 +480,9 @@ YUI.add('juju-gui', function(Y) {
       if (controllerAPI) {
         this.controllerAPI = this.setUpControllerAPI(
           controllerAPI, user, password, macaroons);
+      } else {
+        modelAPI.set('socket_url',
+          this.createSocketURL(this.get('socketTemplate'), modelUUID));
       }
       // Set the modelAPI in the model controller here so
       // that we know that it's been setup.
@@ -633,24 +640,12 @@ YUI.add('juju-gui', function(Y) {
 
       // We are now ready to connect the environment and bootstrap the app.
       this.once('ready', function(e) {
-        // We only want to connect to the model on application load if we are
-        // in a sandbox or real model and not in gisf.
-        const modelUUID = this.get('modelUUID');
-        const isNotGISFSandbox = (
-          this.get('gisf') &&
-          modelUUID &&
-          modelUUID.toLowerCase() !== 'sandbox'
-        );
-        const isNotConnected = (
-          !this.get('gisf') &&
-          (this.get('socket_url') || this.get('sandbox'))
-        );
-        if (isNotGISFSandbox || isNotConnected) {
-          this.env.connect();
-        }
         if (this.controllerAPI) {
-          // We won't have a controller API connection in Juju 1 or in sandbox.
+          // In Juju >= 2 we connect to the controller and then to the model.
           this.controllerAPI.connect();
+        } else {
+          // We won't have a controller API connection in Juju 1.
+          this.env.connect();
         }
         this.dispatch();
         this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
@@ -1592,8 +1587,7 @@ YUI.add('juju-gui', function(Y) {
         return null;
       }
       let matching = [];
-      const modelUUID = this.get('modelUUID') ||
-        (window.juju_config && window.juju_config.jujuEnvUUID);
+      const modelUUID = this.get('modelUUID');
       if (modelUUID) {
         matching = modelList.filter(model => model.uuid === modelUUID);
       }
