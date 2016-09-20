@@ -140,10 +140,11 @@ YUI.add('juju-controller-api', function(Y) {
           previous[current.name] = current.versions;
           return previous;
         }, {});
-        this.set('facades', facades);
+        this.setConnectedAttr('facades', facades);
         var userInfo = response['user-info'];
-        this.set('controllerAccess', userInfo['controller-access']);
-        this.set('serverTag', response['server-tag']);
+        this.setConnectedAttr(
+          'controllerAccess', userInfo['controller-access']);
+        this.setConnectedAttr('serverTag', response['server-tag']);
         // Start pinging the server.
         // XXX frankban: this is only required as a temporary workaround to
         // prevent Apache to disconnect the WebSocket in the embedded Juju.
@@ -331,12 +332,7 @@ YUI.add('juju-controller-api', function(Y) {
         clearInterval(this._pinger);
         this._pinger = null;
       }
-      // TODO frankban: find a more automated way to clean up attributes.
-      this.setAttrs({
-        controllerAccess: '',
-        facades: [],
-        serverTag: ''
-      });
+      this.resetConnectedAttrs();
       done();
     },
 

@@ -181,9 +181,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('resets attributes', done => {
-        env.set('environmentName', 'test');
+        env.setConnectedAttr('environmentName', 'test');
         env.close(() => {
-          assert.strictEqual(env.get('environmentName'), '');
+          assert.strictEqual(env.get('environmentName'), null);
           done();
         });
       });

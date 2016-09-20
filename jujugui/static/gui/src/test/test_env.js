@@ -121,6 +121,61 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       environments.sessionStorage = original;
     });
 
+    describe('attribute resetter', () => {
+      let baseModel;
+
+      beforeEach(() => {
+        const conn = new ClientConnection({
+          juju: {open: function() {}, close: function() {}}
+        });
+        baseModel = new environments.BaseEnvironment({conn: conn});
+      });
+
+      it('sets attributes', () => {
+        baseModel.setConnectedAttr('myattr', 42);
+        assert.strictEqual(baseModel.get('myattr'), 42);
+      });
+
+      it('sets and resets non-existing attributes', () => {
+        baseModel.setConnectedAttr('myattr', 'bannakaffalatta');
+        assert.strictEqual(baseModel.get('myattr'), 'bannakaffalatta');
+        baseModel.resetConnectedAttrs();
+        assert.strictEqual(baseModel.get('myattr'), null);
+      });
+
+      it('sets and resets existing attributes', () => {
+        baseModel.set('existing', 42);
+        baseModel.setConnectedAttr('existing', 47);
+        assert.strictEqual(baseModel.get('existing'), 47);
+        baseModel.resetConnectedAttrs();
+        assert.strictEqual(baseModel.get('existing'), 42);
+      });
+
+      it('sets and resets attributes multiple times', () => {
+        baseModel.set('existing', '');
+        baseModel.setConnectedAttr('existing', 1);
+        baseModel.setConnectedAttr('existing', 2);
+        baseModel.setConnectedAttr('existing', 3);
+        assert.strictEqual(baseModel.get('existing'), 3);
+        baseModel.resetConnectedAttrs();
+        assert.strictEqual(baseModel.get('existing'), '');
+      });
+
+      it('sets and resets multiple attributes', () => {
+        baseModel.set('attr1', 'initial');
+        baseModel.setConnectedAttr('attr1', 'changed');
+        baseModel.setConnectedAttr('attr2', 'non-empty');
+        baseModel.setConnectedAttr('attr3', undefined);
+        assert.strictEqual(baseModel.get('attr1'), 'changed');
+        assert.strictEqual(baseModel.get('attr2'), 'non-empty');
+        assert.strictEqual(baseModel.get('attr3'), undefined);
+        baseModel.resetConnectedAttrs();
+        assert.strictEqual(baseModel.get('attr1'), 'initial');
+        assert.strictEqual(baseModel.get('attr2'), null);
+        assert.strictEqual(baseModel.get('attr3'), null);
+      });
+    });
+
   });
 
   describe('Base Environment module', function() {

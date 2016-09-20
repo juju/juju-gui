@@ -31,6 +31,43 @@ YUI.add('juju-env-base', function(Y) {
   var _sessionStorageData = {};
   var API_USER_TAG = 'user-';
 
+  /**
+    Create and return an attribute setter and resetter for the given object.
+    The given object must implement the attribute interface:
+      - get(name: string) -> string;
+      - set(name: string, value: <T>).
+    The returned object has two methods:
+      - set(name: string, value: <T>) which sets an attribute to the input
+        object (just like obj.set() would do);
+      - reset() which can be used to reset all values set with the set method
+        above to their original values.
+  */
+  const attrResetter = obj => {
+    const initial = {};
+    return {
+      // Set the object attribute with the given name to the given value.
+      set: (name, value) => {
+        if (initial[name] === undefined) {
+          const val = obj.get(name);
+          // The undefined value is used to check whether this attribute has
+          // been already set.
+          if (val === undefined) {
+            val = null;
+          }
+          initial[name] = val;
+        }
+        obj.set(name, value);
+      },
+      // Reset initial values for all previously set attributes.
+      reset: () => {
+        Object.keys(initial).forEach(name => {
+          const value = initial[name];
+          obj.set(name, value);
+        });
+      }
+    };
+  };
+
   module.stubSessionStorage = {
     /**
      * Implement simple sessionStorage getItem work-alike.
@@ -229,6 +266,10 @@ YUI.add('juju-env-base', function(Y) {
         emitFacade: true,
         defaultFn: this.dispatch_result
       });
+      // Set up the attribute resetter.
+      const resetter = attrResetter(this);
+      this.setConnectedAttr = resetter.set.bind(resetter);
+      this.resetConnectedAttrs = resetter.reset.bind(resetter);
       // txn-id sequence. This is used in order to keep track of "request-id"
       // in the WebSocket API requests to Juju. Note that Juju requires the
       // "request-id" to be >= 1, as a 0 valued "request-id" would result in
