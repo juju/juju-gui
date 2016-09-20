@@ -72,11 +72,18 @@ YUI.add('header-search', function() {
       // Need to check if there is a change to sectionC and if it has been
       // cleared (store/search results have been closed) then we also need
       // to deactivate the search box.
-      this.setState({query: this._getSearchQuery()});
+      const query = this._getSearchQuery();
       if (this._activeForComponent()) {
         this._openSearch();
+        // The UI never needs to open the search box and also clear the text in
+        // it. Without this check the entered text would be cleared if there was
+        // a rerender while typing (before hitting enter).
+        if (query !== '') {
+          this.setState({query: query});
+        }
       } else {
         this._closeSearch();
+        this.setState({query: query});
       }
     },
 
