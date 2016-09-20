@@ -1587,7 +1587,10 @@ YUI.add('juju-gui', function(Y) {
         return null;
       }
       let matching = [];
-      const modelUUID = this.get('modelUUID');
+      // At this point the modelUUID attribute could have been removed by
+      // the logout process, so fall back to the provided configuration.
+      const modelUUID = this.get('modelUUID') ||
+          (window.juju_config && window.juju_config.jujuEnvUUID);
       if (modelUUID) {
         matching = modelList.filter(model => model.uuid === modelUUID);
       }

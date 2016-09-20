@@ -482,7 +482,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
           previous[current.Name] = current.Versions;
           return previous;
         }, {});
-        this.set('facades', facades);
+        this.setConnectedAttr('facades', facades);
         this.environmentInfo();
         this._watchAll();
         // Start pinging the server.
@@ -634,14 +634,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
         this._pinger = null;
       }
       const callback = () => {
-        // TODO frankban: find a more automated way to clean up attributes.
-        this.setAttrs({
-          defaultSeries: '',
-          environmentName: '',
-          facades: [],
-          maasServer: null,
-          providerType: ''
-        });
+        this.resetConnectedAttrs();
         done();
       };
       if (!this._allWatcherId) {
@@ -700,14 +693,14 @@ YUI.add('juju-env-legacy-api', function(Y) {
       }
       // Store default series and provider type in the env.
       var response = data.Response;
-      this.set('defaultSeries', response.DefaultSeries);
-      this.set('providerType', response.ProviderType);
-      this.set('environmentName', response.Name);
+      this.setConnectedAttr('defaultSeries', response.DefaultSeries);
+      this.setConnectedAttr('providerType', response.ProviderType);
+      this.setConnectedAttr('environmentName', response.Name);
       // For now we only need to call environmentGet if the provider is MAAS.
       if (response.ProviderType !== 'maas') {
         // Set the MAAS server to null, so that subscribers waiting for this
         // attribute to be set can be released.
-        this.set('maasServer', null);
+        this.setConnectedAttr('maasServer', null);
         return;
       }
       this.environmentGet(data => {
@@ -715,7 +708,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
           console.warn('error calling ModelGet API: ' + data.err);
           return;
         }
-        this.set('maasServer', data.config['maas-server']);
+        this.setConnectedAttr('maasServer', data.config['maas-server']);
       });
     },
 

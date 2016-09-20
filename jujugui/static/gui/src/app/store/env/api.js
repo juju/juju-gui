@@ -486,11 +486,12 @@ YUI.add('juju-env-api', function(Y) {
           previous[current.name] = current.versions;
           return previous;
         }, {});
-        this.set('facades', facades);
+        this.setConnectedAttr('facades', facades);
         var userInfo = response['user-info'];
-        this.set('modelAccess', userInfo['model-access']);
-        this.set('controllerAccess', userInfo['controller-access']);
-        this.set('modelTag', response['model-tag']);
+        this.setConnectedAttr('modelAccess', userInfo['model-access']);
+        this.setConnectedAttr(
+          'controllerAccess', userInfo['controller-access']);
+        this.setConnectedAttr('modelTag', response['model-tag']);
         this.currentModelInfo(this._handleCurrentModelInfo.bind(this));
         this._watchAll();
         // Start pinging the server.
@@ -717,21 +718,7 @@ YUI.add('juju-env-api', function(Y) {
         this._pinger = null;
       }
       const callback = () => {
-        // TODO frankban: find a more automated way to clean up attributes.
-        this.setAttrs({
-          controllerAccess: '',
-          credentialTag: '',
-          defaultSeries: '',
-          cloud: '',
-          environmentName: '',
-          facades: [],
-          maasServer: null,
-          modelAccess: '',
-          modelTag: '',
-          modelUUID: '',
-          providerType: '',
-          region: ''
-        });
+        this.resetConnectedAttrs();
         done();
       };
       if (!this._allWatcherId) {
@@ -768,18 +755,18 @@ YUI.add('juju-env-api', function(Y) {
         return;
       }
       // Store default series and provider type in the env.
-      this.set('defaultSeries', data.series);
-      this.set('providerType', data.provider);
-      this.set('environmentName', data.name);
-      this.set('modelUUID', data.uuid);
-      this.set('cloud', data.cloud);
-      this.set('region', data.region);
-      this.set('credentialTag', data.credentialTag);
+      this.setConnectedAttr('defaultSeries', data.series);
+      this.setConnectedAttr('providerType', data.provider);
+      this.setConnectedAttr('environmentName', data.name);
+      this.setConnectedAttr('modelUUID', data.uuid);
+      this.setConnectedAttr('cloud', data.cloud);
+      this.setConnectedAttr('region', data.region);
+      this.setConnectedAttr('credentialTag', data.credentialTag);
       // For now we only need to call modelGet if the provider is MAAS.
       if (data.provider !== 'maas') {
         // Set the MAAS server to null, so that subscribers waiting for this
         // attribute to be set can be released.
-        this.set('maasServer', null);
+        this.setConnectedAttr('maasServer', null);
         return;
       }
       this.modelGet(data => {
@@ -787,7 +774,7 @@ YUI.add('juju-env-api', function(Y) {
           console.warn('error calling ModelGet API: ' + data.err);
           return;
         }
-        this.set('maasServer', data.config['maas-server'].value);
+        this.setConnectedAttr('maasServer', data.config['maas-server'].value);
       });
     },
 

@@ -118,7 +118,7 @@ describe('Controller API', function() {
     });
 
     it('resets attributes', done => {
-      controllerAPI.set('controllerAccess', 'test');
+      controllerAPI.setConnectedAttr('controllerAccess', 'test');
       controllerAPI.close(() => {
         assert.strictEqual(controllerAPI.get('controllerAccess'), '');
         done();
