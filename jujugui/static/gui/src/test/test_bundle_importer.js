@@ -340,6 +340,11 @@ describe('Bundle Importer', function() {
   describe('Changeset execution', function() {
 
     it('Sets up the correct environment (v5 Integration)', function(done) {
+      let getCanonicalIdCount = 0;
+      fakebackend.get('charmstore').getCanonicalId = (entityId, callback) => {
+        getCanonicalIdCount += 1;
+        callback(null, entityId);
+      };
       var data = utils.loadFixture(
           'data/wordpress-bundle-recordset.json', true);
       bundleImporter.db.after('bundleImportComplete', function() {
@@ -393,6 +398,7 @@ describe('Bundle Importer', function() {
         assert.equal(db.services.item(1).get('exposed'), false);
         assert.equal(db.services.item(2).get('exposed'), true);
         assert.equal(db.services.item(3).get('exposed'), false);
+        assert.equal(getCanonicalIdCount, 3);
         done();
       });
       bundleImporter.importBundleDryRun(data);
