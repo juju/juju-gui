@@ -504,8 +504,8 @@ describe('jujulib charmstore', function() {
       charmstore.getCanonicalId('cs:xenial/ghost-4', callback);
       const sendGetRequest = charmstore.bakery.sendGetRequest;
       assert.equal(sendGetRequest.callCount, 1);
-      assert.equal(
-        sendGetRequest.args[0][0], 'local/v5/xenial/ghost-4/meta/id');
+      const requestPath = sendGetRequest.args[0][0];
+      assert.equal(requestPath, 'local/v5/xenial/ghost-4/meta/id');
       // Call the success request callback
       sendGetRequest.args[0][1]({
         target: {
@@ -521,9 +521,9 @@ describe('jujulib charmstore', function() {
       charmstore.getCanonicalId('cs:xenial/ghost-4', callback);
       const sendGetRequest = charmstore.bakery.sendGetRequest;
       assert.equal(sendGetRequest.callCount, 1);
-      assert.equal(
-        sendGetRequest.args[0][0], 'local/v5/xenial/ghost-4/meta/id');
-      // Call the error request callback
+      const requestPath = sendGetRequest.args[0][0];
+      assert.equal(requestPath, 'local/v5/xenial/ghost-4/meta/id');
+      // Call the error request callback.
       sendGetRequest.args[0][2]('not found');
       assert.equal(callback.callCount, 1);
       assert.deepEqual(callback.args[0], ['not found', null]);

@@ -284,7 +284,7 @@ var module = module;
         this._generatePath(entityId.replace('cs:', ''), null, '/meta/id'),
         'GET',
         null,
-        handler.bind(this));
+        handler);
     },
     /**
       Makes a request to the charmstore api for the supplied id. Whether that
