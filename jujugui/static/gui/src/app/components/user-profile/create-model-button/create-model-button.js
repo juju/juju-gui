@@ -106,16 +106,15 @@ YUI.add('create-model-button', function() {
             const attrs = {
               credentialTag: `cloudcred-${credentialList[0]}`,
               cloudTag: `cloud-${this.props.cloud}`
-              //region: region
             };
             props.controllerAPI.createModel(
               name, userTag, attrs, (err, data) => {
+                props.hideConnectingMask(false);
                 if (err) {
                   notify(err);
                   return;
                 }
                 props.switchModel(data.uuid, data.name);
-                props.hideConnectingMask(false);
               });
           });
         });

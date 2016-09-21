@@ -35,7 +35,10 @@ describe('CreateModelButton', () => {
       createModel: (modelName, userTag, args, callback) => {
         assert.equal(modelName, 'newmodelname', 'model name not set properly');
         assert.equal(userTag, 'user-dalek', 'user tag not set properly');
-        assert.deepEqual(args, {});
+        assert.deepEqual(args, {
+          credentialTag: 'cloudcred-mycred',
+          cloudTag: 'cloud-google'
+        });
         // Simulate the model being created.
         callback(null, {
           uuid: 'abc123',
@@ -97,10 +100,19 @@ describe('CreateModelButton', () => {
     // will need to be done with the uitest suite.
     const showConnectingMask = sinon.stub();
     const switchModel = sinon.stub();
+    const getCloudCredentials = function(tagList, callback) {
+      callback(null, {'my-credential': {name: 'mycred'}});
+    };
+    const getTagsForCloudCredentials = function(tags, callback) {
+      callback(null, []);
+    };
     const component = jsTestUtils.shallowRender(
       <juju.components.CreateModelButton
         addNotification={sinon.stub()}
+        cloud={'google'}
         controllerAPI={controllerAPI}
+        getCloudCredentials={getCloudCredentials}
+        getTagsForCloudCredentials={getTagsForCloudCredentials}
         hideConnectingMask={sinon.stub()}
         showConnectingMask={showConnectingMask}
         switchModel={switchModel}
@@ -161,19 +173,31 @@ describe('CreateModelButton', () => {
     controllerAPI.createModel = (modelName, userTag, args, callback) => {
       assert.equal(modelName, 'newmodelname', 'model name not set properly');
       assert.equal(userTag, 'user-dalek', 'user name not set properly');
-      assert.deepEqual(args, {});
+      assert.deepEqual(args, {
+        credentialTag: 'cloudcred-mycred',
+        cloudTag: 'cloud-google'
+      });
       // Simulate the model being created.
       callback('this is an error', {
         uuid: 'abc123',
         name: modelName
       });
     };
+    const getCloudCredentials = function(tagList, callback) {
+      callback(null, {'my-credential': {name: 'mycred'}});
+    };
+    const getTagsForCloudCredentials = function(tags, callback) {
+      callback(null, []);
+    };
     const hideConnectingMask = sinon.stub();
     const addNotification = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.CreateModelButton
         addNotification={addNotification}
+        cloud={'google'}
         controllerAPI={controllerAPI}
+        getCloudCredentials={getCloudCredentials}
+        getTagsForCloudCredentials={getTagsForCloudCredentials}
         hideConnectingMask={hideConnectingMask}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}
