@@ -102,11 +102,16 @@ describe('UserProfileModelList', () => {
     var addNotification = sinon.stub();
     var hideConnectingMask = sinon.stub();
     var showConnectingMask = sinon.stub();
+    const getCloudCredentials = sinon.stub();
+    const getTagsForCloudCredentials = sinon.stub();
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={addNotification}
         canCreateNew={true}
+        cloud={'google'}
         controllerAPI={controllerAPI}
+        getCloudCredentials={getCloudCredentials}
+        getTagsForCloudCredentials={getTagsForCloudCredentials}
         currentModel={'model1'}
         gisf={false}
         hideConnectingMask={hideConnectingMask}
@@ -126,7 +131,10 @@ describe('UserProfileModelList', () => {
           </span>
           <juju.components.CreateModelButton
             addNotification={addNotification}
+            cloud={'google'}
             controllerAPI={controllerAPI}
+            getCloudCredentials={getCloudCredentials}
+            getTagsForCloudCredentials={getTagsForCloudCredentials}
             hideConnectingMask={hideConnectingMask}
             showConnectingMask={showConnectingMask}
             switchModel={instance.switchModel}

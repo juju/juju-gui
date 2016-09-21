@@ -23,7 +23,10 @@ YUI.add('empty-user-profile', function() {
   juju.components.EmptyUserProfile = React.createClass({
     propTypes: {
       addNotification: React.PropTypes.func.isRequired,
+      cloud: React.PropTypes.string,
       controllerAPI: React.PropTypes.object.isRequired,
+      getCloudCredentials: React.PropTypes.func.isRequired,
+      getTagsForCloudCredentials: React.PropTypes.func.isRequired,
       hideConnectingMask: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
       staticURL: React.PropTypes.string,
@@ -65,6 +68,9 @@ YUI.add('empty-user-profile', function() {
             addNotification={props.addNotification}
             controllerAPI={props.controllerAPI}
             className='user-profile__empty-button'
+            cloud={props.cloud}
+            getCloudCredentials={props.getCloudCredentials}
+            getTagsForCloudCredentials={props.getTagsForCloudCredentials}
             hideConnectingMask={props.hideConnectingMask}
             showConnectingMask={props.showConnectingMask}
             switchModel={this.switchModel}
