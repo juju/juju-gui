@@ -552,9 +552,10 @@ YUI.add('juju-gui', function(Y) {
           // The model is not connected, do nothing waiting for a reconnection.
           return;
         }
-        // If we're in GISF we do not want to empty the db when we connect
-        // because the user may have made changes to the temporary model.
-        if (!this.get('gisf')) {
+        // If we're in GISF or using the blues flag we do not want to empty the
+        // db when we connect because the user may have made changes to the
+        // temporary model.
+        if (!this.get('gisf') && (!window.flags || !window.flags.blues)) {
           this.db.reset();
         }
         this.env.userIsAuthenticated = false;

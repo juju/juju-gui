@@ -1607,22 +1607,9 @@ YUI.add('juju-view-utils', function(Y) {
       app, app.createSocketURL.bind(app, app.get('socketTemplate')),
       app.switchEnv.bind(app), app.env, model.uuid, [model], model.name,
       env => {
-        utils._detachOnLoginHandler();
         env.get('ecs').commit(env);
         callback();
       }, false, false);
-  };
-
-  /**
-    Detach the handler for committing the changeset on login.
-
-    @method _detachOnLoginHandler
-  */
-  utils._detachOnLoginHandler = function() {
-    if (this._onLoginHandler) {
-      this._onLoginHandler.detach();
-      this._onLoginHandler = null;
-    }
   };
 
   /**
