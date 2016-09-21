@@ -27,25 +27,10 @@ describe('EmptyUserProfile', () => {
   });
 
   it('renders the empty state', () => {
-    var addNotification = sinon.stub();
-    var controllerAPI = {};
-    var hideConnectingMask = sinon.stub();
-    var showConnectingMask = sinon.stub();
-    const getCloudCredentials = sinon.stub();
-    const getCloudCredentialNames = sinon.stub();
-    var user = {};
     var staticURL = 'test-url';
     var component = jsTestUtils.shallowRender(
       <juju.components.EmptyUserProfile
-       addNotification={addNotification}
-       cloud={'google'}
-       controllerAPI={controllerAPI}
-       getCloudCredentials={getCloudCredentials}
-       getCloudCredentialNames={getCloudCredentialNames}
-       hideConnectingMask={hideConnectingMask}
-       showConnectingMask={showConnectingMask}
        switchModel={sinon.stub()}
-       user={user}
        staticURL={staticURL} />, true);
     var src = staticURL + '/static/gui/build/app'
               + '/assets/images/non-sprites/empty_profile.png';
@@ -54,16 +39,7 @@ describe('EmptyUserProfile', () => {
     var expected = (
       <div className="user-profile__empty twelve-col no-margin-bottom">
         <juju.components.CreateModelButton
-          addNotification={addNotification}
-          className='user-profile__empty-button'
-          controllerAPI={controllerAPI}
-          cloud={'google'}
-          getCloudCredentials={getCloudCredentials}
-          getCloudCredentialNames={getCloudCredentialNames}
-          hideConnectingMask={hideConnectingMask}
-          showConnectingMask={showConnectingMask}
-          switchModel={instance.switchModel}
-          user={user} />
+          switchModel={instance.switchModel} />
         <div className="clearfix">
           <img alt="Empty profile"
             className="user-profile__empty-image"
@@ -84,7 +60,8 @@ describe('EmptyUserProfile', () => {
   it('displays the empty_profile asset with a staticURL provided', () => {
     var output = jsTestUtils.shallowRender(
       <juju.components.EmptyUserProfile
-       staticURL='test' />);
+        switchModel={sinon.stub()}
+        staticURL='test' />);
     assert.equal(
       output.props.children[1].props.children[0].props.src,
       'test/static/gui/build/app/assets/images/non-sprites/empty_profile.png');

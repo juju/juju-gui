@@ -24,20 +24,12 @@ YUI.add('user-profile-model-list', function() {
     // broadcastStatus is necessary for communicating loading status back to
     // the parent SectionLoadWatcher.
     propTypes: {
-      addNotification: React.PropTypes.func.isRequired,
       broadcastStatus: React.PropTypes.func,
       canCreateNew: React.PropTypes.bool.isRequired,
-      cloud: React.PropTypes.string,
-      controllerAPI: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
-      getCloudCredentialNames: React.PropTypes.func.isRequired,
-      getCloudCredentials: React.PropTypes.func.isRequired,
-      hideConnectingMask: React.PropTypes.func.isRequired,
       listModelsWithInfo: React.PropTypes.func.isRequired,
-      showConnectingMask: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
-      user: React.PropTypes.object,
-      users: React.PropTypes.object.isRequired
+      user: React.PropTypes.object
     },
 
     getInitialState: function() {
@@ -227,15 +219,7 @@ YUI.add('user-profile-model-list', function() {
       if (props.canCreateNew) {
         createNewButton = (
           <juju.components.CreateModelButton
-            addNotification={props.addNotification}
-            cloud={props.cloud}
-            controllerAPI={props.controllerAPI}
-            getCloudCredentials={props.getCloudCredentials}
-            getCloudCredentialNames={props.getCloudCredentialNames}
-            hideConnectingMask={props.hideConnectingMask}
-            showConnectingMask={props.showConnectingMask}
-            switchModel={this.switchModel}
-            user={props.user} />
+            switchModel={this.switchModel} />
         );
       }
       return (
@@ -260,6 +244,7 @@ YUI.add('user-profile-model-list', function() {
 }, '', {
   requires: [
     'create-model-button',
+    'date-display',
     'generic-button',
     'generic-input',
     'loading-spinner',

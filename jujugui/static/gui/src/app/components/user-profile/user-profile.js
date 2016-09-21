@@ -22,23 +22,16 @@ YUI.add('user-profile', function() {
 
   juju.components.UserProfile = React.createClass({
     propTypes: {
-      addNotification: React.PropTypes.func.isRequired,
       canCreateNew: React.PropTypes.bool.isRequired,
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
-      cloud: React.PropTypes.string,
-      controllerAPI: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
       getAgreements: React.PropTypes.func.isRequired,
-      getCloudCredentialNames: React.PropTypes.func.isRequired,
-      getCloudCredentials: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
-      hideConnectingMask: React.PropTypes.func.isRequired,
       interactiveLogin: React.PropTypes.bool,
       listBudgets: React.PropTypes.func.isRequired,
       listModelsWithInfo: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
-      showConnectingMask: React.PropTypes.func.isRequired,
       staticURL: React.PropTypes.string,
       storeUser: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
@@ -81,16 +74,8 @@ YUI.add('user-profile', function() {
       const props = this.props;
       const emptyComponent = (
         <juju.components.EmptyUserProfile
-          addNotification={props.addNotification}
-          cloud={props.cloud}
-          controllerAPI={props.controllerAPI}
-          getCloudCredentials={props.getCloudCredentials}
-          getCloudCredentialNames={props.getCloudCredentialNames}
-          hideConnectingMask={props.hideConnectingMask}
-          showConnectingMask={props.showConnectingMask}
           staticURL={props.staticURL}
-          switchModel={props.switchModel}
-          user={props.user} />
+          switchModel={props.switchModel} />
       );
       // All possible components that can be rendered on the profile page;
       // these may be filtered down to a smaller list depending on the context.
@@ -98,19 +83,11 @@ YUI.add('user-profile', function() {
         <juju.components.UserProfileModelList
           key='modelList'
           ref='modelList'
-          addNotification={props.addNotification}
           canCreateNew={props.canCreateNew}
-          cloud={props.cloud}
-          controllerAPI={props.controllerAPI}
           currentModel={props.currentModel}
-          getCloudCredentials={props.getCloudCredentials}
-          getCloudCredentialNames={props.getCloudCredentialNames}
-          hideConnectingMask={props.hideConnectingMask}
           listModelsWithInfo={props.listModelsWithInfo}
-          showConnectingMask={props.showConnectingMask}
           switchModel={props.switchModel}
-          user={props.user}
-          users={props.users} />,
+          user={props.user} />,
         <juju.components.UserProfileEntityList
           key='bundleList'
           ref='bundleList'
@@ -173,7 +150,8 @@ YUI.add('user-profile', function() {
     },
 
     render: function() {
-      const username = this.props.user && this.props.user.usernameDisplay;
+      const username = this.props.user && this.props.user.usernameDisplay ||
+        'Anonymous user';
       // XXX kadams54 2016-09-05: Will need to restore the header links and
       // counts functionality here.
       const links = [];

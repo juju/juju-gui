@@ -947,30 +947,20 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderUserProfile: function() {
       const charmstore = this.get('charmstore');
-      const controllerAPI = this.controllerAPI;
       const utils = views.utils;
-      const user = this._getAuth();
       // NOTE: we need to clone this.get('users') below; passing in without
       // cloning breaks React's ability to distinguish between this.props and
       // nextProps on the lifecycle methods.
       ReactDOM.render(
         <window.juju.components.UserProfile
           acl={this.acl}
-          addNotification={
-            this.db.notifications.add.bind(this.db.notifications)}
           canCreateNew={this.env.get('connected')}
-          cloud={this.env.get('cloud')}
-          controllerAPI={this.controllerAPI}
           currentModel={this.get('modelUUID')}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listModelsWithInfo={
             this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
           changeState={this.changeState.bind(this)}
           getAgreements={this.terms.getAgreements.bind(this.terms)}
-          getCloudCredentials={
-            controllerAPI.getCloudCredentials.bind(controllerAPI)}
-          getCloudCredentialNames={
-            controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           gisf={this.get('gisf')}
           interactiveLogin={this.get('interactiveLogin')}
@@ -980,9 +970,7 @@ YUI.add('juju-gui', function(Y) {
           switchModel={utils.switchModel.bind(this,
             this.createSocketURL.bind(this, this.get('socketTemplate')),
             this.switchEnv.bind(this), this.env)}
-          showConnectingMask={this.showConnectingMask.bind(this)}
-          hideConnectingMask={this.hideConnectingMask.bind(this)}
-          user={user}
+          user={this._getAuth()}
           users={Y.clone(this.get('users'), true)}
           charmstore={this.get('charmstore')} />,
         document.getElementById('top-page-container'));
