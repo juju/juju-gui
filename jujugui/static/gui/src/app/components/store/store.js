@@ -213,10 +213,10 @@ YUI.add('store', function() {
               <div className="align-bottom">
                   <h2>Kibana</h2>
                   <span
-                    data-entity="kibana"
-                    onClick={this._handleEntityClick}
-                    className="button--inline-neutral">
-                    View the charm
+                      data-entity="kibana"
+                      onClick={this._handleEntityClick}
+                      className="button--inline-neutral">
+                      View the charm
                   </span>
               </div>
           </div>
@@ -224,12 +224,12 @@ YUI.add('store', function() {
               <img src={this._generateLocalImagePath('kubernetes-promo.png')}
                 alt="" className="box__image" />
               <div className="align-bottom">
-                  <h2>Observable Kubernetes</h2>
+                  <h2>Containers</h2>
                   <span
-                    data-entity="observable-kubernetes"
-                    onClick={this._handleEntityClick}
-                    className="button--inline-neutral">
-                    View the bundle
+                      data-query="containers&type=bundle"
+                      onClick={this._handleSearchClick}
+                      className="button--inline-neutral">
+                      View bundles
                   </span>
               </div>
           </div>
