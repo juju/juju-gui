@@ -225,29 +225,6 @@
     padding-bottom: 0;
   }
 
-  .deployment-summary-classic {
-    left: 0;
-    right: 0;
-  }
-
-  .deployment-summary-classic__placement {
-    padding: 20px 0 0;
-  }
-
-  .deployment-summary-classic__placement-label {
-    padding: 10px 0;
-    display: inline;
-  }
-
-  .deployment-summary-classic__placement-radio {
-    margin-bottom: 20px;
-    margin-top: 20px;
-
-    &:first-of-type {
-      margin-left: 0;
-    }
-  }
-
   // Header search
   .header-search__submit {
     top: 0;

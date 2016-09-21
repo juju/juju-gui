@@ -2723,7 +2723,6 @@ YUI.add('juju-gui', function(Y) {
     'charmbrowser-component',
     'deployment-bar',
     'deployment-flow',
-    'deployment-summary-classic',
     'env-size-display',
     'header-breadcrumb',
     'import-export',
