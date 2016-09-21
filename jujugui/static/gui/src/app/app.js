@@ -552,13 +552,6 @@ YUI.add('juju-gui', function(Y) {
           // The model is not connected, do nothing waiting for a reconnection.
           return;
         }
-        // If we're using the blues flag we do not want to empty the db when we
-        // connect because the user may have made changes to the temporary
-        // model. When flags.blues is removed we can remove the reset as well as
-        // it will never be called.
-        if (!window.flags || !window.flags.blues) {
-          this.db.reset();
-        }
         this.env.userIsAuthenticated = false;
         // Attempt to log in if we already have credentials available.
         var credentials = this.env.getCredentials();
@@ -1089,41 +1082,8 @@ YUI.add('juju-gui', function(Y) {
       @param {String} activeComponent The active component state to display.
     */
     _renderDeployment: function(metadata) {
-      var env = this.env;
-      var ecs = env.get('ecs');
-      var db = this.db;
-      var services = db.services;
-      var units = db.units;
-      var utils = views.utils;
-      var changesUtils = this.changesUtils;
-      var currentChangeSet = ecs.getCurrentChangeSet();
-      var changeDescriptions = changesUtils.generateAllChangeDescriptions(
-          services, units, currentChangeSet);
-      var metadata = metadata || {};
-      var activeComponent = metadata.activeComponent;
-      var autoPlaceUnits = this._autoPlaceUnits.bind(this);
-      var modelCommitted = this.env.get('connected');
-      const controllerAPI = this.controllerAPI;
-      if (!window.flags || !window.flags.blues) {
-        // Display the old deploy summary if we're not using the feature flag
-        // for the new deployment flow.
-        if (!activeComponent) {
-          return;
-        }
-        ReactDOM.render(
-          <window.juju.components.DeploymentSummaryClassic
-            acl={this.acl}
-            autoPlaceDefault={!localStorage.getItem('disable-auto-place')}
-            autoPlaceUnits={autoPlaceUnits}
-            changeDescriptions={changeDescriptions}
-            changeState={this.changeState.bind(this)}
-            ecsClear={ecs.clear.bind(ecs)}
-            ecsCommit={ecs.commit.bind(ecs, env)}
-            getUnplacedUnitCount={
-              utils.getUnplacedUnitCount.bind(this, db.units)} />,
-          document.getElementById('deployment-container'));
-        return;
-      }
+      const env = this.env;
+      const currentChangeSet = env.get('ecs').getCurrentChangeSet();
       if (Object.keys(currentChangeSet).length === 0) {
         // If there are no changes then close the deployment flow. This is to
         // prevent showing the deployment flow if the user clicks back in the
@@ -1138,10 +1098,14 @@ YUI.add('juju-gui', function(Y) {
         });
         return;
       }
-      // Auto place the units. This is probably not be best UX, but is required
+      const changesUtils = this.changesUtils;
+      const controllerAPI = this.controllerAPI;
+      const db = this.db;
+      const services = db.services;
+      const utils = views.utils;
+      // Auto place the units. This is probably not the best UX, but is required
       // to display the machines in the deployment flow.
-      autoPlaceUnits();
-      const credential = env.get('credential');
+      this._autoPlaceUnits();
       let cloud = env.get('cloud');
       if (cloud) {
         cloud = {name: cloud};
@@ -1155,12 +1119,12 @@ YUI.add('juju-gui', function(Y) {
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
           changeState={this.changeState.bind(this)}
           cloud={cloud}
-          credential={credential}
+          credential={env.get('credential')}
           changes={currentChangeSet}
           deploy={utils.deploy.bind(utils, this)}
           generateAllChangeDescriptions={
             changesUtils.generateAllChangeDescriptions.bind(
-              changesUtils, services, units)}
+              changesUtils, services, db.units)}
           generateCloudCredentialName={utils.generateCloudCredentialName}
           getCloudCredentials={
             controllerAPI.getCloudCredentials.bind(controllerAPI)}
@@ -1170,7 +1134,7 @@ YUI.add('juju-gui', function(Y) {
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listClouds={controllerAPI.listClouds.bind(controllerAPI)}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
-          modelCommitted={modelCommitted}
+          modelCommitted={env.get('connected')}
           modelName={db.environment.get('name')}
           region={env.get('region')}
           servicesGetById={services.getById.bind(services)}
