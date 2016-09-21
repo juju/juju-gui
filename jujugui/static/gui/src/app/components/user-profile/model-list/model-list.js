@@ -27,8 +27,11 @@ YUI.add('user-profile-model-list', function() {
       addNotification: React.PropTypes.func.isRequired,
       broadcastStatus: React.PropTypes.func,
       canCreateNew: React.PropTypes.bool.isRequired,
+      cloud: React.PropTypes.string,
       controllerAPI: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
+      getCloudCredentials: React.PropTypes.func.isRequired,
+      getTagsForCloudCredentials: React.PropTypes.func.isRequired,
       hideConnectingMask: React.PropTypes.func.isRequired,
       listModelsWithInfo: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
@@ -225,7 +228,10 @@ YUI.add('user-profile-model-list', function() {
         createNewButton = (
           <juju.components.CreateModelButton
             addNotification={props.addNotification}
+            cloud={props.cloud}
             controllerAPI={props.controllerAPI}
+            getCloudCredentials={props.getCloudCredentials}
+            getTagsForCloudCredentials={props.getTagsForCloudCredentials}
             hideConnectingMask={props.hideConnectingMask}
             showConnectingMask={props.showConnectingMask}
             switchModel={this.switchModel}

@@ -951,9 +951,10 @@ YUI.add('juju-gui', function(Y) {
       @method _renderUserProfile
     */
     _renderUserProfile: function() {
-      var charmstore = this.get('charmstore');
-      var utils = views.utils;
-      var user = this._getAuth();
+      const charmstore = this.get('charmstore');
+      const controllerAPI = this.controllerAPI;
+      const utils = views.utils;
+      const user = this._getAuth();
       // NOTE: we need to clone this.get('users') below; passing in without
       // cloning breaks React's ability to distinguish between this.props and
       // nextProps on the lifecycle methods.
@@ -963,6 +964,7 @@ YUI.add('juju-gui', function(Y) {
           addNotification={
             this.db.notifications.add.bind(this.db.notifications)}
           canCreateNew={this.env.get('connected')}
+          cloud={this.env.get('cloud')}
           controllerAPI={this.controllerAPI}
           currentModel={this.get('modelUUID')}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
@@ -970,6 +972,10 @@ YUI.add('juju-gui', function(Y) {
             this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
           changeState={this.changeState.bind(this)}
           getAgreements={this.terms.getAgreements.bind(this.terms)}
+          getCloudCredentials={
+            controllerAPI.getCloudCredentials.bind(controllerAPI)}
+          getTagsForCloudCredentials={
+            controllerAPI.getTagsForCloudCredentials.bind(controllerAPI)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           gisf={this.get('gisf')}
           interactiveLogin={this.get('interactiveLogin')}

@@ -26,10 +26,13 @@ YUI.add('user-profile', function() {
       canCreateNew: React.PropTypes.bool.isRequired,
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
+      cloud: React.PropTypes.string,
       controllerAPI: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
       getAgreements: React.PropTypes.func.isRequired,
+      getCloudCredentials: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
+      getTagsForCloudCredentials: React.PropTypes.func.isRequired,
       hideConnectingMask: React.PropTypes.func.isRequired,
       interactiveLogin: React.PropTypes.bool,
       listBudgets: React.PropTypes.func.isRequired,
@@ -79,7 +82,10 @@ YUI.add('user-profile', function() {
       const emptyComponent = (
         <juju.components.EmptyUserProfile
           addNotification={props.addNotification}
+          cloud={props.cloud}
           controllerAPI={props.controllerAPI}
+          getCloudCredentials={props.getCloudCredentials}
+          getTagsForCloudCredentials={props.getTagsForCloudCredentials}
           hideConnectingMask={props.hideConnectingMask}
           showConnectingMask={props.showConnectingMask}
           staticURL={props.staticURL}
@@ -94,8 +100,11 @@ YUI.add('user-profile', function() {
           ref='modelList'
           addNotification={props.addNotification}
           canCreateNew={props.canCreateNew}
+          cloud={props.cloud}
           controllerAPI={props.controllerAPI}
           currentModel={props.currentModel}
+          getCloudCredentials={props.getCloudCredentials}
+          getTagsForCloudCredentials={props.getTagsForCloudCredentials}
           hideConnectingMask={props.hideConnectingMask}
           listModelsWithInfo={props.listModelsWithInfo}
           showConnectingMask={props.showConnectingMask}
