@@ -743,7 +743,7 @@ YUI.add('juju-gui', function(Y) {
             console.log('No models available, using unconnected mode.');
             return;
           }
-          if (modelList.some(data => data.uuid === this.env.get('modelUUID'))) {
+          if (modelList.some(data => data.id === this.env.get('modelId'))) {
             // If the user is already connected to a model in this list then
             // leave it be.
             return;
@@ -974,8 +974,8 @@ YUI.add('juju-gui', function(Y) {
           getAgreements={this.terms.getAgreements.bind(this.terms)}
           getCloudCredentials={
             controllerAPI.getCloudCredentials.bind(controllerAPI)}
-          getTagsForCloudCredentials={
-            controllerAPI.getTagsForCloudCredentials.bind(controllerAPI)}
+          getCloudCredentialNames={
+            controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           gisf={this.get('gisf')}
           interactiveLogin={this.get('interactiveLogin')}
@@ -1139,16 +1139,13 @@ YUI.add('juju-gui', function(Y) {
       // Auto place the units. This is probably not be best UX, but is required
       // to display the machines in the deployment flow.
       autoPlaceUnits();
-      const credentialTag = env.get('credentialTag');
-      const credential = credentialTag ? credentialTag.replace(
-        /^cloudcred-/, '') : undefined;
+      const credential = env.get('credential');
       let cloud = env.get('cloud');
       if (cloud) {
         cloud = {name: cloud};
       }
       const credentials = this.controllerAPI.getCredentials();
-      const user = credentials.user ?
-        credentials.user.replace(/^user-/, '') : undefined;
+      const user = credentials.user || undefined;
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
@@ -1162,11 +1159,11 @@ YUI.add('juju-gui', function(Y) {
           generateAllChangeDescriptions={
             changesUtils.generateAllChangeDescriptions.bind(
               changesUtils, services, units)}
-          generateCloudCredentialTag={utils.generateCloudCredentialTag}
+          generateCloudCredentialName={utils.generateCloudCredentialName}
           getCloudCredentials={
             controllerAPI.getCloudCredentials.bind(controllerAPI)}
-          getTagsForCloudCredentials={
-            controllerAPI.getTagsForCloudCredentials.bind(controllerAPI)}
+          getCloudCredentialNames={
+            controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
           groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listClouds={controllerAPI.listClouds.bind(controllerAPI)}
@@ -2577,17 +2574,13 @@ YUI.add('juju-gui', function(Y) {
         if (this.env) {
           var credentials = this.env.getCredentials();
           if (credentials.user) {
-            controllerUser = {
-              user: credentials.user
-            };
+            controllerUser = {user: credentials.user};
           }
         }
         // Precedence order of the various services used by the GUI:
-        user = users.jem ||
-               controllerUser ||
-               users.charmstore;
+        user = controllerUser || users.charmstore;
         if (user && user.user) {
-          user.usernameDisplay = user.user.replace('user-', '');
+          user.usernameDisplay = user.user;
         }
       }
       return user;

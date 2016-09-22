@@ -147,23 +147,23 @@ describe('App', function() {
 
     it('should propagate login credentials from the configuration',
         function(done) {
-          var the_username = 'nehi';
-          var the_password = 'moonpie';
+          var user = 'nehi';
+          var password = 'moonpie';
           const conn = new testUtils.SocketStub();
           const ecs = new juju.EnvironmentChangeSet();
           const env = new juju.environments.GoEnvironment({
             conn: conn,
             ecs: ecs,
-            user: the_username,
-            password: the_password
+            user: user,
+            password: password
           });
           env.connect();
           app = new Y.juju.App({
             env: env,
             container: container,
             consoleEnabled: true,
-            user: the_username,
-            password: the_password,
+            user: user,
+            password: password,
             viewContainer: container,
             conn: conn,
             jujuCoreVersion: '2.0-trusty-amd64',
@@ -175,8 +175,8 @@ describe('App', function() {
           });
           app.after('ready', function() {
             var credentials = app.env.getCredentials();
-            assert.equal(credentials.user, 'user-' + the_username + '@local');
-            assert.equal(credentials.password, the_password);
+            assert.equal(credentials.user, user + '@local');
+            assert.equal(credentials.password, password);
             done();
           });
         });
@@ -1622,13 +1622,13 @@ describe('App', function() {
 
     it('fetches the auth', function() {
       var user = {user: 'admin'};
-      app.set('users', {'jem': user});
+      app.set('users', {charmstore: user});
       assert.deepEqual(app._getAuth(), user);
     });
 
     it('uses external auth if present', function() {
       app.set('auth', 'baz');
-      app.set('users', { 'foo': 'bar' });
+      app.set('users', {foo: 'bar'});
       assert.equal(app._getAuth(), 'baz');
     });
 
@@ -1637,10 +1637,9 @@ describe('App', function() {
       assert.isUndefined(app._getAuth());
     });
 
-    it('can clean up the username', function() {
-      app.set('users', {jem: {user: 'user-admin'}});
+    it('populates the display name', function() {
+      app.set('users', {charmstore: {user: 'admin'}});
       var auth = app._getAuth();
-      assert.equal(auth.user, 'user-admin');
       assert.equal(auth.usernameDisplay, 'admin');
     });
   });

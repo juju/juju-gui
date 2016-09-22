@@ -77,7 +77,7 @@ describe('DeploymentCredentialAdd', function() {
         close={close}
         cloud={null}
         clouds={clouds}
-        generateCloudCredentialTag={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
         regions={[{name: 'test-region'}]}
         setCredential={sinon.stub()}
@@ -224,7 +224,7 @@ describe('DeploymentCredentialAdd', function() {
         close={close}
         cloud={{name: 'google'}}
         clouds={clouds}
-        generateCloudCredentialTag={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
         regions={[{name: 'test-region'}]}
         setCredential={sinon.stub()}
@@ -371,7 +371,7 @@ describe('DeploymentCredentialAdd', function() {
         close={close}
         cloud={{name: 'google'}}
         clouds={clouds}
-        generateCloudCredentialTag={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
         regions={[{name: 'test-region'}]}
         setCredential={sinon.stub()}
@@ -484,7 +484,7 @@ describe('DeploymentCredentialAdd', function() {
         close={close}
         cloud={{name: 'google'}}
         clouds={clouds}
-        generateCloudCredentialTag={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
         regions={[{name: 'test-region'}]}
         setCredential={sinon.stub()}
@@ -631,7 +631,7 @@ describe('DeploymentCredentialAdd', function() {
           close={sinon.stub()}
           cloud={{name: 'google'}}
           clouds={clouds}
-          generateCloudCredentialTag={sinon.stub().returns('new@test')}
+          generateCloudCredentialName={sinon.stub().returns('new@test')}
           getCredentials={getCredentials}
           regions={['us-east-1']}
           setCredential={sinon.stub()}
@@ -683,7 +683,7 @@ describe('DeploymentCredentialAdd', function() {
           close={sinon.stub()}
           cloud={{name: 'google'}}
           clouds={clouds}
-          generateCloudCredentialTag={sinon.stub()}
+          generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
           regions={[{name: 'test-regiZon'}]}
           setCredential={sinon.stub()}

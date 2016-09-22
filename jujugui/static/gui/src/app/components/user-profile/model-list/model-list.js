@@ -30,8 +30,8 @@ YUI.add('user-profile-model-list', function() {
       cloud: React.PropTypes.string,
       controllerAPI: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
+      getCloudCredentialNames: React.PropTypes.func.isRequired,
       getCloudCredentials: React.PropTypes.func.isRequired,
-      getTagsForCloudCredentials: React.PropTypes.func.isRequired,
       hideConnectingMask: React.PropTypes.func.isRequired,
       listModelsWithInfo: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
@@ -231,7 +231,7 @@ YUI.add('user-profile-model-list', function() {
             cloud={props.cloud}
             controllerAPI={props.controllerAPI}
             getCloudCredentials={props.getCloudCredentials}
-            getTagsForCloudCredentials={props.getTagsForCloudCredentials}
+            getCloudCredentialNames={props.getCloudCredentialNames}
             hideConnectingMask={props.hideConnectingMask}
             showConnectingMask={props.showConnectingMask}
             switchModel={this.switchModel}

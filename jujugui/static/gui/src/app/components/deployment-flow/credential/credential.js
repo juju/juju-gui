@@ -27,9 +27,9 @@ YUI.add('deployment-credential', function() {
       clouds: React.PropTypes.object.isRequired,
       credential: React.PropTypes.string,
       editable: React.PropTypes.bool,
-      generateCloudCredentialTag: React.PropTypes.func.isRequired,
+      generateCloudCredentialName: React.PropTypes.func.isRequired,
+      getCloudCredentialNames: React.PropTypes.func.isRequired,
       getCloudCredentials: React.PropTypes.func.isRequired,
-      getTagsForCloudCredentials: React.PropTypes.func.isRequired,
       region: React.PropTypes.string,
       setCredential: React.PropTypes.func.isRequired,
       setRegion: React.PropTypes.func.isRequired,
@@ -70,30 +70,30 @@ YUI.add('deployment-credential', function() {
       const cloud = this.props.cloud && this.props.cloud.name;
       const user = this.props.user;
       if (user) {
-        this.props.getTagsForCloudCredentials(
-          [[`user-${user}`, `cloud-${cloud}`]], this._getTagsCallback);
+        this.props.getCloudCredentialNames(
+          [[user, cloud]], this._getCloudCredentialNamesCallback);
       }
     },
 
     /**
-      The method to be called when the credentials tags reponse has been
+      The method to be called when the credentials names response has been
       received.
 
-      @method _getTagsCallback
+      @method _getCloudCredentialNamesCallback
       @param {String} error An error message, or null if there's no error.
       @param {Array} tags A list of the tags found.
     */
-    _getTagsCallback: function(error, tags) {
+    _getCloudCredentialNamesCallback: function(error, names) {
       if (error) {
-        console.error('Unable to get tags for credentials', error);
+        console.error('unable to get names for credentials:', error);
         return;
       }
-      // The resulting array of tags will be in the order that the cloud/user
-      // pairs were passed to getTagsForCloudCredentials. As we're only passing
+      // The resulting array of names will be in the order that the cloud/user
+      // pairs were passed to getCloudCredentialNames. As we're only passing
       // one pair we can safely assume that we only need the first item in the
       // array.
-      const tagList = tags.length && tags[0].tags || [];
-      this.props.getCloudCredentials(tagList, this._getCredentialsCallback);
+      const nameList = names.length && names[0].names || [];
+      this.props.getCloudCredentials(nameList, this._getCredentialsCallback);
     },
 
     /**
@@ -108,8 +108,7 @@ YUI.add('deployment-credential', function() {
         console.error('Unable to get credentials', error);
         return;
       }
-      const credentialList = Object.keys(credentials).map(
-        credential => credentials[credential].name);
+      const credentialList = Object.keys(credentials);
       this.setState({
         credentials: credentialList,
         credentialsLoading: false,
@@ -232,7 +231,7 @@ YUI.add('deployment-credential', function() {
           close={this._toggleAdd}
           cloud={this.props.cloud}
           clouds={this.props.clouds}
-          generateCloudCredentialTag={this.props.generateCloudCredentialTag}
+          generateCloudCredentialName={this.props.generateCloudCredentialName}
           getCredentials={this._getCredentials}
           regions={this.props.cloud && this.props.cloud.regions || []}
           setCredential={this.props.setCredential}

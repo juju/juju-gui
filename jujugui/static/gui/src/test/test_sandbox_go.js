@@ -152,6 +152,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'request-id': 42,
             response: {
               facades: sandboxModule.facades,
+              'controller-tag': 'controller-demonstration-controller-uuid',
+              'model-tag': 'model-demonstration-model-uuid',
               'user-info': {
                 'controller-access': 'superuser',
                 'model-access': 'admin'
@@ -170,21 +172,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'request-id': 42,
         type: 'Admin',
         request: 'Login',
-        params: {'auth-tag': username, credentials: password}
+        params: {'auth-tag': 'user-' + username, credentials: password}
       };
       client.send(JSON.stringify(data));
     };
 
     it('can log in', done => {
-      checkLogin(done, 'user-admin@local', 'password', true);
+      checkLogin(done, 'admin@local', 'password', true);
     });
 
     it('can log in (without local postfix)', done => {
-      checkLogin(done, 'user-admin', 'password', true);
+      checkLogin(done, 'admin', 'password', true);
     });
 
     it('fails to log in', done => {
-      checkLogin(done, 'user-admin', 'wrong-password', false);
+      checkLogin(done, 'admin', 'wrong-password', false);
     });
 
     it('can log in (environment integration).', function(done) {
@@ -1612,28 +1614,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
           controllerAPI.connect();
           // The new credential has been added, in addition to the initial one.
-          const pairs = [['user-admin@local', 'cloud-demonstration']];
-          controllerAPI.getTagsForCloudCredentials(pairs, (err, results) => {
+          const pairs = [['admin@local', 'demonstration']];
+          controllerAPI.getCloudCredentialNames(pairs, (err, results) => {
             assert.strictEqual(err, null);
-            const tags = [
-              'cloudcred-demonstration_admin@local_demonstration',
-              'cloudcred-new-one'
+            const names = [
+              'demonstration_admin@local_demonstration',
+              'new-one'
             ];
-            assert.deepEqual(results[0].tags.sort(), tags);
+            assert.deepEqual(results[0].names.sort(), names);
             // The data for both credentials has been properly set.
-            controllerAPI.getCloudCredentials(tags, (err, results) => {
+            controllerAPI.getCloudCredentials(names, (err, results) => {
               assert.strictEqual(err, null);
               assert.deepEqual(
-                results['cloudcred-demonstration_admin@local_demonstration'], {
-                  name: 'demonstration_admin@local_demonstration',
+                results['demonstration_admin@local_demonstration'], {
                   authType: 'empty',
                   attrs: {answer: '42'},
                   redacted: []
                 }
               );
               assert.deepEqual(
-                results['cloudcred-new-one'], {
-                  name: 'new-one',
+                results['new-one'], {
                   authType: 'oauth2',
                   attrs: {number: '47'},
                   redacted: []
@@ -1694,10 +1694,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
           controllerAPI.connect();
           // The initial credential has been removed.
-          const pairs = [['user-admin@local', 'cloud-demonstration']];
-          controllerAPI.getTagsForCloudCredentials(pairs, (err, results) => {
+          const pairs = [['admin@local', 'demonstration']];
+          controllerAPI.getCloudCredentialNames(pairs, (err, results) => {
             assert.strictEqual(err, null);
-            assert.deepEqual(results[0].tags, []);
+            assert.deepEqual(results[0].names, []);
             done();
           });
         };

@@ -101,7 +101,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(setItemValue, {credentials: Y.JSON.stringify(value)});
       var creds = env.getCredentials();
       assert.strictEqual(creds.areAvailable, true);
-      assert.strictEqual(creds.user, 'user-foo@local');
+      assert.strictEqual(creds.user, 'foo@local');
       assert.strictEqual(creds.password, 'kumquat');
       assert.deepEqual(creds.macaroons, ['macaroon']);
       // Try with null value.
@@ -214,6 +214,36 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           environments.sessionStorage, environments.stubSessionStorage);
       // Clean up.
       environments.sessionStorage = original;
+    });
+  });
+
+  describe('tags management', function() {
+    const requires = ['juju-env-base'];
+    let tags;
+
+    before(done => {
+      YUI(GlobalConfig).use(requires, function(Y) {
+        const module = Y.namespace('juju').environments;
+        tags = module.tags;
+        done();
+      });
+    });
+
+    it('builds tags', () => {
+      assert.strictEqual(tags.build(tags.USER, 'who'), 'user-who');
+      assert.strictEqual(tags.build(tags.CLOUD, 'lxd'), 'cloud-lxd');
+    });
+
+    it('parses tags', () => {
+      assert.strictEqual(tags.parse(tags.USER, 'user-dalek'), 'dalek');
+      assert.strictEqual(tags.parse(tags.MODEL, 'model-default'), 'default');
+    });
+
+    it('raises an error when parsing invalid tags', () => {
+      const func = () => {
+        tags.parse(tags.CONTROLLER, 'user-dalek');
+      };
+      assert.throws(func, 'invalid tag of type controller: user-dalek');
     });
   });
 

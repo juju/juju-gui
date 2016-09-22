@@ -32,13 +32,10 @@ describe('CreateModelButton', () => {
     controllerAPI = {
       findFacadeVersion: sinon.stub(),
       get: sinon.stub().returns('default'),
-      createModel: (modelName, userTag, args, callback) => {
+      createModel: (modelName, user, args, callback) => {
         assert.equal(modelName, 'newmodelname', 'model name not set properly');
-        assert.equal(userTag, 'user-dalek', 'user tag not set properly');
-        assert.deepEqual(args, {
-          credentialTag: 'cloudcred-mycred',
-          cloudTag: 'cloud-google'
-        });
+        assert.equal(user, 'dalek', 'user tag not set properly');
+        assert.deepEqual(args, {credential: 'mycred', cloud: 'google'});
         // Simulate the model being created.
         callback(null, {
           uuid: 'abc123',
@@ -46,10 +43,7 @@ describe('CreateModelButton', () => {
         });
       }
     };
-    users = {charmstore: {
-      user: 'user-dalek',
-      usernameDisplay: 'test owner'
-    }};
+    users = {charmstore: {user: 'dalek', usernameDisplay: 'test owner'}};
   });
 
   it('renders a button', () => {
@@ -100,10 +94,10 @@ describe('CreateModelButton', () => {
     // will need to be done with the uitest suite.
     const showConnectingMask = sinon.stub();
     const switchModel = sinon.stub();
-    const getCloudCredentials = function(tagList, callback) {
-      callback(null, {'my-credential': {name: 'mycred'}});
+    const getCloudCredentials = function(names, callback) {
+      callback(null, {'mycred': {}});
     };
-    const getTagsForCloudCredentials = function(tags, callback) {
+    const getCloudCredentialNames = function(pairs, callback) {
       callback(null, []);
     };
     const component = jsTestUtils.shallowRender(
@@ -112,7 +106,7 @@ describe('CreateModelButton', () => {
         cloud={'google'}
         controllerAPI={controllerAPI}
         getCloudCredentials={getCloudCredentials}
-        getTagsForCloudCredentials={getTagsForCloudCredentials}
+        getCloudCredentialNames={getCloudCredentialNames}
         hideConnectingMask={sinon.stub()}
         showConnectingMask={showConnectingMask}
         switchModel={switchModel}
@@ -170,23 +164,20 @@ describe('CreateModelButton', () => {
   it('gracefully handles errors when creating new model', () => {
     // This test doesn't check the user interactions and animations, that
     // will need to be done with the uitest suite.
-    controllerAPI.createModel = (modelName, userTag, args, callback) => {
+    controllerAPI.createModel = (modelName, user, args, callback) => {
       assert.equal(modelName, 'newmodelname', 'model name not set properly');
-      assert.equal(userTag, 'user-dalek', 'user name not set properly');
-      assert.deepEqual(args, {
-        credentialTag: 'cloudcred-mycred',
-        cloudTag: 'cloud-google'
-      });
+      assert.equal(user, 'dalek', 'user name not set properly');
+      assert.deepEqual(args, {credential: 'mycred', cloud: 'google'});
       // Simulate the model being created.
       callback('this is an error', {
         uuid: 'abc123',
         name: modelName
       });
     };
-    const getCloudCredentials = function(tagList, callback) {
-      callback(null, {'my-credential': {name: 'mycred'}});
+    const getCloudCredentials = function(names, callback) {
+      callback(null, {'mycred': {}});
     };
-    const getTagsForCloudCredentials = function(tags, callback) {
+    const getCloudCredentialNames = function(pairs, callback) {
       callback(null, []);
     };
     const hideConnectingMask = sinon.stub();
@@ -197,7 +188,7 @@ describe('CreateModelButton', () => {
         cloud={'google'}
         controllerAPI={controllerAPI}
         getCloudCredentials={getCloudCredentials}
-        getTagsForCloudCredentials={getTagsForCloudCredentials}
+        getCloudCredentialNames={getCloudCredentialNames}
         hideConnectingMask={hideConnectingMask}
         showConnectingMask={sinon.stub()}
         switchModel={sinon.stub()}

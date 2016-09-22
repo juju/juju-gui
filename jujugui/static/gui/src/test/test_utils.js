@@ -1074,8 +1074,8 @@ describe('utilities', function() {
       assert.equal(args[0], 'new-model');
       assert.equal(args[1], 'user-spinach');
       assert.deepEqual(args[2], {
-        credentialTag: 'cloudcred-the-credential',
-        cloudTag: 'cloud-azure',
+        credential: 'the-credential',
+        cloud: 'azure',
         region: 'north'
       });
       assert.isFunction(args[3]);
@@ -1134,7 +1134,7 @@ describe('utilities', function() {
     });
   });
 
-  describe('generateCloudCredentialTag', function() {
+  describe('generateCloudCredentialName', function() {
     let utils;
 
     before(function(done) {
@@ -1144,10 +1144,10 @@ describe('utilities', function() {
       });
     });
 
-    it('can generate a cloud credential tag', function() {
+    it('can generate a cloud credential name', function() {
       assert.equal(
-        utils.generateCloudCredentialTag('azure', 'user-spinach', 'super-cred'),
-        'cloudcred-azure_spinach_super-cred');
+        utils.generateCloudCredentialName('azure', 'spinach', 'super-cred'),
+        'azure_spinach_super-cred');
     });
   });
 

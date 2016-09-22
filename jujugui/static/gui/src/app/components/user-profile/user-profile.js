@@ -30,9 +30,9 @@ YUI.add('user-profile', function() {
       controllerAPI: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
       getAgreements: React.PropTypes.func.isRequired,
+      getCloudCredentialNames: React.PropTypes.func.isRequired,
       getCloudCredentials: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
-      getTagsForCloudCredentials: React.PropTypes.func.isRequired,
       hideConnectingMask: React.PropTypes.func.isRequired,
       interactiveLogin: React.PropTypes.bool,
       listBudgets: React.PropTypes.func.isRequired,
@@ -85,7 +85,7 @@ YUI.add('user-profile', function() {
           cloud={props.cloud}
           controllerAPI={props.controllerAPI}
           getCloudCredentials={props.getCloudCredentials}
-          getTagsForCloudCredentials={props.getTagsForCloudCredentials}
+          getCloudCredentialNames={props.getCloudCredentialNames}
           hideConnectingMask={props.hideConnectingMask}
           showConnectingMask={props.showConnectingMask}
           staticURL={props.staticURL}
@@ -104,7 +104,7 @@ YUI.add('user-profile', function() {
           controllerAPI={props.controllerAPI}
           currentModel={props.currentModel}
           getCloudCredentials={props.getCloudCredentials}
-          getTagsForCloudCredentials={props.getTagsForCloudCredentials}
+          getCloudCredentialNames={props.getCloudCredentialNames}
           hideConnectingMask={props.hideConnectingMask}
           listModelsWithInfo={props.listModelsWithInfo}
           showConnectingMask={props.showConnectingMask}

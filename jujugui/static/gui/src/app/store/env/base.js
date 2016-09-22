@@ -27,9 +27,50 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-env-base', function(Y) {
 
-  var module = Y.namespace('juju.environments');
-  var _sessionStorageData = {};
-  var API_USER_TAG = 'user-';
+  const module = Y.namespace('juju.environments');
+  const _sessionStorageData = {};
+  // Define a Juju tags management object.
+  module.tags = {
+    /**
+      Build a tag with the given type and entity name.
+
+      @method build
+      @param {String} type The tag type (for instance tags.USER or tags.CLOUD).
+      @param {String} name The name of the Juju entity.
+      @return {String} The resulting Juju tag.
+    */
+    build: (type, name) => {
+      return `${type}-${name}`;
+    },
+    /**
+      Parse a Juju entity name from the given tag.
+
+      @method parse
+      @param {String} tag The tag associated with the Juju entity.
+      @param {String} prefix The Juju prefix (see module.prefixes).
+      @return {String} The resulting name of the entity (without the prefix).
+    */
+    parse: (type, tag) => {
+      const exp = new RegExp(`^${type}-`);
+      const name = tag.replace(exp, '');
+      if (name === tag) {
+        throw new Error(`invalid tag of type ${type}: ${tag}`);
+      }
+      return name;
+    },
+    APPLICATION: 'application',
+    CLOUD: 'cloud',
+    CONTROLLER: 'controller',
+    CREDENTIAL: 'cloudcred',
+    MACHINE: 'machine',
+    MODEL: 'model',
+    UNIT: 'unit',
+    USER: 'user'
+  };
+  // Define the pinger interval in seconds.
+  module.PING_INTERVAL = 10;
+  // Define the Admin API facade version for Juju >= 2.
+  module.ADMIN_FACADE_VERSION = 3;
 
   /**
     Create and return an attribute setter and resetter for the given object.
@@ -283,16 +324,12 @@ YUI.add('juju-env-base', function(Y) {
       this.userIsAuthenticated = false;
       this.failedAuthentication = false;
       // Populate our credentials if they don't already exist.
-      var credentials = this.getCredentials();
-      if (Y.Lang.isValue(this.get('user'))) {
-        credentials.user = credentials.user ||
-            API_USER_TAG + this.get('user');
-        if (Y.Lang.isValue(this.get('password'))) {
-          credentials.password = credentials.password ||
-              this.get('password');
-        }
+      const credentials = this.getCredentials();
+      if (!credentials.areAvailable) {
+        credentials.user = this.get('user') || '';
+        credentials.password = this.get('password') || '';
+        this.setCredentials(credentials);
       }
-      this.setCredentials(credentials);
     },
 
     destructor: function() {
@@ -429,7 +466,7 @@ YUI.add('juju-env-base', function(Y) {
      * @method setCredentials
      * @param {Object} The credentials to store, with a "user" and a "password"
      *   attribute included, or with a "macaroons" attribute, depending on the
-     *   method used to log in.
+     *   method used to log in. The user must be a user name, not a user tag.
      * @return {undefined} Stores data only.
      */
     setCredentials: function(credentials) {
@@ -453,11 +490,6 @@ YUI.add('juju-env-base', function(Y) {
         credentials = {};
       }
       if (credentials.user) {
-        // All Juju interactions require the 'user-' prefix on the username but
-        // we hide that from the user so we prefix that here instead.
-        if (credentials.user.indexOf(API_USER_TAG) !== 0) {
-          credentials.user = API_USER_TAG + credentials.user;
-        }
         // User names without a "@something" part are local Juju users.
         if (credentials.user.indexOf('@') === -1) {
           credentials.user += '@local';

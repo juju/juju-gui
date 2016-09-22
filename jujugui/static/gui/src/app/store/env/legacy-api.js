@@ -26,15 +26,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 YUI.add('juju-env-legacy-api', function(Y) {
+  const module = Y.namespace('juju.environments');
+  const tags = module.tags;
+  const utils = Y.namespace('juju.views.utils');
 
-  // Define the pinger interval in seconds.
-  var PING_INTERVAL = 10;
-
-  // Define the Admin API facade versions for Juju 1 and 2.
+  // Define the Admin API facade versions for Juju 1.
   var ADMIN_FACADE_VERSION = 0;
-
-  var environments = Y.namespace('juju.environments');
-  var utils = Y.namespace('juju.views.utils');
 
   /**
     Return a normalized name from an endpoint object.
@@ -156,9 +153,9 @@ YUI.add('juju-env-legacy-api', function(Y) {
     GoLegacyEnvironment.superclass.constructor.apply(this, arguments);
   }
 
-  GoLegacyEnvironment.NAME = 'legacy-api-env';
+  GoLegacyEnvironment.NAME = 'legacy-api';
 
-  Y.extend(GoLegacyEnvironment, environments.BaseEnvironment, {
+  Y.extend(GoLegacyEnvironment, module.BaseEnvironment, {
 
     /**
       A list of the valid constraints for all providers. Required
@@ -443,10 +440,10 @@ YUI.add('juju-env-legacy-api', function(Y) {
       // bundle, the tags=... part does not include spaces, which are the
       // delimiter used by the deployer to separate different constraints,
       // e.g.: constraints: mem=2000 tags=foo,bar cpu-cores=4.
-      var tags = result.tags;
-      if (tags) {
-        result.tags = tags.split(',').reduce(function(collected, value) {
-          var tag = value.trim().split(/\s+/).join('-');
+      const tagConstraints = result.tags;
+      if (tagConstraints) {
+        result.tags = tagConstraints.split(',').reduce((collected, value) => {
+          const tag = value.trim().split(/\s+/).join('-');
           if (tag) {
             collected.push(tag);
           }
@@ -473,7 +470,9 @@ YUI.add('juju-env-legacy-api', function(Y) {
         var response = data.Response;
         if (response && response.AuthTag && response.Password) {
           this.setCredentials({
-            user: response.AuthTag, password: response.Password});
+            user: tags.parse(tags.USER, response.AuthTag),
+            password: response.Password
+          });
         }
         // If login succeeded store the facades and retrieve environment info.
         // Starting from Juju 2.0, "Facades" is spelled "facades".
@@ -490,7 +489,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
         // prevent Apache to disconnect the WebSocket in the embedded Juju.
         if (!this._pinger) {
           this._pinger = setInterval(
-            this.ping.bind(this), PING_INTERVAL * 1000);
+            this.ping.bind(this), module.PING_INTERVAL * 1000);
         }
         // Clean up for log out text.
         this.failedAuthentication = this.failedTokenAuthentication = false;
@@ -567,7 +566,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
         return;
       }
       var params = {
-        AuthTag: credentials.user,
+        AuthTag: tags.build(tags.USER, credentials.user),
         Password: credentials.password
       };
       this._send_rpc({
@@ -802,8 +801,8 @@ YUI.add('juju-env-legacy-api', function(Y) {
       var webHandler = this.get('webHandler');
       // TODO frankban: allow macaroons based auth here.
       webHandler.sendPostRequest(
-          path, headers, file, credentials.user, credentials.password,
-          progress, callback);
+          path, headers, file, tags.build(tags.USER, credentials.user),
+          credentials.password, progress, callback);
     },
 
     /**
@@ -822,7 +821,8 @@ YUI.add('juju-env-legacy-api', function(Y) {
       var path = '/juju-core/charms?url=' + charmUrl + '&file=' + filename;
       var webHandler = this.get('webHandler');
       // TODO frankban: allow macaroons based auth here.
-      return webHandler.getUrl(path, credentials.user, credentials.password);
+      return webHandler.getUrl(
+        path, tags.build(tags.USER, credentials.user), credentials.password);
     },
 
     /**
@@ -839,8 +839,8 @@ YUI.add('juju-env-legacy-api', function(Y) {
       var webHandler = this.get('webHandler');
       var headers = Object.create(null);
       webHandler.sendGetRequest(
-          path, headers, credentials.user, credentials.password,
-          progress, callback);
+          path, headers, tags.build(tags.USER, credentials.user),
+          credentials.password, progress, callback);
     },
 
     /**
@@ -2406,8 +2406,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
 
       @method createModel
       @param {String} name The name of the new model.
-      @param {String} userTag The name of the new model owner, including the
-        "user-" prefix.
+      @param {String} user The name of the new model owner.
       @param {Object} args Ignored and only present for forward compatibility
         with the new Juju API.
       @param {Function} callback A callable that must be called once the
@@ -2416,26 +2415,26 @@ YUI.add('juju-env-legacy-api', function(Y) {
         following attributes:
         - name: the name of the new model;
         - uuid: the unique identifier of the new model;
-        - ownerTag: the model owner tag.
+        - owner: the name of the model owner.
       @return {undefined} Sends a message to the server only.
     */
-    createModel: function(name, userTag, args, callback) {
-      const handler = function(userCallback, data) {
-        if (!userCallback) {
+    createModel: function(name, user, args, callback) {
+      const handler = data => {
+        if (!callback) {
           console.log('data returned by CreateModel API call:', data);
           return;
         }
         if (data.Error) {
-          userCallback(data.Error, {});
+          callback(data.Error, {});
           return;
         }
         const response = data.Response;
-        userCallback(null, {
+        callback(null, {
           name: response.Name,
           uuid: response.UUID,
-          ownerTag: response.OwnerTag
+          owner: tags.parse(tags.USER, response.OwnerTag)
         });
-      }.bind(this, callback);
+      };
       // In order to create a new model, we first need to retrieve the
       // configuration skeleton for this provider.
       this._send_rpc({
@@ -2443,25 +2442,20 @@ YUI.add('juju-env-legacy-api', function(Y) {
         Request: 'ConfigSkeleton',
       }, data => {
         if (data.Error) {
-          handler({
-            Error: 'cannot get configuration skeleton: ' + data.Error
-          });
+          handler({Error: 'cannot get configuration skeleton: ' + data.Error});
           return;
         };
-        var config = data.Response.Config;
+        const config = data.Response.Config;
         // Then, having the configuration skeleton, we need configuration
         // options for this specific model.
         this.environmentGet(data => {
           if (data.err) {
-            handler({
-              Error: 'cannot get model configuration: ' + data.err
-            });
+            handler({Error: 'cannot get model configuration: ' + data.err});
             return;
           }
           config.name = name;
-          // XXX frankban: juju-core should not require clients to provide SSH
-          // keys at this point, but only when strictly necessary. Provide an
-          // invalid one for now.
+          // juju 1 required clients to provide SSH keys at this point when
+          // creating models. This is fixed starting from Juju 2.
           config['authorized-keys'] = 'ssh-rsa INVALID';
           Object.keys(data.config).forEach((attr) => {
             // Juju returns an error if a uuid key is included in the request.
@@ -2474,7 +2468,10 @@ YUI.add('juju-env-legacy-api', function(Y) {
           this._send_rpc({
             Type: 'EnvironmentManager',
             Request: 'CreateEnvironment',
-            Params: {OwnerTag: userTag, Config: config}
+            Params: {
+              OwnerTag: tags.build(tags.USER, user),
+              Config: config
+            }
           }, handler);
         });
       });
@@ -2484,8 +2481,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
       List all models the user can access on the current controller.
 
       @method listModels
-      @param {String} userTag The name of the new model owner, including the
-        "user-" prefix.
+      @param {String} user The user name.
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an error string and a list of
         models. If an error occurs, the error string will describe the error
@@ -2493,43 +2489,41 @@ YUI.add('juju-env-legacy-api', function(Y) {
         will be null and the model list will be an array of objects, each one
         with the following fields:
         - name: the name of the model;
-        - tag: the model tag, like "model-de1b2c16-0151-4e63-87e9-9f0950a";
-        - ownerTag: the model owner tag (prefixed with "user-");
+        - id: the identifier for the model, like "de1b2c16-0151-4e63-87e9";
         - owner: the model owner;
-        - uuid: the unique identifier of the model;
+        - uuid: the unique identifier of the model (same as id);
         - lastConnection: the date of the last connection as a string, e.g.:
           '2015-09-24T10:08:50Z' or null if the model has been never
           connected to;
       @return {undefined} Sends a message to the server only.
     */
-    listModels: function(userTag, callback) {
-      const handleListModels = function(userCallback, data) {
-        if (!userCallback) {
+    listModels: function(user, callback) {
+      const handleListModels = data => {
+        if (!callback) {
           console.log('data returned by ListEnvironments API call:', data);
           return;
         }
         if (data.Error) {
-          userCallback(data.Error, []);
+          callback(data.Error, []);
           return;
         }
         const results = data.Response.UserEnvironments || [];
         const models = results.map(value => {
           return {
             name: value.Name,
-            tag: 'model-' + value.UUID,
-            ownerTag: value.OwnerTag,
-            owner: value.OwnerTag.replace(/^user-/, ''),
+            id: value.UUID,
+            owner: tags.parse(tags.USER, value.OwnerTag),
             uuid: value.UUID,
             lastConnection: value.LastConnection
           };
         });
-        userCallback(null, models);
-      }.bind(this, callback);
+        callback(null, models);
+      };
       // Send the API request.
       this._send_rpc({
         Type: 'EnvironmentManager',
         Request: 'ListEnvironments',
-        Params: {Tag: userTag}
+        Params: {Tag: tags.build(tags.USER, user)}
       }, handleListModels);
     },
 
@@ -2550,9 +2544,9 @@ YUI.add('juju-env-legacy-api', function(Y) {
 
   });
 
-  environments.legacyCreateRelationKey = createRelationKey;
-  environments.GoLegacyEnvironment = GoLegacyEnvironment;
-  environments.legacyParsePlacement = parsePlacement;
+  module.legacyCreateRelationKey = createRelationKey;
+  module.GoLegacyEnvironment = GoLegacyEnvironment;
+  module.legacyParsePlacement = parsePlacement;
 
   var KVM = {label: 'KVM', value: 'kvm'},
       LXC = {label: 'LXC', value: 'lxc'};

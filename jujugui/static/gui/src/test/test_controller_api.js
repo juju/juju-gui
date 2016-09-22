@@ -187,6 +187,7 @@ describe('Controller API', function() {
         'request-id': 1,
         response: {
           'user-info': {},
+          'controller-tag': 'controller-42',
           facades: [{name: 'ModelManager', versions: [2]}]
         }
       });
@@ -202,6 +203,7 @@ describe('Controller API', function() {
         'request-id': 1,
         response: {
           'user-info': {},
+          'controller-tag': 'controller-42',
           facades: [{name: 'ModelManager', versions: [2]}]
         }
       });
@@ -236,6 +238,7 @@ describe('Controller API', function() {
           {name: 'Client', versions: [0]},
           {name: 'ModelManager', versions: [2]}
         ],
+        'controller-tag': 'controller-42',
         'user-info': {'controller-access': 'addmodel', 'model-access': ''}
       }});
       assert.strictEqual(controllerAPI.get('controllerAccess'), 'addmodel');
@@ -358,7 +361,8 @@ describe('Controller API', function() {
       conn.msg({
         'request-id': requestId,
         response: {
-          'user-info': {identity: 'who'},
+          'user-info': {identity: 'user-who'},
+          'controller-tag': 'controller-42',
           facades: [
             {name: 'Client', versions: [42, 47]},
             {name: 'ModelManager', versions: [2]}
@@ -367,7 +371,7 @@ describe('Controller API', function() {
       });
       assert.strictEqual(error, null);
       const creds = controllerAPI.getCredentials();
-      assert.strictEqual(creds.user, 'user-who@local');
+      assert.strictEqual(creds.user, 'who@local');
       assert.strictEqual(creds.password, '');
       assert.deepEqual(creds.macaroons, ['macaroon', 'discharge']);
       assert.deepEqual(controllerAPI.get('facades'), {
@@ -386,7 +390,8 @@ describe('Controller API', function() {
       conn.msg({
         'request-id': requestId,
         response: {
-          'user-info': {identity: 'dalek'},
+          'user-info': {identity: 'user-dalek'},
+          'controller-tag': 'controller-42',
           facades: [
             {name: 'Client', versions: [0]},
             {name: 'ModelManager', versions: [2]}
@@ -395,7 +400,7 @@ describe('Controller API', function() {
       });
       assert.strictEqual(error, null);
       const creds = controllerAPI.getCredentials();
-      assert.strictEqual(creds.user, 'user-dalek@local');
+      assert.strictEqual(creds.user, 'dalek@local');
       assert.strictEqual(creds.password, '');
       assert.deepEqual(creds.macaroons, ['already stored', 'macaroons']);
       assert.deepEqual(controllerAPI.get('facades'), {
@@ -442,20 +447,19 @@ describe('Controller API', function() {
   });
 
   describe('destroyModels', function() {
-    it('destroys models', function(done) {
+    it('destroys models', done => {
       // Perform the request.
-      controllerAPI.destroyModels(['model-tag-1'], function(response) {
-        assert.strictEqual(response.err, undefined);
-        assert.deepEqual(response.results, {
-          'model-tag-1': null
-        });
+      controllerAPI.destroyModels(['default'], (err, results) => {
+        assert.strictEqual(err, null);
+        assert.deepEqual(results, {default: null});
         assert.strictEqual(conn.messages.length, 1);
-        assert.deepEqual(conn.last_message(), {
+        const msg = conn.last_message();
+        assert.deepEqual(msg, {
           type: 'ModelManager',
           version: 2,
           request: 'DestroyModels',
           params: {entities: [
-            {tag: 'model-tag-1'}
+            {tag: 'model-default'}
           ]},
           'request-id': 1
         });
@@ -468,28 +472,25 @@ describe('Controller API', function() {
       });
     });
 
-    it('destroys multiple models', function(done) {
+    it('destroys multiple models', done => {
       // Perform the request.
-      controllerAPI.destroyModels(
-        ['model-tag-1', 'model-tag-2'], function(response) {
-          assert.strictEqual(response.err, undefined);
-          assert.deepEqual(response.results, {
-            'model-tag-1': null,
-            'model-tag-2': null
-          });
-          assert.strictEqual(conn.messages.length, 1);
-          assert.deepEqual(conn.last_message(), {
-            type: 'ModelManager',
-            version: 2,
-            request: 'DestroyModels',
-            params: {entities: [
-              {tag: 'model-tag-1'},
-              {tag: 'model-tag-2'}
-            ]},
-            'request-id': 1
-          });
-          done();
+      controllerAPI.destroyModels(['test-1', 'test-2'], (err, results) => {
+        assert.strictEqual(err, null);
+        assert.deepEqual(results, {'test-1': null, 'test-2': null});
+        assert.strictEqual(conn.messages.length, 1);
+        const msg = conn.last_message();
+        assert.deepEqual(msg, {
+          type: 'ModelManager',
+          version: 2,
+          request: 'DestroyModels',
+          params: {entities: [
+            {tag: 'model-test-1'},
+            {tag: 'model-test-2'}
+          ]},
+          'request-id': 1
         });
+        done();
+      });
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -497,15 +498,14 @@ describe('Controller API', function() {
       });
     });
 
-    it('handles local failures while destroying models', function(done) {
+    it('handles local failures while destroying models', done => {
       // Perform the request.
-      var tags = ['model-tag-1', 'model-tag-2', 'model-tag-3'];
-      controllerAPI.destroyModels(tags, function(response) {
-        assert.strictEqual(response.err, undefined);
-        assert.deepEqual(response.results, {
-          'model-tag-1': 'bad wolf',
-          'model-tag-2': null,
-          'model-tag-3': 'end of the universe'
+      controllerAPI.destroyModels(['m1', 'm2', 'm3'], (err, results) => {
+        assert.strictEqual(err, null);
+        assert.deepEqual(results, {
+          m1: 'bad wolf',
+          m2: null,
+          m3: 'end of the universe'
         });
         done();
       });
@@ -520,11 +520,11 @@ describe('Controller API', function() {
       });
     });
 
-    it('handles global failures while destroying models', function(done) {
+    it('handles global failures while destroying models', done => {
       // Perform the request.
-      controllerAPI.destroyModels(['model-tag-1'], function(response) {
-        assert.strictEqual(response.err, 'bad wolf');
-        assert.strictEqual(response.results, undefined);
+      controllerAPI.destroyModels(['default'], (err, results) => {
+        assert.strictEqual(err, 'bad wolf');
+        assert.deepEqual(results, {});
         done();
       });
       // Mimic response.
@@ -535,19 +535,18 @@ describe('Controller API', function() {
   describe('modelInfo', function() {
     it('retrieves model info for a single model', done => {
       // Perform the request.
-      const tag = 'model-5bea955d-7a43-47d3-89dd-b02c923e';
-      controllerAPI.modelInfo([tag], (err, models) => {
+      const id = '5bea955d-7a43-47d3-89dd-b02c923e';
+      controllerAPI.modelInfo([id], (err, models) => {
         assert.strictEqual(err, null);
         assert.strictEqual(models.length, 1);
         const result = models[0];
-        assert.strictEqual(result.tag, tag);
+        assert.strictEqual(result.id, id);
         assert.strictEqual(result.name, 'admin');
         assert.strictEqual(result.series, 'trusty');
         assert.strictEqual(result.provider, 'lxd');
         assert.strictEqual(result.uuid, '5bea955d-7a43-47d3-89dd-b02c923e');
-        assert.strictEqual(result.serverUuid, '5bea955d-7a43-47d3-89dd');
+        assert.strictEqual(result.controllerUUID, '5bea955d-7a43-47d3-89dd');
         assert.strictEqual(result.life, 'alive');
-        assert.strictEqual(result.ownerTag, 'user-admin@local');
         assert.strictEqual(result.owner, 'admin@local');
         assert.strictEqual(result.isAlive, true, 'unexpected zombie model');
         assert.strictEqual(result.isAdmin, false, 'unexpected admin model');
@@ -556,12 +555,11 @@ describe('Controller API', function() {
           type: 'ModelManager',
           version: 2,
           request: 'ModelInfo',
-          params: {entities: [{tag: tag}]},
+          params: {entities: [{tag: 'model-' + id}]},
           'request-id': 1
         });
         done();
       });
-
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -583,34 +581,30 @@ describe('Controller API', function() {
 
     it('retrieves model info for multiple models', done => {
       // Perform the request.
-      const tag1 = 'model-5bea955d-7a43-47d3-89dd-tag1';
-      const tag2 = 'model-5bea955d-7a43-47d3-89dd-tag2';
-      controllerAPI.modelInfo([tag1, tag2], (err, models) => {
+      const id1 = '5bea955d-7a43-47d3-89dd-1';
+      const id2 = '5bea955d-7a43-47d3-89dd-2';
+      controllerAPI.modelInfo([id1, id2], (err, models) => {
         assert.strictEqual(err, null);
         assert.strictEqual(models.length, 2);
         const result1 = models[0];
-        assert.strictEqual(result1.tag, tag1);
+        assert.strictEqual(result1.id, id1);
         assert.strictEqual(result1.name, 'model1');
         assert.strictEqual(result1.series, 'trusty');
         assert.strictEqual(result1.provider, 'lxd');
-        assert.strictEqual(result1.uuid, '5bea955d-7a43-47d3-89dd-tag1');
-        assert.strictEqual(
-          result1.serverUuid, '5bea955d-7a43-47d3-89dd-tag1');
+        assert.strictEqual(result1.uuid, id1);
+        assert.strictEqual(result1.controllerUUID, id1);
         assert.strictEqual(result1.life, 'alive');
-        assert.strictEqual(result1.ownerTag, 'user-admin@local');
         assert.strictEqual(result1.owner, 'admin@local');
         assert.strictEqual(result1.isAlive, true, 'unexpected zombie model');
         assert.strictEqual(result1.isAdmin, true, 'unexpected regular model');
         const result2 = models[1];
-        assert.strictEqual(result2.tag, tag2);
+        assert.strictEqual(result2.id, id2);
         assert.strictEqual(result2.name, 'model2');
         assert.strictEqual(result2.series, 'xenial');
         assert.strictEqual(result2.provider, 'aws');
-        assert.strictEqual(result2.uuid, '5bea955d-7a43-47d3-89dd-tag2');
-        assert.strictEqual(
-          result2.serverUuid, '5bea955d-7a43-47d3-89dd-tag1');
+        assert.strictEqual(result2.uuid, id2);
+        assert.strictEqual(result2.controllerUUID, '5bea955d-7a43-c2');
         assert.strictEqual(result2.life, 'dying');
-        assert.strictEqual(result2.ownerTag, 'user-dalek@skaro');
         assert.strictEqual(result2.owner, 'dalek@skaro');
         assert.strictEqual(result2.isAlive, false, 'unexpected alive model');
         assert.strictEqual(result2.isAdmin, false, 'unexpected admin model');
@@ -619,7 +613,10 @@ describe('Controller API', function() {
           type: 'ModelManager',
           version: 2,
           request: 'ModelInfo',
-          params: {entities: [{tag: tag1}, {tag: tag2}]},
+          params: {entities: [
+            {tag: 'model-' + id1},
+            {tag: 'model-' + id2}
+          ]},
           'request-id': 1
         });
         done();
@@ -634,8 +631,8 @@ describe('Controller API', function() {
               'default-series': 'trusty',
               name: 'model1',
               'provider-type': 'lxd',
-              uuid: '5bea955d-7a43-47d3-89dd-tag1',
-              'controller-uuid': '5bea955d-7a43-47d3-89dd-tag1',
+              uuid: id1,
+              'controller-uuid': id1,
               life: 'alive',
               'owner-tag': 'user-admin@local'
             }
@@ -644,8 +641,8 @@ describe('Controller API', function() {
               'default-series': 'xenial',
               name: 'model2',
               'provider-type': 'aws',
-              uuid: '5bea955d-7a43-47d3-89dd-tag2',
-              'controller-uuid': '5bea955d-7a43-47d3-89dd-tag1',
+              uuid: id2,
+              'controller-uuid': '5bea955d-7a43-c2',
               life: 'dying',
               'owner-tag': 'user-dalek@skaro'
             }
@@ -656,7 +653,7 @@ describe('Controller API', function() {
 
     it('handles request failures while fetching model info', done => {
       // Perform the request.
-      controllerAPI.modelInfo(['model-5bea955d-7a43-47d3'], (err, models) => {
+      controllerAPI.modelInfo(['5bea955d-7a43-47d3'], (err, models) => {
         assert.strictEqual(err, 'bad wolf');
         assert.deepEqual(models, []);
         done();
@@ -667,12 +664,12 @@ describe('Controller API', function() {
 
     it('handles API failures while retrieving model info', done => {
       // Perform the request.
-      const tag = 'model-5bea955d-7a43-47d3-89dd';
-      controllerAPI.modelInfo([tag], (err, models) => {
+      const id = '5bea955d-7a43-47d3-89dd';
+      controllerAPI.modelInfo([id], (err, models) => {
         assert.strictEqual(err, null);
         assert.strictEqual(models.length, 1);
         const result = models[0];
-        assert.strictEqual(result.tag, tag);
+        assert.strictEqual(result.id, id);
         assert.strictEqual(result.err, 'bad wolf');
         done();
       });
@@ -689,7 +686,7 @@ describe('Controller API', function() {
 
     it('handles unexpected failures while getting model info', done => {
       // Perform the request.
-      controllerAPI.modelInfo(['model-5bea955d-7a43-47d3'], (err, models) => {
+      controllerAPI.modelInfo(['5bea955d-7a43-47d3'], (err, models) => {
         assert.strictEqual(err, 'unexpected results: []');
         assert.deepEqual(models, []);
         done();
@@ -701,21 +698,20 @@ describe('Controller API', function() {
 
   describe('listModelsWithInfo', function() {
     it('info for a single model', done => {
-      controllerAPI.setCredentials({user: 'user-who', password: 'tardis'});
+      controllerAPI.setCredentials({user: 'who', password: 'tardis'});
       // Perform the request.
       controllerAPI.listModelsWithInfo((err, models) => {
         assert.strictEqual(err, null);
         assert.strictEqual(models.length, 1);
         const result = models[0];
         assert.strictEqual(result.err, undefined);
-        assert.strictEqual(result.tag, 'model-5bea955d-1');
+        assert.strictEqual(result.id, '5bea955d-1');
         assert.strictEqual(result.name, 'admin');
         assert.strictEqual(result.series, 'trusty');
         assert.strictEqual(result.provider, 'lxd');
         assert.strictEqual(result.uuid, '5bea955d-1');
-        assert.strictEqual(result.serverUuid, '5bea955d-c');
+        assert.strictEqual(result.controllerUUID, '5bea955d-c');
         assert.strictEqual(result.life, 'alive');
-        assert.strictEqual(result.ownerTag, 'user-admin@local');
         assert.strictEqual(result.owner, 'admin@local');
         assert.strictEqual(result.isAlive, true, 'unexpected zombie model');
         assert.strictEqual(result.isAdmin, false, 'unexpected admin model');
@@ -773,49 +769,46 @@ describe('Controller API', function() {
 
     it('info for multiple models', done => {
       controllerAPI.setCredentials(
-        {user: 'user-dalek@external', password: 'exterminate'});
+        {user: 'dalek@external', password: 'exterminate'});
       // Perform the request.
       controllerAPI.listModelsWithInfo((err, models) => {
         assert.strictEqual(err, null);
         assert.strictEqual(models.length, 3);
         const result1 = models[0];
         assert.strictEqual(result1.err, undefined);
-        assert.strictEqual(result1.tag, 'model-5bea955d-1');
+        assert.strictEqual(result1.id, '5bea955d-1');
         assert.strictEqual(result1.name, 'default');
         assert.strictEqual(result1.series, 'xenial');
         assert.strictEqual(result1.provider, 'lxd');
         assert.strictEqual(result1.uuid, '5bea955d-1');
-        assert.strictEqual(result1.serverUuid, '5bea955d-c');
+        assert.strictEqual(result1.controllerUUID, '5bea955d-c');
         assert.strictEqual(result1.life, 'dead');
-        assert.strictEqual(result1.ownerTag, 'user-dalek@local');
         assert.strictEqual(result1.owner, 'dalek@local');
         assert.strictEqual(result1.isAlive, false, 'unexpected alive model');
         assert.strictEqual(result1.isAdmin, false, 'unexpected admin model');
         assert.strictEqual(result1.lastConnection, 'today');
         const result2 = models[1];
         assert.strictEqual(result2.err, undefined);
-        assert.strictEqual(result2.tag, 'model-5bea955d-c');
+        assert.strictEqual(result2.id, '5bea955d-c');
         assert.strictEqual(result2.name, 'admin');
         assert.strictEqual(result2.series, 'trusty');
         assert.strictEqual(result2.provider, 'lxd');
         assert.strictEqual(result2.uuid, '5bea955d-c');
-        assert.strictEqual(result2.serverUuid, '5bea955d-c');
+        assert.strictEqual(result2.controllerUUID, '5bea955d-c');
         assert.strictEqual(result2.life, 'alive');
-        assert.strictEqual(result2.ownerTag, 'user-who@local');
         assert.strictEqual(result2.owner, 'who@local');
         assert.strictEqual(result2.isAlive, true, 'unexpected zombie model');
         assert.strictEqual(result2.isAdmin, true, 'unexpected regular model');
         assert.strictEqual(result2.lastConnection, 'yesterday');
         const result3 = models[2];
         assert.strictEqual(result3.err, undefined);
-        assert.strictEqual(result3.tag, 'model-5bea955d-3');
+        assert.strictEqual(result3.id, '5bea955d-3');
         assert.strictEqual(result3.name, 'mymodel');
         assert.strictEqual(result3.series, 'precise');
         assert.strictEqual(result3.provider, 'aws');
         assert.strictEqual(result3.uuid, '5bea955d-3');
-        assert.strictEqual(result3.serverUuid, '5bea955d-c');
+        assert.strictEqual(result3.controllerUUID, '5bea955d-c');
         assert.strictEqual(result3.life, 'alive');
-        assert.strictEqual(result3.ownerTag, 'user-cyberman@local');
         assert.strictEqual(result3.owner, 'cyberman@local');
         assert.strictEqual(result3.isAlive, true, 'unexpected zombie model');
         assert.strictEqual(result3.isAdmin, false, 'unexpected admin model');
@@ -963,7 +956,7 @@ describe('Controller API', function() {
         assert.strictEqual(err, null);
         assert.strictEqual(models.length, 1);
         const result = models[0];
-        assert.strictEqual(result.tag, 'model-5bea955d-1');
+        assert.strictEqual(result.id, '5bea955d-1');
         assert.strictEqual(result.err, 'bad wolf');
         done();
       });
@@ -996,25 +989,22 @@ describe('Controller API', function() {
 
   describe('createModel', function() {
     it('successfully creates a model', done => {
-      const user = 'user-dalek@skaro';
+      const user = 'dalek@skaro';
       const args = {
         config: {answer: '42'},
-        cloudTag: 'cloud-lxd',
+        cloud: 'lxd',
         region: 'galaxy',
-        credentialTag: 'cloudcred-dalek'
+        credential: 'dalek'
       };
       controllerAPI.createModel('mymodel', user, args, (err, data) => {
         assert.strictEqual(err, null);
         assert.strictEqual(data.name, 'mymodel');
         assert.strictEqual(data.uuid, 'unique-id');
-        assert.strictEqual(data.ownerTag, 'user-rose@external');
         assert.strictEqual(data.owner, 'rose@external');
         assert.strictEqual(data.provider, 'lxd');
         assert.strictEqual(data.series, 'xenial');
-        assert.strictEqual(data.cloudTag, 'cloud-proxima-centauri');
         assert.strictEqual(data.cloud, 'proxima-centauri');
         assert.strictEqual(data.region, 'alpha-quadrant');
-        assert.strictEqual(data.credentialTag, 'cloudcred-dalek');
         assert.strictEqual(data.credential, 'dalek');
         assert.equal(conn.messages.length, 1);
         const msg = conn.last_message();
@@ -1024,11 +1014,11 @@ describe('Controller API', function() {
           request: 'CreateModel',
           params: {
             name: 'mymodel',
-            'owner-tag': user,
+            'owner-tag': 'user-' + user,
             config: args.config,
-            'cloud-tag': args.cloudTag,
+            'cloud-tag': 'cloud-' + args.cloud,
             region: args.region,
-            credential: args.credentialTag
+            credential: 'cloudcred-' + args.credential
           },
           'request-id': 1
         });
@@ -1052,8 +1042,8 @@ describe('Controller API', function() {
 
     it('adds local user domain when creating a model', done => {
       // Here we also check that empty/undefined/null args are ignored.
-      const args = {config: null, cloudTag: ''};
-      controllerAPI.createModel('mymodel', 'user-who', args, (err, data) => {
+      const args = {config: null, cloud: ''};
+      controllerAPI.createModel('mymodel', 'who', args, (err, data) => {
         assert.strictEqual(err, null);
         assert.equal(conn.messages.length, 1);
         const msg = conn.last_message();
@@ -1086,15 +1076,14 @@ describe('Controller API', function() {
     });
 
     it('handles no cloud credential returned', done => {
-      const user = 'user-dalek@skaro';
+      const user = 'dalek@skaro';
       const args = {
         config: {answer: '42'},
-        cloudTag: 'cloud-lxd',
+        cloud: 'cloud',
         region: 'galaxy'
       };
       controllerAPI.createModel('mymodel', user, args, (err, data) => {
         assert.strictEqual(err, null);
-        assert.strictEqual(data.credentialTag, '');
         assert.strictEqual(data.credential, '');
         assert.equal(conn.messages.length, 1);
         const msg = conn.last_message();
@@ -1104,9 +1093,9 @@ describe('Controller API', function() {
           request: 'CreateModel',
           params: {
             name: 'mymodel',
-            'owner-tag': user,
+            'owner-tag': 'user-' + user,
             config: args.config,
-            'cloud-tag': args.cloudTag,
+            'cloud-tag': 'cloud-' + args.cloud,
             region: args.region
           },
           'request-id': 1
@@ -1141,21 +1130,20 @@ describe('Controller API', function() {
 
   describe('listModels', function() {
     it('lists models for a specific owner', done => {
-      controllerAPI.listModels('user-who', (err, models) => {
+      controllerAPI.listModels('who', (err, models) => {
         assert.strictEqual(err, null);
+        console.log(models);
         assert.deepEqual(models, [
           {
-            name: 'env1',
-            tag: 'model-unique1',
-            ownerTag: 'user-who',
+            id: 'unique1',
+            name: 'model1',
             owner: 'who',
             uuid: 'unique1',
             lastConnection: 'today'
           },
           {
-            name: 'env2',
-            tag: 'model-unique2',
-            ownerTag: 'user-rose',
+            id: 'unique2',
+            name: 'model2',
             owner: 'rose',
             uuid: 'unique2',
             lastConnection: 'yesterday'
@@ -1177,14 +1165,14 @@ describe('Controller API', function() {
         response: {
           'user-models': [{
             model: {
-              name: 'env1',
+              name: 'model1',
               'owner-tag': 'user-who',
               uuid: 'unique1'
             },
             'last-connection': 'today'
           }, {
             model: {
-              name: 'env2',
+              name: 'model2',
               'owner-tag': 'user-rose',
               uuid: 'unique2'
             },
@@ -1195,7 +1183,7 @@ describe('Controller API', function() {
     });
 
     it('handles failures while listing models', done => {
-      controllerAPI.listModels('user-dalek', (err, models) => {
+      controllerAPI.listModels('dalek', (err, models) => {
         assert.strictEqual(err, 'bad wolf');
         assert.deepEqual(models, []);
         done();
@@ -1205,7 +1193,7 @@ describe('Controller API', function() {
     });
 
     it('handles no models returned', done => {
-      controllerAPI.listModels('user-dalek', (err, models) => {
+      controllerAPI.listModels('dalek', (err, models) => {
         assert.strictEqual(err, null);
         assert.deepEqual(models, []);
         done();
@@ -1221,8 +1209,7 @@ describe('Controller API', function() {
       controllerAPI.listClouds((err, clouds) => {
         assert.strictEqual(err, null);
         assert.deepEqual(clouds, {
-          'cloud-lxd': {
-            name: 'lxd',
+          'lxd': {
             cloudType: 'lxd',
             authTypes: ['empty'],
             endpoint: 'https://1.2.3.4/lxd-api',
@@ -1235,8 +1222,7 @@ describe('Controller API', function() {
               storageEndpoint: 'https://1.2.3.4/lxd-storage-region1'
             }]
           },
-          'cloud-google': {
-            name: 'google',
+          'google': {
             cloudType: 'gce',
             authTypes: ['userpass', 'oauth2'],
             endpoint: 'https://1.2.3.4/google-api',
@@ -1321,12 +1307,10 @@ describe('Controller API', function() {
   describe('getClouds', function() {
     it('retrieves the requested cloud definitions', function(done) {
       // Perform the request.
-      const tags = ['cloud-lxd', 'cloud-google', 'cloud-no-such'];
-      controllerAPI.getClouds(tags, (err, clouds) => {
+      controllerAPI.getClouds(['lxd', 'google', 'no-such'], (err, clouds) => {
         assert.strictEqual(err, null);
         assert.deepEqual(clouds, {
-          'cloud-lxd': {
-            name: 'lxd',
+          'lxd': {
             cloudType: 'lxd',
             authTypes: ['empty'],
             endpoint: 'https://1.2.3.4/lxd-api',
@@ -1339,8 +1323,7 @@ describe('Controller API', function() {
               storageEndpoint: 'https://1.2.3.4/lxd-storage-region1'
             }]
           },
-          'cloud-google': {
-            name: 'google',
+          'google': {
             cloudType: 'gce',
             authTypes: ['userpass', 'oauth2'],
             endpoint: 'https://1.2.3.4/google-api',
@@ -1358,7 +1341,7 @@ describe('Controller API', function() {
               storageEndpoint: 'https://1.2.3.4/lxd-storage-region1'
             }]
           },
-          'cloud-no-such': {err: 'no such cloud'}
+          'no-such': {err: 'no such cloud'}
         });
         const msg = conn.last_message();
         assert.deepEqual(msg, {
@@ -1420,7 +1403,7 @@ describe('Controller API', function() {
 
     it('handles request failures while getting clouds', function(done) {
       // Perform the request.
-      controllerAPI.getClouds(['cloud-lxd'], (err, clouds) => {
+      controllerAPI.getClouds(['lxd'], (err, clouds) => {
         assert.strictEqual(err, 'bad wolf');
         assert.deepEqual(clouds, {});
         done();
@@ -1441,12 +1424,12 @@ describe('Controller API', function() {
     });
   });
 
-  describe('getDefaultCloudTag', function() {
-    it('retrieves the default cloud tag', function(done) {
+  describe('getDefaultCloudName', function() {
+    it('retrieves the default cloud name', function(done) {
       // Perform the request.
-      controllerAPI.getDefaultCloudTag((err, tag) => {
+      controllerAPI.getDefaultCloudName((err, name) => {
         assert.strictEqual(err, null);
-        assert.strictEqual(tag, 'cloud-lxd');
+        assert.strictEqual(name, 'lxd');
         const msg = conn.last_message();
         assert.deepEqual(msg, {
           'request-id': 1,
@@ -1464,22 +1447,22 @@ describe('Controller API', function() {
       });
     });
 
-    it('handles request failures while getting default tag', function(done) {
+    it('handles request failures while getting default name', function(done) {
       // Perform the request.
-      controllerAPI.getDefaultCloudTag((err, tag) => {
+      controllerAPI.getDefaultCloudName((err, name) => {
         assert.strictEqual(err, 'bad wolf');
-        assert.strictEqual(tag, '');
+        assert.strictEqual(name, '');
         done();
       });
       // Mimic response.
       conn.msg({'request-id': 1, error: 'bad wolf'});
     });
 
-    it('handles API failures while getting default tag', function(done) {
+    it('handles API failures while getting default name', function(done) {
       // Perform the request.
-      controllerAPI.getDefaultCloudTag((err, tag) => {
+      controllerAPI.getDefaultCloudName((err, name) => {
         assert.strictEqual(err, 'bad wolf');
-        assert.strictEqual(tag, '');
+        assert.strictEqual(name, '');
         done();
       });
       // Mimic response.
@@ -1490,21 +1473,21 @@ describe('Controller API', function() {
     });
   });
 
-  describe('getTagsForCloudCredentials', function() {
+  describe('getCloudCredentialNames', function() {
 
-    it('retrieves tags for cloud credentials', function(done) {
+    it('retrieves names for cloud credentials', function(done) {
       // Perform the request.
       const pairs = [
-        ['user-who@gallifrey', 'cloud-lxd'],
-        ['user-dalek@skaro', 'cloud-google'],
-        ['user-rose@earth', 'cloud-google']
+        ['who@gallifrey', 'lxd'],
+        ['dalek@skaro', 'google'],
+        ['rose@earth', 'google']
       ];
-      controllerAPI.getTagsForCloudCredentials(pairs, (err, results) => {
+      controllerAPI.getCloudCredentialNames(pairs, (err, results) => {
         assert.strictEqual(err, null);
         assert.deepEqual(results, [
-          {tags: ['cloudcred-1', 'cloudcred-2']},
+          {names: ['name1', 'name2']},
           {err: 'bad wolf'},
-          {tags: ['cloudcred-3']},
+          {names: ['name3']},
         ]);
         const msg = conn.last_message();
         assert.deepEqual(msg, {
@@ -1525,20 +1508,20 @@ describe('Controller API', function() {
         'request-id': 1,
         response: {
           results: [{
-            result: ['cloudcred-1', 'cloudcred-2'],
+            result: ['cloudcred-name1', 'cloudcred-name2'],
           }, {
             error: {message: 'bad wolf'},
           }, {
-            result: ['cloudcred-3'],
+            result: ['cloudcred-name3'],
           }]
         }
       });
     });
 
-    it('handles request failures while getting tags', function(done) {
+    it('handles request failures while getting names', function(done) {
       // Perform the request.
-      const pairs = [['user-who@gallifrey', 'cloud-lxd']];
-      controllerAPI.getTagsForCloudCredentials(pairs, (err, results) => {
+      const pairs = [['who@gallifrey', 'lxd']];
+      controllerAPI.getCloudCredentialNames(pairs, (err, results) => {
         assert.strictEqual(err, 'bad wolf');
         assert.deepEqual(results, []);
         done();
@@ -1549,7 +1532,7 @@ describe('Controller API', function() {
 
     it('returns no results if no user/cloud pairs are passed', function(done) {
       // Perform the request.
-      controllerAPI.getTagsForCloudCredentials([], (err, results) => {
+      controllerAPI.getCloudCredentialNames([], (err, results) => {
         assert.strictEqual(err, null);
         assert.deepEqual(results, []);
         done();
@@ -1560,14 +1543,13 @@ describe('Controller API', function() {
   });
 
   describe('getCloudCredentials', function() {
-    it('retrieves the requested credentials by tag', function(done) {
+    it('retrieves the requested credentials by name', function(done) {
       // Perform the request.
-      const tags = ['cloudcred-1', 'cloudcred-2', 'cloudcred-no-such'];
-      controllerAPI.getCloudCredentials(tags, (err, creds) => {
+      const names = ['cred1', 'cred2', 'no-such'];
+      controllerAPI.getCloudCredentials(names, (err, creds) => {
         assert.strictEqual(err, null);
         assert.deepEqual(creds, {
-          'cloudcred-1': {
-            name: '1',
+          cred1: {
             authType: 'jsonfile',
             attrs: {
               type: 'service_account',
@@ -1576,13 +1558,12 @@ describe('Controller API', function() {
             },
             redacted: ['secret', 'confidential']
           },
-          'cloudcred-2': {
-            name: '2',
+          cred2: {
             authType: 'oauth2',
             attrs: {},
             redacted: []
           },
-          'cloudcred-no-such': {err: 'no such credentials'}
+          'no-such': {err: 'no such credentials'}
         });
         const msg = conn.last_message();
         assert.deepEqual(msg, {
@@ -1591,8 +1572,8 @@ describe('Controller API', function() {
           request: 'Credential',
           version: 1,
           params: {entities: [
-            {tag: 'cloudcred-1'},
-            {tag: 'cloudcred-2'},
+            {tag: 'cloudcred-cred1'},
+            {tag: 'cloudcred-cred2'},
             {tag: 'cloudcred-no-such'}
           ]}
         });
@@ -1625,7 +1606,7 @@ describe('Controller API', function() {
 
     it('handles request failures while getting credentials', function(done) {
       // Perform the request.
-      controllerAPI.getCloudCredentials(['cloudcred-1'], (err, creds) => {
+      controllerAPI.getCloudCredentials(['invalid'], (err, creds) => {
         assert.strictEqual(err, 'bad wolf');
         assert.deepEqual(creds, {});
         done();
@@ -1649,10 +1630,10 @@ describe('Controller API', function() {
   describe('updateCloudCredential', function() {
     it('updates cloud credentials', function(done) {
       // Perform the request.
-      const tag = 'cloudcred-banna';
+      const name = 'banna';
       const authType = 'empty';
       const attrs = {answer: '42'};
-      controllerAPI.updateCloudCredential(tag, authType, attrs, err => {
+      controllerAPI.updateCloudCredential(name, authType, attrs, err => {
         assert.strictEqual(err, null);
         const msg = conn.last_message();
         assert.deepEqual(msg, {
@@ -1661,7 +1642,7 @@ describe('Controller API', function() {
           request: 'UpdateCredentials',
           version: 1,
           params: {credentials: [{
-            tag: tag,
+            tag: 'cloudcred-' + name,
             credential: {'auth-type': authType, attrs: attrs}
           }]}
         });
@@ -1676,7 +1657,7 @@ describe('Controller API', function() {
 
     it('handles request failures while updating credentials', function(done) {
       // Perform the request.
-      controllerAPI.updateCloudCredential('cloudcred-42', '', {}, err => {
+      controllerAPI.updateCloudCredential('credname', '', {}, err => {
         assert.strictEqual(err, 'bad wolf');
         done();
       });
@@ -1686,7 +1667,7 @@ describe('Controller API', function() {
 
     it('handles API failures while updating credentials', function(done) {
       // Perform the request.
-      controllerAPI.updateCloudCredential('cloudcred-42', '', {}, err => {
+      controllerAPI.updateCloudCredential('credname', '', {}, err => {
         assert.strictEqual(err, 'bad wolf');
         done();
       });
@@ -1699,8 +1680,8 @@ describe('Controller API', function() {
 
     it('fails for unexpected results updating credentials', function(done) {
       // Perform the request.
-      controllerAPI.updateCloudCredential('cloudcred-42', '', {}, err => {
-        assert.strictEqual(err, 'invalid results returned by Juju: [{},{}]');
+      controllerAPI.updateCloudCredential('credname', '', {}, err => {
+        assert.strictEqual(err, 'invalid results from Juju: [{},{}]');
         done();
       });
       // Mimic response.
@@ -1712,8 +1693,8 @@ describe('Controller API', function() {
 
     it('fails for no results updating credentials', function(done) {
       // Perform the request.
-      controllerAPI.updateCloudCredential('cloudcred-42', '', {}, err => {
-        assert.strictEqual(err, 'invalid results returned by Juju: []');
+      controllerAPI.updateCloudCredential('credname', '', {}, err => {
+        assert.strictEqual(err, 'invalid results from Juju: []');
         done();
       });
       // Mimic response.
@@ -1727,7 +1708,7 @@ describe('Controller API', function() {
   describe('revokeCloudCredential', function() {
     it('revokes cloud credentials', function(done) {
       // Perform the request.
-      controllerAPI.revokeCloudCredential('cloudcred-banna', err => {
+      controllerAPI.revokeCloudCredential('banna', err => {
         assert.strictEqual(err, null);
         const msg = conn.last_message();
         assert.deepEqual(msg, {
@@ -1750,7 +1731,7 @@ describe('Controller API', function() {
 
     it('handles request failures while revoking credentials', function(done) {
       // Perform the request.
-      controllerAPI.revokeCloudCredential('cloudcred-42', err => {
+      controllerAPI.revokeCloudCredential('banna', err => {
         assert.strictEqual(err, 'bad wolf');
         done();
       });
@@ -1760,7 +1741,7 @@ describe('Controller API', function() {
 
     it('handles API failures while revoking credentials', function(done) {
       // Perform the request.
-      controllerAPI.revokeCloudCredential('cloudcred-42', err => {
+      controllerAPI.revokeCloudCredential('kaffa', err => {
         assert.strictEqual(err, 'bad wolf');
         done();
       });
@@ -1773,8 +1754,8 @@ describe('Controller API', function() {
 
     it('fails for unexpected results revoking credentials', function(done) {
       // Perform the request.
-      controllerAPI.revokeCloudCredential('cloudcred-42', err => {
-        assert.strictEqual(err, 'invalid results returned by Juju: [{},{}]');
+      controllerAPI.revokeCloudCredential('latta', err => {
+        assert.strictEqual(err, 'invalid results from Juju: [{},{}]');
         done();
       });
       // Mimic response.
@@ -1786,8 +1767,8 @@ describe('Controller API', function() {
 
     it('fails for no results revoking credentials', function(done) {
       // Perform the request.
-      controllerAPI.revokeCloudCredential('cloudcred-42', err => {
-        assert.strictEqual(err, 'invalid results returned by Juju: []');
+      controllerAPI.revokeCloudCredential('invalid', err => {
+        assert.strictEqual(err, 'invalid results from Juju: []');
         done();
       });
       // Mimic response.

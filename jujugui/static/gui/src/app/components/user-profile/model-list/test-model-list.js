@@ -32,9 +32,9 @@ describe('UserProfileModelList', () => {
     controllerAPI = {
       findFacadeVersion: sinon.stub(),
       get: sinon.stub().returns('default'),
-      createModel: (modelName, userTag, args, callback) => {
+      createModel: (modelName, user, args, callback) => {
         assert.equal(modelName, 'newmodelname', 'model name not set properly');
-        assert.equal(userTag, 'user-who', 'user name not set properly');
+        assert.equal(user, 'user-who', 'user name not set properly');
         assert.deepEqual(args, {});
         // Simulate the model being created.
         callback(null, {
@@ -103,7 +103,7 @@ describe('UserProfileModelList', () => {
     var hideConnectingMask = sinon.stub();
     var showConnectingMask = sinon.stub();
     const getCloudCredentials = sinon.stub();
-    const getTagsForCloudCredentials = sinon.stub();
+    const getCloudCredentialNames = sinon.stub();
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         addNotification={addNotification}
@@ -111,7 +111,7 @@ describe('UserProfileModelList', () => {
         cloud={'google'}
         controllerAPI={controllerAPI}
         getCloudCredentials={getCloudCredentials}
-        getTagsForCloudCredentials={getTagsForCloudCredentials}
+        getCloudCredentialNames={getCloudCredentialNames}
         currentModel={'model1'}
         gisf={false}
         hideConnectingMask={hideConnectingMask}
@@ -134,7 +134,7 @@ describe('UserProfileModelList', () => {
             cloud={'google'}
             controllerAPI={controllerAPI}
             getCloudCredentials={getCloudCredentials}
-            getTagsForCloudCredentials={getTagsForCloudCredentials}
+            getCloudCredentialNames={getCloudCredentialNames}
             hideConnectingMask={hideConnectingMask}
             showConnectingMask={showConnectingMask}
             switchModel={instance.switchModel}

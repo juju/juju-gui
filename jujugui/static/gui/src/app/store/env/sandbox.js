@@ -306,6 +306,8 @@ YUI.add('juju-env-sandbox', function(Y) {
       if (state.login(username, password)) {
         response.response = {
           facades: sandboxModule.facades,
+          'controller-tag': 'controller-demonstration-controller-uuid',
+          'model-tag': 'model-demonstration-model-uuid',
           'user-info': {
             'controller-access': 'superuser',
             'model-access': 'admin'
