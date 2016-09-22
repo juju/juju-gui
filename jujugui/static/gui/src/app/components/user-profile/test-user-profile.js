@@ -36,9 +36,9 @@ describe('UserProfile', () => {
     controllerAPI = {
       findFacadeVersion: sinon.stub(),
       get: sinon.stub().returns('default'),
-      createModel: (modelName, userTag, args, callback) => {
+      createModel: (modelName, user, args, callback) => {
         assert.equal(modelName, 'newmodelname', 'model name not set properly');
-        assert.equal(userTag, 'user-dalek', 'user name not set properly');
+        assert.equal(user, 'user-dalek', 'user name not set properly');
         assert.deepEqual(args, {});
         // Simulate the model being created.
         callback(null, {
@@ -60,7 +60,7 @@ describe('UserProfile', () => {
     const changeState = sinon.stub();
     const getCloudCredentials = sinon.stub();
     const getDiagramURL = sinon.stub();
-    const getTagsForCloudCredentials = sinon.stub();
+    const getCloudCredentialNames = sinon.stub();
     const hideConnectingMask = sinon.stub();
     const listBudgets = sinon.stub();
     const listModelsWithInfo = sinon.stub();
@@ -81,7 +81,7 @@ describe('UserProfile', () => {
         getAgreements={getAgreements}
         getCloudCredentials={getCloudCredentials}
         getDiagramURL={getDiagramURL}
-        getTagsForCloudCredentials={getTagsForCloudCredentials}
+        getCloudCredentialNames={getCloudCredentialNames}
         listBudgets={listBudgets}
         listModelsWithInfo={listModelsWithInfo}
         switchModel={switchModel}
@@ -102,7 +102,7 @@ describe('UserProfile', () => {
         cloud={'google'}
         controllerAPI={controllerAPI}
         getCloudCredentials={getCloudCredentials}
-        getTagsForCloudCredentials={getTagsForCloudCredentials}
+        getCloudCredentialNames={getCloudCredentialNames}
         hideConnectingMask={hideConnectingMask}
         showConnectingMask={showConnectingMask}
         staticURL={staticURL}
@@ -119,7 +119,7 @@ describe('UserProfile', () => {
         controllerAPI={controllerAPI}
         currentModel={undefined}
         getCloudCredentials={getCloudCredentials}
-        getTagsForCloudCredentials={getTagsForCloudCredentials}
+        getCloudCredentialNames={getCloudCredentialNames}
         hideConnectingMask={hideConnectingMask}
         listModelsWithInfo={listModelsWithInfo}
         showConnectingMask={showConnectingMask}

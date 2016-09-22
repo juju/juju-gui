@@ -54,7 +54,7 @@ describe('DeploymentCredential', function() {
         clouds={clouds}
         editable={true}
         getCloudCredentials={sinon.stub()}
-        getTagsForCloudCredentials={sinon.stub()}
+        getCloudCredentialNames={sinon.stub()}
         setCredential={sinon.stub()}
         setRegion={sinon.stub()}
         user={user}
@@ -74,7 +74,7 @@ describe('DeploymentCredential', function() {
     var setCredential = sinon.stub();
     var setRegion = sinon.stub();
     var validateForm = sinon.stub();
-    const generateCloudCredentialTag = sinon.stub();
+    const generateCloudCredentialName = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
@@ -82,9 +82,9 @@ describe('DeploymentCredential', function() {
         cloud={cloud}
         clouds={clouds}
         editable={true}
-        generateCloudCredentialTag={generateCloudCredentialTag}
+        generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, [])}
-        getTagsForCloudCredentials={
+        getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, tags)}
         setCredential={setCredential}
         setRegion={setRegion}
@@ -105,7 +105,7 @@ describe('DeploymentCredential', function() {
             close={instance._toggleAdd}
             cloud={cloud}
             clouds={clouds}
-            generateCloudCredentialTag={generateCloudCredentialTag}
+            generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
             regions={regions}
             setCredential={setCredential}
@@ -130,9 +130,9 @@ describe('DeploymentCredential', function() {
         clouds={clouds}
         credential="current@local"
         editable={false}
-        generateCloudCredentialTag={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, [])}
-        getTagsForCloudCredentials={
+        getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, tags)}
         region="north-north-west"
         setCredential={setCredential}
@@ -183,7 +183,7 @@ describe('DeploymentCredential', function() {
     var setCredential = sinon.stub();
     var setRegion = sinon.stub();
     var validateForm = sinon.stub();
-    const generateCloudCredentialTag = sinon.stub();
+    const generateCloudCredentialName = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
@@ -191,9 +191,9 @@ describe('DeploymentCredential', function() {
         cloud={null}
         clouds={clouds}
         editable={true}
-        generateCloudCredentialTag={generateCloudCredentialTag}
+        generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, {})}
-        getTagsForCloudCredentials={
+        getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, [])}
         setCredential={setCredential}
         setRegion={setRegion}
@@ -214,7 +214,7 @@ describe('DeploymentCredential', function() {
             close={instance._toggleAdd}
             cloud={null}
             clouds={clouds}
-            generateCloudCredentialTag={generateCloudCredentialTag}
+            generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
             regions={[]}
             setCredential={setCredential}
@@ -236,9 +236,9 @@ describe('DeploymentCredential', function() {
         cloud={cloud}
         clouds={clouds}
         editable={true}
-        generateCloudCredentialTag={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
-        getTagsForCloudCredentials={
+        getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, tags)}
         setCredential={setCredential}
         setRegion={setRegion}
@@ -293,9 +293,9 @@ describe('DeploymentCredential', function() {
         cloud={cloud}
         clouds={clouds}
         editable={true}
-        generateCloudCredentialTag={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
-        getTagsForCloudCredentials={
+        getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, tags)}
         setCredential={setCredential}
         setRegion={setRegion}
@@ -316,9 +316,9 @@ describe('DeploymentCredential', function() {
         cloud={cloud}
         clouds={clouds}
         editable={true}
-        generateCloudCredentialTag={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
-        getTagsForCloudCredentials={sinon.stub().callsArgWith(1, null, tags)}
+        getCloudCredentialNames={sinon.stub().callsArgWith(1, null, tags)}
         setCredential={setCredential}
         setRegion={setRegion}
         user={user}
@@ -367,7 +367,7 @@ describe('DeploymentCredential', function() {
     var setCredential = sinon.stub();
     var setRegion = sinon.stub();
     var validateForm = sinon.stub();
-    const generateCloudCredentialTag = sinon.stub();
+    const generateCloudCredentialName = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredential
         acl={acl}
@@ -375,9 +375,9 @@ describe('DeploymentCredential', function() {
         cloud={cloud}
         clouds={clouds}
         editable={true}
-        generateCloudCredentialTag={generateCloudCredentialTag}
+        generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
-        getTagsForCloudCredentials={
+        getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, tags)}
         setCredential={setCredential}
         setRegion={setRegion}
@@ -399,7 +399,7 @@ describe('DeploymentCredential', function() {
             close={instance._toggleAdd}
             cloud={cloud}
             clouds={clouds}
-            generateCloudCredentialTag={generateCloudCredentialTag}
+            generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
             regions={regions}
             setCredential={setCredential}

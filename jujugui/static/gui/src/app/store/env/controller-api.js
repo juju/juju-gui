@@ -19,17 +19,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 YUI.add('juju-controller-api', function(Y) {
-
-  // Define the pinger interval in seconds.
-  var PING_INTERVAL = 10;
-
-  // Define the Admin API facade version.
-  var ADMIN_FACADE_VERSION = 3;
+  const module = Y.juju.environments;
+  const tags = module.tags;
 
   /**
-   * The Go Juju environment.
+   * The API connection to the Juju controller.
    *
-   * This class handles the WebSocket connection to the GoJuju API backend.
+   * This class handles the WebSocket connection to the controller API backend.
    *
    * @class ControllerAPI
    */
@@ -40,7 +36,7 @@ YUI.add('juju-controller-api', function(Y) {
 
   ControllerAPI.NAME = 'controller-api';
 
-  Y.extend(ControllerAPI, Y.juju.environments.BaseEnvironment, {
+  Y.extend(ControllerAPI, module.BaseEnvironment, {
 
     /**
      * Go environment constructor.
@@ -144,13 +140,15 @@ YUI.add('juju-controller-api', function(Y) {
         var userInfo = response['user-info'];
         this.setConnectedAttr(
           'controllerAccess', userInfo['controller-access']);
-        this.setConnectedAttr('serverTag', response['server-tag']);
+        this.setConnectedAttr(
+          'controllerId',
+          tags.parse(tags.CONTROLLER, response['controller-tag']));
         // Start pinging the server.
         // XXX frankban: this is only required as a temporary workaround to
         // prevent Apache to disconnect the WebSocket in the embedded Juju.
         if (!this._pinger) {
           this._pinger = setInterval(
-            this.ping.bind(this), PING_INTERVAL * 1000);
+            this.ping.bind(this), module.PING_INTERVAL * 1000);
         }
         // Clean up for log out text.
         this.failedAuthentication = false;
@@ -214,10 +212,10 @@ YUI.add('juju-controller-api', function(Y) {
         type: 'Admin',
         request: 'Login',
         params: {
-          'auth-tag': credentials.user,
+          'auth-tag': tags.build(tags.USER, credentials.user),
           credentials: credentials.password
         },
-        version: ADMIN_FACADE_VERSION
+        version: module.ADMIN_FACADE_VERSION
       }, this.handleLogin);
       this.pendingLoginResponse = true;
     },
@@ -278,15 +276,19 @@ YUI.add('juju-controller-api', function(Y) {
         }
 
         // Macaroon authentication succeeded!
-        var user = response['user-info'] && response['user-info'].identity;
-        if (!user) {
+        const userInfo = response['user-info'];
+        const userTag = userInfo && userInfo.identity;
+        if (!userTag) {
           // This is a beta version of Juju 2 which does not include user info
           // in the macaroons based login response. Unfortunately, we did all
           // of this for nothing.
           cback('authentication failed: use a proper Juju 2 release');
           return;
         }
-        this.setCredentials({macaroons: macaroons, user: user});
+        this.setCredentials({
+          macaroons: macaroons,
+          user: tags.parse(tags.USER, userTag)
+        });
         cback(null, response);
       };
 
@@ -296,7 +298,7 @@ YUI.add('juju-controller-api', function(Y) {
         var request = {
           type: 'Admin',
           request: 'Login',
-          version: ADMIN_FACADE_VERSION
+          version: module.ADMIN_FACADE_VERSION
         };
         if (macaroons) {
           request.params = {macaroons: [macaroons]};
@@ -351,21 +353,20 @@ YUI.add('juju-controller-api', function(Y) {
       provider types, by performing a ModelManager.ModelInfo Juju API request.
 
       @method modelInfo
-      @param {Array} tags The Juju tags of the models, each one being a string,
-        for instance "model-5bea955d-7a43-47d3-89dd-b02c923e2447".
+      @param {Array} ids The Juju unique identifiers of the models, each one
+        being a string, for instance "5bea955d-7a43-47d3-89dd-b02c923e2447".
       @param {Function} callback A callable that must be called once the
         operation is performed. In case of errors, it will receive an error
         containing a string describing the problem and an empty list of models.
         Otherwise, if everything went well, it will receive null as first
         argument and a list of model info objects, each one with the following
         fields:
-        - tag: the original Juju model tag;
+        - id: the model unique identifier;
         - name: the model name, like "admin" or "mymodel";
         - series: the model default series, like "trusty" or "xenial";
         - provider: the provider type, like "lxd" or "aws";
-        - uuid: the model unique identifier;
-        - serverUuid: the corresponding controller unique identifier;
-        - ownerTag: the tag of the user owning the model (with "user-" prefix);
+        - uuid: the model unique identifier (usually the same as id);
+        - controllerUUID: the corresponding controller unique identifier;
         - owner: the name of the user owning the model;
         - life: the lifecycle status of the model: "alive", "dying" or "dead";
         - isAlive: whether the model is alive or dying/dead;
@@ -373,49 +374,49 @@ YUI.add('juju-controller-api', function(Y) {
         - err: a message describing a specific model error, or undefined.
       @return {undefined} Sends a message to the server only.
     */
-    modelInfo: function(tags, callback) {
+    modelInfo: function(ids, callback) {
       // Decorate the user supplied callback.
-      const handler = function(userCallback, tags, data) {
-        if (!userCallback) {
+      const handler = data => {
+        if (!callback) {
           console.log('data returned by model info API call:', data);
           return;
         }
         if (data.error) {
-          userCallback(data.error, []);
+          callback(data.error, []);
           return;
         }
         const results = data.response.results;
-        if (results.length !== tags.length) {
+        if (results.length !== ids.length) {
           // Sanity check: this should never happen.
-          userCallback('unexpected results: ' + JSON.stringify(results), []);
+          callback('unexpected results: ' + JSON.stringify(results), []);
           return;
         }
         const models = results.map((result, index) => {
           const err = result.error && result.error.message;
+          const id = ids[index];
           if (err) {
-            return {tag: tags[index], err: err};
+            return {id: id, err: err};
           }
           result = result.result;
           return {
-            tag: tags[index],
+            id: id,
             name: result.name,
             series: result['default-series'],
             provider: result['provider-type'],
             uuid: result.uuid,
-            serverUuid: result['controller-uuid'],
-            ownerTag: result['owner-tag'],
-            owner: result['owner-tag'].replace(/^user-/, ''),
+            controllerUUID: result['controller-uuid'],
+            owner: tags.parse(tags.USER, result['owner-tag']),
             life: result.life,
             isAlive: result.life === 'alive',
             isAdmin: result.uuid === result['controller-uuid']
           };
         });
-        userCallback(null, models);
-      }.bind(this, callback, tags);
+        callback(null, models);
+      };
 
       // Send the API request.
-      const entities = tags.map(tag => {
-        return {tag: tag};
+      const entities = ids.map(id => {
+        return {tag: tags.build(tags.MODEL, id)};
       });
       this._send_rpc({
         type: 'ModelManager',
@@ -435,13 +436,12 @@ YUI.add('juju-controller-api', function(Y) {
         an error (null for no errors, a string describing the error otherwise),
         and the second an array of model info (or an empty array if an error
         occurred), each one with the following fields:
-        - tag: the original Juju model tag;
+        - id: the model unique identifier;
         - name: the model name, like "admin" or "mymodel";
         - series: the model default series, like "trusty" or "xenial";
         - provider: the provider type, like "lxd" or "aws";
-        - uuid: the model unique identifier;
-        - serverUuid: the corresponding controller unique identifier;
-        - ownerTag: the Juju tag of the user owning the model;
+        - uuid: the model unique identifier (usually the same as id);
+        - controllerUUID: the corresponding controller unique identifier;
         - owner: the name of the user owning the model;
         - life: the lifecycle status of the model: "alive", "dying" or "dead";
         - isAlive: whether the model is alive or dying/dead;
@@ -463,7 +463,7 @@ YUI.add('juju-controller-api', function(Y) {
           }
         };
       }
-      // Retrieve the current user tag.
+      // Retrieve the current user.
       const credentials = this.getCredentials();
       if (!credentials.user) {
         callback('called without credentials', []);
@@ -475,24 +475,23 @@ YUI.add('juju-controller-api', function(Y) {
           callback(err, []);
           return;
         }
-        const tags = listedModels.map(model => model.tag);
-        this.modelInfo(tags, (err, infoModels) => {
+        const ids = listedModels.map(model => model.id);
+        this.modelInfo(ids, (err, infoModels) => {
           if (err) {
             callback(err, []);
             return;
           }
           const models = infoModels.map((model, index) => {
             if (model.err) {
-              return {tag: model.tag, err: model.err};
+              return {id: model.id, err: model.err};
             }
             return {
-              tag: model.tag,
+              id: model.id,
               name: model.name,
               series: model.series,
               provider: model.provider,
               uuid: model.uuid,
-              serverUuid: model.serverUuid,
-              ownerTag: model.ownerTag,
+              controllerUUID: model.controllerUUID,
               owner: model.owner,
               life: model.life,
               isAlive: model.isAlive,
@@ -511,94 +510,96 @@ YUI.add('juju-controller-api', function(Y) {
 
       @method createModel
       @param {String} name The name of the new model.
-      @param {String} userTag The name of the new model owner, including the
-        "user-" prefix. If the user tag represents a local user, that user must
-        exist.
+      @param {String} user The name of the new model owner. If the name
+        represents a local user, that user must exist.
       @param {Object} args Any other optional argument that can be provided
         when creating a new model. This includes the following fields:
         - config: the optional model config;
-        - cloudTag: the tag of the cloud to create the model in. If this is
+        - cloud: the name of the cloud to create the model in. If this is
           empty/undefined the model will be created in the same cloud as the
-          controller model. A cloud tag is a cloud name prefixed with "cloud-";
+          controller model;
         - region: the name of the cloud region to create the model in. If the
           cloud does not support regions, this must be empty/undefined. If this
-          is empty/undefined, and cloudTag is empty/undefined, the model will
-          be created in the same region as the controller model;
-        - credentialTag: the tag of the cloud credential to use for managing
-          the model's resources. If the cloud does not require credentials
-          this may be empty/undefined. If this is empty/undefined and the
-          owner is the controller owner then the same credential used for the
-          controller model will be used. A credential tag is a credential name
-          prefixed with "cloudcred-".
+          is empty/undefined, and cloud is empty/undefined, the model will be
+          created in the same region as the controller model;
+        - credential: the name of the cloud credential to use for managing the
+          model's resources. If the cloud does not require credentials this may
+          be empty/undefined. If this is empty/undefined and the owner is the
+          controller owner then the same credential used for the controller
+          model will be used.
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an error (as a string
         describing the problem if any occurred, or null) and an object with the
         following attributes:
         - name: the name of the new model;
         - uuid: the unique identifier of the new model;
-        - ownerTag: the model owner tag (prefixed with "user-");
         - owner: the name of the user owning the model;
         - provider: the model provider type;
         - series: the model default series;
-        - cloudTag: the cloud tag (prefixed with "cloud-");
         - cloud: the name of the cloud;
         - region: the cloud region;
-        - credentialTag: the tag of the cloud credential used to create the
-          model (prefixed with "cloudcred-");
-        - credential: the name of the credential used to create the model;
+        - credential: the name of the credential used to create the model.
       @return {undefined} Sends a message to the server only.
     */
-    createModel: function(name, userTag, args, callback) {
+    createModel: function(name, user, args, callback) {
       // Define the API callback.
-      const handler = function(userCallback, data) {
-        if (!userCallback) {
+      const handler = data => {
+        if (!callback) {
           console.log('data returned by CreateModel API call:', data);
           return;
         }
         if (data.error) {
-          userCallback(data.error, {});
+          callback(data.error, {});
           return;
         }
         const response = data.response;
         // Credentials are not required/returned by all clouds.
-        const credentialTag = response['cloud-credential-tag'] || '';
-        userCallback(null, {
+        let credential = '';
+        const credentialTag = response['cloud-credential-tag'];
+        if (credentialTag) {
+          credential = tags.parse(tags.CREDENTIAL, credentialTag);
+        }
+        callback(null, {
           name: response.name,
           uuid: response.uuid,
-          ownerTag: response['owner-tag'],
-          owner: response['owner-tag'].replace(/^user-/, ''),
+          owner: tags.parse(tags.USER, response['owner-tag']),
           provider: response['provider-type'],
           series: response['default-series'],
-          cloudTag: response['cloud-tag'],
-          cloud: response['cloud-tag'].replace(/^cloud-/, ''),
+          cloud: tags.parse(tags.CLOUD, response['cloud-tag']),
           region: response['cloud-region'],
-          credentialTag: credentialTag,
-          credential: credentialTag.replace(/^cloudcred-/, '')
+          credential: credential
         });
-      }.bind(this, callback);
+      };
 
       // Prepare API call params.
-      if (userTag.indexOf('@') === -1) {
-        userTag += '@local';
+      if (user.indexOf('@') === -1) {
+        user += '@local';
       }
-
+      let cloudTag;
+      if (args.cloud) {
+        cloudTag = tags.build(tags.CLOUD, args.cloud);
+      }
+      let credentialTag;
+      if (args.credential) {
+        credentialTag = tags.build(tags.CREDENTIAL, args.credential);
+      }
       // Send the API call.
       this._send_rpc({
         type: 'ModelManager',
         request: 'CreateModel',
         params: {
           name: name,
-          'owner-tag': userTag,
+          'owner-tag': tags.build(tags.USER, user),
           config: args.config || undefined,
-          'cloud-tag': args.cloudTag || undefined,
+          'cloud-tag': cloudTag,
           region: args.region || undefined,
-          credential: args.credentialTag || undefined
+          credential: credentialTag
         }
       }, handler);
     },
 
     /**
-      Destroy the models with the given tags.
+      Destroy the models with the given identifiers.
 
       This method will try to destroy the specified models.
       It is possible to destroy either other models in the same controller or
@@ -615,37 +616,39 @@ YUI.add('juju-controller-api', function(Y) {
       identifies a controller model before calling this method.
 
       @method destroyModels
-      @param {Array} tags The Juju tags of the models, each one being a string,
-        for instance "model-5bea955d-7a43-47d3-89dd-b02c923e2447".
+      @param {Array} ids The unique identifiers of the models, each one being a
+        string, for instance "5bea955d-7a43-47d3-89dd-b02c923e2447".
       @param {Function} callback A callable that must be called once the
-        operation is performed. It will receive an object with an "err" field
-        if a global API error occurred. Otherwise, the returned object will
-        have a "results" field as an object mapping model tags to possible
-        error strings, or to null if the deletion of that model succeeded.
+        operation is performed. It will receive two arguments:
+        - in case of global errors, it will receive an error message and an
+          empty object;
+        - otherwise, it will receive null and an object mapping the provided
+          model identifiers to possible error strings, or to null if the
+          deletion of that model succeeded.
       @return {undefined} Sends a message to the server only.
     */
-    destroyModels: function(tags, callback) {
+    destroyModels: function(ids, callback) {
       // Decorate the user supplied callback.
-      var handler = function(userCallback, data) {
-        if (!userCallback) {
+      const handler = data => {
+        if (!callback) {
           console.log('data returned by destroy models API call:', data);
           return;
         }
         if (data.error) {
-          userCallback({err: data.error});
+          callback(data.error, {});
           return;
         }
-        var results = data.response.results.reduce((prev, result, index) => {
-          var tag = tags[index];
-          prev[tag] = result.error ? result.error.message : null;
+        const results = data.response.results.reduce((prev, result, index) => {
+          const id = ids[index];
+          prev[id] = result.error ? result.error.message : null;
           return prev;
         }, {});
-        userCallback({results: results});
-      }.bind(this, callback);
+        callback(null, results);
+      };
 
       // Send the API request.
-      var entities = tags.map(function(tag) {
-        return {tag: tag};
+      const entities = ids.map(function(id) {
+        return {tag: tags.build(tags.MODEL, id)};
       });
       this._send_rpc({
         type: 'ModelManager',
@@ -658,57 +661,54 @@ YUI.add('juju-controller-api', function(Y) {
       List all models the user can access on the current controller.
 
       @method listModels
-      @param {String} userTag The name of the new model owner, including the
-        "user-" prefix.
+      @param {String} user The user name.
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an error string and a list of
         models. If an error occurs, the error string will describe the error
         and the second argument will be an empty list. Otherwise, the error
         will be null and the model list will be an array of objects, each one
         with the following fields:
+        - id: the model unique identifier, like "de1b2c16-0151-4e63-87e9";
         - name: the name of the model;
-        - tag: the model tag, like "model-de1b2c16-0151-4e63-87e9-9f0950a";
-        - ownerTag: the model owner tag (prefixed with "user-");
         - owner: the model owner;
-        - uuid: the unique identifier of the model;
+        - uuid: the unique identifier of the model (usually the same as id);
         - lastConnection: the date of the last connection as a string, e.g.:
           '2015-09-24T10:08:50Z' or null if the model has been never
           connected to;
       @return {undefined} Sends a message to the server only.
     */
-    listModels: function(userTag, callback) {
-      const handleListModels = function(userCallback, data) {
-        if (!userCallback) {
+    listModels: function(user, callback) {
+      const handleListModels = data => {
+        if (!callback) {
           console.log('data returned by ListModels API call:', data);
           return;
         }
         if (data.error) {
-          userCallback(data.error, []);
+          callback(data.error, []);
           return;
         }
         const userModels = data.response['user-models'];
         if (!userModels || !userModels.length) {
-          userCallback(null, []);
+          callback(null, []);
           return;
         }
         const models = userModels.map(value => {
           const model = value.model;
           return {
+            id: model.uuid,
             name: model.name,
-            ownerTag: model['owner-tag'],
-            owner: model['owner-tag'].replace(/^user-/, ''),
-            tag: 'model-' + model.uuid,
+            owner: tags.parse(tags.USER, model['owner-tag']),
             uuid: model.uuid,
             lastConnection: value['last-connection']
           };
         });
-        userCallback(null, models);
-      }.bind(this, callback);
+        callback(null, models);
+      };
 
       this._send_rpc({
         type: 'ModelManager',
         request: 'ListModels',
-        params: {tag: userTag}
+        params: {tag: tags.build(tags.USER, user)}
       }, handleListModels);
     },
 
@@ -718,11 +718,11 @@ YUI.add('juju-controller-api', function(Y) {
       @method listClouds
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive two parameters: an error (as a
-        string describing the problem) and an object mapping cloud tags to
-        cloud attributes. If no errors occur, the error parameter is null.
-        Otherwise, in case of errors, the second argument is an empty object.
-        Cloud attributes are returned as an object with the following fields:
-        - name: the cloud name, like "lxd" or "google";
+        string describing the problem) and an object mapping cloud names (for
+        instance "lxd" or "google") to cloud attributes. If no errors occur,
+        the error parameter is null. Otherwise, in case of errors, the second
+        argument is an empty object. Cloud attributes are returned as an object
+        with the following fields:
         - cloudType: the cloud type, like "lxd" or "gce";
         - authTypes: optional supported authentication systems, like "jsonfile"
           or "oauth2" in the google compute example;
@@ -732,46 +732,44 @@ YUI.add('juju-controller-api', function(Y) {
         - regions: the list of regions supported by the cloud, each one being
           an object with the following fields: name, endpoint, identityEndpoint
           and storageEndpoint.
-      A cloud tag is a cloud name prefixed with "cloud-", like "cloud-lxd" or
-      "cloud-google".
     */
     listClouds: function(callback) {
       // Decorate the user supplied callback.
-      const handler = function(userCallback, data) {
-        if (!userCallback) {
+      const handler = data => {
+        if (!callback) {
           console.log('data returned by Cloud.Clouds API call:', data);
           return;
         }
         if (data.error) {
-          userCallback(data.error, {});
+          callback(data.error, {});
           return;
         }
         const results = data.response.clouds;
         const clouds = Object.keys(results).reduce((prev, tag) => {
-          prev[tag] = this._parseCloudResult(tag, results[tag]);
+          const name = tags.parse(tags.CLOUD, tag);
+          prev[name] = this._parseCloudResult(results[tag]);
           return prev;
         }, {});
-        userCallback(null, clouds);
-      }.bind(this, callback);
+        callback(null, clouds);
+      };
       // Send the API request.
       this._send_rpc({type: 'Cloud', request: 'Clouds'}, handler);
     },
 
     /**
-      Return the definitions of the clouds with the given tags.
+      Return the definitions of the clouds with the given names.
 
       @method getClouds
-      @param {Array} tags The Juju tags of the clouds, each one being a string,
-        for instance "cloud-lxd" or "cloud-google.
+      @param {Array} names The names of the clouds, each one being a string,
+        for instance "lxd" or "google.
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive two parameters: an error (as a
-        string describing the problem) and an object mapping cloud tags to
-        cloud attributes. If no errors occur, the error parameter is null.
-        Otherwise, in case of errors, the second argument is an empty object.
-        Cloud attributes are returned as an object with the following fields:
+        string describing the problem) and an object mapping the provided cloud
+        names to cloud attributes. If no errors occur, the error parameter is
+        null. Otherwise, in case of errors, the second argument is an empty
+        object. Attributes are returned as an object with the following fields:
         - err: a possible cloud specific error, in which case all subsequent
           fields are omitted;
-        - name: the cloud name, like "lxd" or "google";
         - cloudType: the cloud type, like "lxd" or "gce";
         - authTypes: optional supported authentication systems, like "jsonfile"
           or "oauth2" in the google compute example;
@@ -781,43 +779,41 @@ YUI.add('juju-controller-api', function(Y) {
         - regions: the list of regions supported by the cloud, each one being
           an object with the following fields: name, endpoint, identityEndpoint
           and storageEndpoint.
-      A cloud tag is a cloud name prefixed with "cloud-", like "cloud-lxd" or
-      "cloud-google".
     */
-    getClouds: function(tags, callback) {
+    getClouds: function(names, callback) {
       // Decorate the user supplied callback.
-      const handler = function(userCallback, data) {
-        if (!userCallback) {
+      const handler = data => {
+        if (!callback) {
           console.log('data returned by Cloud.Cloud API call:', data);
           return;
         }
         if (data.error) {
-          userCallback(data.error, {});
+          callback(data.error, {});
           return;
         }
         const results = data.response.results;
         if (!results) {
-          userCallback(null, {});
+          callback(null, {});
           return;
         }
         const clouds = results.reduce((prev, result, index) => {
-          const tag = tags[index];
+          const name = names[index];
           const err = result.error && result.error.message;
           if (err) {
-            prev[tag] = {err: err};
+            prev[name] = {err: err};
             return prev;
           }
-          prev[tag] = this._parseCloudResult(tag, result.cloud);
+          prev[name] = this._parseCloudResult(result.cloud);
           return prev;
         }, {});
-        userCallback(null, clouds);
-      }.bind(this, callback);
+        callback(null, clouds);
+      };
       // Send the API request.
-      if (!tags.length) {
-        tags = [];
+      if (!names.length) {
+        names = [];
       }
-      const entities = tags.map(function(tag) {
-        return {tag: tag};
+      const entities = names.map(function(name) {
+        return {tag: tags.build(tags.CLOUD, name)};
       });
       this._send_rpc({
         type: 'Cloud',
@@ -827,36 +823,35 @@ YUI.add('juju-controller-api', function(Y) {
     },
 
     /**
-      Return the tag of the cloud that models will be created in by default in
+      Return the name of the cloud that models will be created in by default in
       this controller.
 
-      @method getDefaultCloudTag
+      @method getDefaultCloudName
       @param {Function} callback A callable that must be called once the
-        operation is performed. It will receive an error and the cloud tag,
-        for instance (null, 'cloud-google') when the operation succeeds or
+        operation is performed. It will receive an error and the cloud name,
+        for instance (null, 'google') when the operation succeeds or
         ('error message', '') in case of errors.
-      A cloud tag is a cloud name prefixed with "cloud-", like "cloud-lxd" or
-      "cloud-google".
     */
-    getDefaultCloudTag: function(callback) {
+    getDefaultCloudName: function(callback) {
       // Decorate the user supplied callback.
-      const handler = function(userCallback, data) {
-        if (!userCallback) {
+      const handler = data => {
+        if (!callback) {
           console.log('data returned by Cloud.DefaultCloud API call:', data);
           return;
         }
         if (data.error) {
-          userCallback(data.error, '');
+          callback(data.error, '');
           return;
         }
         const response = data.response;
         const error = response.error && response.error.message;
         if (error) {
-          userCallback(error , '');
+          callback(error , '');
           return;
         }
-        userCallback(null, response.result);
-      }.bind(this, callback);
+        const name = tags.parse(tags.CLOUD, response.result);
+        callback(null, name);
+      };
       // Send the API request.
       this._send_rpc({type: 'Cloud', request: 'DefaultCloud'}, handler);
     },
@@ -866,11 +861,10 @@ YUI.add('juju-controller-api', function(Y) {
       Cloud facade.
 
       @method _parseCloudResult
-      @param {String} tag The cloud tag identifying the result.
       @param {Object} result The cloud result.
       @returns {Object} the parsed/modified result.
     */
-    _parseCloudResult: function(tag, result) {
+    _parseCloudResult: result => {
       const regions = result.regions.map(region => {
         return {
           name: region.name,
@@ -880,7 +874,6 @@ YUI.add('juju-controller-api', function(Y) {
         };
       });
       return {
-        name: tag.slice('cloud-'.length),
         cloudType: result.type,
         authTypes: result['auth-types'] || [],
         endpoint: result.endpoint || '',
@@ -891,12 +884,12 @@ YUI.add('juju-controller-api', function(Y) {
     },
 
     /**
-      Returns the tags of cloud credentials for a set of users.
+      Returns the names of cloud credentials for a set of users.
 
-      @method getTagsForCloudCredentials
-      @param {Array} userCloudPairs A list of (user-tag, cloud-tag) pairs for
-        which to retrieve the credentials, like
-        [['user-admin', 'cloud-google'], ['user-who@external', 'cloud-lxd']].
+      @method getCloudCredentialNames
+      @param {Array} userCloudPairs A list of (user, cloud) pairs for which to
+        retrieve the credentials, like:
+        [['admin', 'google'], ['who@external', 'lxd']].
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive two parameters: an error (as a
         string describing the problem) and a sequence of results. In the
@@ -904,26 +897,26 @@ YUI.add('juju-controller-api', function(Y) {
         user/cloud pair and holds an object with the following fields:
         - err: a possible result specific error, in which case all subsequent
           fields are omitted;
-        - tags: the list of tags that identify cloud credentials corresponding
-          to the user/cloud pair provided as input.
+        - names: the list of names that identify cloud credentials
+          corresponding to the user/cloud pair provided as input.
         If no errors occur, error parameters are null. Otherwise, in case of
         errors, the second argument is an empty array.
     */
-    getTagsForCloudCredentials: function(userCloudPairs, callback) {
+    getCloudCredentialNames: function(userCloudPairs, callback) {
       // Decorate the user supplied callback.
-      const handler = function(userCallback, data) {
-        if (!userCallback) {
+      const handler = data => {
+        if (!callback) {
           console.log(
             'data returned by Cloud.UserCredentials API call:', data);
           return;
         }
         if (data.error) {
-          userCallback(data.error, []);
+          callback(data.error, []);
           return;
         }
         const results = data.response.results;
         if (!results) {
-          userCallback(null, []);
+          callback(null, []);
           return;
         }
         const credentials = results.map(result => {
@@ -931,16 +924,23 @@ YUI.add('juju-controller-api', function(Y) {
           if (err) {
             return {err: err};
           }
-          return {tags: result.result || []};
+          const credentialTags = result.result || [];
+          const names = credentialTags.map(credentialTag => {
+            return tags.parse(tags.CREDENTIAL, credentialTag);
+          });
+          return {names: names};
         });
-        userCallback(null, credentials);
-      }.bind(this, callback);
+        callback(null, credentials);
+      };
       // Send the API request.
       if (!userCloudPairs.length) {
         userCloudPairs = [];
       }
       const userClouds = userCloudPairs.map(userCloud => {
-        return {'user-tag': userCloud[0], 'cloud-tag': userCloud[1]};
+        return {
+          'user-tag': tags.build(tags.USER, userCloud[0]),
+          'cloud-tag': tags.build(tags.CLOUD, userCloud[1])
+        };
       });
       this._send_rpc({
         type: 'Cloud',
@@ -950,23 +950,21 @@ YUI.add('juju-controller-api', function(Y) {
     },
 
     /**
-      Return the specified cloud credentials for each tag, minus secrets.
+      Return the specified cloud credentials for each name, minus secrets.
 
       @method getCloudCredentials
-      @param {Array} tags The Juju tags of the credentials, each one being a
-        string, for instance "cloudcred-google_dalek@local_google". Tags for
-        credentials are usually retrieved by calling the
-        getTagsForCloudCredentials method (see above).
+      @param {Array} names The names of the cloud credentials, each one being a
+        string, for instance "google_dalek@local_google". Names for credentials
+        are usually retrieved by calling the getCloudCredentialNames method.
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive two parameters: an error (as a
-        string describing the problem) and an object mapping credentials tags
-        to corresponding cloud credentials info. If no errors occur, the error
+        string describing the problem) and an object mapping credential names
+        to corresponding cloud credential info. If no errors occur, the error
         parameter is null. Otherwise, in case of errors, the second argument is
         an empty object. Credentials info is returned as objects with the
         following fields:
         - err: a possible credentials specific error, in which case all
           subsequent fields are omitted;
-        - name: the cloud credentials name, like "google_dalek@local_google";
         - authType: the authentication type (as a string, like 'jsonfile');
         - attrs: non-secret credential values as an object mapping strings to
           strings. Keys there are based on the cloud type;
@@ -974,46 +972,45 @@ YUI.add('juju-controller-api', function(Y) {
         If no errors occur, error parameters are null. Otherwise, in case of
         errors, the second argument is an empty object.
     */
-    getCloudCredentials: function(tags, callback) {
+    getCloudCredentials: function(names, callback) {
       // Decorate the user supplied callback.
-      const handler = function(userCallback, data) {
-        if (!userCallback) {
+      const handler = data => {
+        if (!callback) {
           console.log('data returned by Cloud.Credential API call:', data);
           return;
         }
         if (data.error) {
-          userCallback(data.error, {});
+          callback(data.error, {});
           return;
         }
         const results = data.response.results;
         if (!results) {
-          userCallback(null, {});
+          callback(null, {});
           return;
         }
         const credentials = results.reduce((prev, result, index) => {
-          const tag = tags[index];
+          const name = names[index];
           const err = result.error && result.error.message;
           if (err) {
-            prev[tag] = {err: err};
+            prev[name] = {err: err};
             return prev;
           }
           const entry = result.result;
-          prev[tag] = {
-            name: tag.slice('cloudcred-'.length),
+          prev[name] = {
             authType: entry['auth-type'] || '',
             attrs: entry.attrs || {},
             redacted: entry.redacted || []
           };
           return prev;
         }, {});
-        userCallback(null, credentials);
-      }.bind(this, callback);
+        callback(null, credentials);
+      };
       // Send the API request.
-      if (!tags.length) {
-        tags = [];
+      if (!names.length) {
+        names = [];
       }
-      const entities = tags.map(tag => {
-        return {tag: tag};
+      const entities = names.map(name => {
+        return {tag: tags.build(tags.CREDENTIAL, name)};
       });
       this._send_rpc({
         type: 'Cloud',
@@ -1026,9 +1023,9 @@ YUI.add('juju-controller-api', function(Y) {
       Create or update a single cloud credential.
 
       @method updateCloudCredential
-      @param {String} tag The Juju tag of the credential as a string, for
-        instance "cloudcred-google_dalek@local_google". Tags for credentials
-        are usually retrieved by calling the getTagsForCloudCredentials method.
+      @param {String} name The cloud credential name as a string, for instance
+        "google_dalek@local_google". Credential names are usually retrieved by
+        calling the getCloudCredentialNames method.
       @param {String} authType The authentication type, like "userpass",
         "oauth2" or just "empty". The full AuthType definition list can be
         found: https://github.com/juju/juju/blob/master/cloud/clouds.go
@@ -1038,35 +1035,34 @@ YUI.add('juju-controller-api', function(Y) {
         operation is performed. It will receive an error message or null if the
         credential creation/update succeeded.
     */
-    updateCloudCredential: function(tag, authType, attrs, callback) {
+    updateCloudCredential: function(name, authType, attrs, callback) {
       // Decorate the user supplied callback.
-      const handler = function(userCallback, data) {
-        if (!userCallback) {
+      const handler = data => {
+        if (!callback) {
           console.log(
             'data returned by Cloud.UpdateCredentials API call:', data);
           return;
         }
         if (data.error) {
-          userCallback(data.error);
+          callback(data.error);
           return;
         }
         const results = data.response.results;
         if (!results || results.length !== 1) {
           // This should never happen.
-          userCallback(
-            'invalid results returned by Juju: ' + JSON.stringify(results));
+          callback('invalid results from Juju: ' + JSON.stringify(results));
           return;
         }
         const err = results[0].error && results[0].error.message;
         if (err) {
-          userCallback(err);
+          callback(err);
           return;
         }
-        userCallback(null);
-      }.bind(this, callback);
+        callback(null);
+      };
       // Send the API request.
       const credentials = [{
-        tag: tag,
+        tag: tags.build(tags.CREDENTIAL, name),
         credential: {'auth-type': authType || '', attrs: attrs || {}}
       }];
       this._send_rpc({
@@ -1077,47 +1073,46 @@ YUI.add('juju-controller-api', function(Y) {
     },
 
     /**
-      Revoke the cloud credential with the given tag.
+      Revoke the cloud credential with the given name.
 
       @method revokeCloudCredential
-      @param {String} tag The Juju tag of the credential as a string, for
-        instance "cloudcred-google_dalek@local_google". Tags for credentials
-        are usually retrieved by calling the getTagsForCloudCredentials method.
+      @param {String} name The cloud credential name as a string, for instance
+        "google_dalek@local_google". Credential names are usually retrieved by
+        calling the getCloudCredentialNames method.
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an error message or null if the
         credential revocation succeeded.
     */
-    revokeCloudCredential: function(tag, callback) {
+    revokeCloudCredential: function(name, callback) {
       // Decorate the user supplied callback.
-      const handler = function(userCallback, data) {
-        if (!userCallback) {
+      const handler = data => {
+        if (!callback) {
           console.log(
             'data returned by Cloud.RevokeCredentials API call:', data);
           return;
         }
         if (data.error) {
-          userCallback(data.error);
+          callback(data.error);
           return;
         }
         const results = data.response.results;
         if (!results || results.length !== 1) {
           // This should never happen.
-          userCallback(
-            'invalid results returned by Juju: ' + JSON.stringify(results));
+          callback('invalid results from Juju: ' + JSON.stringify(results));
           return;
         }
         const err = results[0].error && results[0].error.message;
         if (err) {
-          userCallback(err);
+          callback(err);
           return;
         }
-        userCallback(null);
-      }.bind(this, callback);
+        callback(null);
+      };
       // Send the API request.
       this._send_rpc({
         type: 'Cloud',
         request: 'RevokeCredentials',
-        params: {entities: [{tag: tag}]}
+        params: {entities: [{tag: tags.build(tags.CREDENTIAL, name)}]}
       }, handler);
     }
 

@@ -19,26 +19,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 /**
- * The Go store environment.
+ * The Go model API connection.
  *
- * @module env
+ * @module api
  * @submodule api.go
  */
 
 YUI.add('juju-env-api', function(Y) {
-
-  // Define the pinger interval in seconds.
-  var PING_INTERVAL = 10;
-
-  // Define the Admin API facade version.
-  var ADMIN_FACADE_VERSION = 3;
+  const module = Y.juju.environments;
+  const tags = module.tags;
+  const utils = Y.namespace('juju.views.utils');
 
   // Define the error returned by Juju when the mega-watcher is stopped and
   // clients make a "Next" request.
-  var ERR_STOP_WATCHER = 'watcher was stopped';
-
-  var environments = Y.namespace('juju.environments');
-  var utils = Y.namespace('juju.views.utils');
+  const ERR_STOP_WATCHER = 'watcher was stopped';
 
   /**
     Return a proper local charm endpoint for both the GUI in
@@ -167,9 +161,9 @@ YUI.add('juju-env-api', function(Y) {
   };
 
   /**
-   * The Go Juju environment.
+   * The API connection to the Juju model.
    *
-   * This class handles the WebSocket connection to the GoJuju API backend.
+   * This class handles the WebSocket connection to the model API backend.
    *
    * @class GoEnvironment
    */
@@ -178,9 +172,9 @@ YUI.add('juju-env-api', function(Y) {
     GoEnvironment.superclass.constructor.apply(this, arguments);
   }
 
-  GoEnvironment.NAME = 'api-env';
+  GoEnvironment.NAME = 'model-api';
 
-  Y.extend(GoEnvironment, environments.BaseEnvironment, {
+  Y.extend(GoEnvironment, module.BaseEnvironment, {
 
     /**
       A list of the valid constraints for all providers. Required
@@ -219,8 +213,8 @@ YUI.add('juju-env-api', function(Y) {
      * @return {undefined} Nothing.
      */
     initializer: function() {
-      // Define the default user name for this environment. It will appear as
-      // predefined value in the login mask.
+      // Define the default user name for connecting to this model. It will
+      // appear as predefined value in the login mask.
       this.defaultUser = 'admin';
       this._allWatcherId = null;
       this._pinger = null;
@@ -491,7 +485,13 @@ YUI.add('juju-env-api', function(Y) {
         this.setConnectedAttr('modelAccess', userInfo['model-access']);
         this.setConnectedAttr(
           'controllerAccess', userInfo['controller-access']);
-        this.setConnectedAttr('modelTag', response['model-tag']);
+        if (response['controller-tag']) {
+          this.setConnectedAttr(
+            'controllerId',
+            tags.parse(tags.CONTROLLER, response['controller-tag']));
+        }
+        this.setConnectedAttr(
+          'modelId',  tags.parse(tags.MODEL, response['model-tag']));
         this.currentModelInfo(this._handleCurrentModelInfo.bind(this));
         this._watchAll();
         // Start pinging the server.
@@ -499,7 +499,7 @@ YUI.add('juju-env-api', function(Y) {
         // prevent Apache to disconnect the WebSocket in the embedded Juju.
         if (!this._pinger) {
           this._pinger = setInterval(
-            this.ping.bind(this), PING_INTERVAL * 1000);
+            this.ping.bind(this), module.PING_INTERVAL * 1000);
         }
         // Clean up for log out text.
         this.failedAuthentication = false;
@@ -544,7 +544,7 @@ YUI.add('juju-env-api', function(Y) {
 
     /**
      * Attempt to log the user in.  Credentials must have been previously
-     * stored on the environment.
+     * stored on the model object.
      *
      * @method login
      * @return {undefined} Nothing.
@@ -567,10 +567,10 @@ YUI.add('juju-env-api', function(Y) {
         type: 'Admin',
         request: 'Login',
         params: {
-          'auth-tag': credentials.user,
+          'auth-tag': tags.build(tags.USER, credentials.user),
           credentials: credentials.password
         },
-        version: ADMIN_FACADE_VERSION
+        version: module.ADMIN_FACADE_VERSION
       }, this.handleLogin);
       this.pendingLoginResponse = true;
     },
@@ -631,15 +631,19 @@ YUI.add('juju-env-api', function(Y) {
         }
 
         // Macaroon authentication succeeded!
-        var user = response['user-info'] && response['user-info'].identity;
-        if (!user) {
+        const userInfo = response['user-info'];
+        const userTag = userInfo && userInfo.identity;
+        if (!userTag) {
           // This is a beta version of Juju 2 which does not include user info
           // in the macaroons based login response. Unfortunately, we did all
           // of this for nothing.
           cback('authentication failed: use a proper Juju 2 release');
           return;
         }
-        this.setCredentials({macaroons: macaroons, user: user});
+        this.setCredentials({
+          macaroons: macaroons,
+          user: tags.parse(tags.USER, userTag)
+        });
         cback(null, response);
       };
 
@@ -649,7 +653,7 @@ YUI.add('juju-env-api', function(Y) {
         var request = {
           type: 'Admin',
           request: 'Login',
-          version: ADMIN_FACADE_VERSION
+          version: module.ADMIN_FACADE_VERSION
         };
         if (macaroons) {
           request.params = {macaroons: [macaroons]};
@@ -679,7 +683,7 @@ YUI.add('juju-env-api', function(Y) {
       this._send_rpc({
         type: 'Admin',
         request: 'RedirectInfo',
-        version: ADMIN_FACADE_VERSION
+        version: module.ADMIN_FACADE_VERSION
       }, resp => {
         if (!callback) {
           console.log('data returned by Admin.RedirectInfo API call:', resp);
@@ -749,19 +753,20 @@ YUI.add('juju-env-api', function(Y) {
         (see the currentModelInfo method below).
       @return {undefined} Nothing.
     */
-    _handleCurrentModelInfo: function(data) {
-      if (data.err) {
-        console.error('error retrieving model information: ' + data.err);
+    _handleCurrentModelInfo: function(err, data) {
+      if (err) {
+        console.error('error retrieving current model information: ' + err);
         return;
       }
-      // Store default series and provider type in the env.
+      // Store received model information on the model.
       this.setConnectedAttr('defaultSeries', data.series);
       this.setConnectedAttr('providerType', data.provider);
       this.setConnectedAttr('environmentName', data.name);
       this.setConnectedAttr('modelUUID', data.uuid);
       this.setConnectedAttr('cloud', data.cloud);
       this.setConnectedAttr('region', data.region);
-      this.setConnectedAttr('credentialTag', data.credentialTag);
+      this.setConnectedAttr('credential', data.credential);
+
       // For now we only need to call modelGet if the provider is MAAS.
       if (data.provider !== 'maas') {
         // Set the MAAS server to null, so that subscribers waiting for this
@@ -784,20 +789,16 @@ YUI.add('juju-env-api', function(Y) {
 
       @method currentModelInfo
       @param {Function} callback A callable that must be called once the
-        operation is performed. It will receive an object with an "err"
-        attribute containing a string describing the problem (if an error
-        occurred). Otherwise, if everything went well, it will receive an
-        object with the following fields:
+        operation is performed. It will receive an error containing a string
+        describing the problem (if an error occurred) and an object with the
+        following fields:
         - name: the model name, like "admin" or "mymodel";
         - series: the model default series, like "trusty" or "xenial";
         - provider: the provider type, like "lxd" or "aws";
         - uuid: the model unique identifier;
-        - ownerTag: the tag of the user owning the model (with "user-" prefix);
         - owner: the name of the user owning the model;
-        - cloudTag: the model cloud tag (prefixed with "cloud-");
         - cloud: the model cloud;
         - region: the cloud region in which the model is placed;
-        - credentialTag: the cloud credential tag (prefixed with "cloudcred-");
         - credential: the cloud credential name;
         - life: the lifecycle status of the model: "alive", "dying" or "dead";
         - isAlive: whether the model is alive or dying/dead.
@@ -805,40 +806,37 @@ YUI.add('juju-env-api', function(Y) {
     */
     currentModelInfo: function(callback) {
       // Decorate the user supplied callback.
-      var handler = function(userCallback, data) {
-        if (!userCallback) {
-          console.log('data returned by current model info API call:', data);
+      var handler = data => {
+        if (!callback) {
+          console.log('data returned by Client.ModelInfo API call:', data);
           return;
         }
         if (data.error) {
-          userCallback({err: data.error});
+          callback(data.error, {});
           return;
         }
         var response = data.response;
         // Credentials are not required/returned by all clouds.
-        const credentialTag = response['cloud-credential-tag'] || '';
-        userCallback({
+        let credential = '';
+        if (response['cloud-credential-tag']) {
+          credential = tags.parse(
+            tags.CREDENTIAL, response['cloud-credential-tag']);
+        }
+        callback(null, {
           name: response.name,
           series: response['default-series'],
           provider: response['provider-type'],
           uuid: response.uuid,
-          ownerTag: response['owner-tag'],
-          owner: response['owner-tag'].replace(/^user-/, ''),
-          cloudTag: response['cloud-tag'],
-          cloud: response['cloud-tag'].replace(/^cloud-/, ''),
+          owner: tags.parse(tags.USER, response['owner-tag']),
+          cloud: tags.parse(tags.CLOUD, response['cloud-tag']),
           region: response['cloud-region'],
-          credentialTag: credentialTag,
-          credential: credentialTag.replace(/^cloudcred-/, ''),
+          credential: credential,
           life: response.life,
           isAlive: response.life === 'alive'
         });
-      }.bind(this, callback);
-
+      };
       // Send the API request.
-      this._send_rpc({
-        type: 'Client',
-        request: 'ModelInfo'
-      }, handler);
+      this._send_rpc({type: 'Client', request: 'ModelInfo'}, handler);
     },
 
     /**
@@ -899,14 +897,14 @@ YUI.add('juju-env-api', function(Y) {
       // HTTP authentication, and of subscribing/invoking the given callbacks.
       // The web handler is stored as an environment attribute: it is usually
       // an instance of app/store/web-handler.js:WebHandler when the GUI is
-      // connected to a real Juju environment. When instead the GUI is run in
+      // connected to a real Juju model. When instead the GUI is run in
       // sandbox mode, a fake handler is used, in which no HTTP requests are
       // involved: see app/store/web-sandbox.js:WebSandbox.
       var webHandler = this.get('webHandler');
       // TODO frankban: allow macaroons based auth here.
       webHandler.sendPostRequest(
-          path, headers, file, credentials.user, credentials.password,
-          progress, callback);
+          path, headers, file, tags.build(tags.USER, credentials.user),
+          credentials.password, progress, callback);
     },
 
     /**
@@ -926,7 +924,8 @@ YUI.add('juju-env-api', function(Y) {
           this.get('modelUUID'), 'url=' + charmUrl + '&file=' + filename);
       var webHandler = this.get('webHandler');
       // TODO frankban: allow macaroons based auth here.
-      return webHandler.getUrl(path, credentials.user, credentials.password);
+      return webHandler.getUrl(
+        path, tags.build(tags.USER, credentials.user), credentials.password);
     },
 
     /**
@@ -944,8 +943,8 @@ YUI.add('juju-env-api', function(Y) {
       var headers = Object.create(null);
       // TODO frankban: allow macaroons based auth here.
       webHandler.sendGetRequest(
-          path, headers, credentials.user, credentials.password,
-          progress, callback);
+          path, headers, tags.build(tags.USER, credentials.user),
+          credentials.password, progress, callback);
     },
 
     /**
@@ -1784,7 +1783,7 @@ YUI.add('juju-env-api', function(Y) {
         type: 'Annotations',
         request: 'Set',
         params: {annotations: [{
-          entity: this.generateTag(entity, type),
+          entity: tags.build(tags[type.toUpperCase()], entity),
           annotations: stringifyObjectValues(data)
         }]}
       }, handler);
@@ -1849,23 +1848,9 @@ YUI.add('juju-env-api', function(Y) {
         type: 'Annotations',
         request: 'Get',
         params: {entities: [{
-          tag: this.generateTag(entity, type)
+          tag: tags.build(tags[type.toUpperCase()], entity)
         }]}
       }, handler);
-    },
-
-    /**
-      Generate the tag for the given entity and entity type.
-
-      @method generateTag
-      @param {String} entity The name of a machine, unit, application, or
-        model, e.g. '0', 'mysql-0', or 'mysql'.
-      @param {String} type The type of entity that is being annotated
-        (e.g.: 'application', 'unit', 'machine', 'model').
-      @return {String} The entity tag.
-    */
-    generateTag: function(entity, type) {
-      return type + '-' + entity;
     },
 
     /**
@@ -2420,7 +2405,7 @@ YUI.add('juju-env-api', function(Y) {
       // XXX frankban 2015/12/15: this will be done automatically by the
       // server, and the URL will be returned as part of the API response.
       if (!url) {
-        var user = this.getCredentials().user.replace(/^user-/, '');
+        var user = this.getCredentials().user;
         var envName = this.get('environmentName');
         url = 'local:/u/' + user + '/' + envName + '/' + applicationName;
       }
@@ -2448,7 +2433,7 @@ YUI.add('juju-env-api', function(Y) {
       // Build the API call parameters.
       if (users && users.length) {
         users = users.map(function(user) {
-          return 'user-' + user;
+          return tags.build(tags.USER, user);
         });
       } else {
         users = ['user-public'];
@@ -2587,7 +2572,7 @@ YUI.add('juju-env-api', function(Y) {
           url: result.applicationurl,
           description: result.applicationdescription,
           sourceName: result.sourcelabel,
-          sourceId: result.sourceenviron.replace(/^environment-/, ''),
+          sourceId: tags.parse(tags.MODEL, result.sourceenviron),
           endpoints: result.endpoints.map(function(endpoint) {
             // Note that we are not really changing values or field names
             // here, we are just excluding limit and scope attributes. The
@@ -2613,13 +2598,13 @@ YUI.add('juju-env-api', function(Y) {
   });
 
 
-  environments.endpointToName = endpointToName;
-  environments.createRelationKey = createRelationKey;
-  environments.GoEnvironment = GoEnvironment;
-  environments.lowerObjectKeys = lowerObjectKeys;
-  environments.parsePlacement = parsePlacement;
-  environments.stringifyObjectValues = stringifyObjectValues;
-  environments.machineJobs = machineJobs;
+  module.endpointToName = endpointToName;
+  module.createRelationKey = createRelationKey;
+  module.GoEnvironment = GoEnvironment;
+  module.lowerObjectKeys = lowerObjectKeys;
+  module.parsePlacement = parsePlacement;
+  module.stringifyObjectValues = stringifyObjectValues;
+  module.machineJobs = machineJobs;
 
   var KVM = {label: 'KVM', value: 'kvm'},
       LXC = {label: 'LXC', value: 'lxc'},
@@ -2629,7 +2614,7 @@ YUI.add('juju-env-api', function(Y) {
   // To enable/disable containerization in the machine view, just add/remove
   // supportedContainerTypes to the provider types below.
   // TODO frankban: is this still used in the machine view? Or somewhere?
-  environments.providerFeatures = {
+  module.providerFeatures = {
     // All container types (used when the "containers" feature flags is set).
     all: {
       supportedContainerTypes: [KVM, LXC, LXD]

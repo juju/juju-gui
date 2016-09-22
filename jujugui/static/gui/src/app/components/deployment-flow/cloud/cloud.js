@@ -44,8 +44,10 @@ YUI.add('deployment-cloud', function() {
         }
         const cloudList = [];
         if (clouds) {
-          cloudList = Object.keys(clouds).map(id => {
-            return clouds[id];
+          cloudList = Object.keys(clouds).map(name => {
+            const cloud = clouds[name];
+            cloud.name = name;
+            return cloud;
           });
         }
         this.setState({

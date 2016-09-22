@@ -1582,13 +1582,11 @@ YUI.add('juju-view-utils', function(Y) {
     }
     controllerAPI.createModel(
       model,
-      controllerAPI.getCredentials().user,
-      {
-        credentialTag: `cloudcred-${credential}`,
-        cloudTag: `cloud-${cloud}`,
+      controllerAPI.getCredentials().user, {
+        credential: credential,
+        cloud: cloud,
         region: region
-      },
-      utils._newModelCallback.bind(this, app, callback));
+      }, utils._newModelCallback.bind(this, app, callback));
   };
 
   /**
@@ -1637,17 +1635,20 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
-    Generates a valid cloud credential tag using the supplied arguments.
+    Generates a valid cloud credential name using the supplied arguments.
+    TODO frankban: why are we using this function? We should not double guess
+    credential names, but retrieve them from Juju. This is broken.
 
-    @method generateCloudCredentialTag
-    @param {String} cloudName Name of the cloud that this credential applies.
-      ex: "aws", "google"
-    @param {String} userId Full user id.
-      ex: "user-admin@local", "admin@local"
-    @param {String} credName The name of the credential.
+    @method generateCloudCredentialName
+    @param {String} cloudName Name of the cloud that this credential applies,
+      for instance "aws" or "google".
+    @param {String} user Full user name, for instance "admin@local".
+    @param {String} credName The name of the credential
+      (TODO frankban: WTF!? We already have that? This is so confusing).
+    @return A cloud credential name
   */
-  utils.generateCloudCredentialTag = function(cloudName, userId, credName) {
-    return `cloudcred-${cloudName}_${userId.replace('user-', '')}_${credName}`;
+  utils.generateCloudCredentialName = function(cloudName, user, credName) {
+    return `${cloudName}_${user}_${credName}`;
   };
 
 }, '0.1.0', {

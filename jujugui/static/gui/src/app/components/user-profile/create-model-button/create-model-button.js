@@ -26,8 +26,8 @@ YUI.add('create-model-button', function() {
       className: React.PropTypes.string,
       cloud: React.PropTypes.string,
       controllerAPI: React.PropTypes.object.isRequired,
+      getCloudCredentialNames: React.PropTypes.func.isRequired,
       getCloudCredentials: React.PropTypes.func.isRequired,
-      getTagsForCloudCredentials: React.PropTypes.func.isRequired,
       hideConnectingMask: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
@@ -72,7 +72,7 @@ YUI.add('create-model-button', function() {
       // the connecting mask right now.
       props.showConnectingMask();
       const name = modelName.getValue();
-      const userTag = props.user.user;
+      const user = props.user.user;
       // XXX Jeff - Everything below here around creating models is only here
       // until the new deployment flow exists and we use the much better
       // written code for creating models with the proper credentials.
@@ -85,39 +85,36 @@ YUI.add('create-model-button', function() {
           level: 'error'
         });
       };
-      props.getTagsForCloudCredentials(
-        [[userTag, `cloud-${this.props.cloud}`]], (err, tags) => {
+      props.getCloudCredentialNames([[user, props.cloud]], (err, names) => {
+        if (err) {
+          notify(err);
+          return;
+        }
+        const nameList = names.length && names[0].names || [];
+        this.props.getCloudCredentials(nameList, (err, credentials) => {
           if (err) {
             notify(err);
             return;
           }
-          const tagList = tags.length && tags[0].tags || [];
-          this.props.getCloudCredentials(tagList, (err, credentials) => {
+          const credentialList = Object.keys(credentials);
+          if (!credentialList.length) {
+            notify('No valid credentials found');
+            return;
+          }
+          const attrs = {
+            credential: credentialList[0],
+            cloud: props.cloud
+          };
+          props.controllerAPI.createModel(name, user, attrs, (err, data) => {
+            props.hideConnectingMask(false);
             if (err) {
               notify(err);
               return;
             }
-            const credentialList = Object.keys(credentials).map(
-              credential => credentials[credential].name);
-            if (credentials && credentialList.length <= 0) {
-              notify('No valid credentials found');
-              return;
-            }
-            const attrs = {
-              credentialTag: `cloudcred-${credentialList[0]}`,
-              cloudTag: `cloud-${this.props.cloud}`
-            };
-            props.controllerAPI.createModel(
-              name, userTag, attrs, (err, data) => {
-                props.hideConnectingMask(false);
-                if (err) {
-                  notify(err);
-                  return;
-                }
-                props.switchModel(data.uuid, data.name);
-              });
+            props.switchModel(data.uuid, data.name);
           });
         });
+      });
     },
 
     /**

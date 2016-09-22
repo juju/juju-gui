@@ -21,9 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('environment login support', function() {
-    var requires = ['node', 'juju-gui', 'juju-views', 'juju-tests-utils'];
-    var conn, env, utils, juju;
-    var test = it; // We aren't really doing BDD so let's be more direct.
+    const requires = ['node', 'juju-gui', 'juju-views', 'juju-tests-utils'];
+    let conn, env, utils, juju;
 
     before(function(done) {
       YUI(GlobalConfig).use(requires, function(Y) {
@@ -47,33 +46,34 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     // These duplicate more thorough tests in test_env_api.js.
-    test('the user is initially assumed to be unauthenticated', function() {
+    it('the user is initially assumed to be unauthenticated', function() {
       assert.isFalse(env.userIsAuthenticated);
     });
 
-    test('successful login event marks user as authenticated', function() {
+    it('successful login event marks user as authenticated', function() {
       var data = {response: {
         facades: [{name: 'ModelManager', versions: [2]}],
+        'model-tag': 'model-42',
         'user-info': {}
       }};
       env.handleLogin(data);
       assert.isTrue(env.userIsAuthenticated);
     });
 
-    test('unsuccessful login event keeps user unauthenticated', function() {
+    it('unsuccessful login event keeps user unauthenticated', function() {
       var data = {error: 'who are you?'};
       env.handleLogin(data);
       assert.isFalse(env.userIsAuthenticated);
     });
 
-    test('bad credentials are removed', function() {
+    it('bad credentials are removed', function() {
       var data = {error: 'who are you?'};
       env.handleLogin(data);
       assert.deepEqual(
         env.getCredentials(), {user: '', password: '', macaroons: null});
     });
 
-    test('credentials passed to the constructor are stored', function() {
+    it('credentials passed to the constructor are stored', function() {
       const user = 'jean-luc-picard';
       const password = 'I am the real legend!';
       // Make sure that the session is empty from the 'beforeEach' instantiation
@@ -84,26 +84,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         conn: conn
       });
       const credentials = env.getCredentials();
-      assert.equal(credentials.user, 'user-' + user + '@local');
+      assert.equal(credentials.user, user + '@local');
       assert.equal(credentials.password, password);
       assert.equal(JSON.stringify({
-        user: 'user-' + user,
+        user: user,
         password: password,
         macaroons: null
       }), sessionStorage.getItem('credentials'));
     });
 
-    test('login requests are sent in response to a connection', function() {
+    it('login requests are sent in response to a connection', function() {
       env.fire('log', {op: 'login', data: {}});
     });
 
-    test('if already authenticated, login() is a no-op', function() {
+    it('if already authenticated, login() is a no-op', function() {
       env.userIsAuthenticated = true;
       env.login();
       assert.equal(conn.last_message(), undefined);
     });
 
-    test('with credentials set, login() sends an RPC message', function() {
+    it('with credentials set, login() sends an RPC message', function() {
       env.setCredentials({user: 'admin', password: 'password'});
       env.login();
       var message = conn.last_message();

@@ -25,8 +25,8 @@ YUI.add('empty-user-profile', function() {
       addNotification: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.string,
       controllerAPI: React.PropTypes.object.isRequired,
+      getCloudCredentialNames: React.PropTypes.func.isRequired,
       getCloudCredentials: React.PropTypes.func.isRequired,
-      getTagsForCloudCredentials: React.PropTypes.func.isRequired,
       hideConnectingMask: React.PropTypes.func.isRequired,
       showConnectingMask: React.PropTypes.func.isRequired,
       staticURL: React.PropTypes.string,
@@ -70,7 +70,7 @@ YUI.add('empty-user-profile', function() {
             className='user-profile__empty-button'
             cloud={props.cloud}
             getCloudCredentials={props.getCloudCredentials}
-            getTagsForCloudCredentials={props.getTagsForCloudCredentials}
+            getCloudCredentialNames={props.getCloudCredentialNames}
             hideConnectingMask={props.hideConnectingMask}
             showConnectingMask={props.showConnectingMask}
             switchModel={this.switchModel}

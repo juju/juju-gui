@@ -365,6 +365,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'request-id': 1,
           response: {
             'user-info': {},
+            'model-tag': 'model-42',
             facades: [{name: 'ModelManager', versions: [2]}]
           }
         });
@@ -380,6 +381,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'request-id': 1,
           response: {
             'user-info': {},
+            'model-tag': 'model-42',
             facades: [{name: 'ModelManager', versions: [2]}]
           }
         });
@@ -451,6 +453,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             {name: 'Client', versions: [0]},
             {name: 'ModelManager', versions: [2]}
           ],
+          'model-tag': 'model-42',
           'user-info': {'controller-access': 'login', 'model-access': 'read'}
         }});
         assert.strictEqual(env.get('controllerAccess'), 'login');
@@ -575,7 +578,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         conn.msg({
           'request-id': requestId,
           response: {
-            'user-info': {identity: 'who'},
+            'model-tag': 'model-42',
+            'user-info': {identity: 'user-who'},
             facades: [
               {name: 'Client', versions: [42, 47]},
               {name: 'ModelManager', versions: [2]}
@@ -584,7 +588,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
         assert.strictEqual(error, null);
         const creds = env.getCredentials();
-        assert.strictEqual(creds.user, 'user-who@local');
+        assert.strictEqual(creds.user, 'who@local');
         assert.strictEqual(creds.password, '');
         assert.deepEqual(creds.macaroons, ['macaroon', 'discharge']);
         assert.deepEqual(env.get('facades'), {
@@ -602,7 +606,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         conn.msg({
           'request-id': requestId,
           response: {
-            'user-info': {identity: 'dalek'},
+            'model-tag': 'model-42',
+            'user-info': {identity: 'user-dalek'},
             facades: [
               {name: 'Client', versions: [0]},
               {name: 'ModelManager', versions: [2]}
@@ -611,7 +616,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
         assert.strictEqual(error, null);
         const creds = env.getCredentials();
-        assert.strictEqual(creds.user, 'user-dalek@local');
+        assert.strictEqual(creds.user, 'dalek@local');
         assert.strictEqual(creds.password, '');
         assert.deepEqual(creds.macaroons, ['already stored', 'macaroons']);
         assert.deepEqual(env.get('facades'), {
@@ -668,7 +673,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sends the correct request for model info', function() {
-      env.set('modelTag', 'my-model-tag');
       env.currentModelInfo();
       var lastMessage = conn.last_message();
       var expected = {
@@ -682,7 +686,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('logs an error on current model info errors', function() {
-      env.set('modelTag', 'my-model-tag');
       env.currentModelInfo(env._handleCurrentModelInfo.bind(env));
       // Mock "console.error" so that it is possible to collect logged errors.
       var original = console.error;
@@ -692,13 +695,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       // Assume currentModelInfo to be the first request.
       conn.msg({'request-id': 1, error: 'bad wolf'});
-      assert.strictEqual(err, 'error retrieving model information: bad wolf');
+      assert.strictEqual(
+        err, 'error retrieving current model information: bad wolf');
       // Restore the original "console.error".
       console.error = original;
     });
 
     it('stores model info into env attributes', function() {
-      env.set('modelTag', 'my-model-tag');
       env.currentModelInfo(env._handleCurrentModelInfo.bind(env));
       // Assume currentModelInfo to be the first request.
       conn.msg({
@@ -721,11 +724,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(env.get('modelUUID'), '5bea955d-7a43-47d3-89dd-tag1');
       assert.equal(env.get('cloud'), 'aws');
       assert.equal(env.get('region'), 'us-east-1');
-      assert.equal(env.get('credentialTag'), 'cloudcred-aws_admin@local_aws');
+      assert.equal(env.get('credential'), 'aws_admin@local_aws');
     });
 
     it('handles no cloud credential returned by ModelInfo', function() {
-      env.set('modelTag', 'my-model-tag');
       env.currentModelInfo(env._handleCurrentModelInfo.bind(env));
       // Assume currentModelInfo to be the first request.
       conn.msg({
@@ -741,7 +743,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'owner-tag': 'user-admin@local',
         }
       });
-      assert.strictEqual(env.get('credentialTag'), '');
+      assert.strictEqual(env.get('credential'), '');
     });
 
     it('sends the correct ModelGet request', function() {
@@ -757,7 +759,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('warns on ModelGet errors', function() {
-      env.set('modelTag', 'my-model-tag');
       env.currentModelInfo(env._handleCurrentModelInfo.bind(env));
       // Mock "console.warn" so that it is possible to collect warnings.
       var original = console.warn;
@@ -785,7 +786,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('stores the MAAS server on ModelGet results on MAAS', function() {
-      env.set('modelTag', 'my-model-tag');
       env.currentModelInfo(env._handleCurrentModelInfo.bind(env));
       conn.msg({
         'request-id': 1,
@@ -823,7 +823,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('calls ModelGet after ModelInfo on MAAS', function() {
       // Simulate a ModelInfo request/response.
-      env.set('modelTag', 'my-model-tag');
       env.currentModelInfo(env._handleCurrentModelInfo.bind(env));
       conn.msg({
         'request-id': 1,
@@ -853,7 +852,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // The MAAS server attribute is initially undefined.
       assert.strictEqual(env.get('maasServer'), undefined);
       // Simulate a ModelInfo request/response.
-      env.set('modelTag', 'my-model-tag');
       env.currentModelInfo(env._handleCurrentModelInfo.bind(env));
       conn.msg({
         'request-id': 1,
@@ -1718,28 +1716,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('sends the correct Annotations.Get message', function() {
       env.get_annotations('apache', 'application');
-      var lastMessage = conn.last_message();
-      var expected = {
+      const msg = conn.last_message();
+      const expected = {
         type: 'Annotations',
         version: 2,
         request: 'Get',
         'request-id': 1,
         params: {entities: [{tag: 'application-apache'}]}
       };
-      assert.deepEqual(expected, lastMessage);
-    });
-
-    it('sends the correct Annotations.Get message (for services)', function() {
-      env.get_annotations('apache', 'service');
-      var lastMessage = conn.last_message();
-      var expected = {
-        type: 'Annotations',
-        version: 2,
-        request: 'Get',
-        'request-id': 1,
-        params: {entities: [{tag: 'service-apache'}]}
-      };
-      assert.deepEqual(expected, lastMessage);
+      assert.deepEqual(msg, expected);
     });
 
     it('sends the correct Annotations.Set message', function() {
@@ -1753,24 +1738,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         params: {
           annotations: [{
             entity: 'application-apache',
-            annotations: {mykey: 'myvalue'}
-          }]
-        }
-      };
-      assert.deepEqual(expected, lastMessage);
-    });
-
-    it('sends the correct Annotations.Set message (for services)', function() {
-      env.update_annotations('apache', 'service', {'mykey': 'myvalue'});
-      var lastMessage = conn.last_message();
-      var expected = {
-        type: 'Annotations',
-        version: 2,
-        request: 'Set',
-        'request-id': 1,
-        params: {
-          annotations: [{
-            entity: 'service-apache',
             annotations: {mykey: 'myvalue'}
           }]
         }
@@ -1818,24 +1785,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         params: {
           annotations: [{
             entity: 'application-apache',
-            annotations: {'key1': '', 'key2': ''}
-          }]
-        }
-      };
-      assert.deepEqual(expected, lastMessage);
-    });
-
-    it('sends the correct message to remove service annotations', function() {
-      env.remove_annotations('apache', 'service', ['key1', 'key2']);
-      var lastMessage = conn.last_message();
-      var expected = {
-        type: 'Annotations',
-        version: 2,
-        request: 'Set',
-        'request-id': 1,
-        params: {
-          annotations: [{
-            entity: 'service-apache',
             annotations: {'key1': '', 'key2': ''}
           }]
         }
@@ -1976,27 +1925,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         error: 'This is an error.'
       });
       assert.equal('This is an error.', err);
-    });
-
-    describe('generateTag', function() {
-
-      var tag;
-
-      it('generates an application tag', function() {
-        tag = env.generateTag('django', 'application');
-        assert.strictEqual('application-django', tag);
-      });
-
-      it('generates a model tag', function() {
-        tag = env.generateTag('default', 'model');
-        assert.strictEqual('model-default', tag);
-      });
-
-      it('generates a unit tag', function() {
-        tag = env.generateTag('django/1', 'unit');
-        assert.strictEqual('unit-django/1', tag);
-      });
-
     });
 
     it('sends the correct message to retrieve application config', function() {
@@ -3200,7 +3128,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               applicationurl: url,
               applicationdescription: 'these are the voyages',
               sourcelabel: 'aws',
-              sourceenviron: 'environment-uuid',
+              sourceenviron: 'model-uuid',
               endpoints: [{
                 name: 'cache',
                 interface: 'http',

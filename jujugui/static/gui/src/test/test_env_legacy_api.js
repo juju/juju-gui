@@ -395,12 +395,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Assume login to be the first request.
         conn.msg({
           RequestId: 1,
-          Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
+          Response: {AuthTag: 'user-tokenuser', Password: 'tokenpasswd'}});
         assert.strictEqual(fired, true);
         assert.strictEqual(err, null);
         assert.strictEqual(fromToken, true);
         const credentials = env.getCredentials();
-        assert.strictEqual(credentials.user, 'user-tokenuser@local');
+        assert.strictEqual(credentials.user, 'tokenuser@local');
         assert.strictEqual(credentials.password, 'tokenpasswd');
       });
 
@@ -410,7 +410,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Assume login to be the first request.
         conn.msg({
           RequestId: 1,
-          Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
+          Response: {AuthTag: 'user-tokenuser', Password: 'tokenpasswd'}});
         assert.isFalse(env.failedAuthentication);
         assert.isFalse(env.failedTokenAuthentication);
       });
@@ -438,7 +438,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Assume login to be the first request.
         conn.msg({
           RequestId: 1,
-          Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
+          Response: {AuthTag: 'user-tokenuser', Password: 'tokenpasswd'}});
         var environmentInfoMessage = conn.last_message(2);
         // EnvironmentInfo is the second request.
         var environmentInfoExpected = {
@@ -2173,10 +2173,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('successfully creates a local model (legacy)', function(done) {
       env.set('providerType', 'local');
       env.set('facades', {'EnvironmentManager': [1]});
-      env.createModel('myenv', 'user-who', {}, (err, data) => {
+      env.createModel('myenv', 'who', {}, (err, data) => {
         assert.strictEqual(err, null);
         assert.strictEqual(data.name, 'myenv');
-        assert.strictEqual(data.ownerTag, 'user-rose');
+        assert.strictEqual(data.owner, 'rose');
         assert.strictEqual(data.uuid, 'unique-id');
         assert.equal(conn.messages.length, 3);
         assert.deepEqual(conn.messages[0], {
@@ -2233,7 +2233,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles failures while retrieving model skeleton', function(done) {
-      env.createModel('bad-env', 'user-dalek', {}, (err, data) => {
+      env.createModel('bad-env', 'dalek', {}, (err, data) => {
         assert.strictEqual(err, 'cannot get configuration skeleton: bad wolf');
         assert.deepEqual(data, {});
         done();
@@ -2243,7 +2243,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles failures while retrieving model config', function(done) {
-      env.createModel('bad-env', 'user-dalek', {}, (err, data) => {
+      env.createModel('bad-env', 'dalek', {}, (err, data) => {
         assert.strictEqual(err, 'cannot get model configuration: bad wolf');
         assert.deepEqual(data, {});
         done();
@@ -2259,7 +2259,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles failures while creating models', function(done) {
       env.set('providerType', 'local');
-      env.createModel('bad-env', 'user-dalek', {}, (err, data) => {
+      env.createModel('bad-env', 'dalek', {}, (err, data) => {
         assert.strictEqual(err, 'bad wolf');
         assert.deepEqual(data, {});
         done();
@@ -2280,21 +2280,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('lists models for a specific owner (legacy)', function(done) {
       env.set('facades', {'EnvironmentManager': [1]});
-      env.listModels('user-who', (err, models) => {
+      env.listModels('who', (err, models) => {
         assert.strictEqual(err, null);
         assert.deepEqual(models, [
           {
+            id: 'unique1',
             name: 'env1',
-            tag: 'model-unique1',
-            ownerTag: 'user-who',
             owner: 'who',
             uuid: 'unique1',
             lastConnection: 'today'
           },
           {
+            id: 'unique2',
             name: 'env2',
-            tag: 'model-unique2',
-            ownerTag: 'user-rose',
             owner: 'rose',
             uuid: 'unique2',
             lastConnection: 'yesterday'
@@ -2333,7 +2331,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles failures while listing models', function(done) {
-      env.listModels('user-dalek', (err, models) => {
+      env.listModels('dalek', (err, models) => {
         assert.strictEqual(err, 'bad wolf');
         assert.deepEqual(models, []);
         done();
@@ -2343,7 +2341,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles no models returned', done => {
-      env.listModels('user-dalek', (err, models) => {
+      env.listModels('dalek', (err, models) => {
         assert.strictEqual(err, null);
         assert.deepEqual(models, []);
         done();
