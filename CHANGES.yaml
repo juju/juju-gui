@@ -1,3 +1,24 @@
+- 2.1.13:
+
+    - Login logic improved to support sequential controller and model access.
+    - Logout logic improved to correctly log out of all models and controllers.
+    - User login location suffix @local is now added automatically if missing.
+    - Updated Juju API to keep it in line with the Juju beta changes.
+    - User profile now displays dates in a relative format.
+    - >
+      Closing the browser tab will now issue browser confirmation if you have
+      uncommitted changes.
+    - Destroyed applications on the canvas now have blue outline.
+    - Added support for new ACL handling.
+    - (Fix) Switch from unconnected to connected state with uncommitted changes.
+    - (Fix) Number of various layout and styling issues.
+    - (Fix) Only attempt logging into a model if controller reports available.
+    - (Fix) Search input no longer clears when Juju deltas arrive.
+    ->
+      (Fix) Bundle imports now fetch the canonical charm ID before deploying to
+      handle cases where user generated bundles are using non-canonical ID's.
+    - (Fix) Pass user correct user credential tag when generating new models.
+
 - 2.1.12:
 
     - Removed "availability-zone" from model exports.
