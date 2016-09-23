@@ -209,32 +209,7 @@ describe('DeploymentFlow', function() {
                 </juju.components.DeploymentSection>
                 <div className="twelve-col">
                   <div className="deployment-flow__deploy">
-                    <div>
-                      <div className="deployment-flow__deploy-option">
-                        <input className="deployment-flow__deploy-checkbox"
-                          disabled={false}
-                          id="emails"
-                          type="checkbox" />
-                        <label className="deployment-flow__deploy-label"
-                          htmlFor="emails">
-                          Please email me updates regarding feature
-                          announcements, performance suggestions, feedback
-                          surveys and special offers.
-                        </label>
-                      </div>
-                      <div className="deployment-flow__deploy-option">
-                        <input className="deployment-flow__deploy-checkbox"
-                          disabled={false}
-                          id="terms"
-                          type="checkbox" />
-                        <label className="deployment-flow__deploy-label"
-                          htmlFor="terms">
-                          I agree that my use of any services and related APIs
-                          is subject to my compliance with the applicable&nbsp;
-                          <a href="" target="_blank">Terms of service</a>.
-                        </label>
-                      </div>
-                    </div>
+                    {undefined}
                     <div className="deployment-flow__deploy-action">
                       <juju.components.GenericButton
                         action={instance._handleDeploy}

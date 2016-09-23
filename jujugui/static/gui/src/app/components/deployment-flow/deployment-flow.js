@@ -359,7 +359,7 @@ YUI.add('deployment-flow', function() {
         case 'agreements':
           completed = false;
           disabled = false;
-          visible = mode === 'deploy';
+          visible = false;
           break;
       }
       return {
