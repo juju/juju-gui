@@ -297,6 +297,10 @@ YUI.add('deployment-flow', function() {
       };
     },
 
+    componentDidMount: function() {
+      this.refs.modelName.focus();
+    },
+
     /**
       Use the props and state to figure out if a section should be visible,
       disabled or completed.

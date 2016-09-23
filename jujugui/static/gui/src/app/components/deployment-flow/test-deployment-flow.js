@@ -712,4 +712,32 @@ describe('DeploymentFlow', function() {
     assert.equal(deploy.args[0][5], 'north');
     assert.equal(changeState.callCount, 1);
   });
+
+  it('focuses on the model name field when loaded', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        changes={{}}
+        changesFilterByParent={sinon.stub()}
+        changeState={sinon.stub()}
+        deploy={sinon.stub()}
+        generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
+        getCloudCredentialNames={sinon.stub()}
+        groupedChanges={groupedChanges}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        modelName="Pavlova"
+        servicesGetById={sinon.stub()}
+        updateCloudCredential={sinon.stub()}
+        user="user-admin">
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {modelName: {focus: sinon.stub()}};
+    instance.componentDidMount();
+    assert.equal(instance.refs.modelName.focus.callCount, 1);
+  });
 });

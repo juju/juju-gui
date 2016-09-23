@@ -82,6 +82,15 @@ YUI.add('generic-input', function() {
     },
 
     /**
+      Set the focus on the input.
+
+      @method focus
+    */
+    focus: function() {
+      return this.refs.field.focus();
+    },
+
+    /**
       Generates a label for the input if the prop is provided.
       @method _generateLabel
     */
