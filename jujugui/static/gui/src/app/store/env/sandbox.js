@@ -1385,8 +1385,9 @@ YUI.add('juju-env-sandbox', function(Y) {
         return;
       }
       const cloudCredentialsStorage = this._getCredentialsStorage(state);
+      const prefix = 'cloudcred-';
       const results = entries.map(entry => {
-        if (!entry.tag.startsWith('cloudcred-')) {
+        if (entry.tag.substr(0, prefix.length) !== prefix) {
           return {error: {message: entry.tag + ' is not a valid tag'}};
         }
         cloudCredentialsStorage[entry.tag] = entry.credential;
@@ -1416,8 +1417,9 @@ YUI.add('juju-env-sandbox', function(Y) {
         return;
       }
       const cloudCredentialsStorage = this._getCredentialsStorage(state);
+      const prefix = 'cloudcred-';
       const results = entities.map(entity => {
-        if (!entity.tag.startsWith('cloudcred-')) {
+        if (entity.tag.substr(0, prefix.length) !== prefix) {
           return {error: {message: entity.tag + ' is not a valid tag'}};
         }
         delete cloudCredentialsStorage[entity.tag];
