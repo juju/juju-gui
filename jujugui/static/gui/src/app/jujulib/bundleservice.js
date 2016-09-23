@@ -23,16 +23,17 @@ var module = module;
     @returns {Object} A client object for making bundleservice API calls.
   */
   function bundleservice(url, webhandler) {
-    // Store the API URL handling missing trailing slash.
-    this.url = url.replace(/\/?$/, '/');
+    // Store the API URL handling trailing slash.
+    this.url = url.replace(/\/?$/, '');
+    this.webhandler = webhandler;
   };
 
   bundleservice.prototype = {
     getBundleChangesFromYAML: function(bundleYAML, callback) {
-      const url = [this.url, 'bundlechanges', 'fromYAML'].join('/');
-      this.webhandler.sendPostRequest(
+      const url = [this.url, 'bundlechanges', 'fromYAML/'].join('/');
+      return this.webhandler.sendPostRequest(
         url,
-        {},
+        {'Content-type': 'application/json'},
         JSON.stringify({bundle: bundleYAML}),
         null,
         null,
