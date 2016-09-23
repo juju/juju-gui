@@ -37,11 +37,11 @@ describe('DeploymentCredential', function() {
     cloud = {id: 'azure', id: 'azure', regions: regions};
     clouds = {cloud: 'one'};
     credentials = {
-      'cloudcred-lxd_admin@local_default': {
-        name: 'cloudcred-lxd_admin@local_default'
+      'lxd_admin@local_default': {
+        name: 'lxd_admin@local_default'
       }
     };
-    tags = [{tags: ['cloudcred-lxd_admin@local_default']}];
+    tags = [{tags: ['lxd_admin@local_default']}];
     user = 'user-admin';
   });
 
@@ -259,8 +259,8 @@ describe('DeploymentCredential', function() {
                 label="Credential"
                 onChange={instance._handleCredentialChange}
                 options={[{
-                  label: 'cloudcred-lxd_admin@local_default',
-                  value: 'cloudcred-lxd_admin@local_default'
+                  label: 'lxd_admin@local_default',
+                  value: 'lxd_admin@local_default'
                 }, {
                   label: 'Add credential...',
                   value: 'add-credential'
@@ -302,7 +302,34 @@ describe('DeploymentCredential', function() {
         user={user}
         validateForm={sinon.stub()} />, true);
     assert.equal(setCredential.callCount, 1);
-    assert.equal(setCredential.args[0][0], 'cloudcred-lxd_admin@local_default');
+    assert.equal(setCredential.args[0][0], 'lxd_admin@local_default');
+  });
+
+  it('can select a credential after loading them', function() {
+    var setCredential = sinon.stub();
+    var setRegion = sinon.stub();
+    credentials['new@test'] = {
+      name: 'new@test'
+    };
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredential
+        acl={acl}
+        updateCloudCredential={sinon.stub()}
+        cloud={cloud}
+        clouds={clouds}
+        editable={true}
+        generateCloudCredentialName={sinon.stub()}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
+        getCloudCredentialNames={
+          sinon.stub().callsArgWith(1, null, tags)}
+        setCredential={setCredential}
+        setRegion={setRegion}
+        user={user}
+        validateForm={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    instance._getCredentials('new@test');
+    assert.equal(setCredential.callCount, 2);
+    assert.equal(setCredential.args[1][0], 'new@test');
   });
 
   it('can disable controls when read only', function() {
@@ -338,8 +365,8 @@ describe('DeploymentCredential', function() {
                 label="Credential"
                 onChange={instance._handleCredentialChange}
                 options={[{
-                  label: 'cloudcred-lxd_admin@local_default',
-                  value: 'cloudcred-lxd_admin@local_default'
+                  label: 'lxd_admin@local_default',
+                  value: 'lxd_admin@local_default'
                 }, {
                   label: 'Add credential...',
                   value: 'add-credential'

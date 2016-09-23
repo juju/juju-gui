@@ -89,12 +89,13 @@ YUI.add('deployment-credential-add', function() {
         // credentials.
         return;
       }
+      const credentialName = this.refs.credentialName.getValue();
       props.updateCloudCredential(
         props.generateCloudCredentialName(
-          props.cloud.name, props.user, this.refs.credentialName.getValue()),
+          props.cloud.name, props.user, credentialName),
         this.state.authType,
         this._generateCredentials(),
-        this._updateCloudCredentialCallback);
+        this._updateCloudCredentialCallback.bind(this, credentialName));
     },
 
     /**
@@ -102,16 +103,18 @@ YUI.add('deployment-credential-add', function() {
       complete.
 
       @method _updateCloudCredentialCallback
+      @param {String} credential The credential name to select when the
+        credential has been added and the list of credentials loaded again.
       @param {String} error An error message, or null if there's no error.
     */
-    _updateCloudCredentialCallback: function(error) {
+    _updateCloudCredentialCallback: function(credential, error) {
       if (error) {
         console.error('Unable to add credential', error);
         return;
       }
       // Load the credentials again so that the list will contain the newly
       // added credential.
-      this.props.getCredentials();
+      this.props.getCredentials(credential);
       this.props.close();
     },
 

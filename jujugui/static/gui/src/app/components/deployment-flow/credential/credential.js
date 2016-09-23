@@ -65,13 +65,16 @@ YUI.add('deployment-credential', function() {
       Request credentials from the controller.
 
       @method _getCredentials
+      @param {String} credential An optional credential name to select after
+        loading the list.
     */
-    _getCredentials: function() {
+    _getCredentials: function(credential) {
       const cloud = this.props.cloud && this.props.cloud.name;
       const user = this.props.user;
       if (user) {
         this.props.getCloudCredentialNames(
-          [[user, cloud]], this._getCloudCredentialNamesCallback);
+          [[user, cloud]],
+          this._getCloudCredentialNamesCallback.bind(this, credential));
       }
     },
 
@@ -80,10 +83,12 @@ YUI.add('deployment-credential', function() {
       received.
 
       @method _getCloudCredentialNamesCallback
+      @param {String} credential An optional credential name to select after
+        loading the list.
       @param {String} error An error message, or null if there's no error.
       @param {Array} tags A list of the tags found.
     */
-    _getCloudCredentialNamesCallback: function(error, names) {
+    _getCloudCredentialNamesCallback: function(credential, error, names) {
       if (error) {
         console.error('unable to get names for credentials:', error);
         return;
@@ -93,17 +98,20 @@ YUI.add('deployment-credential', function() {
       // one pair we can safely assume that we only need the first item in the
       // array.
       const nameList = names.length && names[0].names || [];
-      this.props.getCloudCredentials(nameList, this._getCredentialsCallback);
+      this.props.getCloudCredentials(
+        nameList, this._getCredentialsCallback.bind(this, credential));
     },
 
     /**
       The method to be called when the credentials response has been received.
 
       @method _getCredentialsCallback
+      @param {String} credential An optional credential name to select after
+        loading the list.
       @param {String} error An error message, or null if there's no error.
       @param {Array} credentials A list of the credentials found.
     */
-    _getCredentialsCallback: function(error, credentials) {
+    _getCredentialsCallback: function(credential, error, credentials) {
       if (error) {
         console.error('Unable to get credentials', error);
         return;
@@ -116,7 +124,13 @@ YUI.add('deployment-credential', function() {
         showAdd: !credentials || credentialList.length === 0
       });
       if (credentials && credentialList.length > 0) {
-        this.props.setCredential(credentialList[0]);
+        let select = credentialList[0];
+        // If the supplied credential to select is actually in the list then
+        // select it.
+        if (credentials[credential]) {
+          select = credential;
+        }
+        this.props.setCredential(select);
       }
     },
 
