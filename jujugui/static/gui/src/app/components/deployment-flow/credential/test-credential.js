@@ -107,6 +107,7 @@ describe('DeploymentCredential', function() {
             clouds={clouds}
             generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
+            region={undefined}
             regions={regions}
             setCredential={setCredential}
             setRegion={setRegion}
@@ -128,10 +129,10 @@ describe('DeploymentCredential', function() {
         updateCloudCredential={updateCloudCredential}
         cloud={cloud}
         clouds={clouds}
-        credential="current@local"
+        credential="lxd_admin@local_default"
         editable={false}
         generateCloudCredentialName={sinon.stub()}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, [])}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, tags)}
         region="north-north-west"
@@ -154,12 +155,13 @@ describe('DeploymentCredential', function() {
                 label="Credential"
                 onChange={instance._handleCredentialChange}
                 options={[{
-                  label: 'current@local',
-                  value: 'current@local'
+                  label: 'lxd_admin@local_default',
+                  value: 'lxd_admin@local_default'
                 }, {
                   label: 'Add credential...',
                   value: 'add-credential'
-                }]} />
+                }]}
+                value="lxd_admin@local_default" />
             </div>
             <div className="four-col">
               <juju.components.InsetSelect
@@ -169,7 +171,8 @@ describe('DeploymentCredential', function() {
                 options={[{
                   label: 'north-north-west',
                   value: 'north-north-west'
-                }]} />
+                }]}
+                value="north-north-west" />
             </div>
           </form>
           {undefined}
@@ -216,6 +219,7 @@ describe('DeploymentCredential', function() {
             clouds={clouds}
             generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
+            region={undefined}
             regions={[]}
             setCredential={setCredential}
             setRegion={setRegion}
@@ -264,7 +268,8 @@ describe('DeploymentCredential', function() {
                 }, {
                   label: 'Add credential...',
                   value: 'add-credential'
-                }]} />
+                }]}
+                value={undefined} />
             </div>
             <div className="four-col">
               <juju.components.InsetSelect
@@ -274,7 +279,8 @@ describe('DeploymentCredential', function() {
                 options={[{
                   label: 'test-region',
                   value: 'test-region'
-                }]} />
+                }]}
+                value={undefined} />
             </div>
           </form>
           {undefined}
@@ -370,7 +376,8 @@ describe('DeploymentCredential', function() {
                 }, {
                   label: 'Add credential...',
                   value: 'add-credential'
-                }]} />
+                }]}
+                value={undefined} />
             </div>
             <div className="four-col">
               <juju.components.InsetSelect
@@ -380,7 +387,8 @@ describe('DeploymentCredential', function() {
                 options={[{
                   label: 'test-region',
                   value: 'test-region'
-                }]} />
+                }]}
+                value={undefined} />
             </div>
           </form>
           {undefined}
@@ -428,6 +436,7 @@ describe('DeploymentCredential', function() {
             clouds={clouds}
             generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
+            region={undefined}
             regions={regions}
             setCredential={setCredential}
             setRegion={setRegion}

@@ -125,7 +125,8 @@ describe('DeploymentCredentialAdd', function() {
                 label: 'test-region',
                 value: 'test-region'
               }]}
-              ref="region" />
+              ref="region"
+              value={undefined} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -272,7 +273,8 @@ describe('DeploymentCredentialAdd', function() {
                 label: 'test-region',
                 value: 'test-region'
               }]}
-              ref="region" />
+              ref="region"
+              value={undefined} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -420,7 +422,8 @@ describe('DeploymentCredentialAdd', function() {
                 label: 'test-region',
                 value: 'test-region'
               }]}
-              ref="region" />
+              ref="region"
+              value={undefined} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -532,7 +535,8 @@ describe('DeploymentCredentialAdd', function() {
                 label: 'test-region',
                 value: 'test-region'
               }]}
-              ref="region" />
+              ref="region"
+              value={undefined} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials

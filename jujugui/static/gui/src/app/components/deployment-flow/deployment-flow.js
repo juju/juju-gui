@@ -291,14 +291,17 @@ YUI.add('deployment-flow', function() {
       const modelCommitted = this.props.modelCommitted;
       return {
         cloud: modelCommitted ? this.props.cloud : null,
-        credential: modelCommitted ? this.props.credential : null,
-        region: modelCommitted ? this.props.region : null,
+        credential: this.props.credential,
+        region: this.props.region,
         showChangelogs: false
       };
     },
 
     componentDidMount: function() {
-      this.refs.modelName.focus();
+      const modelName = this.refs.modelName;
+      if (modelName) {
+        modelName.focus();
+      }
     },
 
     /**

@@ -28,6 +28,7 @@ YUI.add('deployment-credential-add', function() {
       clouds: React.PropTypes.object.isRequired,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
       getCredentials: React.PropTypes.func.isRequired,
+      region: React.PropTypes.string,
       regions: React.PropTypes.array.isRequired,
       setCredential: React.PropTypes.func.isRequired,
       setRegion: React.PropTypes.func.isRequired,
@@ -292,7 +293,8 @@ YUI.add('deployment-credential-add', function() {
                 disabled={isReadOnly}
                 label="Region"
                 options={this._generateRegions()}
-                ref="region" />
+                ref="region"
+                value={this.props.region} />
             </div>
             <h3 className="deployment-panel__section-title twelve-col">
               Enter credentials

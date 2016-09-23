@@ -138,12 +138,12 @@ describe('DeploymentFlow', function() {
                     updateCloudCredential={updateCloudCredential}
                     cloud={null}
                     clouds={instance.CLOUDS}
-                    credential={null}
+                    credential={undefined}
                     editable={true}
                     generateCloudCredentialName={generateCloudCredentialName}
                     getCloudCredentials={getCloudCredentials}
                     getCloudCredentialNames={getCloudCredentialNames}
-                    region={null}
+                    region={undefined}
                     setCredential={instance._setCredential}
                     setRegion={instance._setRegion}
                     user="user-admin"

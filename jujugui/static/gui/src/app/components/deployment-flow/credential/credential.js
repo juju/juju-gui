@@ -39,24 +39,21 @@ YUI.add('deployment-credential', function() {
     },
 
     getInitialState: function() {
-      const editable = this.props.editable;
       return {
-        credentials: editable ? [] : [this.props.credential],
-        credentialsLoading: editable,
-        showAdd: editable
+        credentials: [],
+        credentialsLoading: true,
+        showAdd: this.props.editable
       };
     },
 
     componentWillMount: function() {
-      if (this.props.editable) {
-        this._getCredentials();
-      }
+      this._getCredentials();
     },
 
     componentDidUpdate: function(prevProps) {
       const prevId = prevProps.cloud && prevProps.cloud.name;
       const newId = this.props.cloud && this.props.cloud.name;
-      if (this.props.editable && newId !== prevId) {
+      if (newId !== prevId) {
         this._getCredentials();
       }
     },
@@ -121,7 +118,8 @@ YUI.add('deployment-credential', function() {
         credentials: credentialList,
         credentialsLoading: false,
         // If there are no credentials then display the form to add credentials.
-        showAdd: !credentials || credentialList.length === 0
+        showAdd: this.props.editable &&
+          (!credentials || credentialList.length === 0)
       });
       if (credentials && credentialList.length > 0) {
         let select = credentialList[0];
@@ -184,14 +182,9 @@ YUI.add('deployment-credential', function() {
       @returns {Array} The list of region options.
     */
     _generateRegions: function() {
-      if (!this.props.editable) {
-        const region = this.props.region;
-        return [{
-          label: region,
-          value: region
-        }];
-      }
-      return this.props.cloud.regions.map((region) => {
+      let regions = !this.props.editable ? [{name: this.props.region}] :
+        this.props.cloud.regions;
+      return regions.map(region => {
         return {
           label: region.name,
           value: region.name
@@ -217,14 +210,16 @@ YUI.add('deployment-credential', function() {
             disabled={disabled}
             label="Credential"
             onChange={this._handleCredentialChange}
-            options={this._generateCredentials()} />
+            options={this._generateCredentials()}
+            value={this.props.credential} />
           </div>
           <div className="four-col">
             <juju.components.InsetSelect
               disabled={disabled || !this.props.editable}
               label="Region"
               onChange={this.props.setRegion}
-              options={this._generateRegions()} />
+              options={this._generateRegions()}
+              value={this.props.region} />
           </div>
         </form>);
     },
@@ -247,6 +242,7 @@ YUI.add('deployment-credential', function() {
           clouds={this.props.clouds}
           generateCloudCredentialName={this.props.generateCloudCredentialName}
           getCredentials={this._getCredentials}
+          region={this.props.region}
           regions={this.props.cloud && this.props.cloud.regions || []}
           setCredential={this.props.setCredential}
           setRegion={this.props.setRegion}
