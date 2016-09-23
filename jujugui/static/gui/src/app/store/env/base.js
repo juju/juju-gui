@@ -51,12 +51,11 @@ YUI.add('juju-env-base', function(Y) {
       @return {String} The resulting name of the entity (without the prefix).
     */
     parse: (type, tag) => {
-      const exp = new RegExp(`^${type}-`);
-      const name = tag.replace(exp, '');
-      if (name === tag) {
-        throw new Error(`invalid tag of type ${type}: ${tag}`);
+      const prefix = `${type}-`;
+      if (tag.substr(0, prefix.length) === prefix) {
+        return tag.slice(prefix.length);
       }
-      return name;
+      throw new Error(`invalid tag of type ${type}: ${tag}`);
     },
     APPLICATION: 'application',
     CLOUD: 'cloud',
