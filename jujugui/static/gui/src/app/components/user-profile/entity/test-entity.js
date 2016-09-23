@@ -85,8 +85,13 @@ describe('UserProfileEntity', () => {
     assert.deepEqual(output, expected);
   });
 
-  it('can render a bundle', () => {
+  it('can render a bundle with applications', () => {
     var bundle = jsTestUtils.makeEntity(true).toEntity();
+    delete bundle.services;
+    bundle.applications = {
+      django: {},
+      postgresql: {}
+    };
     var getDiagramURL = sinon.stub().returns('bundle.svg');
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
@@ -127,12 +132,104 @@ describe('UserProfileEntity', () => {
               Composed of:
               <ul className="user-profile__entity-service-list">
                 <li className="user-profile__comma-item"
-                  key="django-cluster-service-gunicorn">
-                  gunicorn
-                </li>
-                <li className="user-profile__comma-item"
                   key="django-cluster-service-django">
                   django
+                </li>
+                <li className="user-profile__comma-item"
+                  key="django-cluster-service-postgresql">
+                  postgresql
+                </li>
+              </ul>
+            </div>
+            <div className="three-col last-col">
+              Owner: {"test-owner"}
+            </div>
+            <div className="user-profile__entity-diagram twelve-col">
+              <object type="image/svg+xml" data="bundle.svg"
+                className="entity-content__diagram-image" />
+            </div>
+            <div className="twelve-col no-margin-bottom">
+              <div className="two-col">
+                Description
+              </div>
+              <div className="ten-col last-col">
+                HA Django cluster.
+              </div>
+            </div>
+            <div className="twelve-col no-margin-bottom">
+              <div className="two-col">
+                Tags
+              </div>
+              <ul className="ten-col last-col">
+                {[<li className="user-profile__comma-item link"
+                  key="django-cluster-database"
+                  onClick={tag.props.onClick}
+                  role="button"
+                  tabIndex="0">
+                  database
+                </li>]}
+              </ul>
+            </div>
+            {undefined}
+          </div>
+        </div>
+      </juju.components.ExpandingRow>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can render a bundle with services', () => {
+    var bundle = jsTestUtils.makeEntity(true).toEntity();
+    delete bundle.applications;
+    bundle.services = {
+      mysql: {},
+      wordpress: {}
+    };
+    var getDiagramURL = sinon.stub().returns('bundle.svg');
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.UserProfileEntity
+        changeState={sinon.stub()}
+        entity={bundle}
+        expanded={false}
+        getDiagramURL={getDiagramURL}
+        type="bundle">
+        <span>Summary details</span>
+      </juju.components.UserProfileEntity>, true);
+    var output = renderer.getRenderOutput();
+    var viewButton = output.props.children[1].props.children[0]
+      .props.children[1].props.children;
+    var tag = output.props.children[1].props.children[1]
+      .props.children[5].props.children[1].props.children[0];
+    var expected = (
+      <juju.components.ExpandingRow classes={{
+        'user-profile__entity': true, 'user-profile__list-row': true}}
+        expanded={false}>
+        <span>Summary details</span>
+        <div>
+          <div className="expanding-row__expanded-header twelve-col">
+            <div className="seven-col no-margin-bottom">
+              {undefined}{"django-cluster"}
+            </div>
+            <div className={'expanding-row__expanded-header-action ' +
+              'five-col last-col no-margin-bottom'}>
+              <juju.components.GenericButton
+                action={viewButton.props.action}
+                type="inline-neutral"
+                title="View" />
+            </div>
+          </div>
+          <div className={'expanding-row__expanded-content twelve-col ' +
+            'no-margin-bottom'}>
+            {undefined}
+            <div className="nine-col">
+              Composed of:
+              <ul className="user-profile__entity-service-list">
+                <li className="user-profile__comma-item"
+                  key="django-cluster-service-mysql">
+                  mysql
+                </li>
+                <li className="user-profile__comma-item"
+                  key="django-cluster-service-wordpress">
+                  wordpress
                 </li>
               </ul>
             </div>
