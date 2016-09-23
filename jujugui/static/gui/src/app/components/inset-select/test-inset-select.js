@@ -76,6 +76,20 @@ describe('InsetSelect', function() {
     assert.equal(instance.getValue(), 'default');
   });
 
+  it('can set the field value', () => {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.InsetSelect
+        label="Spork!"
+        options={[{
+          label: 'Splade!',
+          value: 'splade'
+        }]} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {field: {value: 'default'}};
+    instance.setValue('new');
+    assert.equal(instance.getValue(), 'new');
+  });
+
   it('can pass the field value to a supplied onChange method', () => {
     var onChange = sinon.stub();
     var renderer = jsTestUtils.shallowRender(

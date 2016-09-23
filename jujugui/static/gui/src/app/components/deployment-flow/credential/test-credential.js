@@ -161,6 +161,7 @@ describe('DeploymentCredential', function() {
                   label: 'Add credential...',
                   value: 'add-credential'
                 }]}
+                ref="credential"
                 value="lxd_admin@local_default" />
             </div>
             <div className="four-col">
@@ -269,6 +270,7 @@ describe('DeploymentCredential', function() {
                   label: 'Add credential...',
                   value: 'add-credential'
                 }]}
+                ref="credential"
                 value={undefined} />
             </div>
             <div className="four-col">
@@ -311,7 +313,7 @@ describe('DeploymentCredential', function() {
     assert.equal(setCredential.args[0][0], 'lxd_admin@local_default');
   });
 
-  it('can select a credential after loading them', function() {
+  it('can select a credential after loading the list of creds', function() {
     var setCredential = sinon.stub();
     var setRegion = sinon.stub();
     credentials['new@test'] = {
@@ -333,9 +335,12 @@ describe('DeploymentCredential', function() {
         user={user}
         validateForm={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
+    instance.refs = {credential: {setValue: sinon.stub()}};
     instance._getCredentials('new@test');
     assert.equal(setCredential.callCount, 2);
     assert.equal(setCredential.args[1][0], 'new@test');
+    assert.equal(instance.refs.credential.setValue.callCount, 1);
+    assert.equal(instance.refs.credential.setValue.args[0][0], 'new@test');
   });
 
   it('can disable controls when read only', function() {
@@ -377,6 +382,7 @@ describe('DeploymentCredential', function() {
                   label: 'Add credential...',
                   value: 'add-credential'
                 }]}
+                ref="credential"
                 value={undefined} />
             </div>
             <div className="four-col">

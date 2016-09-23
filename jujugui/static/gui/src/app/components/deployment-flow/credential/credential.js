@@ -129,6 +129,12 @@ YUI.add('deployment-credential', function() {
           select = credential;
         }
         this.props.setCredential(select);
+        // The shallow renderer can't have refs set up before the first mount
+        // so we have to check that we have refs before we make this call. We
+        // need to figure out some way to properly handle refs.
+        if (this.refs.credential) {
+          this.refs.credential.setValue(select);
+        }
       }
     },
 
@@ -211,6 +217,7 @@ YUI.add('deployment-credential', function() {
             label="Credential"
             onChange={this._handleCredentialChange}
             options={this._generateCredentials()}
+            ref="credential"
             value={this.props.credential} />
           </div>
           <div className="four-col">

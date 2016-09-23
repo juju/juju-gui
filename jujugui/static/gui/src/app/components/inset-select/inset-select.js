@@ -41,6 +41,16 @@ YUI.add('inset-select', function() {
     },
 
     /**
+      Set the value of the field.
+
+      @method getValue
+      @param {String} value The value to set the select to.
+    */
+    setValue: function(value) {
+      this.refs.field.value = value;
+    },
+
+    /**
       Call the supplied onChange method with the value of the select.
 
       @method _callOnChange

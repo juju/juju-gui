@@ -115,7 +115,9 @@ YUI.add('deployment-credential-add', function() {
       }
       // Load the credentials again so that the list will contain the newly
       // added credential.
-      this.props.getCredentials(credential);
+      this.props.getCredentials(
+        this.props.generateCloudCredentialName(
+          this.props.cloud.name, this.props.user, credential));
       this.props.close();
     },
 
