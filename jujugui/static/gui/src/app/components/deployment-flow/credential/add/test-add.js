@@ -125,7 +125,8 @@ describe('DeploymentCredentialAdd', function() {
                 label: 'test-region',
                 value: 'test-region'
               }]}
-              ref="region" />
+              ref="region"
+              value={undefined} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -272,7 +273,8 @@ describe('DeploymentCredentialAdd', function() {
                 label: 'test-region',
                 value: 'test-region'
               }]}
-              ref="region" />
+              ref="region"
+              value={undefined} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -420,7 +422,8 @@ describe('DeploymentCredentialAdd', function() {
                 label: 'test-region',
                 value: 'test-region'
               }]}
-              ref="region" />
+              ref="region"
+              value={undefined} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -532,7 +535,8 @@ describe('DeploymentCredentialAdd', function() {
                 label: 'test-region',
                 value: 'test-region'
               }]}
-              ref="region" />
+              ref="region"
+              value={undefined} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -642,7 +646,7 @@ describe('DeploymentCredentialAdd', function() {
     instance.refs = {
       'credentialName': {
         validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('new')
+        getValue: sinon.stub().returns('new@test')
       },
       'client-id': {
         validate: sinon.stub().returns(true),
@@ -672,6 +676,7 @@ describe('DeploymentCredentialAdd', function() {
       'project-id': 'project id'
     });
     assert.equal(getCredentials.callCount, 1);
+    assert.equal(getCredentials.args[0][0], 'new@test');
   });
 
   it('does not submit the form if there are validation errors', function() {

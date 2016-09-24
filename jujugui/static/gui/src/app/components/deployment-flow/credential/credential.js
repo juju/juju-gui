@@ -39,24 +39,21 @@ YUI.add('deployment-credential', function() {
     },
 
     getInitialState: function() {
-      const editable = this.props.editable;
       return {
-        credentials: editable ? [] : [this.props.credential],
-        credentialsLoading: editable,
-        showAdd: editable
+        credentials: [],
+        credentialsLoading: true,
+        showAdd: this.props.editable
       };
     },
 
     componentWillMount: function() {
-      if (this.props.editable) {
-        this._getCredentials();
-      }
+      this._getCredentials();
     },
 
     componentDidUpdate: function(prevProps) {
       const prevId = prevProps.cloud && prevProps.cloud.name;
       const newId = this.props.cloud && this.props.cloud.name;
-      if (this.props.editable && newId !== prevId) {
+      if (newId !== prevId) {
         this._getCredentials();
       }
     },
@@ -65,13 +62,16 @@ YUI.add('deployment-credential', function() {
       Request credentials from the controller.
 
       @method _getCredentials
+      @param {String} credential An optional credential name to select after
+        loading the list.
     */
-    _getCredentials: function() {
+    _getCredentials: function(credential) {
       const cloud = this.props.cloud && this.props.cloud.name;
       const user = this.props.user;
       if (user) {
         this.props.getCloudCredentialNames(
-          [[user, cloud]], this._getCloudCredentialNamesCallback);
+          [[user, cloud]],
+          this._getCloudCredentialNamesCallback.bind(this, credential));
       }
     },
 
@@ -80,10 +80,12 @@ YUI.add('deployment-credential', function() {
       received.
 
       @method _getCloudCredentialNamesCallback
+      @param {String} credential An optional credential name to select after
+        loading the list.
       @param {String} error An error message, or null if there's no error.
       @param {Array} tags A list of the tags found.
     */
-    _getCloudCredentialNamesCallback: function(error, names) {
+    _getCloudCredentialNamesCallback: function(credential, error, names) {
       if (error) {
         console.error('unable to get names for credentials:', error);
         return;
@@ -93,17 +95,20 @@ YUI.add('deployment-credential', function() {
       // one pair we can safely assume that we only need the first item in the
       // array.
       const nameList = names.length && names[0].names || [];
-      this.props.getCloudCredentials(nameList, this._getCredentialsCallback);
+      this.props.getCloudCredentials(
+        nameList, this._getCredentialsCallback.bind(this, credential));
     },
 
     /**
       The method to be called when the credentials response has been received.
 
       @method _getCredentialsCallback
+      @param {String} credential An optional credential name to select after
+        loading the list.
       @param {String} error An error message, or null if there's no error.
       @param {Array} credentials A list of the credentials found.
     */
-    _getCredentialsCallback: function(error, credentials) {
+    _getCredentialsCallback: function(credential, error, credentials) {
       if (error) {
         console.error('Unable to get credentials', error);
         return;
@@ -113,10 +118,23 @@ YUI.add('deployment-credential', function() {
         credentials: credentialList,
         credentialsLoading: false,
         // If there are no credentials then display the form to add credentials.
-        showAdd: !credentials || credentialList.length === 0
+        showAdd: this.props.editable &&
+          (!credentials || credentialList.length === 0)
       });
       if (credentials && credentialList.length > 0) {
-        this.props.setCredential(credentialList[0]);
+        let select = credentialList[0];
+        // If the supplied credential to select is actually in the list then
+        // select it.
+        if (credentials[credential]) {
+          select = credential;
+        }
+        this.props.setCredential(select);
+        // The shallow renderer can't have refs set up before the first mount
+        // so we have to check that we have refs before we make this call. We
+        // need to figure out some way to properly handle refs.
+        if (this.refs.credential) {
+          this.refs.credential.setValue(select);
+        }
       }
     },
 
@@ -170,14 +188,9 @@ YUI.add('deployment-credential', function() {
       @returns {Array} The list of region options.
     */
     _generateRegions: function() {
-      if (!this.props.editable) {
-        const region = this.props.region;
-        return [{
-          label: region,
-          value: region
-        }];
-      }
-      return this.props.cloud.regions.map((region) => {
+      let regions = !this.props.editable ? [{name: this.props.region}] :
+        this.props.cloud.regions;
+      return regions.map(region => {
         return {
           label: region.name,
           value: region.name
@@ -203,14 +216,17 @@ YUI.add('deployment-credential', function() {
             disabled={disabled}
             label="Credential"
             onChange={this._handleCredentialChange}
-            options={this._generateCredentials()} />
+            options={this._generateCredentials()}
+            ref="credential"
+            value={this.props.credential} />
           </div>
           <div className="four-col">
             <juju.components.InsetSelect
               disabled={disabled || !this.props.editable}
               label="Region"
               onChange={this.props.setRegion}
-              options={this._generateRegions()} />
+              options={this._generateRegions()}
+              value={this.props.region} />
           </div>
         </form>);
     },
@@ -233,6 +249,7 @@ YUI.add('deployment-credential', function() {
           clouds={this.props.clouds}
           generateCloudCredentialName={this.props.generateCloudCredentialName}
           getCredentials={this._getCredentials}
+          region={this.props.region}
           regions={this.props.cloud && this.props.cloud.regions || []}
           setCredential={this.props.setCredential}
           setRegion={this.props.setRegion}

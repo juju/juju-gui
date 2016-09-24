@@ -189,4 +189,23 @@ describe('GenericInput', function() {
     output = renderer.getRenderOutput();
     assert.deepEqual(output.props.className, 'generic-input error');
   });
+
+  it('can set the focus on the field', () => {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.GenericInput
+        disabled={false}
+        label="Region"
+        placeholder="us-central-1"
+        required={true}
+        ref="templateRegion"
+        validate={[{
+          regex: /\S+/,
+          error: 'This field is required.'
+        }]}
+        value="default" />, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {field: {focus: sinon.stub()}};
+    instance.focus();
+    assert.equal(instance.refs.field.focus.callCount, 1);
+  });
 });

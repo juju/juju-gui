@@ -28,6 +28,7 @@ YUI.add('deployment-credential-add', function() {
       clouds: React.PropTypes.object.isRequired,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
       getCredentials: React.PropTypes.func.isRequired,
+      region: React.PropTypes.string,
       regions: React.PropTypes.array.isRequired,
       setCredential: React.PropTypes.func.isRequired,
       setRegion: React.PropTypes.func.isRequired,
@@ -89,12 +90,13 @@ YUI.add('deployment-credential-add', function() {
         // credentials.
         return;
       }
+      const credentialName = this.refs.credentialName.getValue();
       props.updateCloudCredential(
         props.generateCloudCredentialName(
-          props.cloud.name, props.user, this.refs.credentialName.getValue()),
+          props.cloud.name, props.user, credentialName),
         this.state.authType,
         this._generateCredentials(),
-        this._updateCloudCredentialCallback);
+        this._updateCloudCredentialCallback.bind(this, credentialName));
     },
 
     /**
@@ -102,16 +104,20 @@ YUI.add('deployment-credential-add', function() {
       complete.
 
       @method _updateCloudCredentialCallback
+      @param {String} credential The credential name to select when the
+        credential has been added and the list of credentials loaded again.
       @param {String} error An error message, or null if there's no error.
     */
-    _updateCloudCredentialCallback: function(error) {
+    _updateCloudCredentialCallback: function(credential, error) {
       if (error) {
         console.error('Unable to add credential', error);
         return;
       }
       // Load the credentials again so that the list will contain the newly
       // added credential.
-      this.props.getCredentials();
+      this.props.getCredentials(
+        this.props.generateCloudCredentialName(
+          this.props.cloud.name, this.props.user, credential));
       this.props.close();
     },
 
@@ -289,7 +295,8 @@ YUI.add('deployment-credential-add', function() {
                 disabled={isReadOnly}
                 label="Region"
                 options={this._generateRegions()}
-                ref="region" />
+                ref="region"
+                value={this.props.region} />
             </div>
             <h3 className="deployment-panel__section-title twelve-col">
               Enter credentials

@@ -138,12 +138,12 @@ describe('DeploymentFlow', function() {
                     updateCloudCredential={updateCloudCredential}
                     cloud={null}
                     clouds={instance.CLOUDS}
-                    credential={null}
+                    credential={undefined}
                     editable={true}
                     generateCloudCredentialName={generateCloudCredentialName}
                     getCloudCredentials={getCloudCredentials}
                     getCloudCredentialNames={getCloudCredentialNames}
-                    region={null}
+                    region={undefined}
                     setCredential={instance._setCredential}
                     setRegion={instance._setRegion}
                     user="user-admin"
@@ -209,32 +209,7 @@ describe('DeploymentFlow', function() {
                 </juju.components.DeploymentSection>
                 <div className="twelve-col">
                   <div className="deployment-flow__deploy">
-                    <div>
-                      <div className="deployment-flow__deploy-option">
-                        <input className="deployment-flow__deploy-checkbox"
-                          disabled={false}
-                          id="emails"
-                          type="checkbox" />
-                        <label className="deployment-flow__deploy-label"
-                          htmlFor="emails">
-                          Please email me updates regarding feature
-                          announcements, performance suggestions, feedback
-                          surveys and special offers.
-                        </label>
-                      </div>
-                      <div className="deployment-flow__deploy-option">
-                        <input className="deployment-flow__deploy-checkbox"
-                          disabled={false}
-                          id="terms"
-                          type="checkbox" />
-                        <label className="deployment-flow__deploy-label"
-                          htmlFor="terms">
-                          I agree that my use of any services and related APIs
-                          is subject to my compliance with the applicable&nbsp;
-                          <a href="" target="_blank">Terms of service</a>.
-                        </label>
-                      </div>
-                    </div>
+                    {undefined}
                     <div className="deployment-flow__deploy-action">
                       <juju.components.GenericButton
                         action={instance._handleDeploy}
@@ -711,5 +686,33 @@ describe('DeploymentFlow', function() {
     assert.equal(deploy.args[0][4], 'cloud');
     assert.equal(deploy.args[0][5], 'north');
     assert.equal(changeState.callCount, 1);
+  });
+
+  it('focuses on the model name field when loaded', function() {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        changes={{}}
+        changesFilterByParent={sinon.stub()}
+        changeState={sinon.stub()}
+        deploy={sinon.stub()}
+        generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
+        getCloudCredentialNames={sinon.stub()}
+        groupedChanges={groupedChanges}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        modelName="Pavlova"
+        servicesGetById={sinon.stub()}
+        updateCloudCredential={sinon.stub()}
+        user="user-admin">
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {modelName: {focus: sinon.stub()}};
+    instance.componentDidMount();
+    assert.equal(instance.refs.modelName.focus.callCount, 1);
   });
 });
