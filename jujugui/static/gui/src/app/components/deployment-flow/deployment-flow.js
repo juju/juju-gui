@@ -817,7 +817,9 @@ YUI.add('deployment-flow', function() {
                       <div className="deployment-flow__deploy-action">
                         <juju.components.GenericButton
                           action={this._handleDeploy}
-                          disabled={disabled || !this.state.cloud}
+                          disabled={
+                            !this.props.isLegacyJuju && (
+                              disabled || !this.state.cloud)}
                           type="positive"
                           title="Deploy" />
                       </div>
