@@ -100,6 +100,7 @@ def config(request):
         # Debugging options.
         'consoleEnabled': True,
         # The external services' URLs.
+        'bundleserviceURL': settings['jujugui.bundleservice_url'],
         'charmstoreURL': settings['jujugui.charmstore_url'],
         'jemURL': settings['jujugui.jem_url'],
         'plansURL': settings['jujugui.plans_url'],

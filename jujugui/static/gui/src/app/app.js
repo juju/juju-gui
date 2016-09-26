@@ -391,6 +391,8 @@ YUI.add('juju-gui', function(Y) {
       this.db = new models.Database();
       // Create and set up a new instance of the charmstore.
       this._setupCharmstore(window.jujulib.charmstore);
+      // Create and set up a new instance of the bundleservice.
+      this._setupBundleservice(window.jujulib.bundleservice);
       // Create Romulus API client instances.
       this._setupRomulusServices(
         window.juju_config, window.jujulib, window.localStorage);
@@ -1647,6 +1649,30 @@ YUI.add('juju-gui', function(Y) {
           this.get('users')['charmstore'] = {loading: true};
           this.storeUser('charmstore', false, true);
         }
+      }
+    },
+
+    /**
+      Creates a new instance of the bundleservice API and stores it in the
+      app in an idempotent fashion.
+
+      @method _setupBundleservice
+      @param {Object} Bundleservice The bundleservice API class to
+      instantiate.
+    */
+    _setupBundleservice: function(Bundleservice) {
+      if (this.get('bundleservice') === undefined) {
+        const jujuConfig = window.juju_config;
+        let bundleserviceURL = '';
+        if (!jujuConfig || !jujuConfig.bundleserviceURL) {
+          console.error('no juju config for bundleserviceURL availble');
+        } else {
+          bundleserviceURL = jujuConfig.bundleserviceURL;
+        }
+        let bundleservice = new Bundleservice(
+          bundleserviceURL,
+          new Y.juju.environments.web.WebHandler());
+        this.set('bundleservice', bundleservice);
       }
     },
 

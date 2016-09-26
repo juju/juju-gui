@@ -2358,22 +2358,29 @@ YUI.add('juju-env-api', function(Y) {
                       view/head:/server/guiserver/bundles/__init__.py#L322
     */
     getBundleChanges: function(bundleYAML, changesToken, callback) {
-      var handle = function(userCallback, data) {
-        if (!userCallback) {
-          console.log('data returned by Client.GetBundleChanges:', data);
-          return;
-        }
-        userCallback({
-          errors: data.error && [data.error] || data.response.errors,
-          changes: data.response && data.response.changes
-        });
-      };
-      // Send the request to retrieve bundle changes from Juju.
-      this._send_rpc({
-        type: 'Client',
-        request: 'GetBundleChanges',
-        params: {yaml: bundleYAML}
-      }, handle.bind(this, callback));
+      if (this.get('connected')) {
+        var handle = function(userCallback, data) {
+          if (!userCallback) {
+            console.log('data returned by Client.GetBundleChanges:', data);
+            return;
+          }
+          userCallback({
+            errors: data.error && [data.error] || data.response.errors,
+            changes: data.response && data.response.changes
+          });
+        };
+        // Send the request to retrieve bundle changes from Juju.
+        this._send_rpc({
+          type: 'Client',
+          request: 'GetBundleChanges',
+          params: {yaml: bundleYAML}
+        }, handle.bind(this, callback));
+      } else {
+        const handle = function(usercallback, data) {
+          userCallback({errors: data.Message, changes: data.response.changes});
+        };
+        // call the bundleservice doodad
+      }
     },
 
     /**
