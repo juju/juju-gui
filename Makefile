@@ -329,9 +329,11 @@ ci-check: clean-downloadcache deps fast-babel check
 bumpversion: deps
 	bin/bumpversion $(VPART)
 
+CURRENT_VERSION = $(shell sed -n -e '/current_version =/ s/.*\= *// p' .bumpversion.cfg)
+CURRENT_COMMIT = $(shell git rev-parse HEAD)
 .PHONY: version
 version:
-	python setup.py --version | sed -e "s/.*/'&'/" > $(GUIBUILD)/app/version.js
+	echo '{ "version": "$(CURRENT_VERSION)", "commit": "$(CURRENT_COMMIT)" }' > $(GUIBUILD)/app/version.json
 
 .PHONY: dist
 dist: clean-all fast-dist
