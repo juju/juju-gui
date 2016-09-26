@@ -31,17 +31,18 @@ YUI.add('deployment-flow', function() {
       deploy: React.PropTypes.func.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
-      getCloudCredentialNames: React.PropTypes.func.isRequired,
-      getCloudCredentials: React.PropTypes.func.isRequired,
+      getCloudCredentialNames: React.PropTypes.func,
+      getCloudCredentials: React.PropTypes.func,
       groupedChanges: React.PropTypes.object.isRequired,
+      isLegacyJuju: React.PropTypes.bool,
       listBudgets: React.PropTypes.func.isRequired,
-      listClouds: React.PropTypes.func.isRequired,
+      listClouds: React.PropTypes.func,
       listPlansForCharm: React.PropTypes.func.isRequired,
       modelCommitted: React.PropTypes.bool,
       modelName: React.PropTypes.string.isRequired,
       region: React.PropTypes.string,
       servicesGetById: React.PropTypes.func.isRequired,
-      updateCloudCredential: React.PropTypes.func.isRequired,
+      updateCloudCredential: React.PropTypes.func,
       user: React.PropTypes.string,
       withPlans: React.PropTypes.bool
     },
@@ -318,6 +319,7 @@ YUI.add('deployment-flow', function() {
       var visible;
       var hasCloud = !!this.state.cloud;
       var hasCredential = !!this.state.credential;
+      const isLegacyJuju = this.props.isLegacyJuju;
       var mode = this.props.modelCommitted ? 'commit' : 'deploy';
       var includesPlans = this.props.withPlans;
       const groupedChanges = this.props.groupedChanges;
@@ -325,17 +327,17 @@ YUI.add('deployment-flow', function() {
         case 'model-name':
           completed = false;
           disabled = false;
-          visible = mode === 'deploy';
+          visible = !isLegacyJuju && mode === 'deploy';
           break;
         case 'cloud':
           completed = hasCloud && hasCredential;
           disabled = false;
-          visible = true;
+          visible = !isLegacyJuju;
           break;
         case 'credential':
           completed = false;
           disabled = !hasCloud;
-          visible = true;
+          visible = !isLegacyJuju;
           break;
         case 'machines':
           const addMachines = groupedChanges._addMachines;
@@ -352,7 +354,7 @@ YUI.add('deployment-flow', function() {
         case 'budget':
           completed = false;
           disabled = !hasCloud || !hasCredential;
-          visible = includesPlans;
+          visible = !isLegacyJuju && includesPlans;
           break;
         case 'changes':
           completed = false;

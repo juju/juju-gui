@@ -1098,8 +1098,8 @@ YUI.add('juju-gui', function(Y) {
       if (cloud) {
         cloud = {name: cloud};
       }
-      const credentials = this.controllerAPI.getCredentials();
-      const user = credentials.user || undefined;
+      const credentials = controllerAPI && controllerAPI.getCredentials();
+      const user = credentials && credentials.user || undefined;
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
@@ -1115,19 +1115,24 @@ YUI.add('juju-gui', function(Y) {
               changesUtils, services, db.units)}
           generateCloudCredentialName={utils.generateCloudCredentialName}
           getCloudCredentials={
-            controllerAPI.getCloudCredentials.bind(controllerAPI)}
+            controllerAPI && controllerAPI.getCloudCredentials.bind(
+              controllerAPI)}
           getCloudCredentialNames={
-            controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
+            controllerAPI && controllerAPI.getCloudCredentialNames.bind(
+              controllerAPI)}
           groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
+          isLegacyJuju={this.isLegacyJuju()}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
-          listClouds={controllerAPI.listClouds.bind(controllerAPI)}
+          listClouds={
+            controllerAPI && controllerAPI.listClouds.bind(controllerAPI)}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
           modelCommitted={env.get('connected')}
           modelName={db.environment.get('name')}
           region={env.get('region')}
           servicesGetById={services.getById.bind(services)}
           updateCloudCredential={
-            controllerAPI.updateCloudCredential.bind(controllerAPI)}
+            controllerAPI && controllerAPI.updateCloudCredential.bind(
+              controllerAPI)}
           user={user}
           withPlans={false} />,
         document.getElementById('deployment-container'));
