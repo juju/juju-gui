@@ -227,6 +227,134 @@ describe('DeploymentFlow', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('can render for Juju 1', function() {
+    var updateCloudCredential = sinon.stub();
+    var changesFilterByParent = sinon.stub();
+    var changeState = sinon.stub();
+    var generateAllChangeDescriptions = sinon.stub();
+    var listBudgets = sinon.stub();
+    var listClouds = sinon.stub();
+    var listPlansForCharm = sinon.stub();
+    var getCloudCredentials = sinon.stub();
+    var getCloudCredentialNames = sinon.stub();
+    var servicesGetById = sinon.stub();
+    const changes = {};
+    const generateCloudCredentialName = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        updateCloudCredential={updateCloudCredential}
+        changes={changes}
+        changesFilterByParent={changesFilterByParent}
+        changeState={changeState}
+        deploy={sinon.stub()}
+        generateAllChangeDescriptions={generateAllChangeDescriptions}
+        generateCloudCredentialName={generateCloudCredentialName}
+        getCloudCredentials={getCloudCredentials}
+        getCloudCredentialNames={getCloudCredentialNames}
+        groupedChanges={groupedChanges}
+        isLegacyJuju={true}
+        listBudgets={listBudgets}
+        listClouds={listClouds}
+        listPlansForCharm={listPlansForCharm}
+        modelCommitted={false}
+        modelName="Pavlova"
+        servicesGetById={servicesGetById}
+        user="user-admin"
+        withPlans={true}>
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <juju.components.Panel
+        instanceName="deployment-flow-panel"
+        visible={true}>
+        <div className="deployment-flow">
+          <div className="deployment-flow__header">
+            <div className="deployment-flow__close">
+              <juju.components.GenericButton
+                action={instance._handleClose}
+                type="neutral"
+                title="Back to canvas" />
+            </div>
+            <div className="deployment-flow__header-name">
+              Pavlova
+            </div>
+          </div>
+          <div className="deployment-flow__content">
+            <div className="twelve-col">
+              <div className="inner-wrapper">
+                {undefined}
+                {undefined}
+                {undefined}
+                <juju.components.DeploymentSection
+                  completed={false}
+                  disabled={false}
+                  instance="deployment-machines"
+                  showCheck={false}
+                  title="Machines to be deployed">
+                  <juju.components.DeploymentMachines
+                    acl={acl}
+                    cloud={null}
+                    machines={groupedChanges._addMachines} />
+                </juju.components.DeploymentSection>
+                <juju.components.DeploymentSection
+                  completed={false}
+                  disabled={false}
+                  instance="deployment-services"
+                  showCheck={true}
+                  title={
+                    <span className="deployment-flow__service-title">
+                      Services to be deployed
+                      <juju.components.GenericButton
+                        action={instance._toggleChangelogs}
+                        type="base"
+                        title="Show changelog" />
+                    </span>}>
+                  <juju.components.DeploymentServices
+                    acl={acl}
+                    changesFilterByParent={changesFilterByParent}
+                    generateAllChangeDescriptions={
+                      generateAllChangeDescriptions}
+                    groupedChanges={groupedChanges}
+                    listPlansForCharm={listPlansForCharm}
+                    servicesGetById={servicesGetById}
+                    showChangelogs={false}
+                    withPlans={true} />
+                </juju.components.DeploymentSection>
+                {undefined}
+                <juju.components.DeploymentSection
+                  completed={false}
+                  disabled={false}
+                  instance="deployment-changes"
+                  showCheck={false}
+                  title="Model changes">
+                  <juju.components.DeploymentChanges
+                  changes={changes}
+                  generateAllChangeDescriptions={
+                    generateAllChangeDescriptions} />
+                </juju.components.DeploymentSection>
+                <div className="twelve-col">
+                  <div className="deployment-flow__deploy">
+                    {undefined}
+                    <div className="deployment-flow__deploy-action">
+                      <juju.components.GenericButton
+                        action={instance._handleDeploy}
+                        disabled={false}
+                        type="positive"
+                        title="Deploy" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </juju.components.Panel>);
+    assert.deepEqual(output, expected);
+  });
+
   it('can close', function() {
     var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
@@ -685,6 +813,46 @@ describe('DeploymentFlow', function() {
     assert.equal(deploy.args[0][3], 'cred');
     assert.equal(deploy.args[0][4], 'cloud');
     assert.equal(deploy.args[0][5], 'north');
+    assert.equal(changeState.callCount, 1);
+  });
+
+  it('can deploy with Juju 1', function() {
+    var deploy = sinon.stub().callsArg(0);
+    var changeState = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        changes={{}}
+        changesFilterByParent={sinon.stub()}
+        changeState={changeState}
+        deploy={deploy}
+        generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
+        getCloudCredentialNames={sinon.stub()}
+        groupedChanges={groupedChanges}
+        isLegacyJuju={true}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        modelCommitted={true}
+        modelName="Pavlova"
+        servicesGetById={sinon.stub()}
+        updateCloudCredential={sinon.stub()}
+        user="user-admin">
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {};
+    var output = renderer.getRenderOutput();
+    output.props.children.props.children[1].props.children.props.children
+      .props.children[7].props.children.props.children[1].props.children
+      .props.action();
+    assert.equal(deploy.callCount, 1);
+    assert.equal(deploy.args[0][2], '');
+    assert.equal(deploy.args[0][3], null);
+    assert.equal(deploy.args[0][4], null);
+    assert.equal(deploy.args[0][5], null);
     assert.equal(changeState.callCount, 1);
   });
 

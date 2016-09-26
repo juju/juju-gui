@@ -22,16 +22,8 @@ YUI.add('empty-user-profile', function() {
 
   juju.components.EmptyUserProfile = React.createClass({
     propTypes: {
-      addNotification: React.PropTypes.func.isRequired,
-      cloud: React.PropTypes.string,
-      controllerAPI: React.PropTypes.object.isRequired,
-      getCloudCredentialNames: React.PropTypes.func.isRequired,
-      getCloudCredentials: React.PropTypes.func.isRequired,
-      hideConnectingMask: React.PropTypes.func.isRequired,
-      showConnectingMask: React.PropTypes.func.isRequired,
       staticURL: React.PropTypes.string,
-      switchModel: React.PropTypes.func.isRequired,
-      user: React.PropTypes.object
+      switchModel: React.PropTypes.func.isRequired
     },
 
     getDefaultProps: function() {
@@ -65,16 +57,7 @@ YUI.add('empty-user-profile', function() {
       return (
         <div className="user-profile__empty twelve-col no-margin-bottom">
           <juju.components.CreateModelButton
-            addNotification={props.addNotification}
-            controllerAPI={props.controllerAPI}
-            className='user-profile__empty-button'
-            cloud={props.cloud}
-            getCloudCredentials={props.getCloudCredentials}
-            getCloudCredentialNames={props.getCloudCredentialNames}
-            hideConnectingMask={props.hideConnectingMask}
-            showConnectingMask={props.showConnectingMask}
-            switchModel={this.switchModel}
-            user={props.user} />
+            switchModel={this.switchModel} />
           <div className="clearfix">
             <img alt="Empty profile"
               className="user-profile__empty-image"

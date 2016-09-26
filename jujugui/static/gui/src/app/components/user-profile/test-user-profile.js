@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 const juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('UserProfile', () => {
-  let charmstore, controllerAPI, users;
+  let users;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -33,20 +33,6 @@ describe('UserProfile', () => {
       user: 'user-dalek',
       usernameDisplay: 'test owner'
     }};
-    controllerAPI = {
-      findFacadeVersion: sinon.stub(),
-      get: sinon.stub().returns('default'),
-      createModel: (modelName, user, args, callback) => {
-        assert.equal(modelName, 'newmodelname', 'model name not set properly');
-        assert.equal(user, 'user-dalek', 'user name not set properly');
-        assert.deepEqual(args, {});
-        // Simulate the model being created.
-        callback(null, {
-          uuid: 'abc123',
-          name: modelName
-        });
-      }
-    };
   });
 
   afterEach(() => {
@@ -55,41 +41,30 @@ describe('UserProfile', () => {
 
   it('renders a populated user profile page', () => {
     const links = [];
-    const addNotification = sinon.stub();
     const canCreateNew = true;
     const changeState = sinon.stub();
-    const getCloudCredentials = sinon.stub();
     const getDiagramURL = sinon.stub();
-    const getCloudCredentialNames = sinon.stub();
-    const hideConnectingMask = sinon.stub();
     const listBudgets = sinon.stub();
     const listModelsWithInfo = sinon.stub();
-    const showConnectingMask = sinon.stub();
     const switchModel = sinon.stub();
     const getAgreements = sinon.stub();
     const staticURL = 'test-url';
     const user = users.charmstore;
+    const charmstore = {};
     window.flags = {blues: true};
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
-        addNotification={addNotification}
         users={users}
         canCreateNew={canCreateNew}
-        controllerAPI={controllerAPI}
         charmstore={charmstore}
-        cloud={'google'}
         getAgreements={getAgreements}
-        getCloudCredentials={getCloudCredentials}
         getDiagramURL={getDiagramURL}
-        getCloudCredentialNames={getCloudCredentialNames}
         listBudgets={listBudgets}
         listModelsWithInfo={listModelsWithInfo}
         switchModel={switchModel}
         interactiveLogin={true}
         changeState={changeState}
         pluralize={sinon.stub()}
-        hideConnectingMask={hideConnectingMask}
-        showConnectingMask={showConnectingMask}
         staticURL={staticURL}
         storeUser={sinon.stub()}
         user={user} />, true);
@@ -98,34 +73,18 @@ describe('UserProfile', () => {
     const content = output.props.children.props.children;
     const emptyComponent = (
       <juju.components.EmptyUserProfile
-        addNotification={addNotification}
-        cloud={'google'}
-        controllerAPI={controllerAPI}
-        getCloudCredentials={getCloudCredentials}
-        getCloudCredentialNames={getCloudCredentialNames}
-        hideConnectingMask={hideConnectingMask}
-        showConnectingMask={showConnectingMask}
         staticURL={staticURL}
-        switchModel={switchModel}
-        user={user} />
+        switchModel={switchModel} />
     );
     const lists = [
       <juju.components.UserProfileModelList
         ref="modelList"
         key="modelList"
-        addNotification={addNotification}
         canCreateNew={canCreateNew}
-        cloud={'google'}
-        controllerAPI={controllerAPI}
         currentModel={undefined}
-        getCloudCredentials={getCloudCredentials}
-        getCloudCredentialNames={getCloudCredentialNames}
-        hideConnectingMask={hideConnectingMask}
         listModelsWithInfo={listModelsWithInfo}
-        showConnectingMask={showConnectingMask}
         switchModel={switchModel}
-        user={user}
-        users={users} />,
+        user={user} />,
       <juju.components.UserProfileEntityList
         ref="bundleList"
         key="bundleList"
@@ -180,7 +139,6 @@ describe('UserProfile', () => {
     const links = [];
     const output = jsTestUtils.shallowRender(
       <juju.components.UserProfile
-        addNotification={sinon.stub()}
         users={users}
         canCreateNew={true}
         charmstore={{}}
@@ -192,8 +150,6 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         interactiveLogin={false}
         pluralize={pluralize}
-        hideConnectingMask={sinon.stub()}
-        showConnectingMask={sinon.stub()}
         storeUser={sinon.stub()}
         user={users.charmstore} />);
     const expected = (
@@ -218,7 +174,6 @@ describe('UserProfile', () => {
     };
     const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfile
-        addNotification={sinon.stub()}
         switchModel={sinon.stub()}
         users={users}
         listBudgets={sinon.stub()}
@@ -230,8 +185,6 @@ describe('UserProfile', () => {
         getDiagramURL={sinon.stub()}
         interactiveLogin={true}
         pluralize={sinon.stub()}
-        hideConnectingMask={sinon.stub()}
-        showConnectingMask={sinon.stub()}
         storeUser={storeUser}
         user={users.charmstore} />, true);
     const instance = renderer.getMountedInstance();
@@ -245,10 +198,8 @@ describe('UserProfile', () => {
     const canCreateNew = true;
     const changeState = sinon.stub();
     const getDiagramURL = sinon.stub();
-    const hideConnectingMask = sinon.stub();
     const listBudgets = sinon.stub();
     const listModelsWithInfo = sinon.stub();
-    const showConnectingMask = sinon.stub();
     const switchModel = sinon.stub();
     const getAgreements = sinon.stub();
     const user = users.charmstore;
@@ -258,8 +209,7 @@ describe('UserProfile', () => {
         addNotification={addNotification}
         users={users}
         canCreateNew={canCreateNew}
-        controllerAPI={controllerAPI}
-        charmstore={charmstore}
+        charmstore={{}}
         getAgreements={getAgreements}
         getDiagramURL={getDiagramURL}
         listBudgets={listBudgets}
@@ -268,8 +218,6 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         changeState={changeState}
         pluralize={sinon.stub()}
-        hideConnectingMask={hideConnectingMask}
-        showConnectingMask={showConnectingMask}
         storeUser={sinon.stub()}
         user={user} />, true);
     const instance = component.getMountedInstance();
@@ -277,23 +225,18 @@ describe('UserProfile', () => {
   });
 
   it('skips the bundle and charm lists when not logged in', () => {
-    const addNotification = sinon.stub();
     const canCreateNew = true;
     const changeState = sinon.stub();
     const getDiagramURL = sinon.stub();
-    const hideConnectingMask = sinon.stub();
     const listBudgets = sinon.stub();
     const listModelsWithInfo = sinon.stub();
-    const showConnectingMask = sinon.stub();
     const switchModel = sinon.stub();
     const getAgreements = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
-        addNotification={addNotification}
         users={{}}
         canCreateNew={canCreateNew}
-        controllerAPI={controllerAPI}
-        charmstore={charmstore}
+        charmstore={{}}
         getAgreements={getAgreements}
         getDiagramURL={getDiagramURL}
         listBudgets={listBudgets}
@@ -302,8 +245,6 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         changeState={changeState}
         pluralize={sinon.stub()}
-        hideConnectingMask={hideConnectingMask}
-        showConnectingMask={showConnectingMask}
         storeUser={sinon.stub()}
         user={undefined} />, true);
     const instance = component.getMountedInstance();

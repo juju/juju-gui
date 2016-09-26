@@ -2,66 +2,7 @@
 
     &__create-new {
         float: right;
-        font-size: 1rem;
-        width: 400px;
-        text-align: right;
-
-        &.collapsed {
-            .generic-input__field,
-            .button--inline-neutral.second {
-                width: 0;
-                border-width: 0;
-            }
-            .generic-input__field {
-                padding: 0;
-            }
-            .button--inline-neutral.first {
-                width: 150px;
-                border-width: 1px;
-            }
-        }
-
-        .button--inline-neutral.first {
-            width: 0;
-            border-width: 0;
-        }
-
-        .button--inline-neutral {
-            overflow: hidden;
-            white-space: nowrap;
-            transition: width 0.3s ease-in, padding 0.3s ease-in;
-            width: 150px;
-            display: inline-block;
-            padding-right: 0;
-            padding-left: 0;
-        }
-
-        .generic-input {
-            display: inline-block;
-
-            &.error {
-                .generic-input__field {
-                    border: 1px solid $error;
-                }
-            }
-        }
-
-        .generic-input__errors {
-            position: absolute;
-            z-index: index($z-indexed-elements, more-menu);
-            top: 60px;
-            width: 350px;
-            text-align: left;
-        }
-
-        .generic-input__field {
-            padding: 8px;
-            width: 200px;
-            transition: all 0.5s ease-in;
-            margin-bottom: 0;
-            box-sizing: border-box;
-            height: 40px;
-        }
+        font-size: $base;
     }
 
     &__close {

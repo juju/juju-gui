@@ -32,11 +32,6 @@
     box-shadow: none;
 }
 
-// For deployment-summary-classic.
-#deployment-container .panel-component.white-box {
-    z-index: index($z-indexed-elements, deployment-panel);
-}
-
 .panel-component.deployment-flow-panel,
 .panel-component.deployment-panel {
     z-index: index($z-indexed-elements, deployment-panel);

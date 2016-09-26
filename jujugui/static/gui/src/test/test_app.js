@@ -1116,13 +1116,13 @@ describe('App', function() {
       env.connect();
       conn.open();
       // We need to fake the connection event.
-      assert.equal(app.db.reset.callCount, 1);
+      assert.equal(app.db.reset.callCount, 0);
       assert.equal(env.login.calledOnce, true);
 
       // Trigger a second time and verify.
       conn.transient_close();
       conn.open();
-      assert.equal(app.db.reset.callCount, 2);
+      assert.equal(app.db.reset.callCount, 0);
     });
 
     it('should connect to controller', function(done) {
