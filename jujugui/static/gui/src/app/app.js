@@ -2186,7 +2186,6 @@ YUI.add('juju-gui', function(Y) {
       if (this.env.ws) {
         this.env.ws.onclose = onclose;
         this.env.close();
-        this.hideConnectingMask();
         // If we are already disconnected then connect if we're supposed to.
         if (!this.env.get('connected')) {
           setUpModel(this.env);
@@ -2194,6 +2193,7 @@ YUI.add('juju-gui', function(Y) {
       } else {
         this.env.close(onclose);
       }
+      this.hideConnectingMask();
       if (clearDB) {
         this.db.reset();
         this.db.fire('update');
