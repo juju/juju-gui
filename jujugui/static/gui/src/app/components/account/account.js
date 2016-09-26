@@ -21,20 +21,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('account', function() {
 
   juju.components.Account = React.createClass({
-    /**
-      Used to store the current XHR request so that it can be cancelled if the
-      component is unmounted before the request completes.
-
-      @property listTemplatesXHR
-      @type {Object}
-      @default null
-    */
-    listTemplatesXHR: null,
 
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      deleteTemplate: React.PropTypes.func.isRequired,
-      listTemplates: React.PropTypes.func.isRequired,
       user: React.PropTypes.object.isRequired,
       users: React.PropTypes.object.isRequired
     },
@@ -50,29 +39,13 @@ YUI.add('account', function() {
       this._getCredentials();
     },
 
-    componentWillUnmount: function() {
-      this.listTemplatesXHR.abort();
-    },
-
     /**
       Get the credentials from the API.
 
       @method _getCredentials
     */
     _getCredentials: function() {
-      this.listTemplatesXHR = this.props.listTemplates((error, credentials) => {
-        // XXX This is basic error handling for the initial
-        // implementation. It should be replaced with an error message for the
-        // user in subsequent UI polish work.
-        if (error) {
-          console.error('Unable to list templates', error);
-          return;
-        }
-        this.setState({
-          credentials: credentials,
-          loadingCredentials: false
-        });
-      });
+      console.log('Fetching credentials is not implemented');
     },
 
     /**
@@ -205,23 +178,7 @@ YUI.add('account', function() {
       @param {String} name The name of the credential.
     */
     _handleDestroyCredential: function(name) {
-      this.props.deleteTemplate(
-        this.props.users.jem.user, name, this._destroyCredentialCallback);
-    },
-
-    /**
-      The method to be called once a credential has been attempted to be
-      destroyed.
-
-      @method _destroyCredentialCallback
-      @param {String} error The error from attempting to destroy a credential.
-    */
-    _destroyCredentialCallback: function(error) {
-      if (error) {
-        console.error('Unable to delete the template', error);
-        return;
-      }
-      this._getCredentials();
+      console.log('Removal of credentials is not implemented');
     },
 
     /**
@@ -230,7 +187,7 @@ YUI.add('account', function() {
       @method _handleEditCredential
     */
     _handleEditCredential: function() {
-      // To be implemented.
+      console.log('Editing of credentials is not implemented');
     },
 
     /**
@@ -239,7 +196,7 @@ YUI.add('account', function() {
       @method _handleSignOut
     */
     _handleSignOut: function() {
-      // To be implemented.
+      console.log('Signing out is not implemented');
     },
 
     render: function() {

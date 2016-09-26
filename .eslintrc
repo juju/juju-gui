@@ -60,5 +60,6 @@ globals:
   saveAs: true
   sinon: true
   testUtils: true
+  xit: true
   YUI: true
   zip: true
