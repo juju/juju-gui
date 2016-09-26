@@ -290,7 +290,7 @@ describe('DeploymentFlow', function() {
                 {undefined}
                 <juju.components.DeploymentSection
                   completed={false}
-                  disabled={true}
+                  disabled={false}
                   instance="deployment-machines"
                   showCheck={false}
                   title="Machines to be deployed">
@@ -301,7 +301,7 @@ describe('DeploymentFlow', function() {
                 </juju.components.DeploymentSection>
                 <juju.components.DeploymentSection
                   completed={false}
-                  disabled={true}
+                  disabled={false}
                   instance="deployment-services"
                   showCheck={true}
                   title={
@@ -326,7 +326,7 @@ describe('DeploymentFlow', function() {
                 {undefined}
                 <juju.components.DeploymentSection
                   completed={false}
-                  disabled={true}
+                  disabled={false}
                   instance="deployment-changes"
                   showCheck={false}
                   title="Model changes">
@@ -341,7 +341,7 @@ describe('DeploymentFlow', function() {
                     <div className="deployment-flow__deploy-action">
                       <juju.components.GenericButton
                         action={instance._handleDeploy}
-                        disabled={true}
+                        disabled={false}
                         type="positive"
                         title="Deploy" />
                     </div>
@@ -813,6 +813,46 @@ describe('DeploymentFlow', function() {
     assert.equal(deploy.args[0][3], 'cred');
     assert.equal(deploy.args[0][4], 'cloud');
     assert.equal(deploy.args[0][5], 'north');
+    assert.equal(changeState.callCount, 1);
+  });
+
+  it('can deploy with Juju 1', function() {
+    var deploy = sinon.stub().callsArg(0);
+    var changeState = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        changes={{}}
+        changesFilterByParent={sinon.stub()}
+        changeState={changeState}
+        deploy={deploy}
+        generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
+        getCloudCredentialNames={sinon.stub()}
+        groupedChanges={groupedChanges}
+        isLegacyJuju={true}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        modelCommitted={true}
+        modelName="Pavlova"
+        servicesGetById={sinon.stub()}
+        updateCloudCredential={sinon.stub()}
+        user="user-admin">
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {};
+    var output = renderer.getRenderOutput();
+    output.props.children.props.children[1].props.children.props.children
+      .props.children[7].props.children.props.children[1].props.children
+      .props.action();
+    assert.equal(deploy.callCount, 1);
+    assert.equal(deploy.args[0][2], '');
+    assert.equal(deploy.args[0][3], null);
+    assert.equal(deploy.args[0][4], null);
+    assert.equal(deploy.args[0][5], null);
     assert.equal(changeState.callCount, 1);
   });
 

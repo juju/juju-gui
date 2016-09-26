@@ -475,13 +475,15 @@ YUI.add('deployment-flow', function() {
       @method _handleDeploy
     */
     _handleDeploy: function() {
+      const credential = this.state.credential;
+      const cloud = this.state.cloud && this.state.cloud.name || null;
+      const region = this.state.region;
       let modelName = '';
       if (this.refs.modelName) {
         modelName = this.refs.modelName.getValue();
       }
       this.props.deploy(
-        this._handleClose, true, modelName,
-        this.state.credential, this.state.cloud.name, this.state.region);
+        this._handleClose, true, modelName, credential, cloud, region);
     },
 
     /**
