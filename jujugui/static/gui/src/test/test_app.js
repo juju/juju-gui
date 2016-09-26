@@ -1403,26 +1403,6 @@ describe('App', function() {
       assert.isNull(app.db.fireSignal);
     });
 
-    it('sets credentials based on existence of jem', function() {
-      app = _generateMockedApp();
-      app.jem = false;
-      app.switchEnv('uuid');
-      assert.equal(
-          app.env.setUser, 'not-called',
-          'Credentials should not have been set.');
-      assert.equal(
-          app.env.setPassword, 'not-called',
-          'Credentials should not have been set.');
-      app.jem = true;
-      app.switchEnv('uuid', 'new-username', 'new-password');
-      assert.equal(
-          app.env.setUser, 'new-username',
-          'Credentials should have been set.');
-      assert.equal(
-          app.env.setPassword, 'new-password',
-          'Credentials should have been set.');
-    });
-
     it('skips the reconnect when necessary', function() {
       app = _generateMockedApp(false);
       var connect = testUtils.makeStubMethod(app.env, 'connect');
@@ -1535,7 +1515,7 @@ describe('App', function() {
   });
 
   describe('storeUser', function() {
-    var Y, app, csStub, jemStub, stub;
+    var Y, app, csStub, stub;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
@@ -1553,10 +1533,6 @@ describe('App', function() {
         consoleEnabled: true,
         jujuCoreVersion: '2.0.0'
       });
-      jemStub = sinon.stub();
-      app.jem = {
-        whoami: jemStub
-      };
       var charmstore = app.get('charmstore');
       csStub = testUtils.makeStubMethod(charmstore, 'whoami');
       this._cleanups.push(csStub);
@@ -1566,22 +1542,10 @@ describe('App', function() {
       app.destroy({remove: true});
     });
 
-    it('calls jem whoami for jem users', function() {
-      var user = {user: 'test'};
-      app.storeUser('jem');
-      assert.equal(jemStub.callCount, 1);
-      assert.equal(csStub.callCount, 0);
-      var cb = jemStub.lastCall.args[0];
-      cb(null, user);
-      var users = app.get('users');
-      assert.deepEqual(users['jem'], user);
-    });
-
     it('calls charmstore whoami for charmstore users', function() {
       var user = {user: 'test'};
       app.storeUser('charmstore');
       assert.equal(csStub.callCount, 1);
-      assert.equal(jemStub.callCount, 0);
       var cb = csStub.lastCall.args[0];
       cb(null, user);
       var users = app.get('users');
@@ -2018,52 +1982,6 @@ describe('App', function() {
       app.loginToAPIs(credentials, useMacaroons, [controller, model]);
       checkLoggedInWithMacaroons(controller, true);
       checkLoggedInWithMacaroons(model, false);
-    });
-  });
-
-  describe('checkUserCredentials', function() {
-    var app, juju;
-
-    before(function(done) {
-      YUI(GlobalConfig).use([
-        'juju-gui',
-        'juju-tests-utils',
-        'juju-view-utils',
-        'juju-views',
-        'environment-change-set'
-      ],
-      function(Y) {
-        juju = Y.namespace('juju');
-        done();
-      });
-    });
-
-    beforeEach(() => {
-      const env = new juju.environments.GoEnvironment({
-        conn: new testUtils.SocketStub(),
-        ecs: new juju.EnvironmentChangeSet()
-      });
-      app = new juju.App({
-        env: env,
-        consoleEnabled: true,
-        container: container,
-        jujuCoreVersion: '2.0.0',
-        socketTemplate: '/model/$uuid/api',
-        controllerSocketTemplate: '/api'
-      });
-    });
-
-    afterEach(() => {
-      app.destroy();
-    });
-
-    it('should proceed to next if disconnected but jem is set', function() {
-      var req = {}, res = {};
-      var next = sinon.stub();
-      // Ensure jem is set.
-      app.jem = true;
-      app.checkUserCredentials(req, res, next);
-      assert.equal(next.callCount, 1, 'Next not invoked.');
     });
   });
 
