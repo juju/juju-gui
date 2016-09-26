@@ -1398,16 +1398,11 @@ YUI.add('juju-view-utils', function(Y) {
       createSocketURL, switchEnv, env, uuid, modelList, name, callback,
       clearDB);
 
-    if (env) {
-      // It is possible that we don't yet have an env instance between the
-      // constroller connection can switch us to an unconnected state if
-      // there are no available models.
-      const currentChangeSet = env.get('ecs').getCurrentChangeSet();
-      // If there are uncommitted changes then show a confirmation popup.
-      if (confirmUncommitted && Object.keys(currentChangeSet).length > 0) {
-        utils._showUncommittedConfirm(switchModel);
-        return;
-      }
+    const currentChangeSet = env.get('ecs').getCurrentChangeSet();
+    // If there are uncommitted changes then show a confirmation popup.
+    if (confirmUncommitted && Object.keys(currentChangeSet).length > 0) {
+      utils._showUncommittedConfirm(switchModel);
+      return;
     }
     // If there are no uncommitted changes or we don't want to confirm then
     // switch right away.
@@ -1489,9 +1484,7 @@ YUI.add('juju-view-utils', function(Y) {
     });
     // Update the model name. The onEnvironmentNameChange in app.js method will
     // update the name correctly accross components.
-    if (env) {
-      env.set('environmentName', name);
-    }
+    env.set('environmentName', name);
     this.set('modelUUID', uuid);
     var username, password, address, port;
     if (uuid && modelList) {
