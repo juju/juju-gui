@@ -342,23 +342,23 @@ YUI.add('deployment-flow', function() {
         case 'machines':
           const addMachines = groupedChanges._addMachines;
           completed = false;
-          disabled = !hasCloud || !hasCredential;
+          disabled = !isLegacyJuju && (!hasCloud || !hasCredential);
           visible = addMachines && Object.keys(addMachines).length > 0;
           break;
         case 'services':
           const deploys = groupedChanges._deploy;
           completed = false;
-          disabled = !hasCloud || !hasCredential;
+          disabled = !isLegacyJuju && (!hasCloud || !hasCredential);
           visible = deploys && Object.keys(deploys).length > 0;
           break;
         case 'budget':
           completed = false;
-          disabled = !hasCloud || !hasCredential;
+          disabled = !isLegacyJuju && (!hasCloud || !hasCredential);
           visible = !isLegacyJuju && includesPlans;
           break;
         case 'changes':
           completed = false;
-          disabled = !hasCloud || !hasCredential;
+          disabled = !isLegacyJuju && (!hasCloud || !hasCredential);
           visible = true;
           break;
         case 'agreements':
