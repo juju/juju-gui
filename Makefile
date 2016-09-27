@@ -52,6 +52,9 @@ LSB_RELEASE = $(shell lsb_release -cs)
 SYSDEPS = coreutils g++ git inotify-tools nodejs \
 	python-virtualenv realpath xvfb chromium-browser
 
+CURRENT_VERSION = $(shell sed -n -e '/current_version =/ s/.*\= *// p' .bumpversion.cfg)
+CURRENT_COMMIT = $(shell git rev-parse HEAD)
+
 .PHONY: help
 help:
 	@echo "bumpversion - bump version."
@@ -329,17 +332,15 @@ ci-check: clean-downloadcache deps fast-babel check
 bumpversion: deps
 	bin/bumpversion $(VPART)
 
-CURRENT_VERSION = $(shell sed -n -e '/current_version =/ s/.*\= *// p' .bumpversion.cfg)
-CURRENT_COMMIT = $(shell git rev-parse HEAD)
 .PHONY: version
 version:
-	echo '{ "version": "$(CURRENT_VERSION)", "commit": "$(CURRENT_COMMIT)" }' > $(GUIBUILD)/app/version.json
+	echo "'version: $(CURRENT_VERSION)';\n'commit: $(CURRENT_COMMIT)';" > $(GUIBUILD)/app/version.js
 
 .PHONY: dist
 dist: clean-all fast-dist
 
 .PHONY: fast-dist
-fast-dist: deps fast-babel gui test-deps collect-requirements
+fast-dist: deps fast-babel gui test-deps collect-requirements version
 	python setup.py sdist --formats=bztar\
 
 #######
