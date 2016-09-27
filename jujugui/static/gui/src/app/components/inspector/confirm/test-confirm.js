@@ -24,14 +24,29 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('InspectorConfirm', function() {
+  var buttons;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('inspector-confirm', function() { done(); });
   });
 
+  beforeEach(function() {
+    buttons = [
+      {
+        disabled: false,
+        title: 'Test 1',
+        action: () => {}
+      },
+      {
+        disabled: false,
+        title: 'Test 2',
+        action: () => {}
+      }
+    ];
+  });
+
   it('generates the correct classes if it is closed', function() {
-    var buttons = [];
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorConfirm
           buttons={buttons}
@@ -47,7 +62,6 @@ describe('InspectorConfirm', function() {
   });
 
   it('generates the correct classes if it is open', function() {
-    var buttons = [];
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorConfirm
           buttons={buttons}
@@ -64,7 +78,6 @@ describe('InspectorConfirm', function() {
   });
 
   it('displays the provided message', function() {
-    var buttons = [];
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorConfirm
           buttons={buttons}
@@ -76,7 +89,6 @@ describe('InspectorConfirm', function() {
   });
 
   it('hides the message if one is not provided', function() {
-    var buttons = [];
     var output = jsTestUtils.shallowRender(
         <juju.components.InspectorConfirm
           buttons={buttons} />);
@@ -84,5 +96,13 @@ describe('InspectorConfirm', function() {
       <p className="inspector-confirm__message hidden">
         {undefined}
       </p>);
+  });
+
+  it('leaves out the button row if there are no buttons', function() {
+    buttons = [];
+    var output = jsTestUtils.shallowRender(
+        <juju.components.InspectorConfirm
+          buttons={buttons} />);
+    assert.deepEqual(output.props.children[1], undefined);
   });
 });

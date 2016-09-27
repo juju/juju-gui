@@ -31,13 +31,11 @@ describe('ServiceOverview', function() {
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
     fakeService = {
-      get: function() {
-        return {
-          toArray: function() {
-            return [];
-          }
-        };
-      }};
+      get: sinon.stub()
+    };
+    fakeService.get.withArgs('units').returns({ toArray: () => [] });
+    fakeService.get.withArgs('deleted').returns(false);
+    fakeService.get.withArgs('pending').returns(false);
     fakeCharm = {
       hasMetrics: sinon.stub().returns(true),
       get: function() {
@@ -246,7 +244,7 @@ describe('ServiceOverview', function() {
             service={service}
             serviceRelations={[1]}
             showActivePlan={sinon.stub()} />);
-    assert.deepEqual(output.props.children[0].props.children[0],
+    assert.deepEqual(output.props.children[1].props.children[0],
       <juju.components.OverviewAction
         icon="units"
         key="Units"
@@ -255,7 +253,7 @@ describe('ServiceOverview', function() {
         valueType="all"
         linkAction={undefined}
         linkTitle={undefined}
-        action={output.props.children[0].props.children[0].props.action} />);
+        action={output.props.children[1].props.children[0].props.action} />);
   });
 
   it('shows the all units action even if there are no units', function() {
@@ -281,7 +279,7 @@ describe('ServiceOverview', function() {
             service={service}
             serviceRelations={[1]}
             showActivePlan={sinon.stub()} />);
-    assert.deepEqual(output.props.children[0].props.children[0],
+    assert.deepEqual(output.props.children[1].props.children[0],
       <juju.components.OverviewAction
         icon="units"
         key="Units"
@@ -290,7 +288,7 @@ describe('ServiceOverview', function() {
         valueType="all"
         linkAction={undefined}
         linkTitle={undefined}
-        action={output.props.children[0].props.children[0].props.action} />);
+        action={output.props.children[1].props.children[0].props.action} />);
   });
 
   it('navigates to the unit list when All Units is clicked', function() {
@@ -319,7 +317,7 @@ describe('ServiceOverview', function() {
             showActivePlan={sinon.stub()} />);
     // call the action method which is passed to the child to make sure it
     // is hooked up to the changeState method.
-    output.props.children[0].props.children[0].props.action({
+    output.props.children[1].props.children[0].props.action({
       currentTarget: {
         getAttribute: function() { return 'Units'; }
       }
@@ -363,13 +361,13 @@ describe('ServiceOverview', function() {
             service={service}
             serviceRelations={[1]}
             showActivePlan={sinon.stub()} />);
-    assert.deepEqual(output.props.children[0].props.children[1],
+    assert.deepEqual(output.props.children[1].props.children[1],
       <juju.components.OverviewAction
         key="Uncommitted"
         title="Uncommitted"
         value={2}
         icon={undefined}
-        action={output.props.children[0].props.children[1].props.action}
+        action={output.props.children[1].props.children[1].props.action}
         valueType="uncommitted"
         linkAction={undefined}
         linkTitle={undefined} />);
@@ -397,13 +395,13 @@ describe('ServiceOverview', function() {
             service={service}
             serviceRelations={[1]}
             showActivePlan={sinon.stub()} />);
-    assert.deepEqual(output.props.children[0].props.children[1],
+    assert.deepEqual(output.props.children[1].props.children[1],
       <juju.components.OverviewAction
         key="Pending"
         title="Pending"
         value={1}
         icon={undefined}
-        action={output.props.children[0].props.children[1].props.action}
+        action={output.props.children[1].props.children[1].props.action}
         valueType='pending'
         linkAction={undefined}
         linkTitle={undefined} />);
@@ -431,13 +429,13 @@ describe('ServiceOverview', function() {
             service={service}
             serviceRelations={[1]}
             showActivePlan={sinon.stub()} />);
-    assert.deepEqual(output.props.children[0].props.children[1],
+    assert.deepEqual(output.props.children[1].props.children[1],
       <juju.components.OverviewAction
         key="Errors"
         title="Errors"
         value={1}
         icon={undefined}
-        action={output.props.children[0].props.children[1].props.action}
+        action={output.props.children[1].props.children[1].props.action}
         valueType="error"
         linkAction={undefined}
         linkTitle={undefined} />);
@@ -465,13 +463,13 @@ describe('ServiceOverview', function() {
             service={service}
             serviceRelations={[1]}
             showActivePlan={sinon.stub()} />);
-    assert.deepEqual(output.props.children[0].props.children[1],
+    assert.deepEqual(output.props.children[1].props.children[1],
       <juju.components.OverviewAction
         key="Configure"
         title="Configure"
         value={undefined}
         icon="configure"
-        action={output.props.children[0].props.children[1].props.action}
+        action={output.props.children[1].props.children[1].props.action}
         valueType={undefined}
         linkAction={undefined}
         linkTitle={undefined} />);
@@ -499,13 +497,13 @@ describe('ServiceOverview', function() {
           service={service}
           serviceRelations={[1, 2, 3]}
           showActivePlan={sinon.stub()} />);
-    assert.deepEqual(output.props.children[0].props.children[2],
+    assert.deepEqual(output.props.children[1].props.children[2],
       <juju.components.OverviewAction
         key="Relations"
         title="Relations"
         value={undefined}
         icon="relations"
-        action={output.props.children[0].props.children[2].props.action}
+        action={output.props.children[1].props.children[2].props.action}
         valueType={undefined}
         linkAction={undefined}
         linkTitle={undefined} />);
@@ -536,17 +534,17 @@ describe('ServiceOverview', function() {
           service={service}
           serviceRelations={[1]}
           showActivePlan={sinon.stub()} />);
-    assert.deepEqual(output.props.children[0].props.children[3],
+    assert.deepEqual(output.props.children[1].props.children[3],
       <juju.components.OverviewAction
         key="Expose"
         title="Expose"
         value="On"
         icon="exposed_16"
-        action={output.props.children[0].props.children[3].props.action}
+        action={output.props.children[1].props.children[3].props.action}
         valueType={undefined}
         linkAction={undefined}
         linkTitle={undefined} />);
-    assert.equal(output.props.children[0].props.children.length, 5);
+    assert.equal(output.props.children[1].props.children.length, 5);
   });
 
   it('shows the Change version action if the service is committed', function() {
@@ -574,17 +572,17 @@ describe('ServiceOverview', function() {
           service={service}
           serviceRelations={[1]}
           showActivePlan={sinon.stub()} />);
-    assert.deepEqual(output.props.children[0].props.children[4],
+    assert.deepEqual(output.props.children[1].props.children[4],
       <juju.components.OverviewAction
         key="Change version"
         title="Change version"
-        linkAction={output.props.children[0].props.children[4].props.linkAction}
+        linkAction={output.props.children[1].props.children[4].props.linkAction}
         linkTitle="cs:demo"
         icon="change-version"
-        action={output.props.children[0].props.children[4].props.action}
+        action={output.props.children[1].props.children[4].props.action}
         valueType={undefined}
         value={undefined} />);
-    assert.equal(output.props.children[0].props.children.length, 5);
+    assert.equal(output.props.children[1].props.children.length, 5);
   });
 
   it('shows the charm details if the version is clicked', function() {
@@ -613,7 +611,7 @@ describe('ServiceOverview', function() {
           service={service}
           serviceRelations={[1]}
           showActivePlan={sinon.stub()} />);
-    output.props.children[0].props.children[4].props.linkAction();
+    output.props.children[1].props.children[4].props.linkAction();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionC: {
@@ -650,7 +648,7 @@ describe('ServiceOverview', function() {
           service={service}
           serviceRelations={[1, 2, 3]}
           showActivePlan={sinon.stub()} />);
-    assert.equal(output.props.children[0].props.children.length, 4);
+    assert.equal(output.props.children[1].props.children.length, 4);
   });
 
   it('shows the plans action if there are plans', function() {
@@ -690,7 +688,7 @@ describe('ServiceOverview', function() {
       showActivePlan.callCount, 0,
       'we are defining plans in the service, it should not call to fetch more');
     assert.equal(
-      output.props.children[0].props.children[5].props.title, 'Plan');
+      output.props.children[1].props.children[5].props.title, 'Plan');
   });
 
   it('renders the delete button', function() {
@@ -710,9 +708,9 @@ describe('ServiceOverview', function() {
     var buttons = [{
       disabled: false,
       title: 'Destroy',
-      action: output.props.children[1].props.buttons[0].action
+      action: output.props.children[2].props.children.props.buttons[0].action
     }];
-    assert.deepEqual(output.props.children[1],
+    assert.deepEqual(output.props.children[2].props.children,
       <juju.components.ButtonRow
         buttons={buttons} />);
   });
@@ -735,14 +733,33 @@ describe('ServiceOverview', function() {
     var buttons = [{
       disabled: true,
       title: 'Destroy',
-      action: output.props.children[1].props.buttons[0].action
+      action: output.props.children[2].props.children.props.buttons[0].action
     }];
-    assert.deepEqual(output.props.children[1],
+    assert.deepEqual(output.props.children[2].props.children,
       <juju.components.ButtonRow
         buttons={buttons} />);
   });
 
-  it('renders the delete confirmation', function() {
+  it('hides the delete button when pending deletion', function() {
+    fakeService.get.withArgs('deleted').returns(true);
+    var output = jsTestUtils.shallowRender(
+      <juju.components.ServiceOverview
+        acl={acl}
+        changeState={sinon.stub()}
+        charm={fakeCharm}
+        clearState={sinon.stub()}
+        destroyService={sinon.stub()}
+        getUnitStatusCounts={getUnitStatusCounts()}
+        displayPlans={false}
+        modelUUID="abc123"
+        service={fakeService}
+        serviceRelations={[]}
+        showActivePlan={sinon.stub()} />);
+    assert.equal(output.props.children[2], undefined);
+  });
+
+  it('renders the delete confirmation when pending deletion', function() {
+    fakeService.get.withArgs('deleted').returns(true);
     var output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
@@ -756,183 +773,39 @@ describe('ServiceOverview', function() {
         service={fakeService}
         serviceRelations={[]}
         showActivePlan={sinon.stub()} />);
-    var buttons = [{
-      disabled: false,
-      title: 'Cancel',
-      action: output.props.children[2].props.buttons[0].action
-    }, {
-      disabled: false,
-      title: 'Confirm',
-      type: 'destructive',
-      action: output.props.children[2].props.buttons[1].action
-    }];
-    var confirmMessage = 'Are you sure you want to destroy the application? ' +
-        'This cannot be undone.';
-    assert.deepEqual(output.props.children[2],
-      <juju.components.InspectorConfirm
-        message={confirmMessage}
-        open={false}
-        buttons={buttons} />);
-  });
-
-  it('shows the confirmation when the delete button is clicked', function() {
-    var confirmMessage = 'Are you sure you want to destroy the application? ' +
-        'This cannot be undone.';
-    var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
-        acl={acl}
-        charm={fakeCharm}
-        changeState={sinon.stub()}
-        clearState={sinon.stub()}
-        destroyService={sinon.stub()}
-        displayPlans={false}
-        getUnitStatusCounts={getUnitStatusCounts()}
-        modelUUID="abc123"
-        service={fakeService}
-        serviceRelations={[]}
-        showActivePlan={sinon.stub()} />, true);
-    var output = shallowRenderer.getRenderOutput();
-    var buttons = [{
-      disabled: false,
-      title: 'Cancel',
-      action: output.props.children[2].props.buttons[0].action
-    }, {
-      disabled: false,
-      title: 'Confirm',
-      type: 'destructive',
-      action: output.props.children[2].props.buttons[1].action
-    }];
-    // Fire the click action.
-    output.props.children[1].props.buttons[0].action();
-    shallowRenderer.render(
-      <juju.components.ServiceOverview
-        acl={acl}
-        changeState={sinon.stub()}
-        charm={fakeCharm}
-        clearState={sinon.stub()}
-        destroyService={sinon.stub()}
-        displayPlans={false}
-        getUnitStatusCounts={getUnitStatusCounts()}
-        modelUUID="abc123"
-        service={fakeService}
-        serviceRelations={[]}
-        showActivePlan={sinon.stub()} />);
-    output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children[2],
+    var confirmMessage = 'This application has been marked to be destroyed'
+      + ' on next deployment.';
+    assert.deepEqual(output.props.children[0],
       <juju.components.InspectorConfirm
         message={confirmMessage}
         open={true}
-        buttons={buttons} />);
+        buttons={[]} />);
   });
 
-  it('hides the confirmation when the cancel button is clicked', function() {
-    var confirmMessage = 'Are you sure you want to destroy the application? ' +
-        'This cannot be undone.';
-    var shallowRenderer = jsTestUtils.shallowRender(
+  it('hides the confirmation when not deleted', function() {
+    var output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
         changeState={sinon.stub()}
         charm={fakeCharm}
         clearState={sinon.stub()}
         destroyService={sinon.stub()}
-        displayPlans={false}
         getUnitStatusCounts={getUnitStatusCounts()}
-        modelUUID="abc123"
-        service={fakeService}
-        serviceRelations={[]}
-        showActivePlan={sinon.stub()} />, true);
-    var output = shallowRenderer.getRenderOutput();
-    var buttons = [{
-      disabled: false,
-      title: 'Cancel',
-      action: output.props.children[2].props.buttons[0].action
-    },{
-      disabled: false,
-      title: 'Confirm',
-      type: 'destructive',
-      action: output.props.children[2].props.buttons[1].action
-    }];
-    // Open the confirmation.
-    output.props.children[1].props.buttons[0].action();
-    // close the confirmation.
-    output.props.children[2].props.buttons[0].action();
-    shallowRenderer.render(
-      <juju.components.ServiceOverview
-        acl={acl}
-        changeState={sinon.stub()}
-        charm={fakeCharm}
-        clearState={sinon.stub()}
-        destroyService={sinon.stub()}
         displayPlans={false}
-        getUnitStatusCounts={getUnitStatusCounts()}
         modelUUID="abc123"
         service={fakeService}
         serviceRelations={[]}
         showActivePlan={sinon.stub()} />);
-    output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children[2],
+    var confirmMessage = 'This application has been marked to be destroyed'
+      + ' on next deployment.';
+    assert.deepEqual(output.props.children[0],
       <juju.components.InspectorConfirm
         message={confirmMessage}
         open={false}
-        buttons={buttons} />);
+        buttons={[]} />);
   });
 
-  it('hides the confirmation when confirm button is clicked', function() {
-    var confirmMessage = 'Are you sure you want to destroy the application? ' +
-        'This cannot be undone.';
-    var clearState = sinon.stub();
-    var destroyService = sinon.stub();
-    var changeState = sinon.stub();
-    var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
-        acl={acl}
-        charm={fakeCharm}
-        destroyService={destroyService}
-        getUnitStatusCounts={getUnitStatusCounts()}
-        modelUUID="abc123"
-        clearState={clearState}
-        changeState={changeState}
-        displayPlans={false}
-        service={fakeService}
-        serviceRelations={[]}
-        showActivePlan={sinon.stub()} />, true);
-    var output = shallowRenderer.getRenderOutput();
-    var buttons = [{
-      disabled: false,
-      title: 'Cancel',
-      action: output.props.children[2].props.buttons[0].action
-    }, {
-      disabled: false,
-      title: 'Confirm',
-      type: 'destructive',
-      action: output.props.children[2].props.buttons[1].action
-    }];
-    // Open the confirmation.
-    output.props.children[1].props.buttons[0].action();
-    // Simulate the confirm click.
-    output.props.children[2].props.buttons[1].action();
-    shallowRenderer.render(
-      <juju.components.ServiceOverview
-        acl={acl}
-        charm={fakeCharm}
-        destroyService={destroyService}
-        clearState={clearState}
-        changeState={changeState}
-        displayPlans={false}
-        getUnitStatusCounts={getUnitStatusCounts()}
-        modelUUID="abc123"
-        service={fakeService}
-        serviceRelations={[]}
-        showActivePlan={sinon.stub()} />);
-    output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output.props.children[2],
-      <juju.components.InspectorConfirm
-        message={confirmMessage}
-        open={false}
-        buttons={buttons} />);
-  });
-
-  it('calls the destroy service method if confirm is clicked', function() {
+  it('calls the destroy service method if destroy is clicked', function() {
     var clearState = sinon.stub();
     var destroyService = sinon.stub();
     var changeState = sinon.stub();
@@ -950,29 +823,7 @@ describe('ServiceOverview', function() {
         serviceRelations={[]}
         showActivePlan={sinon.stub()} />);
     // Simulate the confirm click.
-    output.props.children[2].props.buttons[1].action();
+    output.props.children[2].props.children.props.buttons[0].action();
     assert.equal(destroyService.callCount, 1);
-  });
-
-  it('calls clearState if confirm is clicked', function() {
-    var clearState = sinon.stub();
-    var destroyService = sinon.stub();
-    var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <juju.components.ServiceOverview
-        acl={acl}
-        charm={fakeCharm}
-        destroyService={destroyService}
-        getUnitStatusCounts={getUnitStatusCounts()}
-        modelUUID="abc123"
-        clearState={clearState}
-        changeState={changeState}
-        displayPlans={false}
-        service={fakeService}
-        serviceRelations={[]}
-        showActivePlan={sinon.stub()} />);
-    // Simulate the confirm click.
-    output.props.children[2].props.buttons[1].action();
-    assert.equal(clearState.callCount, 1);
   });
 });

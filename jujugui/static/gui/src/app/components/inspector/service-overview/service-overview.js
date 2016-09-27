@@ -53,6 +53,14 @@ YUI.add('service-overview', function() {
 
     componentWillMount: function() {
       var props = this.props;
+
+      // Show or hide the deletion confirmation depending on whether this
+      // application has been deleted or not.
+      var service = props.service;
+      if (service.get('deleted')) {
+        this._showConfirmation();
+      }
+
       if (!props.displayPlans) {
         // If we aren't in a Juju 2 model then do not query for
         // or display the plans.
@@ -65,7 +73,6 @@ YUI.add('service-overview', function() {
         return;
       }
 
-      var service = props.service;
       var plans = props.charm.get('plans');
       var activePlan = service.get('activePlan');
 
@@ -311,52 +318,44 @@ YUI.add('service-overview', function() {
       @method _destroyService
     */
     _destroyService: function() {
-      this._hideConfirmation();
+      this._showConfirmation();
       // db, env, and service have already been bound to this function in
       // the app.js definition.
       this.props.destroyService();
-      // Fire the clearState event to cancel relation building to destroyed
-      // services.
-      this.props.clearState();
-      // Navigate back to the list of services now that this service has been
-      // removed.
-      this.props.changeState({
-        sectionA: {
-          component: 'applications'
-        }});
+    },
+
+    _generateDelete: function(render, readOnly) {
+      if (render) {
+        var buttons = [{
+          disabled: readOnly,
+          title: 'Destroy',
+          action: this._destroyService
+        }];
+        return (
+          <div className="service-overview__delete">
+            <juju.components.ButtonRow
+              buttons={buttons} />
+          </div>
+        );
+      }
     },
 
     render: function() {
-      var disabled = this.props.acl.isReadOnly();
       this._generateActions(this.props.service);
-      var buttons = [{
-        disabled: disabled,
-        title: 'Destroy',
-        action: this._showConfirmation
-      }];
-      var confirmMessage = 'Are you sure you want to destroy the application? '
-        + 'This cannot be undone.';
-      var confirmButtons = [{
-        disabled: disabled,
-        title: 'Cancel',
-        action: this._hideConfirmation
-      }, {
-        disabled: disabled,
-        title: 'Confirm',
-        type: 'destructive',
-        action: this._destroyService
-      }];
+      var confirmationOpen = this.state.confirmationOpen;
+      var readOnly = this.props.acl.isReadOnly();
+      var message = 'This application has been marked to be destroyed on '
+        + 'next deployment.';
       return (
         <div className="service-overview">
+          <juju.components.InspectorConfirm
+            message={message}
+            open={confirmationOpen}
+            buttons={[]} />
           <ul className="service-overview__actions">
             {this._generateActionList(this.state.actions)}
           </ul>
-          <juju.components.ButtonRow
-            buttons={buttons} />
-          <juju.components.InspectorConfirm
-            buttons={confirmButtons}
-            message={confirmMessage}
-            open={this.state.confirmationOpen} />
+          {this._generateDelete(!confirmationOpen, readOnly)}
         </div>
       );
     }

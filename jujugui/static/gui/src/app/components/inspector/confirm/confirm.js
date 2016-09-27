@@ -72,13 +72,23 @@ YUI.add('inspector-confirm', function() {
     },
 
     render: function() {
+      // If there are no buttons, don't render a button row, which may have
+      // CSS styles (e.g., min-height) that don't fly with an empty button
+      // row.
+      const buttons = this.props.buttons;
+      let buttonRow;
+      if (buttons && buttons.length > 0) {
+        buttonRow = (
+          <juju.components.ButtonRow
+            buttons={this.props.buttons} />
+        );
+      }
       return (
         <div className={this._generateClasses()}>
           <p className={this._messageClasses()}>
             {this.props.message}
           </p>
-          <juju.components.ButtonRow
-            buttons={this.props.buttons} />
+          {buttonRow}
         </div>
       );
     }
