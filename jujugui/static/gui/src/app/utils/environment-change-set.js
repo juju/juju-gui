@@ -951,11 +951,12 @@ YUI.add('environment-change-set', function(Y) {
     _lazyRemoveRelation: function(args) {
       // If an existing ecs record for this relation exists, remove it from the
       // queue.
-      var changeSet = this.changeSet,
-          argsEndpoints = [args[0], args[1]],
-          ghosted = false,
-          command, record;
-      var relations = this.get('db').relations;
+      const changeSet = this.changeSet;
+      const argsEndpoints = [args[0], args[1]];
+      let ghosted = false;
+      let command, record;
+      const db = this.get('db');
+      const relations = db.relations;
       Object.keys(changeSet).forEach(function(key) {
         command = changeSet[key].command;
         if (command.method === '_add_relation') {
@@ -968,6 +969,12 @@ YUI.add('environment-change-set', function(Y) {
             // Remove the relation from the relations db. Even the ghost
             // relations are stored in the db.
             relations.remove(relations.getRelationFromEndpoints(argsEndpoints));
+            argsEndpoints.forEach(endpoint => {
+              const service = db.services.getServiceByName(endpoint[0]);
+              if (service.get('subordinate')) {
+                service.updateSubordinateUnits(db);
+              }
+            });
           }
         }
       }, this);
