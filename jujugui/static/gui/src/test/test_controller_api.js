@@ -1302,6 +1302,17 @@ describe('Controller API', function() {
       // Mimic response.
       conn.msg({'request-id': 1, error: 'bad wolf'});
     });
+
+    it('handles no results while listing clouds', function(done) {
+      // Perform the request.
+      controllerAPI.listClouds((err, clouds) => {
+        assert.strictEqual(err, null);
+        assert.deepEqual(clouds, {});
+        done();
+      });
+      // Mimic response.
+      conn.msg({'request-id': 1, response: {}});
+    });
   });
 
   describe('getClouds', function() {

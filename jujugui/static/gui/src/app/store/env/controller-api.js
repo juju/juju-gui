@@ -744,7 +744,7 @@ YUI.add('juju-controller-api', function(Y) {
           callback(data.error, {});
           return;
         }
-        const results = data.response.clouds;
+        const results = data.response.clouds || {};
         const clouds = Object.keys(results).reduce((prev, tag) => {
           const name = tags.parse(tags.CLOUD, tag);
           prev[name] = this._parseCloudResult(results[tag]);

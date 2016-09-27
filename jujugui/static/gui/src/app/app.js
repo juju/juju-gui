@@ -1163,7 +1163,7 @@ YUI.add('juju-gui', function(Y) {
               changesUtils, services, units)}
           hasEntities={servicesArray.length > 0 || machines.length > 0}
           modelCommitted={this.env.get('connected')}
-          showInstall={this.get('sandbox')} />,
+          showInstall={!!this.get('sandbox')} />,
         document.getElementById('deployment-bar-container'));
     },
 
