@@ -734,8 +734,9 @@ YUI.add('juju-gui', function(Y) {
           // If the modelList has no models in it then we have to drop the
           // user into an uncommitted state.
           if (modelList.length === 0) {
-            // XXX Drop the user into the uncommitted state.
+            // Drop the user into the uncommitted state.
             console.log('No models available, using unconnected mode.');
+            this.switchEnv();
             return;
           }
           if (modelList.some(data => data.id === this.env.get('modelId'))) {
@@ -748,7 +749,7 @@ YUI.add('juju-gui', function(Y) {
           if (selectedModel === null) {
             console.log('cannot select a model: using unconnected mode');
             // Drop the user into the unconnected state.
-            views.utils.switchModel();
+            this.switchEnv();
             return;
           }
           // Generate the valid socket URL and switch to this model.
@@ -2184,7 +2185,6 @@ YUI.add('juju-gui', function(Y) {
       if (this.env.ws) {
         this.env.ws.onclose = onclose;
         this.env.close();
-        this.hideConnectingMask();
         // If we are already disconnected then connect if we're supposed to.
         if (!this.env.get('connected')) {
           setUpModel(this.env);
@@ -2192,6 +2192,7 @@ YUI.add('juju-gui', function(Y) {
       } else {
         this.env.close(onclose);
       }
+      this.hideConnectingMask();
       if (clearDB) {
         this.db.reset();
         this.db.fire('update');
