@@ -734,7 +734,7 @@ YUI.add('juju-gui', function(Y) {
           // If the modelList has no models in it then we have to drop the
           // user into an uncommitted state.
           if (modelList.length === 0) {
-            // XXX Drop the user into the uncommitted state.
+            // Drop the user into the uncommitted state.
             console.log('No models available, using unconnected mode.');
             this.switchEnv();
             return;
