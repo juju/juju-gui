@@ -18,7 +18,6 @@ module.exports = function(config) {
     files: [
       'jujugui/static/gui/src/app/jujulib/index.js',
       'jujugui/static/gui/src/app/jujulib/charmstore.js',
-      'jujugui/static/gui/src/app/jujulib/jimm.js',
       'jujugui/static/gui/src/app/jujulib/plans.js',
       'jujugui/static/gui/src/app/jujulib/terms.js',
       'jujugui/static/gui/src/app/jujulib/reconnecting-websocket.js',

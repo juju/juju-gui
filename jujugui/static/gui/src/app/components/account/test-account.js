@@ -34,9 +34,6 @@ describe('Account', () => {
       charmstore: {
         user: 'test-owner',
         usernameDisplay: 'test owner'
-      },
-      jem: {
-        user: 'jem-user'
       }
     };
   });
@@ -131,7 +128,9 @@ describe('Account', () => {
     assert.deepEqual(output, expected);
   });
 
-  it('renders the credentials', () => {
+  // It's not currently possible to fetch credentials so this is being
+  // skipped until that functionality is re-enabled.
+  xit('renders the credentials', () => {
     var listTemplates = sinon.stub().callsArgWith(
       0, null, [{path: 'spinach/test-model'}]);
     var component = jsTestUtils.shallowRender(
@@ -260,15 +259,13 @@ describe('Account', () => {
     assert.deepEqual(credentials, expected);
   });
 
-  it('disables the buttons if in read only mode', () => {
-    var listTemplates = sinon.stub().callsArgWith(
-      0, null, [{path: 'spinach/test-model'}]);
+  // It's not currently possible to fetch credentials so this is being
+  // skipped until that functionality is re-enabled.
+  xit('disables the buttons if in read only mode', () => {
     acl.isReadOnly = sinon.stub().returns(true);
     var component = jsTestUtils.shallowRender(
       <juju.components.Account
         acl={acl}
-        deleteTemplate={sinon.stub()}
-        listTemplates={listTemplates}
         user={users.charmstore}
         users={users} />, true);
     var instance = component.getMountedInstance();
@@ -295,56 +292,4 @@ describe('Account', () => {
     assert.deepEqual(buttons, expected);
   });
 
-  it('will abort the requests when unmounting', function() {
-    var abort = sinon.stub();
-    var listTemplates = sinon.stub().returns({abort: abort});
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.Account
-        acl={acl}
-        deleteTemplate={sinon.stub()}
-        listTemplates={listTemplates}
-        user={users.charmstore}
-        users={users} />, true);
-    renderer.unmount();
-    assert.equal(abort.callCount, 1);
-  });
-
-  it('can destroy a credential', function() {
-    var listTemplates = sinon.stub().callsArgWith(
-      0, null, [{path: 'spinach/test-model'}]);
-    var deleteTemplate = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.Account
-        acl={acl}
-        deleteTemplate={deleteTemplate}
-        listTemplates={listTemplates}
-        user={users.charmstore}
-        users={users} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    output.props.children.props.children.props.children[4].props.children[2][0]
-      .props.children[1].props.children[0].props.children[1].props.children[0]
-      .props.action();
-    assert.equal(deleteTemplate.callCount, 1);
-    assert.deepEqual(deleteTemplate.args[0], [
-      users.jem.user, 'test-model', instance._destroyCredentialCallback]);
-  });
-
-  it('updates the credentials when one is destroyed', function() {
-    var listTemplates = sinon.stub().callsArgWith(
-      0, null, [{path: 'spinach/test-model'}]);
-    var deleteTemplate = sinon.stub().callsArg(2);
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.Account
-        acl={acl}
-        deleteTemplate={deleteTemplate}
-        listTemplates={listTemplates}
-        user={users.charmstore}
-        users={users} />, true);
-    var output = renderer.getRenderOutput();
-    output.props.children.props.children.props.children[4].props.children[2][0]
-      .props.children[1].props.children[0].props.children[1].props.children[0]
-      .props.action();
-    assert.equal(listTemplates.callCount, 2);
-  });
 });

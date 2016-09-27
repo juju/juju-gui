@@ -73,7 +73,6 @@ def config(request):
     base_url = settings.get('jujugui.base_url')
     env_uuid = settings.get('jujugui.uuid', 'sandbox')
 
-    jem_macaroons = settings.get('jujugui.jem_macaroons')
     charmstore_macaroons = settings.get('jujugui.charmstore_macaroons')
     plans_macaroons = settings.get('jujugui.plans_macaroons')
     terms_macaroons = settings.get('jujugui.terms_macaroons')
@@ -101,12 +100,10 @@ def config(request):
         'consoleEnabled': True,
         # The external services' URLs.
         'charmstoreURL': settings['jujugui.charmstore_url'],
-        'jemURL': settings['jujugui.jem_url'],
         'plansURL': settings['jujugui.plans_url'],
         'termsURL': settings['jujugui.terms_url'],
         # Any provided macaroons.
         'charmstoreMacaroons': charmstore_macaroons,
-        'jemMacaroons': jem_macaroons,
         'plansMacaroons': plans_macaroons,
         'termsMacaroons': terms_macaroons,
         # WebSocket connection to the Juju API.

@@ -1004,8 +1004,6 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.Account
           acl={this.acl}
-          deleteTemplate={this.jem.deleteTemplate.bind(this.jem)}
-          listTemplates={this.jem.listTemplates.bind(this.jem)}
           user={this._getAuth()}
           users={Y.clone(this.get('users'), true)} />,
         document.getElementById('top-page-container'));
@@ -2504,9 +2502,7 @@ YUI.add('juju-gui', function(Y) {
           this._renderBreadcrumb();
         }
       };
-      if (service === 'jem') {
-        this.jem.whoami(callback.bind(this));
-      } else if (service === 'charmstore') {
+      if (service === 'charmstore') {
         this.get('charmstore').whoami(callback.bind(this));
       } else {
         console.error('Unrecognized service', service);
@@ -2603,15 +2599,6 @@ YUI.add('juju-gui', function(Y) {
         @default undefined
       */
       charmstore: {},
-
-      /**
-        Store the url for the JEM if it exists.
-
-        @attribute jemURL
-        @type {String}
-        @default undefined
-       */
-      jemURL: {},
 
       /**
        Whether or not to use interactive login for the IdM/JEM connection.
