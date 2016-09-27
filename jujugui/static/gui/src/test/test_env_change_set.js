@@ -1493,27 +1493,45 @@ describe('Environment Change Set', function() {
 
     describe('_lazyRemoveRelation', function() {
       it('can remove a ghost relation from the changeset', function() {
-        ecs.get('db').relations = {
+        const db = ecs.get('db');
+        const origRelations = db.relations;
+        db.relations = {
           compareRelationEndpoints: sinon.stub().returns(true),
           getRelationFromEndpoints: sinon.stub(),
-          remove: sinon.stub()
+          remove: sinon.stub(),
+        };
+        this._cleanups.push(() => {
+          db.relations = origRelations;
+        });
+        const arg1 = ['svc1', 'endpoints1'];
+        const arg2 = ['svc2', 'endpoints2'];
+        const updateSubordinateUnits = sinon.stub();
+        db.services.getServiceByName = name => {
+          const subordinate = name === 'svc2';
+          const service = {
+            get: sinon.stub().withArgs('subordinate').returns(subordinate)
+          };
+          if (subordinate) {
+            service.updateSubordinateUnits = updateSubordinateUnits;
+          }
+          return service;
         };
         ecs.changeSet['addRelation-982'] = {
-          command: {
-            args: ['arg1', 'arg2'],
-            method: '_add_relation' }};
-        var record = ecs._lazyRemoveRelation(['args1', 'args2']);
-        var compare = ecs.get('db').relations.compareRelationEndpoints;
-        var remove = ecs.get('db').relations.remove;
-        var getRelation = ecs.get('db').relations.getRelationFromEndpoints;
-        var compareArgs = compare.lastCall.args;
+          command: {args: ['arg1', 'arg2'], method: '_add_relation'}
+        };
+        const record = ecs._lazyRemoveRelation([arg1, arg2]);
+        const compare = ecs.get('db').relations.compareRelationEndpoints;
+        const remove = ecs.get('db').relations.remove;
+        const getRelation = ecs.get('db').relations.getRelationFromEndpoints;
+        const compareArgs = compare.lastCall.args;
         assert.equal(compare.calledOnce, true);
         assert.deepEqual(compareArgs[0], ['arg1', 'arg2']);
-        assert.deepEqual(compareArgs[1], ['args1', 'args2']);
+        assert.deepEqual(compareArgs[1], [arg1, arg2]);
         assert.strictEqual(record, undefined);
         assert.strictEqual(ecs.changeSet['addRelation-982'], undefined);
-        assert.deepEqual(getRelation.lastCall.args[0], ['args1', 'args2']);
-        assert.equal(remove.calledOnce, true);
+        assert.deepEqual(getRelation.lastCall.args[0], [arg1, arg2]);
+        assert.strictEqual(remove.calledOnce, true);
+        assert.strictEqual(updateSubordinateUnits.calledOnce, true);
       });
 
       it('can add a remove relation record into the changeset', function() {
