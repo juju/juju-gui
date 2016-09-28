@@ -391,6 +391,8 @@ YUI.add('juju-gui', function(Y) {
       this.db = new models.Database();
       // Create and set up a new instance of the charmstore.
       this._setupCharmstore(window.jujulib.charmstore);
+      // Create and set up a new instance of the bundleservice.
+      this._setupBundleservice(window.jujulib.bundleservice);
       // Create Romulus API client instances.
       this._setupRomulusServices(
         window.juju_config, window.jujulib, window.localStorage);
@@ -420,7 +422,8 @@ YUI.add('juju-gui', function(Y) {
         user: this.get('user'),
         password: this.get('password'),
         conn: this.get('conn'),
-        jujuCoreVersion: this.get('jujuCoreVersion')
+        jujuCoreVersion: this.get('jujuCoreVersion'),
+        bundleService: this.get('bundleService')
       };
       let controllerOptions = Object.assign({}, modelOptions);
       if (this.get('sandbox')) {
@@ -675,7 +678,8 @@ YUI.add('juju-gui', function(Y) {
       cfg.conn = new sandboxModule.ClientConnection({
         juju: new sandboxModule.GoJujuAPI({
           state: fakebackend,
-          socket_url: cfg.socket_url
+          socket_url: cfg.socket_url,
+          bundleService: cfg.bundleService
         })
       });
       // Instantiate a fake Web handler, which simulates the
@@ -1605,7 +1609,28 @@ YUI.add('juju-gui', function(Y) {
         }
       }
     },
+    /**
+      Creates a new instance of the bundleservice API and stores it in the
+      app in an idempotent fashion.
 
+      @method _setupBundleservice
+      @param {Object} Bundleservice The bundleservice API class to
+      instantiate.
+    */
+    _setupBundleservice: function(Bundleservice) {
+      if (this.get('bundleService') === undefined) {
+        const jujuConfig = window.juju_config;
+        const bundleServiceURL = jujuConfig.bundleServiceURL;
+        if (!jujuConfig || !bundleServiceURL) {
+          console.error('no juju config for bundleserviceURL availble');
+          return;
+        }
+        const bundleService = new Bundleservice(
+          bundleServiceURL,
+          new Y.juju.environments.web.WebHandler());
+        this.set('bundleService', bundleService);
+      }
+    },
     /**
       Creates new API client instances for Romulus services.
       Assign them to the "plans" and "terms" app properties.
