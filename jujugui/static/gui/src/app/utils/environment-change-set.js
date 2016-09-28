@@ -637,9 +637,10 @@ YUI.add('environment-change-set', function(Y) {
       // Set up the parents of this record.
       var parents = [];
       Object.keys(this.changeSet).forEach(key => {
-        if (this.changeSet[key].command.method === '_addCharm') {
+        const record = this.changeSet[key];
+        if (record.command.method === '_addCharm') {
           // Get the key to the record which adds the charm for this app.
-          if (this.changeSet[key].command.args[0] === args[0]) {
+          if (record.command.options.applicationId === args[9].modelId) {
             parents.push(key);
           }
         }
