@@ -1486,7 +1486,6 @@ YUI.add('juju-env-sandbox', function(Y) {
       @param {Object} state An instance of FakeBackend.
     */
     handleClientGetBundleChanges: function(data, client, state) {
-      console.log(data, client, state);
       this.get('bundleService').getBundleChangesFromYAML(
         data.params.yaml, (error, bundleChanges) => {
           client.receive({

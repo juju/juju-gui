@@ -1620,7 +1620,7 @@ YUI.add('juju-gui', function(Y) {
     _setupBundleservice: function(Bundleservice) {
       if (this.get('bundleService') === undefined) {
         const jujuConfig = window.juju_config;
-        const bundleServiceURL = jujuConfig.bundleServiceURL;
+        const bundleServiceURL = jujuConfig && jujuConfig.bundleServiceURL;
         if (!jujuConfig || !bundleServiceURL) {
           console.error('no juju config for bundleserviceURL availble');
           return;
