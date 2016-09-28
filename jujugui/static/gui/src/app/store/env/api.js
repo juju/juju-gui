@@ -2358,22 +2358,34 @@ YUI.add('juju-env-api', function(Y) {
                       view/head:/server/guiserver/bundles/__init__.py#L322
     */
     getBundleChanges: function(bundleYAML, changesToken, callback) {
-      var handle = function(userCallback, data) {
-        if (!userCallback) {
-          console.log('data returned by Client.GetBundleChanges:', data);
-          return;
-        }
-        userCallback({
-          errors: data.error && [data.error] || data.response.errors,
-          changes: data.response && data.response.changes
-        });
-      };
-      // Send the request to retrieve bundle changes from Juju.
-      this._send_rpc({
-        type: 'Client',
-        request: 'GetBundleChanges',
-        params: {yaml: bundleYAML}
-      }, handle.bind(this, callback));
+      // If we're connected to Juju core then get the bundle changes from there.
+      if (this.get('connected')) {
+        const handle = data => {
+          if (!callback) {
+            console.log('data returned by Client.GetBundleChanges:', data);
+            return;
+          }
+          callback({
+            errors: data.error && [data.error] || data.response.errors,
+            changes: data.response && data.response.changes
+          });
+        };
+        // Send the request to retrieve bundle changes from Juju.
+        this._send_rpc({
+          type: 'Client',
+          request: 'GetBundleChanges',
+          params: {yaml: bundleYAML}
+        }, handle);
+        return;
+      }
+      // If we weren't connected then make the request to the external
+      // bundle service.
+      this.get('bundleService')
+          .getBundleChangesFromYAML(
+            bundleYAML,
+            (error, bundleChanges) => {
+              callback({errors: error, changes: bundleChanges.changes});
+            });
     },
 
     /**

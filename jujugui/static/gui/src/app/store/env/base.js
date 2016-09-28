@@ -294,7 +294,16 @@ YUI.add('juju-env-base', function(Y) {
       value: [
         'update_annotations'
       ]
-    }
+    },
+
+    /**
+      Instance of the bundleService class which provides convenience methods to
+      interact with the remove bundle service.
+
+      @attribute bundleService
+      @type {Object}
+    */
+    'bundleService': {}
 
   };
 
