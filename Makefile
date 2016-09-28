@@ -334,7 +334,7 @@ bumpversion: deps
 
 .PHONY: version
 version:
-	echo "'version: $(CURRENT_VERSION)';\n'commit: $(CURRENT_COMMIT)';" > $(GUIBUILD)/app/version.js
+	echo '{"version": "$(CURRENT_VERSION)", "commit": "$(CURRENT_COMMIT)"}' > $(GUIBUILD)/app/version.json
 
 .PHONY: dist
 dist: clean-all fast-dist
