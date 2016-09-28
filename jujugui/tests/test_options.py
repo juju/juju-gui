@@ -12,6 +12,7 @@ class TestUpdate(unittest.TestCase):
     default_settings = {
         'jujugui.auth': None,
         'jujugui.base_url': '',
+        'jujugui.bundleservice_url': options.DEFAULT_BUNDLESERVICE_URL,
         'jujugui.charmstore_url': options.DEFAULT_CHARMSTORE_URL,
         'jujugui.combine': True,
         'jujugui.gisf': False,
@@ -40,6 +41,7 @@ class TestUpdate(unittest.TestCase):
         expected_settings = {
             'jujugui.auth': 'blob',
             'jujugui.base_url': '/another/url',
+            'jujugui.bundleservice_url': 'https://bundleservice',
             'jujugui.charmstore_url': 'https://1.2.3.4/api/',
             'jujugui.combine': True,
             'jujugui.gisf': True,
@@ -60,6 +62,7 @@ class TestUpdate(unittest.TestCase):
         settings = {
             'jujugui.auth': 'blob',
             'jujugui.base_url': '/another/url',
+            'jujugui.bundleservice_url': 'https://bundleservice',
             'jujugui.charmstore_url': 'https://1.2.3.4/api/',
             'jujugui.combine': 'true',
             'jujugui.gisf': True,

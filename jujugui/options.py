@@ -21,7 +21,7 @@ def update(settings):
     _update(settings, 'jujugui.auth', default=None)
     _update(settings, 'jujugui.base_url', default='')
     _update(settings, 'jujugui.bundleservice_url',
-        default=DEFAULT_BUNDLESERVICE_URL)
+            default=DEFAULT_BUNDLESERVICE_URL)
     _update(settings, 'jujugui.charmstore_url', default=DEFAULT_CHARMSTORE_URL)
     _update(settings, 'jujugui.plans_url', default=DEFAULT_PLANS_URL)
     _update(settings, 'jujugui.terms_url', default=DEFAULT_TERMS_URL)
