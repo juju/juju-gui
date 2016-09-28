@@ -1985,12 +1985,16 @@ YUI.add('juju-env-api', function(Y) {
       @method destroyApplication
     */
     destroyApplication: function(applicationName, callback, options) {
-      var ecs = this.get('ecs');
-      var args = ecs._getArgs(arguments);
+      const ecs = this.get('ecs');
+      const args = ecs._getArgs(arguments);
       if (options && options.immediate) {
         this._destroyApplication.apply(this, args);
       } else {
+        const charmId = ecs.get('db').services.getById(args[0]).get('charm');
         ecs.lazyDestroyApplication(args);
+        // When destroying an application we also need to remove the added
+        // charm from the ecs if it exists.
+        ecs.lazyRemoveCharm(charmId);
       }
     },
 
