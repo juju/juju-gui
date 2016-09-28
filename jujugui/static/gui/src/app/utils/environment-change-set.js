@@ -585,28 +585,6 @@ YUI.add('environment-change-set', function(Y) {
     },
 
     /**
-      Removes the addCharm entry from the ecs for the supplied charm. This
-      is typically required when an application has yet to be deployed
-      and is then destroyed. At this point we no longer want to add the charm
-      to the model.
-
-      @method lazyRemoveCharm
-      @param {String} charmId The charm id to remove from the changeset.
-    */
-    lazyRemoveCharm: function(charmId) {
-      // Loop through the changeSet looking for addCharm commands and check
-      // if the added charm matches the supplied charm.
-      Object.keys(this.changeSet).some(key => {
-        if (key.indexOf('addCharm-') === 0) {
-          if (this.changeSet[key].command.args[0] === charmId) {
-            delete this.changeSet[key];
-            this.fire('changeSetModified');
-            return true;
-          }
-        }
-      });
-    },
-    /**
       Creates a new entry in the queue for creating a new service.
 
       Receives all the parameters received by the environment's "deploy"
@@ -696,17 +674,20 @@ YUI.add('environment-change-set', function(Y) {
       if (command.args.length !== args.length) {
         command.options = args[args.length - 1];
       }
-      var existingService;
+      let existingService;
+      let record;
       // Check if the service is pending in the change set.
-      Object.keys(this.changeSet).forEach(function(key) {
+      Object.keys(this.changeSet).some(key => {
         if (this.changeSet[key].command.method === '_deploy') {
           if (this.changeSet[key].command.options.modelId === args[0]) {
             existingService = key;
+            record = this.changeSet[key];
+            return true;
           }
         }
-      }, this);
+      });
       if (existingService) {
-        this._destroyQueuedService(existingService);
+        this._destroyQueuedService(existingService, record);
       } else {
         var service = this.get('db').services.getById(args[0]);
         // Remove any unplaced units.
@@ -722,21 +703,22 @@ YUI.add('environment-change-set', function(Y) {
 
     /**
       In the event that a service in the change set needs to be destroyed,
-      remove it and all of the entries of which it is a parent.
+      remove it and all of the entries of which it is a parent as well as
+      the addCharm call associated with this application.
 
       @method _destroyQueuedService
-      @param {String} service The key of the service to be destroyed.
+      @param {String} recordKey The key of the service to be destroyed.
     */
-    _destroyQueuedService: function(service) {
+    _destroyQueuedService: function(recordKey, record) {
       // Search for everything that has that service as a parent and remove it.
       Object.keys(this.changeSet).forEach(function(key) {
-        if (this.changeSet[key].parents.indexOf(service) !== -1) {
+        if (this.changeSet[key].parents.indexOf(recordKey) !== -1) {
           this._removeExistingRecord(key);
         }
       }, this);
       // Remove the service itself.
       var db = this.get('db');
-      var modelId = this.changeSet[service].command.options.modelId;
+      var modelId = this.changeSet[recordKey].command.options.modelId;
       var model = db.services.getById(modelId);
       var units = model.get('units');
       var relations = model.get('relations');
@@ -749,7 +731,13 @@ YUI.add('environment-change-set', function(Y) {
       db.services.remove(model);
       model.updateSubordinateUnits(db);
       model.destroy();
-      this._removeExistingRecord(service);
+      this._removeExistingRecord(recordKey);
+      // Remove the record for the addCharm
+      record.parents.some(key => {
+        if (key.indexOf('addCharm-') === 0) {
+          this._removeExistingRecord(key);
+        }
+      });
     },
 
     /**
