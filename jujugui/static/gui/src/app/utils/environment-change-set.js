@@ -583,6 +583,29 @@ YUI.add('environment-change-set', function(Y) {
       };
       return this._createNewRecord('addCharm', command, []);
     },
+
+    /**
+      Removes the addCharm entry from the ecs for the supplied charm. This
+      is typically required when an application has yet to be deployed
+      and is then destroyed. At this point we no longer want to add the charm
+      to the model.
+
+      @method lazyRemoveCharm
+      @param {String} charmId The charm id to remove from the changeset.
+    */
+    lazyRemoveCharm: function(charmId) {
+      // Loop through the changeSet looking for addCharm commands and check
+      // if the added charm matches the supplied charm.
+      Object.keys(this.changeSet).some(key => {
+        if (key.indexOf('addCharm-') === 0) {
+          if (this.changeSet[key].command.args[0] === charmId) {
+            delete this.changeSet[key];
+            this.fire('changeSetModified');
+            return true;
+          }
+        }
+      });
+    },
     /**
       Creates a new entry in the queue for creating a new service.
 
