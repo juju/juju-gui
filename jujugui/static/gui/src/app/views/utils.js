@@ -1190,7 +1190,7 @@ YUI.add('juju-view-utils', function(Y) {
         localIndex = charmId.indexOf('local:'),
         path;
     if (localIndex > -1 && env) {
-      path = env.getLocalCharmFileUrl(charmId, 'icon.svg');
+      path = env.getLocalCharmIcon(charmId);
     } else if (localIndex === -1) {
       if (typeof isBundle === 'boolean' && isBundle) {
         var staticURL = '';
