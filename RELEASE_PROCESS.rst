@@ -1,3 +1,14 @@
+Release the GUI with the charm
+------------------------------
+
+A new release of the GUI requires that the Juju GUI Charm be released also.
+Rather than duplicating effort, the two should be done at the same time to
+minimize the time to do thorough QA and to avoid creating separate release
+tarballs.
+
+So follow the unified release procedure in the Juju GUI Charm code base.
+
+
 Prepare for the Release
 -----------------------
 
