@@ -1,13 +1,13 @@
 Release the GUI with the charm
 ------------------------------
 
-A new release of the GUI requires that the Juju GUI Charm be released also.
-Rather than duplicating effort, the two should be done at the same time to
-minimize the time to do thorough QA and to avoid creating separate release
-tarballs.
+A new release of the GUI requires that the Juju GUI Charm be released in
+tandem.  Rather than duplicating effort, the two should be done at the same
+time to minimize the effort to do thorough QA and to avoid creating separate
+release tarballs.
 
-So follow the unified release procedure in the Juju GUI Charm code base.
-
+The following instructions reference releasing the juju-gui and
+juju-gui-charm.
 
 Prepare for the Release
 -----------------------
@@ -18,8 +18,8 @@ Make the clone using:
 
 ::
 
-    git clone git@github.com:juju/juju-gui.git gui-release
-    cd gui-release
+    git clone git@github.com:juju/juju-gui.git
+    cd juju-gui
 
 Next you'll want to generate the list of changes for CHANGES.yaml.
 
@@ -77,6 +77,16 @@ Test the release
 
     make check
 
+Get a fresh copy of the charm as you'll be releasing it too
+-----------------------------------------------------------
+
+::
+
+    pushd ..
+    git clone --branch master git@github.com:juju/juju-gui-charm.git
+    cd juju-gui-charm
+    git merge origin/develop
+
 
 Really test the release
 -----------------------
@@ -85,47 +95,41 @@ Test it in the charm on juju 1.25...
 
 ::
 
-    # Assuming $REPO is the full path to where your git repos live and $RELEASE
-    # is your release number:
-    pushd $REPO/juju-gui-charm
+    # Assuming $RELEASE is your release number:
     juju-1 bootstrap
-    JUJU_GUI_BRANCH=$REPO/juju-gui make package 
-    # Ensure you have a link from $JUJU_REPOSITORY/trusty/juju-gui to $REPO/juju-gui-charm.
+    JUJU_GUI_BRANCH=$PWD/../juju-gui make package
+    # Ensure you have a link from $JUJU_REPOSITORY/trusty/juju-gui to your
+    # current directory where the charm is.
     juju-1 deploy local:juju-gui
     juju-1 expose juju-gui
     # Test, test test.
     juju-1 destroy-enviroment -y <your env>
-    popd
 
 ...and in juju 2
 
 ::
 
-    make dist
-    cp dist/jujugui-*.tar.bz2 $REPO/juju-gui-charm/releases
-    pushd $REPO/juju-gui-charm
     juju bootstrap aws aws
     juju deploy . --series=trusty
     juju expose juju-gui
     # Test, test test.
-    popd
 
 ...and in embedded in juju.
 
 ::
 
     # Note: this assumes the juju you are using is from an up-to-date checkout of juju in your $GOPATH.
-    juju upgrade-gui dist/jujugui-$RELEASE.tar.bz2
+    juju upgrade-gui releases/jujugui-$RELEASE.tar.bz2
     juju gui --show-credentials
     # Test, test test.
     juju destroy-controller aws --destroy-all-models -y
-
 
 Push to github
 --------------
 
 ::
 
+     popd
      git push --tags origin master
 
 
@@ -141,8 +145,10 @@ Merge changes to develop
 Update the release on github
 ----------------------------
 
-You can find the release on github at https://github.com/juju/juju-gui/releases/tag/<the newest tag>. Update the
-release notes with the entry from CHANGES.yaml. Upload the dist/jujugui-$RELEASE.tar.bz2 package as a binary.
+You can find the release on github at
+https://github.com/juju/juju-gui/releases/tag/<the newest tag>. Update the
+release notes with the entry from CHANGES.yaml. From the juju-gui-charm
+directory, upload the releases/jujugui-$RELEASE.tar.bz2 package as a binary.
 
 Congratulations! You've created a release of the juju gui. Depending on the reason for doing so,
 you may now need to update the charm as well. You can find it at
@@ -151,3 +157,10 @@ https://github.com/juju/juju-gui-charm; read through its release notes for the p
 Also, you may need to request a simplestreams update so that the new GUI release is made available
 to Juju 2 users by default. To do so, ping the QA team asking to include a new GUI release
 in the GUI simplestreams, and point them to the archive uploaded to github.
+
+
+Finish the charm release
+------------------------
+
+Follow the instructions in the juju-gui-charm RELEASE_PROCESS.md file to
+finish the charm release process.
