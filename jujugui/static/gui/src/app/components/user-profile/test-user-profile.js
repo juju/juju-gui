@@ -40,8 +40,8 @@ describe('UserProfile', () => {
   });
 
   it('renders a populated user profile page', () => {
+    const acl = {};
     const links = [];
-    const canCreateNew = true;
     const changeState = sinon.stub();
     const getDiagramURL = sinon.stub();
     const listBudgets = sinon.stub();
@@ -54,8 +54,8 @@ describe('UserProfile', () => {
     window.flags = {blues: true};
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
+        acl={acl}
         users={users}
-        canCreateNew={canCreateNew}
         charmstore={charmstore}
         getAgreements={getAgreements}
         getDiagramURL={getDiagramURL}
@@ -78,9 +78,9 @@ describe('UserProfile', () => {
     );
     const lists = [
       <juju.components.UserProfileModelList
+        acl={acl}
         ref="modelList"
         key="modelList"
-        canCreateNew={canCreateNew}
         currentModel={undefined}
         listModelsWithInfo={listModelsWithInfo}
         switchModel={switchModel}
@@ -140,7 +140,6 @@ describe('UserProfile', () => {
     const output = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         users={users}
-        canCreateNew={true}
         charmstore={{}}
         switchModel={sinon.stub()}
         listBudgets={sinon.stub()}
@@ -178,7 +177,6 @@ describe('UserProfile', () => {
         users={users}
         listBudgets={sinon.stub()}
         listModelsWithInfo={sinon.stub()}
-        canCreateNew={true}
         changeState={sinon.stub()}
         charmstore={charmstore}
         getAgreements={sinon.stub()}
@@ -195,7 +193,6 @@ describe('UserProfile', () => {
 
   it('skips the budget list when blues flag is inactive', () => {
     const addNotification = sinon.stub();
-    const canCreateNew = true;
     const changeState = sinon.stub();
     const getDiagramURL = sinon.stub();
     const listBudgets = sinon.stub();
@@ -208,7 +205,6 @@ describe('UserProfile', () => {
       <juju.components.UserProfile
         addNotification={addNotification}
         users={users}
-        canCreateNew={canCreateNew}
         charmstore={{}}
         getAgreements={getAgreements}
         getDiagramURL={getDiagramURL}
@@ -225,7 +221,6 @@ describe('UserProfile', () => {
   });
 
   it('skips the bundle and charm lists when not logged in', () => {
-    const canCreateNew = true;
     const changeState = sinon.stub();
     const getDiagramURL = sinon.stub();
     const listBudgets = sinon.stub();
@@ -235,7 +230,6 @@ describe('UserProfile', () => {
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
         users={{}}
-        canCreateNew={canCreateNew}
         charmstore={{}}
         getAgreements={getAgreements}
         getDiagramURL={getDiagramURL}

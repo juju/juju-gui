@@ -22,7 +22,7 @@ YUI.add('user-profile', function() {
 
   juju.components.UserProfile = React.createClass({
     propTypes: {
-      canCreateNew: React.PropTypes.bool.isRequired,
+      acl: React.PropTypes.object,
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
@@ -81,9 +81,9 @@ YUI.add('user-profile', function() {
       // these may be filtered down to a smaller list depending on the context.
       const lists = [
         <juju.components.UserProfileModelList
+          acl={props.acl}
           key='modelList'
           ref='modelList'
-          canCreateNew={props.canCreateNew}
           currentModel={props.currentModel}
           listModelsWithInfo={props.listModelsWithInfo}
           switchModel={props.switchModel}

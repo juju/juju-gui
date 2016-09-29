@@ -24,8 +24,8 @@ YUI.add('user-profile-model-list', function() {
     // broadcastStatus is necessary for communicating loading status back to
     // the parent SectionLoadWatcher.
     propTypes: {
+      acl: React.PropTypes.object,
       broadcastStatus: React.PropTypes.func,
-      canCreateNew: React.PropTypes.bool.isRequired,
       currentModel: React.PropTypes.string,
       listModelsWithInfo: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
@@ -209,17 +209,24 @@ YUI.add('user-profile-model-list', function() {
           </div>
         );
       }
-      const list = this.state.modelList;
-      if (!list || list.length === 0) {
-        return null;
-      }
-      const rows = list.map(this._generateRow);
       const props = this.props;
+      const acl = props.acl;
       let createNewButton;
-      if (props.canCreateNew) {
+      if (acl && acl.canAddModels()) {
         createNewButton = (
           <juju.components.CreateModelButton
             switchModel={this.switchModel} />
+        );
+      }
+      const list = this.state.modelList;
+      let content;
+      if (list && list.length > 0) {
+        const rows = list.map(this._generateRow);
+        content = (
+          <ul className="user-profile__list twelve-col">
+            {this._generateHeader()}
+            {rows}
+          </ul>
         );
       }
       return (
@@ -231,10 +238,7 @@ YUI.add('user-profile-model-list', function() {
             </span>
             {createNewButton}
           </div>
-          <ul className="user-profile__list twelve-col">
-            {this._generateHeader()}
-            {rows}
-          </ul>
+          {content}
         </div>
       );
     }

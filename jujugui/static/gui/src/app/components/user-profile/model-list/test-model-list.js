@@ -44,21 +44,37 @@ describe('UserProfileModelList', () => {
   });
 
   it('renders the empty state', () => {
-    var component = jsTestUtils.shallowRender(
+    const acl = {
+      canAddModels: () => true
+    };
+    const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
-        canCreateNew={false}
+        acl={acl}
         currentModel={'model1'}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, [])}
         switchModel={sinon.stub()}
         user={user} />, true);
-    var output = component.getRenderOutput();
-    assert.equal(output, null);
+    const instance = component.getMountedInstance();
+    const output = component.getRenderOutput();
+    const expected = (
+      <div className="user-profile__model-list">
+        <div className="user-profile__header twelve-col no-margin-bottom">
+          Models
+          <span className="user-profile__size">
+            ({0})
+          </span>
+          <juju.components.CreateModelButton
+            switchModel={instance.switchModel} />
+        </div>
+        {undefined}
+      </div>
+    );
+    assert.deepEqual(output, expected);
   });
 
   it('displays loading spinner when loading', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
-        canCreateNew={false}
         currentModel={'model1'}
         listModelsWithInfo={sinon.stub()}
         switchModel={sinon.stub()}
@@ -73,9 +89,12 @@ describe('UserProfileModelList', () => {
 
   it('renders a list of models', () => {
     var listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
+    const acl = {
+      canAddModels: () => true
+    };
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
-        canCreateNew={true}
+        acl={acl}
         currentModel={'model1'}
         listModelsWithInfo={listModelsWithInfo}
         switchModel={sinon.stub()}
@@ -146,7 +165,6 @@ describe('UserProfileModelList', () => {
     var listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
-        canCreateNew={false}
         currentModel={'model1'}
         listModelsWithInfo={listModelsWithInfo}
         switchModel={sinon.stub()}
@@ -168,7 +186,6 @@ describe('UserProfileModelList', () => {
     var listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
-        canCreateNew={true}
         currentModel={'model1'}
         listModelsWithInfo={listModelsWithInfo}
         switchModel={switchModel}
@@ -194,7 +211,6 @@ describe('UserProfileModelList', () => {
     var utilsSwitchModel = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
-        canCreateNew={true}
         listModelsWithInfo={sinon.stub()}
         switchModel={utilsSwitchModel}
         user={user} />, true);
@@ -208,9 +224,12 @@ describe('UserProfileModelList', () => {
   });
 
   it('can hide the create new model button', () => {
+    const acl = {
+      canAddModels: () => false
+    };
     var component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
-        canCreateNew={false}
+        acl={acl}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, models)}
         switchModel={sinon.stub()}
         user={user} />, true);
@@ -224,7 +243,6 @@ describe('UserProfileModelList', () => {
       {abort: listModelsWithInfoAbort});
     var renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
-        canCreateNew={false}
         currentModel={'model1'}
         listModelsWithInfo={listModelsWithInfo}
         switchModel={sinon.stub()}
@@ -238,7 +256,6 @@ describe('UserProfileModelList', () => {
     jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         broadcastStatus={broadcastStatus}
-        canCreateNew={false}
         currentModel={'model1'}
         listModelsWithInfo={sinon.stub()}
         switchModel={sinon.stub()}
@@ -251,7 +268,6 @@ describe('UserProfileModelList', () => {
     jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         broadcastStatus={broadcastStatus}
-        canCreateNew={false}
         currentModel={'model1'}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, models)}
         switchModel={sinon.stub()}
@@ -264,7 +280,6 @@ describe('UserProfileModelList', () => {
     jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         broadcastStatus={broadcastStatus}
-        canCreateNew={false}
         currentModel={'model1'}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, [])}
         switchModel={sinon.stub()}
@@ -277,7 +292,6 @@ describe('UserProfileModelList', () => {
     jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         broadcastStatus={broadcastStatus}
-        canCreateNew={false}
         currentModel={'model1'}
         listModelsWithInfo={sinon.stub().callsArgWith(0, 'bad wolf', [])}
         switchModel={sinon.stub()}
