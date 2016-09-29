@@ -209,15 +209,17 @@ YUI.add('user-profile-model-list', function() {
           </div>
         );
       }
-      const props = this.props;
-      const acl = props.acl;
       let createNewButton;
-      if (acl && acl.canAddModels()) {
-        createNewButton = (
-          <juju.components.CreateModelButton
-            switchModel={this.switchModel} />
-        );
-      }
+      // XXX kadams54 2016-09-29: ACL check disabled until
+      // https://bugs.launchpad.net/juju/+bug/1629089 is resolved.
+      //const props = this.props;
+      //const acl = props.acl;
+      //if (acl && acl.canAddModels()) {
+      createNewButton = (
+        <juju.components.CreateModelButton
+          switchModel={this.switchModel} />
+      );
+      //}
       const list = this.state.modelList;
       let content;
       if (list && list.length > 0) {

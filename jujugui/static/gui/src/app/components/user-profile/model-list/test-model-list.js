@@ -223,6 +223,9 @@ describe('UserProfileModelList', () => {
                  'UUID should not be defined');
   });
 
+  // XXX kadams54 2016-09-29: ACL check disabled until
+  // https://bugs.launchpad.net/juju/+bug/1629089 is resolved.
+  /*
   it('can hide the create new model button', () => {
     const acl = {
       canAddModels: () => false
@@ -236,6 +239,7 @@ describe('UserProfileModelList', () => {
     const output = component.getRenderOutput();
     assert.isUndefined(output.props.children[0].props.children[2]);
   });
+  */
 
   it('will abort the requests when unmounting', function() {
     const listModelsWithInfoAbort = sinon.stub();
