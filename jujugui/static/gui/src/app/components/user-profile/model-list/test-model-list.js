@@ -18,10 +18,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('UserProfileModelList', () => {
-  var models, user;
+  let models, user;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -73,13 +73,13 @@ describe('UserProfileModelList', () => {
   });
 
   it('displays loading spinner when loading', () => {
-    var component = jsTestUtils.shallowRender(
+    const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         currentModel={'model1'}
         listModelsWithInfo={sinon.stub()}
         switchModel={sinon.stub()}
         user={user} />, true);
-    var output = component.getRenderOutput();
+    const output = component.getRenderOutput();
     assert.deepEqual(output, (
       <div className="user-profile__model-list twelve-col">
         <juju.components.Spinner />
@@ -88,20 +88,20 @@ describe('UserProfileModelList', () => {
   });
 
   it('renders a list of models', () => {
-    var listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
+    const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     const acl = {
       canAddModels: () => true
     };
-    var component = jsTestUtils.shallowRender(
+    const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         acl={acl}
         currentModel={'model1'}
         listModelsWithInfo={listModelsWithInfo}
         switchModel={sinon.stub()}
         user={user} />, true);
-    var instance = component.getMountedInstance();
-    var output = component.getRenderOutput();
-    var expected = (
+    const instance = component.getMountedInstance();
+    const output = component.getRenderOutput();
+    const expected = (
       <div className="user-profile__model-list">
         <div className="user-profile__header twelve-col no-margin-bottom">
           Models
@@ -162,16 +162,16 @@ describe('UserProfileModelList', () => {
 
   it('can render models that are being destroyed', () => {
     models[0].isAlive = false;
-    var listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
-    var component = jsTestUtils.shallowRender(
+    const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
+    const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         currentModel={'model1'}
         listModelsWithInfo={listModelsWithInfo}
         switchModel={sinon.stub()}
         user={user} />, true);
-    var output = component.getRenderOutput();
-    var content = output.props.children[1].props.children[1][0];
-    var expected = (
+    const output = component.getRenderOutput();
+    const content = output.props.children[1].props.children[1][0];
+    const expected = (
       <li className="user-profile__entity user-profile__list-row"
         key="model1">
         {'spinach/sandbox'} is being destroyed.
@@ -182,15 +182,15 @@ describe('UserProfileModelList', () => {
   it('switches models when calling switchModel method passed to list', () => {
     // This method is passed down to child components and called from there.
     // We are just calling it directly here to unit test the method.
-    var switchModel = sinon.stub();
-    var listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
-    var component = jsTestUtils.shallowRender(
+    const switchModel = sinon.stub();
+    const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
+    const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         currentModel={'model1'}
         listModelsWithInfo={listModelsWithInfo}
         switchModel={switchModel}
         user={user} />, true);
-    var instance = component.getMountedInstance();
+    const instance = component.getMountedInstance();
     // Call the method that's passed down. We test that this method is
     // correctly passed down in the initial 'happy path' full rendering test.
     instance.switchModel('abc123', 'modelname');
@@ -208,17 +208,17 @@ describe('UserProfileModelList', () => {
   });
 
   it('can reset the model connection', () => {
-    var utilsSwitchModel = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const utilsSwitchModel = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         listModelsWithInfo={sinon.stub()}
         switchModel={utilsSwitchModel}
         user={user} />, true);
-    var instance = renderer.getMountedInstance();
+    const instance = renderer.getMountedInstance();
     instance.switchModel();
     assert.equal(utilsSwitchModel.callCount, 1,
                  'Model disconnect not called');
-    var switchArgs = utilsSwitchModel.args[0];
+    const switchArgs = utilsSwitchModel.args[0];
     assert.equal(switchArgs[0], undefined,
                  'UUID should not be defined');
   });
@@ -227,21 +227,21 @@ describe('UserProfileModelList', () => {
     const acl = {
       canAddModels: () => false
     };
-    var component = jsTestUtils.shallowRender(
+    const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         acl={acl}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, models)}
         switchModel={sinon.stub()}
         user={user} />, true);
-    var output = component.getRenderOutput();
+    const output = component.getRenderOutput();
     assert.isUndefined(output.props.children[0].props.children[2]);
   });
 
   it('will abort the requests when unmounting', function() {
-    var listModelsWithInfoAbort = sinon.stub();
-    var listModelsWithInfo = sinon.stub().returns(
+    const listModelsWithInfoAbort = sinon.stub();
+    const listModelsWithInfo = sinon.stub().returns(
       {abort: listModelsWithInfoAbort});
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         currentModel={'model1'}
         listModelsWithInfo={listModelsWithInfo}
@@ -252,7 +252,7 @@ describe('UserProfileModelList', () => {
   });
 
   it('broadcasts starting status', function() {
-    var broadcastStatus = sinon.stub();
+    const broadcastStatus = sinon.stub();
     jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         broadcastStatus={broadcastStatus}
@@ -264,7 +264,7 @@ describe('UserProfileModelList', () => {
   });
 
   it('broadcasts ok status', function() {
-    var broadcastStatus = sinon.stub();
+    const broadcastStatus = sinon.stub();
     jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         broadcastStatus={broadcastStatus}
@@ -276,7 +276,7 @@ describe('UserProfileModelList', () => {
   });
 
   it('broadcasts empty status', function() {
-    var broadcastStatus = sinon.stub();
+    const broadcastStatus = sinon.stub();
     jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         broadcastStatus={broadcastStatus}
@@ -288,7 +288,7 @@ describe('UserProfileModelList', () => {
   });
 
   it('broadcasts error status', function() {
-    var broadcastStatus = sinon.stub();
+    const broadcastStatus = sinon.stub();
     jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         broadcastStatus={broadcastStatus}
