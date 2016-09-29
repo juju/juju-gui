@@ -74,6 +74,7 @@ def config(request):
     env_uuid = settings.get('jujugui.uuid', 'sandbox')
 
     charmstore_macaroons = settings.get('jujugui.charmstore_macaroons')
+    discharge_token = settings.get('jujugui.discharge_token')
     plans_macaroons = settings.get('jujugui.plans_macaroons')
     terms_macaroons = settings.get('jujugui.terms_macaroons')
 
@@ -104,6 +105,7 @@ def config(request):
         'plansURL': settings['jujugui.plans_url'],
         'termsURL': settings['jujugui.terms_url'],
         # Any provided macaroons.
+        'dischargeToken': discharge_token,
         'charmstoreMacaroons': charmstore_macaroons,
         'plansMacaroons': plans_macaroons,
         'termsMacaroons': terms_macaroons,
