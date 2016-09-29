@@ -959,7 +959,6 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.UserProfile
           acl={this.acl}
-          canCreateNew={this.env.get('connected')}
           currentModel={this.get('modelUUID')}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listModelsWithInfo={
