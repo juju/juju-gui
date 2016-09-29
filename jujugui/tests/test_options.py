@@ -41,7 +41,7 @@ class TestUpdate(unittest.TestCase):
         expected_settings = {
             'jujugui.auth': 'blob',
             'jujugui.base_url': '/another/url',
-            'jujugui.bundleservice_url': 'https://bundleservice',
+            'jujugui.bundleservice_url': 'https://1.2.3.4/bundleservice',
             'jujugui.charmstore_url': 'https://1.2.3.4/api/',
             'jujugui.combine': True,
             'jujugui.gisf': True,
@@ -62,7 +62,7 @@ class TestUpdate(unittest.TestCase):
         settings = {
             'jujugui.auth': 'blob',
             'jujugui.base_url': '/another/url',
-            'jujugui.bundleservice_url': 'https://bundleservice',
+            'jujugui.bundleservice_url': 'https://1.2.3.4/bundleservice',
             'jujugui.charmstore_url': 'https://1.2.3.4/api/',
             'jujugui.combine': 'true',
             'jujugui.gisf': True,

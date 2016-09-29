@@ -2384,7 +2384,7 @@ YUI.add('juju-env-api', function(Y) {
           .getBundleChangesFromYAML(
             bundleYAML,
             (error, bundleChanges) => {
-              callback({errors: error, changes: bundleChanges.changes});
+              callback({errors: error, changes: bundleChanges});
             });
     },
 
