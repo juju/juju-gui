@@ -199,11 +199,12 @@ YUI.add('juju-env-sandbox', function(Y) {
 
   GoJujuAPI.NAME = 'sandbox-go-juju-api';
   GoJujuAPI.ATTRS = {
-    state: {},
-    socket_url: {},
+    bundleService: {},
     client: {},
+    deltaInterval: {value: 1000}, // In milliseconds.
     nextRequestId: {}, // The current outstanding "Next" RPC call ID.
-    deltaInterval: {value: 1000} // In milliseconds.
+    socket_url: {},
+    state: {}
   };
 
   Y.extend(GoJujuAPI, Y.Base, {
@@ -1485,76 +1486,15 @@ YUI.add('juju-env-sandbox', function(Y) {
       @param {Object} state An instance of FakeBackend.
     */
     handleClientGetBundleChanges: function(data, client, state) {
-      // The getBundleChanges functionality still needs to be possible when
-      // deployed via charm and in sandbox mode.
-      // TODO frankban: use the new external service to get bundle changes.
-      var ws = new jujulib.ReconnectingWebSocket(this.get('socket_url'));
-      ws.onopen = this._changeSetWsOnOpen.bind(this, ws, data);
-      ws.onmessage = this._changeSetWsOnMessage.bind(this, ws, data, client);
-      // Because it's possible (and likely) that a user will drop a charm while
-      // the GUI is not deployed with a reference to the bundle lib we need to
-      // bail and throw an error after trying a few times. We try a few times
-      // in the event of a poor connection.
-      ws.onerror = this._changeSetWsOnError.bind(this, ws, data, client);
-    },
-
-    /**
-      Websocket on open handler.
-
-      @method _changeSetWsOnOpen
-      @param {Object} ws Reference to the reconnecting WebSocket instance.
-      @param {Object} data The contents of the API arguments.
-    */
-    _changeSetWsOnOpen: function(ws, data) {
-      ws.send(JSON.stringify(data));
-    },
-
-    /**
-      Track the failure times so that we can notify to the user that we cannot
-      connect to the charm or bundle lib.
-
-      @method _changeSetWsOnError
-      @param {Object} ws Reference to the reconnecting WebSocket instance.
-      @param {Object} data The contents of the API arguments.
-      @param {Object} client The active ClientConnection.
-      @param {Object} response The websocket response.
-    */
-    _changeSetWsOnError: function(ws, data, client, response) {
-      this.wsFailureCount += 1;
-      if (this.wsFailureCount === 3) {
-        // Disconnect and bail if we have had three failures.
-        ws.close();
-        this._basicReceive(data, client, {
-          error: 'Unable to connect to bundle processor.'
-        });
-      }
-    },
-
-    /**
-      Websocket on message handler.
-
-      @method _changeSetWsOnMessage
-      @param {Object} ws Reference to the reconnecting WebSocket instance.
-      @param {Object} data The contents of the API arguments.
-      @param {Object} client The active ClientConnection.
-      @param {Object} response The WebSocket response.
-    */
-    _changeSetWsOnMessage: function(ws, data, client, response) {
-      var responseData = JSON.parse(response.data);
-      if (responseData.Error === 'not implemented (sandbox mode)') {
-        // We requested an endpoint not implemented by the GUI server in
-        // sandbox mode. For instance, a Juju Client.GetBundleChanges has been
-        // issued and cannot be handled. Let callers be notified of this
-        // failure in the way they expect from juju-core.
-        responseData['error-code'] = 'not implemented';
-      }
-      client.receive({
-        'request-id': data['request-id'],
-        error: responseData.Error,
-        'error-code': responseData.ErrorCode,
-        response: responseData.Response
-      });
-      ws.close();
+      this.get('bundleService').getBundleChangesFromYAML(
+        data.params.yaml, (error, bundleChanges) => {
+          client.receive({
+            'request-id': data['request-id'],
+            error: error,
+            response: bundleChanges
+          });
+        }
+      );
     }
 
   });
