@@ -102,7 +102,7 @@ YUI.add('expanding-row', function() {
           };
         } else {
           styles.styles = {
-            'max-height': '10000px',
+            maxHeight: '10000px',
             opacity: 1
           };
         }
