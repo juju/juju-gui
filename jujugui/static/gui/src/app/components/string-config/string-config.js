@@ -50,6 +50,15 @@ YUI.add('string-config', function() {
     },
 
     /**
+      Get the value of the field.
+
+      @method getValue
+    */
+    getValue: function() {
+      return this.state.value;
+    },
+
+    /**
       When the value is updated in the input element then update the state
       with its innerText.
 
@@ -69,7 +78,9 @@ YUI.add('string-config', function() {
         {'string-config--disabled': disabled});
       return (
         <div className="string-config">
-          <span>{this.props.option.key}{typeString}</span>
+          <span className="string-config__label">
+            {this.props.option.key}{typeString}
+          </span>
           <div
             className={classes}
             contentEditable={!disabled}

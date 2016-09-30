@@ -66,7 +66,11 @@ YUI.add('deployment-credential-add', function() {
       const info = this._getInfo();
       const fields = {};
       info.forms[this.state.authType].forEach(field => {
-        fields[field.id] = this.refs[field.id].getValue();
+        let value = this.refs[field.id].getValue();
+        if (field.unescape) {
+          value = decodeURIComponent(value.replace(/\\n/g, '\n'));
+        }
+        fields[field.id] = value;
       });
       return fields;
     },
@@ -183,10 +187,24 @@ YUI.add('deployment-credential-add', function() {
       const fields = info.forms[this.state.authType].map(field => {
         if (field.json) {
           return (
-            <div className="deployment-credential-add__upload twelve-col"
+            <div className="deployment-credential-add__upload"
               key={field.id}>
-              Upload {info.title} auth-file.
+              <juju.components.FileField
+                accept=".json"
+                disabled={isReadOnly}
+                key={field.id}
+                label={`Upload ${info.title} .json auth-file`}
+                required={true}
+                ref={field.id} />
             </div>);
+        }
+        if (field.multiLine) {
+          return (
+            <juju.components.StringConfig
+              disabled={isReadOnly}
+              key={field.id}
+              option={{key: field.title}}
+              ref={field.id} />);
         }
         return (
           <juju.components.GenericInput
@@ -316,8 +334,10 @@ YUI.add('deployment-credential-add', function() {
 }, '0.1.0', {
   requires: [
     'button-row',
+    'file-field',
     'generic-input',
     'inset-select',
+    'string-config',
     'svg-icon'
   ]
 });

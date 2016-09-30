@@ -1,0 +1,21 @@
+.file-field {
+    &__label {
+        font-size: 0.688em;
+    }
+
+    &__field[type=file] {
+        margin-bottom: 20px;
+    }
+
+    &__errors {
+        @extend %list-style;
+        margin: -10px 0 30px 0;
+    }
+
+    &__error {
+        padding: 10px 20px;
+        background-color: $error;
+        border-radius: $border-radius;
+        color: $white;
+    }
+}
