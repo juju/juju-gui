@@ -66,12 +66,21 @@ describe('ExpandingRow', () => {
     instance.refs = {inner: {offsetHeight: 10}};
     output.props.onClick();
     output = renderer.getRenderOutput();
-    var expected = (
+    const expected = (
       <li className={
           'expanding-row twelve-col expanding-row--expanded ' +
           'expanding-row--clickable'}
         onClick={instance._toggle}>
-        {output.props.children}
+        <div className="expanding-row__initial twelve-col no-margin-bottom">
+          <span>closed</span>
+        </div>
+        <div className="expanding-row__expanded twelve-col"
+          style={{maxHeight: '10000px', opacity: 1}}>
+          <div className="twelve-col no-margin-bottom"
+            ref="inner">
+            <span>open</span>
+          </div>
+        </div>
       </li>);
     assert.deepEqual(output, expected);
   });
