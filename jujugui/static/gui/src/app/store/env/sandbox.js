@@ -1491,7 +1491,7 @@ YUI.add('juju-env-sandbox', function(Y) {
           client.receive({
             'request-id': data['request-id'],
             error: error,
-            response: bundleChanges
+            response: {changes: bundleChanges}
           });
         }
       );
