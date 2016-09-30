@@ -92,13 +92,21 @@ YUI.add('expanding-row', function() {
       @method _toggle
     */
     _toggle: function() {
-      var expanded = this.state.expanded;
+      const expanded = this.state.expanded;
       this.setState({expanded: !expanded}, () => {
-        var newHeight = expanded ? '0px' : this.refs.inner.offsetHeight + 'px';
-        this.setState({styles: {
-          height: newHeight,
-          opacity: expanded ? 0 : 1
-        }});
+        let styles = {};
+        if (expanded) {
+          styles.styles = {
+            height: '0px',
+            opacity: 0
+          };
+        } else {
+          styles.styles = {
+            'max-height': '10000px',
+            opacity: 1
+          };
+        }
+        this.setState(styles);
       });
     },
 
