@@ -68,7 +68,7 @@ YUI.add('deployment-credential-add', function() {
       info.forms[this.state.authType].forEach(field => {
         let value = this.refs[field.id].getValue();
         if (field.unescape) {
-          value = decodeURIComponent(value.replace('\\n', '\n'));
+          value = decodeURIComponent(value.replace(/\\n/g, '\n'));
         }
         fields[field.id] = value;
       });
