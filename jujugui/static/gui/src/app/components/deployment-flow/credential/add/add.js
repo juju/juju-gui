@@ -185,7 +185,13 @@ YUI.add('deployment-credential-add', function() {
           return (
             <div className="deployment-credential-add__upload twelve-col"
               key={field.id}>
-              Upload {info.title} auth-file.
+              <juju.components.FileField
+                accept=".json"
+                disabled={isReadOnly}
+                key={field.id}
+                label={`Upload ${info.title} .json auth-file`}
+                required={true}
+                ref={field.id} />
             </div>);
         }
         return (
@@ -316,6 +322,7 @@ YUI.add('deployment-credential-add', function() {
 }, '0.1.0', {
   requires: [
     'button-row',
+    'file-field',
     'generic-input',
     'inset-select',
     'svg-icon'
