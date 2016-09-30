@@ -56,6 +56,11 @@ YUI.add('deployment-flow', function() {
         svgWidth: 256,
         title: 'Google Compute Engine',
         forms: {
+          jsonfile: [{
+            id: 'file',
+            title: 'Google Compute Engine project credentials .json file',
+            json: true
+          }],
           oauth2: [{
             id: 'client-id',
             title: 'Client ID'
@@ -64,15 +69,12 @@ YUI.add('deployment-flow', function() {
             title: 'Client e-mail address'
           }, {
             id: 'private-key',
-            title: 'Client secret'
+            title: 'Private key',
+            multiLine: true,
+            unescape: true
           }, {
             id: 'project-id',
             title: 'Project ID'
-          }],
-          jsonfile: [{
-            id: 'file',
-            title: 'Google Compute Engine project credentials .json file',
-            json: true
           }]
         },
         message: (
@@ -434,7 +436,11 @@ YUI.add('deployment-flow', function() {
     _validateForm: function(fields, refs) {
       var formValid = true;
       fields.forEach(field => {
-        var valid = refs[field].validate();
+        const ref = refs[field];
+        if (!ref || !ref.validate) {
+          return;
+        }
+        var valid = ref.validate();
         // If there is an error then mark that. We don't want to exit the loop
         // at this point so that each field gets validated.
         if (!valid) {

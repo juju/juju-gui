@@ -50,7 +50,9 @@ describe('DeploymentCredentialAdd', function() {
             title: 'Client e-mail address'
           }, {
             id: 'private-key',
-            title: 'Client secret'
+            title: 'Private key',
+            multiLine: true,
+            unescape: true
           }, {
             id: 'project-id',
             title: 'Project ID'
@@ -165,16 +167,11 @@ describe('DeploymentCredentialAdd', function() {
                   regex: /\S+/,
                   error: 'This field is required.'
                 }]} />,
-              <juju.components.GenericInput
+              <juju.components.StringConfig
                 disabled={false}
-                key="private-key"
-                label="Client secret"
-                required={true}
-                ref="private-key"
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />,
+                key={"private-key"}
+                option={{key: 'Private key'}}
+                ref={"private-key"} />,
               <juju.components.GenericInput
                 disabled={false}
                 key="project-id"
@@ -313,16 +310,11 @@ describe('DeploymentCredentialAdd', function() {
                   regex: /\S+/,
                   error: 'This field is required.'
                 }]} />,
-              <juju.components.GenericInput
+              <juju.components.StringConfig
                 disabled={false}
-                key="private-key"
-                label="Client secret"
-                required={true}
-                ref="private-key"
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />,
+                key={"private-key"}
+                option={{key: 'Private key'}}
+                ref={"private-key"} />,
               <juju.components.GenericInput
                 disabled={false}
                 key="project-id"
@@ -442,10 +434,17 @@ describe('DeploymentCredentialAdd', function() {
                   label: 'jsonfile',
                   value: 'jsonfile'
                 }]} />
-              {[<div className="deployment-credential-add__upload twelve-col"
-                key="file">
-                Upload {'Google Compute Engine'} auth-file.
-              </div>]}
+                {[
+                  <div className="deployment-credential-add__upload" key="file">
+                    <juju.components.FileField
+                      accept=".json"
+                      disabled={false}
+                      key="file"
+                      label="Upload Google Compute Engine .json auth-file"
+                      required={true}
+                      ref="file" />
+                  </div>
+                ]}
             </div>
             <div className="deployment-flow__notice six-col last-col">
               <p className="deployment-flow__notice-content">
@@ -575,16 +574,11 @@ describe('DeploymentCredentialAdd', function() {
                   regex: /\S+/,
                   error: 'This field is required.'
                 }]} />,
-              <juju.components.GenericInput
+              <juju.components.StringConfig
                 disabled={true}
-                key="private-key"
-                label="Client secret"
-                required={true}
-                ref="private-key"
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />,
+                key={"private-key"}
+                option={{key: 'Private key'}}
+                ref={"private-key"} />,
               <juju.components.GenericInput
                 disabled={true}
                 key="project-id"
@@ -677,6 +671,51 @@ describe('DeploymentCredentialAdd', function() {
     });
     assert.equal(getCredentials.callCount, 1);
     assert.equal(getCredentials.args[0][0], 'new@test');
+  });
+
+  it('properly unescapes necessary fields', function() {
+    const updateCloudCredential = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+    <juju.components.DeploymentCredentialAdd
+        acl={acl}
+        updateCloudCredential={updateCloudCredential}
+        close={sinon.stub()}
+        cloud={{name: 'google'}}
+        clouds={clouds}
+        generateCloudCredentialName={sinon.stub()}
+        getCredentials={sinon.stub()}
+        regions={[{name: 'test-region'}]}
+        setCredential={sinon.stub()}
+        setRegion={sinon.stub()}
+        user="user-admin"
+        validateForm={sinon.stub().returns(true)} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.setState({authType: 'oauth2'});
+    instance.refs = {
+      'credentialName': {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('new@test')
+      },
+      'client-id': {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('client id')
+      },
+      'client-email': {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('client email')
+      },
+      'private-key': {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('foo%20\\n')
+      },
+      'project-id': {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('project id')
+      }
+    };
+    instance._handleAddCredentials();
+    assert.equal(updateCloudCredential.callCount, 1);
+    assert.equal(updateCloudCredential.args[0][2]['private-key'], 'foo \n');
   });
 
   it('does not submit the form if there are validation errors', function() {

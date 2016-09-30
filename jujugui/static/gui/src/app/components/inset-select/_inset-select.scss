@@ -4,6 +4,7 @@
     background-color: $white;
     border: 1px solid $light-mid-grey;
     border-radius: $border-radius;
+    width: calc(100% - 20px);
 
     &__label {
         padding-left: $padding;
@@ -16,6 +17,7 @@
         border: none;
         border-radius: 0;
         box-shadow: none;
+        line-height: 17px;
     }
 
     &--disabled {
