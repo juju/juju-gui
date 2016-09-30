@@ -70,7 +70,8 @@ YUI.add('deployment-flow', function() {
           }, {
             id: 'private-key',
             title: 'Private key',
-            multiLine: true
+            multiLine: true,
+            unescape: true
           }, {
             id: 'project-id',
             title: 'Project ID'

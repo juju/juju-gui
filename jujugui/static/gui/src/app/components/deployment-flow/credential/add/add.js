@@ -66,7 +66,11 @@ YUI.add('deployment-credential-add', function() {
       const info = this._getInfo();
       const fields = {};
       info.forms[this.state.authType].forEach(field => {
-        fields[field.id] = this.refs[field.id].getValue();
+        let value = this.refs[field.id].getValue();
+        if (field.unescape) {
+          value = unescape(value);
+        }
+        fields[field.id] = value;
       });
       return fields;
     },
@@ -199,7 +203,7 @@ YUI.add('deployment-credential-add', function() {
             <juju.components.StringConfig
               disabled={isReadOnly}
               key={field.id}
-              option={{key: info.title}}
+              option={{key: field.title}}
               ref={field.id} />);
         }
         return (
