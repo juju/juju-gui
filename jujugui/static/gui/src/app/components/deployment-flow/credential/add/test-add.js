@@ -50,7 +50,7 @@ describe('DeploymentCredentialAdd', function() {
             title: 'Client e-mail address'
           }, {
             id: 'private-key',
-            title: 'Client secret',
+            title: 'Private key',
             multiLine: true,
             unescape: true
           }, {
@@ -170,7 +170,7 @@ describe('DeploymentCredentialAdd', function() {
               <juju.components.StringConfig
                 disabled={false}
                 key={"private-key"}
-                option={{key: 'Client secret'}}
+                option={{key: 'Private key'}}
                 ref={"private-key"} />,
               <juju.components.GenericInput
                 disabled={false}
@@ -313,7 +313,7 @@ describe('DeploymentCredentialAdd', function() {
               <juju.components.StringConfig
                 disabled={false}
                 key={"private-key"}
-                option={{key: 'Client secret'}}
+                option={{key: 'Private key'}}
                 ref={"private-key"} />,
               <juju.components.GenericInput
                 disabled={false}
@@ -577,7 +577,7 @@ describe('DeploymentCredentialAdd', function() {
               <juju.components.StringConfig
                 disabled={true}
                 key={"private-key"}
-                option={{key: 'Client secret'}}
+                option={{key: 'Private key'}}
                 ref={"private-key"} />,
               <juju.components.GenericInput
                 disabled={true}
