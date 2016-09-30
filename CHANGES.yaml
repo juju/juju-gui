@@ -1,3 +1,26 @@
+- 2.2.0:
+
+    - >
+      The Juju 2.0 controller was built with multi-user, multi-model
+      functionality in mind. To provide the best user experience we are
+      introducing new and enhanced model management in this release. This
+      new experience allows you to create new models, select which region to
+      deploy to, add new credentials, and choose which credentials to use when
+      deploying to new models.
+    - >
+      Add Bundle Service support. This feature allows the GUI to use the
+      external Bundle Service to import bundles when the bundle lib in Juju
+      is not available, such as when in a sandbox or unconnected mode.
+    - >
+      Add version.json asset which contains the version number and git sha used
+      to build the GUI. To access this file visit the following path replacing
+      the necessary values:
+      <host>/gui/<controllerUUID>/<modelUUID>/static/gui/build/app/version.json
+    - (Fix) Logging in via USSO when you have no models.
+    - (Fix) Update relation list when removing uncommitted subordinate relation.
+    - (Fix) No clouds result when listing clouds.
+    - (Fix) Switch between unconnected state to connected state.
+
 - 2.1.13:
 
     - Login logic improved to support sequential controller and model access.
