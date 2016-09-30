@@ -1312,7 +1312,7 @@ YUI.add('juju-gui', function(Y) {
             addCharm={this.env.addCharm.bind(this.env)}
             displayPlans={utils.compareSemver(
               this.get('jujuCoreVersion'), '2') > -1}
-            modelUUID={this.get('modelUUID')}
+            modelUUID={this.get('modelUUID') || ''}
             showActivePlan={this.plans.showActivePlan.bind(this.plans)}
             setCharm={this.env.setCharm.bind(this.env)}
             getCharm={this.env.get_charm.bind(this.env)}
@@ -2314,7 +2314,7 @@ YUI.add('juju-gui', function(Y) {
       @method onEnvironmentNameChange
     */
     onEnvironmentNameChange: function(evt) {
-      var environmentName = evt.newVal || 'untitled_model';
+      var environmentName = evt.newVal || 'untitled-model';
       // Update the name on the current model. This is what the components use
       // to display the model name.
       this.db.environment.set('name', environmentName);

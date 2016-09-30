@@ -442,10 +442,17 @@ describe('DeploymentCredentialAdd', function() {
                   label: 'jsonfile',
                   value: 'jsonfile'
                 }]} />
-              {[<div className="deployment-credential-add__upload twelve-col"
-                key="file">
-                Upload {'Google Compute Engine'} auth-file.
-              </div>]}
+                {[
+                  <div className="deployment-credential-add__upload" key="file">
+                    <juju.components.FileField
+                      accept=".json"
+                      disabled={false}
+                      key="file"
+                      label="Upload Google Compute Engine .json auth-file"
+                      required={true}
+                      ref="file" />
+                  </div>
+                ]}
             </div>
             <div className="deployment-flow__notice six-col last-col">
               <p className="deployment-flow__notice-content">

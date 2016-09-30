@@ -44,7 +44,7 @@ describe('StringConfig', function() {
     var typeString = ` (${option.type})`;
     var expected = (
       <div className="string-config">
-        <span>{option.key}{typeString}</span>
+        <span className="string-config__label">{option.key}{typeString}</span>
         <div
           className="string-config--value"
           contentEditable={true}

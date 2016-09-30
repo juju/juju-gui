@@ -36,6 +36,7 @@ YUI.add('file-field', function() {
     },
 
     getInitialState: function() {
+      this.ready = true;
       return {
         errors: null,
         contents: null
@@ -52,9 +53,14 @@ YUI.add('file-field', function() {
       let components;
       if (this.props.required && this.refs.field.files.length === 0) {
         errors.push(
-          <li className="file-field__error"
-            key="required">
+          <li className="file-field__error" key="required">
             This field is required.
+          </li>);
+      }
+      if (!this.ready) {
+        errors.push(
+          <li className="file-field__error" key="partial-upload">
+            File upload is not completed.
           </li>);
       }
       if (errors.length > 0) {
@@ -90,21 +96,36 @@ YUI.add('file-field', function() {
     },
 
     /**
+      Set up and return a new file reader.
+
+      @method _newFileReader
+      @return {FileReader} The file reader.
+    */
+    _newFileReader: function() {
+      const reader = new FileReader();
+      reader.onload = evt => {
+        // TODO frankban: handle errors.
+        this.setState({contents: evt.target.result});
+        this.ready = true;
+      };
+      return reader;
+    },
+
+    /**
       Handle uploading the file and getting the value.
 
       @method _handleFileChange
     */
     _handleFileChange: function() {
-      const reader = new FileReader();
+      this.ready = false;
+      const reader = this._newFileReader();
       const file = this.refs.field.files[0];
-      reader.onload = e => {
-        this.setState({contents: e.target.result});
-      };
       reader.readAsText(file);
     },
 
     /**
       Generates a label for the input if the prop is provided.
+
       @method _generateLabel
     */
     _generateLabel: function() {
@@ -124,7 +145,11 @@ YUI.add('file-field', function() {
       };
     },
 
+    /**
+      Render the component.
 
+      @method render
+    */
     render: function() {
       const {labelElement, id} = this._generateLabel();
       const classes = classNames(
@@ -149,5 +174,4 @@ YUI.add('file-field', function() {
     }
   });
 
-}, '0.1.0', { requires: [
-]});
+}, '0.1.0', { requires: []});

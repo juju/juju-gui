@@ -23,7 +23,7 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-fdescribe('FileField', function() {
+describe('FileField', function() {
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -58,16 +58,35 @@ fdescribe('FileField', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('can return the field value', () => {
-    var renderer = jsTestUtils.shallowRender(
+  it('can return the field value', done => {
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.FileField
         accept=".json"
         disabled={false}
         label="Dingo"
         required={true} />, true);
-    var instance = renderer.getMountedInstance();
-    instance.refs = {field: {value: 'default'}};
-    assert.equal(instance.getValue(), 'default');
+    const instance = renderer.getMountedInstance();
+    // Patch the file reader factory used to create the JSON file reader.
+    const reader = instance._newFileReader();
+    const original = instance._newFileReader;
+    instance._newFileReader = () => {
+      return reader;
+    };
+    const onload = reader.onload;
+    reader.onload = evt => {
+      // Restore the original reader factory.
+      instance._newFileReader = original;
+      // While loading, the field is not yet ready.
+      assert.strictEqual(instance.ready, false);
+      onload(evt);
+      // After loading, the field is ready.
+      assert.strictEqual(instance.ready, true);
+      assert.strictEqual(instance.getValue(), 'these are the voyages');
+      done();
+    };
+    const file = new Blob(['these are the voyages']);
+    instance.refs = {field: {files: [file]}};
+    instance.validate();
   });
 
   it('can validate the form', () => {
