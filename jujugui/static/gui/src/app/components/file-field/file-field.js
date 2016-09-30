@@ -48,8 +48,8 @@ YUI.add('file-field', function() {
       @method validate
     */
     validate: function() {
-      var errors = [];
-      var components;
+      const errors = [];
+      let components;
       if (this.props.required && this.refs.field.files.length === 0) {
         errors.push(
           <li className="file-field__error"
@@ -108,8 +108,8 @@ YUI.add('file-field', function() {
       @method _generateLabel
     */
     _generateLabel: function() {
-      var label = this.props.label;
-      var element, id;
+      const label = this.props.label;
+      let element, id;
       if (label) {
         id = label.replace(' ', '-');
         element =
@@ -126,8 +126,8 @@ YUI.add('file-field', function() {
 
 
     render: function() {
-      var {labelElement, id} = this._generateLabel();
-      var classes = classNames(
+      const {labelElement, id} = this._generateLabel();
+      const classes = classNames(
         'file-field', {
           error: !!this.state.errors
         }

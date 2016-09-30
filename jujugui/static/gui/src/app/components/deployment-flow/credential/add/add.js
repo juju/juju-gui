@@ -183,7 +183,7 @@ YUI.add('deployment-credential-add', function() {
       const fields = info.forms[this.state.authType].map(field => {
         if (field.json) {
           return (
-            <div className="deployment-credential-add__upload twelve-col"
+            <div className="deployment-credential-add__upload"
               key={field.id}>
               <juju.components.FileField
                 accept=".json"
@@ -193,6 +193,14 @@ YUI.add('deployment-credential-add', function() {
                 required={true}
                 ref={field.id} />
             </div>);
+        }
+        if (field.multiLine) {
+          return (
+            <juju.components.StringConfig
+              disabled={isReadOnly}
+              key={field.id}
+              option={{key: info.title}}
+              ref={field.id} />);
         }
         return (
           <juju.components.GenericInput
@@ -325,6 +333,7 @@ YUI.add('deployment-credential-add', function() {
     'file-field',
     'generic-input',
     'inset-select',
+    'string-config',
     'svg-icon'
   ]
 });

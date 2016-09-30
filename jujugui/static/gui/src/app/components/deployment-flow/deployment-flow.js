@@ -69,7 +69,8 @@ YUI.add('deployment-flow', function() {
             title: 'Client e-mail address'
           }, {
             id: 'private-key',
-            title: 'Private key'
+            title: 'Private key',
+            multiLine: true
           }, {
             id: 'project-id',
             title: 'Project ID'
@@ -434,7 +435,11 @@ YUI.add('deployment-flow', function() {
     _validateForm: function(fields, refs) {
       var formValid = true;
       fields.forEach(field => {
-        var valid = refs[field].validate();
+        const ref = refs[field];
+        if (!ref || !ref.validate) {
+          return;
+        }
+        var valid = ref.validate();
         // If there is an error then mark that. We don't want to exit the loop
         // at this point so that each field gets validated.
         if (!valid) {
