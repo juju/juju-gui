@@ -81,9 +81,7 @@ describe('DeploymentCredentialAdd', function() {
         clouds={clouds}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
-        regions={[{name: 'test-region'}]}
         setCredential={sinon.stub()}
-        setRegion={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
@@ -102,7 +100,7 @@ describe('DeploymentCredentialAdd', function() {
           </a>
         </div>
         <form className="twelve-col">
-          <div className="six-col">
+          <div className="six-col last-col">
             <juju.components.GenericInput
               disabled={false}
               label="Project ID (credential name)"
@@ -118,17 +116,6 @@ describe('DeploymentCredentialAdd', function() {
                   'letters, numbers, and hyphens. It must not start or ' +
                   'end with a hyphen.'
               }]} />
-          </div>
-          <div className="six-col last-col">
-            <juju.components.InsetSelect
-              disabled={false}
-              label="Region"
-              options={[{
-                label: 'test-region',
-                value: 'test-region'
-              }]}
-              ref="region"
-              value={undefined} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -224,9 +211,7 @@ describe('DeploymentCredentialAdd', function() {
         clouds={clouds}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
-        regions={[{name: 'test-region'}]}
         setCredential={sinon.stub()}
-        setRegion={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
@@ -245,7 +230,7 @@ describe('DeploymentCredentialAdd', function() {
           </a>
         </div>
         <form className="twelve-col">
-          <div className="six-col">
+          <div className="six-col last-col">
             <juju.components.GenericInput
               disabled={false}
               label="Project ID (credential name)"
@@ -261,17 +246,6 @@ describe('DeploymentCredentialAdd', function() {
                   'letters, numbers, and hyphens. It must not start or ' +
                   'end with a hyphen.'
               }]} />
-          </div>
-          <div className="six-col last-col">
-            <juju.components.InsetSelect
-              disabled={false}
-              label="Region"
-              options={[{
-                label: 'test-region',
-                value: 'test-region'
-              }]}
-              ref="region"
-              value={undefined} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -367,9 +341,7 @@ describe('DeploymentCredentialAdd', function() {
         clouds={clouds}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
-        regions={[{name: 'test-region'}]}
         setCredential={sinon.stub()}
-        setRegion={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
@@ -389,7 +361,7 @@ describe('DeploymentCredentialAdd', function() {
           </a>
         </div>
         <form className="twelve-col">
-          <div className="six-col">
+          <div className="six-col last-col">
             <juju.components.GenericInput
               disabled={false}
               label="Project ID (credential name)"
@@ -405,17 +377,6 @@ describe('DeploymentCredentialAdd', function() {
                   'letters, numbers, and hyphens. It must not start or ' +
                   'end with a hyphen.'
               }]} />
-          </div>
-          <div className="six-col last-col">
-            <juju.components.InsetSelect
-              disabled={false}
-              label="Region"
-              options={[{
-                label: 'test-region',
-                value: 'test-region'
-              }]}
-              ref="region"
-              value={undefined} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -488,9 +449,7 @@ describe('DeploymentCredentialAdd', function() {
         clouds={clouds}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
-        regions={[{name: 'test-region'}]}
         setCredential={sinon.stub()}
-        setRegion={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
@@ -509,7 +468,7 @@ describe('DeploymentCredentialAdd', function() {
           </a>
         </div>
         <form className="twelve-col">
-          <div className="six-col">
+          <div className="six-col last-col">
             <juju.components.GenericInput
               disabled={true}
               label="Project ID (credential name)"
@@ -525,17 +484,6 @@ describe('DeploymentCredentialAdd', function() {
                   'letters, numbers, and hyphens. It must not start or ' +
                   'end with a hyphen.'
               }]} />
-          </div>
-          <div className="six-col last-col">
-            <juju.components.InsetSelect
-              disabled={true}
-              label="Region"
-              options={[{
-                label: 'test-region',
-                value: 'test-region'
-              }]}
-              ref="region"
-              value={undefined} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -631,9 +579,7 @@ describe('DeploymentCredentialAdd', function() {
           clouds={clouds}
           generateCloudCredentialName={sinon.stub().returns('new@test')}
           getCredentials={getCredentials}
-          regions={['us-east-1']}
           setCredential={sinon.stub()}
-          setRegion={sinon.stub()}
           user="user-admin"
           validateForm={sinon.stub().returns(true)} />, true);
     var instance = renderer.getMountedInstance();
@@ -684,9 +630,7 @@ describe('DeploymentCredentialAdd', function() {
         clouds={clouds}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
-        regions={[{name: 'test-region'}]}
         setCredential={sinon.stub()}
-        setRegion={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub().returns(true)} />, true);
     const instance = renderer.getMountedInstance();
@@ -729,9 +673,7 @@ describe('DeploymentCredentialAdd', function() {
           clouds={clouds}
           generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
-          regions={[{name: 'test-regiZon'}]}
           setCredential={sinon.stub()}
-          setRegion={sinon.stub()}
           user="user-admin"
           validateForm={sinon.stub().returns(false)} />, true);
     var instance = renderer.getMountedInstance();
