@@ -42,7 +42,6 @@ YUI.add('deployment-machines', function() {
       Object.keys(machines).forEach(key => {
         const machine = machines[key];
         let constraintsDetails;
-        let seriesDetails = '';
         const args = machine.command.args[0][0];
         const series = args.series;
         const constraints = args.constraints || {};
@@ -50,19 +49,19 @@ YUI.add('deployment-machines', function() {
         const disk = constraints.disk;
         const mem = constraints.mem;
         const cores = constraints.cores;
+        const parts = [];
         if (cores && cpu && disk && mem) {
           cpu = cpu / 100;
           disk = disk / 1024;
           mem = mem / 1024;
           constraintsDetails = `${cores}x${cpu}GHz, ${mem.toFixed(2)}GB, ` +
             `${disk.toFixed(2)}GB`;
-        } else {
-          constraintsDetails = '(constraints not set)';
         }
         if (series) {
-          seriesDetails = `${series}, `;
+          parts.push(`${series}${constraintsDetails ? ',' : ''}`);
         }
-        const info = seriesDetails + constraintsDetails;
+        parts.push(constraintsDetails || '(constraints not set)');
+        const info = parts.join(' ');
         const current = machineDetails[info] || 0;
         machineDetails[info] = current + 1;
       });
