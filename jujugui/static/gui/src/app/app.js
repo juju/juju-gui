@@ -844,7 +844,8 @@ YUI.add('juju-gui', function(Y) {
               webhandler: new Y.juju.environments.web.WebHandler(),
               interactive: true,
               serviceName: 'juju',
-              dischargeStore: window.localStorage
+              dischargeStore: window.localStorage,
+              dischargeToken: window.juju_config.dischargeToken
             }), this._apiLoginHandler.bind(this, api));
           }
         });
@@ -1578,12 +1579,13 @@ YUI.add('juju-gui', function(Y) {
       if (this.get('charmstore') === undefined) {
         var jujuConfig = window.juju_config;
         var charmstoreURL = '';
-        var existingMacaroons, existingCookie;
+        var existingMacaroons, existingCookie, existingDischargeToken;
         if (!jujuConfig || !jujuConfig.charmstoreURL) {
           console.error('no juju config for charmstoreURL availble');
         } else {
           charmstoreURL = jujuConfig.charmstoreURL;
           existingMacaroons = jujuConfig.charmstoreMacaroons;
+          existingDischargeToken = jujuConfig.dischargeToken;
         }
         var apiVersion = window.jujulib.charmstoreAPIVersion;
         if (window.flags && window.flags.gisf) {
@@ -1597,7 +1599,8 @@ YUI.add('juju-gui', function(Y) {
           existingCookie: existingCookie,
           serviceName: 'charmstore',
           macaroon: existingMacaroons,
-          dischargeStore: window.localStorage
+          dischargeStore: window.localStorage,
+          dischargeToken: existingDischargeToken
         });
         this.set('charmstore', new Charmstore(charmstoreURL, bakery));
         // Store away the charmstore auth info.
@@ -1656,7 +1659,8 @@ YUI.add('juju-gui', function(Y) {
         webhandler: webHandler,
         interactive: interactive,
         cookieStore: storage,
-        dischargeStore: window.localStorage
+        dischargeStore: window.localStorage,
+        dischargeToken: config.dischargeToken
       });
       this.plans = new window.jujulib.plans(config.plansURL, bakery);
       var bakery = new Y.juju.environments.web.Bakery({
@@ -1665,7 +1669,8 @@ YUI.add('juju-gui', function(Y) {
         webhandler: webHandler,
         interactive: interactive,
         cookieStore: storage,
-        dischargeStore: window.localStorage
+        dischargeStore: window.localStorage,
+        dischargeToken: config.dischargeToken
       });
       this.terms = new window.jujulib.terms(config.termsURL, bakery);
     },

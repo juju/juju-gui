@@ -141,6 +141,7 @@ class ConfigTests(ViewTestCase):
             'jujugui.user': 'who',
             'jujugui.password': 'secret',
             'jujugui.insecure': 'true',
+            'jujugui.discharge_token': 'my_discharge_token'
         })
         jujugui.make_application(self.config)
         response = views.config(self.request)
@@ -156,6 +157,7 @@ class ConfigTests(ViewTestCase):
         # User/password values that are explitly set trump defaults.
         self.assertEqual('who', config['user'])
         self.assertEqual('secret', config['password'])
+        self.assertEqual('my_discharge_token', config['dischargeToken'])
 
     def test_explicit_base_url(self):
         self.update_settings({'jujugui.base_url': '/ignore/prefix'})

@@ -571,8 +571,11 @@ YUI.add('juju-env-bakery', function(Y) {
       _exportMacaroon: function (successCallback, failureCallback, response) {
         try {
           var json = JSON.parse(response.target.responseText);
-          this.dischargeStore.setItem(DISCHARGE_TOKEN,
-            btoa(JSON.stringify(json.DischargeToken)));
+          if (json.DischargeToken !== undefined &&
+              json.DischargeToken !== '') {
+            this.dischargeStore.setItem(DISCHARGE_TOKEN,
+              btoa(JSON.stringify(json.DischargeToken)));
+          }
           successCallback(macaroon.import(json.Macaroon));
         } catch (ex) {
           failureCallback(ex.message);
