@@ -1862,6 +1862,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
       Return the URL to a local charm file.
 
       @method getLocalCharmFileUrl
+      @param {String} charmUrl The local charm URL, for instance
+        local:trusty/django-42".
+      @param {String} filename The file name/path, for instance "icon.svg" or
+        "hooks/install".
       @return {String} The full URL to the charm file.
     */
     getLocalCharmFileUrl: function(charmUrl, filename) {
@@ -1873,6 +1877,18 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // This is in theory unreachable: with the exception of the icon, other
       // file URLs are not currently requested.
       console.error('unexpected getLocalCharmFileUrl request for ' + filename);
+    },
+
+    /**
+      Return the full URL to a local charm icon.
+
+      @method getLocalCharmIcon
+      @param {String} charmUrl The local charm URL, for instance
+        "local:trusty/django-42".
+      @return {String} The full URL to the icon, including auth credentials.
+    */
+    getLocalCharmIcon: function(charmUrl) {
+      return this.getLocalCharmFileUrl(charmUrl, 'icon.svg');
     }
 
   });

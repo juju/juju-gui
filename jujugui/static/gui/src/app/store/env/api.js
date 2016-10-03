@@ -911,18 +911,38 @@ YUI.add('juju-env-api', function(Y) {
       Return the full URL to the Juju HTTPS API serving a local charm file.
 
       @method getLocalCharmFileUrl
-      @param {String} charmUrl The local charm URL,
-        e.g. "local:strusty/django-42".
-      @param {String} filename The file name/path.
-        e.g. "icon.svg" or "hooks/install".
+      @param {String} charmUrl The local charm URL, for instance
+        local:trusty/django-42".
+      @param {String} filename The file name/path, for instance "icon.svg" or
+        "hooks/install".
       @return {String} The full URL to the file contents, including auth
         credentials.
     */
     getLocalCharmFileUrl: function(charmUrl, filename) {
-      var credentials = this.getCredentials();
-      var path = _getCharmAPIPath(
+      const credentials = this.getCredentials();
+      const path = _getCharmAPIPath(
           this.get('modelUUID'), 'url=' + charmUrl + '&file=' + filename);
-      var webHandler = this.get('webHandler');
+      const webHandler = this.get('webHandler');
+      // TODO frankban: allow macaroons based auth here.
+      return webHandler.getUrl(
+        path, tags.build(tags.USER, credentials.user), credentials.password);
+    },
+
+    /**
+      Return the full URL to a local charm icon.
+
+      If the local charm has no icon, a default icon is served.
+
+      @method getLocalCharmIcon
+      @param {String} charmUrl The local charm URL, for instance
+        "local:trusty/django-42".
+      @return {String} The full URL to the icon, including auth credentials.
+    */
+    getLocalCharmIcon: function(charmUrl) {
+      const credentials = this.getCredentials();
+      const uuid = this.get('modelUUID');
+      const path = _getCharmAPIPath(uuid, 'url=' + charmUrl + '&icon=1');
+      const webHandler = this.get('webHandler');
       // TODO frankban: allow macaroons based auth here.
       return webHandler.getUrl(
         path, tags.build(tags.USER, credentials.user), credentials.password);
