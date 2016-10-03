@@ -66,6 +66,27 @@ describe('DeploymentMachines', function() {
             }
           }]]
         }
+      },
+      machine4: {
+        command: {
+          args: [[{
+            constraints: {
+              cores: 2,
+              cpu: 3,
+              disk: 4096,
+              mem: 1024
+            },
+            series: 'trusty'
+          }]]
+        }
+      },
+      machine5: {
+        command: {
+          args: [[{
+            constraints: {},
+            series: null
+          }]]
+        }
       }
     };
   });
@@ -97,9 +118,9 @@ describe('DeploymentMachines', function() {
             </div>
           </li>
           {[<li className="deployment-flow__row twelve-col"
-            key="xenial, (constraints not set)">
+            key="xenial (constraints not set)">
             <div className="eight-col">
-              xenial, (constraints not set)
+              xenial (constraints not set)
             </div>
             <div className="three-col">
               My cloud
@@ -118,6 +139,30 @@ describe('DeploymentMachines', function() {
             </div>
             <div className="one-col last-col">
               {2}
+            </div>
+          </li>,
+          <li className="deployment-flow__row twelve-col"
+            key="trusty, 2x0.03GHz, 1.00GB, 4.00GB">
+            <div className="eight-col">
+              trusty, 2x0.03GHz, 1.00GB, 4.00GB
+            </div>
+            <div className="three-col">
+              My cloud
+            </div>
+            <div className="one-col last-col">
+              {1}
+            </div>
+          </li>,
+          <li className="deployment-flow__row twelve-col"
+            key="(constraints not set)">
+            <div className="eight-col">
+              (constraints not set)
+            </div>
+            <div className="three-col">
+              My cloud
+            </div>
+            <div className="one-col last-col">
+              {1}
             </div>
           </li>]}
         </ul>
