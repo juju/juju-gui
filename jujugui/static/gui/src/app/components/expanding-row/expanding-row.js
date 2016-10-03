@@ -62,12 +62,23 @@ YUI.add('expanding-row', function() {
       if (this.props.expanded) {
         this._toggle();
       }
+      // Observe the DOM for any changes to the content of the expanded row. If
+      // the content changes then animate to the new size required.
+      this.observer = new MutationObserver(mutations => {
+        this._resize();
+      });
+      this.observer.observe(this.refs.inner, {childList: true, subtree: true});
     },
 
     componentWillUpdate: function(nextProps, nextState) {
       if (this.props.expanded !== nextProps.expanded) {
         this._toggle();
       }
+    },
+
+    componentWillUnmount: function() {
+      // Stop observing the child DOM.
+      this.observer.disconnect();
     },
 
     /**
@@ -92,22 +103,22 @@ YUI.add('expanding-row', function() {
       @method _toggle
     */
     _toggle: function() {
-      const expanded = this.state.expanded;
-      this.setState({expanded: !expanded}, () => {
-        let styles = {};
-        if (expanded) {
-          styles.styles = {
-            height: '0px',
-            opacity: 0
-          };
-        } else {
-          styles.styles = {
-            maxHeight: '10000px',
-            opacity: 1
-          };
-        }
-        this.setState(styles);
+      this.setState({expanded: !this.state.expanded}, () => {
+        this._resize();
       });
+    },
+
+    /**
+      Resize the
+
+      @method _resize
+    */
+    _resize: function() {
+      const expanded = this.state.expanded;
+      this.setState({styles: {
+        height: expanded ?  this.refs.inner.offsetHeight + 'px' : '0px',
+        opacity: expanded ? 1 : 0
+      }});
     },
 
     render: function() {

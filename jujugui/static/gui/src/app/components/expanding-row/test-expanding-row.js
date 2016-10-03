@@ -75,7 +75,7 @@ describe('ExpandingRow', () => {
           <span>closed</span>
         </div>
         <div className="expanding-row__expanded twelve-col"
-          style={{maxHeight: '10000px', opacity: 1}}>
+          style={{height: '10px', opacity: 1}}>
           <div className="twelve-col no-margin-bottom"
             ref="inner">
             <span>open</span>
@@ -93,8 +93,8 @@ describe('ExpandingRow', () => {
         <span>open</span>
       </juju.components.ExpandingRow>, true);
     var instance = renderer.getMountedInstance();
-    // Mock the ref.
-    instance.refs = {inner: {offsetHeight: 10}};
+    // Mock the ref. The MutationObserver needs a real DOM node.
+    instance.refs = {inner: document.createElement('div')};
     // The shallow renderer does not call componentDidMount, so call it
     // manually.
     instance.componentDidMount();
@@ -117,8 +117,8 @@ describe('ExpandingRow', () => {
         <span>open</span>
       </juju.components.ExpandingRow>, true);
     var instance = renderer.getMountedInstance();
-    // Mock the ref.
-    instance.refs = {inner: {offsetHeight: 10}};
+    // Mock the ref. The MutationObserver needs a real DOM node.
+    instance.refs = {inner: document.createElement('div')};
     // The shallow renderer does not call componentDidMount, so call it
     // manually.
     instance.componentDidMount();
@@ -147,8 +147,8 @@ describe('ExpandingRow', () => {
         <span>open</span>
       </juju.components.ExpandingRow>, true);
     var instance = renderer.getMountedInstance();
-    // Mock the ref.
-    instance.refs = {inner: {offsetHeight: 10}};
+    // Mock the ref. The MutationObserver needs a real DOM node.
+    instance.refs = {inner: document.createElement('div')};
     // The shallow renderer does not call componentDidMount, so call it
     // manually.
     instance.componentDidMount();
@@ -159,5 +159,24 @@ describe('ExpandingRow', () => {
         {output.props.children}
       </li>);
     assert.deepEqual(output, expected);
+  });
+
+  it('can stop observing the DOM when unmounted', () => {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.ExpandingRow
+        clickable={false}>
+        <span>closed</span>
+        <span>open</span>
+      </juju.components.ExpandingRow>, true);
+    var instance = renderer.getMountedInstance();
+    // Mock the ref. The MutationObserver needs a real DOM node.
+    instance.refs = {inner: document.createElement('div')};
+    // The shallow renderer does not call componentDidMount, so call it
+    // manually.
+    instance.componentDidMount();
+    assert.isNotNull(instance.observer);
+    instance.observer.disconnect = sinon.stub();
+    renderer.unmount();
+    assert.equal(instance.observer.disconnect.callCount, 1);
   });
 });
