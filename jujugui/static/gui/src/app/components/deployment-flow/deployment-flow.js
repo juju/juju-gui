@@ -48,7 +48,7 @@ YUI.add('deployment-flow', function() {
     },
 
     PROVIDERS: {
-      'google': {
+      'gce': {
         id: 'google',
         showLogo: true,
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',
@@ -133,7 +133,7 @@ YUI.add('deployment-flow', function() {
             &nbsp;for details.
           </p>)
       },
-      'aws': {
+      'ec2': {
         id: 'aws',
         showLogo: true,
         signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
@@ -281,7 +281,7 @@ YUI.add('deployment-flow', function() {
           }]
         }
       },
-      local: {
+      lxd: {
         id: 'local',
         showLogo: false,
         title: 'Local'

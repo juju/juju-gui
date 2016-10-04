@@ -125,7 +125,7 @@ YUI.add('deployment-cloud', function() {
       @returns {Array} The logo.
     */
     _generateLogo: function(cloud) {
-      var info = this.props.providers[cloud.name];
+      var info = this.props.providers[cloud.cloudType];
       if (!info) {
         return cloud.name;
       }

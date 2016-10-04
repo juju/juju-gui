@@ -34,7 +34,7 @@ YUI.add('deployment-credential-add', function() {
       validateForm: React.PropTypes.func.isRequired
     },
 
-    DEFAULTCLOUD: 'google',
+    DEFAULTCLOUD: 'gce',
 
     getInitialState: function() {
       const info = this._getInfo();
@@ -157,7 +157,7 @@ YUI.add('deployment-credential-add', function() {
     */
     _getInfo: function() {
       const cloud = this.props.cloud;
-      const id = cloud && cloud.name || this.DEFAULTCLOUD;
+      const id = cloud && cloud.cloudType || this.DEFAULTCLOUD;
       return this.props.providers[id];
     },
 
