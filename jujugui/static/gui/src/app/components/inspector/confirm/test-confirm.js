@@ -18,13 +18,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('InspectorConfirm', function() {
-  var buttons;
+  let buttons;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -47,7 +47,7 @@ describe('InspectorConfirm', function() {
   });
 
   it('generates the correct classes if it is closed', function() {
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
         <juju.components.InspectorConfirm
           buttons={buttons}
           message="My message" />);
@@ -62,7 +62,7 @@ describe('InspectorConfirm', function() {
   });
 
   it('generates the correct classes if it is open', function() {
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
         <juju.components.InspectorConfirm
           buttons={buttons}
           message="My message"
@@ -78,7 +78,7 @@ describe('InspectorConfirm', function() {
   });
 
   it('displays the provided message', function() {
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
         <juju.components.InspectorConfirm
           buttons={buttons}
           message="My message" />);
@@ -89,7 +89,7 @@ describe('InspectorConfirm', function() {
   });
 
   it('hides the message if one is not provided', function() {
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
         <juju.components.InspectorConfirm
           buttons={buttons} />);
     assert.deepEqual(output.props.children[0],
@@ -100,7 +100,7 @@ describe('InspectorConfirm', function() {
 
   it('leaves out the button row if there are no buttons', function() {
     buttons = [];
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
         <juju.components.InspectorConfirm
           buttons={buttons} />);
     assert.deepEqual(output.props.children[1], undefined);

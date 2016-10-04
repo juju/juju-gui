@@ -18,10 +18,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('ServiceOverview', function() {
-  var acl, fakeCharm, fakeService;
+  let acl, fakeCharm, fakeService;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -57,8 +57,8 @@ describe('ServiceOverview', function() {
   }
 
   it('does not request plans if charm does not have metrics', function() {
-    var setAttrs = sinon.stub();
-    var getStub = sinon.stub();
+    const setAttrs = sinon.stub();
+    const getStub = sinon.stub();
     getStub.withArgs('activePlan')
       .throws('it should not fetch this if no metrics');
     getStub.withArgs('name').throws('it should not fetch this if no metrics');
@@ -66,11 +66,11 @@ describe('ServiceOverview', function() {
     getStub.withArgs('units').returns({
       toArray: sinon.stub().returns([])
     });
-    var service = {
+    const service = {
       setAttrs: setAttrs,
       get: getStub
     };
-    var charm = {
+    const charm = {
       hasMetrics: sinon.stub().returns(false),
       get: function() {
         return {
@@ -80,8 +80,8 @@ describe('ServiceOverview', function() {
         };
       }
     };
-    var showActivePlan = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const showActivePlan = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
         changeState={sinon.stub()}
@@ -94,33 +94,33 @@ describe('ServiceOverview', function() {
         service={service}
         serviceRelations={[1]}
         showActivePlan={showActivePlan} />, true);
-    var instance = renderer.getMountedInstance();
+    const instance = renderer.getMountedInstance();
     assert.equal(showActivePlan.callCount, 0);
     assert.equal(instance.state.plans, null);
     assert.equal(instance.state.activePlan, null);
   });
 
   it('queries for active plans if none are stored on the charm', function() {
-    var setStub = sinon.stub();
-    var getStub = sinon.stub();
+    const setStub = sinon.stub();
+    const getStub = sinon.stub();
     getStub.withArgs('activePlan').returns(undefined);
     getStub.withArgs('name').returns('servicename');
     getStub.withArgs('units').returns({
       toArray: sinon.stub().returns([])
     });
-    var charmGetStub = sinon.stub();
+    const charmGetStub = sinon.stub();
     charmGetStub.withArgs('plans').returns(undefined);
-    var service = {
+    const service = {
       set: setStub,
       get: getStub
     };
-    var charm = {
+    const charm = {
       get: charmGetStub,
       hasMetrics: sinon.stub().returns(true)
     };
-    var modelUUID = 'abc123';
-    var showActivePlan = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const modelUUID = 'abc123';
+    const showActivePlan = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
         changeState={sinon.stub()}
@@ -133,12 +133,12 @@ describe('ServiceOverview', function() {
         service={service}
         serviceRelations={[1]}
         showActivePlan={showActivePlan} />, true);
-    var instance = renderer.getMountedInstance();
+    const instance = renderer.getMountedInstance();
     assert.equal(showActivePlan.callCount, 1, 'showActivePlan not called');
     assert.equal(showActivePlan.args[0][0], modelUUID);
     assert.equal(showActivePlan.args[0][1], 'servicename');
-    var activePlan = 'active';
-    var plans = 'plans';
+    const activePlan = 'active';
+    const plans = 'plans';
     // Call the callback sent to showActivePlan
     showActivePlan.args[0][2](null, activePlan, plans);
     assert.equal(setStub.callCount, 1, 'setAttrs never called');
@@ -148,27 +148,27 @@ describe('ServiceOverview', function() {
   });
 
   it('uses plans stored on a charm', function() {
-    var setStub = sinon.stub();
-    var activePlan = {active: 'plan'};
-    var planList = [{plan: 'list'}];
-    var getStub = sinon.stub();
+    const setStub = sinon.stub();
+    const activePlan = {active: 'plan'};
+    const planList = [{plan: 'list'}];
+    const getStub = sinon.stub();
     getStub.withArgs('activePlan').returns(activePlan);
     getStub.withArgs('name').throws('it should not request the service name');
     getStub.withArgs('units').returns({
       toArray: sinon.stub().returns([])
     });
-    var charmGetStub = sinon.stub();
+    const charmGetStub = sinon.stub();
     charmGetStub.withArgs('plans').returns(planList);
-    var service = {
+    const service = {
       set: setStub,
       get: getStub
     };
-    var charm = {
+    const charm = {
       get: charmGetStub,
       hasMetrics: sinon.stub().returns(true)
     };
-    var showActivePlan = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const showActivePlan = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
         changeState={sinon.stub()}
@@ -181,15 +181,15 @@ describe('ServiceOverview', function() {
         service={service}
         serviceRelations={[1]}
         showActivePlan={showActivePlan} />, true);
-    var instance = renderer.getMountedInstance();
+    const instance = renderer.getMountedInstance();
     assert.equal(showActivePlan.callCount, 0);
     assert.equal(instance.state.plans, planList);
     assert.equal(instance.state.activePlan, activePlan);
   });
 
   it('does not make the plans request for Juju 1', function() {
-    var setAttrs = sinon.stub();
-    var getStub = sinon.stub();
+    const setAttrs = sinon.stub();
+    const getStub = sinon.stub();
     getStub.withArgs('activePlan')
       .throws('it should not fetch this for Juju 1');
     getStub.withArgs('name').throws('it should not fetch this for Juju 1');
@@ -197,12 +197,12 @@ describe('ServiceOverview', function() {
     getStub.withArgs('units').returns({
       toArray: sinon.stub().returns([])
     });
-    var service = {
+    const service = {
       setAttrs: setAttrs,
       get: getStub
     };
-    var showActivePlan = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const showActivePlan = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
         changeState={sinon.stub()}
@@ -215,14 +215,14 @@ describe('ServiceOverview', function() {
         service={service}
         serviceRelations={[1]}
         showActivePlan={showActivePlan} />, true);
-    var instance = renderer.getMountedInstance();
+    const instance = renderer.getMountedInstance();
     assert.equal(showActivePlan.callCount, 0);
     assert.equal(instance.state.plans, null);
     assert.equal(instance.state.activePlan, null);
   });
 
   it('shows the all units action', function() {
-    var service = {
+    const service = {
       get: function() {
         return {
           toArray: function() {
@@ -231,7 +231,7 @@ describe('ServiceOverview', function() {
         };
       }};
 
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             acl={acl}
             changeState={sinon.stub()}
@@ -257,7 +257,7 @@ describe('ServiceOverview', function() {
   });
 
   it('shows the all units action even if there are no units', function() {
-    var service = {
+    const service = {
       get: function() {
         return {
           toArray: function() {
@@ -266,7 +266,7 @@ describe('ServiceOverview', function() {
         };
       }};
 
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             acl={acl}
             changeState={sinon.stub()}
@@ -292,17 +292,17 @@ describe('ServiceOverview', function() {
   });
 
   it('navigates to the unit list when All Units is clicked', function() {
-    var getStub = sinon.stub();
+    const getStub = sinon.stub();
     getStub.withArgs('units').returns({toArray: function() {
       return [{}, {}];
     }});
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('pending').returns(true);
-    var service = {
+    const service = {
       get: getStub
     };
-    var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    const changeState = sinon.stub();
+    const output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             acl={acl}
             clearState={sinon.stub()}
@@ -336,7 +336,7 @@ describe('ServiceOverview', function() {
   });
 
   it('shows the uncommitted units action', function() {
-    var service = {
+    const service = {
       get: function() {
         return {
           toArray: function() {
@@ -348,7 +348,7 @@ describe('ServiceOverview', function() {
           }
         };
       }};
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             acl={acl}
             changeState={sinon.stub()}
@@ -374,7 +374,7 @@ describe('ServiceOverview', function() {
   });
 
   it('shows the pending units action', function() {
-    var service = {
+    const service = {
       get: function() {
         return {
           toArray: function() {
@@ -382,7 +382,7 @@ describe('ServiceOverview', function() {
           }
         };
       }};
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             acl={acl}
             changeState={sinon.stub()}
@@ -408,7 +408,7 @@ describe('ServiceOverview', function() {
   });
 
   it('shows the errors units action', function() {
-    var service = {
+    const service = {
       get: function() {
         return {
           toArray: function() {
@@ -416,7 +416,7 @@ describe('ServiceOverview', function() {
           }
         };
       }};
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             acl={acl}
             changeState={sinon.stub()}
@@ -442,7 +442,7 @@ describe('ServiceOverview', function() {
   });
 
   it('shows the configure action', function() {
-    var service = {
+    const service = {
       get: function() {
         return {
           toArray: function() {
@@ -450,7 +450,7 @@ describe('ServiceOverview', function() {
           }
         };
       }};
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
           <juju.components.ServiceOverview
             acl={acl}
             changeState={sinon.stub()}
@@ -476,15 +476,15 @@ describe('ServiceOverview', function() {
   });
 
   it('shows the relations action if there are relations', function() {
-    var getStub = sinon.stub();
+    const getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({
       toArray: sinon.stub().returns([])
     });
-    var service = {
+    const service = {
       get: getStub
     };
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
           acl={acl}
           changeState={sinon.stub()}
@@ -510,7 +510,7 @@ describe('ServiceOverview', function() {
   });
 
   it('shows the expose action if the service is committed', function() {
-    var getStub = sinon.stub();
+    const getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('pending').returns(false);
     getStub.withArgs('exposed').returns(true);
@@ -518,10 +518,10 @@ describe('ServiceOverview', function() {
     getStub.withArgs('units').returns({
       toArray: sinon.stub().returns([])
     });
-    var service = {
+    const service = {
       get: getStub
     };
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
           acl={acl}
           changeState={sinon.stub()}
@@ -548,7 +548,7 @@ describe('ServiceOverview', function() {
   });
 
   it('shows the Change version action if the service is committed', function() {
-    var getStub = sinon.stub();
+    const getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('pending').returns(false);
     getStub.withArgs('exposed').returns(true);
@@ -556,10 +556,10 @@ describe('ServiceOverview', function() {
     getStub.withArgs('units').returns({
       toArray: sinon.stub().returns([])
     });
-    var service = {
+    const service = {
       get: getStub
     };
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
           acl={acl}
           changeState={sinon.stub()}
@@ -586,8 +586,8 @@ describe('ServiceOverview', function() {
   });
 
   it('shows the charm details if the version is clicked', function() {
-    var changeState = sinon.stub();
-    var getStub = sinon.stub();
+    const changeState = sinon.stub();
+    const getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('pending').returns(false);
     getStub.withArgs('exposed').returns(true);
@@ -595,10 +595,10 @@ describe('ServiceOverview', function() {
     getStub.withArgs('units').returns({
       toArray: sinon.stub().returns([])
     });
-    var service = {
+    const service = {
       get: getStub
     };
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
           acl={acl}
           clearState={sinon.stub()}
@@ -625,17 +625,17 @@ describe('ServiceOverview', function() {
   });
 
   it('does not show Change version if uncommitted', function() {
-    var getStub = sinon.stub();
+    const getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('pending').returns(true);
     getStub.withArgs('exposed').returns(true);
     getStub.withArgs('units').returns({
       toArray: sinon.stub().returns([])
     });
-    var service = {
+    const service = {
       get: getStub
     };
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
           acl={acl}
           changeState={sinon.stub()}
@@ -652,26 +652,26 @@ describe('ServiceOverview', function() {
   });
 
   it('shows the plans action if there are plans', function() {
-    var setAttrs = sinon.stub();
-    var getStub = sinon.stub();
+    const setAttrs = sinon.stub();
+    const getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({
       toArray: sinon.stub().returns([])
     });
     // Return an array to make it think it has plans
-    var charmGetStub = sinon.stub();
+    const charmGetStub = sinon.stub();
     charmGetStub.withArgs('plans').returns([]);
     getStub.withArgs('activePlan').returns([]);
-    var service = {
+    const service = {
       setAttrs: setAttrs,
       get: getStub
     };
-    var charm = {
+    const charm = {
       get: charmGetStub,
       hasMetrics: sinon.stub().returns(true)
     };
-    var showActivePlan = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    const showActivePlan = sinon.stub();
+    const output = jsTestUtils.shallowRender(
         <juju.components.ServiceOverview
           acl={acl}
           changeState={sinon.stub()}
@@ -692,7 +692,7 @@ describe('ServiceOverview', function() {
   });
 
   it('renders the delete button', function() {
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
         changeState={sinon.stub()}
@@ -705,7 +705,7 @@ describe('ServiceOverview', function() {
         service={fakeService}
         serviceRelations={[]}
         showActivePlan={sinon.stub()} />);
-    var buttons = [{
+    const buttons = [{
       disabled: false,
       title: 'Destroy',
       action: output.props.children[2].props.children.props.buttons[0].action
@@ -717,7 +717,7 @@ describe('ServiceOverview', function() {
 
   it('disables the delete button when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
         changeState={sinon.stub()}
@@ -730,7 +730,7 @@ describe('ServiceOverview', function() {
         service={fakeService}
         serviceRelations={[]}
         showActivePlan={sinon.stub()} />);
-    var buttons = [{
+    const buttons = [{
       disabled: true,
       title: 'Destroy',
       action: output.props.children[2].props.children.props.buttons[0].action
@@ -742,7 +742,7 @@ describe('ServiceOverview', function() {
 
   it('hides the delete button when pending deletion', function() {
     fakeService.get.withArgs('deleted').returns(true);
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
         changeState={sinon.stub()}
@@ -760,7 +760,7 @@ describe('ServiceOverview', function() {
 
   it('renders the delete confirmation when pending deletion', function() {
     fakeService.get.withArgs('deleted').returns(true);
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
         changeState={sinon.stub()}
@@ -773,7 +773,7 @@ describe('ServiceOverview', function() {
         service={fakeService}
         serviceRelations={[]}
         showActivePlan={sinon.stub()} />);
-    var confirmMessage = 'This application has been marked to be destroyed'
+    const confirmMessage = 'This application has been marked to be destroyed'
       + ' on next deployment.';
     assert.deepEqual(output.props.children[0],
       <juju.components.InspectorConfirm
@@ -783,7 +783,7 @@ describe('ServiceOverview', function() {
   });
 
   it('hides the confirmation when not deleted', function() {
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
         changeState={sinon.stub()}
@@ -796,7 +796,7 @@ describe('ServiceOverview', function() {
         service={fakeService}
         serviceRelations={[]}
         showActivePlan={sinon.stub()} />);
-    var confirmMessage = 'This application has been marked to be destroyed'
+    const confirmMessage = 'This application has been marked to be destroyed'
       + ' on next deployment.';
     assert.deepEqual(output.props.children[0],
       <juju.components.InspectorConfirm
@@ -806,10 +806,10 @@ describe('ServiceOverview', function() {
   });
 
   it('calls the destroy service method if destroy is clicked', function() {
-    var clearState = sinon.stub();
-    var destroyService = sinon.stub();
-    var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+    const clearState = sinon.stub();
+    const destroyService = sinon.stub();
+    const changeState = sinon.stub();
+    const output = jsTestUtils.shallowRender(
       <juju.components.ServiceOverview
         acl={acl}
         charm={fakeCharm}

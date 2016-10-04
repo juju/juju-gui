@@ -52,11 +52,11 @@ YUI.add('service-overview', function() {
     },
 
     componentWillMount: function() {
-      var props = this.props;
+      const props = this.props;
 
       // Show or hide the deletion confirmation depending on whether this
       // application has been deleted or not.
-      var service = props.service;
+      const service = props.service;
       if (service.get('deleted')) {
         this._showConfirmation();
       }
@@ -73,8 +73,8 @@ YUI.add('service-overview', function() {
         return;
       }
 
-      var plans = props.charm.get('plans');
-      var activePlan = service.get('activePlan');
+      const plans = props.charm.get('plans');
+      const activePlan = service.get('activePlan');
 
       if (plans || activePlan) {
         // If we already have plans then set them so that the UI can render
@@ -109,8 +109,8 @@ YUI.add('service-overview', function() {
       @param {Object} e The click event.
     */
     _navigate: function(e) {
-      var title = e.currentTarget.getAttribute('title');
-      var activeAction;
+      const title = e.currentTarget.getAttribute('title');
+      let activeAction;
       this.state.actions.some((action) => {
         if (action.title === title) {
           activeAction = action;
@@ -126,7 +126,7 @@ YUI.add('service-overview', function() {
       @returns {Array} The array of overview action components.
     */
     _generateActionList: function(actions) {
-      var items = [];
+      const items = [];
       actions.forEach(function(action) {
         items.push(
             <juju.components.OverviewAction
@@ -149,14 +149,14 @@ YUI.add('service-overview', function() {
       @returns {Array} The array of actions.
     */
     _generateActions: function(service) {
-      var serviceId = service.get('id');
-      var state = this.state;
-      var actions = [];
-      var units = service.get('units').toArray();
-      var statusCounts = this.props.getUnitStatusCounts(units);
-      var plans = this.props.charm.get('plans');
+      const serviceId = service.get('id');
+      const state = this.state;
+      const actions = [];
+      const units = service.get('units').toArray();
+      const statusCounts = this.props.getUnitStatusCounts(units);
+      const plans = this.props.charm.get('plans');
       statusCounts.all = {size: units.length};
-      var statuses = [{
+      const statuses = [{
         title: 'Units',
         key: 'all',
         icon: 'units'
@@ -171,8 +171,8 @@ YUI.add('service-overview', function() {
         key: 'uncommitted'
       }];
       statuses.forEach(function(status) {
-        var key = status.key;
-        var count = statusCounts[key].size;
+        const key = status.key;
+        const count = statusCounts[key].size;
         if (count > 0 || key === 'all') {
           actions.push({
             title: status.title,
@@ -238,7 +238,7 @@ YUI.add('service-overview', function() {
         }
       });
       if (!service.get('pending')) {
-        var charmId = service.get('charm');
+        const charmId = service.get('charm');
         actions.push({
           title: 'Change version',
           linkAction: this._viewCharmDetails.bind(this, charmId),
@@ -326,7 +326,7 @@ YUI.add('service-overview', function() {
 
     _generateDelete: function(render, readOnly) {
       if (render) {
-        var buttons = [{
+        const buttons = [{
           disabled: readOnly,
           title: 'Destroy',
           action: this._destroyService
@@ -342,9 +342,9 @@ YUI.add('service-overview', function() {
 
     render: function() {
       this._generateActions(this.props.service);
-      var confirmationOpen = this.state.confirmationOpen;
-      var readOnly = this.props.acl.isReadOnly();
-      var message = 'This application has been marked to be destroyed on '
+      const confirmationOpen = this.state.confirmationOpen;
+      const readOnly = this.props.acl.isReadOnly();
+      const message = 'This application has been marked to be destroyed on '
         + 'next deployment.';
       return (
         <div className="service-overview">
