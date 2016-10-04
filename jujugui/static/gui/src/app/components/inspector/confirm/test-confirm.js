@@ -18,21 +18,36 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('InspectorConfirm', function() {
+  let buttons;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('inspector-confirm', function() { done(); });
   });
 
+  beforeEach(function() {
+    buttons = [
+      {
+        disabled: false,
+        title: 'Test 1',
+        action: () => {}
+      },
+      {
+        disabled: false,
+        title: 'Test 2',
+        action: () => {}
+      }
+    ];
+  });
+
   it('generates the correct classes if it is closed', function() {
-    var buttons = [];
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
         <juju.components.InspectorConfirm
           buttons={buttons}
           message="My message" />);
@@ -47,8 +62,7 @@ describe('InspectorConfirm', function() {
   });
 
   it('generates the correct classes if it is open', function() {
-    var buttons = [];
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
         <juju.components.InspectorConfirm
           buttons={buttons}
           message="My message"
@@ -64,8 +78,7 @@ describe('InspectorConfirm', function() {
   });
 
   it('displays the provided message', function() {
-    var buttons = [];
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
         <juju.components.InspectorConfirm
           buttons={buttons}
           message="My message" />);
@@ -76,13 +89,20 @@ describe('InspectorConfirm', function() {
   });
 
   it('hides the message if one is not provided', function() {
-    var buttons = [];
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
         <juju.components.InspectorConfirm
           buttons={buttons} />);
     assert.deepEqual(output.props.children[0],
       <p className="inspector-confirm__message hidden">
         {undefined}
       </p>);
+  });
+
+  it('leaves out the button row if there are no buttons', function() {
+    buttons = [];
+    const output = jsTestUtils.shallowRender(
+        <juju.components.InspectorConfirm
+          buttons={buttons} />);
+    assert.deepEqual(output.props.children[1], undefined);
   });
 });

@@ -1,20 +1,17 @@
 .inspector-confirm {
-    position: absolute;
-    overflow: hidden;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    max-height: 0;
-    background-color: $white;
-    transition: max-height .5s;
+  border-bottom: 1px solid $mid-grey;
+  display: none;
+  height: 0;
+  padding: 10px;
+  transition: height .5s, opacity 1s;
 
-    &--open {
-        max-height: 200px;
-        box-shadow: 0 1px 5px .05px rgba(51, 51, 51, 0.2);
-    }
+  &--open {
+    display: block;
+    height: auto;
+    opacity: 1;
+  }
 
-    &__message {
-        margin: 20px 10px 10px 10px;
-        line-height: 24px;
-    }
+  &__message {
+    margin-bottom: 0;
+  }
 }
