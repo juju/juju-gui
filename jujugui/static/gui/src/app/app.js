@@ -1962,6 +1962,7 @@ YUI.add('juju-gui', function(Y) {
             this.env.connect();
           }
           this.maskVisibility(true);
+          this.env.get('ecs').clear();
           this.db.reset();
           this.db.fire('update');
           this._renderLogin(null);

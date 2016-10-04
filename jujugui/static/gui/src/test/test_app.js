@@ -1165,6 +1165,9 @@ describe('App', function() {
         let modelClosed = false;
         let controllerConnected = false;
         let modelConnected = false;
+        const ecs = {
+          clear: sinon.stub()
+        };
         // Create an application instance.
         app = constructAppInstance();
         app.after('ready', () => {
@@ -1193,7 +1196,8 @@ describe('App', function() {
               assert.strictEqual(
                 modelClosed, true, 'model: connect called before close');
               modelConnected = true;
-            }
+            },
+            get: sinon.stub().returns(ecs)
           };
           this._cleanups.push(() => {
             app.controllerAPI = controllerAPI;
@@ -1212,6 +1216,7 @@ describe('App', function() {
           assert.strictEqual(app.db.reset.calledOnce, true, 'db.reset');
           assert.strictEqual(app.db.fire.calledOnce, true, 'db.fire');
           assert.strictEqual(app.db.fire.lastCall.args[0], 'update');
+          assert.strictEqual(ecs.clear.calledOnce, true, 'ecs.clear');
           // The login mask has been displayed.
           assert.strictEqual(app._renderLogin.calledOnce, true, 'login');
           done();
@@ -1221,6 +1226,9 @@ describe('App', function() {
       it('closes and reopens the model connection in Juju 1', function(done) {
         let modelClosed = false;
         let modelConnected = false;
+        const ecs = {
+          clear: sinon.stub()
+        };
         // Create an application instance.
         app = constructAppInstance(true);
         app.after('ready', () => {
@@ -1234,7 +1242,8 @@ describe('App', function() {
               assert.strictEqual(
                 modelClosed, true, 'model connect called before close');
               modelConnected = true;
-            }
+            },
+            get: sinon.stub().returns(ecs)
           };
           this._cleanups.push(() => {
             app.env = env;
@@ -1250,6 +1259,7 @@ describe('App', function() {
           assert.strictEqual(app.db.reset.called, true, 'db.reset');
           assert.strictEqual(app.db.fire.calledOnce, true, 'db.fire');
           assert.strictEqual(app.db.fire.lastCall.args[0], 'update');
+          assert.strictEqual(ecs.clear.calledOnce, true, 'ecs.clear');
           // The login mask has been displayed.
           assert.strictEqual(app._renderLogin.calledOnce, true, 'login');
           done();
