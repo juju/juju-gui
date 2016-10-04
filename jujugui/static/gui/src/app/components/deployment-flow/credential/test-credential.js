@@ -107,10 +107,7 @@ describe('DeploymentCredential', function() {
             clouds={clouds}
             generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
-            region={undefined}
-            regions={regions}
             setCredential={setCredential}
-            setRegion={setRegion}
             user={user}
             validateForm={validateForm}/>
         </juju.components.ExpandingRow>
@@ -220,10 +217,7 @@ describe('DeploymentCredential', function() {
             clouds={clouds}
             generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
-            region={undefined}
-            regions={[]}
             setCredential={setCredential}
-            setRegion={setRegion}
             user={user}
             validateForm={validateForm} />
         </juju.components.ExpandingRow>
@@ -442,10 +436,7 @@ describe('DeploymentCredential', function() {
             clouds={clouds}
             generateCloudCredentialName={generateCloudCredentialName}
             getCredentials={instance._getCredentials}
-            region={undefined}
-            regions={regions}
             setCredential={setCredential}
-            setRegion={setRegion}
             user={user}
             validateForm={validateForm}/>
         </juju.components.ExpandingRow>

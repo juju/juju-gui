@@ -249,10 +249,7 @@ YUI.add('deployment-credential', function() {
           clouds={this.props.clouds}
           generateCloudCredentialName={this.props.generateCloudCredentialName}
           getCredentials={this._getCredentials}
-          region={this.props.region}
-          regions={this.props.cloud && this.props.cloud.regions || []}
           setCredential={this.props.setCredential}
-          setRegion={this.props.setRegion}
           updateCloudCredential={this.props.updateCloudCredential}
           user={this.props.user}
           validateForm={this.props.validateForm} />);

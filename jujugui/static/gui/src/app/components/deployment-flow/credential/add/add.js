@@ -28,10 +28,7 @@ YUI.add('deployment-credential-add', function() {
       clouds: React.PropTypes.object.isRequired,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
       getCredentials: React.PropTypes.func.isRequired,
-      region: React.PropTypes.string,
-      regions: React.PropTypes.array.isRequired,
       setCredential: React.PropTypes.func.isRequired,
-      setRegion: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func.isRequired,
       user: React.PropTypes.string,
       validateForm: React.PropTypes.func.isRequired
@@ -46,15 +43,6 @@ YUI.add('deployment-credential-add', function() {
       };
     },
 
-    /**
-      Get the region value.
-
-      @method _getRegion
-      @returns {String} The region.
-    */
-    _getRegion: function() {
-      return this.refs.region.getValue();
-    },
 
     /**
       Generate a full credential object in the expected format.
@@ -238,25 +226,6 @@ YUI.add('deployment-credential-add', function() {
         </div>);
     },
 
-    /**
-      Generate the list of region options.
-
-      @method _generateRegions
-      @returns {Array} The list of region options.
-    */
-    _generateRegions: function() {
-      var regions = this.props.regions;
-      if (!regions) {
-        return [];
-      }
-      return regions.map((region) => {
-        return {
-          label: region.name,
-          value: region.name
-        };
-      });
-    },
-
     render: function() {
       var buttons = [{
         action: this.props.close,
@@ -291,7 +260,7 @@ YUI.add('deployment-credential-add', function() {
             </a>
           </div>
           <form className="twelve-col">
-            <div className="six-col">
+            <div className="six-col last-col">
               <juju.components.GenericInput
                 disabled={isReadOnly}
                 label={credentialName}
@@ -307,14 +276,6 @@ YUI.add('deployment-credential-add', function() {
                     'letters, numbers, and hyphens. It must not start or ' +
                     'end with a hyphen.'
                 }]} />
-            </div>
-            <div className="six-col last-col">
-              <juju.components.InsetSelect
-                disabled={isReadOnly}
-                label="Region"
-                options={this._generateRegions()}
-                ref="region"
-                value={this.props.region} />
             </div>
             <h3 className="deployment-panel__section-title twelve-col">
               Enter credentials
