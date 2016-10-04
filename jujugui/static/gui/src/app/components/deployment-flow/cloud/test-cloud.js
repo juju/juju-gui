@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentCloud', function() {
-  let acl, clouds, cloudList;
+  let acl, providers, cloudList;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,7 +33,7 @@ describe('DeploymentCloud', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    clouds = {
+    providers = {
       'google': {
         id: 'google',
         showLogo: true,
@@ -77,7 +77,7 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={null}
-        clouds={clouds}
+        providers={providers}
         listClouds={sinon.stub().callsArgWith(0, null, cloudList)}
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -132,7 +132,7 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={null}
-        clouds={clouds}
+        providers={providers}
         listClouds={sinon.stub()}
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -151,7 +151,7 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={{name: 'google'}}
-        clouds={clouds}
+        providers={providers}
         listClouds={sinon.stub().callsArgWith(0, null, {})}
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -177,7 +177,7 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={null}
-        clouds={clouds}
+        providers={providers}
         listClouds={sinon.stub().callsArgWith(0, null, cloudList)}
         setCloud={setCloud} />);
     assert.equal(setCloud.callCount, 1);
@@ -192,7 +192,7 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={null}
-        clouds={clouds}
+        providers={providers}
         listClouds={sinon.stub().callsArgWith(0, null, cloudList)}
         setCloud={setCloud} />, true);
     var output = renderer.getRenderOutput();

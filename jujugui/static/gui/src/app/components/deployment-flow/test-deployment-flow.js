@@ -129,7 +129,7 @@ describe('DeploymentFlow', function() {
                   <juju.components.DeploymentCloud
                     acl={acl}
                     cloud={null}
-                    clouds={instance.CLOUDS}
+                    providers={instance.PROVIDERS}
                     listClouds={listClouds}
                     setCloud={instance._setCloud} />
                 </juju.components.DeploymentSection>
@@ -142,7 +142,7 @@ describe('DeploymentFlow', function() {
                     acl={acl}
                     updateCloudCredential={updateCloudCredential}
                     cloud={null}
-                    clouds={instance.CLOUDS}
+                    providers={instance.PROVIDERS}
                     credential={undefined}
                     editable={true}
                     generateCloudCredentialName={generateCloudCredentialName}

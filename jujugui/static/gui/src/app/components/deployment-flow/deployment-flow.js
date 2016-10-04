@@ -47,7 +47,7 @@ YUI.add('deployment-flow', function() {
       withPlans: React.PropTypes.bool
     },
 
-    CLOUDS: {
+    PROVIDERS: {
       'google': {
         id: 'google',
         showLogo: true,
@@ -605,8 +605,8 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentCloud
             acl={this.props.acl}
             cloud={cloud}
-            clouds={this.CLOUDS}
             listClouds={this.props.listClouds}
+            providers={this.PROVIDERS}
             setCloud={this._setCloud} />
         </juju.components.DeploymentSection>);
     },
@@ -633,7 +633,7 @@ YUI.add('deployment-flow', function() {
             acl={this.props.acl}
             credential={this.state.credential}
             cloud={cloud}
-            clouds={this.CLOUDS}
+            providers={this.PROVIDERS}
             editable={!this.props.modelCommitted}
             generateCloudCredentialName={this.props.generateCloudCredentialName}
             getCloudCredentials={this.props.getCloudCredentials}
