@@ -1602,7 +1602,14 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Object} model The newly created model data.
   */
   utils._newModelCallback = function(app, callback, error, model) {
-    if (error) throw error;
+    if (error) {
+      app.db.notifications.add({
+        title: error,
+        message: error,
+        level: 'error'
+      });
+      return;
+    }
     utils.switchModel.call(
       app, app.createSocketURL.bind(app, app.get('socketTemplate')),
       app.switchEnv.bind(app), app.env, model.uuid, [model], model.name,

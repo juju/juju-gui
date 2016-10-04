@@ -1032,10 +1032,15 @@ describe('utilities', function() {
           getCredentials: sinon.stub().returns({user: 'user-spinach'}),
         },
         _autoPlaceUnits: sinon.stub(),
+        db: {
+          notifications: {
+            add: sinon.stub()
+          },
+        },
         set: sinon.stub(),
         createSocketURL: sinon.stub().returns('wss://socket-url'),
         get: sinon.stub().returns('wss://socket-url'),
-        switchEnv: sinon.stub()
+        switchEnv: sinon.stub(),
       };
       switchModel = utils.switchModel;
       utils.switchModel = sinon.stub().callsArgWith(6, app.env);
@@ -1108,6 +1113,19 @@ describe('utilities', function() {
       assert.equal(commit.callCount, 1);
       assert.deepEqual(commit.args[0][0], app.env);
       assert.equal(callback.callCount, 1);
+    });
+
+    it('can display an error notification', function() {
+      var model = {
+        name: 'koala',
+        uuid: 'uuid123'
+      };
+      utils._newModelCallback(
+        app, callback, 'Error: no Tasmanian Tigers were found', model);
+      assert.equal(app.db.notifications.add.callCount, 1);
+      assert.equal(
+        app.db.notifications.add.args[0][0].title,
+        'Error: no Tasmanian Tigers were found');
     });
   });
 
