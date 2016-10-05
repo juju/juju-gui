@@ -71,12 +71,6 @@
                 &:hover {
                     color: $ubuntu-orange;
                 }
-
-                &--hidden {
-                    max-width: 0;
-                    opacity: 0;
-                    margin-right: 0;
-                }
             }
         }
     }
