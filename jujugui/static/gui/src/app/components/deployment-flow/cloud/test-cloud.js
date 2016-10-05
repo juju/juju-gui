@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentCloud', function() {
-  let acl, clouds, cloudList;
+  let acl, providers, cloudList;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,8 +33,8 @@ describe('DeploymentCloud', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    clouds = {
-      'google': {
+    providers = {
+      'gce': {
         id: 'google',
         showLogo: true,
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',
@@ -50,7 +50,7 @@ describe('DeploymentCloud', function() {
         svgWidth: 204,
         title: 'Microsoft Azure'
       },
-      'aws': {
+      'ec2': {
         id: 'aws',
         showLogo: true,
         signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
@@ -66,9 +66,18 @@ describe('DeploymentCloud', function() {
       }
     };
     cloudList = {
-      'google': {name: 'google'},
-      'azure': {name: 'azure'},
-      'aws': {name: 'aws'}
+      'google': {
+        name: 'google',
+        cloudType: 'gce'
+      },
+      'azure': {
+        name: 'azure',
+        cloudType: 'azure'
+      },
+      'aws': {
+        name: 'aws',
+        cloudType: 'ec2'
+      }
     };
   });
 
@@ -77,7 +86,7 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={null}
-        clouds={clouds}
+        providers={providers}
         listClouds={sinon.stub().callsArgWith(0, null, cloudList)}
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -132,7 +141,7 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={null}
-        clouds={clouds}
+        providers={providers}
         listClouds={sinon.stub()}
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -150,8 +159,8 @@ describe('DeploymentCloud', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCloud
         acl={acl}
-        cloud={{name: 'google'}}
-        clouds={clouds}
+        cloud={{name: 'google', cloudType: 'gce'}}
+        providers={providers}
         listClouds={sinon.stub().callsArgWith(0, null, {})}
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -177,7 +186,7 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={null}
-        clouds={clouds}
+        providers={providers}
         listClouds={sinon.stub().callsArgWith(0, null, cloudList)}
         setCloud={setCloud} />);
     assert.equal(setCloud.callCount, 1);
@@ -192,12 +201,15 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={null}
-        clouds={clouds}
+        providers={providers}
         listClouds={sinon.stub().callsArgWith(0, null, cloudList)}
         setCloud={setCloud} />, true);
     var output = renderer.getRenderOutput();
     output.props.children[0].props.children[0].props.onClick();
     assert.equal(setCloud.callCount, 1);
-    assert.deepEqual(setCloud.args[0][0], {name: 'google'});
+    assert.deepEqual(setCloud.args[0][0], {
+      name: 'google',
+      cloudType: 'gce'
+    });
   });
 });

@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentCredentialAdd', function() {
-  var acl, clouds;
+  var acl, providers;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,8 +33,8 @@ describe('DeploymentCredentialAdd', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    clouds = {
-      'google': {
+    providers = {
+      gce: {
         id: 'google',
         showLogo: true,
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',
@@ -63,14 +63,13 @@ describe('DeploymentCredentialAdd', function() {
             json: true
           }]
         },
-        message: (
-          <p>a message</p>)
+        message: 'a message'
       }
     };
   });
 
   it('can render without a cloud', function() {
-    var cloud = clouds['google'];
+    var cloud = providers['gce'];
     var close = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
@@ -78,7 +77,7 @@ describe('DeploymentCredentialAdd', function() {
         updateCloudCredential={sinon.stub()}
         close={close}
         cloud={null}
-        clouds={clouds}
+        providers={providers}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
         setCredential={sinon.stub()}
@@ -122,7 +121,7 @@ describe('DeploymentCredentialAdd', function() {
           </h3>
           <div className="deployment-credential-add__credentials">
             <div className="six-col">
-              <p>a message</p>
+              a message
               <juju.components.InsetSelect
                 disabled={false}
                 label="Authentication type"
@@ -200,15 +199,15 @@ describe('DeploymentCredentialAdd', function() {
   });
 
   it('can render credential fields for a cloud', function() {
-    var cloud = clouds['google'];
+    var cloud = providers['gce'];
     var close = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
         acl={acl}
         updateCloudCredential={sinon.stub()}
         close={close}
-        cloud={{name: 'google'}}
-        clouds={clouds}
+        cloud={{name: 'google', cloudType: 'gce'}}
+        providers={providers}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
         setCredential={sinon.stub()}
@@ -252,7 +251,7 @@ describe('DeploymentCredentialAdd', function() {
           </h3>
           <div className="deployment-credential-add__credentials">
             <div className="six-col">
-              <p>a message</p>
+              a message
               <juju.components.InsetSelect
                 disabled={false}
                 label="Authentication type"
@@ -330,15 +329,15 @@ describe('DeploymentCredentialAdd', function() {
   });
 
   it('can render a cloud with a json field', function() {
-    var cloud = clouds['google'];
+    var cloud = providers['gce'];
     var close = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
         acl={acl}
         updateCloudCredential={sinon.stub()}
         close={close}
-        cloud={{name: 'google'}}
-        clouds={clouds}
+        cloud={{name: 'google', cloudType: 'gce'}}
+        providers={providers}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
         setCredential={sinon.stub()}
@@ -383,7 +382,7 @@ describe('DeploymentCredentialAdd', function() {
           </h3>
           <div className="deployment-credential-add__credentials">
             <div className="six-col">
-              <p>a message</p>
+              a message
               <juju.components.InsetSelect
                 disabled={false}
                 label="Authentication type"
@@ -438,15 +437,15 @@ describe('DeploymentCredentialAdd', function() {
 
   it('can disable controls when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
-    var cloud = clouds['google'];
+    var cloud = providers['gce'];
     var close = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
         acl={acl}
         updateCloudCredential={sinon.stub()}
         close={close}
-        cloud={{name: 'google'}}
-        clouds={clouds}
+        cloud={{name: 'google', cloudType: 'gce'}}
+        providers={providers}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
         setCredential={sinon.stub()}
@@ -490,7 +489,7 @@ describe('DeploymentCredentialAdd', function() {
           </h3>
           <div className="deployment-credential-add__credentials">
             <div className="six-col">
-              <p>a message</p>
+              a message
               <juju.components.InsetSelect
                 disabled={true}
                 label="Authentication type"
@@ -575,8 +574,8 @@ describe('DeploymentCredentialAdd', function() {
           acl={acl}
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
-          cloud={{name: 'google'}}
-          clouds={clouds}
+          cloud={{name: 'google', cloudType: 'gce'}}
+          providers={providers}
           generateCloudCredentialName={sinon.stub().returns('new@test')}
           getCredentials={getCredentials}
           setCredential={sinon.stub()}
@@ -626,8 +625,8 @@ describe('DeploymentCredentialAdd', function() {
         acl={acl}
         updateCloudCredential={updateCloudCredential}
         close={sinon.stub()}
-        cloud={{name: 'google'}}
-        clouds={clouds}
+        cloud={{name: 'google', cloudType: 'gce'}}
+        providers={providers}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
         setCredential={sinon.stub()}
@@ -669,8 +668,8 @@ describe('DeploymentCredentialAdd', function() {
           acl={acl}
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
-          cloud={{name: 'google'}}
-          clouds={clouds}
+          cloud={{name: 'google', cloudType: 'gce'}}
+          providers={providers}
           generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
           setCredential={sinon.stub()}

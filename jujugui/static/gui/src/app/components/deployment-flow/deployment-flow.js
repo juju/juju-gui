@@ -47,8 +47,8 @@ YUI.add('deployment-flow', function() {
       withPlans: React.PropTypes.bool
     },
 
-    CLOUDS: {
-      'google': {
+    PROVIDERS: {
+      'gce': {
         id: 'google',
         showLogo: true,
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',
@@ -133,7 +133,7 @@ YUI.add('deployment-flow', function() {
             &nbsp;for details.
           </p>)
       },
-      'aws': {
+      'ec2': {
         id: 'aws',
         showLogo: true,
         signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
@@ -281,7 +281,7 @@ YUI.add('deployment-flow', function() {
           }]
         }
       },
-      local: {
+      lxd: {
         id: 'local',
         showLogo: false,
         title: 'Local'
@@ -605,8 +605,8 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentCloud
             acl={this.props.acl}
             cloud={cloud}
-            clouds={this.CLOUDS}
             listClouds={this.props.listClouds}
+            providers={this.PROVIDERS}
             setCloud={this._setCloud} />
         </juju.components.DeploymentSection>);
     },
@@ -633,7 +633,7 @@ YUI.add('deployment-flow', function() {
             acl={this.props.acl}
             credential={this.state.credential}
             cloud={cloud}
-            clouds={this.CLOUDS}
+            providers={this.PROVIDERS}
             editable={!this.props.modelCommitted}
             generateCloudCredentialName={this.props.generateCloudCredentialName}
             getCloudCredentials={this.props.getCloudCredentials}

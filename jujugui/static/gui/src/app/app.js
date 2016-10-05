@@ -1105,9 +1105,12 @@ YUI.add('juju-gui', function(Y) {
       // Auto place the units. This is probably not the best UX, but is required
       // to display the machines in the deployment flow.
       this._autoPlaceUnits();
-      let cloud = env.get('cloud');
+      let cloud = env.get('providerType');
       if (cloud) {
-        cloud = {name: cloud};
+        cloud = {
+          cloudType: cloud,
+          name: env.get('cloud')
+        };
       }
       const credentials = controllerAPI && controllerAPI.getCredentials();
       const user = credentials && credentials.user || undefined;

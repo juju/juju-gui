@@ -25,16 +25,16 @@ YUI.add('deployment-credential-add', function() {
       acl: React.PropTypes.object.isRequired,
       close: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.object,
-      clouds: React.PropTypes.object.isRequired,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
       getCredentials: React.PropTypes.func.isRequired,
+      providers: React.PropTypes.object.isRequired,
       setCredential: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func.isRequired,
       user: React.PropTypes.string,
       validateForm: React.PropTypes.func.isRequired
     },
 
-    DEFAULTCLOUD: 'google',
+    DEFAULT_CLOUD_TYPE: 'gce',
 
     getInitialState: function() {
       const info = this._getInfo();
@@ -157,8 +157,8 @@ YUI.add('deployment-credential-add', function() {
     */
     _getInfo: function() {
       const cloud = this.props.cloud;
-      const id = cloud && cloud.name || this.DEFAULTCLOUD;
-      return this.props.clouds[id];
+      const id = cloud && cloud.cloudType || this.DEFAULT_CLOUD_TYPE;
+      return this.props.providers[id];
     },
 
     /**
@@ -241,10 +241,10 @@ YUI.add('deployment-credential-add', function() {
       // form will display correctly as the next step.
       var isReadOnly = this.props.acl.isReadOnly();
       const cloud = this.props.cloud;
-      const id = cloud && cloud.name || this.DEFAULTCLOUD;
+      const id = cloud && cloud.cloudType || this.DEFAULT_CLOUD_TYPE;
       const info = this._getInfo();
       var title = info && info.title || cloud.name;
-      var credentialName = id === 'google' ?
+      var credentialName = id === 'gce' ?
         'Project ID (credential name)' : 'Credential name';
       return (
         <div className="deployment-credential-add twelve-col">
