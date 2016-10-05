@@ -2370,18 +2370,31 @@ YUI.add('juju-env-legacy-api', function(Y) {
         (ignored if bundleYAML is provided).
       @param {Function} callback The user supplied callback to send the bundle
         changes response to after proper post processing. The callback receives
-        an object with an "errors" attribute containing possible errors and
-        with a "changes" attribute with the list of bundle changes.
+        a list of errors (each one being a string describing a possible error)
+        and a list of bundle changes.
         Detailed responses for the legacy GUI server calls can be found at
         http://bazaar.launchpad.net/~juju-gui/charms/trusty/juju-gui/trunk/
                       view/head:/server/guiserver/bundles/__init__.py#L322
     */
     getBundleChanges: function(bundleYAML, changesToken, callback) {
-      // Define callbacks for Juju API calls.
-      var intermediateCallback = this.handleGetBundleChanges.bind(
-        null, callback);
+      const handle = data => {
+        if (!callback) {
+          console.log('data returned by ChangeSet.GetChanges:', data);
+          return;
+        }
+        if (data.Error) {
+          callback([data.Error], []);
+          return;
+        }
+        const response = data.Response;
+        if (response.Errors && response.Errors.length) {
+          callback(response.Errors, []);
+          return;
+        }
+        callback([], response.Changes);
+      };
       // Prepare the request parameters.
-      var params = Object.create(null);
+      const params = Object.create(null);
       if (bundleYAML !== null) {
         params.YAML = bundleYAML;
       } else {
@@ -2391,26 +2404,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
         Type: 'ChangeSet',
         Request: 'GetChanges',
         Params: params
-      }, intermediateCallback);
-    },
-
-    /**
-      Handle responses from the getBundleChanges call.
-
-      @method handleGetBundleChanges
-      @param callback The user-provided callback function.
-      @param data The data from the remote call.
-    */
-    handleGetBundleChanges: function(callback, data) {
-      if (!callback) {
-        console.log('data returned by ChangeSet.GetChanges:', data);
-        return;
-      }
-      callback({
-        errors: data.Error && [data.Error] ||
-          data.Response && data.Response.Errors,
-        changes: data.Response && data.Response.Changes
-      });
+      }, handle);
     },
 
     /**

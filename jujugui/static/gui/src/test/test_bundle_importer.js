@@ -19,13 +19,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Bundle Importer', function() {
-  var bundleImporter, BundleImporter, db, env, fakebackend, models,
-      utils, yui;
+  let bundleImporter, BundleImporter, db, getBundleChanges, modelAPI,
+      fakebackend, models, utils, yui;
 
   before(function(done) {
-    var requires = ['bundle-importer', 'juju-tests-utils', 'juju-models',
-                    'juju-env-api', 'juju-tests-factory',
-                    'environment-change-set'];
+    const requires = [
+      'bundle-importer', 'juju-tests-utils', 'juju-models', 'juju-env-api',
+      'juju-tests-factory', 'environment-change-set'];
     YUI(GlobalConfig).use(requires, function(Y) {
       BundleImporter = Y.juju.BundleImporter;
       utils = Y['juju-tests'].utils;
@@ -37,14 +37,16 @@ describe('Bundle Importer', function() {
 
   beforeEach(function() {
     db = new models.Database();
-    env = new yui.juju.environments.GoEnvironment({
+    modelAPI = new yui.juju.environments.GoEnvironment({
       ecs: new yui.juju.EnvironmentChangeSet({
         db: db
       })
     });
     fakebackend = yui['juju-tests'].factory.makeFakeBackend();
+    getBundleChanges = sinon.stub();
     bundleImporter = new BundleImporter({
-      env: env,
+      modelAPI: modelAPI,
+      getBundleChanges: getBundleChanges,
       db: db,
       fakebackend: fakebackend
     });
@@ -52,13 +54,13 @@ describe('Bundle Importer', function() {
 
   afterEach(function() {
     db.destroy();
-    env.destroy();
+    modelAPI.destroy();
     fakebackend.destroy();
   });
 
   it('can be instantiated', function() {
     assert.equal(bundleImporter instanceof BundleImporter, true);
-    assert.equal(typeof bundleImporter.env === 'object', true);
+    assert.equal(typeof bundleImporter.modelAPI === 'object', true);
     assert.equal(typeof bundleImporter.db === 'object', true);
     assert.equal(typeof bundleImporter.fakebackend === 'object', true);
   });
@@ -193,68 +195,54 @@ describe('Bundle Importer', function() {
 
     describe('fetchDryRun', function() {
 
-      it('calls to the env to get bundle changes from a YAML', function() {
-        var yaml = '{"services":{}}';
-        var getBundleChanges = utils.makeStubMethod(
-            bundleImporter.env, 'getBundleChanges');
-        this._cleanups.push(getBundleChanges.reset);
+      it('calls to modelAPI to get bundle changes from a YAML', function() {
+        const yaml = '{"services":{}}';
         bundleImporter.fetchDryRun(yaml, null);
         assert.equal(getBundleChanges.callCount, 1);
-        var args = getBundleChanges.lastCall.args;
+        const args = getBundleChanges.lastCall.args;
         assert.equal(args.length, 3);
         assert.equal(args[0], yaml);
         assert.strictEqual(args[1], null);
       });
 
       it('ensures v4 format on import', function() {
-        var yaml = '{"foo":{"services":{}}}';
-        var getBundleChanges = utils.makeStubMethod(
-            bundleImporter.env, 'getBundleChanges');
-        this._cleanups.push(getBundleChanges.reset);
+        const yaml = '{"foo":{"services":{}}}';
         bundleImporter.fetchDryRun(yaml, null);
         assert.equal(getBundleChanges.callCount, 1);
-        var args = getBundleChanges.lastCall.args;
+        const args = getBundleChanges.lastCall.args;
         assert.equal(args.length, 3);
         assert.equal(args[0], '{"services":{}}');
         assert.strictEqual(args[1], null);
       });
 
       it('can import v4 bundles with applications key', function() {
-        var yaml = '{"applications":{}}';
-        var getBundleChanges = utils.makeStubMethod(
-            bundleImporter.env, 'getBundleChanges');
-        this._cleanups.push(getBundleChanges.reset);
+        const yaml = '{"applications":{}}';
         bundleImporter.fetchDryRun(yaml, null);
         assert.equal(getBundleChanges.callCount, 1);
-        var args = getBundleChanges.lastCall.args;
+        const args = getBundleChanges.lastCall.args;
         assert.equal(args.length, 3);
         assert.equal(args[0], '{"applications":{}}');
         assert.strictEqual(args[1], null);
       });
 
-      it('calls to the env to get bundle changes from a token', function() {
-        var token = 'foo';
-        var getBundleChanges = utils.makeStubMethod(
-            bundleImporter.env, 'getBundleChanges');
-        this._cleanups.push(getBundleChanges.reset);
+      it('calls to modelAPI to get bundle changes from a token', function() {
+        const token = 'foo';
         bundleImporter.fetchDryRun(null, token);
         assert.equal(getBundleChanges.callCount, 1);
-        var args = getBundleChanges.lastCall.args;
+        const args = getBundleChanges.lastCall.args;
         assert.equal(args.length, 3);
         assert.strictEqual(args[0], null);
         assert.equal(args[1], token);
       });
 
       it('has a callback which calls to import the dry run', function() {
-        var yaml = 'foo';
-        var dryRun = utils.makeStubMethod(bundleImporter, 'importBundleDryRun');
-        var getBundleChanges = utils.makeStubMethod(
-            bundleImporter.env, 'getBundleChanges');
-        this._cleanups.concat([dryRun.reset, getBundleChanges.reset]);
-        var changes = [{foo: 'bar'}];
+        const yaml = 'foo';
+        const dryRun = utils.makeStubMethod(
+          bundleImporter, 'importBundleDryRun');
+        const changes = [{foo: 'bar'}];
         bundleImporter.fetchDryRun(yaml);
-        var callback = getBundleChanges.lastCall.args[2];
-        callback({changes: changes});
+        const callback = getBundleChanges.lastCall.args[2];
+        callback([], changes);
         assert.equal(dryRun.callCount, 1);
         assert.deepEqual(dryRun.lastCall.args[0], changes);
       });
@@ -339,7 +327,7 @@ describe('Bundle Importer', function() {
 
   describe('Changeset execution', function() {
 
-    it('Sets up the correct environment (v5 Integration)', function(done) {
+    it('sets up the correct model (v5 Integration)', function(done) {
       let getCanonicalIdCount = 0;
       fakebackend.get('charmstore').getCanonicalId = (entityId, callback) => {
         getCanonicalIdCount += 1;
@@ -431,7 +419,7 @@ describe('Bundle Importer', function() {
       bundleImporter.importBundleDryRun(data);
     });
 
-    it('Sets up the correct environment (v3 colocation)', function() {
+    it('sets up the correct model (v3 colocation)', function() {
       var data = utils.loadFixture(
           'data/wordpress-bundle-v3-recordset.json', true);
       bundleImporter.importBundleDryRun(data);

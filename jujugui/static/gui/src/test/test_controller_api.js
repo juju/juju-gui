@@ -40,6 +40,7 @@ describe('Controller API', function() {
     controllerAPI.connect();
     controllerAPI.set('facades', {
       AllModelWatcher: [2],
+      Bundle: [1],
       Cloud: [1],
       Controller: [3],
       MigrationTarget: [1],
@@ -443,6 +444,78 @@ describe('Controller API', function() {
       var op = {type: 'ModelManager'};
       controllerAPI._send_rpc(op);
       assert.deepEqual(op.params, {});
+    });
+  });
+
+  describe('getBundleChanges', () => {
+    it('requests the changes from Juju using a YAML content', () => {
+      const yaml = 'foo:\n  bar: baz';
+      const callback = sinon.stub();
+      controllerAPI.getBundleChanges(yaml, null, callback);
+      const msg = conn.last_message();
+      assert.deepEqual(msg, {
+        'request-id': 1,
+        type: 'Bundle',
+        version: 1,
+        request: 'GetChanges',
+        params: {yaml: yaml}
+      });
+    });
+
+    it('ignores token requests for bundle changes', () => {
+      const callback = sinon.stub();
+      controllerAPI.getBundleChanges(null, 'TOKEN', callback);
+      const msg = conn.last_message();
+      assert.deepEqual(msg, {
+        'request-id': 1,
+        type: 'Bundle',
+        version: 1,
+        request: 'GetChanges',
+        params: {yaml: null}
+      });
+    });
+
+    it('handles processing the bundle changes response', () => {
+      const yaml = 'foo:\n  bar: baz';
+      const callback = sinon.stub();
+      controllerAPI.getBundleChanges(yaml, null, callback);
+      const msg = conn.last_message();
+      controllerAPI.dispatch_result({
+        'request-id': msg['request-id'],
+        response: {changes: ['foo']}
+      });
+      assert.equal(callback.callCount, 1);
+      assert.strictEqual(callback.lastCall.args.length, 2);
+      assert.deepEqual(callback.lastCall.args[0], []);
+      assert.deepEqual(callback.lastCall.args[1], ['foo']);
+    });
+
+    it('handles bundle changes error responses', () => {
+      const yaml = 'foo:\n  bar: baz';
+      const callback = sinon.stub();
+      controllerAPI.getBundleChanges(yaml, null, callback);
+      const msg = conn.last_message();
+      controllerAPI.dispatch_result({
+        'request-id': msg['request-id'],
+        response: {errors: ['bad wolf']}
+      });
+      assert.equal(callback.callCount, 1);
+      assert.deepEqual(callback.lastCall.args[0], ['bad wolf']);
+      assert.deepEqual(callback.lastCall.args[1], []);
+    });
+
+    it('handles yaml parsing errors from Juju', () => {
+      const yaml = 'foo:\n  bar: baz';
+      const callback = sinon.stub();
+      controllerAPI.getBundleChanges(yaml, null, callback);
+      const msg = conn.last_message();
+      controllerAPI.dispatch_result({
+        'request-id': msg['request-id'],
+        error: 'bad wolf'
+      });
+      assert.equal(callback.callCount, 1);
+      assert.deepEqual(callback.lastCall.args[0], ['bad wolf']);
+      assert.deepEqual(callback.lastCall.args[1], []);
     });
   });
 

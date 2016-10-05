@@ -107,6 +107,9 @@ describe('App', function() {
     function constructAppInstance(config, context) {
       config = config || {};
       config.jujuCoreVersion = config.jujuCoreVersion || '2.0.0';
+      config.controllerAPI = config.controllerAPI || new juju.ControllerAPI({
+        conn: new testUtils.SocketStub()
+      });
       config.container = container;
       config.viewContainer = container;
       app = new Y.juju.App(Y.mix(config, {
@@ -147,8 +150,8 @@ describe('App', function() {
 
     it('should propagate login credentials from the configuration',
         function(done) {
-          var user = 'nehi';
-          var password = 'moonpie';
+          const user = 'nehi';
+          const password = 'moonpie';
           const conn = new testUtils.SocketStub();
           const ecs = new juju.EnvironmentChangeSet();
           const env = new juju.environments.GoEnvironment({
@@ -159,6 +162,9 @@ describe('App', function() {
           });
           env.connect();
           app = new Y.juju.App({
+            controllerAPI: new juju.ControllerAPI({
+              conn: new testUtils.SocketStub()
+            }),
             env: env,
             container: container,
             consoleEnabled: true,
@@ -348,7 +354,9 @@ describe('App', function() {
     describe('_setupCharmstore', function() {
       it('is called on application instantiation', function() {
         var setup = testUtils.makeStubMethod(
-            Y.juju.App.prototype, '_setupCharmstore');
+            Y.juju.App.prototype, '_setupCharmstore', {
+              getBundleChanges: () => {}
+            });
         this._cleanups.push(setup.reset);
         constructAppInstance({
           env: new juju.environments.GoEnvironment({
@@ -426,11 +434,15 @@ describe('App', function() {
 
     function constructAppInstance(config, context) {
       config = config || {};
-      config.env = env;
+      config.controllerAPI = config.controllerAPI || new juju.ControllerAPI({
+        conn: new testUtils.SocketStub(),
+      });
+      config.env = config.env || env;
       config.container = container;
       config.viewContainer = container;
       config.jujuCoreVersion = '2.0.0';
       config.consoleEnabled = true;
+      config.controllerSocketTemplate = '/api';
       app = new Y.juju.App(config);
       env.connect();
       return app;
@@ -644,11 +656,12 @@ describe('App', function() {
       env.setCredentials({user: 'user', password: 'password'});
       app = new Y.juju.App({
         consoleEnabled: true,
+        controllerAPI: controller,
         env: env,
+        controllerSocketTemplate: '/api',
         jujuCoreVersion: '2.0.0',
         viewContainer: container
       });
-      app.controllerAPI = controller;
       app.navigate = function() { return true; };
       legacyApp = new Y.juju.App({
         consoleEnabled: true,
@@ -656,7 +669,6 @@ describe('App', function() {
         jujuCoreVersion: '1.25.6',
         viewContainer: container
       });
-      legacyApp.controllerAPI = controller;
       legacyApp.navigate = function() { return true; };
       destroyMe = [ecs, controller];
       done();
@@ -784,16 +796,18 @@ describe('App', function() {
     it('login method handler is called after successful login', function(done) {
       const oldOnLogin = Y.juju.App.prototype.onLogin;
       Y.juju.App.prototype.onLogin = evt => {
-        // Clean up.
-        Y.juju.App.prototype.onLogin = oldOnLogin;
-        // Begin assertions.
         assert.equal(conn.messages.length, 1);
         assertIsLogin(conn.last_message());
         assert.strictEqual(evt.err, null);
         done();
       };
+      this._cleanups.push(() => {
+        Y.juju.App.prototype.onLogin = oldOnLogin;
+      });
       const app = new Y.juju.App({
+        controllerAPI: controller,
         env: env,
+        controllerSocketTemplate: '/api',
         viewContainer: container,
         jujuCoreVersion: '2.0.0'
       });
@@ -1035,18 +1049,20 @@ describe('App', function() {
 
 
   describe('Application Connection State', function() {
-    var Y, app, conn, controllerAPI, env, juju;
+    let Y, app, conn, controllerAPI, env, legacyModelAPI, juju;
 
     function constructAppInstance(legacy) {
       let version = '2.0.0';
       let controller = controllerAPI;
+      let model = env;
       if (legacy) {
         version = '1.25.6';
         controller = null;
+        model = legacyModelAPI;
       }
       const noop = function() {return this;};
       const app = new juju.App({
-        env: env,
+        env: model,
         controllerAPI: controller,
         consoleEnabled: true,
         container: container,
@@ -1094,8 +1110,13 @@ describe('App', function() {
         user: 'user',
         password: 'password'
       });
+      legacyModelAPI = new juju.environments.GoLegacyEnvironment({
+        conn: conn,
+        user: 'user',
+        password: 'password'
+      });
       controllerAPI = new juju.ControllerAPI({
-        conn: testUtils.SocketStub(),
+        conn: new testUtils.SocketStub(),
         user: 'user',
         password: 'password'
       });
@@ -1138,11 +1159,11 @@ describe('App', function() {
 
     it('should connect to the model in Juju 1', function(done) {
       controllerAPI.connect = sinon.stub();
-      env.connect = sinon.stub();
+      legacyModelAPI.connect = sinon.stub();
       app = constructAppInstance(true);
       app.after('ready', () => {
         assert.strictEqual(controllerAPI.connect.callCount, 0, 'controller');
-        assert.strictEqual(env.connect.callCount, 1, 'model');
+        assert.strictEqual(legacyModelAPI.connect.callCount, 1, 'model');
         done();
       });
     });
@@ -1443,17 +1464,21 @@ describe('App', function() {
     });
 
     beforeEach(() => {
-      const env = new juju.environments.GoEnvironment({
+      const controllerAPI = new juju.ControllerAPI({
+        conn: new testUtils.SocketStub()
+      });
+      const modelAPI = new juju.environments.GoEnvironment({
         conn: new testUtils.SocketStub(),
         ecs: new juju.EnvironmentChangeSet()
       });
       app = new juju.App({
-        env: env,
+        controllerAPI: controllerAPI,
+        env: modelAPI,
         consoleEnabled: true,
         container: container,
         jujuCoreVersion: '2.0.0',
-        socketTemplate: '/model/$uuid/api',
-        controllerSocketTemplate: '/api'
+        controllerSocketTemplate: '/api',
+        socketTemplate: '/model/$uuid/api'
       });
     });
 
@@ -1492,12 +1517,16 @@ describe('App', function() {
     });
 
     beforeEach(() => {
-      const env = new juju.environments.GoEnvironment({
+      const controllerAPI = new juju.ControllerAPI({
+        conn: new testUtils.SocketStub()
+      });
+      const modelAPI = new juju.environments.GoEnvironment({
         conn: new testUtils.SocketStub(),
         ecs: new juju.EnvironmentChangeSet()
       });
       app = new juju.App({
-        env: env,
+        controllerAPI: controllerAPI,
+        env: modelAPI,
         consoleEnabled: true,
         container: container,
         jujuCoreVersion: '2.0.0',
@@ -1525,20 +1554,27 @@ describe('App', function() {
   });
 
   describe('storeUser', function() {
-    var Y, app, csStub, stub;
+    var Y, app, juju, csStub;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        juju = Y.namespace('juju');
         done();
       });
     });
 
     beforeEach(function() {
-      stub = testUtils.makeStubMethod(
-        Y.juju.App.prototype, 'setUpControllerAPI');
-      this._cleanups.push(stub);
       container = Y.Node.create('<div id="test" class="container"></div>');
       app = new Y.juju.App({
+        controllerAPI: new juju.ControllerAPI({
+          conn: new testUtils.SocketStub()
+        }),
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet()
+        }),
+        socketTemplate: '/model/$uuid/api',
+        controllerSocketTemplate: '/api',
         viewContainer: container,
         consoleEnabled: true,
         jujuCoreVersion: '2.0.0'
@@ -1564,23 +1600,27 @@ describe('App', function() {
   });
 
   describe('_getAuth', function() {
-    var Y, app, credStub, stub;
+    var Y, app, credStub, juju;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use([
-        'juju-gui',
-        'juju-tests-utils'
-      ], function(Y) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        juju = Y.namespace('juju');
         done();
       });
     });
 
     beforeEach(function() {
-      stub = testUtils.makeStubMethod(
-        Y.juju.App.prototype, 'setUpControllerAPI');
-      this._cleanups.push(stub);
       container = Y.Node.create('<div id="test" class="container"></div>');
       app = new Y.juju.App({
+        controllerAPI: new juju.ControllerAPI({
+          conn: new testUtils.SocketStub()
+        }),
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet()
+        }),
+        socketTemplate: '/model/$uuid/api',
+        controllerSocketTemplate: '/api',
         viewContainer: container,
         consoleEnabled: true,
         jujuCoreVersion: '2.0.0'
@@ -1996,19 +2036,26 @@ describe('App', function() {
   });
 
   describe('isLegacyJuju', function() {
-    var app, stub, Y;
+    var app, juju, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        juju = juju = Y.namespace('juju');
         done();
       });
     });
 
     beforeEach(function() {
-      stub = testUtils.makeStubMethod(
-        Y.juju.App.prototype, 'setUpControllerAPI');
-      this._cleanups.push(stub);
       app = new Y.juju.App({
+        controllerAPI: new juju.ControllerAPI({
+          conn: new testUtils.SocketStub()
+        }),
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet()
+        }),
+        socketTemplate: '/model/$uuid/api',
+        controllerSocketTemplate: '/api',
         viewContainer: container,
         jujuCoreVersion: '2.0.0'
       });

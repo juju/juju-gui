@@ -349,6 +349,44 @@ YUI.add('juju-controller-api', function(Y) {
     },
 
     /**
+      Make a WebSocket request to retrieve the list of changes required to
+      deploy a bundle, given the bundle YAML content.
+
+      @method getBundleChanges
+      @param {String} bundleYAML The bundle YAML file contents.
+      @param {String} _ The token identifying a bundle change set
+        (ignored on juju >= 2, only present for API compatibility).
+      @param {Function} callback The user supplied callback to send the bundle
+        changes response to after proper post processing. The callback receives
+        a list of errors (each one being a string describing a possible error)
+        and a list of bundle changes.
+    */
+    getBundleChanges: function(bundleYAML, _, callback) {
+      const handle = data => {
+        if (!callback) {
+          console.log('data returned by Bundle.GetChanges:', data);
+          return;
+        }
+        if (data.error) {
+          callback([data.error], []);
+          return;
+        }
+        const response = data.response;
+        if (response.errors && response.errors.length) {
+          callback(response.errors, []);
+          return;
+        }
+        callback([], response.changes);
+      };
+      // Send the request to retrieve bundle changes from Juju.
+      this._send_rpc({
+        type: 'Bundle',
+        request: 'GetChanges',
+        params: {yaml: bundleYAML}
+      }, handle);
+    },
+
+    /**
       Return information about Juju models, such as their names, series, and
       provider types, by performing a ModelManager.ModelInfo Juju API request.
 

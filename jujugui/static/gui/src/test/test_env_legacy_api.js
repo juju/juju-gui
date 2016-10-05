@@ -2084,106 +2084,75 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('requests the changes from Juju using a YAML', function() {
-      var yaml = 'foo:\n  bar: baz';
-      var callback = sinon.stub();
-      env.getBundleChanges(yaml, null, callback);
-      msg = conn.last_message();
-      assert.deepEqual(msg, {
-        RequestId: 1,
-        Type: 'ChangeSet',
-        Version: 0,
-        Request: 'GetChanges',
-        Params: {YAML: yaml}
+    describe('getBundleChanges', () => {
+      it('requests the changes from Juju using a YAML', function() {
+        const yaml = 'foo:\n  bar: baz';
+        const callback = sinon.stub();
+        env.getBundleChanges(yaml, null, callback);
+        msg = conn.last_message();
+        assert.deepEqual(msg, {
+          RequestId: 1,
+          Type: 'ChangeSet',
+          Version: 0,
+          Request: 'GetChanges',
+          Params: {YAML: yaml}
+        });
       });
-    });
 
-    it('requests the changes from the GUI server using a token', function() {
-      var callback = sinon.stub();
-      env.getBundleChanges(null, 'TOKEN', callback);
-      msg = conn.last_message();
-      assert.deepEqual(msg, {
-        RequestId: 1,
-        Type: 'ChangeSet',
-        Version: 0,
-        Request: 'GetChanges',
-        Params: {Token: 'TOKEN'}
+      it('requests the changes from the GUI server using a token', function() {
+        const callback = sinon.stub();
+        env.getBundleChanges(null, 'TOKEN', callback);
+        msg = conn.last_message();
+        assert.deepEqual(msg, {
+          RequestId: 1,
+          Type: 'ChangeSet',
+          Version: 0,
+          Request: 'GetChanges',
+          Params: {Token: 'TOKEN'}
+        });
       });
-    });
 
-    it('handles processing the bundle changes response', function() {
-      var yaml = 'foo:\n  bar: baz';
-      var callback = sinon.stub();
-      env.getBundleChanges(yaml, null, callback);
-      msg = conn.last_message();
-      env.dispatch_result({
-        RequestId: msg.RequestId,
-        Response: {Changes: ['foo']}
+      it('handles processing the bundle changes response', function() {
+        const yaml = 'foo:\n  bar: baz';
+        const callback = sinon.stub();
+        env.getBundleChanges(yaml, null, callback);
+        msg = conn.last_message();
+        env.dispatch_result({
+          RequestId: msg.RequestId,
+          Response: {Changes: ['foo']}
+        });
+        assert.equal(callback.callCount, 1);
+        assert.strictEqual(callback.lastCall.args.length, 2);
+        assert.deepEqual(callback.lastCall.args[0], []);
+        assert.deepEqual(callback.lastCall.args[1], ['foo']);
       });
-      assert.equal(callback.callCount, 1);
-      assert.deepEqual(callback.lastCall.args[0], {
-        changes: ['foo'],
-        errors: undefined
-      });
-    });
 
-    it('handles bundle changes error response', function() {
-      var yaml = 'foo:\n  bar: baz';
-      var callback = sinon.stub();
-      env.getBundleChanges(yaml, null, callback);
-      msg = conn.last_message();
-      env.dispatch_result({
-        RequestId: msg.RequestId,
-        Response: {Errors: ['bad wolf']}
+      it('handles bundle changes error response', function() {
+        const yaml = 'foo:\n  bar: baz';
+        const callback = sinon.stub();
+        env.getBundleChanges(yaml, null, callback);
+        msg = conn.last_message();
+        env.dispatch_result({
+          RequestId: msg.RequestId,
+          Response: {Errors: ['bad wolf']}
+        });
+        assert.equal(callback.callCount, 1);
+        assert.deepEqual(callback.lastCall.args[0], ['bad wolf']);
+        assert.deepEqual(callback.lastCall.args[1], []);
       });
-      assert.equal(callback.callCount, 1);
-      assert.deepEqual(callback.lastCall.args[0], {
-        changes: undefined,
-        errors: ['bad wolf']
-      });
-    });
 
-    it('handles yaml parsing errors from the GUI server', function() {
-      var yaml = 'foo:\n  bar: baz';
-      var callback = sinon.stub();
-      env.getBundleChanges(yaml, null, callback);
-      msg = conn.last_message();
-      env.dispatch_result({
-        RequestId: msg.RequestId,
-        Error: 'bad wolf'
-      });
-      assert.equal(callback.callCount, 1);
-      assert.deepEqual(callback.lastCall.args[0], {
-        changes: undefined,
-        errors: ['bad wolf']
-      });
-    });
-
-    it('falls back to GUI server for bundle deployments', function(done) {
-      var yaml = 'foo:\n  bar: baz';
-      env.getBundleChanges(yaml, null, function(data) {
-        assert.strictEqual(data.errors, undefined);
-        assert.deepEqual(data.changes, ['foo']);
-        done();
-      });
-      // Mimic the second response to ChangeSet.GetChanges (GUI server).
-      conn.msg({
-        RequestId: 1,
-        Response: {Changes: ['foo']}
-      });
-    });
-
-    it('handles errors on GUI server bundle deployments', function(done) {
-      var yaml = 'foo:\n  bar: baz';
-      env.getBundleChanges(yaml, null, function(data) {
-        assert.strictEqual(data.changes, undefined);
-        assert.deepEqual(data.errors, ['bad wolf']);
-        done();
-      });
-      // Mimic the second response to ChangeSet.GetChanges (GUI server).
-      conn.msg({
-        RequestId: 1,
-        Response: {Errors: ['bad wolf']}
+      it('handles yaml parsing errors from the GUI server', function() {
+        const yaml = 'foo:\n  bar: baz';
+        const callback = sinon.stub();
+        env.getBundleChanges(yaml, null, callback);
+        msg = conn.last_message();
+        env.dispatch_result({
+          RequestId: msg.RequestId,
+          Error: 'bad wolf'
+        });
+        assert.equal(callback.callCount, 1);
+        assert.deepEqual(callback.lastCall.args[0], ['bad wolf']);
+        assert.deepEqual(callback.lastCall.args[1], []);
       });
     });
 
