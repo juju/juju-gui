@@ -387,6 +387,8 @@ YUI.add('juju-gui', function(Y) {
       // handlers with a { mask: mask, handlers: handlers } format.
       this.dragNotifications = [];
 
+      this.bakeryFactory = new Y.juju.environments.web.BakeryFactory();
+
       // Create a client side database to store state.
       this.db = new models.Database();
       // Create and set up a new instance of the charmstore.
@@ -458,6 +460,7 @@ YUI.add('juju-gui', function(Y) {
       // Store the initial model UUID.
       const modelUUID = this.get('modelUUID') ||
           (window.juju_config && window.juju_config.jujuEnvUUID);
+
       this.set('modelUUID', modelUUID);
       // If the user closed the GUI when they were on a different env than
       // their default then it would show them the login screen. This sets
@@ -850,7 +853,7 @@ YUI.add('juju-gui', function(Y) {
           // The api may be unset if the current Juju does not support it.
           if (api && api.get('connected')) {
             console.log(`logging into ${api.name} with macaroons`);
-            api.loginWithMacaroon(new Y.juju.environments.web.Bakery({
+            api.loginWithMacaroon(this.bakeryFactory.bakery({
               webhandler: new Y.juju.environments.web.WebHandler(),
               interactive: this.get('interactiveLogin'),
               serviceName: 'juju',
@@ -958,11 +961,13 @@ YUI.add('juju-gui', function(Y) {
       // If the charmbrowser is open then don't show the logout link.
       var visible = !this.state.getState('current', 'sectionC', 'metadata');
       var charmstore = this.get('charmstore');
-      var bakery = charmstore.bakery;
+      var bakeryFactory = this.bakeryFactory;
       ReactDOM.render(
         <window.juju.components.Logout
           logout={this.logout.bind(this)}
-          clearCookie={bakery.clearCookie.bind(bakery)}
+          clearCookie={bakeryFactory.clear.bind(bakeryFactory)}
+          gisfLogout={window.juju_config.gisfLogout}
+          gisf={window.juju_config.gisf}
           charmstoreLogoutUrl={charmstore.getLogoutUrl()}
           getUser={this.getUser.bind(this, 'charmstore')}
           clearUser={this.clearUser.bind(this, 'charmstore')}
@@ -1631,7 +1636,7 @@ YUI.add('juju-gui', function(Y) {
         if (window.flags && window.flags.gisf) {
           existingCookie = 'macaroon-storefront';
         }
-        var bakery = new Y.juju.environments.web.Bakery({
+        var bakery = this.bakeryFactory.bakery({
           webhandler: new Y.juju.environments.web.WebHandler(),
           interactive: this.get('interactiveLogin'),
           setCookiePath: `${charmstoreURL}${apiVersion}/set-auth-cookie`,
@@ -1693,7 +1698,7 @@ YUI.add('juju-gui', function(Y) {
       }
       var interactive = this.get('interactiveLogin');
       var webHandler = new Y.juju.environments.web.WebHandler();
-      var bakery = new Y.juju.environments.web.Bakery({
+      var bakery = this.bakeryFactory.bakery({
         serviceName: 'plans',
         macaroon: config.plansMacaroons,
         webhandler: webHandler,
@@ -1703,7 +1708,7 @@ YUI.add('juju-gui', function(Y) {
         dischargeToken: config.dischargeToken
       });
       this.plans = new window.jujulib.plans(config.plansURL, bakery);
-      var bakery = new Y.juju.environments.web.Bakery({
+      var bakery = this.bakeryFactory.bakery({
         serviceName: 'terms',
         macaroon: config.termsMacaroons,
         webhandler: webHandler,
@@ -2786,6 +2791,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-controller-api',
     'juju-endpoints-controller',
     'juju-env-bakery',
+    'juju-env-bakery-factory',
     'juju-env-base',
     'juju-env-fakebackend',
     'juju-env-api',
