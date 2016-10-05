@@ -21,13 +21,14 @@
 
     &__link {
         box-sizing: border-box;
-        color: $cool-grey;
+        color: $warm-grey;
         display: block;
+        transition: color .3s;
 
         &:hover,
         &:active,
         &:focus {
-            text-decoration: none;
+            color: $ubuntu-orange;
         }
     }
 
@@ -60,6 +61,7 @@
                 overflow: hidden;
                 max-width: 100px;
                 margin-right: 20px;
+                margin-left: 10px;
                 color: $warm-grey;
                 opacity: 1;
                 transition: all .3s;

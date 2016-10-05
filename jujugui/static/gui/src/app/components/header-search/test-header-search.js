@@ -215,8 +215,7 @@ describe('HeaderSearch', function() {
     assert.equal(preventDefault.callCount, 1);
     output = renderer.getRenderOutput();
     assert.deepEqual(output,
-      <div className={'header-search header-search--active ' +
-        'header-search--search-active'}
+      <div className={'header-search header-search--active'}
         ref="headerSearchContainer">
         {output.props.children}
       </div>);
@@ -234,6 +233,7 @@ describe('HeaderSearch', function() {
         changeState={changeState} />, true);
     var instance = renderer.getMountedInstance();
     instance.refs = {searchInput: {focus: sinon.stub()}};
+    instance.state.active = true;
     var output = renderer.getRenderOutput();
     output.props.children[0].props.children[0].props.onClick({
       preventDefault: sinon.stub()

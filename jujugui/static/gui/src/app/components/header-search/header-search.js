@@ -36,8 +36,7 @@ YUI.add('header-search', function() {
     getInitialState: function() {
       return {
         query: this._getSearchQuery(),
-        active: this._activeForComponent(),
-        inputStyles: this._generateInputStyles()
+        active: this._activeForComponent()
       };
     },
 
@@ -96,8 +95,7 @@ YUI.add('header-search', function() {
     _generateClasses: function() {
       var metadata = this.props.getAppState('current', 'sectionC', 'metadata');
       var classes = {
-        'header-search--active': this.state.active,
-        'header-search--search-active': !!this.state.inputStyles.width
+        'header-search--active': this.state.active
       };
       if (metadata && metadata.activeComponent) {
         classes['header-search--' + metadata.activeComponent] = true;
@@ -150,8 +148,7 @@ YUI.add('header-search', function() {
     */
     _openSearch: function(inputOpen) {
       this.setState({
-        active: true,
-        inputStyles: this._generateInputStyles(inputOpen)
+        active: true
       });
       this.refs.searchInput.focus();
     },
@@ -164,35 +161,8 @@ YUI.add('header-search', function() {
     _closeSearch: function() {
       this.setState({
         query: '',
-        active: false,
-        inputStyles: this._generateInputStyles(false)
+        active: false
       });
-    },
-
-    /**
-      Set the width of the input based on the window size.
-
-      @method _generateInputStyles
-      @param {Boolean} active Set the width only if it active
-      @returns {Object} The object of styles
-    */
-    _generateInputStyles: function(active) {
-      if (active === undefined) {
-        var metadata = this.props.getAppState(
-          'current', 'sectionC', 'metadata');
-        if (metadata) {
-          var activeComponent = metadata.activeComponent;
-          if (activeComponent === 'store' ||
-              activeComponent === 'search-results') {
-            active = true;
-          }
-        }
-      }
-      var styles = {};
-      if (active) {
-        styles.width = (window.innerWidth * 0.40) + 'px';
-      }
-      return styles;
     },
 
     /**
@@ -205,7 +175,7 @@ YUI.add('header-search', function() {
       e.preventDefault();
       // If the search box is not open then instead of submitting the form the
       // search box should be opened.
-      if (!this.state.inputStyles.width) {
+      if (!this.state.active) {
         this._openSearch(true);
         return;
       }
