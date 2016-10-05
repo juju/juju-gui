@@ -34,7 +34,7 @@ YUI.add('deployment-credential-add', function() {
       validateForm: React.PropTypes.func.isRequired
     },
 
-    DEFAULTCLOUD: 'gce',
+    DEFAULT_CLOUD_TYPE: 'gce',
 
     getInitialState: function() {
       const info = this._getInfo();
@@ -157,7 +157,7 @@ YUI.add('deployment-credential-add', function() {
     */
     _getInfo: function() {
       const cloud = this.props.cloud;
-      const id = cloud && cloud.cloudType || this.DEFAULTCLOUD;
+      const id = cloud && cloud.cloudType || this.DEFAULT_CLOUD_TYPE;
       return this.props.providers[id];
     },
 
@@ -241,7 +241,7 @@ YUI.add('deployment-credential-add', function() {
       // form will display correctly as the next step.
       var isReadOnly = this.props.acl.isReadOnly();
       const cloud = this.props.cloud;
-      const id = cloud && cloud.cloudType || this.DEFAULTCLOUD;
+      const id = cloud && cloud.cloudType || this.DEFAULT_CLOUD_TYPE;
       const info = this._getInfo();
       var title = info && info.title || cloud.name;
       var credentialName = id === 'gce' ?
