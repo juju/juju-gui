@@ -1,10 +1,18 @@
 .generic-input {
+    position: relative;
+
     &__label {
-        // Needs to be relative to appear above the input.
-        position: relative;
-        margin: 4px 0 -23px 10px;
-        padding-top: 5px;
-        font-size: 0.688em;
+        // Needs to be positioned to appear above the input.
+        font-size: 18px;
+        left: 10px;
+        position: absolute;
+        top: 25px;
+        transition: font-size .25s, top .25s;
+
+        &.focus {
+            top: 6px;
+            font-size: 11px;
+        }
     }
 
     &__field[type=text] {

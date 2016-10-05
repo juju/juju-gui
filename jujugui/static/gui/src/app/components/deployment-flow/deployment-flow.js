@@ -531,6 +531,17 @@ YUI.add('deployment-flow', function() {
     },
 
     /**
+      Select the value of the model name input, for easier replacement with a
+      different name.
+
+      @method _generateModelNameSection
+      @returns {Object} The markup.
+    */
+    _selectModelName: function() {
+      this.refs.modelName.select();
+    },
+
+    /**
       Generate the cloud section.
 
       @method _generateModelNameSection
@@ -562,7 +573,7 @@ YUI.add('deployment-flow', function() {
                   'letters, numbers, and hyphens. It must not start or ' +
                   'end with a hyphen.'
               }]}
-              value={this.props.modelName} />
+              value="" />
           </div>
         </juju.components.DeploymentSection>);
     },

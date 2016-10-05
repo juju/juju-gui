@@ -25,6 +25,7 @@ YUI.add('generic-input', function() {
     propTypes: {
       disabled: React.PropTypes.bool,
       label: React.PropTypes.string,
+      onFocus: React.PropTypes.func,
       placeholder: React.PropTypes.string,
       required: React.PropTypes.bool,
       validate: React.PropTypes.array,
@@ -38,7 +39,7 @@ YUI.add('generic-input', function() {
     },
 
     getInitialState: function() {
-      return {errors: null};
+      return {errors: null, focus: false};
     },
 
     /**
@@ -96,16 +97,37 @@ YUI.add('generic-input', function() {
     },
 
     /**
+      Handle focus events for the input.
+      @method _focusHandler
+    */
+    _focusHandler: function() {
+      this.setState({focus: true});
+    },
+
+    /**
+      Handle blur events for the input.
+      @method _blurHandler
+    */
+    _blurHandler: function() {
+      this.setState({focus: false});
+    },
+
+    /**
       Generates a label for the input if the prop is provided.
       @method _generateLabel
     */
     _generateLabel: function() {
       var label = this.props.label;
       var element, id;
+      var classes = classNames(
+        'generic-input__label', {
+          focus: this.state.focus
+        }
+      );
       if (label) {
         id = label.replace(' ', '-');
         element =
-          <label className="generic-input__label"
+          <label className={classes}
             htmlFor={id}>
             {label}
           </label>;
@@ -134,6 +156,8 @@ YUI.add('generic-input', function() {
             placeholder={this.props.placeholder}
             required={this.props.required}
             onChange={this.validate}
+            onFocus={this._focusHandler}
+            onBlur={this._blurHandler}
             ref="field"
             type="text" />
           {this.state.errors}

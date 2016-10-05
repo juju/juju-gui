@@ -58,6 +58,8 @@ describe('GenericInput', function() {
           placeholder="us-central-1"
           required={true}
           onChange={instance.validate}
+          onFocus={instance._focusHandler}
+          onBlur={instance._blurHandler}
           ref="field"
           type="text" />
         {null}
@@ -179,6 +181,8 @@ describe('GenericInput', function() {
           placeholder="us-central-1"
           required={true}
           onChange={instance.validate}
+          onFocus={instance._focusHandler}
+          onBlur={instance._blurHandler}
           ref="field"
           type="text" />
         {null}
