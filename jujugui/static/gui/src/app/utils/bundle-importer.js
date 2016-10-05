@@ -30,7 +30,8 @@ YUI.add('bundle-importer', function(Y) {
     @constructor
   */
   function BundleImporter(cfg) {
-    this.env = cfg.env;
+    this.modelAPI = cfg.modelAPI;
+    this._getBundleChanges = cfg.getBundleChanges;
     this.db = cfg.db;
     this.fakebackend = cfg.fakebackend;
     this.hideDragOverNotification = cfg.hideDragOverNotification;
@@ -42,7 +43,7 @@ YUI.add('bundle-importer', function(Y) {
   BundleImporter.prototype = {
 
     /**
-      Import a bundle YAML into the current environment.
+      Import a bundle YAML into the current model.
 
       @method importBundleYAML
       @param {String} bundleYAML The bundle YAML to deploy.
@@ -58,7 +59,7 @@ YUI.add('bundle-importer', function(Y) {
 
     /**
       Import a the collection of changes identified by the given token into the
-      current environment.
+      current model.
 
       @method importChangesToken
       @param {String} changesToken The token identifying a bundle change set.
@@ -133,8 +134,8 @@ YUI.add('bundle-importer', function(Y) {
       if (bundleYAML) {
         bundleYAML = this._ensureV4Format(bundleYAML);
       }
-      this.env.getBundleChanges(
-          bundleYAML, changesToken, this._handleFetchDryRun.bind(this));
+      this._getBundleChanges(
+        bundleYAML, changesToken, this._handleFetchDryRun.bind(this));
     },
 
     /**
@@ -143,17 +144,17 @@ YUI.add('bundle-importer', function(Y) {
       @method _handleFetchDryRun
       @param {Object} response The processed response data.
     */
-    _handleFetchDryRun: function(response) {
-      if (response.errors && response.errors.length) {
+    _handleFetchDryRun: function(errors, changes) {
+      if (errors && errors.length) {
         this.db.notifications.add({
           title: 'Error generating changeSet',
           message: 'The following errors occurred while retrieving bundle ' +
-              'changes: ' + response.errors.join(', '),
+              'changes: ' + errors.join(', '),
           level: 'error'
         });
         return;
       }
-      this.importBundleDryRun(response.changes);
+      this.importBundleDryRun(changes);
     },
 
     /**
@@ -358,7 +359,7 @@ YUI.add('bundle-importer', function(Y) {
     _execute_expose: function(record, next) {
       // Grab the actual record Id
       var serviceId = record[record.args[0].replace(/^\$/, '')].get('id');
-      this.env.expose(serviceId, null, {});
+      this.modelAPI.expose(serviceId, null, {});
       next();
     },
 
@@ -398,7 +399,7 @@ YUI.add('bundle-importer', function(Y) {
       // layer where we create ghosts and handle cleaning them up.
       var machine = this.db.machines.addGhost(
           record.args[0].parentId, record.args[0].containerType);
-      this.env.addMachines(record.args, function(machine) {
+      this.modelAPI.addMachines(record.args, function(machine) {
         this.db.machines.remove(machine);
       }.bind(this, machine), { modelId: machine.id});
       // Loop through recordSet and add the machine model to every record which
@@ -480,7 +481,7 @@ YUI.add('bundle-importer', function(Y) {
 
           var constraints = record.args[4] || {};
 
-          this.env.deploy(
+          this.modelAPI.deploy(
               // Utilize the charm's id, as bundles may specify charms without
               // fully qualified charm IDs in the service specification. This
               // allows bundles to use charms without revisions, effectively
@@ -503,10 +504,10 @@ YUI.add('bundle-importer', function(Y) {
                   config: ghostService.get('config'),
                   constraints: constraints
                 });
-                this.env.update_annotations(
+                this.modelAPI.update_annotations(
                     name, 'application', ghostService.get('annotations'));
               }.bind(this, ghostService),
-              // Options used by ECS, ignored by environment.
+              // Options used by ECS, ignored by model.
               {modelId: ghostService.get('id')});
           this._saveModelToRequires(record.id, ghostService);
           this._collectedServices.push(ghostService);
@@ -555,7 +556,7 @@ YUI.add('bundle-importer', function(Y) {
                   charm.loaded = true;
                   db.charms.add(charm);
                 }
-                this.env.addCharm(charmId, null, () => {});
+                this.modelAPI.addCharm(charmId, null, () => {});
                 this._saveModelToRequires(record.id, charm);
                 next();
               }.bind(this),
@@ -577,8 +578,8 @@ YUI.add('bundle-importer', function(Y) {
     _execute_addUnit: function(record, next) {
       var serviceId, charmUrl, size, name;
       // The bundlelib no longer returns the same format as required by the
-      // GUI's add_unit env method so this re-maps the arguments so that they
-      // match.
+      // GUI's add_unit modelAPI method so this re-maps the arguments so that
+      // they match.
       // If the length is longer than 2 then it's still using the old format
       // which includes the matching args.
       // XXX This can be removed once the bundlelib has been updated across
@@ -640,7 +641,7 @@ YUI.add('bundle-importer', function(Y) {
       }
       // Add the ghost model Id to the arguments list for the ECS.
       record.args.push({modelId: unitId});
-      this.env.add_unit.apply(this.env, record.args);
+      this.modelAPI.add_unit.apply(this.modelAPI, record.args);
       // If the unit does not specify a machine, create a new machine.
       if (record.args[2] === null) {
         this._execute_addMachines({
@@ -651,7 +652,7 @@ YUI.add('bundle-importer', function(Y) {
         }.bind(this));
       }
       // Place all units.
-      this.env.placeUnit(ghostUnit, record.args[2]);
+      this.modelAPI.placeUnit(ghostUnit, record.args[2]);
       next();
     },
 
@@ -684,7 +685,7 @@ YUI.add('bundle-importer', function(Y) {
         scope: 'global', // XXX check the charms to see if this is a subordinate
         display_name: 'pending'
       });
-      this.env.add_relation(
+      this.modelAPI.add_relation(
           endpoints[0], endpoints[1],
           function(e) {
             this.db.relations.create({

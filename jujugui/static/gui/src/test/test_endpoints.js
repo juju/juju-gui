@@ -54,7 +54,12 @@ describe('Relation endpoints logic', function() {
     env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
     env.connect();
     app = new Y.juju.App({
+      controllerAPI: new juju.ControllerAPI({
+        conn: new utils.SocketStub()
+      }),
       env: env,
+      socketTemplate: '/model/$uuid/api',
+      controllerSocketTemplate: '/api',
       consoleEnabled: true,
       jujuCoreVersion: '2.0.0'
     });
@@ -698,7 +703,12 @@ describe('Application config handlers', function() {
     env.connect();
     env.set('facades', {Application: [1]});
     app = new Y.juju.App({
+      controllerAPI: new juju.ControllerAPI({
+        conn: new utils.SocketStub()
+      }),
       env: env,
+      socketTemplate: '/model/$uuid/api',
+      controllerSocketTemplate: '/api',
       consoleEnabled: true,
       jujuCoreVersion: '2.0.0'
     });

@@ -478,14 +478,21 @@ YUI.add('juju-gui', function(Y) {
       }
       modelAPI.setCredentials({ user, password, macaroons });
       this.env = modelAPI;
-      // If we're in legacy Juju (Juju 1) then we'll only require
-      // a single WebSocket connection.
+      let getBundleChanges;
       if (controllerAPI) {
+        // In Juju >= 2 we establish the controller API connection first, then
+        // the model one. Also, bundle changes are always retrieved using the
+        // controller connection.
         this.controllerAPI = this.setUpControllerAPI(
           controllerAPI, user, password, macaroons);
+        getBundleChanges = this.controllerAPI.getBundleChanges.bind(
+          this.controllerAPI);
       } else {
+        // In legacy Juju, we only connect to the model, and therefore bundle
+        // changes are retrieved from that single WebSocket connection.
         modelAPI.set('socket_url',
           this.createSocketURL(this.get('socketTemplate'), modelUUID));
+        getBundleChanges = this.env.getBundleChanges.bind(this.env);
       }
       // Set the modelAPI in the model controller here so
       // that we know that it's been setup.
@@ -495,7 +502,8 @@ YUI.add('juju-gui', function(Y) {
       var environments = Y.namespace('juju.environments');
       this.bundleImporter = new Y.juju.BundleImporter({
         db: this.db,
-        env: this.env,
+        modelAPI: this.env,
+        getBundleChanges: getBundleChanges,
         fakebackend: new environments.FakeBackend({
           charmstore: this.get('charmstore')
         }),

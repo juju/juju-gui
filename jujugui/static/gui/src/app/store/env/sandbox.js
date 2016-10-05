@@ -181,6 +181,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     {name: 'AllWatcher', versions: [1]},
     {name: 'Annotations', versions: [2]},
     {name: 'Application', versions: [1]},
+    {name: 'Bundle', versions: [1]},
     {name: 'Charms', versions: [2]},
     {name: 'Client', versions: [1]},
     {name: 'Cloud', versions: [1]},
@@ -1480,18 +1481,18 @@ YUI.add('juju-env-sandbox', function(Y) {
     /**
       Makes a request using a real WebSocket to get the bundle changeSet data.
 
-      @method handleClientGetBundleChanges
+      @method handleBundleGetChanges
       @param {Object} data The contents of the API arguments.
       @param {Object} client The active ClientConnection.
       @param {Object} state An instance of FakeBackend.
     */
-    handleClientGetBundleChanges: function(data, client, state) {
+    handleBundleGetChanges: function(data, client, state) {
       this.get('bundleService').getBundleChangesFromYAML(
-        data.params.yaml, (error, bundleChanges) => {
+        data.params.yaml, (error, changes) => {
           client.receive({
             'request-id': data['request-id'],
             error: error,
-            response: {changes: bundleChanges}
+            response: {changes: changes}
           });
         }
       );

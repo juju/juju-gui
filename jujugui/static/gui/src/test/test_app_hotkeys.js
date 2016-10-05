@@ -19,26 +19,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('application hotkeys', function() {
-  var app, container, env, windowNode, Y;
+  let app, container, controllerAPI, env, windowNode, Y;
+  const requirements = ['juju-gui', 'juju-tests-utils', 'node-event-simulate'];
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(
-        ['juju-gui', 'juju-tests-utils', 'node-event-simulate'], function(Y) {
-          env = {
-            after: function() {},
-            get: function() {},
-            on: function() {},
-            once: function() {},
-            set: function() {},
-            setCredentials: function() {},
-            getCredentials: function() {
-              return {areAvailable: false};
-            }
-          };
-          windowNode = Y.one(window);
-          done();
-        });
-
+    Y = YUI(GlobalConfig).use(requirements, function(Y) {
+      controllerAPI = {
+        after: () => {},
+        getBundleChanges: () => {},
+        set: () => {},
+        setAttrs: () => {},
+        setCredentials: () => {}
+      };
+      env = {
+        after: () => {},
+        get: () => {},
+        on: () => {},
+        once: () => {},
+        set: () => {},
+        setCredentials: () => {},
+        getCredentials: () => {
+          return {areAvailable: false};
+        }
+      };
+      windowNode = Y.one(window);
+      done();
+    });
   });
 
   beforeEach(function() {
@@ -47,10 +53,12 @@ describe('application hotkeys', function() {
       .set('id', 'shortcut-help')
       .setStyle('display', 'none');
     app = new Y.juju.App({
+      controllerAPI: controllerAPI,
       env: env,
       container: container,
       viewContainer: container,
-      jujuCoreVersion: '2.0.0'
+      jujuCoreVersion: '2.0.0',
+      controllerSocketTemplate: ''
     });
     app.showView(new Y.View());
     app.activateHotkeys();

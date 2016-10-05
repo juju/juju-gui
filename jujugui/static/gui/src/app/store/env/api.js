@@ -2362,53 +2362,6 @@ YUI.add('juju-env-api', function(Y) {
     },
 
     /**
-      Make a WebSocket request to retrieve the list of changes required to
-      deploy a bundle, given the bundle YAML contents or token.
-
-      @method getBundleChanges
-      @param {String} bundleYAML The bundle YAML file contents.
-      @param {String} changesToken The token identifying a bundle change set
-        (ignored on juju 2).
-      @param {Function} callback The user supplied callback to send the bundle
-        changes response to after proper post processing. The callback receives
-        an object with an "errors" attribute containing possible errors and
-        with a "changes" attribute with the list of bundle changes.
-        Detailed responses for the legacy GUI server calls can be found at
-        http://bazaar.launchpad.net/~juju-gui/charms/trusty/juju-gui/trunk/
-                      view/head:/server/guiserver/bundles/__init__.py#L322
-    */
-    getBundleChanges: function(bundleYAML, changesToken, callback) {
-      // If we're connected to Juju core then get the bundle changes from there.
-      if (this.get('connected')) {
-        const handle = data => {
-          if (!callback) {
-            console.log('data returned by Client.GetBundleChanges:', data);
-            return;
-          }
-          callback({
-            errors: data.error && [data.error] || data.response.errors,
-            changes: data.response && data.response.changes
-          });
-        };
-        // Send the request to retrieve bundle changes from Juju.
-        this._send_rpc({
-          type: 'Client',
-          request: 'GetBundleChanges',
-          params: {yaml: bundleYAML}
-        }, handle);
-        return;
-      }
-      // If we weren't connected then make the request to the external
-      // bundle service.
-      this.get('bundleService')
-          .getBundleChangesFromYAML(
-            bundleYAML,
-            (error, bundleChanges) => {
-              callback({errors: error, changes: bundleChanges});
-            });
-    },
-
-    /**
       Make application endpoints available for consumption.
 
       @method offer
