@@ -241,10 +241,10 @@ YUI.add('deployment-credential-add', function() {
       // form will display correctly as the next step.
       var isReadOnly = this.props.acl.isReadOnly();
       const cloud = this.props.cloud;
-      const id = cloud && cloud.name || this.DEFAULTCLOUD;
+      const id = cloud && cloud.cloudType || this.DEFAULTCLOUD;
       const info = this._getInfo();
       var title = info && info.title || cloud.name;
-      var credentialName = id === 'google' ?
+      var credentialName = id === 'gce' ?
         'Project ID (credential name)' : 'Credential name';
       return (
         <div className="deployment-credential-add twelve-col">

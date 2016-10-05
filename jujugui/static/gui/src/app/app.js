@@ -1099,7 +1099,10 @@ YUI.add('juju-gui', function(Y) {
       this._autoPlaceUnits();
       let cloud = env.get('providerType');
       if (cloud) {
-        cloud = {name: cloud};
+        cloud = {
+          cloudType: cloud,
+          name: env.get('cloud')
+        };
       }
       const credentials = controllerAPI && controllerAPI.getCredentials();
       const user = credentials && credentials.user || undefined;

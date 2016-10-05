@@ -34,7 +34,7 @@ describe('DeploymentCloud', function() {
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
     providers = {
-      'google': {
+      'gce': {
         id: 'google',
         showLogo: true,
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',
@@ -50,7 +50,7 @@ describe('DeploymentCloud', function() {
         svgWidth: 204,
         title: 'Microsoft Azure'
       },
-      'aws': {
+      'ec2': {
         id: 'aws',
         showLogo: true,
         signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
@@ -66,9 +66,18 @@ describe('DeploymentCloud', function() {
       }
     };
     cloudList = {
-      'google': {name: 'google'},
-      'azure': {name: 'azure'},
-      'aws': {name: 'aws'}
+      'google': {
+        name: 'google',
+        cloudType: 'gce'
+      },
+      'azure': {
+        name: 'azure',
+        cloudType: 'azure'
+      },
+      'aws': {
+        name: 'aws',
+        cloudType: 'ec2'
+      }
     };
   });
 
@@ -150,7 +159,7 @@ describe('DeploymentCloud', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCloud
         acl={acl}
-        cloud={{name: 'google'}}
+        cloud={{name: 'google', cloudType: 'gce'}}
         providers={providers}
         listClouds={sinon.stub().callsArgWith(0, null, {})}
         setCloud={sinon.stub()} />, true);
@@ -198,6 +207,9 @@ describe('DeploymentCloud', function() {
     var output = renderer.getRenderOutput();
     output.props.children[0].props.children[0].props.onClick();
     assert.equal(setCloud.callCount, 1);
-    assert.deepEqual(setCloud.args[0][0], {name: 'google'});
+    assert.deepEqual(setCloud.args[0][0], {
+      name: 'google',
+      cloudType: 'gce'
+    });
   });
 });
