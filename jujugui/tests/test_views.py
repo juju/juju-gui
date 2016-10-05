@@ -1,6 +1,5 @@
 # Copyright 2015 Canonical Ltd.  This software is licensed under the
 # GNU Affero General Public License version 3 (see the file LICENSE).
-
 import json
 import pkg_resources
 import unittest
@@ -129,19 +128,21 @@ class ConfigTests(ViewTestCase):
         self.assertEqual('', config['baseUrl'])
         self.assertIsNone(config['auth'])
         self.assertEqual('wss', config['socket_protocol'])
+        self.assertIsNone(config['gisfLogout'])
 
     def test_customized_options(self):
         self.update_settings({
-            'jujugui.charmstore_url': 'http://1.2.3.4/cs-api',
-            'jujugui.plans_url': 'http://1.2.3.4/plans-api',
-            'jujugui.terms_url': 'http://1.2.3.4/terms-api',
-            'jujugui.GTM_enabled': 'true',
-            'jujugui.sandbox': 'true',
             'jujugui.auth': 'blob',
-            'jujugui.user': 'who',
-            'jujugui.password': 'secret',
+            'jujugui.charmstore_url': 'http://1.2.3.4/cs-api',
+            'jujugui.discharge_token': 'my_discharge_token',
+            'jujugui.gisf': 'true',
+            'jujugui.GTM_enabled': 'true',
             'jujugui.insecure': 'true',
-            'jujugui.discharge_token': 'my_discharge_token'
+            'jujugui.password': 'secret',
+            'jujugui.plans_url': 'http://1.2.3.4/plans-api',
+            'jujugui.sandbox': 'true',
+            'jujugui.terms_url': 'http://1.2.3.4/terms-api',
+            'jujugui.user': 'who',
         })
         jujugui.make_application(self.config)
         response = views.config(self.request)
@@ -158,6 +159,7 @@ class ConfigTests(ViewTestCase):
         self.assertEqual('who', config['user'])
         self.assertEqual('secret', config['password'])
         self.assertEqual('my_discharge_token', config['dischargeToken'])
+        self.assertEqual('/logout', config['gisfLogout'])
 
     def test_explicit_base_url(self):
         self.update_settings({'jujugui.base_url': '/ignore/prefix'})

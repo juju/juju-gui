@@ -27,6 +27,8 @@ YUI.add('logout-component', function() {
       clearCookie: React.PropTypes.func.isRequired,
       clearUser: React.PropTypes.func.isRequired,
       getUser: React.PropTypes.func.isRequired,
+      gisf: React.PropTypes.bool.isRequired,
+      gisfLogout: React.PropTypes.string.isRequired,
       logout: React.PropTypes.func.isRequired,
       visible: React.PropTypes.bool.isRequired
     },
@@ -43,6 +45,9 @@ YUI.add('logout-component', function() {
       props.clearUser();
       props.clearCookie();
       props.logout();
+      if (this.props.gisf) {
+        window.location.href = window.location.origin + this.props.gisfLogout;
+      }
     },
 
     /**
@@ -61,9 +66,13 @@ YUI.add('logout-component', function() {
     },
 
     render: function() {
+      let href = this.props.charmstoreLogoutUrl ;
+      if (this.props.gisf) {
+        href = this.props.gisfLogout;
+      }
       return (
         <a className={this._generateClasses()}
-          href={this.props.charmstoreLogoutUrl}
+          href={href}
           onClick={this.logout}
           target="_blank">
           Logout

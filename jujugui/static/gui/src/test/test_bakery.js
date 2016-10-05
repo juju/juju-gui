@@ -43,6 +43,9 @@ describe('Bakery', function() {
       },
       setItem: function(item, value) {
         this.store[item] = value;
+      },
+      removeItem: function(item) {
+        delete this.store[item];
       }
     };
   });
@@ -106,6 +109,19 @@ describe('Bakery', function() {
       cookieStore: fakeLocalStorage
     });
     assert.equal(fakeLocalStorage.getItem('existing-cookie'), 'foo-bar');
+  });
+
+  it('can clear a macaroon from the cookieStore', function() {
+    bakery = new Y.juju.environments.web.Bakery({
+      webhandler: new Y.juju.environments.web.WebHandler(),
+      serviceName: 'test',
+      existingCookie: 'existing-cookie',
+      macaroon: 'foo-bar',
+      dischargeStore: fakeLocalStorage,
+      cookieStore: fakeLocalStorage,
+    });
+    bakery.clearCookie();
+    assert.deepEqual(fakeLocalStorage.store, {});
   });
 
   describe('_fetchMacaroonFromStaticPath', function() {
