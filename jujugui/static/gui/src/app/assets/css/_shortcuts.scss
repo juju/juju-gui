@@ -1,8 +1,8 @@
-/*
-* The keyboard shorcut panel
-*/
+// The keyboard shorcut panel
+// scss-lint:disable IdSelector
 #shortcut-help {
-  box-shadow: (0 1px 4.85px .15px rgba( 0, 0, 0, .2));
+// scss-lint:enable IdSelector
+  box-shadow: (0 1px 4.85px .15px rgba(0, 0, 0, .2));
   position: absolute;
   left: 4%;
   right: 4%;
@@ -21,7 +21,7 @@
   .content {
     padding: 20px;
 
-    div[class$="col"] {
+    [class$="col"] {
       margin-bottom: 10px;
     }
   }
