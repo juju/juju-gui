@@ -1,46 +1,44 @@
-/*
-* The actions menu that appears next to a service block.
-*/
+// The actions menu that appears next to a service block.
 .environment-menu {
+  background-color: $white;
   border-radius: $border-radius;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
-  display: none;
-  background-color: #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, .3);
   color: $cool-grey;
-  top: 0;
+  display: none;
   left: 0;
   position: absolute;
+  top: 0;
 
   &.active {
     display: block;
   }
 
   .triangle {
+    border-style: solid;
+    color: $white;
+    height: 0;
     position: absolute;
     top: 22px;
     width: 0;
-    height: 0;
-    border-style: solid;
-    color: #fff;
   }
 
   &.right .triangle {
-    left: -16px;
+    border-color: transparent $white;
     border-width: 10px 17.3px 10px 0;
-    border-color: transparent #fff transparent transparent;
+    left: -16px;
   }
 
   &.left .triangle {
-    right: -16px;
+    border-color: transparent transparent transparent $white;
     border-width: 10px 0 10px 17.3px;
-    border-color: transparent transparent transparent #fff;
+    right: -16px;
   }
 
   &.top .triangle {
-    top: auto;
+    border-color: $white transparent transparent;
+    border-width: 17.3px 10px 0;
     bottom: -16px;
-    border-width: 17.3px 10px 0px 10px;
-    border-color: #fff transparent transparent transparent;
+    top: auto;
   }
 
   .menu-title {
@@ -49,13 +47,13 @@
 
   .cancel {
     position: absolute;
-    top: 25px;
     right: 20px;
+    top: 25px;
   }
 
   ul {
-    margin: 0;
     list-style-type: none;
+    margin: 0;
 
     li {
       background-position: 10px center;
@@ -66,23 +64,23 @@
       white-space: nowrap;
 
       a {
-        text-decoration: none;
-        font-size: 13px;
         color: $cool-grey;
+        font-size: 13px;
+        text-decoration: none;
       }
 
       &:last-child {
-        border-bottom: none;
+        border-bottom: 0;
       }
 
       &:focus,
       &:active,
       &:hover {
-        background-color: #f2f2f2;
+        background-color: $light-grey;
       }
 
       &.disabled {
-        color: gray;
+        color: $grey;
         cursor: default;
 
         &:focus,
@@ -96,12 +94,14 @@
 
   .menu {
     li {
-      border-top: 1px solid #e9e9e9;
+      border-top: 1px solid $light-grey;
     }
   }
 }
 
+// scss-lint:disable IdSelector
 #relation-menu {
+// scss-lint:enable IdSelector
   $icon-size: 16px;
   $height: 30px;
   $gutter: 10px;
@@ -112,10 +112,10 @@
     line-height: $height;
     background-repeat: no-repeat;
     background-position: $gutter (($height - $icon-size) / 2);
-    background-image: url("static/gui/build/app/assets/images/unit_running_16.png");
+    background-image: url('static/gui/build/app/assets/images/unit_running_16.png');
 
     &.error {
-      background-image: url("static/gui/build/app/assets/images/error_16.png");
+      background-image: url('static/gui/build/app/assets/images/error_16.png');
     }
 
     .endpoint.error {
@@ -131,7 +131,7 @@
 
   .triangle {
     bottom: -3px;
-    border-width: 3px 5px 0 5px;
+    border-width: 3px 5px 0;
   }
 
   .relation-remove {
