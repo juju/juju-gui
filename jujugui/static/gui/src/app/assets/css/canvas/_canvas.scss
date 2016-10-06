@@ -1,8 +1,9 @@
+// scss-lint:disable IdSelector
 #content {
+  height: 100%;
+  left: 0;
   position: absolute;
   top: 0;
-  left: 0;
-  height: 100%;
   width: 100%;
 }
 
@@ -13,8 +14,9 @@
 #canvas {
   position: relative;
 }
+// scss-lint:disable IdSelector
 
 .zoom-plane {
-  fill-opacity: 0;
   cursor: move;
+  fill-opacity: 0;
 }
