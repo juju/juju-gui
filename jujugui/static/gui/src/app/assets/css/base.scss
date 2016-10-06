@@ -1,8 +1,8 @@
 
-/* Processed with SCSS from app/assets/css/base.scss */
+// Processed with SCSS from app/assets/css/base.scss
 $font-family-mono: 'Ubuntu Mono', 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace;
 
-/* Shades of grey */
+// Shades of grey
 $light-grey: #f7f7f7;
 $light-mid-grey: #d4d4d4;
 $dark-grey: #9fa7aa;
@@ -66,15 +66,15 @@ $asset-path: 'static/gui/build/app/assets/';
 @import '../../../../../../../node_modules/cloud-vanilla-theme/scss/theme';
 
 // Imports need to be after vars.
-@import "animations";
-@import "mixins";
-@import "generic";
-@import "header";
-@import "loading";
-@import "shortcuts";
-@import "tooltip";
-@import "cookies";
-@import "components";
+@import 'animations';
+@import 'mixins';
+@import 'generic';
+@import 'header';
+@import 'loading';
+@import 'shortcuts';
+@import 'tooltip';
+@import 'cookies';
+@import 'components';
 
 // Include required modules from Vanilla
 @mixin required-vanilla-modules {
@@ -112,16 +112,16 @@ $asset-path: 'static/gui/build/app/assets/';
 // Build the Juju GUI theme
 @include juju-gui-vanilla-theme;
 
-/** Canvas **/
-@import "canvas/canvas";
-@import "canvas/onboarding";
-@import "canvas/plus-service";
-@import "canvas/relation";
-@import "canvas/relation-menu";
-@import "canvas/service";
+// Canvas
+@import 'canvas/canvas';
+@import 'canvas/onboarding';
+@import 'canvas/plus-service';
+@import 'canvas/relation';
+@import 'canvas/relation-menu';
+@import 'canvas/service';
 
-@import "plugins/prism";
-@import "plugins/prism-overrides";
+@import 'plugins/prism';
+@import 'plugins/prism-overrides';
 
-/* Mobile styles */
-@import "mobile";
+// Mobile styles
+@import 'mobile';
