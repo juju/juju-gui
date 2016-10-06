@@ -1,5 +1,6 @@
-/// Generic unclassed HTML elements
-/// @group Generic
+$pre-background: #fdf6f2;
+
+// Generic unclassed HTML elements
 @mixin juju-gui-generic {
 
   //XXX: Temporarily remove the focus state of interactive elements:
@@ -13,7 +14,7 @@
   html {
     overflow-y: hidden;
   }
-  
+
   body {
     @include customize-scrollbar($white);
     overflow: hidden;
@@ -23,25 +24,25 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  input[type="text"],
-  input[type="number"],
-  input[type="password"] {
+  [type="text"],
+  [type="number"],
+  [type="password"] {
     @extend %input;
   }
 
-  input[type=number]::-webkit-inner-spin-button,
-  input[type=number]::-webkit-outer-spin-button {
+  [type=number]::-webkit-inner-spin-button,
+  [type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     appearance: none;
     margin: 0;
   }
 
-  input[type=number] {
+  [type=number] {
     -moz-appearance: textfield;
   }
 
-  input[type="radio"],
-  input[type="checkbox"] {
+  [type="radio"],
+  [type="checkbox"] {
     $size: 14px;
     width: $size;
     height: $size;
@@ -55,7 +56,7 @@
 
     &:checked {
       background-color: $success;
-      border: none;
+      border: 0;
     }
 
     &:after {
@@ -70,7 +71,7 @@
     }
   }
 
-  input[type="radio"] {
+  [type="radio"] {
     border-radius: 50%;
     vertical-align: middle;
 
@@ -80,7 +81,7 @@
       height: $size;
       margin-bottom: 5px;
       border-radius: 50%;
-      background-color: #fff;
+      background-color: $white;
     }
 
     &:checked:after {
@@ -88,11 +89,11 @@
     }
   }
 
-  input[type="checkbox"] {
+  [type="checkbox"] {
     border-radius: $border-radius;
 
     &:after {
-      background: transparent url(static/gui/build/app/assets/images/non-sprites/tick.svg) no-repeat center 2px;
+      background: transparent url('static/gui/build/app/assets/images/non-sprites/tick.svg') no-repeat center 2px;
     }
   }
 
@@ -101,7 +102,12 @@
     overflow: hidden;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: inherit;
     font-weight: 300;
     color: inherit;
@@ -128,8 +134,8 @@
   pre {
     margin-bottom: 10px;
     padding: 5px;
-    background-color: #fdf6f2;
-    border: none;
+    background-color: $pre-background;
+    border: 0;
   }
 
   pre,
