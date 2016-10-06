@@ -7,20 +7,20 @@
       display: block;
     }
   }
-  
-  %tooltip__tooltip {
+
+  %tooltip-tooltip {
     display: none;
     position: absolute;
     left: 50%;
   }
 
   &__tooltip {
-    @extend %tooltip__tooltip;
+    @extend %tooltip-tooltip;
     bottom: calc(100% + 10px);
   }
 
   &__tooltip--below {
-    @extend %tooltip__tooltip;
+    @extend %tooltip-tooltip;
     top: calc(100% + 10px);
   }
 
