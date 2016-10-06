@@ -778,6 +778,18 @@ describe('Environment Change Set', function() {
         assert.deepEqual(record.command.options, {applicationId: 'foo'});
         cb(); // Will call done().
       });
+
+      it('only adds one `add Charm` record for duplicates', function() {
+        ecs._lazyAddCharm(
+          ['cs:wordpress', 'cookies', null, {applicationId: 'foo'}]);
+        assert.equal(Object.keys(ecs.changeSet).length, 1);
+        ecs._lazyAddCharm(
+          ['cs:wordpress', 'cookies', null, {applicationId: 'foo'}]);
+        assert.equal(Object.keys(ecs.changeSet).length, 1);
+        ecs._lazyAddCharm(
+          ['cs:mysql', 'cookies', null, {applicationId: 'foo'}]);
+        assert.equal(Object.keys(ecs.changeSet).length, 2);
+      });
     });
 
     describe('_lazyDeploy', function() {
