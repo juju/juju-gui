@@ -665,7 +665,7 @@ describe('App', function() {
           assert.strictEqual(
             node.props.helpMessage,
             'Find your username and password with ' +
-            '`juju show-controller --include-passwords`'
+            '`juju gui --show-credentials --no-browser`'
           );
           done();
         });

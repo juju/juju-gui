@@ -686,7 +686,7 @@ YUI.add('juju-gui', function(Y) {
       var msg = (
         <p>
           Find your username and password with<br />
-          <code>`juju show-controller --show-passwords`</code>
+          <code>`juju gui --show-credentials --no-browser`</code>
         </p>);
       if (this.get('jujuCoreVersion').lastIndexOf('1.', 0) === 0) {
         // Use old command to retrieve the password.
