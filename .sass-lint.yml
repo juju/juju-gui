@@ -1,18 +1,20 @@
 files:
-  include: '**/*.s+(a|c)ss'
+  include: juju-gui/**/*.scss
+  exclude: juju-gui/static/gui/src/app/assets/css/plugins/**
 options:
   formatter: stylish
   merge-default-rules: false
 rules:
-  class-name-format: 0
-  id-name-format: 0
-  indentation:
-    - 2
-    -
-      size: 4
-  no-css-comments: 0
-  no-qualifying-elements:
+  class-name-format:
     - 1
-    - allow-element-with-attribute: true
-  placeholder-name-format: 0
+    - convention: hyphenatedbem
+  id-name-format:
+    - 1
+    - convention: hyphenatedbem
+  nesting-depth: 0
+  no-ids: 1
+  no-vendor-prefixes: 0
+  placeholder-name-format:
+    - 1
+    - convention: hyphenatedbem
   property-sort-order: 0
