@@ -1,6 +1,6 @@
 .machine-view {
   @include customize-scrollbar($canvas-background);
-  @include fadeIn(.1s);
+  @include fade-in(.1s);
   position: absolute;
   top: 0;
   bottom: 0;
