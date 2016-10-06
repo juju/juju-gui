@@ -13,13 +13,13 @@
     }
   }
 
-  input[type=checkbox] {
+  [type=checkbox] {
     margin-right: 15px;
     cursor: pointer;
   }
 
   label {
-    padding: 11px 20px 11px 20px;
+    padding: 11px 20px;
   }
 
   &--nav:hover {
@@ -32,7 +32,7 @@
     border-top: 1px solid $mid-grey;
 
     &:first-child {
-      border-top: none;
+      border-top: 0;
     }
   }
 
