@@ -1,3 +1,7 @@
+$subordinate-relation: #33c;
+$pending-relation: #faaf40;
+$pending-relation--dragging: #fa6a40;
+
 .relation {
   stroke: rgb(167, 167, 167);
   stroke-width: 1px;
@@ -9,7 +13,7 @@
   &.subordinate {
     stroke: rgb(167, 167, 167);
   }
-  
+
   &.healthy {
     stroke: rgb(167, 167, 167);
   }
@@ -18,7 +22,8 @@
     stroke: $uncommitted;
   }
 
-  &.pending-healthy, &.pending-error {
+  &.pending-healthy,
+  &.pending-error {
     stroke: $uncommitted;
   }
 
@@ -31,7 +36,7 @@
   }
 
   &.subordinate-relation {
-    stroke: #3333cc;
+    stroke: $subordinate-relation;
   }
 }
 
@@ -54,15 +59,16 @@
     fill: $uncommitted;
   }
 
-  &.pending-healthy, &.pending-error {
+  &.pending-healthy,
+  &.pending-error {
     fill: $uncommitted;
   }
 
   &.pending-relation {
-    fill: #faaf40;
+    fill: $pending-relation;
 
     &.dragging {
-      fill: #fa6a40
+      fill: $pending-relation--dragging;
     }
   }
 
@@ -71,12 +77,14 @@
   }
 
   &.subordinate-relation {
-    fill: #3333cc;
+    fill: $subordinate-relation;
   }
 }
 
 .rel-group {
+  // scss-lint:disable PlaceholderInExtend
   @extend .visibility-classes;
+  // scss-lint:enable PlaceholderInExtend
 }
 
 .rel-indicator {

@@ -1,7 +1,3 @@
-$service-erroring: #ed3146;
-$service-pending: #f99b0f;
-$service-uncommitted: #19b6ee;
-
 .service {
   // scss-lint:disable PlaceholderInExtend
   @extend .visibility-classes;
