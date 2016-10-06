@@ -32,6 +32,10 @@
     &:hover {
       background-color: $canvas-background;
     }
+
+    &.is-active &__link &__icon {
+      color: $ubuntu-orange;
+    }
   }
 
   &__link {
@@ -41,10 +45,6 @@
     &:hover {
       text-decoration: none;
     }
-  }
-
-  &__list-item.is-active &__link &__icon {
-    color: $ubuntu-orange;
   }
 
   &__icon {
