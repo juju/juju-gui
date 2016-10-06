@@ -12,7 +12,7 @@
   .row--border-bottom {
     border-bottom: 1px dotted $warm-grey;
   }
-  
+
   // XXX Ant, Ask about the styling going forward here
   .inline-list {
     &__item {
@@ -115,9 +115,9 @@
     }
 
     &--openstack {
-      $openstack-brand: #DF2E29;
+      $openstack-brand: #df2e29;
       padding-bottom: 100px;
-      border-color:  $openstack-brand;
+      border-color: $openstack-brand;
       background-color: $openstack-brand;
       color: $white;
 
@@ -135,8 +135,8 @@
     }
 
     &--mysql {
-      $mysql-brand: #2089B5;
-      border-color:  $mysql-brand;
+      $mysql-brand: #2089b5;
+      border-color: $mysql-brand;
       background-color: $mysql-brand;
       color: $white;
 
@@ -158,7 +158,7 @@
       position: absolute;
       bottom: 20px;
       left: 0;
-      right:0;
+      right: 0;
     }
   }
 
@@ -179,11 +179,7 @@
     $hadoop-brand-start: #7ccdf7;
     $hadoop-brand-end: #40b6f2;
     color: $white;
-    background: $hadoop-brand-start;
-    background: -moz-linear-gradient(top,  $hadoop-brand-start 0%, $hadoop-brand-end 100%);
-    background: -webkit-linear-gradient(top,  $hadoop-brand-start 0%,$hadoop-brand-end 100%);
-    background: linear-gradient(to bottom,  $hadoop-brand-start 0%,$hadoop-brand-end 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$hadoop-brand-start', endColorstr='$hadoop-brand-end',GradientType=0 );
+    background: linear-gradient(to bottom, $hadoop-brand-start 0%, $hadoop-brand-end 100%);
 
     .inner-wrapper {
       @media only screen and (min-width: $breakpoint-medium) {
@@ -195,13 +191,13 @@
     }
 
     .link {
-      color: white;
+      color: $white;
     }
   }
 
   .row--write-your-own .inner-wrapper {
     @media only screen and (min-width: $breakpoint-medium) {
-      background-image: url("static/gui/build/app/assets/images/store/write-your-own.png");
+      background-image: url('static/gui/build/app/assets/images/store/write-your-own.png');
       background-size: 50%;
     }
   }
