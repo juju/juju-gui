@@ -1,14 +1,11 @@
-
-/*
-* The main header above the canvas
-*/
+// The main header above the canvas
 
 .header-banner {
   position: absolute;
   top: 0;
   width: auto;
   height: $navbar-height;
-  
+
   &--right {
     z-index: index($z-indexed-elements, header-banner-search);
     right: 0;
