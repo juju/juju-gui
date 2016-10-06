@@ -1,38 +1,42 @@
+$cookie-policy-background: #fae4dc;
+
 .cookie-policy {
   z-index: index($z-indexed-elements, cookie-policy);
   position: fixed;
   bottom: 0;
   width: 100%;
-  -moz-box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
-  -webkit-box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
-  background-color: #fae4dc;
-}
+  -moz-box-shadow: 0 -1px 2px rgba(0, 0, 0, .2);
+  -webkit-box-shadow: 0 -1px 2px rgba(0, 0, 0, .2);
+  box-shadow: 0 -1px 2px rgba(0, 0, 0, .2);
+  background-color: $cookie-policy-background;
 
-.cookie-policy .wrapper {
-  box-sizing: border-box;
-  background: none;
-  margin: 10px auto;
-  position: relative;
-  text-align: left;
-  width: 984px;
-}
+  .wrapper {
+    box-sizing: border-box;
+    background: none;
+    margin: 10px auto;
+    position: relative;
+    text-align: left;
+    width: 984px;
+  }
 
-.cookie-policy .link-cta {
-  background: url("https://assets.ubuntu.com/sites/ubuntu/latest/u/img/icons/close-orange.png") no-repeat;
-  height: 15px;
-  margin-top: 12px;
-  padding: 0;
-  text-indent: -9999px;
-  width: 16px;
-  float: right;
-}
+  .link-cta {
+    // scss-lint:disable UrlFormat
+    background: url('https://assets.ubuntu.com/sites/ubuntu/latest/u/img/icons/close-orange.png') no-repeat;
+    // scss-lint:enable UrlFormat
+    height: 15px;
+    margin-top: 12px;
+    padding: 0;
+    text-indent: -9999px;
+    width: 16px;
+    float: right;
+  }
 
-.cookie-policy p {
-  font-size: 13px;
-  line-height: 1.6;
-  margin-left: 0;
-  margin-bottom: 0;
-  padding: 8px 0;
-  width: 100%;
+  p {
+    font-size: 13px;
+    line-height: 1.6;
+    margin-left: 0;
+    margin-bottom: 0;
+    padding: 8px 0;
+    width: 100%;
+  }
 }
