@@ -1,12 +1,12 @@
 .boolean-config {
   @extend %stagger-fade-in;
-  margin: 10px 20px 14px 20px;
+  margin: 10px 20px 14px;
   position: relative;
 
   &--title {
     margin: auto auto auto 0;
   }
-  
+
   &--toggle {
     margin: auto 0 auto 4px;
 
@@ -60,16 +60,16 @@
       background-position: center center;
       background-repeat: no-repeat;
     }
+
     &:before {
       z-index: index($z-indexed-elements, boolean-config--label);
-      background-image:
-      url(static/gui/build/app/assets/images/toggle-off.png);
+      background-image: url('static/gui/build/app/assets/images/toggle-off.png');
     }
+
     &:after {
       z-index: index($z-indexed-elements, boolean-config--label);
       left: 29px;
-      background-image:
-      url(static/gui/build/app/assets/images/toggle-on-inactive.png);
+      background-image: url('static/gui/build/app/assets/images/toggle-on-inactive.png');
     }
   }
 
@@ -78,19 +78,19 @@
       left: 25px;
       background-color: $success;
     }
+
     &:before {
-      background-image:
-      url(static/gui/build/app/assets/images/toggle-off-inactive.png);
+      background-image: url('static/gui/build/app/assets/images/toggle-off-inactive.png');
     }
+
     &:after {
-      background-image:
-      url(static/gui/build/app/assets/images/toggle-on.png);
+      background-image: url('static/gui/build/app/assets/images/toggle-on.png');
     }
   }
 
   &--description {
     margin-top: 15px;
     color: $cool-grey;
-    font-size: 0.875em;
+    font-size: .875em;
   }
 }
