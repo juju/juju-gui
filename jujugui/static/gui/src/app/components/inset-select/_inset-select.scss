@@ -9,12 +9,12 @@
   &__label {
     padding-left: $padding;
     color: $warm-grey;
-    font-size: 0.688em;
+    font-size: .688em;
   }
 
   &__field {
-    padding: 3px $padding $padding $padding;
-    border: none;
+    padding: 3px $padding $padding;
+    border: 0;
     border-radius: 0;
     box-shadow: none;
     line-height: 17px;
