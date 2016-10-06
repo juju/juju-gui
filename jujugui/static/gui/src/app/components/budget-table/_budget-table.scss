@@ -9,7 +9,7 @@
     display: none;
     margin: -8px 0;
   }
-  
+
   &__charm-icon {
     $size: 24px;
     width: $size;
@@ -26,7 +26,7 @@
 
   &__plans {
     @extend %list-style;
-    padding: 20px 20px 0 20px;
+    padding: 20px 20px 0;
   }
 
   &__plan {
@@ -34,12 +34,12 @@
 
     &:last-child {
       margin-bottom: 0;
-      border-bottom: none;
+      border-bottom: 0;
     }
 
     &-notice {
       border-top: 2px solid $light-mid-grey;
-      padding: 20px 20px 0 20px;
+      padding: 20px 20px 0;
     }
   }
 }
