@@ -8,3 +8,6 @@ linters:
 
   IdSelector:
     severity: warning
+
+  VendorPrefix:
+    enabled: false
