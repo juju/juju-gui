@@ -1,6 +1,8 @@
+// scss-lint:disable IdSelector
 #import-export-container {
   float: left;
 }
+// scss-lint:enable IdSelector
 
 .import-export {
   margin-left: 10px;
@@ -16,7 +18,9 @@
 
     &:hover {
       background-color: $white;
+      // scss-lint:disable ImportantRule
       color: $ubuntu-orange !important;
+      // scss-lint:disable ImportantRule
     }
   }
 
