@@ -1,7 +1,10 @@
+// scss-lint:disable IdSelector
 #header-breadcrumb {
   float: left;
   position: relative;
 }
+// scss-lint:enable IdSelector
+
 .header-breadcrumb {
   @extend %list-style;
   padding: 17px 0;
@@ -28,7 +31,7 @@
 
     &.profile-disabled {
       cursor: default;
-      border-bottom: none;
+      border-bottom: 0;
     }
   }
 
