@@ -22,7 +22,7 @@
       height: 10px;
       border-width: 1px 0 0 1px;
       border-style: solid;
-      border-color: rgba(0, 0, 0, 0.1);
+      border-color: rgba(0, 0, 0, .1);
     }
 
     &-item {
@@ -79,11 +79,12 @@
   &:focus:not(.machine-view__machine--root),
   &:active:not(.machine-view__machine--root),
   &:hover:not(.machine-view__machine--root) {
-    & > .more-menu {
+    > .more-menu {
       display: block;
     }
   }
 }
+
 .machine-view__unplaced-unit {
   .more-menu {
     float: right;
