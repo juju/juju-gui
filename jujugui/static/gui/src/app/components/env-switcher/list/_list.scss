@@ -12,7 +12,7 @@
     height: 13px;
     border-width: 1px 0 0 1px;
     border-style: solid;
-    border-color: rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 0, 0, .1);
   }
 
   .env-list {
@@ -20,8 +20,8 @@
 
     &__input {
       box-sizing: border-box;
-      padding: 10px 10px 8px 10px;
-      margin: 10px 10px 0 10px;
+      padding: 10px 10px 8px;
+      margin: 10px 10px 0;
       width: $width - 20px;
     }
 
@@ -41,7 +41,7 @@
     }
 
     &__message {
-      padding: 10px 10px 0 10px;
+      padding: 10px 10px 0;
     }
   }
 }
