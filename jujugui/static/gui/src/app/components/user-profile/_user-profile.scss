@@ -30,7 +30,7 @@
     }
 
     &-image {
-      margin: 0 0 40px 0;
+      margin: 0 0 40px;
     }
 
     &-title {
@@ -46,7 +46,7 @@
 
   &__size {
     color: $light-mid-grey;
-    margin-left: 0.25em;
+    margin-left: .25em;
   }
 
   &__list {
@@ -71,7 +71,7 @@
         font-size: 23px;
         margin-bottom: 40px;
       }
-
+      
       &-text {
         max-width: 360px;
         margin: 0 auto;
