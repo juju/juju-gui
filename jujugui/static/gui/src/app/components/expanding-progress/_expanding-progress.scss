@@ -1,15 +1,17 @@
 $expanding-progress-height: 10px;
 
+// scss-lint:disable IdSelector
 #drag-over-notification-container {
   margin-top: -$expanding-progress-height;
 }
+// scss-lint:enable IdSelector
 
 .expanding-progress {
   background-color: $uncommitted;
   height: $expanding-progress-height;
   width: 20%;
   margin: 0 auto;
-  transition: width 0.7s;
+  transition: width .7s;
 
   &.expanding-progress--active {
     width: 100%;
