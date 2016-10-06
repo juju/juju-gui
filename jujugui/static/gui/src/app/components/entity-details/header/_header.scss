@@ -25,8 +25,8 @@
     right: 0;
     height: $sticky-height;
     padding: 0;
-    background-color: white;
-    border-bottom: 1px solid #d4d4d4;
+    background-color: $white;
+    border-bottom: 1px solid $light-mid-grey;
     border-top-left-radius: $border-radius;
     animation: slideIn .5s;
     pointer-events: none;
@@ -110,7 +110,7 @@
     li {
       &:after {
         color: $warm-grey;
-        content: "\2022";
+        content: '\2022';
         vertical-align: middle;
         margin: 0 5px;
       }
@@ -152,7 +152,7 @@
   }
 
   &__social-list {
-    margin: 30px 0 0 0;
+    margin: 30px 0 0;
     height: $social-icon-size;
 
     li {
@@ -162,26 +162,31 @@
     }
   }
 
-  #item-twitter, #item-googleplus {
+  // scss-lint:disable IdSelector
+  #item-twitter,
+  #item-googleplus {
     display: block;
     line-height: normal;
     width: $social-icon-size;
     height: $social-icon-size;
 
     .svg-icon {
-      fill: #cdcdcd;
+      fill: $mid-grey;
     }
   }
 
   #item-twitter:hover {
     .svg-icon {
-      fill: #55acee;
+      $twitter-color: #55acee;
+      fill: $twitter-color;
     }
   }
 
   #item-googleplus:hover {
     .svg-icon {
-      fill: #dc4a38;
+      $googleplus-color: #dc4a38;
+      fill: $googleplus-color;
     }
   }
+  // scss-lint:enable IdSelector
 }

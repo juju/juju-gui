@@ -2,12 +2,12 @@
   &-option {
     margin-top: 15px;
     padding-top: 15px;
-    border-top: 1px dotted $light_mid_grey;
+    border-top: 1px dotted $light-mid-grey;
 
     &:first-of-type {
       margin-top: 0;
       padding-top: 0;
-      border-top: none;
+      border-top: 0;
     }
   }
 
@@ -27,8 +27,8 @@
   }
 
   &-default {
-    font-size: 0.875em;
-    color: $warm_grey;
-    font-family: "Ubuntu Mono","Consolas","Monaco","Lucida Console","Courier New",Courier,monospace;
+    font-size: .875em;
+    color: $warm-grey;
+    font-family: 'Ubuntu Mono' ,'Consolas' ,'Monaco' ,'Lucida Console' ,'Courier New' ,Courier, monospace;
   }
 }

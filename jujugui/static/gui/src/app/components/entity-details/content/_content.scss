@@ -2,7 +2,7 @@
   clear: both;
 
   &__header {
-    margin: 0 0 1.6em 0;
+    margin: 0 0 1.6em;
   }
 
   &__description {
@@ -29,7 +29,7 @@
 
     li {
       list-style: none;
-      margin-bottom: 0.8em;
+      margin-bottom: .8em;
     }
   }
 
@@ -45,14 +45,6 @@
     &-price,
     &-title {
       text-align: center;
-    }
-
-    &-price {
-      margin: 20px 0;
-      padding: 20px 0;
-      border-width: 1px 0;
-      border-style: solid;
-      border-color: $light-mid-grey;
     }
 
     &-price {
@@ -80,12 +72,16 @@
   }
 
   &__readme-content {
-    h1, h2, h3 {
+    h1,
+    h2,
+    h3 {
       margin: 1.6em 0;
     }
 
-    h4, h5, h6 {
-      margin: 0.8em 0;
+    h4,
+    h5,
+    h6 {
+      margin: .8em 0;
     }
 
     h1 {
@@ -104,7 +100,8 @@
       font-size: 1.1em;
     }
 
-    h5, h6 {
+    h5,
+    h6 {
       font-size: 1em;
     }
 
@@ -118,14 +115,14 @@
 
     pre {
       padding: 10px 15px;
-      background-color: $cool_grey;
-      border: none;
+      background-color: $cool-grey;
+      border: 0;
       border-radius: 2px;
-      color: $mid_grey;
+      color: $mid-grey;
 
       code {
         margin-bottom: 0;
-        color: $mid_grey;
+        color: $mid-grey;
       }
     }
   }
@@ -191,7 +188,9 @@
 
   .btn__see--more,
   .btn__see--less {
+    // scss-lint:disable PlaceholderInExtend
     @extend .button--inline-neutral;
+    // scss-lint:enable PlaceholderInExtend
   }
 
   .list__controls {

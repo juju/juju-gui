@@ -7,9 +7,10 @@
     a:hover {
       text-decoration: underline;
     }
+
     &:after {
       color: $warm-grey;
-      content: "\2022";
+      content: '\2022';
       vertical-align: middle;
       margin: 0 5px;
     }
@@ -30,7 +31,7 @@
       content: '';
       width: $dimension;
       height: 1px;
-      background-color: #d4d4d4;
+      background-color: $light-mid-grey;
       display: inline-block;
       position: relative;
       top: -4px;
