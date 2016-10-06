@@ -1,6 +1,6 @@
 .string-config {
   @extend %stagger-fade-in;
-  margin: 10px 20px 14px 20px;
+  margin: 10px 20px 14px;
 
   &--value,
   &--disabled {
@@ -15,6 +15,6 @@
 
   &--description {
     color: $cool-grey;
-    font-size: 0.875em;
+    font-size: .875em;
   }
 }
