@@ -9,7 +9,7 @@
 
   &:first-child {
     padding-left: 0;
-    border-left: none;
+    border-left: 0;
   }
 
   &:last-child {
@@ -29,7 +29,7 @@
   }
 
   &-onboarding {
-    padding: 0 10px 20px 10px;
+    padding: 0 10px 20px;
 
     .svg-icon {
       margin-right: 7px;
@@ -61,6 +61,6 @@
   }
 
   &--drop &-drop-target {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, .9);
   }
 }

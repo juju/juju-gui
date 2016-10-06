@@ -24,9 +24,9 @@
 
   &--dragged {
     box-shadow: none;
-  }
 
-  &--dragged &-drag-state {
-    display: block;
+    &-drag-state {
+      display: block;
+    }
   }
 }

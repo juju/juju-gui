@@ -1,11 +1,11 @@
 .add-machine {
   &__title {
-    margin: 0 10px 20px 10px;
+    margin: 0 10px 20px;
     font-size: 1em;
   }
 
   &__container {
-    margin: 0 10px 10px 10px;
+    margin: 0 10px 10px;
     width: calc(100% - 20px);
   }
 
@@ -19,7 +19,7 @@
 
   select {
     width: 100%;
-    margin: 10px 10px 0 10px;
+    margin: 10px 10px 0;
   }
 }
 
