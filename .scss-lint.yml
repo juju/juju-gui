@@ -1,0 +1,10 @@
+scss_files: 'juju-gui/**/*.scss'
+
+exclude: 'juju-gui/static/gui/src/app/assets/css/plugins/**'
+
+linters:
+  SelectorFormat:
+    convention: hyphenated_BEM
+
+  IdSelector:
+    severity: warning
