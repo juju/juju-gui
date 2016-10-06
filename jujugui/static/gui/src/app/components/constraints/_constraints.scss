@@ -8,7 +8,7 @@
 
   &__input {
     @extend %stagger-fade-in;
-    margin: 5px 10px 10px 10px;
+    margin: 5px 10px 10px;
     width: calc(100% - 20px);
   }
 }
