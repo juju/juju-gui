@@ -1,34 +1,34 @@
 .entity-content__config {
-    &-option {
-        margin-top: 15px;
-        padding-top: 15px;
-        border-top: 1px dotted $light_mid_grey;
+  &-option {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dotted $light_mid_grey;
 
-        &:first-of-type {
-            margin-top: 0;
-            padding-top: 0;
-            border-top: none;
-        }
+    &:first-of-type {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
     }
+  }
 
-    &-name {
-        margin: 0;
-        font-weight: 500;
-    }
+  &-name {
+    margin: 0;
+    font-weight: 500;
+  }
 
-    &-type {
-        font-weight: 500;
-    }
+  &-type {
+    font-weight: 500;
+  }
 
-    &-description,
-    &-default {
-        margin-left: 30px;
-        margin-top: 8px;
-    }
+  &-description,
+  &-default {
+    margin-left: 30px;
+    margin-top: 8px;
+  }
 
-    &-default {
-        font-size: 0.875em;
-        color: $warm_grey;
-        font-family: "Ubuntu Mono","Consolas","Monaco","Lucida Console","Courier New",Courier,monospace;
-    }
+  &-default {
+    font-size: 0.875em;
+    color: $warm_grey;
+    font-family: "Ubuntu Mono","Consolas","Monaco","Lucida Console","Courier New",Courier,monospace;
+  }
 }

@@ -1,62 +1,62 @@
 .login {
-    margin: 80px auto 0;
-    width: 350px;
+  margin: 80px auto 0;
+  width: 350px;
 
-    &__logo {
-        text-align: center;
+  &__logo {
+    text-align: center;
+  }
+
+  &__failure-message {
+    padding: 20px;
+    background-color: $error;
+    color: $white;
+  }
+
+  &__full-form {
+    margin: 50px auto 25px;
+    background-color: $white;
+    box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  &__form {
+    padding: 20px;
+
+    .generic-button {
+      width: 100%;
     }
+  }
 
-    &__failure-message {
-        padding: 20px;
-        background-color: $error;
-        color: $white;
-    }
+  &__label {
+    clear: both;
+    color: $warm-grey;
+    vertical-align: middle;
+    line-height: 40px;
+    margin-bottom: 20px;
+  }
 
-    &__full-form {
-        margin: 50px auto 25px;
-        background-color: $white;
-        box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.3);
-    }
+  &__env-name {
+    font-size: 23px;
+    border-bottom: 1px solid $mid-grey;
+    padding: 20px;
+  }
 
-    &__form {
-        padding: 20px;
+  &__input[type=text],
+  &__input[type=password] {
+    display: block;
+    float: right;
+    padding: 10px;
+    line-height: 1em;
+  }
 
-        .generic-button {
-            width: 100%;
-        }
-    }
+  &__message code,
+  &__message {
+    color: $warm-grey;
+    font-size: 13px;
+    text-align: center;
+  }
 
-    &__label {
-        clear: both;
-        color: $warm-grey;
-        vertical-align: middle;
-        line-height: 40px;
-        margin-bottom: 20px;
-    }
-
-    &__env-name {
-        font-size: 23px;
-        border-bottom: 1px solid $mid-grey;
-        padding: 20px;
-    }
-
-    &__input[type=text],
-    &__input[type=password] {
-        display: block;
-        float: right;
-        padding: 10px;
-        line-height: 1em;
-    }
-
-    &__message code,
-    &__message {
-        color: $warm-grey;
-        font-size: 13px;
-        text-align: center;
-    }
-
-    &__message-link {
-        margin-top: 25px;
-    }
+  &__message-link {
+    margin-top: 25px;
+  }
 
 }

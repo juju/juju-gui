@@ -1,75 +1,75 @@
 .inspector-view {
-    @extend %fade-in;
-    @extend %floating-panel;
-    @extend %scroll-children;
-    $extra-space: $navbar-height + $panel-space + $environment-header-height + $panel-space + 30px;
+  @extend %fade-in;
+  @extend %floating-panel;
+  @extend %scroll-children;
+  $extra-space: $navbar-height + $panel-space + $environment-header-height + $panel-space + 30px;
+  position: absolute;
+  z-index: index($z-indexed-elements, inspector-view);
+  top: $environment-header-height + ($panel-space * 2) + $navbar-height;
+  left: $panel-space * 2;
+  width: $left-panel-width;
+  max-height: calc(100% - #{$extra-space});
+
+  &__list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  &__list-item {
+    @extend %stagger-fade-in;
+    position: relative;
+    padding: 10px 20px;
+    cursor: pointer;
+
+    &.hover,
+    &:focus,
+    &:active,
+    &:hover {
+      background-color: $hover-background;
+    }
+  }
+
+  &__item-icon {
+    @extend %icon--small;
+    margin-right: 16px;
+  }
+
+  &__item-name {
+    position: relative;
+    top: 2px;
+    overflow: hidden;
+    display: inline-block;
+    max-width: 155px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: text-bottom;
+  }
+
+  &__item-count {
+    position: relative;
+    top: 1px;
+    color: $warm-grey;
+  }
+
+  &__status-block {
     position: absolute;
-    z-index: index($z-indexed-elements, inspector-view);
-    top: $environment-header-height + ($panel-space * 2) + $navbar-height;
-    left: $panel-space * 2;
-    width: $left-panel-width;
-    max-height: calc(100% - #{$extra-space});
+    top: 11px;
+    right: 20px;
+    float: right;
+  }
 
-    &__list {
-        list-style: none;
-        padding-left: 0;
-        margin: 0;
+  &__status {
+    &--error {
+      @include notification($error);
     }
 
-    &__list-item {
-        @extend %stagger-fade-in;
-        position: relative;
-        padding: 10px 20px;
-        cursor: pointer;
-
-        &.hover,
-        &:focus,
-        &:active,
-        &:hover {
-            background-color: $hover-background;
-        }
+    &--pending {
+      @include notification($pending);
     }
 
-    &__item-icon {
-        @extend %icon--small;
-        margin-right: 16px;
+    &--uncommitted {
+      @include notification($uncommitted);
     }
-
-    &__item-name {
-        position: relative;
-        top: 2px;
-        overflow: hidden;
-        display: inline-block;
-        max-width: 155px;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        vertical-align: text-bottom;
-    }
-
-    &__item-count {
-        position: relative;
-        top: 1px;
-        color: $warm-grey;
-    }
-
-    &__status-block {
-        position: absolute;
-        top: 11px;
-        right: 20px;
-        float: right;
-    }
-
-    &__status {
-        &--error {
-            @include notification($error);
-        }
-
-        &--pending {
-            @include notification($pending);
-        }
-
-        &--uncommitted {
-            @include notification($uncommitted);
-        }
-    }
+  }
 }

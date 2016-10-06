@@ -1,56 +1,56 @@
 .expanding-row {
-    &--clickable {
-        cursor: pointer;
+  &--clickable {
+    cursor: pointer;
+  }
+
+  &--expanded {
+    .expanding-row {
+      &__initial {
+        height: 0;
+        opacity: 0;
+      }
+
+      &__expanded {
+        @extend %floating-panel;
+      }
     }
+  }
 
-    &--expanded {
-        .expanding-row {
-            &__initial {
-                height: 0;
-                opacity: 0;
-            }
+  &__initial {
+    // Force hardware acceleration.
+    transform: translate3d(0, 0, 0);
+    transition: all .3s;
+    height: auto;
+    opacity: 1;
+  }
 
-            &__expanded {
-                @extend %floating-panel;
-            }
-        }
-    }
+  &__expanded {
+    // Force hardware acceleration.
+    transform: translate3d(0, 0, 0);
+    transition: all .3s;
+    margin: 5px 0;
+    overflow: hidden;
 
-    &__initial {
-        // Force hardware acceleration.
-        transform: translate3d(0, 0, 0);
-        transition: all .3s;
-        height: auto;
-        opacity: 1;
-    }
+    &-header {
+      padding: 20px;
+      border-bottom: 1px solid $mid-grey;
+      box-sizing: border-box;
 
-    &__expanded {
-        // Force hardware acceleration.
-        transform: translate3d(0, 0, 0);
-        transition: all .3s;
-        margin: 5px 0;
-        overflow: hidden;
+      &-action {
+        text-align: right;
 
-        &-header {
-            padding: 20px;
-            border-bottom: 1px solid $mid-grey;
-            box-sizing: border-box;
-
-            &-action {
-                text-align: right;
-
-                .generic-button {
-                    margin: 0 -10px 0 0;
-                }
-
-                .button--inline-neutral {
-                    margin-left: 20px;
-                }
-            }
+        .generic-button {
+          margin: 0 -10px 0 0;
         }
 
-        &-content {
-            padding: 0 20px;
+        .button--inline-neutral {
+          margin-left: 20px;
         }
+      }
     }
+
+    &-content {
+      padding: 0 20px;
+    }
+  }
 }

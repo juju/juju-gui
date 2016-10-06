@@ -1,22 +1,22 @@
 .unit-list {
-    @extend %scroll-children;
+  @extend %scroll-children;
 
-    &__units,
-    &__actions {
-        list-style: none;
-        margin: 0;
-    }
+  &__units,
+  &__actions {
+    list-style: none;
+    margin: 0;
+  }
 
-    &__units {
-        @extend %collapse-children;
-        border-bottom: 1px solid $mid-grey;
-    }
+  &__units {
+    @extend %collapse-children;
+    border-bottom: 1px solid $mid-grey;
+  }
 
-    &__actions {
-        border-bottom: 1px solid $mid-grey;
-    }
+  &__actions {
+    border-bottom: 1px solid $mid-grey;
+  }
 
-    &__message {
-        padding: 10px 20px;
-    }
+  &__message {
+    padding: 10px 20px;
+  }
 }

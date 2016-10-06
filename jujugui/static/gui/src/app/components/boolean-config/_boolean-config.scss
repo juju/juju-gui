@@ -1,96 +1,96 @@
 .boolean-config {
-    @extend %stagger-fade-in;
-    margin: 10px 20px 14px 20px;
+  @extend %stagger-fade-in;
+  margin: 10px 20px 14px 20px;
+  position: relative;
+
+  &--title {
+    margin: auto auto auto 0;
+  }
+  
+  &--toggle {
+    margin: auto 0 auto 4px;
+
+    &-container {
+      display: flex;
+    }
+  }
+
+  &--input {
+    display: none;
+  }
+
+  &--handle {
+    border-radius: $border-radius;
+    position: absolute;
+    z-index: index($z-indexed-elements, boolean-config--handle);
+    left: 0;
+    height: 24px;
+    width: 24px;
+    margin: 4px;
+    background-color: $cool-grey;
+    text-align: center;
+    line-height: 20px;
+    font-size: 16px;
+    transition: left .1s ease-in-out;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  &--label {
+    border-radius: $border-radius;
+    width: 56px;
+    display: inline-block;
     position: relative;
+    margin: 0;
+    cursor: pointer;
+    height: 32px;
+    border: 1px solid $mid-grey;
 
-    &--title {
-        margin: auto auto auto 0;
+    &:after,
+    &:before {
+      content: '';
+      position: absolute;
+      display: block;
+      top: 4px;
+      left: 4px;
+      width: 24px;
+      height: 24px;
+      background-position: center center;
+      background-repeat: no-repeat;
     }
-
-    &--toggle {
-        margin: auto 0 auto 4px;
-
-        &-container {
-            display: flex;
-        }
+    &:before {
+      z-index: index($z-indexed-elements, boolean-config--label);
+      background-image:
+      url(static/gui/build/app/assets/images/toggle-off.png);
     }
-
-    &--input {
-      display: none;
+    &:after {
+      z-index: index($z-indexed-elements, boolean-config--label);
+      left: 29px;
+      background-image:
+      url(static/gui/build/app/assets/images/toggle-on-inactive.png);
     }
+  }
 
-    &--handle {
-        border-radius: $border-radius;
-        position: absolute;
-        z-index: index($z-indexed-elements, boolean-config--handle);
-        left: 0;
-        height: 24px;
-        width: 24px;
-        margin: 4px;
-        background-color: $cool-grey;
-        text-align: center;
-        line-height: 20px;
-        font-size: 16px;
-        transition: left .1s ease-in-out;
-        -moz-user-select: none;
-        -webkit-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
+  &--input:checked ~ label {
+    .boolean-config--handle {
+      left: 25px;
+      background-color: $success;
     }
-
-    &--label {
-        border-radius: $border-radius;
-        width: 56px;
-        display: inline-block;
-        position: relative;
-        margin: 0;
-        cursor: pointer;
-        height: 32px;
-        border: 1px solid $mid-grey;
-
-        &:after,
-        &:before {
-            content: '';
-            position: absolute;
-            display: block;
-            top: 4px;
-            left: 4px;
-            width: 24px;
-            height: 24px;
-            background-position: center center;
-            background-repeat: no-repeat;
-        }
-        &:before {
-            z-index: index($z-indexed-elements, boolean-config--label);
-            background-image:
-                url(static/gui/build/app/assets/images/toggle-off.png);
-        }
-        &:after {
-            z-index: index($z-indexed-elements, boolean-config--label);
-            left: 29px;
-            background-image:
-                url(static/gui/build/app/assets/images/toggle-on-inactive.png);
-        }
+    &:before {
+      background-image:
+      url(static/gui/build/app/assets/images/toggle-off-inactive.png);
     }
-
-    &--input:checked ~ label {
-        .boolean-config--handle {
-            left: 25px;
-            background-color: $success;
-        }
-        &:before {
-            background-image:
-                url(static/gui/build/app/assets/images/toggle-off-inactive.png);
-        }
-        &:after {
-            background-image:
-                url(static/gui/build/app/assets/images/toggle-on.png);
-        }
+    &:after {
+      background-image:
+      url(static/gui/build/app/assets/images/toggle-on.png);
     }
+  }
 
-    &--description {
-        margin-top: 15px;
-        color: $cool-grey;
-        font-size: 0.875em;
-    }
+  &--description {
+    margin-top: 15px;
+    color: $cool-grey;
+    font-size: 0.875em;
+  }
 }

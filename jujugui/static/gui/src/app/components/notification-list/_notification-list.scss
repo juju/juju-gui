@@ -1,7 +1,7 @@
 .notification-list {
-    position: absolute;
-    bottom: $panel-space;
-    left: $panel-space;
-    max-width: 50%;
-    z-index: index($z-indexed-elements, notification-list);
+  position: absolute;
+  bottom: $panel-space;
+  left: $panel-space;
+  max-width: 50%;
+  z-index: index($z-indexed-elements, notification-list);
 }

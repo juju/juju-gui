@@ -1,33 +1,33 @@
 .add-machine {
-    &__title {
-        margin: 0 10px 20px 10px;
-        font-size: 1em;
-    }
+  &__title {
+    margin: 0 10px 20px 10px;
+    font-size: 1em;
+  }
 
-    &__container {
-        margin: 0 10px 10px 10px;
-        width: calc(100% - 20px);
-    }
+  &__container {
+    margin: 0 10px 10px 10px;
+    width: calc(100% - 20px);
+  }
 
-    &__constraints {
-        margin-top: 10px;
+  &__constraints {
+    margin-top: 10px;
 
-        &:first-child {
-            margin-top: 0;
-        }
+    &:first-child {
+      margin-top: 0;
     }
+  }
 
-    select {
-        width: 100%;
-        margin: 10px 10px 0 10px;
-    }
+  select {
+    width: 100%;
+    margin: 10px 10px 0 10px;
+  }
 }
 
 .machine-view__unplaced-unit .add-machine {
-    select,
-    &__title,
-    &__container {
-        margin-left: 0;
-        margin-right: 0;
-    }
+  select,
+  &__title,
+  &__container {
+    margin-left: 0;
+    margin-right: 0;
+  }
 }

@@ -1,39 +1,39 @@
 #header-breadcrumb {
-    float: left;
-    position: relative;
+  float: left;
+  position: relative;
 }
 .header-breadcrumb {
-    @extend %list-style;
-    padding: 17px 0;
+  @extend %list-style;
+  padding: 17px 0;
 
-    &--link {
-        position: relative;
-        border-bottom: 1px solid currentColor;
-        font-size: 23px;
-        text-decoration: none;
+  &--link {
+    position: relative;
+    border-bottom: 1px solid currentColor;
+    font-size: 23px;
+    text-decoration: none;
 
-        &:focus,
-        &:active,
-        &:hover {
-          text-decoration: none;
-        }
-
-        &:before {
-            content: '/';
-            position: absolute;
-            left: -14px;
-            top: -2px;
-            color: $mid-grey;
-        }
-
-        &.profile-disabled {
-            cursor: default;
-            border-bottom: none;
-        }
+    &:focus,
+    &:active,
+    &:hover {
+      text-decoration: none;
     }
 
-    &__list-item {
-        float: left;
-        padding-left: 20px;
+    &:before {
+      content: '/';
+      position: absolute;
+      left: -14px;
+      top: -2px;
+      color: $mid-grey;
     }
+
+    &.profile-disabled {
+      cursor: default;
+      border-bottom: none;
+    }
+  }
+
+  &__list-item {
+    float: left;
+    padding-left: 20px;
+  }
 }

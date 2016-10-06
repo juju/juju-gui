@@ -1,47 +1,47 @@
 .env-list-panel {
-    $width: 275px;
-    box-sizing: border-box;
-    width: $width;
-    margin-left: -20px;
+  $width: 275px;
+  box-sizing: border-box;
+  width: $width;
+  margin-left: -20px;
 
-    &:before {
-        @include diamond($white);
-        top: -8px;
-        left: 30px;
-        width: 13px;
-        height: 13px;
-        border-width: 1px 0 0 1px;
-        border-style: solid;
-        border-color: rgba(0, 0, 0, 0.1);
+  &:before {
+    @include diamond($white);
+    top: -8px;
+    left: 30px;
+    width: 13px;
+    height: 13px;
+    border-width: 1px 0 0 1px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .env-list {
+    margin-left: 0;
+
+    &__input {
+      box-sizing: border-box;
+      padding: 10px 10px 8px 10px;
+      margin: 10px 10px 0 10px;
+      width: $width - 20px;
     }
 
-    .env-list {
-        margin-left: 0;
-
-        &__input {
-            box-sizing: border-box;
-            padding: 10px 10px 8px 10px;
-            margin: 10px 10px 0 10px;
-            width: $width - 20px;
-        }
-
-        &__environment {
-            position: relative;
-            // The items need to be above the diamond.
-            z-index: 1;
-            list-style-type: none;
-            padding: 10px 20px;
-            margin-bottom: 0;
-        }
-
-        &__environment:hover,
-        &__environment:focus {
-            background-color: $hover-background;
-            cursor: pointer;
-        }
-
-        &__message {
-            padding: 10px 10px 0 10px;
-        }
+    &__environment {
+      position: relative;
+      // The items need to be above the diamond.
+      z-index: 1;
+      list-style-type: none;
+      padding: 10px 20px;
+      margin-bottom: 0;
     }
+
+    &__environment:hover,
+    &__environment:focus {
+      background-color: $hover-background;
+      cursor: pointer;
+    }
+
+    &__message {
+      padding: 10px 10px 0 10px;
+    }
+  }
 }

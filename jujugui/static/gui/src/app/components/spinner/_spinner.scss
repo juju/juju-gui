@@ -8,65 +8,65 @@
 }
 
 .spinner-loading {
-    $colour: $mid-grey;
-    $size: 60px;
-    display: inline-block;
-    position: relative;
-    width: $size;
-    height: $size;
-    margin: 50px auto;
-    border-radius: 50%;
+  $colour: $mid-grey;
+  $size: 60px;
+  display: inline-block;
+  position: relative;
+  width: $size;
+  height: $size;
+  margin: 50px auto;
+  border-radius: 50%;
+  background: $colour;
+  background: linear-gradient(to right, $colour 10%, rgba(255, 255, 255, 0) 42%);
+  font-size: 10px;
+  text-indent: -9999em;
+  animation: spinner 1.4s infinite linear;
+  transform: translateZ(0);
+
+  &:before,
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  &:before {
+    width: 50%;
+    height: 50%;
     background: $colour;
-    background: linear-gradient(to right, $colour 10%, rgba(255, 255, 255, 0) 42%);
-    font-size: 10px;
-    text-indent: -9999em;
-    animation: spinner 1.4s infinite linear;
-    transform: translateZ(0);
+    border-radius: 100% 0 0 0;
+  }
 
-    &:before,
-    &:after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-
-    &:before {
-        width: 50%;
-        height: 50%;
-        background: $colour;
-        border-radius: 100% 0 0 0;
-    }
-
-    &:after {
-        background: $white;
-        width: 75%;
-        height: 75%;
-        border-radius: 50%;
-        margin: auto;
-        bottom: 0;
-        right: 0;
-    }
+  &:after {
+    background: $white;
+    width: 75%;
+    height: 75%;
+    border-radius: 50%;
+    margin: auto;
+    bottom: 0;
+    right: 0;
+  }
 }
 
 
 .inspector-spinner {
-    text-align: center;
+  text-align: center;
 
-    .spinner-loading {
-        $size: 40px;
-        width: $size;
-        height: $size;
-        margin: 20px;
-    }
+  .spinner-loading {
+    $size: 40px;
+    width: $size;
+    height: $size;
+    margin: 20px;
+  }
 }
 
 #loading-spinner {
-    .spinner-loading {
-        margin: 25px auto;
+  .spinner-loading {
+    margin: 25px auto;
 
-        &:after {
-          background: $canvas-background;
-        }
+    &:after {
+      background: $canvas-background;
     }
+  }
 }

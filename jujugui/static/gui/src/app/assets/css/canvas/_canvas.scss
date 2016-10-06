@@ -1,20 +1,20 @@
 #content {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
 }
 
 #main {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 #canvas {
-    position: relative;
+  position: relative;
 }
 
 .zoom-plane {
-    fill-opacity: 0;
-    cursor: move;
+  fill-opacity: 0;
+  cursor: move;
 }

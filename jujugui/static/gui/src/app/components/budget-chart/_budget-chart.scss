@@ -1,59 +1,59 @@
 .budget-chart {
-    $light-green: lighten($success, 50%);
+  $light-green: lighten($success, 50%);
 
-    &__chart {
-        position: relative;
-        height: 20px;
-        margin-bottom: 10px;
+  &__chart {
+    position: relative;
+    height: 20px;
+    margin-bottom: 10px;
 
-        &-new,
-        &-existing,
-        &-limit {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            border-radius: $border-radius;
-        }
-
-        &-limit {
-            left: 0;
-            right: 0;
-            background-color: $white;
-            border: 1px solid $light-mid-grey;
-        }
-
-        &-new {
-            left: 0;
-            background-color: $success;
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-
-        &-existing {
-            border-radius: 0;
-            background-color: $light-green;
-        }
+    &-new,
+    &-existing,
+    &-limit {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      border-radius: $border-radius;
     }
 
-    &__indicator {
-        display: inline-block;
-        width: 15px;
-        height: 15px;
-        margin-right: 10px;
-        border-radius: $border-radius;
-        vertical-align: middle;
-
-        &--new {
-            background-color: $success;
-        }
-
-        &--existing {
-            background-color: $light-green;
-        }
-
-        &--limit {
-            background-color: $white;
-            border: 1px solid $light-mid-grey;
-        }
+    &-limit {
+      left: 0;
+      right: 0;
+      background-color: $white;
+      border: 1px solid $light-mid-grey;
     }
+
+    &-new {
+      left: 0;
+      background-color: $success;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    &-existing {
+      border-radius: 0;
+      background-color: $light-green;
+    }
+  }
+
+  &__indicator {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-right: 10px;
+    border-radius: $border-radius;
+    vertical-align: middle;
+
+    &--new {
+      background-color: $success;
+    }
+
+    &--existing {
+      background-color: $light-green;
+    }
+
+    &--limit {
+      background-color: $white;
+      border: 1px solid $light-mid-grey;
+    }
+  }
 }

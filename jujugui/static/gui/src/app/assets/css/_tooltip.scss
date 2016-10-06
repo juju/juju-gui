@@ -1,50 +1,50 @@
 .tooltip {
+  position: relative;
+
+  &:hover {
+    .tooltip__tooltip,
+    .tooltip__tooltip--below {
+      display: block;
+    }
+  }
+  
+  %tooltip__tooltip {
+    display: none;
+    position: absolute;
+    left: 50%;
+  }
+
+  &__tooltip {
+    @extend %tooltip__tooltip;
+    bottom: calc(100% + 10px);
+  }
+
+  &__tooltip--below {
+    @extend %tooltip__tooltip;
+    top: calc(100% + 10px);
+  }
+
+  &__inner {
+    display: block;
     position: relative;
+    left: -50%;
+    padding: 5px 10px;
+    background-color: $black;
+    border-radius: 3px;
+    color: $white;
+    font-size: 14px;
+    white-space: nowrap;
+  }
 
-    &:hover {
-        .tooltip__tooltip,
-        .tooltip__tooltip--below {
-            display: block;
-        }
-    }
+  &__inner--up:after {
+    @include diamond($black, 8px, 'up');
+    left: 50%;
+    margin-left: -4px;
+  }
 
-    %tooltip__tooltip {
-        display: none;
-        position: absolute;
-        left: 50%;
-    }
-
-    &__tooltip {
-        @extend %tooltip__tooltip;
-        bottom: calc(100% + 10px);
-    }
-
-    &__tooltip--below {
-        @extend %tooltip__tooltip;
-        top: calc(100% + 10px);
-    }
-
-    &__inner {
-        display: block;
-        position: relative;
-        left: -50%;
-        padding: 5px 10px;
-        background-color: $black;
-        border-radius: 3px;
-        color: $white;
-        font-size: 14px;
-        white-space: nowrap;
-    }
-
-    &__inner--up:after {
-        @include diamond($black, 8px, 'up');
-        left: 50%;
-        margin-left: -4px;
-    }
-
-    &__inner--down:after {
-        @include diamond($black, 8px, 'down');
-        left: 50%;
-        margin-left: -4px;
-    }
+  &__inner--down:after {
+    @include diamond($black, 8px, 'down');
+    left: 50%;
+    margin-left: -4px;
+  }
 }

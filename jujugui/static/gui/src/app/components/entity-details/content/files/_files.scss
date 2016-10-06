@@ -1,85 +1,85 @@
 .entity-files {
-    $dimension: 13px;
+  $dimension: 13px;
 
-    &__link {
-        display: inline-block;
+  &__link {
+    display: inline-block;
 
-        a:hover {
-            text-decoration: underline;
-        }
-        &:after {
-            color: $warm-grey;
-            content: "\2022";
-            vertical-align: middle;
-            margin: 0 5px;
-        }
-
-        &:last-child:after {
-            display: none;
-        }
+    a:hover {
+      text-decoration: underline;
+    }
+    &:after {
+      color: $warm-grey;
+      content: "\2022";
+      vertical-align: middle;
+      margin: 0 5px;
     }
 
-    &__file,
-    &__directory {
-        margin: 10px 0;
-        list-style: none;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+    &:last-child:after {
+      display: none;
+    }
+  }
 
-        &:before {
-          content: '';
-          width: $dimension;
-          height: 1px;
-          background-color: #d4d4d4;
-          display: inline-block;
-          position: relative;
-          top: -4px;
-          margin-right: 5px;
-        }
+  &__file,
+  &__directory {
+    margin: 10px 0;
+    list-style: none;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    &:before {
+      content: '';
+      width: $dimension;
+      height: 1px;
+      background-color: #d4d4d4;
+      display: inline-block;
+      position: relative;
+      top: -4px;
+      margin-right: 5px;
+    }
+  }
+
+  &__file {
+    overflow: hidden;
+
+    a {
+      text-decoration: none;
+      color: $cool-grey;
+    }
+  }
+
+  &__directory {
+    position: relative;
+    cursor: pointer;
+
+    &:after {
+      font-size: 11px;
+      display: block;
+      content: '-';
+      position: absolute;
+      top: 0;
+      left: 0 - (($dimension + 2px) / 2);
+      border: 1px solid $warm-grey;
+      width: $dimension;
+      height: $dimension;
+      line-height: $dimension;
+      margin: 3px 0;
+      text-align: center;
+      background-color: $white;
     }
 
-    &__file {
-        overflow: hidden;
+    &.collapsed {
+      &:after {
+        content: '+';
+      }
 
-        a {
-            text-decoration: none;
-            color: $cool-grey;
-        }
+      .entity-files__listing {
+        display: none;
+      }
     }
+  }
 
-    &__directory {
-        position: relative;
-        cursor: pointer;
-
-        &:after {
-            font-size: 11px;
-            display: block;
-            content: '-';
-            position: absolute;
-            top: 0;
-            left: 0 - (($dimension + 2px) / 2);
-            border: 1px solid $warm-grey;
-            width: $dimension;
-            height: $dimension;
-            line-height: $dimension;
-            margin: 3px 0;
-            text-align: center;
-            background-color: $white;
-        }
-
-        &.collapsed {
-            &:after {
-                content: '+';
-            }
-
-            .entity-files__listing {
-                display: none;
-            }
-        }
-    }
-
-    &__listing {
-        margin-left: 20px;
-        border-left: 1px solid $mid-grey;
-    }
+  &__listing {
+    margin-left: 20px;
+    border-left: 1px solid $mid-grey;
+  }
 }

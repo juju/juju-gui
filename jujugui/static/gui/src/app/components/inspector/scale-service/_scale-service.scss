@@ -1,38 +1,38 @@
 .scale-service {
-    &--units {
-        position: relative;
+  &--units {
+    position: relative;
 
-        &__input {
-            margin: 20px 20px 13px 20px;
-            width: 250px;
-            background-color: transparent;
-        }
-
-        &__span {
-            position: absolute;
-            right: 25px;
-            top: 30px;
-            color: $warm-grey;
-        }
+    &__input {
+      margin: 20px 20px 13px 20px;
+      width: 250px;
+      background-color: transparent;
     }
 
-    &--selector {
+    &__span {
+      position: absolute;
+      right: 25px;
+      top: 30px;
+      color: $warm-grey;
+    }
+  }
 
-      & &__radio {
-          margin: 6px 10px 10px 20px;
-      }
+  &--selector {
 
-      label {
-          display: inline-block;
-      }
-
-      div:last-of-type {
-          margin-bottom: 20px;
-      }
-
+    & &__radio {
+      margin: 6px 10px 10px 20px;
     }
 
-    &--constraints {
-        padding: 0 10px;
+    label {
+      display: inline-block;
     }
+
+    div:last-of-type {
+      margin-bottom: 20px;
+    }
+
+  }
+
+  &--constraints {
+    padding: 0 10px;
+  }
 }

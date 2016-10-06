@@ -1,277 +1,277 @@
 .entity-content {
-    clear: both;
+  clear: both;
 
-    &__header {
-        margin: 0 0 1.6em 0;
+  &__header {
+    margin: 0 0 1.6em 0;
+  }
+
+  &__description {
+
+    .twelve-col,
+    p {
+      margin: 0;
+    }
+  }
+
+  &__metadata {
+    margin-top: 80px;
+    font-size: 16px;
+    font-weight: 100;
+
+    h4 {
+      border-bottom: 1px solid $light-mid-grey;
+      padding-bottom: 1em;
     }
 
-    &__description {
-
-        .twelve-col,
-        p {
-            margin: 0;
-        }
+    ul {
+      margin: 1em 0;
     }
 
-    &__metadata {
-        margin-top: 80px;
-        font-size: 16px;
-        font-weight: 100;
+    li {
+      list-style: none;
+      margin-bottom: 0.8em;
+    }
+  }
 
-        h4 {
-            border-bottom: 1px solid $light-mid-grey;
-            padding-bottom: 1em;
-        }
+  &__plan {
+    box-sizing: border-box;
+    border: 1px solid $light-mid-grey;
+    border-radius: $border-radius;
 
-        ul {
-            margin: 1em 0;
-        }
-
-        li {
-            list-style: none;
-            margin-bottom: 0.8em;
-        }
+    &-content {
+      padding: 20px;
     }
 
-    &__plan {
-        box-sizing: border-box;
-        border: 1px solid $light-mid-grey;
-        border-radius: $border-radius;
-
-        &-content {
-            padding: 20px;
-        }
-
-        &-price,
-        &-title {
-            text-align: center;
-        }
-
-        &-price {
-            margin: 20px 0;
-            padding: 20px 0;
-            border-width: 1px 0;
-            border-style: solid;
-            border-color: $light-mid-grey;
-        }
-
-        &-price {
-            @extend %list-style;
-            margin: 20px 0;
-            padding: 20px 0;
-            border-width: 1px 0;
-            border-style: solid;
-            border-color: $light-mid-grey;
-
-            &-amount {
-                font-size: 2em;
-                color: $ubuntu-orange;
-            }
-
-            &-quantity {
-                font-size: 1.1em;
-                color: $warm-grey;
-            }
-
-            &-item:last-child {
-                margin-bottom: 0;
-            }
-        }
+    &-price,
+    &-title {
+      text-align: center;
     }
 
-    &__readme-content {
-        h1, h2, h3 {
-            margin: 1.6em 0;
-        }
-
-        h4, h5, h6 {
-            margin: 0.8em 0;
-        }
-
-        h1 {
-            font-size: 1.4em;
-        }
-
-        h2 {
-            font-size: 1.3em;
-        }
-
-        h3 {
-            font-size: 1.2em;
-        }
-
-        h4 {
-            font-size: 1.1em;
-        }
-
-        h5, h6 {
-            font-size: 1em;
-        }
-
-        ul {
-            list-style-position: inside;
-        }
-
-        li {
-            line-height: 1.6;
-        }
-
-        pre {
-            padding: 10px 15px;
-            background-color: $cool_grey;
-            border: none;
-            border-radius: 2px;
-            color: $mid_grey;
-
-            code {
-                margin-bottom: 0;
-                color: $mid_grey;
-            }
-        }
+    &-price {
+      margin: 20px 0;
+      padding: 20px 0;
+      border-width: 1px 0;
+      border-style: solid;
+      border-color: $light-mid-grey;
     }
 
-    .section {
-        margin-bottom: 20px;
-        padding: 30px 20px;
-        border: 1px solid $light-mid-grey;
-        border-radius: 2px;
+    &-price {
+      @extend %list-style;
+      margin: 20px 0;
+      padding: 20px 0;
+      border-width: 1px 0;
+      border-style: solid;
+      border-color: $light-mid-grey;
 
-        &__title {
-            font-size: 1.33em;
-            margin-bottom: 20px;
-        }
+      &-amount {
+        font-size: 2em;
+        color: $ubuntu-orange;
+      }
 
-        &__list {
-            margin: 0;
-            padding: 0;
-            list-style: none;
+      &-quantity {
+        font-size: 1.1em;
+        color: $warm-grey;
+      }
 
-            &-item {
-                line-height: 1.8;
-            }
-        }
+      &-item:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &__readme-content {
+    h1, h2, h3 {
+      margin: 1.6em 0;
     }
 
-    .entity-relations {
-        .section__list-item {
-            text-indent: -1.5em;
-            padding-left: 1.5em;
-        }
+    h4, h5, h6 {
+      margin: 0.8em 0;
     }
 
-    .revisions {
-        padding-bottom: 20px;
+    h1 {
+      font-size: 1.4em;
     }
 
-    .revisions__list {
-        list-style: none;
-        margin-left: 0;
-        padding-left: 0;
-
-        &-item {
-            word-wrap: break-word;
-            margin-bottom: 1em;
-        }
-
-        &-meta {
-            color: $warm-grey;
-            margin-bottom: .2em;
-            font-size: 14px;
-        }
-
-        &-meta-date {
-            float: right;
-        }
-
-        &-message {
-            white-space: pre-line;
-            margin-top: 0;
-        }
+    h2 {
+      font-size: 1.3em;
     }
 
-    .btn__see--more,
+    h3 {
+      font-size: 1.2em;
+    }
+
+    h4 {
+      font-size: 1.1em;
+    }
+
+    h5, h6 {
+      font-size: 1em;
+    }
+
+    ul {
+      list-style-position: inside;
+    }
+
+    li {
+      line-height: 1.6;
+    }
+
+    pre {
+      padding: 10px 15px;
+      background-color: $cool_grey;
+      border: none;
+      border-radius: 2px;
+      color: $mid_grey;
+
+      code {
+        margin-bottom: 0;
+        color: $mid_grey;
+      }
+    }
+  }
+
+  .section {
+    margin-bottom: 20px;
+    padding: 30px 20px;
+    border: 1px solid $light-mid-grey;
+    border-radius: 2px;
+
+    &__title {
+      font-size: 1.33em;
+      margin-bottom: 20px;
+    }
+
+    &__list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+
+      &-item {
+        line-height: 1.8;
+      }
+    }
+  }
+
+  .entity-relations {
+    .section__list-item {
+      text-indent: -1.5em;
+      padding-left: 1.5em;
+    }
+  }
+
+  .revisions {
+    padding-bottom: 20px;
+  }
+
+  .revisions__list {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+
+    &-item {
+      word-wrap: break-word;
+      margin-bottom: 1em;
+    }
+
+    &-meta {
+      color: $warm-grey;
+      margin-bottom: .2em;
+      font-size: 14px;
+    }
+
+    &-meta-date {
+      float: right;
+    }
+
+    &-message {
+      white-space: pre-line;
+      margin-top: 0;
+    }
+  }
+
+  .btn__see--more,
+  .btn__see--less {
+    @extend .button--inline-neutral;
+  }
+
+  .list__controls {
+    display: block;
+    margin-top: 2em;
+    text-align: center;
+
+    .btn__see--more {
+      display: none;
+    }
+
     .btn__see--less {
-        @extend .button--inline-neutral;
+      display: inline;
+    }
+  }
+
+  .list--concealed {
+    .list-item {
+      display: none;
+
+      &:first-of-type {
+        display: list-item;
+      }
     }
 
-    .list__controls {
-        display: block;
-        margin-top: 2em;
-        text-align: center;
+    .btn__see--more {
+      display: inline;
+    }
 
-        .btn__see--more {
+    .btn__see--less {
+      display: none;
+    }
+  }
+
+  &__bundle-config {
+    @extend %list-style;
+    margin-top: 20px;
+    cursor: pointer;
+
+    &-title {
+      padding: 15px 20px;
+      border-top: 1px solid $mid-grey;
+    }
+
+    &-options {
+      padding: 0 30px;
+    }
+
+    &-chevron {
+      float: right;
+
+      .entity-content__bundle-config-contract {
+        display: none;
+      }
+    }
+
+    &.expanding-row--expanded {
+      .expanding-row {
+        &__initial {
+          opacity: 1;
+          height: 50px;
+        }
+
+        &__expanded {
+          background-color: transparent;
+          box-shadow: none;
+        }
+      }
+
+      .entity-content__bundle-config-chevron {
+        .entity-content__bundle-config {
+          &-expand {
             display: none;
-        }
+          }
 
-        .btn__see--less {
-            display: inline;
+          &-contract {
+            display: inline-block;
+          }
         }
+      }
     }
-
-    .list--concealed {
-        .list-item {
-            display: none;
-
-            &:first-of-type {
-                display: list-item;
-            }
-        }
-
-        .btn__see--more {
-            display: inline;
-        }
-
-        .btn__see--less {
-            display: none;
-        }
-    }
-
-    &__bundle-config {
-        @extend %list-style;
-        margin-top: 20px;
-        cursor: pointer;
-
-        &-title {
-            padding: 15px 20px;
-            border-top: 1px solid $mid-grey;
-        }
-
-        &-options {
-            padding: 0 30px;
-        }
-
-        &-chevron {
-            float: right;
-
-            .entity-content__bundle-config-contract {
-                display: none;
-            }
-        }
-
-        &.expanding-row--expanded {
-            .expanding-row {
-                &__initial {
-                    opacity: 1;
-                    height: 50px;
-                }
-
-                &__expanded {
-                    background-color: transparent;
-                    box-shadow: none;
-                }
-            }
-
-            .entity-content__bundle-config-chevron {
-                .entity-content__bundle-config {
-                    &-expand {
-                        display: none;
-                    }
-
-                    &-contract {
-                        display: inline-block;
-                    }
-                }
-            }
-        }
-    }
+  }
 }

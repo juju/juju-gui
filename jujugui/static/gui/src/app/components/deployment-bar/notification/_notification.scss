@@ -1,32 +1,32 @@
 .deployment-bar__notification {
-    @extend %floating-panel;
+  @extend %floating-panel;
+  position: absolute;
+  top: -50px;
+  right: 0;
+  padding: 10px;
+  white-space: nowrap;
+  transition: opacity .5s;
+  opacity: 0;
+  cursor: default;
+
+  &--visible {
+    opacity: 100;
+  }
+
+  &:after {
+    $size: 11px;
+    content: '';
+    display: block;
     position: absolute;
-    top: -50px;
-    right: 0;
-    padding: 10px;
-    white-space: nowrap;
-    transition: opacity .5s;
-    opacity: 0;
-    cursor: default;
-
-    &--visible {
-        opacity: 100;
-    }
-
-    &:after {
-        $size: 11px;
-        content: '';
-        display: block;
-        position: absolute;
-        bottom: - (($size / 2) + 1px);
-        right: 15px;
-        width: $size;
-        height: $size;
-        background-color: $white;
-        border-width: 0 2px 2px 0;
-        border-style: solid;
-        border-color: rgba(0, 0, 0, 0.1);
-        -webkit-transform: rotate(45deg);
-        transform: rotate(45deg);
-    }
+    bottom: - (($size / 2) + 1px);
+    right: 15px;
+    width: $size;
+    height: $size;
+    background-color: $white;
+    border-width: 0 2px 2px 0;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.1);
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
 }

@@ -1,77 +1,77 @@
 
 /*
- * The main header above the canvas
- */
+* The main header above the canvas
+*/
 
 .header-banner {
-    position: absolute;
-    top: 0;
-    width: auto;
-    height: $navbar-height;
+  position: absolute;
+  top: 0;
+  width: auto;
+  height: $navbar-height;
+  
+  &--right {
+    z-index: index($z-indexed-elements, header-banner-search);
+    right: 0;
+  }
 
-    &--right {
-        z-index: index($z-indexed-elements, header-banner-search);
-        right: 0;
+  &--left {
+    z-index: index($z-indexed-elements, header-banner-breadcrumbs);
+    left: 0;
+  }
+
+  &__link {
+    box-sizing: border-box;
+    color: $warm-grey;
+    display: block;
+    transition: color .3s;
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: $ubuntu-orange;
+    }
+  }
+
+  &__logo {
+    position: relative;
+    float: left;
+    top: -1px;
+    padding: 15px 0 20px 20px;
+  }
+
+  .header-banner__list--right {
+    @extend %list-style;
+    float: right;
+  }
+
+  .header-banner__list-item {
+    float: left;
+    padding: 21px 8px;
+
+    &--no-padding {
+      padding: 0;
     }
 
-    &--left {
-        z-index: index($z-indexed-elements, header-banner-breadcrumbs);
-        left: 0;
-    }
+    &--logout {
+      padding-left: 0;
+      padding-right: 0;
 
-    &__link {
-        box-sizing: border-box;
+      .logout-link {
+        display: inline-block;
+        overflow: hidden;
+        max-width: 100px;
+        margin-right: 20px;
+        margin-left: 10px;
         color: $warm-grey;
-        display: block;
-        transition: color .3s;
+        opacity: 1;
+        transition: all .3s;
 
-        &:hover,
+        &:focus,
         &:active,
-        &:focus {
-            color: $ubuntu-orange;
+        &:hover {
+          color: $ubuntu-orange;
         }
+      }
     }
-
-    &__logo {
-        position: relative;
-        float: left;
-        top: -1px;
-        padding: 15px 0 20px 20px;
-    }
-
-    .header-banner__list--right {
-        @extend %list-style;
-        float: right;
-    }
-
-    .header-banner__list-item {
-        float: left;
-        padding: 21px 8px;
-
-        &--no-padding {
-            padding: 0;
-        }
-
-        &--logout {
-            padding-left: 0;
-            padding-right: 0;
-
-            .logout-link {
-                display: inline-block;
-                overflow: hidden;
-                max-width: 100px;
-                margin-right: 20px;
-                margin-left: 10px;
-                color: $warm-grey;
-                opacity: 1;
-                transition: all .3s;
-
-                &:focus,
-                &:active,
-                &:hover {
-                    color: $ubuntu-orange;
-                }
-            }
-        }
-    }
+  }
 }

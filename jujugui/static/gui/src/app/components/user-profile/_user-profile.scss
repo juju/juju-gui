@@ -1,122 +1,123 @@
 .user-profile {
 
-    &__create-new {
-        float: right;
-        font-size: $base;
+  &__create-new {
+    float: right;
+    font-size: $base;
+  }
+
+  &__close {
+    position: fixed;
+    z-index: 1;
+    top: $navbar-height + 20px;
+    right: 20px;
+    cursor: pointer;
+  }
+
+  &__header {
+    margin-top: 10px;
+    padding-bottom: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: 1.375em;
+    line-height: 40px;
+  }
+
+  &__empty {
+    text-align: center;
+
+    .clearfix {
+      clear: both;
     }
 
-    &__close {
-        position: fixed;
-        z-index: 1;
-        top: $navbar-height + 20px;
-        right: 20px;
-        cursor: pointer;
+    &-image {
+      margin: 0 0 40px 0;
     }
 
-    &__header {
-        margin-top: 10px;
-        padding-bottom: 20px;
-        padding-left: 15px;
-        padding-right: 15px;
-        font-size: 1.375em;
-        line-height: 40px;
+    &-title {
+      margin-bottom: 40px;
     }
 
-    &__empty {
+    &-text {
+      max-width: 360px;
+      margin: 0 auto;
+      color: $warm-grey;
+    }
+  }
+
+  &__size {
+    color: $light-mid-grey;
+    margin-left: 0.25em;
+  }
+
+  &__list {
+    @extend %list-style;
+    border-bottom: 1px solid $mid-grey;
+    margin-bottom: 20px;
+
+    &-row,
+    &-header {
+      margin: 0;
+      padding: 15px 0 15px 15px;
+    }
+
+    &-header {
+      border-bottom: 1px solid $mid-grey;
+    }
+
+    &-row {
+      border-bottom: 1px dotted $mid-grey;
+
+      &-title {
+        font-size: 23px;
+        margin-bottom: 40px;
+      }
+
+      &-text {
+        max-width: 360px;
+        margin: 0 auto;
+        color: $warm-grey;
+      }
+
+      .user-profile__create-new {
+        float: none;
+        margin-top: 40px;
         text-align: center;
-
-        .clearfix {
-            clear: both;
-        }
-
-        &-image {
-            margin: 0 0 40px 0;
-        }
-
-        &-title {
-            font-size: 23px;
-            margin-bottom: 40px;
-        }
-
-        &-text {
-            max-width: 360px;
-            margin: 0 auto;
-            color: $warm-grey;
-        }
-
-        .user-profile__create-new {
-            float: none;
-            margin-top: 40px;
-            text-align: center;
-        }
+      }
     }
 
-    &__size {
-        color: $light-mid-grey;
-        margin-left: 0.25em;
+    &-series {
+      margin-left: 0;
     }
 
-    &__list {
-        @extend %list-style;
-        border-bottom: 1px solid $mid-grey;
-        margin-bottom: 20px;
-
-        &-row,
-        &-header {
-            margin: 0;
-            padding: 15px 0 15px 15px;
-        }
-
-        &-header {
-            border-bottom: 1px solid $mid-grey;
-        }
-
-        &-row {
-            border-bottom: 1px dotted $mid-grey;
-
-            &:last-child {
-                border-bottom: none;
-            }
-        }
-
-        &-col {
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        &-series {
-            margin-left: 0;
-        }
-
-        &-name {
-            margin-top: -9px;
-        }
-
-        &-tags {
-            @extend %list-style;
-            color: $warm-grey;
-            font-size: 14px;
-        }
-
-        &-icons {
-            text-align: right;
-        }
-
-        &-icon {
-            @extend %icon--small;
-            margin-left: 3px;
-        }
+    &-name {
+      margin-top: -9px;
     }
 
-    &__comma-item {
-        display: inline;
-
-        &:after {
-            content: ', ';
-        }
-
-        &:last-child:after {
-            content: '';
-        }
+    &-tags {
+      @extend %list-style;
+      color: $warm-grey;
+      font-size: 14px;
     }
+
+    &-icons {
+      text-align: right;
+    }
+
+    &-icon {
+      @extend %icon--small;
+      margin-left: 3px;
+    }
+  }
+
+  &__comma-item {
+    display: inline;
+
+    &:after {
+      content: ', ';
+    }
+
+    &:last-child:after {
+      content: '';
+    }
+  }
 }

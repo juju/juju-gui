@@ -1,94 +1,94 @@
 @mixin customize-scrollbar($background) {
-    ::-webkit-scrollbar {
-        width: 10px;
-    }
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
 
-    ::-webkit-scrollbar-track {
-        background-color: $background;
-    }
+  ::-webkit-scrollbar-track {
+    background-color: $background;
+  }
 
-    ::-webkit-scrollbar-thumb {
-        background-color: #d4d4d4;
-        border: 1px solid $background;
-        border-radius: 5px;
-    }
+  ::-webkit-scrollbar-thumb {
+    background-color: #d4d4d4;
+    border: 1px solid $background;
+    border-radius: 5px;
+  }
 }
 
 @mixin diamond($color: inherit, $size: 6px, $direction: 'down') {
-    content: '';
-    width: $size;
-    height: $size;
-    position: absolute;
-    display: block;
-    background-color: $color;
-    -webkit-transform: rotate(45deg);
-    -ms-transform: rotate(45deg);
-    transform: rotate(45deg);
+  content: '';
+  width: $size;
+  height: $size;
+  position: absolute;
+  display: block;
+  background-color: $color;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
 
-    @if $direction == 'down' {
-        bottom: -4px;
-    } @else if $direction == 'up' {
-        top: -4px;
-    }
+  @if $direction == 'down' {
+    bottom: -4px;
+  } @else if $direction == 'up' {
+    top: -4px;
+  }
 }
 
 @mixin notification($background) {
-    $size: 24px;
-    box-sizing: border-box;
-    display: inline-block;
-    min-width: $size;
-    height: $size;
-    padding: 0 7px;
-    background-color: $background;
-    border-radius: $size / 2;
-    color: $white;
-    line-height: $size;
-    text-align: center;
+  $size: 24px;
+  box-sizing: border-box;
+  display: inline-block;
+  min-width: $size;
+  height: $size;
+  padding: 0 7px;
+  background-color: $background;
+  border-radius: $size / 2;
+  color: $white;
+  line-height: $size;
+  text-align: center;
 }
 
 %floating-panel {
-    background-color: $white;
-    border-radius: $border-radius;
-    box-shadow: $box-shadow;
+  background-color: $white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
 }
 
 %list-style {
-    margin: 0;
-    padding: 0;
-    list-style: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 %scroll-children {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 %collapse-children {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 %icon--small {
-    $size: 24px;
-    width: $size;
-    height: $size;
-    vertical-align: middle;
-    text-align: center;
-    border-radius: 50%;
-    -webkit-clip-path: circle(($size / 2 - 1) at center);
-    clip-path: circle(($size / 2 - 1) at center);
+  $size: 24px;
+  width: $size;
+  height: $size;
+  vertical-align: middle;
+  text-align: center;
+  border-radius: 50%;
+  -webkit-clip-path: circle(($size / 2 - 1) at center);
+  clip-path: circle(($size / 2 - 1) at center);
 }
 
 %input {
-    padding: 10px;
-    background-color: $white;
-    border: 1px solid $mid-grey;
-    border-radius: $border-radius;
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.07) inset;
-    font-weight: 300;
+  padding: 10px;
+  background-color: $white;
+  border: 1px solid $mid-grey;
+  border-radius: $border-radius;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.07) inset;
+  font-weight: 300;
 }

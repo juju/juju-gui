@@ -1,59 +1,59 @@
 .overview-action {
-    position: relative;
-    @extend %stagger-fade-in;
-    cursor: pointer;
-    padding: 11px 20px 11px 45px;
+  position: relative;
+  @extend %stagger-fade-in;
+  cursor: pointer;
+  padding: 11px 20px 11px 45px;
 
-    &:focus,
-    &:active,
-    &:hover {
-        background-color: $hover-background;
+  &:focus,
+  &:active,
+  &:hover {
+    background-color: $hover-background;
 
-        .svg-icon {
-          opacity: 1;
-        }
+    .svg-icon {
+      opacity: 1;
+    }
+  }
+
+  &__icon {
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    left: 20px;
+    top: 13px;
+
+    .svg-icon {
+      transition: opacity .3s;
+      opacity: 0.6;
+    }
+  }
+
+  &__link:not(.hidden) {
+    display: block;
+    margin-top: 3px;
+    color: $cool-grey;
+    text-decoration: underline;
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: left;
+    direction: rtl;
+  }
+
+  &__value {
+    @include notification(transparent);
+    float: right;
+    margin-top: -3px;
+    color: $cool-grey;
+
+    &--type-error {
+      @include notification($error);
     }
 
-    &__icon {
-        width: 16px;
-        height: 16px;
-        position: absolute;
-        left: 20px;
-        top: 13px;
-
-        .svg-icon {
-          transition: opacity .3s;
-          opacity: 0.6;
-        }
+    &--type-pending {
+      @include notification($pending);
     }
 
-    &__link:not(.hidden) {
-        display: block;
-        margin-top: 3px;
-        color: $cool-grey;
-        text-decoration: underline;
-        white-space: nowrap;
-        overflow: hidden;
-        text-align: left;
-        direction: rtl;
+    &--type-uncommitted {
+      @include notification($uncommitted);
     }
-
-    &__value {
-        @include notification(transparent);
-        float: right;
-        margin-top: -3px;
-        color: $cool-grey;
-
-        &--type-error {
-            @include notification($error);
-        }
-
-        &--type-pending {
-            @include notification($pending);
-        }
-
-        &--type-uncommitted {
-            @include notification($uncommitted);
-        }
-    }
+  }
 }

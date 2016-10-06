@@ -1,149 +1,149 @@
 /*
- * The actions menu that appears next to a service block.
- */
+* The actions menu that appears next to a service block.
+*/
 .environment-menu {
-    border-radius: $border-radius;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
-    display: none;
-    background-color: #fff;
-    color: $cool-grey;
-    top: 0;
-    left: 0;
+  border-radius: $border-radius;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  display: none;
+  background-color: #fff;
+  color: $cool-grey;
+  top: 0;
+  left: 0;
+  position: absolute;
+
+  &.active {
+    display: block;
+  }
+
+  .triangle {
     position: absolute;
+    top: 22px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    color: #fff;
+  }
 
-    &.active {
-        display: block;
-    }
+  &.right .triangle {
+    left: -16px;
+    border-width: 10px 17.3px 10px 0;
+    border-color: transparent #fff transparent transparent;
+  }
 
-    .triangle {
-        position: absolute;
-        top: 22px;
-        width: 0;
-        height: 0;
-        border-style: solid;
-        color: #fff;
-    }
+  &.left .triangle {
+    right: -16px;
+    border-width: 10px 0 10px 17.3px;
+    border-color: transparent transparent transparent #fff;
+  }
 
-    &.right .triangle {
-        left: -16px;
-        border-width: 10px 17.3px 10px 0;
-        border-color: transparent #fff transparent transparent;
-    }
+  &.top .triangle {
+    top: auto;
+    bottom: -16px;
+    border-width: 17.3px 10px 0px 10px;
+    border-color: #fff transparent transparent transparent;
+  }
 
-    &.left .triangle {
-        right: -16px;
-        border-width: 10px 0 10px 17.3px;
-        border-color: transparent transparent transparent #fff;
-    }
+  .menu-title {
+    padding: 20px;
+  }
 
-    &.top .triangle {
-        top: auto;
-        bottom: -16px;
-        border-width: 17.3px 10px 0px 10px;
-        border-color: #fff transparent transparent transparent;
-    }
+  .cancel {
+    position: absolute;
+    top: 25px;
+    right: 20px;
+  }
 
-    .menu-title {
-        padding: 20px;
-    }
+  ul {
+    margin: 0;
+    list-style-type: none;
 
-    .cancel {
-        position: absolute;
-        top: 25px;
-        right: 20px;
-    }
+    li {
+      background-position: 10px center;
+      background-repeat: no-repeat;
+      cursor: pointer;
+      line-height: 40px;
+      padding: 0 15px;
+      white-space: nowrap;
 
-    ul {
-        margin: 0;
-        list-style-type: none;
+      a {
+        text-decoration: none;
+        font-size: 13px;
+        color: $cool-grey;
+      }
 
-        li {
-            background-position: 10px center;
-            background-repeat: no-repeat;
-            cursor: pointer;
-            line-height: 40px;
-            padding: 0 15px;
-            white-space: nowrap;
+      &:last-child {
+        border-bottom: none;
+      }
 
-            a {
-                text-decoration: none;
-                font-size: 13px;
-                color: $cool-grey;
-            }
+      &:focus,
+      &:active,
+      &:hover {
+        background-color: #f2f2f2;
+      }
 
-            &:last-child {
-                border-bottom: none;
-            }
-
-            &:focus,
-            &:active,
-            &:hover {
-                background-color: #f2f2f2;
-            }
-
-            &.disabled {
-                color: gray;
-                cursor: default;
-
-                &:focus,
-                &:active,
-                &:hover {
-                    background-color: inherit;
-                }
-            }
-        }
-    }
-
-    .menu {
-        li {
-            border-top: 1px solid #e9e9e9;
-        }
-    }
-}
-
-#relation-menu {
-    $icon-size: 16px;
-    $height: 30px;
-    $gutter: 10px;
-
-    .relation-container {
-        cursor: inherit;
-        padding: 0 0 0 (($gutter * 2) + $icon-size);
-        line-height: $height;
-        background-repeat: no-repeat;
-        background-position: $gutter (($height - $icon-size) / 2);
-        background-image: url("static/gui/build/app/assets/images/unit_running_16.png");
-
-        &.error {
-            background-image: url("static/gui/build/app/assets/images/error_16.png");
-        }
-
-        .endpoint.error {
-            color: $error;
-        }
+      &.disabled {
+        color: gray;
+        cursor: default;
 
         &:focus,
         &:active,
         &:hover {
-            background-color: inherit;
+          background-color: inherit;
         }
+      }
+    }
+  }
+
+  .menu {
+    li {
+      border-top: 1px solid #e9e9e9;
+    }
+  }
+}
+
+#relation-menu {
+  $icon-size: 16px;
+  $height: 30px;
+  $gutter: 10px;
+
+  .relation-container {
+    cursor: inherit;
+    padding: 0 0 0 (($gutter * 2) + $icon-size);
+    line-height: $height;
+    background-repeat: no-repeat;
+    background-position: $gutter (($height - $icon-size) / 2);
+    background-image: url("static/gui/build/app/assets/images/unit_running_16.png");
+
+    &.error {
+      background-image: url("static/gui/build/app/assets/images/error_16.png");
     }
 
-    .triangle {
-        bottom: -3px;
-        border-width: 3px 5px 0 5px;
+    .endpoint.error {
+      color: $error;
     }
 
-    .relation-remove {
-        line-height: normal;
-        margin: (($height - $icon-size) / 2) $gutter;
-        display: block;
-        float: right;
-        height: $icon-size;
-        width: $icon-size;
+    &:focus,
+    &:active,
+    &:hover {
+      background-color: inherit;
     }
+  }
 
-    .inspect-relation {
-        cursor: pointer;
-    }
+  .triangle {
+    bottom: -3px;
+    border-width: 3px 5px 0 5px;
+  }
+
+  .relation-remove {
+    line-height: normal;
+    margin: (($height - $icon-size) / 2) $gutter;
+    display: block;
+    float: right;
+    height: $icon-size;
+    width: $icon-size;
+  }
+
+  .inspect-relation {
+    cursor: pointer;
+  }
 }

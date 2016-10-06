@@ -1,41 +1,41 @@
 .machine-view__machine-unit {
-    position: relative;
+  position: relative;
 
-    &--uncommitted {
-        .machine-view__machine-unit-icon {
-            border: 1px solid $uncommitted;
-        }
+  &--uncommitted {
+    .machine-view__machine-unit-icon {
+      border: 1px solid $uncommitted;
     }
+  }
 
-    &--error {
-        .machine-view__machine-unit-icon {
-            border: 1px solid $error;
-        }
+  &--error {
+    .machine-view__machine-unit-icon {
+      border: 1px solid $error;
     }
+  }
 
-    &--pending {
-        .machine-view__machine-unit-icon {
-            border: 1px solid $pending;
-        }
+  &--pending {
+    .machine-view__machine-unit-icon {
+      border: 1px solid $pending;
     }
+  }
 
-    &-icon {
-        display: inline-block;
-        margin-right: 10px;
-        padding: 2px;
-        border: 1px solid $canvas-background;
-        border-radius: 50%;
+  &-icon {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 2px;
+    border: 1px solid $canvas-background;
+    border-radius: 50%;
 
-        &-img {
-            @extend %icon--small;
-        }
+    &-img {
+      @extend %icon--small;
     }
+  }
 
-    &--draggable {
-        cursor: move;
-    }
+  &--draggable {
+    cursor: move;
+  }
 
-    &--dragged {
-        opacity: 0;
-    }
+  &--dragged {
+    opacity: 0;
+  }
 }

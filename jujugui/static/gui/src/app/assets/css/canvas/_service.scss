@@ -1,216 +1,216 @@
 g.service {
-   @extend .visibility-classes;
-   fill: none;
-   stroke: none;
-   cursor: pointer;
+  @extend .visibility-classes;
+  fill: none;
+  stroke: none;
+  cursor: pointer;
 
-   .service-block {
-      transition: all .3s;
-   }
+  .service-block {
+    transition: all .3s;
+  }
 
-   .relation-button {
-      transition: transform .3s;
-      transform: translate(95px, 30px);
+  .relation-button {
+    transition: transform .3s;
+    transform: translate(95px, 30px);
 
-      &__link {
-         cursor: pointer;
+    &__link {
+      cursor: pointer;
 
-         &:focus,
-         &:active,
-         &:hover {
-            fill: $white;
-         }
-      }
-
-      &__image {
-         pointer-events: none;
-      }
-   }
-
-   &.highlight {
-      .service-block {
-         fill: #fff;
-      }
-   }
-
-   &.is-erroring {
-      .service-block {
-         stroke: #ed3146;
-         stroke-width: 3;
-      }
-   }
-
-   &.is-pending {
-      .service-block {
-         stroke: #f99b0f;
-         stroke-width: 3;
-      }
-   }
-
-   &.is-running {
-      .service-block {
-         stroke: #888888;
-         stroke-width: 1;
-      }
-   }
-
-   &.is-exposed {
-      .service-block {
-         stroke-width: 4;
-      }
-   }
-
-   .service-block__halo {
-      transition: all .3s;
-      opacity: 0;
-      r: 90;
-   }
-
-   .service-block {
-      transition: all .3s;
-   }
-
-   &.hover,
-   &:focus,
-   &:active,
-   &:hover {
-
-      .service-block__halo {
-         opacity: 1;
-         r: 110;
-         stroke-width: 1;
-      }
-
-      &.is-uncommitted .service-block__halo,
-      .service-block__halo {
-         stroke: #19b6ee;
-      }
-
-      &.is-erroring .service-block__halo {
-         stroke: #ed3146;
-      }
-
-      &.is-pending .service-block__halo {
-         stroke: #f99b0f;
-      }
-
-      &.is-running .service-block__halo {
-         stroke: #888888;
-      }
-
-      .service-block {
-         fill: $white;
-      }
-
-      .relation-button {
-         transform: translate(95px, -30px);
-      }
-   }
-
-   &.subordinate {
-      .service-block__halo {
-         r: 60;
-         stroke: #888888;
-      }
-
-      .relation-button {
-         transform: translate(65px, 30px);
-      }
-
-      &.hover,
       &:focus,
       &:active,
       &:hover {
-         .service-block__halo {
-            r: 80;
-         }
-
-         .relation-button {
-            transform: translate(65px, -30px);
-         }
+        fill: $white;
       }
+    }
 
-      .sub-rel-count {
-         fill: $warm-grey;
-      }
-   }
+    &__image {
+      pointer-events: none;
+    }
+  }
 
-   &.is-selected {
+  &.highlight {
+    .service-block {
+      fill: #fff;
+    }
+  }
+
+  &.is-erroring {
+    .service-block {
+      stroke: #ed3146;
+      stroke-width: 3;
+    }
+  }
+
+  &.is-pending {
+    .service-block {
+      stroke: #f99b0f;
+      stroke-width: 3;
+    }
+  }
+
+  &.is-running {
+    .service-block {
+      stroke: #888888;
+      stroke-width: 1;
+    }
+  }
+
+  &.is-exposed {
+    .service-block {
+      stroke-width: 4;
+    }
+  }
+
+  .service-block__halo {
+    transition: all .3s;
+    opacity: 0;
+    r: 90;
+  }
+
+  .service-block {
+    transition: all .3s;
+  }
+
+  &.hover,
+  &:focus,
+  &:active,
+  &:hover {
+
+    .service-block__halo {
+      opacity: 1;
+      r: 110;
+      stroke-width: 1;
+    }
+
+    &.is-uncommitted .service-block__halo,
+    .service-block__halo {
+      stroke: #19b6ee;
+    }
+
+    &.is-erroring .service-block__halo {
+      stroke: #ed3146;
+    }
+
+    &.is-pending .service-block__halo {
+      stroke: #f99b0f;
+    }
+
+    &.is-running .service-block__halo {
+      stroke: #888888;
+    }
+
+    .service-block {
+      fill: $white;
+    }
+
+    .relation-button {
+      transform: translate(95px, -30px);
+    }
+  }
+
+  &.subordinate {
+    .service-block__halo {
+      r: 60;
+      stroke: #888888;
+    }
+
+    .relation-button {
+      transform: translate(65px, 30px);
+    }
+
+    &.hover,
+    &:focus,
+    &:active,
+    &:hover {
       .service-block__halo {
-         -webkit-animation: serviceBlockHaloSelected 1s alternate;
-         animation: serviceBlockHaloSelected 1s alternate;
-         opacity: .3;
-         r: 110;
-         stroke-width: 0;
-         fill: #19b6ee;
+        r: 80;
       }
 
       .relation-button {
-         transform: translate(95px, -30px);
+        transform: translate(65px, -30px);
+      }
+    }
+
+    .sub-rel-count {
+      fill: $warm-grey;
+    }
+  }
+
+  &.is-selected {
+    .service-block__halo {
+      -webkit-animation: serviceBlockHaloSelected 1s alternate;
+      animation: serviceBlockHaloSelected 1s alternate;
+      opacity: .3;
+      r: 110;
+      stroke-width: 0;
+      fill: #19b6ee;
+    }
+
+    .relation-button {
+      transform: translate(95px, -30px);
+    }
+
+    &.is-erroring .service-block__halo {
+      fill: #ed3146;
+    }
+
+    &.is-pending .service-block__halo {
+      fill: #f99b0f;
+    }
+
+    &.is-running .service-block__halo {
+      fill: #888888;
+    }
+
+    &.subordinate {
+      .service-block__halo {
+        r: 80;
+        fill: #888888;
       }
 
-      &.is-erroring .service-block__halo {
-         fill: #ed3146;
+      .relation-button {
+        transform: translate(65px, -30px);
       }
+    }
 
-      &.is-pending .service-block__halo {
-         fill: #f99b0f;
-      }
+    .service-block {
+      fill: $white;
+    }
 
-      &.is-running .service-block__halo {
-         fill: #888888;
-      }
-
-      &.subordinate {
-         .service-block__halo {
-            r: 80;
-            fill: #888888;
-         }
-
-         .relation-button {
-            transform: translate(65px, -30px);
-         }
-      }
-
-      .service-block {
-         fill: $white;
-      }
-
-      @-webkit-keyframes serviceBlockHaloSelected {
-         0% { opacity: 0 }
-         100% { opacity: .3 }
-      }
-      @keyframes serviceBlockHaloSelected {
-         0% { opacity: 0 }
-         100% { opacity: .3 }
-      }
-   }
+    @-webkit-keyframes serviceBlockHaloSelected {
+      0% { opacity: 0 }
+      100% { opacity: .3 }
+    }
+    @keyframes serviceBlockHaloSelected {
+      0% { opacity: 0 }
+      100% { opacity: .3 }
+    }
+  }
 }
 
 // Hide all relation buttons from relation when dragging
 .drag-relation-group ~ .service .relation-button {
-   transition: none !important;
-   transform: translate(95px, 30px) !important;
+  transition: none !important;
+  transform: translate(95px, 30px) !important;
 }
 
 .visibility-classes {
-    transition: opacity .4s ease;
+  transition: opacity .4s ease;
 
-    &.show {
-        opacity: 1;
-    }
+  &.show {
+    opacity: 1;
+  }
 
-    &.fade {
-        opacity: .3;
-    }
+  &.fade {
+    opacity: .3;
+  }
 
-    &.hide {
-        /*
-          Put visibility on a delay so it gets hidden after the opacity is
-          finished transitioning.
-        */
-        transition: visibility 0s linear 0.4s, opacity 0.4s ease;
-        opacity: 0;
-        visibility: hidden;
-    }
+  &.hide {
+    /*
+    Put visibility on a delay so it gets hidden after the opacity is
+    finished transitioning.
+    */
+    transition: visibility 0s linear 0.4s, opacity 0.4s ease;
+    opacity: 0;
+    visibility: hidden;
+  }
 }

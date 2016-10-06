@@ -15,8 +15,8 @@
     background-color: $canvas-background;
 
     &:hover {
-        background-color: $white;
-        color: $ubuntu-orange !important;
+      background-color: $white;
+      color: $ubuntu-orange !important;
     }
   }
 
@@ -30,11 +30,11 @@
   }
 
   &__file {
-      position: absolute;
-      top: -99999;
-      display: block;
-      visibility: hidden;
-      width: 0;
+    position: absolute;
+    top: -99999;
+    display: block;
+    visibility: hidden;
+    width: 0;
   }
 
   &--initial &__export {

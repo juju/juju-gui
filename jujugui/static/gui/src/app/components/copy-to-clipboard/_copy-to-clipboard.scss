@@ -1,47 +1,47 @@
 .copy-to-clipboard {
-    margin-bottom: 15px;
-    position: relative;
-    $icon-size: 16px;
-    $button-size: 37px;
+  margin-bottom: 15px;
+  position: relative;
+  $icon-size: 16px;
+  $button-size: 37px;
 
-    input[type="text"].copy-to-clipboard__input {
-        box-shadow: inset 0 1px 2px 0 rgba(0,0,0,0.12);
-        box-sizing: border-box;
-        background-image: url("static/gui/build/app/assets/svgs/code-snippet_16.svg");
-        background-repeat: no-repeat;
-        background-position: 10px center;
-        background-color: $white;
-        background-size: $icon-size;
-        width: 100%;
-        border: 1px solid $mid-grey;
-        border-radius: 2px;
-        padding: 9.5px $button-size 9.5px 34px;
-        color: $cool-grey;
-        font-size: 16px;
-        white-space: nowrap;
-        overflow: hidden;
-        cursor: text;
+  input[type="text"].copy-to-clipboard__input {
+    box-shadow: inset 0 1px 2px 0 rgba(0,0,0,0.12);
+    box-sizing: border-box;
+    background-image: url("static/gui/build/app/assets/svgs/code-snippet_16.svg");
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    background-color: $white;
+    background-size: $icon-size;
+    width: 100%;
+    border: 1px solid $mid-grey;
+    border-radius: 2px;
+    padding: 9.5px $button-size 9.5px 34px;
+    color: $cool-grey;
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    cursor: text;
+  }
+
+  &__btn {
+    cursor: pointer;
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    border: none;
+    height: $button-size;
+    width: $button-size;
+    padding: ($button-size - $icon-size) / 2;
+    background-color: transparent;
+    background-image: url("static/gui/build/app/assets/svgs/get-link-url_16.svg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: $icon-size;
+
+    &:focus,
+    &:active,
+    &:hover {
+      background-color: transparentize($light-mid-grey, 0.25);
     }
-
-    &__btn {
-        cursor: pointer;
-        position: absolute;
-        right: 1px;
-        top: 1px;
-        border: none;
-        height: $button-size;
-        width: $button-size;
-        padding: ($button-size - $icon-size) / 2;
-        background-color: transparent;
-        background-image: url("static/gui/build/app/assets/svgs/get-link-url_16.svg");
-        background-repeat: no-repeat;
-        background-position: center center;
-        background-size: $icon-size;
-
-        &:focus,
-        &:active,
-        &:hover {
-            background-color: transparentize($light-mid-grey, 0.25);
-        }
-    }
+  }
 }

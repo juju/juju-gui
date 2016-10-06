@@ -1,32 +1,32 @@
 .machine-view__unplaced-unit {
-    @extend %floating-panel;
-    position: relative;
-    margin-bottom: 10px;
-    padding: 10px;
-    cursor: move;
+  @extend %floating-panel;
+  position: relative;
+  margin-bottom: 10px;
+  padding: 10px;
+  cursor: move;
 
-    &-icon {
-        @extend %icon--small;
-        margin: -2px 7px -2px 0;
-        vertical-align: text-top;
-    }
+  &-icon {
+    @extend %icon--small;
+    margin: -2px 7px -2px 0;
+    vertical-align: text-top;
+  }
 
-    &-drag-state {
-        display: none;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: $canvas-background;
-        border: 1px dotted $mid-grey;
-    }
+  &-drag-state {
+    display: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: $canvas-background;
+    border: 1px dotted $mid-grey;
+  }
 
-    &--dragged {
-        box-shadow: none;
-    }
+  &--dragged {
+    box-shadow: none;
+  }
 
-    &--dragged &-drag-state {
-        display: block;
-    }
+  &--dragged &-drag-state {
+    display: block;
+  }
 }

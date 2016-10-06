@@ -1,22 +1,22 @@
 .unit-details {
-    &__properties {
-        padding: 10px 20px;
-    }
+  &__properties {
+    padding: 10px 20px;
+  }
 
-    &__property {
-        @extend %stagger-fade-in;
-        margin-top: 0;
-        margin-bottom: .3em;
-    }
+  &__property {
+    @extend %stagger-fade-in;
+    margin-top: 0;
+    margin-bottom: .3em;
+  }
 
-    &__list {
-      list-style: none;
-      margin: 0;
-    }
+  &__list {
+    list-style: none;
+    margin: 0;
+  }
 
-    a:focus,
-    a:active,
-    a:hover {
-        text-decoration: underline;
-    }
+  a:focus,
+  a:active,
+  a:hover {
+    text-decoration: underline;
+  }
 }
