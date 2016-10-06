@@ -740,10 +740,20 @@ YUI.add('environment-change-set', function(Y) {
       model.updateSubordinateUnits(db);
       model.destroy();
       this._removeExistingRecord(recordKey);
-      // Remove the record for the addCharm
+      // Check if there are other applications using the same charm. If not
+      // then remove the addCharm call.
       record.parents.some(key => {
         if (key.indexOf('addCharm-') === 0) {
-          this._removeExistingRecord(key);
+          const used = Object.keys(this.changeSet).some(recordKey => {
+            if (recordKey.indexOf('service-') === 0) {
+              return this.changeSet[recordKey].parents.includes(key);
+            }
+          });
+          // If the addCharm call is not used anywhere else then it can be
+          // safely removed.
+          if (!used) {
+            this._removeExistingRecord(key);
+          }
         }
       });
     },
