@@ -3,6 +3,7 @@
   stroke: $warm-grey;
 }
 
+// scss-lint:disable IdSelector, SelectorFormat
 #close_16 path {
   stroke: inherit;
 }
@@ -25,3 +26,4 @@
 #import_16 path {
   fill: currentColor;
 }
+// scss-lint:enable IdSelector, SelectorFormat
