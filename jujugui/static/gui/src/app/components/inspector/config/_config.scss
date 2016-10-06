@@ -7,12 +7,12 @@
   }
 
   &__select {
-    margin: 10px 0 14px 0;
+    margin: 10px 0 14px;
     text-transform: capitalize;
   }
 
   &__series-select {
-    margin: 10px 20px 14px 20px;
+    margin: 10px 20px 14px;
     width: 250px;
 
     option {
@@ -21,15 +21,15 @@
 
     &-description {
       color: $cool-grey;
-      font-size: 0.875em;
+      font-size: .875em;
     }
   }
 
   &--no-config {
-    margin: 10px 20px 14px 20px;
+    margin: 10px 20px 14px;
   }
 
   &__config-file {
-    margin: 0px 10px 0px 10px;
+    margin: 0 10px;
   }
 }

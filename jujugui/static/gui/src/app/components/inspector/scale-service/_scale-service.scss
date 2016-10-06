@@ -3,7 +3,7 @@
     position: relative;
 
     &__input {
-      margin: 20px 20px 13px 20px;
+      margin: 20px 20px 13px;
       width: 250px;
       background-color: transparent;
     }
@@ -18,7 +18,7 @@
 
   &--selector {
 
-    & &__radio {
+    &__radio {
       margin: 6px 10px 10px 20px;
     }
 

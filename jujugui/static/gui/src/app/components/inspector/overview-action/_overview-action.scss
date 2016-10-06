@@ -1,6 +1,6 @@
 .overview-action {
-  position: relative;
   @extend %stagger-fade-in;
+  position: relative;
   cursor: pointer;
   padding: 11px 20px 11px 45px;
 
@@ -23,7 +23,7 @@
 
     .svg-icon {
       transition: opacity .3s;
-      opacity: 0.6;
+      opacity: .6;
     }
   }
 

@@ -12,7 +12,7 @@
   &__count {
     float: right;
   }
-  
+
   &--type {
     &-error,
     &-pending,
@@ -37,15 +37,14 @@
   }
 
   &__icon-container {
-    box-shadow: 0 0 0px 2px #fff;
-    background-color: #fff;
+    box-shadow: 0 0 0 2px $white;
+    background-color: $white;
     float: right;
     border-radius: 50%;
   }
 
   &__service-icon {
     @extend %icon--small;
-    margin-right: 16px;
     margin-right: 0;
     transform: scale(1.1);
   }

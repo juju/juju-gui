@@ -5,7 +5,7 @@
   }
 
   &__title {
-    margin-bottom: 15px
+    margin-bottom: 15px;
   }
 
   &__price {
@@ -13,7 +13,7 @@
     font-size: 14px;
     margin-bottom: 15px;
   }
-  
+
   &__description {
     font-size: 14px;
   }
@@ -22,5 +22,4 @@
     margin: 20px 0 10px 20px;
     color: $dark-grey;
   }
-
 }
