@@ -1,8 +1,9 @@
-/*
-* This is used for the initial page before displaying the canvas
-* e.g. connecting to Juju and browser not supported screens
-*/
+// This is used for the initial page before displaying the canvas
+// e.g. connecting to Juju and browser not supported screens
+
+// scss-lint:disable IdSelector
 #full-screen-mask {
+// scss-lint:enable IdSelector
   display: block;
   position: absolute;
   z-index: index($z-indexed-elements, full-screen-mask);
@@ -12,6 +13,7 @@
   right: 0;
   background-color: $canvas-background;
 }
+
 .centered-column {
   display: block;
   z-index: index($z-indexed-elements, centered-column);
@@ -26,13 +28,13 @@
     border-radius: $border-radius;
     width: 280px;
     margin: 20px 0;
-    padding: 0 20px 20px 20px;
+    padding: 0 20px 20px;
     background-color: $light-grey;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 2px rgba(0, 0, 0, .3);
     text-align: left;
 
     .header {
-      margin: 0 -20px 20px -20px;
+      margin: 0 -20px 20px;
       padding: 10px 20px;
       background-color: $light-mid-grey;
       border-top-left-radius: $border-radius;
@@ -46,7 +48,9 @@
     }
   }
 
+  // scss-lint:disable IdSelector
   #loading-spinner {
+  // scss-lint:enable IdSelector
     height: 100px;
     text-align: center;
   }
