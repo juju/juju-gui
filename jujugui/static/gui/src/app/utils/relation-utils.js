@@ -126,13 +126,18 @@ YUI.add('relation-utils', function(Y) {
         var farService;
         // far will be undefined or the far endpoint service.
         if (far) {
-          var id = far[0];
-          farService = {
-            service: id,
-            serviceName: db.services.getById(id).get('name'),
-            role: far[1].role,
-            name: far[1].name
-          };
+          const id = far[0];
+          const application = db.services.getById(id);
+          // The uncommitted application could been removed so check it is
+          // really there.
+          if (application) {
+            farService = {
+              service: id,
+              serviceName: application.get('name'),
+              role: far[1].role,
+              name: far[1].name
+            };
+          }
         }
         rel.far = farService;
         var relationId = rel.relation_id;

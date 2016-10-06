@@ -576,6 +576,13 @@ YUI.add('environment-change-set', function(Y) {
       @param {Array} args The arguments to add the charm with.
     */
     _lazyAddCharm: function(args) {
+      const existing = Object.keys(this.changeSet).some(key => {
+        return this.changeSet[key].command.args[0] === args[0];
+      });
+      // If there is an existing record for this charm then don't add another.
+      if (existing) {
+        return;
+      }
       var command = {
         method: '_addCharm',
         args: this._getArgs(args),
@@ -640,7 +647,7 @@ YUI.add('environment-change-set', function(Y) {
         const record = this.changeSet[key];
         if (record.command.method === '_addCharm') {
           // Get the key to the record which adds the charm for this app.
-          if (record.command.options.applicationId === args[9].modelId) {
+          if (record.command.args[0] === args[0]) {
             parents.push(key);
           }
         }
