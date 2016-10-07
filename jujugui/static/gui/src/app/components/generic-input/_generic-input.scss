@@ -3,15 +3,16 @@
 
     &__label {
         // Needs to be positioned to appear above the input.
-        font-size: 18px;
+        color: $cool-grey;
         left: 10px;
         position: absolute;
         top: 25px;
         transition: font-size .25s, top .25s;
 
         &.focus {
+            color: $warm-grey;
+            font-size: 12px;
             top: 6px;
-            font-size: 11px;
         }
     }
 
