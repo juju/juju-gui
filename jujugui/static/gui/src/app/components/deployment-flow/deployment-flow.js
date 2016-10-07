@@ -531,17 +531,6 @@ YUI.add('deployment-flow', function() {
     },
 
     /**
-      Select the value of the model name input, for easier replacement with a
-      different name.
-
-      @method _generateModelNameSection
-      @returns {Object} The markup.
-    */
-    _selectModelName: function() {
-      this.refs.modelName.select();
-    },
-
-    /**
       Generate the cloud section.
 
       @method _generateModelNameSection
