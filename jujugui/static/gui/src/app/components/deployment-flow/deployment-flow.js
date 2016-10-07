@@ -178,6 +178,7 @@ YUI.add('deployment-flow', function() {
             title: 'Tenant name'
           }, {
             id: 'domain-name',
+            required: false,
             title: 'Domain name'
           }],
           'access-key': [{
@@ -253,6 +254,7 @@ YUI.add('deployment-flow', function() {
             title: 'Tenant name'
           }, {
             id: 'domain-name',
+            required: false,
             title: 'Domain name'
           }],
           'access-key': [{

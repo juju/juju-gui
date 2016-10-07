@@ -47,6 +47,7 @@ describe('DeploymentCredentialAdd', function() {
             title: 'Client ID'
           }, {
             id: 'client-email',
+            required: true,
             title: 'Client e-mail address'
           }, {
             id: 'private-key',
@@ -55,6 +56,7 @@ describe('DeploymentCredentialAdd', function() {
             unescape: true
           }, {
             id: 'project-id',
+            required: false,
             title: 'Project ID'
           }],
           jsonfile: [{
@@ -162,12 +164,9 @@ describe('DeploymentCredentialAdd', function() {
                 disabled={false}
                 key="project-id"
                 label="Project ID"
-                required={true}
+                required={false}
                 ref="project-id"
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />]}
+                validate={undefined} />]}
             </div>
             <div className="deployment-flow__notice six-col last-col">
               <p className="deployment-flow__notice-content">
@@ -292,12 +291,9 @@ describe('DeploymentCredentialAdd', function() {
                 disabled={false}
                 key="project-id"
                 label="Project ID"
-                required={true}
+                required={false}
                 ref="project-id"
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />]}
+                validate={undefined} />]}
             </div>
             <div className="deployment-flow__notice six-col last-col">
               <p className="deployment-flow__notice-content">
@@ -530,12 +526,9 @@ describe('DeploymentCredentialAdd', function() {
                 disabled={true}
                 key="project-id"
                 label="Project ID"
-                required={true}
+                required={false}
                 ref="project-id"
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />]}
+                validate={undefined} />]}
             </div>
             <div className="deployment-flow__notice six-col last-col">
               <p className="deployment-flow__notice-content">

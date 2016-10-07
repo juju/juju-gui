@@ -173,6 +173,8 @@ YUI.add('deployment-credential-add', function() {
         return;
       }
       const fields = info.forms[this.state.authType].map(field => {
+        // If the required parameter is not provided then default it to true.
+        const required = field.required === undefined ? true : field.required;
         if (field.json) {
           return (
             <div className="deployment-credential-add__upload"
@@ -182,7 +184,7 @@ YUI.add('deployment-credential-add', function() {
                 disabled={isReadOnly}
                 key={field.id}
                 label={`Upload ${info.title} .json auth-file`}
-                required={true}
+                required={required}
                 ref={field.id} />
             </div>);
         }
@@ -199,12 +201,12 @@ YUI.add('deployment-credential-add', function() {
             disabled={isReadOnly}
             key={field.id}
             label={field.title}
-            required={true}
+            required={required}
             ref={field.id}
-            validate={[{
+            validate={required ? [{
               regex: /\S+/,
               error: 'This field is required.'
-            }]} />);
+            }] : undefined} />);
       });
       return (
         <div className="deployment-credential-add__credentials">
