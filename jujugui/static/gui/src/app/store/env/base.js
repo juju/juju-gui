@@ -498,9 +498,13 @@ YUI.add('juju-env-base', function(Y) {
         credentials = {};
       }
       if (credentials.user) {
-        // User names without a "@something" part are local Juju users.
-        if (credentials.user.indexOf('@') === -1) {
-          credentials.user += '@local';
+        // When we're using externally provided authentication values the user
+        // field may not be a string. It can also be an object.
+        if (typeof credentials.user === 'string') {
+          // User names without a "@something" part are local Juju users.
+          if (credentials.user.indexOf('@') === -1) {
+            credentials.user += '@local';
+          }
         }
       } else {
         credentials.user = '';
@@ -521,7 +525,15 @@ YUI.add('juju-env-base', function(Y) {
            *   macaroons are set.
            */
           get: function() {
-            return !!((this.user && this.password) || this.macaroons);
+            const creds = !!((this.user && this.password) || this.macaroons);
+            // In typical deploys this is sufficient however in HJC or when
+            // external auth values are provided we have to be more resilient.
+            return creds || this.areExternal;
+          }
+        },
+        areExternal: {
+          get: function() {
+            return !!(this.user && this.domain && this.tenant);
           }
         }
       });
