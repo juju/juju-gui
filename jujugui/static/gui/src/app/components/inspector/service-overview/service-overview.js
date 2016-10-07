@@ -45,7 +45,6 @@ YUI.add('service-overview', function() {
     getInitialState: function() {
       // Setting a default state object.
       return {
-        confirmationOpen: false,
         activePlan: null,
         plans: null
       };
@@ -53,13 +52,6 @@ YUI.add('service-overview', function() {
 
     componentWillMount: function() {
       const props = this.props;
-
-      // Show or hide the deletion confirmation depending on whether this
-      // application has been deleted or not.
-      const service = props.service;
-      if (service.get('deleted')) {
-        this._showConfirmation();
-      }
 
       if (!props.displayPlans) {
         // If we aren't in a Juju 2 model then do not query for
@@ -74,6 +66,7 @@ YUI.add('service-overview', function() {
       }
 
       const plans = props.charm.get('plans');
+      const service = props.service;
       const activePlan = service.get('activePlan');
 
       if (plans || activePlan) {
@@ -297,28 +290,11 @@ YUI.add('service-overview', function() {
     },
 
     /**
-      Set the confirmation state to open.
-      @method _showConfirmation
-    */
-    _showConfirmation: function() {
-      this.setState({confirmationOpen: true});
-    },
-
-    /**
-      Set the confirmation state to closed.
-      @method _hideConfirmation
-    */
-    _hideConfirmation: function() {
-      this.setState({confirmationOpen: false});
-    },
-
-    /**
       Handle destroying the service from the button click.
 
       @method _destroyService
     */
     _destroyService: function() {
-      this._showConfirmation();
       // db, env, and service have already been bound to this function in
       // the app.js definition.
       this.props.destroyService();
@@ -341,21 +317,22 @@ YUI.add('service-overview', function() {
     },
 
     render: function() {
-      this._generateActions(this.props.service);
-      const confirmationOpen = this.state.confirmationOpen;
-      const readOnly = this.props.acl.isReadOnly();
+      const props = this.props;
+      this._generateActions(props.service);
+      const isDeleted = props.service.get('deleted');
+      const readOnly = props.acl.isReadOnly();
       const message = 'This application has been marked to be destroyed on '
         + 'next deployment.';
       return (
         <div className="service-overview">
           <juju.components.InspectorConfirm
             message={message}
-            open={confirmationOpen}
+            open={isDeleted}
             buttons={[]} />
           <ul className="service-overview__actions">
             {this._generateActionList(this.state.actions)}
           </ul>
-          {this._generateDelete(!confirmationOpen, readOnly)}
+          {this._generateDelete(!isDeleted, readOnly)}
         </div>
       );
     }
