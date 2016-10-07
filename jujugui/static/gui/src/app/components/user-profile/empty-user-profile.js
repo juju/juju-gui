@@ -56,21 +56,21 @@ YUI.add('empty-user-profile', function() {
       var basePath = `${props.staticURL}/static/gui/build/app`;
       return (
         <div className="user-profile__empty twelve-col no-margin-bottom">
+          <img alt="Empty profile"
+            className="user-profile__empty-image"
+            src=
+              {`${basePath}/assets/images/non-sprites/empty_profile.png`} />
+          <h2 className="user-profile__empty-title">
+            Your profile is currently empty
+          </h2>
+          <p className="user-profile__empty-text">
+            Your models, bundles, and charms will
+            appear here when you create them.
+          </p>
           <juju.components.CreateModelButton
-            switchModel={this.switchModel} />
-          <div className="clearfix">
-            <img alt="Empty profile"
-              className="user-profile__empty-image"
-              src=
-                {`${basePath}/assets/images/non-sprites/empty_profile.png`} />
-            <h2 className="user-profile__empty-title">
-              Your profile is currently empty
-            </h2>
-            <p className="user-profile__empty-text">
-              Your models, bundles, and charms will
-              appear here when you create them.
-            </p>
-          </div>
+            switchModel={this.switchModel}
+            title="Start building"
+            type="inline-positive" />
         </div>);
     }
 

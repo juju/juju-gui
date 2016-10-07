@@ -38,20 +38,20 @@ describe('EmptyUserProfile', () => {
     var instance = component.getMountedInstance();
     var expected = (
       <div className="user-profile__empty twelve-col no-margin-bottom">
+        <img alt="Empty profile"
+          className="user-profile__empty-image"
+          src={src} />
+        <h2 className="user-profile__empty-title">
+          Your profile is currently empty
+        </h2>
+        <p className="user-profile__empty-text">
+          Your models, bundles, and charms will appear here when you create
+          them.
+        </p>
         <juju.components.CreateModelButton
-          switchModel={instance.switchModel} />
-        <div className="clearfix">
-          <img alt="Empty profile"
-            className="user-profile__empty-image"
-            src={src} />
-          <h2 className="user-profile__empty-title">
-            Your profile is currently empty
-          </h2>
-          <p className="user-profile__empty-text">
-            Your models, bundles, and charms will appear here when you create
-            them.
-          </p>
-        </div>
+          switchModel={instance.switchModel}
+          title="Start building"
+          type="inline-positive" />
       </div>
     );
     assert.deepEqual(output, expected);
@@ -63,7 +63,7 @@ describe('EmptyUserProfile', () => {
         switchModel={sinon.stub()}
         staticURL='test' />);
     assert.equal(
-      output.props.children[1].props.children[0].props.src,
+      output.props.children[0].props.src,
       'test/static/gui/build/app/assets/images/non-sprites/empty_profile.png');
   });
 });
