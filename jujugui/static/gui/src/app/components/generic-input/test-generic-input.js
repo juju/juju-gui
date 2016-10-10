@@ -68,6 +68,40 @@ describe('GenericInput', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('can display as a different type', () => {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.GenericInput
+        disabled={false}
+        label="Region"
+        placeholder="us-central-1"
+        required={true}
+        ref="templateRegion"
+        type="password"
+        validate={[]}
+        value="default" />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="generic-input">
+        <label className="generic-input__label"
+          htmlFor="Region">
+          Region
+        </label>
+        <input className="generic-input__field"
+          defaultValue="default"
+          disabled={false}
+          id="Region"
+          placeholder="us-central-1"
+          required={true}
+          onChange={instance.validate}
+          ref="field"
+          type="password" />
+        {null}
+      </div>
+    );
+    assert.deepEqual(output, expected);
+  });
+
   it('can return the field value', () => {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.GenericInput

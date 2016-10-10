@@ -118,7 +118,8 @@ YUI.add('deployment-flow', function() {
             title: 'Azure Active Directory tenant ID'
           }, {
             id: 'application-password',
-            title: 'Azure Active Directory application password'
+            title: 'Azure Active Directory application password',
+            type: 'password'
           }]
         },
         message: (
@@ -172,7 +173,8 @@ YUI.add('deployment-flow', function() {
             title: 'Username'
           }, {
             id: 'password',
-            title: 'Password'
+            title: 'Password',
+            type: 'password'
           }, {
             id: 'tenant-name',
             title: 'Tenant name'
@@ -203,7 +205,8 @@ YUI.add('deployment-flow', function() {
             title: 'Username'
           }, {
             id: 'password',
-            title: 'Password'
+            title: 'Password',
+            type: 'password'
           }]
         }
       },
@@ -248,7 +251,8 @@ YUI.add('deployment-flow', function() {
             title: 'Username'
           }, {
             id: 'password',
-            title: 'Password'
+            title: 'Password',
+            type: 'password'
           }, {
             id: 'tenant-name',
             title: 'Tenant name'
@@ -279,7 +283,8 @@ YUI.add('deployment-flow', function() {
             title: 'Username'
           }, {
             id: 'password',
-            title: 'Password'
+            title: 'Password',
+            type: 'password'
           }]
         }
       },

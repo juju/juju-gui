@@ -58,6 +58,11 @@ describe('DeploymentCredentialAdd', function() {
             id: 'project-id',
             required: false,
             title: 'Project ID'
+          }, {
+            id: 'password',
+            required: false,
+            title: 'Password',
+            type: 'password'
           }],
           jsonfile: [{
             id: 'file',
@@ -141,6 +146,7 @@ describe('DeploymentCredentialAdd', function() {
                 label="Client ID"
                 required={true}
                 ref="client-id"
+                type={undefined}
                 validate={[{
                   regex: /\S+/,
                   error: 'This field is required.'
@@ -151,6 +157,7 @@ describe('DeploymentCredentialAdd', function() {
                 label="Client e-mail address"
                 required={true}
                 ref="client-email"
+                type={undefined}
                 validate={[{
                   regex: /\S+/,
                   error: 'This field is required.'
@@ -166,6 +173,15 @@ describe('DeploymentCredentialAdd', function() {
                 label="Project ID"
                 required={false}
                 ref="project-id"
+                type={undefined}
+                validate={undefined} />,
+              <juju.components.GenericInput
+                disabled={false}
+                key="password"
+                label="Password"
+                required={false}
+                ref="password"
+                type="password"
                 validate={undefined} />]}
             </div>
             <div className="deployment-flow__notice six-col last-col">
@@ -268,6 +284,7 @@ describe('DeploymentCredentialAdd', function() {
                 label="Client ID"
                 required={true}
                 ref="client-id"
+                type={undefined}
                 validate={[{
                   regex: /\S+/,
                   error: 'This field is required.'
@@ -278,6 +295,7 @@ describe('DeploymentCredentialAdd', function() {
                 label="Client e-mail address"
                 required={true}
                 ref="client-email"
+                type={undefined}
                 validate={[{
                   regex: /\S+/,
                   error: 'This field is required.'
@@ -293,6 +311,15 @@ describe('DeploymentCredentialAdd', function() {
                 label="Project ID"
                 required={false}
                 ref="project-id"
+                type={undefined}
+                validate={undefined} />,
+              <juju.components.GenericInput
+                disabled={false}
+                key="password"
+                label="Password"
+                required={false}
+                ref="password"
+                type="password"
                 validate={undefined} />]}
             </div>
             <div className="deployment-flow__notice six-col last-col">
@@ -503,6 +530,7 @@ describe('DeploymentCredentialAdd', function() {
                 label="Client ID"
                 required={true}
                 ref="client-id"
+                type={undefined}
                 validate={[{
                   regex: /\S+/,
                   error: 'This field is required.'
@@ -513,6 +541,7 @@ describe('DeploymentCredentialAdd', function() {
                 label="Client e-mail address"
                 required={true}
                 ref="client-email"
+                type={undefined}
                 validate={[{
                   regex: /\S+/,
                   error: 'This field is required.'
@@ -528,6 +557,15 @@ describe('DeploymentCredentialAdd', function() {
                 label="Project ID"
                 required={false}
                 ref="project-id"
+                type={undefined}
+                validate={undefined} />,
+              <juju.components.GenericInput
+                disabled={true}
+                key="password"
+                label="Password"
+                required={false}
+                ref="password"
+                type="password"
                 validate={undefined} />]}
             </div>
             <div className="deployment-flow__notice six-col last-col">
@@ -594,6 +632,9 @@ describe('DeploymentCredentialAdd', function() {
       },
       'project-id': {
         getValue: sinon.stub().returns('project id')
+      },
+      'password': {
+        getValue: sinon.stub().returns('password')
       }
     };
     instance._handleAddCredentials();
@@ -605,7 +646,8 @@ describe('DeploymentCredentialAdd', function() {
       'client-id': 'client id',
       'client-email': 'client email',
       'private-key': 'private key',
-      'project-id': 'project id'
+      'project-id': 'project id',
+      'password': 'password'
     });
     assert.equal(getCredentials.callCount, 1);
     assert.equal(getCredentials.args[0][0], 'new@test');
@@ -647,6 +689,10 @@ describe('DeploymentCredentialAdd', function() {
       'project-id': {
         validate: sinon.stub().returns(true),
         getValue: sinon.stub().returns('project id')
+      },
+      'password': {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('password')
       }
     };
     instance._handleAddCredentials();

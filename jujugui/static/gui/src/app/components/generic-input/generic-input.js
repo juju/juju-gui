@@ -28,13 +28,15 @@ YUI.add('generic-input', function() {
       onFocus: React.PropTypes.func,
       placeholder: React.PropTypes.string,
       required: React.PropTypes.bool,
+      type: React.PropTypes.string,
       validate: React.PropTypes.array,
       value: React.PropTypes.string,
     },
 
     getDefaultProps: () => {
       return {
-        required: false
+        required: false,
+        type: 'text'
       };
     },
 
@@ -161,7 +163,7 @@ YUI.add('generic-input', function() {
             onFocus={this._focusHandler}
             onBlur={this._blurHandler}
             ref="field"
-            type="text" />
+            type={this.props.type} />
           {this.state.errors}
         </div>
       );
