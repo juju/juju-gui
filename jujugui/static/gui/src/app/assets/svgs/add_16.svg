@@ -154,7 +154,7 @@
       <g
          id="g4159">
         <path
-           style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#808080;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:7.5;marker:none;enable-background:accumulate"
+           style="display:inline;overflow:visible;visibility:visible;fill:#808080;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:7.5;marker:none;enable-background:accumulate"
            d="m 959,157.36219 2,0 0,14 -2,0 z"
            id="path4331"
            inkscape:connector-curvature="0"
@@ -166,7 +166,7 @@
            height="13.999987"
            width="1.9999841"
            id="rect4333"
-           style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#808080;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:7.5;marker:none;enable-background:accumulate" />
+           style="display:inline;overflow:visible;visibility:visible;fill:#808080;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:7.5;marker:none;enable-background:accumulate" />
       </g>
     </g>
   </g>

@@ -102,6 +102,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               class="header-banner__list-item header-banner__list-item--logout"></li>
         </ul>
       </div>
+
+      <div id="zoom-container"></div>
+      
       <div id="full-screen-mask">
         <div id="browser-warning" class="centered-column"
             style="display:none;">

@@ -1226,6 +1226,18 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Renders the zoom component to the page in the designated element.
+
+      @method _renderZoom
+    */
+    _renderZoom: function() {
+      ReactDOM.render(
+        <window.juju.components.Zoom
+        topo={this.views.environment.instance.topo} />,
+        document.getElementById('zoom-container'));
+    },
+
+    /**
       Renders the Added Services component to the page in the appropriate
       element.
 
@@ -2364,6 +2376,7 @@ YUI.add('juju-gui', function(Y) {
       );
       this._renderDeploymentBar();
       this._renderImportExport();
+      this._renderZoom();
       this._renderBreadcrumb();
       this._renderHeaderSearch();
       // When we render the components we also want to trigger the rest of
@@ -2798,6 +2811,7 @@ YUI.add('juju-gui', function(Y) {
     'panel-component',
     'shortcuts',
     'user-profile',
+    'zoom',
     // juju-views group
     'd3-components',
     'juju-view-utils',
