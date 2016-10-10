@@ -7,9 +7,10 @@
         left: 10px;
         position: absolute;
         top: 25px;
-        transition: font-size .25s, top .25s;
+        transition: all .25s;
 
-        &.focus {
+        &.focus,
+        &.value-present {
             color: $warm-grey;
             font-size: 12px;
             top: 6px;

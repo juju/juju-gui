@@ -84,7 +84,7 @@ YUI.add('generic-input', function() {
       @method getValue
     */
     getValue: function() {
-      return this.refs.field.value;
+      return this.refs.field && this.refs.field.value;
     },
 
     /**
@@ -121,7 +121,8 @@ YUI.add('generic-input', function() {
       var element, id;
       var classes = classNames(
         'generic-input__label', {
-          focus: this.state.focus
+          focus: this.state.focus,
+          'value-present': !!this.getValue()
         }
       );
       if (label) {
