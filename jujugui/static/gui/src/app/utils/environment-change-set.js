@@ -715,7 +715,8 @@ YUI.add('environment-change-set', function(Y) {
       the addCharm call associated with this application.
 
       @method _destroyQueuedService
-      @param {String} recordKey The key of the service to be destroyed.
+      @param {String} recordKey The key of the application to be destroyed.
+      @param {String} record The changeSet record for the application.
     */
     _destroyQueuedService: function(recordKey, record) {
       // Search for everything that has that service as a parent and remove it.

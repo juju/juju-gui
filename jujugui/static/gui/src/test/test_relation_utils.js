@@ -438,6 +438,8 @@ describe('RelationUtils', function() {
         ],
         'id': 'mediawiki:db mysql:mydb'
       });
+      // By not returning an application we're simulating that the service no
+      // longer exists, i.e. has been destroyed.
       db.services.getById = sinon.stub().returns(null);
       const results = relationUtils.getRelationDataForService(db, service);
       const result = results[0];
