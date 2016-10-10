@@ -606,7 +606,8 @@ YUI.add('juju-env-bakery', function(Y) {
 
         return this.webhandler.sendGetRequest(
             response.Info.WaitURL,
-            null, null, null, false, null,
+            {'Content-Type': 'application/json'},
+            null, null, false, null,
             this._requestHandler.bind(
               this,
               this._exportMacaroon.bind(this, successCallback, failureCallback),
