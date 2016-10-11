@@ -6,8 +6,9 @@
         color: $cool-grey;
         left: 10px;
         position: absolute;
-        top: 25px;
+        top: 17px;
         transition: all .25s;
+        user-select: none;
 
         &.focus,
         &.value-present {
