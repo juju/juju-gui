@@ -47,7 +47,7 @@ describe('GenericInput', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="generic-input">
-        <label className="generic-input__label"
+        <label className="generic-input__label placeholder-present"
           htmlFor="Region">
           Region
         </label>

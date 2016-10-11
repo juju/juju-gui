@@ -11,6 +11,7 @@
         user-select: none;
 
         &.focus,
+        &.placeholder-present,
         &.value-present {
             color: $cool-grey;
             font-size: 12px;
