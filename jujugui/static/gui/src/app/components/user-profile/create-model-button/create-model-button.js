@@ -22,7 +22,16 @@ YUI.add('create-model-button', function() {
 
   juju.components.CreateModelButton = React.createClass({
     propTypes: {
-      switchModel: React.PropTypes.func.isRequired
+      switchModel: React.PropTypes.func.isRequired,
+      title: React.PropTypes.string,
+      type: React.PropTypes.string,
+    },
+
+    getDefaultProps: function() {
+      return {
+        type: 'inline-neutral',
+        title: 'Create new'
+      };
     },
 
     render: function() {
@@ -30,8 +39,8 @@ YUI.add('create-model-button', function() {
         <div className="user-profile__create-new">
           <juju.components.GenericButton
             action={this.props.switchModel}
-            type="inline-neutral"
-            title="Create new" />
+            type={this.props.type}
+            title={this.props.title} />
         </div>
       );
     },

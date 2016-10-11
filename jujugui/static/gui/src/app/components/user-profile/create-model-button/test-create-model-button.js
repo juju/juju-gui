@@ -27,7 +27,7 @@ describe('CreateModelButton', () => {
     YUI().use('create-model-button', () => { done(); });
   });
 
-  it('renders a button', () => {
+  it('renders a button with default values', () => {
     const switchModel = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.CreateModelButton
@@ -39,6 +39,25 @@ describe('CreateModelButton', () => {
           action={switchModel}
           type="inline-neutral"
           title="Create new" />
+      </div>
+    );
+    assert.deepEqual(output, expected);
+  });
+
+  it('renders a button with provided values', () => {
+    const switchModel = sinon.stub();
+    const component = jsTestUtils.shallowRender(
+      <juju.components.CreateModelButton
+        type="positive"
+        title="test"
+        switchModel={switchModel} />, true);
+    const output = component.getRenderOutput();
+    const expected = (
+      <div className="user-profile__create-new">
+        <juju.components.GenericButton
+          action={switchModel}
+          type="positive"
+          title="test" />
       </div>
     );
     assert.deepEqual(output, expected);

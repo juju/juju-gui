@@ -34,6 +34,7 @@
         }
 
         &-title {
+            font-size: 23px;
             margin-bottom: 40px;
         }
 
@@ -41,6 +42,12 @@
             max-width: 360px;
             margin: 0 auto;
             color: $warm-grey;
+        }
+
+        .user-profile__create-new {
+            float: none;
+            margin-top: 40px;
+            text-align: center;
         }
     }
 
