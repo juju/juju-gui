@@ -1,7 +1,7 @@
 {
   "name": "Juju GUI",
   "manifest_version": 2,
-  "version": "2.2.0",
+  "version": "2.2.1",
 
   "description": "Manage your Juju environment",
   "icons": {
