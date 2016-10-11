@@ -33,6 +33,7 @@ describe('GenericInput', function() {
   it('can render', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.GenericInput
+        autocomplete={false}
         disabled={false}
         label="Region"
         placeholder="us-central-1"
@@ -52,6 +53,7 @@ describe('GenericInput', function() {
           Region
         </label>
         <input className="generic-input__field"
+          autocomplete={false}
           defaultValue="default"
           disabled={false}
           id="Region"
@@ -88,6 +90,7 @@ describe('GenericInput', function() {
           Region
         </label>
         <input className="generic-input__field"
+          autocomplete={true}
           defaultValue="default"
           disabled={false}
           id="Region"
@@ -209,6 +212,7 @@ describe('GenericInput', function() {
       <div className="generic-input">
         {undefined}
         <input className="generic-input__field"
+          autocomplete={true}
           defaultValue="default"
           disabled={false}
           id={undefined}
