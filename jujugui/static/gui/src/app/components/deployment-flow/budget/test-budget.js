@@ -110,7 +110,6 @@ describe('DeploymentBudget', function() {
               <juju.components.GenericInput
                 disabled={true}
                 label="Budget"
-                placeholder="Personal ($100)"
                 required={false} />
             </div>
             <div className="one-col">
@@ -204,7 +203,6 @@ describe('DeploymentBudget', function() {
               <juju.components.GenericInput
                 disabled={true}
                 label="Budget"
-                placeholder="Personal ($100)"
                 required={false} />
             </div>
             <div className="one-col">

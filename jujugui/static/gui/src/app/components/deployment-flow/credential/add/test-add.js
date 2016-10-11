@@ -105,7 +105,6 @@ describe('DeploymentCredentialAdd', function() {
             <juju.components.GenericInput
               disabled={false}
               label="Project ID (credential name)"
-              placeholder="cred-1"
               required={true}
               ref="credentialName"
               validate={[{
@@ -232,7 +231,6 @@ describe('DeploymentCredentialAdd', function() {
             <juju.components.GenericInput
               disabled={false}
               label="Project ID (credential name)"
-              placeholder="cred-1"
               required={true}
               ref="credentialName"
               validate={[{
@@ -360,7 +358,6 @@ describe('DeploymentCredentialAdd', function() {
             <juju.components.GenericInput
               disabled={false}
               label="Project ID (credential name)"
-              placeholder="cred-1"
               required={true}
               ref="credentialName"
               validate={[{
@@ -467,7 +464,6 @@ describe('DeploymentCredentialAdd', function() {
             <juju.components.GenericInput
               disabled={true}
               label="Project ID (credential name)"
-              placeholder="cred-1"
               required={true}
               ref="credentialName"
               validate={[{
