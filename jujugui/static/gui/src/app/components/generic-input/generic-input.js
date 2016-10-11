@@ -122,7 +122,8 @@ YUI.add('generic-input', function() {
       var classes = classNames(
         'generic-input__label', {
           focus: this.state.focus,
-          'value-present': !!this.getValue()
+          'value-present': !!this.getValue(),
+          'placeholder-present': !!this.props.placeholder
         }
       );
       if (label) {
