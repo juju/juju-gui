@@ -778,6 +778,18 @@ describe('Environment Change Set', function() {
         assert.deepEqual(record.command.options, {applicationId: 'foo'});
         cb(); // Will call done().
       });
+
+      it('only adds one `add Charm` record for duplicates', function() {
+        ecs._lazyAddCharm(
+          ['cs:wordpress', 'cookies', null, {applicationId: 'foo'}]);
+        assert.equal(Object.keys(ecs.changeSet).length, 1);
+        ecs._lazyAddCharm(
+          ['cs:wordpress', 'cookies', null, {applicationId: 'foo'}]);
+        assert.equal(Object.keys(ecs.changeSet).length, 1);
+        ecs._lazyAddCharm(
+          ['cs:mysql', 'cookies', null, {applicationId: 'foo'}]);
+        assert.equal(Object.keys(ecs.changeSet).length, 2);
+      });
     });
 
     describe('_lazyDeploy', function() {
@@ -933,6 +945,37 @@ describe('Environment Change Set', function() {
         assert.equal(stubUpdateSubordinates.calledOnce, true,
             'subordinate units not updated');
         assert.deepEqual(ecs.changeSet, {});
+      });
+
+      it('only destroys the last charm', function() {
+        const db = ecs.get('db');
+        db.services = {
+          remove: sinon.stub(),
+          getById: function() {
+            return {
+              destroy: sinon.stub(),
+              get: function(key) {
+                if (key === 'units') { return {each: sinon.stub()}; }
+              },
+              set: sinon.stub(),
+              updateSubordinateUnits: sinon.stub()
+            };
+          },
+        };
+        db.relations = {
+          remove: sinon.stub()
+        };
+        ecs._lazyAddCharm(
+          ['cs:wordpress', 'cookies', null, {applicationId: 'foo'}]);
+        ecs._lazyDeploy(
+          ['cs:wordpress', 2, 'foo', 'bar', function() {}, {modelId: 'baz'}]);
+        ecs._lazyDeploy(
+          ['cs:wordpress', 2, 'foo', 'bar', function() {}, {modelId: 'baz2'}]);
+        assert.equal(Object.keys(ecs.changeSet).length, 3);
+        ecs.lazyDestroyApplication(['baz']);
+        assert.equal(Object.keys(ecs.changeSet).length, 2);
+        ecs.lazyDestroyApplication(['baz2']);
+        assert.equal(Object.keys(ecs.changeSet).length, 0);
       });
 
       it('destroys unplaced units when the service is removed', function(done) {

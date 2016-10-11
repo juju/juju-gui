@@ -576,6 +576,13 @@ YUI.add('environment-change-set', function(Y) {
       @param {Array} args The arguments to add the charm with.
     */
     _lazyAddCharm: function(args) {
+      const existing = Object.keys(this.changeSet).some(key => {
+        return this.changeSet[key].command.args[0] === args[0];
+      });
+      // If there is an existing record for this charm then don't add another.
+      if (existing) {
+        return;
+      }
       var command = {
         method: '_addCharm',
         args: this._getArgs(args),
@@ -583,6 +590,7 @@ YUI.add('environment-change-set', function(Y) {
       };
       return this._createNewRecord('addCharm', command, []);
     },
+
     /**
       Creates a new entry in the queue for creating a new service.
 
@@ -636,9 +644,10 @@ YUI.add('environment-change-set', function(Y) {
       // Set up the parents of this record.
       var parents = [];
       Object.keys(this.changeSet).forEach(key => {
-        if (this.changeSet[key].command.method === '_addCharm') {
+        const record = this.changeSet[key];
+        if (record.command.method === '_addCharm') {
           // Get the key to the record which adds the charm for this app.
-          if (this.changeSet[key].command.args[0] === args[0]) {
+          if (record.command.args[0] === args[0]) {
             parents.push(key);
           }
         }
@@ -673,17 +682,20 @@ YUI.add('environment-change-set', function(Y) {
       if (command.args.length !== args.length) {
         command.options = args[args.length - 1];
       }
-      var existingService;
+      let existingService;
+      let record;
       // Check if the service is pending in the change set.
-      Object.keys(this.changeSet).forEach(function(key) {
+      Object.keys(this.changeSet).some(key => {
         if (this.changeSet[key].command.method === '_deploy') {
           if (this.changeSet[key].command.options.modelId === args[0]) {
             existingService = key;
+            record = this.changeSet[key];
+            return true;
           }
         }
-      }, this);
+      });
       if (existingService) {
-        this._destroyQueuedService(existingService);
+        this._destroyQueuedService(existingService, record);
       } else {
         var service = this.get('db').services.getById(args[0]);
         // Remove any unplaced units.
@@ -699,21 +711,23 @@ YUI.add('environment-change-set', function(Y) {
 
     /**
       In the event that a service in the change set needs to be destroyed,
-      remove it and all of the entries of which it is a parent.
+      remove it and all of the entries of which it is a parent as well as
+      the addCharm call associated with this application.
 
       @method _destroyQueuedService
-      @param {String} service The key of the service to be destroyed.
+      @param {String} recordKey The key of the application to be destroyed.
+      @param {String} record The changeSet record for the application.
     */
-    _destroyQueuedService: function(service) {
+    _destroyQueuedService: function(recordKey, record) {
       // Search for everything that has that service as a parent and remove it.
       Object.keys(this.changeSet).forEach(function(key) {
-        if (this.changeSet[key].parents.indexOf(service) !== -1) {
+        if (this.changeSet[key].parents.indexOf(recordKey) !== -1) {
           this._removeExistingRecord(key);
         }
       }, this);
       // Remove the service itself.
       var db = this.get('db');
-      var modelId = this.changeSet[service].command.options.modelId;
+      var modelId = this.changeSet[recordKey].command.options.modelId;
       var model = db.services.getById(modelId);
       var units = model.get('units');
       var relations = model.get('relations');
@@ -726,7 +740,23 @@ YUI.add('environment-change-set', function(Y) {
       db.services.remove(model);
       model.updateSubordinateUnits(db);
       model.destroy();
-      this._removeExistingRecord(service);
+      this._removeExistingRecord(recordKey);
+      // Check if there are other applications using the same charm. If not
+      // then remove the addCharm call.
+      record.parents.some(key => {
+        if (key.indexOf('addCharm-') === 0) {
+          const used = Object.keys(this.changeSet).some(recordKey => {
+            if (recordKey.indexOf('service-') === 0) {
+              return this.changeSet[recordKey].parents.includes(key);
+            }
+          });
+          // If the addCharm call is not used anywhere else then it can be
+          // safely removed.
+          if (!used) {
+            this._removeExistingRecord(key);
+          }
+        }
+      });
     },
 
     /**

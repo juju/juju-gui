@@ -1985,8 +1985,8 @@ YUI.add('juju-env-api', function(Y) {
       @method destroyApplication
     */
     destroyApplication: function(applicationName, callback, options) {
-      var ecs = this.get('ecs');
-      var args = ecs._getArgs(arguments);
+      const ecs = this.get('ecs');
+      const args = ecs._getArgs(arguments);
       if (options && options.immediate) {
         this._destroyApplication.apply(this, args);
       } else {

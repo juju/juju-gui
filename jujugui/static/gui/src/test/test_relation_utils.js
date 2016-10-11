@@ -427,6 +427,25 @@ describe('RelationUtils', function() {
       assert.strictEqual(result.near.serviceName, 'cs:mysql');
       assert.strictEqual(result.far.serviceName, 'mediawiki');
     });
+
+    it('does not fail if the far application has been removed', function() {
+      db.relations.add({
+        'interface': 'mysql',
+        scope: 'global',
+        endpoints: [
+          ['mysql', {role: 'provider', name: 'mydb'}],
+          ['mediawiki', {role: 'requirer', name: 'db'}]
+        ],
+        'id': 'mediawiki:db mysql:mydb'
+      });
+      // By not returning an application we're simulating that the service no
+      // longer exists, i.e. has been destroyed.
+      db.services.getById = sinon.stub().returns(null);
+      const results = relationUtils.getRelationDataForService(db, service);
+      const result = results[0];
+      assert.strictEqual(result.near.serviceName, 'cs:mysql');
+      assert.isUndefined(result.far);
+    });
   });
 
   describe('DecoratedRelation and RelationCollection', function() {
