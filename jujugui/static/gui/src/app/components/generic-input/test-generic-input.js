@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const juju = {components: {}}; // eslint-disable-line no-unused-consts
 
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
@@ -31,7 +31,7 @@ describe('GenericInput', function() {
   });
 
   it('can render', () => {
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.GenericInput
         disabled={false}
         label="Region"
@@ -43,9 +43,9 @@ describe('GenericInput', function() {
           error: 'This field is required.'
         }]}
         value="default" />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
       <div className="generic-input">
         <label className="generic-input__label placeholder-present"
           htmlFor="Region">
@@ -69,7 +69,7 @@ describe('GenericInput', function() {
   });
 
   it('can display as a different type', () => {
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.GenericInput
         disabled={false}
         label="Region"
@@ -79,9 +79,9 @@ describe('GenericInput', function() {
         type="password"
         validate={[]}
         value="default" />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
       <div className="generic-input">
         <label className="generic-input__label"
           htmlFor="Region">
@@ -103,7 +103,7 @@ describe('GenericInput', function() {
   });
 
   it('can return the field value', () => {
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.GenericInput
         disabled={false}
         label="Region"
@@ -115,13 +115,13 @@ describe('GenericInput', function() {
           error: 'This field is required.'
         }]}
         value="default" />, true);
-    var instance = renderer.getMountedInstance();
+    const instance = renderer.getMountedInstance();
     instance.refs = {field: {value: 'default'}};
     assert.equal(instance.getValue(), 'default');
   });
 
   it('can validate the form', () => {
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.GenericInput
         disabled={false}
         label="Region"
@@ -132,11 +132,11 @@ describe('GenericInput', function() {
           regex: /\S+/,
           error: 'This field is required.'
         }]} />, true);
-    var instance = renderer.getMountedInstance();
+    const instance = renderer.getMountedInstance();
     instance.refs = {field: {value: ''}};
     instance.validate();
-    var output = renderer.getRenderOutput();
-    var expected = (
+    const output = renderer.getRenderOutput();
+    const expected = (
       <ul className="generic-input__errors">
         {[<li className="generic-input__error"
           key="This field is required.">
@@ -164,7 +164,7 @@ describe('GenericInput', function() {
   });
 
   it('can validate the form when typing', () => {
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.GenericInput
         disabled={false}
         label="Region"
@@ -175,12 +175,12 @@ describe('GenericInput', function() {
           regex: /\S+/,
           error: 'This field is required.'
         }]} />, true);
-    var instance = renderer.getMountedInstance();
+    const instance = renderer.getMountedInstance();
     instance.refs = {field: {value: ''}};
-    var output = renderer.getRenderOutput();
+    const output = renderer.getRenderOutput();
     output.props.children[1].props.onChange();
     output = renderer.getRenderOutput();
-    var expected = (
+    const expected = (
       <ul className="generic-input__errors">
         {[<li className="generic-input__error"
           key="This field is required.">
@@ -192,7 +192,7 @@ describe('GenericInput', function() {
   });
 
   it('allows the label to be optional', () => {
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.GenericInput
         disabled={false}
         placeholder="us-central-1"
@@ -203,9 +203,9 @@ describe('GenericInput', function() {
           error: 'This field is required.'
         }]}
         value="default" />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
       <div className="generic-input">
         {undefined}
         <input className="generic-input__field"
@@ -226,7 +226,7 @@ describe('GenericInput', function() {
   });
 
   it('adds a class to the wrapper element on error', () => {
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.GenericInput
         disabled={false}
         placeholder="us-central-1"
@@ -236,16 +236,16 @@ describe('GenericInput', function() {
           regex: /\S+/,
           error: 'This field is required.'
         }]} />, true);
-    var instance = renderer.getMountedInstance();
+    const instance = renderer.getMountedInstance();
     instance.refs = {field: {value: ''}};
-    var output = renderer.getRenderOutput();
+    const output = renderer.getRenderOutput();
     output.props.children[1].props.onChange();
     output = renderer.getRenderOutput();
     assert.deepEqual(output.props.className, 'generic-input error');
   });
 
   it('can set the focus on the field', () => {
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.GenericInput
         disabled={false}
         label="Region"
@@ -257,7 +257,7 @@ describe('GenericInput', function() {
           error: 'This field is required.'
         }]}
         value="default" />, true);
-    var instance = renderer.getMountedInstance();
+    const instance = renderer.getMountedInstance();
     instance.refs = {field: {focus: sinon.stub()}};
     instance.focus();
     assert.equal(instance.refs.field.focus.callCount, 1);
