@@ -562,7 +562,7 @@ YUI.add('deployment-flow', function() {
                   'letters, numbers, and hyphens. It must not start or ' +
                   'end with a hyphen.'
               }]}
-              value={this.props.modelName} />
+              value="" />
           </div>
         </juju.components.DeploymentSection>);
     },
