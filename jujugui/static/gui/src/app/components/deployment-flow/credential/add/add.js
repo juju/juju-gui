@@ -266,6 +266,7 @@ YUI.add('deployment-credential-add', function() {
               <juju.components.GenericInput
                 disabled={isReadOnly}
                 label={credentialName}
+                placeholder="cred-1"
                 required={true}
                 ref="credentialName"
                 validate={[{
