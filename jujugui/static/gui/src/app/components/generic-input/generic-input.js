@@ -47,6 +47,11 @@ YUI.add('generic-input', function() {
       @method validate
     */
     validate: function() {
+      const validate = this.props.validate;
+      if (!validate) {
+        // If there are no validators then this field should always be valid.
+        return true;
+      }
       var value = this.getValue();
       var errors = [];
       var components;

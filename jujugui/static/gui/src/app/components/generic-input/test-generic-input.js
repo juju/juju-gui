@@ -111,6 +111,22 @@ describe('GenericInput', function() {
     assert.deepEqual(output.props.children[2], expected);
   });
 
+  it('can validate when there are no validations set', () => {
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.GenericInput
+        disabled={false}
+        label="Region"
+        placeholder="us-central-1"
+        required={true}
+        ref="templateRegion"
+        validate={undefined} />, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {field: {value: ''}};
+    instance.validate();
+    var output = renderer.getRenderOutput();
+    assert.isNull(output.props.children[2]);
+  });
+
   it('can validate the form when typing', () => {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.GenericInput
