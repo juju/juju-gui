@@ -85,7 +85,7 @@ describe('GenericInput', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="generic-input">
-        <label className="generic-input__label"
+        <label className="generic-input__label placeholder-present"
           htmlFor="Region">
           Region
         </label>
@@ -97,6 +97,8 @@ describe('GenericInput', function() {
           placeholder="us-central-1"
           required={true}
           onChange={instance.validate}
+          onFocus={instance._focusHandler}
+          onBlur={instance._blurHandler}
           ref="field"
           type="password" />
         {null}
