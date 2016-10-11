@@ -25,9 +25,19 @@ chai.config.truncateThreshold = 0;
 
 describe('NotificationList', function() {
 
+  let clock;
+
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('notification-list', function() { done(); });
+  });
+
+  beforeEach(() => {
+    clock = sinon.useFakeTimers();
+  });
+
+  afterEach(() => {
+    clock.restore();
   });
 
   it('renders a list based on the notification passed in', () => {
@@ -36,9 +46,11 @@ describe('NotificationList', function() {
       message: 'notification message',
       level: 'info'
     };
-    var output = jsTestUtils.shallowRender(
+    var renderer = jsTestUtils.shallowRender(
       <juju.components.NotificationList
-        notification={notification}/>);
+        notification={notification}/>, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
     var children = output.props.children;
     var items = [
       <juju.components.NotificationListItem
@@ -49,7 +61,13 @@ describe('NotificationList', function() {
         message={notification.message}
         timeout={undefined}
         type={notification.level} />];
-    var expected = (<ul className="notification-list">{items}</ul>);
+    var expected = (
+      <ul className="notification-list"
+          onMouseOver={instance._clearTimeouts}
+          onMouseOut={instance._restartTimeouts}>
+        {items}
+      </ul>
+    );
     assert.deepEqual(output, expected);
   });
 
@@ -81,55 +99,81 @@ describe('NotificationList', function() {
       notifications: {
         12345: {
           message: 'notification message',
-          type: 'info'
+          type: 'info',
+          timestamp: '12345'
         }
       }
     });
   });
 
-  it('times out non error messages', (done) => {
+  it('times out non error messages', () => {
     var notification = {
+      key: '12345',
       timestamp: '12345',
       message: 'notification message',
       level: 'info'
     };
-    var timeout = 1;
+    var timeout = 500;
     var renderer = jsTestUtils.shallowRender(
       <juju.components.NotificationList
         timeout={timeout}
         notification={notification}/>, this);
     var instance = renderer.getMountedInstance();
-    // Fake the ref being created for the list item;
-    instance.refs = {
-      NotificationListItem12345: {
-        hide: () => {
-          done();
-        }
-      }
-    };
+    var key = 'NotificationListItem' + notification.timestamp;
+    var refs = {};
+    var hideStub = sinon.stub();
+    refs[key] = { hide: hideStub };
+    instance.refs = refs;
+    // Trigger the timeout.
+    clock.tick(timeout + 10);
+    assert.equal(hideStub.callCount, 1);
   });
 
   it('does not time out error messages', () => {
     var notification = {
+      key: '12345',
       timestamp: '12345',
       message: 'notification message',
       level: 'error'
     };
-    var timeout = 1;
+    var timeout = 500;
     var renderer = jsTestUtils.shallowRender(
       <juju.components.NotificationList
         timeout={timeout}
         notification={notification}/>, this);
     var instance = renderer.getMountedInstance();
-    // Fake the ref being created for the list item;
-    instance.refs = {
-      NotificationListItem12345: {
-        hide: () => {
-          // If it gets here then it's setting the timeout.
-          assert.fail();
-        }
-      }
-    };
+    var key = 'NotificationListItem' + notification.timestamp;
+    var refs = {};
+    var hideStub = sinon.stub();
+    refs[key] = { hide: hideStub };
+    instance.refs = refs;
+    // Trigger the timeout.
+    clock.tick(timeout + 10);
+    assert.equal(hideStub.callCount, 0);
   });
 
+  it('can clear and restart timeouts', () => {
+    const longTimeout = 10000;
+    const notification = {
+      timestamp: '12345',
+      message: 'notification message',
+      level: 'info'
+    };
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.NotificationList
+        notification={notification}
+        timeout={longTimeout} />, this);
+    const instance = renderer.getMountedInstance();
+    renderer.getRenderOutput();
+    assert.equal(instance.timeouts.length, 1,
+                 'notification timeouts were not populated');
+    instance._clearTimeouts();
+    assert.equal(instance.timeouts.length, 0,
+                 'notification timeouts did not clear');
+    instance._restartTimeouts();
+    assert.equal(instance.timeouts.length, 1,
+                 'notification timeouts were not restarted');
+    // Let everything clear out.
+    clock.tick(longTimeout + 10);
+  });
 });

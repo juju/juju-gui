@@ -36,6 +36,7 @@ YUI.add('notification-list', function() {
       if (note) {
         notifications[note.timestamp] = this._processNotification(note);
       }
+      this.timeouts = [];
       return {
         notifications: notifications
       };
@@ -52,7 +53,8 @@ YUI.add('notification-list', function() {
     _processNotification: function(notification) {
       var structured = {
         message: notification.message,
-        type: notification.level
+        type: notification.level,
+        timestamp: notification.timestamp
       };
       return structured;
     },
@@ -70,29 +72,33 @@ YUI.add('notification-list', function() {
       this.setState({notifications: notifications});
     },
 
+    _startTimeout: function(key, notification) {
+      if (notification.type !== 'error') {
+        // If it's not an error message then it needs to auto destroy.
+        this.timeouts.push(setTimeout(() => {
+          var item = this.refs['NotificationListItem' + key];
+          if (item) {
+            item.hide();
+          }
+        }, this.props.timeout || 3000));
+      }
+    },
+
     _generateNotifications: function() {
       var notifications = this.state.notifications;
       var elements = [];
-      Object.keys(notifications).forEach((key) => {
-        var type = notifications[key].type;
+      Object.keys(notifications).forEach(key => {
+        const notification = notifications[key];
+        this._startTimeout(key, notification);
         elements.push(
           <juju.components.NotificationListItem
             key={key}
             timestamp={key}
             ref={'NotificationListItem' + key}
             removeNotification={this._removeNotification}
-            message={notifications[key].message}
+            message={notification.message}
             timeout={this.props.timeout}
-            type={type} />);
-        if (type !== 'error') {
-          // If it's not an error message then it needs to auto destroy.
-          setTimeout(() => {
-            var item = this.refs['NotificationListItem' + key];
-            if (item) {
-              this.refs['NotificationListItem' + key].hide();
-            }
-          }, this.props.timeout || 3000);
-        }
+            type={notification.type} />);
       });
       return elements;
     },
@@ -103,9 +109,29 @@ YUI.add('notification-list', function() {
       this.setState({notifications: notifications});
     },
 
+    _clearTimeouts: function() {
+      this.timeouts.forEach(id => {
+        clearTimeout(id);
+      });
+      this.timeouts = [];
+    },
+
+    _restartTimeouts: function() {
+      // Only restart if there are no timeouts active.
+      if (this.timeouts.length > 0) {
+        return;
+      }
+      const notifications = this.state.notifications;
+      Object.keys(notifications).forEach(key => {
+        this._startTimeout(key, notifications[key]);
+      });
+    },
+
     render: function() {
       return (
-        <ul className="notification-list">
+        <ul onMouseOver={this._clearTimeouts}
+            onMouseOut={this._restartTimeouts}
+            className="notification-list">
           {this._generateNotifications()}
         </ul>);
     }
