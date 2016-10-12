@@ -42,7 +42,6 @@ def update(settings):
     _update_bool(settings, 'jujugui.sandbox', default=False)
 
 
-
 def _update(settings, name, default=None, convert=lambda value: value):
     """Update the value with the given name on the given settings.
 
