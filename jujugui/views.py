@@ -130,6 +130,7 @@ def config(request):
             'jujugui.controllerSocketTemplate'],
         'socketTemplate': settings['jujugui.socketTemplate'],
         'gisf': settings['jujugui.gisf'],
+        'staticURL': settings['jujugui.static_url'],
     }
     return 'var juju_config = {};'.format(json.dumps(options))
 

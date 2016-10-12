@@ -27,6 +27,7 @@ class TestUpdate(unittest.TestCase):
         'jujugui.apiAddress': None,
         'jujugui.controllerSocketTemplate': '/api',
         'jujugui.socketTemplate': '/model/$uuid/api',
+        'jujugui.static_url': '',
         'jujugui.terms_url': options.DEFAULT_TERMS_URL,
         'jujugui.user': None,
     }
@@ -56,6 +57,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.apiAddress': 'wss://api.address',
             'jujugui.controllerSocketTemplate': '/my-api',
             'jujugui.socketTemplate': '/juju/api/$host/$port/$uuid',
+            'jujugui.static_url': '/horizon/juju',
             'jujugui.terms_url': 'https://1.2.3.4/terms-api/',
             'jujugui.user': 'who',
         }
@@ -77,6 +79,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.apiAddress': 'wss://api.address',
             'jujugui.controllerSocketTemplate': '/my-api',
             'jujugui.socketTemplate': '/juju/api/$host/$port/$uuid',
+            'jujugui.static_url': '/horizon/juju',
             'jujugui.terms_url': 'https://1.2.3.4/terms-api/',
             'jujugui.user': 'who',
         }

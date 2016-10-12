@@ -18,26 +18,28 @@ def update(settings):
 
     Modify the given settings object in place.
     """
+    _update(settings, 'jujugui.apiAddress', default=None)
     _update(settings, 'jujugui.auth', default=None)
     _update(settings, 'jujugui.base_url', default='')
     _update(settings, 'jujugui.bundleservice_url',
             default=DEFAULT_BUNDLESERVICE_URL)
     _update(settings, 'jujugui.charmstore_url', default=DEFAULT_CHARMSTORE_URL)
-    _update(settings, 'jujugui.plans_url', default=DEFAULT_PLANS_URL)
-    _update(settings, 'jujugui.terms_url', default=DEFAULT_TERMS_URL)
+    _update(settings, 'jujugui.controllerSocketTemplate', default='/api')
     _update(settings, 'jujugui.GTM_enabled', default=False)
     _update(settings, 'jujugui.password', default=None)
-    _update(settings, 'jujugui.user', default=None)
-    _update(settings, 'jujugui.apiAddress', default=None)
-    _update(settings, 'jujugui.controllerSocketTemplate', default='/api')
+    _update(settings, 'jujugui.plans_url', default=DEFAULT_PLANS_URL)
+    _update(settings, 'jujugui.terms_url', default=DEFAULT_TERMS_URL)
     _update(settings, 'jujugui.socketTemplate', default='/model/$uuid/api')
-    _update_bool(settings, 'jujugui.interactive_login', default=False)
-    _update_bool(settings, 'jujugui.sandbox', default=False)
-    _update_bool(settings, 'jujugui.raw', default=False)
+    _update(settings, 'jujugui.static_url', default='')
+    _update(settings, 'jujugui.user', default=None)
+
     _update_bool(settings, 'jujugui.combine', default=True)
+    _update_bool(settings, 'jujugui.gisf', default=False)
     _update_bool(settings, 'jujugui.gzip', default=True)
     _update_bool(settings, 'jujugui.insecure', default=False)
-    _update_bool(settings, 'jujugui.gisf', default=False)
+    _update_bool(settings, 'jujugui.interactive_login', default=False)
+    _update_bool(settings, 'jujugui.raw', default=False)
+    _update_bool(settings, 'jujugui.sandbox', default=False)
 
 
 def _update(settings, name, default=None, convert=lambda value: value):
