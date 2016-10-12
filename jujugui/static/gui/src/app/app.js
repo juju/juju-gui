@@ -2561,6 +2561,11 @@ YUI.add('juju-gui', function(Y) {
     _getAuth: function() {
       var externalAuth = this.get('auth');
       if (externalAuth) {
+        if (externalAuth.user) {
+          // When HJC supplies an external auth it's possible that the name is
+          // stored in a nested user object.
+          externalAuth.usernameDisplay = externalAuth.user.name;
+        }
         return externalAuth;
       }
       var users = this.get('users');
@@ -2578,14 +2583,7 @@ YUI.add('juju-gui', function(Y) {
         // Precedence order of the various services used by the GUI:
         user = controllerUser || users.charmstore;
         if (user && user.user) {
-          // It is possible that the username is stored in a nested user object
-          // instead of a user string. This typically happens when external
-          // credentials are passed in.
-          if (typeof user.user === 'string') {
-            user.usernameDisplay = user.user;
-          } else {
-            user.usernameDisplay = user.user.name;
-          }
+          user.usernameDisplay = user.user;
         }
       }
       return user;
