@@ -53,7 +53,7 @@ describe('GenericInput', function() {
           Region
         </label>
         <input className="generic-input__field"
-          autocomplete={false}
+          autoComplete={false}
           defaultValue="default"
           disabled={false}
           id="Region"
@@ -90,7 +90,7 @@ describe('GenericInput', function() {
           Region
         </label>
         <input className="generic-input__field"
-          autocomplete={true}
+          autoComplete={true}
           defaultValue="default"
           disabled={false}
           id="Region"
@@ -214,7 +214,7 @@ describe('GenericInput', function() {
       <div className="generic-input">
         {undefined}
         <input className="generic-input__field"
-          autocomplete={true}
+          autoComplete={true}
           defaultValue="default"
           disabled={false}
           id={undefined}

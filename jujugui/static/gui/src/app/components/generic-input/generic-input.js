@@ -156,7 +156,7 @@ YUI.add('generic-input', function() {
         <div className={classes}>
           {labelElement}
           <input className="generic-input__field"
-            autocomplete={this.props.autocomplete}
+            autoComplete={this.props.autocomplete}
             defaultValue={this.props.value}
             disabled={this.props.disabled}
             id={id}
