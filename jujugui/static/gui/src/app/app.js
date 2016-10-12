@@ -714,13 +714,9 @@ YUI.add('juju-gui', function(Y) {
         we're in a legacy juju model and no controllerAPI instance was supplied.
     */
     setUpControllerAPI: function(controllerAPI, user, password, macaroons) {
-      const externalCreds = this._getAuth();
+      const external = this._getAuth();
       controllerAPI.setAttrs({ user, password });
-      if (externalCreds) {
-        controllerAPI.setCredentials(externalCreds);
-      } else {
-        controllerAPI.setCredentials({ user, password, macaroons });
-      }
+      controllerAPI.setCredentials({ user, password, macaroons, external });
 
       controllerAPI.after('login', evt => {
         if (evt.err) {

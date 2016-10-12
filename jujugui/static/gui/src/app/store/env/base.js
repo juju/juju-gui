@@ -469,14 +469,14 @@ YUI.add('juju-env-base', function(Y) {
     },
 
     /**
-     * Store the user's credentials in session storage.
-     *
-     * @method setCredentials
-     * @param {Object} The credentials to store, with a "user" and a "password"
-     *   attribute included, or with a "macaroons" attribute, depending on the
-     *   method used to log in. The user must be a user name, not a user tag.
-     * @return {undefined} Stores data only.
-     */
+      Store the user's credentials in session storage.
+
+      @method setCredentials
+      @param {Object} The credentials to store.
+        Possible properties { user, password, macaroons, external }.
+        The user must be a user name, not a user tag.
+      @return {undefined} Stores data only.
+    */
     setCredentials: function(credentials) {
       module.sessionStorage.setItem(
           'credentials', Y.JSON.stringify(credentials));
@@ -498,13 +498,9 @@ YUI.add('juju-env-base', function(Y) {
         credentials = {};
       }
       if (credentials.user) {
-        // When we're using externally provided authentication values the user
-        // field may not be a string. It can also be an object.
-        if (typeof credentials.user === 'string') {
-          // User names without a "@something" part are local Juju users.
-          if (credentials.user.indexOf('@') === -1) {
-            credentials.user += '@local';
-          }
+        // User names without a "@something" part are local Juju users.
+        if (credentials.user.indexOf('@') === -1) {
+          credentials.user += '@local';
         }
       } else {
         credentials.user = '';
@@ -533,7 +529,7 @@ YUI.add('juju-env-base', function(Y) {
         },
         areExternal: {
           get: function() {
-            return !!(this.user && this.domain && this.tenant);
+            return !!(this.external);
           }
         }
       });
