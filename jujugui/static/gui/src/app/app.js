@@ -2578,7 +2578,14 @@ YUI.add('juju-gui', function(Y) {
         // Precedence order of the various services used by the GUI:
         user = controllerUser || users.charmstore;
         if (user && user.user) {
-          user.usernameDisplay = user.user;
+          // It is possible that the username is stored in a nested user object
+          // instead of a user string. This typically happens when external
+          // credentials are passed in.
+          if (typeof user.user === 'string') {
+            user.usernameDisplay = user.user;
+          } else {
+            user.usernameDisplay = user.user.name;
+          }
         }
       }
       return user;
