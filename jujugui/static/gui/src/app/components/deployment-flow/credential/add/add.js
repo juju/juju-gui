@@ -198,11 +198,13 @@ YUI.add('deployment-credential-add', function() {
         }
         return (
           <juju.components.GenericInput
+            autocomplete={field.autocomplete}
             disabled={isReadOnly}
             key={field.id}
             label={field.title}
             required={required}
             ref={field.id}
+            type={field.type}
             validate={required ? [{
               regex: /\S+/,
               error: 'This field is required.'

@@ -68,6 +68,7 @@ YUI.add('deployment-flow', function() {
             id: 'client-email',
             title: 'Client e-mail address'
           }, {
+            autocomplete: false,
             id: 'private-key',
             title: 'Private key',
             multiLine: true,
@@ -118,7 +119,8 @@ YUI.add('deployment-flow', function() {
             title: 'Azure Active Directory tenant ID'
           }, {
             id: 'application-password',
-            title: 'Azure Active Directory application password'
+            title: 'Azure Active Directory application password',
+            type: 'password'
           }]
         },
         message: (
@@ -146,6 +148,7 @@ YUI.add('deployment-flow', function() {
             id: 'access-key',
             title: 'The EC2 access key'
           }, {
+            autocomplete: false,
             id: 'secret-key',
             title: 'The EC2 secret key'
           }]
@@ -172,7 +175,8 @@ YUI.add('deployment-flow', function() {
             title: 'Username'
           }, {
             id: 'password',
-            title: 'Password'
+            title: 'Password',
+            type: 'password'
           }, {
             id: 'tenant-name',
             title: 'Tenant name'
@@ -185,6 +189,7 @@ YUI.add('deployment-flow', function() {
             id: 'access-key',
             title: 'Access key'
           }, {
+            autocomplete: false,
             id: 'secret-key',
             title: 'Secret key'
           }, {
@@ -203,7 +208,8 @@ YUI.add('deployment-flow', function() {
             title: 'Username'
           }, {
             id: 'password',
-            title: 'Password'
+            title: 'Password',
+            type: 'password'
           }]
         }
       },
@@ -219,6 +225,7 @@ YUI.add('deployment-flow', function() {
             id: 'sdc-key-id',
             title: 'SmartDataCenter key ID'
           }, {
+            autocomplete: false,
             id: 'private-key',
             title: 'Private key used to sign requests'
           }, {
@@ -248,7 +255,8 @@ YUI.add('deployment-flow', function() {
             title: 'Username'
           }, {
             id: 'password',
-            title: 'Password'
+            title: 'Password',
+            type: 'password'
           }, {
             id: 'tenant-name',
             title: 'Tenant name'
@@ -261,6 +269,7 @@ YUI.add('deployment-flow', function() {
             id: 'access-key',
             title: 'Access key'
           }, {
+            autocomplete: false,
             id: 'secret-key',
             title: 'Secret key'
           }, {
@@ -279,7 +288,8 @@ YUI.add('deployment-flow', function() {
             title: 'Username'
           }, {
             id: 'password',
-            title: 'Password'
+            title: 'Password',
+            type: 'password'
           }]
         }
       },

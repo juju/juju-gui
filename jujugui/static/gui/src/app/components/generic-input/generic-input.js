@@ -23,18 +23,22 @@ YUI.add('generic-input', function() {
   juju.components.GenericInput = React.createClass({
 
     propTypes: {
+      autocomplete: React.PropTypes.bool,
       disabled: React.PropTypes.bool,
       label: React.PropTypes.string,
       onFocus: React.PropTypes.func,
       placeholder: React.PropTypes.string,
       required: React.PropTypes.bool,
+      type: React.PropTypes.string,
       validate: React.PropTypes.array,
       value: React.PropTypes.string,
     },
 
     getDefaultProps: () => {
       return {
-        required: false
+        autocomplete: true,
+        required: false,
+        type: 'text'
       };
     },
 
@@ -152,6 +156,7 @@ YUI.add('generic-input', function() {
         <div className={classes}>
           {labelElement}
           <input className="generic-input__field"
+            autoComplete={this.props.autocomplete}
             defaultValue={this.props.value}
             disabled={this.props.disabled}
             id={id}
@@ -161,7 +166,7 @@ YUI.add('generic-input', function() {
             onFocus={this._focusHandler}
             onBlur={this._blurHandler}
             ref="field"
-            type="text" />
+            type={this.props.type} />
           {this.state.errors}
         </div>
       );
