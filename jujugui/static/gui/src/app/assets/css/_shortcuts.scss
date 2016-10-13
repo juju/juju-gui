@@ -1,41 +1,41 @@
-/*
- * The keyboard shorcut panel
- */
+// The keyboard shorcut panel
+// scss-lint:disable IdSelector
 #shortcut-help {
-    box-shadow: (0 1px 4.85px .15px rgba( 0, 0, 0, .2));
+// scss-lint:enable IdSelector
+  box-shadow: (0 1px 4.85px .15px rgba(0, 0, 0, .2));
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  top: 8%;
+  bottom: 8%;
+  z-index: index($z-indexed-elements, shortcut-help);
+  background-color: $white;
+  border-radius: $border-radius;
+  overflow: scroll;
+
+  .bordered {
+    border-bottom: 1px solid $light-mid-grey;
+    padding: 20px;
+  }
+
+  .content {
+    padding: 20px;
+
+    [class$="col"] {
+      margin-bottom: 10px;
+    }
+  }
+
+  .no-margin-bottom {
+    margin-bottom: 0;
+  }
+
+  .close {
     position: absolute;
-    left: 4%;
-    right: 4%;
-    top: 8%;
-    bottom: 8%;
-    z-index: index($z-indexed-elements, shortcut-help);
-    background-color: $white;
-    border-radius: $border-radius;
-    overflow: scroll;
-
-    .bordered {
-        border-bottom: 1px solid $light-mid-grey;
-        padding: 20px;
-    }
-
-    .content {
-        padding: 20px;
-
-        div[class$="col"] {
-            margin-bottom: 10px;
-        }
-    }
-
-    .no-margin-bottom {
-        margin-bottom: 0;
-    }
-
-    .close {
-        position: absolute;
-        right: 20px;
-        top: 20px;
-        width: 16px;
-        height: 16px;
-        cursor: pointer;
-    }
+    right: 20px;
+    top: 20px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
 }

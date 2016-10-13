@@ -1,27 +1,27 @@
 .entity-details {
 
-    .row-hero {
-        margin-top: 0;
-    }
+  .row-hero {
+    margin-top: 0;
+  }
 
-    .inline {
-        margin-left: 0;
-        overflow: auto;
+  .inline {
+    margin-left: 0;
+    overflow: auto;
 
-        li {
-            display: inline;
-            list-style: none;
-            margin-left: 0;
-            float: left;
-            margin-bottom: 0;
-        }
+    li {
+      display: inline;
+      list-style: none;
+      margin-left: 0;
+      float: left;
+      margin-bottom: 0;
     }
+  }
 
-    .error {
-        margin: 40px;
-    }
+  .error {
+    margin: 40px;
+  }
 
-    .spinner-loading {
-        margin: 25vh 45vw;
-    }
+  .spinner-loading {
+    margin: 25vh 45vw;
+  }
 }

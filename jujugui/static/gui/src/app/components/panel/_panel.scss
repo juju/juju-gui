@@ -1,14 +1,14 @@
 .panel-component {
-    @extend %floating-panel;
-    position: absolute;
+  @extend %floating-panel;
+  position: absolute;
 
-    &__inner {
-        display: flex;
-        flex-direction: column;
-    }
-}
+  &__inner {
+    display: flex;
+    flex-direction: column;
+  }
 
-.panel-component.inspector-panel {
+
+  &.inspector-panel {
     position: static;
     background-color: transparent;
     border-radius: 0;
@@ -16,12 +16,12 @@
     z-index: index($z-indexed-elements, inspector-panel);
 
     li {
-        margin-bottom: 0;
-        line-height: 1.3125em;
+      margin-bottom: 0;
+      line-height: 1.3125em;
     }
-}
+  }
 
-.panel-component.white-box {
+  &.white-box {
     z-index: index($z-indexed-elements, white-box);
     top: 0;
     bottom: 0;
@@ -30,44 +30,44 @@
     background-color: rgba(247, 247, 247, .7);
     border-radius: none;
     box-shadow: none;
-}
+  }
 
-.panel-component.deployment-flow-panel,
-.panel-component.deployment-panel {
+  &.deployment-flow-panel,
+  &.deployment-panel {
     z-index: index($z-indexed-elements, deployment-panel);
     border-radius: 0;
     box-shadow: none;
 
     .panel-component__inner {
-        height: 100%;
+      height: 100%;
     }
-}
+  }
 
-.panel-component.deployment-flow-panel {
+  &.deployment-flow-panel {
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     background-color: $white;
-}
+  }
 
-.panel-component.deployment-bar-panel {
+  &.deployment-bar-panel {
     right: 20px;
     bottom: 30px;
     z-index: index($z-indexed-elements, deployment-bar-panel);
     background-color: transparent;
     border-radius: 0;
     box-shadow: none;
-}
+  }
 
-.panel-component.env-list-panel {
+  &.env-list-panel {
     top: 65px;
     right: -220px;
-}
+  }
 
-.panel-component.account,
-.panel-component.isv-profile,
-.panel-component.user-profile {
+  &.account,
+  &.isv-profile,
+  &.user-profile {
     @extend %scroll-children;
     z-index: index($z-indexed-elements, top-page);
     top: $navbar-height;
@@ -77,9 +77,9 @@
     background-color: $canvas-background;
     border-top: 1px solid $mid-grey;
     box-shadow: none;
-}
+  }
 
-.panel-component.confirmation-popup {
+  &.confirmation-popup {
     position: fixed;
     z-index: index($z-indexed-elements, confirmation-popup);
     top: 0;
@@ -89,4 +89,5 @@
     background-color: transparent;
     border-radius: none;
     box-shadow: none;
+  }
 }

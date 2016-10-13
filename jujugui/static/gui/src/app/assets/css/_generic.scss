@@ -1,5 +1,6 @@
-/// Generic unclassed HTML elements
-/// @group Generic
+$pre-background: #fdf6f2;
+
+// Generic unclassed HTML elements
 @mixin juju-gui-generic {
 
   //XXX: Temporarily remove the focus state of interactive elements:
@@ -7,135 +8,140 @@
   // explore a solution for tabbing post-ODS."
   // https://github.com/juju/juju-gui/pull/840#issuecomment-141111802
   *:focus {
-      outline: none;
+    outline: none;
   }
 
   html {
-      overflow-y: hidden;
+    overflow-y: hidden;
   }
 
   body {
-      @include customize-scrollbar($white);
-      overflow: hidden;
-      height: 1vh;
-      background: $canvas-background;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+    @include customize-scrollbar($white);
+    overflow: hidden;
+    height: 1vh;
+    background: $canvas-background;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  input[type="text"],
-  input[type="number"],
-  input[type="password"] {
-        @extend %input;
+  [type="text"],
+  [type="number"],
+  [type="password"] {
+    @extend %input;
   }
 
-  input[type=number]::-webkit-inner-spin-button,
-  input[type=number]::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-      appearance: none;
-      margin: 0;
+  [type=number]::-webkit-inner-spin-button,
+  [type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
   }
 
-  input[type=number] {
+  [type=number] {
     -moz-appearance: textfield;
   }
 
-  input[type="radio"],
-  input[type="checkbox"] {
-      $size: 14px;
+  [type="radio"],
+  [type="checkbox"] {
+    $size: 14px;
+    width: $size;
+    height: $size;
+    background-color: $white;
+    border: 1px solid $mid-grey;
+    box-shadow: inset 0 1px 1px .15px rgba(0, 0, 0, .15);
+    color: $white;
+    text-align: center;
+    overflow: hidden;
+    -webkit-appearance: button;
+
+    &:checked {
+      background-color: $success;
+      border: 0;
+    }
+
+    &:after {
+      content: '';
+      display: none;
       width: $size;
       height: $size;
-      background-color: $white;
-      border: 1px solid $mid-grey;
-      box-shadow: inset 0 1px 1px .15px rgba(0, 0, 0, .15);
-      color: $white;
-      text-align: center;
-      overflow: hidden;
-      -webkit-appearance: button;
+    }
 
-      &:checked {
-          background-color: $success;
-          border: none;
-      }
-
-      &:after {
-          content: '';
-          display: none;
-          width: $size;
-          height: $size;
-      }
-
-      &:checked:after {
-          display: inline-block;
-      }
+    &:checked:after {
+      display: inline-block;
+    }
   }
 
-  input[type="radio"] {
+  [type="radio"] {
+    border-radius: 50%;
+    vertical-align: middle;
+
+    &:after {
+      $size: 6px;
+      width: $size;
+      height: $size;
+      margin-bottom: 5px;
       border-radius: 50%;
-      vertical-align: middle;
+      background-color: $white;
+    }
 
-      &:after {
-          $size: 6px;
-          width: $size;
-          height: $size;
-          margin-bottom: 5px;
-          border-radius: 50%;
-          background-color: #fff;
-      }
-
-      &:checked:after {
-          display: inline-block;
-      }
+    &:checked:after {
+      display: inline-block;
+    }
   }
 
-  input[type="checkbox"] {
-      border-radius: $border-radius;
+  [type="checkbox"] {
+    border-radius: $border-radius;
 
-      &:after {
-          background: transparent url(static/gui/build/app/assets/images/non-sprites/tick.svg) no-repeat center 2px;
-      }
+    &:after {
+      background: transparent url('static/gui/build/app/assets/images/non-sprites/tick.svg') no-repeat center 2px;
+    }
   }
 
   svg {
-      stroke-width: 0;
-      overflow: hidden;
+    stroke-width: 0;
+    overflow: hidden;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-      font-family: inherit;
-      font-weight: 300;
-      color: inherit;
-      text-rendering: optimizelegibility;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: inherit;
+    font-weight: 300;
+    color: inherit;
+    text-rendering: optimizelegibility;
   }
 
   ul {
-      padding: 0;
+    padding: 0;
   }
 
   label {
-      display: block;
+    display: block;
   }
 
   strong {
-      font-weight: 400;
+    font-weight: 400;
   }
 
   .hidden {
-      display: none;
-      visibility: hidden;
+    display: none;
+    visibility: hidden;
   }
 
   pre {
-      margin-bottom: 10px;
-      padding: 5px;
-      background-color: #fdf6f2;
-      border: none;
+    margin-bottom: 10px;
+    padding: 5px;
+    background-color: $pre-background;
+    border: 0;
   }
 
   pre,
   code {
-      font-family: $font-family-mono;
-      font-size: 14px;
-      color: $cool-grey;
+    font-family: $font-family-mono;
+    font-size: 14px;
+    color: $cool-grey;
   }
 }

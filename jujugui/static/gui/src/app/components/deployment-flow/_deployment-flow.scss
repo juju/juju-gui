@@ -1,96 +1,96 @@
 .deployment-flow {
-    @extend %scroll-children;
+  @extend %scroll-children;
 
-    &__header {
-        // Don't allow the header to collapse:
-        flex: 1 0 auto;
-        margin: 0 20px;
-        padding: 10px 0;
-        border-bottom: 1px solid $light-mid-grey;
+  &__header {
+    // Don't allow the header to collapse:
+    flex: 1 0 auto;
+    margin: 0 20px;
+    padding: 10px 0;
+    border-bottom: 1px solid $light-mid-grey;
 
-        &-name {
-            display: inline-block;
-            margin-left: 40px;
-            font-weight: 400;
-        }
+    &-name {
+      display: inline-block;
+      margin-left: 40px;
+      font-weight: 400;
     }
+  }
 
-    &__close {
-        @extend %link;
-        display: inline-block;
-        color: $cool-grey;
-
-        .button--neutral {
-            width: auto;
-        }
-    }
-
-    &__content {
-        @extend %scroll-children;
-        padding-top: 40px;
-    }
-
-    &__row-header {
-        font-weight: 400;
-    }
-
-    &__row-header,
-    &__row {
-        border-bottom: 1px solid $light-mid-grey;
-    }
+  &__close {
+    @extend %link;
+    display: inline-block;
+    color: $cool-grey;
 
     .button--neutral {
-        background-color: $white;
+      width: auto;
+    }
+  }
+
+  &__content {
+    @extend %scroll-children;
+    padding-top: 40px;
+  }
+
+  &__row-header {
+    font-weight: 400;
+  }
+
+  &__row-header,
+  &__row {
+    border-bottom: 1px solid $light-mid-grey;
+  }
+
+  .button--neutral {
+    background-color: $white;
+  }
+
+  &__notice {
+    &-content {
+      padding: 0 0 0 26px;
     }
 
-    &__notice {
-        &-content {
-            padding: 0 0 0 26px;
-        }
+    .svg-icon {
+      margin-left: -26px;
+      margin-right: 10px;
+      vertical-align: text-bottom;
+    }
+  }
 
-        .svg-icon {
-            margin-left: -26px;
-            margin-right: 10px;
-            vertical-align: text-bottom;
-        }
+  &__service-title {
+    .button--base {
+      width: auto;
+      color: $ubuntu-orange;
+      font-size: $base;
+
+      &:focus,
+      &:active,
+      &:hover {
+        background-color: transparent;
+      }
+    }
+  }
+
+  &__deploy {
+    &-option {
+      margin-bottom: 20px;
     }
 
-    &__service-title {
-        .button--base {
-            width: auto;
-            color: $ubuntu-orange;
-            font-size: $base;
-
-            &:focus,
-            &:active,
-            &:hover {
-                background-color: transparent;
-            }
-        }
+    &-checkbox {
+      margin-right: 10px;
     }
 
-    &__deploy {
-        &-option {
-            margin-bottom: 20px;
-        }
-
-        &-checkbox {
-            margin-right: 10px;
-        }
-
-        &-label {
-            display: inline-block;
-            width: 50%;
-            vertical-align: text-top;
-        }
-
-        &-action {
-            padding-top: 20px;
-
-            .button--positive {
-                padding-top: 20px;
-                padding-bottom: 20px;
-            }
-        }
+    &-label {
+      display: inline-block;
+      width: 50%;
+      vertical-align: text-top;
     }
+
+    &-action {
+      padding-top: 20px;
+
+      .button--positive {
+        padding-top: 20px;
+        padding-bottom: 20px;
+      }
+    }
+  }
 }

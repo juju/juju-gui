@@ -1,187 +1,192 @@
 .entity-header {
-    $social-icon-size: 35px;
-    $sticky-height: 100px;
-    margin-bottom: 0;
-    padding: 50px 0;
+  $social-icon-size: 35px;
+  $sticky-height: 100px;
+  margin-bottom: 0;
+  padding: 50px 0;
+  background-color: $white;
+  color: $cool-grey;
+  overflow: hidden;
+
+  @keyframes slideIn {
+    0% {
+      height: 0;
+    }
+
+    100% {
+      height: $sticky-height;
+    }
+  }
+
+  &--sticky {
+    position: fixed;
+    z-index: index($z-indexed-elements, entity-sticky-header);
+    top: $navbar-height;
+    left: $panel-space;
+    right: 0;
+    height: $sticky-height;
+    padding: 0;
     background-color: $white;
-    color: $cool-grey;
-    overflow: hidden;
+    border-bottom: 1px solid $light-mid-grey;
+    border-top-left-radius: $border-radius;
+    animation: slideIn .5s;
+    pointer-events: none;
 
-    @keyframes slideIn {
-        0% {
-            height: 0;
-        }
-
-        100% {
-            height: $sticky-height;
-        }
-    }
-
-    &--sticky {
-        position: fixed;
-        z-index: index($z-indexed-elements, entity-sticky-header);
-        top: $navbar-height;
-        left: $panel-space;
-        right: 0;
-        height: $sticky-height;
-        padding: 0;
-        background-color: white;
-        border-bottom: 1px solid #d4d4d4;
-        border-top-left-radius: $border-radius;
-        animation: slideIn .5s;
-        pointer-events: none;
-
-        a,
-        button,
-        input,
-        select {
-            pointer-events: auto;
-        }
-
-        .inner-wrapper {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 20px 0;
-        }
-
-        .entity-header {
-            $icon-size: 26px;
-
-            &__icon {
-                width: $icon-size;
-                height: $icon-size;
-                margin-right: 10px;
-                border-radius: 2px;
-            }
-
-            &__title {
-                font-size: 20px;
-                line-height: $icon-size;
-            }
-
-            &__properties {
-                margin-top: 14px;
-            }
-
-            &__social-list {
-                display: none;
-            }
-
-            &__select {
-                width: 150px;
-                margin: 0 10px 0 0;
-            }
-
-            &__right {
-                padding-top: 15px;
-            }
-        }
-
-        .copy-to-clipboard {
-            display: none;
-        }
-
-        .button--positive {
-            width: auto;
-        }
-    }
-
-    .no-margin-bottom {
-        margin-bottom: 0;
-    }
-
-    .row-hero {
-        overflow: hidden;
-        margin-top: 0;
+    a,
+    button,
+    input,
+    select {
+      pointer-events: auto;
     }
 
     .inner-wrapper {
-        overflow: visible;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 20px 0;
     }
 
-    &__properties {
-        margin-bottom: 0;
-        margin-top: 24px;
-        font-size: 18px;
-        overflow: hidden;
+    .entity-header {
+      $icon-size: 26px;
 
-        li {
-            &:after {
-                color: $warm-grey;
-                content: "\2022";
-                vertical-align: middle;
-                margin: 0 5px;
-            }
+      &__icon {
+        width: $icon-size;
+        height: $icon-size;
+        margin-right: 10px;
+        border-radius: 2px;
+      }
 
-            &:last-child:after {
-                display: none;
-            }
-        }
+      &__title {
+        font-size: 20px;
+        line-height: $icon-size;
+      }
+
+      &__properties {
+        margin-top: 14px;
+      }
+
+      &__social-list {
+        display: none;
+      }
+
+      &__select {
+        width: 150px;
+        margin: 0 10px 0 0;
+      }
+
+      &__right {
+        padding-top: 15px;
+      }
     }
 
-    &__icon {
-        border-radius: 14px;
-        height: 96px;
-        width: 96px;
-        display: inline-block;
-        vertical-align: top;
-        margin: 0 30px 0 0;
+    .copy-to-clipboard {
+      display: none;
     }
 
-    &__title {
-        line-height: 96px;
-        display: inline-block;
-        margin-bottom: 0;
-        color: $cool-grey;
-        font-size: 2.8125em;
-        text-transform: capitalize;
+    .button--positive {
+      width: auto;
     }
+  }
 
-    &__deploys {
-        text-transform: capitalize;
+  .no-margin-bottom {
+    margin-bottom: 0;
+  }
+
+  .row-hero {
+    overflow: hidden;
+    margin-top: 0;
+  }
+
+  .inner-wrapper {
+    overflow: visible;
+  }
+
+  &__properties {
+    margin-bottom: 0;
+    margin-top: 24px;
+    font-size: 18px;
+    overflow: hidden;
+
+    li {
+      &:after {
+        color: $warm-grey;
+        content: '\2022';
+        vertical-align: middle;
+        margin: 0 5px;
+      }
+
+      &:last-child:after {
+        display: none;
+      }
     }
+  }
 
-    &__series {
-        text-transform: capitalize;
+  &__icon {
+    border-radius: 14px;
+    height: 96px;
+    width: 96px;
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 30px 0 0;
+  }
+
+  &__title {
+    line-height: 96px;
+    display: inline-block;
+    margin-bottom: 0;
+    color: $cool-grey;
+    font-size: 2.8125em;
+    text-transform: capitalize;
+  }
+
+  &__deploys {
+    text-transform: capitalize;
+  }
+
+  &__series {
+    text-transform: capitalize;
+  }
+
+  &__select {
+    margin-bottom: 15px;
+  }
+
+  &__social-list {
+    margin: 30px 0 0;
+    height: $social-icon-size;
+
+    li {
+      list-style: none;
+      margin: 0 10px 0 0;
+      display: inline-block;
     }
+  }
 
-    &__select {
-        margin-bottom: 15px;
+  // scss-lint:disable IdSelector
+  #item-twitter,
+  #item-googleplus {
+    display: block;
+    line-height: normal;
+    width: $social-icon-size;
+    height: $social-icon-size;
+
+    .svg-icon {
+      fill: $mid-grey;
     }
+  }
 
-    &__social-list {
-        margin: 30px 0 0 0;
-        height: $social-icon-size;
-
-        li {
-            list-style: none;
-            margin: 0 10px 0 0;
-            display: inline-block;
-        }
+  #item-twitter:hover {
+    .svg-icon {
+      $twitter-color: #55acee;
+      fill: $twitter-color;
     }
+  }
 
-    #item-twitter, #item-googleplus {
-        display: block;
-        line-height: normal;
-        width: $social-icon-size;
-        height: $social-icon-size;
-
-        .svg-icon {
-            fill: #cdcdcd;
-        }
+  #item-googleplus:hover {
+    .svg-icon {
+      $googleplus-color: #dc4a38;
+      fill: $googleplus-color;
     }
-
-    #item-twitter:hover {
-        .svg-icon {
-            fill: #55acee;
-        }
-    }
-
-    #item-googleplus:hover {
-        .svg-icon {
-            fill: #dc4a38;
-        }
-    }
+  }
+  // scss-lint:enable IdSelector
 }

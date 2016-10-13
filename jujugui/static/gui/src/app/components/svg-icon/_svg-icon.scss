@@ -1,10 +1,11 @@
 .svg-icon {
-    // Set a default stroke colour for any icon that has stroke: inherit.
-    stroke: $warm-grey;
+  // Set a default stroke colour for any icon that has stroke: inherit.
+  stroke: $warm-grey;
 }
 
+// scss-lint:disable IdSelector, SelectorFormat
 #close_16 path {
-    stroke: inherit;
+  stroke: inherit;
 }
 
 #complete path,
@@ -14,7 +15,7 @@
 #icon-social-google g,
 #icon-social-google path,
 #icon-social-twitter path {
-    fill: inherit;
+  fill: inherit;
 }
 
 #chevron_up_16 path,
@@ -23,5 +24,6 @@
 #changes-machine-created path,
 #export_16 path,
 #import_16 path {
-    fill: currentColor;
+  fill: currentColor;
 }
+// scss-lint:enable IdSelector, SelectorFormat

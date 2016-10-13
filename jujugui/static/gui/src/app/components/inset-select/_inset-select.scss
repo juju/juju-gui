@@ -1,31 +1,31 @@
 .inset-select {
-    $padding: 8px;
-    padding-top: $padding;
-    background-color: $white;
-    border: 1px solid $light-mid-grey;
-    border-radius: $border-radius;
-    width: calc(100% - 20px);
+  $padding: 8px;
+  padding-top: $padding;
+  background-color: $white;
+  border: 1px solid $light-mid-grey;
+  border-radius: $border-radius;
+  width: calc(100% - 20px);
 
-    &__label {
-        padding-left: $padding;
-        color: $warm-grey;
-        font-size: 0.688em;
+  &__label {
+    padding-left: $padding;
+    color: $warm-grey;
+    font-size: .688em;
+  }
+
+  &__field {
+    padding: 3px $padding $padding;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    line-height: 17px;
+  }
+
+  &--disabled {
+    background-color: $light-grey;
+
+    .inset-select__field {
+      background-image: none;
+      background-color: $light-grey;
     }
-
-    &__field {
-        padding: 3px $padding $padding $padding;
-        border: none;
-        border-radius: 0;
-        box-shadow: none;
-        line-height: 17px;
-    }
-
-    &--disabled {
-        background-color: $light-grey;
-
-        .inset-select__field {
-            background-image: none;
-            background-color: $light-grey;
-        }
-    }
+  }
 }

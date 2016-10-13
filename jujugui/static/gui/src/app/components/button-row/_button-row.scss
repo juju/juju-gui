@@ -1,26 +1,26 @@
 .button-row {
-    @extend %fade-in;
-    padding: 10px;
+  @extend %fade-in;
+  padding: 10px;
 
-    [class^="button--"] {
-        width: 100%;
-        padding-left: 5px;
-        padding-right: 5px;
+  [class^="button--"] {
+    width: 100%;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  &--multiple [class^="button--"] {
+    margin-right: 10px;
+    
+    &:last-child {
+      margin-right: 0;
     }
+  }
 
-    &--multiple [class^="button--"] {
-        margin-right: 10px;
+  &--count-2 [class^="button--"] {
+    width: calc(50% - 5px);
+  }
 
-        &:last-child {
-            margin-right: 0;
-        }
-    }
-
-    &--count-2 [class^="button--"] {
-        width: calc(50% - 5px);
-    }
-
-    &--count-3 [class^="button--"] {
-        width: calc(33.333% - 7px);
-    }
+  &--count-3 [class^="button--"] {
+    width: calc(33.333% - 7px);
+  }
 }

@@ -1,20 +1,20 @@
 .string-config {
-    @extend %stagger-fade-in;
-    margin: 10px 20px 14px 20px;
+  @extend %stagger-fade-in;
+  margin: 10px 20px 14px;
 
-    &--value,
-    &--disabled {
-        @extend %input;
-        min-height: $base;
-        margin: 10px 0;
-    }
+  &--value,
+  &--disabled {
+    @extend %input;
+    min-height: $base;
+    margin: 10px 0;
+  }
 
-    &--disabled {
-        word-wrap: break-word;
-    }
+  &--disabled {
+    word-wrap: break-word;
+  }
 
-    &--description {
-        color: $cool-grey;
-        font-size: 0.875em;
-    }
+  &--description {
+    color: $cool-grey;
+    font-size: .875em;
+  }
 }

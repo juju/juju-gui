@@ -1,13 +1,15 @@
 .entity-content__diagram {
-    clear: both;
-    padding: 60px;
-    background-color: $canvas-background;
-    // Unfortunately this needs to use !important to override the .row and
-    // .row--grey styles.
-    border-bottom: 1px solid #cdcdcd !important;
-    text-align: center;
+  clear: both;
+  padding: 60px;
+  background-color: $canvas-background;
+  // Unfortunately this needs to use !important to override the .row and
+  // .row--grey styles.
+  // scss-lint:disable ImportantRule
+  border-bottom: 1px solid $mid-grey !important;
+  // scss-lint:enable ImportantRule
+  text-align: center;
 
-    &-image {
-        height: 350px;
-    }
+  &-image {
+    height: 350px;
+  }
 }

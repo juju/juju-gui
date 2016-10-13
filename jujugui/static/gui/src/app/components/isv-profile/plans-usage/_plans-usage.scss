@@ -1,38 +1,38 @@
 .isv-profile__plan-usage {
-    .d3-chart {
-        overflow: visible;
+  .d3-chart {
+    overflow: visible;
+  }
+
+  .axis {
+    path {
+      fill: none;
+      stroke: $warm-grey;
+      stroke-width: 1px;
+      shape-rendering: crispEdges;
+    }
+    
+    text {
+      font-family: unquote($base-font-family);
+      font-size: 1em;
     }
 
-    .axis {
-        path {
-            fill: none;
-            stroke: $warm-grey;
-            stroke-width: 1px;
-            shape-rendering: crispEdges;
-        }
-
-        text {
-            font-family: unquote($base-font-family);
-            font-size: 1em;
-        }
-
-        line:after {
-            content: '';
-            width: 500px;
-            height: 1px;
-            display: block;
-            background-color: $warm-grey;
-        }
+    line:after {
+      content: '';
+      width: 500px;
+      height: 1px;
+      display: block;
+      background-color: $warm-grey;
     }
+  }
 
-    .line {
-        opacity: .5;
-        stroke-width: 1;
-        fill: none;
+  .line {
+    opacity: .5;
+    stroke-width: 1;
+    fill: none;
 
-        &:hover {
-            opacity: 1;
-            stroke-width: 2;
-        }
+    &:hover {
+      opacity: 1;
+      stroke-width: 2;
     }
+  }
 }

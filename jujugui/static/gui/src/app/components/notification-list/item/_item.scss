@@ -1,120 +1,120 @@
 .notification-list-item {
-    @extend %floating-panel;
-    position: relative;
-    box-sizing: border-box;
-    min-width: $left-panel-width;
-    padding: 8px 60px 8px 20px;
-    color: $cool-grey;
-    margin-top: 10px;
-    opacity: 0;
-    line-height: 1.6;
-    list-style: none;
+  @extend %floating-panel;
+  position: relative;
+  box-sizing: border-box;
+  min-width: $left-panel-width;
+  padding: 8px 60px 8px 20px;
+  color: $cool-grey;
+  margin-top: 10px;
+  opacity: 0;
+  line-height: 1.6;
+  list-style: none;
 
-    &--error {
-        background-color: $error;
-        color: $white;
+  &--error {
+    background-color: $error;
+    color: $white;
 
-        .notification-list-item__hide .svg-icon {
-            stroke: $white;
+    .notification-list-item__hide .svg-icon {
+      stroke: $white;
 
-            &:focus,
-            &:active,
-            &:hover {
-                stroke: rgba(255, 255, 255, 0.6);
-            }
-        }
+      &:focus,
+      &:active,
+      &:hover {
+        stroke: rgba(255, 255, 255, .6);
+      }
     }
+  }
 
-    &--visible {
+  &--visible {
+    opacity: 1;
+    animation-duration: .6s;
+    animation-name: fadeInNotificationListItem;
+    animation-fill-mode: forwards;
+
+    @keyframes fadeInNotificationListItem {
+      0% {
+        height: 0;
+        opacity: 0;
+        margin-top: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        line-height: 0;
+      }
+
+      50% {
+        height: auto;
+        opacity: 0;
+        margin-top: 10px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        line-height: 1.6;
+      }
+
+      100% {
+        height: auto;
         opacity: 1;
-        animation-duration: 0.6s;
-        animation-name: fadeInNotificationListItem;
-        animation-fill-mode: forwards;
-
-        @keyframes fadeInNotificationListItem {
-            0% {
-                height: 0;
-                opacity: 0;
-                margin-top: 0;
-                padding-top: 0;
-                padding-bottom: 0;
-                line-height: 0;
-            }
-
-            50% {
-                height: auto;
-                opacity: 0;
-                margin-top: 10px;
-                padding-top: 8px;
-                padding-bottom: 8px;
-                line-height: 1.6;
-            }
-
-            100% {
-                height: auto;
-                opacity: 1;
-                margin-top: 10px;
-                padding-top: 8px;
-                padding-bottom: 8px;
-                line-height: 1.6;
-            }
-        }
+        margin-top: 10px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        line-height: 1.6;
+      }
     }
+  }
 
-    &--hidden {
-        overflow: hidden;
-        // Note that this animation timing is closely coupled to a timeout in
-        // notification JS, so don't change one without changing the other.
-        animation-duration: 0.6s;
-        animation-name: fadeOutNotificationListItem;
-        animation-fill-mode: forwards;
+  &--hidden {
+    overflow: hidden;
+    // Note that this animation timing is closely coupled to a timeout in
+    // notification JS, so don't change one without changing the other.
+    animation-duration: .6s;
+    animation-name: fadeOutNotificationListItem;
+    animation-fill-mode: forwards;
 
-        @keyframes fadeOutNotificationListItem {
-            0% {
-                height: auto;
-                opacity: 1;
-                margin-top: 10px;
-                padding-top: 8px;
-                padding-bottom: 8px;
-                line-height: 1.6;
-            }
+    @keyframes fadeOutNotificationListItem {
+      0% {
+        height: auto;
+        opacity: 1;
+        margin-top: 10px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        line-height: 1.6;
+      }
 
-            50% {
-                height: auto;
-                opacity: 0;
-                margin-top: 10px;
-                padding-top: 8px;
-                padding-bottom: 8px;
-                line-height: 1.6;
-            }
+      50% {
+        height: auto;
+        opacity: 0;
+        margin-top: 10px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        line-height: 1.6;
+      }
 
-            100% {
-                height: 0;
-                opacity: 0;
-                margin-top: 0;
-                padding-top: 0;
-                padding-bottom: 0;
-                line-height: 0;
-            }
-        }
+      100% {
+        height: 0;
+        opacity: 0;
+        margin-top: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        line-height: 0;
+      }
     }
+  }
 
-    &__hide {
-        display: block;
-        position: absolute;
-        top: 10px;
-        right: 20px;
-        cursor: pointer;
+  &__hide {
+    display: block;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+
+    .svg-icon {
+      transition: stroke .3s;
+      stroke: $cool-grey;
+
+      &:focus,
+      &:active,
+      &:hover {
+        stroke: rgba(51, 51, 51, .6);
+      }
     }
-
-    &__hide .svg-icon {
-        transition: stroke 0.3s;
-        stroke: $cool-grey;
-
-        &:focus,
-        &:active,
-        &:hover {
-            stroke: rgba(51, 51, 51, 0.6);
-        }
-    }
+  }
 }

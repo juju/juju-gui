@@ -1,75 +1,77 @@
+$user-profile-header-avatar-background: #28a3ea;
+
 .user-profile-header {
-    padding: 20px 0;
-    border-bottom: 1px solid $mid-grey;
+  padding: 20px 0;
+  border-bottom: 1px solid $mid-grey;
 
-    &__avatar {
-        $size: 96px;
-        float: left;
-        width: $size;
-        height: $size;
-        margin-right: 20px;
-        border-radius: 50%;
+  &__avatar {
+    $size: 96px;
+    float: left;
+    width: $size;
+    height: $size;
+    margin-right: 20px;
+    border-radius: 50%;
 
-        &--default {
-            display: block;
-            overflow: hidden;
-            position: relative;
-            background-color: #28a3ea;
+    &--default {
+      display: block;
+      overflow: hidden;
+      position: relative;
+      background-color: $user-profile-header-avatar-background;
 
-            .avatar-overlay {
-                position: absolute;
-                left: -20px;
-                top: 20px;
-            }
+      .avatar-overlay {
+        position: absolute;
+        left: -20px;
+        top: 20px;
+      }
 
-            .avatar-overlay:after,
-            .avatar-overlay:before {
-                content: '';
-                position: absolute;
-                width: 300px;
-                height: 300px;
-                background-color: #000;
-                opacity: .2;
-            }
+      .avatar-overlay:after,
+      .avatar-overlay:before {
+        content: '';
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background-color: $black;
+        opacity: .2;
+      }
 
-            .avatar-overlay:before {
-                left: -210px;
-                transform: rotate(-45deg);
-            }
+      .avatar-overlay:before {
+        left: -210px;
+        transform: rotate(-45deg);
+      }
 
-            .avatar-overlay:after {
-                left: 10px;
-                transform: rotate(45deg);
-            }
-        }
+      .avatar-overlay:after {
+        left: 10px;
+        transform: rotate(45deg);
+      }
+    }
+  }
+
+  &__username {
+    $size: 45px;
+    padding: 10px 0;
+    font-size: $size;
+    line-height: $size;
+  }
+
+  &__links {
+    @extend %list-style;
+  }
+
+  &__link {
+    float: left;
+    margin-right: 20px;
+
+    &--is-link {
+      @extend %link;
     }
 
-    &__username {
-        $size: 45px;
-        padding: 10px 0;
-        font-size: $size;
-        line-height: $size;
+    &--light {
+      color: $warm-grey;
     }
+  }
 
-    &__links {
-        @extend %list-style;
-    }
-
-    &__link {
-        float: left;
-        margin-right: 20px;
-
-        &--is-link {
-            @extend %link;
-        }
-
-        &--light {
-            color: $warm-grey;
-        }
-    }
-
-    .button--inline-neutral {
-        float: right;
-        margin-top: 50px;
-    }
+  .button--inline-neutral {
+    float: right;
+    margin-top: 50px;
+  }
 }

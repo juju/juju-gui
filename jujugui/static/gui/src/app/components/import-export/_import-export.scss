@@ -1,6 +1,8 @@
+// scss-lint:disable IdSelector
 #import-export-container {
   float: left;
 }
+// scss-lint:enable IdSelector
 
 .import-export {
   margin-left: 10px;
@@ -15,8 +17,10 @@
     background-color: $canvas-background;
 
     &:hover {
-        background-color: $white;
-        color: $ubuntu-orange !important;
+      background-color: $white;
+      // scss-lint:disable ImportantRule
+      color: $ubuntu-orange !important;
+      // scss-lint:disable ImportantRule
     }
   }
 
@@ -30,11 +34,11 @@
   }
 
   &__file {
-      position: absolute;
-      top: -99999;
-      display: block;
-      visibility: hidden;
-      width: 0;
+    position: absolute;
+    top: -99999;
+    display: block;
+    visibility: hidden;
+    width: 0;
   }
 
   &--initial &__export {

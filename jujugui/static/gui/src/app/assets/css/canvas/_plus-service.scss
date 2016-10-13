@@ -1,41 +1,45 @@
 .plus-service {
-    cursor: pointer;
-    transition: opacity 0.4s ease;
+  cursor: pointer;
+  transition: opacity .4s ease;
 
-    &.fade {
-        visibility: visible;
-        stroke-opacity: .2;
-        opacity: .2;
+  &.fade {
+    opacity: .2;
+    stroke-opacity: .2;
+    visibility: visible;
+  }
+
+  &.included-plus {
+    display: none;
+
+    &.show {
+      display: block;
+    }
+  }
+
+  &__halo {
+    opacity: 0;
+    // scss-lint:disable PropertySpelling
+    r: 60;
+    // scss-lint:enable PropertySpelling
+    transition: all .3s;
+  }
+
+  &__plus-circle {
+    fill: $success;
+  }
+
+  &:focus,
+  &:active,
+  &:hover {
+    .plus-service__halo {
+      opacity: 1;
+      // scss-lint:disable PropertySpelling
+      r: 80;
+      // scss-lint:enable PropertySpelling
     }
 
-    &.included-plus {
-        display: none;
-
-        &.show {
-            display: block;
-        }
+    .plus-service__inner-circle {
+      fill: $white;
     }
-
-    &__halo {
-        transition: all .3s;
-        opacity: 0;
-        r: 60;
-    }
-
-    &__plus-circle {
-        fill: $success;
-    }
-
-    &:focus,
-    &:active,
-    &:hover {
-        .plus-service__halo {
-            r: 80;
-            opacity: 1;
-        }
-
-        .plus-service__inner-circle {
-            fill: $white;
-        }
-    }
+  }
 }

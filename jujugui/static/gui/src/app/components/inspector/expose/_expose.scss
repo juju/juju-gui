@@ -1,21 +1,21 @@
 .inspector-expose {
-    @extend %scroll-children;
+  @extend %scroll-children;
 
-    &__control {
-        @extend %fade-in;
-    }
+  &__control {
+    @extend %fade-in;
+  }
 
-    &__warning {
-        @extend %fade-in;
-        margin: 5px 20px 20px;
-        font-size: .875em;
-    }
-
-    &__units {
-        @extend %collapse-children;
-        margin: 0;
-        border-bottom: 1px solid $mid-grey;
-        border-top: 1px solid $mid-grey;
-        list-style: none;
-    }
+  &__warning {
+    @extend %fade-in;
+    margin: 5px 20px 20px;
+    font-size: .875em;
+  }
+  
+  &__units {
+    @extend %collapse-children;
+    margin: 0;
+    border-bottom: 1px solid $mid-grey;
+    border-top: 1px solid $mid-grey;
+    list-style: none;
+  }
 }

@@ -1,66 +1,66 @@
 .machine-view__column {
-    @extend %scroll-children;
-    overflow-y: hidden;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    flex: 1 0 33.333%;
-    border-left: 1px dotted $mid-grey;
+  @extend %scroll-children;
+  overflow-y: hidden;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 33.333%;
+  border-left: 1px dotted $mid-grey;
 
-    &:first-child {
-        padding-left: 0;
-        border-left: none;
+  &:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  &:last-child {
+    padding-right: 0;
+  }
+
+  &--overlap {
+    z-index: 1;
+    // Overlap the right border so that the selected machine token
+    // can overlay the column border.
+    margin-right: -1px;
+  }
+
+  &-content {
+    @extend %collapse-children;
+    padding: 20px;
+  }
+
+  &-onboarding {
+    padding: 0 10px 20px;
+
+    .svg-icon {
+      margin-right: 7px;
+      vertical-align: top;
     }
 
-    &:last-child {
-        padding-right: 0;
+    ul {
+      padding-left: 10px;
+      list-style-position: inside;
     }
+  }
 
-    &--overlap {
-        z-index: 1;
-        // Overlap the right border so that the selected machine token
-        // can overlay the column border.
-        margin-right: -1px;
+  &-drop-target {
+    $height: 95px;
+    display: none;
+    height: $height;
+    background-color: $canvas-background;
+    border: 1px dashed $mid-grey;
+    line-height: $height;
+    text-align: center;
+
+    .svg-icon {
+      fill: $ubuntu-orange;
     }
+  }
 
-    &-content {
-        @extend %collapse-children;
-        padding: 20px;
-    }
+  &--droppable &-drop-target {
+    display: block;
+  }
 
-    &-onboarding {
-        padding: 0 10px 20px 10px;
-
-        .svg-icon {
-            margin-right: 7px;
-            vertical-align: top;
-        }
-
-        ul {
-            padding-left: 10px;
-            list-style-position: inside;
-        }
-    }
-
-    &-drop-target {
-        $height: 95px;
-        display: none;
-        height: $height;
-        background-color: $canvas-background;
-        border: 1px dashed $mid-grey;
-        line-height: $height;
-        text-align: center;
-
-        .svg-icon {
-            fill: $ubuntu-orange;
-        }
-    }
-
-    &--droppable &-drop-target {
-        display: block;
-    }
-
-    &--drop &-drop-target {
-        background-color: rgba(255, 255, 255, 0.9);
-    }
+  &--drop &-drop-target {
+    background-color: rgba(255, 255, 255, .9);
+  }
 }

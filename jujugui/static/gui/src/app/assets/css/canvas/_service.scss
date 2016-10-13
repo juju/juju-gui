@@ -1,216 +1,230 @@
-g.service {
-   @extend .visibility-classes;
-   fill: none;
-   stroke: none;
-   cursor: pointer;
+.service {
+  // scss-lint:disable PlaceholderInExtend
+  @extend .visibility-classes;
+  // scss-lint:enable PlaceholderInExtend
+  cursor: pointer;
+  fill: none;
+  stroke: none;
 
-   .service-block {
-      transition: all .3s;
-   }
+  .service-block {
+    transition: all .3s;
+  }
 
-   .relation-button {
-      transition: transform .3s;
-      transform: translate(95px, 30px);
+  .relation-button {
+    transform: translate(95px, 30px);
+    transition: transform .3s;
 
-      &__link {
-         cursor: pointer;
+    &__image {
+      pointer-events: none;
+    }
+  }
 
-         &:focus,
-         &:active,
-         &:hover {
-            fill: $white;
-         }
-      }
+  .relation-button__link {
+    cursor: pointer;
 
-      &__image {
-         pointer-events: none;
-      }
-   }
+    &:focus,
+    &:active,
+    &:hover {
+      fill: $white;
+    }
+  }
 
-   &.highlight {
-      .service-block {
-         fill: #fff;
-      }
-   }
+  &.highlight {
+    .service-block {
+      fill: $white;
+    }
+  }
 
-   &.is-erroring {
-      .service-block {
-         stroke: #ed3146;
-         stroke-width: 3;
-      }
-   }
+  &.is-erroring {
+    .service-block {
+      stroke: $service-erroring;
+      stroke-width: 3;
+    }
+  }
 
-   &.is-pending {
-      .service-block {
-         stroke: #f99b0f;
-         stroke-width: 3;
-      }
-   }
+  &.is-pending {
+    .service-block {
+      stroke: $service-pending;
+      stroke-width: 3;
+    }
+  }
 
-   &.is-running {
-      .service-block {
-         stroke: #888888;
-         stroke-width: 1;
-      }
-   }
+  &.is-running {
+    .service-block {
+      stroke: $warm-grey;
+      stroke-width: 1;
+    }
+  }
 
-   &.is-exposed {
-      .service-block {
-         stroke-width: 4;
-      }
-   }
+  &.is-exposed {
+    .service-block {
+      stroke-width: 4;
+    }
+  }
 
-   .service-block__halo {
-      transition: all .3s;
-      opacity: 0;
-      r: 90;
-   }
+  .service-block__halo {
+    opacity: 0;
+    // scss-lint:disable PropertySpelling
+    r: 90;
+    // scss-lint:enable PropertySpelling
+    transition: all .3s;
+  }
 
-   .service-block {
-      transition: all .3s;
-   }
+  &.hover,
+  &:focus,
+  &:active,
+  &:hover {
 
-   &.hover,
-   &:focus,
-   &:active,
-   &:hover {
+    .service-block__halo {
+      opacity: 1;
+      // scss-lint:disable PropertySpelling
+      r: 110;
+      // scss-lint:enable PropertySpelling
+      stroke-width: 1;
+    }
 
+    &.is-uncommitted .service-block__halo,
+    .service-block__halo {
+      stroke: $service-uncommitted;
+    }
+
+    &.is-erroring .service-block__halo {
+      stroke: $service-erroring;
+    }
+
+    &.is-pending .service-block__halo {
+      stroke: $service-pending;
+    }
+
+    &.is-running .service-block__halo {
+      stroke: $warm-grey;
+    }
+
+    .service-block {
+      fill: $white;
+    }
+
+    .relation-button {
+      transform: translate(95px, -30px);
+    }
+  }
+
+  &.subordinate {
+    .service-block__halo {
+      // scss-lint:disable PropertySpelling
+      r: 60;
+      // scss-lint:enable PropertySpelling
+      stroke: $warm-grey;
+    }
+
+    .relation-button {
+      transform: translate(65px, 30px);
+    }
+
+    // scss-lint:disable NestingDepth
+    &.hover,
+    &:focus,
+    &:active,
+    &:hover {
       .service-block__halo {
-         opacity: 1;
-         r: 110;
-         stroke-width: 1;
-      }
-
-      &.is-uncommitted .service-block__halo,
-      .service-block__halo {
-         stroke: #19b6ee;
-      }
-
-      &.is-erroring .service-block__halo {
-         stroke: #ed3146;
-      }
-
-      &.is-pending .service-block__halo {
-         stroke: #f99b0f;
-      }
-
-      &.is-running .service-block__halo {
-         stroke: #888888;
-      }
-
-      .service-block {
-         fill: $white;
+        // scss-lint:disable PropertySpelling
+        r: 80;
+        // scss-lint:enable PropertySpelling
       }
 
       .relation-button {
-         transform: translate(95px, -30px);
+        transform: translate(65px, -30px);
       }
-   }
+    }
+    // scss-lint:enable NestingDepth
 
-   &.subordinate {
+    .sub-rel-count {
+      fill: $warm-grey;
+    }
+  }
+
+  &.is-selected {
+    .service-block__halo {
+      -webkit-animation: serviceBlockHaloSelected 1s alternate;
+      animation: serviceBlockHaloSelected 1s alternate;
+      fill: $service-uncommitted;
+      opacity: .3;
+      // scss-lint:disable PropertySpelling
+      r: 110;
+      // scss-lint:enable PropertySpelling
+      stroke-width: 0;
+    }
+
+    .relation-button {
+      transform: translate(95px, -30px);
+    }
+
+    &.is-erroring .service-block__halo {
+      fill: $service-erroring;
+    }
+
+    &.is-pending .service-block__halo {
+      fill: $service-pending;
+    }
+
+    &.is-running .service-block__halo {
+      fill: $warm-grey;
+    }
+
+    &.subordinate {
+      // scss-lint:disable NestingDepth
       .service-block__halo {
-         r: 60;
-         stroke: #888888;
+        fill: $warm-grey;
+        // scss-lint:disable PropertySpelling
+        r: 80;
+        // scss-lint:enable PropertySpelling
       }
 
       .relation-button {
-         transform: translate(65px, 30px);
+        transform: translate(65px, -30px);
       }
+      // scss-lint:enable NestingDepth
+    }
 
-      &.hover,
-      &:focus,
-      &:active,
-      &:hover {
-         .service-block__halo {
-            r: 80;
-         }
+    .service-block {
+      fill: $white;
+    }
 
-         .relation-button {
-            transform: translate(65px, -30px);
-         }
-      }
-
-      .sub-rel-count {
-         fill: $warm-grey;
-      }
-   }
-
-   &.is-selected {
-      .service-block__halo {
-         -webkit-animation: serviceBlockHaloSelected 1s alternate;
-         animation: serviceBlockHaloSelected 1s alternate;
-         opacity: .3;
-         r: 110;
-         stroke-width: 0;
-         fill: #19b6ee;
-      }
-
-      .relation-button {
-         transform: translate(95px, -30px);
-      }
-
-      &.is-erroring .service-block__halo {
-         fill: #ed3146;
-      }
-
-      &.is-pending .service-block__halo {
-         fill: #f99b0f;
-      }
-
-      &.is-running .service-block__halo {
-         fill: #888888;
-      }
-
-      &.subordinate {
-         .service-block__halo {
-            r: 80;
-            fill: #888888;
-         }
-
-         .relation-button {
-            transform: translate(65px, -30px);
-         }
-      }
-
-      .service-block {
-         fill: $white;
-      }
-
-      @-webkit-keyframes serviceBlockHaloSelected {
-         0% { opacity: 0 }
-         100% { opacity: .3 }
-      }
-      @keyframes serviceBlockHaloSelected {
-         0% { opacity: 0 }
-         100% { opacity: .3 }
-      }
-   }
+    @-webkit-keyframes serviceBlockHaloSelected {
+      0% { opacity: 0; }
+      100% { opacity: .3; }
+    }
+    @keyframes serviceBlockHaloSelected {
+      0% { opacity: 0; }
+      100% { opacity: .3; }
+    }
+  }
 }
 
 // Hide all relation buttons from relation when dragging
 .drag-relation-group ~ .service .relation-button {
-   transition: none !important;
-   transform: translate(95px, 30px) !important;
+  // scss-lint:disable ImportantRule
+  transform: translate(95px, 30px) !important;
+  transition: none !important;
+  // scss-lint:enable ImportantRule
 }
 
 .visibility-classes {
-    transition: opacity .4s ease;
+  transition: opacity .4s ease;
 
-    &.show {
-        opacity: 1;
-    }
+  &.show {
+    opacity: 1;
+  }
 
-    &.fade {
-        opacity: .3;
-    }
+  &.fade {
+    opacity: .3;
+  }
 
-    &.hide {
-        /*
-          Put visibility on a delay so it gets hidden after the opacity is
-          finished transitioning.
-        */
-        transition: visibility 0s linear 0.4s, opacity 0.4s ease;
-        opacity: 0;
-        visibility: hidden;
-    }
+  &.hide {
+    // Put visibility on a delay so it gets hidden after the opacity is
+    // finished transitioning.
+    opacity: 0;
+    transition: visibility 0s linear .4s, opacity .4s ease;
+    visibility: hidden;
+  }
 }

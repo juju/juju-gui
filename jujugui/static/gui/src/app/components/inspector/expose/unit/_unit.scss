@@ -1,36 +1,36 @@
 .inspector-expose__unit {
-    @extend %stagger-fade-in;
-    padding: 10px 20px;
-    border-bottom: 1px solid $mid-grey;
-    cursor: pointer;
+  @extend %stagger-fade-in;
+  padding: 10px 20px;
+  border-bottom: 1px solid $mid-grey;
+  cursor: pointer;
 
-    &:focus,
-    &:active,
-    &:hover {
-        background-color: $hover-background;
-    }
+  &:focus,
+  &:active,
+  &:hover {
+    background-color: $hover-background;
+  }
+
+  &:last-child {
+    border: 0;
+  }
+
+  &-detail {
+    margin-bottom: 10px;
 
     &:last-child {
-        border: none;
+      margin-bottom: 0;
+      font-size: .875em;
     }
+  }
 
-    &-detail {
-        margin-bottom: 10px;
+  &-list {
+    list-style: none;
+    margin: 0;
+  }
 
-        &:last-child {
-            margin-bottom: 0;
-            font-size: .875em;
-        }
-    }
-
-    &-list {
-      list-style: none;
-      margin: 0;
-    }
-
-    a:focus,
-    a:active,
-    a:hover {
-        text-decoration: underline;
-    }
+  a:focus,
+  a:active,
+  a:hover {
+    text-decoration: underline;
+  }
 }

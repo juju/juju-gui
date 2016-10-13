@@ -1,28 +1,28 @@
 .local-inspector {
-    &__section {
-        padding: 0 20px 10px 20px;
+  &__section {
+    padding: 0 20px 10px;
+  }
+
+  p {
+    margin-bottom: 0;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 15px 0 0;
+
+    input {
+      margin-right: 15px;
+      vertical-align: middle;
     }
 
-    p {
-        margin-bottom: 0;
+    label {
+      padding: 8px 0;
     }
+  }
 
-    &__list {
-        list-style: none;
-        margin: 15px 0 0 0;
-
-        input {
-            margin-right: 15px;
-            vertical-align: middle;
-        }
-
-        label {
-            padding: 8px 0;
-        }
-    }
-
-    &__series {
-        margin-top: 20px;
-        max-width: 250px;
-    }
+  &__series {
+    margin-top: 20px;
+    max-width: 250px;
+  }
 }

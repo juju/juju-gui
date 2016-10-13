@@ -1,6 +1,8 @@
 @media only screen and (max-width: 600px) {
   // Hide canvas on small screens
+  // scss-lint:disable IdSelector
   #viewport {
+  // scss-lint:enable IdSelector
     display: none;
   }
 
@@ -119,7 +121,7 @@
     margin-bottom: 20px;
   }
 
-   // Deployment bar
+  // Deployment bar
   .panel-component.deployment-bar-panel {
     bottom: 20px;
 
@@ -235,7 +237,9 @@
   }
 
   // Import and export
+  // scss-lint:disable IdSelector
   #import-export-container {
+  // scss-lint:enable IdSelector
     bottom: 25px;
     left: 10px;
     position: fixed;

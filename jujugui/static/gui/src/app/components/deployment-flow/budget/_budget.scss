@@ -1,21 +1,21 @@
 .deployment-budget {
-    &__loading {
-        text-align: center;
+  &__loading {
+    text-align: center;
+  }
+
+  &__form {
+    margin-top: 20px;
+    margin-bottom: 0;
+  }
+
+  &__increase {
+    &-button {
+      display: inline-block;
+      margin-top: 10px;
     }
 
-    &__form {
-        margin-top: 20px;
-        margin-bottom: 0;
+    &-form {
+      padding: 20px;
     }
-
-    &__increase {
-        &-button {
-            display: inline-block;
-            margin-top: 10px;
-        }
-
-        &-form {
-            padding: 20px;
-        }
-    }
+  }
 }

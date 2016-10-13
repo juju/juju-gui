@@ -1,84 +1,84 @@
 .check-list-item {
-    @extend %stagger-fade-in;
-    height: 48px;
+  @extend %stagger-fade-in;
+  height: 48px;
 
-    &:focus,
-    &:active,
-    &:hover {
-        background-color: $hover-background;
-        cursor: pointer;
-
-        label {
-            cursor: pointer;
-        }
-    }
-
-    input[type=checkbox] {
-        margin-right: 15px;
-        cursor: pointer;
-    }
+  &:focus,
+  &:active,
+  &:hover {
+    background-color: $hover-background;
+    cursor: pointer;
 
     label {
-        padding: 11px 20px 11px 20px;
+      cursor: pointer;
+    }
+  }
+
+  [type=checkbox] {
+    margin-right: 15px;
+    cursor: pointer;
+  }
+
+  label {
+    padding: 11px 20px;
+  }
+
+  &--nav:hover {
+    label {
+      text-decoration: underline;
+    }
+  }
+
+  &--select-all {
+    border-top: 1px solid $mid-grey;
+
+    &:first-child {
+      border-top: 0;
+    }
+  }
+
+  &--extra-info {
+    .check-list-item__label {
+      position: relative;
+      top: -7px;
     }
 
-    &--nav:hover {
-        label {
-            text-decoration: underline;
-        }
+    .check-list-item__extra-info {
+      position: relative;
+      top: -14px;
     }
+  }
 
-    &--select-all {
-        border-top: 1px solid $mid-grey;
+  &__aside {
+    @include notification(transparent);
+    float: right;
+    margin-top: -3px;
+    color: $cool-grey;
+    position: relative;
+    top: 4px;
+  }
 
-        &:first-child {
-            border-top: none;
-        }
+  &__label {
+    width: 165px;
+    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    position: relative;
+    top: 4px;
+  }
+
+  &__extra-info {
+    font-size: 14px;
+    color: $warm-grey;
+    margin-left: 30px;
+    width: 210px;
+    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    &:hover {
+      text-decoration: none;
     }
-
-    &--extra-info {
-          .check-list-item__label {
-                position: relative;
-                top: -7px;
-          }
-
-          .check-list-item__extra-info {
-                position: relative;
-                top: -14px;
-          }
-    }
-
-    &__aside {
-        @include notification(transparent);
-        float: right;
-        margin-top: -3px;
-        color: $cool-grey;
-        position: relative;
-        top: 4px;
-    }
-
-    &__label {
-        width: 165px;
-        overflow: hidden;
-        display: inline-block;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        position: relative;
-        top: 4px;
-    }
-
-    &__extra-info {
-        font-size: 14px;
-        color: $warm-grey;
-        margin-left: 30px;
-        width: 210px;
-        overflow: hidden;
-        display: inline-block;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-
-        &:hover {
-            text-decoration: none;
-        }
-    }
+  }
 }

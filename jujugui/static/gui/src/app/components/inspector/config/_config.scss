@@ -1,35 +1,35 @@
 .inspector-config {
-    @extend %scroll-children;
+  @extend %scroll-children;
 
-    &__fields {
-        @extend %collapse-children;
-        border-bottom: 1px solid $mid-grey;
+  &__fields {
+    @extend %collapse-children;
+    border-bottom: 1px solid $mid-grey;
+  }
+
+  &__select {
+    margin: 10px 0 14px;
+    text-transform: capitalize;
+  }
+
+  &__series-select {
+    margin: 10px 20px 14px;
+    width: 250px;
+
+    option {
+      text-transform: capitalize;
     }
 
-    &__select {
-        margin: 10px 0 14px 0;
-        text-transform: capitalize;
+    &-description {
+      color: $cool-grey;
+      font-size: .875em;
     }
+  }
 
-    &__series-select {
-        margin: 10px 20px 14px 20px;
-        width: 250px;
+  &--no-config {
+    margin: 10px 20px 14px;
+  }
 
-        option {
-            text-transform: capitalize;
-        }
-
-        &-description {
-            color: $cool-grey;
-            font-size: 0.875em;
-        }
-    }
-
-    &--no-config {
-      margin: 10px 20px 14px 20px;
-    }
-
-    &__config-file {
-        margin: 0px 10px 0px 10px;
-    }
+  &__config-file {
+    margin: 0 10px;
+  }
 }

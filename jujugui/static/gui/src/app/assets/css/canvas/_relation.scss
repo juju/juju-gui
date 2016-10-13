@@ -1,95 +1,103 @@
+$subordinate-relation: #33c;
+$pending-relation: #faaf40;
+$pending-relation--dragging: #fa6a40;
+
 .relation {
+  stroke: rgb(167, 167, 167);
+  stroke-width: 1px;
+
+  &.error {
+    stroke: $error;
+  }
+
+  &.subordinate {
     stroke: rgb(167, 167, 167);
-    stroke-width: 1px;
+  }
 
-    &.error {
-        stroke: $error;
-    }
+  &.healthy {
+    stroke: rgb(167, 167, 167);
+  }
 
-    &.subordinate {
-        stroke: rgb(167, 167, 167);
-    }
+  &.pending {
+    stroke: $uncommitted;
+  }
 
-    &.healthy {
-        stroke: rgb(167, 167, 167);
-    }
+  &.pending-healthy,
+  &.pending-error {
+    stroke: $uncommitted;
+  }
 
-    &.pending {
-        stroke: $uncommitted;
-    }
+  &.pending-relation {
+    stroke: $uncommitted;
+  }
 
-    &.pending-healthy, &.pending-error {
-        stroke: $uncommitted;
-    }
+  &.unused {
+    visibility: hidden;
+  }
 
-    &.pending-relation {
-        stroke: $uncommitted;
-    }
-
-    &.unused {
-        visibility: hidden;
-    }
-
-    &.subordinate-relation {
-        stroke: #3333cc;
-    }
+  &.subordinate-relation {
+    stroke: $subordinate-relation;
+  }
 }
 
 .connector1,
 .connector2 {
 
-    &.error {
-        fill: $error;
-    }
+  &.error {
+    fill: $error;
+  }
 
-    &.subordinate {
-        fill: rgb(167, 167, 167);
-    }
+  &.subordinate {
+    fill: rgb(167, 167, 167);
+  }
 
-    &.healthy {
-        fill: rgb(167, 167, 167);
-    }
+  &.healthy {
+    fill: rgb(167, 167, 167);
+  }
 
-    &.pending {
-        fill: $uncommitted;
-    }
+  &.pending {
+    fill: $uncommitted;
+  }
 
-    &.pending-healthy, &.pending-error {
-        fill: $uncommitted;
-    }
+  &.pending-healthy,
+  &.pending-error {
+    fill: $uncommitted;
+  }
 
-    &.pending-relation {
-        fill: #faaf40;
+  &.pending-relation {
+    fill: $pending-relation;
 
-        &.dragging {
-            fill: #fa6a40
-        }
+    &.dragging {
+      fill: $pending-relation--dragging;
     }
+  }
 
-    &.unused {
-        visibility: hidden;
-    }
+  &.unused {
+    visibility: hidden;
+  }
 
-    &.subordinate-relation {
-        fill: #3333cc;
-    }
+  &.subordinate-relation {
+    fill: $subordinate-relation;
+  }
 }
 
 .rel-group {
-    @extend .visibility-classes;
+  // scss-lint:disable PlaceholderInExtend
+  @extend .visibility-classes;
+  // scss-lint:enable PlaceholderInExtend
 }
 
 .rel-indicator {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .dragline__indicator,
 .dragline__indicator-image {
-    opacity: 0;
-    pointer-events: none;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .dragging ~ .dragline__indicator,
 .dragging ~ .dragline__indicator-image {
-    opacity: 1;
+  opacity: 1;
 }

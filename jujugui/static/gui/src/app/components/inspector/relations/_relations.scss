@@ -1,25 +1,25 @@
 .inspector-relations {
-    &__onboarding {
-        &-description {
-            @extend %fade-in;
-            margin: 0;
-            padding: 20px 20px 0 20px;
-            font-size: 0.9em;
-            line-height: 1.5;
-        }
+  &__onboarding {
+    &-description {
+      @extend %fade-in;
+      margin: 0;
+      padding: 20px 20px 0;
+      font-size: .9em;
+      line-height: 1.5;
     }
+  }
 
-    &__list,
-    &__actions {
-        margin: 0;
-        list-style: none;
-    }
+  &__list,
+  &__actions {
+    margin: 0;
+    list-style: none;
+  }
 
-    &__message {
-        padding: 10px 20px;
-    }
+  &__message {
+    padding: 10px 20px;
+  }
 
-    &__actions {
-        border-bottom: 1px solid $mid-grey;
-    }
+  &__actions {
+    border-bottom: 1px solid $mid-grey;
+  }
 }

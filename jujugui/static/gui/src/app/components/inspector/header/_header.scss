@@ -1,52 +1,51 @@
 .inspector-header {
-    border-bottom: 1px solid $mid-grey;
-    cursor: pointer;
-    min-height: 44px;
-    padding: 10px 20px;
+  border-bottom: 1px solid $mid-grey;
+  cursor: pointer;
+  min-height: 44px;
+  padding: 10px 20px;
 
-    &__back {
-        vertical-align: middle;
-        margin-right: 15px;
+  &__back {
+    vertical-align: middle;
+    margin-right: 15px;
+  }
+
+  &__count {
+    float: right;
+  }
+
+  &--type {
+    &-error,
+    &-pending,
+    &-uncommitted {
+      color: $white;
     }
 
-    &__count {
-        float: right;
+    &-error {
+      background-color: $error;
+      border-color: $error;
     }
 
-    &--type {
-        &-error,
-        &-pending,
-        &-uncommitted {
-            color: $white;
-        }
-
-        &-error {
-            background-color: $error;
-            border-color: $error;
-        }
-
-        &-pending {
-            background-color: $pending;
-            border-color: $pending;
-        }
-
-        &-uncommitted {
-            background-color: $uncommitted;
-            border-color: $uncommitted;
-        }
+    &-pending {
+      background-color: $pending;
+      border-color: $pending;
     }
 
-    &__icon-container {
-        box-shadow: 0 0 0px 2px #fff;
-        background-color: #fff;
-        float: right;
-        border-radius: 50%;
+    &-uncommitted {
+      background-color: $uncommitted;
+      border-color: $uncommitted;
     }
+  }
 
-    &__service-icon {
-        @extend %icon--small;
-        margin-right: 16px;
-        margin-right: 0;
-        transform: scale(1.1);
-    }
+  &__icon-container {
+    box-shadow: 0 0 0 2px $white;
+    background-color: $white;
+    float: right;
+    border-radius: 50%;
+  }
+
+  &__service-icon {
+    @extend %icon--small;
+    margin-right: 0;
+    transform: scale(1.1);
+  }
 }

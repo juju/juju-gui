@@ -1,26 +1,27 @@
 .inspector-change-version {
-    @extend %scroll-children;
+  @extend %scroll-children;
 
-    &__current {
-        @extend %fade-in;
-        padding: 10px 20px;
-        border-bottom: 1px solid $mid-grey;
-        line-height: 1.5;
-    }
-    &__current-version {
-        color: $cool-grey;
-        text-decoration: underline;
-        cursor: pointer;
-    }
+  &__current {
+    @extend %fade-in;
+    padding: 10px 20px;
+    border-bottom: 1px solid $mid-grey;
+    line-height: 1.5;
+  }
+  
+  &__current-version {
+    color: $cool-grey;
+    text-decoration: underline;
+    cursor: pointer;
+  }
 
-    &__versions {
-        @extend %collapse-children;
-        border-bottom: 1px solid $mid-grey;
-        margin: 0;
-        list-style: none;
-    }
+  &__versions {
+    @extend %collapse-children;
+    border-bottom: 1px solid $mid-grey;
+    margin: 0;
+    list-style: none;
+  }
 
-    &__none {
-        padding: 20px;
-    }
+  &__none {
+    padding: 20px;
+  }
 }
