@@ -473,7 +473,8 @@ YUI.add('juju-env-base', function(Y) {
 
       @method setCredentials
       @param {Object} The credentials to store.
-        Possible properties { user, password, macaroons, external }.
+        Possible properties
+          { user: string, password: string, macaroons: object, external: any }.
         The user must be a user name, not a user tag.
       @return {undefined} Stores data only.
     */
