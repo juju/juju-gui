@@ -23,9 +23,11 @@ YUI.add('user-profile', function() {
   juju.components.UserProfile = React.createClass({
     propTypes: {
       acl: React.PropTypes.object,
+      addNotification: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
       currentModel: React.PropTypes.string,
+      destroyModels: React.PropTypes.func.isRequired,
       getAgreements: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       interactiveLogin: React.PropTypes.bool,
@@ -82,9 +84,11 @@ YUI.add('user-profile', function() {
       const lists = [
         <juju.components.UserProfileModelList
           acl={props.acl}
+          addNotification={props.addNotification}
           key='modelList'
           ref='modelList'
           currentModel={props.currentModel}
+          destroyModels={props.destroyModels}
           listModelsWithInfo={props.listModelsWithInfo}
           switchModel={props.switchModel}
           user={props.user} />,
