@@ -190,12 +190,19 @@ YUI.add('deployment-credential', function() {
     _generateRegions: function() {
       let regions = !this.props.editable ? [{name: this.props.region}] :
         this.props.cloud.regions;
-      return regions.map(region => {
+      // Setup the default option.
+      const defaultValue = [
+        {label: 'Default', value: ''}
+      ];
+      // Setup each region option.
+      const regionValues = regions.map(region => {
         return {
           label: region.name,
           value: region.name
         };
       });
+      // Return the default option + the regions.
+      return defaultValue.concat(regionValues);
     },
 
     /**

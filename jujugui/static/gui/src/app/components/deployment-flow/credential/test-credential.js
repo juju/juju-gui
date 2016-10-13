@@ -166,10 +166,10 @@ describe('DeploymentCredential', function() {
                 disabled={true}
                 label="Region"
                 onChange={setRegion}
-                options={[{
-                  label: 'north-north-west',
-                  value: 'north-north-west'
-                }]}
+                options={[
+                  {label: 'Default', value: ''},
+                  {label: 'north-north-west', value: 'north-north-west'}
+                ]}
                 value="north-north-west" />
             </div>
           </form>
@@ -272,10 +272,10 @@ describe('DeploymentCredential', function() {
                 disabled={false}
                 label="Region"
                 onChange={setRegion}
-                options={[{
-                  label: 'test-region',
-                  value: 'test-region'
-                }]}
+                options={[
+                  {label: 'Default', value: ''},
+                  {label: 'test-region', value: 'test-region'}
+                ]}
                 value={undefined} />
             </div>
           </form>
@@ -384,10 +384,10 @@ describe('DeploymentCredential', function() {
                 disabled={true}
                 label="Region"
                 onChange={setRegion}
-                options={[{
-                  label: 'test-region',
-                  value: 'test-region'
-                }]}
+                options={[
+                  {label: 'Default', value: ''},
+                  {label: 'test-region', value: 'test-region'}
+                ]}
                 value={undefined} />
             </div>
           </form>
