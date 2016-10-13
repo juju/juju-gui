@@ -101,6 +101,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(setItemValue, {credentials: Y.JSON.stringify(value)});
       var creds = env.getCredentials();
       assert.strictEqual(creds.areAvailable, true);
+      assert.strictEqual(creds.areExternal, false);
       assert.strictEqual(creds.user, 'foo@local');
       assert.strictEqual(creds.password, 'kumquat');
       assert.deepEqual(creds.macaroons, ['macaroon']);
@@ -109,6 +110,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(setItemValue, {credentials: 'null'});
       creds = env.getCredentials();
       assert.strictEqual(creds.areAvailable, false);
+      assert.strictEqual(creds.areExternal, false);
       assert.strictEqual(creds.user, '');
       assert.strictEqual(creds.password, '');
       assert.strictEqual(creds.macaroons, null);
@@ -117,6 +119,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.strictEqual(env.getCredentials().areAvailable, true);
       env.setCredentials({user: 'foo', password: 'kumquat'});
       assert.strictEqual(env.getCredentials().areAvailable, true);
+      env.setCredentials({external: 'foo'});
+      assert.strictEqual(env.getCredentials().areExternal, true);
       // Clean up.
       environments.sessionStorage = original;
     });

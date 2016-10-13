@@ -478,6 +478,8 @@ describe('Bakery', function() {
         var getCalled = 0, getSuccess = false;
         bakery.webhandler.sendGetRequest = function (path, headers, query, d,
                                                      e, f, completed) {
+
+          assert.deepEqual(headers, {'Content-Type': 'application/json'});
           getCalled++;
           getSuccess = (path == '/mywaiturl');
 
