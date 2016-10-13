@@ -469,14 +469,15 @@ YUI.add('juju-env-base', function(Y) {
     },
 
     /**
-     * Store the user's credentials in session storage.
-     *
-     * @method setCredentials
-     * @param {Object} The credentials to store, with a "user" and a "password"
-     *   attribute included, or with a "macaroons" attribute, depending on the
-     *   method used to log in. The user must be a user name, not a user tag.
-     * @return {undefined} Stores data only.
-     */
+      Store the user's credentials in session storage.
+
+      @method setCredentials
+      @param {Object} The credentials to store.
+        Possible properties
+          { user: string, password: string, macaroons: object, external: any }.
+        The user must be a user name, not a user tag.
+      @return {undefined} Stores data only.
+    */
     setCredentials: function(credentials) {
       module.sessionStorage.setItem(
           'credentials', Y.JSON.stringify(credentials));
@@ -521,7 +522,15 @@ YUI.add('juju-env-base', function(Y) {
            *   macaroons are set.
            */
           get: function() {
-            return !!((this.user && this.password) || this.macaroons);
+            const creds = !!((this.user && this.password) || this.macaroons);
+            // In typical deploys this is sufficient however in HJC or when
+            // external auth values are provided we have to be more resilient.
+            return creds || this.areExternal;
+          }
+        },
+        areExternal: {
+          get: function() {
+            return !!(this.external);
           }
         }
       });

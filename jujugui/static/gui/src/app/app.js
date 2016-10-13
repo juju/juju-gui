@@ -714,8 +714,9 @@ YUI.add('juju-gui', function(Y) {
         we're in a legacy juju model and no controllerAPI instance was supplied.
     */
     setUpControllerAPI: function(controllerAPI, user, password, macaroons) {
+      const external = this._getAuth();
       controllerAPI.setAttrs({ user, password });
-      controllerAPI.setCredentials({ user, password, macaroons });
+      controllerAPI.setCredentials({ user, password, macaroons, external });
 
       controllerAPI.after('login', evt => {
         if (evt.err) {
@@ -777,15 +778,15 @@ YUI.add('juju-gui', function(Y) {
           // reconnection.
           return;
         }
-        const credentials = this.controllerAPI.getCredentials();
-        if (!credentials.areAvailable && !this.get('gisf')) {
+        const creds = this.controllerAPI.getCredentials();
+        if (!creds.areAvailable && !this.get('gisf')) {
           this._displayLogin();
           return;
         }
-        // If we're in a JIMM controlled environment or if we have macaroon
-        // credentials then use the macaroon login. If not then uses the
-        // standard u/p method.
-        if (this.get('gisf') || credentials.macaroons) {
+        // If we're in a JIMM controlled environment, HJC, or if we have
+        // macaroon credentials then use the macaroon login. If not then uses
+        // the standard u/p method.
+        if (this.get('gisf') || creds.macaroons || creds.areExternal) {
           this.loginToAPIs(null, true, [this.controllerAPI]);
         } else {
           this.loginToAPIs(null, false, [this.controllerAPI]);
@@ -850,7 +851,7 @@ YUI.add('juju-gui', function(Y) {
             console.log(`logging into ${api.name} with macaroons`);
             api.loginWithMacaroon(new Y.juju.environments.web.Bakery({
               webhandler: new Y.juju.environments.web.WebHandler(),
-              interactive: true,
+              interactive: this.get('interactiveLogin'),
               serviceName: 'juju',
               dischargeStore: window.localStorage,
               dischargeToken: window.juju_config.dischargeToken
@@ -2560,6 +2561,11 @@ YUI.add('juju-gui', function(Y) {
     _getAuth: function() {
       var externalAuth = this.get('auth');
       if (externalAuth) {
+        if (externalAuth.user) {
+          // When HJC supplies an external auth it's possible that the name is
+          // stored in a nested user object.
+          externalAuth.usernameDisplay = externalAuth.user.name;
+        }
         return externalAuth;
       }
       var users = this.get('users');
@@ -2649,7 +2655,7 @@ YUI.add('juju-gui', function(Y) {
        @type {Boolean}
        @default false
        */
-      interactiveLogin: {value: false},
+      interactiveLogin: { value: true },
 
       /**
        The address for the environment's state-server. Used for websocket

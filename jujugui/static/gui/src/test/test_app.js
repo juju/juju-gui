@@ -1641,9 +1641,13 @@ describe('App', function() {
     });
 
     it('uses external auth if present', function() {
-      app.set('auth', 'baz');
+      app.set('auth', {user: {name: 'bark'}});
       app.set('users', {foo: 'bar'});
-      assert.equal(app._getAuth(), 'baz');
+      assert.deepEqual(
+        app._getAuth(), {
+          usernameDisplay: 'bark',
+          user: {name: 'bark'}
+        });
     });
 
     it('does not break when auth is not set', function() {
