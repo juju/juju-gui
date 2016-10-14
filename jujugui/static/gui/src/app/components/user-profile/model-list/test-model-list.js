@@ -180,8 +180,10 @@ describe('UserProfileModelList', () => {
         user={user} />, true);
     const output = component.getRenderOutput();
     const content = output.props.children[1].props.children[1][0];
+    const classes = 'expanding-row twelve-col user-profile__entity'
+                     + ' user-profile__list-row';
     const expected = (
-      <li className="user-profile__entity user-profile__list-row"
+      <li className={classes}
         key="model1">
         {'spinach/sandbox'} is being destroyed.
       </li>);

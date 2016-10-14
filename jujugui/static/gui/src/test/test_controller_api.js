@@ -652,6 +652,33 @@ describe('Controller API', function() {
       });
     });
 
+    it('detects controller models', done => {
+      // Perform the request.
+      const id = '5bea955d-7a43-47d3-89dd-b02c923e';
+      controllerAPI.modelInfo([id], (err, models) => {
+        const result = models[0];
+        assert.strictEqual(result.isAdmin, true, 'unexpected regular model');
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {
+          results: [{
+            result: {
+              'default-series': 'trusty',
+              name: 'controller',
+              'provider-type': 'lxd',
+              uuid: '5bea955d-7a43-47d3-89dd-b02c923e',
+              'controller-uuid': '5bea955d-7a43-47d3-89dd',
+              life: 'alive',
+              'owner-tag': 'user-admin@local'
+            }
+          }]
+        }
+      });
+    });
+
     it('retrieves model info for multiple models', done => {
       // Perform the request.
       const id1 = '5bea955d-7a43-47d3-89dd-1';
@@ -669,7 +696,7 @@ describe('Controller API', function() {
         assert.strictEqual(result1.life, 'alive');
         assert.strictEqual(result1.owner, 'admin@local');
         assert.strictEqual(result1.isAlive, true, 'unexpected zombie model');
-        assert.strictEqual(result1.isAdmin, true, 'unexpected regular model');
+        assert.strictEqual(result1.isAdmin, false, 'unexpected admin model');
         const result2 = models[1];
         assert.strictEqual(result2.id, id2);
         assert.strictEqual(result2.name, 'model2');
@@ -871,7 +898,7 @@ describe('Controller API', function() {
         assert.strictEqual(result2.life, 'alive');
         assert.strictEqual(result2.owner, 'who@local');
         assert.strictEqual(result2.isAlive, true, 'unexpected zombie model');
-        assert.strictEqual(result2.isAdmin, true, 'unexpected regular model');
+        assert.strictEqual(result2.isAdmin, false, 'unexpected admin model');
         assert.strictEqual(result2.lastConnection, 'yesterday');
         const result3 = models[2];
         assert.strictEqual(result3.err, undefined);

@@ -94,9 +94,9 @@ YUI.add('user-profile-entity', function() {
       @returns {Object} A list of tag components.
     */
     _generateTags: function() {
-      var tags = [];
-      var entity = this.props.entity;
-      var tagList = entity.tags;
+      const tags = [];
+      const entity = this.props.entity;
+      const tagList = entity.tags;
       if (!tagList) {
         return;
       }
@@ -128,9 +128,9 @@ YUI.add('user-profile-entity', function() {
       @returns {Object} A list of commits.
     */
     _generateCommits: function() {
-      var commits = [];
-      var entity = this.props.entity;
-      var commitList = entity.commits;
+      const commits = [];
+      const entity = this.props.entity;
+      const commitList = entity.commits;
       if (!commitList) {
         return;
       }
@@ -174,7 +174,7 @@ YUI.add('user-profile-entity', function() {
       if (this.props.type !== 'bundle') {
         return;
       }
-      var url = this.props.getDiagramURL(this.props.entity.id);
+      const url = this.props.getDiagramURL(this.props.entity.id);
       return (
         <div className="user-profile__entity-diagram twelve-col">
           <object type="image/svg+xml" data={url}
@@ -189,7 +189,7 @@ YUI.add('user-profile-entity', function() {
       @return {Object} The description.
     */
     _generateDescription: function() {
-      var description = this.props.entity.description;
+      const description = this.props.entity.description;
       if (!description) {
         return;
       }
@@ -230,9 +230,9 @@ YUI.add('user-profile-entity', function() {
       if (this.props.type !== 'bundle') {
         return;
       }
-      var entity = this.props.entity;
-      var services = [];
-      var applications = entity.applications || entity.services || {};
+      const entity = this.props.entity;
+      const services = [];
+      const applications = entity.applications || entity.services || {};
       Object.keys(applications).forEach((name) => {
         services.push(
           <li className="user-profile__comma-item"
@@ -250,29 +250,29 @@ YUI.add('user-profile-entity', function() {
     },
 
     render: function() {
-      var props = this.props;
-      var entity = props.entity;
-      var type = props.type;
-      var isModel = type === 'model';
-      var isCharm = type === 'charm';
+      const props = this.props;
+      const entity = props.entity;
+      const type = props.type;
+      const isModel = type === 'model';
+      const isCharm = type === 'charm';
       // Model names will be in the format "username/model-name" so we have to
       // extract the part we need.
-      var name = entity.name;
+      const name = entity.name;
       if (isModel && entity.name.indexOf('/') !== -1) {
         name = name.split('/')[1];
       }
-      var id = isModel ? entity.uuid : entity.id;
-      var buttonAction = isModel ? this._switchEnv.bind(
+      const id = isModel ? entity.uuid : entity.id;
+      const buttonAction = isModel ? this._switchEnv.bind(
         this, id, name) : this._viewEntity.bind(this, id);
-      var icon = isCharm ? (
+      const icon = isCharm ? (
         <img className="user-profile__entity-icon"
           src={entity.icon}
           title={name} />) : undefined;
-      var classes = {
+      const classes = {
         'user-profile__entity': true,
         'user-profile__list-row': true
       };
-      var destroyButton = isModel && !entity.isAdmin ? (
+      const destroyButton = isModel && !entity.isAdmin ? (
         <juju.components.GenericButton
           action={props.displayConfirmation}
           type="inline-base"

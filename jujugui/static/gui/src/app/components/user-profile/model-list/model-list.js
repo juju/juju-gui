@@ -247,10 +247,16 @@ YUI.add('user-profile-model-list', function() {
     _generateRow: function(model) {
       const uuid = model.uuid;
       const isCurrent = uuid === this.props.currentModel;
+      const classes = classNames(
+        'expanding-row',
+        'twelve-col',
+        'user-profile__entity',
+        'user-profile__list-row'
+      );
       if (!model.isAlive) {
         if (model.name) {
           return (
-            <li className="expanding-row twelve-col user-profile__entity user-profile__list-row"
+            <li className={classes}
               key={uuid}>
               {model.name} is being destroyed.
             </li>);

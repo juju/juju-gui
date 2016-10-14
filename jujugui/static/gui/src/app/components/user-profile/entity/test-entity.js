@@ -18,10 +18,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('UserProfileEntity', () => {
-  var model;
+  let model;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -40,8 +40,8 @@ describe('UserProfileEntity', () => {
   });
 
   it('can render a model', () => {
-    var displayConfirmation = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const displayConfirmation = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
         displayConfirmation={displayConfirmation}
         entity={model}
@@ -50,10 +50,10 @@ describe('UserProfileEntity', () => {
         type="model">
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
-    var output = renderer.getRenderOutput();
-    var button = output.props.children[1].props.children[0].props.children[1]
+    const output = renderer.getRenderOutput();
+    const button = output.props.children[1].props.children[0].props.children[1]
       .props.children[1];
-    var expected = (
+    const expected = (
       <juju.components.ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
         expanded={false}>
@@ -93,14 +93,14 @@ describe('UserProfileEntity', () => {
   });
 
   it('can render a bundle with applications', () => {
-    var bundle = jsTestUtils.makeEntity(true).toEntity();
+    const bundle = jsTestUtils.makeEntity(true).toEntity();
     delete bundle.services;
     bundle.applications = {
       django: {},
       postgresql: {}
     };
-    var getDiagramURL = sinon.stub().returns('bundle.svg');
-    var renderer = jsTestUtils.shallowRender(
+    const getDiagramURL = sinon.stub().returns('bundle.svg');
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
         changeState={sinon.stub()}
         entity={bundle}
@@ -109,12 +109,12 @@ describe('UserProfileEntity', () => {
         type="bundle">
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
-    var output = renderer.getRenderOutput();
-    var viewButton = output.props.children[1].props.children[0]
+    const output = renderer.getRenderOutput();
+    const viewButton = output.props.children[1].props.children[0]
       .props.children[1].props.children[1];
-    var tag = output.props.children[1].props.children[1]
+    const tag = output.props.children[1].props.children[1]
       .props.children[5].props.children[1].props.children[0];
-    var expected = (
+    const expected = (
       <juju.components.ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
         expanded={false}>
@@ -186,14 +186,14 @@ describe('UserProfileEntity', () => {
   });
 
   it('can render a bundle with services', () => {
-    var bundle = jsTestUtils.makeEntity(true).toEntity();
+    const bundle = jsTestUtils.makeEntity(true).toEntity();
     delete bundle.applications;
     bundle.services = {
       mysql: {},
       wordpress: {}
     };
-    var getDiagramURL = sinon.stub().returns('bundle.svg');
-    var renderer = jsTestUtils.shallowRender(
+    const getDiagramURL = sinon.stub().returns('bundle.svg');
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
         changeState={sinon.stub()}
         entity={bundle}
@@ -202,12 +202,12 @@ describe('UserProfileEntity', () => {
         type="bundle">
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
-    var output = renderer.getRenderOutput();
-    var viewButton = output.props.children[1].props.children[0]
+    const output = renderer.getRenderOutput();
+    const viewButton = output.props.children[1].props.children[0]
       .props.children[1].props.children[1];
-    var tag = output.props.children[1].props.children[1]
+    const tag = output.props.children[1].props.children[1]
       .props.children[5].props.children[1].props.children[0];
-    var expected = (
+    const expected = (
       <juju.components.ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
         expanded={false}>
@@ -279,8 +279,8 @@ describe('UserProfileEntity', () => {
   });
 
   it('can render a charm', () => {
-    var charm = jsTestUtils.makeEntity().toEntity();
-    var renderer = jsTestUtils.shallowRender(
+    const charm = jsTestUtils.makeEntity().toEntity();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
         changeState={sinon.stub()}
         entity={charm}
@@ -288,12 +288,12 @@ describe('UserProfileEntity', () => {
         type="charm">
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
-    var output = renderer.getRenderOutput();
-    var viewButton = output.props.children[1].props.children[0]
+    const output = renderer.getRenderOutput();
+    const viewButton = output.props.children[1].props.children[0]
       .props.children[1].props.children[1];
-    var tag = output.props.children[1].props.children[1]
+    const tag = output.props.children[1].props.children[1]
       .props.children[5].props.children[1].props.children[0];
-    var expected = (
+    const expected = (
       <juju.components.ExpandingRow classes={{
         'user-profile__entity': true, 'user-profile__list-row': true}}
         expanded={false}>
@@ -355,15 +355,15 @@ describe('UserProfileEntity', () => {
   });
 
   it('can switch envs for a model', () => {
-    var switchModel = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const switchModel = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
         entity={model}
         switchModel={switchModel}
         type="model">
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
-    var output = renderer.getRenderOutput();
+    const output = renderer.getRenderOutput();
     output.props.children[1].props.children[0].props.children[1]
       .props.children[1].props.action();
     assert.equal(switchModel.callCount, 1);
@@ -372,15 +372,15 @@ describe('UserProfileEntity', () => {
   });
 
   it('can display a delete confirmation', () => {
-    var displayConfirmation = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const displayConfirmation = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
         entity={model}
         displayConfirmation={displayConfirmation}
         type="model">
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
-    var output = renderer.getRenderOutput();
+    const output = renderer.getRenderOutput();
     output.props.children[1].props.children[0].props.children[1]
       .props.children[0].props.action();
     assert.equal(displayConfirmation.callCount, 1);
@@ -388,24 +388,24 @@ describe('UserProfileEntity', () => {
 
   it('hides the destroy button for controllers', () => {
     model.isAdmin = true;
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
         entity={model}
         type="model">
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
-    var output = renderer.getRenderOutput();
-    var destroyButton = output.props.children[1].props.children[0].props
-      .children[1].props.children[0]
+    const output = renderer.getRenderOutput();
+    const destroyButton = output.props.children[1].props.children[0].props
+      .children[1].props.children[0];
     assert.equal(destroyButton, undefined);
   });
 
   it('can navigate to view a charm or bundle', () => {
-    var bundle = jsTestUtils.makeEntity(true).toEntity();
+    const bundle = jsTestUtils.makeEntity(true).toEntity();
     bundle.id = 'cs:django-cluster';
-    var getDiagramURL = sinon.stub().returns('bundle.svg');
-    var changeState = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const getDiagramURL = sinon.stub().returns('bundle.svg');
+    const changeState = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
         changeState={changeState}
         entity={bundle}
@@ -413,7 +413,7 @@ describe('UserProfileEntity', () => {
         type="bundle">
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
-    var output = renderer.getRenderOutput();
+    const output = renderer.getRenderOutput();
     output.props.children[1].props.children[0].props.children[1]
       .props.children[1].props.action();
     assert.equal(changeState.callCount, 1);
@@ -429,10 +429,10 @@ describe('UserProfileEntity', () => {
   });
 
   it('can navigate to a tag search', () => {
-    var bundle = jsTestUtils.makeEntity(true).toEntity();
-    var getDiagramURL = sinon.stub().returns('bundle.svg');
-    var changeState = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const bundle = jsTestUtils.makeEntity(true).toEntity();
+    const getDiagramURL = sinon.stub().returns('bundle.svg');
+    const changeState = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
         changeState={changeState}
         entity={bundle}
@@ -440,7 +440,7 @@ describe('UserProfileEntity', () => {
         type="bundle">
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
-    var output = renderer.getRenderOutput();
+    const output = renderer.getRenderOutput();
     output.props.children[1].props.children[1].props.children[5]
       .props.children[1].props.children[0].props.onClick();
     assert.equal(changeState.callCount, 1);
