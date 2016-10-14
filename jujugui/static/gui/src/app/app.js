@@ -714,7 +714,7 @@ YUI.add('juju-gui', function(Y) {
         we're in a legacy juju model and no controllerAPI instance was supplied.
     */
     setUpControllerAPI: function(controllerAPI, user, password, macaroons) {
-      const external = this._getAuth();
+      const external = this._getExternalAuth();
       controllerAPI.setAttrs({ user, password });
       controllerAPI.setCredentials({ user, password, macaroons, external });
 
@@ -2559,14 +2559,9 @@ YUI.add('juju-gui', function(Y) {
       @method _getAuth
      */
     _getAuth: function() {
-      var externalAuth = this.get('auth');
-      if (externalAuth) {
-        if (externalAuth.user) {
-          // When HJC supplies an external auth it's possible that the name is
-          // stored in a nested user object.
-          externalAuth.usernameDisplay = externalAuth.user.name;
-        }
-        return externalAuth;
+      const external = this._getExternalAuth();
+      if (external) {
+        return external;
       }
       var users = this.get('users');
       var user;
@@ -2587,6 +2582,22 @@ YUI.add('juju-gui', function(Y) {
         }
       }
       return user;
+    },
+
+    /**
+      Fetches the external auth and if it exists modify the values as necessary.
+
+      @method _getExternalAuth
+      @return {Object|Undefined} The external auth.
+    */
+    _getExternalAuth: function() {
+      var externalAuth = this.get('auth');
+      if (externalAuth && externalAuth.user) {
+        // When HJC supplies an external auth it's possible that the name is
+        // stored in a nested user object.
+        externalAuth.usernameDisplay = externalAuth.user.name;
+      }
+      return externalAuth;
     }
 
   }, {
