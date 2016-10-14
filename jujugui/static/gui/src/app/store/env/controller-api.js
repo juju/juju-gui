@@ -446,7 +446,7 @@ YUI.add('juju-controller-api', function(Y) {
             owner: tags.parse(tags.USER, result['owner-tag']),
             life: result.life,
             isAlive: result.life === 'alive',
-            isAdmin: result.uuid === result['controller-uuid']
+            isAdmin: result.name === 'controller'
           };
         });
         callback(null, models);
