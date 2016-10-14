@@ -48,7 +48,7 @@ describe('GenericInput', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="generic-input">
-        <label className="generic-input__label placeholder-present"
+        <label className="generic-input__label generic-input__label--placeholder-present"
           htmlFor="Region">
           Region
         </label>
@@ -85,7 +85,7 @@ describe('GenericInput', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="generic-input">
-        <label className="generic-input__label placeholder-present"
+        <label className="generic-input__label generic-input__label--placeholder-present"
           htmlFor="Region">
           Region
         </label>

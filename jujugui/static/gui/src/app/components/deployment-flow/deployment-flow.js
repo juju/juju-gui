@@ -48,7 +48,8 @@ YUI.add('deployment-flow', function() {
     },
 
     PROVIDERS: {
-      'gce': {
+      // 'gce': {
+      'demonstration': {
         id: 'google',
         showLogo: true,
         signupUrl: 'https://console.cloud.google.com/billing/freetrial',

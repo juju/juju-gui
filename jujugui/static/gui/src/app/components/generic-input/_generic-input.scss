@@ -10,13 +10,21 @@
     transition: all .25s;
     user-select: none;
 
-    &.focus,
-    &.placeholder-present,
-    &.value-present {
-      color: $cool-grey;
-      font-size: 12px;
-      top: 6px;
+    &--focus,
+    &--placeholder-present,
+    &--value-present {
+        color: $cool-grey;
+        font-size: 12px;
+        top: 6px;
     }
+  }
+
+  &__field[type=text],
+  &__field[type=password] {
+      width: calc(100% - 20px);
+      margin-bottom: 20px;
+      padding-top: 25px;
+      padding-bottom: 7px;
   }
 
   &__errors {
