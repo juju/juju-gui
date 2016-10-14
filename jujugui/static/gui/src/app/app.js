@@ -904,11 +904,22 @@ YUI.add('juju-gui', function(Y) {
           return;
         }
         // Loop through the available servers and find the public IP.
-        const server = servers[0].filter(server => server.scope === 'public');
+        const hosts = servers[0];
+        const publicHosts = hosts.filter(host => host.scope === 'public');
+        if (!publicHosts.length) {
+          this.db.notifications.add({
+            title: 'Model connection error',
+            message: 'Cannot find a public host for connecting to the model',
+            level: 'error'
+          });
+          console.error('no public hosts found: ' + JSON.stringify(servers));
+          return;
+        }
+        const publicHost = publicHosts[0];
         // Switch to the redirected model.
         this.switchEnv(this.createSocketURL(
           this.get('socketTemplate'),
-          this.get('modelUUID'), server[0].value, server[0].port));
+          this.get('modelUUID'), publicHost.value, publicHost.port));
       });
     },
 
