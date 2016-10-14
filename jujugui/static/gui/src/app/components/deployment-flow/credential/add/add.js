@@ -188,20 +188,13 @@ YUI.add('deployment-credential-add', function() {
                 ref={field.id} />
             </div>);
         }
-        if (field.multiLine) {
-          return (
-            <juju.components.StringConfig
-              disabled={isReadOnly}
-              key={field.id}
-              option={{key: field.title}}
-              ref={field.id} />);
-        }
         return (
           <juju.components.GenericInput
             autocomplete={field.autocomplete}
             disabled={isReadOnly}
             key={field.id}
             label={field.title}
+            multiLine={field.multiLine}
             required={required}
             ref={field.id}
             type={field.type}
@@ -301,7 +294,6 @@ YUI.add('deployment-credential-add', function() {
     'file-field',
     'generic-input',
     'inset-select',
-    'string-config',
     'svg-icon'
   ]
 });

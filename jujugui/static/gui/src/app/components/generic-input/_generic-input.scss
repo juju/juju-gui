@@ -19,8 +19,10 @@
     }
   }
 
+  &__multiline-field,
   &__field[type=text],
   &__field[type=password] {
+      @extend %input;
       width: calc(100% - 20px);
       margin-bottom: 20px;
       padding-top: 25px;

@@ -48,7 +48,8 @@ describe('GenericInput', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="generic-input">
-        <label className="generic-input__label generic-input__label--placeholder-present"
+        <label className={
+          'generic-input__label generic-input__label--placeholder-present'}
           htmlFor="Region">
           Region
         </label>
@@ -70,6 +71,45 @@ describe('GenericInput', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('can render a multi line input', () => {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.GenericInput
+        autocomplete={false}
+        disabled={false}
+        label="Region"
+        multiLine={true}
+        placeholder="us-central-1"
+        required={true}
+        ref="templateRegion"
+        validate={[{
+          regex: /\S+/,
+          error: 'This field is required.'
+        }]}
+        value="default" />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="generic-input">
+        <label className={
+          'generic-input__label generic-input__label--placeholder-present'}
+          htmlFor="Region">
+          Region
+        </label>
+        <div className="generic-input__multiline-field"
+          contentEditable={true}
+          id="Region"
+          dangerouslySetInnerHTML={{__html: 'default'}}
+          onChange={instance.validate}
+          onFocus={instance._focusHandler}
+          onBlur={instance._blurHandler}
+          ref="field">
+        </div>
+        {null}
+      </div>
+    );
+    assert.deepEqual(output, expected);
+  });
+
   it('can display as a different type', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.GenericInput
@@ -85,7 +125,8 @@ describe('GenericInput', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="generic-input">
-        <label className="generic-input__label generic-input__label--placeholder-present"
+        <label className={
+          'generic-input__label generic-input__label--placeholder-present'}
           htmlFor="Region">
           Region
         </label>
@@ -122,6 +163,25 @@ describe('GenericInput', function() {
         value="default" />, true);
     const instance = renderer.getMountedInstance();
     instance.refs = {field: {value: 'default'}};
+    assert.equal(instance.getValue(), 'default');
+  });
+
+  it('can return a multi line field value', () => {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.GenericInput
+        disabled={false}
+        label="Region"
+        multiLine={true}
+        placeholder="us-central-1"
+        required={true}
+        ref="templateRegion"
+        validate={[{
+          regex: /\S+/,
+          error: 'This field is required.'
+        }]}
+        value="default" />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {field: {innerText: 'default'}};
     assert.equal(instance.getValue(), 'default');
   });
 
