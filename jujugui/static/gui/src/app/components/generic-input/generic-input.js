@@ -26,6 +26,7 @@ YUI.add('generic-input', function() {
       autocomplete: React.PropTypes.bool,
       disabled: React.PropTypes.bool,
       label: React.PropTypes.string,
+      multiLine: React.PropTypes.bool,
       onFocus: React.PropTypes.func,
       placeholder: React.PropTypes.string,
       required: React.PropTypes.bool,
@@ -88,7 +89,12 @@ YUI.add('generic-input', function() {
       @method getValue
     */
     getValue: function() {
-      return this.refs.field && this.refs.field.value;
+      if (this.refs.field) {
+        if (this.props.multiLine) {
+          return this.refs.field.innerText;
+        }
+        return this.refs.field.value;
+      }
     },
 
     /**
@@ -125,9 +131,9 @@ YUI.add('generic-input', function() {
       var element, id;
       var classes = classNames(
         'generic-input__label', {
-          focus: this.state.focus,
-          'value-present': !!this.getValue(),
-          'placeholder-present': !!this.props.placeholder
+          'generic-input__label--focus': this.state.focus,
+          'generic-input__label--value-present': !!this.getValue(),
+          'generic-input__label--placeholder-present': !!this.props.placeholder
         }
       );
       if (label) {
@@ -144,6 +150,43 @@ YUI.add('generic-input', function() {
       };
     },
 
+    /**
+      Generates a single or multi line input field.
+      @method _generateInput
+      @param {String} id The element id.
+    */
+    _generateInput: function(id) {
+      const disabled = this.props.disabled;
+      if (this.props.multiLine) {
+        const classes = classNames(
+          'generic-input__multiline-field',
+          {'generic-input__multiline-field--disabled': disabled});
+        return (
+          <div
+            className={classes}
+            contentEditable={!disabled}
+            id={id}
+            dangerouslySetInnerHTML={{__html: this.props.value}}
+            onChange={this.validate}
+            onFocus={this._focusHandler}
+            onBlur={this._blurHandler}
+            ref="field">
+          </div>);
+      }
+      return (
+        <input className="generic-input__field"
+          autoComplete={this.props.autocomplete}
+          defaultValue={this.props.value}
+          disabled={disabled}
+          id={id}
+          placeholder={this.props.placeholder}
+          required={this.props.required}
+          onChange={this.validate}
+          onFocus={this._focusHandler}
+          onBlur={this._blurHandler}
+          ref="field"
+          type={this.props.type} />);
+    },
 
     render: function() {
       var {labelElement, id} = this._generateLabel();
@@ -155,18 +198,7 @@ YUI.add('generic-input', function() {
       return (
         <div className={classes}>
           {labelElement}
-          <input className="generic-input__field"
-            autoComplete={this.props.autocomplete}
-            defaultValue={this.props.value}
-            disabled={this.props.disabled}
-            id={id}
-            placeholder={this.props.placeholder}
-            required={this.props.required}
-            onChange={this.validate}
-            onFocus={this._focusHandler}
-            onBlur={this._blurHandler}
-            ref="field"
-            type={this.props.type} />
+          {this._generateInput(id)}
           {this.state.errors}
         </div>
       );
