@@ -1775,12 +1775,13 @@ describe('App', function() {
 
     describe('pickModel', () => {
       it('can pick the right model from a list based on config', () => {
+        const modelUUID = 'who-uuid';
         app = new Y.juju.App({
           apiAddress: 'example.com:17070',
           conn: {close: function() {}},
           container: container,
           jujuCoreVersion: '2.1.1',
-          modelUUID: 'who-uuid',
+          modelUUID: modelUUID,
           user: 'rose',
           socket_protocol: 'ws',
           socketTemplate: '/juju/api/$server/$port/$uuid',
@@ -1794,7 +1795,7 @@ describe('App', function() {
         }, {
           uuid: 'rose-uuid'
         }];
-        const model = app._pickModel(fakeModelList);
+        const model = app._pickModel(fakeModelList, modelUUID);
         assert.strictEqual(model.uuid, 'who-uuid');
         assert.strictEqual(app.get('modelUUID'), 'who-uuid');
       });
@@ -1818,18 +1819,19 @@ describe('App', function() {
         }, {
           uuid: 'rose-uuid'
         }];
-        const model = app._pickModel(fakeModelList);
+        const model = app._pickModel(fakeModelList, null);
         assert.strictEqual(model.uuid, 'dalek-uuid');
         assert.strictEqual(app.get('modelUUID'), 'dalek-uuid');
       });
 
       it('picks the first model if no model matches', () => {
+        const modelUUID = 'bannakaffalatta-uuid';
         app = new Y.juju.App({
           apiAddress: 'example.com:17070',
           conn: {close: function() {}},
           container: container,
           jujuCoreVersion: '2.1.1',
-          modelUUID: 'bannakaffalatta-uuid',
+          modelUUID: modelUUID,
           user: 'rose',
           socket_protocol: 'ws',
           socketTemplate: '/juju/api/$server/$port/$uuid',
@@ -1843,7 +1845,7 @@ describe('App', function() {
         }, {
           uuid: 'rose-uuid'
         }];
-        const model = app._pickModel(fakeModelList);
+        const model = app._pickModel(fakeModelList, modelUUID);
         assert.strictEqual(model.uuid, 'dalek-uuid');
         assert.strictEqual(app.get('modelUUID'), 'dalek-uuid');
       });
