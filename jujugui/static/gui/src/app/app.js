@@ -731,6 +731,15 @@ YUI.add('juju-gui', function(Y) {
         if (this.env.get('modelUUID')) {
           return;
         }
+        // If the modelUUID provided by the external system is 'disconnected'
+        // that means that the external GUI host decided that it wants to
+        // load the GUI in the disconnected mode.
+        const modelUUID = this.get('modelUUID') ||
+           (window.juju_config && window.juju_config.jujuEnvUUID);
+        if (modelUUID === 'disconnected') {
+          this.switchEnv();
+          return;
+        }
         // If the user isn't currently connected to a model then fetch the
         // available models so that we can connect to an available one.
         this.controllerAPI.listModelsWithInfo((err, modelList) => {
@@ -750,7 +759,7 @@ YUI.add('juju-gui', function(Y) {
             return;
           }
           // Pick a model to connect to.
-          const selectedModel = this._pickModel(modelList);
+          const selectedModel = this._pickModel(modelList, modelUUID);
           if (selectedModel === null) {
             console.log('cannot select a model: using unconnected mode');
             // Drop the user into the unconnected state.
@@ -1559,18 +1568,15 @@ YUI.add('juju-gui', function(Y) {
 
       @method _pickModel
       @param {Array} modelList The list of models to pick from.
+      @param {String} modelUUID The uuid of the model to attempt to connect to.
       @return {Object} The selected model, or null if there are no models
         accessible by the user.
      */
-    _pickModel: function(modelList) {
+    _pickModel: function(modelList, modelUUID) {
       if (!modelList.length) {
         return null;
       }
       let matching = [];
-      // At this point the modelUUID attribute could have been removed by
-      // the logout process, so fall back to the provided configuration.
-      const modelUUID = this.get('modelUUID') ||
-          (window.juju_config && window.juju_config.jujuEnvUUID);
       if (modelUUID) {
         matching = modelList.filter(model => model.uuid === modelUUID);
       }
