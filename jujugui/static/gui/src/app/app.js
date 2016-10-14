@@ -743,15 +743,7 @@ YUI.add('juju-gui', function(Y) {
             });
             return;
           }
-          this.set('environmentList', modelList);
-          // If the modelList has no models in it then we have to drop the
-          // user into an uncommitted state.
-          if (modelList.length === 0) {
-            // Drop the user into the uncommitted state.
-            console.log('No models available, using unconnected mode.');
-            this.switchEnv();
-            return;
-          }
+          modelList = modelList.filter(model => !model.err);
           if (modelList.some(data => data.id === this.env.get('modelId'))) {
             // If the user is already connected to a model in this list then
             // leave it be.
