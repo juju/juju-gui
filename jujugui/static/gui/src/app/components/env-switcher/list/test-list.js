@@ -73,7 +73,8 @@ describe('EnvList', function() {
     assert.deepEqual(output.props.children[0].props.children,
       <li className="env-list__environment"
         key="none">
-        No models
+        No models available, click below to view your profile and create a new
+        model.
       </li>);
   });
 

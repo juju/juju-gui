@@ -44,7 +44,8 @@ YUI.add('env-list', function() {
       if (envList.length === 0) {
         return (<li className="env-list__environment"
           key="none">
-          No models
+          No models available, click below to view your profile and create a
+          new model.
         </li>);
       }
       envList.forEach(function(env) {
