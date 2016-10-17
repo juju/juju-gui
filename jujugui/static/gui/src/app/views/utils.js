@@ -1484,7 +1484,8 @@ YUI.add('juju-view-utils', function(Y) {
     });
     // Update the model name. The onEnvironmentNameChange in app.js method will
     // update the name correctly accross components.
-    var cb = function(params) {
+    // Make sure it is done after the switchEnv.
+    var updateModelName = function(params) {
       env.set('environmentName', name);
       if (callback) {
         callback(params);
@@ -1512,10 +1513,10 @@ YUI.add('juju-view-utils', function(Y) {
         console.log('No user credentials for model: ', uuid);
       }
       var socketUrl = createSocketURL(uuid, address, port);
-      switchEnv(socketUrl, username, password, cb, true, clearDB);
+      switchEnv(socketUrl, username, password, updateModelName, true, clearDB);
     } else {
       // Just reset without reconnecting to an env.
-      switchEnv(null, null, null, cb, false, clearDB);
+      switchEnv(null, null, null, callback, false, clearDB);
     }
   };
 

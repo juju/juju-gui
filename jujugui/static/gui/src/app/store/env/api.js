@@ -512,6 +512,8 @@ YUI.add('juju-env-api', function(Y) {
         this.setCredentials(null);
         this.failedAuthentication = true;
       }
+      // Only fire login if this is not a redirect error as we will come back
+      // here once the redirection is made.
       if (!utils.isRedirectError(data.error)) {
         this.fire('login', {err: data.error || null});
       }

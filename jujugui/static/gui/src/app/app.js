@@ -918,6 +918,8 @@ YUI.add('juju-gui', function(Y) {
         }
         const publicHost = publicHosts[0];
         // Switch to the redirected model.
+        // Make sure we keep the change set by not clearing the db when
+        // creating a model with change set (last param false).
         this.switchEnv(this.createSocketURL(
           this.get('socketTemplate'),
           this.get('modelUUID'), publicHost.value, publicHost.port), null,
