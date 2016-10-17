@@ -64,6 +64,20 @@ describe('EnvList', function() {
       </li>]);
   });
 
+  it('displays a message if there are no models', function() {
+    const output = jsTestUtils.shallowRender(
+      <juju.components.EnvList
+        envs={[]}
+        handleEnvClick={sinon.stub()}
+        showProfile={sinon.stub()} />);
+    assert.deepEqual(output.props.children[0].props.children,
+      <li className="env-list__environment"
+        key="none">
+        No models available, click below to view your profile and create a new
+        model.
+      </li>);
+  });
+
   it('clicking an env calls the handleEnvClick prop', function() {
     var envs = [{ uuid: 'abc123', name: 'the name' }];
     var handleEnvClick = sinon.stub();

@@ -6,6 +6,7 @@
     cursor: pointer;
     margin-left: 3px;
     padding: 6px 9px 8px;
+    background-color: $canvas-background;
     transition: background-color .2s;
 
     &:hover,

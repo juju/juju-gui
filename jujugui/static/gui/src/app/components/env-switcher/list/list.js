@@ -40,7 +40,15 @@ YUI.add('env-list', function() {
 
     generateEnvList: function() {
       var envs = [];
-      this.state.envs.forEach(function(env) {
+      const envList = this.state.envs;
+      if (envList.length === 0) {
+        return (<li className="env-list__environment"
+          key="none">
+          No models available, click below to view your profile and create a
+          new model.
+        </li>);
+      }
+      envList.forEach(function(env) {
         // below the env.name is for JES response object and env.path is for
         // the JEM response object.
         var envName = env.name || env.path;
