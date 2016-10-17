@@ -920,7 +920,8 @@ YUI.add('juju-gui', function(Y) {
         // Switch to the redirected model.
         this.switchEnv(this.createSocketURL(
           this.get('socketTemplate'),
-          this.get('modelUUID'), publicHost.value, publicHost.port));
+          this.get('modelUUID'), publicHost.value, publicHost.port), null,
+          null, null, true, false);
       });
     },
 
