@@ -409,6 +409,9 @@ describe('App', function() {
     var Y, app, env, juju;
 
     before(function(done) {
+      // Need to define the container before the juju-gui module is loaded so
+      // that the DOM exists when it initializes.
+      container = testUtils.makeAppContainer(yui);
       Y = YUI(GlobalConfig).use(
           ['juju-gui', 'juju-tests-utils', 'juju-view-utils', 'juju-views'],
           function(Y) {
