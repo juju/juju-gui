@@ -71,7 +71,27 @@ describe('DeploymentCredentialAdd', function() {
           }]
         },
         message: 'a message'
-      }
+      },
+      'ec2': {
+        id: 'aws',
+        showLogo: true,
+        signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
+          'registration/index.html',
+        svgHeight: 48,
+        svgWidth: 120,
+        title: 'Amazon Web Services',
+        forms: {
+          'access-key': [{
+            id: 'access-key',
+            title: 'The EC2 access key'
+          }, {
+            autocomplete: false,
+            id: 'secret-key',
+            title: 'The EC2 secret key'
+          }]
+        },
+        message: 'a message'
+      },
     };
   });
 
@@ -79,17 +99,17 @@ describe('DeploymentCredentialAdd', function() {
     var cloud = providers['gce'];
     var close = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
-    <juju.components.DeploymentCredentialAdd
-        acl={acl}
-        updateCloudCredential={sinon.stub()}
-        close={close}
-        cloud={null}
-        providers={providers}
-        generateCloudCredentialName={sinon.stub()}
-        getCredentials={sinon.stub()}
-        setCredential={sinon.stub()}
-        user="user-admin"
-        validateForm={sinon.stub()} />, true);
+      <juju.components.DeploymentCredentialAdd
+          acl={acl}
+          updateCloudCredential={sinon.stub()}
+          close={close}
+          cloud={null}
+          providers={providers}
+          generateCloudCredentialName={sinon.stub()}
+          getCredentials={sinon.stub()}
+          setCredential={sinon.stub()}
+          user="user-admin"
+          validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -198,6 +218,129 @@ describe('DeploymentCredentialAdd', function() {
                 ref="password"
                 type="password"
                 validate={undefined} />]}
+            </div>
+            <div className="deployment-flow__notice six-col last-col">
+              <p className="deployment-flow__notice-content">
+                <juju.components.SvgIcon
+                  name="general-action-blue"
+                  size="16" />
+                Credentials are stored securely on our servers and we will
+                notify you by email whenever they are used. See where they are
+                used and manage or remove them via the account page.
+              </p>
+            </div>
+          </div>
+        </form>
+        <div className="prepend-six six-col last-col">
+          <juju.components.ButtonRow
+            buttons={[{
+              action: close,
+              title: 'Cancel',
+              type: 'neutral'
+            }, {
+              action: instance._handleAddCredentials,
+              submit: true,
+              title: 'Add cloud credential',
+              type: 'positive'
+            }]} />
+        </div>
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can update to a new cloud', function() {
+    const close = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredentialAdd
+          acl={acl}
+          updateCloudCredential={sinon.stub()}
+          close={close}
+          cloud={null}
+          providers={providers}
+          generateCloudCredentialName={sinon.stub()}
+          getCredentials={sinon.stub()}
+          setCredential={sinon.stub()}
+          user="user-admin"
+          validateForm={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    let output = renderer.getRenderOutput();
+    renderer.render(
+      <juju.components.DeploymentCredentialAdd
+          acl={acl}
+          updateCloudCredential={sinon.stub()}
+          close={close}
+          cloud={{name: 'aws', cloudType: 'ec2'}}
+          providers={providers}
+          generateCloudCredentialName={sinon.stub()}
+          getCredentials={sinon.stub()}
+          setCredential={sinon.stub()}
+          user="user-admin"
+          validateForm={sinon.stub()} />);
+    const cloud = providers['ec2'];
+    output = renderer.getRenderOutput();
+    const expected = (
+      <div className="deployment-credential-add twelve-col">
+        <h4>Create new Amazon Web Services credential</h4>
+        <div className="twelve-col deployment-credential-add__signup">
+          <a href={cloud.signupUrl}
+            target="_blank">
+            Sign up for {'Amazon Web Services'}
+            &nbsp;
+            <juju.components.SvgIcon
+              name="external-link-16"
+              size="12" />
+          </a>
+        </div>
+        <form className="twelve-col">
+          <div className="six-col last-col">
+            <juju.components.GenericInput
+              disabled={false}
+              label="Credential name"
+              required={true}
+              ref="credentialName"
+              validate={[{
+                regex: /\S+/,
+                error: 'This field is required.'
+              }, {
+                regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
+                error: 'This field must only contain upper and lowercase ' +
+                  'letters, numbers, and hyphens. It must not start or ' +
+                  'end with a hyphen.'
+              }]} />
+          </div>
+          <h3 className="deployment-panel__section-title twelve-col">
+            Enter credentials
+          </h3>
+          <div className="deployment-credential-add__credentials">
+            <div className="six-col">
+              a message
+              {undefined}
+              {[<juju.components.GenericInput
+                autocomplete={true}
+                disabled={false}
+                key="access-key"
+                label="The EC2 access key"
+                multiLine={undefined}
+                required={true}
+                ref="access-key"
+                type={undefined}
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }]} />,
+              <juju.components.GenericInput
+                autocomplete={false}
+                disabled={false}
+                key="secret-key"
+                label="The EC2 secret key"
+                multiLine={undefined}
+                required={true}
+                ref="secret-key"
+                type={undefined}
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }]} />]}
             </div>
             <div className="deployment-flow__notice six-col last-col">
               <p className="deployment-flow__notice-content">
