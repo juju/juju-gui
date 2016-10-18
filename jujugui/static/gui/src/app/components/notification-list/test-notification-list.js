@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+const juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
@@ -41,18 +41,18 @@ describe('NotificationList', function() {
   });
 
   it('renders a list based on the notification passed in', () => {
-    var notification = {
+    const notification = {
       timestamp: '12345',
       message: 'notification message',
       level: 'info'
     };
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.NotificationList
         notification={notification}/>, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
-    var children = output.props.children;
-    var items = [
+    const children = output.props.children;
+    const items = [
       <juju.components.NotificationListItem
         key={notification.timestamp}
         timestamp={notification.timestamp}
@@ -61,7 +61,7 @@ describe('NotificationList', function() {
         message={notification.message}
         timeout={undefined}
         type={notification.level} />];
-    var expected = (
+    const expected = (
       <ul className="notification-list"
           onMouseOver={instance._clearTimeouts}
           onMouseOut={instance._restartTimeouts}>
@@ -72,19 +72,19 @@ describe('NotificationList', function() {
   });
 
   it('can render with no notifications', () => {
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.NotificationList
         notification={null}/>);
     assert.deepEqual(output.props.children[0], undefined);
   });
 
   it('can render notifications after rendering none', () => {
-    var renderer = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.NotificationList
         notification={null}/>, true);
-    var output = renderer.getRenderOutput();
+    const output = renderer.getRenderOutput();
     assert.deepEqual(output.props.children[0], undefined);
-    var notification = {
+    const notification = {
       timestamp: '12345',
       message: 'notification message',
       level: 'info'
@@ -92,7 +92,7 @@ describe('NotificationList', function() {
     renderer.render(
       <juju.components.NotificationList
         notification={notification}/>);
-    var instance = renderer.getMountedInstance();
+    const instance = renderer.getMountedInstance();
     // Updates to state don't re-render when using the shallow renderer
     // so just checking that the state gets updated.
     assert.deepEqual(instance.state, {
@@ -107,21 +107,21 @@ describe('NotificationList', function() {
   });
 
   it('times out non error messages', () => {
-    var notification = {
+    const notification = {
       key: '12345',
       timestamp: '12345',
       message: 'notification message',
       level: 'info'
     };
-    var timeout = 500;
-    var renderer = jsTestUtils.shallowRender(
+    const timeout = 500;
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.NotificationList
         timeout={timeout}
         notification={notification}/>, this);
-    var instance = renderer.getMountedInstance();
-    var key = 'NotificationListItem' + notification.timestamp;
-    var refs = {};
-    var hideStub = sinon.stub();
+    const instance = renderer.getMountedInstance();
+    const key = 'NotificationListItem' + notification.timestamp;
+    const refs = {};
+    const hideStub = sinon.stub();
     refs[key] = { hide: hideStub };
     instance.refs = refs;
     // Trigger the timeout.
@@ -130,21 +130,21 @@ describe('NotificationList', function() {
   });
 
   it('does not time out error messages', () => {
-    var notification = {
+    const notification = {
       key: '12345',
       timestamp: '12345',
       message: 'notification message',
       level: 'error'
     };
-    var timeout = 500;
-    var renderer = jsTestUtils.shallowRender(
+    const timeout = 500;
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.NotificationList
         timeout={timeout}
         notification={notification}/>, this);
-    var instance = renderer.getMountedInstance();
-    var key = 'NotificationListItem' + notification.timestamp;
-    var refs = {};
-    var hideStub = sinon.stub();
+    const instance = renderer.getMountedInstance();
+    const key = 'NotificationListItem' + notification.timestamp;
+    const refs = {};
+    const hideStub = sinon.stub();
     refs[key] = { hide: hideStub };
     instance.refs = refs;
     // Trigger the timeout.

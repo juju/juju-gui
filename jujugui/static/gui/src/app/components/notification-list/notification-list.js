@@ -31,8 +31,8 @@ YUI.add('notification-list', function() {
     },
 
     getInitialState: function() {
-      var notifications = {};
-      var note = this.props.notification;
+      const notifications = {};
+      const note = this.props.notification;
       if (note) {
         notifications[note.timestamp] = this._processNotification(note);
       }
@@ -51,7 +51,7 @@ YUI.add('notification-list', function() {
       @param {Object} notification The notification to show.
     */
     _processNotification: function(notification) {
-      var structured = {
+      const structured = {
         message: notification.message,
         type: notification.level,
         timestamp: notification.timestamp
@@ -62,11 +62,11 @@ YUI.add('notification-list', function() {
     componentWillReceiveProps: function(nextProps) {
       // This component will be re-rendered every time a notification is Added
       // so we only need to add the notification into state.
-      var notification = nextProps.notification;
+      const notification = nextProps.notification;
       if (!notification) {
         return;
       }
-      var notifications = this.state.notifications;
+      const notifications = this.state.notifications;
       notifications[notification.timestamp] =
         this._processNotification(notification);
       this.setState({notifications: notifications});
@@ -76,7 +76,7 @@ YUI.add('notification-list', function() {
       if (notification.type !== 'error') {
         // If it's not an error message then it needs to auto destroy.
         this.timeouts.push(setTimeout(() => {
-          var item = this.refs['NotificationListItem' + key];
+          const item = this.refs['NotificationListItem' + key];
           if (item) {
             item.hide();
           }
@@ -85,8 +85,8 @@ YUI.add('notification-list', function() {
     },
 
     _generateNotifications: function() {
-      var notifications = this.state.notifications;
-      var elements = [];
+      const notifications = this.state.notifications;
+      const elements = [];
       Object.keys(notifications).forEach(key => {
         const notification = notifications[key];
         this._startTimeout(key, notification);
@@ -104,7 +104,7 @@ YUI.add('notification-list', function() {
     },
 
     _removeNotification: function(timestamp) {
-      var notifications = this.state.notifications;
+      const notifications = this.state.notifications;
       delete notifications[timestamp];
       this.setState({notifications: notifications});
     },
