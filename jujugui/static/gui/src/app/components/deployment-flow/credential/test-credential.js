@@ -397,6 +397,40 @@ describe('DeploymentCredential', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('can handle a cloud without regions', function() {
+    delete cloud.regions;
+    var setCredential = sinon.stub();
+    var setRegion = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredential
+        acl={acl}
+        updateCloudCredential={sinon.stub()}
+        cloud={cloud}
+        providers={providers}
+        editable={true}
+        generateCloudCredentialName={sinon.stub()}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
+        getCloudCredentialNames={sinon.stub().callsArgWith(1, null, tags)}
+        setCredential={setCredential}
+        setRegion={setRegion}
+        user={user}
+        validateForm={sinon.stub()} />, true);
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="four-col">
+        <juju.components.InsetSelect
+          disabled={false}
+          label="Region"
+          onChange={setRegion}
+          options={[
+            {label: 'Default', value: ''},
+          ]}
+          value={undefined} />
+      </div>);
+    assert.deepEqual(
+      output.props.children.props.children[0].props.children[1], expected);
+  });
+
   it('can navigate to the add credentials form', function() {
     var updateCloudCredential = sinon.stub();
     var setCredential = sinon.stub();

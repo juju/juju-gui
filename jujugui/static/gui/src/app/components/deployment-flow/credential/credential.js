@@ -188,8 +188,8 @@ YUI.add('deployment-credential', function() {
       @returns {Array} The list of region options.
     */
     _generateRegions: function() {
-      let regions = !this.props.editable ? [{name: this.props.region}] :
-        this.props.cloud.regions;
+      const regions = !this.props.editable ? [{name: this.props.region}] :
+        this.props.cloud && this.props.cloud.regions || [];
       // Setup the default option.
       const defaultValue = [
         {label: 'Default', value: ''}
