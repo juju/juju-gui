@@ -50,6 +50,7 @@ describe('UserProfileModelList', () => {
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         acl={acl}
+        addNotification={sinon.stub()}
         currentModel={'model1'}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, [])}
         switchModel={sinon.stub()}
@@ -67,6 +68,7 @@ describe('UserProfileModelList', () => {
             switchModel={instance.switchModel} />
         </div>
         {undefined}
+        {undefined}
       </div>
     );
     assert.deepEqual(output, expected);
@@ -75,6 +77,7 @@ describe('UserProfileModelList', () => {
   it('displays loading spinner when loading', () => {
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
+        addNotification={sinon.stub()}
         currentModel={'model1'}
         listModelsWithInfo={sinon.stub()}
         switchModel={sinon.stub()}
@@ -95,12 +98,15 @@ describe('UserProfileModelList', () => {
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         acl={acl}
+        addNotification={sinon.stub()}
         currentModel={'model1'}
+        destroyModels={sinon.stub()}
         listModelsWithInfo={listModelsWithInfo}
         switchModel={sinon.stub()}
         user={user} />, true);
     const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
+    const content = output.props.children[1].props.children;
     const expected = (
       <div className="user-profile__model-list">
         <div className="user-profile__header twelve-col no-margin-bottom">
@@ -131,6 +137,7 @@ describe('UserProfileModelList', () => {
             </span>
           </li>
           {[<juju.components.UserProfileEntity
+            displayConfirmation={content[1][0].props.displayConfirmation}
             entity={models[0]}
             expanded={true}
             key="model1"
@@ -155,6 +162,7 @@ describe('UserProfileModelList', () => {
             </span>
           </juju.components.UserProfileEntity>]}
         </ul>
+        {undefined}
       </div>
     );
     assert.deepEqual(output, expected);
@@ -165,14 +173,17 @@ describe('UserProfileModelList', () => {
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
+        addNotification={sinon.stub()}
         currentModel={'model1'}
         listModelsWithInfo={listModelsWithInfo}
         switchModel={sinon.stub()}
         user={user} />, true);
     const output = component.getRenderOutput();
     const content = output.props.children[1].props.children[1][0];
+    const classes = 'expanding-row twelve-col user-profile__entity'
+                     + ' user-profile__list-row';
     const expected = (
-      <li className="user-profile__entity user-profile__list-row"
+      <li className={classes}
         key="model1">
         {'spinach/sandbox'} is being destroyed.
       </li>);
@@ -186,6 +197,7 @@ describe('UserProfileModelList', () => {
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
+        addNotification={sinon.stub()}
         currentModel={'model1'}
         listModelsWithInfo={listModelsWithInfo}
         switchModel={switchModel}
@@ -211,6 +223,7 @@ describe('UserProfileModelList', () => {
     const utilsSwitchModel = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
+        addNotification={sinon.stub()}
         listModelsWithInfo={sinon.stub()}
         switchModel={utilsSwitchModel}
         user={user} />, true);
@@ -241,12 +254,171 @@ describe('UserProfileModelList', () => {
   });
   */
 
+  it('can display a confirmation when models are to be destroyed', () => {
+    const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
+    const component = jsTestUtils.shallowRender(
+      <juju.components.UserProfileModelList
+        addNotification={sinon.stub()}
+        currentModel={'model1'}
+        destroyModels={sinon.stub()}
+        listModelsWithInfo={listModelsWithInfo}
+        switchModel={sinon.stub()}
+        user={user} />, true);
+    const output = component.getRenderOutput();
+    output.props.children[1].props.children[1][0].props.displayConfirmation();
+    output = component.getRenderOutput();
+    const expected = (
+      <juju.components.ConfirmationPopup
+        buttons={output.props.children[2].props.buttons}
+        message={'Are you sure you want to destroy spinach/sandbox? All the ' +
+          'applications and units included in the model will be destroyed. ' +
+          'This action cannot be undone.'}
+        title="Destroy model" />);
+    assert.deepEqual(output.props.children[2], expected);
+  });
+
+  it('can destroy a model', () => {
+    const addNotification = sinon.stub();
+    const uuids = {};
+    models.forEach(model => {
+      uuids[model.uuid] = null;
+    });
+    const destroyModels = sinon.stub().callsArgWith(1, null, uuids);
+    const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
+    const component = jsTestUtils.shallowRender(
+      <juju.components.UserProfileModelList
+        addNotification={addNotification}
+        currentModel={'model1'}
+        destroyModels={destroyModels}
+        listModelsWithInfo={listModelsWithInfo}
+        switchModel={sinon.stub()}
+        user={user} />, true);
+    const instance = component.getMountedInstance();
+    instance._displayConfirmation({name: 'spinach/my-model'});
+    const output = component.getRenderOutput();
+    output.props.children[2].props.buttons[1].action();
+    assert.equal(destroyModels.callCount, 1, 'destroyModels not called');
+    output = component.getRenderOutput();
+    // The confirmation should now be hidden.
+    assert.isUndefined(output.props.children[2], 'Confirmation not hidden');
+    assert.equal(addNotification.callCount, 1, 'addNotification not called');
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Model destroyed',
+      message: 'The model is currently being destroyed.',
+      level: 'important'
+    }, 'Notification message does not match expected.');
+  });
+
+  it('can cancel destroying a model', () => {
+    const destroyModels = sinon.stub();
+    const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
+    const component = jsTestUtils.shallowRender(
+      <juju.components.UserProfileModelList
+        addNotification={sinon.stub()}
+        currentModel={'model1'}
+        destroyModels={destroyModels}
+        listModelsWithInfo={listModelsWithInfo}
+        switchModel={sinon.stub()}
+        user={user} />, true);
+    const instance = component.getMountedInstance();
+    instance._displayConfirmation({name: 'spinach/my-model'});
+    const output = component.getRenderOutput();
+    output.props.children[2].props.buttons[0].action();
+    assert.equal(destroyModels.callCount, 0, 'destroyModels was called');
+    output = component.getRenderOutput();
+    // The confirmation should now be hidden.
+    assert.isUndefined(output.props.children[2], 'Confirmation not hidden');
+  });
+
+  it('can display a global error when destroying', () => {
+    const addNotification = sinon.stub();
+    const error = 'An error';
+    const destroyModels = sinon.stub().callsArgWith(1, error, null);
+    const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
+    const component = jsTestUtils.shallowRender(
+      <juju.components.UserProfileModelList
+        addNotification={addNotification}
+        currentModel={'model1'}
+        destroyModels={destroyModels}
+        listModelsWithInfo={listModelsWithInfo}
+        switchModel={sinon.stub()}
+        user={user} />, true);
+    const instance = component.getMountedInstance();
+    component.getRenderOutput();
+    instance._displayConfirmation({name: 'spinach/my-model', uuid: 'my-model'});
+    instance._destroyModel();
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Model destruction failed',
+      message: 'The model failed to be destroyed: ' + error,
+      level: 'error'
+    });
+  });
+
+  it('can display a specific error when destroying', () => {
+    const addNotification = sinon.stub();
+    const statuses = {};
+    const model = models[0];
+    const error = 'An error.';
+    statuses[model.uuid] = error;
+    const destroyModels = sinon.stub().callsArgWith(1, null, statuses);
+    const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
+    const component = jsTestUtils.shallowRender(
+      <juju.components.UserProfileModelList
+        addNotification={addNotification}
+        currentModel={'model1'}
+        destroyModels={destroyModels}
+        listModelsWithInfo={listModelsWithInfo}
+        switchModel={sinon.stub()}
+        user={user} />, true);
+    const instance = component.getMountedInstance();
+    component.getRenderOutput();
+    instance._displayConfirmation({name: 'spinach/my-model', uuid: 'my-model'});
+    instance._destroyModel();
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Model destruction failed',
+      message: 'The model failed to be destroyed: ' + error,
+      level: 'error'
+    });
+  });
+
+  it('can prevent deletion of a controller', () => {
+    const addNotification = sinon.stub();
+    const destroyModels = sinon.stub();
+    const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
+    const component = jsTestUtils.shallowRender(
+      <juju.components.UserProfileModelList
+        addNotification={addNotification}
+        currentModel={'model1'}
+        destroyModels={destroyModels}
+        listModelsWithInfo={listModelsWithInfo}
+        switchModel={sinon.stub()}
+        user={user} />, true);
+    const instance = component.getMountedInstance();
+    component.getRenderOutput();
+    const model = {
+      name: 'spinach/my-model',
+      uuid: 'my-model',
+      isController: true
+    };
+    instance._displayConfirmation(model);
+    assert.equal(addNotification.callCount, 1,
+                 'addNotification was not called');
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Cannot destroy model',
+      message: 'The controller model cannot be destroyed.',
+      level: 'error'
+    }, 'The notification does not match expected.');
+  });
+
   it('will abort the requests when unmounting', function() {
     const listModelsWithInfoAbort = sinon.stub();
     const listModelsWithInfo = sinon.stub().returns(
       {abort: listModelsWithInfoAbort});
     const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
+        addNotification={sinon.stub()}
         currentModel={'model1'}
         listModelsWithInfo={listModelsWithInfo}
         switchModel={sinon.stub()}
@@ -259,6 +431,7 @@ describe('UserProfileModelList', () => {
     const broadcastStatus = sinon.stub();
     jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
+        addNotification={sinon.stub()}
         broadcastStatus={broadcastStatus}
         currentModel={'model1'}
         listModelsWithInfo={sinon.stub()}
@@ -271,6 +444,7 @@ describe('UserProfileModelList', () => {
     const broadcastStatus = sinon.stub();
     jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
+        addNotification={sinon.stub()}
         broadcastStatus={broadcastStatus}
         currentModel={'model1'}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, models)}
@@ -283,6 +457,7 @@ describe('UserProfileModelList', () => {
     const broadcastStatus = sinon.stub();
     jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
+        addNotification={sinon.stub()}
         broadcastStatus={broadcastStatus}
         currentModel={'model1'}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, [])}
@@ -295,6 +470,7 @@ describe('UserProfileModelList', () => {
     const broadcastStatus = sinon.stub();
     jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
+        addNotification={sinon.stub()}
         broadcastStatus={broadcastStatus}
         currentModel={'model1'}
         listModelsWithInfo={sinon.stub().callsArgWith(0, 'bad wolf', [])}

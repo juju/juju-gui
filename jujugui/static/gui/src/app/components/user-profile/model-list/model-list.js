@@ -25,8 +25,10 @@ YUI.add('user-profile-model-list', function() {
     // the parent SectionLoadWatcher.
     propTypes: {
       acl: React.PropTypes.object,
+      addNotification: React.PropTypes.func.isRequired,
       broadcastStatus: React.PropTypes.func,
       currentModel: React.PropTypes.string,
+      destroyModels: React.PropTypes.func.isRequired,
       listModelsWithInfo: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
       user: React.PropTypes.object
@@ -69,7 +71,7 @@ YUI.add('user-profile-model-list', function() {
     },
 
     /**
-      Makes a request of JIMM or JES to fetch the user's availble models.
+      Makes a request of the controller to fetch the user's availble models.
 
       @method _fetchModels
     */
@@ -84,7 +86,7 @@ YUI.add('user-profile-model-list', function() {
     },
 
     /**
-      Callback for the JIMM and JES list models call.
+      Callback for the controller list models call.
 
       @method _fetchModelsCallback
       @param {String} err The error from the request, or null.
@@ -105,6 +107,118 @@ YUI.add('user-profile-model-list', function() {
         }
         this.setState({modelList: modelList});
       });
+    },
+
+    /**
+      Display the confirmation for destroying a model.
+
+      @method _displayConfirmation
+      @param {Object} model the model to destroy. A model should at least have
+                            a name and uuid.
+    */
+    _displayConfirmation: function(model) {
+      this.setState({modelToBeDestroyed: model});
+    },
+
+    /**
+      Generate the confirmation for destroying a model.
+
+      @method _displayConfirmation
+      @return {Object} the confirmation component.
+    */
+    _generateConfirmation: function() {
+      const model = this.state.modelToBeDestroyed;
+      const addNotification = this.props.addNotification;
+      if (!model) {
+        return;
+      }
+      if (model.isController) {
+        addNotification({
+          title: 'Cannot destroy model',
+          message: 'The controller model cannot be destroyed.',
+          level: 'error'
+        });
+        return;
+      }
+      const buttons = [{
+        title: 'Cancel',
+        action: this._displayConfirmation.bind(this, null),
+        type: 'base'
+      }, {
+        title: 'Destroy',
+        action: this._destroyModel,
+        type: 'destructive'
+      }];
+      const message = `Are you sure you want to destroy ${model.name}?`
+        + ' All the applications and units included in the model will be'
+        + ' destroyed. This action cannot be undone.';
+      return (
+        <juju.components.ConfirmationPopup
+          buttons={buttons}
+          message={message}
+          title="Destroy model" />);
+    },
+
+    /**
+      Makes a request of the controller to delete a selected model.
+
+      @method _destroyModel
+    */
+    _destroyModel: function() {
+      const model = this.state.modelToBeDestroyed;
+      const uuid = model.uuid;
+      // Hide the confirmation popup.
+      this._displayConfirmation(null);
+      const xhr = this.props.destroyModels([uuid], this._destroyModelCallback);
+      this.xhrs.push(xhr);
+    },
+
+    /**
+      Callback for the controller delete model call.
+
+      @method _destroyModelCallback
+      @param {String} err The error from the request, or null.
+      @param {Array} modelList The list of models.
+    */
+    _destroyModelCallback: function(err, results) {
+      const addNotification = this.props.addNotification;
+      // Handle global errors.
+      if (err) {
+        addNotification({
+          title: 'Model destruction failed',
+          message: 'The model failed to be destroyed: ' + err,
+          level: 'error'
+        });
+        return;
+      }
+      // Ignore all but the first UUID because the UI only allows deleting one
+      // at a time.
+      const uuid = Object.keys(results)[0];
+      // Check for model-specific errors.
+      const uuidError = results[uuid];
+      if (uuidError) {
+        addNotification({
+          title: 'Model destruction failed',
+          message: 'The model failed to be destroyed: ' + uuidError,
+          level: 'error'
+        });
+        return;
+      }
+      // Handle a successful deletion.
+      addNotification({
+        title: 'Model destroyed',
+        message: 'The model is currently being destroyed.',
+        level: 'important'
+      });
+      // XXX kadams54: Ideally the model would change in the DB and that would
+      // trigger a re-render. Right now we're getting the data from an API;
+      // eventually, once we re-write the model layer to move away from YUI,
+      // this will hopefully change to become more React-friendly. Until then
+      // this hack will do.
+      const destroyedModel = this.state.modelList.find(model => {
+        return model.uuid === uuid;
+      });
+      destroyedModel.isAlive = false;
     },
 
     /**
@@ -134,10 +248,16 @@ YUI.add('user-profile-model-list', function() {
     _generateRow: function(model) {
       const uuid = model.uuid;
       const isCurrent = uuid === this.props.currentModel;
+      const classes = classNames(
+        'expanding-row',
+        'twelve-col',
+        'user-profile__entity',
+        'user-profile__list-row'
+      );
       if (!model.isAlive) {
         if (model.name) {
           return (
-            <li className="user-profile__entity user-profile__list-row"
+            <li className={classes}
               key={uuid}>
               {model.name} is being destroyed.
             </li>);
@@ -148,6 +268,7 @@ YUI.add('user-profile-model-list', function() {
       const lastConnection = model.lastConnection || '--';
       return (
         <juju.components.UserProfileEntity
+          displayConfirmation={this._displayConfirmation.bind(this, model)}
           entity={model}
           expanded={isCurrent}
           key={uuid}
@@ -241,6 +362,7 @@ YUI.add('user-profile-model-list', function() {
             {createNewButton}
           </div>
           {content}
+          {this._generateConfirmation()}
         </div>
       );
     }
@@ -249,6 +371,7 @@ YUI.add('user-profile-model-list', function() {
 
 }, '', {
   requires: [
+    'confirmation-popup',
     'create-model-button',
     'date-display',
     'generic-button',

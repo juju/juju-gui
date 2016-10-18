@@ -408,7 +408,7 @@ YUI.add('juju-controller-api', function(Y) {
         - owner: the name of the user owning the model;
         - life: the lifecycle status of the model: "alive", "dying" or "dead";
         - isAlive: whether the model is alive or dying/dead;
-        - isAdmin: whether the model is an admin model;
+        - isController: whether the model is a controller model;
         - err: a message describing a specific model error, or undefined.
       @return {undefined} Sends a message to the server only.
     */
@@ -446,7 +446,7 @@ YUI.add('juju-controller-api', function(Y) {
             owner: tags.parse(tags.USER, result['owner-tag']),
             life: result.life,
             isAlive: result.life === 'alive',
-            isAdmin: result.uuid === result['controller-uuid']
+            isController: result.name === 'controller'
           };
         });
         callback(null, models);
@@ -483,7 +483,7 @@ YUI.add('juju-controller-api', function(Y) {
         - owner: the name of the user owning the model;
         - life: the lifecycle status of the model: "alive", "dying" or "dead";
         - isAlive: whether the model is alive or dying/dead;
-        - isAdmin: whether the model is an admin model;
+        - isController: whether the model is a controller model;
         - lastConnection: the date of the last connection as a string, e.g.:
           '2015-09-24T10:08:50Z' or null if the model was never connected to;
         - err: a message describing a specific model error, or undefined.
@@ -533,7 +533,7 @@ YUI.add('juju-controller-api', function(Y) {
               owner: model.owner,
               life: model.life,
               isAlive: model.isAlive,
-              isAdmin: model.isAdmin,
+              isController: model.isController,
               lastConnection: listedModels[index].lastConnection
             };
           });

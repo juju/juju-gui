@@ -984,11 +984,15 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.UserProfile
           acl={this.acl}
+          addNotification=
+            {this.db.notifications.add.bind(this.db.notifications)}
           currentModel={this.get('modelUUID')}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listModelsWithInfo={
             this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
           changeState={this.changeState.bind(this)}
+          destroyModels={
+            this.controllerAPI.destroyModels.bind(this.controllerAPI)}
           getAgreements={this.terms.getAgreements.bind(this.terms)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           gisf={this.get('gisf')}
