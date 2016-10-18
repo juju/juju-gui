@@ -43,6 +43,15 @@ YUI.add('deployment-credential-add', function() {
       };
     },
 
+    componentWillReceiveProps: function(nextProps) {
+      const oldId = this.props.cloud && this.props.cloud.cloudType;
+      const newId = nextProps.cloud && nextProps.cloud.cloudType;
+      if (newId !== oldId) {
+        const info = this._getInfo(nextProps);
+        this.setState(
+          {authType: info && info.forms && Object.keys(info.forms)[0]});
+      }
+    },
 
     /**
       Generate a full credential object in the expected format.
@@ -153,12 +162,13 @@ YUI.add('deployment-credential-add', function() {
       Get the info for a cloud
 
       @method _getInfo
+      @param {Object} props The component props.
       @returns {Object} The cloud info if available.
     */
-    _getInfo: function() {
-      const cloud = this.props.cloud;
+    _getInfo: function(props=this.props) {
+      const cloud = props.cloud;
       const id = cloud && cloud.cloudType || this.DEFAULT_CLOUD_TYPE;
-      return this.props.providers[id];
+      return props.providers[id];
     },
 
     /**
