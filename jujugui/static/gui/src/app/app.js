@@ -387,7 +387,8 @@ YUI.add('juju-gui', function(Y) {
       // handlers with a { mask: mask, handlers: handlers } format.
       this.dragNotifications = [];
 
-      this.bakeryFactory = new Y.juju.environments.web.BakeryFactory();
+      this.bakeryFactory = new window.jujulib.bakeryFactory(
+        {Bakery: Y.juju.environments.web.Bakery});
 
       // Create a client side database to store state.
       this.db = new models.Database();
@@ -853,7 +854,7 @@ YUI.add('juju-gui', function(Y) {
           // The api may be unset if the current Juju does not support it.
           if (api && api.get('connected')) {
             console.log(`logging into ${api.name} with macaroons`);
-            api.loginWithMacaroon(this.bakeryFactory.bakery({
+            api.loginWithMacaroon(this.bakeryFactory.get({
               webhandler: new Y.juju.environments.web.WebHandler(),
               interactive: this.get('interactiveLogin'),
               serviceName: 'juju',
@@ -1636,7 +1637,7 @@ YUI.add('juju-gui', function(Y) {
         if (window.flags && window.flags.gisf) {
           existingCookie = 'macaroon-storefront';
         }
-        var bakery = this.bakeryFactory.bakery({
+        var bakery = this.bakeryFactory.get({
           webhandler: new Y.juju.environments.web.WebHandler(),
           interactive: this.get('interactiveLogin'),
           setCookiePath: `${charmstoreURL}${apiVersion}/set-auth-cookie`,
@@ -1698,7 +1699,7 @@ YUI.add('juju-gui', function(Y) {
       }
       var interactive = this.get('interactiveLogin');
       var webHandler = new Y.juju.environments.web.WebHandler();
-      var bakery = this.bakeryFactory.bakery({
+      var bakery = this.bakeryFactory.get({
         serviceName: 'plans',
         macaroon: config.plansMacaroons,
         webhandler: webHandler,
@@ -1708,7 +1709,7 @@ YUI.add('juju-gui', function(Y) {
         dischargeToken: config.dischargeToken
       });
       this.plans = new window.jujulib.plans(config.plansURL, bakery);
-      var bakery = this.bakeryFactory.bakery({
+      var bakery = this.bakeryFactory.get({
         serviceName: 'terms',
         macaroon: config.termsMacaroons,
         webhandler: webHandler,
@@ -2791,7 +2792,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-controller-api',
     'juju-endpoints-controller',
     'juju-env-bakery',
-    'juju-env-bakery-factory',
     'juju-env-base',
     'juju-env-fakebackend',
     'juju-env-api',
