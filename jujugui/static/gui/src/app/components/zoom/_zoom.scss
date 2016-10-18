@@ -1,0 +1,38 @@
+.zoom {
+  @extend %floating-panel;
+  z-index: index($z-indexed-elements, zoom);
+  position: absolute;
+  top: $navbar-height + $panel-space;
+  right: $panel-space * 2;
+  list-style: none;
+
+  &__in,
+  &__out {
+    @extend %disable-dbclick-highlighting;
+    display: block;
+    padding: 10px 9px;
+    margin-bottom: 0;
+
+    &:hover {
+      background-color: $light-grey;
+    }
+
+    svg {
+      display: block;
+      color: $warm-grey;
+    }
+  }
+
+  &__in {
+    border-bottom: 1px solid  $light-mid-grey;
+  }
+}
+
+// Method of preventing text/element selection when clicking multiple times.
+%disable-dbclick-highlighting {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}

@@ -6,6 +6,7 @@ $font-family-mono: 'Ubuntu Mono', 'Bitstream Vera Sans Mono', 'Courier New', Cou
 $light-grey: #f7f7f7;
 $light-mid-grey: #d4d4d4;
 $dark-grey: #9fa7aa;
+$warm-grey: #666;
 
 // Status colours.
 $uncommitted: #19b6ee;
@@ -40,6 +41,7 @@ $z-indexed-elements: search-results-list-block__tags,
   search-results-cell--hover,
   boolean-config--handle,
   boolean-config--label,
+  zoom,
   machine-view,
   inspector-view,
   env-size-display,
