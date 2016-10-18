@@ -132,7 +132,7 @@ YUI.add('user-profile-model-list', function() {
       if (!model) {
         return;
       }
-      if (model.isAdmin) {
+      if (model.isController) {
         addNotification({
           title: 'Cannot destroy model',
           message: 'The controller model cannot be destroyed.',
@@ -191,7 +191,8 @@ YUI.add('user-profile-model-list', function() {
         });
         return;
       }
-      // Ignore all but the first UUID.
+      // Ignore all but the first UUID because the UI only allows deleting one
+      // at a time.
       const uuid = Object.keys(results)[0];
       // Check for model-specific errors.
       const uuidError = results[uuid];

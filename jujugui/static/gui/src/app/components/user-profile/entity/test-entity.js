@@ -34,7 +34,7 @@ describe('UserProfileEntity', () => {
       name: 'spinach/sandbox',
       lastConnection: 'today',
       owner: 'test-owner',
-      isAdmin: false,
+      isController: false,
       isAlive: true
     };
   });
@@ -387,7 +387,7 @@ describe('UserProfileEntity', () => {
   });
 
   it('hides the destroy button for controllers', () => {
-    model.isAdmin = true;
+    model.isController = true;
     const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
         entity={model}

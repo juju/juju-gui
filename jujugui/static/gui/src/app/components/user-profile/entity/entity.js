@@ -272,7 +272,7 @@ YUI.add('user-profile-entity', function() {
         'user-profile__entity': true,
         'user-profile__list-row': true
       };
-      const destroyButton = isModel && !entity.isAdmin ? (
+      const destroyButton = isModel && !entity.isController ? (
         <juju.components.GenericButton
           action={props.displayConfirmation}
           type="inline-base"

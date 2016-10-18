@@ -400,7 +400,7 @@ describe('UserProfileModelList', () => {
     const model = {
       name: 'spinach/my-model',
       uuid: 'my-model',
-      isAdmin: true
+      isController: true
     };
     instance._displayConfirmation(model);
     assert.equal(addNotification.callCount, 1,
