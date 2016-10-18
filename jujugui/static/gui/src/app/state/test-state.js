@@ -25,6 +25,18 @@ describe('State', () => {
     assert.equal(state instanceof window.jujugui.State, true);
   });
 
+  it('has static ROOT_RESERVED', () => {
+    assert.deepEqual(
+      window.jujugui.State.ROOT_RESERVED,
+      ['about', 'bigdata', 'docs', 'juju', 'login', 'logout', 'new', 'store']);
+  });
+
+  it('has static PROFILE_RESERVED', () => {
+    assert.deepEqual(
+      window.jujugui.State.PROFILE_RESERVED,
+      ['billing', 'charms', 'issues', 'revenue', 'settings']);
+  });
+
   describe('State._sanitizeURL()', () => {
 
     it('can sanitize the url', () => {

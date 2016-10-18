@@ -42,6 +42,25 @@ this.jujugui.State = class State {
   }
 
   /**
+    List of reserved keywords for the paths.
+    @type {Array}
+    @static
+  */
+  static get ROOT_RESERVED() {
+    return [
+      'about', 'bigdata', 'docs', 'juju', 'login', 'logout', 'new', 'store'];
+  }
+
+  /**
+    List of reserved keywords for the profile paths.
+    @type {Array}
+    @static
+  */
+  static get PROFILE_RESERVED() {
+    return ['billing', 'charms', 'issues', 'revenue', 'settings'];
+  }
+
+  /**
     Takes a complete url, strips off the supplied baseURL and extra slashes.
     @param {String} url - The url to sanitize.
     @return {String} The sanitized url.
