@@ -40,4 +40,25 @@ this.jujugui.State = class State {
     */
     this.dispatchers = cfg.dispatchers;
   }
+
+  /**
+    Takes a complete url, strips off the supplied baseURL and extra slashes.
+    @param {String} url - The url to sanitize.
+    @return {String} The sanitized url.
+  */
+  _sanitizeURL(url) {
+    return url
+      // Strip the baseURL before parsing the sections.
+      .replace(this.baseURL, '')
+    // Strip the leading and trailing slashes off the url.
+      .replace(/^\//, '').replace(/\/$/, '');
+  }
+
+  /**
+    Splits the url up and generates a state object.
+    @param {String} url - The url to turn into state.
+  */
+  buildState(url) {
+    url = this._sanitizeURL(url);
+  }
 };
