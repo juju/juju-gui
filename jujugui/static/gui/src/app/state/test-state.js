@@ -60,6 +60,7 @@ describe('State', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123'
       });
+      assert.deepEqual(state._parseRoot([], {}), {});
       assert.deepEqual(
         state._parseRoot(['login'], {}),
         {root: 'login'});
@@ -71,9 +72,37 @@ describe('State', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123'
       });
+      assert.deepEqual(state._parseSearch([], {}),{});
       assert.deepEqual(
         state._parseSearch(['k8s', 'core'], {}),
         {search: 'k8s/core'});
+    });
+  });
+
+  describe('State._parseGUI', () => {
+    it('populates the gui portion of the state object', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123'
+      });
+
+      const guiSections = [{
+        parts: [],
+        state: {}
+      }, {
+        parts: [
+          'inspector', 'apache2', 'machine', '3', 'lxc-0', 'deploy', 'foo'],
+        state: {
+          gui: {
+            inspector: 'apache2',
+            machine: '3/lxc-0',
+            deploy: 'foo'
+          }
+        }
+      }];
+
+      assert.deepEqual(
+        state._parseGUI(guiSections[0].parts, {}),
+        guiSections[0].state);
     });
   });
 

@@ -74,6 +74,16 @@ const State = class State {
   }
 
   /**
+    List of path delimeters for the gui section.
+    @type {Array}
+    @static
+  */
+  static get GUI_PATH_DELIMETERS() {
+    return [
+      'account', 'applications', 'deploy', 'inspector', 'isv', 'machine'];
+  }
+
+  /**
     Takes a complete url, strips off the supplied baseURL and extra slashes.
     @param {String} url - The url to sanitize.
     @return {String} The sanitized url.
@@ -106,6 +116,14 @@ const State = class State {
       // If we have a search path in the url then we can ignore everything else.
       return state;
     }
+    // Working backwards to split up the URL.
+    const guiIndex = parts.indexOf(State.PATH_DELIMETERS.get('gui'));
+    if (guiIndex > -1) {
+      state = this._parseGUI(parts.splice(guiIndex), state);
+      // Trim off the lagging delimeter.
+      parts.splice(-1);
+    }
+
 
     return state;
   }
@@ -128,7 +146,7 @@ const State = class State {
   }
 
   /**
-    Parses the search portion of the url with out the
+    Parses the search portion of the url without the
     State.PATH_DELIMETERS.get('search') key value.
     @param {Array} urlParts - The url path split into parts.
     @param {Object} state - The application state object as being parsed
@@ -139,6 +157,41 @@ const State = class State {
     if (urlParts.length > 0) {
       state.search = urlParts.join('/');
     }
+    return state;
+  }
+
+  /**
+    Parses the GUI portion of the url without the
+    State.PATH_DELIMETERS.get('gui') key value.
+    @param {Array} urlParts - The url path split into parts.
+    @param {Object} state - The application state object as being parsed
+      from the URL.
+    @return {Object} The updated state to contain the search value, if any.
+  */
+  _parseGUI(urlParts, state) {
+    let indexes = [];
+    State.GUI_PATH_DELIMETERS.forEach(section => {
+      const index = urlParts.indexOf(section);
+      if (index > -1) {
+        indexes.push(index);
+      }
+    });
+    // If there were no sections found then just return.
+    if (!indexes.length) {
+      return state;
+    }
+    // JavaScript array sort sorts alphabetically which causes issues if
+    // you have multiple default sections ie) [0, 9, 17] gets sorted as
+    // [0, 17, 9]. So we must pass a custom sorter to it so that it sorts
+    // numerically.
+    indexes.sort((a, b) => a-b);
+    // Split out and store the sections
+    let guiParts = {};
+    indexes.forEach((index, arIndex) => {
+      const end = indexes[arIndex+1] || urlParts.length;
+      guiParts[urlParts[index]] = urlParts.slice(index+1, end).join('/');
+    });
+    state.gui = guiParts;
     return state;
   }
 };
