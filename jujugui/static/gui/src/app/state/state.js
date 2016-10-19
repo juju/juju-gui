@@ -23,7 +23,7 @@ if (typeof this.jujugui === 'undefined') {
 }
 
 /** Class representing the State of the Juju GUI */
-this.jujugui.State = class State {
+const State = class State {
   /**
     Create a new instance of the GUI state.
     @param {Object} cfg - The configuration options for a new State instance.
@@ -91,6 +91,28 @@ this.jujugui.State = class State {
     @param {String} url - The url to turn into state.
   */
   buildState(url) {
+    let state = {};
     url = this._sanitizeURL(url);
+    const parts = url.split('/');
+    state = this._parseRoot(parts, state);
+    return state;
+  }
+
+  /**
+    Inspects the url path to see if it is for the root.
+    @param {Array} urlParts - The url path split into parts.
+    @param {Object} state - The application state object as being parsed
+      from the URL.
+  */
+  _parseRoot(urlParts, state) {
+    State.ROOT_RESERVED.some(key => {
+      if (urlParts[0] === key) {
+        state.root = key;
+        return true;
+      }
+    });
+    return state;
   }
 };
+
+this.jujugui.State = State;

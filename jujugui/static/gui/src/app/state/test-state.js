@@ -58,4 +58,43 @@ describe('State', () => {
 
   });
 
+  describe('State._parseRoot()', () => {
+
+    it('populates the root portion of the state object', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123'
+      });
+      let appState = {};
+      state._parseRoot(['login'], appState);
+      assert.deepEqual(appState, {root: 'login'});
+    });
+
+  });
+
+  describe('State.buildState()', () => {
+
+    it('builds the proper state for the supplied urls', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123'
+      });
+
+      const urls = [{
+        path: 'http://abc.com:123/login',
+        state: {
+          root: 'login'
+        }
+      }];
+
+      urls.forEach(test => {
+        assert.deepEqual(
+          state.buildState(test.path),
+          test.state,
+          `${test.path} did not properly generate the state object: ` +
+          JSON.stringify(test.state));
+      });
+
+    });
+
+  });
+
 });
