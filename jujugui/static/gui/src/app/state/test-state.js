@@ -37,6 +37,14 @@ describe('State', () => {
       ['billing', 'charms', 'issues', 'revenue', 'settings']);
   });
 
+  it('has static properties for the necessary prefixes', () => {
+    const State = window.jujugui.State;
+    assert.equal(State.PATH_DELIMETERS.get('search'), 'q');
+    assert.equal(State.PATH_DELIMETERS.get('user'), 'u');
+    assert.equal(State.PATH_DELIMETERS.get('gui'), 'i');
+    assert.equal(State.PATH_DELIMETERS.size, 3);
+  });
+
   describe('State._sanitizeURL()', () => {
 
     it('can sanitize the url', () => {

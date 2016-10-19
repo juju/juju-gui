@@ -61,6 +61,19 @@ this.jujugui.State = class State {
   }
 
   /**
+    A map of path delimeters and their labels.
+    @type {Map}
+    @static
+  */
+  static get PATH_DELIMETERS() {
+    return new Map([
+      ['search', 'q'],
+      ['user', 'u'],
+      ['gui', 'i']
+    ]);
+  }
+
+  /**
     Takes a complete url, strips off the supplied baseURL and extra slashes.
     @param {String} url - The url to sanitize.
     @return {String} The sanitized url.
