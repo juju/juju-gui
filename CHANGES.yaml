@@ -1,5 +1,6 @@
 - 2.2.2:
 
+    - Add the ability to destroy models in the user profile.
     - Add zoom component back to the canvas.
     - Display a message in the model switcher if there are no models.
     - Add "Default" value to region selector to speed up deployment.
