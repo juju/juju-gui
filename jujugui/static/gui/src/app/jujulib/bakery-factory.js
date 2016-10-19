@@ -34,20 +34,20 @@ var module = module;
      nstance, created if needed.
      */
     get: function (cfg) {
-      let bakery = this.bakeries.get(cfg.serviceName);
-      if (bakery) {
-        return bakery;
-      }
-      bakery = new this.Bakery(cfg);
+      return this.bakeries.get(cfg.serviceName);
+    },
+
+    create: function (cfg) {
+      let bakery = new this.Bakery(cfg);
       this.bakeries.set(cfg.serviceName, bakery);
       return bakery;
     },
 
     /**
      Call clearCookie on all the bakery instances created by the factory.
-     @method clear
+     @method clearAllCookies
      */
-    clear: function () {
+    clearAllCookies: function () {
       for (var bakery of this.bakeries.values()) {
         bakery.clearCookie();
       }

@@ -399,7 +399,18 @@ YUI.add('juju-gui', function(Y) {
       // Create Romulus API client instances.
       this._setupRomulusServices(
         window.juju_config, window.jujulib, window.localStorage);
-
+      // Set up juju bakery service.
+      var dischargeToken;
+      if (window.juju_config) {
+        dischargeToken = window.juju_config.dischargeToken;
+      }
+      this.bakeryFactory.create({
+        webhandler: new Y.juju.environments.web.WebHandler(),
+        interactive: this.get('interactiveLogin'),
+        serviceName: 'juju',
+        dischargeStore: window.localStorage,
+        dischargeToken: dischargeToken
+      });
       // Set up a new modelController instance.
       this.modelController = new juju.ModelController({
         db: this.db,
@@ -855,11 +866,7 @@ YUI.add('juju-gui', function(Y) {
           if (api && api.get('connected')) {
             console.log(`logging into ${api.name} with macaroons`);
             api.loginWithMacaroon(this.bakeryFactory.get({
-              webhandler: new Y.juju.environments.web.WebHandler(),
-              interactive: this.get('interactiveLogin'),
-              serviceName: 'juju',
-              dischargeStore: window.localStorage,
-              dischargeToken: window.juju_config.dischargeToken
+              serviceName: 'juju'
             }), this._apiLoginHandler.bind(this, api));
           }
         });
@@ -966,7 +973,7 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.Logout
           logout={this.logout.bind(this)}
-          clearCookie={bakeryFactory.clear.bind(bakeryFactory)}
+          clearCookie={bakeryFactory.clearAllCookies.bind(bakeryFactory)}
           gisfLogout={window.juju_config.gisfLogout}
           gisf={window.juju_config.gisf}
           charmstoreLogoutUrl={charmstore.getLogoutUrl()}
@@ -1637,7 +1644,7 @@ YUI.add('juju-gui', function(Y) {
         if (window.flags && window.flags.gisf) {
           existingCookie = 'macaroon-storefront';
         }
-        var bakery = this.bakeryFactory.get({
+        var bakery = this.bakeryFactory.create({
           webhandler: new Y.juju.environments.web.WebHandler(),
           interactive: this.get('interactiveLogin'),
           setCookiePath: `${charmstoreURL}${apiVersion}/set-auth-cookie`,
@@ -1699,7 +1706,7 @@ YUI.add('juju-gui', function(Y) {
       }
       var interactive = this.get('interactiveLogin');
       var webHandler = new Y.juju.environments.web.WebHandler();
-      var bakery = this.bakeryFactory.get({
+      var bakery = this.bakeryFactory.create({
         serviceName: 'plans',
         macaroon: config.plansMacaroons,
         webhandler: webHandler,
@@ -1709,7 +1716,7 @@ YUI.add('juju-gui', function(Y) {
         dischargeToken: config.dischargeToken
       });
       this.plans = new window.jujulib.plans(config.plansURL, bakery);
-      var bakery = this.bakeryFactory.get({
+      var bakery = this.bakeryFactory.create({
         serviceName: 'terms',
         macaroon: config.termsMacaroons,
         webhandler: webHandler,
