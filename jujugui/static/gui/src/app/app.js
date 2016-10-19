@@ -653,7 +653,12 @@ YUI.add('juju-gui', function(Y) {
           // We won't have a controller API connection in Juju 1.
           this.env.connect();
         }
-        this.dispatch();
+        this.state.register([
+          this.checkUserCredentials.bind(this),
+          this.show_environment.bind(this),
+          this.authorizeCookieUse.bind(this)
+        ]);
+        this.state.parseURL();
         this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       }, this);
 
@@ -725,7 +730,7 @@ YUI.add('juju-gui', function(Y) {
         }
         // After logging in trigger the app to dispatch to re-render the
         // components that require an active connection to the controllerAPI.
-        this.dispatch();
+        this.state.parseURL();
         // If the user is connected to a model then the modelList will be
         // fetched by the modelswitcher component.
         if (this.env.get('modelUUID')) {
@@ -818,7 +823,6 @@ YUI.add('juju-gui', function(Y) {
     */
     parseURLState: function(req, res, next) {
       this.state.loadRequest(req, '', {dispatch: false});
-      next();
     },
 
     /**
@@ -1540,7 +1544,8 @@ YUI.add('juju-gui', function(Y) {
     _setupUIState: function(sandbox, baseUrl) {
       this.state = new models.UIState({
         baseUrl: baseUrl || '',
-        dispatchers: {}
+        dispatchers: {},
+        location: window.location
       });
       var dispatchers = this.state.get('dispatchers');
       dispatchers.sectionA = {
@@ -1578,7 +1583,7 @@ YUI.add('juju-gui', function(Y) {
     _changeState: function(e) {
       var state = e.details[0];
       var url = this.state.generateUrl(state);
-      this.navigate(url);
+      this.state.pushURL(url);
     },
 
     /**
@@ -1940,7 +1945,7 @@ YUI.add('juju-gui', function(Y) {
       if (this.views.environment.instance) {
         this.views.environment.instance.topo.update();
       }
-      this.dispatch();
+      this.state.parseURL();
       this._renderComponents();
     },
 
@@ -2039,7 +2044,6 @@ YUI.add('juju-gui', function(Y) {
         this._displayLogin();
         return;
       }
-      next();
     },
 
     /**
@@ -2397,7 +2401,7 @@ YUI.add('juju-gui', function(Y) {
      */
     show_environment: function(req, res, next) {
       if (!this.renderEnvironment) {
-        next(); return;
+        return;
       }
       var options = {
         getModelURL: Y.bind(this.getModelURL, this),
@@ -2436,7 +2440,6 @@ YUI.add('juju-gui', function(Y) {
 
       // Display the zoom message on page load.
       this._handleZoomMessage();
-      next();
     },
 
     /**
@@ -2524,7 +2527,6 @@ YUI.add('juju-gui', function(Y) {
         this.cookieHandler = this.cookieHandler || new Y.juju.Cookies();
         this.cookieHandler.check();
       }
-      next();
     },
 
     /**
@@ -2735,43 +2737,6 @@ YUI.add('juju-gui', function(Y) {
       users: {
         value: {}
       },
-
-      /**
-       * Routes
-       *
-       * Each request path is evaluated against all hereby defined routes,
-       * and the callbacks for all the ones that match are invoked,
-       * without stopping at the first one.
-       *
-       * To support this we supplement our routing information with
-       * additional attributes as follows:
-       *
-       * `namespace`: (optional) when namespace is specified this route should
-       *   only match when the URL fragment occurs in that namespace. The
-       *   default namespace (as passed to this.nsRouter) is assumed if no
-       *   namespace attribute is specified.
-       *
-       * `model`: `model.name` (required)
-       *
-       * `reverse_map`: (optional) A reverse mapping of `route_path_key` to the
-       *   name of the attribute on the model.  If no value is provided, it is
-       *   used directly as attribute name.
-       *
-       * `intent`: (optional) A string named `intent` for which this route
-       *   should be used. This can be used to select which subview is selected
-       *   to resolve a model's route.
-       *
-       * @attribute routes
-       */
-      routes: {
-        value: [
-          // Called on each request.
-          { path: '*', callbacks: 'parseURLState'},
-          { path: '*', callbacks: 'checkUserCredentials'},
-          { path: '*', callbacks: 'show_environment'},
-          { path: '*', callbacks: 'authorizeCookieUse'}
-        ]
-      }
     }
   });
 
