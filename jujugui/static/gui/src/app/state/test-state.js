@@ -19,7 +19,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('State', () => {
-
   it('can be instantiated', () => {
     const state = new window.jujugui.State({});
     assert.equal(state instanceof window.jujugui.State, true);
@@ -46,7 +45,6 @@ describe('State', () => {
   });
 
   describe('State._sanitizeURL()', () => {
-
     it('can sanitize the url', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123'
@@ -55,24 +53,31 @@ describe('State', () => {
         state._sanitizeURL('http://abc.com:123/a/b/c/d/'),
         'a/b/c/d');
     });
-
   });
 
   describe('State._parseRoot()', () => {
-
     it('populates the root portion of the state object', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123'
       });
-      let appState = {};
-      state._parseRoot(['login'], appState);
-      assert.deepEqual(appState, {root: 'login'});
+      assert.deepEqual(
+        state._parseRoot(['login'], {}),
+        {root: 'login'});
     });
+  });
 
+  describe('State._parseSearch()', () => {
+    it('populates the search portion of the state object', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123'
+      });
+      assert.deepEqual(
+        state._parseSearch(['k8s', 'core'], {}),
+        {search: 'k8s/core'});
+    });
   });
 
   describe('State.buildState()', () => {
-
     it('builds the proper state for the supplied urls', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123'
@@ -92,9 +97,7 @@ describe('State', () => {
           `${test.path} did not properly generate the state object: ` +
           JSON.stringify(test.state));
       });
-
     });
-
   });
 
 });

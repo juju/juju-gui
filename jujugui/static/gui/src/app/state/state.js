@@ -95,6 +95,18 @@ const State = class State {
     url = this._sanitizeURL(url);
     const parts = url.split('/');
     state = this._parseRoot(parts, state);
+    // If we have root paths in the url then we can ignore everything else.
+    if (state.root) {
+      return state;
+    }
+    // The order of the PATH_DELIMETERS is important so we can assume the
+    // order for easy parsing of the path.
+    if (parts[0] === State.PATH_DELIMETERS.get('search')) {
+      state = this._parseSearch(parts.splice(1), state);
+      // If we have a search path in the url then we can ignore everything else.
+      return state;
+    }
+
     return state;
   }
 
@@ -103,6 +115,7 @@ const State = class State {
     @param {Array} urlParts - The url path split into parts.
     @param {Object} state - The application state object as being parsed
       from the URL.
+    @return {Object} The updated state to contain the root value, if any.
   */
   _parseRoot(urlParts, state) {
     State.ROOT_RESERVED.some(key => {
@@ -111,6 +124,21 @@ const State = class State {
         return true;
       }
     });
+    return state;
+  }
+
+  /**
+    Parses the search portion of the url with out the
+    State.PATH_DELIMETERS.get('search') key value.
+    @param {Array} urlParts - The url path split into parts.
+    @param {Object} state - The application state object as being parsed
+      from the URL.
+    @return {Object} The updated state to contain the search value, if any.
+  */
+  _parseSearch(urlParts, state) {
+    if (urlParts.length > 0) {
+      state.search = urlParts.join('/');
+    }
     return state;
   }
 };
