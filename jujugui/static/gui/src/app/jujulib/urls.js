@@ -301,7 +301,32 @@ var module = module;
       parts.schema = schemaFragments.shift();
       value = schemaFragments.join(':');
     }
-    throw new Error('not implemented');
+    const fragments = value.split('/');
+    // Handle the user part, if any.
+    if (value.indexOf(LEGACY_USER_PREFIX) === 0) {
+      parts.user = fragments.shift().replace(/^~/, '');
+      if (!parts.user) {
+        throw new Error(`URL only includes the user prefix: ${value}`);
+      }
+    }
+    // Handle the series part if any.
+    if (fragments.length > 1) {
+      parts.series = fragments.shift();
+    }
+    // Validation of undefined values will be done by the URL constructor.
+    parts.name = fragments.shift() || '';
+    if (fragments.length) {
+      throw new Error(`URL includes too many parts: ${value}`);
+    }
+    const nameParts = parts.name.split('-');
+    if (nameParts.length > 1) {
+      const possibleRevision = parseInt(nameParts[nameParts.length-1], 10);
+      if (!isNaN(possibleRevision)) {
+        parts.revision = possibleRevision;
+        parts.name = nameParts.slice(0, nameParts.length-1).join('-');
+      }
+    }
+    return new URL(parts);
   };
 
   /**

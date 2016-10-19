@@ -300,17 +300,15 @@ describe('jujulib urls', () => {
   describe('fromLegacyString', () => {
     it('creates the URL from a legacy string', () => {
       legacyPathTests.forEach(test => {
-        // TODO frankban: implement URL.fromLegacyString.
-        // let str = test.url.toLegacyString();
-        // let url = URL.fromLegacyString(str);
-        // assertURL(url, test.url, str);
+        let str = test.url.toLegacyString();
+        let url = URL.fromLegacyString(str);
+        assertURL(url, test.url, str);
         if (!test.url.isLocal()) {
           // Non-local charms strings can be parsed even if they don't
           // explicitly include the schema.
-          // TODO frankban: implement URL.fromLegacyString.
-          // str = test.url.legacyPath();
-          // url = URL.fromLegacyString(str);
-          // assertURL(url, test.url, str);
+          str = test.url.legacyPath();
+          url = URL.fromLegacyString(str);
+          assertURL(url, test.url, str);
         }
       });
     });
@@ -348,26 +346,25 @@ describe('jujulib urls', () => {
         err: 'invalid user: "my#user"'
       }, {
         str: '~dalek/xenial/django-42/bad-wolf',
-        err: 'URL includes too many parts: u/dalek/django/xenial/42/bad-wolf'
+        err: 'URL includes too many parts: ~dalek/xenial/django-42/bad-wolf'
       }, {
         str: 'bundle/django-0/1',
-        err: 'URL includes too many parts: django/bundle/0/1'
+        err: 'URL includes too many parts: bundle/django-0/1'
       }, {
         str: 'bundle django',
-        err: 'URL contains spaces: "/django bundle"'
+        err: 'URL contains spaces: "bundle django"'
       }, {
         str: '/django/~who',
-        err: 'invalid series: "u"'
+        err: 'invalid charm/bundle name: "~who"'
       }, {
         str: 'django-2-bad-wolf',
-        err: 'invalid series: "bad-wolf"'
+        err: 'invalid charm/bundle name: "django-2-bad-wolf"'
       }, {
         str: 'xenial/haproxy--1',
-        err: 'revision is not a positive number: "-1"'
+        err: 'invalid charm/bundle name: "haproxy-"'
       }];
       tests.forEach(test => {
-        // TODO frankban: implement URL.fromLegacyString.
-        // assert.throws(() => URL.fromLegacyString(test.str), test.err);
+        assert.throws(() => URL.fromLegacyString(test.str), test.err);
       });
     });
   });
