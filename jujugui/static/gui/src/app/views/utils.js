@@ -911,6 +911,11 @@ YUI.add('juju-view-utils', function(Y) {
           charm = charm[0];
           var config = {},
               options = charm.get ? charm.get('options') : charm.options;
+          var series = charm.series;
+          // If series is an array then pick the first one. This will be the
+          // case if it is a multi-series charm and we're picking the default
+          // and preferred series.
+          var activeSeries = Array.isArray(series) ? series[0] : series;
           Object.keys(options).forEach(function(key) {
             config[key] = options[key]['default'];
           });
@@ -918,6 +923,7 @@ YUI.add('juju-view-utils', function(Y) {
           // the ghost inspector to open.
           this.env.deploy(
               charm.get ? charm.get('id') : charm.id,
+              activeSeries,
               charm.get ? charm.get('name') : charm.name,
               config,
               undefined, //config file content
