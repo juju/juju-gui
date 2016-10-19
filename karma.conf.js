@@ -21,6 +21,7 @@ module.exports = function(config) {
       'jujugui/static/gui/src/app/jujulib/plans.js',
       'jujugui/static/gui/src/app/jujulib/terms.js',
       'jujugui/static/gui/src/app/jujulib/reconnecting-websocket.js',
+      'jujugui/static/gui/src/app/jujulib/urls.js',
       'jujugui/static/gui/src/app/jujulib/test-*.js',
 
       'jujugui/static/gui/build/app/assets/javascripts/bind-function-pollyfill.js',
