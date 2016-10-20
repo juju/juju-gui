@@ -43,7 +43,7 @@ YUI.add('acl', function(Y) {
     @param modelAPI {Object} The model API connection instance.
     @return {Object} A namespace providing access to ACLs checkers (see below).
   */
-  juju.generateAcl = (controllerAPI, modelAPI) => {
+  juju.generateAcl = function (controllerAPI, modelAPI) {
     if (!controllerAPI) {
       // The application is connected to a legacy Juju.
       controllerAPI = {
