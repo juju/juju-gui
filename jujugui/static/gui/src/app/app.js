@@ -40,8 +40,6 @@ YUI.add('juju-gui', function(Y) {
       widgets = Y.namespace('juju.widgets'),
       d3 = Y.namespace('d3');
 
-  var components = window.juju.components; // eslint-disable-line no-unused-vars
-
   /**
    * The main app class.
    *
@@ -138,7 +136,7 @@ YUI.add('juju-gui', function(Y) {
             }, this);
 
             ReactDOM.render(
-              <components.Shortcuts
+              <window.juju.components.Shortcuts
                 bindings={bindings}
                 disableCookie={localStorage.getItem('disable-cookie')}
                 disableAutoPlace={localStorage.getItem('disable-auto-place')}
@@ -1275,10 +1273,10 @@ YUI.add('juju-gui', function(Y) {
       ServiceModule.deselectNodes();
       const db = this.db;
       ReactDOM.render(
-        <components.Panel
+        <window.juju.components.Panel
           instanceName="inspector-panel"
           visible={db.services.size() > 0}>
-          <components.AddedServicesList
+          <window.juju.components.AddedServicesList
             services={db.services}
             hoveredId={hoveredId}
             updateUnitFlags={db.updateUnitFlags.bind(db)}
@@ -1288,7 +1286,7 @@ YUI.add('juju-gui', function(Y) {
             hoverService={ServiceModule.hoverService.bind(ServiceModule)}
             panToService={ServiceModule.panToService.bind(ServiceModule)}
             changeState={this.changeState.bind(this)} />
-        </components.Panel>,
+        </window.juju.components.Panel>,
         document.getElementById('inspector-container'));
     },
 
@@ -1320,7 +1318,7 @@ YUI.add('juju-gui', function(Y) {
           this.db, models.getEndpoints(service, this.endpointsController));
         const ecs = this.env.get('ecs');
         inspector = (
-          <components.Inspector
+          <window.juju.components.Inspector
             acl={this.acl}
             service={service}
             charm={charm}
@@ -1377,7 +1375,7 @@ YUI.add('juju-gui', function(Y) {
         this._hideDragOverNotification();
         var localCharmHelpers = juju.localCharmHelpers;
         inspector = (
-          <components.LocalInspector
+          <window.juju.components.LocalInspector
             acl={this.acl}
             file={metadata.flash.file}
             localType={localType}
@@ -1401,12 +1399,12 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       ReactDOM.render(
-        <components.Panel
+        <window.juju.components.Panel
           instanceName="inspector-panel"
           visible={true}
           metadata={metadata}>
           {inspector}
-        </components.Panel>,
+        </window.juju.components.Panel>,
         document.getElementById('inspector-container'));
     },
 
@@ -1431,7 +1429,7 @@ YUI.add('juju-gui', function(Y) {
         }
       });
       ReactDOM.render(
-        <components.Charmbrowser
+        <window.juju.components.Charmbrowser
           acl={this.acl}
           apiUrl={charmstore.url}
           charmstoreSearch={charmstore.search.bind(charmstore)}
@@ -1499,7 +1497,7 @@ YUI.add('juju-gui', function(Y) {
     _renderMachineView: function(metadata) {
       var db = this.db;
       ReactDOM.render(
-        <components.MachineView
+        <window.juju.components.MachineView
           acl={this.acl}
           addGhostAndEcsUnits={views.utils.addGhostAndEcsUnits.bind(
               this, this.db, this.env)}
@@ -1526,7 +1524,7 @@ YUI.add('juju-gui', function(Y) {
     _renderDragOverNotification: function(showIndicator = true) {
       this.views.environment.instance.fadeHelpIndicator(showIndicator);
       ReactDOM.render(
-        <components.ExpandingProgress />,
+        <window.juju.components.ExpandingProgress />,
         document.getElementById('drag-over-notification-container'));
     },
 
