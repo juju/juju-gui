@@ -391,6 +391,14 @@ describe('utilities', function() {
           path,
           'http://4.3.2.1/v5/~paulgear/precise/quassel-core-2/icon.svg');
     });
+
+    it('handles charmstoreURL with no trailing slash', function() {
+      window.juju_config = {charmstoreURL: 'http://4.3.2.1'};
+      var path = utils.getIconPath('~paulgear/precise/quassel-core-2');
+      assert.equal(
+          path,
+          'http://4.3.2.1/v5/~paulgear/precise/quassel-core-2/icon.svg');
+    });
   });
 
   describe('addGhostAndEcsUnits', function() {

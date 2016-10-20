@@ -1623,7 +1623,8 @@ YUI.add('juju-gui', function(Y) {
         if (!jujuConfig || !jujuConfig.charmstoreURL) {
           console.error('no juju config for charmstoreURL availble');
         } else {
-          charmstoreURL = jujuConfig.charmstoreURL;
+          charmstoreURL = views.utils.ensureTrailingSlash(
+            jujuConfig.charmstoreURL);
           existingMacaroons = jujuConfig.charmstoreMacaroons;
           existingDischargeToken = jujuConfig.dischargeToken;
         }
