@@ -4,7 +4,7 @@ const childProcess = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const babel = require('babel-core');
+const babel = require('babel-cli/node_modules/babel-core');
 // FILE_LIST will be a space delimited list of paths that need to be built.
 const fileList = process.env.FILE_LIST.split(' ');
 const rootDir = path.join(__dirname, '/../');
@@ -27,6 +27,7 @@ fileList.forEach(file => {
     const full = babel.transform(data, { plugins });
     fs.writeFile(fullPath, full.code);
     const min = babel.transform(data, {
+      presets: ['babel-preset-babili'],
       plugins,
       compact: true,
       comments: false
