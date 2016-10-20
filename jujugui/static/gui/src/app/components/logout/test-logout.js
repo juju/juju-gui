@@ -38,12 +38,36 @@ describe('Logout', () => {
         logout={logout}
         visible={true}
         clearCookie={sinon.stub()}
+        gisf={false}
         charmstoreLogoutUrl={logoutUrl}
         getUser={sinon.stub()}
         clearUser={sinon.stub()}/>);
     var expected = (
       <a className="logout-link"
         href={logoutUrl}
+        onClick={output.props.onClick}
+        target="_blank">Logout</a>
+      );
+    assert.deepEqual(output, expected);
+  });
+
+  it('renders properly in gisf', () => {
+    var logout = sinon.stub();
+    var logoutUrl = 'http://logout';
+    var gisfLogoutUrl = 'http://gisflogout';
+    var output = jsTestUtils.shallowRender(
+      <juju.components.Logout
+        logout={logout}
+        visible={true}
+        clearCookie={sinon.stub()}
+        gisf={true}
+        gisfLogout={gisfLogoutUrl}
+        charmstoreLogoutUrl={logoutUrl}
+        getUser={sinon.stub()}
+        clearUser={sinon.stub()}/>);
+    var expected = (
+      <a className="logout-link"
+        href={gisfLogoutUrl}
         onClick={output.props.onClick}
         target="_blank">Logout</a>
       );
