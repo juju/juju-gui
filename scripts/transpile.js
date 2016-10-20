@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 'use strict';
-const childProcess = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
 const babel = require('babel-cli/node_modules/babel-core');
+const mkdirp = require('mkdirp');
 // FILE_LIST will be a space delimited list of paths that need to be built.
 const fileList = process.env.FILE_LIST.split(' ');
 const rootDir = path.join(__dirname, '/../');
@@ -23,7 +23,7 @@ fileList.forEach(file => {
     encoding: 'utf-8'
   }, (err, data) => {
     console.log('Transpiling', fullPath);
-    childProcess.execSync('mkdir -p ' + directory);
+    mkdirp.sync(directory);
     const full = babel.transform(data, { plugins });
     fs.writeFile(fullPath, full.code);
     const min = babel.transform(data, {
