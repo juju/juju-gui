@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const juju = {components: {}}; // eslint-disable-line no-unused-vars
+var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('UserProfileModelList', () => {
   let models, user;
@@ -264,7 +264,7 @@ describe('UserProfileModelList', () => {
         listModelsWithInfo={listModelsWithInfo}
         switchModel={sinon.stub()}
         user={user} />, true);
-    const output = component.getRenderOutput();
+    let output = component.getRenderOutput();
     output.props.children[1].props.children[1][0].props.displayConfirmation();
     output = component.getRenderOutput();
     const expected = (
@@ -295,7 +295,7 @@ describe('UserProfileModelList', () => {
         user={user} />, true);
     const instance = component.getMountedInstance();
     instance._displayConfirmation({name: 'spinach/my-model'});
-    const output = component.getRenderOutput();
+    let output = component.getRenderOutput();
     output.props.children[2].props.buttons[1].action();
     assert.equal(destroyModels.callCount, 1, 'destroyModels not called');
     output = component.getRenderOutput();
@@ -322,7 +322,7 @@ describe('UserProfileModelList', () => {
         user={user} />, true);
     const instance = component.getMountedInstance();
     instance._displayConfirmation({name: 'spinach/my-model'});
-    const output = component.getRenderOutput();
+    let output = component.getRenderOutput();
     output.props.children[2].props.buttons[0].action();
     assert.equal(destroyModels.callCount, 0, 'destroyModels was called');
     output = component.getRenderOutput();

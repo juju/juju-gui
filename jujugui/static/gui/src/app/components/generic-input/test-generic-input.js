@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const juju = {components: {}}; // eslint-disable-line no-unused-vars
+var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
@@ -242,7 +242,7 @@ describe('GenericInput', function() {
         }]} />, true);
     const instance = renderer.getMountedInstance();
     instance.refs = {field: {value: ''}};
-    const output = renderer.getRenderOutput();
+    let output = renderer.getRenderOutput();
     output.props.children[1].props.onChange();
     output = renderer.getRenderOutput();
     const expected = (
@@ -304,7 +304,7 @@ describe('GenericInput', function() {
         }]} />, true);
     const instance = renderer.getMountedInstance();
     instance.refs = {field: {value: ''}};
-    const output = renderer.getRenderOutput();
+    let output = renderer.getRenderOutput();
     output.props.children[1].props.onChange();
     output = renderer.getRenderOutput();
     assert.deepEqual(output.props.className, 'generic-input error');

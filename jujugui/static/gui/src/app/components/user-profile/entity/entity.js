@@ -257,7 +257,7 @@ YUI.add('user-profile-entity', function() {
       const isCharm = type === 'charm';
       // Model names will be in the format "username/model-name" so we have to
       // extract the part we need.
-      const name = entity.name;
+      let name = entity.name;
       if (isModel && entity.name.indexOf('/') !== -1) {
         name = name.split('/')[1];
       }
