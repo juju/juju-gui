@@ -10,15 +10,7 @@ const fileList = process.env.FILE_LIST.split(' ');
 const rootDir = path.join(__dirname, '/../');
 
 const plugins = [
-  'transform-react-jsx',
-  'transform-es2015-template-literals',
-  'transform-es2015-function-name',
-  'transform-es2015-arrow-functions',
-  'transform-es2015-block-scoped-functions',
-  'transform-es2015-shorthand-properties',
-  'transform-es2015-destructuring',
-  'transform-es2015-parameters',
-  'transform-es2015-block-scoping'
+  'transform-react-jsx'
 ];
 
 fileList.forEach(file => {
