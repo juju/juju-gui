@@ -1,4 +1,18 @@
+- 2.2.2:
+
+    - Add the ability to destroy models in the user profile.
+    - Add zoom component back to the canvas.
+    - Display a message in the model switcher if there are no models.
+    - Add "Default" value to region selector to speed up deployment.
+    - Update styling of the input fields in the deployment flow.
+    - (Fix) Model creation when redirect is required no longer fails.
+    - (Fix) Improve visibility of redirect info errors.
+    - (Fix) Do not try to connect to models in error state.
+    - (Fix) Re-enable external credential data.
+    - (Fix) Logging in via Sandbox mode.
+
 - 2.2.1:
+
     - Update UI for empty profile.
     - Search input no longer expands when focused.
     - New animated inputs in deployment flow.
@@ -7,7 +21,7 @@
       (Fix) When removing applications also remove the prerequisite calls.
       This fixes the issue where the changes indicated in the deployment
       summary wouldn't mirror the representation on the canvas.
-    - (Fix) Openstck domain field is no longer required.
+    - (Fix) Openstack domain field is no longer required.
     - (Fix) Properly clear staged changes when logging out.
     - (Fix) Surface model creation errors.
     - (Fix) Model names are now validated on input blur.

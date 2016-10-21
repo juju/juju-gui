@@ -1195,6 +1195,8 @@ YUI.add('juju-view-utils', function(Y) {
         charmstoreURL = (cfg && cfg.charmstoreURL) || '',
         localIndex = charmId.indexOf('local:'),
         path;
+    charmstoreURL = utils.ensureTrailingSlash(charmstoreURL);
+
     if (localIndex > -1 && env) {
       path = env.getLocalCharmIcon(charmId);
     } else if (localIndex === -1) {

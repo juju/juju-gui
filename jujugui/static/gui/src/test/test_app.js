@@ -1092,7 +1092,7 @@ describe('App', function() {
           get: () => {}
         }
       };
-      app.dispatch = function() {};
+      app.state.parseURL = function() {};
       return app;
     };
 

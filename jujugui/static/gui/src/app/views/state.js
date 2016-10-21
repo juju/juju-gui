@@ -33,6 +33,15 @@ YUI.add('juju-app-state', function(Y) {
   // feature flag until it's complete, at which point it will be renamed
   // back to State.
   ns.UIState = Y.Base.create('state', Y.Base, [], {
+
+    /**
+     * @method initializer
+     * @param {Object} cfg Application configuration data.
+     */
+    initializer: function(cfg) {
+      this.stateObservers = [];
+    },
+
     /**
      * Verify that a particular part of the state has changed.
      *
@@ -66,6 +75,51 @@ YUI.add('juju-app-state', function(Y) {
           value;
       if (sectionObj) { value = sectionObj[field]; }
       return value;
+    },
+
+    /**
+      Registers an array of function as observers to state change.
+
+      @method register
+      @param {Array} stateObservers functions to be notified.
+    */
+    register: function(stateObservers) {
+      for (let observer in stateObservers) {
+        this.stateObservers.push(stateObservers[observer]);
+      }
+    },
+
+    /**
+      Breaks the URL down into stateful queries.
+
+      @method parseURL
+    */
+    parseURL: function() {
+      let location = this.get('location');
+      location.query = {};
+      if (location.search === '?store') {
+        location.query.store = '';
+      } else if (location.search.includes('?search=')) {
+        location.query.term = location.search.replace('?search=', '');
+      } else if (location.search.includes('?store=')) {
+        location.query.store = location.search.replace('?store=', '');
+      }
+      this.loadRequest(location);
+      for (let observer in this.stateObservers) {
+        this.stateObservers[observer]();
+      }
+    },
+
+    /**
+      Updates the browser address.
+
+      @method parseURL
+      @param {Sting} url the string to replace the address bar.
+    */
+    pushURL: function(url) {
+      let stateObj = {};
+      history.pushState(stateObj, '', url);
+      this.parseURL();
     },
 
     /**
@@ -387,7 +441,7 @@ YUI.add('juju-app-state', function(Y) {
         should render.
     */
     loadRequest: function(req, hash, options) {
-      var url = req.path,
+      var url = req.pathname,
           query = req.query,
           state = {};
       // Strip the baseUrl before attempting to read the url's other parts.
@@ -498,19 +552,10 @@ YUI.add('juju-app-state', function(Y) {
       }, this);
       // There's always a query component, if it reflects a search.
       if (query) {
-        // midpoint doesn't typically have a value, just the key existing.
-        if (query.midpoint !== undefined) {
-          state.sectionC = {
-            component: 'charmbrowser',
-            metadata: {
-              activeComponent: 'store'
-            }
-          };
-        }
-        if (query.search !== undefined) {
+        if (query.term !== undefined) {
           var metadata = {
             activeComponent: 'search-results',
-            search: query.search
+            search: query.term
           };
           if (query.tags) {
             metadata.tags = query.tags;
@@ -799,10 +844,20 @@ YUI.add('juju-app-state', function(Y) {
         Temporary memory for dispatching some views
 
         @attribute flash
-        @type {Oobject}
+        @type {Object}
         @default {}
       */
       flash: {
+        value: {}
+      },
+      /**
+        The browser location
+
+        @attribute location
+        @type {Object}
+        @default {}
+      */
+      location: {
         value: {}
       }
     }

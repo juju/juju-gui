@@ -1104,7 +1104,7 @@ describe('UI State object', function() {
       } else if (hashIndex > -1) {
         hashTo = hashIndex;
       }
-      req.path = url.substr(0, hashTo || length);
+      req.pathname = url.substr(0, hashTo || length);
       return req;
     }
 
