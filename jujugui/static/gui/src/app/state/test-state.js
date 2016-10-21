@@ -33,7 +33,7 @@ describe('State', () => {
   it('has static PROFILE_RESERVED', () => {
     assert.deepEqual(
       window.jujugui.State.PROFILE_RESERVED,
-      ['billing', 'charms', 'issues', 'revenue', 'settings']);
+      ['charms', 'issues', 'revenue', 'settings']);
   });
 
   it('has static properties for the necessary prefixes', () => {
@@ -79,7 +79,7 @@ describe('State', () => {
     });
   });
 
-  describe('State._parseGUI', () => {
+  fdescribe('State._parseGUI', () => {
     it('populates the gui portion of the state object', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123'
@@ -89,20 +89,53 @@ describe('State', () => {
         parts: [],
         state: {}
       }, {
+        parts: ['inspector', 'haproxy', 'config'],
+        state: {
+          gui: {
+            inspector: 'haproxy/config'
+          }
+        }
+      }, {
+        parts: ['machines'],
+        state: {
+          gui: {
+            machines: ''
+          }
+        }
+      }, {
+        parts: ['applications', 'inspector', 'ghost'],
+        state: {
+          gui: {
+            applications: '',
+            inspector: 'ghost'
+          }
+        }
+      }, {
+        parts: ['inspector', 'service123', 'relate-to', 'serviceabc'],
+        state: {
+          gui: {
+            inspector: 'service123/relate-to/serviceabc'
+          }
+        }
+      }, {
         parts: [
-          'inspector', 'apache2', 'machine', '3', 'lxc-0', 'deploy', 'foo'],
+          'inspector', 'apache2', 'machines', '3', 'lxc-0', 'deploy', 'foo'],
         state: {
           gui: {
             inspector: 'apache2',
-            machine: '3/lxc-0',
+            machines: '3/lxc-0',
             deploy: 'foo'
           }
         }
       }];
 
-      assert.deepEqual(
-        state._parseGUI(guiSections[0].parts, {}),
-        guiSections[0].state);
+      guiSections.forEach(section => {
+        assert.deepEqual(
+          state._parseGUI(section.parts, {}),
+          section.state,
+          `${section.path} did not properly generate the state object: ` +
+          JSON.stringify(section.state));
+      });
     });
   });
 

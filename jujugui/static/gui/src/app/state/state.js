@@ -57,7 +57,7 @@ const State = class State {
     @static
   */
   static get PROFILE_RESERVED() {
-    return ['billing', 'charms', 'issues', 'revenue', 'settings'];
+    return ['charms', 'issues', 'revenue', 'settings'];
   }
 
   /**
@@ -80,7 +80,7 @@ const State = class State {
   */
   static get GUI_PATH_DELIMETERS() {
     return [
-      'account', 'applications', 'deploy', 'inspector', 'isv', 'machine'];
+      'account', 'applications', 'deploy', 'inspector', 'isv', 'machines'];
   }
 
   /**
