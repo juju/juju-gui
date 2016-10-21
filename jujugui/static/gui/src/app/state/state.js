@@ -39,6 +39,26 @@ const State = class State {
       @type {Object}
     */
     this.dispatchers = cfg.dispatchers;
+
+    if (cfg.seriesList && !Array.isArray(cfg.seriesList)) {
+      throw 'Series list must be an Array';
+    }
+    /**
+      The list of possible distro 'series' for the store paths. ex)
+      trusty, precise, xenial. The GUI has a utils method `getSeriesList` that
+      is the central storage location for the series information. This Object
+      should be converted to an array and passed to this state when being
+      instantiated.
+      @type {Array}
+    */
+    this.seriesList = (function() {
+      if (!cfg.seriesList) {
+        console.log('No series list provided, using default list');
+        return ['bundle', 'precise', 'trusty', 'xenial'];
+      } else {
+        return cfg.seriesList.concat(['bundle']);
+      }
+    }());
   }
 
   /**
@@ -102,8 +122,7 @@ const State = class State {
   */
   buildState(url) {
     let state = {};
-    url = this._sanitizeURL(url);
-    const parts = url.split('/');
+    let parts = this._sanitizeURL(url).split('/');
     state = this._parseRoot(parts, state);
     // If we have root paths in the url then we can ignore everything else.
     if (state.root) {
@@ -123,8 +142,11 @@ const State = class State {
       // Trim off the lagging delimeter.
       parts.splice(-1);
     }
-
-
+    // Extract out the user sections.
+    if (parts.includes(State.PATH_DELIMETERS.get('user'))) {
+      ({state, parts} = this._parseUser(parts, state));
+    }
+    // By this point there should only be the 'store only' content left.
     return state;
   }
 
@@ -193,6 +215,67 @@ const State = class State {
     });
     state.gui = guiParts;
     return state;
+  }
+
+  /**
+    Parses the url and extracts the user delimeted sections.
+    @param {Array} urlParts - The url path split into parts.
+    @param {Object} state - The application state object as being parsed
+      from the URL.
+    @return {Object}
+  */
+  _parseUser(urlParts, state) {
+    // Grab the indexes of the user delimeters as there can be multiple.
+    let indexes = [];
+    urlParts.forEach((item, index) => {
+      if (item === State.PATH_DELIMETERS.get('user')) {
+        indexes.push(index);
+      }
+    });
+    // If we have no user parts then we don't need to parse them.
+    if (indexes.length > 0) {
+      switch (indexes.length) {
+        case 1:
+          // Extract out the user portion of the list and then remove the
+          // user delimeter at the beginning.
+          const userBlock = urlParts.splice(indexes[0]).slice(1);
+          // The userBlock might have user components and store components.
+          // The user component has at most two spots. If it has more, then
+          // it may be a user store path.
+          if (userBlock.length > 2) {
+            // Check the 2 index spot to see if it's either an integer or a
+            // series. If it is, then this is a user store path.
+            if (!Number.isNaN(parseInt(userBlock[2], 10)) ||
+                this.seriesList.includes(userBlock[2])) {
+              state.store = userBlock.splice(0).join('/');
+            }
+          }
+          // If there are still parts then it wasn't a long user store url
+          // so only grab the user path.
+          if (userBlock.length) {
+            state.user = userBlock.splice(0, 2).join('/');
+          }
+          // Anything left is a root store path which will be handled elsewhere
+          // So add it back to the parts list.
+          urlParts = urlParts.concat(userBlock);
+          break;
+        case 2:
+          // JavaScript array sort sorts alphabetically which causes issues
+          // if you have multiple default sections ie) [0, 9, 17] gets sorted
+          // as [0, 17, 9]. So we must pass a custom sorter to it so that it
+          // sorts numerically.
+          indexes.sort((a, b) => a-b);
+          // The first user portion will be the primary user.
+          // Extract out the user portion of the list and then remove the
+          // user delimeter at the beginning.
+          state.user = urlParts.splice(
+            indexes[0], indexes[1]).slice(1).join('/');
+          // The second user portion will be the store section.
+          state.store = urlParts.splice(0).slice(1).join('/');
+          break;
+      }
+    }
+    return {state, parts: urlParts};
   }
 };
 

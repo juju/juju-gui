@@ -118,6 +118,100 @@ describe('State', () => {
     });
   });
 
+  describe('State._parseUser()', () => {
+    it('populates the user and store portions of the state object', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123'
+      });
+
+      const userSections = [{
+        parts: [],
+        state: {},
+        outputParts: []
+      }, {
+        parts: ['u', 'ant'],
+        state: {
+          user: 'ant'
+        },
+        outputParts: []
+      }, {
+        parts: ['u', 'frankban', 'settings'],
+        state: {
+          user: 'frankban/settings'
+        },
+        outputParts: []
+      }, {
+        parts: ['u', 'hatch', 'staging', 'haproxy'],
+        state: {
+          user: 'hatch/staging'
+        },
+        outputParts: ['haproxy']
+      }, {
+        parts: ['u', 'frankban', 'production', 'ghost', 'xenial'],
+        state: {
+          user: 'frankban/production'
+        },
+        outputParts: ['ghost', 'xenial']
+      }, {
+        parts: ['u', 'hatch', 'staging', 'ghost', '42'],
+        state: {
+          user: 'hatch/staging'
+        },
+        outputParts: ['ghost', '42']
+      }, {
+        parts: ['u', 'hatch', 'mongodb', 'xenial'],
+        state: {
+          store: 'hatch/mongodb/xenial'
+        },
+        outputParts: []
+      }, {
+        parts: ['u', 'hatch', 'mongodb', '47'],
+        state: {
+          store: 'hatch/mongodb/47'
+        },
+        outputParts: []
+      }, {
+        parts: ['u', 'frankban', 'django', 'bundle', '0'],
+        state: {
+          store: 'frankban/django/bundle/0'
+        },
+        outputParts: []
+      }, {
+      // Multi user delimiter handling.
+        parts: ['u', 'hatch', 'staging', 'u', 'frankban', 'django'],
+        state: {
+          user: 'hatch/staging',
+          store: 'frankban/django'
+        },
+        outputParts: []
+      }, {
+        parts: [
+          'u', 'frankban', 'production', 'u', 'hatch', 'mongodb', 'xenial'],
+        state: {
+          user: 'frankban/production',
+          store: 'hatch/mongodb/xenial'
+        },
+        outputParts: []
+      }, {
+        parts: [
+          'u', 'hatch', 'staging', 'u', 'hatch', 'django', 'bundle', '0'],
+        state: {
+          user: 'hatch/staging',
+          store: 'hatch/django/bundle/0'
+        },
+        outputParts: []
+      }];
+
+      userSections.forEach(section => {
+        assert.deepEqual(
+          state._parseUser(section.parts, {}),
+          {state: section.state, parts: section.outputParts},
+          `${section.path} did not properly generate the state object: ` +
+          JSON.stringify(section.state));
+      });
+    });
+  });
+
   describe('State.buildState()', () => {
     it('builds the proper state for the reserved urls', () => {
       const state = new window.jujugui.State({
@@ -192,6 +286,37 @@ describe('State', () => {
         state: {
           gui: { inspector: 'apache2', machines: '3/lxc-0', deploy: 'foo'}
         }
+      }];
+
+      urls.forEach(test => {
+        assert.deepEqual(
+          state.buildState(test.path),
+          test.state,
+          `${test.path} did not properly generate the state object: ` +
+          JSON.stringify(test.state));
+      });
+    });
+
+    it('builds proper state for the user urls', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123'
+      });
+
+      const urls = [{
+        path: 'http://abc.com:123/u/ant',
+        state: { user: 'ant' }
+      }, {
+        path: 'http://abc.com:123/u/hatch/staging',
+        state: { user: 'hatch/staging' }
+      }, {
+        path: 'http://abc.com:123/u/hatch/mongodb/xenial',
+        state: { store: 'hatch/mongodb/xenial' }
+      }, {
+        path: 'http://abc.com:123/u/hatch/mongodb/47',
+        state: { store: 'hatch/mongodb/47' }
+      }, {
+        path: 'http://abc.com:123/u/frankban/django/bundle/0',
+        state: { store: 'frankban/django/bundle/0' }
       }];
 
       urls.forEach(test => {
