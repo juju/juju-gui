@@ -147,6 +147,9 @@ const State = class State {
       ({state, parts} = this._parseUser(parts, state));
     }
     // By this point there should only be the 'store only' content left.
+    if (!state.store && parts.length) {
+      state.store = parts.join('/');
+    }
     return state;
   }
 
