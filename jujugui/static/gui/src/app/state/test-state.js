@@ -44,6 +44,33 @@ describe('State', () => {
     assert.equal(State.PATH_DELIMETERS.size, 3);
   });
 
+  describe('steriesList', () => {
+    it('defaults to an internal series list if none is provided', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123'
+      });
+      assert.deepEqual(state.seriesList, [
+        'bundle', 'precise', 'trusty', 'xenial']);
+    });
+
+    it('adds \'bundle\' to the series list', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList: ['trusty']
+      });
+      assert.deepEqual(state.seriesList, ['trusty', 'bundle']);
+    });
+
+    it('throws if the seriesList value is not an array', () => {
+      assert.throws(function() {
+        new window.jujugui.State({
+          baseURL: 'http://abc.com:123',
+          seriesList: 'notanarray'
+        });
+      });
+    });
+  });
+
   describe('State._sanitizeURL()', () => {
     it('can sanitize the url', () => {
       const state = new window.jujugui.State({
