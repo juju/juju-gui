@@ -139,8 +139,6 @@ const State = class State {
     const guiIndex = parts.indexOf(State.PATH_DELIMETERS.get('gui'));
     if (guiIndex > -1) {
       state = this._parseGUI(parts.splice(guiIndex), state);
-      // Trim off the lagging delimeter.
-      parts.splice(-1);
     }
     // Extract out the user sections.
     if (parts.includes(State.PATH_DELIMETERS.get('user'))) {

@@ -355,6 +355,185 @@ describe('State', () => {
           JSON.stringify(test.state));
       });
     });
+
+    it('builds proper state for model and store urls', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123'
+      });
+
+      const urls = [{
+        path: 'http://abc.com:123/u/hatch/staging/haproxy',
+        state: { user: 'hatch/staging', store: 'haproxy' }
+      }, {
+        path: 'http://abc.com:123/u/frankban/production/ghost/xenial',
+        state: { user: 'frankban/production', store: 'ghost/xenial' }
+      }, {
+        path: 'http://abc.com:123/u/hatch/staging/ghost/42',
+        state: { user: 'hatch/staging', store: 'ghost/42' }
+      }, {
+        path: 'http://abc.com:123/u/frankban/production/django/bundle/47',
+        state: { user: 'frankban/production', store: 'django/bundle/47' }
+      }, {
+        path: 'http://abc.com:123/u/hatch/staging/u/frankban/django',
+        state: { user: 'hatch/staging', store: 'frankban/django' }
+      }, {
+        path: 'http://abc.com:123/u/frankban/production/u/hatch/mongodb/xenial',
+        state: { user: 'frankban/production', store: 'hatch/mongodb/xenial' }
+      }, {
+        path: 'http://abc.com:123/u/hatch/staging/u/hatch/mongodb/47',
+        state: { user: 'hatch/staging', store: 'hatch/mongodb/47' }
+      }, {
+        path:
+          'http://abc.com:123/u/frankban/production/u/frankban/django/bundle/0',
+        state: {
+          user: 'frankban/production', store: 'frankban/django/bundle/0' }
+      }];
+
+      urls.forEach(test => {
+        assert.deepEqual(
+          state.buildState(test.path),
+          test.state,
+          `${test.path} did not properly generate the state object: ` +
+          JSON.stringify(test.state));
+      });
+    });
+
+    it('builds proper state for model and gui urls', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123'
+      });
+
+      const urls = [{
+        path: 'http://abc.com:123/u/hatch/staging/i/inspector/haproxy/config',
+        state: { user: 'hatch/staging', gui: { inspector: 'haproxy/config' } }
+      }, {
+        path: 'http://abc.com:123/u/frankban/production/i/machines',
+        state: { user: 'frankban/production', gui: { machines: '' } }
+      }, {
+        path:
+          'http://abc.com:123/u/hatch/staging/i/applications/inspector/ghost/',
+        state: {
+          user: 'hatch/staging', gui: { applications: '', inspector: 'ghost' } }
+      }];
+
+      urls.forEach(test => {
+        assert.deepEqual(
+          state.buildState(test.path),
+          test.state,
+          `${test.path} did not properly generate the state object: ` +
+          JSON.stringify(test.state));
+      });
+    });
+
+    it('builds proper state for store and gui urls', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123'
+      });
+
+      const urls = [{
+        path: 'http://abc.com:123/haproxy/i/inspector/haproxy/config',
+        state: { store: 'haproxy', gui: { inspector: 'haproxy/config' } }
+      }, {
+        path: 'http://abc.com:123/ghost/xenial/i/machines',
+        state: { store: 'ghost/xenial', gui: { machines: '' } }
+      }, {
+        path: 'http://abc.com:123/ghost/42/i/applications/inspector/ghost/',
+        state: {
+          store: 'ghost/42', gui: { applications: '', inspector: 'ghost' } }
+      }, {
+        path: 'http://abc.com:123/django/bundle/47/i/machines',
+        state: { store: 'django/bundle/47', gui: { machines: '' } }
+      }, {
+        path: 'http://abc.com:123/u/hatch/mongodb/xenial/i/applications/inspector/ghost/', // eslint-disable-line max-len
+        state: {
+          store: 'hatch/mongodb/xenial',
+          gui: { applications: '', inspector: 'ghost'} }
+      }, {
+        path: 'http://abc.com:123/u/frankban/django/bundle/0/i/machines',
+        state: { store: 'frankban/django/bundle/0', gui: { machines: '' } }
+      }];
+
+      urls.forEach(test => {
+        assert.deepEqual(
+          state.buildState(test.path),
+          test.state,
+          `${test.path} did not properly generate the state object: ` +
+          JSON.stringify(test.state));
+      });
+    });
+
+    it('builds proper state for urls with all sections', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123'
+      });
+
+      const urls = [{
+        path: 'http://abc.com:123/u/hatch/staging/haproxy/i/inspector/haproxy/config', // eslint-disable-line max-len
+        state: {
+          user: 'hatch/staging',
+          store: 'haproxy',
+          gui: { inspector: 'haproxy/config' }
+        }
+      }, {
+        path: 'http://abc.com:123/u/frankban/production/ghost/xenial/i/inspector/haproxy/config', // eslint-disable-line max-len
+        state: {
+          user: 'frankban/production',
+          store: 'ghost/xenial',
+          gui: { inspector: 'haproxy/config' }
+        }
+      }, {
+        path: 'http://abc.com:123/u/hatch/staging/ghost/42/i/inspector/haproxy/config', // eslint-disable-line max-len
+        state: {
+          user: 'hatch/staging',
+          store: 'ghost/42',
+          gui: { inspector: 'haproxy/config' }
+        }
+      }, {
+        path: 'http://abc.com:123/u/frankban/production/django/bundle/47/i/machines', // eslint-disable-line max-len
+        state: {
+          user: 'frankban/production',
+          store: 'django/bundle/47',
+          gui: { machines: '' }
+        }
+      }, {
+        path: 'http://abc.com:123/u/hatch/staging/u/frankban/django/i/applications/inspector/ghost/', // eslint-disable-line max-len
+        state: {
+          user: 'hatch/staging',
+          store: 'frankban/django',
+          gui: { applications: '', inspector: 'ghost' }
+        }
+      }, {
+        path: 'http://abc.com:123/u/frankban/production/u/hatch/mongodb/xenial/i/machines', // eslint-disable-line max-len
+        state: {
+          user: 'frankban/production',
+          store: 'hatch/mongodb/xenial',
+          gui: { machines: '' }
+        }
+      }, {
+        path: 'http://abc.com:123/u/hatch/staging/u/hatch/mongodb/47/i/applications/inspector/ghost/', // eslint-disable-line max-len
+        state: {
+          user: 'hatch/staging',
+          store: 'hatch/mongodb/47',
+          gui: { applications: '', inspector: 'ghost' }
+        }
+      }, {
+        path: 'http://abc.com:123/u/frankban/production/u/frankban/django/bundle/0/i/applications', // eslint-disable-line max-len
+        state: {
+          user: 'frankban/production',
+          store: 'frankban/django/bundle/0',
+          gui: { applications: '' }
+        }
+      }];
+
+      urls.forEach(test => {
+        assert.deepEqual(
+          state.buildState(test.path),
+          test.state,
+          `${test.path} did not properly generate the state object: ` +
+          JSON.stringify(test.state));
+      });
+    });
+
   });
 
 });
