@@ -79,7 +79,7 @@ describe('State', () => {
     });
   });
 
-  fdescribe('State._parseGUI', () => {
+  describe('State._parseGUI', () => {
     it('populates the gui portion of the state object', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123'
@@ -90,42 +90,21 @@ describe('State', () => {
         state: {}
       }, {
         parts: ['inspector', 'haproxy', 'config'],
-        state: {
-          gui: {
-            inspector: 'haproxy/config'
-          }
-        }
+        state: { gui: { inspector: 'haproxy/config' } }
       }, {
         parts: ['machines'],
-        state: {
-          gui: {
-            machines: ''
-          }
-        }
+        state: { gui: { machines: '' } }
       }, {
         parts: ['applications', 'inspector', 'ghost'],
-        state: {
-          gui: {
-            applications: '',
-            inspector: 'ghost'
-          }
-        }
+        state: { gui: { applications: '', inspector: 'ghost' } }
       }, {
         parts: ['inspector', 'service123', 'relate-to', 'serviceabc'],
-        state: {
-          gui: {
-            inspector: 'service123/relate-to/serviceabc'
-          }
-        }
+        state: { gui: { inspector: 'service123/relate-to/serviceabc' } }
       }, {
         parts: [
           'inspector', 'apache2', 'machines', '3', 'lxc-0', 'deploy', 'foo'],
         state: {
-          gui: {
-            inspector: 'apache2',
-            machines: '3/lxc-0',
-            deploy: 'foo'
-          }
+          gui: { inspector: 'apache2', machines: '3/lxc-0', deploy: 'foo' }
         }
       }];
 
@@ -179,9 +158,40 @@ describe('State', () => {
       const urls = [{
         path: 'http://abc.com:123/q/haproxy',
         state: { search: 'haproxy' }
-      },{
+      }, {
         path: 'http://abc.com:123/q/k8s/core',
         state: { search: 'k8s/core' }
+      }];
+
+      urls.forEach(test => {
+        assert.deepEqual(
+          state.buildState(test.path),
+          test.state,
+          `${test.path} did not properly generate the state object: ` +
+          JSON.stringify(test.state));
+      });
+    });
+
+    it('builds the proper state for the gui urls', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123'
+      });
+
+      const urls = [{
+        path: 'http://abc.com:123/i/inspector/haproxy/config',
+        state: { gui: { inspector: 'haproxy/config' }}
+      }, {
+        path: 'http://abc.com:123/i/machines',
+        state: { gui: { machines: '' }}
+      }, {
+        path: 'http://abc.com:123/i/applications/inspector/ghost',
+        state: { gui: { applications: '', inspector: 'ghost' }}
+      }, {
+        path:
+          'http://abc.com:123/i/inspector/apache2/machines/3/lxc-0/deploy/foo',
+        state: {
+          gui: { inspector: 'apache2', machines: '3/lxc-0', deploy: 'foo'}
+        }
       }];
 
       urls.forEach(test => {
