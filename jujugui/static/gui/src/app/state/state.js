@@ -30,9 +30,14 @@ const State = class State {
   */
   constructor(cfg) {
     /**
-      The baseURL to use when generating URLs.
+      The baseURL to use when generating URLs. This value is required and
+      should be the full base path that the GUI is served from.
+      @property baseURL
       @type {String}
     */
+    if (!cfg.baseURL) {
+      throw 'baseURL must be provided.';
+    }
     this.baseURL = cfg.baseURL;
     /**
       The list of dispatchers for the various components from the url.
@@ -41,7 +46,7 @@ const State = class State {
     this.dispatchers = cfg.dispatchers;
 
     if (cfg.seriesList && !Array.isArray(cfg.seriesList)) {
-      throw 'Series list must be an Array';
+      throw 'Series list must be an Array.';
     }
     /**
       The list of possible distro 'series' for the store paths. ex)
@@ -81,7 +86,7 @@ const State = class State {
   }
 
   /**
-    A map of path delimeters and their labels.
+    A map of path labels to their delimeters.
     @type {Map}
     @static
   */
@@ -94,7 +99,7 @@ const State = class State {
   }
 
   /**
-    List of path delimeters for the gui section.
+    List of path delimeters for the GUI section.
     @type {Array}
     @static
   */
@@ -104,11 +109,11 @@ const State = class State {
   }
 
   /**
-    Takes a complete url, strips off the supplied baseURL and extra slashes.
-    @param {String} url - The url to sanitize.
-    @return {String} The sanitized url.
+    Takes a complete URL, strips off the supplied baseURL and extra slashes.
+    @param {String} url - The URL to sanitize.
+    @return {String} The sanitized path.
   */
-  _sanitizeURL(url) {
+  _getCleanPath(url) {
     return url
       // Strip the baseURL before parsing the sections.
       .replace(this.baseURL, '')
@@ -117,14 +122,15 @@ const State = class State {
   }
 
   /**
-    Splits the url up and generates a state object.
-    @param {String} url - The url to turn into state.
+    Splits the URL up and generates a state object.
+    @param {String} url - The URL to turn into state.
+    @return {Object} The generated state object.
   */
   buildState(url) {
     let state = {};
-    let parts = this._sanitizeURL(url).split('/');
+    let parts = this._getCleanPath(url).split('/');
     state = this._parseRoot(parts, state);
-    // If we have root paths in the url then we can ignore everything else.
+    // If we have root paths in the URL then we can ignore everything else.
     if (state.root) {
       return state;
     }
@@ -132,7 +138,7 @@ const State = class State {
     // order for easy parsing of the path.
     if (parts[0] === State.PATH_DELIMETERS.get('search')) {
       state = this._parseSearch(parts.splice(1), state);
-      // If we have a search path in the url then we can ignore everything else.
+      // If we have a search path in the URL then we can ignore everything else.
       return state;
     }
     // Working backwards to split up the URL.
@@ -152,8 +158,8 @@ const State = class State {
   }
 
   /**
-    Inspects the url path to see if it is for the root.
-    @param {Array} urlParts - The url path split into parts.
+    Inspects the URL path to see if it is for the root.
+    @param {Array} urlParts - The URL path split into parts.
     @param {Object} state - The application state object as being parsed
       from the URL.
     @return {Object} The updated state to contain the root value, if any.
@@ -169,9 +175,9 @@ const State = class State {
   }
 
   /**
-    Parses the search portion of the url without the
+    Parses the search portion of the URL without the
     State.PATH_DELIMETERS.get('search') key value.
-    @param {Array} urlParts - The url path split into parts.
+    @param {Array} urlParts - The URL path split into parts.
     @param {Object} state - The application state object as being parsed
       from the URL.
     @return {Object} The updated state to contain the search value, if any.
@@ -184,9 +190,9 @@ const State = class State {
   }
 
   /**
-    Parses the GUI portion of the url without the
+    Parses the GUI portion of the URL without the
     State.PATH_DELIMETERS.get('gui') key value.
-    @param {Array} urlParts - The url path split into parts.
+    @param {Array} urlParts - The URL path split into parts.
     @param {Object} state - The application state object as being parsed
       from the URL.
     @return {Object} The updated state to contain the search value, if any.
@@ -219,8 +225,8 @@ const State = class State {
   }
 
   /**
-    Parses the url and extracts the user delimeted sections.
-    @param {Array} urlParts - The url path split into parts.
+    Parses the URL and extracts the user delimeted sections.
+    @param {Array} urlParts - The URL path split into parts.
     @param {Object} state - The application state object as being parsed
       from the URL.
     @return {Object}
@@ -234,48 +240,52 @@ const State = class State {
       }
     });
     // If we have no user parts then we don't need to parse them.
-    if (indexes.length > 0) {
-      switch (indexes.length) {
-        case 1:
-          // Extract out the user portion of the list and then remove the
-          // user delimeter at the beginning.
-          const userBlock = urlParts.splice(indexes[0]).slice(1);
-          // The userBlock might have user components and store components.
-          // The user component has at most two spots. If it has more, then
-          // it may be a user store path.
-          if (userBlock.length > 2) {
-            // Check the 2 index spot to see if it's either an integer or a
-            // series. If it is, then this is a user store path.
-            if (!Number.isNaN(parseInt(userBlock[2], 10)) ||
-                this.seriesList.includes(userBlock[2])) {
-              state.store = userBlock.splice(0).join('/');
-            }
-          }
-          // If there are still parts then it wasn't a long user store url
-          // so only grab the user path.
-          if (userBlock.length) {
-            state.user = userBlock.splice(0, 2).join('/');
-          }
-          // Anything left is a root store path which will be handled elsewhere
-          // So add it back to the parts list.
-          urlParts = urlParts.concat(userBlock);
-          break;
-        case 2:
-          // JavaScript array sort sorts alphabetically which causes issues
-          // if you have multiple default sections ie) [0, 9, 17] gets sorted
-          // as [0, 17, 9]. So we must pass a custom sorter to it so that it
-          // sorts numerically.
-          indexes.sort((a, b) => a-b);
-          // The first user portion will be the primary user.
-          // Extract out the user portion of the list and then remove the
-          // user delimeter at the beginning.
-          state.user = urlParts.splice(
-            indexes[0], indexes[1]).slice(1).join('/');
-          // The second user portion will be the store section.
-          state.store = urlParts.splice(0).slice(1).join('/');
-          break;
-      }
+    if (indexes.length === 0) {
+      return { state, parts: urlParts };
     }
+
+    switch (indexes.length) {
+      case 1:
+        // Extract out the user portion of the list and then remove the
+        // user delimeter at the beginning.
+        const userBlock = urlParts.splice(indexes[0]).slice(1);
+        // The userBlock might have user components and store components.
+        // The user component has at most two spots. If it has more, then
+        // it may be a user store path.
+        if (userBlock.length > 2) {
+          // Check the second index spot to see if it's either an integer for
+          // the revision or or a series. If it is, then this is a user
+          // store path.
+          if (!Number.isNaN(parseInt(userBlock[2], 10)) ||
+              this.seriesList.includes(userBlock[2])) {
+            state.store = userBlock.splice(0).join('/');
+          }
+        }
+        // If there are still parts then it wasn't a long user store url
+        // so only grab the user path.
+        if (userBlock.length) {
+          state.user = userBlock.splice(0, 2).join('/');
+        }
+        // Anything left is a root store path which will be handled elsewhere
+        // So add it back to the parts list.
+        urlParts = urlParts.concat(userBlock);
+        break;
+      case 2:
+        // JavaScript array sort sorts alphabetically which causes issues
+        // if you have multiple default sections ie) [0, 9, 17] gets sorted
+        // as [0, 17, 9]. So we must pass a custom sorter to it so that it
+        // sorts numerically.
+        indexes.sort((a, b) => a-b);
+        // The first user portion will be the primary user.
+        // Extract out the user portion of the list and then remove the
+        // user delimeter at the beginning.
+        state.user = urlParts.splice(
+          indexes[0], indexes[1]).slice(1).join('/');
+        // The second user portion will be the store section.
+        state.store = urlParts.splice(0).slice(1).join('/');
+        break;
+    }
+
     return {state, parts: urlParts};
   }
 };
