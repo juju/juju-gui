@@ -20,28 +20,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('State', () => {
   it('can be instantiated', () => {
-    const state = new window.jujugui.State({});
+    const state = new window.jujugui.State({
+      baseURL: 'http://abc.com:123'
+    });
     assert.equal(state instanceof window.jujugui.State, true);
   });
 
-  it('has static ROOT_RESERVED', () => {
-    assert.deepEqual(
-      window.jujugui.State.ROOT_RESERVED,
-      ['about', 'bigdata', 'docs', 'juju', 'login', 'logout', 'new', 'store']);
-  });
-
-  it('has static PROFILE_RESERVED', () => {
-    assert.deepEqual(
-      window.jujugui.State.PROFILE_RESERVED,
-      ['charms', 'issues', 'revenue', 'settings']);
-  });
-
-  it('has static properties for the necessary prefixes', () => {
-    const State = window.jujugui.State;
-    assert.equal(State.PATH_DELIMETERS.get('search'), 'q');
-    assert.equal(State.PATH_DELIMETERS.get('user'), 'u');
-    assert.equal(State.PATH_DELIMETERS.get('gui'), 'i');
-    assert.equal(State.PATH_DELIMETERS.size, 3);
+  it('throws if no baseURL is provided', () => {
+    assert.throws(function() {
+      new window.jujugui.State({});
+    });
   });
 
   describe('steriesList', () => {
