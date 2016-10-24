@@ -115,6 +115,9 @@ const State = class State {
     const guiIndex = parts.indexOf(PATH_DELIMETERS.get('gui'));
     if (guiIndex > -1) {
       ({state, error} = this._parseGUI(parts.splice(guiIndex), state));
+      if (error !== null) {
+        return {error, state};
+      }
     }
     // Extract out the user sections.
     if (parts.includes(PATH_DELIMETERS.get('user'))) {

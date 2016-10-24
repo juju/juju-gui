@@ -157,6 +157,28 @@ describe('State', () => {
         error: null,
         outputParts: []
       }, {
+        parts: ['u'],
+        state: {},
+        error: 'invalid user path.',
+        outputParts: []
+      }, {
+        parts: ['ghost', 'u', 'hatch'],
+        state: {},
+        error: 'invalid user path.',
+        outputParts: ['ghost', 'u', 'hatch']
+      }, {
+        parts: ['u', 'hatch', 'staging', 'foo', 'u', 'hatch', 'ghost'],
+        state: {},
+        error: 'invalid user path.',
+        outputParts: ['u', 'hatch', 'ghost']
+      }, {
+        parts: ['u', 'hatch', 'staging', 'u', 'hatch'],
+        state: {
+          user: 'hatch/staging'
+        },
+        error: 'invalid user store path.',
+        outputParts: []
+      }, {
         parts: ['u', 'ant'],
         state: { profile: 'ant' },
         error: null,
@@ -692,9 +714,7 @@ describe('State', () => {
         error: 'invalid root path.'
       }, {
         path: 'http://abc.com:123/no-such/i',
-        state: {
-          store: 'no-such'
-        },
+        state: {},
         error: 'invalid GUI path.'
       }, {
         path: 'http://abc.com:123/django/bundle/42/wat',
