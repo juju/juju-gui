@@ -71,13 +71,19 @@ describe('State', () => {
     });
   });
 
-  describe('State._sanitizeURL()', () => {
-    it('can sanitize the url', () => {
+  describe('State._getCleanPath()', () => {
+    it('can clean the url', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123'
       });
       assert.equal(
-        state._sanitizeURL('http://abc.com:123/a/b/c/d/'),
+        state._getCleanPath('http://abc.com:123/a/b/c/d/'),
+        'a/b/c/d');
+      assert.equal(
+        state._getCleanPath('http://abc.com:123///a/b/c/d/'),
+        'a/b/c/d');
+      assert.equal(
+        state._getCleanPath('http://abc.com:123/a/b/c/d///'),
         'a/b/c/d');
     });
   });

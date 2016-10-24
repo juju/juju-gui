@@ -82,8 +82,8 @@ const State = class State {
     return url
       // Strip the baseURL before parsing the sections.
       .replace(this.baseURL, '')
-    // Strip the leading and trailing slashes off the url.
-      .replace(/^\//, '').replace(/\/$/, '');
+      // Strip the leading and trailing slashes off the url.
+      .replace(/^\/*/, '').replace(/\/*$/, '');
   }
 
   /**
