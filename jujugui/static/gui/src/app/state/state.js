@@ -22,6 +22,13 @@ if (typeof this.jujugui === 'undefined') {
   this.jujugui = {};
 }
 
+const ROOT_RESERVED = [
+  'about', 'bigdata', 'docs', 'juju', 'login', 'logout', 'new', 'store'];
+const PROFILE_RESERVED = ['charms', 'issues', 'revenue', 'settings']; //eslint-disable-line
+const PATH_DELIMETERS = new Map([['search', 'q'], ['user', 'u'], ['gui', 'i']]);
+const GUI_PATH_DELIMETERS = [
+  'account', 'applications', 'deploy', 'inspector', 'isv', 'machines'];
+
 /** Class representing the State of the Juju GUI */
 const State = class State {
   /**
@@ -67,48 +74,6 @@ const State = class State {
   }
 
   /**
-    List of reserved keywords for the paths.
-    @type {Array}
-    @static
-  */
-  static get ROOT_RESERVED() {
-    return [
-      'about', 'bigdata', 'docs', 'juju', 'login', 'logout', 'new', 'store'];
-  }
-
-  /**
-    List of reserved keywords for the profile paths.
-    @type {Array}
-    @static
-  */
-  static get PROFILE_RESERVED() {
-    return ['charms', 'issues', 'revenue', 'settings'];
-  }
-
-  /**
-    A map of path labels to their delimeters.
-    @type {Map}
-    @static
-  */
-  static get PATH_DELIMETERS() {
-    return new Map([
-      ['search', 'q'],
-      ['user', 'u'],
-      ['gui', 'i']
-    ]);
-  }
-
-  /**
-    List of path delimeters for the GUI section.
-    @type {Array}
-    @static
-  */
-  static get GUI_PATH_DELIMETERS() {
-    return [
-      'account', 'applications', 'deploy', 'inspector', 'isv', 'machines'];
-  }
-
-  /**
     Takes a complete URL, strips off the supplied baseURL and extra slashes.
     @param {String} url - The URL to sanitize.
     @return {String} The sanitized path.
@@ -136,18 +101,18 @@ const State = class State {
     }
     // The order of the PATH_DELIMETERS is important so we can assume the
     // order for easy parsing of the path.
-    if (parts[0] === State.PATH_DELIMETERS.get('search')) {
+    if (parts[0] === PATH_DELIMETERS.get('search')) {
       state = this._parseSearch(parts.splice(1), state);
       // If we have a search path in the URL then we can ignore everything else.
       return state;
     }
     // Working backwards to split up the URL.
-    const guiIndex = parts.indexOf(State.PATH_DELIMETERS.get('gui'));
+    const guiIndex = parts.indexOf(PATH_DELIMETERS.get('gui'));
     if (guiIndex > -1) {
       state = this._parseGUI(parts.splice(guiIndex), state);
     }
     // Extract out the user sections.
-    if (parts.includes(State.PATH_DELIMETERS.get('user'))) {
+    if (parts.includes(PATH_DELIMETERS.get('user'))) {
       ({state, parts} = this._parseUser(parts, state));
     }
     // By this point there should only be the 'store only' content left.
@@ -165,7 +130,7 @@ const State = class State {
     @return {Object} The updated state to contain the root value, if any.
   */
   _parseRoot(urlParts, state) {
-    State.ROOT_RESERVED.some(key => {
+    ROOT_RESERVED.some(key => {
       if (urlParts[0] === key) {
         state.root = key;
         return true;
@@ -176,7 +141,7 @@ const State = class State {
 
   /**
     Parses the search portion of the URL without the
-    State.PATH_DELIMETERS.get('search') key value.
+    PATH_DELIMETERS.get('search') key value.
     @param {Array} urlParts - The URL path split into parts.
     @param {Object} state - The application state object as being parsed
       from the URL.
@@ -191,7 +156,7 @@ const State = class State {
 
   /**
     Parses the GUI portion of the URL without the
-    State.PATH_DELIMETERS.get('gui') key value.
+    PATH_DELIMETERS.get('gui') key value.
     @param {Array} urlParts - The URL path split into parts.
     @param {Object} state - The application state object as being parsed
       from the URL.
@@ -199,7 +164,7 @@ const State = class State {
   */
   _parseGUI(urlParts, state) {
     let indexes = [];
-    State.GUI_PATH_DELIMETERS.forEach(section => {
+    GUI_PATH_DELIMETERS.forEach(section => {
       const index = urlParts.indexOf(section);
       if (index > -1) {
         indexes.push(index);
@@ -235,7 +200,7 @@ const State = class State {
     // Grab the indexes of the user delimeters as there can be multiple.
     let indexes = [];
     urlParts.forEach((item, index) => {
-      if (item === State.PATH_DELIMETERS.get('user')) {
+      if (item === PATH_DELIMETERS.get('user')) {
         indexes.push(index);
       }
     });
