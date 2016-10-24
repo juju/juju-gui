@@ -157,9 +157,19 @@ describe('State', () => {
         outputParts: []
       }, {
         parts: ['u', 'frankban', 'settings'],
-        state: {
-          user: 'frankban/settings'
-        },
+        state: { profile: 'frankban/settings' },
+        outputParts: []
+      }, {
+        parts: ['u', 'frankban', 'charms'],
+        state: { profile: 'frankban/charms' },
+        outputParts: []
+      }, {
+        parts: ['u', 'frankban', 'issues'],
+        state: { profile: 'frankban/issues' },
+        outputParts: []
+      }, {
+        parts: ['u', 'frankban', 'revenue'],
+        state: { profile: 'frankban/revenue' },
         outputParts: []
       }, {
         parts: ['u', 'hatch', 'staging', 'haproxy'],
@@ -171,6 +181,12 @@ describe('State', () => {
         parts: ['u', 'frankban', 'production', 'ghost', 'xenial'],
         state: {
           user: 'frankban/production'
+        },
+        outputParts: ['ghost', 'xenial']
+      }, {
+        parts: ['u', 'hatch', 'charms', 'ghost', 'xenial'],
+        state: {
+          profile: 'hatch/charms',
         },
         outputParts: ['ghost', 'xenial']
       }, {
@@ -219,6 +235,14 @@ describe('State', () => {
         state: {
           user: 'hatch/staging',
           store: 'hatch/django/bundle/0'
+        },
+        outputParts: []
+      }, {
+        parts: [
+          'u', 'hatch', 'charms', 'u', 'hatch', 'mongodb', 'xenial'],
+        state: {
+          profile: 'hatch/charms',
+          store: 'hatch/mongodb/xenial'
         },
         outputParts: []
       }];

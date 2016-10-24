@@ -24,7 +24,7 @@ if (typeof this.jujugui === 'undefined') {
 
 const ROOT_RESERVED = [
   'about', 'bigdata', 'docs', 'juju', 'login', 'logout', 'new', 'store'];
-const PROFILE_RESERVED = ['charms', 'issues', 'revenue', 'settings']; //eslint-disable-line
+const PROFILE_RESERVED = ['charms', 'issues', 'revenue', 'settings'];
 const PATH_DELIMETERS = new Map([['search', 'q'], ['user', 'u'], ['gui', 'i']]);
 const GUI_PATH_DELIMETERS = [
   'account', 'applications', 'deploy', 'inspector', 'isv', 'machines'];
@@ -209,6 +209,27 @@ const State = class State {
       return { state, parts: urlParts };
     }
 
+    /**
+      Takes the section of the URL parts which needs to be added to either the
+      user or profile section and depending on its contents adds it to the
+      appropriate section. This modifies the state object in place but also
+      returns the state for completeness.
+      @param {Array} block - The section of the URL parts which contains the
+        data necessary to add to the state depending on its contents.
+      @param {Object} state - The current instance of the state object.
+      @returns {Object} The modified state object.
+    */
+    function addToUserOrProfile(block, state) {
+      // If the second part of the path has one of the reserved words
+      // from the profile then store it in the profile section
+      if (block[1] && PROFILE_RESERVED.includes(block[1])) {
+        state.profile = block.join('/');
+      } else {
+        state.user = block.join('/');
+      }
+      return state;
+    }
+
     switch (indexes.length) {
       case 1:
         // Extract out the user portion of the list and then remove the
@@ -226,10 +247,11 @@ const State = class State {
             state.store = userBlock.splice(0).join('/');
           }
         }
-        // If there are still parts then it wasn't a long user store url
+        // If there are still parts then it wasn't a long user store UTL
         // so only grab the user path.
         if (userBlock.length) {
-          state.user = userBlock.splice(0, 2).join('/');
+          let block = userBlock.splice(0, 2);
+          state = addToUserOrProfile(block, state);
         }
         // Anything left is a root store path which will be handled elsewhere
         // So add it back to the parts list.
@@ -244,8 +266,8 @@ const State = class State {
         // The first user portion will be the primary user.
         // Extract out the user portion of the list and then remove the
         // user delimeter at the beginning.
-        state.user = urlParts.splice(
-          indexes[0], indexes[1]).slice(1).join('/');
+        let block = urlParts.splice(indexes[0], indexes[1]).slice(1);
+        state = addToUserOrProfile(block, state);
         // The second user portion will be the store section.
         state.store = urlParts.splice(0).slice(1).join('/');
         break;
