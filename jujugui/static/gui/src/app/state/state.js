@@ -92,19 +92,20 @@ const State = class State {
     @return {Object} The generated state object.
   */
   buildState(url) {
+    let error = null;
     let state = {};
     let parts = this._getCleanPath(url).split('/');
     state = this._parseRoot(parts, state);
     // If we have root paths in the URL then we can ignore everything else.
     if (state.root) {
-      return state;
+      return {error, state};
     }
     // The order of the PATH_DELIMETERS is important so we can assume the
     // order for easy parsing of the path.
     if (parts[0] === PATH_DELIMETERS.get('search')) {
       state = this._parseSearch(parts.splice(1), state);
       // If we have a search path in the URL then we can ignore everything else.
-      return state;
+      return {error, state};
     }
     // Working backwards to split up the URL.
     const guiIndex = parts.indexOf(PATH_DELIMETERS.get('gui'));
@@ -113,13 +114,16 @@ const State = class State {
     }
     // Extract out the user sections.
     if (parts.includes(PATH_DELIMETERS.get('user'))) {
-      ({state, parts} = this._parseUser(parts, state));
+      ({state, parts, error} = this._parseUser(parts, state));
+      if (error !== null) {
+        return {error, state};
+      }
     }
     // By this point there should only be the 'store only' content left.
     if (!state.store && parts.length) {
       state.store = parts.join('/');
     }
-    return state;
+    return {error, state};
   }
 
   /**
@@ -194,11 +198,12 @@ const State = class State {
     @param {Array} urlParts - The URL path split into parts.
     @param {Object} state - The application state object as being parsed
       from the URL.
-    @return {Object}
+    @return {Object} Contains the state, parts, error if any.
   */
   _parseUser(urlParts, state) {
     // Grab the indexes of the user delimeters as there can be multiple.
     let indexes = [];
+    let error = null;
     urlParts.forEach((item, index) => {
       if (item === PATH_DELIMETERS.get('user')) {
         indexes.push(index);
@@ -206,7 +211,7 @@ const State = class State {
     });
     // If we have no user parts then we don't need to parse them.
     if (indexes.length === 0) {
-      return { state, parts: urlParts };
+      return { state, parts: urlParts, error };
     }
 
     /**
@@ -222,7 +227,8 @@ const State = class State {
     function addToUserOrProfile(block, state) {
       // If the second part of the path has one of the reserved words
       // from the profile then store it in the profile section
-      if (block[1] && PROFILE_RESERVED.includes(block[1])) {
+      if (block.length === 1 ||
+          block[1] && PROFILE_RESERVED.includes(block[1])) {
         state.profile = block.join('/');
       } else {
         state.user = block.join('/');
@@ -235,6 +241,11 @@ const State = class State {
         // Extract out the user portion of the list and then remove the
         // user delimeter at the beginning.
         const userBlock = urlParts.splice(indexes[0]).slice(1);
+        // If there are no sections after the delimeter is removed then this
+        // is an invalid url.
+        if (userBlock.length === 0) {
+          return {state, parts: urlParts, error: 'invalid user path.'};
+        }
         // The userBlock might have user components and store components.
         // The user component has at most two spots. If it has more, then
         // it may be a user store path.
@@ -247,7 +258,7 @@ const State = class State {
             state.store = userBlock.splice(0).join('/');
           }
         }
-        // If there are still parts then it wasn't a long user store UTL
+        // If there are still parts then it wasn't a long user store URL
         // so only grab the user path.
         if (userBlock.length) {
           let block = userBlock.splice(0, 2);
@@ -267,13 +278,24 @@ const State = class State {
         // Extract out the user portion of the list and then remove the
         // user delimeter at the beginning.
         let block = urlParts.splice(indexes[0], indexes[1]).slice(1);
+        // If there are more than two parts in the first block when we have
+        // two user blocks then the url is invalid.
+        if (block.length > 2) {
+          return {state, parts: urlParts, error: 'invalid user path.'};
+        }
         state = addToUserOrProfile(block, state);
         // The second user portion will be the store section.
-        state.store = urlParts.splice(0).slice(1).join('/');
+        const storeBlock = urlParts.splice(0).slice(1);
+        // If there are less than two or more than four sections after
+        // the delimeter is removed then this is an invalid url.
+        if (storeBlock.length < 2 || storeBlock.length > 4) {
+          return {state, parts: urlParts, error: 'invalid user store path.'};
+        }
+        state.store = storeBlock.join('/');
         break;
     }
 
-    return {state, parts: urlParts};
+    return {state, parts: urlParts, error};
   }
 };
 
