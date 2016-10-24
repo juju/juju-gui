@@ -98,6 +98,10 @@ const State = class State {
     state = this._parseRoot(parts, state);
     // If we have root paths in the URL then we can ignore everything else.
     if (state.root) {
+      // If there is anything after this then it's an invalid url.
+      if (parts.length > 1) {
+        error = 'invalid root path.';
+      }
       return {error, state};
     }
     // The order of the PATH_DELIMETERS is important so we can assume the
@@ -110,7 +114,7 @@ const State = class State {
     // Working backwards to split up the URL.
     const guiIndex = parts.indexOf(PATH_DELIMETERS.get('gui'));
     if (guiIndex > -1) {
-      state = this._parseGUI(parts.splice(guiIndex), state);
+      ({state, error} = this._parseGUI(parts.splice(guiIndex), state));
     }
     // Extract out the user sections.
     if (parts.includes(PATH_DELIMETERS.get('user'))) {
@@ -121,7 +125,16 @@ const State = class State {
     }
     // By this point there should only be the 'store only' content left.
     if (!state.store && parts.length) {
-      state.store = parts.join('/');
+      // If there are more than 3 parts then this is an invalid url.
+      if (parts.length > 3) {
+        error = 'invalid store path.';
+      } else {
+        state.store = parts.join('/');
+      }
+      // If we have more content here but there is already a store populated.
+      // then this is an invalid url.
+    } else if (state.store && parts.length) {
+      error = 'invalid store path.';state.store = parts.join('/');
     }
     return {error, state};
   }
@@ -167,6 +180,7 @@ const State = class State {
     @return {Object} The updated state to contain the search value, if any.
   */
   _parseGUI(urlParts, state) {
+    let error = null;
     let indexes = [];
     GUI_PATH_DELIMETERS.forEach(section => {
       const index = urlParts.indexOf(section);
@@ -174,9 +188,10 @@ const State = class State {
         indexes.push(index);
       }
     });
-    // If there were no sections found then just return.
+    // If there were no sections found then this is an invalid URL.
     if (!indexes.length) {
-      return state;
+      error = 'invalid GUI path.';
+      return {error, state};
     }
     // JavaScript array sort sorts alphabetically which causes issues if
     // you have multiple default sections ie) [0, 9, 17] gets sorted as
@@ -190,7 +205,7 @@ const State = class State {
       guiParts[urlParts[index]] = urlParts.slice(index+1, end).join('/');
     });
     state.gui = guiParts;
-    return state;
+    return {error, state};
   }
 
   /**
@@ -213,7 +228,10 @@ const State = class State {
     if (indexes.length === 0) {
       return { state, parts: urlParts, error };
     }
-
+    // If we don't have a user delimeter at 0 then this is an invalid URL.
+    if (indexes[0] !== 0) {
+      return { state, parts: urlParts, error: 'invalid user path.'};
+    }
     /**
       Takes the section of the URL parts which needs to be added to either the
       user or profile section and depending on its contents adds it to the

@@ -108,31 +108,37 @@ describe('State', () => {
 
       const guiSections = [{
         parts: [],
-        state: {}
+        state: {},
+        error: 'invalid GUI path.'
       }, {
         parts: ['inspector', 'haproxy', 'config'],
-        state: { gui: { inspector: 'haproxy/config' } }
+        state: { gui: { inspector: 'haproxy/config' } },
+        error: null
       }, {
         parts: ['machines'],
-        state: { gui: { machines: '' } }
+        state: { gui: { machines: '' } },
+        error: null
       }, {
         parts: ['applications', 'inspector', 'ghost'],
-        state: { gui: { applications: '', inspector: 'ghost' } }
+        state: { gui: { applications: '', inspector: 'ghost' } },
+        error: null
       }, {
         parts: ['inspector', 'service123', 'relate-to', 'serviceabc'],
-        state: { gui: { inspector: 'service123/relate-to/serviceabc' } }
+        state: { gui: { inspector: 'service123/relate-to/serviceabc' } },
+        error: null
       }, {
         parts: [
           'inspector', 'apache2', 'machines', '3', 'lxc-0', 'deploy', 'foo'],
         state: {
           gui: { inspector: 'apache2', machines: '3/lxc-0', deploy: 'foo' }
-        }
+        },
+        error: null
       }];
 
       guiSections.forEach(section => {
         assert.deepEqual(
           state._parseGUI(section.parts, {}),
-          section.state,
+          {error: section.error, state: section.state},
           `${section.path} did not properly generate the state object: ` +
           JSON.stringify(section.state));
       });
@@ -678,6 +684,26 @@ describe('State', () => {
           user: 'frankban/production'
         },
         error: 'invalid user store path.'
+      }, {
+        path: 'http://abc.com:123/about/wat',
+        state: {
+          root: 'about'
+        },
+        error: 'invalid root path.'
+      }, {
+        path: 'http://abc.com:123/no-such/i',
+        state: {
+          store: 'no-such'
+        },
+        error: 'invalid GUI path.'
+      }, {
+        path: 'http://abc.com:123/django/bundle/42/wat',
+        state: {},
+        error: 'invalid store path.'
+      }, {
+        path: 'http://abc.com:123/ghost/u/frankban/ghost',
+        state: {},
+        error: 'invalid user path.'
       }];
 
       badURLS.forEach(test => {
