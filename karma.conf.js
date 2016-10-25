@@ -24,6 +24,8 @@ module.exports = function(config) {
       'jujugui/static/gui/src/app/jujulib/urls.js',
       'jujugui/static/gui/src/app/jujulib/test-*.js',
 
+      'jujugui/static/gui/src/app/state/*.js',
+
       'jujugui/static/gui/build/app/assets/javascripts/bind-function-pollyfill.js',
       'jujugui/static/gui/build/app/assets/javascripts/react-with-addons.js',
       'jujugui/static/gui/build/app/assets/javascripts/react-dom.js',
