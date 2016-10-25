@@ -585,138 +585,48 @@ describe('State', () => {
   });
 
   describe('State.generateState()', () => {
-    it('builds the proper state for the reserved urls', () => {
-      const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
-      });
-
-      ROOT_STATE_URLS.forEach(test => {
-        assert.deepEqual(
-          state.generateState(test.path),
-          {error: test.error, state: test.state},
-          `${test.path} did not properly generate the state object: ` +
-          JSON.stringify(test.state));
-      });
-    });
-
-    it('builds the proper state for the search urls', () => {
-      const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
-      });
-
-      SEARCH_STATE_URLS.forEach(test => {
-        assert.deepEqual(
-          state.generateState(test.path),
-          {error: test.error, state: test.state},
-          `${test.path} did not properly generate the state object: ` +
-          JSON.stringify(test.state));
-      });
-    });
-
-    it('builds the proper state for the gui urls', () => {
-      const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
-      });
-
-      GUI_STATE_URLS.forEach(test => {
-        assert.deepEqual(
-          state.generateState(test.path),
-          {error: test.error, state: test.state},
-          `${test.path} did not properly generate the state object: ` +
-          JSON.stringify(test.state));
-      });
-    });
-
-    it('builds proper state for the user urls', () => {
-      const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
-      });
-
-      USER_STATE_URLS.forEach(test => {
-        assert.deepEqual(
-          state.generateState(test.path),
-          {error: test.error, state: test.state},
-          `${test.path} did not properly generate the state object: ` +
-          JSON.stringify(test.state));
-      });
-    });
-
-    it('builds proper state for the store urls', () => {
-      const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
-      });
-
-      STORE_STATE_URLS.forEach(test => {
-        assert.deepEqual(
-          state.generateState(test.path),
-          {error: test.error, state: test.state},
-          `${test.path} did not properly generate the state object: ` +
-          JSON.stringify(test.state));
-      });
-    });
-
-    it('builds proper state for model and store urls', () => {
-      const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
-      });
-
-      MODEL_STORE_STATE_URLS.forEach(test => {
-        assert.deepEqual(
-          state.generateState(test.path),
-          {error: test.error, state: test.state},
-          `${test.path} did not properly generate the state object: ` +
-          JSON.stringify(test.state));
-      });
-    });
-
-    it('builds proper state for model and gui urls', () => {
-      const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
-      });
-
-      MODEL_GUI_STATE_URLS.forEach(test => {
-        assert.deepEqual(
-          state.generateState(test.path),
-          {error: test.error, state: test.state},
-          `${test.path} did not properly generate the state object: ` +
-          JSON.stringify(test.state));
-      });
-    });
-
-    it('builds proper state for store and gui urls', () => {
-      const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
-      });
-
-      STORE_GUI_STATE_URLS.forEach(test => {
-        assert.deepEqual(
-          state.generateState(test.path),
-          {error: test.error, state: test.state},
-          `${test.path} did not properly generate the state object: ` +
-          JSON.stringify(test.state));
-      });
-    });
-
-    it('builds proper state for urls with all sections', () => {
-      const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
-      });
-
-      ALL_STATE_URLS.forEach(test => {
-        assert.deepEqual(
-          state.generateState(test.path),
-          {error: test.error, state: test.state},
-          `${test.path} did not properly generate the state object: ` +
-          JSON.stringify(test.state));
+    // Generate all of the test cases for the various states.
+    [{
+      title: 'builds the proper state for the reserved urls',
+      list: ROOT_STATE_URLS
+    }, {
+      title: 'builds proper state for the user urls',
+      list: USER_STATE_URLS
+    }, {
+      title: 'builds the proper state for the search urls',
+      list: SEARCH_STATE_URLS
+    }, {
+      title: 'builds the proper state for the gui urls',
+      list: GUI_STATE_URLS
+    }, {
+      title: 'builds proper state for the store urls',
+      list: STORE_STATE_URLS
+    }, {
+      title: 'builds proper state for model and gui urls',
+      list: MODEL_STORE_STATE_URLS
+    }, {
+      title: 'builds proper state for model and gui urls',
+      list: MODEL_GUI_STATE_URLS
+    }, {
+      title: 'builds proper state for store and gui urls',
+      list: STORE_GUI_STATE_URLS
+    }, {
+      title: 'builds proper state for urls with all sections',
+      list: ALL_STATE_URLS
+    }].forEach(test => {
+      it(test.title, () => {
+        const baseURL = 'http://abc.com:123';
+        const state = new window.jujugui.State({
+          baseURL: baseURL,
+          seriesList:  ['precise', 'trusty', 'xenial']
+        });
+        test.list.forEach(test => {
+          assert.deepEqual(
+            state.generateState(test.path),
+            {error: test.error, state: test.state},
+            `${test.path} did not properly generate the state object: ` +
+            JSON.stringify(test.state));
+        });
       });
     });
 
