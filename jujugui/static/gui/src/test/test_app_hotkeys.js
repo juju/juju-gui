@@ -65,7 +65,8 @@ describe('application hotkeys', function() {
     app.render();
   });
 
-  afterEach(function() {
+  afterEach(function(done) {
+    app.after('destroy', () => done());
     container.remove(true);
     app.destroy({remove: true});
   });

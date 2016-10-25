@@ -96,11 +96,12 @@ describe('App', function() {
       window._gaq = [];
     });
 
-    afterEach(function() {
+    afterEach(function(done) {
       // Reset the flags.
       window.flags = {};
       app.after('destroy', function() {
         sessionStorage.setItem('credentials', null);
+        done();
       });
     });
 
@@ -796,18 +797,21 @@ describe('App', function() {
       });
     });
 
-    it('login method handler is called after successful login', function(done) {
+    it('login method handler is called after successful login',
+    function(done) {
+      let localApp = {};
       const oldOnLogin = Y.juju.App.prototype.onLogin;
       Y.juju.App.prototype.onLogin = evt => {
         assert.equal(conn.messages.length, 1);
         assertIsLogin(conn.last_message());
         assert.strictEqual(evt.err, null);
-        done();
+        localApp.on('destroy', () => done());
+        localApp.destroy();
       };
       this._cleanups.push(() => {
         Y.juju.App.prototype.onLogin = oldOnLogin;
       });
-      const app = new Y.juju.App({
+      localApp = new Y.juju.App({
         controllerAPI: controller,
         env: env,
         controllerSocketTemplate: '/api',
@@ -815,8 +819,8 @@ describe('App', function() {
         jujuCoreVersion: '2.0.0'
       });
       env.connect();
-      app.env.userIsAuthenticated = true;
-      app.env.login();
+      localApp.env.userIsAuthenticated = true;
+      localApp.env.login();
     });
 
     it('navigates to requested url on login', function() {
