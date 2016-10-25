@@ -95,6 +95,17 @@ const State = class State {
   }
 
   /**
+    Check the second index spot to see if it's either an integer for
+    the revision or or a series. If it is, then this is a user
+    store path.
+    @return {Boolean}
+  */
+  _isUserStorePath(block) {
+    return !Number.isNaN(parseInt(block[2], 10)) ||
+      this.seriesList.includes(block[2]);
+  }
+
+  /**
     The current window location. If set has been called on this property then
     it will return the externally set option. Typically this option will be used
     for testing.
@@ -209,7 +220,40 @@ const State = class State {
     Takes the existing app state and generates the path.
     @return {String} The path representing the current application state.
   */
-  generateURL() {}
+  generatePath() {
+    let path = '';
+    const root = this.appState.root;
+    if (root) {
+      path = `${path}/${root}`;
+    }
+    const search = this.appState.search;
+    if (search) {
+      path = `${path}/${PATH_DELIMETERS.get('search')}/${search}`;
+    }
+    const user = this.appState.user || this.appState.profile;
+    if (user) {
+      path = `${path}/${PATH_DELIMETERS.get('user')}/${user}`;
+    }
+    const store = this.appState.store;
+    if (store) {
+      if (this._isUserStorePath(store.split('/'))) {
+        path = `${path}/u/`;
+      }
+      path = `${path}${store}`;
+    }
+    const gui = this.appState.gui;
+    if (gui) {
+      path = `${path}/${PATH_DELIMETERS.get('gui')}`;
+      Object.keys(gui).forEach(key => {
+        const value = gui[key];
+        path = `${path}/${key}`;
+        if (value) {
+          path = `${path}/${value}`;
+        }
+      });
+    }
+    return path;
+  }
 
   /**
     Inspects the URL path to see if it is for the root.
@@ -340,11 +384,8 @@ const State = class State {
         // The user component has at most two spots. If it has more, then
         // it may be a user store path.
         if (userBlock.length > 2) {
-          // Check the second index spot to see if it's either an integer for
-          // the revision or or a series. If it is, then this is a user
-          // store path.
-          if (!Number.isNaN(parseInt(userBlock[2], 10)) ||
-              this.seriesList.includes(userBlock[2])) {
+          // Check if this is a user store path.
+          if (this._isUserStorePath(userBlock)) {
             state.store = userBlock.splice(0).join('/');
           }
         }
