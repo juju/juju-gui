@@ -548,4 +548,47 @@ describe('jujulib charmstore', function() {
         '&include=owner&include=supported-series');
     });
   });
+
+  describe('getResources', function() {
+    it('can get resources for a charm', function() {
+      const callback = sinon.stub();
+      charmstore.getResources('cs:xenial/ghost-4', callback);
+      const sendGetRequest = charmstore.bakery.sendGetRequest;
+      assert.equal(sendGetRequest.callCount, 1);
+      const requestPath = sendGetRequest.args[0][0];
+      assert.equal(requestPath, 'local/v5/xenial/ghost-4/meta/resources');
+      // Call the success request callback
+      sendGetRequest.args[0][1]({
+        target: {
+          responseText: '[' +
+            '{"Name":"file1","Type":"file","Path":"file1.zip","Description":' +
+            '"desc.","Revision":5,"Fingerprint":"123","Size":168},' +
+            '{"Name":"file2","Type":"file","Path":"file2.zip","Description":' +
+            '"desc.","Revision":5,"Fingerprint":"123","Size":168}' +
+            ']'
+        }
+      });
+      assert.equal(callback.callCount, 1);
+      assert.deepEqual(callback.args[0], [null, [{
+        name: 'file1', type: 'file', path: 'file1.zip', description: 'desc.',
+        revision: 5,fingerprint: '123',size: 168
+      }, {
+        name: 'file2', type: 'file', path: 'file2.zip', description: 'desc.',
+        revision: 5,fingerprint: '123',size: 168
+      }]]);
+    });
+
+    it('properly calls the callback when there is an error', function() {
+      const callback = sinon.stub();
+      charmstore.getResources('cs:xenial/ghost-4', callback);
+      const sendGetRequest = charmstore.bakery.sendGetRequest;
+      assert.equal(sendGetRequest.callCount, 1);
+      const requestPath = sendGetRequest.args[0][0];
+      assert.equal(requestPath, 'local/v5/xenial/ghost-4/meta/resources');
+      // Call the error request callback.
+      sendGetRequest.args[0][2]('not found');
+      assert.equal(callback.callCount, 1);
+      assert.deepEqual(callback.args[0], ['not found', null]);
+    });
+  });
 });
