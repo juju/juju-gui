@@ -19,6 +19,82 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('State', () => {
+
+  const USER_STATE_URLS = [{
+    path: 'http://abc.com:123/u/ant',
+    state: { profile: 'ant' },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/hatch/staging',
+    state: { user: 'hatch/staging' },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/hatch/mongodb/xenial',
+    state: { store: 'hatch/mongodb/xenial' },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/hatch/mongodb/47',
+    state: { store: 'hatch/mongodb/47' },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/frankban/django/bundle/0',
+    state: { store: 'frankban/django/bundle/0' },
+    error: null
+  }];
+
+  const ROOT_STATE_URLS = [{
+    path: 'http://abc.com:123/new',
+    state: { root: 'new' },
+    error: null
+  },{
+    path: 'http://abc.com:123/store',
+    state: { root: 'store' },
+    error: null
+  },{
+    path: 'http://abc.com:123/about',
+    state: { root: 'about' },
+    error: null
+  },{
+    path: 'http://abc.com:123/docs',
+    state: { root: 'docs' },
+    error: null
+  },{
+    path: 'http://abc.com:123/login',
+    state: { root: 'login' },
+    error: null
+  }];
+
+  const SEARCH_STATE_URLS = [{
+    path: 'http://abc.com:123/q/haproxy',
+    state: { search: 'haproxy' },
+    error: null
+  }, {
+    path: 'http://abc.com:123/q/k8s/core',
+    state: { search: 'k8s/core' },
+    error: null
+  }];
+
+  const GUI_STATE_PATHS = [{
+    path: 'http://abc.com:123/i/inspector/haproxy/config',
+    state: { gui: { inspector: 'haproxy/config' }},
+    error: null
+  }, {
+    path: 'http://abc.com:123/i/machines',
+    state: { gui: { machines: '' }},
+    error: null
+  }, {
+    path: 'http://abc.com:123/i/applications/inspector/ghost',
+    state: { gui: { applications: '', inspector: 'ghost' }},
+    error: null
+  }, {
+    path:
+      'http://abc.com:123/i/inspector/apache2/machines/3/lxc-0/deploy/foo',
+    state: {
+      gui: { inspector: 'apache2', machines: '3/lxc-0', deploy: 'foo'}
+    },
+    error: null
+  }];
+
   it('can be instantiated', () => {
     const state = new window.jujugui.State({
       baseURL: 'http://abc.com:123',
@@ -350,29 +426,7 @@ describe('State', () => {
         seriesList:  ['precise', 'trusty', 'xenial']
       });
 
-      const urls = [{
-        path: 'http://abc.com:123/new',
-        state: { root: 'new' },
-        error: null
-      },{
-        path: 'http://abc.com:123/store',
-        state: { root: 'store' },
-        error: null
-      },{
-        path: 'http://abc.com:123/about',
-        state: { root: 'about' },
-        error: null
-      },{
-        path: 'http://abc.com:123/docs',
-        state: { root: 'docs' },
-        error: null
-      },{
-        path: 'http://abc.com:123/login',
-        state: { root: 'login' },
-        error: null
-      }];
-
-      urls.forEach(test => {
+      ROOT_STATE_URLS.forEach(test => {
         assert.deepEqual(
           state.generateState(test.path),
           {error: test.error, state: test.state},
@@ -387,17 +441,7 @@ describe('State', () => {
         seriesList:  ['precise', 'trusty', 'xenial']
       });
 
-      const urls = [{
-        path: 'http://abc.com:123/q/haproxy',
-        state: { search: 'haproxy' },
-        error: null
-      }, {
-        path: 'http://abc.com:123/q/k8s/core',
-        state: { search: 'k8s/core' },
-        error: null
-      }];
-
-      urls.forEach(test => {
+      SEARCH_STATE_URLS.forEach(test => {
         assert.deepEqual(
           state.generateState(test.path),
           {error: test.error, state: test.state},
@@ -412,28 +456,7 @@ describe('State', () => {
         seriesList:  ['precise', 'trusty', 'xenial']
       });
 
-      const urls = [{
-        path: 'http://abc.com:123/i/inspector/haproxy/config',
-        state: { gui: { inspector: 'haproxy/config' }},
-        error: null
-      }, {
-        path: 'http://abc.com:123/i/machines',
-        state: { gui: { machines: '' }},
-        error: null
-      }, {
-        path: 'http://abc.com:123/i/applications/inspector/ghost',
-        state: { gui: { applications: '', inspector: 'ghost' }},
-        error: null
-      }, {
-        path:
-          'http://abc.com:123/i/inspector/apache2/machines/3/lxc-0/deploy/foo',
-        state: {
-          gui: { inspector: 'apache2', machines: '3/lxc-0', deploy: 'foo'}
-        },
-        error: null
-      }];
-
-      urls.forEach(test => {
+      GUI_STATE_PATHS.forEach(test => {
         assert.deepEqual(
           state.generateState(test.path),
           {error: test.error, state: test.state},
@@ -448,29 +471,7 @@ describe('State', () => {
         seriesList:  ['precise', 'trusty', 'xenial']
       });
 
-      const urls = [{
-        path: 'http://abc.com:123/u/ant',
-        state: { profile: 'ant' },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/hatch/staging',
-        state: { user: 'hatch/staging' },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/hatch/mongodb/xenial',
-        state: { store: 'hatch/mongodb/xenial' },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/hatch/mongodb/47',
-        state: { store: 'hatch/mongodb/47' },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/frankban/django/bundle/0',
-        state: { store: 'frankban/django/bundle/0' },
-        error: null
-      }];
-
-      urls.forEach(test => {
+      USER_STATE_URLS.forEach(test => {
         assert.deepEqual(
           state.generateState(test.path),
           {error: test.error, state: test.state},
@@ -829,6 +830,74 @@ describe('State', () => {
       state.dispatch();
       assert.deepEqual(state._appStateHistory, [{new: 'state'}]);
     });
+  });
+
+  describe('State.generatePath()', () => {
+
+    it('generates proper root paths from state', () => {
+      const baseURL = 'http://abc.com:123';
+      const state = new window.jujugui.State({
+        baseURL: baseURL,
+        seriesList:  ['precise', 'trusty', 'xenial']
+      });
+
+      ROOT_STATE_URLS.forEach(test => {
+        state._appStateHistory.push(test.state);
+        assert.equal(
+          state.generatePath(),
+          // Remove baseURL as the generatePath method only generates the path.
+          test.path.replace(baseURL, ''));
+      });
+    });
+
+    it('generates proper user paths from state', () => {
+      const baseURL = 'http://abc.com:123';
+      const state = new window.jujugui.State({
+        baseURL: baseURL,
+        seriesList:  ['precise', 'trusty', 'xenial']
+      });
+
+      USER_STATE_URLS.forEach(test => {
+        state._appStateHistory.push(test.state);
+        assert.equal(
+          state.generatePath(),
+          // Remove baseURL as the generatePath method only generates the path.
+          test.path.replace(baseURL, ''));
+      });
+    });
+
+    it('generates proper search paths from state', () => {
+      const baseURL = 'http://abc.com:123';
+      const state = new window.jujugui.State({
+        baseURL: baseURL,
+        seriesList:  ['precise', 'trusty', 'xenial']
+      });
+
+      SEARCH_STATE_URLS.forEach(test => {
+        state._appStateHistory.push(test.state);
+        assert.equal(
+          state.generatePath(),
+          // Remove baseURL as the generatePath method only generates the path.
+          test.path.replace(baseURL, ''));
+      });
+    });
+
+    it('generates proper gui paths from state', () => {
+      const baseURL = 'http://abc.com:123';
+      const state = new window.jujugui.State({
+        baseURL: baseURL,
+        seriesList:  ['precise', 'trusty', 'xenial']
+      });
+
+      GUI_STATE_PATHS.forEach(test => {
+        state._appStateHistory.push(test.state);
+        assert.equal(
+          state.generatePath(),
+          // Remove baseURL as the generatePath method only generates the path.
+          test.path.replace(baseURL, ''));
+      });
+    });
+
   });
 
 });
