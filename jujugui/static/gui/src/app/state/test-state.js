@@ -42,6 +42,15 @@ describe('State', () => {
     assert.equal(state.location.origin, 'foo');
   });
 
+  it('can be instantiated with a location value', () => {
+    const state = new window.jujugui.State({
+      baseURL: 'http://abc.com:123',
+      seriesList: ['trusty'],
+      location: {origin: 'foo'}
+    });
+    assert.equal(state.location.origin, 'foo');
+  });
+
   it('uses the window.location if none is provided', () => {
     // Note that this test is fragile, if any of the test runner execution
     // parameters change then this test may fail because the location needs

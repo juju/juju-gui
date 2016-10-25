@@ -72,7 +72,7 @@ const State = class State {
       @private
       @type {Object}
     */
-    this._location = null;
+    this._location = cfg.location || null;
   }
 
   /**
