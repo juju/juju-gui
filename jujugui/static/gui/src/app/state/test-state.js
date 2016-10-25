@@ -33,6 +33,26 @@ describe('State', () => {
     });
   });
 
+  it('can recieve a location value for testing', () => {
+    const state = new window.jujugui.State({
+      baseURL: 'http://abc.com:123',
+      seriesList: ['trusty']
+    });
+    state.location = {origin: 'foo'};
+    assert.equal(state.location.origin, 'foo');
+  });
+
+  it('uses the window.location if none is provided', () => {
+    // Note that this test is fragile, if any of the test runner execution
+    // parameters change then this test may fail because the location needs
+    // to be updated
+    const state = new window.jujugui.State({
+      baseURL: 'http://abc.com:123',
+      seriesList: ['trusty']
+    });
+    assert.equal(state.location.origin, 'http://0.0.0.0:6544');
+  });
+
   describe('steriesList', () => {
     it('adds \'bundle\' to the series list', () => {
       const state = new window.jujugui.State({
@@ -750,6 +770,19 @@ describe('State', () => {
           JSON.stringify(test.state));
       });
     });
+  });
 
+  describe('State.parseURL()', () => {
+    it('passes the current location to buildState', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
+      });
+      state.location = {href: 'foo'}; // Modify for testing.
+      const stub = sinon.stub(state, 'buildState');
+      state.parseURL();
+      assert.equal(stub.callCount, 1);
+      assert.deepEqual(stub.args[0], ['foo']);
+    });
   });
 });

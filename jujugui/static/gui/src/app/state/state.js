@@ -66,6 +66,13 @@ const State = class State {
       @type {Array}
     */
     this.seriesList = cfg.seriesList;
+    /**
+      Internal storage value for the application location. Only used when
+      location is set externally.
+      @private
+      @type {Object}
+    */
+    this._location = null;
   }
 
   /**
@@ -79,6 +86,28 @@ const State = class State {
       .replace(this.baseURL, '')
       // Strip the leading and trailing slashes off the URL.
       .replace(/^\/*/, '').replace(/\/*$/, '');
+  }
+
+  /**
+    The current window location. If set has been called on this property then
+    it will return the externally set option. Typically this option will be used
+    for testing.
+    @type {Object}
+  */
+  get location() {
+    return this._location || window.location;
+  }
+
+  set location(location) {
+    this._location = location;
+  }
+
+  /**
+    Grabs the current location and parses it, building the state, then
+    executing the registered dispatchers.
+  */
+  parseURL() {
+    this.buildState(this.location.href);
   }
 
   /**
