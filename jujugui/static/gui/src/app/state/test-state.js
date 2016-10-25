@@ -21,7 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('State', () => {
   it('can be instantiated', () => {
     const state = new window.jujugui.State({
-      baseURL: 'http://abc.com:123'
+      baseURL: 'http://abc.com:123',
+      seriesList:  ['precise', 'trusty', 'xenial']
     });
     assert.equal(state instanceof window.jujugui.State, true);
   });
@@ -33,14 +34,6 @@ describe('State', () => {
   });
 
   describe('steriesList', () => {
-    it('defaults to an internal series list if none is provided', () => {
-      const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123'
-      });
-      assert.deepEqual(state.seriesList, [
-        'bundle', 'precise', 'trusty', 'xenial']);
-    });
-
     it('adds \'bundle\' to the series list', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
@@ -57,12 +50,21 @@ describe('State', () => {
         });
       });
     });
+
+    it('throws no seriesList is provided', () => {
+      assert.throws(function() {
+        new window.jujugui.State({
+          baseURL: 'http://abc.com:123'
+        });
+      });
+    });
   });
 
   describe('State._getCleanPath()', () => {
     it('can clean the url', () => {
       const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123'
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
       });
       assert.equal(
         state._getCleanPath('http://abc.com:123/a/b/c/d/'),
@@ -79,7 +81,8 @@ describe('State', () => {
   describe('State._parseRoot()', () => {
     it('populates the root portion of the state object', () => {
       const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123'
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
       });
       assert.deepEqual(state._parseRoot([], {}), {});
       assert.deepEqual(
@@ -91,7 +94,8 @@ describe('State', () => {
   describe('State._parseSearch()', () => {
     it('populates the search portion of the state object', () => {
       const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123'
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
       });
       assert.deepEqual(state._parseSearch([], {}),{});
       assert.deepEqual(
@@ -103,7 +107,8 @@ describe('State', () => {
   describe('State._parseGUI', () => {
     it('populates the gui portion of the state object', () => {
       const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123'
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
       });
 
       const guiSections = [{
@@ -148,7 +153,8 @@ describe('State', () => {
   describe('State._parseUser()', () => {
     it('populates the user and store portions of the state object', () => {
       const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123'
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
       });
 
       const userSections = [{
@@ -289,7 +295,8 @@ describe('State', () => {
   describe('State.buildState()', () => {
     it('builds the proper state for the reserved urls', () => {
       const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123'
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
       });
 
       const urls = [{
@@ -325,7 +332,8 @@ describe('State', () => {
 
     it('builds the proper state for the search urls', () => {
       const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123'
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
       });
 
       const urls = [{
@@ -349,7 +357,8 @@ describe('State', () => {
 
     it('builds the proper state for the gui urls', () => {
       const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123'
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
       });
 
       const urls = [{
@@ -384,7 +393,8 @@ describe('State', () => {
 
     it('builds proper state for the user urls', () => {
       const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123'
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
       });
 
       const urls = [{
@@ -420,7 +430,8 @@ describe('State', () => {
 
     it('builds proper state for the store urls', () => {
       const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123'
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
       });
 
       const urls = [{
@@ -452,7 +463,8 @@ describe('State', () => {
 
     it('builds proper state for model and store urls', () => {
       const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123'
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
       });
 
       const urls = [{
@@ -502,7 +514,8 @@ describe('State', () => {
 
     it('builds proper state for model and gui urls', () => {
       const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123'
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
       });
 
       const urls = [{
@@ -532,7 +545,8 @@ describe('State', () => {
 
     it('builds proper state for store and gui urls', () => {
       const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123'
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
       });
 
       const urls = [{
@@ -575,7 +589,8 @@ describe('State', () => {
 
     it('builds proper state for urls with all sections', () => {
       const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123'
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
       });
 
       const urls = [{
@@ -655,7 +670,8 @@ describe('State', () => {
 
     it('correctly returns with an error for invalid urls', () => {
       const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123'
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
       });
 
       const badURLS = [{

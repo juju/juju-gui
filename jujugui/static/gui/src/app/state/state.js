@@ -52,9 +52,11 @@ const State = class State {
     */
     this.dispatchers = cfg.dispatchers;
 
-    if (cfg.seriesList && !Array.isArray(cfg.seriesList)) {
+    if (!cfg.seriesList || !Array.isArray(cfg.seriesList)) {
       throw 'Series list must be an Array.';
     }
+    // Push bundle into the seriesList as it sits in the series spot in the URL.
+    cfg.seriesList.push('bundle');
     /**
       The list of possible distro 'series' for the store paths. ex)
       trusty, precise, xenial. The GUI has a utils method `getSeriesList` that
@@ -63,14 +65,7 @@ const State = class State {
       instantiated.
       @type {Array}
     */
-    this.seriesList = (function() {
-      if (!cfg.seriesList) {
-        console.log('No series list provided, using default list');
-        return ['bundle', 'precise', 'trusty', 'xenial'];
-      } else {
-        return cfg.seriesList.concat(['bundle']);
-      }
-    }());
+    this.seriesList = cfg.seriesList;
   }
 
   /**
