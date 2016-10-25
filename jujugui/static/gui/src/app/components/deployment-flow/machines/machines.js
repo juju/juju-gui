@@ -45,9 +45,9 @@ YUI.add('deployment-machines', function() {
         const args = machine.command.args[0][0];
         const series = args.series;
         const constraints = args.constraints || {};
-        const cpu = constraints.cpu;
-        const disk = constraints.disk;
-        const mem = constraints.mem;
+        let cpu = constraints.cpu;
+        let disk = constraints.disk;
+        let mem = constraints.mem;
         const cores = constraints.cores;
         const parts = [];
         if (cores && cpu && disk && mem) {

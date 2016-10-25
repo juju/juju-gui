@@ -126,7 +126,7 @@ $(JUJUGUI): $(PYRAMID)
 
 $(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(BUILT_RAWJSFILES) $(MIN_JS_FILES) $(BUILT_YUI) $(BUILT_JS_ASSETS) $(BUILT_D3)
 	bin/python scripts/generate_modules.py -n YUI_MODULES -s $(GUIBUILD)/app -o $(MODULES) -x "(-min.js)|(\/yui\/)|(javascripts\/d3\.js)"
-	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(MODULES) -o $(MODULESMIN)
+	$(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments $(MODULES) -o $(MODULESMIN)
 
 # fast-babel is simply passed an input and output folder which dramatically
 # speeds up the build time because it doesn't need to spin up a new instance
@@ -148,7 +148,7 @@ $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	find $(BUILT_JS_ASSETS) -type f -name "*.js" \
 		-not -name "react*" | \
 		sed s/\.js$$//g | \
-		xargs -I {} node_modules/.bin/uglifyjs --screw-ie8 {}.js -o {}-min.js
+		xargs -I {} $(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments {}.js -o {}-min.js
 
 $(YUI): $(NODE_MODULES)
 
@@ -166,8 +166,8 @@ $(REACT_ASSETS): $(NODE_MODULES)
 	cp $(NODE_MODULES)/react-dnd-html5-backend/dist/ReactDnDHTML5Backend.min.js $(BUILT_JS_ASSETS)/ReactDnDHTML5Backend.min.js
 	cp $(NODE_MODULES)/diff/dist/diff.js $(BUILT_JS_ASSETS)/diff.js
 	cp $(NODE_MODULES)/prismjs/prism.js $(BUILT_JS_ASSETS)/prism.js
-	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(NODE_MODULES)/classnames/index.js -o $(BUILT_JS_ASSETS)/classnames-min.js
-	$(NODE_MODULES)/.bin/uglifyjs --screw-ie8 $(NODE_MODULES)/prismjs/prism.js -o $(BUILT_JS_ASSETS)/prism.min.js
+	$(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments $(NODE_MODULES)/classnames/index.js -o $(BUILT_JS_ASSETS)/classnames-min.js
+	$(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments $(NODE_MODULES)/prismjs/prism.js -o $(BUILT_JS_ASSETS)/prism.min.js
 
 $(BUILT_YUI): $(YUI) $(BUILT_JS_ASSETS)
 	cp -r $(YUI) $(BUILT_YUI)

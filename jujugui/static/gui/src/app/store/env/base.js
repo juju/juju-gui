@@ -83,12 +83,12 @@ YUI.add('juju-env-base', function(Y) {
         above to their original values.
   */
   const attrResetter = obj => {
-    const initial = {};
+    let initial = {};
     return {
       // Set the object attribute with the given name to the given value.
       set: (name, value) => {
         if (initial[name] === undefined) {
-          const val = obj.get(name);
+          let val = obj.get(name);
           // The undefined value is used to check whether this attribute has
           // been already set.
           if (val === undefined) {

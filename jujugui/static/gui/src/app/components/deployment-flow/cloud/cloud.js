@@ -42,7 +42,7 @@ YUI.add('deployment-cloud', function() {
           console.error('Unable to list clouds', error);
           return;
         }
-        const cloudList = [];
+        let cloudList = [];
         if (clouds) {
           cloudList = Object.keys(clouds).map(name => {
             const cloud = clouds[name];

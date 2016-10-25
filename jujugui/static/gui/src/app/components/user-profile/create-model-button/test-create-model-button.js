@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const juju = {components: {}}; // eslint-disable-line no-unused-vars
+var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('CreateModelButton', () => {
 
