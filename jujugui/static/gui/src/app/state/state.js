@@ -73,6 +73,12 @@ const State = class State {
       @type {Object}
     */
     this._location = cfg.location || null;
+    /**
+      Internal storage for the app state history.
+      @private
+      @type {Array}
+    */
+    this._appStateHistory = [];
   }
 
   /**
@@ -103,12 +109,38 @@ const State = class State {
   }
 
   /**
+    The object representing the current app state.
+    @type {Object}
+  */
+  get appState() {
+    return this._appStateHistory[this._appStateHistory.length-1];
+  }
+
+  /**
     Grabs the current location and parses it, building the state, then
     executing the registered dispatchers.
   */
-  parseURL() {
-    this.buildState(this.location.href);
+  dispatch() {
+    let error, state;
+    ({error, state} = this.generateState(this.location.href));
+    this._appStateHistory.push(state);
+    if (error !== null) {
+      return `unable to generate state: ${error}`;
+    }
+    this._dispatch(state);
   }
+
+  /**
+    Takes the existing app state and then calls the registered dispatchers.
+  */
+  _dispatch() {}
+
+  /**
+    Changes the internal state of the app, updating the location and
+    dispatching the app.
+    @param {Object} state - The new state delta to apply to the existing state.
+  */
+  changeState(state) {}
 
   /**
     Splits the URL up and generates a state object.
@@ -119,7 +151,7 @@ const State = class State {
         state: <Object
       }
   */
-  buildState(url) {
+  generateState(url) {
     let error = null;
     let state = {};
     let parts = this._getCleanPath(url).split('/');
@@ -172,6 +204,12 @@ const State = class State {
     }
     return {error, state};
   }
+
+  /**
+    Takes the existing app state and generates the path.
+    @return {String} The path representing the current application state.
+  */
+  generateURL() {}
 
   /**
     Inspects the URL path to see if it is for the root.

@@ -89,6 +89,28 @@ describe('State', () => {
     });
   });
 
+  describe('_appStateHistory', () => {
+    it('is instantiated with an empty array', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList: ['trusty']
+      });
+      assert.deepEqual(state._appStateHistory, []);
+    });
+
+    it('returns the last record in the history', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList: ['trusty']
+      });
+      state._appStateHistory.push('step1');
+      state._appStateHistory.push('step2');
+      state._appStateHistory.push('step3');
+      state._appStateHistory.push('step2');
+      assert.equal(state.appState, 'step2');
+    });
+  });
+
   describe('State._getCleanPath()', () => {
     it('can clean the url', () => {
       const state = new window.jujugui.State({
@@ -321,7 +343,7 @@ describe('State', () => {
     });
   });
 
-  describe('State.buildState()', () => {
+  describe('State.generateState()', () => {
     it('builds the proper state for the reserved urls', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
@@ -352,7 +374,7 @@ describe('State', () => {
 
       urls.forEach(test => {
         assert.deepEqual(
-          state.buildState(test.path),
+          state.generateState(test.path),
           {error: test.error, state: test.state},
           `${test.path} did not properly generate the state object: ` +
           JSON.stringify(test.state));
@@ -377,7 +399,7 @@ describe('State', () => {
 
       urls.forEach(test => {
         assert.deepEqual(
-          state.buildState(test.path),
+          state.generateState(test.path),
           {error: test.error, state: test.state},
           `${test.path} did not properly generate the state object: ` +
           JSON.stringify(test.state));
@@ -413,7 +435,7 @@ describe('State', () => {
 
       urls.forEach(test => {
         assert.deepEqual(
-          state.buildState(test.path),
+          state.generateState(test.path),
           {error: test.error, state: test.state},
           `${test.path} did not properly generate the state object: ` +
           JSON.stringify(test.state));
@@ -450,7 +472,7 @@ describe('State', () => {
 
       urls.forEach(test => {
         assert.deepEqual(
-          state.buildState(test.path),
+          state.generateState(test.path),
           {error: test.error, state: test.state},
           `${test.path} did not properly generate the state object: ` +
           JSON.stringify(test.state));
@@ -483,7 +505,7 @@ describe('State', () => {
 
       urls.forEach(test => {
         assert.deepEqual(
-          state.buildState(test.path),
+          state.generateState(test.path),
           {error: test.error, state: test.state},
           `${test.path} did not properly generate the state object: ` +
           JSON.stringify(test.state));
@@ -534,7 +556,7 @@ describe('State', () => {
 
       urls.forEach(test => {
         assert.deepEqual(
-          state.buildState(test.path),
+          state.generateState(test.path),
           {error: test.error, state: test.state},
           `${test.path} did not properly generate the state object: ` +
           JSON.stringify(test.state));
@@ -565,7 +587,7 @@ describe('State', () => {
 
       urls.forEach(test => {
         assert.deepEqual(
-          state.buildState(test.path),
+          state.generateState(test.path),
           {error: test.error, state: test.state},
           `${test.path} did not properly generate the state object: ` +
           JSON.stringify(test.state));
@@ -609,7 +631,7 @@ describe('State', () => {
 
       urls.forEach(test => {
         assert.deepEqual(
-          state.buildState(test.path),
+          state.generateState(test.path),
           {error: test.error, state: test.state},
           `${test.path} did not properly generate the state object: ` +
           JSON.stringify(test.state));
@@ -690,7 +712,7 @@ describe('State', () => {
 
       urls.forEach(test => {
         assert.deepEqual(
-          state.buildState(test.path),
+          state.generateState(test.path),
           {error: test.error, state: test.state},
           `${test.path} did not properly generate the state object: ` +
           JSON.stringify(test.state));
@@ -773,7 +795,7 @@ describe('State', () => {
 
       badURLS.forEach(test => {
         assert.deepEqual(
-          state.buildState(test.path),
+          state.generateState(test.path),
           {error: test.error, state: test.state},
           `${test.path} did not properly generate the state object: ` +
           JSON.stringify(test.state));
@@ -781,17 +803,32 @@ describe('State', () => {
     });
   });
 
-  describe('State.parseURL()', () => {
-    it('passes the current location to buildState', () => {
+  describe('State.dispatch()', () => {
+    it('passes the current location to generateState', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
+        seriesList:  ['precise', 'trusty', 'xenial'],
+        location: {href: 'foo'}
       });
-      state.location = {href: 'foo'}; // Modify for testing.
-      const stub = sinon.stub(state, 'buildState');
-      state.parseURL();
+      console.log(state.generateState);
+      const stub = sinon.stub(
+        state, 'generateState', () => ({ error: null, state: {}}));
+      state.dispatch();
       assert.equal(stub.callCount, 1);
       assert.deepEqual(stub.args[0], ['foo']);
     });
+
+    it('updates the _appStateHistory with the new state', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial'],
+        location: {href: 'foo'}
+      });
+      sinon.stub(state,
+        'generateState', () => ({ error: null, state: {new: 'state'}}));
+      state.dispatch();
+      assert.deepEqual(state._appStateHistory, [{new: 'state'}]);
+    });
   });
+
 });
