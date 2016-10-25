@@ -833,148 +833,48 @@ describe('State', () => {
   });
 
   describe('State.generatePath()', () => {
-
-    it('generates proper root paths from state', () => {
-      const baseURL = 'http://abc.com:123';
-      const state = new window.jujugui.State({
-        baseURL: baseURL,
-        seriesList:  ['precise', 'trusty', 'xenial']
-      });
-
-      ROOT_STATE_URLS.forEach(test => {
-        state._appStateHistory.push(test.state);
-        assert.equal(
-          state.generatePath(),
-          // Remove baseURL as the generatePath method only generates the path.
-          test.path.replace(baseURL, ''));
-      });
-    });
-
-    it('generates proper user paths from state', () => {
-      const baseURL = 'http://abc.com:123';
-      const state = new window.jujugui.State({
-        baseURL: baseURL,
-        seriesList:  ['precise', 'trusty', 'xenial']
-      });
-
-      USER_STATE_URLS.forEach(test => {
-        state._appStateHistory.push(test.state);
-        assert.equal(
-          state.generatePath(),
-          // Remove baseURL as the generatePath method only generates the path.
-          test.path.replace(baseURL, ''));
-      });
-    });
-
-    it('generates proper search paths from state', () => {
-      const baseURL = 'http://abc.com:123';
-      const state = new window.jujugui.State({
-        baseURL: baseURL,
-        seriesList:  ['precise', 'trusty', 'xenial']
-      });
-
-      SEARCH_STATE_URLS.forEach(test => {
-        state._appStateHistory.push(test.state);
-        assert.equal(
-          state.generatePath(),
-          // Remove baseURL as the generatePath method only generates the path.
-          test.path.replace(baseURL, ''));
-      });
-    });
-
-    it('generates proper gui paths from state', () => {
-      const baseURL = 'http://abc.com:123';
-      const state = new window.jujugui.State({
-        baseURL: baseURL,
-        seriesList:  ['precise', 'trusty', 'xenial']
-      });
-
-      GUI_STATE_URLS.forEach(test => {
-        state._appStateHistory.push(test.state);
-        assert.equal(
-          state.generatePath(),
-          // Remove baseURL as the generatePath method only generates the path.
-          test.path.replace(baseURL, ''));
-      });
-    });
-
-    it('generates proper store paths from state', () => {
-      const baseURL = 'http://abc.com:123';
-      const state = new window.jujugui.State({
-        baseURL: baseURL,
-        seriesList:  ['precise', 'trusty', 'xenial']
-      });
-
-      STORE_STATE_URLS.forEach(test => {
-        state._appStateHistory.push(test.state);
-        assert.equal(
-          state.generatePath(),
-          // Remove baseURL as the generatePath method only generates the path.
-          test.path.replace(baseURL, ''));
-      });
-    });
-
-    it('generates proper model and store paths from state', () => {
-      const baseURL = 'http://abc.com:123';
-      const state = new window.jujugui.State({
-        baseURL: baseURL,
-        seriesList:  ['precise', 'trusty', 'xenial']
-      });
-
-      MODEL_STORE_STATE_URLS.forEach(test => {
-        state._appStateHistory.push(test.state);
-        assert.equal(
-          state.generatePath(),
-          // Remove baseURL as the generatePath method only generates the path.
-          test.path.replace(baseURL, ''));
-      });
-    });
-
-    it('generates proper model and gui paths from state', () => {
-      const baseURL = 'http://abc.com:123';
-      const state = new window.jujugui.State({
-        baseURL: baseURL,
-        seriesList:  ['precise', 'trusty', 'xenial']
-      });
-
-      MODEL_GUI_STATE_URLS.forEach(test => {
-        state._appStateHistory.push(test.state);
-        assert.equal(
-          state.generatePath(),
-          // Remove baseURL as the generatePath method only generates the path.
-          test.path.replace(baseURL, ''));
-      });
-    });
-
-    it('generates proper store and gui paths from state', () => {
-      const baseURL = 'http://abc.com:123';
-      const state = new window.jujugui.State({
-        baseURL: baseURL,
-        seriesList:  ['precise', 'trusty', 'xenial']
-      });
-
-      STORE_GUI_STATE_URLS.forEach(test => {
-        state._appStateHistory.push(test.state);
-        assert.equal(
-          state.generatePath(),
-          // Remove baseURL as the generatePath method only generates the path.
-          test.path.replace(baseURL, ''));
-      });
-    });
-
-    it('generates proper all paths from state', () => {
-      const baseURL = 'http://abc.com:123';
-      const state = new window.jujugui.State({
-        baseURL: baseURL,
-        seriesList:  ['precise', 'trusty', 'xenial']
-      });
-
-      ALL_STATE_URLS.forEach(test => {
-        state._appStateHistory.push(test.state);
-        assert.equal(
-          state.generatePath(),
-          // Remove baseURL as the generatePath method only generates the path.
-          test.path.replace(baseURL, ''));
+    // Generate all of the test cases for the various states.
+    [{
+      title: 'generates proper root paths from state',
+      list: ROOT_STATE_URLS
+    }, {
+      title: 'generates proper user paths from state',
+      list: USER_STATE_URLS
+    }, {
+      title: 'generates proper search paths from state',
+      list: SEARCH_STATE_URLS
+    }, {
+      title: 'generates proper gui paths from state',
+      list: GUI_STATE_URLS
+    }, {
+      title: 'generates proper store paths from state',
+      list: STORE_STATE_URLS
+    }, {
+      title: 'generates proper model and store paths from state',
+      list: MODEL_STORE_STATE_URLS
+    }, {
+      title: 'generates proper model and gui paths from state',
+      list: MODEL_GUI_STATE_URLS
+    }, {
+      title: 'generates proper store and gui paths from state',
+      list: STORE_GUI_STATE_URLS
+    }, {
+      title: 'generates proper all paths from state',
+      list: ALL_STATE_URLS
+    }].forEach(test => {
+      it(test.title, () => {
+        const baseURL = 'http://abc.com:123';
+        const state = new window.jujugui.State({
+          baseURL: baseURL,
+          seriesList:  ['precise', 'trusty', 'xenial']
+        });
+        test.list.forEach(test => {
+          state._appStateHistory.push(test.state);
+          assert.equal(
+            state.generatePath(),
+            // Remove baseURL as generatePath method only generates the path.
+            test.path.replace(baseURL, ''));
+        });
       });
     });
 
