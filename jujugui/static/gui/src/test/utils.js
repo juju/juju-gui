@@ -125,7 +125,8 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
         'machine-view',
         'notifications-container',
         'profile-link-container',
-        'top-page-container'
+        'top-page-container',
+        'zoom-container'
       ];
       const container = yui.Node.create('<div>');
       container.set('id', 'test-container');

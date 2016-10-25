@@ -222,6 +222,16 @@ YUI.add('juju-env-api', function(Y) {
       this.pendingLoginResponse = false;
       this.on('_rpc_response', this._handleRpcResponse);
       this._allWatcherBeingStopped = false;
+      // When using GISF and switching between models or going from the
+      // unconnected state to a model the env properties are reset, but only
+      // those that were previously set. This meant that the environmentName
+      // would not be updated as when the model disconnected then the value was
+      // not reset. The reason we need the value to be reset is so that when it
+      // is set to the new value it fires a value change event, which in turn
+      // updates the name set in the db. See onEnvironmentNameChange. For some
+      // reason this can't be set to null as then it displays the name as null
+      // instead of picking up that the name has not been set.
+      this.setConnectedAttr('environmentName', undefined);
     },
 
     /**
