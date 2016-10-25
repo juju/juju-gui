@@ -43,17 +43,17 @@ const State = class State {
       @type {String}
     */
     if (!cfg.baseURL) {
-      throw 'baseURL must be provided.';
+      throw new Error('baseURL must be provided.');
     }
     this.baseURL = cfg.baseURL;
     /**
-      The list of dispatchers for the various components from the url.
+      The list of dispatchers for the various components from the URL.
       @type {Object}
     */
     this.dispatchers = cfg.dispatchers;
 
     if (!cfg.seriesList || !Array.isArray(cfg.seriesList)) {
-      throw 'Series list must be an Array.';
+      throw new Error('Series list must be an Array.');
     }
     // Push bundle into the seriesList as it sits in the series spot in the URL.
     cfg.seriesList.push('bundle');
@@ -77,14 +77,18 @@ const State = class State {
     return url
       // Strip the baseURL before parsing the sections.
       .replace(this.baseURL, '')
-      // Strip the leading and trailing slashes off the url.
+      // Strip the leading and trailing slashes off the URL.
       .replace(/^\/*/, '').replace(/\/*$/, '');
   }
 
   /**
     Splits the URL up and generates a state object.
     @param {String} url - The URL to turn into state.
-    @return {Object} The generated state object.
+    @return {Object} The generated state object. In the format:
+      {
+        error: <String>,
+        state: <Object
+      }
   */
   buildState(url) {
     let error = null;
@@ -93,7 +97,7 @@ const State = class State {
     state = this._parseRoot(parts, state);
     // If we have root paths in the URL then we can ignore everything else.
     if (state.root) {
-      // If there is anything after this then it's an invalid url.
+      // If there is anything after this then it's an invalid URL.
       if (parts.length > 1) {
         error = 'invalid root path.';
       }
@@ -111,6 +115,7 @@ const State = class State {
     if (guiIndex > -1) {
       ({state, error} = this._parseGUI(parts.splice(guiIndex), state));
       if (error !== null) {
+        error = `cannot parse the GUI path: ${error}`;
         return {error, state};
       }
     }
@@ -118,6 +123,7 @@ const State = class State {
     if (parts.includes(PATH_DELIMETERS.get('user'))) {
       ({state, parts, error} = this._parseUser(parts, state));
       if (error !== null) {
+        error = `cannot parse the User path: ${error}`;
         return {error, state};
       }
     }
@@ -132,7 +138,8 @@ const State = class State {
       // If we have more content here but there is already a store populated.
       // then this is an invalid url.
     } else if (state.store && parts.length) {
-      error = 'invalid store path.';state.store = parts.join('/');
+      error = 'invalid store path.';
+      state.store = parts.join('/');
     }
     return {error, state};
   }

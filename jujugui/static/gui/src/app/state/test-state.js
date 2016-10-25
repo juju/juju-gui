@@ -677,41 +677,41 @@ describe('State', () => {
       const badURLS = [{
         path: 'http://abc.com:123/u',
         state: {},
-        error: 'invalid user path.'
+        error: 'cannot parse the User path: invalid user path.'
       }, {
         path: 'http://abc.com:123/u/frankban/u',
         state: {
           profile: 'frankban'
         },
-        error: 'invalid user store path.'
+        error: 'cannot parse the User path: invalid user store path.'
       }, {
         path: 'http://abc.com:123/u/frankban/u/haproxy',
         state: {
           profile: 'frankban'
         },
-        error: 'invalid user store path.'
+        error: 'cannot parse the User path: invalid user store path.'
       }, {
         path: 'http://abc.com:123/u/hatch/staging/u',
         state: {
           user: 'hatch/staging'
         },
-        error: 'invalid user store path.'
+        error: 'cannot parse the User path: invalid user store path.'
       }, {
         path: 'http://abc.com:123/u/hatch/staging/u/hatch',
         state: {
           user: 'hatch/staging'
         },
-        error: 'invalid user store path.'
+        error: 'cannot parse the User path: invalid user store path.'
       }, {
         path: 'http://abc.com:123/u/hatch/staging/u/hatch/ghost/trusty/42/wat',
         state: {
           user: 'hatch/staging'
         },
-        error: 'invalid user store path.'
+        error: 'cannot parse the User path: invalid user store path.'
       }, {
         path: 'http://abc.com:123/u/hatch/staging/hatch/u/wat',
         state: {},
-        error: 'invalid user path.'
+        error: 'cannot parse the User path: invalid user path.'
       }, {
         path:
           'http://abc.com:123/u/frankban/production/u/frankban/i/applications',
@@ -721,7 +721,7 @@ describe('State', () => {
           },
           user: 'frankban/production'
         },
-        error: 'invalid user store path.'
+        error: 'cannot parse the User path: invalid user store path.'
       }, {
         path: 'http://abc.com:123/about/wat',
         state: {
@@ -731,7 +731,7 @@ describe('State', () => {
       }, {
         path: 'http://abc.com:123/no-such/i',
         state: {},
-        error: 'invalid GUI path.'
+        error: 'cannot parse the GUI path: invalid GUI path.'
       }, {
         path: 'http://abc.com:123/django/bundle/42/wat',
         state: {},
@@ -739,7 +739,7 @@ describe('State', () => {
       }, {
         path: 'http://abc.com:123/ghost/u/frankban/ghost',
         state: {},
-        error: 'invalid user path.'
+        error: 'cannot parse the User path: invalid user path.'
       }];
 
       badURLS.forEach(test => {
