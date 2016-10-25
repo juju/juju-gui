@@ -95,14 +95,19 @@ const State = class State {
   }
 
   /**
-    Check the second index spot to see if it's either an integer for
-    the revision or or a series. If it is, then this is a user
-    store path.
+    Check the supplied block of path to see if this is a user store path or not.
     @return {Boolean}
   */
   _isUserStorePath(block) {
+    const seriesList = this.seriesList;
+    if (block.length === 3 && block[1] === 'bundle') {
+      return false;
+    }
+    if (block.length === 2 && !seriesList.includes(block[1])) {
+      return Number.isNaN(parseInt(block[1], 10));
+    }
     return !Number.isNaN(parseInt(block[2], 10)) ||
-      this.seriesList.includes(block[2]);
+      seriesList.includes(block[2]);
   }
 
   /**
@@ -237,9 +242,9 @@ const State = class State {
     const store = this.appState.store;
     if (store) {
       if (this._isUserStorePath(store.split('/'))) {
-        path = `${path}/u/`;
+        path = `${path}/u`;
       }
-      path = `${path}${store}`;
+      path = `${path}/${store}`;
     }
     const gui = this.appState.gui;
     if (gui) {
@@ -247,7 +252,7 @@ const State = class State {
       Object.keys(gui).forEach(key => {
         const value = gui[key];
         path = `${path}/${key}`;
-        if (value) {
+        if (value !== '') {
           path = `${path}/${value}`;
         }
       });

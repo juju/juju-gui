@@ -74,7 +74,7 @@ describe('State', () => {
     error: null
   }];
 
-  const GUI_STATE_PATHS = [{
+  const GUI_STATE_URLS = [{
     path: 'http://abc.com:123/i/inspector/haproxy/config',
     state: { gui: { inspector: 'haproxy/config' }},
     error: null
@@ -91,6 +91,171 @@ describe('State', () => {
       'http://abc.com:123/i/inspector/apache2/machines/3/lxc-0/deploy/foo',
     state: {
       gui: { inspector: 'apache2', machines: '3/lxc-0', deploy: 'foo'}
+    },
+    error: null
+  }];
+
+  const STORE_STATE_URLS = [{
+    path: 'http://abc.com:123/haproxy',
+    state: { store: 'haproxy' },
+    error: null
+  }, {
+    path: 'http://abc.com:123/haproxy/xenial',
+    state: { store: 'haproxy/xenial' },
+    error: null
+  }, {
+    path: 'http://abc.com:123/haproxy/42',
+    state: { store: 'haproxy/42' },
+    error: null
+  }, {
+    path: 'http://abc.com:123/django/bundle/47',
+    state: { store: 'django/bundle/47' },
+    error: null
+  }];
+
+  const MODEL_STORE_STATE_URLS = [{
+    path: 'http://abc.com:123/u/hatch/staging/haproxy',
+    state: { user: 'hatch/staging', store: 'haproxy' },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/frankban/production/ghost/xenial',
+    state: { user: 'frankban/production', store: 'ghost/xenial' },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/hatch/staging/ghost/42',
+    state: { user: 'hatch/staging', store: 'ghost/42' },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/frankban/production/django/bundle/47',
+    state: { user: 'frankban/production', store: 'django/bundle/47' },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/hatch/staging/u/frankban/django',
+    state: { user: 'hatch/staging', store: 'frankban/django' },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/frankban/production/u/hatch/mongodb/xenial',
+    state: { user: 'frankban/production', store: 'hatch/mongodb/xenial' },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/hatch/staging/u/hatch/mongodb/47',
+    state: { user: 'hatch/staging', store: 'hatch/mongodb/47' },
+    error: null
+  }, {
+    path:
+      'http://abc.com:123/u/frankban/production/u/frankban/django/bundle/0',
+    state: {
+      user: 'frankban/production', store: 'frankban/django/bundle/0' },
+    error: null
+  }];
+
+  const MODEL_GUI_STATE_URLS = [{
+    path: 'http://abc.com:123/u/hatch/staging/i/inspector/haproxy/config',
+    state: { user: 'hatch/staging', gui: { inspector: 'haproxy/config' } },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/frankban/production/i/machines',
+    state: { user: 'frankban/production', gui: { machines: '' } },
+    error: null
+  }, {
+    path:
+      'http://abc.com:123/u/hatch/staging/i/applications/inspector/ghost',
+    state: {
+      user: 'hatch/staging', gui: {applications: '', inspector: 'ghost' }},
+    error: null
+  }];
+
+  const STORE_GUI_STATE_URLS = [{
+    path: 'http://abc.com:123/haproxy/i/inspector/haproxy/config',
+    state: { store: 'haproxy', gui: { inspector: 'haproxy/config' } },
+    error: null
+  }, {
+    path: 'http://abc.com:123/ghost/xenial/i/machines',
+    state: { store: 'ghost/xenial', gui: { machines: '' } },
+    error: null
+  }, {
+    path: 'http://abc.com:123/ghost/42/i/applications/inspector/ghost',
+    state: {
+      store: 'ghost/42', gui: { applications: '', inspector: 'ghost' } },
+    error: null
+  }, {
+    path: 'http://abc.com:123/django/bundle/47/i/machines',
+    state: { store: 'django/bundle/47', gui: { machines: '' } },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/hatch/mongodb/xenial/i/applications/inspector/ghost', // eslint-disable-line max-len
+    state: {
+      store: 'hatch/mongodb/xenial',
+      gui: { applications: '', inspector: 'ghost'} },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/frankban/django/bundle/0/i/machines',
+    state: { store: 'frankban/django/bundle/0', gui: { machines: '' } },
+    error: null
+  }];
+
+  const ALL_STATE_URLS = [{
+    path: 'http://abc.com:123/u/hatch/staging/haproxy/i/inspector/haproxy/config', // eslint-disable-line max-len
+    state: {
+      user: 'hatch/staging',
+      store: 'haproxy',
+      gui: { inspector: 'haproxy/config' }
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/frankban/production/ghost/xenial/i/inspector/haproxy/config', // eslint-disable-line max-len
+    state: {
+      user: 'frankban/production',
+      store: 'ghost/xenial',
+      gui: { inspector: 'haproxy/config' }
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/hatch/staging/ghost/42/i/inspector/haproxy/config', // eslint-disable-line max-len
+    state: {
+      user: 'hatch/staging',
+      store: 'ghost/42',
+      gui: { inspector: 'haproxy/config' }
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/frankban/production/django/bundle/47/i/machines', // eslint-disable-line max-len
+    state: {
+      user: 'frankban/production',
+      store: 'django/bundle/47',
+      gui: { machines: '' }
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/hatch/staging/u/frankban/django/i/applications/inspector/ghost', // eslint-disable-line max-len
+    state: {
+      user: 'hatch/staging',
+      store: 'frankban/django',
+      gui: { applications: '', inspector: 'ghost' }
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/frankban/production/u/hatch/mongodb/xenial/i/machines', // eslint-disable-line max-len
+    state: {
+      user: 'frankban/production',
+      store: 'hatch/mongodb/xenial',
+      gui: { machines: '' }
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/hatch/staging/u/hatch/mongodb/47/i/applications/inspector/ghost', // eslint-disable-line max-len
+    state: {
+      user: 'hatch/staging',
+      store: 'hatch/mongodb/47',
+      gui: { applications: '', inspector: 'ghost' }
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/frankban/production/u/frankban/django/bundle/0/i/applications', // eslint-disable-line max-len
+    state: {
+      user: 'frankban/production',
+      store: 'frankban/django/bundle/0',
+      gui: { applications: '' }
     },
     error: null
   }];
@@ -456,7 +621,7 @@ describe('State', () => {
         seriesList:  ['precise', 'trusty', 'xenial']
       });
 
-      GUI_STATE_PATHS.forEach(test => {
+      GUI_STATE_URLS.forEach(test => {
         assert.deepEqual(
           state.generateState(test.path),
           {error: test.error, state: test.state},
@@ -486,25 +651,7 @@ describe('State', () => {
         seriesList:  ['precise', 'trusty', 'xenial']
       });
 
-      const urls = [{
-        path: 'http://abc.com:123/haproxy',
-        state: { store: 'haproxy' },
-        error: null
-      }, {
-        path: 'http://abc.com:123/haproxy/xenial',
-        state: { store: 'haproxy/xenial' },
-        error: null
-      }, {
-        path: 'http://abc.com:123/haproxy/42',
-        state: { store: 'haproxy/42' },
-        error: null
-      }, {
-        path: 'http://abc.com:123/django/bundle/47',
-        state: { store: 'django/bundle/47' },
-        error: null
-      }];
-
-      urls.forEach(test => {
+      STORE_STATE_URLS.forEach(test => {
         assert.deepEqual(
           state.generateState(test.path),
           {error: test.error, state: test.state},
@@ -519,43 +666,7 @@ describe('State', () => {
         seriesList:  ['precise', 'trusty', 'xenial']
       });
 
-      const urls = [{
-        path: 'http://abc.com:123/u/hatch/staging/haproxy',
-        state: { user: 'hatch/staging', store: 'haproxy' },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/frankban/production/ghost/xenial',
-        state: { user: 'frankban/production', store: 'ghost/xenial' },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/hatch/staging/ghost/42',
-        state: { user: 'hatch/staging', store: 'ghost/42' },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/frankban/production/django/bundle/47',
-        state: { user: 'frankban/production', store: 'django/bundle/47' },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/hatch/staging/u/frankban/django',
-        state: { user: 'hatch/staging', store: 'frankban/django' },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/frankban/production/u/hatch/mongodb/xenial',
-        state: { user: 'frankban/production', store: 'hatch/mongodb/xenial' },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/hatch/staging/u/hatch/mongodb/47',
-        state: { user: 'hatch/staging', store: 'hatch/mongodb/47' },
-        error: null
-      }, {
-        path:
-          'http://abc.com:123/u/frankban/production/u/frankban/django/bundle/0',
-        state: {
-          user: 'frankban/production', store: 'frankban/django/bundle/0' },
-        error: null
-      }];
-
-      urls.forEach(test => {
+      MODEL_STORE_STATE_URLS.forEach(test => {
         assert.deepEqual(
           state.generateState(test.path),
           {error: test.error, state: test.state},
@@ -570,23 +681,7 @@ describe('State', () => {
         seriesList:  ['precise', 'trusty', 'xenial']
       });
 
-      const urls = [{
-        path: 'http://abc.com:123/u/hatch/staging/i/inspector/haproxy/config',
-        state: { user: 'hatch/staging', gui: { inspector: 'haproxy/config' } },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/frankban/production/i/machines',
-        state: { user: 'frankban/production', gui: { machines: '' } },
-        error: null
-      }, {
-        path:
-          'http://abc.com:123/u/hatch/staging/i/applications/inspector/ghost/',
-        state: {
-          user: 'hatch/staging', gui: {applications: '', inspector: 'ghost' }},
-        error: null
-      }];
-
-      urls.forEach(test => {
+      MODEL_GUI_STATE_URLS.forEach(test => {
         assert.deepEqual(
           state.generateState(test.path),
           {error: test.error, state: test.state},
@@ -601,36 +696,7 @@ describe('State', () => {
         seriesList:  ['precise', 'trusty', 'xenial']
       });
 
-      const urls = [{
-        path: 'http://abc.com:123/haproxy/i/inspector/haproxy/config',
-        state: { store: 'haproxy', gui: { inspector: 'haproxy/config' } },
-        error: null
-      }, {
-        path: 'http://abc.com:123/ghost/xenial/i/machines',
-        state: { store: 'ghost/xenial', gui: { machines: '' } },
-        error: null
-      }, {
-        path: 'http://abc.com:123/ghost/42/i/applications/inspector/ghost/',
-        state: {
-          store: 'ghost/42', gui: { applications: '', inspector: 'ghost' } },
-        error: null
-      }, {
-        path: 'http://abc.com:123/django/bundle/47/i/machines',
-        state: { store: 'django/bundle/47', gui: { machines: '' } },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/hatch/mongodb/xenial/i/applications/inspector/ghost/', // eslint-disable-line max-len
-        state: {
-          store: 'hatch/mongodb/xenial',
-          gui: { applications: '', inspector: 'ghost'} },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/frankban/django/bundle/0/i/machines',
-        state: { store: 'frankban/django/bundle/0', gui: { machines: '' } },
-        error: null
-      }];
-
-      urls.forEach(test => {
+      STORE_GUI_STATE_URLS.forEach(test => {
         assert.deepEqual(
           state.generateState(test.path),
           {error: test.error, state: test.state},
@@ -645,73 +711,7 @@ describe('State', () => {
         seriesList:  ['precise', 'trusty', 'xenial']
       });
 
-      const urls = [{
-        path: 'http://abc.com:123/u/hatch/staging/haproxy/i/inspector/haproxy/config', // eslint-disable-line max-len
-        state: {
-          user: 'hatch/staging',
-          store: 'haproxy',
-          gui: { inspector: 'haproxy/config' }
-        },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/frankban/production/ghost/xenial/i/inspector/haproxy/config', // eslint-disable-line max-len
-        state: {
-          user: 'frankban/production',
-          store: 'ghost/xenial',
-          gui: { inspector: 'haproxy/config' }
-        },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/hatch/staging/ghost/42/i/inspector/haproxy/config', // eslint-disable-line max-len
-        state: {
-          user: 'hatch/staging',
-          store: 'ghost/42',
-          gui: { inspector: 'haproxy/config' }
-        },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/frankban/production/django/bundle/47/i/machines', // eslint-disable-line max-len
-        state: {
-          user: 'frankban/production',
-          store: 'django/bundle/47',
-          gui: { machines: '' }
-        },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/hatch/staging/u/frankban/django/i/applications/inspector/ghost/', // eslint-disable-line max-len
-        state: {
-          user: 'hatch/staging',
-          store: 'frankban/django',
-          gui: { applications: '', inspector: 'ghost' }
-        },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/frankban/production/u/hatch/mongodb/xenial/i/machines', // eslint-disable-line max-len
-        state: {
-          user: 'frankban/production',
-          store: 'hatch/mongodb/xenial',
-          gui: { machines: '' }
-        },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/hatch/staging/u/hatch/mongodb/47/i/applications/inspector/ghost/', // eslint-disable-line max-len
-        state: {
-          user: 'hatch/staging',
-          store: 'hatch/mongodb/47',
-          gui: { applications: '', inspector: 'ghost' }
-        },
-        error: null
-      }, {
-        path: 'http://abc.com:123/u/frankban/production/u/frankban/django/bundle/0/i/applications', // eslint-disable-line max-len
-        state: {
-          user: 'frankban/production',
-          store: 'frankban/django/bundle/0',
-          gui: { applications: '' }
-        },
-        error: null
-      }];
-
-      urls.forEach(test => {
+      ALL_STATE_URLS.forEach(test => {
         assert.deepEqual(
           state.generateState(test.path),
           {error: test.error, state: test.state},
@@ -889,7 +889,87 @@ describe('State', () => {
         seriesList:  ['precise', 'trusty', 'xenial']
       });
 
-      GUI_STATE_PATHS.forEach(test => {
+      GUI_STATE_URLS.forEach(test => {
+        state._appStateHistory.push(test.state);
+        assert.equal(
+          state.generatePath(),
+          // Remove baseURL as the generatePath method only generates the path.
+          test.path.replace(baseURL, ''));
+      });
+    });
+
+    it('generates proper store paths from state', () => {
+      const baseURL = 'http://abc.com:123';
+      const state = new window.jujugui.State({
+        baseURL: baseURL,
+        seriesList:  ['precise', 'trusty', 'xenial']
+      });
+
+      STORE_STATE_URLS.forEach(test => {
+        state._appStateHistory.push(test.state);
+        assert.equal(
+          state.generatePath(),
+          // Remove baseURL as the generatePath method only generates the path.
+          test.path.replace(baseURL, ''));
+      });
+    });
+
+    it('generates proper model and store paths from state', () => {
+      const baseURL = 'http://abc.com:123';
+      const state = new window.jujugui.State({
+        baseURL: baseURL,
+        seriesList:  ['precise', 'trusty', 'xenial']
+      });
+
+      MODEL_STORE_STATE_URLS.forEach(test => {
+        state._appStateHistory.push(test.state);
+        assert.equal(
+          state.generatePath(),
+          // Remove baseURL as the generatePath method only generates the path.
+          test.path.replace(baseURL, ''));
+      });
+    });
+
+    it('generates proper model and gui paths from state', () => {
+      const baseURL = 'http://abc.com:123';
+      const state = new window.jujugui.State({
+        baseURL: baseURL,
+        seriesList:  ['precise', 'trusty', 'xenial']
+      });
+
+      MODEL_GUI_STATE_URLS.forEach(test => {
+        state._appStateHistory.push(test.state);
+        assert.equal(
+          state.generatePath(),
+          // Remove baseURL as the generatePath method only generates the path.
+          test.path.replace(baseURL, ''));
+      });
+    });
+
+    it('generates proper store and gui paths from state', () => {
+      const baseURL = 'http://abc.com:123';
+      const state = new window.jujugui.State({
+        baseURL: baseURL,
+        seriesList:  ['precise', 'trusty', 'xenial']
+      });
+
+      STORE_GUI_STATE_URLS.forEach(test => {
+        state._appStateHistory.push(test.state);
+        assert.equal(
+          state.generatePath(),
+          // Remove baseURL as the generatePath method only generates the path.
+          test.path.replace(baseURL, ''));
+      });
+    });
+
+    it('generates proper all paths from state', () => {
+      const baseURL = 'http://abc.com:123';
+      const state = new window.jujugui.State({
+        baseURL: baseURL,
+        seriesList:  ['precise', 'trusty', 'xenial']
+      });
+
+      ALL_STATE_URLS.forEach(test => {
         state._appStateHistory.push(test.state);
         assert.equal(
           state.generatePath(),
