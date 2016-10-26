@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('State', () => {
 
-  const USER_STATE_URLS = [{
+  const userStateTests = [{
     path: 'http://abc.com:123/u/ant',
     state: { profile: 'ant' },
     error: null
@@ -42,7 +42,7 @@ describe('State', () => {
     error: null
   }];
 
-  const ROOT_STATE_URLS = [{
+  const rootStateTests = [{
     path: 'http://abc.com:123/new',
     state: { root: 'new' },
     error: null
@@ -64,7 +64,7 @@ describe('State', () => {
     error: null
   }];
 
-  const SEARCH_STATE_URLS = [{
+  const searchStateTests = [{
     path: 'http://abc.com:123/q/haproxy',
     state: { search: 'haproxy' },
     error: null
@@ -74,7 +74,7 @@ describe('State', () => {
     error: null
   }];
 
-  const GUI_STATE_URLS = [{
+  const guiStateTests = [{
     path: 'http://abc.com:123/i/inspector/haproxy/config',
     state: { gui: { inspector: 'haproxy/config' }},
     error: null
@@ -95,7 +95,7 @@ describe('State', () => {
     error: null
   }];
 
-  const STORE_STATE_URLS = [{
+  const storeStateTests = [{
     path: 'http://abc.com:123/haproxy',
     state: { store: 'haproxy' },
     error: null
@@ -113,7 +113,7 @@ describe('State', () => {
     error: null
   }];
 
-  const MODEL_STORE_STATE_URLS = [{
+  const modelStoreStateTests = [{
     path: 'http://abc.com:123/u/hatch/staging/haproxy',
     state: { user: 'hatch/staging', store: 'haproxy' },
     error: null
@@ -149,7 +149,7 @@ describe('State', () => {
     error: null
   }];
 
-  const MODEL_GUI_STATE_URLS = [{
+  const modelGuiStateTests = [{
     path: 'http://abc.com:123/u/hatch/staging/i/inspector/haproxy/config',
     state: { user: 'hatch/staging', gui: { inspector: 'haproxy/config' } },
     error: null
@@ -165,7 +165,7 @@ describe('State', () => {
     error: null
   }];
 
-  const STORE_GUI_STATE_URLS = [{
+  const storeGuiStateTests = [{
     path: 'http://abc.com:123/haproxy/i/inspector/haproxy/config',
     state: { store: 'haproxy', gui: { inspector: 'haproxy/config' } },
     error: null
@@ -194,7 +194,7 @@ describe('State', () => {
     error: null
   }];
 
-  const ALL_STATE_URLS = [{
+  const allStateTests = [{
     path: 'http://abc.com:123/u/hatch/staging/haproxy/i/inspector/haproxy/config', // eslint-disable-line max-len
     state: {
       user: 'hatch/staging',
@@ -293,14 +293,11 @@ describe('State', () => {
   });
 
   it('uses the window.location if none is provided', () => {
-    // Note that this test is fragile, if any of the test runner execution
-    // parameters change then this test may fail because the location needs
-    // to be updated
     const state = new window.jujugui.State({
       baseURL: 'http://abc.com:123',
       seriesList: ['trusty']
     });
-    assert.equal(state.location.origin, 'http://0.0.0.0:6544');
+    assert.equal(state.location.origin, window.location.origin);
   });
 
   describe('steriesList', () => {
@@ -588,31 +585,31 @@ describe('State', () => {
     // Generate all of the test cases for the various states.
     [{
       title: 'builds the proper state for the reserved urls',
-      list: ROOT_STATE_URLS
+      test: rootStateTests
     }, {
       title: 'builds proper state for the user urls',
-      list: USER_STATE_URLS
+      test: userStateTests
     }, {
       title: 'builds the proper state for the search urls',
-      list: SEARCH_STATE_URLS
+      test: searchStateTests
     }, {
       title: 'builds the proper state for the gui urls',
-      list: GUI_STATE_URLS
+      test: guiStateTests
     }, {
       title: 'builds proper state for the store urls',
-      list: STORE_STATE_URLS
+      test: storeStateTests
     }, {
       title: 'builds proper state for model and gui urls',
-      list: MODEL_STORE_STATE_URLS
+      test: modelStoreStateTests
     }, {
       title: 'builds proper state for model and gui urls',
-      list: MODEL_GUI_STATE_URLS
+      test: modelGuiStateTests
     }, {
       title: 'builds proper state for store and gui urls',
-      list: STORE_GUI_STATE_URLS
+      test: storeGuiStateTests
     }, {
       title: 'builds proper state for urls with all sections',
-      list: ALL_STATE_URLS
+      test: allStateTests
     }].forEach(test => {
       it(test.title, () => {
         const baseURL = 'http://abc.com:123';
@@ -620,7 +617,7 @@ describe('State', () => {
           baseURL: baseURL,
           seriesList:  ['precise', 'trusty', 'xenial']
         });
-        test.list.forEach(test => {
+        test.test.forEach(test => {
           assert.deepEqual(
             state.generateState(test.path),
             {error: test.error, state: test.state},
@@ -745,31 +742,31 @@ describe('State', () => {
     // Generate all of the test cases for the various states.
     [{
       title: 'generates proper root paths from state',
-      list: ROOT_STATE_URLS
+      test: rootStateTests
     }, {
       title: 'generates proper user paths from state',
-      list: USER_STATE_URLS
+      test: userStateTests
     }, {
       title: 'generates proper search paths from state',
-      list: SEARCH_STATE_URLS
+      test: searchStateTests
     }, {
       title: 'generates proper gui paths from state',
-      list: GUI_STATE_URLS
+      test: guiStateTests
     }, {
       title: 'generates proper store paths from state',
-      list: STORE_STATE_URLS
+      test: storeStateTests
     }, {
       title: 'generates proper model and store paths from state',
-      list: MODEL_STORE_STATE_URLS
+      test: modelStoreStateTests
     }, {
       title: 'generates proper model and gui paths from state',
-      list: MODEL_GUI_STATE_URLS
+      test: modelGuiStateTests
     }, {
       title: 'generates proper store and gui paths from state',
-      list: STORE_GUI_STATE_URLS
+      test: storeGuiStateTests
     }, {
       title: 'generates proper all paths from state',
-      list: ALL_STATE_URLS
+      test: allStateTests
     }].forEach(test => {
       it(test.title, () => {
         const baseURL = 'http://abc.com:123';
@@ -777,7 +774,7 @@ describe('State', () => {
           baseURL: baseURL,
           seriesList:  ['precise', 'trusty', 'xenial']
         });
-        test.list.forEach(test => {
+        test.test.forEach(test => {
           state._appStateHistory.push(test.state);
           assert.equal(
             state.generatePath(),
