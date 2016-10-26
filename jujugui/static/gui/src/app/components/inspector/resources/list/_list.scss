@@ -1,18 +1,18 @@
 .inspector-resources-list {
-    &__list {
-        @extend %list-style;
-    }
+  &__list {
+    @extend %list-style;
+  }
 
-    &__resource {
-        padding: 20px 20px 10px 20px;
-        border-bottom: 1px solid $mid-grey;
+  &__resource {
+    padding: 20px 20px 10px 20px;
+    border-bottom: 1px solid $mid-grey;
 
-        &:last-child {
-            border-bottom: none;
-        }
+    &:last-child {
+      border-bottom: none;
     }
+  }
 
-    &__loading {
-        text-align: center;
-    }
+  &__loading {
+    text-align: center;
+  }
 }

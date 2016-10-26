@@ -537,7 +537,7 @@ var module = module;
     */
     _processResources: function(callback, error, data) {
       if (error !== null) {
-        callback(error, null);
+        callback(error, data);
       } else {
         const resources = data.map(item => {
           const cleaned = {};

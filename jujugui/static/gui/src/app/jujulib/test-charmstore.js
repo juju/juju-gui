@@ -588,7 +588,7 @@ describe('jujulib charmstore', function() {
       // Call the error request callback.
       sendGetRequest.args[0][2]('not found');
       assert.equal(callback.callCount, 1);
-      assert.deepEqual(callback.args[0], ['not found', null]);
+      assert.deepEqual(callback.args[0], ['not found', {error: 'not found'}]);
     });
   });
 });
