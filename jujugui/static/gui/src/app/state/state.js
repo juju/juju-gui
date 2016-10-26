@@ -55,8 +55,11 @@ const State = class State {
     if (!cfg.seriesList || !Array.isArray(cfg.seriesList)) {
       throw new Error('Series list must be an Array.');
     }
-    // Push bundle into the seriesList as it sits in the series spot in the URL.
-    cfg.seriesList.push('bundle');
+    // Push bundle into the seriesList if it doesn't already exist as it sits
+    // in the series spot in the URL.
+    if (!cfg.seriesList.includes('bundle')) {
+      cfg.seriesList.push('bundle');
+    }
     /**
       The list of possible distro 'series' for the store paths. ex)
       trusty, precise, xenial. The GUI has a utils method `getSeriesList` that
@@ -146,17 +149,38 @@ const State = class State {
   dispatch() {
     let error, state;
     ({error, state} = this.generateState(this.location.href));
-    this._appStateHistory.push(state);
     if (error !== null) {
-      return `unable to generate state: ${error}`;
+      error += `unable to generate state: ${error}`;
+      return {error, state};
     }
-    this._dispatch(state);
+    this._appStateHistory.push(state);
+    // First execute the 'all' dispatchers.
+    this._dispatch(state, '*');
+    // Loop through the state keys to execute their dispatchers.
+    Object.keys(state).forEach(key => {
+      this._dispatch(state, key);
+    });
+    return {error: null, state};
   }
 
   /**
     Takes the existing app state and then calls the registered dispatchers.
+    @param {Object} state - The state to dispatch.
   */
-  _dispatch() {}
+  _dispatch(state, key) {
+    if (!this._dispatchers[key]) {
+      // If we have no registered dispatchers for the key then return.
+      return;
+    }
+    const iterator = this._dispatchers[key][Symbol.iterator]();
+    function next() {
+      const data = iterator.next();
+      if (!data.done) {
+        data.value(state, next);
+      }
+    }
+    next();
+  }
 
   /**
     Changes the internal state of the app, updating the location and

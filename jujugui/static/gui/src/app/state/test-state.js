@@ -727,29 +727,56 @@ describe('State', () => {
     });
   });
 
+  describe('State.dispatch()', () => {
     it('passes the current location to generateState', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
         seriesList:  ['precise', 'trusty', 'xenial'],
-        location: {href: 'foo'}
+        location: {href: '/hatch/ghost'}
       });
       const stub = sinon.stub(
         state, 'generateState', () => ({ error: null, state: {}}));
       state.dispatch();
       assert.equal(stub.callCount, 1);
-      assert.deepEqual(stub.args[0], ['foo']);
+      assert.deepEqual(stub.args[0], ['/hatch/ghost']);
     });
 
     it('updates the _appStateHistory with the new state', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
         seriesList:  ['precise', 'trusty', 'xenial'],
-        location: {href: 'foo'}
+        location: {href: 'hatch/ghost'}
       });
       sinon.stub(state,
         'generateState', () => ({ error: null, state: {new: 'state'}}));
       state.dispatch();
       assert.deepEqual(state._appStateHistory, [{new: 'state'}]);
+    });
+
+    it('dispatches registered dispatchers in proper order', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial'],
+        location: {href: 'ghost/trusty'}
+      });
+      let counter = 0;
+      let increment = () => counter += 1;
+      let execution = {};
+      const stub = function(state, next) {
+        execution.stub = increment();
+        next();
+      };
+      const stub2 = function(state, next) {
+        execution.stub2 = increment();
+        next();
+      };
+      const stub3 = function(state, next) {
+        execution.stub3 = increment();
+        next();
+      };
+      state.register([['*', stub], ['store', stub2],['*', stub3]]);
+      state.dispatch();
+      assert.deepEqual(execution, { stub: 1, stub2: 3, stub3: 2 });
     });
   });
 
@@ -798,7 +825,6 @@ describe('State', () => {
         });
       });
     });
-
   });
 
 });
