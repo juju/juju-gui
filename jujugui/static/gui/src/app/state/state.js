@@ -66,6 +66,19 @@ const State = class State {
       @type {Array}
     */
     this.seriesList = cfg.seriesList;
+    /**
+      Internal storage value for the application location. Only used when
+      location is set externally.
+      @private
+      @type {Object}
+    */
+    this._location = cfg.location || null;
+    /**
+      Internal storage for the app state history.
+      @private
+      @type {Array}
+    */
+    this._appStateHistory = [];
   }
 
   /**
@@ -82,6 +95,54 @@ const State = class State {
   }
 
   /**
+    The current window location. If set has been called on this property then
+    it will return the externally set option. Typically this option will be used
+    for testing.
+    @type {Object}
+  */
+  get location() {
+    return this._location || window.location;
+  }
+
+  set location(location) {
+    this._location = location;
+  }
+
+  /**
+    The object representing the current app state.
+    @type {Object}
+  */
+  get appState() {
+    return this._appStateHistory[this._appStateHistory.length-1];
+  }
+
+  /**
+    Checks the current location and parses it, building the state, then
+    executing the registered dispatchers.
+  */
+  dispatch() {
+    let error, state;
+    ({error, state} = this.generateState(this.location.href));
+    this._appStateHistory.push(state);
+    if (error !== null) {
+      return `unable to generate state: ${error}`;
+    }
+    this._dispatch(state);
+  }
+
+  /**
+    Takes the existing app state and then calls the registered dispatchers.
+  */
+  _dispatch() {}
+
+  /**
+    Changes the internal state of the app, updating the location and
+    dispatching the app.
+    @param {Object} state - The new state delta to apply to the existing state.
+  */
+  changeState(state) {}
+
+  /**
     Splits the URL up and generates a state object.
     @param {String} url - The URL to turn into state.
     @return {Object} The generated state object. In the format:
@@ -90,7 +151,7 @@ const State = class State {
         state: <Object
       }
   */
-  buildState(url) {
+  generateState(url) {
     let error = null;
     let state = {};
     let parts = this._getCleanPath(url).split('/');
@@ -142,6 +203,42 @@ const State = class State {
       state.store = parts.join('/');
     }
     return {error, state};
+  }
+
+  /**
+    Takes the existing app state and generates the path.
+    @return {String} The path representing the current application state.
+  */
+  generatePath() {
+    let path = [];
+    const root = this.appState.root;
+    if (root) {
+      path.push(root);
+    }
+    const search = this.appState.search;
+    if (search) {
+      path = path.concat([PATH_DELIMETERS.get('search'), search]);
+    }
+    const user = this.appState.user || this.appState.profile;
+    if (user) {
+      path = path.concat([PATH_DELIMETERS.get('user'), user]);
+    }
+    const store = this.appState.store;
+    if (store) {
+      path.push(store);
+    }
+    const gui = this.appState.gui;
+    if (gui) {
+      path.push(PATH_DELIMETERS.get('gui'));
+      Object.keys(gui).forEach(key => {
+        const value = gui[key];
+        path.push(key);
+        if (value !== '') {
+          path.push(value);
+        }
+      });
+    }
+    return '/' + path.join('/');
   }
 
   /**
@@ -273,12 +370,11 @@ const State = class State {
         // The user component has at most two spots. If it has more, then
         // it may be a user store path.
         if (userBlock.length > 2) {
-          // Check the second index spot to see if it's either an integer for
-          // the revision or or a series. If it is, then this is a user
-          // store path.
+          // Check if this is a user store path.
           if (!Number.isNaN(parseInt(userBlock[2], 10)) ||
-              this.seriesList.includes(userBlock[2])) {
-            state.store = userBlock.splice(0).join('/');
+            this.seriesList.includes(userBlock[2])) {
+            // Add the user prefix back in if it's a user store path.
+            state.store = 'u/' + userBlock.splice(0).join('/');
           }
         }
         // If there are still parts then it wasn't a long user store URL
@@ -314,7 +410,8 @@ const State = class State {
         if (storeBlock.length < 2 || storeBlock.length > 4) {
           return {state, parts: urlParts, error: 'invalid user store path.'};
         }
-        state.store = storeBlock.join('/');
+        // Add the user prefix back in if it's a user store path.
+        state.store = 'u/' + storeBlock.join('/');
         break;
     }
 
