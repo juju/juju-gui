@@ -761,13 +761,19 @@ YUI.add('juju-env-bakery', function(Y) {
         var name = this.macaroonName;
         var pathParts = '/profile'.split('/');
         var currentPath = ' path=';
-        // Delete the / cookie first
-        document.cookie = `${name}=; expires=Thu, 01-Jan-1970 00:00:01 GMT;`;
-        pathParts.forEach(part => {
-          currentPath += ((currentPath.substr(-1) !== '/') ? '/' : '') + part;
-          document.cookie =
-            `${name}=; expires=Thu, 01-Jan-1970 00:00:01 GMT;${currentPath};`;
-        });
+
+        if (this.cookieStore) {
+          this.cookieStore.removeItem(this.macaroonName);
+        } else {
+          // Delete the / cookie first
+          document.cookie = `${name}=; expires=Thu, 01-Jan-1970 00:00:01 GMT;`;
+          pathParts.forEach(part => {
+            currentPath += ((currentPath.substr(-1) !== '/') ? '/' : '') + part;
+            document.cookie =
+              `${name}=; expires=Thu, 01-Jan-1970 00:00:01 GMT;${currentPath};`;
+          });
+        }
+        this.dischargeStore.removeItem(DISCHARGE_TOKEN);
       }
     }
   );
