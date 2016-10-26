@@ -185,9 +185,37 @@ const State = class State {
   /**
     Changes the internal state of the app, updating the location and
     dispatching the app.
-    @param {Object} state - The new state delta to apply to the existing state.
+    @param {Object} stateSegment - The new state delta to apply to the
+      existing state.
   */
-  changeState(state) {}
+  changeState(stateSegment) {
+    /**
+      Merge two objects together or clone one. Only works with simple values.
+      @param {Object} target - The root object.
+      @param {Object} source - The object to clone or merge into the target.
+      @return {Object} The merged or cloned object.
+    */
+    function merge(target, source) {
+      if (typeof source === 'object') {
+        Object.keys(source).forEach(key => {
+          const value = source[key];
+          if (typeof value === 'object') {
+            target[key] = merge(target[key] || {}, value);
+          } else {
+            target[key] = value;
+          }
+        });
+      } else {
+        target = source;
+      }
+      return target;
+    }
+
+    this._appStateHistory.push(
+      merge(
+        // Clone the appState so we don't end up clobbering old states.
+        merge({}, this.appState), stateSegment));
+  }
 
   /**
     Splits the URL up and generates a state object.

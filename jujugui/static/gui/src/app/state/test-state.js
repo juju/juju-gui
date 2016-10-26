@@ -780,6 +780,30 @@ describe('State', () => {
     });
   });
 
+  describe('State.changeState()', () => {
+    it('can update state', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial'],
+        location: {href: '/u/hatch/staging/i/applications/inspector/ghost'}
+      });
+      state.dispatch();
+      assert.deepEqual(
+        state.appState,
+        {user: 'hatch/staging', gui: {applications: '', inspector: 'ghost' }},
+        'generateState() did not parse location properly');
+      state.changeState({
+        gui: {
+          applications: 'foo'
+        }
+      });
+      assert.deepEqual(state._appStateHistory, [
+        {user: 'hatch/staging', gui: {applications: '', inspector: 'ghost' }},
+        {user: 'hatch/staging', gui: {applications: 'foo', inspector: 'ghost' }}
+      ]);
+    });
+  });
+
   describe('State.generatePath()', () => {
     // Generate all of the test cases for the various states.
     [{
