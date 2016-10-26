@@ -79,6 +79,7 @@ describe('Inspector', function() {
           getAvailableVersions={sinon.stub()}
           getCharm={sinon.stub()}
           getMacaroon={sinon.stub()}
+          getResources={sinon.stub()}
           getServiceById={sinon.stub()}
           getServiceByName={sinon.stub()}
           getUnitStatusCounts={getUnitStatusCounts}
@@ -170,6 +171,7 @@ describe('Inspector', function() {
           getAvailableVersions={sinon.stub()}
           getCharm={sinon.stub()}
           getMacaroon={sinon.stub()}
+          getResources={sinon.stub()}
           getServiceById={sinon.stub()}
           getServiceByName={sinon.stub()}
           getUnitStatusCounts={sinon.stub()}
@@ -258,6 +260,7 @@ describe('Inspector', function() {
           getAvailableVersions={sinon.stub()}
           getCharm={sinon.stub()}
           getMacaroon={sinon.stub()}
+          getResources={sinon.stub()}
           getServiceById={sinon.stub()}
           getServiceByName={getServiceByName}
           getUnitStatusCounts={sinon.stub()}
@@ -354,6 +357,7 @@ describe('Inspector', function() {
           getAvailableVersions={sinon.stub()}
           getCharm={sinon.stub()}
           getMacaroon={sinon.stub()}
+          getResources={sinon.stub()}
           getServiceById={sinon.stub()}
           getServiceByName={sinon.stub()}
           getUnitStatusCounts={sinon.stub()}
@@ -438,6 +442,7 @@ describe('Inspector', function() {
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
         getMacaroon={sinon.stub()}
+        getResources={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
@@ -490,6 +495,7 @@ describe('Inspector', function() {
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
         getMacaroon={sinon.stub()}
+        getResources={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
@@ -566,6 +572,7 @@ describe('Inspector', function() {
           getAvailableVersions={sinon.stub()}
           getCharm={sinon.stub()}
           getMacaroon={sinon.stub()}
+          getResources={sinon.stub()}
           getServiceById={sinon.stub()}
           getServiceByName={sinon.stub()}
           getUnitStatusCounts={sinon.stub()}
@@ -635,6 +642,7 @@ describe('Inspector', function() {
           getAvailableVersions={sinon.stub()}
           getCharm={sinon.stub()}
           getMacaroon={sinon.stub()}
+          getResources={sinon.stub()}
           getServiceById={sinon.stub()}
           getServiceByName={sinon.stub()}
           getUnitStatusCounts={sinon.stub()}
@@ -714,6 +722,7 @@ describe('Inspector', function() {
           getAvailableVersions={sinon.stub()}
           getCharm={sinon.stub()}
           getMacaroon={sinon.stub()}
+          getResources={sinon.stub()}
           getServiceById={sinon.stub()}
           getServiceByName={sinon.stub()}
           getUnitStatusCounts={sinon.stub()}
@@ -780,6 +789,7 @@ describe('Inspector', function() {
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
         getMacaroon={sinon.stub()}
+        getResources={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
@@ -862,6 +872,7 @@ describe('Inspector', function() {
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
         getMacaroon={sinon.stub()}
+        getResources={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
@@ -943,6 +954,7 @@ describe('Inspector', function() {
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
         getMacaroon={sinon.stub()}
+        getResources={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
@@ -1020,6 +1032,7 @@ describe('Inspector', function() {
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
         getMacaroon={sinon.stub()}
+        getResources={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
@@ -1101,6 +1114,7 @@ describe('Inspector', function() {
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
         getMacaroon={sinon.stub()}
+        getResources={sinon.stub()}
         getServiceById={getServiceById}
         getServiceByName={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
@@ -1186,6 +1200,7 @@ describe('Inspector', function() {
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
         getMacaroon={sinon.stub()}
+        getResources={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
@@ -1311,6 +1326,89 @@ describe('Inspector', function() {
         getAvailableVersions={getAvailableVersions} />);
   });
 
+  it('displays Resources when the app state calls for it', function() {
+    const addNotification = sinon.stub();
+    const changeState = sinon.stub();
+    const getMacaroon = sinon.stub();
+    const addCharm = sinon.stub();
+    const setCharm = sinon.stub();
+    const getCharm = sinon.stub();
+    const getAvailableVersions = sinon.stub();
+    const icon = 'icon.png';
+    const getStub = sinon.stub();
+    const getResources = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('charm').returns('cs:demo');
+    getStub.withArgs('icon').returns(icon);
+    const service = {
+      get: getStub
+    };
+    const appState = {
+      sectionA: {
+        metadata: {
+          activeComponent: 'resources',
+        }}};
+    const component = jsTestUtils.shallowRender(
+      <juju.components.Inspector
+        acl={acl}
+        addCharm={addCharm}
+        addGhostAndEcsUnits={sinon.stub()}
+        addNotification={addNotification}
+        appPreviousState={{}}
+        appState={appState}
+        changeState={changeState}
+        charm={{}}
+        clearState={sinon.stub()}
+        createMachinesPlaceUnits={sinon.stub()}
+        createRelation={sinon.stub()}
+        destroyRelations={sinon.stub()}
+        destroyService={sinon.stub()}
+        destroyUnits={sinon.stub()}
+        displayPlans={true}
+        envResolved={sinon.stub()}
+        exposeService={sinon.stub()}
+        getAvailableEndpoints={sinon.stub()}
+        getAvailableVersions={getAvailableVersions}
+        getCharm={getCharm}
+        getMacaroon={getMacaroon}
+        getResources={getResources}
+        getServiceById={sinon.stub()}
+        getServiceByName={sinon.stub()}
+        getUnitStatusCounts={sinon.stub()}
+        getYAMLConfig={sinon.stub()}
+        linkify={sinon.stub()}
+        modelUUID="abc123"
+        relatableApplications={[]}
+        service={service}
+        serviceRelations={[]}
+        setCharm={setCharm}
+        setConfig={sinon.stub()}
+        showActivePlan={sinon.stub()}
+        unexposeService={sinon.stub()}
+        unplaceServiceUnits={sinon.stub()}
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
+    const instance = component.getMountedInstance();
+    const output = component.getRenderOutput();
+    const header = output.props.children[0];
+    const expectedHeader = (
+      <juju.components.InspectorHeader
+        backCallback={instance._backCallback}
+        activeComponent={appState.sectionA.metadata.activeComponent}
+        type={undefined}
+        count={undefined}
+        title='Resources'
+        icon={icon} />
+    );
+    assert.deepEqual(header, expectedHeader,
+                     'Header is not rendered as expected');
+    const children = output.props.children[1].props.children;
+    assert.deepEqual(children,
+      <juju.components.InspectorResourcesList
+        acl={acl}
+        charmId="cs:demo"
+        getResources={getResources} />);
+  });
+
   it('passes changeState callable to header component', function() {
     var service = {
       get: function(val) {
@@ -1352,6 +1450,7 @@ describe('Inspector', function() {
           getAvailableVersions={sinon.stub()}
           getCharm={sinon.stub()}
           getMacaroon={sinon.stub()}
+          getResources={sinon.stub()}
           getServiceById={sinon.stub()}
           getServiceByName={sinon.stub()}
           getUnitStatusCounts={sinon.stub()}
@@ -1425,6 +1524,7 @@ describe('Inspector', function() {
           getAvailableVersions={sinon.stub()}
           getCharm={sinon.stub()}
           getMacaroon={sinon.stub()}
+          getResources={sinon.stub()}
           getServiceById={sinon.stub()}
           getServiceByName={sinon.stub()}
           getUnitStatusCounts={sinon.stub()}
@@ -1494,6 +1594,7 @@ describe('Inspector', function() {
           getAvailableVersions={sinon.stub()}
           getCharm={sinon.stub()}
           getMacaroon={sinon.stub()}
+          getResources={sinon.stub()}
           getServiceById={sinon.stub()}
           getServiceByName={sinon.stub()}
           getUnitStatusCounts={sinon.stub()}
@@ -1554,6 +1655,7 @@ describe('Inspector', function() {
           getAvailableVersions={sinon.stub()}
           getCharm={sinon.stub()}
           getMacaroon={sinon.stub()}
+          getResources={sinon.stub()}
           getServiceById={sinon.stub()}
           getServiceByName={sinon.stub()}
           getUnitStatusCounts={sinon.stub()}
@@ -1614,6 +1716,7 @@ describe('Inspector', function() {
           getAvailableVersions={sinon.stub()}
           getCharm={sinon.stub()}
           getMacaroon={sinon.stub()}
+          getResources={sinon.stub()}
           getServiceById={sinon.stub()}
           getServiceByName={sinon.stub()}
           getUnitStatusCounts={sinon.stub()}
@@ -1680,6 +1783,7 @@ describe('Inspector', function() {
           getAvailableVersions={sinon.stub()}
           getCharm={sinon.stub()}
           getMacaroon={sinon.stub()}
+          getResources={sinon.stub()}
           getServiceById={sinon.stub()}
           getServiceByName={sinon.stub()}
           getUnitStatusCounts={sinon.stub()}
@@ -1727,6 +1831,7 @@ describe('Inspector', function() {
           getAvailableVersions={sinon.stub()}
           getCharm={sinon.stub()}
           getMacaroon={sinon.stub()}
+          getResources={sinon.stub()}
           getServiceById={sinon.stub()}
           getServiceByName={sinon.stub()}
           getUnitStatusCounts={sinon.stub()}

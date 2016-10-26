@@ -504,6 +504,51 @@ var module = module;
         });
         callback(null, truncatedList);
       }
+    },
+
+    /**
+      Gets the list of resources for the supplied charm.
+
+      @method getResources
+      @param charmId {String} The id of the charm for which to get resources.
+      @params callback {Function} A callback to handle errors or accept the data
+          from the request. Must accept an error message or null as its first
+          parameter and the response data as its second.
+    */
+    getResources: function(charmId, callback) {
+      charmId = charmId.replace('cs:', '');
+      return jujulib._makeRequest(
+          this.bakery,
+          this._generatePath(charmId, null, '/meta/resources'),
+          'GET',
+          null,
+          this._processResources.bind(this, callback));
+    },
+
+    /**
+      Process the data returned by the call to get charm resources.
+
+      @method _processResources
+      @param callback {Function} A callback to handle errors or accept the data
+          from the request. Must accept an error message or null as its first
+          parameter and the response data as its second.
+      @param error {String} An error message or null if no error.
+      @param data {Object} The response from the request.
+    */
+    _processResources: function(callback, error, data) {
+      if (error !== null) {
+        callback(error, data);
+      } else {
+        const resources = data.map(item => {
+          const cleaned = {};
+          // Map the keys to lower case.
+          Object.keys(item).forEach(key => {
+            cleaned[key.toLowerCase()] = item[key];
+          });
+          return cleaned;
+        });
+        callback(null, resources);
+      }
     }
   };
 

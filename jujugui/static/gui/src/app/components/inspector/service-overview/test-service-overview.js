@@ -544,7 +544,44 @@ describe('ServiceOverview', function() {
         valueType={undefined}
         linkAction={undefined}
         linkTitle={undefined} />);
-    assert.equal(output.props.children[1].props.children.length, 5);
+    assert.equal(output.props.children[1].props.children.length, 6);
+  });
+
+  it('shows the resources action', function() {
+    const getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('pending').returns(false);
+    getStub.withArgs('exposed').returns(true);
+    getStub.withArgs('charm').returns('cs:demo');
+    getStub.withArgs('units').returns({
+      toArray: sinon.stub().returns([])
+    });
+    const service = {
+      get: getStub
+    };
+    const output = jsTestUtils.shallowRender(
+        <juju.components.ServiceOverview
+          acl={acl}
+          changeState={sinon.stub()}
+          charm={fakeCharm}
+          clearState={sinon.stub()}
+          destroyService={sinon.stub()}
+          displayPlans={false}
+          getUnitStatusCounts={getUnitStatusCounts()}
+          modelUUID="abc123"
+          service={service}
+          serviceRelations={[1]}
+          showActivePlan={sinon.stub()} />);
+    assert.deepEqual(output.props.children[1].props.children[4],
+      <juju.components.OverviewAction
+        key="Resources"
+        title="Resources"
+        value={undefined}
+        icon={undefined}
+        action={output.props.children[1].props.children[4].props.action}
+        valueType={undefined}
+        linkAction={undefined}
+        linkTitle={undefined} />);
   });
 
   it('shows the Change version action if the service is committed', function() {
@@ -572,17 +609,17 @@ describe('ServiceOverview', function() {
           service={service}
           serviceRelations={[1]}
           showActivePlan={sinon.stub()} />);
-    assert.deepEqual(output.props.children[1].props.children[4],
+    assert.deepEqual(output.props.children[1].props.children[5],
       <juju.components.OverviewAction
         key="Change version"
         title="Change version"
-        linkAction={output.props.children[1].props.children[4].props.linkAction}
+        linkAction={output.props.children[1].props.children[5].props.linkAction}
         linkTitle="cs:demo"
         icon="change-version"
-        action={output.props.children[1].props.children[4].props.action}
+        action={output.props.children[1].props.children[5].props.action}
         valueType={undefined}
         value={undefined} />);
-    assert.equal(output.props.children[1].props.children.length, 5);
+    assert.equal(output.props.children[1].props.children.length, 6);
   });
 
   it('shows the charm details if the version is clicked', function() {
@@ -611,7 +648,7 @@ describe('ServiceOverview', function() {
           service={service}
           serviceRelations={[1]}
           showActivePlan={sinon.stub()} />);
-    output.props.children[1].props.children[4].props.linkAction();
+    output.props.children[1].props.children[5].props.linkAction();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       sectionC: {
@@ -648,7 +685,7 @@ describe('ServiceOverview', function() {
           service={service}
           serviceRelations={[1, 2, 3]}
           showActivePlan={sinon.stub()} />);
-    assert.equal(output.props.children[1].props.children.length, 4);
+    assert.equal(output.props.children[1].props.children.length, 5);
   });
 
   it('shows the plans action if there are plans', function() {
@@ -688,7 +725,7 @@ describe('ServiceOverview', function() {
       showActivePlan.callCount, 0,
       'we are defining plans in the service, it should not call to fetch more');
     assert.equal(
-      output.props.children[1].props.children[5].props.title, 'Plan');
+      output.props.children[1].props.children[6].props.title, 'Plan');
   });
 
   it('renders the delete button', function() {
