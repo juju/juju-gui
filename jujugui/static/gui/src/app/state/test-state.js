@@ -30,15 +30,15 @@ describe('State', () => {
     error: null
   }, {
     path: 'http://abc.com:123/u/hatch/mongodb/xenial',
-    state: { store: 'hatch/mongodb/xenial' },
+    state: { store: 'u/hatch/mongodb/xenial' },
     error: null
   }, {
     path: 'http://abc.com:123/u/hatch/mongodb/47',
-    state: { store: 'hatch/mongodb/47' },
+    state: { store: 'u/hatch/mongodb/47' },
     error: null
   }, {
     path: 'http://abc.com:123/u/frankban/django/bundle/0',
-    state: { store: 'frankban/django/bundle/0' },
+    state: { store: 'u/frankban/django/bundle/0' },
     error: null
   }];
 
@@ -131,21 +131,21 @@ describe('State', () => {
     error: null
   }, {
     path: 'http://abc.com:123/u/hatch/staging/u/frankban/django',
-    state: { user: 'hatch/staging', store: 'frankban/django' },
+    state: { user: 'hatch/staging', store: 'u/frankban/django' },
     error: null
   }, {
     path: 'http://abc.com:123/u/frankban/production/u/hatch/mongodb/xenial',
-    state: { user: 'frankban/production', store: 'hatch/mongodb/xenial' },
+    state: { user: 'frankban/production', store: 'u/hatch/mongodb/xenial' },
     error: null
   }, {
     path: 'http://abc.com:123/u/hatch/staging/u/hatch/mongodb/47',
-    state: { user: 'hatch/staging', store: 'hatch/mongodb/47' },
+    state: { user: 'hatch/staging', store: 'u/hatch/mongodb/47' },
     error: null
   }, {
     path:
       'http://abc.com:123/u/frankban/production/u/frankban/django/bundle/0',
     state: {
-      user: 'frankban/production', store: 'frankban/django/bundle/0' },
+      user: 'frankban/production', store: 'u/frankban/django/bundle/0' },
     error: null
   }];
 
@@ -185,12 +185,12 @@ describe('State', () => {
   }, {
     path: 'http://abc.com:123/u/hatch/mongodb/xenial/i/applications/inspector/ghost', // eslint-disable-line max-len
     state: {
-      store: 'hatch/mongodb/xenial',
+      store: 'u/hatch/mongodb/xenial',
       gui: { applications: '', inspector: 'ghost'} },
     error: null
   }, {
     path: 'http://abc.com:123/u/frankban/django/bundle/0/i/machines',
-    state: { store: 'frankban/django/bundle/0', gui: { machines: '' } },
+    state: { store: 'u/frankban/django/bundle/0', gui: { machines: '' } },
     error: null
   }];
 
@@ -230,7 +230,7 @@ describe('State', () => {
     path: 'http://abc.com:123/u/hatch/staging/u/frankban/django/i/applications/inspector/ghost', // eslint-disable-line max-len
     state: {
       user: 'hatch/staging',
-      store: 'frankban/django',
+      store: 'u/frankban/django',
       gui: { applications: '', inspector: 'ghost' }
     },
     error: null
@@ -238,7 +238,7 @@ describe('State', () => {
     path: 'http://abc.com:123/u/frankban/production/u/hatch/mongodb/xenial/i/machines', // eslint-disable-line max-len
     state: {
       user: 'frankban/production',
-      store: 'hatch/mongodb/xenial',
+      store: 'u/hatch/mongodb/xenial',
       gui: { machines: '' }
     },
     error: null
@@ -246,7 +246,7 @@ describe('State', () => {
     path: 'http://abc.com:123/u/hatch/staging/u/hatch/mongodb/47/i/applications/inspector/ghost', // eslint-disable-line max-len
     state: {
       user: 'hatch/staging',
-      store: 'hatch/mongodb/47',
+      store: 'u/hatch/mongodb/47',
       gui: { applications: '', inspector: 'ghost' }
     },
     error: null
@@ -254,7 +254,7 @@ describe('State', () => {
     path: 'http://abc.com:123/u/frankban/production/u/frankban/django/bundle/0/i/applications', // eslint-disable-line max-len
     state: {
       user: 'frankban/production',
-      store: 'frankban/django/bundle/0',
+      store: 'u/frankban/django/bundle/0',
       gui: { applications: '' }
     },
     error: null
@@ -520,17 +520,17 @@ describe('State', () => {
         outputParts: ['ghost', '42']
       }, {
         parts: ['u', 'hatch', 'mongodb', 'xenial'],
-        state: { store: 'hatch/mongodb/xenial' },
+        state: { store: 'u/hatch/mongodb/xenial' },
         error: null,
         outputParts: []
       }, {
         parts: ['u', 'hatch', 'mongodb', '47'],
-        state: { store: 'hatch/mongodb/47' },
+        state: { store: 'u/hatch/mongodb/47' },
         error: null,
         outputParts: []
       }, {
         parts: ['u', 'frankban', 'django', 'bundle', '0'],
-        state: { store: 'frankban/django/bundle/0' },
+        state: { store: 'u/frankban/django/bundle/0' },
         error: null,
         outputParts: []
       }, {
@@ -538,7 +538,7 @@ describe('State', () => {
         parts: ['u', 'hatch', 'staging', 'u', 'frankban', 'django'],
         state: {
           user: 'hatch/staging',
-          store: 'frankban/django'
+          store: 'u/frankban/django'
         },
         error: null,
         outputParts: []
@@ -547,7 +547,7 @@ describe('State', () => {
           'u', 'frankban', 'production', 'u', 'hatch', 'mongodb', 'xenial'],
         state: {
           user: 'frankban/production',
-          store: 'hatch/mongodb/xenial'
+          store: 'u/hatch/mongodb/xenial'
         },
         error: null,
         outputParts: []
@@ -556,7 +556,7 @@ describe('State', () => {
           'u', 'hatch', 'staging', 'u', 'hatch', 'django', 'bundle', '0'],
         state: {
           user: 'hatch/staging',
-          store: 'hatch/django/bundle/0'
+          store: 'u/hatch/django/bundle/0'
         },
         error: null,
         outputParts: []
@@ -565,7 +565,7 @@ describe('State', () => {
           'u', 'hatch', 'charms', 'u', 'hatch', 'mongodb', 'xenial'],
         state: {
           profile: 'hatch/charms',
-          store: 'hatch/mongodb/xenial'
+          store: 'u/hatch/mongodb/xenial'
         },
         error: null,
         outputParts: []
@@ -599,7 +599,7 @@ describe('State', () => {
       title: 'builds proper state for the store urls',
       test: storeStateTests
     }, {
-      title: 'builds proper state for model and gui urls',
+      title: 'builds proper state for model and store urls',
       test: modelStoreStateTests
     }, {
       title: 'builds proper state for model and gui urls',

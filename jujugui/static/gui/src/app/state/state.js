@@ -95,28 +95,6 @@ const State = class State {
   }
 
   /**
-    Check the supplied block of path to see if this is a user store path or
-    not. These options are becuase the store path can come in many forms and
-    we need to know if it's a user store path for both parsing and
-    generating the path.
-    @return {Boolean}
-  */
-  _isUserStorePath(block) {
-    const seriesList = this.seriesList;
-    // Store path ex) django/bundle/42
-    if (block.length === 3 && block[1] === 'bundle') {
-      return false;
-    }
-    // Store path ex) hatch/ghost
-    if (block.length === 2 && !seriesList.includes(block[1])) {
-      return Number.isNaN(parseInt(block[1], 10));
-    }
-    // Everything else
-    return !Number.isNaN(parseInt(block[2], 10)) ||
-      seriesList.includes(block[2]);
-  }
-
-  /**
     The current window location. If set has been called on this property then
     it will return the externally set option. Typically this option will be used
     for testing.
@@ -139,7 +117,7 @@ const State = class State {
   }
 
   /**
-    Grabs the current location and parses it, building the state, then
+    Checks the current location and parses it, building the state, then
     executing the registered dispatchers.
   */
   dispatch() {
@@ -247,9 +225,6 @@ const State = class State {
     }
     const store = this.appState.store;
     if (store) {
-      if (this._isUserStorePath(store.split('/'))) {
-        path.push(PATH_DELIMETERS.get('user'));
-      }
       path.push(store);
     }
     const gui = this.appState.gui;
@@ -396,8 +371,10 @@ const State = class State {
         // it may be a user store path.
         if (userBlock.length > 2) {
           // Check if this is a user store path.
-          if (this._isUserStorePath(userBlock)) {
-            state.store = userBlock.splice(0).join('/');
+          if (!Number.isNaN(parseInt(userBlock[2], 10)) ||
+            this.seriesList.includes(userBlock[2])) {
+            // Add the user prefix back in if it's a user store path.
+            state.store = 'u/' + userBlock.splice(0).join('/');
           }
         }
         // If there are still parts then it wasn't a long user store URL
@@ -433,7 +410,8 @@ const State = class State {
         if (storeBlock.length < 2 || storeBlock.length > 4) {
           return {state, parts: urlParts, error: 'invalid user store path.'};
         }
-        state.store = storeBlock.join('/');
+        // Add the user prefix back in if it's a user store path.
+        state.store = 'u/' + storeBlock.join('/');
         break;
     }
 
