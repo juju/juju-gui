@@ -95,17 +95,23 @@ const State = class State {
   }
 
   /**
-    Check the supplied block of path to see if this is a user store path or not.
+    Check the supplied block of path to see if this is a user store path or
+    not. These options are becuase the store path can come in many forms and
+    we need to know if it's a user store path for both parsing and
+    generating the path.
     @return {Boolean}
   */
   _isUserStorePath(block) {
     const seriesList = this.seriesList;
+    // Store path ex) django/bundle/42
     if (block.length === 3 && block[1] === 'bundle') {
       return false;
     }
+    // Store path ex) hatch/ghost
     if (block.length === 2 && !seriesList.includes(block[1])) {
       return Number.isNaN(parseInt(block[1], 10));
     }
+    // Everything else
     return !Number.isNaN(parseInt(block[2], 10)) ||
       seriesList.includes(block[2]);
   }
@@ -226,38 +232,38 @@ const State = class State {
     @return {String} The path representing the current application state.
   */
   generatePath() {
-    let path = '';
+    let path = [];
     const root = this.appState.root;
     if (root) {
-      path = `${path}/${root}`;
+      path.push(root);
     }
     const search = this.appState.search;
     if (search) {
-      path = `${path}/${PATH_DELIMETERS.get('search')}/${search}`;
+      path = path.concat([PATH_DELIMETERS.get('search'), search]);
     }
     const user = this.appState.user || this.appState.profile;
     if (user) {
-      path = `${path}/${PATH_DELIMETERS.get('user')}/${user}`;
+      path = path.concat([PATH_DELIMETERS.get('user'), user]);
     }
     const store = this.appState.store;
     if (store) {
       if (this._isUserStorePath(store.split('/'))) {
-        path = `${path}/u`;
+        path.push(PATH_DELIMETERS.get('user'));
       }
-      path = `${path}/${store}`;
+      path.push(store);
     }
     const gui = this.appState.gui;
     if (gui) {
-      path = `${path}/${PATH_DELIMETERS.get('gui')}`;
+      path.push(PATH_DELIMETERS.get('gui'));
       Object.keys(gui).forEach(key => {
         const value = gui[key];
-        path = `${path}/${key}`;
+        path.push(key);
         if (value !== '') {
-          path = `${path}/${value}`;
+          path.push(value);
         }
       });
     }
-    return path;
+    return '/' + path.join('/');
   }
 
   /**

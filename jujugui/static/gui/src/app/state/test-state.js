@@ -274,7 +274,7 @@ describe('State', () => {
     });
   });
 
-  it('can recieve a location value for testing', () => {
+  it('can receive a location value for testing', () => {
     const state = new window.jujugui.State({
       baseURL: 'http://abc.com:123',
       seriesList: ['trusty']
@@ -721,7 +721,6 @@ describe('State', () => {
         seriesList:  ['precise', 'trusty', 'xenial'],
         location: {href: 'foo'}
       });
-      console.log(state.generateState);
       const stub = sinon.stub(
         state, 'generateState', () => ({ error: null, state: {}}));
       state.dispatch();
