@@ -230,6 +230,19 @@ YUI.add('service-overview', function() {
           }
         }
       });
+      actions.push({
+        title: 'Resources',
+        action: this._navigate,
+        state: {
+          sectionA: {
+            component: 'inspector',
+            metadata: {
+              id: service.get('id'),
+              activeComponent: 'resources'
+            }
+          }
+        }
+      });
       if (!service.get('pending')) {
         const charmId = service.get('charm');
         actions.push({

@@ -43,6 +43,7 @@ YUI.add('inspector-component', function() {
       getAvailableVersions: React.PropTypes.func.isRequired,
       getCharm: React.PropTypes.func.isRequired,
       getMacaroon: React.PropTypes.func.isRequired,
+      getResources: React.PropTypes.func.isRequired,
       getServiceById: React.PropTypes.func.isRequired,
       getServiceByName: React.PropTypes.func.isRequired,
       getUnitStatusCounts: React.PropTypes.func.isRequired,
@@ -400,6 +401,23 @@ YUI.add('inspector-component', function() {
                   activeComponent: undefined
                 }}}};
           break;
+        case 'resources':
+          state.activeChild = {
+            title: 'Resources',
+            icon: service.get('icon'),
+            component:
+              <juju.components.InspectorResourcesList
+                acl={this.props.acl}
+                charmId={service.get('charm')}
+                getResources={this.props.getResources} />,
+            backState: {
+              sectionA: {
+                component: 'inspector',
+                metadata: {
+                  id: serviceId,
+                  activeComponent: undefined
+                }}}};
+          break;
         case 'plan':
           state.activeChild = {
             title: 'Plan',
@@ -454,6 +472,7 @@ YUI.add('inspector-component', function() {
     'inspector-relate-to-endpoint',
     'inspector-relations',
     'inspector-relation-details',
+    'inspector-resources-list',
     'scale-service',
     'service-overview',
     'unit-details',
