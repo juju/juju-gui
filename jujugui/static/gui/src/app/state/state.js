@@ -79,6 +79,12 @@ const State = class State {
       @type {Array}
     */
     this._appStateHistory = [];
+    /**
+      Internal storage for the dispatchers.
+      @private
+      @type {Array}
+    */
+    this._dispatchers = {};
   }
 
   /**
@@ -114,6 +120,23 @@ const State = class State {
   */
   get appState() {
     return this._appStateHistory[this._appStateHistory.length-1];
+  }
+
+  /**
+    Stores the dispatchers that are to be called when the appropriate state
+    changes in the application.
+    @param {Array} dispatchers - An array of dispatchers in the format:
+      [['section', callback], ...]
+  */
+  register(dispatchers) {
+    const stored = this._dispatchers;
+    dispatchers.forEach(dispatcher => {
+      if (!stored[dispatcher[0]]) {
+        stored[dispatcher[0]] = [dispatcher[1]];
+        return;
+      }
+      stored[dispatcher[0]].push(dispatcher[1]);
+    });
   }
 
   /**

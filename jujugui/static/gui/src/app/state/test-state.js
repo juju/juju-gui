@@ -711,7 +711,22 @@ describe('State', () => {
     });
   });
 
-  describe('State.dispatch()', () => {
+  describe('State.register()', () => {
+    it('stores the supplied dispatchers', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
+      });
+      const stub1 = sinon.stub();
+      const stub2 = sinon.stub();
+      state.register([['*', stub1], ['store', stub2]]);
+      assert.deepEqual(state._dispatchers, {
+        '*': [stub1],
+        store: [stub2]
+      });
+    });
+  });
+
     it('passes the current location to generateState', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
