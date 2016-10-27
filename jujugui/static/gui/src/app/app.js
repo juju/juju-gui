@@ -1466,6 +1466,7 @@ YUI.add('juju-gui', function(Y) {
           getEntity={charmstore.getEntity.bind(charmstore)}
           getFile={charmstore.getFile.bind(charmstore)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
+          getResources={charmstore.getResources.bind(charmstore)}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
           renderMarkdown={marked.bind(this)}
           deployService={this.deployService.bind(this)}

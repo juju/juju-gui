@@ -28,13 +28,16 @@ YUI.add('entity-details', function() {
       acl: React.PropTypes.object.isRequired,
       addNotification: React.PropTypes.func.isRequired,
       apiUrl: React.PropTypes.string.isRequired,
+      apiVersion: React.PropTypes.string.isRequired,
       changeState: React.PropTypes.func.isRequired,
+      charmstoreURL: React.PropTypes.string.isRequired,
       deployService: React.PropTypes.func.isRequired,
       displayPlans: React.PropTypes.bool.isRequired,
       getBundleYAML: React.PropTypes.func.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       getEntity: React.PropTypes.func.isRequired,
       getFile: React.PropTypes.func.isRequired,
+      getResources: React.PropTypes.func.isRequired,
       id: React.PropTypes.string.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
       listPlansForCharm: React.PropTypes.func.isRequired,
@@ -92,8 +95,11 @@ YUI.add('entity-details', function() {
                 {this._generateDiagram(entityModel)}
                 <juju.components.EntityContent
                   apiUrl={this.props.apiUrl}
+                  apiVersion={this.props.apiVersion}
                   changeState={this.props.changeState}
+                  charmstoreURL={this.props.charmstoreURL}
                   getFile={this.props.getFile}
+                  getResources={this.props.getResources}
                   hasPlans={this.state.hasPlans}
                   renderMarkdown={this.props.renderMarkdown}
                   entityModel={entityModel}

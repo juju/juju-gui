@@ -24,9 +24,12 @@ YUI.add('entity-content', function() {
     /* Define and validate the properites available on this component. */
     propTypes: {
       apiUrl: React.PropTypes.string.isRequired,
+      apiVersion: React.PropTypes.string.isRequired,
       changeState: React.PropTypes.func.isRequired,
+      charmstoreURL: React.PropTypes.string.isRequired,
       entityModel: React.PropTypes.object.isRequired,
       getFile: React.PropTypes.func.isRequired,
+      getResources: React.PropTypes.func.isRequired,
       hasPlans: React.PropTypes.bool.isRequired,
       plans: React.PropTypes.array,
       pluralize: React.PropTypes.func.isRequired,
@@ -168,9 +171,9 @@ YUI.add('entity-content', function() {
       @return {Array} The list markup.
     */
     _generateList: function(list, handler) {
-      return list.map(function(item) {
+      return list.map(function(item, i) {
         return (
-          <li key={item}>
+          <li key={item + i}>
             <a data-id={item} onClick={handler}>
               {item}
             </a>
@@ -270,6 +273,24 @@ YUI.add('entity-content', function() {
             </div>
           </div>
         );
+      }
+    },
+
+    /**
+      Display the resources if this is a charm.
+
+      @method _generateResources
+    */
+    _generateResources: function() {
+      var entityModel = this.props.entityModel;
+      if (entityModel.get('entityType') === 'charm') {
+        return (
+          <juju.components.EntityResources
+            apiVersion={this.props.apiVersion}
+            charmId={entityModel.get('id')}
+            charmstoreURL={this.props.charmstoreURL}
+            getResources={this.props.getResources}
+            pluralize={this.props.pluralize} />);
       }
     },
 
@@ -430,6 +451,7 @@ YUI.add('entity-content', function() {
                   getFile={this.props.getFile} />
               </div>
               <div className="four-col">
+                {this._generateResources()}
                 {this._showEntityRelations()}
                 <juju.components.EntityFiles
                   apiUrl={this.props.apiUrl}
@@ -454,6 +476,7 @@ YUI.add('entity-content', function() {
     'entity-content-relations',
     'entity-content-revisions',
     'entity-files',
+    'entity-resources',
     'expanding-row',
     'loading-spinner',
     'svg-icon'
