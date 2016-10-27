@@ -227,57 +227,6 @@ describe('App', function() {
       assert.equal(app._autoPlaceUnits.callCount, 1);
     });
 
-    it('should display a zoom message on small browsers', function() {
-      constructAppInstance({
-        env: new juju.environments.GoEnvironment({
-          conn: new testUtils.SocketStub(),
-          ecs: new juju.EnvironmentChangeSet()
-        })
-      }, this);
-      app._displayZoomMessage(1024, 'linux');
-      assert.equal(app.db.notifications.item(0).get('title'),
-          'Browser size adjustment');
-    });
-
-    it('should not display the zoom message more than once', function() {
-      constructAppInstance({
-        env: new juju.environments.GoEnvironment({
-          conn: new testUtils.SocketStub(),
-          ecs: new juju.EnvironmentChangeSet()
-        })
-      }, this);
-      assert.equal(app.db.notifications.size(), 0);
-      app._displayZoomMessage(1024, 'linux');
-      assert.equal(app.db.notifications.item(0).get('title'),
-          'Browser size adjustment');
-      app._displayZoomMessage(1024, 'linux');
-      assert.equal(app.db.notifications.size(), 1);
-    });
-
-    it('should show the correct message on a mac', function() {
-      constructAppInstance({
-        env: new juju.environments.GoEnvironment({
-          conn: new testUtils.SocketStub(),
-          ecs: new juju.EnvironmentChangeSet()
-        })
-      }, this);
-      app._displayZoomMessage(1024, 'macintosh');
-      assert.isTrue(app.db.notifications.item(0).get(
-          'message').indexOf('command+-') !== -1);
-    });
-
-    it('should show the correct message for non mac', function() {
-      constructAppInstance({
-        env: new juju.environments.GoEnvironment({
-          conn: new testUtils.SocketStub(),
-          ecs: new juju.EnvironmentChangeSet()
-        })
-      }, this);
-      app._displayZoomMessage(1024, 'linux');
-      assert.isTrue(app.db.notifications.item(0).get(
-          'message').indexOf('ctrl+-') !== -1);
-    });
-
     describe('MAAS support', function() {
       var env, maasNode;
 
