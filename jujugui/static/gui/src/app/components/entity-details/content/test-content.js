@@ -25,7 +25,7 @@ chai.config.truncateThreshold = 0;
 
 function _generateTagItem(tag, fn) {
   return [
-    <li key={tag}>
+    <li key={tag + 0}>
       <a data-id={tag} onClick={fn}>{tag}</a>
     </li>
   ];
@@ -53,12 +53,16 @@ describe('EntityContent', function() {
     var getFile = sinon.spy();
     var changeState = sinon.spy();
     var pluralize = sinon.spy();
+    var getResources = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityContent
           apiUrl={apiUrl}
+          apiVersion="v5"
           changeState={changeState}
+          charmstoreURL="http://1.2.3.4/"
           entityModel={mockEntity}
           getFile={getFile}
+          getResources={getResources}
           hasPlans={false}
           pluralize={pluralize}
           renderMarkdown={renderMarkdown} />, true);
@@ -125,6 +129,12 @@ describe('EntityContent', function() {
                 getFile={getFile} />
             </div>
             <div className="four-col">
+              <juju.components.EntityResources
+                apiVersion="v5"
+                charmstoreURL="http://1.2.3.4/"
+                charmId="cs:django"
+                getResources={getResources}
+                pluralize={pluralize} />
               <juju.components.EntityContentRelations
                 changeState={changeState}
                 relations={mockEntity.get('relations')} />
@@ -166,12 +176,16 @@ describe('EntityContent', function() {
     var getFile = sinon.spy();
     var pluralize = sinon.spy();
     var changeState = sinon.spy();
+    var getResources = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
         apiUrl={apiUrl}
+        apiVersion="v5"
         changeState={changeState}
+        charmstoreURL="http://1.2.3.4/"
         entityModel={mockEntity}
         getFile={getFile}
+        getResources={getResources}
         hasPlans={false}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown} />, true);
@@ -226,6 +240,12 @@ describe('EntityContent', function() {
                 getFile={getFile} />
             </div>
             <div className="four-col">
+              <juju.components.EntityResources
+                apiVersion="v5"
+                charmstoreURL="http://1.2.3.4/"
+                charmId="cs:django"
+                getResources={getResources}
+                pluralize={pluralize} />
               <juju.components.EntityContentRelations
                 changeState={changeState}
                 relations={mockEntity.get('relations')} />
@@ -255,9 +275,12 @@ describe('EntityContent', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.EntityContent
           apiUrl={apiUrl}
+          apiVersion="v5"
           changeState={changeState}
+          charmstoreURL="http://1.2.3.4/"
           entityModel={mockEntity}
           getFile={getFile}
+          getResources={sinon.stub()}
           hasPlans={false}
           pluralize={pluralize}
           renderMarkdown={renderMarkdown} />);
@@ -274,6 +297,7 @@ describe('EntityContent', function() {
                 getFile={getFile} />
             </div>
             <div className="four-col">
+              {undefined}
               {undefined}
               <juju.components.EntityFiles
                 apiUrl={apiUrl}
@@ -390,15 +414,18 @@ describe('EntityContent', function() {
     var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityContent
           apiUrl={apiUrl}
+          apiVersion="v5"
           changeState={changeState}
+          charmstoreURL="http://1.2.3.4/"
           entityModel={mockEntity}
           getFile={getFile}
+          getResources={sinon.stub()}
           hasPlans={false}
           pluralize={pluralize}
           renderMarkdown={renderMarkdown} />, true);
     var output = renderer.getRenderOutput();
     var parent = output.props.children[2].props.children.props.children[1];
-    var relationsComponent = parent.props.children[0];
+    var relationsComponent = parent.props.children[1];
     assert.equal(relationsComponent, undefined);
   });
 
@@ -425,9 +452,12 @@ describe('EntityContent', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
         apiUrl={apiUrl}
+        apiVersion="v5"
         changeState={changeState}
+        charmstoreURL="http://1.2.3.4/"
         entityModel={mockEntity}
         getFile={getFile}
+        getResources={sinon.stub()}
         hasPlans={true}
         plans={plans}
         pluralize={pluralize}
@@ -528,9 +558,12 @@ describe('EntityContent', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
         apiUrl={apiUrl}
+        apiVersion="v5"
         changeState={changeState}
+        charmstoreURL="http://1.2.3.4/"
         entityModel={mockEntity}
         getFile={getFile}
+        getResources={sinon.stub()}
         hasPlans={true}
         plans={null}
         pluralize={pluralize}
@@ -551,9 +584,12 @@ describe('EntityContent', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
         apiUrl={apiUrl}
+        apiVersion="v5"
         changeState={changeState}
+        charmstoreURL="http://1.2.3.4/"
         entityModel={mockEntity}
         getFile={getFile}
+        getResources={sinon.stub()}
         hasPlans={true}
         plans={[]}
         pluralize={pluralize}

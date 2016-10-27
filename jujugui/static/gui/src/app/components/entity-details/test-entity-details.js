@@ -46,14 +46,17 @@ describe('EntityDetails', function() {
         acl={acl}
         addNotification={sinon.stub()}
         apiUrl="http://example.com/"
+        apiVersion="v5"
         id="test"
         changeState={sinon.spy()}
+        charmstoreURL="http://1.2.3.4/"
         deployService={sinon.spy()}
         displayPlans={true}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.spy()}
         getFile={sinon.stub()}
+        getResources={sinon.stub()}
         importBundleYAML={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         makeEntityModel={sinon.spy()}
@@ -77,11 +80,14 @@ describe('EntityDetails', function() {
     var getFile = sinon.spy();
     var renderMarkdown = sinon.spy();
     var addNotification = sinon.spy();
+    const getResources = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           acl={acl}
           apiUrl={apiUrl}
+          apiVersion="v5"
           changeState={changeState}
+          charmstoreURL="http://1.2.3.4/"
           deployService={deployService}
           displayPlans={true}
           importBundleYAML={importBundleYAML}
@@ -89,6 +95,7 @@ describe('EntityDetails', function() {
           getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
+          getResources={getResources}
           listPlansForCharm={sinon.stub()}
           scrollPosition={100}
           renderMarkdown={renderMarkdown}
@@ -124,9 +131,12 @@ describe('EntityDetails', function() {
           {undefined}
           <juju.components.EntityContent
             apiUrl={apiUrl}
+            apiVersion="v5"
             changeState={changeState}
+            charmstoreURL="http://1.2.3.4/"
             entityModel={mockEntity}
             getFile={getFile}
+            getResources={getResources}
             hasPlans={false}
             plans={null}
             pluralize={pluralize}
@@ -152,7 +162,9 @@ describe('EntityDetails', function() {
           acl={acl}
           addNotification={sinon.stub()}
           apiUrl="http://example.com/"
+          apiVersion="v5"
           changeState={changeState}
+          charmstoreURL="http://1.2.3.4/"
           deployService={deployService}
           displayPlans={true}
           importBundleYAML={importBundleYAML}
@@ -160,6 +172,7 @@ describe('EntityDetails', function() {
           getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
+          getResources={sinon.stub()}
           listPlansForCharm={sinon.spy()}
           makeEntityModel={sinon.spy()}
           renderMarkdown={renderMarkdown}
@@ -201,17 +214,21 @@ describe('EntityDetails', function() {
     var renderMarkdown = sinon.spy();
     var getDiagramURL = sinon.spy();
     var addNotification = sinon.spy();
+    const getResources = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           acl={acl}
           apiUrl={apiUrl}
+          apiVersion="v5"
           changeState={changeState}
+          charmstoreURL="http://1.2.3.4/"
           deployService={deployService}
           displayPlans={true}
           importBundleYAML={importBundleYAML}
           getBundleYAML={getBundleYAML}
           getEntity={getEntity}
           getFile={getFile}
+          getResources={getResources}
           scrollPosition={100}
           renderMarkdown={renderMarkdown}
           getDiagramURL={getDiagramURL}
@@ -250,9 +267,12 @@ describe('EntityDetails', function() {
             id={id} />
           <juju.components.EntityContent
             apiUrl={apiUrl}
+            apiVersion="v5"
             changeState={changeState}
+            charmstoreURL="http://1.2.3.4/"
             entityModel={mockEntity}
             getFile={getFile}
+            getResources={getResources}
             hasPlans={false}
             plans={null}
             pluralize={pluralize}
@@ -278,7 +298,9 @@ describe('EntityDetails', function() {
           acl={acl}
           addNotification={sinon.stub()}
           apiUrl="http://example.com/"
+          apiVersion="v5"
           changeState={changeState}
+          charmstoreURL="http://1.2.3.4/"
           deployService={deployService}
           displayPlans={true}
           importBundleYAML={importBundleYAML}
@@ -286,6 +308,7 @@ describe('EntityDetails', function() {
           getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
+          getResources={sinon.stub()}
           listPlansForCharm={sinon.stub()}
           makeEntityModel={sinon.spy()}
           renderMarkdown={renderMarkdown}
@@ -306,14 +329,17 @@ describe('EntityDetails', function() {
         acl={acl}
         addNotification={sinon.stub()}
         apiUrl="http://example.com/"
+        apiVersion="v5"
         id="test"
         changeState={sinon.spy()}
+        charmstoreURL="http://1.2.3.4/"
         deployService={sinon.spy()}
         displayPlans={true}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.spy()}
         getFile={sinon.stub()}
+        getResources={sinon.stub()}
         importBundleYAML={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         makeEntityModel={sinon.spy()}
@@ -342,18 +368,22 @@ describe('EntityDetails', function() {
     var makeEntityModel = sinon.stub().returns(mockEntity);
     var pluralize = sinon.spy();
     var renderMarkdown = sinon.spy();
+    const getResources = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         acl={acl}
         addNotification={addNotification}
         apiUrl={apiUrl}
+        apiVersion="v5"
         changeState={changeState}
+        charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
         displayPlans={true}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
         getFile={getFile}
+        getResources={getResources}
         id={id}
         importBundleYAML={importBundleYAML}
         listPlansForCharm={listPlansForCharm}
@@ -389,9 +419,12 @@ describe('EntityDetails', function() {
           {undefined}
           <juju.components.EntityContent
             apiUrl={apiUrl}
+            apiVersion="v5"
             changeState={changeState}
+            charmstoreURL="http://1.2.3.4/"
             entityModel={mockEntity}
             getFile={getFile}
+            getResources={getResources}
             hasPlans={true}
             plans={plans}
             pluralize={pluralize}
@@ -419,18 +452,22 @@ describe('EntityDetails', function() {
     var makeEntityModel = sinon.stub().returns(mockEntity);
     var pluralize = sinon.spy();
     var renderMarkdown = sinon.spy();
+    const getResources = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         acl={acl}
         addNotification={addNotification}
         apiUrl={apiUrl}
+        apiVersion="v5"
         changeState={changeState}
+        charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
         displayPlans={false}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
         getFile={getFile}
+        getResources={getResources}
         id={id}
         importBundleYAML={importBundleYAML}
         listPlansForCharm={listPlansForCharm}
@@ -466,9 +503,12 @@ describe('EntityDetails', function() {
           {undefined}
           <juju.components.EntityContent
             apiUrl={apiUrl}
+            apiVersion="v5"
             changeState={changeState}
+            charmstoreURL="http://1.2.3.4/"
             entityModel={mockEntity}
             getFile={getFile}
+            getResources={getResources}
             hasPlans={false}
             plans={null}
             pluralize={pluralize}
@@ -494,18 +534,22 @@ describe('EntityDetails', function() {
     var makeEntityModel = sinon.stub().returns(mockEntity);
     var pluralize = sinon.spy();
     var renderMarkdown = sinon.spy();
+    const getResources = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         acl={acl}
         addNotification={addNotification}
         apiUrl={apiUrl}
+        apiVersion="v5"
         changeState={changeState}
+        charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
         displayPlans={true}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
         getFile={getFile}
+        getResources={getResources}
         id={id}
         importBundleYAML={importBundleYAML}
         listPlansForCharm={listPlansForCharm}
@@ -541,9 +585,12 @@ describe('EntityDetails', function() {
           {undefined}
           <juju.components.EntityContent
             apiUrl={apiUrl}
+            apiVersion="v5"
             changeState={changeState}
+            charmstoreURL="http://1.2.3.4/"
             entityModel={mockEntity}
             getFile={getFile}
+            getResources={getResources}
             hasPlans={true}
             plans={[]}
             pluralize={pluralize}

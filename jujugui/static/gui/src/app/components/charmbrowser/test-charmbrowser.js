@@ -74,6 +74,7 @@ describe('Charmbrowser', function() {
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
         getFile={sinon.stub()}
+        getResources={sinon.stub()}
         importBundleYAML={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         makeEntityModel={makeEntityModel}
@@ -137,6 +138,7 @@ describe('Charmbrowser', function() {
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
         getFile={sinon.stub()}
+        getResources={sinon.stub()}
         importBundleYAML={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         makeEntityModel={makeEntityModel}
@@ -185,6 +187,7 @@ describe('Charmbrowser', function() {
     var getDiagramURL = sinon.spy();
     var listPlansForCharm = sinon.spy();
     var addNotification = sinon.spy();
+    const getResources = sinon.stub();
     var utils = {
       pluralize: sinon.spy()
     };
@@ -204,6 +207,7 @@ describe('Charmbrowser', function() {
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
         getFile={getFile}
+        getResources={getResources}
         importBundleYAML={importBundleYAML}
         listPlansForCharm={listPlansForCharm}
         makeEntityModel={makeEntityModel}
@@ -223,15 +227,18 @@ describe('Charmbrowser', function() {
             <juju.components.EntityDetails
               acl={acl}
               apiUrl={apiUrl}
+              apiVersion="v5"
               importBundleYAML={importBundleYAML}
               getBundleYAML={getBundleYAML}
               changeState={changeState}
+              charmstoreURL="http://1.2.3.4/"
               getEntity={getEntity}
               scrollPosition={0}
               listPlansForCharm={listPlansForCharm}
               makeEntityModel={makeEntityModel}
               getDiagramURL={getDiagramURL}
               getFile={getFile}
+              getResources={getResources}
               renderMarkdown={renderMarkdown}
               deployService={deployService}
               displayPlans={true}
