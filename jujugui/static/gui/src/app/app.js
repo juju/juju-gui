@@ -669,10 +669,6 @@ YUI.add('juju-gui', function(Y) {
         this.dispatch();
         this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       }, this);
-
-      this.zoomMessageHandler = Y.one(Y.config.win).on('resize', function(e) {
-        this._handleZoomMessage();
-      }, this);
     },
 
     /**
@@ -1848,36 +1844,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Display a small screen message using browser data.
-     *
-     * @method _handleZoomMessage
-     */
-    _handleZoomMessage: function() {
-      this._displayZoomMessage(Y.one('body').get('winWidth'), Y.UA.os);
-    },
-
-    /**
-     * Display a message when the browser is too small to work.
-     *
-     * @method _displayZoomMessage
-     */
-    _displayZoomMessage: function(viewportWidth, os) {
-      var metaKey = (os === 'macintosh') ? 'command' : 'ctrl';
-      // Only display the message once otherwise the message will continually
-      // fire while the browser is being resized or zoomed.
-      if (!this.zoomMessageDisplayed && viewportWidth <= 1024) {
-        this.db.notifications.add({
-          title: 'Browser size adjustment',
-          message: 'This browser needs to be maximised or zoomed out to' +
-              ' display the Juju GUI properly. Try using "' + metaKey +
-              '+-" to zoom the window.',
-          level: 'error'
-        });
-        this.zoomMessageDisplayed = true;
-      }
-    },
-
-    /**
     Release resources and inform subcomponents to do the same.
 
     @method destructor
@@ -1888,9 +1854,6 @@ YUI.add('juju-gui', function(Y) {
       // difficult to debug, so please do not remove this code.
       if (this.dbChangedTimer) {
         clearTimeout(this.dbChangedTimer);
-      }
-      if (this.zoomMessageHandler) {
-        this.zoomMessageHandler.detach();
       }
       if (this._keybindings) {
         this._keybindings.detach();
@@ -2447,8 +2410,6 @@ YUI.add('juju-gui', function(Y) {
       this._renderNotifications();
       this._renderLogout();
 
-      // Display the zoom message on page load.
-      this._handleZoomMessage();
       next();
     },
 
