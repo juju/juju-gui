@@ -401,7 +401,8 @@ describe('DeploymentFlow', function() {
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var output = renderer.getRenderOutput();
-    assert.equal(output.props.children[1].props.title, 'Choose cloud to deploy to');
+    assert.equal(
+      output.props.children[1].props.title, 'Choose cloud to deploy to');
   });
 
   it('correctly sets the cloud title if a public cloud is chosen', function() {
