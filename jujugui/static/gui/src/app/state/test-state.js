@@ -757,7 +757,7 @@ describe('State', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
         seriesList:  ['precise', 'trusty', 'xenial'],
-        location: {href: 'ghost/trusty'}
+        location: {href: 'ghost/trusty/i/machines'}
       });
       let counter = 0;
       let increment = () => counter += 1;
@@ -774,9 +774,15 @@ describe('State', () => {
         execution.stub3 = increment();
         next();
       };
-      state.register([['*', stub], ['store', stub2],['*', stub3]]);
+      const stub4 = function(state, next) {
+        execution.stub4 = increment();
+        next();
+      };
+      state.register([
+        ['*', stub], ['store', stub2], ['*', stub3], ['gui.machines', stub4]
+      ]);
       state.dispatch();
-      assert.deepEqual(execution, { stub: 1, stub2: 3, stub3: 2 });
+      assert.deepEqual(execution, {stub: 1, stub2: 4, stub3: 2, stub4: 3});
     });
   });
 

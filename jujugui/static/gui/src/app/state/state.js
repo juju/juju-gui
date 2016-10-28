@@ -156,10 +156,32 @@ const State = class State {
     this._appStateHistory.push(state);
     // First execute the 'all' dispatchers.
     this._dispatch(state, '*');
-    // Loop through the state keys to execute their dispatchers.
-    Object.keys(state).forEach(key => {
+
+    /**
+      Extract out the state path for the dispatcher key.
+      @param {Object} state - The app state.
+    */
+    function extract(state) {
+      let allKeys = [];
+      function concat(state, keys = []) {
+        Object.keys(state).forEach(key => {
+          keys.push(key);
+          if (typeof state[key] === 'object' && state[key] !== null) {
+            concat(state[key], keys);
+          } else {
+            allKeys.push(keys.join('.'));
+          }
+          keys = [];
+        });
+      }
+      concat(state);
+      return allKeys;
+    }
+    // Extract and loop through the state keys to execute their dispatchers.
+    extract(state).forEach(key => {
       this._dispatch(state, key);
     });
+
     return {error: null, state};
   }
 
