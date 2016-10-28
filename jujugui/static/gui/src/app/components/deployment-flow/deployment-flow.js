@@ -811,50 +811,30 @@ YUI.add('deployment-flow', function() {
     render: function() {
       var disabled = this.props.acl.isReadOnly();
       return (
-        <juju.components.Panel
-          instanceName="deployment-flow-panel"
-          visible={true}>
-          <div className="deployment-flow">
-            <div className="deployment-flow__header">
-              <div className="deployment-flow__close">
+        <juju.components.DeploymentPanel
+          changeState={this.props.changeState}
+          title={this.props.modelName}>
+          {this._generateModelNameSection()}
+          {this._generateCloudSection()}
+          {this._generateCredentialSection()}
+          {this._generateMachinesSection()}
+          {this._generateServicesSection()}
+          {this._generateBudgetSection()}
+          {this._generateChangeSection()}
+          <div className="twelve-col">
+            <div className="deployment-flow__deploy">
+              {this._generateAgreementsSection()}
+              <div className="deployment-flow__deploy-action">
                 <juju.components.GenericButton
-                  action={this._handleClose}
-                  type="neutral"
-                  title="Back to canvas" />
-              </div>
-              <div className="deployment-flow__header-name">
-                {this.props.modelName}
-              </div>
-            </div>
-            <div className="deployment-flow__content">
-              <div className="twelve-col">
-                <div className="inner-wrapper">
-                  {this._generateModelNameSection()}
-                  {this._generateCloudSection()}
-                  {this._generateCredentialSection()}
-                  {this._generateMachinesSection()}
-                  {this._generateServicesSection()}
-                  {this._generateBudgetSection()}
-                  {this._generateChangeSection()}
-                  <div className="twelve-col">
-                    <div className="deployment-flow__deploy">
-                      {this._generateAgreementsSection()}
-                      <div className="deployment-flow__deploy-action">
-                        <juju.components.GenericButton
-                          action={this._handleDeploy}
-                          disabled={
-                            !this.props.isLegacyJuju && (
-                              disabled || !this.state.cloud)}
-                          type="positive"
-                          title="Deploy" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  action={this._handleDeploy}
+                  disabled={
+                    !this.props.isLegacyJuju && (disabled || !this.state.cloud)}
+                  type="positive"
+                  title="Deploy" />
               </div>
             </div>
           </div>
-        </juju.components.Panel>
+        </juju.components.DeploymentPanel>
       );
     }
 
@@ -867,10 +847,10 @@ YUI.add('deployment-flow', function() {
     'deployment-cloud',
     'deployment-credential',
     'deployment-machines',
+    'deployment-panel',
     'deployment-section',
     'deployment-services',
     'generic-button',
-    'generic-input',
-    'panel-component'
+    'generic-input'
   ]
 });
