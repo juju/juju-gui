@@ -32,9 +32,8 @@ describe('EntityResources', function() {
   it('can display a loading spinner', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityResources
-        apiVersion="v5"
+        apiUrl="http://1.2.3.4/v5"
         charmId="cs:django"
-        charmstoreURL="http://1.2.3.4/"
         getResources={sinon.stub()}
         pluralize={sinon.stub()} />, true);
     renderer.getMountedInstance().componentDidMount();
@@ -51,9 +50,8 @@ describe('EntityResources', function() {
   it('can display an empty list', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityResources
-        apiVersion="v5"
+        apiUrl="http://1.2.3.4/v5"
         charmId="cs:django"
-        charmstoreURL="http://1.2.3.4/"
         getResources={sinon.stub().callsArgWith(1, null, [])}
         pluralize={sinon.stub()} />, true);
     renderer.getMountedInstance().componentDidMount();
@@ -79,9 +77,8 @@ describe('EntityResources', function() {
     }];
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityResources
-        apiVersion="v5"
+        apiUrl="http://1.2.3.4/v5"
         charmId="cs:django"
-        charmstoreURL="http://1.2.3.4/"
         getResources={sinon.stub().callsArgWith(1, null, resources)}
         pluralize={sinon.stub().returns('resources')} />, true);
     renderer.getMountedInstance().componentDidMount();
@@ -117,9 +114,8 @@ describe('EntityResources', function() {
     const abort = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityResources
-        apiVersion="v5"
+        apiUrl="http://1.2.3.4/v5"
         charmId="cs:django"
-        charmstoreURL="http://1.2.3.4/"
         getResources={sinon.stub().returns({abort: abort})}
         pluralize={sinon.stub()} />, true);
     renderer.getMountedInstance().componentDidMount();

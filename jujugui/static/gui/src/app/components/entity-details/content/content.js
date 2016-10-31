@@ -24,9 +24,7 @@ YUI.add('entity-content', function() {
     /* Define and validate the properites available on this component. */
     propTypes: {
       apiUrl: React.PropTypes.string.isRequired,
-      apiVersion: React.PropTypes.string.isRequired,
       changeState: React.PropTypes.func.isRequired,
-      charmstoreURL: React.PropTypes.string.isRequired,
       entityModel: React.PropTypes.object.isRequired,
       getFile: React.PropTypes.func.isRequired,
       getResources: React.PropTypes.func.isRequired,
@@ -286,9 +284,8 @@ YUI.add('entity-content', function() {
       if (entityModel.get('entityType') === 'charm') {
         return (
           <juju.components.EntityResources
-            apiVersion={this.props.apiVersion}
             charmId={entityModel.get('id')}
-            charmstoreURL={this.props.charmstoreURL}
+            apiUrl={this.props.apiUrl}
             getResources={this.props.getResources}
             pluralize={this.props.pluralize} />);
       }

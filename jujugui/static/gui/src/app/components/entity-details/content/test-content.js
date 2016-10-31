@@ -57,9 +57,7 @@ describe('EntityContent', function() {
     var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityContent
           apiUrl={apiUrl}
-          apiVersion="v5"
           changeState={changeState}
-          charmstoreURL="http://1.2.3.4/"
           entityModel={mockEntity}
           getFile={getFile}
           getResources={getResources}
@@ -130,8 +128,7 @@ describe('EntityContent', function() {
             </div>
             <div className="four-col">
               <juju.components.EntityResources
-                apiVersion="v5"
-                charmstoreURL="http://1.2.3.4/"
+                apiUrl={apiUrl}
                 charmId="cs:django"
                 getResources={getResources}
                 pluralize={pluralize} />
@@ -180,9 +177,7 @@ describe('EntityContent', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
         apiUrl={apiUrl}
-        apiVersion="v5"
         changeState={changeState}
-        charmstoreURL="http://1.2.3.4/"
         entityModel={mockEntity}
         getFile={getFile}
         getResources={getResources}
@@ -241,8 +236,7 @@ describe('EntityContent', function() {
             </div>
             <div className="four-col">
               <juju.components.EntityResources
-                apiVersion="v5"
-                charmstoreURL="http://1.2.3.4/"
+                apiUrl={apiUrl}
                 charmId="cs:django"
                 getResources={getResources}
                 pluralize={pluralize} />
@@ -275,9 +269,7 @@ describe('EntityContent', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.EntityContent
           apiUrl={apiUrl}
-          apiVersion="v5"
           changeState={changeState}
-          charmstoreURL="http://1.2.3.4/"
           entityModel={mockEntity}
           getFile={getFile}
           getResources={sinon.stub()}
@@ -414,9 +406,7 @@ describe('EntityContent', function() {
     var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityContent
           apiUrl={apiUrl}
-          apiVersion="v5"
           changeState={changeState}
-          charmstoreURL="http://1.2.3.4/"
           entityModel={mockEntity}
           getFile={getFile}
           getResources={sinon.stub()}
@@ -452,9 +442,7 @@ describe('EntityContent', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
         apiUrl={apiUrl}
-        apiVersion="v5"
         changeState={changeState}
-        charmstoreURL="http://1.2.3.4/"
         entityModel={mockEntity}
         getFile={getFile}
         getResources={sinon.stub()}
@@ -558,9 +546,7 @@ describe('EntityContent', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
         apiUrl={apiUrl}
-        apiVersion="v5"
         changeState={changeState}
-        charmstoreURL="http://1.2.3.4/"
         entityModel={mockEntity}
         getFile={getFile}
         getResources={sinon.stub()}
@@ -584,9 +570,7 @@ describe('EntityContent', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
         apiUrl={apiUrl}
-        apiVersion="v5"
         changeState={changeState}
-        charmstoreURL="http://1.2.3.4/"
         entityModel={mockEntity}
         getFile={getFile}
         getResources={sinon.stub()}

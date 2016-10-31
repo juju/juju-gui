@@ -46,10 +46,8 @@ describe('EntityDetails', function() {
         acl={acl}
         addNotification={sinon.stub()}
         apiUrl="http://example.com/"
-        apiVersion="v5"
         id="test"
         changeState={sinon.spy()}
-        charmstoreURL="http://1.2.3.4/"
         deployService={sinon.spy()}
         displayPlans={true}
         getBundleYAML={sinon.stub()}
@@ -85,9 +83,7 @@ describe('EntityDetails', function() {
         <juju.components.EntityDetails
           acl={acl}
           apiUrl={apiUrl}
-          apiVersion="v5"
           changeState={changeState}
-          charmstoreURL="http://1.2.3.4/"
           deployService={deployService}
           displayPlans={true}
           importBundleYAML={importBundleYAML}
@@ -131,9 +127,7 @@ describe('EntityDetails', function() {
           {undefined}
           <juju.components.EntityContent
             apiUrl={apiUrl}
-            apiVersion="v5"
             changeState={changeState}
-            charmstoreURL="http://1.2.3.4/"
             entityModel={mockEntity}
             getFile={getFile}
             getResources={getResources}
@@ -162,9 +156,7 @@ describe('EntityDetails', function() {
           acl={acl}
           addNotification={sinon.stub()}
           apiUrl="http://example.com/"
-          apiVersion="v5"
           changeState={changeState}
-          charmstoreURL="http://1.2.3.4/"
           deployService={deployService}
           displayPlans={true}
           importBundleYAML={importBundleYAML}
@@ -219,9 +211,7 @@ describe('EntityDetails', function() {
         <juju.components.EntityDetails
           acl={acl}
           apiUrl={apiUrl}
-          apiVersion="v5"
           changeState={changeState}
-          charmstoreURL="http://1.2.3.4/"
           deployService={deployService}
           displayPlans={true}
           importBundleYAML={importBundleYAML}
@@ -267,9 +257,7 @@ describe('EntityDetails', function() {
             id={id} />
           <juju.components.EntityContent
             apiUrl={apiUrl}
-            apiVersion="v5"
             changeState={changeState}
-            charmstoreURL="http://1.2.3.4/"
             entityModel={mockEntity}
             getFile={getFile}
             getResources={getResources}
@@ -298,9 +286,7 @@ describe('EntityDetails', function() {
           acl={acl}
           addNotification={sinon.stub()}
           apiUrl="http://example.com/"
-          apiVersion="v5"
           changeState={changeState}
-          charmstoreURL="http://1.2.3.4/"
           deployService={deployService}
           displayPlans={true}
           importBundleYAML={importBundleYAML}
@@ -329,10 +315,8 @@ describe('EntityDetails', function() {
         acl={acl}
         addNotification={sinon.stub()}
         apiUrl="http://example.com/"
-        apiVersion="v5"
         id="test"
         changeState={sinon.spy()}
-        charmstoreURL="http://1.2.3.4/"
         deployService={sinon.spy()}
         displayPlans={true}
         getBundleYAML={sinon.stub()}
@@ -374,9 +358,7 @@ describe('EntityDetails', function() {
         acl={acl}
         addNotification={addNotification}
         apiUrl={apiUrl}
-        apiVersion="v5"
         changeState={changeState}
-        charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
         displayPlans={true}
         getBundleYAML={getBundleYAML}
@@ -419,9 +401,7 @@ describe('EntityDetails', function() {
           {undefined}
           <juju.components.EntityContent
             apiUrl={apiUrl}
-            apiVersion="v5"
             changeState={changeState}
-            charmstoreURL="http://1.2.3.4/"
             entityModel={mockEntity}
             getFile={getFile}
             getResources={getResources}
@@ -458,9 +438,7 @@ describe('EntityDetails', function() {
         acl={acl}
         addNotification={addNotification}
         apiUrl={apiUrl}
-        apiVersion="v5"
         changeState={changeState}
-        charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
         displayPlans={false}
         getBundleYAML={getBundleYAML}
@@ -503,9 +481,7 @@ describe('EntityDetails', function() {
           {undefined}
           <juju.components.EntityContent
             apiUrl={apiUrl}
-            apiVersion="v5"
             changeState={changeState}
-            charmstoreURL="http://1.2.3.4/"
             entityModel={mockEntity}
             getFile={getFile}
             getResources={getResources}
@@ -540,9 +516,7 @@ describe('EntityDetails', function() {
         acl={acl}
         addNotification={addNotification}
         apiUrl={apiUrl}
-        apiVersion="v5"
         changeState={changeState}
-        charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
         displayPlans={true}
         getBundleYAML={getBundleYAML}
@@ -585,9 +559,7 @@ describe('EntityDetails', function() {
           {undefined}
           <juju.components.EntityContent
             apiUrl={apiUrl}
-            apiVersion="v5"
             changeState={changeState}
-            charmstoreURL="http://1.2.3.4/"
             entityModel={mockEntity}
             getFile={getFile}
             getResources={getResources}

@@ -155,11 +155,9 @@ YUI.add('charmbrowser-component', function() {
           activeChild = (
               <juju.components.EntityDetails
                 acl={this.props.acl}
-                apiVersion={this.props.apiVersion}
                 addNotification={this.props.addNotification}
                 apiUrl={this.props.apiUrl}
                 changeState={this.props.changeState}
-                charmstoreURL={this.props.charmstoreURL}
                 displayPlans={this.props.displayPlans}
                 importBundleYAML={this.props.importBundleYAML}
                 getBundleYAML={this.props.getBundleYAML}

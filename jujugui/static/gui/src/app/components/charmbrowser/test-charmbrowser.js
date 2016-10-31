@@ -227,11 +227,9 @@ describe('Charmbrowser', function() {
             <juju.components.EntityDetails
               acl={acl}
               apiUrl={apiUrl}
-              apiVersion="v5"
               importBundleYAML={importBundleYAML}
               getBundleYAML={getBundleYAML}
               changeState={changeState}
-              charmstoreURL="http://1.2.3.4/"
               getEntity={getEntity}
               scrollPosition={0}
               listPlansForCharm={listPlansForCharm}
