@@ -55,8 +55,11 @@ const State = class State {
     if (!cfg.seriesList || !Array.isArray(cfg.seriesList)) {
       throw new Error('Series list must be an Array.');
     }
-    // Push bundle into the seriesList as it sits in the series spot in the URL.
-    cfg.seriesList.push('bundle');
+    // Push bundle into the seriesList if it doesn't already exist as it sits
+    // in the series spot in the URL.
+    if (!cfg.seriesList.includes('bundle')) {
+      cfg.seriesList.push('bundle');
+    }
     /**
       The list of possible distro 'series' for the store paths. ex)
       trusty, precise, xenial. The GUI has a utils method `getSeriesList` that
@@ -74,11 +77,26 @@ const State = class State {
     */
     this._location = cfg.location || null;
     /**
+      Internal storage value for the history object to use. Only used when
+      history is set externally.
+      @private
+      @type {Object}
+    */
+    this._history = cfg.history || null;
+    /**
       Internal storage for the app state history.
       @private
       @type {Array}
     */
     this._appStateHistory = [];
+    /**
+      Internal storage for the dispatchers.
+      @private
+      @type {Array}
+    */
+    this._dispatchers = {};
+
+    window.onpopstate = this.dispatch;
   }
 
   /**
@@ -109,6 +127,20 @@ const State = class State {
   }
 
   /**
+    The browser history object to use. If set has been called on this property
+    then it will return the externally set option. Typically this option will
+    be used for testing.
+    @type {Object}
+  */
+  get history() {
+    return this._history || window.history;
+  }
+
+  set history(history) {
+    this._history = history;
+  }
+
+  /**
     The object representing the current app state.
     @type {Object}
   */
@@ -117,30 +149,192 @@ const State = class State {
   }
 
   /**
+    Stores the dispatchers that are to be called when the appropriate state
+    changes in the application.
+    @param {Array} dispatchers - An array of dispatchers in the format:
+      [['section', callback], ...]
+  */
+  register(dispatchers) {
+    const stored = this._dispatchers;
+    dispatchers.forEach(dispatcher => {
+      const record = [dispatcher[1], dispatcher[2]];
+      if (!stored[dispatcher[0]]) {
+        stored[dispatcher[0]] = [record];
+        return;
+      }
+      stored[dispatcher[0]].push(record);
+    });
+  }
+
+  /**
     Checks the current location and parses it, building the state, then
     executing the registered dispatchers.
+    @param {Array} nullKeys - A list of keys which we must run the 'cleanup'
+      dispaches on before dispatching the current state.
+    @param {Boolean} updateState - Whether this dispatch should update the
+      internal app state. This is typically only done when dispatch is called
+      manually. Internal calls to dispatch are done via changeState which
+      updates the state itself so it's not needed to do it here.
   */
-  dispatch() {
+  dispatch(nullKeys = [], updateState = true) {
     let error, state;
     ({error, state} = this.generateState(this.location.href));
-    this._appStateHistory.push(state);
     if (error !== null) {
-      return `unable to generate state: ${error}`;
+      error += `unable to generate state: ${error}`;
+      return {error, state};
     }
-    this._dispatch(state);
+
+    /**
+      Extract out the state path for the dispatcher key.
+      @param {Object} state - The app state.
+    */
+    function extract(state) {
+      let allKeys = [];
+      function concat(state, keys = []) {
+        Object.keys(state).forEach(key => {
+          keys.push(key);
+          if (typeof state[key] === 'object' && state[key] !== null) {
+            concat(state[key], keys);
+          } else {
+            allKeys.push(keys.join('.'));
+          }
+          keys = [];
+        });
+      }
+      concat(state);
+      return allKeys;
+    }
+    if (updateState) {
+      this._appStateHistory.push(state);
+    }
+    // First run all of the 'null state' dispatchers to clear out the old
+    // state representations.
+    nullKeys.forEach(key => this._dispatch(state, key, true));
+    // Then execute the 'all' dispatchers.
+    this._dispatch(state, '*');
+    // Extract and loop through the state keys to execute their dispatchers.
+    extract(state).forEach(key => {
+      this._dispatch(state, key);
+    });
+
+    return {error: null, state};
   }
 
   /**
     Takes the existing app state and then calls the registered dispatchers.
+    @param {Object} state - The state to dispatch.
+    @param {String} key - The key to manage the dispatchers.
+    @param {Boolean} cleanup - Whether it should execute the cleanup method or
+      not. Defaults to false.
   */
-  _dispatch() {}
+  _dispatch(state, key, cleanup = false) {
+    if (!this._dispatchers[key]) {
+      // If we have no registered dispatchers for the key then return.
+      return;
+    }
+    const iterator = this._dispatchers[key][Symbol.iterator]();
+    function next() {
+      const data = iterator.next();
+      if (!data.done) {
+        const index = cleanup ? 1 : 0;
+        // The 0 index is the 'create' dispatcher, the 1 index is the
+        // 'cleanup' dispatcher.
+        const dispatcher = data.value[index];
+        if (typeof dispatcher === 'function') {
+          dispatcher(state, next);
+        }
+      }
+    }
+    next();
+  }
 
   /**
     Changes the internal state of the app, updating the location and
     dispatching the app.
-    @param {Object} state - The new state delta to apply to the existing state.
+    @param {Object} stateSegment - The new state delta to apply to the
+      existing state.
   */
-  changeState(state) {}
+  changeState(stateSegment) {
+    /**
+      Merge two objects together or clone one. Only works with simple values.
+      @param {Object} target - The root object.
+      @param {Object} source - The object to clone or merge into the target.
+      @return {Object} The merged or cloned object.
+    */
+    let nullKeys = [];
+    function merge(target, source, keys = []) {
+      if (typeof source === 'object' && source !== null) {
+        Object.keys(source).forEach(key => {
+          keys.push(key);
+          const value = source[key];
+          if (typeof value === 'object' && value !== null) {
+            target[key] = merge(target[key] || {}, value, keys);
+          } else {
+            // If the value is null then we don't want it in state.
+            if (value !== null) {
+              target[key] = value;
+            } else {
+              // Keep track of the paths for the values that are null.
+              nullKeys.push(keys.join('.'));
+              if (target[key] !== undefined) {
+                delete target[key];
+              }
+            }
+          }
+        });
+        keys = [];
+      } else {
+        target = source;
+      }
+      return target;
+    }
+
+    /**
+      Returns if an object is empty or not by counting the
+      enumerable properties.
+      @param {Object} obj - The object to check if empty.
+      @return {Boolean} If the object is empty or not.
+    */
+    function isEmptyObject(obj) {
+      return !!Object.keys(obj).length;
+    }
+
+    /**
+      Prunes the null and undefined objects from the state.
+      @param {Object} obj - The object to prune.
+      @param {Object} The pruned object.
+    */
+    function pruneEmpty(obj) {
+      function prune(current) {
+        Object.keys(current).forEach(key => {
+          const value = current[key];
+          if (value === null ||
+              value === undefined ||
+              (typeof value === 'object' && !isEmptyObject(prune(value)))) {
+            delete current[key];
+          }
+        });
+        return current;
+      };
+      return prune(obj);
+    }
+
+    const mergedState = merge(
+      // Clone the appState so we don't end up clobbering old states.
+      merge({}, this.appState), stateSegment);
+    const purgedState = pruneEmpty(merge({}, mergedState));
+
+    this._appStateHistory.push(purgedState);
+    this._pushState();
+    this.dispatch(nullKeys, false);
+  }
+
+  /**
+    Pushes the current state to the browser history using pushState.
+  */
+  _pushState() {
+    this.history.pushState({}, 'Juju GUI', this.generatePath());
+  }
 
   /**
     Splits the URL up and generates a state object.
