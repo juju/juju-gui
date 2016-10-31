@@ -349,6 +349,11 @@ const State = class State {
     let error = null;
     let state = {};
     let parts = this._getCleanPath(url).split('/');
+    // If we have a single part and it's an empty string then we are at '/' and
+    // there is nothing to parse so we can return early.
+    if (parts.length === 1 && parts[0] === '') {
+      return {error, state};
+    }
     state = this._parseRoot(parts, state);
     // If we have root paths in the URL then we can ignore everything else.
     if (state.root) {

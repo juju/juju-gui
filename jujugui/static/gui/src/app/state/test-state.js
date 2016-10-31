@@ -43,6 +43,10 @@ describe('State', () => {
   }];
 
   const rootStateTests = [{
+    path: 'http://abc.com:123/',
+    state: {},
+    error: null
+  }, {
     path: 'http://abc.com:123/new',
     state: { root: 'new' },
     error: null
