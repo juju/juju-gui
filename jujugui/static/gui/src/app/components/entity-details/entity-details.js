@@ -35,7 +35,6 @@ YUI.add('entity-details', function() {
       getDiagramURL: React.PropTypes.func.isRequired,
       getEntity: React.PropTypes.func.isRequired,
       getFile: React.PropTypes.func.isRequired,
-      getResources: React.PropTypes.func.isRequired,
       id: React.PropTypes.string.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
       listPlansForCharm: React.PropTypes.func.isRequired,
@@ -95,7 +94,6 @@ YUI.add('entity-details', function() {
                   apiUrl={this.props.apiUrl}
                   changeState={this.props.changeState}
                   getFile={this.props.getFile}
-                  getResources={this.props.getResources}
                   hasPlans={this.state.hasPlans}
                   renderMarkdown={this.props.renderMarkdown}
                   entityModel={entityModel}

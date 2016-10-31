@@ -53,14 +53,13 @@ describe('EntityContent', function() {
     var getFile = sinon.spy();
     var changeState = sinon.spy();
     var pluralize = sinon.spy();
-    var getResources = sinon.stub();
+    mockEntity.set('resources', {resource: 'one'});
     var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityContent
           apiUrl={apiUrl}
           changeState={changeState}
           entityModel={mockEntity}
           getFile={getFile}
-          getResources={getResources}
           hasPlans={false}
           pluralize={pluralize}
           renderMarkdown={renderMarkdown} />, true);
@@ -130,8 +129,8 @@ describe('EntityContent', function() {
               <juju.components.EntityResources
                 apiUrl={apiUrl}
                 charmId="cs:django"
-                getResources={getResources}
-                pluralize={pluralize} />
+                pluralize={pluralize}
+                resources={{resource: 'one'}} />
               <juju.components.EntityContentRelations
                 changeState={changeState}
                 relations={mockEntity.get('relations')} />
@@ -173,14 +172,12 @@ describe('EntityContent', function() {
     var getFile = sinon.spy();
     var pluralize = sinon.spy();
     var changeState = sinon.spy();
-    var getResources = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.EntityContent
         apiUrl={apiUrl}
         changeState={changeState}
         entityModel={mockEntity}
         getFile={getFile}
-        getResources={getResources}
         hasPlans={false}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown} />, true);
@@ -238,8 +235,8 @@ describe('EntityContent', function() {
               <juju.components.EntityResources
                 apiUrl={apiUrl}
                 charmId="cs:django"
-                getResources={getResources}
-                pluralize={pluralize} />
+                pluralize={pluralize}
+                resources={undefined} />
               <juju.components.EntityContentRelations
                 changeState={changeState}
                 relations={mockEntity.get('relations')} />
@@ -272,7 +269,6 @@ describe('EntityContent', function() {
           changeState={changeState}
           entityModel={mockEntity}
           getFile={getFile}
-          getResources={sinon.stub()}
           hasPlans={false}
           pluralize={pluralize}
           renderMarkdown={renderMarkdown} />);
@@ -409,7 +405,6 @@ describe('EntityContent', function() {
           changeState={changeState}
           entityModel={mockEntity}
           getFile={getFile}
-          getResources={sinon.stub()}
           hasPlans={false}
           pluralize={pluralize}
           renderMarkdown={renderMarkdown} />, true);
@@ -445,7 +440,6 @@ describe('EntityContent', function() {
         changeState={changeState}
         entityModel={mockEntity}
         getFile={getFile}
-        getResources={sinon.stub()}
         hasPlans={true}
         plans={plans}
         pluralize={pluralize}
@@ -549,7 +543,6 @@ describe('EntityContent', function() {
         changeState={changeState}
         entityModel={mockEntity}
         getFile={getFile}
-        getResources={sinon.stub()}
         hasPlans={true}
         plans={null}
         pluralize={pluralize}
@@ -573,7 +566,6 @@ describe('EntityContent', function() {
         changeState={changeState}
         entityModel={mockEntity}
         getFile={getFile}
-        getResources={sinon.stub()}
         hasPlans={true}
         plans={[]}
         pluralize={pluralize}

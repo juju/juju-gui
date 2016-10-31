@@ -54,7 +54,6 @@ describe('EntityDetails', function() {
         getDiagramURL={sinon.stub()}
         getEntity={sinon.spy()}
         getFile={sinon.stub()}
-        getResources={sinon.stub()}
         importBundleYAML={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         makeEntityModel={sinon.spy()}
@@ -78,7 +77,6 @@ describe('EntityDetails', function() {
     var getFile = sinon.spy();
     var renderMarkdown = sinon.spy();
     var addNotification = sinon.spy();
-    const getResources = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           acl={acl}
@@ -91,7 +89,6 @@ describe('EntityDetails', function() {
           getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
-          getResources={getResources}
           listPlansForCharm={sinon.stub()}
           scrollPosition={100}
           renderMarkdown={renderMarkdown}
@@ -130,7 +127,6 @@ describe('EntityDetails', function() {
             changeState={changeState}
             entityModel={mockEntity}
             getFile={getFile}
-            getResources={getResources}
             hasPlans={false}
             plans={null}
             pluralize={pluralize}
@@ -164,7 +160,6 @@ describe('EntityDetails', function() {
           getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
-          getResources={sinon.stub()}
           listPlansForCharm={sinon.spy()}
           makeEntityModel={sinon.spy()}
           renderMarkdown={renderMarkdown}
@@ -206,7 +201,6 @@ describe('EntityDetails', function() {
     var renderMarkdown = sinon.spy();
     var getDiagramURL = sinon.spy();
     var addNotification = sinon.spy();
-    const getResources = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           acl={acl}
@@ -218,7 +212,6 @@ describe('EntityDetails', function() {
           getBundleYAML={getBundleYAML}
           getEntity={getEntity}
           getFile={getFile}
-          getResources={getResources}
           scrollPosition={100}
           renderMarkdown={renderMarkdown}
           getDiagramURL={getDiagramURL}
@@ -260,7 +253,6 @@ describe('EntityDetails', function() {
             changeState={changeState}
             entityModel={mockEntity}
             getFile={getFile}
-            getResources={getResources}
             hasPlans={false}
             plans={null}
             pluralize={pluralize}
@@ -294,7 +286,6 @@ describe('EntityDetails', function() {
           getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
-          getResources={sinon.stub()}
           listPlansForCharm={sinon.stub()}
           makeEntityModel={sinon.spy()}
           renderMarkdown={renderMarkdown}
@@ -323,7 +314,6 @@ describe('EntityDetails', function() {
         getDiagramURL={sinon.stub()}
         getEntity={sinon.spy()}
         getFile={sinon.stub()}
-        getResources={sinon.stub()}
         importBundleYAML={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         makeEntityModel={sinon.spy()}
@@ -352,7 +342,6 @@ describe('EntityDetails', function() {
     var makeEntityModel = sinon.stub().returns(mockEntity);
     var pluralize = sinon.spy();
     var renderMarkdown = sinon.spy();
-    const getResources = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         acl={acl}
@@ -365,7 +354,6 @@ describe('EntityDetails', function() {
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
         getFile={getFile}
-        getResources={getResources}
         id={id}
         importBundleYAML={importBundleYAML}
         listPlansForCharm={listPlansForCharm}
@@ -404,7 +392,6 @@ describe('EntityDetails', function() {
             changeState={changeState}
             entityModel={mockEntity}
             getFile={getFile}
-            getResources={getResources}
             hasPlans={true}
             plans={plans}
             pluralize={pluralize}
@@ -432,7 +419,6 @@ describe('EntityDetails', function() {
     var makeEntityModel = sinon.stub().returns(mockEntity);
     var pluralize = sinon.spy();
     var renderMarkdown = sinon.spy();
-    const getResources = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         acl={acl}
@@ -445,7 +431,6 @@ describe('EntityDetails', function() {
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
         getFile={getFile}
-        getResources={getResources}
         id={id}
         importBundleYAML={importBundleYAML}
         listPlansForCharm={listPlansForCharm}
@@ -484,7 +469,6 @@ describe('EntityDetails', function() {
             changeState={changeState}
             entityModel={mockEntity}
             getFile={getFile}
-            getResources={getResources}
             hasPlans={false}
             plans={null}
             pluralize={pluralize}
@@ -510,7 +494,6 @@ describe('EntityDetails', function() {
     var makeEntityModel = sinon.stub().returns(mockEntity);
     var pluralize = sinon.spy();
     var renderMarkdown = sinon.spy();
-    const getResources = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.EntityDetails
         acl={acl}
@@ -523,7 +506,6 @@ describe('EntityDetails', function() {
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
         getFile={getFile}
-        getResources={getResources}
         id={id}
         importBundleYAML={importBundleYAML}
         listPlansForCharm={listPlansForCharm}
@@ -562,7 +544,6 @@ describe('EntityDetails', function() {
             changeState={changeState}
             entityModel={mockEntity}
             getFile={getFile}
-            getResources={getResources}
             hasPlans={true}
             plans={[]}
             pluralize={pluralize}

@@ -27,7 +27,6 @@ YUI.add('entity-content', function() {
       changeState: React.PropTypes.func.isRequired,
       entityModel: React.PropTypes.object.isRequired,
       getFile: React.PropTypes.func.isRequired,
-      getResources: React.PropTypes.func.isRequired,
       hasPlans: React.PropTypes.bool.isRequired,
       plans: React.PropTypes.array,
       pluralize: React.PropTypes.func.isRequired,
@@ -284,10 +283,10 @@ YUI.add('entity-content', function() {
       if (entityModel.get('entityType') === 'charm') {
         return (
           <juju.components.EntityResources
-            charmId={entityModel.get('id')}
             apiUrl={this.props.apiUrl}
-            getResources={this.props.getResources}
-            pluralize={this.props.pluralize} />);
+            charmId={entityModel.get('id')}
+            pluralize={this.props.pluralize}
+            resources={entityModel.get('resources')} />);
       }
     },
 

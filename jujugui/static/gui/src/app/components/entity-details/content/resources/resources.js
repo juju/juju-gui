@@ -25,56 +25,8 @@ YUI.add('entity-resources', function() {
     propTypes: {
       apiUrl: React.PropTypes.string.isRequired,
       charmId: React.PropTypes.string.isRequired,
-      getResources: React.PropTypes.func.isRequired,
-      pluralize: React.PropTypes.func.isRequired
-    },
-
-    /**
-      Get the current state.
-
-      @method getInitialState
-      @returns {String} The current state.
-    */
-    getInitialState: function() {
-      this.resourcesXHR = null;
-      return {
-        loading: false,
-        resources: null
-      };
-    },
-
-    componentDidMount: function() {
-      this._getResources(this.props.charmId);
-    },
-
-    componentWillUnmount: function() {
-      this.resourcesXHR.abort();
-    },
-
-    /**
-      Get a list of resources for the charm.
-
-      @method _getResources
-      @param {String} charmId The charm id.
-    */
-    _getResources: function(charmId) {
-      this.setState({loading: true});
-      this.resourcesXHR = this.props.getResources(
-          charmId, this._getResourcesCallback);
-    },
-
-    /**
-      Update the state with the returned versions.
-
-      @method _getResourcesSuccess
-      @param {String} error The error message, if any. Null if no error.
-      @param {Array} data The resources data.
-    */
-    _getResourcesCallback: function(error, data) {
-      if (error) {
-        console.error(error);
-      }
-      this.setState({loading: false, resources: data});
+      pluralize: React.PropTypes.func.isRequired,
+      resources: React.PropTypes.object
     },
 
     /**
@@ -83,21 +35,15 @@ YUI.add('entity-resources', function() {
       @returns {Object} The resource list markup.
     */
     _generateResources: function() {
-      if (this.state.loading) {
-        return (
-          <div className="entity-resources__loading">
-              <juju.components.Spinner />
-          </div>);
-      }
-      const resources = this.state.resources || [];
-      if (resources.length === 0) {
+      const resources = this.props.resources;
+      if (!resources || Object.keys(resources).length === 0) {
         return;
       }
-      const resourceList = resources.map((resource, i) => {
+      const resourceList = Object.keys(resources).map((key, i) => {
+        const resource = resources[key];
         // Construct the full path to the resource.
         const URL = `${this.props.apiUrl}/` +
-          `${this.props.charmId.replace('cs:', '')}/resource/${resource.name}` +
-          `/${resource.revision}`;
+          `${this.props.charmId.replace('cs:', '')}/resource/${resource.name}`;
         // Get the file extension.
         const parts = resource.path.split('.');
         let extension;
@@ -135,5 +81,4 @@ YUI.add('entity-resources', function() {
   });
 
 }, '0.1.0', { requires: [
-  'loading-spinner'
 ]});

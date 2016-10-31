@@ -29,32 +29,13 @@ describe('EntityResources', function() {
     YUI().use('entity-resources', function() { done(); });
   });
 
-  it('can display a loading spinner', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityResources
-        apiUrl="http://1.2.3.4/v5"
-        charmId="cs:django"
-        getResources={sinon.stub()}
-        pluralize={sinon.stub()} />, true);
-    renderer.getMountedInstance().componentDidMount();
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div>
-        <div className="entity-resources__loading">
-            <juju.components.Spinner />
-        </div>
-      </div>);
-    assert.deepEqual(output, expected);
-  });
-
   it('can display an empty list', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityResources
         apiUrl="http://1.2.3.4/v5"
         charmId="cs:django"
-        getResources={sinon.stub().callsArgWith(1, null, [])}
-        pluralize={sinon.stub()} />, true);
-    renderer.getMountedInstance().componentDidMount();
+        pluralize={sinon.stub()}
+        resource={{}} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div>
@@ -64,24 +45,26 @@ describe('EntityResources', function() {
   });
 
   it('can display a list of resources', function() {
-    const resources = [{
-      description: 'file1 desc',
-      name: 'file1',
-      path: 'file1.zip',
-      revision: 5
-    }, {
-      description: 'file2 desc',
-      name: 'file2',
-      path: 'file2',
-      revision: 2
-    }];
+    const resources = {
+      file1: {
+        description: 'file1 desc',
+        name: 'file1',
+        path: 'file1.zip',
+        revision: 5
+      },
+      file2: {
+        description: 'file2 desc',
+        name: 'file2',
+        path: 'file2',
+        revision: 2
+      }
+    };
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityResources
         apiUrl="http://1.2.3.4/v5"
         charmId="cs:django"
-        getResources={sinon.stub().callsArgWith(1, null, resources)}
-        pluralize={sinon.stub().returns('resources')} />, true);
-    renderer.getMountedInstance().componentDidMount();
+        pluralize={sinon.stub().returns('resources')}
+        resources={resources} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div>
@@ -92,14 +75,14 @@ describe('EntityResources', function() {
           <ul className="section__list entity-files__listing">
             <li className="entity-files__file"
               key="file10">
-              <a href="http://1.2.3.4/v5/django/resource/file1/5"
+              <a href="http://1.2.3.4/v5/django/resource/file1"
                 target="_blank">
                 {'file1'} {'(.zip)'}
               </a>
             </li>
             <li className="entity-files__file"
               key="file21">
-              <a href="http://1.2.3.4/v5/django/resource/file2/2"
+              <a href="http://1.2.3.4/v5/django/resource/file2"
                 target="_blank">
                 {'file2'} {undefined}
               </a>
@@ -108,18 +91,5 @@ describe('EntityResources', function() {
         </div>
       </div>);
     assert.deepEqual(output, expected);
-  });
-
-  it('can abort the request when unmounting', function() {
-    const abort = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <juju.components.EntityResources
-        apiUrl="http://1.2.3.4/v5"
-        charmId="cs:django"
-        getResources={sinon.stub().returns({abort: abort})}
-        pluralize={sinon.stub()} />, true);
-    renderer.getMountedInstance().componentDidMount();
-    renderer.unmount();
-    assert.equal(abort.callCount, 1);
   });
 });
