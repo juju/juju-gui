@@ -859,6 +859,23 @@ describe('State', () => {
     });
   });
 
+  describe('State.pushState()', () => {
+    it('pushes state to history', () => {
+      const historyStub = {
+        pushState: sinon.stub()
+      };
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial'],
+        location: {href: '/u/hatch/staging'},
+        history: historyStub
+      });
+      state.dispatch();
+      state._pushState();
+      assert.deepEqual(historyStub.pushState.args[0], [
+        {}, 'Juju GUI', '/u/hatch/staging']);
+    });
+
   });
 
   describe('State.generatePath()', () => {

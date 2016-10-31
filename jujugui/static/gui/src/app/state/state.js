@@ -77,6 +77,13 @@ const State = class State {
     */
     this._location = cfg.location || null;
     /**
+      Internal storage value for the history object to use. Only used when
+      history is set externally.
+      @private
+      @type {Object}
+    */
+    this._history = cfg.history || null;
+    /**
       Internal storage for the app state history.
       @private
       @type {Array}
@@ -88,6 +95,8 @@ const State = class State {
       @type {Array}
     */
     this._dispatchers = {};
+
+    window.onpopstate = this.dispatch;
   }
 
   /**
@@ -115,6 +124,20 @@ const State = class State {
 
   set location(location) {
     this._location = location;
+  }
+
+  /**
+    The browser history object to use. If set has been called on this property
+    then it will return the externally set option. Typically this option will
+    be used for testing.
+    @type {Object}
+  */
+  get history() {
+    return this._history || window.history;
+  }
+
+  set history(history) {
+    this._history = history;
   }
 
   /**
@@ -297,6 +320,13 @@ const State = class State {
     this._appStateHistory.push(purgedState);
     this._pushState();
     this.dispatch(nullKeys, false);
+  }
+
+  /**
+    Pushes the current state to the browser history using pushState.
+  */
+  _pushState() {
+    this.history.pushState({}, 'Juju GUI', this.generatePath());
   }
 
   /**
