@@ -719,10 +719,20 @@ describe('State', () => {
       });
       const stub1 = sinon.stub();
       const stub2 = sinon.stub();
-      state.register([['*', stub1], ['store', stub2]]);
+      const stub3 = sinon.stub();
+      const stub4 = sinon.stub();
+      const stub5 = sinon.stub();
+      state.register([
+        ['*', stub1],
+        ['*', stub5],
+        ['store', stub2],
+        // dispatchers with cleanup argument.
+        ['machine', stub3, stub4]
+      ]);
       assert.deepEqual(state._dispatchers, {
-        '*': [stub1],
-        store: [stub2]
+        '*': [[stub1, undefined], [stub5, undefined]],
+        store: [[stub2, undefined]],
+        machine: [[stub3, stub4]]
       });
     });
   });
@@ -779,10 +789,57 @@ describe('State', () => {
         next();
       };
       state.register([
-        ['*', stub], ['store', stub2], ['*', stub3], ['gui.machines', stub4]
+        ['*', stub],
+        ['store', stub2],
+        ['*', stub3],
+        ['gui.machines', stub4]
       ]);
       state.dispatch();
       assert.deepEqual(execution, {stub: 1, stub2: 4, stub3: 2, stub4: 3});
+    });
+
+    it('dispatches registered cleanup dispatchers in proper order', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial'],
+        location: {href: 'ghost/trusty/i/machines'}
+      });
+      let counter = 0;
+      let increment = () => counter += 1;
+      let execution = {};
+      const stub = function(state, next) {
+        execution.stub = increment();
+        next();
+      };
+      const stub2 = function(state, next) {
+        execution.stub2 = increment();
+        next();
+      };
+      const stub3 = function(state, next) {
+        execution.stub3 = increment();
+        next();
+      };
+      const stub4 = function(state, next) {
+        execution.stub4 = increment();
+        next();
+      };
+      const stub5 = function(state, next) {
+        execution.stub5 = increment();
+        next();
+      };
+      const stub6 = function(state, next) {
+        execution.stub6 = increment();
+        next();
+      };
+      state.register([
+        ['*', stub],
+        ['store', stub2, stub5],
+        ['*', stub3],
+        ['gui.machines', stub4, stub6]
+      ]);
+      state.dispatch(['store', 'gui.machines']);
+      assert.deepEqual(execution, {
+        stub5: 1, stub6: 2, stub: 3, stub3: 4, stub4: 5, stub2: 6});
     });
   });
 

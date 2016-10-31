@@ -157,11 +157,12 @@ const State = class State {
   register(dispatchers) {
     const stored = this._dispatchers;
     dispatchers.forEach(dispatcher => {
+      const record = [dispatcher[1], dispatcher[2]];
       if (!stored[dispatcher[0]]) {
-        stored[dispatcher[0]] = [dispatcher[1]];
+        stored[dispatcher[0]] = [record];
         return;
       }
-      stored[dispatcher[0]].push(dispatcher[1]);
+      stored[dispatcher[0]].push(record);
     });
   }
 
@@ -208,7 +209,7 @@ const State = class State {
     }
     // First run all of the 'null state' dispatchers to clear out the old
     // state representations.
-    nullKeys.forEach(key => this.dispatch(state, key, true));
+    nullKeys.forEach(key => this._dispatch(state, key, true));
     // Then execute the 'all' dispatchers.
     this._dispatch(state, '*');
     // Extract and loop through the state keys to execute their dispatchers.
@@ -235,7 +236,13 @@ const State = class State {
     function next() {
       const data = iterator.next();
       if (!data.done) {
-        data.value(state, next);
+        const index = cleanup ? 1 : 0;
+        // The 0 index is the 'create' dispatcher, the 1 index is the
+        // 'cleanup' dispatcher.
+        const dispatcher = data.value[index];
+        if (typeof dispatcher === 'function') {
+          dispatcher(state, next);
+        }
       }
     }
     next();
