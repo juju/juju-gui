@@ -84,7 +84,7 @@ describe('EntityResources', function() {
               key="file21">
               <a href="http://1.2.3.4/v5/django/resource/file2"
                 target="_blank">
-                {'file2'} {undefined}
+                {'file2'} {''}
               </a>
             </li>
           </ul>
