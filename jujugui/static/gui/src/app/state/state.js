@@ -145,17 +145,20 @@ const State = class State {
   /**
     Checks the current location and parses it, building the state, then
     executing the registered dispatchers.
+    @param {Array} nullKeys - A list of keys which we must run the 'cleanup'
+      dispaches on before dispatching the current state.
+    @param {Boolean} updateState - Whether this dispatch should update the
+      internal app state. This is typically only done when dispatch is called
+      manually. Internal calls to dispatch are done via changeState which
+      updates the state itself so it's not needed to do it here.
   */
-  dispatch() {
+  dispatch(nullKeys = [], updateState = true) {
     let error, state;
     ({error, state} = this.generateState(this.location.href));
     if (error !== null) {
       error += `unable to generate state: ${error}`;
       return {error, state};
     }
-    this._appStateHistory.push(state);
-    // First execute the 'all' dispatchers.
-    this._dispatch(state, '*');
 
     /**
       Extract out the state path for the dispatcher key.
@@ -177,6 +180,14 @@ const State = class State {
       concat(state);
       return allKeys;
     }
+    if (updateState) {
+      this._appStateHistory.push(state);
+    }
+    // First run all of the 'null state' dispatchers to clear out the old
+    // state representations.
+    nullKeys.forEach(key => this.dispatch(state, key, true));
+    // Then execute the 'all' dispatchers.
+    this._dispatch(state, '*');
     // Extract and loop through the state keys to execute their dispatchers.
     extract(state).forEach(key => {
       this._dispatch(state, key);
@@ -188,8 +199,11 @@ const State = class State {
   /**
     Takes the existing app state and then calls the registered dispatchers.
     @param {Object} state - The state to dispatch.
+    @param {String} key - The key to manage the dispatchers.
+    @param {Boolean} cleanup - Whether it should execute the cleanup method or
+      not. Defaults to false.
   */
-  _dispatch(state, key) {
+  _dispatch(state, key, cleanup = false) {
     if (!this._dispatchers[key]) {
       // If we have no registered dispatchers for the key then return.
       return;
@@ -217,26 +231,72 @@ const State = class State {
       @param {Object} source - The object to clone or merge into the target.
       @return {Object} The merged or cloned object.
     */
-    function merge(target, source) {
-      if (typeof source === 'object') {
+    let nullKeys = [];
+    function merge(target, source, keys = []) {
+      if (typeof source === 'object' && source !== null) {
         Object.keys(source).forEach(key => {
+          keys.push(key);
           const value = source[key];
-          if (typeof value === 'object') {
-            target[key] = merge(target[key] || {}, value);
+          if (typeof value === 'object' && value !== null) {
+            target[key] = merge(target[key] || {}, value, keys);
           } else {
-            target[key] = value;
+            // If the value is null then we don't want it in state.
+            if (value !== null) {
+              target[key] = value;
+            } else {
+              // Keep track of the paths for the values that are null.
+              nullKeys.push(keys.join('.'));
+              if (target[key] !== undefined) {
+                delete target[key];
+              }
+            }
           }
         });
+        keys = [];
       } else {
         target = source;
       }
       return target;
     }
 
-    this._appStateHistory.push(
-      merge(
-        // Clone the appState so we don't end up clobbering old states.
-        merge({}, this.appState), stateSegment));
+    /**
+      Returns if an object is empty or not by counting the
+      enumerable properties.
+      @param {Object} obj - The object to check if empty.
+      @return {Boolean} If the object is empty or not.
+    */
+    function isEmptyObject(obj) {
+      return !!Object.keys(obj).length;
+    }
+
+    /**
+      Prunes the null and undefined objects from the state.
+      @param {Object} obj - The object to prune.
+      @param {Object} The pruned object.
+    */
+    function pruneEmpty(obj) {
+      function prune(current) {
+        Object.keys(current).forEach(key => {
+          const value = current[key];
+          if (value === null ||
+              value === undefined ||
+              (typeof value === 'object' && !isEmptyObject(prune(value)))) {
+            delete current[key];
+          }
+        });
+        return current;
+      };
+      return prune(obj);
+    }
+
+    const mergedState = merge(
+      // Clone the appState so we don't end up clobbering old states.
+      merge({}, this.appState), stateSegment);
+    const purgedState = pruneEmpty(merge({}, mergedState));
+
+    this._appStateHistory.push(purgedState);
+    this._pushState();
+    this.dispatch(nullKeys, false);
   }
 
   /**

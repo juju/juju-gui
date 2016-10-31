@@ -793,11 +793,13 @@ describe('State', () => {
         seriesList:  ['precise', 'trusty', 'xenial'],
         location: {href: '/u/hatch/staging/i/applications/inspector/ghost'}
       });
+      const pushStub = sinon.stub(state, '_pushState');
       state.dispatch();
       assert.deepEqual(
         state.appState,
         {user: 'hatch/staging', gui: {applications: '', inspector: 'ghost' }},
         'generateState() did not parse location properly');
+      const dispatchStub = sinon.stub(state, 'dispatch');
       state.changeState({
         gui: {
           applications: 'foo'
@@ -807,7 +809,56 @@ describe('State', () => {
         {user: 'hatch/staging', gui: {applications: '', inspector: 'ghost' }},
         {user: 'hatch/staging', gui: {applications: 'foo', inspector: 'ghost' }}
       ]);
+      assert.equal(pushStub.callCount, 1);
+      assert.equal(dispatchStub.callCount, 1);
     });
+
+    it('prunes null values when removing states', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial'],
+        location: {href: '/u/hatch/staging/i/applications/inspector/ghost'}
+      });
+      const pushStub = sinon.stub(state, '_pushState');
+      state.dispatch();
+      assert.deepEqual(
+        state.appState,
+        {user: 'hatch/staging', gui: {applications: '', inspector: 'ghost' }},
+        'generateState() did not parse location properly');
+      const dispatchStub = sinon.stub(state, 'dispatch');
+      state.changeState({
+        gui: {
+          applications: null
+        }
+      });
+      assert.deepEqual(state._appStateHistory, [
+        {user: 'hatch/staging', gui: {applications: '', inspector: 'ghost'}},
+        {user: 'hatch/staging', gui: {inspector: 'ghost'}}
+      ]);
+      assert.equal(pushStub.callCount, 1);
+      assert.equal(dispatchStub.callCount, 1);
+    });
+
+    it('calls dispatch with the key paths that were pruned', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial'],
+        location: {href: '/u/hatch/staging/i/applications/inspector/ghost'}
+      });
+      const pushStub = sinon.stub(state, '_pushState');
+      state.dispatch();
+      const dispatchStub = sinon.stub(state, 'dispatch');
+      state.changeState({
+        gui: {
+          applications: null
+        }
+      });
+      assert.equal(pushStub.callCount, 1);
+      assert.equal(dispatchStub.callCount, 1);
+      assert.deepEqual(dispatchStub.args[0], [['gui.applications'], false]);
+    });
+  });
+
   });
 
   describe('State.generatePath()', () => {
