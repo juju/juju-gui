@@ -46,7 +46,8 @@ YUI.add('entity-resources', function() {
           `${this.props.charmId.replace('cs:', '')}/resource/${resource.name}`;
         // Get the file extension.
         const parts = resource.path.split('.');
-        let extension;
+        let extension = '';
+        // If there is a file extension then format it for display.
         if (parts.length > 1) {
           extension = `(.${parts.pop()})`;
         }
@@ -73,7 +74,7 @@ YUI.add('entity-resources', function() {
     render: function() {
       return (
         <div>
-            {this._generateResources()}
+          {this._generateResources()}
         </div>
       );
     }
