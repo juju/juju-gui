@@ -918,6 +918,26 @@ describe('State', () => {
       assert.equal(dispatchStub.callCount, 1);
       assert.deepEqual(dispatchStub.args[0], [['gui.applications'], false]);
     });
+
+    it('calls dispatch with the key paths that were pruned #2', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial'],
+        location: {href: '/i/machines'}
+      });
+      const pushStub = sinon.stub(state, '_pushState');
+      state.dispatch();
+      const dispatchStub = sinon.stub(state, 'dispatch');
+      state.changeState({
+        root: 'store',
+        gui: {
+          machines: null
+        }
+      });
+      assert.equal(pushStub.callCount, 1);
+      assert.equal(dispatchStub.callCount, 1);
+      assert.deepEqual(dispatchStub.args[0], [['gui.machines'], false]);
+    });
   });
 
   describe('State.pushState()', () => {
