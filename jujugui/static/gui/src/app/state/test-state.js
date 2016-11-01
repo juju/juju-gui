@@ -885,6 +885,21 @@ describe('State', () => {
       assert.deepEqual(execution, {
         stub5: 1, stub6: 2, stub: 3, stub3: 4, stub4: 5, stub2: 6});
     });
+
+    it('finds and executes parent dispatchers', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial'],
+        location: {href: '/i/inspector/apache/unit/0'}
+      });
+      const stub1 = sinon.stub();
+      state.register([
+        ['*', sinon.stub()],
+        ['gui.inspector', stub1]
+      ]);
+      state.dispatch();
+      assert.equal(stub1.callCount, 1);
+    });
   });
 
   describe('State.changeState()', () => {
