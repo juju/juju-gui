@@ -97,6 +97,12 @@ describe('State', () => {
       gui: { inspector: 'apache2', machines: '3/lxc-0', deploy: 'foo'}
     },
     error: null
+  }, {
+    path: 'http://abc.com:123/i/inspector/kibana/unit/0',
+    state: {
+      gui: {inspector: 'kibana/unit/0'}
+    },
+    error: null
   }];
 
   const storeStateTests = [{
