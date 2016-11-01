@@ -96,7 +96,7 @@ const State = class State {
     */
     this._dispatchers = {};
 
-    window.onpopstate = this.dispatch;
+    window.onpopstate = this.dispatch.bind(this);
   }
 
   /**
