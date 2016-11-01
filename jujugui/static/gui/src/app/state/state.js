@@ -228,11 +228,34 @@ const State = class State {
       not. Defaults to false.
   */
   _dispatch(state, key, cleanup = false) {
-    if (!this._dispatchers[key]) {
-      // If we have no registered dispatchers for the key then return.
+    /**
+      Continues to reduce the key to find a dispatcher. Example, if key
+      value is 'gui.inspector.id' but there is only a handler for
+      'gui.inspector' it will first try 'gui.inspector.id' then drop the 'id'
+      until it finds something, or fails
+      @param {String} key - The key for the registered dispatchers.
+      @param {Object} dispatchers - The collection of registered dispatchers.
+      @return {Function|Boolean} Either the matching dispatchers or false.
+    */
+    function findDispatchers(key, dispatchers) {
+      const found = dispatchers[key];
+      if (!found) {
+        const newKey = key.split('.').slice(0, -1).join('.');
+        if (newKey !== '') {
+          return findDispatchers(newKey, dispatchers);
+        } else {
+          return false;
+        }
+      }
+      return found;
+    }
+    // Recurse up the dispatcher tree to find matching dispatchers.
+    const dispatchers = findDispatchers(key, this._dispatchers);
+    if (!dispatchers) {
+      console.error('No dispatcher found for key:', key);
       return;
     }
-    const iterator = this._dispatchers[key][Symbol.iterator]();
+    const iterator = dispatchers[Symbol.iterator]();
     function next() {
       const data = iterator.next();
       if (!data.done) {
