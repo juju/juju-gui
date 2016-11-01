@@ -79,7 +79,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           <a class="header-banner__link" target="_blank" href="${logo_url}">
           % endif
             <svg class="svg-icon"
-              viewBox="0 0 75 30"
+              viewBox="0 0 90 35"
               style="width:90px; height:35px;">
               <use xlink:href="#juju-logo" />
             </svg>
@@ -109,8 +109,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div id="browser-warning" class="centered-column"
             style="display:none;">
           <svg class="svg-icon"
-            viewBox="0 0 75 30"
-            style="width:75px; height:30px;">
+            viewBox="0 0 90 35"
+            style="width:90px; height:35px;">
             <use xlink:href="#juju-logo" />
           </svg>
           <div class="panel">
@@ -133,8 +133,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
         <div id="loading-message" class="centered-column">
           <svg class="svg-icon"
-            viewBox="0 0 75 30"
-            style="width:75px; height:30px;">
+            viewBox="0 0 90 35"
+            style="width:90px; height:35px;">
             <use xlink:href="#juju-logo" />
           </svg>
           <div class="panel">
