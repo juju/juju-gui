@@ -118,6 +118,12 @@ describe('State', () => {
       gui: {inspector: {localType: 'update'}}
     },
     error: null
+  }, {
+    path: 'http://abc.com:123/i/inspector/kibana/unit/0',
+    state: {
+      gui: {inspector: 'kibana/unit/0'}
+    },
+    error: null
   }];
 
   const storeStateTests = [{
