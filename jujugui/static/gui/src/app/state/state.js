@@ -281,6 +281,7 @@ const State = class State {
               }
             }
           }
+          keys = [];
         });
         keys = [];
       } else {
