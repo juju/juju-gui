@@ -434,7 +434,27 @@ const State = class State {
         const value = gui[key];
         path.push(key);
         if (value !== '') {
-          path.push(value);
+          if (key === 'inspector') {
+            const id = value.id;
+            if (id) {
+              path.push(id);
+            }
+            const activeComponent = value.activeComponent;
+            if (activeComponent) {
+              path.push(activeComponent);
+            }
+            const activeValue = value[activeComponent];
+            if (activeValue && typeof activeValue !== 'boolean') {
+              path.push(activeValue);
+            }
+            const localType = value.localType;
+            if (localType) {
+              path.push('local');
+              path.push(localType);
+            }
+          } else {
+            path.push(value);
+          }
         }
       });
     }
@@ -506,8 +526,32 @@ const State = class State {
       const end = indexes[arIndex+1] || urlParts.length;
       guiParts[urlParts[index]] = urlParts.slice(index+1, end).join('/');
     });
+    const inspectorParts = guiParts.inspector;
+    if (inspectorParts) {
+      guiParts.inspector = this._parseInspector(inspectorParts);
+    }
     state.gui = guiParts;
     return {error, state};
+  }
+
+  /**
+    Parses the inspector state string and returns the parsed object.
+    @param {String} inspectorState - The state of the inspector.
+    @return {Object} The parsed state.
+  */
+  _parseInspector(inspectorState) {
+    const parts = inspectorState.split('/');
+    let state = {};
+    if (parts[0] === 'local') {
+      state.localType = parts[1];
+    } else {
+      state.id = parts[0];
+      if (parts[1]) {
+        state.activeComponent = parts[1];
+        state[parts[1]] = parts[2] || true;
+      }
+    }
+    return state;
   }
 
   /**
