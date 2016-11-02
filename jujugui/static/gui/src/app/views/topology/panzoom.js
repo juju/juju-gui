@@ -223,17 +223,17 @@ YUI.add('juju-topology-panzoom', function(Y) {
 
     panPointToScreen: function(evt) {
       const point = evt.point,
-        topo = this.get('component'),
-        scale = topo.get('scale'),
-        translate = topo.get('translate'),
-        size = [window.innerWidth * scale, window.innerHeight * scale],
-        servicePadding = 110, // Width of a service block.
-        inspectorPadding = 310 / scale, // Width of the inspector.
-        buttonPadding = 80 / scale, // Height of the commit buttons and padding.
-        leftSide = translate[0],
-        rightSide = leftSide + size[0],
-        topSide = translate[1],
-        bottomSide = topSide + size[1];
+          topo = this.get('component'),
+          scale = topo.get('scale'),
+          translate = topo.get('translate'),
+          size = [window.innerWidth * scale, window.innerHeight * scale],
+          servicePadding = 110, // Width of a service block.
+          inspectorPadding = 310 / scale, // Width of the inspector.
+          buttonPadding = 80 / scale, // Height of the commit buttons.
+          leftSide = translate[0],
+          rightSide = leftSide + size[0],
+          topSide = translate[1],
+          bottomSide = topSide + size[1];
       let newTranslate = [];
       if (point[0] > rightSide - servicePadding) {
         newTranslate[0] = point[0] - size[0] +  2 * servicePadding;
@@ -243,13 +243,15 @@ YUI.add('juju-topology-panzoom', function(Y) {
         newTranslate[0] = translate[0];
       }
       if (point[1] > bottomSide - servicePadding) {
-        newTranslate[1] = point[1] - size[1] + 2 * servicePadding + buttonPadding;
+        newTranslate[1] = point[1] - size[1] + 2 * servicePadding
+          + buttonPadding;
       } else if (point[1] < topSide) {
         newTranslate[1] = point[1];
       } else {
         newTranslate[1] = translate[1];
       }
-      if (newTranslate[0] !== translate[0] || newTranslate[1] !== translate[1]) {
+      if (newTranslate[0] !== translate[0] ||
+          newTranslate[1] !== translate[1]) {
         this.rescale({
           scale: scale,
           translate: newTranslate.map(function(d, i) {
