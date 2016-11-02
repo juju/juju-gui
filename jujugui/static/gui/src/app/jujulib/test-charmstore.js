@@ -545,7 +545,7 @@ describe('jujulib charmstore', function() {
         path, 'local/v5/foobar/meta/any?include=bundle-metadata' +
         '&include=charm-metadata&include=charm-config&include=manifest' +
         '&include=stats&include=extra-info&include=tags&include=charm-metrics' +
-        '&include=owner&include=supported-series');
+        '&include=owner&include=resources&include=supported-series');
     });
   });
 
