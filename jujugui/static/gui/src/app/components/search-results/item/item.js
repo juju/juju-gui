@@ -148,13 +148,8 @@ YUI.add('search-results-item', function(Y) {
     _handleItemClick: function(id, e) {
       e.stopPropagation();
       this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'entity-details',
-            id: id
-          }
-        }
+        search: null,
+        store: id.replace('cs:', '')
       });
     },
 
