@@ -27,7 +27,6 @@ YUI.add('charmbrowser-component', function() {
       apiUrl: React.PropTypes.string.isRequired,
       apiVersion: React.PropTypes.string.isRequired,
       appState: React.PropTypes.object.isRequired,
-      changeState: React.PropTypes.func.isRequired,
       charmstoreSearch: React.PropTypes.func.isRequired,
       charmstoreURL: React.PropTypes.string.isRequired,
       deployService: React.PropTypes.func.isRequired,
@@ -84,11 +83,9 @@ YUI.add('charmbrowser-component', function() {
       @method _close
     */
     _close: function() {
-      this.props.changeState({
-        sectionC: {
-          component: null,
-          metadata: null
-        }
+      this.props.appState.changeState({
+        root: null,
+        store: null
       });
     },
 
@@ -100,15 +97,23 @@ YUI.add('charmbrowser-component', function() {
       @return {Object} A generated state object which can be passed to setState.
     */
     generateState: function(nextProps) {
-      var metadata = nextProps.appState.sectionC.metadata;
-      var activeComponent = metadata.activeComponent;
-      var state = {activeComponent: activeComponent};
+      let state = {};
+      let activeComponent = 'store';
+      const appState = nextProps.appState.appState;
+      // Because it's invalid to have these values be in state at the same time
+      // we can simply check for their existance.
+      if (appState.store) {
+        activeComponent = 'entity-details';
+      } else if (appState.search) {
+        activeComponent = 'search-results';
+      }
       // If the contents of the charmbrowser changes we need to scroll the
       // container to the top.
       if (this.state && activeComponent !== this.state.activeComponent) {
         this.refs.charmbrowser.scrollTop = 0;
         state.scrollPosition = 0;
       }
+      state.activeComponent = activeComponent;
       return state;
     },
 
@@ -119,14 +124,17 @@ YUI.add('charmbrowser-component', function() {
       @return {Object} The child components for the content.
     */
     _generateContent: function() {
-      var activeChild;
-      var metadata = this.props.appState.sectionC.metadata;
-      var utils = this.props.utils;
+      let activeChild;
+      const metadata = {};
+      const utils = this.props.utils;
+      const appState = this.props.appState.appState;
+      const changeState = this.props.appState.changeState.bind(
+        this.props.appState);
       switch (this.state.activeComponent) {
         case 'store':
           activeChild = (
               <juju.components.Store
-                changeState={this.props.changeState}
+                changeState={changeState}
                 staticURL={this.props.staticURL}
                 charmstoreURL={this.props.charmstoreURL}
                 apiVersion={this.props.apiVersion} />
@@ -135,11 +143,11 @@ YUI.add('charmbrowser-component', function() {
         case 'search-results':
           activeChild = (
               <juju.components.SearchResults
-                changeState={this.props.changeState}
+                changeState={changeState}
                 charmstoreSearch={this.props.charmstoreSearch}
                 getName={utils.getName}
                 makeEntityModel={this.props.makeEntityModel}
-                query={metadata.search}
+                query={appState.search}
                 seriesList={this.props.series}
                 type={metadata.type}
                 sort={metadata.sort}
@@ -156,7 +164,7 @@ YUI.add('charmbrowser-component', function() {
                 acl={this.props.acl}
                 addNotification={this.props.addNotification}
                 apiUrl={this.props.apiUrl}
-                changeState={this.props.changeState}
+                changeState={changeState}
                 displayPlans={this.props.displayPlans}
                 importBundleYAML={this.props.importBundleYAML}
                 getBundleYAML={this.props.getBundleYAML}
@@ -166,7 +174,7 @@ YUI.add('charmbrowser-component', function() {
                 getFile={this.props.getFile}
                 scrollPosition={this.state.scrollPosition}
                 renderMarkdown={this.props.renderMarkdown}
-                id={metadata.id}
+                id={appState.store}
                 pluralize={utils.pluralize}
                 listPlansForCharm={this.props.listPlansForCharm}
                 makeEntityModel={this.props.makeEntityModel} />

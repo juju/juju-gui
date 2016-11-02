@@ -105,13 +105,8 @@ describe('Store', function() {
     assert.equal(changeState.callCount, 1);
     assert.equal(stopPropagation.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'entity-details',
-          id: 'kibana'
-        }
-      }
+      root: null,
+      store: 'kibana'
     });
   });
 
@@ -134,13 +129,8 @@ describe('Store', function() {
     assert.equal(changeState.callCount, 1);
     assert.equal(stopPropagation.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'search-results',
-          search: '&tags=databases'
-        }
-      }
+      root: null,
+      search: '&tags=databases'
     });
   });
 });
