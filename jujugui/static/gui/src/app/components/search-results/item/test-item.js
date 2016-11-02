@@ -323,13 +323,8 @@ describe('SearchResultsItem', function() {
     assert.equal(changeState.callCount, 1);
     assert.equal(stopPropagation.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'entity-details',
-          id: 'mysql'
-        }
-      }
+      search: null,
+      store: 'mysql'
     });
   });
 

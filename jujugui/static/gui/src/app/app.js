@@ -415,8 +415,9 @@ YUI.add('juju-gui', function(Y) {
       });
 
       let environments = juju.environments;
-      this._setupUIState(cfg.sandbox, cfg.baseUrl);
-      cfg.state = this.state;
+
+      cfg.baseUrl = window.location.origin;
+      this.state = this._setupState(cfg.baseUrl);
       // Create an environment facade to interact with.
       // Allow "env" as an attribute/option to ease testing.
       var env = this.get('env');
@@ -665,7 +666,7 @@ YUI.add('juju-gui', function(Y) {
           // We won't have a controller API connection in Juju 1.
           this.env.connect();
         }
-        this.dispatch();
+        this.state.dispatch();
         this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       }, this);
     },
@@ -1057,11 +1058,9 @@ YUI.add('juju-gui', function(Y) {
       @param {Integer} machineCount The machineCount to display.
     */
     _renderEnvSizeDisplay: function(serviceCount=0, machineCount=0) {
-      var state = this.state;
       ReactDOM.render(
         <window.juju.components.EnvSizeDisplay
-          changeState={this.changeState.bind(this)}
-          getAppState={state.getState.bind(state)}
+          appState={this.state}
           machineCount={machineCount}
           pluralize={views.utils.pluralize.bind(this)}
           serviceCount={serviceCount} />,
@@ -1075,11 +1074,10 @@ YUI.add('juju-gui', function(Y) {
       @method _renderHeaderSearch
     */
     _renderHeaderSearch: function() {
-      var state = this.state;
       ReactDOM.render(
         <window.juju.components.HeaderSearch
           changeState={this.changeState.bind(this)}
-          getAppState={state.getState.bind(state)} />,
+          appState={this.state} />,
         document.getElementById('header-search-container'));
     },
 
@@ -1214,22 +1212,19 @@ YUI.add('juju-gui', function(Y) {
       @method _renderImportExport
     */
     _renderImportExport: function() {
-      var env = this.env;
-      var ecs = env.get('ecs');
-      var db = this.db;
-      var services = db.services;
-      var servicesArray = services.toArray();
-      var machines = db.machines.toArray();
-      var utils = views.utils;
+      const env = this.env;
+      const db = this.db;
+      const utils = views.utils;
       ReactDOM.render(
         <window.juju.components.ImportExport
           acl={this.acl}
-          changeState={this.changeState.bind(this)}
-          currentChangeSet={ecs.getCurrentChangeSet()}
+          changeState={this.state.changeState.bind(this.state)}
+          currentChangeSet={env.get('ecs').getCurrentChangeSet()}
           exportEnvironmentFile={
             utils.exportEnvironmentFile.bind(utils, db,
               env.findFacadeVersion('Application') === null)}
-          hasEntities={servicesArray.length > 0 || machines.length > 0}
+          hasEntities={db.services.toArray().length > 0 ||
+            db.machines.toArray().length > 0}
           hideDragOverNotification={this._hideDragOverNotification.bind(this)}
           importBundleFile={this.bundleImporter.importBundleFile.bind(
             this.bundleImporter)}
@@ -1293,7 +1288,7 @@ YUI.add('juju-gui', function(Y) {
             getUnitStatusCounts={views.utils.getUnitStatusCounts}
             hoverService={ServiceModule.hoverService.bind(ServiceModule)}
             panToService={ServiceModule.panToService.bind(ServiceModule)}
-            changeState={this.changeState.bind(this)} />
+            changeState={this.state.changeState.bind(this.state)} />
         </window.juju.components.Panel>,
         document.getElementById('inspector-container'));
     },
@@ -1419,19 +1414,16 @@ YUI.add('juju-gui', function(Y) {
 
     /**
       Renders the Charmbrowser component to the page in the designated element.
-
-      @method _renderCharmbrowser
-      @param {Object} metadata The data to pass to the charmbrowser which tells
-        it how to render.
+      @param {Object} state - The app state.
+      @param {Function} next - Call to continue dispatching.
     */
-    _renderCharmbrowser: function(metadata) {
-      var state = this.state;
-      var utils = views.utils;
-      var charmstore = this.get('charmstore');
+    _renderCharmbrowser: function(state, next) {
+      const utils = views.utils;
+      const charmstore = this.get('charmstore');
       // Configure syntax highlighting for the markdown renderer.
       marked.setOptions({
         highlight: function(code, lang) {
-          var language = Prism.languages[lang];
+          const language = Prism.languages[lang];
           if (language) {
             return Prism.highlight(code, language);
           }
@@ -1453,17 +1445,28 @@ YUI.add('juju-gui', function(Y) {
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
           renderMarkdown={marked.bind(this)}
           deployService={this.deployService.bind(this)}
-          appState={state.get('current')}
-          changeState={this.changeState.bind(this)}
+          appState={this.state}
           utils={utils}
           staticURL={window.juju_config.staticURL}
           charmstoreURL={
-            views.utils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
+            utils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
           apiVersion={window.jujulib.charmstoreAPIVersion}
           addNotification={
             this.db.notifications.add.bind(this.db.notifications)}
           makeEntityModel={Y.juju.makeEntityModel} />,
         document.getElementById('charmbrowser-container'));
+      next();
+    },
+
+    /**
+      The cleanup dispatcher for the store state path.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _clearCharmbrowser: function(state, next) {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('charmbrowser-container'));
+      next();
     },
 
     _emptySectionApp: function() {
@@ -1499,12 +1502,10 @@ YUI.add('juju-gui', function(Y) {
 
     /**
       Handles rendering and/or updating the machine UI component.
-
-      @method _machine
-      @param {Object|String} metadata The metadata to pass to the machine
-        view.
+      @param {Object} state - The app state.
+      @param {Function} next - Call to continue dispatching.
     */
-    _renderMachineView: function(metadata) {
+    _renderMachineView: function(state, next) {
       var db = this.db;
       ReactDOM.render(
         <window.juju.components.MachineView
@@ -1522,6 +1523,18 @@ YUI.add('juju-gui', function(Y) {
           services={db.services}
           units={db.units} />,
         document.getElementById('machine-view'));
+      next();
+    },
+
+    /**
+      The cleanup dispatcher for the machines state path.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _clearMachineView: function(state, next) {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('machine-view'));
+      next();
     },
 
     /**
@@ -1575,6 +1588,72 @@ YUI.add('juju-gui', function(Y) {
       };
       this.state.set('dispatchers', dispatchers);
       this.on('*:changeState', this._changeState, this);
+    },
+
+    /**
+      Creates an instance of the State and registers the necessary dispatchers.
+      @param {String} baseURL - The path the application is served from.
+      @return {Object} The state instance.
+    */
+    _setupState: function(baseURL) {
+      const state = new window.jujugui.State({
+        baseURL: baseURL,
+        seriesList: window.jujulib.SERIES
+      });
+
+      state.register([
+        ['*', this.checkUserCredentials.bind(this)],
+        ['*', this.show_environment.bind(this)],
+        ['*', this.authorizeCookieUse.bind(this)],
+        ['root',
+          this._rootDispatcher.bind(this),
+          this._clearRoot.bind(this)],
+        ['store',
+          this._renderCharmbrowser.bind(this),
+          this._clearCharmbrowser.bind(this)],
+        ['search',
+          this._renderCharmbrowser.bind(this),
+          this._clearCharmbrowser.bind(this)],
+        ['gui.machines',
+          this._renderMachineView.bind(this),
+          this._clearMachineView.bind(this)],
+        ['gui.inspector',
+          this._renderInspector.bind(this)]
+      ]);
+
+      return state;
+    },
+
+    /**
+      The dispatcher for the root state path.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _rootDispatcher: function(state, next) {
+      switch (state.root) {
+        case 'login':
+          // _renderLogin is called from various places with a different call
+          // signature so we have to call next manually after.
+          this._renderLogin();
+          next();
+          break;
+        case 'store':
+          this._renderCharmbrowser(state, next);
+          break;
+        default:
+          next();
+          break;
+      }
+    },
+
+    /**
+      The cleanup dispatcher for the root state path.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _clearRoot: function(state, next) {
+      this._clearCharmbrowser(state, next);
+      next();
     },
 
     /**
@@ -1915,7 +1994,7 @@ YUI.add('juju-gui', function(Y) {
       if (this.views.environment.instance) {
         this.views.environment.instance.topo.update();
       }
-      this.dispatch();
+      this.state.dispatch();
       this._renderComponents();
     },
 
@@ -1926,15 +2005,10 @@ YUI.add('juju-gui', function(Y) {
     */
     _displayLogin: function() {
       this.set('loggedIn', false);
-      var component = this.state.getState('current', 'app', 'component');
-      if (!component || component !== 'login') {
-        this.state.dispatch({
-          app: {
-            component: 'login',
-            metadata: {
-              redirectPath: this.get('currentUrl')
-            }
-          }
+      const root = this.state.appState.root;
+      if (!root || root !== 'login') {
+        this.state.changeState({
+          root: 'login'
         });
       }
     },
@@ -1989,15 +2063,11 @@ YUI.add('juju-gui', function(Y) {
     // Persistent Views
 
     /**
-     * Ensure that the current user has authenticated.
-     *
-     * @method checkUserCredentials
-     * @param {Object} req The request.
-     * @param {Object} res ???
-     * @param {Object} next The next route handler.
-     *
-     */
-    checkUserCredentials: function(req, res, next) {
+      Ensure that the current user has authenticated.
+      @param {Object} state The application state.
+      @param {Function} next The next route handler.
+    */
+    checkUserCredentials: function(state, next) {
       const apis = [this.env, this.controllerAPI];
       // Loop through each api connection and see if we are properly
       // authenticated. If we aren't then display the login screen.
@@ -2082,6 +2152,9 @@ YUI.add('juju-gui', function(Y) {
       this.maskVisibility(false);
       this._emptySectionApp();
       this.set('loggedIn', true);
+      if (this.state.appState.root === 'login') {
+        this.state.changeState({root: null});
+      }
       // Handle token authentication.
       if (evt.fromToken) {
         // Alert the user.  In the future, we might want to call out the
@@ -2362,15 +2435,18 @@ YUI.add('juju-gui', function(Y) {
       this._renderZoom();
       this._renderBreadcrumb();
       this._renderHeaderSearch();
-      // When we render the components we also want to trigger the rest of
-      // the application to render but only based on the current state.
-      this.state.dispatch();
+      const gui = this.state.appState.gui;
+      if (!gui || (gui && !gui.inspector)) {
+        this._renderAddedServices();
+      }
     },
 
     /**
-     * @method show_environment
-     */
-    show_environment: function(req, res, next) {
+      Show the environment view.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    show_environment: function(state, next) {
       if (!this.renderEnvironment) {
         next(); return;
       }
