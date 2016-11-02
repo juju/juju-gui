@@ -429,4 +429,86 @@ describe('Bundle Importer', function() {
       assert.equal(db.units.item(0).machine, db.units.item(1).machine);
     });
   });
+
+  describe('_execute_deploy', function() {
+    it('properly merges bundle config with defaults', () => {
+      const id = 'cs:trusty/haproxy-10';
+      const name = 'haproxy';
+      const record = {
+        'addCharm-0': {},
+        args: [
+          id,
+          'trusty',
+          name,
+          { services: '', enable_monitoring: true, source: 'backports' },
+          '',
+          {},
+          {},
+          {}
+        ],
+        id: 'deploy-1',
+        method: 'deploy',
+        requires: [ 'addCharm-0' ]
+      };
+      class MockModel {
+        constructor(attrs) {
+          this.attrs = attrs;
+        }
+        get(key) {
+          return this.attrs[key];
+        }
+        set(key, value) {
+          this.attrs[key] = value;
+        }
+      }
+      const options = {
+        services: {
+          default: 'foo',
+          description: '',
+          type: 'string'
+        },
+        enable_monitoring: {
+          default: false,
+          description: '',
+          type: 'boolean'
+        },
+        source: {
+          default: '',
+          description: '',
+          type: 'string'
+        },
+        default_log: {
+          default: 'global',
+          description: '',
+          type: 'string'
+        }
+      };
+      const charm = new MockModel({
+        options: options,
+        id: id,
+        series: 'trusty'
+      });
+      const next = sinon.stub();
+      bundleImporter.fakebackend._loadCharm = (id, callbacks) => {
+        callbacks.success(charm);
+      };
+      bundleImporter.modelAPI.deploy = sinon.stub();
+      const ghostService = new MockModel({
+        id: id,
+        name: name
+      });
+      bundleImporter.db.services.ghostService = sinon.stub();
+      bundleImporter.db.services.ghostService.returns(ghostService);
+      bundleImporter._saveModelToRequires = sinon.stub();
+      bundleImporter._execute_deploy(record, next);
+      const expectedConfig = {
+        services: '',
+        enable_monitoring: true,
+        source: 'backports',
+        default_log: 'global'
+      };
+      const actualConfig = ghostService.get('config');
+      assert.deepEqual(expectedConfig, actualConfig);
+    });
+  });
 });
