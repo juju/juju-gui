@@ -273,16 +273,6 @@ YUI.add('juju-view-utils', function(Y) {
       // Re-render this view when the model changes, and after it is loaded,
       // to support "loaded" flags.
       this.after(['*:change', '*:load'], this.render, this);
-    },
-
-    renderable_charm: function(charm_name, db, getModelURL) {
-      var charm = db.charms.getById(charm_name);
-      if (charm) {
-        var result = charm.getAttrs();
-        result.app_url = getModelURL(charm);
-        return result;
-      }
-      return null;
     }
 
   });
