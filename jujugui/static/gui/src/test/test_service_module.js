@@ -211,9 +211,6 @@ describe.skip('service module events', function() {
         update_annotations: function() {},
         get: function() {}
       },
-      nsRouter: {
-        url: function() { return; }
-      },
       charmstore: fakeStore
     });
     view.render();
