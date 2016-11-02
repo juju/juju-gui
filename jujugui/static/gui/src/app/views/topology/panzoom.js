@@ -221,6 +221,16 @@ YUI.add('juju-topology-panzoom', function(Y) {
       });
     },
 
+    /**
+      Pan a point to just on the screen, rather than centering it.
+
+      NB: This implementation is limited when it comes to points to the top and
+      left of the screen, due to some weird math that infects the entire
+      canvas.  Future work will address this.
+
+      @method panPonitToScreen
+      @param {Event} evt An event containing a point.
+    */
     panPointToScreen: function(evt) {
       const point = evt.point,
           topo = this.get('component'),
@@ -236,25 +246,40 @@ YUI.add('juju-topology-panzoom', function(Y) {
           bottomSide = topSide + size[1];
       let newTranslate = [];
       if (point[0] > rightSide - servicePadding) {
+        // If the point is to the right of the canvas, pan so that the point
+        // is just on the right side of the canvas, plus the size of the
+        // service.
         newTranslate[0] = point[0] - size[0] +  2 * servicePadding;
       } else if (point[0] < leftSide + inspectorPadding) {
+        // If the point is on the left side, pan the canvas so that the point
+        // is just on the right side of the inspector.
         newTranslate[0] = point[0] - inspectorPadding;
       } else {
+        // Otherwise, we can leave the point on the canvas.
         newTranslate[0] = translate[0];
       }
       if (point[1] > bottomSide - servicePadding) {
+        // If the point is below the canvas, pan so that the point is just on
+        // the bottom side of the canvas, plus the size of the service and
+        // commit buttons.
         newTranslate[1] = point[1] - size[1] + 2 * servicePadding
           + buttonPadding;
       } else if (point[1] < topSide) {
+        // If the point is above the canvas, pan so that it's just at the top
+        // of the canvas.
         newTranslate[1] = point[1];
       } else {
+        // Otherwise, we can leave the point on the canvas.
         newTranslate[1] = translate[1];
       }
+      // Only translate if we need to.
       if (newTranslate[0] !== translate[0] ||
           newTranslate[1] !== translate[1]) {
         this.rescale({
           scale: scale,
           translate: newTranslate.map(function(d, i) {
+            // TODO figure out why we need this ridiculous calculation.
+            // Makyo 2016-11-02
             return 0 - d;
           })
         });
