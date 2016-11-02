@@ -260,10 +260,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           update_annotations: function() {},
           get: function() {}
         },
-        nsRouter: {
-          url: function() { return; }
-        },
-        getModelURL: function() {},
         charmstore: fakeStore
       });
     });
@@ -1391,22 +1387,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(db.relations.filter(function(relation) {
         return relation.get('scope') !== 'container';
       }).length, 4);
-    });
-
-    it('propagates the getModelURL function to the topology', function() {
-      var getModelURL = function() {
-        return 'placeholder value';
-      };
-      var view = new views.environment({
-        container: container,
-        db: db,
-        env: env,
-        getModelURL: getModelURL,
-        charmstore: fakeStore
-      }).render();
-      var topoGetModelURL = view.topo.get('getModelURL');
-      assert.equal('placeholder value', topoGetModelURL());
-      view.destroy();
     });
 
     it('propagates the endpointsController to the topology', function() {

@@ -117,10 +117,8 @@ YUI.add('juju-view-environment', function(Y) {
           env: this.get('env'),
           db: this.get('db'),
           bundleImporter: this.get('bundleImporter'),
-          getModelURL: this.get('getModelURL'),
           container: container,
           endpointsController: this.get('endpointsController'),
-          nsRouter: this.get('nsRouter'),
           staticURL: this.get('staticURL')
         });
         // Bind all the behaviors we need as modules.
@@ -206,15 +204,6 @@ YUI.add('juju-view-environment', function(Y) {
           }
         }
       });
-    }
-  }, {
-    ATTRS: {
-      /**
-        Applications router utility methods
-
-        @attribute nsRouter
-      */
-      nsRouter: {}
     }
   });
 

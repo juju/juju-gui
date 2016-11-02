@@ -46,7 +46,6 @@ YUI.add('juju-gui', function(Y) {
    * @class App
    */
   var extensions = [
-    Y.juju.NSRouter,
     widgets.AutodeployExtension,
     Y.juju.Cookies,
     Y.juju.AppRenderer,
@@ -2417,8 +2416,6 @@ YUI.add('juju-gui', function(Y) {
         next(); return;
       }
       var options = {
-        getModelURL: Y.bind(this.getModelURL, this),
-        nsRouter: this.nsRouter,
         endpointsController: this.endpointsController,
         useDragDropImport: this.get('sandbox'),
         db: this.db,
@@ -2455,85 +2452,11 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Object routing support
-     *
-     * This utility helps map from model objects to routes
-     * defined on the App object. See the routes Attribute
-     * for additional information.
-     *
-     * @param {object} model The model to determine a route URL for.
-     * @param {object} [intent] the name of an intent associated with a route.
-     *   When more than one route can match a model, the route without an
-     *   intent is matched when this attribute is missing.  If intent is
-     *   provided as a string, it is matched to the `intent` attribute
-     *   specified on the route. This is effectively a tag.
-     * @method getModelURL
-     */
-    getModelURL: function(model, intent) {
-      var matches = [],
-          attrs = (model instanceof Y.Model) ? model.getAttrs() : model,
-          routes = this.get('routes'),
-          regexPathParam = /([:*])([\w\-]+)?/g,
-          idx = 0,
-          finalPath = '';
-
-      routes.forEach(function(route) {
-        var path = route.path,
-            required_model = route.model,
-            reverse_map = route.reverse_map;
-
-        // Fail fast on wildcard paths, on routes without models,
-        // and when the model does not match the route type.
-        if (path === '*' ||
-            required_model === undefined ||
-            model.name !== required_model) {
-          return;
-        }
-
-        // Replace the path params with items from the model's attributes.
-        path = path.replace(regexPathParam,
-                            function(match, operator, key) {
-                              if (reverse_map !== undefined &&
-                                  reverse_map[key]) {
-                                key = reverse_map[key];
-                              }
-                              return attrs[key];
-                            });
-        matches.push(Y.mix({path: path,
-          route: route,
-          attrs: attrs,
-          intent: route.intent,
-          namespace: route.namespace}));
-      });
-
-      // See if intent is in the match. Because the default is to match routes
-      // without intent (undefined), this test can always be applied.
-      matches = matches.filter(match => {
-        return match.intent === intent;
-      });
-
-      if (matches.length > 1) {
-        console.warn('Ambiguous routeModel', attrs.id, matches);
-        // Default to the last route in this configuration error case.
-        idx = matches.length - 1;
-      }
-
-      if (matches[idx] && matches[idx].path) {
-        finalPath = this.nsRouter.url({ gui: matches[idx].path });
-      }
-      return finalPath;
-    },
-
-    /**
-     * Make sure the user agrees to cookie usage.
-     *
-     * @method authorizeCookieUse
-     * @param {Object} req The request.
-     * @param {Object} res The response.
-     * @param {Object} next The next route handler.
-     *
-     */
-    authorizeCookieUse: function(req, res, next) {
+      Make sure the user agrees to cookie usage.
+      @param {Object} state - The application state.
+      @param {Function} next - The next route handler.
+    */
+    authorizeCookieUse: function(state, next) {
       var GTM_enabled = this.get('GTM_enabled');
       if (GTM_enabled) {
         this.cookieHandler = this.cookieHandler || new Y.juju.Cookies();
@@ -2660,41 +2583,6 @@ YUI.add('juju-gui', function(Y) {
         value: false
       },
       /**
-       * @attribute currentUrl
-       * @default '/'
-       * @type {String}
-       *
-       */
-      currentUrl: {
-
-        /**
-         * @attribute currentUrl.getter
-         */
-        getter: function() {
-          // The result is a normalized version of the currentURL.
-          // Specifically, it omits any tokens used for authentication or
-          // change set retrieval, and uses our standard path
-          // normalizing tool (currently the nsRouter).
-          var nsRouter = this.nsRouter;
-          // `this.location` is a test-friendly access of window.location.
-          var routes = nsRouter.parse(this.location.toString());
-          if (routes.search) {
-            var qs = Y.QueryString.parse(routes.search);
-            ['authtoken', 'changestoken'].forEach(function(token) {
-              if (Y.Lang.isValue(qs[token])) {
-                // Remove the token from the URL. It is a one-shot, designed to
-                // be consumed.  We don't want it to be in the URL after it has
-                // been used.
-                delete qs[token];
-              }
-            });
-            routes.search = Y.QueryString.stringify(qs);
-          }
-          // Use the nsRouter to normalize.
-          return nsRouter.url(routes);
-        }
-      },
-      /**
         Store the instance of the charmstore api that we will be using
         throughout the application.
 
@@ -2749,43 +2637,6 @@ YUI.add('juju-gui', function(Y) {
        */
       users: {
         value: {}
-      },
-
-      /**
-       * Routes
-       *
-       * Each request path is evaluated against all hereby defined routes,
-       * and the callbacks for all the ones that match are invoked,
-       * without stopping at the first one.
-       *
-       * To support this we supplement our routing information with
-       * additional attributes as follows:
-       *
-       * `namespace`: (optional) when namespace is specified this route should
-       *   only match when the URL fragment occurs in that namespace. The
-       *   default namespace (as passed to this.nsRouter) is assumed if no
-       *   namespace attribute is specified.
-       *
-       * `model`: `model.name` (required)
-       *
-       * `reverse_map`: (optional) A reverse mapping of `route_path_key` to the
-       *   name of the attribute on the model.  If no value is provided, it is
-       *   used directly as attribute name.
-       *
-       * `intent`: (optional) A string named `intent` for which this route
-       *   should be used. This can be used to select which subview is selected
-       *   to resolve a model's route.
-       *
-       * @attribute routes
-       */
-      routes: {
-        value: [
-          // Called on each request.
-          { path: '*', callbacks: 'parseURLState'},
-          { path: '*', callbacks: 'checkUserCredentials'},
-          { path: '*', callbacks: 'show_environment'},
-          { path: '*', callbacks: 'authorizeCookieUse'}
-        ]
       }
     }
   });
@@ -2812,7 +2663,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-models',
     'jujulib-utils',
     'net-utils',
-    'ns-routing-app-extension',
     // React components
     'account',
     'added-services-list',
