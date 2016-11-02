@@ -33,6 +33,8 @@ YUI.add('deployment-signup', function() {
       @method _displayFlow
     */
     _displayFlow: function() {
+      // TODO: In the future the deployment flow must be opened in sandbox mode
+      // at demo.jujucharms.com.
       this.props.changeState({
         sectionC: {
           component: 'deploy',
