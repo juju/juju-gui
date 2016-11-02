@@ -43,7 +43,6 @@ YUI.add('app-renderer-extension', function(Y) {
       const env = this.env;
       const controllerAPI = this.controllerAPI;
       const utils = views.utils;
-      const state = this.state;
       let listModelsWithInfo =
         controllerAPI &&
           controllerAPI.listModelsWithInfo.bind(this.controllerAPI);
@@ -69,7 +68,7 @@ YUI.add('app-renderer-extension', function(Y) {
         <juju.components.HeaderBreadcrumb
           envName={this.db.environment.get('name')}
           envList={this.get('environmentList')}
-          getAppState={state.getState.bind(state)}
+          appState={this.state}
           authDetails={this._getAuth()}
           listModelsWithInfo={listModelsWithInfo}
           showEnvSwitcher={showEnvSwitcher}
