@@ -46,11 +46,6 @@ const State = class State {
       throw new Error('baseURL must be provided.');
     }
     this.baseURL = cfg.baseURL;
-    /**
-      The list of dispatchers for the various components from the URL.
-      @type {Object}
-    */
-    this.dispatchers = cfg.dispatchers;
 
     if (!cfg.seriesList || !Array.isArray(cfg.seriesList)) {
       throw new Error('Series list must be an Array.');
@@ -150,9 +145,12 @@ const State = class State {
 
   /**
     Stores the dispatchers that are to be called when the appropriate state
-    changes in the application.
+    changes in the application. When state matches one of the supplied sections
+    it will execute all of the `callback` dispatchers registered here. If the
+    section is then set with a `null` value, the cleanupCallback will be
+    called instead.
     @param {Array} dispatchers - An array of dispatchers in the format:
-      [['section', callback], ...]
+      [['section', callback, cleanupCallback], ...]
   */
   register(dispatchers) {
     const stored = this._dispatchers;
@@ -274,12 +272,13 @@ const State = class State {
   /**
     Changes the internal state of the app, updating the location and
     dispatching the app.
-    @param {Object} stateSegment - The new state delta to apply to the
+    @param {Object} changes - The new state delta to apply to the
       existing state.
   */
-  changeState(stateSegment) {
+  changeState(changes) {
     /**
       Merge two objects together or clone one. Only works with simple values.
+      Source values overwrite target values.
       @param {Object} target - The root object.
       @param {Object} source - The object to clone or merge into the target.
       @return {Object} The merged or cloned object.
@@ -345,7 +344,7 @@ const State = class State {
 
     const mergedState = merge(
       // Clone the appState so we don't end up clobbering old states.
-      merge({}, this.appState), stateSegment);
+      merge({}, this.appState), changes);
     const purgedState = pruneEmpty(merge({}, mergedState));
 
     this._appStateHistory.push(purgedState);
