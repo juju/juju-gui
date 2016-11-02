@@ -24,78 +24,17 @@ YUI.add('inspector-resources-list', function() {
 
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      charmId: React.PropTypes.string.isRequired,
-      getResources: React.PropTypes.func.isRequired
+      resources: React.PropTypes.object.isRequired
     },
-
-    /**
-      Get the current state.
-
-      @method getInitialState
-      @returns {String} The current state.
-    */
-    getInitialState: function() {
-      this.resourcesXHR = null;
-      return {
-        loading: false,
-        resources: null
-      };
-    },
-
-    componentDidMount: function() {
-      this._getResources(this.props.charmId);
-    },
-
-    componentWillUnmount: function() {
-      this.resourcesXHR.abort();
-    },
-
-    /**
-      Get a list of resources for the charm.
-
-      @method _getResources
-      @param {String} charmId The charm id.
-    */
-    _getResources: function(charmId) {
-      this.setState({loading: true});
-      this.resourcesXHR = this.props.getResources(
-          charmId, this._getResourcesCallback);
-    },
-
-    /**
-      Update the state with the returned versions.
-
-      @method _getResourcesSuccess
-      @param {String} error The error message, if any. Null if no error.
-      @param {Array} data The resources data.
-    */
-    _getResourcesCallback: function(error, data) {
-      if (error) {
-        console.error(error);
-      }
-      this.setState({loading: false, resources: data});
-    },
-
     /**
       Generate a list of resources to display.
 
       @returns {Object} The resource list markup.
     */
     _generateResources: function() {
-      if (this.state.loading) {
-        return (
-          <div className="inspector-resources-list__loading">
-              <juju.components.Spinner />
-          </div>);
-      }
-      const resources = this.state.resources || [];
-      if (resources.length === 0) {
-        return (
-          <div className="inspector-resources-list__empty">
-              No resources available.
-          </div>);
-      }
-      const resourceList = resources.map((resource, i) => {
+      const resources = this.props.resources;
+      const resourceList = Object.keys(resources).map((key, i) => {
+        const resource = resources[key];
         return (
           <li className="inspector-resources-list__resource"
             key={resource.name + i}>

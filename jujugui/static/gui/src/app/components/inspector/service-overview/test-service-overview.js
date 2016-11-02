@@ -584,6 +584,40 @@ describe('ServiceOverview', function() {
         linkTitle={undefined} />);
   });
 
+  it('does not show the resources action if there are none', function() {
+    const getStub = sinon.stub();
+    getStub.withArgs('id').returns('demo');
+    getStub.withArgs('pending').returns(false);
+    getStub.withArgs('exposed').returns(true);
+    getStub.withArgs('charm').returns('cs:demo');
+    getStub.withArgs('units').returns({
+      toArray: sinon.stub().returns([])
+    });
+    const service = {
+      get: getStub
+    };
+    const charmGetStub = sinon.stub();
+    charmGetStub.withArgs('resources').returns(null);
+    const charm = {
+      get: charmGetStub,
+      hasMetrics: sinon.stub().returns(true)
+    };
+    const output = jsTestUtils.shallowRender(
+        <juju.components.ServiceOverview
+          acl={acl}
+          changeState={sinon.stub()}
+          charm={charm}
+          clearState={sinon.stub()}
+          destroyService={sinon.stub()}
+          displayPlans={false}
+          getUnitStatusCounts={getUnitStatusCounts()}
+          modelUUID="abc123"
+          service={service}
+          serviceRelations={[1]}
+          showActivePlan={sinon.stub()} />);
+    assert.equal(output.props.children[1].props.children.length, 5);
+  });
+
   it('shows the Change version action if the service is committed', function() {
     const getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
@@ -698,6 +732,7 @@ describe('ServiceOverview', function() {
     // Return an array to make it think it has plans
     const charmGetStub = sinon.stub();
     charmGetStub.withArgs('plans').returns([]);
+    charmGetStub.withArgs('resources').returns({resource: 'one'});
     getStub.withArgs('activePlan').returns([]);
     const service = {
       setAttrs: setAttrs,
