@@ -469,7 +469,10 @@ YUI.add('bundle-importer', function(Y) {
           var charmOptions = charm.get('options');
           if (charmOptions) {
             Object.keys(charmOptions).forEach(function(key) {
-              if (record.args[3][key]) {
+              // #2149: Need to be careful; checking for truthy/falsey isn't
+              // good enough here, as we want things like empty strings to be
+              // applied to the config.
+              if (record.args[3][key] !== undefined) {
                 config[key] = record.args[3][key];
               } else {
                 var value = charmOptions[key];
