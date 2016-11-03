@@ -40,7 +40,7 @@ YUI.add('header-breadcrumb', function() {
       @method _renderEnvSwitcher
     */
     _renderEnvSwitcher: function() {
-      if (this.props.showEnvSwitcher && !this.props.appState.appState.profile) {
+      if (this.props.showEnvSwitcher && !this.props.appState.current.profile) {
         return (
           <li className="header-breadcrumb__list-item">
             <window.juju.components.EnvSwitcher
