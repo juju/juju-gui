@@ -174,16 +174,11 @@ YUI.add('service-overview', function() {
             valueType: key,
             action: this._navigate,
             state: {
-              sectionA: {
-                component: 'inspector',
-                metadata: {
+              gui: {
+                inspector: {
                   id: serviceId,
                   activeComponent: 'units',
-                  unitStatus: key === 'all' ? null : key
-                }
-              }
-            }
-          });
+                  unitStatus: key === 'all' ? null : key}}}});
         }
       }, this);
 
@@ -192,57 +187,37 @@ YUI.add('service-overview', function() {
         icon: 'configure',
         action: this._navigate,
         state: {
-          sectionA: {
-            component: 'inspector',
-            metadata: {
+          gui: {
+            inspector: {
               id: service.get('id'),
-              activeComponent: 'config'
-            }
-          }
-        }
-      });
+              activeComponent: 'config'}}}});
       actions.push({
         title: 'Relations',
         icon: 'relations',
         action: this._navigate,
         state: {
-          sectionA: {
-            component: 'inspector',
-            metadata: {
+          gui: {
+            inspector: {
               id: serviceId,
-              activeComponent: 'relations'
-            }
-          }
-        }
-      });
+              activeComponent: 'relations'}}}});
       actions.push({
         title: 'Expose',
         value: service.get('exposed') ? 'On' : 'Off',
         icon: 'exposed_16',
         action: this._navigate,
         state: {
-          sectionA: {
-            component: 'inspector',
-            metadata: {
+          gui: {
+            inspector: {
               id: serviceId,
-              activeComponent: 'expose'
-            }
-          }
-        }
-      });
+              activeComponent: 'expose'}}}});
       actions.push({
         title: 'Resources',
         action: this._navigate,
         state: {
-          sectionA: {
-            component: 'inspector',
-            metadata: {
+          gui: {
+            inspector: {
               id: service.get('id'),
-              activeComponent: 'resources'
-            }
-          }
-        }
-      });
+              activeComponent: 'resources'}}}});
       if (!service.get('pending')) {
         const charmId = service.get('charm');
         actions.push({
@@ -252,15 +227,10 @@ YUI.add('service-overview', function() {
           icon: 'change-version',
           action: this._navigate,
           state: {
-            sectionA: {
-              component: 'inspector',
-              metadata: {
+            gui: {
+              inspector: {
                 id: serviceId,
-                activeComponent: 'change-version'
-              }
-            }
-          }
-        });
+                activeComponent: 'change-version'}}}});
       }
       // If we aren't in a Juju 2 model then do not query for
       // or display the plans.
@@ -270,15 +240,10 @@ YUI.add('service-overview', function() {
           icon: 'plan',
           action: this._navigate,
           state: {
-            sectionA: {
-              component: 'inspector',
-              metadata: {
+            gui: {
+              inspector: {
                 id: serviceId,
-                activeComponent: 'plan'
-              }
-            }
-          }
-        });
+                activeComponent: 'plan'}}}});
       }
       this.state.actions = actions;
     },
@@ -292,13 +257,7 @@ YUI.add('service-overview', function() {
     */
     _viewCharmDetails: function(charmId, e) {
       this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'entity-details',
-            id: charmId.replace('cs:', '')
-          }
-        }
+        store: charmId.replace('cs:', '')
       });
     },
 
