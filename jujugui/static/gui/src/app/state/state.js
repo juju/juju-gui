@@ -72,12 +72,12 @@ const State = class State {
     */
     this._location = cfg.location || null;
     /**
-      Internal storage value for the history object to use. Only used when
-      history is set externally.
+      Internal storage value for the browser history object to use. Only used
+      when browserHistory is set externally.
       @private
       @type {Object}
     */
-    this._history = cfg.history || null;
+    this._browserHistory = cfg.browserHistory || null;
     /**
       Internal storage for the app state history.
       @private
@@ -127,12 +127,12 @@ const State = class State {
     be used for testing.
     @type {Object}
   */
-  get history() {
-    return this._history || window.history;
+  get browserHistory() {
+    return this._browserHistory || window.history;
   }
 
-  set history(history) {
-    this._history = history;
+  set browserHistory(history) {
+    this._browserHistory = history;
   }
 
   /**
@@ -356,7 +356,7 @@ const State = class State {
     Pushes the current state to the browser history using pushState.
   */
   _pushState() {
-    this.history.pushState({}, 'Juju GUI', this.generatePath());
+    this.browserHistory.pushState({}, 'Juju GUI', this.generatePath());
   }
 
   /**
