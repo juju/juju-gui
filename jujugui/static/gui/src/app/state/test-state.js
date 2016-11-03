@@ -378,7 +378,7 @@ describe('State', () => {
       state._appStateHistory.push('step2');
       state._appStateHistory.push('step3');
       state._appStateHistory.push('step2');
-      assert.equal(state.appState, 'step2');
+      assert.equal(state.current, 'step2');
     });
 
     it('has a public accessor', () => {
@@ -922,7 +922,7 @@ describe('State', () => {
       const pushStub = sinon.stub(state, '_pushState');
       state.dispatch();
       assert.deepEqual(
-        state.appState, {
+        state.current, {
           user: 'hatch/staging',
           gui: {applications: '', inspector: {id: 'ghost' }}
         },
@@ -953,7 +953,7 @@ describe('State', () => {
       const pushStub = sinon.stub(state, '_pushState');
       state.dispatch();
       assert.deepEqual(
-        state.appState, {
+        state.current, {
           user: 'hatch/staging',
           gui: {applications: '', inspector: {id: 'ghost' }}
         },
