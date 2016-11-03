@@ -33,7 +33,7 @@ describe('HeaderBreadcrumb', () => {
 
   beforeEach(function() {
     appState = {
-      appState: {}
+      current: {}
     };
   });
 
@@ -121,7 +121,7 @@ describe('HeaderBreadcrumb', () => {
     var app = {app:'app'};
     var envName = 'bar';
     var envList = ['envList'];
-    appState.appState.profile = true;
+    appState.current.profile = true;
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
         app={app}
