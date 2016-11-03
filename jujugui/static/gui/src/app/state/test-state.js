@@ -1014,7 +1014,7 @@ describe('State', () => {
         baseURL: 'http://abc.com:123',
         seriesList:  ['precise', 'trusty', 'xenial'],
         location: {href: '/u/hatch/staging'},
-        history: historyStub
+        browserHistory: historyStub
       });
       state.dispatch();
       state._pushState();
