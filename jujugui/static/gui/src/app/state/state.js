@@ -144,6 +144,14 @@ const State = class State {
   }
 
   /**
+    The object representing the application history.
+    @type {Array}
+  */
+  get history() {
+    return this._appStateHistory;
+  }
+
+  /**
     Stores the dispatchers that are to be called when the appropriate state
     changes in the application. When state matches one of the supplied sections
     it will execute all of the `callback` dispatchers registered here. If the
