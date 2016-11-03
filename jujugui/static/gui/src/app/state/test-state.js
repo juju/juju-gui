@@ -927,7 +927,7 @@ describe('State', () => {
           gui: {applications: '', inspector: {id: 'ghost' }}
         },
         'generateState() did not parse location properly');
-      const dispatchStub = sinon.stub(state, 'dispatch');
+      const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});
       state.changeState({
         gui: {
           applications: 'foo'
@@ -958,7 +958,7 @@ describe('State', () => {
           gui: {applications: '', inspector: {id: 'ghost' }}
         },
         'generateState() did not parse location properly');
-      const dispatchStub = sinon.stub(state, 'dispatch');
+      const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});
       state.changeState({
         gui: {
           applications: null
@@ -983,7 +983,7 @@ describe('State', () => {
       });
       const pushStub = sinon.stub(state, '_pushState');
       state.dispatch();
-      const dispatchStub = sinon.stub(state, 'dispatch');
+      const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});
       state.changeState({
         gui: {
           applications: null
@@ -1002,7 +1002,7 @@ describe('State', () => {
       });
       const pushStub = sinon.stub(state, '_pushState');
       state.dispatch();
-      const dispatchStub = sinon.stub(state, 'dispatch');
+      const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});
       state.changeState({
         root: 'store',
         gui: {
