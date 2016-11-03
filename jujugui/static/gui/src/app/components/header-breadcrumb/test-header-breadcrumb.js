@@ -24,10 +24,17 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('HeaderBreadcrumb', () => {
+  let appState;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
     YUI().use('header-breadcrumb', () => { done(); });
+  });
+
+  beforeEach(function() {
+    appState = {
+      appState: {}
+    };
   });
 
   it('Renders properly', () => {
@@ -35,7 +42,6 @@ describe('HeaderBreadcrumb', () => {
     var envName = 'bar';
     var envList = ['envList'];
     var showProfile = sinon.stub();
-    var getAppState = sinon.stub();
     var listModelsWithInfo = sinon.stub();
     var authDetails = {
       user: 'foo',
@@ -45,7 +51,7 @@ describe('HeaderBreadcrumb', () => {
       <juju.components.HeaderBreadcrumb
         envName={envName}
         envList={envList}
-        getAppState={getAppState}
+        appState={appState}
         authDetails={authDetails}
         listModelsWithInfo={listModelsWithInfo}
         showProfile={showProfile}
@@ -80,13 +86,12 @@ describe('HeaderBreadcrumb', () => {
     var app = {app:'app'};
     var envName = 'bar';
     var envList = ['envList'];
-    var getAppState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
         app={app}
         envName={envName}
         envList={envList}
-        getAppState={getAppState}
+        appState={appState}
         listModelsWithInfo={sinon.stub()}
         showEnvSwitcher={true}
         showProfile={sinon.stub()}
@@ -98,13 +103,12 @@ describe('HeaderBreadcrumb', () => {
     var app = {app:'app'};
     var envName = 'bar';
     var envList = ['envList'];
-    var getAppState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
         app={app}
         envName={envName}
         envList={envList}
-        getAppState={getAppState}
+        appState={appState}
         listModelsWithInfo={sinon.stub()}
         showEnvSwitcher={false}
         showProfile={sinon.stub()}
@@ -117,13 +121,13 @@ describe('HeaderBreadcrumb', () => {
     var app = {app:'app'};
     var envName = 'bar';
     var envList = ['envList'];
-    var getAppState = sinon.stub().returns('profile');
+    appState.appState.profile = true;
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
         app={app}
         envName={envName}
         envList={envList}
-        getAppState={getAppState}
+        appState={appState}
         listModelsWithInfo={sinon.stub()}
         // Even though showEnvSwitcher is true, because the profile is visibile
         // it shouldn't render the env switcher.
@@ -138,7 +142,6 @@ describe('HeaderBreadcrumb', () => {
     var app = {app:'app'};
     var envName = 'bar';
     var envList = ['envList'];
-    var getAppState = sinon.stub();
     var showProfile = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
@@ -149,7 +152,7 @@ describe('HeaderBreadcrumb', () => {
         }}
         envName={envName}
         envList={envList}
-        getAppState={getAppState}
+        appState={appState}
         listModelsWithInfo={sinon.stub()}
         showEnvSwitcher={false}
         showProfile={showProfile}
@@ -179,7 +182,7 @@ describe('HeaderBreadcrumb', () => {
         app={app}
         envName={envName}
         envList={envList}
-        getAppState={sinon.stub()}
+        appState={appState}
         authDetails={authDetails}
         listModelsWithInfo={sinon.stub()}
         showEnvSwitcher={true}
