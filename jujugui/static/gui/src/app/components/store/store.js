@@ -90,13 +90,8 @@ YUI.add('store', function() {
       var id = (e.target.dataset.entity ||
         e.target.closest('[data-entity]').dataset.entity);
       this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'entity-details',
-            id: id
-          }
-        }
+        root: null,
+        store: id
       });
     },
 
@@ -112,13 +107,8 @@ YUI.add('store', function() {
       var query = (e.target.dataset.query ||
         e.target.closest('[data-query]').dataset.query);
       this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'search-results',
-            search: query
-          }
-        }
+        root: null,
+        search: query
       });
     },
 

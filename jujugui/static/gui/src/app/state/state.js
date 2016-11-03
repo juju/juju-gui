@@ -46,11 +46,6 @@ const State = class State {
       throw new Error('baseURL must be provided.');
     }
     this.baseURL = cfg.baseURL;
-    /**
-      The list of dispatchers for the various components from the URL.
-      @type {Object}
-    */
-    this.dispatchers = cfg.dispatchers;
 
     if (!cfg.seriesList || !Array.isArray(cfg.seriesList)) {
       throw new Error('Series list must be an Array.');
@@ -96,7 +91,7 @@ const State = class State {
     */
     this._dispatchers = {};
 
-    window.onpopstate = this.dispatch;
+    window.onpopstate = this.dispatch.bind(this);
   }
 
   /**
@@ -150,9 +145,12 @@ const State = class State {
 
   /**
     Stores the dispatchers that are to be called when the appropriate state
-    changes in the application.
+    changes in the application. When state matches one of the supplied sections
+    it will execute all of the `callback` dispatchers registered here. If the
+    section is then set with a `null` value, the cleanupCallback will be
+    called instead.
     @param {Array} dispatchers - An array of dispatchers in the format:
-      [['section', callback], ...]
+      [['section', callback, cleanupCallback], ...]
   */
   register(dispatchers) {
     const stored = this._dispatchers;
@@ -228,11 +226,34 @@ const State = class State {
       not. Defaults to false.
   */
   _dispatch(state, key, cleanup = false) {
-    if (!this._dispatchers[key]) {
-      // If we have no registered dispatchers for the key then return.
+    /**
+      Continues to reduce the key to find a dispatcher. Example, if key
+      value is 'gui.inspector.id' but there is only a handler for
+      'gui.inspector' it will first try 'gui.inspector.id' then drop the 'id'
+      until it finds something, or fails
+      @param {String} key - The key for the registered dispatchers.
+      @param {Object} dispatchers - The collection of registered dispatchers.
+      @return {Function|Boolean} Either the matching dispatchers or false.
+    */
+    function findDispatchers(key, dispatchers) {
+      const found = dispatchers[key];
+      if (!found) {
+        const newKey = key.split('.').slice(0, -1).join('.');
+        if (newKey !== '') {
+          return findDispatchers(newKey, dispatchers);
+        } else {
+          return false;
+        }
+      }
+      return found;
+    }
+    // Recurse up the dispatcher tree to find matching dispatchers.
+    const dispatchers = findDispatchers(key, this._dispatchers);
+    if (!dispatchers) {
+      console.error('No dispatcher found for key:', key);
       return;
     }
-    const iterator = this._dispatchers[key][Symbol.iterator]();
+    const iterator = dispatchers[Symbol.iterator]();
     function next() {
       const data = iterator.next();
       if (!data.done) {
@@ -251,12 +272,13 @@ const State = class State {
   /**
     Changes the internal state of the app, updating the location and
     dispatching the app.
-    @param {Object} stateSegment - The new state delta to apply to the
+    @param {Object} changes - The new state delta to apply to the
       existing state.
   */
-  changeState(stateSegment) {
+  changeState(changes) {
     /**
       Merge two objects together or clone one. Only works with simple values.
+      Source values overwrite target values.
       @param {Object} target - The root object.
       @param {Object} source - The object to clone or merge into the target.
       @return {Object} The merged or cloned object.
@@ -281,6 +303,7 @@ const State = class State {
               }
             }
           }
+          keys = [];
         });
         keys = [];
       } else {
@@ -321,7 +344,7 @@ const State = class State {
 
     const mergedState = merge(
       // Clone the appState so we don't end up clobbering old states.
-      merge({}, this.appState), stateSegment);
+      merge({}, this.appState), changes);
     const purgedState = pruneEmpty(merge({}, mergedState));
 
     this._appStateHistory.push(purgedState);
@@ -349,6 +372,11 @@ const State = class State {
     let error = null;
     let state = {};
     let parts = this._getCleanPath(url).split('/');
+    // If we have a single part and it's an empty string then we are at '/' and
+    // there is nothing to parse so we can return early.
+    if (parts.length === 1 && parts[0] === '') {
+      return {error, state};
+    }
     state = this._parseRoot(parts, state);
     // If we have root paths in the URL then we can ignore everything else.
     if (state.root) {
@@ -428,7 +456,27 @@ const State = class State {
         const value = gui[key];
         path.push(key);
         if (value !== '') {
-          path.push(value);
+          if (key === 'inspector') {
+            const id = value.id;
+            if (id) {
+              path.push(id);
+            }
+            const activeComponent = value.activeComponent;
+            if (activeComponent) {
+              path.push(activeComponent);
+            }
+            const activeValue = value[activeComponent];
+            if (activeValue && typeof activeValue !== 'boolean') {
+              path.push(activeValue);
+            }
+            const localType = value.localType;
+            if (localType) {
+              path.push('local');
+              path.push(localType);
+            }
+          } else {
+            path.push(value);
+          }
         }
       });
     }
@@ -500,8 +548,32 @@ const State = class State {
       const end = indexes[arIndex+1] || urlParts.length;
       guiParts[urlParts[index]] = urlParts.slice(index+1, end).join('/');
     });
+    const inspectorParts = guiParts.inspector;
+    if (inspectorParts) {
+      guiParts.inspector = this._parseInspector(inspectorParts);
+    }
     state.gui = guiParts;
     return {error, state};
+  }
+
+  /**
+    Parses the inspector state string and returns the parsed object.
+    @param {String} inspectorState - The state of the inspector.
+    @return {Object} The parsed state.
+  */
+  _parseInspector(inspectorState) {
+    const parts = inspectorState.split('/');
+    let state = {};
+    if (parts[0] === 'local') {
+      state.localType = parts[1];
+    } else {
+      state.id = parts[0];
+      if (parts[1]) {
+        state.activeComponent = parts[1];
+        state[parts[1]] = parts[2] || true;
+      }
+    }
+    return state;
   }
 
   /**

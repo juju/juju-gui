@@ -46,7 +46,6 @@ YUI.add('juju-gui', function(Y) {
    * @class App
    */
   var extensions = [
-    Y.juju.NSRouter,
     widgets.AutodeployExtension,
     Y.juju.Cookies,
     Y.juju.AppRenderer,
@@ -416,8 +415,9 @@ YUI.add('juju-gui', function(Y) {
       });
 
       let environments = juju.environments;
-      this._setupUIState(cfg.sandbox, cfg.baseUrl);
-      cfg.state = this.state;
+
+      cfg.baseUrl = window.location.origin;
+      this.state = this._setupState(cfg.baseUrl);
       // Create an environment facade to interact with.
       // Allow "env" as an attribute/option to ease testing.
       var env = this.get('env');
@@ -666,7 +666,7 @@ YUI.add('juju-gui', function(Y) {
           // We won't have a controller API connection in Juju 1.
           this.env.connect();
         }
-        this.dispatch();
+        this.state.dispatch();
         this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       }, this);
     },
@@ -1058,11 +1058,9 @@ YUI.add('juju-gui', function(Y) {
       @param {Integer} machineCount The machineCount to display.
     */
     _renderEnvSizeDisplay: function(serviceCount=0, machineCount=0) {
-      var state = this.state;
       ReactDOM.render(
         <window.juju.components.EnvSizeDisplay
-          changeState={this.changeState.bind(this)}
-          getAppState={state.getState.bind(state)}
+          appState={this.state}
           machineCount={machineCount}
           pluralize={views.utils.pluralize.bind(this)}
           serviceCount={serviceCount} />,
@@ -1076,11 +1074,10 @@ YUI.add('juju-gui', function(Y) {
       @method _renderHeaderSearch
     */
     _renderHeaderSearch: function() {
-      var state = this.state;
       ReactDOM.render(
         <window.juju.components.HeaderSearch
           changeState={this.changeState.bind(this)}
-          getAppState={state.getState.bind(state)} />,
+          appState={this.state} />,
         document.getElementById('header-search-container'));
     },
 
@@ -1215,22 +1212,19 @@ YUI.add('juju-gui', function(Y) {
       @method _renderImportExport
     */
     _renderImportExport: function() {
-      var env = this.env;
-      var ecs = env.get('ecs');
-      var db = this.db;
-      var services = db.services;
-      var servicesArray = services.toArray();
-      var machines = db.machines.toArray();
-      var utils = views.utils;
+      const env = this.env;
+      const db = this.db;
+      const utils = views.utils;
       ReactDOM.render(
         <window.juju.components.ImportExport
           acl={this.acl}
-          changeState={this.changeState.bind(this)}
-          currentChangeSet={ecs.getCurrentChangeSet()}
+          changeState={this.state.changeState.bind(this.state)}
+          currentChangeSet={env.get('ecs').getCurrentChangeSet()}
           exportEnvironmentFile={
             utils.exportEnvironmentFile.bind(utils, db,
               env.findFacadeVersion('Application') === null)}
-          hasEntities={servicesArray.length > 0 || machines.length > 0}
+          hasEntities={db.services.toArray().length > 0 ||
+            db.machines.toArray().length > 0}
           hideDragOverNotification={this._hideDragOverNotification.bind(this)}
           importBundleFile={this.bundleImporter.importBundleFile.bind(
             this.bundleImporter)}
@@ -1294,7 +1288,7 @@ YUI.add('juju-gui', function(Y) {
             getUnitStatusCounts={views.utils.getUnitStatusCounts}
             hoverService={ServiceModule.hoverService.bind(ServiceModule)}
             panToService={ServiceModule.panToService.bind(ServiceModule)}
-            changeState={this.changeState.bind(this)} />
+            changeState={this.state.changeState.bind(this.state)} />
         </window.juju.components.Panel>,
         document.getElementById('inspector-container'));
     },
@@ -1420,19 +1414,16 @@ YUI.add('juju-gui', function(Y) {
 
     /**
       Renders the Charmbrowser component to the page in the designated element.
-
-      @method _renderCharmbrowser
-      @param {Object} metadata The data to pass to the charmbrowser which tells
-        it how to render.
+      @param {Object} state - The app state.
+      @param {Function} next - Call to continue dispatching.
     */
-    _renderCharmbrowser: function(metadata) {
-      var state = this.state;
-      var utils = views.utils;
-      var charmstore = this.get('charmstore');
+    _renderCharmbrowser: function(state, next) {
+      const utils = views.utils;
+      const charmstore = this.get('charmstore');
       // Configure syntax highlighting for the markdown renderer.
       marked.setOptions({
         highlight: function(code, lang) {
-          var language = Prism.languages[lang];
+          const language = Prism.languages[lang];
           if (language) {
             return Prism.highlight(code, language);
           }
@@ -1454,17 +1445,28 @@ YUI.add('juju-gui', function(Y) {
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
           renderMarkdown={marked.bind(this)}
           deployService={this.deployService.bind(this)}
-          appState={state.get('current')}
-          changeState={this.changeState.bind(this)}
+          appState={this.state}
           utils={utils}
           staticURL={window.juju_config.staticURL}
           charmstoreURL={
-            views.utils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
+            utils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
           apiVersion={window.jujulib.charmstoreAPIVersion}
           addNotification={
             this.db.notifications.add.bind(this.db.notifications)}
           makeEntityModel={Y.juju.makeEntityModel} />,
         document.getElementById('charmbrowser-container'));
+      next();
+    },
+
+    /**
+      The cleanup dispatcher for the store state path.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _clearCharmbrowser: function(state, next) {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('charmbrowser-container'));
+      next();
     },
 
     _emptySectionApp: function() {
@@ -1500,12 +1502,10 @@ YUI.add('juju-gui', function(Y) {
 
     /**
       Handles rendering and/or updating the machine UI component.
-
-      @method _machine
-      @param {Object|String} metadata The metadata to pass to the machine
-        view.
+      @param {Object} state - The app state.
+      @param {Function} next - Call to continue dispatching.
     */
-    _renderMachineView: function(metadata) {
+    _renderMachineView: function(state, next) {
       var db = this.db;
       ReactDOM.render(
         <window.juju.components.MachineView
@@ -1523,6 +1523,18 @@ YUI.add('juju-gui', function(Y) {
           services={db.services}
           units={db.units} />,
         document.getElementById('machine-view'));
+      next();
+    },
+
+    /**
+      The cleanup dispatcher for the machines state path.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _clearMachineView: function(state, next) {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('machine-view'));
+      next();
     },
 
     /**
@@ -1576,6 +1588,72 @@ YUI.add('juju-gui', function(Y) {
       };
       this.state.set('dispatchers', dispatchers);
       this.on('*:changeState', this._changeState, this);
+    },
+
+    /**
+      Creates an instance of the State and registers the necessary dispatchers.
+      @param {String} baseURL - The path the application is served from.
+      @return {Object} The state instance.
+    */
+    _setupState: function(baseURL) {
+      const state = new window.jujugui.State({
+        baseURL: baseURL,
+        seriesList: window.jujulib.SERIES
+      });
+
+      state.register([
+        ['*', this.checkUserCredentials.bind(this)],
+        ['*', this.show_environment.bind(this)],
+        ['*', this.authorizeCookieUse.bind(this)],
+        ['root',
+          this._rootDispatcher.bind(this),
+          this._clearRoot.bind(this)],
+        ['store',
+          this._renderCharmbrowser.bind(this),
+          this._clearCharmbrowser.bind(this)],
+        ['search',
+          this._renderCharmbrowser.bind(this),
+          this._clearCharmbrowser.bind(this)],
+        ['gui.machines',
+          this._renderMachineView.bind(this),
+          this._clearMachineView.bind(this)],
+        ['gui.inspector',
+          this._renderInspector.bind(this)]
+      ]);
+
+      return state;
+    },
+
+    /**
+      The dispatcher for the root state path.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _rootDispatcher: function(state, next) {
+      switch (state.root) {
+        case 'login':
+          // _renderLogin is called from various places with a different call
+          // signature so we have to call next manually after.
+          this._renderLogin();
+          next();
+          break;
+        case 'store':
+          this._renderCharmbrowser(state, next);
+          break;
+        default:
+          next();
+          break;
+      }
+    },
+
+    /**
+      The cleanup dispatcher for the root state path.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _clearRoot: function(state, next) {
+      this._clearCharmbrowser(state, next);
+      next();
     },
 
     /**
@@ -1916,7 +1994,7 @@ YUI.add('juju-gui', function(Y) {
       if (this.views.environment.instance) {
         this.views.environment.instance.topo.update();
       }
-      this.dispatch();
+      this.state.dispatch();
       this._renderComponents();
     },
 
@@ -1927,15 +2005,10 @@ YUI.add('juju-gui', function(Y) {
     */
     _displayLogin: function() {
       this.set('loggedIn', false);
-      var component = this.state.getState('current', 'app', 'component');
-      if (!component || component !== 'login') {
-        this.state.dispatch({
-          app: {
-            component: 'login',
-            metadata: {
-              redirectPath: this.get('currentUrl')
-            }
-          }
+      const root = this.state.appState.root;
+      if (!root || root !== 'login') {
+        this.state.changeState({
+          root: 'login'
         });
       }
     },
@@ -1990,15 +2063,11 @@ YUI.add('juju-gui', function(Y) {
     // Persistent Views
 
     /**
-     * Ensure that the current user has authenticated.
-     *
-     * @method checkUserCredentials
-     * @param {Object} req The request.
-     * @param {Object} res ???
-     * @param {Object} next The next route handler.
-     *
-     */
-    checkUserCredentials: function(req, res, next) {
+      Ensure that the current user has authenticated.
+      @param {Object} state The application state.
+      @param {Function} next The next route handler.
+    */
+    checkUserCredentials: function(state, next) {
       const apis = [this.env, this.controllerAPI];
       // Loop through each api connection and see if we are properly
       // authenticated. If we aren't then display the login screen.
@@ -2083,6 +2152,9 @@ YUI.add('juju-gui', function(Y) {
       this.maskVisibility(false);
       this._emptySectionApp();
       this.set('loggedIn', true);
+      if (this.state.appState.root === 'login') {
+        this.state.changeState({root: null});
+      }
       // Handle token authentication.
       if (evt.fromToken) {
         // Alert the user.  In the future, we might want to call out the
@@ -2363,21 +2435,22 @@ YUI.add('juju-gui', function(Y) {
       this._renderZoom();
       this._renderBreadcrumb();
       this._renderHeaderSearch();
-      // When we render the components we also want to trigger the rest of
-      // the application to render but only based on the current state.
-      this.state.dispatch();
+      const gui = this.state.appState.gui;
+      if (!gui || (gui && !gui.inspector)) {
+        this._renderAddedServices();
+      }
     },
 
     /**
-     * @method show_environment
-     */
-    show_environment: function(req, res, next) {
+      Show the environment view.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    show_environment: function(state, next) {
       if (!this.renderEnvironment) {
         next(); return;
       }
       var options = {
-        getModelURL: Y.bind(this.getModelURL, this),
-        nsRouter: this.nsRouter,
         endpointsController: this.endpointsController,
         useDragDropImport: this.get('sandbox'),
         db: this.db,
@@ -2414,85 +2487,11 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Object routing support
-     *
-     * This utility helps map from model objects to routes
-     * defined on the App object. See the routes Attribute
-     * for additional information.
-     *
-     * @param {object} model The model to determine a route URL for.
-     * @param {object} [intent] the name of an intent associated with a route.
-     *   When more than one route can match a model, the route without an
-     *   intent is matched when this attribute is missing.  If intent is
-     *   provided as a string, it is matched to the `intent` attribute
-     *   specified on the route. This is effectively a tag.
-     * @method getModelURL
-     */
-    getModelURL: function(model, intent) {
-      var matches = [],
-          attrs = (model instanceof Y.Model) ? model.getAttrs() : model,
-          routes = this.get('routes'),
-          regexPathParam = /([:*])([\w\-]+)?/g,
-          idx = 0,
-          finalPath = '';
-
-      routes.forEach(function(route) {
-        var path = route.path,
-            required_model = route.model,
-            reverse_map = route.reverse_map;
-
-        // Fail fast on wildcard paths, on routes without models,
-        // and when the model does not match the route type.
-        if (path === '*' ||
-            required_model === undefined ||
-            model.name !== required_model) {
-          return;
-        }
-
-        // Replace the path params with items from the model's attributes.
-        path = path.replace(regexPathParam,
-                            function(match, operator, key) {
-                              if (reverse_map !== undefined &&
-                                  reverse_map[key]) {
-                                key = reverse_map[key];
-                              }
-                              return attrs[key];
-                            });
-        matches.push(Y.mix({path: path,
-          route: route,
-          attrs: attrs,
-          intent: route.intent,
-          namespace: route.namespace}));
-      });
-
-      // See if intent is in the match. Because the default is to match routes
-      // without intent (undefined), this test can always be applied.
-      matches = matches.filter(match => {
-        return match.intent === intent;
-      });
-
-      if (matches.length > 1) {
-        console.warn('Ambiguous routeModel', attrs.id, matches);
-        // Default to the last route in this configuration error case.
-        idx = matches.length - 1;
-      }
-
-      if (matches[idx] && matches[idx].path) {
-        finalPath = this.nsRouter.url({ gui: matches[idx].path });
-      }
-      return finalPath;
-    },
-
-    /**
-     * Make sure the user agrees to cookie usage.
-     *
-     * @method authorizeCookieUse
-     * @param {Object} req The request.
-     * @param {Object} res The response.
-     * @param {Object} next The next route handler.
-     *
-     */
-    authorizeCookieUse: function(req, res, next) {
+      Make sure the user agrees to cookie usage.
+      @param {Object} state - The application state.
+      @param {Function} next - The next route handler.
+    */
+    authorizeCookieUse: function(state, next) {
       var GTM_enabled = this.get('GTM_enabled');
       if (GTM_enabled) {
         this.cookieHandler = this.cookieHandler || new Y.juju.Cookies();
@@ -2619,41 +2618,6 @@ YUI.add('juju-gui', function(Y) {
         value: false
       },
       /**
-       * @attribute currentUrl
-       * @default '/'
-       * @type {String}
-       *
-       */
-      currentUrl: {
-
-        /**
-         * @attribute currentUrl.getter
-         */
-        getter: function() {
-          // The result is a normalized version of the currentURL.
-          // Specifically, it omits any tokens used for authentication or
-          // change set retrieval, and uses our standard path
-          // normalizing tool (currently the nsRouter).
-          var nsRouter = this.nsRouter;
-          // `this.location` is a test-friendly access of window.location.
-          var routes = nsRouter.parse(this.location.toString());
-          if (routes.search) {
-            var qs = Y.QueryString.parse(routes.search);
-            ['authtoken', 'changestoken'].forEach(function(token) {
-              if (Y.Lang.isValue(qs[token])) {
-                // Remove the token from the URL. It is a one-shot, designed to
-                // be consumed.  We don't want it to be in the URL after it has
-                // been used.
-                delete qs[token];
-              }
-            });
-            routes.search = Y.QueryString.stringify(qs);
-          }
-          // Use the nsRouter to normalize.
-          return nsRouter.url(routes);
-        }
-      },
-      /**
         Store the instance of the charmstore api that we will be using
         throughout the application.
 
@@ -2708,43 +2672,6 @@ YUI.add('juju-gui', function(Y) {
        */
       users: {
         value: {}
-      },
-
-      /**
-       * Routes
-       *
-       * Each request path is evaluated against all hereby defined routes,
-       * and the callbacks for all the ones that match are invoked,
-       * without stopping at the first one.
-       *
-       * To support this we supplement our routing information with
-       * additional attributes as follows:
-       *
-       * `namespace`: (optional) when namespace is specified this route should
-       *   only match when the URL fragment occurs in that namespace. The
-       *   default namespace (as passed to this.nsRouter) is assumed if no
-       *   namespace attribute is specified.
-       *
-       * `model`: `model.name` (required)
-       *
-       * `reverse_map`: (optional) A reverse mapping of `route_path_key` to the
-       *   name of the attribute on the model.  If no value is provided, it is
-       *   used directly as attribute name.
-       *
-       * `intent`: (optional) A string named `intent` for which this route
-       *   should be used. This can be used to select which subview is selected
-       *   to resolve a model's route.
-       *
-       * @attribute routes
-       */
-      routes: {
-        value: [
-          // Called on each request.
-          { path: '*', callbacks: 'parseURLState'},
-          { path: '*', callbacks: 'checkUserCredentials'},
-          { path: '*', callbacks: 'show_environment'},
-          { path: '*', callbacks: 'authorizeCookieUse'}
-        ]
       }
     }
   });
@@ -2771,7 +2698,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-models',
     'jujulib-utils',
     'net-utils',
-    'ns-routing-app-extension',
     // React components
     'account',
     'added-services-list',
