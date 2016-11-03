@@ -969,8 +969,8 @@ YUI.add('juju-gui', function(Y) {
         <window.juju.components.Logout
           logout={this.logout.bind(this)}
           clearCookie={bakeryFactory.clearAllCookies.bind(bakeryFactory)}
-          gisfLogout={window.juju_config.gisfLogout}
-          gisf={window.juju_config.gisf}
+          gisfLogout={window.juju_config.gisfLogout || ''}
+          gisf={window.juju_config.gisf || false}
           charmstoreLogoutUrl={charmstore.getLogoutUrl()}
           getUser={this.getUser.bind(this, 'charmstore')}
           clearUser={this.clearUser.bind(this, 'charmstore')}
