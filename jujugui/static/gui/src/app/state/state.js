@@ -72,12 +72,12 @@ const State = class State {
     */
     this._location = cfg.location || null;
     /**
-      Internal storage value for the history object to use. Only used when
-      history is set externally.
+      Internal storage value for the browser history object to use. Only used
+      when browserHistory is set externally.
       @private
       @type {Object}
     */
-    this._history = cfg.history || null;
+    this._browserHistory = cfg.browserHistory || null;
     /**
       Internal storage for the app state history.
       @private
@@ -127,20 +127,28 @@ const State = class State {
     be used for testing.
     @type {Object}
   */
-  get history() {
-    return this._history || window.history;
+  get browserHistory() {
+    return this._browserHistory || window.history;
   }
 
-  set history(history) {
-    this._history = history;
+  set browserHistory(history) {
+    this._browserHistory = history;
   }
 
   /**
-    The object representing the current app state.
+    The geteter representing the current app state.
     @type {Object}
   */
-  get appState() {
+  get current() {
     return this._appStateHistory[this._appStateHistory.length-1];
+  }
+
+  /**
+    The getter representing the application history.
+    @type {Array}
+  */
+  get history() {
+    return this._appStateHistory;
   }
 
   /**
@@ -178,7 +186,7 @@ const State = class State {
     let error, state;
     ({error, state} = this.generateState(this.location.href));
     if (error !== null) {
-      error += `unable to generate state: ${error}`;
+      error += ` unable to generate state: ${error}`;
       return {error, state};
     }
 
@@ -214,7 +222,6 @@ const State = class State {
     extract(state).forEach(key => {
       this._dispatch(state, key);
     });
-
     return {error: null, state};
   }
 
@@ -250,7 +257,7 @@ const State = class State {
     // Recurse up the dispatcher tree to find matching dispatchers.
     const dispatchers = findDispatchers(key, this._dispatchers);
     if (!dispatchers) {
-      console.error('No dispatcher found for key:', key);
+      console.warn('No dispatcher found for key:', key);
       return;
     }
     const iterator = dispatchers[Symbol.iterator]();
@@ -343,20 +350,23 @@ const State = class State {
     }
 
     const mergedState = merge(
-      // Clone the appState so we don't end up clobbering old states.
-      merge({}, this.appState), changes);
+      // Clone the current state so we don't end up clobbering old states.
+      merge({}, this.current), changes);
     const purgedState = pruneEmpty(merge({}, mergedState));
 
     this._appStateHistory.push(purgedState);
     this._pushState();
-    this.dispatch(nullKeys, false);
+    let {error} = this.dispatch(nullKeys, false);
+    if (error !== null) {
+      console.error(error);
+    }
   }
 
   /**
     Pushes the current state to the browser history using pushState.
   */
   _pushState() {
-    this.history.pushState({}, 'Juju GUI', this.generatePath());
+    this.browserHistory.pushState({}, 'Juju GUI', this.generatePath());
   }
 
   /**
@@ -433,23 +443,23 @@ const State = class State {
   */
   generatePath() {
     let path = [];
-    const root = this.appState.root;
+    const root = this.current.root;
     if (root) {
       path.push(root);
     }
-    const search = this.appState.search;
+    const search = this.current.search;
     if (search) {
       path = path.concat([PATH_DELIMETERS.get('search'), search]);
     }
-    const user = this.appState.user || this.appState.profile;
+    const user = this.current.user || this.current.profile;
     if (user) {
       path = path.concat([PATH_DELIMETERS.get('user'), user]);
     }
-    const store = this.appState.store;
+    const store = this.current.store;
     if (store) {
       path.push(store);
     }
-    const gui = this.appState.gui;
+    const gui = this.current.gui;
     if (gui) {
       path.push(PATH_DELIMETERS.get('gui'));
       Object.keys(gui).forEach(key => {

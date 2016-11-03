@@ -99,12 +99,12 @@ YUI.add('charmbrowser-component', function() {
     generateState: function(nextProps) {
       let state = {};
       let activeComponent = 'store';
-      const appState = nextProps.appState.appState;
+      const currentState = nextProps.appState.current;
       // Because it's invalid to have these values be in state at the same time
       // we can simply check for their existance.
-      if (appState.store) {
+      if (currentState.store) {
         activeComponent = 'entity-details';
-      } else if (appState.search) {
+      } else if (currentState.search) {
         activeComponent = 'search-results';
       }
       // If the contents of the charmbrowser changes we need to scroll the
@@ -127,7 +127,7 @@ YUI.add('charmbrowser-component', function() {
       let activeChild;
       const metadata = {};
       const utils = this.props.utils;
-      const appState = this.props.appState.appState;
+      const currentState = this.props.appState.current;
       const changeState = this.props.appState.changeState.bind(
         this.props.appState);
       switch (this.state.activeComponent) {
@@ -147,7 +147,7 @@ YUI.add('charmbrowser-component', function() {
                 charmstoreSearch={this.props.charmstoreSearch}
                 getName={utils.getName}
                 makeEntityModel={this.props.makeEntityModel}
-                query={appState.search}
+                query={currentState.search}
                 seriesList={this.props.series}
                 type={metadata.type}
                 sort={metadata.sort}
@@ -174,7 +174,7 @@ YUI.add('charmbrowser-component', function() {
                 getFile={this.props.getFile}
                 scrollPosition={this.state.scrollPosition}
                 renderMarkdown={this.props.renderMarkdown}
-                id={appState.store}
+                id={currentState.store}
                 pluralize={utils.pluralize}
                 listPlansForCharm={this.props.listPlansForCharm}
                 makeEntityModel={this.props.makeEntityModel} />

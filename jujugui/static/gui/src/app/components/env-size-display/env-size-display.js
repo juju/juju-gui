@@ -57,7 +57,7 @@ YUI.add('env-size-display', function() {
       @returns {String} The collection of class names.
     */
     _genClasses: function(section) {
-      const guiState = this.props.appState.appState.gui;
+      const guiState = this.props.appState.current.gui;
       return classNames(
         'env-size-display__list-item',
         {

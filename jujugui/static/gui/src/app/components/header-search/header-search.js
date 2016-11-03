@@ -45,7 +45,7 @@ YUI.add('header-search', function() {
       @returns {String} The search query.
     */
     _getSearchQuery: function() {
-      return this.props.appState.appState.search || '';
+      return this.props.appState.current.search || '';
     },
 
     /**
@@ -55,7 +55,7 @@ YUI.add('header-search', function() {
       @method _activeForComponent
     */
     _activeForComponent: function() {
-      const state = this.props.appState.appState;
+      const state = this.props.appState.current;
       return state.root === 'store' ||
               state.store !== undefined || state.search !== undefined;
     },
@@ -121,7 +121,8 @@ YUI.add('header-search', function() {
         this.props.appState.changeState({
           root: 'store',
           gui: {
-            machines: null
+            machines: null,
+            inspector: null
           }
         });
       }

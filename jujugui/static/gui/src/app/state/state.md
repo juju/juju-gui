@@ -11,8 +11,7 @@ can be registered at any time and changes to the state must be done by calling
 the `changeState` method.
 
 State maintains a history of all of the state changes throughout the life of
-the application. This is stored in memory in the private property
-`_appStateHistory`.
+the application accesible via the `history` propery.
 
 ### How to use
 
@@ -156,12 +155,12 @@ In the above example the `gui.machines` path has been set to null so the
 #### Getting the current application state
 The application state can be retrieved from three places
 
-- `state.appState` - This will return the current application state and is
+- `state.current` - This will return the current application state and is
   available anywhere you have access to the state instance.
 - `dispatcher(state, next)` - While state is executing the dispatchers, both the
   create and teardown dispatchers are called with the same arugment signature.
   the first being the current application state.
-- `state._appStateHistory` - This is an Array on the state instance which
+- `state.history` - This is an Array on the state instance which
   holds all changes to the state over the lifecycle of the application.
 
 #### State reserved words, delimiters and state.

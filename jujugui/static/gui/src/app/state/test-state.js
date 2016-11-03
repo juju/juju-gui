@@ -378,7 +378,17 @@ describe('State', () => {
       state._appStateHistory.push('step2');
       state._appStateHistory.push('step3');
       state._appStateHistory.push('step2');
-      assert.equal(state.appState, 'step2');
+      assert.equal(state.current, 'step2');
+    });
+
+    it('has a public accessor', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList: ['trusty']
+      });
+      state._appStateHistory.push('step1');
+      state._appStateHistory.push('step2');
+      assert.deepEqual(state.history, ['step1', 'step2']);
     });
   });
 
@@ -912,12 +922,12 @@ describe('State', () => {
       const pushStub = sinon.stub(state, '_pushState');
       state.dispatch();
       assert.deepEqual(
-        state.appState, {
+        state.current, {
           user: 'hatch/staging',
           gui: {applications: '', inspector: {id: 'ghost' }}
         },
         'generateState() did not parse location properly');
-      const dispatchStub = sinon.stub(state, 'dispatch');
+      const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});
       state.changeState({
         gui: {
           applications: 'foo'
@@ -943,12 +953,12 @@ describe('State', () => {
       const pushStub = sinon.stub(state, '_pushState');
       state.dispatch();
       assert.deepEqual(
-        state.appState, {
+        state.current, {
           user: 'hatch/staging',
           gui: {applications: '', inspector: {id: 'ghost' }}
         },
         'generateState() did not parse location properly');
-      const dispatchStub = sinon.stub(state, 'dispatch');
+      const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});
       state.changeState({
         gui: {
           applications: null
@@ -973,7 +983,7 @@ describe('State', () => {
       });
       const pushStub = sinon.stub(state, '_pushState');
       state.dispatch();
-      const dispatchStub = sinon.stub(state, 'dispatch');
+      const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});
       state.changeState({
         gui: {
           applications: null
@@ -992,7 +1002,7 @@ describe('State', () => {
       });
       const pushStub = sinon.stub(state, '_pushState');
       state.dispatch();
-      const dispatchStub = sinon.stub(state, 'dispatch');
+      const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});
       state.changeState({
         root: 'store',
         gui: {
@@ -1014,7 +1024,7 @@ describe('State', () => {
         baseURL: 'http://abc.com:123',
         seriesList:  ['precise', 'trusty', 'xenial'],
         location: {href: '/u/hatch/staging'},
-        history: historyStub
+        browserHistory: historyStub
       });
       state.dispatch();
       state._pushState();

@@ -26,9 +26,7 @@ YUI.add('inspector-component', function() {
       addCharm: React.PropTypes.func.isRequired,
       addGhostAndEcsUnits: React.PropTypes.func.isRequired,
       addNotification: React.PropTypes.func.isRequired,
-      appPreviousState: React.PropTypes.object.isRequired,
       appState: React.PropTypes.object.isRequired,
-      changeState: React.PropTypes.func.isRequired,
       charm: React.PropTypes.object.isRequired,
       clearState: React.PropTypes.func.isRequired,
       createMachinesPlaceUnits: React.PropTypes.func.isRequired,
@@ -78,7 +76,7 @@ YUI.add('inspector-component', function() {
       @method _backCallback
     */
     _backCallback: function() {
-      this.props.changeState(this.state.activeChild.backState);
+      this.props.appState.changeState(this.state.activeChild.backState);
     },
 
     /**
@@ -89,54 +87,56 @@ YUI.add('inspector-component', function() {
       @return {Object} A generated state object which can be passed to setState.
     */
     generateState: function(nextProps) {
-      var service = nextProps.service;
-      var serviceId = service.get('id');
-      var metadata = nextProps.appState.sectionA.metadata;
-      var lastId = this.props.service.get('id');
+      const service = nextProps.service;
+      const serviceId = service.get('id');
+      const lastId = this.props.service.get('id');
+      const appState = this.props.appState;
+      const changeState = appState.changeState.bind(appState);
       if (lastId && serviceId !== lastId) {
         // If we've switched to a new service then return to the service
         // overview. All metadata properties need to be cleared to prevent
         // displaying a particular sub-view.
-        this.props.changeState({
-          sectionA: {
-            component: 'inspector',
-            metadata: {
+        changeState({
+          gui: {
+            inspector: {
               id: serviceId,
               activeComponent: undefined,
               unit: null,
               unitStatus: null
-            }}});
+            }
+          }
+        });
         return {};
       }
-      var state = {
-        activeComponent: metadata.activeComponent
+      const state = {
+        activeComponent: appState.current.gui.inspector.activeComponent
       };
-      var appPreviousState = nextProps.appPreviousState ||
-          this.props.appPreviousState;
-      var previousMetadata;
-      if (appPreviousState.sectionA) {
-        previousMetadata = appPreviousState.sectionA.metadata;
-      }
+      const stateHistory = appState.history;
+      const prevState = stateHistory[stateHistory.length-2];
+      const previousInspector = prevState.gui && prevState.gui.inspector;
       switch (state.activeComponent) {
         case undefined:
-          var component;
-          var newMetadata;
+          let backState = {};
           // Handle navigating back from the service details to a previous
           // service's relations.
-          if (previousMetadata && previousMetadata.id !== serviceId &&
-              previousMetadata.activeComponent === 'relations') {
-            component = 'inspector';
-            newMetadata = {
-              id: previousMetadata.id,
-              activeComponent: previousMetadata.activeComponent
-            };
+          if (previousInspector &&
+              previousInspector.id !== serviceId &&
+              previousInspector.activeComponent === 'relations') {
+            backState.gui = {
+              inspector: {
+                id: previousInspector.id,
+                activeComponent: previousInspector.activeComponent}};
+          } else {
+            backState = {
+              gui: {
+                inspector: null}};
           }
           state.activeChild = {
             title: service.get('name'),
             icon: service.get('icon'),
             component: <juju.components.ServiceOverview
               acl={this.props.acl}
-              changeState={this.props.changeState}
+              changeState={changeState}
               charm={this.props.charm}
               clearState={this.props.clearState}
               destroyService={this.props.destroyService}
@@ -146,14 +146,11 @@ YUI.add('inspector-component', function() {
               service={service}
               serviceRelations={this.props.serviceRelations}
               showActivePlan={this.props.showActivePlan} />,
-            backState: {
-              sectionA: {
-                component: component || 'applications',
-                metadata: newMetadata || null
-              }}};
+            backState: backState
+          };
           break;
         case 'units':
-          var unitStatus = metadata.units;
+          var unitStatus = appState.current.gui.inspector.units;
           // A unit status of 'true' is provided when there is no status, but
           // we don't want to pass that on as the status value.
           unitStatus = unitStatus === true ? null : unitStatus;
@@ -171,43 +168,40 @@ YUI.add('inspector-component', function() {
                 units={units}
                 envResolved={this.props.envResolved}
                 destroyUnits={this.props.destroyUnits}
-                changeState={this.props.changeState} />,
+                changeState={changeState} />,
             backState: {
-              sectionA: {
-                component: 'inspector',
-                metadata: {
+              gui: {
+                inspector: {
                   id: serviceId,
                   activeComponent: undefined
                 }}}};
           break;
         case 'unit':
-          var unitId = metadata.unit;
+          var unitId = appState.current.gui.inspector.unit;
           var unit = service.get('units').getById(
                 serviceId + '/' + unitId);
           var unitStatus = null;
           var previousComponent;
           var id;
-          if (previousMetadata) {
-            var units = previousMetadata.units;
-            previousComponent = previousMetadata.activeComponent;
+          if (previousInspector && previousInspector.units) {
+            var units = previousInspector.units;
+            previousComponent = previousInspector.activeComponent;
             // A unit status of 'true' is provided when there is no status, but
             // we don't want to pass that on as the status value.
             unitStatus = units === true ? null : units;
-            id = previousMetadata.id;
+            id = previousInspector.id;
           } else {
             id = serviceId;
           }
           // If the unit doesn't exist then show the list of units.
           if (!unit) {
-            this.props.changeState({
-              sectionA: {
-                component: 'inspector',
-                metadata: {
+            changeState({
+              gui: {
+                inspector: {
                   id: id,
                   activeComponent: 'units',
                   unit: null,
-                  unitStatus: unitStatus
-                }}});
+                  unitStatus: unitStatus}}});
             return {};
           }
           state.activeChild = {
@@ -219,19 +213,17 @@ YUI.add('inspector-component', function() {
                 acl={this.props.acl}
                 destroyUnits={this.props.destroyUnits}
                 service={service}
-                changeState={this.props.changeState}
+                changeState={changeState}
                 unitStatus={unitStatus}
                 previousComponent={previousComponent}
                 unit={unit} />,
             backState: {
-              sectionA: {
-                component: 'inspector',
-                metadata: {
+              gui: {
+                inspector: {
                   id: id,
                   activeComponent: previousComponent || 'units',
                   unit: null,
-                  unitStatus: unitStatus
-                }}}};
+                  unitStatus: unitStatus}}}};
           break;
         case 'scale':
           state.activeChild = {
@@ -243,14 +235,12 @@ YUI.add('inspector-component', function() {
                 serviceId={serviceId}
                 addGhostAndEcsUnits={this.props.addGhostAndEcsUnits}
                 createMachinesPlaceUnits={this.props.createMachinesPlaceUnits}
-                changeState={this.props.changeState} />,
+                changeState={changeState} />,
             backState: {
-              sectionA: {
-                component: 'inspector',
-                metadata: {
+              gui: {
+                inspector: {
                   id: serviceId,
-                  activeComponent: 'units'
-                }}}};
+                  activeComponent: 'units'}}}};
           break;
         case 'config':
           state.activeChild = {
@@ -261,7 +251,7 @@ YUI.add('inspector-component', function() {
                 acl={this.props.acl}
                 service={service}
                 charm={nextProps.charm}
-                changeState={this.props.changeState}
+                changeState={changeState}
                 getYAMLConfig={this.props.getYAMLConfig}
                 updateServiceUnitsDisplayname=
                   {this.props.updateServiceUnitsDisplayname}
@@ -272,12 +262,10 @@ YUI.add('inspector-component', function() {
                 serviceRelations={this.props.serviceRelations}
                 setConfig={nextProps.setConfig} />,
             backState: {
-              sectionA: {
-                component: 'inspector',
-                metadata: {
+              gui: {
+                inspector: {
                   id: serviceId,
-                  activeComponent: undefined
-                }}}};
+                  activeComponent: undefined}}}};
           break;
         case 'expose':
           state.activeChild = {
@@ -286,19 +274,17 @@ YUI.add('inspector-component', function() {
             component:
               <juju.components.InspectorExpose
                 acl={this.props.acl}
-                changeState={this.props.changeState}
+                changeState={changeState}
                 exposeService={this.props.exposeService}
                 unexposeService={this.props.unexposeService}
                 addNotification={this.props.addNotification}
                 service={service}
                 units={service.get('units')} />,
             backState: {
-              sectionA: {
-                component: 'inspector',
-                metadata: {
+              gui: {
+                inspector: {
                   id: serviceId,
-                  activeComponent: undefined
-                }}}};
+                  activeComponent: undefined}}}};
           break;
         case 'relations':
           state.activeChild = {
@@ -310,17 +296,15 @@ YUI.add('inspector-component', function() {
                 service={service}
                 destroyRelations={this.props.destroyRelations}
                 serviceRelations={this.props.serviceRelations}
-                changeState={this.props.changeState} />,
+                changeState={changeState} />,
             backState: {
-              sectionA: {
-                component: 'inspector',
-                metadata: {
+              gui: {
+                inspector: {
                   id: serviceId,
-                  activeComponent: undefined
-                }}}};
+                  activeComponent: undefined}}}};
           break;
         case 'relation':
-          var relationIndex = metadata.relation;
+          var relationIndex = nextProps.current.inspector.relation;
           var relation = this.props.serviceRelations[relationIndex];
           var serviceName = relation.far.serviceName;
           var relationName = relation.far.name;
@@ -331,39 +315,33 @@ YUI.add('inspector-component', function() {
               <juju.components.InspectorRelationDetails
                 relation={relation} />,
             backState: {
-              sectionA: {
-                component: 'inspector',
-                metadata: {
+              gui: {
+                inspector: {
                   id: serviceId,
-                  activeComponent: 'relations'
-                }}}};
+                  activeComponent: 'relations'}}}};
           break;
         case 'relate-to':
-          var spouse = metadata['relate-to'];
-          var backState = {
-            sectionA: {
-              component: 'inspector',
-              metadata: {
-                id: serviceId,
-                activeComponent: 'relations'
-              }}};
+          const spouse = nextProps.current.inspector['relate-to'];
           if (typeof serviceId === 'string' && typeof spouse === 'string') {
             state.activeChild = {
               title: this.props.getServiceById(spouse).get('name'),
               icon: service.get('icon'),
               component:
                 <juju.components.InspectorRelateToEndpoint
-                  backState={backState}
+                  backState={{
+                    gui: {
+                      inspector: {
+                        id: serviceId,
+                        activeComponent: 'relations'}}}}
                   createRelation={this.props.createRelation}
                   endpoints={this.props.getAvailableEndpoints(
                     service, this.props.getServiceById(spouse))}
-                  changeState={this.props.changeState} />,
+                  changeState={changeState} />,
               backState: {
-                component: 'inspector',
-                metadata: {
-                  id: serviceId,
-                  activeComponent: 'relate-to'
-                }}};
+                gui: {
+                  inspector: {
+                    id: serviceId,
+                    activeComponent: 'relate-to'}}}};
             break;
           }
           state.activeChild = {
@@ -371,7 +349,7 @@ YUI.add('inspector-component', function() {
             icon: service.get('icon'),
             component:
               <juju.components.InspectorRelateTo
-              changeState={this.props.changeState}
+              changeState={changeState}
               application={service}
               relatableApplications={this.props.relatableApplications}/>,
             backState: backState
@@ -384,7 +362,7 @@ YUI.add('inspector-component', function() {
             component:
               <juju.components.InspectorChangeVersion
                 acl={this.props.acl}
-                changeState={this.props.changeState}
+                changeState={changeState}
                 addNotification={this.props.addNotification}
                 charmId={service.get('charm')}
                 service={service}
@@ -394,12 +372,10 @@ YUI.add('inspector-component', function() {
                 getCharm={this.props.getCharm}
                 getAvailableVersions={this.props.getAvailableVersions} />,
             backState: {
-              sectionA: {
-                component: 'inspector',
-                metadata: {
+              gui: {
+                inspector: {
                   id: serviceId,
-                  activeComponent: undefined
-                }}}};
+                  activeComponent: undefined}}}};
           break;
         case 'resources':
           state.activeChild = {
@@ -411,12 +387,10 @@ YUI.add('inspector-component', function() {
                 charmId={service.get('charm')}
                 getResources={this.props.getResources} />,
             backState: {
-              sectionA: {
-                component: 'inspector',
-                metadata: {
+              gui: {
+                inspector: {
                   id: serviceId,
-                  activeComponent: undefined
-                }}}};
+                  activeComponent: undefined}}}};
           break;
         case 'plan':
           state.activeChild = {
@@ -427,12 +401,10 @@ YUI.add('inspector-component', function() {
                 acl={this.props.acl}
                 currentPlan={this.props.service.get('activePlan')} />,
             backState: {
-              sectionA: {
-                component: 'inspector',
-                metadata: {
+              gui: {
+                inspector: {
                   id: serviceId,
-                  activeComponent: undefined
-                }}}};
+                  activeComponent: undefined}}}};
           break;
       }
       return state;
