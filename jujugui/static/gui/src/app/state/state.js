@@ -139,7 +139,7 @@ const State = class State {
     The object representing the current app state.
     @type {Object}
   */
-  get appState() {
+  get current() {
     return this._appStateHistory[this._appStateHistory.length-1];
   }
 
@@ -351,8 +351,8 @@ const State = class State {
     }
 
     const mergedState = merge(
-      // Clone the appState so we don't end up clobbering old states.
-      merge({}, this.appState), changes);
+      // Clone the current state so we don't end up clobbering old states.
+      merge({}, this.current), changes);
     const purgedState = pruneEmpty(merge({}, mergedState));
 
     this._appStateHistory.push(purgedState);
@@ -441,23 +441,23 @@ const State = class State {
   */
   generatePath() {
     let path = [];
-    const root = this.appState.root;
+    const root = this.current.root;
     if (root) {
       path.push(root);
     }
-    const search = this.appState.search;
+    const search = this.current.search;
     if (search) {
       path = path.concat([PATH_DELIMETERS.get('search'), search]);
     }
-    const user = this.appState.user || this.appState.profile;
+    const user = this.current.user || this.current.profile;
     if (user) {
       path = path.concat([PATH_DELIMETERS.get('user'), user]);
     }
-    const store = this.appState.store;
+    const store = this.current.store;
     if (store) {
       path.push(store);
     }
-    const gui = this.appState.gui;
+    const gui = this.current.gui;
     if (gui) {
       path.push(PATH_DELIMETERS.get('gui'));
       Object.keys(gui).forEach(key => {
