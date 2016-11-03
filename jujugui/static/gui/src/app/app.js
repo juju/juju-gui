@@ -209,7 +209,8 @@ YUI.add('juju-gui', function(Y) {
 
       'S-d': {
         callback: function(evt) {
-          views.utils.exportEnvironmentFile(this.db);
+          views.utils.exportEnvironmentFile(
+            this.db, this.env.findFacadeVersion('Application') === null);
         },
         help: 'Export the model',
         label: 'Shift + d'
@@ -1109,6 +1110,10 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderDeployment: function(metadata) {
       const env = this.env;
+      const db = this.db;
+      const modelName = db.environment.get('name');
+      const modelCommitted = env.get('connected');
+      const utils = views.utils;
       const currentChangeSet = env.get('ecs').getCurrentChangeSet();
       if (Object.keys(currentChangeSet).length === 0) {
         // If there are no changes then close the deployment flow. This is to
@@ -1124,11 +1129,22 @@ YUI.add('juju-gui', function(Y) {
         });
         return;
       }
+      const beta = window.flags && window.flags.beta;
+      const displayFlow = metadata && metadata.activeComponent === 'flow';
+      if (beta && !displayFlow && !modelCommitted) {
+        ReactDOM.render(
+          <window.juju.components.DeploymentSignup
+            changeState={this.changeState.bind(this)}
+            exportEnvironmentFile={
+              utils.exportEnvironmentFile.bind(utils, db,
+                env.findFacadeVersion('Application') === null)}
+            modelName={modelName} />,
+          document.getElementById('deployment-container'));
+        return;
+      }
       const changesUtils = this.changesUtils;
       const controllerAPI = this.controllerAPI;
-      const db = this.db;
       const services = db.services;
-      const utils = views.utils;
       // Auto place the units. This is probably not the best UX, but is required
       // to display the machines in the deployment flow.
       this._autoPlaceUnits();
@@ -1167,8 +1183,8 @@ YUI.add('juju-gui', function(Y) {
           listClouds={
             controllerAPI && controllerAPI.listClouds.bind(controllerAPI)}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
-          modelCommitted={env.get('connected')}
-          modelName={db.environment.get('name')}
+          modelCommitted={modelCommitted}
+          modelName={modelName}
           region={env.get('region')}
           servicesGetById={services.getById.bind(services)}
           updateCloudCredential={
@@ -2778,6 +2794,7 @@ YUI.add('juju-gui', function(Y) {
     'charmbrowser-component',
     'deployment-bar',
     'deployment-flow',
+    'deployment-signup',
     'env-size-display',
     'header-breadcrumb',
     'import-export',
