@@ -186,7 +186,7 @@ const State = class State {
     let error, state;
     ({error, state} = this.generateState(this.location.href));
     if (error !== null) {
-      error += `unable to generate state: ${error}`;
+      error += ` unable to generate state: ${error}`;
       return {error, state};
     }
 
@@ -222,7 +222,6 @@ const State = class State {
     extract(state).forEach(key => {
       this._dispatch(state, key);
     });
-
     return {error: null, state};
   }
 
@@ -258,7 +257,7 @@ const State = class State {
     // Recurse up the dispatcher tree to find matching dispatchers.
     const dispatchers = findDispatchers(key, this._dispatchers);
     if (!dispatchers) {
-      console.error('No dispatcher found for key:', key);
+      console.warn('No dispatcher found for key:', key);
       return;
     }
     const iterator = dispatchers[Symbol.iterator]();
@@ -357,7 +356,10 @@ const State = class State {
 
     this._appStateHistory.push(purgedState);
     this._pushState();
-    this.dispatch(nullKeys, false);
+    let {error} = this.dispatch(nullKeys, false);
+    if (error !== null) {
+      console.error(error);
+    }
   }
 
   /**
