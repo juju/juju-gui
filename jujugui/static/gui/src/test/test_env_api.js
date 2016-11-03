@@ -127,7 +127,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         GUIToken: [46, 47],
         ModelConfig: [41, 42],
         ModelManager: [2],
-        Pinger: [42]
+        Pinger: [42],
+        Resources: [4, 7]
       });
       env.set('modelUUID', 'this-is-a-uuid');
       this._cleanups.push(env.close.bind(env));
@@ -1296,6 +1297,222 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.msg({'request-id': 1, error: 'bad wolf'});
       assert.strictEqual(url, 'wily/django-42');
       assert.strictEqual(err, 'bad wolf');
+    });
+
+    describe('addPendingResources', function() {
+      it('uploads resources', done => {
+        // Perform the request.
+        const resources = [
+          {Name: 'res1', File: 'res1.tgz'},
+          {Name: 'res2', File: 'res2.tgz'}
+        ];
+        env.addPendingResources({
+          applicationName: 'wordpress',
+          charmURL: 'wordpress-42',
+          channel: 'stable',
+          resources: resources
+        }, (err, ids) => {
+          assert.strictEqual(err, null);
+          assert.deepEqual(ids, {res1: 'id-res-1', res2: 'id-res-2'});
+          assert.strictEqual(conn.messages.length, 1);
+          const msg = conn.last_message();
+          assert.deepEqual(msg, {
+            type: 'Resources',
+            version: 7,
+            request: 'AddPendingResources',
+            params: {
+              tag: 'application-wordpress',
+              url: 'wordpress-42',
+              channel: 'stable',
+              resources: [{
+                Name: 'res1', File: 'res1.tgz', Origin: 'store'
+              }, {
+                Name: 'res2', File: 'res2.tgz', Origin: 'store'
+              }]
+            },
+            'request-id': 1
+          });
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {'pending-ids': ['id-res-1', 'id-res-2']}
+        });
+      });
+
+      it('uploads a single resource', done => {
+        // Perform the request.
+        env.addPendingResources({
+          applicationName: 'hap',
+          charmURL: 'cs:xenial/haproxy-47',
+          channel: 'beta',
+          resources: [{Name: 'myres', File: 'myres.tar.bz2'}]
+        }, (err, ids) => {
+          assert.strictEqual(err, null);
+          assert.deepEqual(ids, {myres: 'id-res-1'});
+          assert.strictEqual(conn.messages.length, 1);
+          const msg = conn.last_message();
+          assert.deepEqual(msg, {
+            type: 'Resources',
+            version: 7,
+            request: 'AddPendingResources',
+            params: {
+              tag: 'application-hap',
+              url: 'cs:xenial/haproxy-47',
+              channel: 'beta',
+              resources: [{
+                Name: 'myres', File: 'myres.tar.bz2', Origin: 'store'
+              }]
+            },
+            'request-id': 1
+          });
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {'pending-ids': ['id-res-1']}
+        });
+      });
+
+      it('uploads resources with origin', done => {
+        // Perform the request.
+        env.addPendingResources({
+          applicationName: 'haproxy',
+          charmURL: 'xenial/haproxy-47',
+          resources: [{Name: 'myres', File: 'myres.tar.bz2', Origin: 'Vulcan'}]
+        }, (err, ids) => {
+          assert.strictEqual(err, null);
+          assert.deepEqual(ids, {myres: 'id-res-vulcan'});
+          assert.strictEqual(conn.messages.length, 1);
+          const msg = conn.last_message();
+          assert.deepEqual(msg, {
+            type: 'Resources',
+            version: 7,
+            request: 'AddPendingResources',
+            params: {
+              tag: 'application-haproxy',
+              url: 'xenial/haproxy-47',
+              channel: 'stable',
+              resources: [{
+                Name: 'myres', File: 'myres.tar.bz2', Origin: 'Vulcan'
+              }]
+            },
+            'request-id': 1
+          });
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {'pending-ids': ['id-res-vulcan']}
+        });
+      });
+
+      it('fails when no application name is provided', done => {
+        // Perform the request.
+        const args = {
+          charmURL: 'cs:xenial/haproxy-47',
+          channel: 'beta',
+          resources: [{Name: 'myres', File: 'myres.tar.bz2'}]
+        };
+        env.addPendingResources(args, (err, ids) => {
+          assert.equal(err, 'invalid arguments: ' + JSON.stringify(args));
+          assert.deepEqual(ids, {});
+          done();
+        });
+      });
+
+      it('fails when no charm URL is provided', done => {
+        // Perform the request.
+        const args = {
+          applicationName: 'wordpress',
+          charmURL: '',
+          channel: 'candidate',
+          resources: [{Name: 'myres', File: 'myres.tar.bz2'}]
+        };
+        env.addPendingResources(args, (err, ids) => {
+          assert.equal(err, 'invalid arguments: ' + JSON.stringify(args));
+          assert.deepEqual(ids, {});
+          done();
+        });
+      });
+
+      it('fails when no resources are provided', done => {
+        // Perform the request.
+        const args = {
+          applicationName: 'wordpress',
+          charmURL: 'wordpress-42',
+          resources: []
+        };
+        env.addPendingResources(args, (err, ids) => {
+          assert.equal(err, 'invalid arguments: ' + JSON.stringify(args));
+          assert.deepEqual(ids, {});
+          done();
+        });
+      });
+
+      it('fails when invalid resources are provided', done => {
+        // Perform the request.
+        env.addPendingResources({
+          applicationName: 'wordpress',
+          charmURL: 'wordpress-42',
+          resources: [{File: 'bad'}]
+        }, (err, ids) => {
+          assert.equal(err, 'resource without name: [{"File":"bad"}]');
+          assert.deepEqual(ids, {});
+          done();
+        });
+      });
+
+      it('handles global failures while adding resources', done => {
+        // Perform the request.
+        env.addPendingResources({
+          applicationName: 'redis',
+          charmURL: 'redis-0',
+          resources: [{Name: 'red', File: 'red.tgz'}]
+        }, (err, ids) => {
+          assert.strictEqual(err, 'bad wolf');
+          assert.deepEqual(ids, {});
+          done();
+        });
+        // Mimic response.
+        conn.msg({'request-id': 1, error: 'bad wolf'});
+      });
+
+      it('handles local failures while adding resources', done => {
+        // Perform the request.
+        env.addPendingResources({
+          applicationName: 'redis',
+          charmURL: 'redis-0',
+          resources: [{Name: 'red', File: 'red.tgz'}]
+        }, (err, ids) => {
+          assert.strictEqual(err, 'bad wolf');
+          assert.deepEqual(ids, {});
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {error: {message: 'bad wolf'}}
+        });
+      });
+
+      it('handles unexpected failures while adding resources', done => {
+        // Perform the request.
+        env.addPendingResources({
+          applicationName: 'redis',
+          charmURL: 'redis-0',
+          resources: [{Name: 'red', File: 'red.tgz'}]
+        }, (err, ids) => {
+          assert.strictEqual(err, 'unexpected response: {"pending-ids":[]}');
+          assert.deepEqual(ids, {});
+          done();
+        });
+        // Mimic response.
+        conn.msg({'request-id': 1, response: {'pending-ids': []}});
+      });
     });
 
     describe('setCharm', function() {

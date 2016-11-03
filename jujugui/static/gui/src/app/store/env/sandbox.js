@@ -186,7 +186,8 @@ YUI.add('juju-env-sandbox', function(Y) {
     {name: 'Client', versions: [1]},
     {name: 'Cloud', versions: [1]},
     {name: 'ModelManager', versions: [2]},
-    {name: 'Pinger', versions: [1]}
+    {name: 'Pinger', versions: [1]},
+    {name: 'Resources', versions: [1]}
   ];
 
   /**
@@ -840,6 +841,27 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleClientAddCharmWithAuthorization: function(data, client, state) {
       this.handleClientAddCharm(data, client, state);
+    },
+
+    /**
+    Handle Resources.AddPendingResources messages.
+
+    @method handleApplicationDeploy
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleResourcesAddPendingResources: function(data, client, state) {
+      // In sandbox mode there is no need for adding charm resources before
+      // simulating charm deployments.
+      const ids = data.params.resources.map(resource => {
+        return resource.Name + '-pending-id';
+      });
+      client.receive({
+        'request-id': data['request-id'],
+        response: {'pending-ids': ids}
+      });
     },
 
     /**

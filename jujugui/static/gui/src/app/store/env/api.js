@@ -1076,6 +1076,115 @@ YUI.add('juju-env-api', function(Y) {
     },
 
     /**
+      Sends the provided resource info up to Juju without making it available
+      yet.
+
+      This is required to be called before deploying charms requiring
+      resources. The resource identifiers passed to the callback must then be
+      used when calling deploy. Like this:
+
+        const resources = [
+          // Retrieve resources from charmstore, for instance from
+          // https://api.jujucharms.com/charmstore/v5/$id/meta/resources
+        ];
+        model.addPendingResources({
+          applicationName: 'wordpress',
+          charmURL: 'wordpress-42',
+          channel: 'stable',
+          resources: resources
+        }, (err, ids) => {
+          if (err) {
+            // Handle error.
+            return;
+          }
+          model.deploy({
+            applicationName: 'wordpress',
+            charmURL: 'wordpress-42',
+            resources: ids
+          }, deployCallback);
+        });
+
+      @method addPendingResources
+      @param {Object} args The arguments required to make the call, including:
+        - applicationName: the name of the application to be associated with
+          the resources;
+        - charmURL: the URL of the charm, as a string;
+        - resources: an array of resources, for instance as returned by the
+          "$id/meta.resources" charm store endpoint;
+        - channel: optional charm store channel name, defaulting to "stable".
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive two arguments:
+        - an error message if an error occurred in the process, or null if
+          everything went well;
+        - an object mapping resource names with pending resource identifiers,
+          or an empty object if the operation failed. The returned map can be
+          used as is in the "resources" argument of the deploy call.
+    */
+    addPendingResources: function(args, callback) {
+      // Validate the arguments.
+      const resources = args.resources;
+      if (!(
+        args.applicationName &&
+        args.charmURL &&
+        resources &&
+        resources.length
+      )) {
+        callback('invalid arguments: ' + JSON.stringify(args), {});
+        return;
+      }
+      for (let i = 0; i < resources.length; i++) {
+        let resource = resources[i];
+        if (!resource.Name) {
+          callback('resource without name: ' + JSON.stringify(resources), {});
+          return;
+        }
+        if (!resource.Origin) {
+          resource.Origin = 'store';
+        }
+      }
+
+      // Decorate the user supplied callback.
+      const handler = data => {
+        if (!callback) {
+          console.log('data returned by addPendingResources API call:', data);
+          return;
+        }
+        if (data.error) {
+          callback(data.error, {});
+          return;
+        }
+        const response = data.response;
+        if (response.error) {
+          callback(response.error.message, {});
+          return;
+        }
+        if (response['pending-ids'].length !== resources.length) {
+          // This should never happen.
+          callback('unexpected response: ' + JSON.stringify(response), {});
+          return;
+        }
+        const ids = response['pending-ids'].reduce((prev, curr, index) => {
+          const resource = resources[index];
+          prev[resource.Name] = curr;
+          return prev;
+        }, {});
+        callback(null, ids);
+      };
+
+      // Send the API request.
+      this._send_rpc({
+        type: 'Resources',
+        request: 'AddPendingResources',
+        params: {
+          tag: tags.build(tags.APPLICATION, args.applicationName),
+          url: args.charmURL,
+          channel: args.channel || 'stable',
+          resources: resources
+        },
+      }, handler);
+    },
+
+    /**
       Calls the environment's _deploy method or creates a new deploy record in
       the ECS queue.
 

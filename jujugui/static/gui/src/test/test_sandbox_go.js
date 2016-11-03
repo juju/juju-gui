@@ -1407,6 +1407,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }, {immediate: true});
     });
 
+    describe('Resources facade', function() {
+      it('adds pending resources', function(done) {
+        const resources = [
+          {Name: 'res1', File: 'res1.tgz'},
+          {Name: 'res2', File: 'res2.tgz'}
+        ];
+        env.connect();
+        env.addPendingResources({
+          applicationName: 'wordpress',
+          charmURL: 'wordpress-42',
+          channel: 'stable',
+          resources: resources
+        }, (err, ids) => {
+          assert.strictEqual(err, null);
+          assert.deepEqual(ids, {
+            res1: 'res1-pending-id',
+            res2: 'res2-pending-id'
+          });
+          done();
+        });
+      });
+    });
+
     describe('Cloud facade', function() {
       it('can list available clouds', function(done) {
         client.onmessage = function(received) {
