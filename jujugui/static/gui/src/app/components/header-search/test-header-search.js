@@ -34,13 +34,13 @@ describe('HeaderSearch', function() {
 
   beforeEach(function() {
     appState = {
-      appState: {},
+      current: {},
       changeState: sinon.stub()
     };
   });
 
   it('sets the active class if there is search metadata', function() {
-    appState.appState.search = 'apache2';
+    appState.current.search = 'apache2';
     var className = 'header-search header-search--active';
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
@@ -78,7 +78,7 @@ describe('HeaderSearch', function() {
   });
 
   it('gets cleared when closed', function() {
-    appState.appState.search = 'hexo';
+    appState.current.search = 'hexo';
     var renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
         appState={appState} />, true);
@@ -93,7 +93,7 @@ describe('HeaderSearch', function() {
     var input = output.props.children[0].props.children[1];
     assert.equal(input.props.value, 'hexo');
     // re-render which will get the new state.
-    delete appState.appState.search;
+    delete appState.current.search;
     renderer.render(
       <juju.components.HeaderSearch
         appState={appState} />, true);
@@ -108,7 +108,7 @@ describe('HeaderSearch', function() {
   });
 
   it('does not clear the search when rerendering', function() {
-    appState.appState.search = 'hexo';
+    appState.current.search = 'hexo';
     var renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
         appState={appState} />, true);
@@ -177,7 +177,7 @@ describe('HeaderSearch', function() {
   });
 
   it('searches when clicking search button if the input is open', function() {
-    appState.appState = {
+    appState.current = {
       search: 'apache2',
       activeComponent: 'store'
     };
