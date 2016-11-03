@@ -37,7 +37,7 @@ describe('EnvSizeDisplay', function() {
 
   beforeEach(function() {
     appState = {
-      appState: {
+      current: {
         gui: {
           machine: true
         }
@@ -125,8 +125,8 @@ describe('EnvSizeDisplay', function() {
         machines: ''
       }
     });
-    delete appState.appState.gui.machine;
-    appState.appState.gui.application = true;
+    delete appState.current.gui.machine;
+    appState.current.gui.application = true;
     testUtils.Simulate.click(serviceLink);
     assert.notEqual(
         queryComponentSelector(

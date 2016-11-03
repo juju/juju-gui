@@ -36,14 +36,14 @@ describe('Charmbrowser', function() {
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
     appState = {
-      appState: {},
+      current: {},
       changeState: sinon.stub()
     };
   });
 
   it('displays the search results when the app state calls for it', function() {
     var query = 'django';
-    appState.appState.search = query;
+    appState.current.search = query;
     var series = {};
     var charmstoreSearch = sinon.stub();
     var makeEntityModel = sinon.spy();
@@ -150,7 +150,7 @@ describe('Charmbrowser', function() {
   it('displays entity details when the app state calls for it', function() {
     var id = 'foobar';
     var apiUrl = 'http://example.com';
-    appState.appState.store = id;
+    appState.current.store = id;
     var getEntity = sinon.spy();
     var makeEntityModel = sinon.spy();
     var deployService = sinon.spy();
