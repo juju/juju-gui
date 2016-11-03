@@ -25,25 +25,26 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('HeaderSearch', function() {
+  let appState;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('header-search', function() { done(); });
   });
 
+  beforeEach(function() {
+    appState = {
+      appState: {},
+      changeState: sinon.stub()
+    };
+  });
+
   it('sets the active class if there is search metadata', function() {
-    var getAppState = sinon.stub();
-    var changeState = sinon.stub();
-    getAppState.withArgs('current', 'sectionC', 'metadata').returns({
-      search: 'apache2'
-    });
-    getAppState.withArgs('current', 'sectionC', 'component').returns(
-      'charmbrowser');
+    appState.appState.search = 'apache2';
     var className = 'header-search header-search--active';
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
-        getAppState={getAppState}
-        changeState={changeState} />);
+        appState={appState} />);
     assert.deepEqual(output,
       <div className={className} ref="headerSearchContainer">
         {output.props.children}
@@ -51,13 +52,9 @@ describe('HeaderSearch', function() {
   });
 
   it('hides the close button when not active', function() {
-    var getAppState = sinon.stub();
-    var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
-        getAppState={getAppState}
-        changeState={changeState}
-        active={false} />);
+        appState={appState} />);
     assert.deepEqual(output.props.children[2],
       <span tabIndex="0" role="button"
         className="header-search__close hidden"
@@ -68,41 +65,23 @@ describe('HeaderSearch', function() {
   });
 
   it('changes state when the close button is clicked', function() {
-    var getAppState = sinon.stub();
-    getAppState.withArgs(
-      'current', 'sectionC', 'component').returns('charmbrowser');
-    getAppState.withArgs(
-      'current', 'sectionC', 'metadata').returns(undefined);
-    var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
-        getAppState={getAppState}
-        changeState={changeState} />);
+        appState={appState} />);
     output.props.children[2].props.onClick();
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: null,
-        metadata: null
-      }
+    assert.equal(appState.changeState.callCount, 1);
+    assert.deepEqual(appState.changeState.args[0][0], {
+      root: null,
+      store: null,
+      search: null
     });
   });
 
   it('gets cleared when closed', function() {
-    var getAppState = sinon.stub();
-    getAppState.withArgs(
-      'current', 'sectionC', 'component').onFirstCall().returns('charmbrowser');
-    getAppState.withArgs(
-      'current', 'sectionC', 'component').onSecondCall().returns(null);
-    getAppState.withArgs('current', 'sectionC', 'metadata')
-               .onFirstCall().returns({ search: 'hexo' });
-    getAppState.withArgs('current', 'sectionC', 'metadata')
-               .onSecondCall().returns({ search: '' });
-    var changeState = sinon.stub();
+    appState.appState.search = 'hexo';
     var renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
-        getAppState={getAppState}
-        changeState={changeState} />, true);
+        appState={appState} />, true);
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
     instance.refs = {
@@ -114,10 +93,10 @@ describe('HeaderSearch', function() {
     var input = output.props.children[0].props.children[1];
     assert.equal(input.props.value, 'hexo');
     // re-render which will get the new state.
+    delete appState.appState.search;
     renderer.render(
       <juju.components.HeaderSearch
-        getAppState={getAppState}
-        changeState={changeState} />, true);
+        appState={appState} />, true);
     output = renderer.getRenderOutput();
     // It should be emptied out when metadata.search is undefined.
     input = output.props.children[0].props.children[1];
@@ -129,18 +108,10 @@ describe('HeaderSearch', function() {
   });
 
   it('does not clear the search when rerendering', function() {
-    var getAppState = sinon.stub();
-    getAppState.withArgs(
-      'current', 'sectionC', 'component').returns('charmbrowser');
-    getAppState.withArgs('current', 'sectionC', 'metadata')
-               .onFirstCall().returns({ search: 'hexo' });
-    getAppState.withArgs('current', 'sectionC', 'metadata')
-               .onSecondCall().returns({ search: '' });
-    var changeState = sinon.stub();
+    appState.appState.search = 'hexo';
     var renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
-        getAppState={getAppState}
-        changeState={changeState} />, true);
+        appState={appState} />, true);
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
     instance.refs = {
@@ -154,21 +125,16 @@ describe('HeaderSearch', function() {
     // re-render which will get the new state.
     renderer.render(
       <juju.components.HeaderSearch
-        getAppState={getAppState}
-        changeState={changeState} />, true);
+        appState={appState} />, true);
     output = renderer.getRenderOutput();
     input = output.props.children[0].props.children[1];
     assert.equal(input.props.value, 'hexo');
   });
 
   it('becomes active when the input is focused', function() {
-    var getAppState = sinon.stub();
-    var changeState = sinon.stub();
     var output = testUtils.renderIntoDocument(
       <juju.components.HeaderSearch
-        getAppState={getAppState}
-        changeState={changeState}
-        active={true} />);
+        appState={appState} />);
     var input = output.refs.searchInput;
     testUtils.Simulate.focus(input);
     assert.isTrue(
@@ -177,40 +143,29 @@ describe('HeaderSearch', function() {
   });
 
   it('navigates to the store when the Store button is clicked', function() {
-    var getAppState = sinon.stub();
-    var changeState = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
-        getAppState={getAppState}
-        changeState={changeState} />);
+        appState={appState} />);
     output.props.children[1].props.onClick();
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'store'
-        }
-      }
+    assert.equal(appState.changeState.callCount, 1);
+    assert.deepEqual(appState.changeState.args[0][0], {
+      root: 'store'
     });
   });
 
   it('opens the search input if the search button is clicked', function() {
-    var getAppState = sinon.stub();
-    var changeState = sinon.stub();
     var focus = sinon.stub();
     var preventDefault = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
-        getAppState={getAppState}
-        changeState={changeState} />, true);
+        appState={appState} />, true);
     var instance = renderer.getMountedInstance();
     instance.refs = {searchInput: {focus: focus}};
     var output = renderer.getRenderOutput();
     output.props.children[0].props.children[0].props.onClick({
       preventDefault: preventDefault
     });
-    assert.equal(changeState.callCount, 0);
+    assert.equal(appState.changeState.callCount, 0);
     assert.equal(focus.callCount, 1);
     assert.equal(preventDefault.callCount, 1);
     output = renderer.getRenderOutput();
@@ -222,15 +177,13 @@ describe('HeaderSearch', function() {
   });
 
   it('searches when clicking search button if the input is open', function() {
-    var getAppState = sinon.stub().returns({
+    appState.appState = {
       search: 'apache2',
       activeComponent: 'store'
-    });
-    var changeState = sinon.stub();
+    };
     var renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
-        getAppState={getAppState}
-        changeState={changeState} />, true);
+        appState={appState} />, true);
     var instance = renderer.getMountedInstance();
     instance.refs = {searchInput: {focus: sinon.stub()}};
     instance.state.active = true;
@@ -238,15 +191,10 @@ describe('HeaderSearch', function() {
     output.props.children[0].props.children[0].props.onClick({
       preventDefault: sinon.stub()
     });
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'search-results',
-          search: 'apache2'
-        }
-      }
+    assert.equal(appState.changeState.callCount, 1);
+    assert.deepEqual(appState.changeState.args[0][0], {
+      root: null,
+      search: 'apache2'
     });
   });
 });
