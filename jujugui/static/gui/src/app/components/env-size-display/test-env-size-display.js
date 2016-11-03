@@ -28,10 +28,22 @@ function queryComponentSelector(component, selector, all) {
 }
 
 describe('EnvSizeDisplay', function() {
+  let appState;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
     YUI().use('env-size-display', function() { done(); });
+  });
+
+  beforeEach(function() {
+    appState = {
+      appState: {
+        gui: {
+          machine: true
+        }
+      },
+      changeState: sinon.stub()
+    };
   });
 
   it('shows applications and machines count', function() {
@@ -40,8 +52,7 @@ describe('EnvSizeDisplay', function() {
     pluralize.withArgs('machine').returns('machines');
     var component = renderIntoDocument(
         <juju.components.EnvSizeDisplay
-          changeState={sinon.stub()}
-          getAppState={function() {}}
+          appState={appState}
           machineCount={4}
           pluralize={pluralize}
           serviceCount={3} />);
@@ -54,18 +65,12 @@ describe('EnvSizeDisplay', function() {
   });
 
   it('highlights active tab on initial render', function() {
-    var getAppStateStub = sinon.stub();
-    getAppStateStub.returns('machine');
-
     var component = renderIntoDocument(
         <juju.components.EnvSizeDisplay
-          changeState={sinon.stub()}
           serviceCount={3}
           machineCount={4}
-          getAppState={getAppStateStub}
+          appState={appState}
           pluralize={sinon.stub()}  />);
-
-    assert.equal(getAppStateStub.callCount, 1);
     assert.notEqual(
         queryComponentSelector(
             component,
@@ -74,14 +79,11 @@ describe('EnvSizeDisplay', function() {
   });
 
   it('calls to change state when list item is clicked', function() {
-    var changeStateStub = sinon.stub();
-
     var component = renderIntoDocument(
         <juju.components.EnvSizeDisplay
           serviceCount={3}
           machineCount={4}
-          getAppState={function() {}}
-          changeState={changeStateStub}
+          appState={appState}
           pluralize={sinon.stub()}  />);
     var serviceLink = queryComponentSelector(component,
       'a[data-view=application]');
@@ -90,24 +92,21 @@ describe('EnvSizeDisplay', function() {
     testUtils.Simulate.click(machineLink);
     testUtils.Simulate.click(serviceLink);
 
-    assert.equal(changeStateStub.callCount, 2);
-    assert.deepEqual(changeStateStub.getCall(0).args[0], {
-      sectionB: { component: 'machine', metadata: {} }
+    assert.equal(appState.changeState.callCount, 2);
+    assert.deepEqual(appState.changeState.getCall(0).args[0], {
+      gui: {machines: ''}
     });
-    assert.deepEqual(changeStateStub.getCall(1).args[0], {
-      sectionB: { component: null, metadata: {} }
+    assert.deepEqual(appState.changeState.getCall(1).args[0], {
+      gui: {machines: null}
     });
   });
 
   it('highlights the tab which was clicked on', function() {
-    var changeStateStub = sinon.stub();
-
     var component = renderIntoDocument(
         <juju.components.EnvSizeDisplay
           serviceCount={3}
           machineCount={4}
-          getAppState={function() {}}
-          changeState={changeStateStub}
+          appState={appState}
           pluralize={sinon.stub()}  />);
     var serviceLink = queryComponentSelector(component,
       'a[data-view=application]');
@@ -120,7 +119,14 @@ describe('EnvSizeDisplay', function() {
             component,
             '.env-size-display__list-item.is-active a[data-view=machine]'),
             null);
-
+    assert.equal(appState.changeState.callCount, 1);
+    assert.deepEqual(appState.changeState.args[0][0], {
+      gui: {
+        machines: ''
+      }
+    });
+    delete appState.appState.gui.machine;
+    appState.appState.gui.application = true;
     testUtils.Simulate.click(serviceLink);
     assert.notEqual(
         queryComponentSelector(
@@ -128,6 +134,11 @@ describe('EnvSizeDisplay', function() {
             '.env-size-display__list-item.is-active a[data-view=application]'),
             null);
 
-    assert.equal(changeStateStub.callCount, 2);
+    assert.equal(appState.changeState.callCount, 2);
+    assert.deepEqual(appState.changeState.args[0][0], {
+      gui: {
+        machines: ''
+      }
+    });
   });
 });
