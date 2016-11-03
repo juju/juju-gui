@@ -1345,20 +1345,18 @@ YUI.add('juju-gui', function(Y) {
 
     /**
       Renders the Inspector component to the page.
-
-      @method _renderInspector
-      @param {Object} metadata The data to pass to the inspector which tells it
-        how to render.
+      @param {Object} state - The app state.
+      @param {Function} next - Call to continue dispatching.
     */
-    _renderInspector: function(metadata) {
-      var relationUtils = this.relationUtils;
-      var state = this.state;
-      var utils = views.utils;
-      var topo = this.views.environment.instance.topo;
-      var charmstore = this.get('charmstore');
-      var inspector;
-      var service = this.db.services.getById(metadata.id);
-      var localType = metadata.localType;
+    _renderInspector: function(state, next) {
+      const relationUtils = this.relationUtils;
+      const utils = views.utils;
+      const topo = this.views.environment.instance.topo;
+      const charmstore = this.get('charmstore');
+      let inspector = {};
+      const service = this.db.services.getById(state.gui.inspector.id);
+      const inspectorState = this.state.current.gui.inspector;
+      const localType = inspectorState.localType;
       // If the url was provided with a service id which isn't in the localType
       // db then change state back to the added services list. This usually
       // happens if the user tries to visit the inspector of a ghost service
@@ -1381,7 +1379,7 @@ YUI.add('juju-gui', function(Y) {
             envResolved={this.env.resolved.bind(this.env)}
             serviceRelations={
               relationUtils.getRelationDataForService(this.db, service)}
-            addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(
+            addGhostAnlocalTypedEcsUnits={utils.addGhostAndEcsUnits.bind(
                 this, this.db, this.env, service)}
             createMachinesPlaceUnits={utils.createMachinesPlaceUnits.bind(
                 this, this.db, this.env, service)}
@@ -1395,7 +1393,6 @@ YUI.add('juju-gui', function(Y) {
             createRelation={
               relationUtils.createRelation.bind(this, this.db, this.env)}
             getYAMLConfig={utils.getYAMLConfig.bind(this)}
-            changeState={this.changeState.bind(this)}
             exposeService={this.env.expose.bind(this.env)}
             unexposeService={this.env.unexpose.bind(this.env)}
             unplaceServiceUnits={ecs.unplaceServiceUnits.bind(ecs)}
@@ -1418,10 +1415,9 @@ YUI.add('juju-gui', function(Y) {
             getServiceByName=
               {this.db.services.getServiceByName.bind(this.db.services)}
             linkify={utils.linkify}
-            appState={state.get('current')}
-            appPreviousState={state.get('previous')} />
+            appState={this.state} />
         );
-      } else if (localType && metadata.flash && metadata.flash.file) {
+      } else if (localType && inspectorState.file) {
         // When dragging a local charm zip over the canvas it animates the
         // drag over notification which needs to be closed when the inspector
         // is opened.
@@ -1430,7 +1426,7 @@ YUI.add('juju-gui', function(Y) {
         inspector = (
           <window.juju.components.LocalInspector
             acl={this.acl}
-            file={metadata.flash.file}
+            file={inspectorState.file}
             localType={localType}
             services={this.db.services}
             series={utils.getSeriesList()}
@@ -1440,25 +1436,22 @@ YUI.add('juju-gui', function(Y) {
             upgradeServiceUsingLocalCharm={
                 localCharmHelpers.upgradeServiceUsingLocalCharm.bind(
                 this, this.env, this.db)}
-            changeState={this.changeState.bind(this)} />
+            changeState={this.state.changeState.bind(this.state)} />
         );
       } else {
-        this.changeState({
-          sectionA: {
-            component: 'applications',
-            metadata: null
-          }
-        });
+        this.state.changeState({
+          gui: {
+            inspector: null}});
         return;
       }
       ReactDOM.render(
         <window.juju.components.Panel
           instanceName="inspector-panel"
-          visible={true}
-          metadata={metadata}>
+          visible={true}>
           {inspector}
         </window.juju.components.Panel>,
         document.getElementById('inspector-container'));
+      next();
     },
 
     /**
@@ -2043,7 +2036,7 @@ YUI.add('juju-gui', function(Y) {
     */
     _displayLogin: function() {
       this.set('loggedIn', false);
-      const root = this.state.appState.root;
+      const root = this.state.current.root;
       if (!root || root !== 'login') {
         this.state.changeState({
           root: 'login'
@@ -2190,7 +2183,7 @@ YUI.add('juju-gui', function(Y) {
       this.maskVisibility(false);
       this._emptySectionApp();
       this.set('loggedIn', true);
-      if (this.state.appState.root === 'login') {
+      if (this.state.current.root === 'login') {
         this.state.changeState({root: null});
       }
       // Handle token authentication.
@@ -2474,7 +2467,7 @@ YUI.add('juju-gui', function(Y) {
       this._renderZoom();
       this._renderBreadcrumb();
       this._renderHeaderSearch();
-      const gui = this.state.appState.gui;
+      const gui = this.state.current.gui;
       if (!gui || (gui && !gui.inspector)) {
         this._renderAddedServices();
       }

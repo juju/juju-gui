@@ -121,7 +121,8 @@ YUI.add('header-search', function() {
         this.props.appState.changeState({
           root: 'store',
           gui: {
-            machines: null
+            machines: null,
+            inspector: null
           }
         });
       }
