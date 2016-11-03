@@ -1379,7 +1379,7 @@ YUI.add('juju-gui', function(Y) {
             envResolved={this.env.resolved.bind(this.env)}
             serviceRelations={
               relationUtils.getRelationDataForService(this.db, service)}
-            addGhostAnlocalTypedEcsUnits={utils.addGhostAndEcsUnits.bind(
+            addGhostAndEcsUnits={utils.addGhostAndEcsUnits.bind(
                 this, this.db, this.env, service)}
             createMachinesPlaceUnits={utils.createMachinesPlaceUnits.bind(
                 this, this.db, this.env, service)}
