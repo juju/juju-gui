@@ -1076,8 +1076,8 @@ YUI.add('juju-env-api', function(Y) {
     },
 
     /**
-      AddPendingResources sends the provided resource info up to Juju without
-      making it available yet.
+      Sends the provided resource info up to Juju without making it available
+      yet.
 
       This is required to be called before deploying charms requiring
       resources. The resource identifiers passed to the callback must then be
@@ -1104,7 +1104,7 @@ YUI.add('juju-env-api', function(Y) {
           }, deployCallback);
         });
 
-      @method AddPendingResources
+      @method addPendingResources
       @param {Object} args The arguments required to make the call, including:
         - applicationName: the name of the application to be associated with
           the resources;
