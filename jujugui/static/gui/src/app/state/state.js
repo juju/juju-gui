@@ -136,7 +136,7 @@ const State = class State {
   }
 
   /**
-    The object representing the current app state.
+    The geteter representing the current app state.
     @type {Object}
   */
   get current() {
@@ -144,7 +144,7 @@ const State = class State {
   }
 
   /**
-    The object representing the application history.
+    The getter representing the application history.
     @type {Array}
   */
   get history() {
