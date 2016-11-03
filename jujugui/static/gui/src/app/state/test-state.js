@@ -380,6 +380,16 @@ describe('State', () => {
       state._appStateHistory.push('step2');
       assert.equal(state.appState, 'step2');
     });
+
+    it('has a public accessor', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList: ['trusty']
+      });
+      state._appStateHistory.push('step1');
+      state._appStateHistory.push('step2');
+      assert.deepEqual(state.history, ['step1', 'step2']);
+    });
   });
 
   describe('State._getCleanPath()', () => {
