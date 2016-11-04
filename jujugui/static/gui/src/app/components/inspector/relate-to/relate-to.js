@@ -37,13 +37,12 @@ YUI.add('inspector-relate-to', function() {
     */
     _relateToItemAction: function(e) {
       this.props.changeState({
-        sectionA: {
-          component: 'inspector',
-          metadata: {
+        gui: {
+          inspector: {
             // Application from Id
             id: this.props.application.get('id'),
             // Application to Id
-            spouse: e.currentTarget.getAttribute('data-id'),
+            'relate-to': e.currentTarget.getAttribute('data-id'),
             activeComponent: 'relate-to'
           }
         }
