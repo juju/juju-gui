@@ -25,7 +25,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('Inspector', function() {
-  var acl;
+  var acl, appState;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -34,6 +34,23 @@ describe('Inspector', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    appState = {
+      current: {
+        gui: {
+          inspector: {}
+        }
+      },
+      changeState: sinon.stub(),
+      history: [{
+        gui: {
+          inspector: {}
+        }
+      }, {
+        gui: {
+          inspector: {}
+        }
+      }]
+    };
   });
 
   it('displays the service overview for the "inspector" state', function() {
@@ -46,11 +63,6 @@ describe('Inspector', function() {
     var service = {
       get: getStub
     };
-    var appState = {
-      sectionA: {
-        metadata: {}
-      }};
-    var changeState = sinon.stub();
     var clearState = sinon.stub();
     var destroyService = sinon.stub();
     var getUnitStatusCounts = sinon.stub();
@@ -62,9 +74,7 @@ describe('Inspector', function() {
           addCharm={sinon.stub()}
           addGhostAndEcsUnits={sinon.stub()}
           addNotification={sinon.stub()}
-          appPreviousState={{}}
           appState={appState}
-          changeState={changeState}
           charm={{}}
           clearState={clearState}
           createMachinesPlaceUnits={sinon.stub()}
@@ -108,10 +118,11 @@ describe('Inspector', function() {
     );
     assert.deepEqual(header, expectedHeader,
                      'Header is not rendered as expected');
+    const overview = output.props.children[1].props.children;
     var expectedOverview = (
         <juju.components.ServiceOverview
           acl={acl}
-          changeState={changeState}
+          changeState={overview.props.changeState}
           charm={{}}
           clearState={clearState}
           destroyService={destroyService}
@@ -121,14 +132,12 @@ describe('Inspector', function() {
           service={service}
           serviceRelations={serviceRelations}
           showActivePlan={showActivePlan} />);
-    var overview = output.props.children[1].props.children;
     assert.deepEqual(overview, expectedOverview,
                      'Overview is not rendered as expected');
   });
 
   it('displays the unit list when the app state calls for it', function() {
     var envResolved = sinon.stub();
-    var changeStateStub = sinon.stub();
     var destroyUnits = sinon.stub();
     var unitStatus = 'error';
     var getStub = sinon.stub();
@@ -141,21 +150,17 @@ describe('Inspector', function() {
     var service = {
       get: getStub
     };
-    var appState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'units',
-          units: unitStatus
-        }}};
+    appState.current.gui.inspector = {
+      activeComponent: 'units',
+      units: unitStatus
+    };
     var component = jsTestUtils.shallowRender(
         <juju.components.Inspector
           acl={acl}
           addCharm={sinon.stub()}
           addGhostAndEcsUnits={sinon.stub()}
           addNotification={sinon.stub()}
-          appPreviousState={{}}
           appState={appState}
-          changeState={changeStateStub}
           charm={{}}
           clearState={sinon.stub()}
           createMachinesPlaceUnits={sinon.stub()}
@@ -192,7 +197,7 @@ describe('Inspector', function() {
     var expectedHeader = (
       <juju.components.InspectorHeader
         backCallback={instance._backCallback}
-        activeComponent={appState.sectionA.metadata.activeComponent}
+        activeComponent='units'
         type={unitStatus}
         count={0}
         title='Units'
@@ -211,7 +216,7 @@ describe('Inspector', function() {
           units={[]}
           envResolved={envResolved}
           destroyUnits={destroyUnits}
-          changeState={changeStateStub} />);
+          changeState={children.props.changeState} />);
   });
 
   it('displays the configuration when the app state calls for it', function() {
@@ -219,7 +224,6 @@ describe('Inspector', function() {
     var getStub = sinon.stub();
     var icon = 'foo.png';
     getStub.withArgs('icon').returns(icon);
-    var changeState = sinon.stub();
     var getYAMLConfig = sinon.stub();
     var updateServiceUnitsDisplayname = sinon.stub();
     var getServiceByName = sinon.stub();
@@ -229,11 +233,9 @@ describe('Inspector', function() {
     var service = {
       get: getStub
     };
-    var appState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'config'
-        }}};
+    appState.current.gui.inspector = {
+      activeComponent: 'config'
+    };
     var charm = {};
     var component = jsTestUtils.shallowRender(
         <juju.components.Inspector
@@ -241,9 +243,7 @@ describe('Inspector', function() {
           addCharm={sinon.stub()}
           addGhostAndEcsUnits={sinon.stub()}
           addNotification={addNotification}
-          appPreviousState={{}}
           appState={appState}
-          changeState={changeState}
           charm={charm}
           clearState={sinon.stub()}
           createMachinesPlaceUnits={sinon.stub()}
@@ -280,7 +280,7 @@ describe('Inspector', function() {
     var expectedHeader = (
       <juju.components.InspectorHeader
         backCallback={instance._backCallback}
-        activeComponent={appState.sectionA.metadata.activeComponent}
+        activeComponent="config"
         type={undefined}
         count={undefined}
         title='Configure'
@@ -294,7 +294,7 @@ describe('Inspector', function() {
         <juju.components.Configuration
           acl={acl}
           service={service}
-          changeState={changeState}
+          changeState={children.props.changeState}
           getYAMLConfig={getYAMLConfig}
           charm={charm}
           setConfig={setConfig}
@@ -308,7 +308,6 @@ describe('Inspector', function() {
 
   it('displays the unit details when the app state calls for it', function() {
     var destroyUnits = sinon.stub();
-    var changeState = sinon.stub();
     var getStub = sinon.stub();
     var title = 'demo-unit';
     var icon = 'foo.png';
@@ -325,21 +324,17 @@ describe('Inspector', function() {
     var service = {
       get: getStub
     };
-    var appState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'unit',
-          unit: '5'
-        }}};
+    appState.current.gui.inspector = {
+      activeComponent: 'unit',
+      unit: '5'
+    };
     var component = jsTestUtils.shallowRender(
         <juju.components.Inspector
           acl={acl}
           addCharm={sinon.stub()}
           addGhostAndEcsUnits={sinon.stub()}
           addNotification={sinon.stub()}
-          appPreviousState={{}}
           appState={appState}
-          changeState={changeState}
           charm={{}}
           clearState={sinon.stub()}
           createMachinesPlaceUnits={sinon.stub()}
@@ -376,7 +371,7 @@ describe('Inspector', function() {
     var expectedHeader = (
       <juju.components.InspectorHeader
         backCallback={instance._backCallback}
-        activeComponent={appState.sectionA.metadata.activeComponent}
+        activeComponent='unit'
         type={headerType}
         count={undefined}
         title={title}
@@ -390,7 +385,7 @@ describe('Inspector', function() {
         acl={acl}
         destroyUnits={destroyUnits}
         service={service}
-        changeState={changeState}
+        changeState={children.props.changeState}
         previousComponent={undefined}
         unitStatus={null}
         unit={unit} />
@@ -400,7 +395,6 @@ describe('Inspector', function() {
   });
 
   it('handles the unit being removed while viewing the unit', function() {
-    var changeState = sinon.stub();
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({
@@ -409,21 +403,17 @@ describe('Inspector', function() {
     var service = {
       get: getStub
     };
-    var appState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'units',
-          units: 'error'
-        }}};
+    appState.current.gui.inspector = {
+      activeComponent: 'units',
+      units: 'error'
+    };
     var shallowRenderer = jsTestUtils.shallowRender(
       <juju.components.Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
-        appPreviousState={{}}
         appState={appState}
-        changeState={changeState}
         charm={{}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
@@ -461,21 +451,17 @@ describe('Inspector', function() {
     service = {
       get: getStub
     };
-    appState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'unit',
-          unit: '5'
-        }}};
+    appState.current.gui.inspector = {
+      activeComponent: 'unit',
+      unit: '5'
+    };
     shallowRenderer.render(
       <juju.components.Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
-        appPreviousState={{}}
         appState={appState}
-        changeState={sinon.stub()}
         charm={{}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
@@ -507,11 +493,10 @@ describe('Inspector', function() {
         updateServiceUnitsDisplayname={sinon.stub()} />);
     // The displayed component should not have been updated.
     assert.equal(instance.state.activeComponent, 'units');
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+    assert.equal(appState.changeState.callCount, 1);
+    assert.deepEqual(appState.changeState.args[0][0], {
+      gui: {
+        inspector: {
           id: 'demo',
           activeComponent: 'units',
           unit: null,
@@ -521,7 +506,6 @@ describe('Inspector', function() {
 
   it('can go back from the unit details to a status list', function() {
     var destroyUnits = sinon.stub();
-    var changeState = sinon.stub();
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({getById: function() {
@@ -530,28 +514,22 @@ describe('Inspector', function() {
     var service = {
       get: getStub
     };
-    var appState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'unit',
-          unit: '5'
-        }}};
-    var appPreviousState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'units',
-          units: 'error',
-          id: 'demo'
-        }}};
+    appState.history[0].gui.inspector = {
+      activeComponent: 'units',
+      units: 'error',
+      id: 'demo'
+    };
+    appState.current.gui.inspector = {
+      activeComponent: 'unit',
+      unit: '5'
+    };
     var output = jsTestUtils.shallowRender(
         <juju.components.Inspector
           acl={acl}
           addCharm={sinon.stub()}
           addGhostAndEcsUnits={sinon.stub()}
           addNotification={sinon.stub()}
-          appPreviousState={appPreviousState}
           appState={appState}
-          changeState={changeState}
           charm={{}}
           clearState={sinon.stub()}
           createMachinesPlaceUnits={sinon.stub()}
@@ -583,11 +561,10 @@ describe('Inspector', function() {
           updateServiceUnitsDisplayname={sinon.stub()}>
         </juju.components.Inspector>);
     output.props.children[0].props.backCallback();
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+    assert.equal(appState.changeState.callCount, 1);
+    assert.deepEqual(appState.changeState.args[0][0], {
+      gui: {
+        inspector: {
           id: 'demo',
           activeComponent: 'units',
           unit: null,
@@ -597,7 +574,6 @@ describe('Inspector', function() {
 
   it('defaults to go back from the unit details to the all list', function() {
     var destroyUnits = sinon.stub();
-    var changeState = sinon.stub();
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({getById: function() {
@@ -606,21 +582,17 @@ describe('Inspector', function() {
     var service = {
       get: getStub
     };
-    var appState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'unit',
-          unit: '5'
-        }}};
+    appState.current.gui.inspector = {
+      activeComponent: 'unit',
+      unit: '5'
+    };
     var output = jsTestUtils.shallowRender(
         <juju.components.Inspector
           acl={acl}
           addCharm={sinon.stub()}
           addGhostAndEcsUnits={sinon.stub()}
           addNotification={sinon.stub()}
-          appPreviousState={{}}
           appState={appState}
-          changeState={changeState}
           charm={{}}
           clearState={sinon.stub()}
           createMachinesPlaceUnits={sinon.stub()}
@@ -652,11 +624,10 @@ describe('Inspector', function() {
           updateServiceUnitsDisplayname={sinon.stub()}>
         </juju.components.Inspector>);
     output.props.children[0].props.backCallback();
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+    assert.equal(appState.changeState.callCount, 1);
+    assert.deepEqual(appState.changeState.args[0][0], {
+      gui: {
+        inspector: {
           id: 'demo',
           activeComponent: 'units',
           unit: null,
@@ -670,7 +641,6 @@ describe('Inspector', function() {
     // makes sure that if the previous service was different then 'back'
     // takes to you to that service.
     var destroyUnits = sinon.stub();
-    var changeState = sinon.stub();
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({getById: function() {
@@ -679,27 +649,21 @@ describe('Inspector', function() {
     var service = {
       get: getStub
     };
-    var appState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'unit',
-          unit: '5'
-        }}};
-    var appPreviousState = {
-      sectionA: {
-        metadata: {
-          id: 'previousService',
-          units: true
-        }}};
+    appState.history[0].gui.inspector = {
+      id: 'previousService',
+      units: true
+    };
+    appState.current.gui.inspector = {
+      activeComponent: 'unit',
+      unit: '5'
+    };
     var output = jsTestUtils.shallowRender(
         <juju.components.Inspector
           acl={acl}
           addCharm={sinon.stub()}
           addGhostAndEcsUnits={sinon.stub()}
           addNotification={sinon.stub()}
-          appPreviousState={appPreviousState}
           appState={appState}
-          changeState={changeState}
           charm={{}}
           clearState={sinon.stub()}
           createMachinesPlaceUnits={sinon.stub()}
@@ -731,11 +695,10 @@ describe('Inspector', function() {
           updateServiceUnitsDisplayname={sinon.stub()}>
         </juju.components.Inspector>);
     output.props.children[0].props.backCallback();
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+    assert.equal(appState.changeState.callCount, 1);
+    assert.deepEqual(appState.changeState.args[0][0], {
+      gui: {
+        inspector: {
           id: 'previousService',
           activeComponent: 'units',
           unit: null,
@@ -751,21 +714,16 @@ describe('Inspector', function() {
     var service = {
       get: getStub
     };
-
-    var appState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'scale',
-        }}};
+    appState.current.gui.inspector = {
+      activeComponent: 'scale'
+    };
     var component = jsTestUtils.shallowRender(
       <juju.components.Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
-        appPreviousState={{}}
         appState={appState}
-        changeState={sinon.stub()}
         charm={{}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
@@ -801,7 +759,7 @@ describe('Inspector', function() {
     var expectedHeader = (
       <juju.components.InspectorHeader
         backCallback={instance._backCallback}
-        activeComponent={appState.sectionA.metadata.activeComponent}
+        activeComponent="scale"
         type={undefined}
         count={undefined}
         title='Scale'
@@ -821,7 +779,6 @@ describe('Inspector', function() {
 
   it('displays Expose when the app state calls for it', function() {
     var addNotification = sinon.stub();
-    var changeState = sinon.stub();
     var exposeService = sinon.stub();
     var unexposeService = sinon.stub();
     var service = sinon.stub();
@@ -834,20 +791,16 @@ describe('Inspector', function() {
     var service = {
       get: getStub
     };
-    var appState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'expose',
-        }}};
+    appState.current.gui.inspector = {
+      activeComponent: 'expose'
+    };
     var component = jsTestUtils.shallowRender(
       <juju.components.Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={addNotification}
-        appPreviousState={{}}
         appState={appState}
-        changeState={changeState}
         charm={{}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
@@ -883,7 +836,7 @@ describe('Inspector', function() {
     var expectedHeader = (
       <juju.components.InspectorHeader
         backCallback={instance._backCallback}
-        activeComponent={appState.sectionA.metadata.activeComponent}
+        activeComponent="expose"
         type={undefined}
         count={undefined}
         title='Expose'
@@ -896,7 +849,7 @@ describe('Inspector', function() {
         <juju.components.InspectorExpose
           acl={acl}
           addNotification={addNotification}
-          changeState={changeState}
+          changeState={children.props.changeState}
           exposeService={exposeService}
           unexposeService={unexposeService}
           service={service}
@@ -904,7 +857,6 @@ describe('Inspector', function() {
   });
 
   it('displays Relations when the app state calls for it', function() {
-    var changeState = sinon.stub();
     var destroyRelations = sinon.stub();
     var service = sinon.stub();
     var icon = 'icon.png';
@@ -914,11 +866,9 @@ describe('Inspector', function() {
     var service = {
       get: getStub
     };
-    var appState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'relations',
-        }}};
+    appState.current.gui.inspector = {
+      activeComponent: 'relations'
+    };
     var serviceRelations = ['relatons'];
     var component = jsTestUtils.shallowRender(
       <juju.components.Inspector
@@ -926,9 +876,7 @@ describe('Inspector', function() {
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
-        appPreviousState={{}}
         appState={appState}
-        changeState={changeState}
         charm={{}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
@@ -964,7 +912,7 @@ describe('Inspector', function() {
     var expectedHeader = (
       <juju.components.InspectorHeader
         backCallback={instance._backCallback}
-        activeComponent={appState.sectionA.metadata.activeComponent}
+        activeComponent="relations"
         type={undefined}
         count={undefined}
         title='Relations'
@@ -976,14 +924,13 @@ describe('Inspector', function() {
     assert.deepEqual(children,
         <juju.components.InspectorRelations
           acl={acl}
-          changeState={changeState}
+          changeState={children.props.changeState}
           destroyRelations={destroyRelations}
           service={service}
           serviceRelations={serviceRelations} />);
   });
 
   it('displays the relate-to when the app state calls for it', function() {
-    var changeState = sinon.stub();
     var destroyRelations = sinon.stub();
     var icon = 'icon.png';
     var getStub = sinon.stub();
@@ -992,20 +939,16 @@ describe('Inspector', function() {
     var service = {
       get: getStub
     };
-    var appState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'relate-to'
-        }}};
+    appState.current.gui.inspector = {
+      activeComponent: 'relate-to'
+    };
     var component = jsTestUtils.shallowRender(
       <juju.components.Inspector
         acl={acl}
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
-        appPreviousState={{}}
         appState={appState}
-        changeState={changeState}
         charm={{}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
@@ -1041,7 +984,7 @@ describe('Inspector', function() {
     var expectedHeader = (
       <juju.components.InspectorHeader
         backCallback={instance._backCallback}
-        activeComponent={appState.sectionA.metadata.activeComponent}
+        activeComponent="relate-to"
         type={undefined}
         count={undefined}
         title='Relate to'
@@ -1052,13 +995,12 @@ describe('Inspector', function() {
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
       <juju.components.InspectorRelateTo
-        changeState={changeState}
+        changeState={children.props.changeState}
         application={service}
         relatableApplications={['apps']}/>);
   });
 
   it('displays relate-to with spouse when the app state calls for it', () => {
-    var changeState = sinon.stub();
     var destroyRelations = sinon.stub();
     var icon = 'icon.png';
     var getStub = sinon.stub();
@@ -1067,12 +1009,10 @@ describe('Inspector', function() {
     var service = {
       get: getStub
     };
-    var appState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'relate-to',
-          'relate-to': 'zee-spouse'
-        }}};
+    appState.current.gui.inspector = {
+      activeComponent: 'relate-to',
+      'relate-to': 'zee-spouse'
+    };
     var createRelation = sinon.stub();
     var getAvailableEndpoints = sinon.stub().returns([]);
     var getServiceById = () => ({
@@ -1084,9 +1024,7 @@ describe('Inspector', function() {
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
-        appPreviousState={{}}
         appState={appState}
-        changeState={changeState}
         charm={{}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
@@ -1122,7 +1060,7 @@ describe('Inspector', function() {
     var expectedHeader = (
       <juju.components.InspectorHeader
         backCallback={instance._backCallback}
-        activeComponent={appState.sectionA.metadata.activeComponent}
+        activeComponent="relate-to"
         type={undefined}
         count={undefined}
         title='spouse-name'
@@ -1134,19 +1072,19 @@ describe('Inspector', function() {
     assert.deepEqual(children,
       <juju.components.InspectorRelateToEndpoint
         backState={{
-          sectionA: {
-            component: 'inspector',
-            metadata: {
+          gui: {
+            inspector: {
               id: 'demo',
               activeComponent: 'relations'
-            }}}}
+            }
+          }
+        }}
         createRelation={createRelation}
         endpoints={[]}
-        changeState={changeState} />);
+        changeState={children.props.changeState} />);
   });
 
   it('displays the Plans when the app state calls for it', function() {
-    var changeState = sinon.stub();
     var icon = 'icon.png';
     var activePlan = {active: 'plan'};
     var getStub = sinon.stub();
@@ -1156,12 +1094,9 @@ describe('Inspector', function() {
     var service = {
       get: getStub
     };
-    var appState = {
-      sectionA: {
-        metadata: {
-          component: 'inspector',
-          activeComponent: 'plan'
-        }}};
+    appState.current.gui.inspector = {
+      activeComponent: 'plan'
+    };
     var serviceRelations = ['relatons'];
     var component = jsTestUtils.shallowRender(
       <juju.components.Inspector
@@ -1169,9 +1104,7 @@ describe('Inspector', function() {
         addCharm={sinon.stub()}
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
-        appPreviousState={{}}
         appState={appState}
-        changeState={changeState}
         charm={{}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
@@ -1207,7 +1140,7 @@ describe('Inspector', function() {
     var expectedHeader = (
       <juju.components.InspectorHeader
         backCallback={instance._backCallback}
-        activeComponent={appState.sectionA.metadata.activeComponent}
+        activeComponent='plan'
         type={undefined}
         count={undefined}
         title='Plan'
@@ -1224,7 +1157,6 @@ describe('Inspector', function() {
 
   it('displays Change versions when the app state calls for it', function() {
     var addNotification = sinon.stub();
-    var changeState = sinon.stub();
     var service = sinon.stub();
     var getMacaroon = sinon.stub();
     var addCharm = sinon.stub();
@@ -1239,20 +1171,16 @@ describe('Inspector', function() {
     var service = {
       get: getStub
     };
-    var appState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'change-version',
-        }}};
+    appState.current.gui.inspector = {
+      activeComponent: 'change-version'
+    };
     var component = jsTestUtils.shallowRender(
       <juju.components.Inspector
         acl={acl}
         addCharm={addCharm}
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={addNotification}
-        appPreviousState={{}}
         appState={appState}
-        changeState={changeState}
         charm={{}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
@@ -1288,7 +1216,7 @@ describe('Inspector', function() {
     var expectedHeader = (
       <juju.components.InspectorHeader
         backCallback={instance._backCallback}
-        activeComponent={appState.sectionA.metadata.activeComponent}
+        activeComponent="change-version"
         type={undefined}
         count={undefined}
         title='Change version'
@@ -1301,7 +1229,7 @@ describe('Inspector', function() {
       <juju.components.InspectorChangeVersion
         acl={acl}
         addNotification={addNotification}
-        changeState={changeState}
+        changeState={children.props.changeState}
         charmId="cs:demo"
         service={service}
         getMacaroon={getMacaroon}
@@ -1313,7 +1241,6 @@ describe('Inspector', function() {
 
   it('displays Resources when the app state calls for it', function() {
     const addNotification = sinon.stub();
-    const changeState = sinon.stub();
     const getMacaroon = sinon.stub();
     const addCharm = sinon.stub();
     const setCharm = sinon.stub();
@@ -1327,18 +1254,15 @@ describe('Inspector', function() {
     const service = {
       get: getStub
     };
-    const appState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'resources',
-        }}};
+    appState.current.gui.inspector = {
+      activeComponent: 'resources'
+    };
     const component = jsTestUtils.shallowRender(
       <juju.components.Inspector
         acl={acl}
         addCharm={addCharm}
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={addNotification}
-        appPreviousState={{}}
         appState={appState}
         changeState={changeState}
         charm={{get: sinon.stub().returns({resource: 'one'})}}
@@ -1376,7 +1300,7 @@ describe('Inspector', function() {
     const expectedHeader = (
       <juju.components.InspectorHeader
         backCallback={instance._backCallback}
-        activeComponent={appState.sectionA.metadata.activeComponent}
+        activeComponent='resources'
         type={undefined}
         count={undefined}
         title='Resources'
@@ -1403,11 +1327,6 @@ describe('Inspector', function() {
         }
         return {name: 'demo'};
       }};
-    var appState = {
-      sectionA: {
-        metadata: {}
-      }};
-    var changeStub = sinon.stub();
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.Inspector
@@ -1415,9 +1334,7 @@ describe('Inspector', function() {
           addCharm={sinon.stub()}
           addGhostAndEcsUnits={sinon.stub()}
           addNotification={sinon.stub()}
-          appPreviousState={{}}
           appState={appState}
-          changeState={changeStub}
           charm={{}}
           clearState={sinon.stub()}
           createMachinesPlaceUnits={sinon.stub()}
@@ -1449,22 +1366,19 @@ describe('Inspector', function() {
           updateServiceUnitsDisplayname={sinon.stub()} />);
     var output = shallowRenderer.getRenderOutput();
     output.props.children[0].props.backCallback();
-    assert.equal(changeStub.callCount, 1);
-    assert.deepEqual(changeStub.args[0][0], {
-      sectionA: {
-        component: 'applications',
-        metadata: null
+    assert.equal(appState.changeState.callCount, 1);
+    assert.deepEqual(appState.changeState.args[0][0], {
+      gui: {
+        inspector: null
       }
     });
   });
 
   it('can navigate back to the inspector from a service', function() {
-    var appPreviousState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'relations',
-          id: 'service2'
-        }}};
+    appState.history[0].gui.inspector = {
+      activeComponent: 'relations',
+      id: 'service2'
+    };
     var service = {
       get: function(val) {
         if (val === 'id') {
@@ -1476,11 +1390,6 @@ describe('Inspector', function() {
         }
         return {name: 'demo'};
       }};
-    var appState = {
-      sectionA: {
-        metadata: {}
-      }};
-    var changeStub = sinon.stub();
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.Inspector
@@ -1488,9 +1397,7 @@ describe('Inspector', function() {
           addCharm={sinon.stub()}
           addGhostAndEcsUnits={sinon.stub()}
           addNotification={sinon.stub()}
-          appPreviousState={appPreviousState}
           appState={appState}
-          changeState={changeStub}
           charm={{}}
           clearState={sinon.stub()}
           createMachinesPlaceUnits={sinon.stub()}
@@ -1522,11 +1429,10 @@ describe('Inspector', function() {
           updateServiceUnitsDisplayname={sinon.stub()} />);
     var output = shallowRenderer.getRenderOutput();
     output.props.children[0].props.backCallback();
-    assert.equal(changeStub.callCount, 1);
-    assert.deepEqual(changeStub.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+    assert.equal(appState.changeState.callCount, 1);
+    assert.deepEqual(appState.changeState.args[0][0], {
+      gui: {
+        inspector: {
           id: 'service2',
           activeComponent: 'relations'
         }
@@ -1535,21 +1441,10 @@ describe('Inspector', function() {
   });
 
   it('does not go back to the inspector from the same service', function() {
-    var appPreviousState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'relations',
-          id: 'demo'
-        }}};
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('name').returns('demo');
     var service = {get: getStub};
-    var appState = {
-      sectionA: {
-        metadata: {}
-      }};
-    var changeStub = sinon.stub();
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.Inspector
@@ -1557,9 +1452,7 @@ describe('Inspector', function() {
           addCharm={sinon.stub()}
           addGhostAndEcsUnits={sinon.stub()}
           addNotification={sinon.stub()}
-          appPreviousState={appPreviousState}
           appState={appState}
-          changeState={changeStub}
           charm={{}}
           clearState={sinon.stub()}
           createMachinesPlaceUnits={sinon.stub()}
@@ -1591,11 +1484,10 @@ describe('Inspector', function() {
           updateServiceUnitsDisplayname={sinon.stub()} />);
     var output = shallowRenderer.getRenderOutput();
     output.props.children[0].props.backCallback();
-    assert.equal(changeStub.callCount, 1);
-    assert.deepEqual(changeStub.args[0][0], {
-      sectionA: {
-        component: 'applications',
-        metadata: null
+    assert.equal(appState.changeState.callCount, 1);
+    assert.deepEqual(appState.changeState.args[0][0], {
+      gui: {
+        inspector: null
       }
     });
   });
@@ -1605,11 +1497,6 @@ describe('Inspector', function() {
       get: function() {
         return 'demo';
       }};
-    var appState = {
-      sectionA: {
-        metadata: {}
-      }};
-    var changeStub = sinon.stub();
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.Inspector
@@ -1617,9 +1504,7 @@ describe('Inspector', function() {
           addCharm={sinon.stub()}
           addGhostAndEcsUnits={sinon.stub()}
           addNotification={sinon.stub()}
-          appPreviousState={{}}
           appState={appState}
-          changeState={changeStub}
           charm={{}}
           clearState={sinon.stub()}
           createMachinesPlaceUnits={sinon.stub()}
@@ -1661,15 +1546,12 @@ describe('Inspector', function() {
       filterByStatus: sinon.stub().returns([])
     });
     var service = {get: getStub};
-    var appState = {
-      sectionA: {
-        metadata: {
-          id: 'django',
-          activeComponent: 'units',
-          units: 'error'
-        }
-      }};
-    var changeStub = sinon.stub();
+    appState.current.gui.inspector = {
+      id: 'django',
+      activeComponent: 'units',
+      units: 'error',
+      unitStatus: null
+    };
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.Inspector
@@ -1677,9 +1559,7 @@ describe('Inspector', function() {
           addCharm={sinon.stub()}
           addGhostAndEcsUnits={sinon.stub()}
           addNotification={sinon.stub()}
-          appPreviousState={{}}
           appState={appState}
-          changeState={changeStub}
           charm={{}}
           clearState={sinon.stub()}
           createMachinesPlaceUnits={sinon.stub()}
@@ -1714,12 +1594,12 @@ describe('Inspector', function() {
   });
 
   it('displays the service overview when switching services', function() {
-    var appPreviousState = {
-      sectionA: {
-        metadata: {
-          activeComponent: 'relations',
-          id: 'service2'
-        }}};
+    appState.current.gui.inspector = {
+      id: 'django',
+      activeComponent: undefined,
+      unit: null,
+      unitStatus: null
+    };
     var service = {
       get: function(val) {
         if (val === 'id') {
@@ -1731,11 +1611,6 @@ describe('Inspector', function() {
         }
         return {name: 'demo'};
       }};
-    var appState = {
-      sectionA: {
-        metadata: {}
-      }};
-    var changeStub = sinon.stub();
     var shallowRenderer = testUtils.createRenderer();
     shallowRenderer.render(
         <juju.components.Inspector
@@ -1743,9 +1618,7 @@ describe('Inspector', function() {
           addCharm={sinon.stub()}
           addGhostAndEcsUnits={sinon.stub()}
           addNotification={sinon.stub()}
-          appPreviousState={appPreviousState}
           appState={appState}
-          changeState={changeStub}
           charm={{}}
           clearState={sinon.stub()}
           createMachinesPlaceUnits={sinon.stub()}
@@ -1776,7 +1649,7 @@ describe('Inspector', function() {
           unplaceServiceUnits={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()} />);
     shallowRenderer.getRenderOutput();
-    assert.equal(changeStub.callCount, 0);
+    assert.equal(appState.changeState.callCount, 0);
     service = {
       get: function(val) {
         if (val === 'id') {
@@ -1790,9 +1663,7 @@ describe('Inspector', function() {
           addCharm={sinon.stub()}
           addGhostAndEcsUnits={sinon.stub()}
           addNotification={sinon.stub()}
-          appPreviousState={appPreviousState}
           appState={appState}
-          changeState={changeStub}
           charm={{}}
           clearState={sinon.stub()}
           createMachinesPlaceUnits={sinon.stub()}
@@ -1823,15 +1694,16 @@ describe('Inspector', function() {
           unplaceServiceUnits={sinon.stub()}
           updateServiceUnitsDisplayname={sinon.stub()} />);
     shallowRenderer.getRenderOutput();
-    assert.equal(changeStub.callCount, 1);
-    assert.deepEqual(changeStub.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+    assert.equal(appState.changeState.callCount, 1);
+    assert.deepEqual(appState.changeState.args[0][0], {
+      gui: {
+        inspector: {
           id: 'django',
           activeComponent: undefined,
           unit: null,
           unitStatus: null
-        }}});
+        }
+      }
+    });
   });
 });
