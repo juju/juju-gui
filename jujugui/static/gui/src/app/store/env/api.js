@@ -1193,85 +1193,86 @@ YUI.add('juju-env-api', function(Y) {
 
       @method deploy
     */
-    deploy: function(charmUrl, series, applicationName, config, configRaw,
-        numUnits, constraints, toMachine, callback, options) {
-      var ecs = this.get('ecs');
-      var args = ecs._getArgs(arguments);
+    deploy: function(args, callback, options) {
       if (options && options.immediate) {
         // Call the deploy method right away bypassing the queue.
-        this._deploy.apply(this, args);
-      } else {
-        ecs._lazyDeploy(arguments);
+        this._deploy(args, callback);
+        return;
       }
+      const ecs = this.get('ecs');
+      ecs._lazyDeploy(arguments);
     },
 
     /**
       Deploy a charm.
 
+      The charm is assumed to be already included in the model (see addCharm).
+
       @method _deploy
-      @param {String} charmUrl The URL of the charm.
-      @param {String} series The series to use in a multi-series charm.
-      @param {String} applicationName The name of the app to be deployed.
-      @param {Object} config The charm configuration options.
-      @param {String} configRaw The YAML representation of the charm
-        configuration options. Only one of `config` and `configRaw` should be
-        provided, though `configRaw` takes precedence if it is given.
-      @param {Integer} numUnits The number of units to be deployed.
-      @param {Object} constraints The machine constraints to use in the
-        object format key: value.
-      @param {String} toMachine The machine/container name where to deploy the
-        application unit (e.g. top level machine "42" or container "2/lxc/0").
-        If the value is null or undefined, the default juju-core unit placement
-        policy is used. This currently means that clean and empty machines are
-        used if available, otherwise new top level machines are created.
-        If the value is set, numUnits must be 1: i.e. it is not possible to add
-        multiple units to a single machine/container.
-        TODO frankban: currently unit placement is not supported by the client.
+      @param {Object} args The arguments required to execute the call to deploy
+        the charm, including:
+        - {String} charmURL: the URL of the charm;
+        - {String} applicationName: the name of the resulting application;
+        - {String} series: the optional series to use in a multi-series charm;
+        - {Integer} numUnits: the number of units to be added, defaulting to 0;
+        - {Object} config: the optional charm configuration options;
+        - {String} configRaw: the optional YAML representation of the charm
+          configuration options. Only one of `config` and `configRaw` should be
+          provided, though `configRaw` takes precedence if it is given;
+        - {Object} constraints: the optional machine constraints to use in the
+          object format key: value;
+        - {Object} resources: optional pending resources to use when deploying
+          the charm. It is ok to use the result of the addPendingResources call
+          in this case. Note that charms requiring resources cannot be deployed
+          before adding the corresponding pending resources to Juju.
       @param {Function} callback A callable that must be called once the
-        operation is performed.
-      @return {undefined} Sends a message to the server only.
+        operation is performed. It receives an error with a message describing
+        the problem if a problem occurred (or null if the operation succeeded),
+        the application name as second argument and the charm URL as third.
     */
-    _deploy: function(charmUrl, series, applicationName, config, configRaw,
-        numUnits, constraints, toMachine, callback) {
+    _deploy: function(args, callback) {
       // Define the API callback.
-      var handler = function(userCallback, applicationName, charmUrl, data) {
-        if (!userCallback) {
+      const handler = data => {
+        if (!callback) {
           console.log('data returned by deploy API call:', data);
           return;
         }
-        var result = data.response.results[0];
-        userCallback({
-          err: result.error,
-          applicationName: applicationName,
-          charmUrl: charmUrl
-        });
-      }.bind(this, callback, applicationName, charmUrl);
-
-      // Build the API call parameters.
-      if (constraints) {
-        // If the constraints is a function (this arg position used to be a
-        // callback) then log it out to the console to fix it.
-        if (typeof constraints === 'function') {
-          console.error('Constraints need to be an object not a function');
-          console.warn(constraints);
+        if (data.error) {
+          callback(data.error, '', '');
+          return;
         }
-        constraints = this.prepareConstraints(constraints);
-      } else {
-        constraints = {};
-      }
-      var params = {
-        application: applicationName,
-        'charm-url': charmUrl,
-        config: stringifyObjectValues(config),
-        'config-yaml': configRaw,
-        constraints: constraints,
-        'num-units': numUnits
+        const response = data.response || {};
+        if (!response.results || response.results.length !== 1) {
+          // This should never happen.
+          callback('unexpected response: ' + JSON.stringify(response), '', '');
+          return;
+        }
+        const error = response.results[0].error;
+        if (error) {
+          callback(error.message, '', '');
+          return;
+        }
+        callback(null, args.applicationName, args.charmURL);
       };
 
-      if (series) {
+      // Build the API call parameters.
+      let constraints = {};
+      if (args.constraints) {
+        constraints = this.prepareConstraints(args.constraints);
+      }
+      const params = {
+        application: args.applicationName,
+        'charm-url': args.charmURL,
+        config: stringifyObjectValues(args.config || {}),
+        'config-yaml': args.configRaw || '',
+        constraints: constraints,
+        'num-units': args.numUnits || 0,
+        resources: args.resources || {}
+      };
+      if (args.series) {
         // If series is defined then set it, do not send an undefined series
         // field as Juju core will not successfully deploy the application.
-        params.series = series;
+        params.series = args.series;
       }
 
       // Perform the API call.

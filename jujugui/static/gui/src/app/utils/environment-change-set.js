@@ -617,50 +617,43 @@ YUI.add('environment-change-set', function(Y) {
             // bar.
             return;
           }
-          var ghostService = db.services.getById(this.options.modelId);
+          const ghostService = db.services.getById(this.options.modelId);
+          const deployArgs = this.args[0];
           // Update the application name, which can change from when the
           // charm is added to the canvas to the actual time the changes are
           // committed.
-          this.args[2] = ghostService.get('name');
+          deployArgs.applicationName = ghostService.get('name');
           // Update the application series, which can change from when the
           // charm is added to the canvas to the time that the changes are
           // committed.
           const series = ghostService.get('series');
           if (series) {
-            this.args[1] = series;
+            deployArgs.series = series;
           }
           // Loop through the services settings and remove any which have
           // undefined values so that they aren't set as 'undefined'.
-          Object.keys(this.args[3]).forEach(function(key) {
-            if (this.args[3][key] === undefined) {
-              delete this.args[3][key];
+          const config = deployArgs.config || {};
+          Object.keys(config).forEach(key => {
+            if (config[key] === undefined) {
+              delete config[key];
             }
-          }, this);
+          });
         }
       };
       if (command.args.length !== args.length) {
         command.options = args[args.length - 1];
       }
       // Set up the parents of this record.
-      var parents = [];
+      const parents = [];
       Object.keys(this.changeSet).forEach(key => {
         const record = this.changeSet[key];
         if (record.command.method === '_addCharm') {
           // Get the key to the record which adds the charm for this app.
-          if (record.command.args[0] === args[0]) {
+          if (record.command.args[0] === args[0].charmURL) {
             parents.push(key);
           }
         }
       });
-      // The 6th param is the toMachine param of the env deploy call.
-      var toMachine = command.args[7];
-      if (!this.changeSet[toMachine]) {
-        // If the toMachine isn't a record in the changeSet that means it's
-        // an existing machine or that the machine does not exist and one
-        // will be created to host this unit. This means that this does not
-        // need to be queued behind another command.
-        parents.push(toMachine);
-      }
       return this._createNewRecord('service', command, parents);
     },
 
@@ -883,10 +876,13 @@ YUI.add('environment-change-set', function(Y) {
         onParentResults: function(record, results) {
           if (record.command.method === '_deploy') {
             // After deploy change the temp id to the real name.
-            var tempId = this.args[0];
-            if (tempId.indexOf('$') > -1 &&
-                record.command.options.modelId === tempId) {
-              this.args[0] = results[0].applicationName;
+            const tempId = this.args[0];
+            if (
+              tempId.indexOf('$') > -1 &&
+              record.command.options.modelId === tempId
+            ) {
+              const applicationName = results[1];
+              this.args[0] = applicationName;
             }
           }
         }
@@ -958,9 +954,12 @@ YUI.add('environment-change-set', function(Y) {
         onParentResults: function(record, results) {
           if (record.command.method === '_deploy') {
             this.args.forEach(function(arg, index) {
-              if (Array.isArray(arg) &&
-                  record.command.options.modelId === arg[0]) {
-                this.args[index][0] = results[0].applicationName;
+              if (
+                Array.isArray(arg) &&
+                record.command.options.modelId === arg[0]
+              ) {
+                const applicationName = results[1];
+                this.args[index][0] = applicationName;
               }
             }, this);
           }
@@ -1119,10 +1118,13 @@ YUI.add('environment-change-set', function(Y) {
         onParentResults: function(record, results) {
           if (record.command.method === '_deploy') {
             // After deploy change the temp id to the real name.
-            var tempId = this.args[0];
-            if (tempId.indexOf('$') > -1 &&
-                record.command.options.modelId === tempId) {
-              this.args[0] = results[0].applicationName;
+            const tempId = this.args[0];
+            if (
+              tempId.indexOf('$') > -1 &&
+              record.command.options.modelId === tempId
+            ) {
+              const applicationName = results[1];
+              this.args[0] = applicationName;
             }
           }
         }
@@ -1256,7 +1258,7 @@ YUI.add('environment-change-set', function(Y) {
         if (value.command.method === '_deploy') {
           if (value.command.options.modelId === args[0]) {
             parent.push(key);
-            args[0] = value.command.args[2];
+            args[0] = value.command.args[0].applicationName;
           }
         }
       });
@@ -1298,12 +1300,13 @@ YUI.add('environment-change-set', function(Y) {
               // Update the service name. The add_unit record is first added
               // passing the initial service name. This service name can be
               // changed by users before the changes are committed.
-              var newServiceId = record.command.args[2];
-              this.args[0] = newServiceId;
+              const applicationName = record.command.args[0].applicationName;
+              this.args[0] = applicationName;
               // We also need to update the unit id to match the new service id
               // so that we can correctly look up the unit using service id +
               // unit number.
-              var unit = db.updateUnitId(newServiceId, this.options.modelId);
+              const unit = db.updateUnitId(
+                applicationName, this.options.modelId);
               // Update the ecs change with the new id.
               this.options.modelId = unit.id;
               break;

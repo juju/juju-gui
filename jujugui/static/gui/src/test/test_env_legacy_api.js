@@ -978,21 +978,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('successfully deploys an application (legacy API)', function() {
       env.set('facades', {});
-      env.deploy('precise/mysql', null, 'mysql', null, null, null, null, null,
-        null, {immediate: true});
+      env.deploy({
+        charmURL: 'precise/mysql',
+        applicationName: 'mysql',
+        series: 'trusty',
+        numUnits: 1
+      }, null, {immediate: true});
       msg = conn.last_message();
-      var expected = {
+      const expected = {
         Type: 'Client',
         Version: 0,
         Request: 'ServiceDeploy',
         Params: {
           ServiceName: 'mysql',
-          ConfigYAML: null,
+          ConfigYAML: '',
           Config: {},
           Constraints: {},
           CharmUrl: 'precise/mysql',
-          NumUnits: null,
-          ToMachineSpec: null
+          NumUnits: 1,
         },
         RequestId: 1
       };
@@ -1000,64 +1003,65 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys an application with a config file', function() {
-      var config_raw = 'tuning-level: \nexpert-mojo';
+      const configRaw = 'tuning-level: \nexpert-mojo';
       var expected = {
         Type: 'Client',
         Version: 0,
         Request: 'ServiceDeploy',
         Params: {
-          ServiceName: null,
-          ConfigYAML: config_raw,
+          ServiceName: 'haproxy',
+          ConfigYAML: configRaw,
           Config: {},
           Constraints: {},
-          CharmUrl: 'precise/mysql',
-          NumUnits: null,
-          ToMachineSpec: null
+          CharmUrl: 'xenial/haproxy',
+          NumUnits: 0,
         },
         RequestId: 1
       };
-      env.deploy('precise/mysql', null, null, null, config_raw, null, null,
-        null, null, {immediate: true});
+      env.deploy({
+        charmURL: 'xenial/haproxy',
+        applicationName: 'haproxy',
+        configRaw: configRaw
+      }, null, {immediate: true});
       msg = conn.last_message();
       assert.deepEqual(expected, msg);
     });
 
-    it('successfully deploys an app storing legacy charm data', function() {
+    it('deploys an app storing legacy charm data', function(done) {
       env.set('facades', env.defaultFacades);
-      var charmUrl;
-      var err;
-      var applicationName;
-      env.deploy(
-          'precise/mysql', null, 'mysql', null, null, null, null, null,
-          function(data) {
-            charmUrl = data.charmUrl;
-            err = data.err;
-            applicationName = data.applicationName;
-          }, {immediate: true});
+      env.deploy({
+        charmURL: 'precise/mysql',
+        applicationName: 'mysql',
+        series: 'trusty',
+        numUnits: 1
+      }, (err, applicationName, charmURL) => {
+        assert.strictEqual(err, null);
+        assert.strictEqual(applicationName, 'mysql');
+        assert.strictEqual(charmURL, 'precise/mysql');
+        done();
+      }, {immediate: true});
       // Mimic response.
       conn.msg({
         RequestId: 1,
         Response: {}
       });
-      assert.equal(charmUrl, 'precise/mysql');
-      assert.strictEqual(err, undefined);
-      assert.equal(applicationName, 'mysql');
     });
 
-    it('handles failed application deployments (legacy API)', function() {
+    it('handles failed application deployments (legacy API)', function(done) {
       env.set('facades', env.defaultFacades);
-      var err;
-      env.deploy(
-          'precise/mysql', null, 'mysql', null, null, null, null, null,
-          function(data) {
-            err = data.err;
-          }, {immediate: true});
+      env.deploy({
+        charmURL: 'precise/mysql',
+        applicationName: 'mysql',
+        series: 'trusty',
+        numUnits: 1
+      }, (err, applicationName, charmURL) => {
+        assert.strictEqual(err, 'bad wolf');
+        assert.strictEqual(applicationName, '');
+        assert.strictEqual(charmURL, '');
+        done();
+      }, {immediate: true});
       // Mimic response.
-      conn.msg({
-        RequestId: 1,
-        Error: 'service "mysql" not found'
-      });
-      assert.equal(err, 'service "mysql" not found');
+      conn.msg({RequestId: 1, Error: 'bad wolf'});
     });
 
     it('adds a machine', function() {

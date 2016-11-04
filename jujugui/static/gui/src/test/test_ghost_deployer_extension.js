@@ -164,42 +164,39 @@ describe('Ghost Deployer Extension', function() {
   });
 
   it('calls the env deploy method with default charm data', function() {
-    var charm = makeCharm();
+    const charm = makeCharm();
     ghostDeployer.deployService(charm);
     assert.strictEqual(ghostDeployer.env.deploy.calledOnce, true);
-    var args = ghostDeployer.env.deploy.lastCall.args;
-    assert.strictEqual(args[0], 'cs:trusty/django-42'); // Charm URL.
-    assert.strictEqual(args[1], 'trusty'); // service series.
-    assert.strictEqual(args[2], 'ghost-service-id'); // Service name.
-    assert.deepEqual(args[3], {}); // Config.
-    assert.strictEqual(args[5], 0); // Number of units.
-    assert.deepEqual(args[6], {}); // Constraints.
-    assert.isNull(args[7]); // Machine placement.
+    const args = ghostDeployer.env.deploy.lastCall.args[0];
+    assert.strictEqual(args.charmURL, 'cs:trusty/django-42');
+    assert.strictEqual(args.applicationName, 'ghost-service-id');
+    assert.strictEqual(args.series, 'trusty');
+    assert.deepEqual(args.config, {});
   });
 
   it('properly adds the series to Juju 1 applications', function() {
-    var charm = makeCharm();
+    const charm = makeCharm();
     ghostDeployer.isLegacyJuju = function() { return true; };
     ghostDeployer.deployService(charm);
-    var args = ghostDeployer.env.deploy.lastCall.args;
-    assert.strictEqual(args[0], 'cs:trusty/django-42'); // Charm URL.
+    const args = ghostDeployer.env.deploy.lastCall.args[0];
+    assert.strictEqual(args.charmURL, 'cs:trusty/django-42');
   });
 
   it('properly adds the series to local Juju 1 applications', function() {
-    var charm = makeCharm('local:trusty/django-42');
+    const charm = makeCharm('local:trusty/django-42');
     ghostDeployer.isLegacyJuju = function() { return true; };
     ghostDeployer.deployService(charm);
-    var args = ghostDeployer.env.deploy.lastCall.args;
-    assert.strictEqual(args[0], 'local:trusty/django-42'); // Charm URL.
+    const args = ghostDeployer.env.deploy.lastCall.args[0];
+    assert.strictEqual(args.charmURL, 'local:trusty/django-42');
   });
 
   it('properly adds the series to userspace Juju 1 applications', function() {
-    var charm = makeCharm();
+    const charm = makeCharm();
     charm.set('id', 'cs:~thedr/django-42');
     ghostDeployer.isLegacyJuju = function() { return true; };
     ghostDeployer.deployService(charm);
-    var args = ghostDeployer.env.deploy.lastCall.args;
-    assert.strictEqual(args[0], 'cs:~thedr/trusty/django-42'); // Charm URL.
+    const args = ghostDeployer.env.deploy.lastCall.args[0];
+    assert.strictEqual(args.charmURL, 'cs:~thedr/trusty/django-42');
   });
 
   it('adds the ECS modelId option when deploying the charm', function() {
@@ -366,16 +363,16 @@ describe('Ghost Deployer Extension', function() {
   });
 
   it('sets the proper annotations in the deploy handler', function() {
-    var ghostService = new Y.Model({
+    const ghostService = new Y.Model({
       id: 'ghostid',
       name: 'django',
       config: {}
     });
-    var topo = ghostDeployer.views.environment.instance.topo;
+    const topo = ghostDeployer.views.environment.instance.topo;
     topo.annotateBoxPosition = sinon.stub();
     topo.service_boxes.ghostid = {};
-    ghostDeployer._deployCallbackHandler(ghostService, {});
-    var attrs = ghostService.getAttrs();
+    ghostDeployer._deployCallbackHandler(ghostService, null);
+    const attrs = ghostService.getAttrs();
     assert.equal(attrs.id, 'django');
     assert.equal(attrs.displayName, undefined);
     assert.equal(attrs.pending, false, 'pending');

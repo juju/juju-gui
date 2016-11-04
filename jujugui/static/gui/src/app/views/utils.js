@@ -921,15 +921,13 @@ YUI.add('juju-view-utils', function(Y) {
           });
           // We call the env deploy method directly because we don't want
           // the ghost inspector to open.
-          this.env.deploy(
-              charm.get ? charm.get('id') : charm.id,
-              activeSeries,
-              charm.get ? charm.get('name') : charm.name,
-              config,
-              undefined, //config file content
-              1, // number of units
-              {}, //constraints
-              null); // toMachine
+          this.env.deploy({
+            charmURL: charm.get ? charm.get('id') : charm.id,
+            applicationName: charm.get ? charm.get('name') : charm.name,
+            series: activeSeries,
+            config: config,
+            numUnits: 1
+          });
           this.fire('autoplaceAndCommitAll');
         }
       }.bind(this));

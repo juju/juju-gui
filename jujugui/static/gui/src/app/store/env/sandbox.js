@@ -874,17 +874,17 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleApplicationDeploy: function(data, client, state) {
-      var callback = function(result) {
-        var res = {};
+      const callback = function(result) {
+        const res = {};
         if (result.error) {
-          res.error = result.error;
+          res.error = {message: result.error};
         }
         client.receive({
           'request-id': data['request-id'],
           response: {results: [res]}
         });
       };
-      var params = data.params.applications[0];
+      const params = data.params.applications[0];
       state.deploy(params['charm-url'], callback, {
         name: params.application,
         config: params.config,
