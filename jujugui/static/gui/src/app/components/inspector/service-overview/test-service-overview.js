@@ -324,9 +324,8 @@ describe('ServiceOverview', function() {
     });
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+      gui: {
+        inspector: {
           id: 'demo',
           activeComponent: 'units',
           unitStatus: null
@@ -651,13 +650,7 @@ describe('ServiceOverview', function() {
     output.props.children[1].props.children[5].props.linkAction();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'entity-details',
-          id: 'demo'
-        }
-      }
+      store: 'demo'
     });
   });
 
