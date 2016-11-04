@@ -95,11 +95,10 @@ describe('InspectorRelateTo', function() {
     });
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+      gui: {
+        inspector: {
           id: 'my-id',
-          spouse: 'zee-spouse',
+          'relate-to': 'zee-spouse',
           activeComponent: 'relate-to'
         }}});
 

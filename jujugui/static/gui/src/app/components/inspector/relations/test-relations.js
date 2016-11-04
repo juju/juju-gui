@@ -428,9 +428,8 @@ describe('InspectorRelations', function() {
     // Call the action for the create realtion button.
     output.props.children[0].props.children.props.action();
     assert.deepEqual(changeState.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+      gui: {
+        inspector: {
           id: 'ghost',
           activeComponent: 'relate-to'
         }}});
