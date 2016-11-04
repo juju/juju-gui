@@ -97,11 +97,10 @@ YUI.add('scale-service', function() {
       if (e) {
         e.preventDefault();
       }
-      var state = this.state;
-      var appState = {
-        sectionA: {
-          component: 'inspector',
-          metadata: {
+      const state = this.state;
+      const appState = {
+        gui: {
+          inspector: {
             id: this.props.serviceId,
             activeComponent: 'units'
           }}};
@@ -111,9 +110,7 @@ YUI.add('scale-service', function() {
         // db, env, and service have already been bound to this function in
         // the app.js definition.
         this.props.addGhostAndEcsUnits(numUnits);
-        appState.sectionB = {
-          component: 'machine'
-        };
+        appState.gui.machines = '';
       } else {
         var constraints = this.state.constraints;
         this.props.createMachinesPlaceUnits(numUnits, {
