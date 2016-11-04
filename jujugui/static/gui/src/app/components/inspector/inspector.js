@@ -116,7 +116,7 @@ YUI.add('inspector-component', function() {
       const previousInspector = prevState.gui && prevState.gui.inspector;
       switch (state.activeComponent) {
         case undefined:
-          let backState = {};
+          const backState = {};
           // Handle navigating back from the service details to a previous
           // service's relations.
           if (previousInspector &&
@@ -127,9 +127,7 @@ YUI.add('inspector-component', function() {
                 id: previousInspector.id,
                 activeComponent: previousInspector.activeComponent}};
           } else {
-            backState = {
-              gui: {
-                inspector: null}};
+            backState.gui = {inspector: null};
           }
           state.activeChild = {
             title: service.get('name'),
@@ -304,7 +302,7 @@ YUI.add('inspector-component', function() {
                   activeComponent: undefined}}}};
           break;
         case 'relation':
-          var relationIndex = nextProps.current.inspector.relation;
+          var relationIndex = nextProps.appState.current.gui.inspector.relation;
           var relation = this.props.serviceRelations[relationIndex];
           var serviceName = relation.far.serviceName;
           var relationName = relation.far.name;
@@ -321,7 +319,7 @@ YUI.add('inspector-component', function() {
                   activeComponent: 'relations'}}}};
           break;
         case 'relate-to':
-          const spouse = nextProps.current.inspector['relate-to'];
+          const spouse = nextProps.appState.current.gui.inspector['relate-to'];
           if (typeof serviceId === 'string' && typeof spouse === 'string') {
             state.activeChild = {
               title: this.props.getServiceById(spouse).get('name'),
@@ -352,7 +350,14 @@ YUI.add('inspector-component', function() {
               changeState={changeState}
               application={service}
               relatableApplications={this.props.relatableApplications}/>,
-            backState: backState
+            backState: {
+              gui: {
+                inspector: {
+                  id: serviceId,
+                  activeComponent: 'relations'
+                }
+              }
+            }
           };
           break;
         case 'change-version':
