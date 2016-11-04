@@ -35,55 +35,25 @@ describe('InspectorResourcesList', function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
-  it('can display a loading spinner', function() {
+  it('can display a list of resources', function() {
+    const resources = {
+      file1: {
+        description: 'file1 desc',
+        name: 'file1',
+        path: 'file1.zip',
+        revision: 5
+      },
+      file2: {
+        description: 'file2 desc',
+        name: 'file2',
+        path: 'file2',
+        revision: 2
+      }
+    };
     const renderer = jsTestUtils.shallowRender(
-        <juju.components.InspectorResourcesList
-          acl={acl}
-          charmId="cs:django"
-          getResources={sinon.stub()} />, true);
-    renderer.getMountedInstance().componentDidMount();
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="inspector-resources-list">
-        <div className="inspector-resources-list__loading">
-            <juju.components.Spinner />
-        </div>
-      </div>);
-    assert.deepEqual(output, expected);
-  });
-
-  it('can display an empty list', function() {
-    const renderer = jsTestUtils.shallowRender(
-        <juju.components.InspectorResourcesList
-          acl={acl}
-          charmId="cs:django"
-          getResources={sinon.stub().callsArgWith(1, null, [])} />, true);
-    renderer.getMountedInstance().componentDidMount();
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="inspector-resources-list">
-        <div className="inspector-resources-list__empty">
-            No resources available.
-        </div>
-      </div>);
-    assert.deepEqual(output, expected);
-  });
-
-  it('can display an empty list', function() {
-    const resources = [{
-      name: 'file1',
-      description: 'file1 desc'
-    }, {
-      name: 'file2',
-      description: 'file2 desc'
-    }];
-    const renderer = jsTestUtils.shallowRender(
-        <juju.components.InspectorResourcesList
-          acl={acl}
-          charmId="cs:django"
-          getResources={sinon.stub().callsArgWith(1, null, resources)} />,
-        true);
-    renderer.getMountedInstance().componentDidMount();
+      <juju.components.InspectorResourcesList
+        acl={acl}
+        resources={resources} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="inspector-resources-list">
@@ -101,18 +71,5 @@ describe('InspectorResourcesList', function() {
         </ul>
       </div>);
     assert.deepEqual(output, expected);
-  });
-
-  it('can abort the request when unmounting', function() {
-    const abort = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-        <juju.components.InspectorResourcesList
-          acl={acl}
-          charmId="cs:django"
-          getResources={sinon.stub().returns({abort: abort})} />,
-        true);
-    renderer.getMountedInstance().componentDidMount();
-    renderer.unmount();
-    assert.equal(abort.callCount, 1);
   });
 });

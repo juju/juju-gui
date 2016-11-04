@@ -43,7 +43,6 @@ YUI.add('inspector-component', function() {
       getAvailableVersions: React.PropTypes.func.isRequired,
       getCharm: React.PropTypes.func.isRequired,
       getMacaroon: React.PropTypes.func.isRequired,
-      getResources: React.PropTypes.func.isRequired,
       getServiceById: React.PropTypes.func.isRequired,
       getServiceByName: React.PropTypes.func.isRequired,
       getUnitStatusCounts: React.PropTypes.func.isRequired,
@@ -408,8 +407,7 @@ YUI.add('inspector-component', function() {
             component:
               <juju.components.InspectorResourcesList
                 acl={this.props.acl}
-                charmId={service.get('charm')}
-                getResources={this.props.getResources} />,
+                resources={this.props.charm.get('resources')} />,
             backState: {
               sectionA: {
                 component: 'inspector',

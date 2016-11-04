@@ -309,6 +309,7 @@ var module = module;
         'tags',
         'charm-metrics',
         'owner',
+        'resources',
         'supported-series'
       ].join('&include=');
       return jujulib._makeRequest(

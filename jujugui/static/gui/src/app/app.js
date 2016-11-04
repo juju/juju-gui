@@ -1376,7 +1376,6 @@ YUI.add('juju-gui', function(Y) {
             getAvailableEndpoints={relationUtils.getAvailableEndpoints.bind(
               this, this.endpointsController, this.db, models.getEndpoints)}
             getMacaroon={charmstore.bakery.getMacaroon.bind(charmstore.bakery)}
-            getResources={charmstore.getResources.bind(charmstore)}
             addCharm={this.env.addCharm.bind(this.env)}
             displayPlans={utils.compareSemver(
               this.get('jujuCoreVersion'), '2') > -1}
