@@ -128,9 +128,8 @@ describe('ScaleService', function() {
     });
     // Check that it modifies state so that it shows the unit list.
     assert.deepEqual(changeStateStub.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+      gui: {
+        inspector: {
           id: '123',
           activeComponent: 'units'
         }}
@@ -167,15 +166,12 @@ describe('ScaleService', function() {
     // Check that it modifies state so that it shows the unit list and
     // the machine view.
     assert.deepEqual(changeStateStub.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+      gui: {
+        inspector: {
           id: '123',
           activeComponent: 'units'
-        }
-      },
-      sectionB: {
-        component: 'machine'
+        },
+        machines: ''
       }
     });
   });
