@@ -326,9 +326,8 @@ describe('UnitList', () => {
     });
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+      gui: {
+        inspector: {
           id: 'mysql',
           unit: '5',
           activeComponent: 'unit'
@@ -363,9 +362,8 @@ describe('UnitList', () => {
     });
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+      gui: {
+        inspector: {
           id: 'wordpress',
           unit: '5',
           activeComponent: 'unit'
