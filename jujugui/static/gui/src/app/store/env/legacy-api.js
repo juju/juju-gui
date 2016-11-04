@@ -1107,81 +1107,65 @@ YUI.add('juju-env-legacy-api', function(Y) {
 
       @method deploy
     */
-    deploy: function(charmUrl, series, applicationName, config, configRaw,
-        numUnits,constraints, toMachine, callback, options) {
-      var ecs = this.get('ecs');
-      var args = ecs._getArgs(arguments);
+    deploy: function(args, callback, options) {
       if (options && options.immediate) {
         // Call the deploy method right away bypassing the queue.
-        this._deploy.apply(this, args);
-      } else {
-        ecs._lazyDeploy(arguments);
+        this._deploy(args, callback);
+        return;
       }
+      const ecs = this.get('ecs');
+      ecs._lazyDeploy(arguments);
     },
 
     /**
       Deploy a charm.
 
       @method _deploy
-      @param {String} charmUrl The URL of the charm.
-      @param {String} series The series to use in a multi-series charm. This
-        field is ignored as Juju 1.x does not support multi-series charms. It
-        is only here to keep the api consistent with the Juju 2 call signature.
-      @param {String} applicationName The name of the app to be deployed.
-      @param {Object} config The charm configuration options.
-      @param {String} configRaw The YAML representation of the charm
-        configuration options. Only one of `config` and `configRaw` should be
-        provided, though `configRaw` takes precedence if it is given.
-      @param {Integer} numUnits The number of units to be deployed.
-      @param {Object} constraints The machine constraints to use in the
-        object format key: value.
-      @param {String} toMachine The machine/container name where to deploy the
-        application unit (e.g. top level machine "42" or container "2/lxc/0").
-        If the value is null or undefined, the default juju-core unit placement
-        policy is used. This currently means that clean and empty machines are
-        used if available, otherwise new top level machines are created.
-        If the value is set, numUnits must be 1: i.e. it is not possible to add
-        multiple units to a single machine/container.
+      @param {Object} args The arguments required to execute the call to deploy
+        the charm, including:
+        - {String} charmURL: the URL of the charm;
+        - {String} applicationName: the name of the resulting application;
+        - {Integer} numUnits: the number of units to be added, defaulting to 0;
+        - {Object} config: the optional charm configuration options;
+        - {String} configRaw: the optional YAML representation of the charm
+          configuration options. Only one of `config` and `configRaw` should be
+          provided, though `configRaw` takes precedence if it is given;
+        - {Object} constraints: the optional machine constraints to use in the
+          object format key: value;
       @param {Function} callback A callable that must be called once the
-        operation is performed.
-      @return {undefined} Sends a message to the server only.
+        operation is performed. It receives an error with a message describing
+        the problem if a problem occurred (or null if the operation succeeded),
+        the application name as second argument and the charm URL as third.
     */
-    _deploy: function(charmUrl, series, applicationName, config, configRaw,
-        numUnits, constraints, toMachine, callback) {
+    _deploy: function(args, callback) {
       // Define the API callback.
-      var handler = function(userCallback, applicationName, charmUrl, data) {
-        if (!userCallback) {
+      const handler = data => {
+        if (!callback) {
           console.log('data returned by deploy API call:', data);
           return;
         }
-        userCallback({
-          err: data.Error,
-          applicationName: applicationName,
-          charmUrl: charmUrl
-        });
-      }.bind(this, callback, applicationName, charmUrl);
+        if (data.Error) {
+          callback(data.Error, '', '');
+          return;
+        }
+        callback(null, args.applicationName, args.charmURL);
+      };
 
       // Build the API call parameters.
-      if (constraints) {
-        // If the constraints is a function (this arg position used to be a
-        // callback) then log it out to the console to fix it.
-        if (typeof constraints === 'function') {
-          console.error('Constraints need to be an object not a function');
-          console.warn(constraints);
-        }
-        constraints = this.prepareConstraints(constraints);
-      } else {
-        constraints = {};
+      let constraints = {};
+      if (args.constraints) {
+        constraints = this.prepareConstraints(args.constraints);
       }
-      var params = {
-        ServiceName: applicationName,
-        Config: stringifyObjectValues(config),
-        ConfigYAML: configRaw,
+      const params = {
+        ServiceName: args.applicationName,
+        Config: stringifyObjectValues(args.config || {}),
+        ConfigYAML: args.configRaw || '',
         Constraints: constraints,
-        CharmUrl: charmUrl,
-        NumUnits: numUnits,
-        ToMachineSpec: toMachine
+        CharmUrl: args.charmURL,
+        NumUnits: args.numUnits || 0
       };
+
+      // Perform the API call.
       this._send_rpc({
         Type: 'Client',
         Request: 'ServiceDeploy',

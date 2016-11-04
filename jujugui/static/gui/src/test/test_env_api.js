@@ -1551,21 +1551,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys an application', function() {
-      env.deploy('precise/mysql', 'trusty', 'mysql', null, null, 1, null,
-        null, null, {immediate: true});
+      env.deploy({
+        charmURL: 'precise/mysql',
+        applicationName: 'mysql',
+        series: 'trusty',
+        numUnits: 1
+      }, null, {immediate: true});
       msg = conn.last_message();
-      var expected = {
+      const expected = {
         type: 'Application',
         request: 'Deploy',
         version: 7,
         params: {applications: [{
           application: 'mysql',
-          'config-yaml': null,
+          'config-yaml': '',
           config: {},
           constraints: {},
           'charm-url': 'precise/mysql',
           'num-units': 1,
-          series: 'trusty'
+          series: 'trusty',
+          resources: {}
         }]},
         'request-id': 1
       };
@@ -1573,52 +1578,60 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys an application with a config object', function() {
-      var config = {debug: true, logo: 'example.com/mylogo.png'};
-      var expected = {
+      const config = {debug: true, logo: 'example.com/mylogo.png'};
+      const expected = {
         type: 'Application',
         request: 'Deploy',
         version: 7,
         params: {applications: [{
-          application: null,
+          application: 'wiki',
           // Configuration values are sent as strings.
           config: {debug: 'true', logo: 'example.com/mylogo.png'},
-          'config-yaml': null,
+          'config-yaml': '',
           constraints: {},
           'charm-url': 'precise/mediawiki',
-          'num-units': null
+          'num-units': 0,
+          resources: {}
         }]},
         'request-id': 1
       };
-      env.deploy('precise/mediawiki', null, null, config, null, null, null,
-        null, null, {immediate: true});
+      env.deploy({
+        charmURL: 'precise/mediawiki',
+        applicationName: 'wiki',
+        config: config
+      }, null, {immediate: true});
       msg = conn.last_message();
       assert.deepEqual(expected, msg);
     });
 
     it('successfully deploys an application with a config file', function() {
-      var config_raw = 'tuning-level: \nexpert-mojo';
-      var expected = {
+      const configRaw = 'tuning-level: \nexpert-mojo';
+      const expected = {
         type: 'Application',
         request: 'Deploy',
         version: 7,
         params: {applications: [{
-          application: null,
+          application: 'mysql',
           config: {},
           constraints: {},
-          'config-yaml': config_raw,
+          'config-yaml': configRaw,
           'charm-url': 'precise/mysql',
-          'num-units': null
+          'num-units': 0,
+          resources: {}
         }]},
         'request-id': 1
       };
-      env.deploy('precise/mysql', null, null, null, config_raw, null, null,
-        null, null, {immediate: true});
+      env.deploy({
+        charmURL: 'precise/mysql',
+        applicationName: 'mysql',
+        configRaw: configRaw
+      }, null, {immediate: true});
       msg = conn.last_message();
       assert.deepEqual(expected, msg);
     });
 
     it('successfully deploys an application with constraints', function() {
-      var constraints = {
+      const constraints = {
         'cpu-cores': 1,
         'cpu-power': 0,
         mem: '512M',
@@ -1626,8 +1639,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'root-disk': '8000',
         tags: 'tag1,tag2'
       };
-      env.deploy('precise/mediawiki', null, null, null, null, 1, constraints,
-        null, null, {immediate: true});
+      env.deploy({
+        charmURL: 'xenial/mediawiki',
+        applicationName: 'mediawiki',
+        numUnits: 1,
+        constraints: constraints
+      }, null, {immediate: true});
       msg = conn.last_message();
       assert.deepEqual(msg.params.applications[0].constraints, {
         'cpu-cores': 1,
@@ -1639,60 +1656,70 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('successfully deploys an app to a specific machine', function() {
-      var expectedMessage = {
+    it('successfully deploys an application with resources', function() {
+      const resources = {myresource: 'pending-resource-id'};
+      const expected = {
         type: 'Application',
         request: 'Deploy',
         version: 7,
         params: {applications: [{
-          application: null,
-          'config-yaml': null,
+          application: 'wiki',
+          // Configuration values are sent as strings.
           config: {},
+          'config-yaml': '',
           constraints: {},
           'charm-url': 'precise/mediawiki',
-          'num-units': 1
+          'num-units': 7,
+          resources: resources
         }]},
         'request-id': 1
       };
-      env.deploy('precise/mediawiki', null, null, null, null, 1, null, '42',
-        null, {immediate: true});
-      assert.deepEqual(conn.last_message(), expectedMessage);
+      env.deploy({
+        charmURL: 'precise/mediawiki',
+        applicationName: 'wiki',
+        numUnits: 7,
+        resources: resources
+      }, null, {immediate: true});
+      msg = conn.last_message();
+      assert.deepEqual(expected, msg);
     });
 
-    it('successfully deploys an application storing charm data', function() {
-      var charmUrl;
-      var err;
-      var applicationName;
-      env.deploy(
-          'precise/mysql', null, 'mysql', null, null, null, null, null,
-          function(data) {
-            charmUrl = data.charmUrl;
-            err = data.err;
-            applicationName = data.applicationName;
-          }, {immediate: true});
+    it('deploys an application storing charm data', function(done) {
+      env.deploy({
+        charmURL: 'precise/mysql',
+        applicationName: 'mysql',
+        series: 'trusty',
+        numUnits: 1
+      }, (err, applicationName, charmURL) => {
+        assert.strictEqual(err, null);
+        assert.strictEqual(applicationName, 'mysql');
+        assert.strictEqual(charmURL, 'precise/mysql');
+        done();
+      }, {immediate: true});
       // Mimic response.
       conn.msg({
         'request-id': 1,
         response: {results: [{}]}
       });
-      assert.equal(charmUrl, 'precise/mysql');
-      assert.strictEqual(err, undefined);
-      assert.equal(applicationName, 'mysql');
     });
 
-    it('handles failed application deployments', function() {
-      var err;
-      env.deploy(
-          'precise/mysql', null, 'mysql', null, null, null, null, null,
-          function(data) {
-            err = data.err;
-          }, {immediate: true});
+    it('handles failed application deployments', function(done) {
+      env.deploy({
+        charmURL: 'precise/mysql',
+        applicationName: 'mysql',
+        series: 'trusty',
+        numUnits: 1
+      }, (err, applicationName, charmURL) => {
+        assert.strictEqual(err, 'bad wolf');
+        assert.strictEqual(applicationName, '');
+        assert.strictEqual(charmURL, '');
+        done();
+      }, {immediate: true});
       // Mimic response.
       conn.msg({
         'request-id': 1,
-        response: {results: [{error: 'app "mysql" not found'}]}
+        response: {results: [{error: {message: 'bad wolf'}}]}
       });
-      assert.equal(err, 'app "mysql" not found');
     });
 
     it('sets metric credentials', function(done) {

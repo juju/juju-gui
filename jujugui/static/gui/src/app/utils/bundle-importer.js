@@ -482,36 +482,36 @@ YUI.add('bundle-importer', function(Y) {
           }
           ghostService.set('config', config);
 
-          var constraints = record.args[4] || {};
-
-          this.modelAPI.deploy(
-              // Utilize the charm's id, as bundles may specify charms without
-              // fully qualified charm IDs in the service specification. This
-              // allows bundles to use charms without revisions, effectively
-              // requesting the most recent charm.
-              charm.get('id'),
-              series,
-              record.args[2],
-              record.args[3],
-              undefined, // Config file content.
-              0, // Number of units.
-              constraints, // Constraints.
-              null, // toMachine.
-              function(ghostService) {
-                var name = ghostService.get('name');
-                ghostService.setAttrs({
-                  id: name,
-                  displayName: undefined,
-                  pending: false,
-                  loading: false,
-                  config: ghostService.get('config'),
-                  constraints: constraints
-                });
-                this.modelAPI.update_annotations(
-                    name, 'application', ghostService.get('annotations'));
-              }.bind(this, ghostService),
-              // Options used by ECS, ignored by model.
-              {modelId: ghostService.get('id')});
+          const constraints = record.args[4] || {};
+          const deployCallback = function(ghostService, err, applicationName) {
+            if (err) {
+              this.db.notifications.add({
+                title: 'Error deploying ' + applicationName,
+                message: 'Could not deploy the requested application. Server ' +
+                    'responded with: ' + err,
+                level: 'error'
+              });
+              return;
+            }
+            const name = ghostService.get('name');
+            ghostService.setAttrs({
+              id: name,
+              displayName: undefined,
+              pending: false,
+              loading: false,
+              config: ghostService.get('config'),
+              constraints: constraints
+            });
+            this.modelAPI.update_annotations(
+              name, 'application', ghostService.get('annotations'));
+          }.bind(this, ghostService);
+          this.modelAPI.deploy({
+            charmURL: charm.get('id'),
+            applicationName: record.args[2],
+            series: series,
+            config: record.args[3],
+            constraints: constraints
+          }, deployCallback, {modelId: ghostService.get('id')});
           this._saveModelToRequires(record.id, ghostService);
           this._collectedServices.push(ghostService);
           next();

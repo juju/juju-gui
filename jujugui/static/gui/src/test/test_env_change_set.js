@@ -794,83 +794,83 @@ describe('Environment Change Set', function() {
 
     describe('_lazyDeploy', function() {
       it('creates a new `deploy` record', function(done) {
-        var args = [1, 2, 'foo', 'bar', done, {modelId: 'baz'}];
-        var key = ecs._lazyDeploy(args);
-        var record = ecs.changeSet[key];
+        const args = {
+          charmURL: 'cs:precise/django-42',
+          applicationName: 'django',
+        };
+        const key = ecs._lazyDeploy([args, done, {modelId: 'baz'}]);
+        const record = ecs.changeSet[key];
         assert.isObject(record);
         assert.isObject(record.command);
         assert.equal(record.executed, false);
         assert.equal(record.command.method, '_deploy');
         // Remove the functions, which will not be equal.
-        var cb = record.command.args.pop();
-        args.pop();
+        const cb = record.command.args.pop();
         // Also remove the options object.
-        args.pop();
-        assert.deepEqual(record.command.args, args);
+        assert.deepEqual(record.command.args, [args]);
         assert.deepEqual(record.command.options, {modelId: 'baz'});
         cb(); // Will call done().
       });
 
       it('retrieves the updated application name on preparation', function() {
-        var options = {modelId: 'new1'};
-        var callback = sinon.stub();
-        var args = [
-          'cs:precise/django-42', 'precise', 'django', {}, null, 1, {}, null,
-          callback, options
-        ];
-        var key = ecs._lazyDeploy(args);
-        var command = ecs.changeSet[key].command;
+        const args = {
+          charmURL: 'cs:precise/django-42',
+          applicationName: 'django',
+          series: 'precise',
+          numUnits: 1
+        };
+        const callback = sinon.stub();
+        const options = {modelId: 'new1'};
+        const key = ecs._lazyDeploy([args, callback, options]);
+        const command = ecs.changeSet[key].command;
         // Add the ghost service to the db.
-        var services = new Y.juju.models.ServiceList();
-        services.add({id: 'new1', name: 'renamed-service'});
+        const services = new Y.juju.models.ServiceList();
+        services.add({id: 'new1', name: 'renamed-app'});
         // Execute the command preparation.
         command.prepare({services: services});
         // The service name has been updated.
-        assert.strictEqual(command.args[2], 'renamed-service');
+        assert.strictEqual(command.args[0].applicationName, 'renamed-app');
       });
 
       it('retrieves the updated application series on preparation', function() {
-        var options = {modelId: 'new1'};
-        var callback = sinon.stub();
-        var args = [
-          'cs:precise/django-42', 'precise', 'django', {}, null, 1, {}, null,
-          callback, options
-        ];
-        var key = ecs._lazyDeploy(args);
-        var command = ecs.changeSet[key].command;
+        const args = {
+          charmURL: 'cs:trusty/django-42',
+          applicationName: 'django',
+          series: 'trusty',
+          numUnits: 2
+        };
+        const callback = sinon.stub();
+        const options = {modelId: 'new1'};
+        const key = ecs._lazyDeploy([args, callback, options]);
+        const command = ecs.changeSet[key].command;
         // Add the ghost service to the db.
-        var services = new Y.juju.models.ServiceList();
+        const services = new Y.juju.models.ServiceList();
         services.add({id: 'new1', name: 'renamed-service', series: 'xenial'});
         // Execute the command preparation.
         command.prepare({services: services});
         // The service name has been updated.
-        assert.strictEqual(command.args[1], 'xenial');
+        assert.strictEqual(command.args[0].series, 'xenial');
       });
 
       it('filters out any undefined settings on commit', function() {
-        var options = {modelId: 'new1'};
-        var callback = sinon.stub();
-        var args = [
-          'cs:precise/django-42', 'precise', 'django', {
-            foo: 'bar',
-            baz: undefined
-          }, null, 1, {}, null,
-          callback, options
-        ];
-        var key = ecs._lazyDeploy(args);
-        var command = ecs.changeSet[key].command;
+        const args = {
+          charmURL: 'cs:trusty/django-42',
+          applicationName: 'django',
+          series: 'trusty',
+          numUnits: 2,
+          config: {key1: 'val', key2: undefined}
+        };
+        const callback = sinon.stub();
+        const options = {modelId: 'new1'};
+        const key = ecs._lazyDeploy([args, callback, options]);
+        const command = ecs.changeSet[key].command;
         // Add the ghost service to the db.
-        var services = new Y.juju.models.ServiceList();
+        const services = new Y.juju.models.ServiceList();
         services.add({id: 'new1'});
         // Execute the command preparation.
-        command.prepare.call({
-          args: args,
-          options: options
-        }, {services: services});
+        command.prepare({services: services});
         // Ensure that the undefined key is not still in the config param.
-        assert.deepEqual(args[3], {
-          foo: 'bar'
-        });
+        assert.deepEqual(Object.keys(command.args[0].config), ['key1']);
       });
     });
 
@@ -934,7 +934,7 @@ describe('Environment Change Set', function() {
         var stubRemoveUnits = testUtils.makeStubMethod(db, 'removeUnits');
         this._cleanups.push(stubRemoveUnits.reset);
 
-        ecs._lazyDeploy([1, 2, 'foo', 'bar', function() {}, {modelId: 'baz'}]);
+        ecs._lazyDeploy([{charmURL: 'wp'}, function() {}, {modelId: 'baz'}]);
         ecs.lazyDestroyApplication(['baz']);
         assert.equal(stubRemove.calledOnce, true, 'remove not called');
         assert.equal(stubDestroy.calledOnce, true, 'destroy not called');
@@ -968,9 +968,9 @@ describe('Environment Change Set', function() {
         ecs._lazyAddCharm(
           ['cs:wordpress', 'cookies', null, {applicationId: 'foo'}]);
         ecs._lazyDeploy(
-          ['cs:wordpress', 2, 'foo', 'bar', function() {}, {modelId: 'baz'}]);
+          [{charmURL: 'cs:wordpress'}, function() {}, {modelId: 'baz'}]);
         ecs._lazyDeploy(
-          ['cs:wordpress', 2, 'foo', 'bar', function() {}, {modelId: 'baz2'}]);
+          [{charmURL: 'cs:wordpress'}, function() {}, {modelId: 'baz2'}]);
         assert.equal(Object.keys(ecs.changeSet).length, 3);
         ecs.lazyDestroyApplication(['baz']);
         assert.equal(Object.keys(ecs.changeSet).length, 2);
@@ -1367,14 +1367,14 @@ describe('Environment Change Set', function() {
       });
 
       it('updates the service and unit on parent results', function() {
-        var args = ['django', 1, 'new1'];
-        var db = ecs.get('db');
+        const args = ['django', 1, 'new1'];
+        const db = ecs.get('db');
         db.units = {
           _idMap: {},
           fire: sinon.stub()
         };
         db.services.getById = sinon.stub();
-        var unit = {
+        const unit = {
           id: '756482$/3',
           number: '3'
         };
@@ -1382,15 +1382,19 @@ describe('Environment Change Set', function() {
         testUtils.makeStubMethod(db, 'updateUnitId', {
           id: 'my-service/3'
         });
-        var key = ecs.lazyAddUnits(args, {modelId: '1'});
-        var command = ecs.changeSet[key].command;
-        var parentRecord = {
+        const key = ecs.lazyAddUnits(args, {modelId: '1'});
+        const command = ecs.changeSet[key].command;
+        const parentRecord = {
           command: {
             method: '_deploy',
-            args: ['cs:utipic/django-42', 'utopic', 'my-service']
+            args: [{
+              charmURL: 'cs:utipic/django-42',
+              applicationName: 'my-service',
+              series: 'utopic'
+            }]
           }
         };
-        var parentResults = {}; // Not used in this case.
+        const parentResults = {}; // Not used in this case.
         command.options = {modelId: '756482$/3'};
         command.onParentResults(parentRecord, parentResults);
         // The first add_unit argument has been updated with the new service
@@ -1443,7 +1447,7 @@ describe('Environment Change Set', function() {
       });
 
       it('creates a new `setConfig` record for a queued service', function() {
-        var args = [1, 2, 'foo', 'bar', function() {}, {modelId: 'baz'}];
+        const args = [{charmURL: 'wp'}, function() {}, {modelId: 'baz'}];
         // This assumes that the _lazyDeploy tests complete successfully.
         var key = ecs._lazyDeploy(args);
         var record = ecs.changeSet[key];
@@ -1774,17 +1778,15 @@ describe('Environment Change Set', function() {
 
     describe('deploy', function() {
       it('can immediately deploy a charm via the env', function() {
-        var lazyDeploy = testUtils.makeStubMethod(ecs, '_lazyDeploy');
+        const lazyDeploy = testUtils.makeStubMethod(ecs, '_lazyDeploy');
         this._cleanups.push(lazyDeploy.reset);
-        var callback = sinon.stub();
-        var args = [1, 2, 3, 4, 5, 6, 7, 8, callback, { immediate: true}];
-        envObj.deploy.apply(envObj, args);
+        const callback = sinon.stub();
+        const args = {charmURL: 'cs:haproxy-42', applicationName: 'haproxy'};
+        envObj.deploy.apply(envObj, [args, callback, {immediate: true}]);
         assert.equal(envObj._deploy.calledOnce, true);
-        var deployArgs = envObj._deploy.lastCall.args;
-        // Remove the final options element, which should not be an argument to
-        // env.deploy.
-        assert.deepEqual(deployArgs, Array.prototype.slice.call(args, 0, -1));
-        // make sure that we don't add it to the changeSet.
+        const deployArgs = envObj._deploy.lastCall.args;
+        assert.deepEqual(deployArgs, [args, callback]);
+        // Make sure that we don't add it to the changeSet.
         assert.equal(lazyDeploy.callCount, 0);
       });
 
@@ -2042,14 +2044,14 @@ describe('Environment Change Set', function() {
   });
 
   describe('validateUnitPlacement', function() {
-    var db, machines, services, unit, units;
+    var db, machines, unit, units;
 
     beforeEach(function() {
       // Set up a unit used for tests and the ecs database.
       unit = {id: 'django/0', charmUrl: 'cs:utopic/django-42'};
       units = new Y.juju.models.ServiceUnitList();
       machines = new Y.juju.models.MachineList();
-      services = new Y.juju.models.ServiceList();
+      const services = new Y.juju.models.ServiceList();
       services.add({
         name: 'django',
         series: 'utopic'

@@ -73,7 +73,6 @@ YUI.add('ghost-deployer-extension', function(Y) {
       ghostService.set('series', activeSeries);
       var serviceName = ghostService.get('name');
       var charmId = this._addSeriesToCharmId(charm.get('id'), activeSeries);
-      var constraints = {};
       if (charm.get('id').indexOf('local:') === -1) {
         // TODO frankban: add support for fetching delegatable macaroons that
         // can be used to add private charms.
@@ -82,18 +81,13 @@ YUI.add('ghost-deployer-extension', function(Y) {
           // Options used by ECS, ignored by environment.
           {applicationId: ghostServiceId});
       }
-      this.env.deploy(
-          charmId,
-          activeSeries,
-          serviceName,
-          config,
-          undefined, // Config file content.
-          0, // Number of units.
-          constraints,
-          null, // toMachine.
-          this._deployCallbackHandler.bind(this, ghostService),
-          // Options used by ECS, ignored by environment.
-          {modelId: ghostServiceId});
+      const options = {modelId: ghostServiceId};
+      this.env.deploy({
+        charmURL: charmId,
+        applicationName: serviceName,
+        series: activeSeries,
+        config: config,
+      }, this._deployCallbackHandler.bind(this, ghostService), options);
 
       // Add an unplaced unit to this service if it is not a subordinate
       // (subordinate units reside alongside non-subordinate units).
@@ -220,17 +214,17 @@ YUI.add('ghost-deployer-extension', function(Y) {
 
       @method _deployCallbackHandler
       @param {Object} ghostService The model of the ghost service.
-      @param {Y.EventFacade} evt The event facade from the deploy event.
+      @param {String} err The error message from the deploy event, or null.
     */
-    _deployCallbackHandler: function(ghostService, evt) {
+    _deployCallbackHandler: function(ghostService, err) {
       var db = this.db;
       var serviceName = ghostService.get('name');
 
-      if (evt.err) {
+      if (err) {
         db.notifications.add({
           title: 'Error deploying ' + serviceName,
           message: 'Could not deploy the requested application. Server ' +
-              'responded with: ' + evt.err.message,
+              'responded with: ' + err,
           level: 'error'
         });
         return;

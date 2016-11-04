@@ -410,49 +410,43 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can deploy (environment integration).', function(done) {
       env.connect();
       // We begin logged in.  See utils.makeFakeBackend.
-      var callback = function(result) {
-        assert.isUndefined(result.err);
-        assert.equal(result.charmUrl, 'cs:precise/mediawiki-18');
-        var application = state.db.services.getById('kumquat');
+      const callback = function(err, applicationName, charmURL) {
+        assert.strictEqual(err, null);
+        assert.strictEqual(applicationName, 'kumquat');
+        assert.strictEqual(charmURL, 'cs:precise/mediawiki-18');
+        const application = state.db.services.getById(applicationName);
         assert.equal(application.get('charm'), 'cs:precise/mediawiki-18');
-        assert.deepEqual(
-            application.get('config'), {
-              admins: '',
-              debug: false,
-              logo: 'test logo',
-              name: 'Please set name of wiki',
-              server_address: '',
-              use_suffix: true,
-              skin: 'vector'
-            }
-        );
+        assert.deepEqual(application.get('config'), {
+          admins: '',
+          debug: false,
+          logo: 'test logo',
+          name: 'Please set name of wiki',
+          server_address: '',
+          use_suffix: true,
+          skin: 'vector'
+        });
         done();
       };
-      env.deploy(
-          'cs:precise/mediawiki-18',
-          'precise',
-          'kumquat',
-          {logo: 'test logo'},
-          null,
-          1,
-          {},
-          null,
-          callback,
-          {immediate: true});
+      env.deploy({
+        charmURL: 'cs:precise/mediawiki-18',
+        applicationName: 'kumquat',
+        series: 'precise',
+        config: {logo: 'test logo'},
+        numUnits: 1
+      }, callback, {immediate: true});
     });
 
     it('can deploy with constraints', function(done) {
-      var constraints = {
+      const constraints = {
         'cpu-cores': 1,
         'cpu-power': 0,
         mem: '512M',
         arch: 'i386'
       };
-
       env.connect();
       // We begin logged in.  See utils.makeFakeBackend.
-      var callback = function(result) {
-        var application = state.db.services.getById('kumquat');
+      const callback = function(_, applicationName) {
+        const application = state.db.services.getById(applicationName);
         assert.deepEqual(application.get('constraints'), {
           'cpu-cores': 1,
           'cpu-power': 0,
@@ -461,30 +455,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
         done();
       };
-      env.deploy(
-          'cs:precise/wordpress-27',
-          'precise',
-          'kumquat',
-          {llama: 'pajama'},
-          null,
-          1,
-          constraints,
-          null,
-          callback,
-          {immediate: true});
+      env.deploy({
+        charmURL: 'cs:precise/wordpress-27',
+        applicationName: 'kumquat',
+        series: 'precise',
+        config: {llama: 'pajama'},
+        constraints: constraints,
+        numUnits: 1
+      }, callback, {immediate: true});
     });
 
     it('can communicate errors after attempting to deploy', function(done) {
       env.connect();
       state.deploy('cs:precise/wordpress-27', function() {});
-      var callback = function(result) {
-        assert.equal(
-            result.err,
-            'An application with this name already exists (wordpress).');
+      const callback = function(err) {
+        assert.strictEqual(
+          err, 'An application with this name already exists (wordpress).');
         done();
       };
-      env.deploy('cs:precise/wordpress-27', 'precise', undefined, undefined,
-        undefined, 1, null, null, callback, {immediate: true});
+      env.deploy({
+        charmURL: 'cs:precise/wordpress-27',
+        applicationName: 'wordpress',
+        series: 'precise',
+        numUnits: 1
+      }, callback, {immediate: true});
     });
 
     it('can add machines', function(done) {
@@ -950,24 +944,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         have been generated.
     */
     function generateIntegrationApplications(callback) {
-      var localCb = function(result) {
+      const localCb = function(err) {
+        assert.strictEqual(err, null);
         env.add_unit('kumquat', 2, null, function(data) {
           // After finished generating integrated applications.
           callback(data);
         }, {immediate: true});
       };
       env.connect();
-      env.deploy(
-          'cs:precise/wordpress-27',
-          'precise',
-          'kumquat',
-          {llama: 'pajama'},
-          null,
-          1,
-          null,
-          null,
-          localCb,
-          {immediate: true});
+      env.deploy({
+        charmURL: 'cs:precise/wordpress-27',
+        applicationName: 'kumquat',
+        series: 'precise',
+        config: {llama: 'pajama'},
+        numUnits: 1
+      }, localCb, {immediate: true});
     }
 
     /**
@@ -1008,23 +999,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         have been generated.
     */
     function generateAndExposeIntegrationApplication(callback) {
-      var localCb = function(result) {
-        env.expose(result.applicationName, function(rec) {
+      const localCb = function(err, applicationName) {
+        assert.strictEqual(err, null);
+        env.expose(applicationName, function(rec) {
           callback(rec);
         }, {immediate: true});
       };
       env.connect();
-      env.deploy(
-          'cs:precise/wordpress-27',
-          'precise',
-          'kumquat',
-          {llama: 'pajama'},
-          null,
-          1,
-          null,
-          null,
-          localCb,
-          {immediate: true});
+      env.deploy({
+        charmURL: 'cs:precise/wordpress-27',
+        applicationName: 'kumquat',
+        series: 'precise',
+        config: {llama: 'pajama'},
+        numUnits: 1
+      }, localCb, {immediate: true});
     }
 
     it('can add additional units', function(done) {
@@ -1264,25 +1252,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can add a relation (integration)', function(done) {
       env.connect();
-      env.deploy(
-          'cs:precise/wordpress-27', null, null, null, null, 1,
-          null, null, function() {
-            env.deploy(
-                'cs:precise/mysql-26', null, null, null, null, 1,
-                null, null, function() {
-                  var endpointA = ['wordpress', {name: 'db', role: 'client'}],
-                      endpointB = ['mysql', {name: 'db', role: 'server'}];
-                  env.add_relation(endpointA, endpointB, function(recData) {
-                    assert.equal(recData.err, undefined);
-                    assert.equal(recData.endpoint_a, 'wordpress:db');
-                    assert.equal(recData.endpoint_b, 'mysql:db');
-                    assert.isObject(recData.result);
-                    assert.isObject(
-                        state.db.relations.getById('wordpress:db mysql:db'));
-                    done();
-                  }, {immediate: true});
-                }, {immediate: true});
+      env.deploy({
+        charmURL: 'cs:precise/wordpress-27',
+        applicationName: 'wordpress',
+        numUnits: 1
+      }, function() {
+        env.deploy({
+          charmURL: 'cs:precise/mysql-26',
+          applicationName: 'mysql',
+          numUnits: 1
+        }, function() {
+          const endpointA = ['wordpress', {name: 'db', role: 'client'}];
+          const endpointB = ['mysql', {name: 'db', role: 'server'}];
+          env.add_relation(endpointA, endpointB, function(recData) {
+            assert.equal(recData.err, undefined);
+            assert.equal(recData.endpoint_a, 'wordpress:db');
+            assert.equal(recData.endpoint_b, 'mysql:db');
+            assert.isObject(recData.result);
+            assert.isObject(
+              state.db.relations.getById('wordpress:db mysql:db'));
+            done();
           }, {immediate: true});
+        }, {immediate: true});
+      }, {immediate: true});
     });
 
     it('is able to add a relation with a subordinate app', function(done) {
@@ -1386,25 +1378,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can remove a relation(integration)', function(done) {
       env.connect();
-      env.deploy(
-          'cs:precise/wordpress-27', null, null, null, null, 1,
-          null, null, function() {
-            env.deploy(
-                'cs:precise/mysql-26', null, null, null, null, 1,
-                null, null, function() {
-                  var endpointA = ['wordpress', {name: 'db', role: 'client'}],
-                      endpointB = ['mysql', {name: 'db', role: 'server'}];
-                  env.add_relation(endpointA, endpointB, function() {
-                    env.remove_relation(
-                        endpointA, endpointB, function(recData) {
-                          assert.equal(recData.err, undefined);
-                          assert.equal(recData.endpoint_a, 'wordpress:db');
-                          assert.equal(recData.endpoint_b, 'mysql:db');
-                          done();
-                        }, {immediate: true});
-                  }, {immediate: true});
-                }, {immediate: true});
+      env.deploy({
+        charmURL: 'cs:precise/wordpress-27',
+        applicationName: 'wordpress',
+        numUnits: 1
+      }, function() {
+        env.deploy({
+          charmURL: 'cs:precise/mysql-26',
+          applicationName: 'mysql',
+          numUnits: 1
+        }, function() {
+          const endpointA = ['wordpress', {name: 'db', role: 'client'}];
+          const endpointB = ['mysql', {name: 'db', role: 'server'}];
+          env.add_relation(endpointA, endpointB, function() {
+            env.remove_relation(
+              endpointA, endpointB, function(recData) {
+                assert.equal(recData.err, undefined);
+                assert.equal(recData.endpoint_a, 'wordpress:db');
+                assert.equal(recData.endpoint_b, 'mysql:db');
+                done();
+              }, {immediate: true});
           }, {immediate: true});
+        }, {immediate: true});
+      }, {immediate: true});
     });
 
     describe('Resources facade', function() {
