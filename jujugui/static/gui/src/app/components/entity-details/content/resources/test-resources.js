@@ -32,8 +32,6 @@ describe('EntityResources', function() {
   it('can display an empty list', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityResources
-        apiUrl="http://1.2.3.4/v5"
-        charmId="cs:django"
         pluralize={sinon.stub()}
         resource={{}} />, true);
     const output = renderer.getRenderOutput();
@@ -61,8 +59,6 @@ describe('EntityResources', function() {
     };
     const renderer = jsTestUtils.shallowRender(
       <juju.components.EntityResources
-        apiUrl="http://1.2.3.4/v5"
-        charmId="cs:django"
         pluralize={sinon.stub().returns('resources')}
         resources={resources} />, true);
     const output = renderer.getRenderOutput();
@@ -75,17 +71,11 @@ describe('EntityResources', function() {
           <ul className="section__list entity-files__listing">
             <li className="entity-files__file"
               key="file10">
-              <a href="http://1.2.3.4/v5/django/resource/file1"
-                target="_blank">
-                {'file1'} {'(.zip)'}
-              </a>
+              {'file1'} {'(.zip)'}
             </li>
             <li className="entity-files__file"
               key="file21">
-              <a href="http://1.2.3.4/v5/django/resource/file2"
-                target="_blank">
-                {'file2'} {''}
-              </a>
+              {'file2'} {''}
             </li>
           </ul>
         </div>

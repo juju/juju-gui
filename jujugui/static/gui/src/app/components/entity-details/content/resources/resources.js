@@ -23,8 +23,6 @@ YUI.add('entity-resources', function() {
   juju.components.EntityResources = React.createClass({
 
     propTypes: {
-      apiUrl: React.PropTypes.string.isRequired,
-      charmId: React.PropTypes.string.isRequired,
       pluralize: React.PropTypes.func.isRequired,
       resources: React.PropTypes.object
     },
@@ -41,9 +39,6 @@ YUI.add('entity-resources', function() {
       }
       const resourceList = Object.keys(resources).map((key, i) => {
         const resource = resources[key];
-        // Construct the full path to the resource.
-        const URL = `${this.props.apiUrl}/` +
-          `${this.props.charmId.replace('cs:', '')}/resource/${resource.name}`;
         // Get the file extension.
         const parts = resource.path.split('.');
         let extension = '';
@@ -54,9 +49,7 @@ YUI.add('entity-resources', function() {
         return (
           <li className="entity-files__file"
             key={resource.name + i}>
-            <a href={URL} target="_blank">
-              {resource.name} {extension}
-            </a>
+            {resource.name} {extension}
           </li>);
       });
       return (

@@ -127,8 +127,6 @@ describe('EntityContent', function() {
             </div>
             <div className="four-col">
               <juju.components.EntityResources
-                apiUrl={apiUrl}
-                charmId="cs:django"
                 pluralize={pluralize}
                 resources={{resource: 'one'}} />
               <juju.components.EntityContentRelations
@@ -233,8 +231,6 @@ describe('EntityContent', function() {
             </div>
             <div className="four-col">
               <juju.components.EntityResources
-                apiUrl={apiUrl}
-                charmId="cs:django"
                 pluralize={pluralize}
                 resources={undefined} />
               <juju.components.EntityContentRelations
