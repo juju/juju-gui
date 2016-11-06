@@ -1177,4 +1177,19 @@ describe('utilities', function() {
     });
   });
 
+  describe('getCloudProviderDetails', function() {
+    let utils;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('can get details for a provider', function() {
+      const provider = utils.getCloudProviderDetails('gce');
+      assert.equal(provider.id, 'google');
+    });
+  });
 })();

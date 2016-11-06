@@ -29,7 +29,7 @@ YUI.add('deployment-credential', function() {
       generateCloudCredentialName: React.PropTypes.func.isRequired,
       getCloudCredentialNames: React.PropTypes.func.isRequired,
       getCloudCredentials: React.PropTypes.func.isRequired,
-      providers: React.PropTypes.object.isRequired,
+      getCloudProviderDetails: React.PropTypes.func.isRequired,
       region: React.PropTypes.string,
       setCredential: React.PropTypes.func.isRequired,
       setRegion: React.PropTypes.func.isRequired,
@@ -253,7 +253,7 @@ YUI.add('deployment-credential', function() {
           acl={this.props.acl}
           close={this._toggleAdd}
           cloud={this.props.cloud}
-          providers={this.props.providers}
+          getCloudProviderDetails={this.props.getCloudProviderDetails}
           generateCloudCredentialName={this.props.generateCloudCredentialName}
           getCredentials={this._getCredentials}
           setCredential={this.props.setCredential}

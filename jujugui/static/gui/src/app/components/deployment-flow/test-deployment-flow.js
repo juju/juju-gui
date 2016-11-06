@@ -50,6 +50,7 @@ describe('DeploymentFlow', function() {
     var getCloudCredentials = sinon.stub();
     var getCloudCredentialNames = sinon.stub();
     var servicesGetById = sinon.stub();
+    const getCloudProviderDetails = sinon.stub();
     const changes = {};
     const generateCloudCredentialName = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
@@ -64,6 +65,7 @@ describe('DeploymentFlow', function() {
         generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentials={getCloudCredentials}
         getCloudCredentialNames={getCloudCredentialNames}
+        getCloudProviderDetails={getCloudProviderDetails}
         groupedChanges={groupedChanges}
         listBudgets={listBudgets}
         listClouds={listClouds}
@@ -114,7 +116,7 @@ describe('DeploymentFlow', function() {
           <juju.components.DeploymentCloud
             acl={acl}
             cloud={null}
-            providers={instance.PROVIDERS}
+            getCloudProviderDetails={getCloudProviderDetails}
             listClouds={listClouds}
             setCloud={instance._setCloud} />
         </juju.components.DeploymentSection>
@@ -127,7 +129,7 @@ describe('DeploymentFlow', function() {
             acl={acl}
             updateCloudCredential={updateCloudCredential}
             cloud={null}
-            providers={instance.PROVIDERS}
+            getCloudProviderDetails={getCloudProviderDetails}
             credential={undefined}
             editable={true}
             generateCloudCredentialName={generateCloudCredentialName}
@@ -238,6 +240,7 @@ describe('DeploymentFlow', function() {
         generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentials={getCloudCredentials}
         getCloudCredentialNames={getCloudCredentialNames}
+        getCloudProviderDetails={sinon.stub()}
         groupedChanges={groupedChanges}
         isLegacyJuju={true}
         listBudgets={listBudgets}
@@ -334,6 +337,7 @@ describe('DeploymentFlow', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
@@ -363,6 +367,7 @@ describe('DeploymentFlow', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
@@ -390,6 +395,7 @@ describe('DeploymentFlow', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
@@ -417,6 +423,7 @@ describe('DeploymentFlow', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
@@ -445,6 +452,7 @@ describe('DeploymentFlow', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
@@ -473,6 +481,7 @@ describe('DeploymentFlow', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
@@ -506,6 +515,7 @@ describe('DeploymentFlow', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
@@ -534,6 +544,7 @@ describe('DeploymentFlow', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
@@ -563,6 +574,7 @@ describe('DeploymentFlow', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
@@ -592,6 +604,7 @@ describe('DeploymentFlow', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
@@ -622,6 +635,7 @@ describe('DeploymentFlow', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
@@ -655,6 +669,7 @@ describe('DeploymentFlow', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
@@ -700,6 +715,7 @@ describe('DeploymentFlow', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
@@ -741,6 +757,7 @@ describe('DeploymentFlow', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
         groupedChanges={groupedChanges}
         isLegacyJuju={true}
         listBudgets={sinon.stub()}
@@ -778,6 +795,7 @@ describe('DeploymentFlow', function() {
         generateCloudCredentialName={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}

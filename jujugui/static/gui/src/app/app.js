@@ -1177,6 +1177,7 @@ YUI.add('juju-gui', function(Y) {
           getCloudCredentialNames={
             controllerAPI && controllerAPI.getCloudCredentialNames.bind(
               controllerAPI)}
+          getCloudProviderDetails={utils.getCloudProviderDetails.bind(utils)}
           groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
           isLegacyJuju={this.isLegacyJuju()}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
