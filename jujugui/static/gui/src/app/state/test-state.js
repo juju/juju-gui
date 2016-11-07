@@ -118,6 +118,24 @@ describe('State', () => {
       gui: {inspector: {localType: 'update'}}
     },
     error: null
+  }, {
+    path: 'http://abc.com:123/i/inspector/kibana/unit/0',
+    state: {
+      gui: {inspector: {id: 'kibana', activeComponent: 'unit', 'unit': '0'}}
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/i/inspector/local/new',
+    state: {
+      gui: {inspector: {localType: 'new'}}
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/i/inspector/local/update',
+    state: {
+      gui: {inspector: {localType: 'update'}}
+    },
+    error: null
   }];
 
   const storeStateTests = [{
