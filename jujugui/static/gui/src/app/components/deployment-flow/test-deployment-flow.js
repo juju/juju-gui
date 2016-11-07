@@ -23,7 +23,7 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('DeploymentFlow', function() {
+fdescribe('DeploymentFlow', function() {
   var acl, groupedChanges;
 
   beforeAll(function(done) {
