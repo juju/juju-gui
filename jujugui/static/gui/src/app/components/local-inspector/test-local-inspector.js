@@ -348,9 +348,8 @@ describe('LocalInspector', function() {
     assert.equal(upgradeServiceUsingLocalCharm.args[0][1], file);
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionA: {
-        component: 'applications',
-        metadata: null
+      gui: {
+        machines: null
       }});
   });
 
@@ -378,9 +377,8 @@ describe('LocalInspector', function() {
     output.props.children[2].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionA: {
-        component: 'applications',
-        metadata: null
+      gui: {
+        machines: null
       }});
   });
 
