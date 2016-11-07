@@ -71,13 +71,7 @@ YUI.add('inspector-change-version', function() {
     */
     _viewCharmDetails: function(charmId, e) {
       this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'entity-details',
-            id: charmId.replace('cs:', '')
-          }
-        }
+        store: charmId.replace('cs:', '')
       });
     },
 
