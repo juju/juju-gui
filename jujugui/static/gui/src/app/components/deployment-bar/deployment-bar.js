@@ -106,11 +106,8 @@ YUI.add('deployment-bar', function() {
     */
     _deployAction: function() {
       this.props.changeState({
-        sectionC: {
-          component: 'deploy',
-          metadata: {
-            activeComponent: null
-          }
+        gui: {
+          deploy: ''
         }
       });
     },
