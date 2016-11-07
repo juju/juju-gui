@@ -1525,17 +1525,18 @@ YUI.add('juju-view-utils', function(Y) {
     @method showProfile
     @param {Object} ecs Reference to the ecs.
     @param {Function} changeState The method for changing the app state.
+    @param {String} username The username of the profile to display.
   */
-  utils.showProfile = function(ecs, changeState) {
+  utils.showProfile = function(ecs, changeState, username) {
     var currentChangeSet = ecs.getCurrentChangeSet();
     // If there are uncommitted changes then show a confirmation popup.
     if (Object.keys(currentChangeSet).length > 0) {
       utils._showUncommittedConfirm(
-        utils._showProfile.bind(this, ecs, changeState, true));
+        utils._showProfile.bind(this, ecs, changeState, username, true));
       return;
     }
     // If there are no uncommitted changes then switch right away.
-    utils._showProfile(ecs, changeState, false);
+    utils._showProfile(ecs, changeState, username, false);
   };
 
   /**
@@ -1545,8 +1546,10 @@ YUI.add('juju-view-utils', function(Y) {
     @method _showProfile
     @param {Object} ecs Reference to the ecs.
     @param {Function} changeState The method for changing the app state.
+    @param {String} username The username of the profile to display.
+    @param {Boolean} clear Whether to clear the ecs.
   */
-  utils._showProfile = function(ecs, changeState, clear=false) {
+  utils._showProfile = function(ecs, changeState, username, clear=false) {
     utils._hidePopup();
     if (clear) {
       // Have to go ahead and clear the ECS otherwise future navigation will
@@ -1554,10 +1557,7 @@ YUI.add('juju-view-utils', function(Y) {
       ecs.clear();
     }
     changeState({
-      sectionB: {
-        component: 'profile',
-        metadata: null
-      }
+      profile: username
     });
   };
 
