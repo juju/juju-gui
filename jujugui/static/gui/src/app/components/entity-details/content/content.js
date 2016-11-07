@@ -168,9 +168,9 @@ YUI.add('entity-content', function() {
       @return {Array} The list markup.
     */
     _generateList: function(list, handler) {
-      return list.map(function(item) {
+      return list.map(function(item, i) {
         return (
-          <li key={item}>
+          <li key={item + i}>
             <a data-id={item} onClick={handler}>
               {item}
             </a>
@@ -270,6 +270,21 @@ YUI.add('entity-content', function() {
             </div>
           </div>
         );
+      }
+    },
+
+    /**
+      Display the resources if this is a charm.
+
+      @method _generateResources
+    */
+    _generateResources: function() {
+      var entityModel = this.props.entityModel;
+      if (entityModel.get('entityType') === 'charm') {
+        return (
+          <juju.components.EntityResources
+            pluralize={this.props.pluralize}
+            resources={entityModel.get('resources')} />);
       }
     },
 
@@ -430,6 +445,7 @@ YUI.add('entity-content', function() {
                   getFile={this.props.getFile} />
               </div>
               <div className="four-col">
+                {this._generateResources()}
                 {this._showEntityRelations()}
                 <juju.components.EntityFiles
                   apiUrl={this.props.apiUrl}
@@ -454,6 +470,7 @@ YUI.add('entity-content', function() {
     'entity-content-relations',
     'entity-content-revisions',
     'entity-files',
+    'entity-resources',
     'expanding-row',
     'loading-spinner',
     'svg-icon'

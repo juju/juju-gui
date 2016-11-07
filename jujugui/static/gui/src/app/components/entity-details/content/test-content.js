@@ -25,7 +25,7 @@ chai.config.truncateThreshold = 0;
 
 function _generateTagItem(tag, fn) {
   return [
-    <li key={tag}>
+    <li key={tag + 0}>
       <a data-id={tag} onClick={fn}>{tag}</a>
     </li>
   ];
@@ -53,6 +53,7 @@ describe('EntityContent', function() {
     var getFile = sinon.spy();
     var changeState = sinon.spy();
     var pluralize = sinon.spy();
+    mockEntity.set('resources', {resource: 'one'});
     var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityContent
           apiUrl={apiUrl}
@@ -125,6 +126,9 @@ describe('EntityContent', function() {
                 getFile={getFile} />
             </div>
             <div className="four-col">
+              <juju.components.EntityResources
+                pluralize={pluralize}
+                resources={{resource: 'one'}} />
               <juju.components.EntityContentRelations
                 changeState={changeState}
                 relations={mockEntity.get('relations')} />
@@ -226,6 +230,9 @@ describe('EntityContent', function() {
                 getFile={getFile} />
             </div>
             <div className="four-col">
+              <juju.components.EntityResources
+                pluralize={pluralize}
+                resources={undefined} />
               <juju.components.EntityContentRelations
                 changeState={changeState}
                 relations={mockEntity.get('relations')} />
@@ -274,6 +281,7 @@ describe('EntityContent', function() {
                 getFile={getFile} />
             </div>
             <div className="four-col">
+              {undefined}
               {undefined}
               <juju.components.EntityFiles
                 apiUrl={apiUrl}
@@ -398,7 +406,7 @@ describe('EntityContent', function() {
           renderMarkdown={renderMarkdown} />, true);
     var output = renderer.getRenderOutput();
     var parent = output.props.children[2].props.children.props.children[1];
-    var relationsComponent = parent.props.children[0];
+    var relationsComponent = parent.props.children[1];
     assert.equal(relationsComponent, undefined);
   });
 
