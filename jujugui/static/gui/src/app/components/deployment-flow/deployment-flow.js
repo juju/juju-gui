@@ -469,9 +469,8 @@ YUI.add('deployment-flow', function() {
     */
     _handleClose: function() {
       this.props.changeState({
-        sectionC: {
-          component: null,
-          metadata: {}
+        gui: {
+          deploy: null
         }
       });
     },
