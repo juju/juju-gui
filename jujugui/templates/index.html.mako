@@ -89,6 +89,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
         <div id="header-breadcrumb"></div>
         <div id="import-export-container"></div>
+        <div id="provider-logo-container" class="header-banner__provider"></div>
       </div>
 
       <div class="header-banner header-banner--right">
@@ -104,7 +105,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       </div>
 
       <div id="zoom-container"></div>
-      
+
       <div id="full-screen-mask">
         <div id="browser-warning" class="centered-column"
             style="display:none;">

@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentCloud', function() {
-  let acl, providers, cloudList;
+  let acl, cloudList, getCloudProviderDetails;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,38 +33,32 @@ describe('DeploymentCloud', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    providers = {
-      'gce': {
-        id: 'google',
-        showLogo: true,
-        signupUrl: 'https://console.cloud.google.com/billing/freetrial',
-        svgHeight: 33,
-        svgWidth: 256,
-        title: 'Google Compute Engine'
-      },
-      'azure': {
-        id: 'azure',
-        showLogo: true,
-        signupUrl: 'https://azure.microsoft.com/en-us/free/',
-        svgHeight: 24,
-        svgWidth: 204,
-        title: 'Microsoft Azure'
-      },
-      'ec2': {
-        id: 'aws',
-        showLogo: true,
-        signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
-        'registration/index.html',
-        svgHeight: 48,
-        svgWidth: 120,
-        title: 'Amazon Web Services'
-      },
-      local: {
-        id: 'local',
-        showLogo: false,
-        title: 'Local'
-      }
-    };
+    getCloudProviderDetails = sinon.stub();
+    getCloudProviderDetails.withArgs('gce').returns({
+      id: 'google',
+      showLogo: true,
+      signupUrl: 'https://console.cloud.google.com/billing/freetrial',
+      svgHeight: 33,
+      svgWidth: 256,
+      title: 'Google Compute Engine'
+    });
+    getCloudProviderDetails.withArgs('azure').returns({
+      id: 'azure',
+      showLogo: true,
+      signupUrl: 'https://azure.microsoft.com/en-us/free/',
+      svgHeight: 24,
+      svgWidth: 204,
+      title: 'Microsoft Azure'
+    });
+    getCloudProviderDetails.withArgs('ec2').returns({
+      id: 'aws',
+      showLogo: true,
+      signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
+      'registration/index.html',
+      svgHeight: 48,
+      svgWidth: 120,
+      title: 'Amazon Web Services'
+    });
     cloudList = {
       'google': {
         name: 'google',
@@ -86,7 +80,7 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={null}
-        providers={providers}
+        getCloudProviderDetails={getCloudProviderDetails}
         listClouds={sinon.stub().callsArgWith(0, null, cloudList)}
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -141,7 +135,7 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={null}
-        providers={providers}
+        getCloudProviderDetails={getCloudProviderDetails}
         listClouds={sinon.stub()}
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -160,7 +154,7 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={{name: 'google', cloudType: 'gce'}}
-        providers={providers}
+        getCloudProviderDetails={getCloudProviderDetails}
         listClouds={sinon.stub().callsArgWith(0, null, {})}
         setCloud={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -186,7 +180,7 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={null}
-        providers={providers}
+        getCloudProviderDetails={getCloudProviderDetails}
         listClouds={sinon.stub().callsArgWith(0, null, cloudList)}
         setCloud={setCloud} />);
     assert.equal(setCloud.callCount, 1);
@@ -201,7 +195,7 @@ describe('DeploymentCloud', function() {
       <juju.components.DeploymentCloud
         acl={acl}
         cloud={null}
-        providers={providers}
+        getCloudProviderDetails={getCloudProviderDetails}
         listClouds={sinon.stub().callsArgWith(0, null, cloudList)}
         setCloud={setCloud} />, true);
     var output = renderer.getRenderOutput();

@@ -24,8 +24,8 @@ YUI.add('deployment-cloud', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       cloud: React.PropTypes.object,
+      getCloudProviderDetails: React.PropTypes.func.isRequired,
       listClouds: React.PropTypes.func.isRequired,
-      providers: React.PropTypes.object.isRequired,
       setCloud: React.PropTypes.func.isRequired
     },
 
@@ -125,7 +125,7 @@ YUI.add('deployment-cloud', function() {
       @returns {Array} The logo.
     */
     _generateLogo: function(cloud) {
-      const info = this.props.providers[cloud.cloudType];
+      const info = this.props.getCloudProviderDetails(cloud.cloudType);
       if (!info) {
         return cloud.name;
       }

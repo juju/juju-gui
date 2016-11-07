@@ -36,6 +36,18 @@
     padding: 15px 0 20px 20px;
   }
 
+  &__provider {
+    float: left;
+    height: 60px;
+    padding: 10px 0 0 20px;
+
+    svg {
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
   .header-banner__list--right {
     @extend %list-style;
     float: right;

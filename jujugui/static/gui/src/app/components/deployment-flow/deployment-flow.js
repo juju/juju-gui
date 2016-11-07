@@ -33,6 +33,7 @@ YUI.add('deployment-flow', function() {
       generateCloudCredentialName: React.PropTypes.func.isRequired,
       getCloudCredentialNames: React.PropTypes.func,
       getCloudCredentials: React.PropTypes.func,
+      getCloudProviderDetails: React.PropTypes.func.isRequired,
       groupedChanges: React.PropTypes.object.isRequired,
       isLegacyJuju: React.PropTypes.bool,
       listBudgets: React.PropTypes.func.isRequired,
@@ -45,259 +46,6 @@ YUI.add('deployment-flow', function() {
       updateCloudCredential: React.PropTypes.func,
       user: React.PropTypes.string,
       withPlans: React.PropTypes.bool
-    },
-
-    PROVIDERS: {
-      'gce': {
-        id: 'google',
-        showLogo: true,
-        signupUrl: 'https://console.cloud.google.com/billing/freetrial',
-        svgHeight: 33,
-        svgWidth: 256,
-        title: 'Google Compute Engine',
-        forms: {
-          jsonfile: [{
-            id: 'file',
-            title: 'Google Compute Engine project credentials .json file',
-            json: true
-          }],
-          oauth2: [{
-            id: 'client-id',
-            title: 'Client ID'
-          }, {
-            id: 'client-email',
-            title: 'Client e-mail address'
-          }, {
-            autocomplete: false,
-            id: 'private-key',
-            title: 'Private key',
-            multiLine: true,
-            unescape: true
-          }, {
-            id: 'project-id',
-            title: 'Project ID'
-          }]
-        },
-        message: (
-          <p>
-            The GCE provider uses OAauth to Authenticate. This requires that
-            you set it up and get the relevant credentials. For more
-            information see
-            &nbsp;<a className="deployment-panel__link"
-              href={'https://cloud.google.com/copmute/dosc/api/how-tos/' +
-                'authorization'}
-              target="_blank">
-              https://cloud.google.com/copmute/dosc/api/how-tos/
-              authorization
-            </a>.
-            The key information can be downloaded as a JSON file, or copied
-            from
-            &nbsp;<a className="deployment-panel__link"
-              href={'https://console.developers.google.com/project/apiui/' +
-                'credential'}
-              target="_blank">
-              https://console.developers.google.com/project/apiui/credential
-            </a>.
-          </p>)
-      },
-      'azure': {
-        id: 'azure',
-        showLogo: true,
-        signupUrl: 'https://azure.microsoft.com/en-us/free/',
-        svgHeight: 24,
-        svgWidth: 204,
-        title: 'Microsoft Azure',
-        forms: {
-          userpass: [{
-            id: 'application-id',
-            title: 'Azure Active Directory application ID'
-          }, {
-            id: 'subscription-id',
-            title: 'Azure subscription ID'
-          }, {
-            id: 'tenant-id',
-            title: 'Azure Active Directory tenant ID'
-          }, {
-            id: 'application-password',
-            title: 'Azure Active Directory application password',
-            type: 'password'
-          }]
-        },
-        message: (
-          <p>
-            The following fields require your Windows Azure management
-            information. For more information please see:&nbsp;
-            <a className="deployment-panel__link"
-              href="https://msdn.microsoft.com/en-us/library/windowsazure"
-              target="_blank">
-              https://msdn.microsoft.com/en-us/library/windowsazure
-            </a>
-            &nbsp;for details.
-          </p>)
-      },
-      'ec2': {
-        id: 'aws',
-        showLogo: true,
-        signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
-        'registration/index.html',
-        svgHeight: 48,
-        svgWidth: 120,
-        title: 'Amazon Web Services',
-        forms: {
-          'access-key': [{
-            id: 'access-key',
-            title: 'The EC2 access key'
-          }, {
-            autocomplete: false,
-            id: 'secret-key',
-            title: 'The EC2 secret key'
-          }]
-        },
-        message: (
-          <p>
-            You can obtain your AWS credentials at:<br />
-            <a className="deployment-panel__link"
-              href={'https://console.aws.amazon.com/iam/home?region=' +
-                'eu-west-1#security_credential'}
-              target="_blank">
-              https://console.aws.amazon.com/iam/home?region=eu-west-1#
-              security_credential
-            </a>
-          </p>)
-      },
-      'openstack': {
-        id: 'openstack',
-        showLogo: false,
-        title: 'OpenStack',
-        forms: {
-          userpass: [{
-            id: 'username',
-            title: 'Username'
-          }, {
-            id: 'password',
-            title: 'Password',
-            type: 'password'
-          }, {
-            id: 'tenant-name',
-            title: 'Tenant name'
-          }, {
-            id: 'domain-name',
-            required: false,
-            title: 'Domain name'
-          }],
-          'access-key': [{
-            id: 'access-key',
-            title: 'Access key'
-          }, {
-            autocomplete: false,
-            id: 'secret-key',
-            title: 'Secret key'
-          }, {
-            id: 'tenant-name',
-            title: 'Tenant name'
-          }]
-        }
-      },
-      'cloudsigma': {
-        id: 'cloudsigma',
-        showLogo: false,
-        title: 'CloudSigma',
-        forms: {
-          userpass: [{
-            id: 'username',
-            title: 'Username'
-          }, {
-            id: 'password',
-            title: 'Password',
-            type: 'password'
-          }]
-        }
-      },
-      'joyent': {
-        id: 'joyent',
-        showLogo: false,
-        title: 'Joyent',
-        forms: {
-          userpass: [{
-            id: 'sdc-user',
-            title: 'SmartDataCenter user ID'
-          }, {
-            id: 'sdc-key-id',
-            title: 'SmartDataCenter key ID'
-          }, {
-            autocomplete: false,
-            id: 'private-key',
-            title: 'Private key used to sign requests'
-          }, {
-            id: 'algorithm',
-            title: 'Algorithm used to generate the private key'
-          }]
-        }
-      },
-      'maas': {
-        id: 'maas',
-        showLogo: false,
-        title: 'MAAS',
-        forms: {
-          oauth1: [{
-            id: 'maas-oauth',
-            title: 'OAuth/API-key credentials for MAAS'
-          }]
-        }
-      },
-      'rackspace': {
-        id: 'rackspace',
-        showLogo: false,
-        title: 'Rackspace',
-        forms: {
-          userpass: [{
-            id: 'username',
-            title: 'Username'
-          }, {
-            id: 'password',
-            title: 'Password',
-            type: 'password'
-          }, {
-            id: 'tenant-name',
-            title: 'Tenant name'
-          }, {
-            id: 'domain-name',
-            required: false,
-            title: 'Domain name'
-          }],
-          'access-key': [{
-            id: 'access-key',
-            title: 'Access key'
-          }, {
-            autocomplete: false,
-            id: 'secret-key',
-            title: 'Secret key'
-          }, {
-            id: 'tenant-name',
-            title: 'Tenant name'
-          }]
-        }
-      },
-      'vsphere': {
-        id: 'vsphere',
-        showLogo: false,
-        title: 'vSphere',
-        forms: {
-          userpass: [{
-            id: 'username',
-            title: 'Username'
-          }, {
-            id: 'password',
-            title: 'Password',
-            type: 'password'
-          }]
-        }
-      },
-      lxd: {
-        id: 'local',
-        showLogo: false,
-        title: 'Local'
-      }
     },
 
     getInitialState: function() {
@@ -618,7 +366,7 @@ YUI.add('deployment-flow', function() {
             acl={this.props.acl}
             cloud={cloud}
             listClouds={this.props.listClouds}
-            providers={this.PROVIDERS}
+            getCloudProviderDetails={this.props.getCloudProviderDetails}
             setCloud={this._setCloud} />
         </juju.components.DeploymentSection>);
     },
@@ -645,7 +393,7 @@ YUI.add('deployment-flow', function() {
             acl={this.props.acl}
             credential={this.state.credential}
             cloud={cloud}
-            providers={this.PROVIDERS}
+            getCloudProviderDetails={this.props.getCloudProviderDetails}
             editable={!this.props.modelCommitted}
             generateCloudCredentialName={this.props.generateCloudCredentialName}
             getCloudCredentials={this.props.getCloudCredentials}

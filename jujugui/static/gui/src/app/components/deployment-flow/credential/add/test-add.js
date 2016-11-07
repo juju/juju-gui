@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('DeploymentCredentialAdd', function() {
-  var acl, providers;
+  var acl, getCloudProviderDetails;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,70 +33,69 @@ describe('DeploymentCredentialAdd', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    providers = {
-      gce: {
-        id: 'google',
-        showLogo: true,
-        signupUrl: 'https://console.cloud.google.com/billing/freetrial',
-        svgHeight: 33,
-        svgWidth: 256,
-        title: 'Google Compute Engine',
-        forms: {
-          oauth2: [{
-            id: 'client-id',
-            title: 'Client ID'
-          }, {
-            id: 'client-email',
-            required: true,
-            title: 'Client e-mail address'
-          }, {
-            id: 'private-key',
-            title: 'Private key',
-            multiLine: true,
-            unescape: true
-          }, {
-            id: 'project-id',
-            required: false,
-            title: 'Project ID'
-          }, {
-            id: 'password',
-            required: false,
-            title: 'Password',
-            type: 'password'
-          }],
-          jsonfile: [{
-            id: 'file',
-            title: 'Google Compute Engine project credentials .json file',
-            json: true
-          }]
-        },
-        message: 'a message'
+    getCloudProviderDetails = sinon.stub();
+    getCloudProviderDetails.withArgs('gce').returns({
+      id: 'google',
+      showLogo: true,
+      signupUrl: 'https://console.cloud.google.com/billing/freetrial',
+      svgHeight: 33,
+      svgWidth: 256,
+      title: 'Google Compute Engine',
+      forms: {
+        oauth2: [{
+          id: 'client-id',
+          title: 'Client ID'
+        }, {
+          id: 'client-email',
+          required: true,
+          title: 'Client e-mail address'
+        }, {
+          id: 'private-key',
+          title: 'Private key',
+          multiLine: true,
+          unescape: true
+        }, {
+          id: 'project-id',
+          required: false,
+          title: 'Project ID'
+        }, {
+          id: 'password',
+          required: false,
+          title: 'Password',
+          type: 'password'
+        }],
+        jsonfile: [{
+          id: 'file',
+          title: 'Google Compute Engine project credentials .json file',
+          json: true
+        }]
       },
-      'ec2': {
-        id: 'aws',
-        showLogo: true,
-        signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
-          'registration/index.html',
-        svgHeight: 48,
-        svgWidth: 120,
-        title: 'Amazon Web Services',
-        forms: {
-          'access-key': [{
-            id: 'access-key',
-            title: 'The EC2 access key'
-          }, {
-            autocomplete: false,
-            id: 'secret-key',
-            title: 'The EC2 secret key'
-          }]
-        },
-        message: 'a message'
+      message: 'a message'
+    });
+    getCloudProviderDetails.withArgs('ec2').returns({
+      id: 'aws',
+      showLogo: true,
+      signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
+        'registration/index.html',
+      svgHeight: 48,
+      svgWidth: 120,
+      title: 'Amazon Web Services',
+      forms: {
+        'access-key': [{
+          id: 'access-key',
+          title: 'The EC2 access key'
+        }, {
+          autocomplete: false,
+          id: 'secret-key',
+          title: 'The EC2 secret key'
+        }]
       },
-    };
+      message: 'a message'
+    });
   });
 
   it('can render without a cloud', function() {
-    var cloud = providers['gce'];
+    var cloud = getCloudProviderDetails('gce');
     var close = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredentialAdd
@@ -104,7 +103,7 @@ describe('DeploymentCredentialAdd', function() {
           updateCloudCredential={sinon.stub()}
           close={close}
           cloud={null}
-          providers={providers}
+          getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
           setCredential={sinon.stub()}
@@ -256,7 +255,7 @@ describe('DeploymentCredentialAdd', function() {
           updateCloudCredential={sinon.stub()}
           close={close}
           cloud={null}
-          providers={providers}
+          getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
           setCredential={sinon.stub()}
@@ -270,13 +269,13 @@ describe('DeploymentCredentialAdd', function() {
           updateCloudCredential={sinon.stub()}
           close={close}
           cloud={{name: 'aws', cloudType: 'ec2'}}
-          providers={providers}
+          getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
           setCredential={sinon.stub()}
           user="user-admin"
           validateForm={sinon.stub()} />);
-    const cloud = providers['ec2'];
+    const cloud = getCloudProviderDetails('ec2');
     output = renderer.getRenderOutput();
     const expected = (
       <div className="deployment-credential-add twelve-col">
@@ -372,7 +371,7 @@ describe('DeploymentCredentialAdd', function() {
   });
 
   it('can render credential fields for a cloud', function() {
-    var cloud = providers['gce'];
+    var cloud = getCloudProviderDetails('gce');
     var close = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
@@ -380,7 +379,7 @@ describe('DeploymentCredentialAdd', function() {
         updateCloudCredential={sinon.stub()}
         close={close}
         cloud={{name: 'google', cloudType: 'gce'}}
-        providers={providers}
+        getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
         setCredential={sinon.stub()}
@@ -525,7 +524,7 @@ describe('DeploymentCredentialAdd', function() {
   });
 
   it('can render a cloud with a json field', function() {
-    var cloud = providers['gce'];
+    var cloud = getCloudProviderDetails('gce');
     var close = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
@@ -533,7 +532,7 @@ describe('DeploymentCredentialAdd', function() {
         updateCloudCredential={sinon.stub()}
         close={close}
         cloud={{name: 'google', cloudType: 'gce'}}
-        providers={providers}
+        getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
         setCredential={sinon.stub()}
@@ -632,7 +631,7 @@ describe('DeploymentCredentialAdd', function() {
 
   it('can disable controls when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
-    var cloud = providers['gce'];
+    var cloud = getCloudProviderDetails('gce');
     var close = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
@@ -640,7 +639,7 @@ describe('DeploymentCredentialAdd', function() {
         updateCloudCredential={sinon.stub()}
         close={close}
         cloud={{name: 'google', cloudType: 'gce'}}
-        providers={providers}
+        getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
         setCredential={sinon.stub()}
@@ -793,7 +792,7 @@ describe('DeploymentCredentialAdd', function() {
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
           cloud={{name: 'google', cloudType: 'gce'}}
-          providers={providers}
+          getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub().returns('new@test')}
           getCredentials={getCredentials}
           setCredential={sinon.stub()}
@@ -848,7 +847,7 @@ describe('DeploymentCredentialAdd', function() {
         updateCloudCredential={updateCloudCredential}
         close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
-        providers={providers}
+        getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
         getCredentials={sinon.stub()}
         setCredential={sinon.stub()}
@@ -895,7 +894,7 @@ describe('DeploymentCredentialAdd', function() {
           updateCloudCredential={updateCloudCredential}
           close={sinon.stub()}
           cloud={{name: 'google', cloudType: 'gce'}}
-          providers={providers}
+          getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub()}
           getCredentials={sinon.stub()}
           setCredential={sinon.stub()}

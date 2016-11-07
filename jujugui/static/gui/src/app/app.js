@@ -1177,6 +1177,7 @@ YUI.add('juju-gui', function(Y) {
           getCloudCredentialNames={
             controllerAPI && controllerAPI.getCloudCredentialNames.bind(
               controllerAPI)}
+          getCloudProviderDetails={utils.getCloudProviderDetails.bind(utils)}
           groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
           isLegacyJuju={this.isLegacyJuju()}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
@@ -1253,6 +1254,30 @@ YUI.add('juju-gui', function(Y) {
           renderDragOverNotification={
             this._renderDragOverNotification.bind(this)} />,
         document.getElementById('import-export-container'));
+    },
+
+    /**
+      Renders the logo for the current cloud provider.
+
+      @method _renderProviderLogo
+    */
+    _renderProviderLogo: function() {
+      const cloudProvider = this.env.get('providerType');
+      if (!cloudProvider) {
+        return;
+      }
+      const providerDetails = views.utils.getCloudProviderDetails(
+        cloudProvider);
+      if (!providerDetails) {
+        return;
+      }
+      const scale = 0.65;
+      ReactDOM.render(
+        <window.juju.components.SvgIcon
+          height={providerDetails.svgHeight * scale}
+          name={providerDetails.id}
+          width={providerDetails.svgWidth * scale} />,
+        document.getElementById('provider-logo-container'));
     },
 
     /**
@@ -2375,6 +2400,7 @@ YUI.add('juju-gui', function(Y) {
       );
       this._renderDeploymentBar();
       this._renderImportExport();
+      this._renderProviderLogo();
       this._renderZoom();
       this._renderBreadcrumb();
       this._renderHeaderSearch();
