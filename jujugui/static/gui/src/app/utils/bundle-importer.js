@@ -510,7 +510,8 @@ YUI.add('bundle-importer', function(Y) {
             applicationName: record.args[2],
             series: series,
             config: record.args[3],
-            constraints: constraints
+            constraints: constraints,
+            charmResources: charm.get('resources')
           }, deployCallback, {modelId: ghostService.get('id')});
           this._saveModelToRequires(record.id, ghostService);
           this._collectedServices.push(ghostService);

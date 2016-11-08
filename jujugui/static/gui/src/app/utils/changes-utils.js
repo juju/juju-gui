@@ -146,6 +146,12 @@ YUI.add('changes-utils', function(Y) {
             changeItem.icon = services.getById(appId).get('icon');
           }
           break;
+        case 'addPendingResources':
+          const applicationName = change.command.args[0].applicationName;
+          const application = services.getServiceByName(applicationName);
+          changeItem.icon = application.get('icon');
+          changeItem.description = ` ${applicationName} resources added.`;
+          break;
         case '_deploy':
           if (!change.command.options || !change.command.options.modelId) {
             // When using the deploy-target query parameter we want to auto

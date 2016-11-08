@@ -1200,6 +1200,20 @@ YUI.add('juju-env-api', function(Y) {
         return;
       }
       const ecs = this.get('ecs');
+      if (args.charmResources) {
+        // If we have resources then we need to make an addPendingResources
+        // call prior to deploying.
+        ecs._lazyAddPendingResources([{
+          applicationName: args.applicationName,
+          charmURL: args.charmURL,
+          channel: 'stable',
+          resources: args.charmResources
+        }]);
+        // The charmResources key is only used to add the charm pending
+        // resources so we need to remove it before passing to the deploy
+        // method.
+        delete args.charmResources;
+      }
       ecs._lazyDeploy(arguments);
     },
 

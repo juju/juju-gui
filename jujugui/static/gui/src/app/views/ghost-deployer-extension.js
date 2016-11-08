@@ -87,6 +87,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
         applicationName: serviceName,
         series: activeSeries,
         config: config,
+        charmResources: charm.get('resources')
       }, this._deployCallbackHandler.bind(this, ghostService), options);
 
       // Add an unplaced unit to this service if it is not a subordinate

@@ -592,6 +592,18 @@ YUI.add('environment-change-set', function(Y) {
     },
 
     /**
+      Creates a new entry in the queue to add the pending resources.
+      @param {Array} The arguments to add the pending resources with.
+    */
+    _lazyAddPendingResources: function(args) {
+      const command = {
+        method: 'addPendingResources',
+        args: args
+      };
+      return this._createNewRecord('addPendingResources', command, []);
+    },
+
+    /**
       Creates a new entry in the queue for creating a new service.
 
       Receives all the parameters received by the environment's "deploy"
@@ -650,6 +662,11 @@ YUI.add('environment-change-set', function(Y) {
         if (record.command.method === '_addCharm') {
           // Get the key to the record which adds the charm for this app.
           if (record.command.args[0] === args[0].charmURL) {
+            parents.push(key);
+          }
+        }
+        if (record.command.method === 'addPendingResources') {
+          if (record.command.args[0] === args[0].applicationName) {
             parents.push(key);
           }
         }
