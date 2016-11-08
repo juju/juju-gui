@@ -218,4 +218,75 @@ describe('Charmbrowser', function() {
         </juju.components.Panel>);
     assert.deepEqual(output, expected);
   });
+
+  it('displays entity details when the state has a user path', function() {
+    const apiUrl = 'http://example.com';
+    appState.current.user = 'spinch/koala';
+    const getEntity = sinon.stub();
+    const makeEntityModel = sinon.stub();
+    const deployService = sinon.stub();
+    const importBundleYAML = sinon.stub();
+    const getBundleYAML = sinon.stub();
+    const getFile = sinon.stub();
+    const renderMarkdown = sinon.stub();
+    const getDiagramURL = sinon.stub();
+    const listPlansForCharm = sinon.stub();
+    const addNotification = sinon.stub();
+    const utils = {
+      pluralize: sinon.stub()
+    };
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Charmbrowser
+        acl={acl}
+        addNotification={addNotification}
+        apiUrl={apiUrl}
+        apiVersion="v5"
+        appState={appState}
+        charmstoreSearch={sinon.stub()}
+        charmstoreURL="http://1.2.3.4/"
+        deployService={deployService}
+        displayPlans={true}
+        getBundleYAML={getBundleYAML}
+        getDiagramURL={getDiagramURL}
+        getEntity={getEntity}
+        getFile={getFile}
+        importBundleYAML={importBundleYAML}
+        listPlansForCharm={listPlansForCharm}
+        makeEntityModel={makeEntityModel}
+        utils={utils}
+        renderMarkdown={renderMarkdown}
+        series={{}} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    const expected = (
+        <juju.components.Panel
+          instanceName="white-box"
+          clickAction={instance._close}
+          focus={false}
+          visible={true}>
+          <div className="charmbrowser"
+            ref="charmbrowser">
+            <juju.components.EntityDetails
+              acl={acl}
+              apiUrl={apiUrl}
+              importBundleYAML={importBundleYAML}
+              getBundleYAML={getBundleYAML}
+              changeState={
+                output.props.children.props.children.props.changeState}
+              getEntity={getEntity}
+              scrollPosition={0}
+              listPlansForCharm={listPlansForCharm}
+              makeEntityModel={makeEntityModel}
+              getDiagramURL={getDiagramURL}
+              getFile={getFile}
+              renderMarkdown={renderMarkdown}
+              deployService={deployService}
+              displayPlans={true}
+              id='~spinch/koala'
+              addNotification={addNotification}
+              pluralize={utils.pluralize} />
+          </div>
+        </juju.components.Panel>);
+    assert.deepEqual(output, expected);
+  });
 });

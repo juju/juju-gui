@@ -102,7 +102,7 @@ YUI.add('charmbrowser-component', function() {
       const currentState = nextProps.appState.current;
       // Because it's invalid to have these values be in state at the same time
       // we can simply check for their existance.
-      if (currentState.store) {
+      if (currentState.store || currentState.user) {
         activeComponent = 'entity-details';
       } else if (currentState.search) {
         activeComponent = 'search-results';
@@ -174,7 +174,7 @@ YUI.add('charmbrowser-component', function() {
                 getFile={this.props.getFile}
                 scrollPosition={this.state.scrollPosition}
                 renderMarkdown={this.props.renderMarkdown}
-                id={currentState.store}
+                id={currentState.store || `~${currentState.user}`}
                 pluralize={utils.pluralize}
                 listPlansForCharm={this.props.listPlansForCharm}
                 makeEntityModel={this.props.makeEntityModel} />

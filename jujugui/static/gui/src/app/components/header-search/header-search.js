@@ -120,6 +120,7 @@ YUI.add('header-search', function() {
       if (!this.state.active && !this.state.query) {
         this.props.appState.changeState({
           root: 'store',
+          user: null,
           gui: {
             machines: null,
             inspector: null
