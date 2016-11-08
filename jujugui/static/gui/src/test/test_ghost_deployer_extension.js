@@ -165,6 +165,7 @@ describe('Ghost Deployer Extension', function() {
 
   it('calls the env deploy method with default charm data', function() {
     const charm = makeCharm();
+    charm.set('resources', {a: 'resource'});
     ghostDeployer.deployService(charm);
     assert.strictEqual(ghostDeployer.env.deploy.calledOnce, true);
     const args = ghostDeployer.env.deploy.lastCall.args[0];
@@ -172,6 +173,7 @@ describe('Ghost Deployer Extension', function() {
     assert.strictEqual(args.applicationName, 'ghost-service-id');
     assert.strictEqual(args.series, 'trusty');
     assert.deepEqual(args.config, {});
+    assert.deepEqual(args.charmResources, {a: 'resource'});
   });
 
   it('properly adds the series to Juju 1 applications', function() {

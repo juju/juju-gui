@@ -792,6 +792,24 @@ describe('Environment Change Set', function() {
       });
     });
 
+    describe('lazyAddPendingResources', () => {
+      it('creates a new addPendingResources record', () => {
+        const args = {
+          applicationName: 'django',
+          charmURL: 'cs:precise/django-42',
+          channel: 'stable',
+          resources: {a: 'resource'}
+        };
+        const key = ecs._lazyAddPendingResources([args]);
+        const record = ecs.changeSet[key];
+        assert.equal(record.executed, false);
+        assert.equal(record.command.method, 'addPendingResources');
+        // Remove the functions, which will not be equal.
+        record.command.args.pop();
+        assert.deepEqual(record.command.args, [args]);
+      });
+    });
+
     describe('_lazyDeploy', function() {
       it('creates a new `deploy` record', function(done) {
         const args = {
@@ -872,6 +890,34 @@ describe('Environment Change Set', function() {
         // Ensure that the undefined key is not still in the config param.
         assert.deepEqual(Object.keys(command.args[0].config), ['key1']);
       });
+
+      it('adds the correct addCharm and addPendingResources parents', () => {
+        ecs._lazyAddCharm([
+          'cs:precise/django-42', 'cookies', null, {applicationId: 'django'}]);
+        ecs._lazyAddPendingResources([{
+          applicationName: 'django',
+          charmURL: 'cs:precise/django-42',
+          channel: 'stable',
+          resources: {a: 'resource'}
+        }]);
+        const key = ecs._lazyDeploy([{
+          charmURL: 'cs:precise/django-42',
+          applicationName: 'django',
+        }]);
+        const record = ecs.changeSet[key];
+        assert.equal(record.parents.length, 2);
+        const parentKeys = {
+          addCharm: false,
+          addPendingResources: false
+        };
+        record.parents.forEach(
+          parent => parentKeys[parent.split('-')[0]] = true);
+        assert.deepEqual(parentKeys, {
+          addCharm: true,
+          addPendingResources: true
+        });
+      });
+
     });
 
     describe('lazyDestroyApplication', function() {
@@ -1804,6 +1850,35 @@ describe('Environment Change Set', function() {
         assert.equal(lazyDeploy.calledOnce, true);
         // make sure we don't call the env deploy method.
         assert.equal(envObj._deploy.callCount, 0);
+      });
+
+      it('adds an addPendingResources call if charm has resources', function() {
+        const lazyDeploy = testUtils.makeStubMethod(ecs, '_lazyDeploy');
+        const lazyAddResources =
+          testUtils.makeStubMethod(ecs, '_lazyAddPendingResources');
+        this._cleanups.push(lazyDeploy.reset);
+        this._cleanups.push(lazyAddResources.reset);
+
+        envObj.deploy.call(envObj, {
+          applicationName: 'django',
+          charmURL: 'cs:precise/django-42',
+          charmResources: {a: 'resource'}
+        }, function() {});
+
+        assert.equal(lazyAddResources.callCount, 1);
+        assert.deepEqual(lazyAddResources.lastCall.args[0][0], {
+          applicationName: 'django',
+          charmURL: 'cs:precise/django-42',
+          channel: 'stable',
+          resources: {a: 'resource'}
+        }, 'lazyAddResources called with incorrect arguments');
+
+        assert.equal(lazyDeploy.callCount, 1);
+        assert.deepEqual(lazyDeploy.lastCall.args[0][0], {
+          applicationName: 'django',
+          charmURL: 'cs:precise/django-42'
+          // charmResources was supposed to have been removed.
+        }, 'lazyDeploy called with incorrect arguments');
       });
     });
 
