@@ -982,8 +982,19 @@ YUI.add('juju-gui', function(Y) {
       Renders the user profile component.
 
       @method _renderUserProfile
+      @param {Object} state - The app state.
+      @param {Function} next - Call to continue dispatching.
     */
-    _renderUserProfile: function() {
+    _renderUserProfile: function(state, next) {
+      // If the username does not match the logged in user then display a new
+      // model instead of the profile.
+      if (state.profile !== this._getAuth().user) {
+        this.state.changeState({
+          new: '',
+          profile: null
+        });
+        return;
+      }
       const charmstore = this.get('charmstore');
       const utils = views.utils;
       // NOTE: we need to clone this.get('users') below; passing in without
@@ -1017,6 +1028,17 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('top-page-container'));
       // The model name should not be visible when viewing the profile.
       this._renderBreadcrumb({ showEnvSwitcher: false });
+    },
+
+    /**
+      The cleanup dispatcher for the user profile path.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _clearUserProfile: function(state, next) {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('top-page-container'));
+      next();
     },
 
     /**
@@ -1561,6 +1583,15 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Handle the request to display the new model state.
+
+      @method _handleNewModel
+    */
+    _handleNewModel: function() {
+      this.switchEnv(null, null, null, null, false, true);
+    },
+
+    /**
       Sets up the UIState instance on the app
 
       @method _setupUIState
@@ -1617,6 +1648,14 @@ YUI.add('juju-gui', function(Y) {
         ['root',
           this._rootDispatcher.bind(this),
           this._clearRoot.bind(this)],
+        ['new',
+          this._handleNewModel.bind(this)],
+        ['profile',
+          this._renderUserProfile.bind(this),
+          this._clearUserProfile.bind(this)],
+        ['user',
+          this._renderCharmbrowser.bind(this),
+          this._clearCharmbrowser.bind(this)],
         ['store',
           this._renderCharmbrowser.bind(this),
           this._clearCharmbrowser.bind(this)],
