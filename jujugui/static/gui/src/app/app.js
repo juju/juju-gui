@@ -1592,6 +1592,50 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Handle the request to display the user entity state.
+
+      @method _handleUserEntity
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _handleUserEntity: function(state, next) {
+      this.controllerAPI.listModelsWithInfo((err, modelList) => {
+        if (err) {
+          console.error('unable to list models', err);
+          this.db.notifications.add({
+            title: 'Unable to list models',
+            message: 'Unable to list models: ' + err,
+            level: 'error'
+          });
+          return;
+        }
+        const selectedModel = this._pickModel(
+          modelList, state.user.split('/')[1]);
+        // If there are no matching models then this might be a charm or bundle.
+        if (selectedModel === null) {
+          this._renderCharmbrowser(state, next);
+        }
+      });
+    },
+
+    /**
+      The cleanup dispatcher for the user entity state path.
+
+      @method _clearUserEntity
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _clearUserEntity: function(state, next) {
+      const container = document.getElementById('charmbrowser-container');
+      // The charmbrowser will only be mounted if the entity is a charm or
+      // bundle.
+      if (container.childNodes.length > 0) {
+        ReactDOM.unmountComponentAtNode(container);
+      }
+      next();
+    },
+
+    /**
       Sets up the UIState instance on the app
 
       @method _setupUIState
@@ -1654,8 +1698,8 @@ YUI.add('juju-gui', function(Y) {
           this._renderUserProfile.bind(this),
           this._clearUserProfile.bind(this)],
         ['user',
-          this._renderCharmbrowser.bind(this),
-          this._clearCharmbrowser.bind(this)],
+          this._handleUserEntity.bind(this),
+          this._clearUserEntity.bind(this)],
         ['store',
           this._renderCharmbrowser.bind(this),
           this._clearCharmbrowser.bind(this)],
