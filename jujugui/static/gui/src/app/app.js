@@ -992,7 +992,8 @@ YUI.add('juju-gui', function(Y) {
     _renderUserProfile: function(state, next) {
       if (state.profile !== this._getAuth().user) {
         this.state.changeState({
-          new: ''
+          new: '',
+          profile: null
         });
         return;
       }
@@ -1613,6 +1614,15 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Handle the request to display the new model state.
+
+      @method _handleNewModel
+    */
+    _handleNewModel: function() {
+      this.switchEnv(null, null, null, null, false, true);
+    },
+
+    /**
       Sets up the UIState instance on the app
 
       @method _setupUIState
@@ -1669,6 +1679,8 @@ YUI.add('juju-gui', function(Y) {
         ['root',
           this._rootDispatcher.bind(this),
           this._clearRoot.bind(this)],
+        ['new',
+          this._handleNewModel.bind(this)],
         ['profile',
           this._renderUserProfile.bind(this),
           this._clearUserProfile.bind(this)],
