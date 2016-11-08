@@ -986,6 +986,8 @@ YUI.add('juju-gui', function(Y) {
       @param {Function} next - Call to continue dispatching.
     */
     _renderUserProfile: function(state, next) {
+      // If the username does not match the logged in user then display a new
+      // model instead of the profile.
       if (state.profile !== this._getAuth().user) {
         this.state.changeState({
           new: '',
@@ -1675,6 +1677,9 @@ YUI.add('juju-gui', function(Y) {
         ['profile',
           this._renderUserProfile.bind(this),
           this._clearUserProfile.bind(this)],
+        ['user',
+          this._renderCharmbrowser.bind(this),
+          this._clearCharmbrowser.bind(this)],
         ['store',
           this._renderCharmbrowser.bind(this),
           this._clearCharmbrowser.bind(this)],
