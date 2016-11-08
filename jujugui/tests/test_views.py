@@ -129,6 +129,7 @@ class ConfigTests(ViewTestCase):
         self.assertIsNone(config['auth'])
         self.assertEqual('wss', config['socket_protocol'])
         self.assertIsNone(config['gisfLogout'])
+        self.assertFalse(config['betaUser'])
 
     def test_customized_options(self):
         self.update_settings({
@@ -143,6 +144,7 @@ class ConfigTests(ViewTestCase):
             'jujugui.sandbox': 'true',
             'jujugui.terms_url': 'http://1.2.3.4/terms-api',
             'jujugui.user': 'who',
+            'jujugui.betaUser': 'true',
         })
         jujugui.make_application(self.config)
         response = views.config(self.request)
@@ -160,6 +162,7 @@ class ConfigTests(ViewTestCase):
         self.assertEqual('secret', config['password'])
         self.assertEqual('my_discharge_token', config['dischargeToken'])
         self.assertEqual('/logout', config['gisfLogout'])
+        self.assertTrue(config['betaUser'])
 
     def test_explicit_base_url(self):
         self.update_settings({'jujugui.base_url': '/ignore/prefix'})
