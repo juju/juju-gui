@@ -1,4 +1,4 @@
-Mako==1.0.2
+Mako>=1.0.2
 MarkupSafe==0.23
 Paste==2.0.2
 PasteDeploy==1.5.2
