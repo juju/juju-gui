@@ -600,7 +600,18 @@ YUI.add('environment-change-set', function(Y) {
         method: 'addPendingResources',
         args: args
       };
-      return this._createNewRecord('addPendingResources', command, []);
+      // Set up the parents of this record.
+      const parents = [];
+      Object.keys(this.changeSet).forEach(key => {
+        const command = this.changeSet[key].command;
+        if (command.method === '_addCharm') {
+          // Get the key to the record which adds the charm for this app.
+          if (command.args[0] === args[0].charmURL) {
+            parents.push(key);
+          }
+        }
+      });
+      return this._createNewRecord('addPendingResources', command, parents);
     },
 
     /**
@@ -650,6 +661,11 @@ YUI.add('environment-change-set', function(Y) {
               delete config[key];
             }
           });
+          // Check if we have any resources, if we do, then add them.
+          const resourceIds = ghostService.get('resourceIds');
+          if (resourceIds) {
+            deployArgs.resources = resourceIds;
+          }
         }
       };
       if (command.args.length !== args.length) {
