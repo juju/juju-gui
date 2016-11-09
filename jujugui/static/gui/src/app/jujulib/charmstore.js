@@ -225,6 +225,11 @@ var module = module;
         delete processed.requires;
         processed.is_subordinate = !!metadata.Subordinate;
       }
+      // Use the outer resource data structure as it's the proper format
+      // for the addPendingResources call.
+      if (meta.resources && meta.resources.length) {
+        processed.resources = meta.resources;
+      }
       return processed;
     },
 
