@@ -235,6 +235,7 @@ YUI.add('service-overview', function() {
         actions.push({
           title: 'Resources',
           action: this._navigate,
+          icon: 'resources_16',
           state: {
             sectionA: {
               component: 'inspector',
