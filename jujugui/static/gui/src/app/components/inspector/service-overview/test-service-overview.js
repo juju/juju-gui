@@ -577,7 +577,7 @@ describe('ServiceOverview', function() {
         key="Resources"
         title="Resources"
         value={undefined}
-        icon={undefined}
+        icon="resources_16"
         action={output.props.children[1].props.children[4].props.action}
         valueType={undefined}
         linkAction={undefined}
