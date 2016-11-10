@@ -803,7 +803,7 @@ describe('Environment Change Set', function() {
         const key = ecs._lazyAddPendingResources([args]);
         const record = ecs.changeSet[key];
         assert.equal(record.executed, false);
-        assert.equal(record.command.method, 'addPendingResources');
+        assert.equal(record.command.method, '_addPendingResources');
         // Remove the functions, which will not be equal.
         record.command.args.pop();
         assert.deepEqual(record.command.args, [args]);
@@ -1850,35 +1850,6 @@ describe('Environment Change Set', function() {
         assert.equal(lazyDeploy.calledOnce, true);
         // make sure we don't call the env deploy method.
         assert.equal(envObj._deploy.callCount, 0);
-      });
-
-      it('adds an addPendingResources call if charm has resources', function() {
-        const lazyDeploy = testUtils.makeStubMethod(ecs, '_lazyDeploy');
-        const lazyAddResources =
-          testUtils.makeStubMethod(ecs, '_lazyAddPendingResources');
-        this._cleanups.push(lazyDeploy.reset);
-        this._cleanups.push(lazyAddResources.reset);
-
-        envObj.deploy.call(envObj, {
-          applicationName: 'django',
-          charmURL: 'cs:precise/django-42',
-          charmResources: {a: 'resource'}
-        }, function() {});
-
-        assert.equal(lazyAddResources.callCount, 1);
-        assert.deepEqual(lazyAddResources.lastCall.args[0][0], {
-          applicationName: 'django',
-          charmURL: 'cs:precise/django-42',
-          channel: 'stable',
-          resources: {a: 'resource'}
-        }, 'lazyAddResources called with incorrect arguments');
-
-        assert.equal(lazyDeploy.callCount, 1);
-        assert.deepEqual(lazyDeploy.lastCall.args[0][0], {
-          applicationName: 'django',
-          charmURL: 'cs:precise/django-42'
-          // charmResources was supposed to have been removed.
-        }, 'lazyDeploy called with incorrect arguments');
       });
     });
 

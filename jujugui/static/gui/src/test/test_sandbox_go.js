@@ -1410,7 +1410,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           {Name: 'res2', File: 'res2.tgz'}
         ];
         env.connect();
-        env.addPendingResources({
+        env._addPendingResources({
           applicationName: 'wordpress',
           charmURL: 'wordpress-42',
           channel: 'stable',
