@@ -1076,6 +1076,22 @@ YUI.add('juju-env-api', function(Y) {
     },
 
     /**
+      Calls the environment's _addPendingResources method or creates a
+      new addPendingResources record in the ECS queue.
+
+      Parameters match the parameters for the _addPendingResources method
+      below. The only new parameter is the last one (ECS options).
+    */
+    addPendingResources: function(args, callback, options) {
+      if (options && options.immediate) {
+        // Call the deploy method right away bypassing the queue.
+        this._addPendingResources(args, callback);
+        return;
+      }
+      this.get('ecs')._lazyAddPendingResources(arguments);
+    },
+
+    /**
       Sends the provided resource info up to Juju without making it available
       yet.
 
@@ -1104,7 +1120,6 @@ YUI.add('juju-env-api', function(Y) {
           }, deployCallback);
         });
 
-      @method addPendingResources
       @param {Object} args The arguments required to make the call, including:
         - applicationName: the name of the application to be associated with
           the resources;
@@ -1120,7 +1135,7 @@ YUI.add('juju-env-api', function(Y) {
           or an empty object if the operation failed. The returned map can be
           used as is in the "resources" argument of the deploy call.
     */
-    addPendingResources: function(args, callback) {
+    _addPendingResources: function(args, callback) {
       // Validate the arguments.
       const resources = args.resources;
       if (!(
@@ -1199,33 +1214,7 @@ YUI.add('juju-env-api', function(Y) {
         this._deploy(args, callback);
         return;
       }
-      const ecs = this.get('ecs');
-      const resources = args.charmResources;
-      if (resources) {
-        // If we have resources then we need to make an addPendingResources
-        // call prior to deploying.
-        ecs._lazyAddPendingResources([{
-          applicationName: args.applicationName,
-          charmURL: args.charmURL,
-          channel: 'stable',
-          resources: resources
-        }, (error, ids) => {
-          if (error !== null) {
-            callback(error, {});
-            return;
-          }
-          // Store the id map in the application model for use by the ecs
-          // during deploy.
-          const db = this.get('ecs').get('db');
-          const app = db.services.getServiceByName(args.applicationName);
-          app.set('resourceIds', ids);
-        }]);
-        // The charmResources key is only used to add the charm pending
-        // resources so we need to remove it before passing to the deploy
-        // method.
-        delete args.charmResources;
-      }
-      ecs._lazyDeploy(arguments);
+      this.get('ecs')._lazyDeploy(arguments);
     },
 
     /**

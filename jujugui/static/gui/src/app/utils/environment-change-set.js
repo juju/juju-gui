@@ -597,7 +597,7 @@ YUI.add('environment-change-set', function(Y) {
     */
     _lazyAddPendingResources: function(args) {
       const command = {
-        method: 'addPendingResources',
+        method: '_addPendingResources',
         args: args
       };
       // Set up the parents of this record.
@@ -681,7 +681,7 @@ YUI.add('environment-change-set', function(Y) {
             parents.push(key);
           }
         }
-        if (command.method === 'addPendingResources') {
+        if (command.method === '_addPendingResources') {
           if (command.args[0].applicationName === args[0].applicationName) {
             parents.push(key);
           }
