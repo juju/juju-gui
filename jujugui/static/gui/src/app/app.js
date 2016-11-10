@@ -1644,7 +1644,7 @@ YUI.add('juju-gui', function(Y) {
           return;
         }
         const selectedModel = this._pickModel(
-          modelList, state.user.split('/')[1]);
+          modelList, state.current.user.split('/')[1], false);
         // If there are no matching models then this might be a charm or bundle.
         if (selectedModel === null) {
           this._renderCharmbrowser(state, next);
@@ -1801,10 +1801,12 @@ YUI.add('juju-gui', function(Y) {
       @method _pickModel
       @param {Array} modelList The list of models to pick from.
       @param {String} modelUUID The uuid of the model to attempt to connect to.
+      @param {Boolean} selectFirst Whether to select the first model if a
+        match is not found.
       @return {Object} The selected model, or null if there are no models
         accessible by the user.
      */
-    _pickModel: function(modelList, modelUUID) {
+    _pickModel: function(modelList, modelUUID, selectFirst=true) {
       if (!modelList.length) {
         return null;
       }
@@ -1815,8 +1817,11 @@ YUI.add('juju-gui', function(Y) {
       // XXX This picks the first model if one is not provided by config or
       // not available. We'll want to default to disconnected mode then allow
       // the user to choose a model in this case.
-      const selectedModel = matching.length ? matching[0] : modelList[0];
-      this.set('modelUUID', selectedModel.uuid);
+      const selectedModel = matching.length ? matching[0] :
+        (selectFirst ? modelList[0] : null);
+      if (selectedModel) {
+        this.set('modelUUID', selectedModel.uuid);
+      }
       return selectedModel;
     },
 
