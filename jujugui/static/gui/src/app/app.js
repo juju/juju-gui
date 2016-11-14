@@ -660,7 +660,9 @@ YUI.add('juju-gui', function(Y) {
 
       // We are now ready to connect the environment and bootstrap the app.
       this.once('ready', function(e) {
-        if (this.controllerAPI) {
+        if (this.get('gisf')) {
+          this.maskVisibility(false);
+        } else if (this.controllerAPI) {
           // In Juju >= 2 we connect to the controller and then to the model.
           this.controllerAPI.connect();
         } else {
