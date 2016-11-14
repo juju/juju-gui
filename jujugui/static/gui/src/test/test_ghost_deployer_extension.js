@@ -46,7 +46,8 @@ describe('Ghost Deployer Extension', function() {
           env: {
             deploy: sinon.stub(),
             add_unit: sinon.stub(),
-            addCharm: sinon.stub()
+            addCharm: sinon.stub(),
+            addPendingResources: sinon.stub()
           }
         }, {
           ATTRS: {
@@ -163,15 +164,16 @@ describe('Ghost Deployer Extension', function() {
     assert.equal(ghostDeployer.env.deploy.callCount, 1);
   });
 
-  it('calls the env deploy method with default charm data', function() {
+  it('calls the env addPendingResources method with default charm data', () => {
     const charm = makeCharm();
+    charm.set('resources', {a: 'resource'});
     ghostDeployer.deployService(charm);
-    assert.strictEqual(ghostDeployer.env.deploy.calledOnce, true);
-    const args = ghostDeployer.env.deploy.lastCall.args[0];
-    assert.strictEqual(args.charmURL, 'cs:trusty/django-42');
-    assert.strictEqual(args.applicationName, 'ghost-service-id');
-    assert.strictEqual(args.series, 'trusty');
-    assert.deepEqual(args.config, {});
+    assert.strictEqual(ghostDeployer.env.addPendingResources.calledOnce, true);
+    const args = ghostDeployer.env.addPendingResources.lastCall.args;
+    assert.equal(args[0].charmURL, 'cs:trusty/django-42');
+    assert.equal(args[0].applicationName, 'ghost-service-id');
+    assert.deepEqual(args[0].resources, {a: 'resource'});
+    assert.equal(typeof args[1], 'function');
   });
 
   it('properly adds the series to Juju 1 applications', function() {

@@ -505,8 +505,35 @@ YUI.add('bundle-importer', function(Y) {
             this.modelAPI.update_annotations(
               name, 'application', ghostService.get('annotations'));
           }.bind(this, ghostService);
+
+          const charmURL = charm.get('id');
+
+          // Add the resources to the Juju controller if we have any.
+          const charmResources = charm.get('resources');
+          if (charmResources) {
+            this.modelAPI.addPendingResources({
+              applicationName: record.args[2],
+              charmURL: charmURL,
+              channel: 'stable',
+              resources: charmResources
+            }, (error, ids) => {
+              if (error !== null) {
+                this.db.notifications.add({
+                  title: 'Error adding resources',
+                  message: `Could not add requested resources for ${charmURL}. `
+                    + 'Server responded with: ' + error,
+                  level: 'error'
+                });
+                return;
+              }
+              // Store the id map in the application model for use by the ecs
+              // during deploy.
+              ghostService.set('resourceIds', ids);
+            });
+          }
+
           this.modelAPI.deploy({
-            charmURL: charm.get('id'),
+            charmURL: charmURL,
             applicationName: record.args[2],
             series: series,
             config: record.args[3],

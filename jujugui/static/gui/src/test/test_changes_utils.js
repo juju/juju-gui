@@ -109,6 +109,15 @@ describe('ChangesUtils', function() {
       }
     }, {
       icon: 'django.svg',
+      msg: ' django resources added.',
+      change: {
+        command: {
+          method: 'addPendingResources',
+          args: [{applicationName: 'django', charmURL: 'cs:trusty/django-1'}]
+        }
+      }
+    }, {
+      icon: 'django.svg',
       msg: ' django has been added.',
       change: {
         command: {

@@ -82,11 +82,35 @@ YUI.add('ghost-deployer-extension', function(Y) {
           {applicationId: ghostServiceId});
       }
       const options = {modelId: ghostServiceId};
+      // Add the resources to the Juju controller if we have any.
+      const charmResources = charm.get('resources');
+      if (charmResources) {
+        this.env.addPendingResources({
+          applicationName: serviceName,
+          charmURL: charmId,
+          channel: 'stable',
+          resources: charmResources
+        }, (error, ids) => {
+          if (error !== null) {
+            db.notifications.add({
+              title: 'Error adding resources',
+              message: `Could not add requested resources for ${charmId}. ` +
+                'Server responded with: ' + error,
+              level: 'error'
+            });
+            return;
+          }
+          // Store the id map in the application model for use by the ecs
+          // during deploy.
+          ghostService.set('resourceIds', ids);
+        });
+      }
+
       this.env.deploy({
         charmURL: charmId,
         applicationName: serviceName,
         series: activeSeries,
-        config: config,
+        config: config
       }, this._deployCallbackHandler.bind(this, ghostService), options);
 
       // Add an unplaced unit to this service if it is not a subordinate

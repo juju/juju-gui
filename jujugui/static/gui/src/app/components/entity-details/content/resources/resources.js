@@ -34,13 +34,12 @@ YUI.add('entity-resources', function() {
     */
     _generateResources: function() {
       const resources = this.props.resources;
-      if (!resources || Object.keys(resources).length === 0) {
+      if (!resources || resources.length === 0) {
         return;
       }
-      const resourceList = Object.keys(resources).map((key, i) => {
-        const resource = resources[key];
+      const resourceList = resources.map((resource, i) => {
         // Get the file extension.
-        const parts = resource.path.split('.');
+        const parts = resource.Path.split('.');
         let extension = '';
         // If there is a file extension then format it for display.
         if (parts.length > 1) {
@@ -48,8 +47,8 @@ YUI.add('entity-resources', function() {
         }
         return (
           <li className="entity-files__file"
-            key={resource.name + i}>
-            {resource.name} {extension}
+            key={resource.Name + i}>
+            {resource.Name} {extension}
           </li>);
       });
       return (

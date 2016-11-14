@@ -1300,13 +1300,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     describe('addPendingResources', function() {
+      it('adds to the ecs on the public method', () => {
+        const stub = sinon.stub(env.get('ecs'), '_lazyAddPendingResources');
+        env.addPendingResources({
+          applicationName: 'wordpress',
+          charmURL: 'wordpress-42',
+          channel: 'stable',
+          resources: []
+        });
+        assert.equal(stub.callCount, 1);
+      });
       it('uploads resources', done => {
         // Perform the request.
         const resources = [
           {Name: 'res1', File: 'res1.tgz'},
           {Name: 'res2', File: 'res2.tgz'}
         ];
-        env.addPendingResources({
+        env._addPendingResources({
           applicationName: 'wordpress',
           charmURL: 'wordpress-42',
           channel: 'stable',
@@ -1343,7 +1353,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('uploads a single resource', done => {
         // Perform the request.
-        env.addPendingResources({
+        env._addPendingResources({
           applicationName: 'hap',
           charmURL: 'cs:xenial/haproxy-47',
           channel: 'beta',
@@ -1378,7 +1388,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('uploads resources with origin', done => {
         // Perform the request.
-        env.addPendingResources({
+        env._addPendingResources({
           applicationName: 'haproxy',
           charmURL: 'xenial/haproxy-47',
           resources: [{Name: 'myres', File: 'myres.tar.bz2', Origin: 'Vulcan'}]
@@ -1417,7 +1427,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           channel: 'beta',
           resources: [{Name: 'myres', File: 'myres.tar.bz2'}]
         };
-        env.addPendingResources(args, (err, ids) => {
+        env._addPendingResources(args, (err, ids) => {
           assert.equal(err, 'invalid arguments: ' + JSON.stringify(args));
           assert.deepEqual(ids, {});
           done();
@@ -1432,7 +1442,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           channel: 'candidate',
           resources: [{Name: 'myres', File: 'myres.tar.bz2'}]
         };
-        env.addPendingResources(args, (err, ids) => {
+        env._addPendingResources(args, (err, ids) => {
           assert.equal(err, 'invalid arguments: ' + JSON.stringify(args));
           assert.deepEqual(ids, {});
           done();
@@ -1446,7 +1456,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           charmURL: 'wordpress-42',
           resources: []
         };
-        env.addPendingResources(args, (err, ids) => {
+        env._addPendingResources(args, (err, ids) => {
           assert.equal(err, 'invalid arguments: ' + JSON.stringify(args));
           assert.deepEqual(ids, {});
           done();
@@ -1455,7 +1465,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('fails when invalid resources are provided', done => {
         // Perform the request.
-        env.addPendingResources({
+        env._addPendingResources({
           applicationName: 'wordpress',
           charmURL: 'wordpress-42',
           resources: [{File: 'bad'}]
@@ -1468,7 +1478,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('handles global failures while adding resources', done => {
         // Perform the request.
-        env.addPendingResources({
+        env._addPendingResources({
           applicationName: 'redis',
           charmURL: 'redis-0',
           resources: [{Name: 'red', File: 'red.tgz'}]
@@ -1483,7 +1493,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('handles local failures while adding resources', done => {
         // Perform the request.
-        env.addPendingResources({
+        env._addPendingResources({
           applicationName: 'redis',
           charmURL: 'redis-0',
           resources: [{Name: 'red', File: 'red.tgz'}]
@@ -1501,7 +1511,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('handles unexpected failures while adding resources', done => {
         // Perform the request.
-        env.addPendingResources({
+        env._addPendingResources({
           applicationName: 'redis',
           charmURL: 'redis-0',
           resources: [{Name: 'red', File: 'red.tgz'}]

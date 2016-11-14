@@ -792,6 +792,24 @@ describe('Environment Change Set', function() {
       });
     });
 
+    describe('lazyAddPendingResources', () => {
+      it('creates a new addPendingResources record', () => {
+        const args = {
+          applicationName: 'django',
+          charmURL: 'cs:precise/django-42',
+          channel: 'stable',
+          resources: {a: 'resource'}
+        };
+        const key = ecs._lazyAddPendingResources([args]);
+        const record = ecs.changeSet[key];
+        assert.equal(record.executed, false);
+        assert.equal(record.command.method, '_addPendingResources');
+        // Remove the functions, which will not be equal.
+        record.command.args.pop();
+        assert.deepEqual(record.command.args, [args]);
+      });
+    });
+
     describe('_lazyDeploy', function() {
       it('creates a new `deploy` record', function(done) {
         const args = {
@@ -872,6 +890,34 @@ describe('Environment Change Set', function() {
         // Ensure that the undefined key is not still in the config param.
         assert.deepEqual(Object.keys(command.args[0].config), ['key1']);
       });
+
+      it('adds the correct addCharm and addPendingResources parents', () => {
+        ecs._lazyAddCharm([
+          'cs:precise/django-42', 'cookies', null, {applicationId: 'django'}]);
+        ecs._lazyAddPendingResources([{
+          applicationName: 'django',
+          charmURL: 'cs:precise/django-42',
+          channel: 'stable',
+          resources: {a: 'resource'}
+        }]);
+        const key = ecs._lazyDeploy([{
+          charmURL: 'cs:precise/django-42',
+          applicationName: 'django',
+        }]);
+        const record = ecs.changeSet[key];
+        assert.equal(record.parents.length, 2);
+        const parentKeys = {
+          addCharm: false,
+          addPendingResources: false
+        };
+        record.parents.forEach(
+          parent => parentKeys[parent.split('-')[0]] = true);
+        assert.deepEqual(parentKeys, {
+          addCharm: true,
+          addPendingResources: true
+        });
+      });
+
     });
 
     describe('lazyDestroyApplication', function() {
