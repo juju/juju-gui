@@ -64,6 +64,14 @@ $z-indexed-elements: search-results-list-block__tags,
 // Asset path used by Vanilla to load fonts instead of asset server
 $asset-path: 'static/gui/build/app/assets/';
 
+// Classes for extending.
+.vertical-center {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+
 // Imports cloud vanilla theme from node_modules
 @import '../../../../../../../node_modules/cloud-vanilla-theme/scss/theme';
 

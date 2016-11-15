@@ -1,13 +1,12 @@
 // scss-lint:disable IdSelector
 #header-breadcrumb {
+  @extend .vertical-center;
   float: left;
-  position: relative;
 }
 // scss-lint:enable IdSelector
 
 .header-breadcrumb {
   @extend %list-style;
-  padding: 17px 0;
 
   &--link {
     position: relative;
@@ -38,5 +37,6 @@
   &__list-item {
     float: left;
     padding-left: 20px;
+    margin-bottom: 0;
   }
 }

@@ -29,23 +29,11 @@
     }
   }
 
-  &__logo {
-    position: relative;
-    float: left;
-    top: -1px;
-    padding: 15px 0 20px 20px;
-  }
-
+  &__logo,
   &__provider {
+    @extend .vertical-center;
     float: left;
-    height: 60px;
-    padding: 10px 0 0 20px;
-
-    svg {
-      position: relative;
-      top: 50%;
-      transform: translateY(-50%);
-    }
+    margin-left: 20px;
   }
 
   .header-banner__list--right {
