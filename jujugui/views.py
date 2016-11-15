@@ -135,7 +135,6 @@ def config(request):
         'gisf': settings['jujugui.gisf'],
         'staticURL': settings['jujugui.static_url'],
         'gisfLogout': gisfLogout,
-        'betaUser': settings.get('jujugui.betaUser', False),
     }
     return 'var juju_config = {};'.format(json.dumps(options))
 

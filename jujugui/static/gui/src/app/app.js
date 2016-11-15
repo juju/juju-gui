@@ -1112,7 +1112,6 @@ YUI.add('juju-gui', function(Y) {
       const env = this.env;
       const db = this.db;
       const modelName = db.environment.get('name');
-      const modelCommitted = env.get('connected');
       const utils = views.utils;
       const currentChangeSet = env.get('ecs').getCurrentChangeSet();
       if (Object.keys(currentChangeSet).length === 0) {
@@ -1129,13 +1128,10 @@ YUI.add('juju-gui', function(Y) {
         });
         return;
       }
-      const beta = window.flags && window.flags.beta;
-      // This variable might be a string or a boolean, depending on how it's
-      // passed in.
-      let betaUser = window.juju_config.betaUser;
-      betaUser = betaUser === true || betaUser === 'true';
-      const displayFlow = metadata && metadata.activeComponent === 'flow';
-      if (beta && !betaUser && !displayFlow && !modelCommitted) {
+      // The beta sign-up component is displayed in sandbox mode at the
+      // beginning of the deployment flow.
+      const flowDisplayed = metadata && metadata.activeComponent === 'flow';
+      if (!flowDisplayed && this.get('sandbox')) {
         ReactDOM.render(
           <window.juju.components.DeploymentSignup
             changeState={this.changeState.bind(this)}
@@ -1188,7 +1184,7 @@ YUI.add('juju-gui', function(Y) {
           listClouds={
             controllerAPI && controllerAPI.listClouds.bind(controllerAPI)}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
-          modelCommitted={modelCommitted}
+          modelCommitted={this.env.get('connected')}
           modelName={modelName}
           region={env.get('region')}
           servicesGetById={services.getById.bind(services)}
