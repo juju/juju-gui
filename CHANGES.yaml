@@ -1,3 +1,14 @@
+- 2.2.3:
+
+    - Added charm resources section to the inspector.
+    - Reduced GUI size by 30KB pre-gzip by optimising minification.
+    - Added multi-threading to transpile step, saving 30s off transpile time.
+    - Display cloud provider in header.
+    - (Fix) Switching models from disconnected state updates model name.
+    - (Fix) Pass resource list when deploying charms with resources.
+    - (Fix) Cloud logo positioning and scaling.
+    - (Fix) Honor config values set in bundles.
+
 - 2.2.2:
 
     - Add the ability to destroy models in the user profile.
