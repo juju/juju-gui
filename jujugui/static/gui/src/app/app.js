@@ -392,9 +392,9 @@ YUI.add('juju-gui', function(Y) {
         store.
 
         @property userPaths
-        @type {Object}
+        @type {Map}
       */
-      this.userPaths = {};
+      this.userPaths = new Map();
 
       this.bakeryFactory = new window.jujulib.bakeryFactory(
         Y.juju.environments.web.Bakery);
@@ -1666,11 +1666,11 @@ YUI.add('juju-gui', function(Y) {
           modelList.forEach(model => {
             const path = `${model.owner}/${model.name}`;
             // Don't need to store the path if it already exists.
-            if (!this.userPaths[path]) {
-              this.userPaths[path] = {
+            if (!this.userPaths.get(path)) {
+              this.userPaths.set(path, {
                 type: 'model',
                 model: model
-              };
+              });
             }
           });
           // Attempt to handle the path.
@@ -1678,7 +1678,7 @@ YUI.add('juju-gui', function(Y) {
           if (!existing) {
             // If the path does not exist after we've populated the list with
             // models then it must be for a charm/bundle so store it as such.
-            this.userPaths[userPath] = {type: 'store'};
+            this.userPaths.set(userPath, {type: 'store'});
             // Handle the entity. It will exist now.
             handleEntity();
           }
@@ -1696,7 +1696,7 @@ YUI.add('juju-gui', function(Y) {
       @returns {Boolean} Whether there was an existing path.
     */
     _handleUserEntityPath: function(state, next, userPath) {
-      const storedPath = this.userPaths[userPath];
+      const storedPath = this.userPaths.get(userPath);
       const type = storedPath && storedPath.type;
       if (type === 'store') {
         // The path is for a bundle or charm so display the store.
