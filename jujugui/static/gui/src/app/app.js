@@ -1638,8 +1638,7 @@ YUI.add('juju-gui', function(Y) {
       const handleEntity = this._handleUserEntityPath.bind(
         this, state, next, userPath);
       // Attempt to handle an exisitng path.
-      const existing = handleEntity();
-      if (!existing) {
+      if (!handleEntity()) {
         // If the path has not been visited then populate the path storage with
         // the list of models.
         this.controllerAPI.listModelsWithInfo((err, modelList) => {
@@ -1664,8 +1663,7 @@ YUI.add('juju-gui', function(Y) {
             }
           });
           // Attempt to handle the path.
-          const existing = handleEntity();
-          if (!existing) {
+          if (!handleEntity()) {
             // If the path does not exist after we've populated the list with
             // models then it must be for a charm/bundle so store it as such.
             this.userPaths.set(userPath, {type: 'store'});
