@@ -962,7 +962,7 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       // If the charmbrowser is open then don't show the logout link.
-      var visible = !this.state.getState('current', 'sectionC', 'metadata');
+      var visible = !this.state.current.store;
       var charmstore = this.get('charmstore');
       const bakeryFactory = this.bakeryFactory;
       ReactDOM.render(
@@ -1588,7 +1588,7 @@ YUI.add('juju-gui', function(Y) {
       @method _handleNewModel
     */
     _handleNewModel: function() {
-      this.switchEnv(null, null, null, null, false, true);
+      this.switchEnv();
     },
 
     /**
@@ -1597,25 +1597,54 @@ YUI.add('juju-gui', function(Y) {
       @method _handleUserEntity
       @param {Object} state - The application state.
       @param {Function} next - Run the next route handler, if any.
+      @param {Boolean} lookupModels - Whether to fetch models.
     */
-    _handleUserEntity: function(state, next) {
-      this.controllerAPI.listModelsWithInfo((err, modelList) => {
-        if (err) {
-          console.error('unable to list models', err);
-          this.db.notifications.add({
-            title: 'Unable to list models',
-            message: 'Unable to list models: ' + err,
-            level: 'error'
-          });
-          return;
-        }
-        const selectedModel = this._pickModel(
-          modelList, state.current.user.split('/')[1], false);
-        // If there are no matching models then this might be a charm or bundle.
-        if (selectedModel === null) {
+    _handleUserEntity: function(state, next, lookupModels=true) {
+      if (!this.userPaths) {
+        this.userPaths = {};
+      }
+      const userPath = state.user;
+      const match = this.userPaths[userPath];
+      if (match) {
+        if (match.type === 'store') {
           this._renderCharmbrowser(state, next);
+        } else if (match.type === 'model') {
+          const uuid = match.model.uuid;
+          if (uuid === this.get('modelUUID')) {
+            // We're already connected/connecting to the model.
+            return;
+          }
+          this.set('modelUUID', uuid);
+          this.switchEnv(
+            this.createSocketURL(
+              this.get('socketTemplate'), uuid));
         }
-      });
+      } else if (lookupModels) {
+        this.controllerAPI.listModelsWithInfo((err, modelList) => {
+          if (err) {
+            console.error('unable to list models', err);
+            this.db.notifications.add({
+              title: 'Unable to list models',
+              message: 'Unable to list models: ' + err,
+              level: 'error'
+            });
+            return;
+          }
+          modelList.forEach(model => {
+            this.userPaths[`${model.owner}/${model.name}`] = {
+              type: 'model',
+              model: model
+            };
+          });
+          // Don't look up models again otherwise we'll create an endless loop.
+          this._handleUserEntity(state, next, false);
+        });
+      } else {
+        // Must be a charm/bundle. Don't look up models again otherwise we'll
+        // create an endless loop.
+        this.userPaths[userPath] = {type: 'store'};
+        this._handleUserEntity(state, next, false);
+      }
     },
 
     /**
@@ -1767,12 +1796,10 @@ YUI.add('juju-gui', function(Y) {
       @method _pickModel
       @param {Array} modelList The list of models to pick from.
       @param {String} modelUUID The uuid of the model to attempt to connect to.
-      @param {Boolean} selectFirst Whether to select the first model if a
-        match is not found.
       @return {Object} The selected model, or null if there are no models
         accessible by the user.
      */
-    _pickModel: function(modelList, modelUUID, selectFirst=true) {
+    _pickModel: function(modelList, modelUUID) {
       if (!modelList.length) {
         return null;
       }
@@ -1780,11 +1807,9 @@ YUI.add('juju-gui', function(Y) {
       if (modelUUID) {
         matching = modelList.filter(model => model.uuid === modelUUID);
       }
-      // XXX This picks the first model if one is not provided by config or
-      // not available. We'll want to default to disconnected mode then allow
-      // the user to choose a model in this case.
-      const selectedModel = matching.length ? matching[0] :
-        (selectFirst ? modelList[0] : null);
+      // Connect to the first matching model. Not sure if it's possible to match
+      // more than one UUID.
+      const selectedModel = matching.length ? matching[0] : null;
       if (selectedModel) {
         this.set('modelUUID', selectedModel.uuid);
       }
