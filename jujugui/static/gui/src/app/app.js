@@ -1130,8 +1130,12 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       const beta = window.flags && window.flags.beta;
+      // This variable might be a string or a boolean, depending on how it's
+      // passed in.
+      let betaUser = window.juju_config.betaUser;
+      betaUser = betaUser === true || betaUser === 'true';
       const displayFlow = metadata && metadata.activeComponent === 'flow';
-      if (beta && !displayFlow && !modelCommitted) {
+      if (beta && !betaUser && !displayFlow && !modelCommitted) {
         ReactDOM.render(
           <window.juju.components.DeploymentSignup
             changeState={this.changeState.bind(this)}

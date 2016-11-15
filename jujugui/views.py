@@ -98,6 +98,7 @@ def config(request):
         'viewContainer': '#main',
         'baseUrl': base_url,
         'transitions': False,
+        # XXX kadams54: cachedFonts doesn't appear to be used anywhere.
         'cachedFonts': False,
         # Debugging options.
         'consoleEnabled': True,
@@ -133,7 +134,8 @@ def config(request):
         'socketTemplate': settings['jujugui.socketTemplate'],
         'gisf': settings['jujugui.gisf'],
         'staticURL': settings['jujugui.static_url'],
-        'gisfLogout': gisfLogout
+        'gisfLogout': gisfLogout,
+        'betaUser': settings.get('jujugui.betaUser', False),
     }
     return 'var juju_config = {};'.format(json.dumps(options))
 
