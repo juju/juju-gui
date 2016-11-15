@@ -385,6 +385,17 @@ YUI.add('juju-gui', function(Y) {
       // handlers with a { mask: mask, handlers: handlers } format.
       this.dragNotifications = [];
 
+
+      /**
+        The object used for storing a mapping of previously visited user paths
+        to the type of entity (model, store). e.g. /u/spinach/ghost would map to
+        store.
+
+        @property userPaths
+        @type {Object}
+      */
+      this.userPaths = {};
+
       this.bakeryFactory = new window.jujulib.bakeryFactory(
         Y.juju.environments.web.Bakery);
 
@@ -1621,29 +1632,16 @@ YUI.add('juju-gui', function(Y) {
       @method _handleUserEntity
       @param {Object} state - The application state.
       @param {Function} next - Run the next route handler, if any.
-      @param {Boolean} lookupModels - Whether to fetch models.
     */
-    _handleUserEntity: function(state, next, lookupModels=true) {
-      if (!this.userPaths) {
-        this.userPaths = {};
-      }
+    _handleUserEntity: function(state, next) {
       const userPath = state.user;
-      const match = this.userPaths[userPath];
-      if (match) {
-        if (match.type === 'store') {
-          this._renderCharmbrowser(state, next);
-        } else if (match.type === 'model') {
-          const uuid = match.model.uuid;
-          if (uuid === this.get('modelUUID')) {
-            // We're already connected/connecting to the model.
-            return;
-          }
-          this.set('modelUUID', uuid);
-          this.switchEnv(
-            this.createSocketURL(
-              this.get('socketTemplate'), uuid));
-        }
-      } else if (lookupModels) {
+      const handleEntity = this._handleUserEntityPath.bind(
+        this, state, next, userPath);
+      // Attempt to handle an exisitng path.
+      const existing = handleEntity();
+      if (!existing) {
+        // If the path has not been visited then populate the path storage with
+        // the list of models.
         this.controllerAPI.listModelsWithInfo((err, modelList) => {
           if (err) {
             console.error('unable to list models', err);
@@ -1654,25 +1652,64 @@ YUI.add('juju-gui', function(Y) {
             });
             return;
           }
+          // Store the list of model paths.
           modelList.forEach(model => {
-            this.userPaths[`${model.owner}/${model.name}`] = {
-              type: 'model',
-              model: model
-            };
+            const path = `${model.owner}/${model.name}`;
+            // Don't need to store the path if it already exists.
+            if (!this.userPaths[path]) {
+              this.userPaths[path] = {
+                type: 'model',
+                model: model
+              };
+            }
           });
-          // Don't look up models again otherwise we'll create an endless loop.
-          this._handleUserEntity(state, next, false);
+          // Attempt to handle the path.
+          const existing = handleEntity();
+          if (!existing) {
+            // If the path does not exist after we've populated the list with
+            // models then it must be for a charm/bundle so store it as such.
+            this.userPaths[userPath] = {type: 'store'};
+            // Handle the entity. It will exist now.
+            handleEntity();
+          }
         });
-      } else {
-        // Must be a charm/bundle. Don't look up models again otherwise we'll
-        // create an endless loop.
-        this.userPaths[userPath] = {type: 'store'};
-        this._handleUserEntity(state, next, false);
       }
     },
 
     /**
-      The cleanup dispatcher for the user entity state path.
+      Handle the request to display the user entity state.
+
+      @method _handleUserEntityPath
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+      @param {String} userPath - The path to handle.
+      @returns {Boolean} Whether there was an existing path.
+    */
+    _handleUserEntityPath: function(state, next, userPath) {
+      const storedPath = this.userPaths[userPath];
+      const type = storedPath && storedPath.type;
+      if (type === 'store') {
+        // The path is for a bundle or charm so display the store.
+        this._renderCharmbrowser(state, next);
+      } else if (type === 'model') {
+        // The path is for a model so connect to it.
+        const uuid = storedPath.model.uuid;
+        if (uuid !== this.get('modelUUID')) {
+          // We're not already connected/connecting to the model so connect to
+          // it.
+          this.set('modelUUID', uuid);
+          this.switchEnv(
+            this.createSocketURL(this.get('socketTemplate'), uuid));
+        }
+      }
+      // Return whether there was an existing path.
+      return !!storedPath;
+    },
+
+    /**
+      The cleanup dispatcher for the user entity state path. The store will be
+      mounted if the path was for a bundle or charm. If the entity was a model
+      we don't need to do anything.
 
       @method _clearUserEntity
       @param {Object} state - The application state.
