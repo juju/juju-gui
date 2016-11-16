@@ -61,31 +61,15 @@ YUI.add('deployment-signup', function() {
           title={this.props.modelName}>
           <div className="deployment-signup">
             <div className="six-col">
-              <h2>Install Juju to deploy locally</h2>
+              <h2>Deploy your model using Juju</h2>
               <p>
-                Doing so provides on LXD, which allows you to recreate the
-                production deployment environment on your own machine. This
-                minimises portability issues when deploying to a public cloud,
-                OpenStack or bare metal.
+                By deploying your model, all of your services will be deployed
+                to the cloud provider of your choice, using the configuration
+                values you provided.  In the next step, you will be able to
+                sign up and choose your cloud provider.
               </p>
-              <p>To deploy locally:</p>
-              <ol>
-                <li>
-                  <juju.components.GenericButton
-                    action={this.props.exportEnvironmentFile}
-                    type="base"
-                    title="Download your model" />
-                  </li>
-                <li>
-                  <a href="https://jujucharms.com/docs/stable/getting-started"
-                    target="_blank">
-                    Install Juju
-                  </a>
-                </li>
-                <li>Add your model to deploy</li>
-              </ol>
               <p>
-                Or continue to the&nbsp;
+                Continue to the&nbsp;
                 <juju.components.GenericButton
                   action={this._displayFlow}
                   type="inline-neutral"
