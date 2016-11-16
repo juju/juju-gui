@@ -51,6 +51,7 @@ YUI.add('deployment-signup', function() {
       @method _handleSignup
     */
     _handleSignup: function() {
+      document.cookie = 'signup-seen=true';
       console.error('Not implemented.');
     },
 
