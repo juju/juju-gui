@@ -197,12 +197,7 @@ YUI.add('juju-view-environment', function(Y) {
     */
     _handlePlusClick: function(e) {
       this.fire('changeState', {
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'store'
-          }
-        }
+        root: 'store'
       });
     }
   });

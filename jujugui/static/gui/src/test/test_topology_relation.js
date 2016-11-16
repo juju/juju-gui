@@ -134,9 +134,8 @@ describe('topology relation module', function() {
         view.inspectRelationClick.call(container, undefined, view);
         assert.equal(topo.fire.lastCall.args[0], 'changeState');
         assert.deepEqual(topo.fire.lastCall.args[1], {
-          sectionA: {
-            component: 'inspector',
-            metadata: { id: container.get('text').split(':')[0].trim() }
+          gui: {
+            inspector: { id: container.get('text').split(':')[0].trim() }
           }});
       });
 
