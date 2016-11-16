@@ -156,11 +156,8 @@ describe('DeploymentSignup', function() {
       .props.children[1].props.action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'deploy',
-        metadata: {
-          activeComponent: 'flow'
-        }
+      gui: {
+        deploy: 'flow'
       }
     });
   });
