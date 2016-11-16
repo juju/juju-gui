@@ -385,6 +385,17 @@ YUI.add('juju-gui', function(Y) {
       // handlers with a { mask: mask, handlers: handlers } format.
       this.dragNotifications = [];
 
+
+      /**
+        The object used for storing a mapping of previously visited user paths
+        to the type of entity (model, store). e.g. /u/spinach/ghost would map to
+        store.
+
+        @property userPaths
+        @type {Map}
+      */
+      this.userPaths = new Map();
+
       this.bakeryFactory = new window.jujulib.bakeryFactory(
         Y.juju.environments.web.Bakery);
 
@@ -962,7 +973,7 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       // If the charmbrowser is open then don't show the logout link.
-      var visible = !this.state.getState('current', 'sectionC', 'metadata');
+      var visible = !this.state.current.store;
       var charmstore = this.get('charmstore');
       const bakeryFactory = this.bakeryFactory;
       ReactDOM.render(
@@ -1588,7 +1599,104 @@ YUI.add('juju-gui', function(Y) {
       @method _handleNewModel
     */
     _handleNewModel: function() {
-      this.switchEnv(null, null, null, null, false, true);
+      this.switchEnv();
+    },
+
+    /**
+      Handle the request to display the user entity state.
+
+      @method _handleUserEntity
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _handleUserEntity: function(state, next) {
+      const userPath = state.user;
+      const handleEntity = this._handleUserEntityPath.bind(
+        this, state, next, userPath);
+      // Attempt to handle an exisitng path.
+      if (!handleEntity()) {
+        // If the path has not been visited then populate the path storage with
+        // the list of models.
+        this.controllerAPI.listModelsWithInfo((err, modelList) => {
+          if (err) {
+            console.error('unable to list models', err);
+            this.db.notifications.add({
+              title: 'Unable to list models',
+              message: 'Unable to list models: ' + err,
+              level: 'error'
+            });
+            return;
+          }
+          // Store the list of model paths.
+          modelList.forEach(model => {
+            const path = `${model.owner}/${model.name}`;
+            // Don't need to store the path if it already exists.
+            if (!this.userPaths.get(path)) {
+              this.userPaths.set(path, {
+                type: 'model',
+                model: model
+              });
+            }
+          });
+          // Attempt to handle the path.
+          if (!handleEntity()) {
+            // If the path does not exist after we've populated the list with
+            // models then it must be for a charm/bundle so store it as such.
+            this.userPaths.set(userPath, {type: 'store'});
+            // Handle the entity. It will exist now.
+            handleEntity();
+          }
+        });
+      }
+    },
+
+    /**
+      Handle the request to display the user entity state.
+
+      @method _handleUserEntityPath
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+      @param {String} userPath - The path to handle.
+      @returns {Boolean} Whether there was an existing path.
+    */
+    _handleUserEntityPath: function(state, next, userPath) {
+      const storedPath = this.userPaths.get(userPath);
+      const type = storedPath && storedPath.type;
+      if (type === 'store') {
+        // The path is for a bundle or charm so display the store.
+        this._renderCharmbrowser(state, next);
+      } else if (type === 'model') {
+        // The path is for a model so connect to it.
+        const uuid = storedPath.model.uuid;
+        if (uuid !== this.get('modelUUID')) {
+          // We're not already connected/connecting to the model so connect to
+          // it.
+          this.set('modelUUID', uuid);
+          this.switchEnv(
+            this.createSocketURL(this.get('socketTemplate'), uuid));
+        }
+      }
+      // Return whether there was an existing path.
+      return !!storedPath;
+    },
+
+    /**
+      The cleanup dispatcher for the user entity state path. The store will be
+      mounted if the path was for a bundle or charm. If the entity was a model
+      we don't need to do anything.
+
+      @method _clearUserEntity
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _clearUserEntity: function(state, next) {
+      const container = document.getElementById('charmbrowser-container');
+      // The charmbrowser will only be mounted if the entity is a charm or
+      // bundle.
+      if (container.childNodes.length > 0) {
+        ReactDOM.unmountComponentAtNode(container);
+      }
+      next();
     },
 
     /**
@@ -1654,8 +1762,8 @@ YUI.add('juju-gui', function(Y) {
           this._renderUserProfile.bind(this),
           this._clearUserProfile.bind(this)],
         ['user',
-          this._renderCharmbrowser.bind(this),
-          this._clearCharmbrowser.bind(this)],
+          this._handleUserEntity.bind(this),
+          this._clearUserEntity.bind(this)],
         ['store',
           this._renderCharmbrowser.bind(this),
           this._clearCharmbrowser.bind(this)],
@@ -1734,11 +1842,12 @@ YUI.add('juju-gui', function(Y) {
       if (modelUUID) {
         matching = modelList.filter(model => model.uuid === modelUUID);
       }
-      // XXX This picks the first model if one is not provided by config or
-      // not available. We'll want to default to disconnected mode then allow
-      // the user to choose a model in this case.
-      const selectedModel = matching.length ? matching[0] : modelList[0];
-      this.set('modelUUID', selectedModel.uuid);
+      // Connect to the first matching model. Not sure if it's possible to match
+      // more than one UUID.
+      const selectedModel = matching.length ? matching[0] : null;
+      if (selectedModel) {
+        this.set('modelUUID', selectedModel.uuid);
+      }
       return selectedModel;
     },
 
