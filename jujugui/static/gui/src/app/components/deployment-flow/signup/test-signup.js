@@ -128,19 +128,4 @@ describe('DeploymentSignup', function() {
     });
   });
 
-  xit('can export the model', function() {
-    // XXX This functionality has been removed for the 2.2.4 release.
-    // @makyo 2016-11-16
-    const exportEnvironmentFile = sinon.stub();
-    const output = jsTestUtils.shallowRender(
-      <juju.components.DeploymentSignup
-        changeState={sinon.stub()}
-        exportEnvironmentFile={exportEnvironmentFile}
-        modelName="Lamington">
-        <span>content</span>
-      </juju.components.DeploymentSignup>);
-    output.props.children.props.children[0].props.children[3].props.children[0]
-      .props.children.props.action();
-    assert.equal(exportEnvironmentFile.callCount, 1);
-  });
 });
