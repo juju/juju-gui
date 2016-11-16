@@ -164,11 +164,8 @@ YUI.add('juju-topology', function(Y) {
             return;
           }
           self.fire('changeState', {
-            sectionC: {
-              component: 'charmbrowser',
-              metadata: {
-                activeComponent: 'store'
-              }
+            gui: {
+              root: 'store'
             }
           });
           // Pass the wheel events to the canvas so that it can be zoomed.

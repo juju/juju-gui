@@ -885,9 +885,8 @@ YUI.add('juju-topology-service', function(Y) {
     _deployLocalCharm: function(file, env, db) {
       var topo = this.get('component');
       topo.fire('changeState', {
-        sectionA: {
-          component: 'inspector',
-          metadata: {
+        gui: {
+          inspector: {
             id: null,
             localType: 'new',
             flash: {
@@ -1022,9 +1021,8 @@ YUI.add('juju-topology-service', function(Y) {
 
       var topo = this.get('component');
       topo.fire('changeState', {
-        sectionA: {
-          component: 'inspector',
-          metadata: {
+        gui: {
+          inspector: {
             id: null,
             localType: 'update',
             flash: {
@@ -1100,13 +1098,11 @@ YUI.add('juju-topology-service', function(Y) {
       this.deselectNodes();
       this.unhoverServices();
       topo.fire('changeState', {
-        sectionA: {
-          component: 'applications',
-          metadata: null
-        },
-        sectionC: {
-          component: null,
-          metadata: null
+        root: null,
+        user: null,
+        gui: {
+          machines: null,
+          inspector: null
         }
       });
     },
@@ -1862,9 +1858,8 @@ YUI.add('juju-topology-service', function(Y) {
       // so it was easier to hide the help on that one entrance and then show it
       // by default for all the rest.
       topo.fire('changeState', {
-        sectionA: {
-          component: 'inspector',
-          metadata: {
+        gui: {
+          inspector: {
             id: box.id,
             flash: { hideHelp: true }
           }
