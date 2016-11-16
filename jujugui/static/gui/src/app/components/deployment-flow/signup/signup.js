@@ -51,7 +51,10 @@ YUI.add('deployment-signup', function() {
       @method _handleSignup
     */
     _handleSignup: function() {
-      document.cookie = 'signup-seen=true';
+      let expiration = new Date();
+      expiration.setMonth(exipiration.getMonth() + 1);
+      document.cookie = 'beta-signup-seen=true; expires='
+          + expiration.toUTCString();
       console.error('Not implemented.');
     },
 
