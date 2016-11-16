@@ -1135,10 +1135,10 @@ YUI.add('juju-gui', function(Y) {
       Renders the Deployment component to the page in the
       designated element.
 
-      @method _renderDeployment
-      @param {String} activeComponent The active component state to display.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
     */
-    _renderDeployment: function(metadata) {
+    _renderDeployment: function(state, next) {
       const env = this.env;
       const db = this.db;
       const modelName = db.environment.get('name');
@@ -1159,7 +1159,7 @@ YUI.add('juju-gui', function(Y) {
       }
       // The beta sign-up component is displayed in sandbox mode at the
       // beginning of the deployment flow.
-      const flowDisplayed = metadata && metadata.activeComponent === 'flow';
+      const flowDisplayed = state.gui.deploy === 'flow';
       if (!flowDisplayed && this.get('sandbox')) {
         ReactDOM.render(
           <window.juju.components.DeploymentSignup
@@ -2508,6 +2508,9 @@ YUI.add('juju-gui', function(Y) {
       } else {
         this.env.close(onclose);
       }
+      this.state.changeState({
+        root: null
+      });
       this.hideConnectingMask();
       if (clearDB) {
         this.db.reset();
