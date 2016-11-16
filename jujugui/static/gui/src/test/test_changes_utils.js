@@ -112,7 +112,7 @@ describe('ChangesUtils', function() {
       msg: ' django resources added.',
       change: {
         command: {
-          method: 'addPendingResources',
+          method: '_addPendingResources',
           args: [{applicationName: 'django', charmURL: 'cs:trusty/django-1'}]
         }
       }
