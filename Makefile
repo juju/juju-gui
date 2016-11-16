@@ -4,8 +4,9 @@ PYTEST := bin/py.test
 GUISRC := jujugui/static/gui/src
 GUIBUILD := jujugui/static/gui/build
 SVG_SPRITE_DIR := $(GUIBUILD)/app/assets
-SVG_SPRITE_FILE := $(SVG_SPRITE_FILE)/stack/svg/sprite.css.svg
+SVG_SPRITE_FILE := $(SVG_SPRITE_DIR)/stack/svg/sprite.css.svg
 SVG_SPRITE_SOURCE_DIR := $(GUISRC)/app/assets/svgs
+SVG_FILES := $(shell find $(SVG_SPRITE_SOURCE_DIR) -name "*.svg")
 STATIC_CSS := $(GUIBUILD)/app/assets/css
 STATIC_IMAGES := $(GUIBUILD)/app/assets/images
 FAVICON := $(GUIBUILD)/app/favicon.ico
@@ -190,7 +191,7 @@ $(CSS_FILE): $(PYRAMID) $(SCSS_FILES)
 .phony: css
 css: $(CSS_FILE) $(STATIC_CSS_FILES)
 
-$(SVG_SPRITE_FILE): $(NODE_MODULES)
+$(SVG_SPRITE_FILE): $(SVG_FILES) $(NODE_MODULES)
 	$(NODE_MODULES)/.bin/svg-sprite --dest=$(SVG_SPRITE_DIR) --stack $(SVG_SPRITE_SOURCE_DIR)/*.svg
 
 $(STATIC_IMAGES):
