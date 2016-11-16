@@ -314,11 +314,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var plus = Y.one('.environment-help .plus-service');
       plus.simulate('click');
       assert.deepEqual(changeStateCalled, {
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'store'
-          }
+        gui: {
+          root: 'store'
         }
       });
     });
@@ -1272,9 +1269,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       view.topo.after('changeState', function(e) {
         assert.deepEqual(e.details[0], {
-          sectionA: {
-            component: 'inspector',
-            metadata: { id: endpointName }
+          gui: {
+            inspector: {id: endpointName}
           }});
         done();
       });
