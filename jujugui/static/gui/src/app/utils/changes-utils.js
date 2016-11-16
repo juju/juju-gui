@@ -146,7 +146,7 @@ YUI.add('changes-utils', function(Y) {
             changeItem.icon = services.getById(appId).get('icon');
           }
           break;
-        case 'addPendingResources':
+        case '_addPendingResources':
           const applicationName = change.command.args[0].applicationName;
           const application = services.getServiceByName(applicationName);
           changeItem.icon = application.get('icon');
