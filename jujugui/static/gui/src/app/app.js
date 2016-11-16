@@ -1020,7 +1020,7 @@ YUI.add('juju-gui', function(Y) {
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listModelsWithInfo={
             this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
-          changeState={this.changeState.bind(this)}
+          changeState={this.state.changeState.bind(this.state)}
           destroyModels={
             this.controllerAPI.destroyModels.bind(this.controllerAPI)}
           getAgreements={this.terms.getAgreements.bind(this.terms)}
@@ -1110,7 +1110,7 @@ YUI.add('juju-gui', function(Y) {
     _renderHeaderSearch: function() {
       ReactDOM.render(
         <window.juju.components.HeaderSearch
-          changeState={this.changeState.bind(this)}
+          changeState={this.state.changeState.bind(this.state)}
           appState={this.state} />,
         document.getElementById('header-search-container'));
     },
@@ -1151,10 +1151,9 @@ YUI.add('juju-gui', function(Y) {
         // browser or navigates directly to the url. This changeState needs to
         // happen in app.js, not the component otherwise it will have to try and
         // interrupt the mount to unmount the component.
-        this.changeState({
-          sectionC: {
-            component: null,
-            metadata: null
+        this.state.changeState({
+          gui: {
+            deploy: null
           }
         });
         return;
@@ -1164,7 +1163,7 @@ YUI.add('juju-gui', function(Y) {
       if (beta && !displayFlow && !modelCommitted) {
         ReactDOM.render(
           <window.juju.components.DeploymentSignup
-            changeState={this.changeState.bind(this)}
+            changeState={this.state.changeState.bind(this.state)}
             exportEnvironmentFile={
               utils.exportEnvironmentFile.bind(utils, db,
                 env.findFacadeVersion('Application') === null)}
@@ -1192,7 +1191,7 @@ YUI.add('juju-gui', function(Y) {
           acl={this.acl}
           changesFilterByParent={
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
-          changeState={this.changeState.bind(this)}
+          changeState={this.state.changeState.bind(this.state)}
           cloud={cloud}
           credential={env.get('credential')}
           changes={currentChangeSet}
@@ -1226,6 +1225,17 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      The cleanup dispatcher for the deployment flow state path.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _clearDeployment: function(state, next) {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('deployment-container'));
+      next();
+    },
+
+    /**
       Renders the Deployment component to the page in the
       designated element.
 
@@ -1243,7 +1253,7 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.DeploymentBar
           acl={this.acl}
-          changeState={this.changeState.bind(this)}
+          changeState={this.state.changeState.bind(this.state)}
           currentChangeSet={ecs.getCurrentChangeSet()}
           generateChangeDescription={
             changesUtils.generateChangeDescription.bind(
@@ -1774,7 +1784,13 @@ YUI.add('juju-gui', function(Y) {
           this._renderMachineView.bind(this),
           this._clearMachineView.bind(this)],
         ['gui.inspector',
-          this._renderInspector.bind(this)]
+          this._renderInspector.bind(this)],
+        ['gui.deploy',
+          this._renderDeployment.bind(this),
+          this._clearDeployment.bind(this)],
+        ['deploy',
+          this._renderDeployment.bind(this),
+          this._clearDeployment.bind(this)]
       ]);
 
       return state;
