@@ -27,6 +27,13 @@ YUI.add('deployment-signup', function() {
       modelName: React.PropTypes.string.isRequired
     },
 
+    _setBetaCookie: function() {
+      let expiration = new Date();
+      expiration.setMonth(expiration.getMonth() + 1);
+      document.cookie = 'beta-signup-seen=true; expires='
+        + expiration.toUTCString();
+    },
+
     /**
       Handle navigating to the deployment flow.
 
@@ -43,6 +50,7 @@ YUI.add('deployment-signup', function() {
           }
         }
       });
+      this._setBetaCookie();
     },
 
     /**
@@ -51,10 +59,7 @@ YUI.add('deployment-signup', function() {
       @method _handleSignup
     */
     _handleSignup: function() {
-      let expiration = new Date();
-      expiration.setMonth(expiration.getMonth() + 1);
-      document.cookie = 'beta-signup-seen=true; expires='
-          + expiration.toUTCString();
+      this._setBetaCookie();
       console.error('Not implemented.');
     },
 
