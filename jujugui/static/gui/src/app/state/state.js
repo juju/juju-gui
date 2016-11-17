@@ -310,7 +310,7 @@ const State = class State {
               }
             }
           }
-          keys = [];
+          keys.pop();
         });
         keys = [];
       } else {

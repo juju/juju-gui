@@ -986,12 +986,14 @@ describe('State', () => {
       const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});
       state.changeState({
         gui: {
+          inspector: null,
           applications: null
         }
       });
       assert.equal(pushStub.callCount, 1);
       assert.equal(dispatchStub.callCount, 1);
-      assert.deepEqual(dispatchStub.args[0], [['gui.applications'], false]);
+      assert.deepEqual(dispatchStub.args[0],
+        [['gui.inspector', 'gui.applications'], false]);
     });
 
     it('calls dispatch with the key paths that were pruned #2', () => {
