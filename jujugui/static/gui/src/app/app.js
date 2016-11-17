@@ -1131,7 +1131,9 @@ YUI.add('juju-gui', function(Y) {
       // The beta sign-up component is displayed in sandbox mode at the
       // beginning of the deployment flow.
       const flowDisplayed = metadata && metadata.activeComponent === 'flow';
-      if (!flowDisplayed && this.get('sandbox')) {
+      const cookieExists = 
+          document.cookie.indexOf('beta-signup-seen=true') > -1;
+      if (!flowDisplayed && this.get('sandbox') && !cookieExists) {
         ReactDOM.render(
           <window.juju.components.DeploymentSignup
             changeState={this.changeState.bind(this)}

@@ -48,31 +48,15 @@ describe('DeploymentSignup', function() {
         title="Prawns on the barbie">
         <div className="deployment-signup">
           <div className="six-col">
-            <h2>Install Juju to deploy locally</h2>
+            <h2>Deploy your model using Juju</h2>
             <p>
-              Doing so provides on LXD, which allows you to recreate the
-              production deployment environment on your own machine. This
-              minimises portability issues when deploying to a public cloud,
-              OpenStack or bare metal.
+              By deploying your model, all of your services will be deployed
+              to the cloud provider of your choice, using the configuration
+              values you provided.  In the next step, you will be able to
+              sign up and choose your cloud provider.
             </p>
-            <p>To deploy locally:</p>
-            <ol>
-              <li>
-                <juju.components.GenericButton
-                  action={exportEnvironmentFile}
-                  type="base"
-                  title="Download your model" />
-                </li>
-              <li>
-                <a href="https://jujucharms.com/docs/stable/getting-started"
-                  target="_blank">
-                  Install Juju
-                </a>
-              </li>
-              <li>Add your model to deploy</li>
-            </ol>
             <p>
-              Or continue to the&nbsp;
+              Continue to the&nbsp;
               <juju.components.GenericButton
                 action={instance._displayFlow}
                 type="inline-neutral"
@@ -131,7 +115,7 @@ describe('DeploymentSignup', function() {
         modelName="Lamington">
         <span>content</span>
       </juju.components.DeploymentSignup>);
-    output.props.children.props.children[0].props.children[4].props.children[1]
+    output.props.children.props.children[0].props.children[2].props.children[1]
       .props.action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -144,17 +128,4 @@ describe('DeploymentSignup', function() {
     });
   });
 
-  it('can export the model', function() {
-    const exportEnvironmentFile = sinon.stub();
-    const output = jsTestUtils.shallowRender(
-      <juju.components.DeploymentSignup
-        changeState={sinon.stub()}
-        exportEnvironmentFile={exportEnvironmentFile}
-        modelName="Lamington">
-        <span>content</span>
-      </juju.components.DeploymentSignup>);
-    output.props.children.props.children[0].props.children[3].props.children[0]
-      .props.children.props.action();
-    assert.equal(exportEnvironmentFile.callCount, 1);
-  });
 });
