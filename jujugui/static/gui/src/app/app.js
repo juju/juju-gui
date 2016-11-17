@@ -1821,9 +1821,6 @@ YUI.add('juju-gui', function(Y) {
           this._renderInspector.bind(this)],
         ['gui.deploy',
           this._renderDeployment.bind(this),
-          this._clearDeployment.bind(this)],
-        ['deploy',
-          this._renderDeployment.bind(this),
           this._clearDeployment.bind(this)]
       ]);
 
