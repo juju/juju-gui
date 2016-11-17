@@ -817,6 +817,26 @@ describe('State', () => {
       assert.deepEqual(state._appStateHistory, [{new: 'state'}]);
     });
 
+    it('properly extracts complex states', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial'],
+        location: {href: 'hatch/ghost'}
+      });
+      const currentState = {
+        gui: {
+          deploy: '',
+          inspector: { id: '$foo'}}};
+      sinon.stub(state,
+        'generateState', () => ({
+          error: null,
+          state: currentState}));
+      const dispatch = sinon.stub(state, '_dispatch');
+      state.dispatch();
+      assert.deepEqual(dispatch.args[1], [currentState, 'gui.deploy']);
+      assert.deepEqual(dispatch.args[2], [currentState, 'gui.inspector.id']);
+    });
+
     it('dispatches registered dispatchers in proper order', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
