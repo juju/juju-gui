@@ -27,9 +27,19 @@ YUI.add('deployment-signup', function() {
       modelName: React.PropTypes.string.isRequired
     },
 
-    _setBetaCookie: function() {
-      let expiration = new Date();
-      expiration.setMonth(expiration.getMonth() + 1);
+    /**
+      Set the cookie for hiding the sign-up page.
+
+      @method _setBetaCookie
+      @param {Boolean} permanent Whether the page must be permanently hidden.
+    */
+    _setBetaCookie: function(permanent) {
+      const expiration = new Date();
+      if (permanent) {
+        expiration.setFullYear(2020);
+      } else {
+        expiration.setHours(expiration.getHours() + 3);
+      }
       document.cookie = 'beta-signup-seen=true; expires='
         + expiration.toUTCString();
     },
@@ -50,7 +60,7 @@ YUI.add('deployment-signup', function() {
           }
         }
       });
-      this._setBetaCookie();
+      this._setBetaCookie(false);
     },
 
     /**
@@ -59,7 +69,7 @@ YUI.add('deployment-signup', function() {
       @method _handleSignup
     */
     _handleSignup: function() {
-      this._setBetaCookie();
+      this._setBetaCookie(true);
       console.error('Not implemented.');
     },
 
