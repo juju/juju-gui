@@ -817,6 +817,26 @@ describe('State', () => {
       assert.deepEqual(state._appStateHistory, [{new: 'state'}]);
     });
 
+    it('properly extracts complex states', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial'],
+        location: {href: 'hatch/ghost'}
+      });
+      const currentState = {
+        gui: {
+          deploy: '',
+          inspector: { id: '$foo'}}};
+      sinon.stub(state,
+        'generateState', () => ({
+          error: null,
+          state: currentState}));
+      const dispatch = sinon.stub(state, '_dispatch');
+      state.dispatch();
+      assert.deepEqual(dispatch.args[1], [currentState, 'gui.deploy']);
+      assert.deepEqual(dispatch.args[2], [currentState, 'gui.inspector.id']);
+    });
+
     it('dispatches registered dispatchers in proper order', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
@@ -986,12 +1006,14 @@ describe('State', () => {
       const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});
       state.changeState({
         gui: {
+          inspector: null,
           applications: null
         }
       });
       assert.equal(pushStub.callCount, 1);
       assert.equal(dispatchStub.callCount, 1);
-      assert.deepEqual(dispatchStub.args[0], [['gui.applications'], false]);
+      assert.deepEqual(dispatchStub.args[0],
+        [['gui.inspector', 'gui.applications'], false]);
     });
 
     it('calls dispatch with the key paths that were pruned #2', () => {

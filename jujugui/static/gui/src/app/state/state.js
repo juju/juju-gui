@@ -204,7 +204,7 @@ const State = class State {
           } else {
             allKeys.push(keys.join('.'));
           }
-          keys = [];
+          keys.pop();
         });
       }
       concat(state);
@@ -310,7 +310,7 @@ const State = class State {
               }
             }
           }
-          keys = [];
+          keys.pop();
         });
         keys = [];
       } else {
