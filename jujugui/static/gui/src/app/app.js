@@ -748,6 +748,9 @@ YUI.add('juju-gui', function(Y) {
         // load the GUI in the disconnected mode.
         const modelUUID = this.get('modelUUID') ||
            (window.juju_config && window.juju_config.jujuEnvUUID);
+        if (modelUUID== 'anon') {
+          return;
+        }
         if (modelUUID === 'disconnected') {
           this.switchEnv();
           return;
@@ -1171,11 +1174,13 @@ YUI.add('juju-gui', function(Y) {
           cloud={cloud}
           credential={env.get('credential')}
           changes={currentChangeSet}
+          controller={this.controllerAPI}
           deploy={utils.deploy.bind(utils, this)}
           generateAllChangeDescriptions={
             changesUtils.generateAllChangeDescriptions.bind(
               changesUtils, services, db.units)}
           generateCloudCredentialName={utils.generateCloudCredentialName}
+          getAuth={this._getAuth.bind(this)}
           getCloudCredentials={
             controllerAPI && controllerAPI.getCloudCredentials.bind(
               controllerAPI)}
