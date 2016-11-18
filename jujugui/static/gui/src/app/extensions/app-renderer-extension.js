@@ -75,7 +75,7 @@ YUI.add('app-renderer-extension', function(Y) {
           showEnvSwitcher={showEnvSwitcher}
           showProfile={utils.showProfile.bind(
             this, env && env.get('ecs'),
-            this.state.changeState.bind(this.state), auth.user)}
+            this.state.changeState.bind(this.state), auth.rootUserName)}
           switchModel={utils.switchModel.bind(
             this, this.createSocketURL.bind(this, this.get('socketTemplate')),
             this.switchEnv.bind(this), env)} />,
