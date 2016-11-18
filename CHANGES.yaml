@@ -1,3 +1,11 @@
+- 2.2.4:
+
+    - [bda69b5] Update the sign up copy and add a button to sign up.
+    - [931c029] Sign-up component: expire early if the user did not apply.
+    - [8eff0bf] Remove export functionality from signup.
+    - [1936033] Use proper key for addPendingResources in deployment.
+    - [36a6876] Change the logic used to display the signup component.
+
 - 2.2.3:
 
     - Added charm resources section to the inspector.
