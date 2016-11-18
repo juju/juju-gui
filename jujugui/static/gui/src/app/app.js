@@ -1131,7 +1131,7 @@ YUI.add('juju-gui', function(Y) {
       // The beta sign-up component is displayed in sandbox mode at the
       // beginning of the deployment flow.
       const flowDisplayed = metadata && metadata.activeComponent === 'flow';
-      const cookieExists = 
+      const cookieExists =
           document.cookie.indexOf('beta-signup-seen=true') > -1;
       if (!flowDisplayed && this.get('sandbox') && !cookieExists) {
         ReactDOM.render(
@@ -1140,7 +1140,8 @@ YUI.add('juju-gui', function(Y) {
             exportEnvironmentFile={
               utils.exportEnvironmentFile.bind(utils, db,
                 env.findFacadeVersion('Application') === null)}
-            modelName={modelName} />,
+            modelName={modelName}
+            staticURL={window.juju_config.staticURL} />,
           document.getElementById('deployment-container'));
         return;
       }
