@@ -999,7 +999,7 @@ YUI.add('juju-gui', function(Y) {
     _renderUserProfile: function(state, next) {
       // If the username does not match the logged in user then display a new
       // model instead of the profile.
-      if (state.profile !== this._getAuth().user) {
+      if (state.profile !== this._getAuth().rootUserName) {
         this.state.changeState({
           new: '',
           profile: null
@@ -2764,8 +2764,8 @@ YUI.add('juju-gui', function(Y) {
       if (external) {
         return external;
       }
-      var users = this.get('users');
-      var user;
+      const users = this.get('users');
+      let user;
       if (users) {
         var controllerUser;
         // Sometimes _getAuth may be called before the env connection is
@@ -2780,6 +2780,7 @@ YUI.add('juju-gui', function(Y) {
         user = controllerUser || users.charmstore;
         if (user && user.user) {
           user.usernameDisplay = user.user;
+          user.rootUserName = user.user.split('@')[0];
         }
       }
       return user;
