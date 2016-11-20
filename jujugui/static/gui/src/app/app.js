@@ -1002,6 +1002,22 @@ YUI.add('juju-gui', function(Y) {
       @param {Function} next - Call to continue dispatching.
     */
     _renderUserProfile: function(state, next) {
+      // XXX Jeff - 18-11-2016 - This profile gets rendered before the
+      // controller has completed connecting and logging in when in gisf. The
+      // proper fix is to queue up the RPC calls but due to time constraints
+      // we're setting up this handler to simply re-render the profile when
+      // the controller is properly connected.
+      const controllerConnected =
+        !!(this.controllerAPI.get('connected') &&
+           this.controllerAPI.get('facades'));
+      if (controllerConnected) {
+        const handler = this.controllerAPI.after('connectedChange', e => {
+          if (e.newVal && this.controllerAPI.get('facades')) {
+            this._renderUserProfile(state, next);
+            handler.detach();
+          }
+        });
+      }
       // If the username does not match the logged in user then display a new
       // model instead of the profile.
       if (state.profile !== this._getAuth().rootUserName) {
@@ -1022,6 +1038,7 @@ YUI.add('juju-gui', function(Y) {
           addNotification=
             {this.db.notifications.add.bind(this.db.notifications)}
           currentModel={this.get('modelUUID')}
+          controllerConnected={controllerConnected}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listModelsWithInfo={
             this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
