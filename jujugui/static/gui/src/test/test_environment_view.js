@@ -299,27 +299,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.strictEqual(help.getStyle('display'), 'none');
     });
 
-    it('should handle clicking the plus', function(done) {
+    it('should handle clicking the plus', function() {
       // Use a db w/o the delta loaded
-      var changeStateCalled;
       var db = new models.Database();
       view.set('db', db);
+      const state = {
+        changeState: sinon.stub()
+      };
+      view.set('state', state);
       view.render().rendered();
-
-      view.on('*:changeState', function(e) {
-        changeStateCalled = e.details[0];
-        done();
-      });
 
       var plus = Y.one('.environment-help .plus-service');
       plus.simulate('click');
-      assert.deepEqual(changeStateCalled, {
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'store'
-          }
-        }
+      assert.equal(state.changeState.callCount, 1);
+      assert.deepEqual(state.changeState.args[0][0], {
+        root: 'store'
       });
     });
 
@@ -1244,13 +1238,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       ]);
     });
 
-    it('allows clicking on a relation to inspect it', function(done) {
+    it('allows clicking on a relation to inspect it', function() {
       db.onDelta({data: additionalRelations});
+      const state = {
+        changeState: sinon.stub()
+      };
       view = new views.environment({
         container: container,
         db: db,
         env: env,
-        charmstore: fakeStore
+        charmstore: fakeStore,
+        state: state
       }).render();
       // This stops the simulate() call later on from causing a 'script error'
       container.append(
@@ -1269,17 +1267,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var endpoints = menu.all('.inspect-relation'),
           endpoint = endpoints.item(0),
           endpointName = endpoint.get('text').split(':')[0].trim();
-
-      view.topo.after('changeState', function(e) {
-        assert.deepEqual(e.details[0], {
-          sectionA: {
-            component: 'inspector',
-            metadata: { id: endpointName }
-          }});
-        done();
-      });
-
       endpoint.simulate('click');
+      assert.equal(state.changeState.callCount, 1);
+      assert.deepEqual(state.changeState.args[0][0], {
+        gui: {
+          inspector: {id: endpointName}
+        }
+      });
     });
 
     it('must not remove a deployed subordinate relation between services',

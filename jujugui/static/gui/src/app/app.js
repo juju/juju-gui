@@ -2656,6 +2656,7 @@ YUI.add('juju-gui', function(Y) {
         ecs: this.env.ecs,
         charmstore: this.get('charmstore'),
         bundleImporter: this.bundleImporter,
+        state: this.state,
         staticURL: window.juju_config.staticURL
       };
 
