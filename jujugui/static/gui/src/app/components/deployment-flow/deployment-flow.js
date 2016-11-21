@@ -96,7 +96,7 @@ YUI.add('deployment-flow', function() {
           break;
         case 'login':
           completed = this.state.loggedIn;
-          disabled = false
+          disabled = false;
           visible = !isLegacyJuju && !this.state.loggedIn;
           break;
         case 'cloud':
@@ -267,9 +267,8 @@ YUI.add('deployment-flow', function() {
     */
     _handleLogin: function() {
       this.props.controller.connect();
-      //TODO XXX about queueing here
       const handler = this.props.controller.after('facadesChange', e => {
-      if (e.newVal && this.props.controller.get('facades')) {
+        if (e.newVal && this.props.controller.get('facades')) {
           this.setState({loggedIn: true});
           handler.detach();
         }

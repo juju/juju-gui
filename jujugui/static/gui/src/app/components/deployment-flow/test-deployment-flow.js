@@ -337,7 +337,6 @@ describe('DeploymentFlow', function() {
           </div>
         </div>
       </juju.components.DeploymentPanel>);
-    jsTestUtils.compare(output, expected);
     assert.deepEqual(output, expected);
   });
 
