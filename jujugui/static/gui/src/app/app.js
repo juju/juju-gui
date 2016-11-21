@@ -1007,12 +1007,10 @@ YUI.add('juju-gui', function(Y) {
       // proper fix is to queue up the RPC calls but due to time constraints
       // we're setting up this handler to simply re-render the profile when
       // the controller is properly connected.
-      const controllerConnected =
-        !!(this.controllerAPI.get('connected') &&
-           this.controllerAPI.get('facades'));
-      if (controllerConnected) {
-        const handler = this.controllerAPI.after('connectedChange', e => {
-          if (e.newVal && this.controllerAPI.get('facades')) {
+      const facadesExist = !!this.controllerAPI.get('facades');
+      if (!facadesExist) {
+        const handler = this.controllerAPI.after('facadesChange', e => {
+          if (e.newVal) {
             this._renderUserProfile(state, next);
             handler.detach();
           }
@@ -1038,7 +1036,7 @@ YUI.add('juju-gui', function(Y) {
           addNotification=
             {this.db.notifications.add.bind(this.db.notifications)}
           currentModel={this.get('modelUUID')}
-          controllerConnected={controllerConnected}
+          facadesExist={facadesExist}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listModelsWithInfo={
             this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}

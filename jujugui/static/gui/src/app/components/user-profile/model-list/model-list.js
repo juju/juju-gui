@@ -28,7 +28,7 @@ YUI.add('user-profile-model-list', function() {
       addNotification: React.PropTypes.func.isRequired,
       broadcastStatus: React.PropTypes.func,
       currentModel: React.PropTypes.string,
-      controllerConnected: React.PropTypes.bool.isRequired,
+      facadesExist: React.PropTypes.bool.isRequired,
       destroyModels: React.PropTypes.func.isRequired,
       listModelsWithInfo: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
@@ -53,7 +53,7 @@ YUI.add('user-profile-model-list', function() {
     },
 
     componentWillMount: function() {
-      this._fetchModels(this.props.controllerConnected);
+      this._fetchModels(this.props.facadesExist);
     },
 
     componentWillUnmount: function() {
@@ -67,8 +67,8 @@ YUI.add('user-profile-model-list', function() {
       const currentUser = props.user && props.user.user;
       const nextUser = nextProps.user && nextProps.user.user;
       if (nextUser !== currentUser ||
-        props.controllerConnected !== nextProps.controllerConnected) {
-        this._fetchModels(nextProps.controllerConnected);
+        props.facadesExist !== nextProps.facadesExist) {
+        this._fetchModels(nextProps.facadesExist);
       }
     },
 
@@ -76,11 +76,11 @@ YUI.add('user-profile-model-list', function() {
       Makes a request of the controller to fetch the user's availble models.
 
       @method _fetchModels
-      @param {Boolean} controllerConnected - Whether the controller is
+      @param {Boolean} facadesExist - Whether the controller is
         connected or not.
     */
-    _fetchModels:  function(controllerConnected) {
-      if (!controllerConnected) {
+    _fetchModels:  function(facadesExist) {
+      if (!facadesExist) {
         console.warn('Controller not connected, skipping fetching models.');
         return;
       }
