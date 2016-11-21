@@ -884,7 +884,7 @@ YUI.add('juju-topology-service', function(Y) {
      */
     _deployLocalCharm: function(file, env, db) {
       var topo = this.get('component');
-      topo.fire('changeState', {
+      topo.get('state').changeState({
         gui: {
           inspector: {
             id: null,
@@ -1020,7 +1020,7 @@ YUI.add('juju-topology-service', function(Y) {
       });
 
       var topo = this.get('component');
-      topo.fire('changeState', {
+      topo.get('state').changeState({
         gui: {
           inspector: {
             id: null,
@@ -1097,7 +1097,7 @@ YUI.add('juju-topology-service', function(Y) {
       container.all('.environment-menu.active').removeClass('active');
       this.deselectNodes();
       this.unhoverServices();
-      topo.fire('changeState', {
+      topo.get('state').changeState({
         root: null,
         user: null,
         gui: {
@@ -1857,7 +1857,7 @@ YUI.add('juju-topology-service', function(Y) {
       // service" workflow, but only one to "show details for existing service",
       // so it was easier to hide the help on that one entrance and then show it
       // by default for all the rest.
-      topo.fire('changeState', {
+      topo.get('state').changeState({
         gui: {
           inspector: {
             id: box.id,
