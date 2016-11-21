@@ -1817,8 +1817,6 @@ YUI.add('juju-gui', function(Y) {
           this._clearDeployment.bind(this)]
       ]);
 
-      // Listen for change state events from the canvas components.
-      this.on('*:changeState', this._changeState, this);
       return state;
     },
 
@@ -1861,7 +1859,9 @@ YUI.add('juju-gui', function(Y) {
       @param {Object} e The event facade.
     */
     _changeState: function(e) {
-      this.state.changeState(e.details[0]);
+      var state = e.details[0];
+      var url = this.state.generateUrl(state);
+      this.navigate(url);
     },
 
     /**
@@ -2659,6 +2659,7 @@ YUI.add('juju-gui', function(Y) {
         ecs: this.env.ecs,
         charmstore: this.get('charmstore'),
         bundleImporter: this.bundleImporter,
+        state: this.state,
         staticURL: window.juju_config.staticURL
       };
 

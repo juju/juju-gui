@@ -119,6 +119,7 @@ YUI.add('juju-view-environment', function(Y) {
           bundleImporter: this.get('bundleImporter'),
           container: container,
           endpointsController: this.get('endpointsController'),
+          state: this.get('state'),
           staticURL: this.get('staticURL')
         });
         // Bind all the behaviors we need as modules.
@@ -196,7 +197,7 @@ YUI.add('juju-view-environment', function(Y) {
       @param {Object} e The click event
     */
     _handlePlusClick: function(e) {
-      this.fire('changeState', {
+      this.get('state').changeState({
         root: 'store'
       });
     }

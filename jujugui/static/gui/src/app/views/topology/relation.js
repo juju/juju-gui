@@ -1158,7 +1158,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var topo = self.get('component');
       var endpoint = Y.one(this).getAttribute('data-endpoint');
       var serviceId = endpoint.split(':')[0].trim();
-      topo.fire('changeState', {
+      topo.get('state').changeState({
         gui: {
           inspector: {
             id: serviceId
