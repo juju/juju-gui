@@ -997,9 +997,23 @@ YUI.add('juju-gui', function(Y) {
       @param {Function} next - Call to continue dispatching.
     */
     _renderUserProfile: function(state, next) {
+      // XXX Jeff - 18-11-2016 - This profile gets rendered before the
+      // controller has completed connecting and logging in when in gisf. The
+      // proper fix is to queue up the RPC calls but due to time constraints
+      // we're setting up this handler to simply re-render the profile when
+      // the controller is properly connected.
+      const facadesExist = !!this.controllerAPI.get('facades');
+      if (!facadesExist) {
+        const handler = this.controllerAPI.after('facadesChange', e => {
+          if (e.newVal) {
+            this._renderUserProfile(state, next);
+            handler.detach();
+          }
+        });
+      }
       // If the username does not match the logged in user then display a new
       // model instead of the profile.
-      if (state.profile !== this._getAuth().user) {
+      if (state.profile !== this._getAuth().rootUserName) {
         this.state.changeState({
           new: '',
           profile: null
@@ -1017,6 +1031,7 @@ YUI.add('juju-gui', function(Y) {
           addNotification=
             {this.db.notifications.add.bind(this.db.notifications)}
           currentModel={this.get('modelUUID')}
+          facadesExist={facadesExist}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listModelsWithInfo={
             this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
@@ -2765,8 +2780,8 @@ YUI.add('juju-gui', function(Y) {
       if (external) {
         return external;
       }
-      var users = this.get('users');
-      var user;
+      const users = this.get('users');
+      let user;
       if (users) {
         var controllerUser;
         // Sometimes _getAuth may be called before the env connection is
@@ -2781,6 +2796,7 @@ YUI.add('juju-gui', function(Y) {
         user = controllerUser || users.charmstore;
         if (user && user.user) {
           user.usernameDisplay = user.user;
+          user.rootUserName = user.user.split('@')[0];
         }
       }
       return user;
