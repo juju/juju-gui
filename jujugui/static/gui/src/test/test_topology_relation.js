@@ -127,13 +127,16 @@ describe('topology relation module', function() {
 
   it('fires "changeState" topo event for clicking a relation endpoint',
       function() {
+        const state = {
+          changeState: sinon.stub()
+        };
         var topo = {
-          fire: sinon.stub()
+          get: sinon.stub().withArgs('state').returns(state)
         };
         view.set('component', topo);
         view.inspectRelationClick.call(container, undefined, view);
-        assert.equal(topo.fire.lastCall.args[0], 'changeState');
-        assert.deepEqual(topo.fire.lastCall.args[1], {
+        assert.equal(state.changeState.callCount, 1);
+        assert.deepEqual(state.changeState.args[0][0], {
           gui: {
             inspector: { id: container.get('text').split(':')[0].trim() }
           }});
