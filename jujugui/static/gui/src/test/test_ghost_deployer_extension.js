@@ -48,6 +48,9 @@ describe('Ghost Deployer Extension', function() {
             add_unit: sinon.stub(),
             addCharm: sinon.stub(),
             addPendingResources: sinon.stub()
+          },
+          state: {
+            changeState: sinon.stub()
           }
         }, {
           ATTRS: {
@@ -221,21 +224,17 @@ describe('Ghost Deployer Extension', function() {
     var args = services.ghostService.lastCall.args;
     assert.lengthOf(args, 1);
     assert.deepEqual(args[0], charm);
-    var fire = ghostDeployer.fire;
-    assert.equal(fire.calledOnce, true);
-    var fireArgs = fire.lastCall.args;
-    assert.equal(fireArgs[0], 'changeState');
-    assert.deepEqual(fireArgs[1], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+    const changeState = ghostDeployer.state.changeState;
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      store: null,
+      gui: {
+        inspector: {
           id: 'ghost-service-id',
           localType: null
-        }},
-      sectionC: {
-        component: null,
-        metadata: null
-      }});
+        }
+      }
+    });
   });
 
   it('increments the name for duplicate ghost services', function() {
