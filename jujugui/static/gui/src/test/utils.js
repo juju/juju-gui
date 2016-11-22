@@ -125,6 +125,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
         'machine-view',
         'notifications-container',
         'profile-link-container',
+        'shortcut-help',
         'top-page-container',
         'zoom-container'
       ];
