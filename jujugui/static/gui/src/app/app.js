@@ -1416,6 +1416,11 @@ YUI.add('juju-gui', function(Y) {
       const service = this.db.services.getById(state.gui.inspector.id);
       const inspectorState = this.state.current.gui.inspector;
       const localType = inspectorState.localType;
+      // If there is a hoverService event listener then we need to detach it
+      // when rendering the inspector.
+      if (this.hoverService) {
+        this.hoverService.detach();
+      }
       // If the url was provided with a service id which isn't in the localType
       // db then change state back to the added services list. This usually
       // happens if the user tries to visit the inspector of a ghost service
