@@ -839,7 +839,7 @@ describe('utilities', function() {
       utils._hidePopup = sinon.stub();
       _showUncommittedConfirm = utils._showUncommittedConfirm;
       utils._showUncommittedConfirm = sinon.stub();
-      utils.changeState = sinon.stub();
+      utils.state = {changeState: sinon.stub()};
       utils.set = sinon.stub();
       utils.showConnectingMask = sinon.stub();
       models = [{
@@ -922,7 +922,7 @@ describe('utilities', function() {
       assert.deepEqual(envSet[1], 'ev');
 
       assert.deepEqual(utils.showConnectingMask.callCount, 1);
-      assert.deepEqual(utils.changeState.callCount, 1);
+      assert.deepEqual(utils.state.changeState.callCount, 1);
     });
 
     it('just disconnects if uuid is missing', function() {

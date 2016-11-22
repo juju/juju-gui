@@ -2340,7 +2340,7 @@ YUI.add('juju-gui', function(Y) {
     popLoginRedirectPath: function() {
       var result = this.redirectPath;
       delete this.redirectPath;
-      var currentPath = this.get('currentUrl');
+      var currentPath = this.location.pathname;
       var loginPath = /^\/login(\/|$)/;
       if (currentPath !== '/' && !loginPath.test(currentPath)) {
         // We used existing credentials or a token to go directly to a url.

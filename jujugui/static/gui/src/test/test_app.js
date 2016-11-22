@@ -917,21 +917,21 @@ describe('App', function() {
     describe('popLoginRedirectPath', function() {
       it('returns and clears redirectPath', function() {
         app.redirectPath = '/foo/bar/';
-        app.location = {toString: function() {return '/login/';}};
+        app.location = {pathname: '/login/'};
         assert.equal(app.popLoginRedirectPath(), '/foo/bar/');
         assert.isUndefined(app.redirectPath);
       });
 
       it('prefers the current path if not login', function() {
         app.redirectPath = '/';
-        app.location = {toString: function() {return '/foo/bar/';}};
+        app.location = {pathname: '/foo/bar/'};
         assert.equal(app.popLoginRedirectPath(), '/foo/bar/');
         assert.isUndefined(app.redirectPath);
       });
 
       it('uses root if the redirectPath is /login/', function() {
         app.redirectPath = '/login/';
-        app.location = {toString: function() {return '/login/';}};
+        app.location = {pathname: '/login/'};
         assert.equal(app.popLoginRedirectPath(), '/');
         assert.isUndefined(app.redirectPath);
       });
@@ -939,68 +939,11 @@ describe('App', function() {
       it('uses root if the redirectPath is /login', function() {
         // Missing trailing slash is only difference from previous test.
         app.redirectPath = '/login';
-        app.location = {toString: function() {return '/login';}};
+        app.location = {pathname: '/login/'};
         assert.equal(app.popLoginRedirectPath(), '/');
         assert.isUndefined(app.redirectPath);
       });
     });
-
-    describe('currentUrl', function() {
-      it('returns the full current path', function() {
-        var expected = '/foo/bar/';
-        app.location = {
-          toString: function() {return 'https://foo.com' + expected;}};
-        assert.equal(expected, app.get('currentUrl'));
-        expected = '/';
-        assert.equal(expected, app.get('currentUrl'));
-        expected = '/foo/?bar=bing#shazam';
-        assert.equal(expected, app.get('currentUrl'));
-      });
-
-      // Ensure the given token is removed from the query string.
-      var checkTokenIgnored = function(context, token) {
-        var expected_path = '/foo/bar/';
-        var expected_querystring = '';
-        var expected_hash = '';
-        var expected = function(add_authtoken) {
-          var result = expected_path;
-          var querystring = expected_querystring;
-          if (add_authtoken) {
-            querystring += '&' + token + '=demoToken';
-          }
-          if (querystring) {
-            result += '?' + querystring;
-          }
-          result += expected_hash;
-          return result;
-        };
-        app.location = {
-          toString: function() {return 'https://foo.com' + expected(true);}};
-        assert.equal(expected(), app.get('currentUrl'));
-        expected_path = '/';
-        assert.equal(expected(), app.get('currentUrl'));
-        expected_path = '/foo/';
-        expected_querystring = 'bar=bing';
-        expected_hash = '#shazam';
-        assert.equal(expected(), app.get('currentUrl'));
-      };
-
-      it('ignores authtokens', function() {
-        // This is intended to be the canonical current path.  This should
-        // never include authtokens, which are transient and can never be
-        // re-used.
-        checkTokenIgnored(this, 'authtoken');
-      });
-
-      it('ignores changestokens', function() {
-        // This is intended to be the canonical current path.  This should
-        // never include changestokens, which are transient and can never be
-        // re-used.
-        checkTokenIgnored(this, 'changestoken');
-      });
-
-    });
-
   });
 
 

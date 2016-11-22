@@ -260,7 +260,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           update_annotations: function() {},
           get: function() {}
         },
-        charmstore: fakeStore
+        charmstore: fakeStore,
+        state: {changeState: sinon.stub()}
       });
     });
 
@@ -340,7 +341,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             container: container,
             db: db,
             env: env,
-            charmstore: fakeStore
+            charmstore: fakeStore,
+            state: {changeState: sinon.stub()}
           });
           view.render();
           var serviceBlock = container.one('.service').one('.service-block');
@@ -355,7 +357,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        charmstore: fakeStore
+        charmstore: fakeStore,
+        state: {changeState: sinon.stub()}
       });
       view.render();
       var relationIcon = container.one('.service').one('.relation-button');
@@ -402,6 +405,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         db: db,
         env: env,
         charmstore: fakeStore,
+        state: {changeState: sinon.stub()},
         staticURL: 'staticpath'
       });
       view.render();
@@ -420,7 +424,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             container: container,
             db: db,
             env: env,
-            charmstore: fakeStore
+            charmstore: fakeStore,
+            state: {changeState: sinon.stub()}
           });
           view.render();
           container.all('.service').size().should.equal(4);
@@ -460,7 +465,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             container: container,
             db: db,
             env: env,
-            charmstore: fakeStore
+            charmstore: fakeStore,
+            state: {changeState: sinon.stub()}
           });
           view.render();
           container.all('.service').size().should.equal(4);
@@ -476,7 +482,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        charmstore: fakeStore
+        charmstore: fakeStore,
+        state: {changeState: sinon.stub()}
       });
       view.render();
       var service = container.one('.service');
@@ -493,7 +500,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        charmstore: fakeStore
+        charmstore: fakeStore,
+        state: {changeState: sinon.stub()}
       });
       view.render();
       assert.equal(container.one('.service .service-block').getAttribute(
@@ -598,7 +606,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        charmstore: fakeStore
+        charmstore: fakeStore,
+        state: {changeState: sinon.stub()}
       });
       var tmp_data = {
         result: [
@@ -638,7 +647,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             container: container,
             db: db,
             env: env,
-            charmstore: fakeStore
+            charmstore: fakeStore,
+            state: {changeState: sinon.stub()}
           });
           var tmp_data = {
             result: [
@@ -685,7 +695,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             container: container,
             db: db,
             env: env,
-            charmstore: fakeStore
+            charmstore: fakeStore,
+            state: {changeState: sinon.stub()}
           }).render();
           var tmp_data = {
             result: [
@@ -763,7 +774,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             container: container,
             db: db,
             env: env,
-            charmstore: fakeStore
+            charmstore: fakeStore,
+            state: {changeState: sinon.stub()}
           }),
           tmp_data = {
             result: [
@@ -912,7 +924,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            container: container,
            db: db,
            env: env,
-           charmstore: fakeStore
+           charmstore: fakeStore,
+           state: {changeState: sinon.stub()}
          }).render();
          var rel_block = container.one('.sub-rel-count').getDOMNode();
 
@@ -931,7 +944,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            container: container,
            db: db,
            env: env,
-           charmstore: fakeStore
+           charmstore: fakeStore,
+           state: {changeState: sinon.stub()}
          }).render();
          // Attach the view to the DOM so that sizes get set properly
          // from the viewport (only available from DOM).
@@ -963,7 +977,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            container: container,
            db: db,
            env: env,
-           charmstore: fakeStore
+           charmstore: fakeStore,
+           state: {changeState: sinon.stub()}
          }).render();
          // Attach the view to the DOM so that sizes get set properly
          // from the viewport (only available from DOM).
@@ -1011,7 +1026,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        charmstore: fakeStore
+        charmstore: fakeStore,
+        state: {changeState: sinon.stub()}
       }).render();
       container.all('.service').each(function(node, i) {
         node.after('click', function() {
@@ -1034,7 +1050,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            container: container,
            db: db,
            env: env,
-           charmstore: fakeStore
+           charmstore: fakeStore,
+           state: {changeState: sinon.stub()}
          }).render();
          var serviceNode = container.one('.service'),
              add_rel = container.one('.relation-button__link');
@@ -1069,7 +1086,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          var module = view.topo.modules.RelationModule;
          var sm = view.topo.modules.ServiceModule;
 
-         sm.showServiceDetails(service, { fire: function() {} });
+         sm.showServiceDetails(service, {
+           fire: function() {},
+           get: sinon.stub().withArgs('state').returns(
+             {changeState: sinon.stub()})
+         });
          // Mock an event object so that d3.mouse does not throw a NPE.
          d3.event = {};
          add_rel.simulate('click');
@@ -1107,7 +1128,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            container: container,
            db: db,
            env: env,
-           charmstore: fakeStore
+           charmstore: fakeStore,
+           state: {changeState: sinon.stub()}
          }).render();
 
          var relation = container.one(
@@ -1128,7 +1150,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        charmstore: fakeStore
+        charmstore: fakeStore,
+        state: {changeState: sinon.stub()}
       }).render();
       var module = view.topo.modules.RelationModule;
 
@@ -1282,7 +1305,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             container: container,
             db: db,
             env: env,
-            charmstore: fakeStore
+            charmstore: fakeStore,
+            state: {changeState: sinon.stub()}
           }).render();
           assert.equal(db.notifications.size(), 0);
 
@@ -1306,7 +1330,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             container: container,
             db: db,
             env: env,
-            charmstore: fakeStore
+            charmstore: fakeStore,
+            state: {changeState: sinon.stub()}
           }).render();
           db.relations.item(1).set('pending', true);
 
@@ -1336,7 +1361,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 db: db,
                 endpointsController: fauxController,
                 env: env,
-                charmstore: fakeStore
+                charmstore: fakeStore,
+                state: {changeState: sinon.stub()}
               });
           var service = new models.Service({
             id: 'service-1',
@@ -1366,7 +1392,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        charmstore: fakeStore
+        charmstore: fakeStore,
+        state: {changeState: sinon.stub()}
       }).render();
       var module = view.topo.modules.RelationModule;
       // RelationCollections have an aggregatedStatus.
@@ -1389,7 +1416,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         db: db,
         endpointsController: 'hidy ho',
         env: env,
-        charmstore: fakeStore
+        charmstore: fakeStore,
+        state: {changeState: sinon.stub()}
       }).render();
       var endpointsController = view.topo.get('endpointsController');
       assert.equal('hidy ho', endpointsController);
