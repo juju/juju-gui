@@ -101,8 +101,8 @@ YUI.add('deployment-flow', function() {
           break;
         case 'cloud':
           completed = hasCloud && hasCredential;
-          disabled = this.state.loggedIn;
-          visible = !isLegacyJuju;
+          disabled = !this.state.loggedIn;
+        visible = this.state.loggedIn && !isLegacyJuju;
           break;
         case 'credential':
           completed = false;
