@@ -34,7 +34,7 @@ describe('DeploymentSection', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentSection
         disabled={false}
-        title="Services to be deployed">
+        title="Applications to be deployed">
         <span>content</span>
       </juju.components.DeploymentSection>, true);
     var output = renderer.getRenderOutput();
@@ -44,7 +44,7 @@ describe('DeploymentSection', function() {
         {undefined}
         <h3 className="deployment-section__title">
           {undefined}
-          Services to be deployed
+          Applications to be deployed
         </h3>
         <span>content</span>
       </div>);
@@ -65,7 +65,7 @@ describe('DeploymentSection', function() {
         extra={<span>extra</span>}
         instance="section-instance"
         showCheck={true}
-        title="Services to be deployed">
+        title="Applications to be deployed">
         <span>content</span>
       </juju.components.DeploymentSection>, true);
     var output = renderer.getRenderOutput();
@@ -86,7 +86,7 @@ describe('DeploymentSection', function() {
             className="deployment-section__title-checkmark"
             name="complete"
             size="24" />
-          Services to be deployed
+          Applications to be deployed
         </h3>
         <span>content</span>
       </div>);
