@@ -27,10 +27,12 @@ YUI.add('deployment-flow', function() {
       changes: React.PropTypes.object.isRequired,
       changesFilterByParent: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.object,
+      controller: React.PropTypes.object.isRequired,
       credential: React.PropTypes.string,
       deploy: React.PropTypes.func.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
+      getAuth: React.PropTypes.func.isRequired,
       getCloudCredentialNames: React.PropTypes.func,
       getCloudCredentials: React.PropTypes.func,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
@@ -56,7 +58,8 @@ YUI.add('deployment-flow', function() {
         cloud: modelCommitted ? this.props.cloud : null,
         credential: this.props.credential,
         region: this.props.region,
-        showChangelogs: false
+        showChangelogs: false,
+        loggedIn: !!this.props.getAuth(),
       };
     },
 
@@ -91,10 +94,15 @@ YUI.add('deployment-flow', function() {
           disabled = false;
           visible = !isLegacyJuju && mode === 'deploy';
           break;
+        case 'login':
+          completed = this.state.loggedIn;
+          disabled = false;
+          visible = !isLegacyJuju && !this.state.loggedIn;
+          break;
         case 'cloud':
           completed = hasCloud && hasCredential;
-          disabled = false;
-          visible = !isLegacyJuju;
+          disabled = !this.state.loggedIn;
+        visible = this.state.loggedIn && !isLegacyJuju;
           break;
         case 'credential':
           completed = false;
@@ -253,6 +261,21 @@ YUI.add('deployment-flow', function() {
     },
 
     /**
+      Handle logging in within the deployment flow.
+
+     @method _handleLogin
+    */
+    _handleLogin: function() {
+      this.props.controller.connect();
+      const handler = this.props.controller.after('facadesChange', e => {
+        if (e.newVal && this.props.controller.get('facades')) {
+          this.setState({loggedIn: true});
+          handler.detach();
+        }
+      });
+    },
+
+    /**
       Generate a change cloud action if a cloud has been selected.
 
       @method _generateCloudAction
@@ -321,6 +344,30 @@ YUI.add('deployment-flow', function() {
                   'end with a hyphen.'
               }]}
               value="" />
+          </div>
+        </juju.components.DeploymentSection>);
+    },
+
+    /**
+      Generate the login link
+
+      @method _generateLogin
+      @returns {Object} The markup.
+    */
+    _generateLogin: function() {
+      var status = this._getSectionStatus('login');
+      if (!status.visible) {
+        return;
+      }
+      return (
+        <juju.components.DeploymentSection
+          instance="deployment-model-login"
+          showCheck={false}>
+          <div className="six-col">
+          <juju.components.GenericButton
+            action={this._handleLogin}
+            type="positive"
+            title="Sign up or Login" />
           </div>
         </juju.components.DeploymentSection>);
     },
@@ -563,6 +610,7 @@ YUI.add('deployment-flow', function() {
           changeState={this.props.changeState}
           title={this.props.modelName}>
           {this._generateModelNameSection()}
+          {this._generateLogin()}
           {this._generateCloudSection()}
           {this._generateCredentialSection()}
           {this._generateMachinesSection()}
