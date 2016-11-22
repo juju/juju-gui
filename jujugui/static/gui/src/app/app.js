@@ -660,7 +660,9 @@ YUI.add('juju-gui', function(Y) {
 
       // We are now ready to connect the environment and bootstrap the app.
       this.once('ready', function(e) {
-        if (this.controllerAPI) {
+        if (this.get('gisf')) {
+          this.maskVisibility(false);
+        } else if (this.controllerAPI) {
           // In Juju >= 2 we connect to the controller and then to the model.
           this.controllerAPI.connect();
         } else {
@@ -746,6 +748,9 @@ YUI.add('juju-gui', function(Y) {
         // load the GUI in the disconnected mode.
         const modelUUID = this.get('modelUUID') ||
            (window.juju_config && window.juju_config.jujuEnvUUID);
+        if (modelUUID === 'anon') {
+          return;
+        }
         if (modelUUID === 'disconnected') {
           this.switchEnv();
           return;
@@ -1169,11 +1174,13 @@ YUI.add('juju-gui', function(Y) {
           cloud={cloud}
           credential={env.get('credential')}
           changes={currentChangeSet}
+          controllerAPI={this.controllerAPI}
           deploy={utils.deploy.bind(utils, this)}
           generateAllChangeDescriptions={
             changesUtils.generateAllChangeDescriptions.bind(
               changesUtils, services, db.units)}
           generateCloudCredentialName={utils.generateCloudCredentialName}
+          getAuth={this._getAuth.bind(this)}
           getCloudCredentials={
             controllerAPI && controllerAPI.getCloudCredentials.bind(
               controllerAPI)}

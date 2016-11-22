@@ -60,9 +60,11 @@ describe('DeploymentFlow', function() {
         changes={changes}
         changesFilterByParent={changesFilterByParent}
         changeState={changeState}
+        controller={sinon.stub()}
         deploy={sinon.stub()}
         generateAllChangeDescriptions={generateAllChangeDescriptions}
         generateCloudCredentialName={generateCloudCredentialName}
+        getAuth={sinon.stub()}
         getCloudCredentials={getCloudCredentials}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -107,19 +109,16 @@ describe('DeploymentFlow', function() {
           </div>
         </juju.components.DeploymentSection>
         <juju.components.DeploymentSection
-          buttons={undefined}
-          completed={false}
-          disabled={false}
-          instance="deployment-cloud"
-          showCheck={true}
-          title="Choose cloud to deploy to">
-          <juju.components.DeploymentCloud
-            acl={acl}
-            cloud={null}
-            getCloudProviderDetails={getCloudProviderDetails}
-            listClouds={listClouds}
-            setCloud={instance._setCloud} />
+          instance="deployment-model-login"
+          showCheck={false}>
+          <div className="six-col">
+            <juju.components.GenericButton
+              action={instance._handleLogin}
+              type="positive"
+              title="Sign up or Login" />
+          </div>
         </juju.components.DeploymentSection>
+        {undefined}
         <juju.components.DeploymentSection
           completed={false}
           disabled={true}
@@ -233,11 +232,13 @@ describe('DeploymentFlow', function() {
         acl={acl}
         updateCloudCredential={updateCloudCredential}
         changes={changes}
+        controllerAPI={sinon.stub()}
         changesFilterByParent={changesFilterByParent}
         changeState={changeState}
         deploy={sinon.stub()}
         generateAllChangeDescriptions={generateAllChangeDescriptions}
         generateCloudCredentialName={generateCloudCredentialName}
+        getAuth={sinon.stub()}
         getCloudCredentials={getCloudCredentials}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={sinon.stub()}
@@ -259,6 +260,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentPanel
         changeState={changeState}
         title="Pavlova">
+        {undefined}
         {undefined}
         {undefined}
         {undefined}
@@ -335,6 +337,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAuth={sinon.stub().returns(true)}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -352,7 +355,7 @@ describe('DeploymentFlow', function() {
     instance._setCloud({name: 'cloud'});
     instance._setCredential('cred');
     var output = renderer.getRenderOutput();
-    assert.isTrue(output.props.children[1].props.completed);
+    assert.isTrue(output.props.children[2].props.completed);
   });
 
   it('does not show the model name when comitting', function() {
@@ -365,6 +368,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAuth={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -393,6 +397,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+      getAuth={sinon.stub().returns(true)}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -408,7 +413,7 @@ describe('DeploymentFlow', function() {
       </juju.components.DeploymentFlow>, true);
     var output = renderer.getRenderOutput();
     assert.equal(
-      output.props.children[1].props.title, 'Choose cloud to deploy to');
+      output.props.children[2].props.title, 'Choose cloud to deploy to');
   });
 
   it('correctly sets the cloud title if a public cloud is chosen', function() {
@@ -421,6 +426,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAuth={sinon.stub().returns(true)}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -437,7 +443,7 @@ describe('DeploymentFlow', function() {
     var instance = renderer.getMountedInstance();
     instance._setCloud({name: 'azure'});
     var output = renderer.getRenderOutput();
-    assert.equal(output.props.children[1].props.title, 'Public cloud');
+    assert.equal(output.props.children[2].props.title, 'Public cloud');
   });
 
   it('correctly sets the cloud title if local is chosen', function() {
@@ -450,6 +456,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAuth={sinon.stub().returns(true)}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -466,7 +473,7 @@ describe('DeploymentFlow', function() {
     var instance = renderer.getMountedInstance();
     instance._setCloud({name: 'local'});
     var output = renderer.getRenderOutput();
-    assert.equal(output.props.children[1].props.title, 'Local cloud');
+    assert.equal(output.props.children[2].props.title, 'Local cloud');
   });
 
   it('can clear the cloud and credential when changing clouds', function() {
@@ -479,6 +486,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAuth={sinon.stub().returns(true)}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -498,7 +506,7 @@ describe('DeploymentFlow', function() {
     var output = renderer.getRenderOutput();
     assert.isNotNull(instance.state.cloud);
     assert.isNotNull(instance.state.credential);
-    output.props.children[1].props.buttons[0].action();
+    output.props.children[2].props.buttons[0].action();
     assert.isNull(instance.state.cloud);
     assert.isNull(instance.state.credential);
   });
@@ -513,6 +521,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAuth={sinon.stub().returns(true)}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -542,6 +551,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAuth={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -572,6 +582,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAuth={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -602,6 +613,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAuth={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -633,6 +645,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAuth={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -652,7 +665,7 @@ describe('DeploymentFlow', function() {
     instance._setCredential('cred');
     var output = renderer.getRenderOutput();
     assert.isUndefined(
-      output.props.children[7].props.children.props.children[0]);
+      output.props.children[8].props.children.props.children[0]);
   });
 
   it('can deploy', function() {
@@ -664,9 +677,11 @@ describe('DeploymentFlow', function() {
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={changeState}
+        controllerAPI={sinon.stub()}
         deploy={deploy}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAuth={sinon.stub().returns(true)}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -691,7 +706,7 @@ describe('DeploymentFlow', function() {
     instance._setCredential('cred');
     instance._setRegion('north');
     var output = renderer.getRenderOutput();
-    output.props.children[7].props.children.props.children[1].props.children
+    output.props.children[8].props.children.props.children[1].props.children
       .props.action();
     assert.equal(deploy.callCount, 1);
     assert.equal(deploy.args[0][2], 'Lamington');
@@ -713,6 +728,7 @@ describe('DeploymentFlow', function() {
         deploy={deploy}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAuth={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -733,7 +749,7 @@ describe('DeploymentFlow', function() {
     instance._setCredential('cred');
     instance._setRegion('north');
     var output = renderer.getRenderOutput();
-    output.props.children[7].props.children.props.children[1].props.children
+    output.props.children[8].props.children.props.children[1].props.children
       .props.action();
     assert.equal(deploy.callCount, 1);
     assert.equal(deploy.args[0][2], '');
@@ -755,6 +771,7 @@ describe('DeploymentFlow', function() {
         deploy={deploy}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAuth={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -773,7 +790,7 @@ describe('DeploymentFlow', function() {
     var instance = renderer.getMountedInstance();
     instance.refs = {};
     var output = renderer.getRenderOutput();
-    output.props.children[7].props.children.props.children[1].props.children
+    output.props.children[8].props.children.props.children[1].props.children
       .props.action();
     assert.equal(deploy.callCount, 1);
     assert.equal(deploy.args[0][2], '');
@@ -793,6 +810,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAuth={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
