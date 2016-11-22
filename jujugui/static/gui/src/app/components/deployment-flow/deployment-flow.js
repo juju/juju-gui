@@ -27,7 +27,7 @@ YUI.add('deployment-flow', function() {
       changes: React.PropTypes.object.isRequired,
       changesFilterByParent: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.object,
-      controller: React.PropTypes.object.isRequired,
+      controllerAPI: React.PropTypes.object.isRequired,
       credential: React.PropTypes.string,
       deploy: React.PropTypes.func.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
@@ -102,7 +102,7 @@ YUI.add('deployment-flow', function() {
         case 'cloud':
           completed = hasCloud && hasCredential;
           disabled = !this.state.loggedIn;
-        visible = this.state.loggedIn && !isLegacyJuju;
+          visible = this.state.loggedIn && !isLegacyJuju;
           break;
         case 'credential':
           completed = false;
@@ -266,9 +266,10 @@ YUI.add('deployment-flow', function() {
      @method _handleLogin
     */
     _handleLogin: function() {
-      this.props.controller.connect();
-      const handler = this.props.controller.after('facadesChange', e => {
-        if (e.newVal && this.props.controller.get('facades')) {
+      const controllerAPI = this.props.controllerAPI;
+      controllerAPI.connect();
+      const handler = controllerAPI.after('facadesChange', e => {
+        if (e.newVal && controllerAPI.get('facades')) {
           this.setState({loggedIn: true});
           handler.detach();
         }
@@ -364,10 +365,10 @@ YUI.add('deployment-flow', function() {
           instance="deployment-model-login"
           showCheck={false}>
           <div className="six-col">
-          <juju.components.GenericButton
-            action={this._handleLogin}
-            type="positive"
-            title="Sign up or Login" />
+            <juju.components.GenericButton
+              action={this._handleLogin}
+              type="positive"
+              title="Sign up or Login" />
           </div>
         </juju.components.DeploymentSection>);
     },

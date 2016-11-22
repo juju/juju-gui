@@ -64,7 +64,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={generateAllChangeDescriptions}
         generateCloudCredentialName={generateCloudCredentialName}
-        getAuth={sinon.stub()} 
+        getAuth={sinon.stub()}
         getCloudCredentials={getCloudCredentials}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={getCloudProviderDetails}
@@ -211,7 +211,6 @@ describe('DeploymentFlow', function() {
           </div>
         </div>
       </juju.components.DeploymentPanel>);
-    jsTestUtils.compare(output, expected);
     assert.deepEqual(output, expected);
   });
 
@@ -233,13 +232,13 @@ describe('DeploymentFlow', function() {
         acl={acl}
         updateCloudCredential={updateCloudCredential}
         changes={changes}
-        controller={sinon.stub()}
+        controllerAPI={sinon.stub()}
         changesFilterByParent={changesFilterByParent}
         changeState={changeState}
         deploy={sinon.stub()}
         generateAllChangeDescriptions={generateAllChangeDescriptions}
         generateCloudCredentialName={generateCloudCredentialName}
-        getAuth={sinon.stub()} 
+        getAuth={sinon.stub()}
         getCloudCredentials={getCloudCredentials}
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudProviderDetails={sinon.stub()}
@@ -338,7 +337,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
-        getAuth={sinon.stub().returns(true)} 
+        getAuth={sinon.stub().returns(true)}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -369,7 +368,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
-        getAuth={sinon.stub()} 
+        getAuth={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -398,7 +397,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
-      getAuth={sinon.stub().returns(true)} 
+      getAuth={sinon.stub().returns(true)}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -427,7 +426,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
-        getAuth={sinon.stub().returns(true)} 
+        getAuth={sinon.stub().returns(true)}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -457,7 +456,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
-        getAuth={sinon.stub().returns(true)} 
+        getAuth={sinon.stub().returns(true)}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -487,7 +486,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
-        getAuth={sinon.stub().returns(true)} 
+        getAuth={sinon.stub().returns(true)}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -522,7 +521,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
-        getAuth={sinon.stub().returns(true)} 
+        getAuth={sinon.stub().returns(true)}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -552,7 +551,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
-        getAuth={sinon.stub()} 
+        getAuth={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -583,7 +582,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
-        getAuth={sinon.stub()} 
+        getAuth={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -614,7 +613,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
-        getAuth={sinon.stub()} 
+        getAuth={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -646,7 +645,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
-        getAuth={sinon.stub()} 
+        getAuth={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -678,11 +677,11 @@ describe('DeploymentFlow', function() {
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={changeState}
-        controller={sinon.stub()}
+        controllerAPI={sinon.stub()}
         deploy={deploy}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
-        getAuth={sinon.stub().returns(true)} 
+        getAuth={sinon.stub().returns(true)}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -729,7 +728,7 @@ describe('DeploymentFlow', function() {
         deploy={deploy}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
-        getAuth={sinon.stub()} 
+        getAuth={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -772,7 +771,7 @@ describe('DeploymentFlow', function() {
         deploy={deploy}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
-        getAuth={sinon.stub()} 
+        getAuth={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
@@ -811,7 +810,7 @@ describe('DeploymentFlow', function() {
         deploy={sinon.stub()}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
-        getAuth={sinon.stub()} 
+        getAuth={sinon.stub()}
         getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
