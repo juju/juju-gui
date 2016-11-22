@@ -303,7 +303,7 @@ YUI.add('deployment-flow', function() {
     _generateChangelogTitle: function() {
       return (
         <span className="deployment-flow__service-title">
-          Services to be deployed
+          Applications to be deployed
           <juju.components.GenericButton
             action={this._toggleChangelogs}
             type="base"

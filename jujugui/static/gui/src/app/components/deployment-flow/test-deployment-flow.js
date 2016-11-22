@@ -158,7 +158,7 @@ describe('DeploymentFlow', function() {
           showCheck={true}
           title={
             <span className="deployment-flow__service-title">
-              Services to be deployed
+              Applications to be deployed
               <juju.components.GenericButton
                 action={instance._toggleChangelogs}
                 type="base"
@@ -282,7 +282,7 @@ describe('DeploymentFlow', function() {
           showCheck={true}
           title={
             <span className="deployment-flow__service-title">
-              Services to be deployed
+              Applications to be deployed
               <juju.components.GenericButton
                 action={instance._toggleChangelogs}
                 type="base"
