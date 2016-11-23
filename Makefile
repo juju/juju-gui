@@ -129,12 +129,11 @@ $(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(BUILT_RAWJSFILES) $(MIN_JS_FILES) $(
 	bin/python scripts/generate_modules.py -n YUI_MODULES -s $(GUIBUILD)/app -o $(MODULES) -x "(-min.js)|(\/yui\/)|(javascripts\/d3\.js)"
 	$(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments $(MODULES) -o $(MODULESMIN)
 
-# fast-babel is simply passed an input and output folder which dramatically
-# speeds up the build time because it doesn't need to spin up a new instance
-# for every file.
-.PHONY: fast-babel
-fast-babel: $(NODE_MODULES)
-	FILE_LIST="$(RAWJSFILES)" ./scripts/transpile.js
+# fast-babel will be passed a list of all files which have been
+# changed since the last time this target has run.
+fast-babel: $(RAWJSFILES)
+	FILE_LIST="$?" ./scripts/transpile.js
+	@touch $@
 
 $(GUIBUILD)/app/%-min.js: $(GUIBUILD)/app/%.js $(NODE_MODULES)
 	FILE_LIST="$(GUISRC)/app/$*.js" ./scripts/transpile.js
@@ -364,6 +363,7 @@ clean-pyc:
 .PHONY: clean-gui
 clean-gui:
 	- rm -rf jujugui/static/gui/build
+	- rm -rf fast-babel
 
 .PHONY: clean-all
 clean-all: clean-venv clean-pyc clean-gui clean-dist clean-uitest
