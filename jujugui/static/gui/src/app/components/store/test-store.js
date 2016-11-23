@@ -113,7 +113,12 @@ describe('Store', function() {
   it('can handle clicking on an search item', function() {
     var changeState = sinon.stub();
     var stopPropagation = sinon.stub();
-    var target = {dataset: {query: '&tags=databases'}};
+    var target = {
+      dataset: {
+        filterkey: 'tags',
+        filtervalue: 'databases'
+      }
+    };
     var output = jsTestUtils.shallowRender(
       <juju.components.Store
         apiVersion="v5"
@@ -130,7 +135,10 @@ describe('Store', function() {
     assert.equal(stopPropagation.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       root: null,
-      search: '&tags=databases'
+      search: {
+        tags: 'databases',
+        text: ''
+      }
     });
   });
 });

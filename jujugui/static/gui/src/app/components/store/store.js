@@ -104,12 +104,31 @@ YUI.add('store', function() {
     */
     _handleSearchClick: function(e) {
       e.stopPropagation();
-      var query = (e.target.dataset.query ||
-        e.target.closest('[data-query]').dataset.query);
+      const search = {
+        text: this._getData(e.target, 'query')
+      };
+      const filterKey = this._getData(e.target, 'filterkey');
+      const filterValue = this._getData(e.target, 'filtervalue');
+      if (filterKey && filterValue) {
+        search[filterKey] = filterValue;
+      }
       this.props.changeState({
         root: null,
-        search: query
+        search: search
       });
+    },
+
+    /**
+      Get the data value for an element.
+
+      @method _getData
+      @param {Object} target The target node.
+      @param {String} key The key for the data value.
+      @returns {String} The data value.
+    */
+    _getData: function(target, key) {
+      const node = target || target.closest(`[data-${key}]`);
+      return node && node.dataset && node.dataset[key] || '';
     },
 
     /**
@@ -216,7 +235,9 @@ YUI.add('store', function() {
               <div className="align-bottom">
                   <h2>Containers</h2>
                   <span
-                      data-query="containers&type=bundle"
+                      data-query="containers"
+                      data-filterkey="type"
+                      data-filtervalue="bundle"
                       onClick={this._handleSearchClick}
                       className="button--inline-neutral">
                       View bundles
@@ -230,7 +251,9 @@ YUI.add('store', function() {
               <div className="align-bottom">
                   <h2>OpenStack</h2>
                   <span
-                      data-query="openstack&type=bundle"
+                      data-query="openstack"
+                      data-filterkey="type"
+                      data-filtervalue="bundle"
                       onClick={this._handleSearchClick}
                       className="button--inline-neutral">
                       View bundles
@@ -264,11 +287,11 @@ YUI.add('store', function() {
       ];
       var list = [];
       topics.forEach(function(topic, index) {
-        var url = `&tags=${topic.name}`;
         var key = `tagItem-${index}`;
         list.push(<li className="inline-list__item" key={key}>
             <span onClick={this._handleSearchClick}
-                data-query={url}
+                data-filterkey="tags"
+                data-filtervalue={topic.name}
                 className="link">
                 {topic.name}
             </span>
@@ -303,7 +326,8 @@ YUI.add('store', function() {
                     deployment and management tasks of a service. They
                     are regularly reviewed and updated.</p>
                     <span onClick={this._handleSearchClick}
-                        data-query="&type=charm"
+                        data-filterkey="type"
+                        data-filtervalue="charm"
                         className="button--inline-neutral">
                         View all the charms
                     </span>
@@ -320,7 +344,8 @@ YUI.add('store', function() {
                     applications together, so you can deploy whole
                     chunks of infrastructure in one go.</p>
                     <span onClick={this._handleSearchClick}
-                        data-query="&type=bundle"
+                        data-filterkey="type"
+                        data-filtervalue="bundle"
                         className="button--inline-neutral">
                         View all the bundles
                     </span>
@@ -523,7 +548,8 @@ YUI.add('store', function() {
             </ul>
             <p className="intro">
                 <span onClick={this._handleSearchClick}
-                    data-query="&tags=ops"
+                    data-filterkey="tags"
+                    data-filtervalue="ops"
                     className="link">
                     View all operations&nbsp;&rsaquo;
                 </span>
@@ -548,7 +574,7 @@ YUI.add('store', function() {
                 Juju&rsquo;s pre-configured bundles or expertly
                 created charms.</p>
                 <p><span onClick={this._handleSearchClick}
-                    data-query="&type=bigdata"
+                    data-query="bigdata"
                     className="link">
                     Big data charms and bundles&nbsp;&rsaquo;
                 </span></p>
@@ -742,7 +768,8 @@ YUI.add('store', function() {
             </ul>
             <p className="intro">
                 <span onClick={this._handleSearchClick}
-                    data-query="&tags=analytics"
+                    data-filterkey="tags"
+                    data-filtervalue="analytics"
                     className="link">
                     View all analytics&nbsp;&rsaquo;
                 </span>
@@ -879,7 +906,8 @@ YUI.add('store', function() {
             </ul>
             <p className="intro">
                 <span onClick={this._handleSearchClick}
-                    data-query="&tags=databases"
+                    data-filterkey="tags"
+                    data-filtervalue="databases"
                     className="link">
                     View all databases&nbsp;&rsaquo;
                 </span>
