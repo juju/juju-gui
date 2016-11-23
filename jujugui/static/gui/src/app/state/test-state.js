@@ -70,11 +70,38 @@ describe('State', () => {
 
   const searchStateTests = [{
     path: 'http://abc.com:123/q/haproxy',
-    state: { search: 'haproxy' },
+    state: {
+      search: {
+        text: 'haproxy'
+      }
+    },
     error: null
   }, {
     path: 'http://abc.com:123/q/k8s/core',
-    state: { search: 'k8s/core' },
+    state: {
+      search: {
+        text: 'k8s/core'
+      }
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/q/haproxy/?tags=ops,db&series=yakkety',
+    state: {
+      search: {
+        tags: ['ops', 'db'],
+        text: 'haproxy',
+        series: 'yakkety'
+      }
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/q/?series=yakkety',
+    state: {
+      search: {
+        text: '',
+        series: 'yakkety'
+      }
+    },
     error: null
   }];
 
@@ -432,7 +459,28 @@ describe('State', () => {
       assert.deepEqual(state._parseSearch([], {}),{});
       assert.deepEqual(
         state._parseSearch(['k8s', 'core'], {}),
-        {search: 'k8s/core'});
+        {
+          search: {
+            text: 'k8s/core'
+          }
+        });
+    });
+
+    it('handles query parameters', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
+      });
+      assert.deepEqual(state._parseSearch([], {}),{});
+      assert.deepEqual(
+        state._parseSearch(['k8s', 'core', '?tags=ops,db&series=yakkety'], {}),
+        {
+          search: {
+            series: 'yakkety',
+            tags: ['ops', 'db'],
+            text: 'k8s/core'
+          }
+        });
     });
   });
 
