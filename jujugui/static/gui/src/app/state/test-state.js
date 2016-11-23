@@ -881,8 +881,9 @@ describe('State', () => {
           state: currentState}));
       const dispatch = sinon.stub(state, '_dispatch');
       state.dispatch();
-      assert.deepEqual(dispatch.args[1], [currentState, 'gui.deploy']);
-      assert.deepEqual(dispatch.args[2], [currentState, 'gui.inspector.id']);
+      assert.deepEqual(dispatch.args[1], [currentState, 'gui.deploy', []]);
+      assert.deepEqual(
+        dispatch.args[2], [currentState, 'gui.inspector.id', []]);
     });
 
     it('dispatches registered dispatchers in proper order', () => {
