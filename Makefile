@@ -135,10 +135,7 @@ fast-babel: $(RAWJSFILES)
 	FILE_LIST="$?" ./scripts/transpile.js
 	@touch $@
 
-$(GUIBUILD)/app/%-min.js: $(GUIBUILD)/app/%.js $(NODE_MODULES)
-	FILE_LIST="$(GUISRC)/app/$*.js" ./scripts/transpile.js
-
-$(GUIBUILD)/app/%.js: $(GUISRC)/app/%.js $(NODE_MODULES)
+$(GUIBUILD)/app/%.js $(GUIBUILD)/app/%-min.js: $(GUISRC)/app/%.js $(NODE_MODULES)
 	FILE_LIST="$(GUISRC)/app/$*.js" ./scripts/transpile.js
 
 $(BUILT_JS_ASSETS): $(NODE_MODULES)
