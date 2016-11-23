@@ -69,11 +69,8 @@ YUI.add('deployment-signup', function() {
     _handleSignup: function() {
       this._setBetaCookie(true);
       this.props.changeState({
-        sectionC: {
-          component: 'deploy',
-          metadata: {
-            activeComponent: 'flow'
-          }
+        gui: {
+          deploy: 'flow'
         }
       });
     },

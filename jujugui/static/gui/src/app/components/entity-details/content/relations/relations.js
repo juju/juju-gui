@@ -35,16 +35,13 @@ YUI.add('entity-content-relations', function() {
       @param {String} name The requirement interface.
     */
     _handleRelationClick: function(type, name) {
-      var metadata = {
-        activeComponent: 'search-results',
-        search: null
+      const search = {
+        text: ''
       };
-      metadata[type] = name;
+      search[type] = name;
       this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: metadata
-        }
+        search: search,
+        store: null
       });
     },
     /**

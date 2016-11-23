@@ -170,7 +170,13 @@ YUI.add('header-search', function() {
       this.props.appState.changeState({
         root: null,
         search: {
-          text: this.state.query
+          owner: null,
+          provides: null,
+          requires: null,
+          series: null,
+          tags: null,
+          text: this.state.query,
+          type: null
         }
       });
     },

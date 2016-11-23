@@ -55,15 +55,10 @@ YUI.add('search-results-select-filter', function(Y) {
       @param {Object} e The change event.
     */
     _handleChange: function(e) {
-      var metadata = {
-        activeComponent: 'search-results',
-      };
-      metadata[this.props.filter] = e.currentTarget.value;
+      const search = {};
+      search[this.props.filter] = e.currentTarget.value;
       this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: metadata
-        }
+        search: search
       });
     },
 

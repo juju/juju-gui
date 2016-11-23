@@ -163,13 +163,14 @@ YUI.add('search-results-item', function(Y) {
     _handleTagClick: function(tag, e) {
       e.stopPropagation();
       this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'search-results',
-            search: null,
-            tags: tag
-          }
+        search: {
+          owner: null,
+          provides: null,
+          requires: null,
+          series: null,
+          tags: tag,
+          text: '',
+          type: null
         }
       });
     },
@@ -184,13 +185,14 @@ YUI.add('search-results-item', function(Y) {
     _handleOwnerClick: function(owner, e) {
       e.stopPropagation();
       this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'search-results',
-            search: null,
-            owner: owner
-          }
+        search: {
+          owner: owner,
+          provides: null,
+          requires: null,
+          series: null,
+          tags: null,
+          text: '',
+          type: null
         }
       });
     },
