@@ -454,18 +454,21 @@ const State = class State {
       if (search.text) {
         path.push(search.text);
       }
-      // Everything that is not the 'text' param should be appened as a query
-      // string.
-      delete search.text;
       const querystrings = [];
       const keys = Object.keys(search);
-      // If there are more keys then append them as a query string
+      // Everything that is not the 'text' param should be appened as a query
+      // string.
       if (keys.length > 0) {
         // Generate the key/value pairs.
         keys.forEach(key => {
-          querystrings.push(`${key}=${search[key]}`);
+          // The text parameter is handled as part of the path.
+          if (key !== 'text') {
+            querystrings.push(`${key}=${search[key]}`);
+          }
         });
-        path.push(`?${querystrings.join('&')}`);
+        if (querystrings.length > 0) {
+          path.push(`?${querystrings.join('&')}`);
+        }
       }
     }
     const user = this.current.user || this.current.profile;
