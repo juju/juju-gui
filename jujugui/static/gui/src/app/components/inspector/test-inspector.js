@@ -1264,7 +1264,6 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={addNotification}
         appState={appState}
-        changeState={changeState}
         charm={{get: sinon.stub().returns({resource: 'one'})}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}

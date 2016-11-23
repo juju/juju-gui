@@ -28,7 +28,7 @@ YUI.add('search-results', function(Y) {
       makeEntityModel: React.PropTypes.func.isRequired,
       owner: React.PropTypes.string,
       provides: React.PropTypes.string,
-      query: React.PropTypes.string.isRequired,
+      query: React.PropTypes.string,
       requires: React.PropTypes.string,
       series: React.PropTypes.string,
       seriesList: React.PropTypes.object.isRequired,
