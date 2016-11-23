@@ -78,7 +78,7 @@ describe('HeaderSearch', function() {
   });
 
   it('gets cleared when closed', function() {
-    appState.current.search = 'hexo';
+    appState.current.search = {text: 'hexo'};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
         appState={appState} />, true);
@@ -108,7 +108,7 @@ describe('HeaderSearch', function() {
   });
 
   it('does not clear the search when rerendering', function() {
-    appState.current.search = 'hexo';
+    appState.current.search = {text: 'hexo'};
     var renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderSearch
         appState={appState} />, true);
@@ -178,7 +178,7 @@ describe('HeaderSearch', function() {
 
   it('searches when clicking search button if the input is open', function() {
     appState.current = {
-      search: 'apache2',
+      search: {text: 'apache2'},
       activeComponent: 'store'
     };
     var renderer = jsTestUtils.shallowRender(
@@ -194,7 +194,7 @@ describe('HeaderSearch', function() {
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       root: null,
-      search: 'apache2'
+      search: {text: 'apache2'}
     });
   });
 });

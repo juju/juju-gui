@@ -43,7 +43,7 @@ describe('Charmbrowser', function() {
 
   it('displays the search results when the app state calls for it', function() {
     var query = 'django';
-    appState.current.search = query;
+    appState.current.search = {text: query};
     var series = {};
     var charmstoreSearch = sinon.stub();
     var makeEntityModel = sinon.spy();

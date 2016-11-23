@@ -141,21 +141,22 @@ YUI.add('charmbrowser-component', function() {
           );
           break;
         case 'search-results':
+          const search = currentState.search;
           activeChild = (
               <juju.components.SearchResults
                 changeState={changeState}
                 charmstoreSearch={this.props.charmstoreSearch}
                 getName={utils.getName}
                 makeEntityModel={this.props.makeEntityModel}
-                query={currentState.search}
+                query={search.text}
                 seriesList={this.props.series}
-                type={metadata.type}
-                sort={metadata.sort}
-                series={metadata.series}
-                provides={metadata.provides}
-                requires={metadata.requires}
-                owner={metadata.owner}
-                tags={metadata.tags} />
+                type={search.type}
+                sort={search.sort}
+                series={search.series}
+                provides={search.provides}
+                requires={search.requires}
+                owner={search.owner}
+                tags={search.tags} />
           );
           break;
         case 'entity-details':
