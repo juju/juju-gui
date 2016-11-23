@@ -2535,9 +2535,11 @@ YUI.add('juju-gui', function(Y) {
       } else {
         this.env.close(onclose);
       }
-      this.state.changeState({
-        root: null
-      });
+      // XXX: This has been causing issues when loading paths. Disabling until
+      // we know it is not required (talk to hatch).
+      // this.state.changeState({
+      //   root: null
+      // });
       this.hideConnectingMask();
       if (clearDB) {
         this.db.reset();
