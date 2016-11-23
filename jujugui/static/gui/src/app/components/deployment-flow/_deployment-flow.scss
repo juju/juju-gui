@@ -8,8 +8,10 @@
     border-bottom: 1px solid $light-mid-grey;
   }
 
-  .button--neutral {
-    background-color: $white;
+  &-panel {
+    .button--neutral {
+      background-color: $white;
+    }
   }
 
   &__notice {
