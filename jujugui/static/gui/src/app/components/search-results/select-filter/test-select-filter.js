@@ -107,12 +107,8 @@ describe('SearchResultsSelectFilter', function() {
     });
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'search-results',
-          sort: 'downloads'
-        }
+      search: {
+        sort: 'downloads'
       }
     });
   });

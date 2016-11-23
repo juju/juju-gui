@@ -101,12 +101,8 @@ describe('SearchResultsTypeFilter', function() {
     output.props.children.props.children[1].props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'search-results',
-          type: 'charm'
-        }
+      search: {
+        type: 'charm'
       }
     });
   });

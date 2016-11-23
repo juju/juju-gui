@@ -449,7 +449,27 @@ const State = class State {
     }
     const search = this.current.search;
     if (search) {
-      path = path.concat([PATH_DELIMETERS.get('search'), search]);
+      path.push(PATH_DELIMETERS.get('search'));
+      // Append the text if it is truthy, i.e. not a blank string etc.
+      if (search.text) {
+        path.push(search.text);
+      }
+      const querystrings = [];
+      const keys = Object.keys(search);
+      // Everything that is not the 'text' param should be appened as a query
+      // string.
+      if (keys.length > 0) {
+        // Generate the key/value pairs.
+        keys.forEach(key => {
+          // The text parameter is handled as part of the path.
+          if (key !== 'text') {
+            querystrings.push(`${key}=${search[key]}`);
+          }
+        });
+        if (querystrings.length > 0) {
+          path.push(`?${querystrings.join('&')}`);
+        }
+      }
     }
     const user = this.current.user || this.current.profile;
     if (user) {
@@ -520,7 +540,26 @@ const State = class State {
   */
   _parseSearch(urlParts, state) {
     if (urlParts.length > 0) {
-      state.search = urlParts.join('/');
+      // Split the path at the start of the query params.
+      const parts = urlParts.join('/').split('?');
+      state.search = {
+        // The path may have a trailing slash so clean it up.
+        text: this._getCleanPath(parts[0])
+      };
+      // If there is more than one part then there are query params.
+      if (parts.length > 1) {
+        const params = parts[1].split('&');
+        params.forEach(param => {
+          // Split the param into the key and value.
+          const paramParts = param.split('=');
+          let value = paramParts[1] || '';
+          // Turn the value into an array if required.
+          if (value.indexOf(',') > -1) {
+            value = value.split(',');
+          }
+          state.search[paramParts[0]] = value;
+        });
+      }
     }
     return state;
   }

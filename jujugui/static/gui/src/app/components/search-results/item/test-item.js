@@ -397,13 +397,14 @@ describe('SearchResultsItem', function() {
     assert.equal(changeState.callCount, 1);
     assert.equal(stopPropagation.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'search-results',
-          search: null,
-          tags: 'tag1'
-        }
+      search: {
+        owner: null,
+        provides: null,
+        requires: null,
+        series: null,
+        tags: 'tag1',
+        text: '',
+        type: null
       }
     });
   });
@@ -435,13 +436,14 @@ describe('SearchResultsItem', function() {
     assert.equal(changeState.callCount, 1);
     assert.equal(stopPropagation.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'search-results',
-          search: null,
-          owner: 'test-owner'
-        }
+      search: {
+        owner: 'test-owner',
+        provides: null,
+        requires: null,
+        series: null,
+        tags: null,
+        text: '',
+        type: null
       }
     });
   });

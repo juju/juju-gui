@@ -45,7 +45,8 @@ YUI.add('header-search', function() {
       @returns {String} The search query.
     */
     _getSearchQuery: function() {
-      return this.props.appState.current.search || '';
+      const current = this.props.appState.current;
+      return current.search && current.search.text || '';
     },
 
     /**
@@ -168,7 +169,15 @@ YUI.add('header-search', function() {
       }
       this.props.appState.changeState({
         root: null,
-        search: this.state.query
+        search: {
+          owner: null,
+          provides: null,
+          requires: null,
+          series: null,
+          tags: null,
+          text: this.state.query,
+          type: null
+        }
       });
     },
 
