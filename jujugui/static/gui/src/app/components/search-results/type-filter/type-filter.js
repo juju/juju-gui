@@ -82,12 +82,8 @@ YUI.add('search-results-type-filter', function(Y) {
     */
     _handleFilterClick: function(type) {
       this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'search-results',
-            type: type
-          }
+        search: {
+          type: type
         }
       });
     },

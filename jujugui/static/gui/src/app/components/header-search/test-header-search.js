@@ -194,7 +194,15 @@ describe('HeaderSearch', function() {
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       root: null,
-      search: {text: 'apache2'}
+      search: {
+        owner: null,
+        provides: null,
+        requires: null,
+        series: null,
+        tags: null,
+        text: 'apache2',
+        type: null
+      }
     });
   });
 });
