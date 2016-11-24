@@ -120,6 +120,7 @@ YUI.add('generic-input', function() {
     */
     _blurHandler: function() {
       this.setState({focus: false});
+      this.validate();
     },
 
     /**
@@ -181,7 +182,6 @@ YUI.add('generic-input', function() {
           id={id}
           placeholder={this.props.placeholder}
           required={this.props.required}
-          onChange={this.validate}
           onFocus={this._focusHandler}
           onBlur={this._blurHandler}
           ref="field"
