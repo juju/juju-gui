@@ -140,6 +140,16 @@ describe('HeaderSearch', function() {
     assert.isTrue(
         output.refs.headerSearchContainer
                    .classList.contains('header-search--active'));
+    assert.equal(appState.changeState.callCount, 1);
+    assert.deepEqual(appState.changeState.args[0][0], {
+      root: 'store',
+      user: null,
+      profile: null,
+      gui: {
+        machines: null,
+        inspector: null
+      }
+    });
   });
 
   it('navigates to the store when the Store button is clicked', function() {
