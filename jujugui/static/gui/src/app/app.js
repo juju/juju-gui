@@ -670,8 +670,8 @@ YUI.add('juju-gui', function(Y) {
       });
 
       // We are now ready to connect the environment and bootstrap the app.
-      this.once('ready', function(e) {
-        if (this.get('gisf')) {
+      this.once('ready', e => {
+        if (this.get('gisf') && this.get('modelUUID') === 'anon') {
           this.maskVisibility(false);
         } else if (this.controllerAPI) {
           // In Juju >= 2 we connect to the controller and then to the model.
@@ -680,8 +680,8 @@ YUI.add('juju-gui', function(Y) {
           // We won't have a controller API connection in Juju 1.
           this.env.connect();
         }
-        this.dispatch();
-      }, this);
+        this.state.dispatch();
+      });
     },
 
     /**
@@ -2435,11 +2435,6 @@ YUI.add('juju-gui', function(Y) {
       } else {
         this.env.close(onclose);
       }
-      // XXX: This has been causing issues when loading paths. Disabling until
-      // we know it is not required (talk to hatch).
-      // this.state.changeState({
-      //   root: null
-      // });
       this.hideConnectingMask();
       if (clearDB) {
         this.db.reset();
