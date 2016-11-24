@@ -223,7 +223,7 @@ const State = class State {
     extract(state).forEach(key => {
       const dispatcherCalled = this._dispatch(state, key, dispatched);
       // If a dispatcher was called then store it so that it doesn't get called
-      // again.
+      // again this dispatch.
       if (dispatcherCalled) {
         dispatched.push(dispatcherCalled);
       }
@@ -235,8 +235,8 @@ const State = class State {
     Takes the existing app state and then calls the registered dispatchers.
     @param {Object} state - The state to dispatch.
     @param {String} key - The key to manage the dispatchers.
-    @param {Array} dispatched - The list of dispatchers that have already been
-      called.
+    @param {Array} dispatched - The list of dispatcher keys that have already
+      been called.
     @param {Boolean} cleanup - Whether it should execute the cleanup method or
       not. Defaults to false.
   */
