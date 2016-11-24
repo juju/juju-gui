@@ -50,7 +50,7 @@ YUI.add('header-search', function() {
     },
 
     /**
-      Based on the active component in sectionC this will return true or false
+      Based on the current state this will return true or false
       if this component is to be in its active state.
 
       @method _activeForComponent
@@ -67,7 +67,7 @@ YUI.add('header-search', function() {
       @method componentWillReceiveProps
     */
     componentWillReceiveProps: function() {
-      // Need to check if there is a change to sectionC and if it has been
+      // Need to check if there is a change to the state and if it has been
       // cleared (store/search results have been closed) then we also need
       // to deactivate the search box.
       const query = this._getSearchQuery();
@@ -182,7 +182,7 @@ YUI.add('header-search', function() {
     },
 
     /**
-      Close the header and sectionC when the button is clicked.
+      Close the header and clear the state when the button is clicked.
 
       @method _handleClose
     */

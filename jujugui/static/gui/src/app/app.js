@@ -837,17 +837,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Parses the application URL to populate the state object without
-      dispatching
-
-      @method parseURLState
-    */
-    parseURLState: function(req, res, next) {
-      this.state.loadRequest(req, '', {dispatch: false});
-      next();
-    },
-
-    /**
       This method is to be passed to the components so that they can interact
       with the existing changeState system.
 
@@ -1580,32 +1569,6 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('login-container'));
     },
 
-    _emptySectionA: function() {
-      if (this.hoverService) {
-        this.hoverService.detach();
-      }
-    },
-    /**
-      Empties out the sectionB UI making sure to properly clean up.
-
-      @method emptySectionB
-    */
-    emptySectionB: function() {
-      ReactDOM.unmountComponentAtNode(
-        document.getElementById('machine-view'));
-      ReactDOM.unmountComponentAtNode(
-        document.getElementById('top-page-container'));
-    },
-
-    _emptySectionC: function() {
-      // If the model name has been hidden by the profile then show it again.
-      this._renderBreadcrumb({ showEnvSwitcher: true });
-      ReactDOM.unmountComponentAtNode(
-        document.getElementById('charmbrowser-container'));
-      ReactDOM.unmountComponentAtNode(
-        document.getElementById('deployment-container'));
-    },
-
     /**
       Handles rendering and/or updating the machine UI component.
       @param {Object} state - The app state.
@@ -1764,45 +1727,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Sets up the UIState instance on the app
-
-      @method _setupUIState
-      @param {Boolean} sandbox
-      @param {String} baseUrl
-    */
-    _setupUIState: function(sandbox, baseUrl) {
-      this.state = new models.UIState({
-        baseUrl: baseUrl || '',
-        dispatchers: {}
-      });
-      var dispatchers = this.state.get('dispatchers');
-      dispatchers.sectionA = {
-        applications: this._renderAddedServices.bind(this),
-        inspector: this._renderInspector.bind(this),
-        empty: this._emptySectionA.bind(this)
-      };
-      dispatchers.sectionB = {
-        account: this._renderAccount.bind(this),
-        machine: this._renderMachineView.bind(this),
-        profile: this._renderUserProfile.bind(this),
-        isv: this._renderISVProfile.bind(this),
-        empty: this.emptySectionB.bind(this)
-      };
-      dispatchers.sectionC = {
-        charmbrowser: this._renderCharmbrowser.bind(this),
-        deploy: this._renderDeployment.bind(this),
-        empty: this._emptySectionC.bind(this)
-      };
-      dispatchers.app = {
-        login: this._renderLogin.bind(this, null),
-        deployTarget: views.utils.deployTargetDispatcher.bind(this),
-        empty: this._emptySectionApp.bind(this)
-      };
-      this.state.set('dispatchers', dispatchers);
-      this.on('*:changeState', this._changeState, this);
-    },
-
-    /**
       Creates an instance of the State and registers the necessary dispatchers.
       @param {String} baseURL - The path the application is served from.
       @return {Object} The state instance.
@@ -1877,18 +1801,6 @@ YUI.add('juju-gui', function(Y) {
     _clearRoot: function(state, next) {
       this._clearCharmbrowser(state, next);
       next();
-    },
-
-    /**
-      Sets up the UIState instance on the app
-
-      @method _changeState
-      @param {Object} e The event facade.
-    */
-    _changeState: function(e) {
-      var state = e.details[0];
-      var url = this.state.generateUrl(state);
-      this.navigate(url);
     },
 
     /**
@@ -2914,7 +2826,6 @@ YUI.add('juju-gui', function(Y) {
   requires: [
     'acl',
     'changes-utils',
-    'juju-app-state',
     'juju-charm-models',
     'juju-bundle-models',
     'juju-controller-api',
