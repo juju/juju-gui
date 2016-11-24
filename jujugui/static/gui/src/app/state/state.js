@@ -215,12 +215,18 @@ const State = class State {
     }
     // First run all of the 'null state' dispatchers to clear out the old
     // state representations.
-    nullKeys.forEach(key => this._dispatch(state, key, true));
+    const dispatched = [];
+    nullKeys.forEach(key => this._dispatch(state, key, dispatched, true));
     // Then execute the 'all' dispatchers.
     this._dispatch(state, '*');
     // Extract and loop through the state keys to execute their dispatchers.
     extract(state).forEach(key => {
-      this._dispatch(state, key);
+      const dispatcherCalled = this._dispatch(state, key, dispatched);
+      // If a dispatcher was called then store it so that it doesn't get called
+      // again this dispatch.
+      if (dispatcherCalled) {
+        dispatched.push(dispatcherCalled);
+      }
     });
     return {error: null, state};
   }
@@ -229,10 +235,12 @@ const State = class State {
     Takes the existing app state and then calls the registered dispatchers.
     @param {Object} state - The state to dispatch.
     @param {String} key - The key to manage the dispatchers.
+    @param {Array} dispatched - The list of dispatcher keys that have already
+      been called.
     @param {Boolean} cleanup - Whether it should execute the cleanup method or
       not. Defaults to false.
   */
-  _dispatch(state, key, cleanup = false) {
+  _dispatch(state, key, dispatched = [], cleanup = false) {
     /**
       Continues to reduce the key to find a dispatcher. Example, if key
       value is 'gui.inspector.id' but there is only a handler for
@@ -240,7 +248,7 @@ const State = class State {
       until it finds something, or fails
       @param {String} key - The key for the registered dispatchers.
       @param {Object} dispatchers - The collection of registered dispatchers.
-      @return {Function|Boolean} Either the matching dispatchers or false.
+      @return {Object|Boolean} Either the matching dispatchers and key or false.
     */
     function findDispatchers(key, dispatchers) {
       const found = dispatchers[key];
@@ -252,10 +260,20 @@ const State = class State {
           return false;
         }
       }
-      return found;
+      return {
+        dispatchers: found,
+        key: key
+      };
     }
     // Recurse up the dispatcher tree to find matching dispatchers.
-    const dispatchers = findDispatchers(key, this._dispatchers);
+    const matchingDispatchers = findDispatchers(key, this._dispatchers);
+    // If this dispatcher has already been called for this state then don't call
+    // it again. e.g. 'gui.inspector' should only be called once for
+    // 'gui.inspector.id' and 'gui.inspector.unit'.
+    if (dispatched.indexOf(matchingDispatchers.key) > -1) {
+      return;
+    }
+    const dispatchers = matchingDispatchers.dispatchers;
     if (!dispatchers) {
       console.warn('No dispatcher found for key:', key);
       return;
@@ -274,6 +292,7 @@ const State = class State {
       }
     }
     next();
+    return matchingDispatchers.key;
   }
 
   /**
