@@ -46,11 +46,6 @@ const State = class State {
       throw new Error('baseURL must be provided.');
     }
     this.baseURL = cfg.baseURL;
-    /**
-      The list of dispatchers for the various components from the URL.
-      @type {Object}
-    */
-    this.dispatchers = cfg.dispatchers;
 
     if (!cfg.seriesList || !Array.isArray(cfg.seriesList)) {
       throw new Error('Series list must be an Array.');
@@ -77,12 +72,12 @@ const State = class State {
     */
     this._location = cfg.location || null;
     /**
-      Internal storage value for the history object to use. Only used when
-      history is set externally.
+      Internal storage value for the browser history object to use. Only used
+      when browserHistory is set externally.
       @private
       @type {Object}
     */
-    this._history = cfg.history || null;
+    this._browserHistory = cfg.browserHistory || null;
     /**
       Internal storage for the app state history.
       @private
@@ -96,7 +91,7 @@ const State = class State {
     */
     this._dispatchers = {};
 
-    window.onpopstate = this.dispatch;
+    window.onpopstate = this.dispatch.bind(this);
   }
 
   /**
@@ -132,27 +127,38 @@ const State = class State {
     be used for testing.
     @type {Object}
   */
-  get history() {
-    return this._history || window.history;
+  get browserHistory() {
+    return this._browserHistory || window.history;
   }
 
-  set history(history) {
-    this._history = history;
+  set browserHistory(history) {
+    this._browserHistory = history;
   }
 
   /**
-    The object representing the current app state.
+    The geteter representing the current app state.
     @type {Object}
   */
-  get appState() {
+  get current() {
     return this._appStateHistory[this._appStateHistory.length-1];
   }
 
   /**
+    The getter representing the application history.
+    @type {Array}
+  */
+  get history() {
+    return this._appStateHistory;
+  }
+
+  /**
     Stores the dispatchers that are to be called when the appropriate state
-    changes in the application.
+    changes in the application. When state matches one of the supplied sections
+    it will execute all of the `callback` dispatchers registered here. If the
+    section is then set with a `null` value, the cleanupCallback will be
+    called instead.
     @param {Array} dispatchers - An array of dispatchers in the format:
-      [['section', callback], ...]
+      [['section', callback, cleanupCallback], ...]
   */
   register(dispatchers) {
     const stored = this._dispatchers;
@@ -180,7 +186,7 @@ const State = class State {
     let error, state;
     ({error, state} = this.generateState(this.location.href));
     if (error !== null) {
-      error += `unable to generate state: ${error}`;
+      error += ` unable to generate state: ${error}`;
       return {error, state};
     }
 
@@ -198,7 +204,7 @@ const State = class State {
           } else {
             allKeys.push(keys.join('.'));
           }
-          keys = [];
+          keys.pop();
         });
       }
       concat(state);
@@ -209,14 +215,19 @@ const State = class State {
     }
     // First run all of the 'null state' dispatchers to clear out the old
     // state representations.
-    nullKeys.forEach(key => this._dispatch(state, key, true));
+    const dispatched = [];
+    nullKeys.forEach(key => this._dispatch(state, key, dispatched, true));
     // Then execute the 'all' dispatchers.
     this._dispatch(state, '*');
     // Extract and loop through the state keys to execute their dispatchers.
     extract(state).forEach(key => {
-      this._dispatch(state, key);
+      const dispatcherCalled = this._dispatch(state, key, dispatched);
+      // If a dispatcher was called then store it so that it doesn't get called
+      // again this dispatch.
+      if (dispatcherCalled) {
+        dispatched.push(dispatcherCalled);
+      }
     });
-
     return {error: null, state};
   }
 
@@ -224,15 +235,50 @@ const State = class State {
     Takes the existing app state and then calls the registered dispatchers.
     @param {Object} state - The state to dispatch.
     @param {String} key - The key to manage the dispatchers.
+    @param {Array} dispatched - The list of dispatcher keys that have already
+      been called.
     @param {Boolean} cleanup - Whether it should execute the cleanup method or
       not. Defaults to false.
   */
-  _dispatch(state, key, cleanup = false) {
-    if (!this._dispatchers[key]) {
-      // If we have no registered dispatchers for the key then return.
+  _dispatch(state, key, dispatched = [], cleanup = false) {
+    /**
+      Continues to reduce the key to find a dispatcher. Example, if key
+      value is 'gui.inspector.id' but there is only a handler for
+      'gui.inspector' it will first try 'gui.inspector.id' then drop the 'id'
+      until it finds something, or fails
+      @param {String} key - The key for the registered dispatchers.
+      @param {Object} dispatchers - The collection of registered dispatchers.
+      @return {Object|Boolean} Either the matching dispatchers and key or false.
+    */
+    function findDispatchers(key, dispatchers) {
+      const found = dispatchers[key];
+      if (!found) {
+        const newKey = key.split('.').slice(0, -1).join('.');
+        if (newKey !== '') {
+          return findDispatchers(newKey, dispatchers);
+        } else {
+          return false;
+        }
+      }
+      return {
+        dispatchers: found,
+        key: key
+      };
+    }
+    // Recurse up the dispatcher tree to find matching dispatchers.
+    const matchingDispatchers = findDispatchers(key, this._dispatchers);
+    // If this dispatcher has already been called for this state then don't call
+    // it again. e.g. 'gui.inspector' should only be called once for
+    // 'gui.inspector.id' and 'gui.inspector.unit'.
+    if (dispatched.indexOf(matchingDispatchers.key) > -1) {
       return;
     }
-    const iterator = this._dispatchers[key][Symbol.iterator]();
+    const dispatchers = matchingDispatchers.dispatchers;
+    if (!dispatchers) {
+      console.warn('No dispatcher found for key:', key);
+      return;
+    }
+    const iterator = dispatchers[Symbol.iterator]();
     function next() {
       const data = iterator.next();
       if (!data.done) {
@@ -246,17 +292,19 @@ const State = class State {
       }
     }
     next();
+    return matchingDispatchers.key;
   }
 
   /**
     Changes the internal state of the app, updating the location and
     dispatching the app.
-    @param {Object} stateSegment - The new state delta to apply to the
+    @param {Object} changes - The new state delta to apply to the
       existing state.
   */
-  changeState(stateSegment) {
+  changeState(changes) {
     /**
       Merge two objects together or clone one. Only works with simple values.
+      Source values overwrite target values.
       @param {Object} target - The root object.
       @param {Object} source - The object to clone or merge into the target.
       @return {Object} The merged or cloned object.
@@ -281,6 +329,7 @@ const State = class State {
               }
             }
           }
+          keys.pop();
         });
         keys = [];
       } else {
@@ -320,20 +369,23 @@ const State = class State {
     }
 
     const mergedState = merge(
-      // Clone the appState so we don't end up clobbering old states.
-      merge({}, this.appState), stateSegment);
+      // Clone the current state so we don't end up clobbering old states.
+      merge({}, this.current), changes);
     const purgedState = pruneEmpty(merge({}, mergedState));
 
     this._appStateHistory.push(purgedState);
     this._pushState();
-    this.dispatch(nullKeys, false);
+    let {error} = this.dispatch(nullKeys, false);
+    if (error !== null) {
+      console.error(error);
+    }
   }
 
   /**
     Pushes the current state to the browser history using pushState.
   */
   _pushState() {
-    this.history.pushState({}, 'Juju GUI', this.generatePath());
+    this.browserHistory.pushState({}, 'Juju GUI', this.generatePath());
   }
 
   /**
@@ -349,6 +401,11 @@ const State = class State {
     let error = null;
     let state = {};
     let parts = this._getCleanPath(url).split('/');
+    // If we have a single part and it's an empty string then we are at '/' and
+    // there is nothing to parse so we can return early.
+    if (parts.length === 1 && parts[0] === '') {
+      return {error, state};
+    }
     state = this._parseRoot(parts, state);
     // If we have root paths in the URL then we can ignore everything else.
     if (state.root) {
@@ -405,30 +462,70 @@ const State = class State {
   */
   generatePath() {
     let path = [];
-    const root = this.appState.root;
+    const root = this.current.root;
     if (root) {
       path.push(root);
     }
-    const search = this.appState.search;
+    const search = this.current.search;
     if (search) {
-      path = path.concat([PATH_DELIMETERS.get('search'), search]);
+      path.push(PATH_DELIMETERS.get('search'));
+      // Append the text if it is truthy, i.e. not a blank string etc.
+      if (search.text) {
+        path.push(search.text);
+      }
+      const querystrings = [];
+      const keys = Object.keys(search);
+      // Everything that is not the 'text' param should be appened as a query
+      // string.
+      if (keys.length > 0) {
+        // Generate the key/value pairs.
+        keys.forEach(key => {
+          // The text parameter is handled as part of the path.
+          if (key !== 'text') {
+            querystrings.push(`${key}=${search[key]}`);
+          }
+        });
+        if (querystrings.length > 0) {
+          path.push(`?${querystrings.join('&')}`);
+        }
+      }
     }
-    const user = this.appState.user || this.appState.profile;
+    const user = this.current.user || this.current.profile;
     if (user) {
       path = path.concat([PATH_DELIMETERS.get('user'), user]);
     }
-    const store = this.appState.store;
+    const store = this.current.store;
     if (store) {
       path.push(store);
     }
-    const gui = this.appState.gui;
+    const gui = this.current.gui;
     if (gui) {
       path.push(PATH_DELIMETERS.get('gui'));
       Object.keys(gui).forEach(key => {
         const value = gui[key];
         path.push(key);
         if (value !== '') {
-          path.push(value);
+          if (key === 'inspector') {
+            const id = value.id;
+            if (id) {
+              path.push(id);
+            }
+            const activeComponent = value.activeComponent;
+            if (activeComponent) {
+              path.push(activeComponent);
+            }
+            const activeValue = value[activeComponent];
+            if (activeValue && typeof activeValue !== 'boolean') {
+              path.push(activeValue);
+            }
+            const localType = value.localType;
+            if (localType) {
+              path.push('local');
+              path.push(localType);
+            }
+          } else {
+            path.push(value);
+          }
         }
       });
     }
@@ -462,7 +559,26 @@ const State = class State {
   */
   _parseSearch(urlParts, state) {
     if (urlParts.length > 0) {
-      state.search = urlParts.join('/');
+      // Split the path at the start of the query params.
+      const parts = urlParts.join('/').split('?');
+      state.search = {
+        // The path may have a trailing slash so clean it up.
+        text: this._getCleanPath(parts[0])
+      };
+      // If there is more than one part then there are query params.
+      if (parts.length > 1) {
+        const params = parts[1].split('&');
+        params.forEach(param => {
+          // Split the param into the key and value.
+          const paramParts = param.split('=');
+          let value = paramParts[1] || '';
+          // Turn the value into an array if required.
+          if (value.indexOf(',') > -1) {
+            value = value.split(',');
+          }
+          state.search[paramParts[0]] = value;
+        });
+      }
     }
     return state;
   }
@@ -500,8 +616,32 @@ const State = class State {
       const end = indexes[arIndex+1] || urlParts.length;
       guiParts[urlParts[index]] = urlParts.slice(index+1, end).join('/');
     });
+    const inspectorParts = guiParts.inspector;
+    if (inspectorParts) {
+      guiParts.inspector = this._parseInspector(inspectorParts);
+    }
     state.gui = guiParts;
     return {error, state};
+  }
+
+  /**
+    Parses the inspector state string and returns the parsed object.
+    @param {String} inspectorState - The state of the inspector.
+    @return {Object} The parsed state.
+  */
+  _parseInspector(inspectorState) {
+    const parts = inspectorState.split('/');
+    let state = {};
+    if (parts[0] === 'local') {
+      state.localType = parts[1];
+    } else {
+      state.id = parts[0];
+      if (parts[1]) {
+        state.activeComponent = parts[1];
+        state[parts[1]] = parts[2] || true;
+      }
+    }
+    return state;
   }
 
   /**

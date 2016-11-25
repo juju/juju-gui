@@ -43,7 +43,7 @@ YUI.add('app-renderer-extension', function(Y) {
       const env = this.env;
       const controllerAPI = this.controllerAPI;
       const utils = views.utils;
-      const state = this.state;
+      const auth = this._getAuth();
       let listModelsWithInfo =
         controllerAPI &&
           controllerAPI.listModelsWithInfo.bind(this.controllerAPI);
@@ -69,12 +69,13 @@ YUI.add('app-renderer-extension', function(Y) {
         <juju.components.HeaderBreadcrumb
           envName={this.db.environment.get('name')}
           envList={this.get('environmentList')}
-          getAppState={state.getState.bind(state)}
-          authDetails={this._getAuth()}
+          appState={this.state}
+          authDetails={auth}
           listModelsWithInfo={listModelsWithInfo}
           showEnvSwitcher={showEnvSwitcher}
           showProfile={utils.showProfile.bind(
-            this, env && env.get('ecs'), this.changeState.bind(this))}
+            this, env && env.get('ecs'),
+            this.state.changeState.bind(this.state), auth && auth.rootUserName)}
           switchModel={utils.switchModel.bind(
             this, this.createSocketURL.bind(this, this.get('socketTemplate')),
             this.switchEnv.bind(this), env)} />,

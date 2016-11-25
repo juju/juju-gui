@@ -43,6 +43,10 @@ describe('State', () => {
   }];
 
   const rootStateTests = [{
+    path: 'http://abc.com:123/',
+    state: {},
+    error: null
+  }, {
     path: 'http://abc.com:123/new',
     state: { root: 'new' },
     error: null
@@ -66,31 +70,79 @@ describe('State', () => {
 
   const searchStateTests = [{
     path: 'http://abc.com:123/q/haproxy',
-    state: { search: 'haproxy' },
+    state: {
+      search: {
+        text: 'haproxy'
+      }
+    },
     error: null
   }, {
     path: 'http://abc.com:123/q/k8s/core',
-    state: { search: 'k8s/core' },
+    state: {
+      search: {
+        text: 'k8s/core'
+      }
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/q/haproxy/?tags=ops,db&series=yakkety',
+    state: {
+      search: {
+        tags: ['ops', 'db'],
+        text: 'haproxy',
+        series: 'yakkety'
+      }
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/q/?series=yakkety',
+    state: {
+      search: {
+        text: '',
+        series: 'yakkety'
+      }
+    },
     error: null
   }];
 
   const guiStateTests = [{
     path: 'http://abc.com:123/i/inspector/haproxy/config',
-    state: { gui: { inspector: 'haproxy/config' }},
+    state: {
+      gui: {
+        inspector: {id:'haproxy', activeComponent: 'config', config: true}
+      }},
     error: null
   }, {
     path: 'http://abc.com:123/i/machines',
-    state: { gui: { machines: '' }},
+    state: {gui: {machines: '' }},
     error: null
   }, {
     path: 'http://abc.com:123/i/applications/inspector/ghost',
-    state: { gui: { applications: '', inspector: 'ghost' }},
+    state: {gui: {applications: '', inspector: {id:'ghost'}}},
     error: null
   }, {
     path:
       'http://abc.com:123/i/inspector/apache2/machines/3/lxc-0/deploy/foo',
     state: {
-      gui: { inspector: 'apache2', machines: '3/lxc-0', deploy: 'foo'}
+      gui: { inspector: {id: 'apache2'}, machines: '3/lxc-0', deploy: 'foo'}
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/i/inspector/kibana/unit/0',
+    state: {
+      gui: {inspector: {id: 'kibana', activeComponent: 'unit', 'unit': '0'}}
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/i/inspector/local/new',
+    state: {
+      gui: {inspector: {localType: 'new'}}
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/i/inspector/local/update',
+    state: {
+      gui: {inspector: {localType: 'update'}}
     },
     error: null
   }];
@@ -151,7 +203,11 @@ describe('State', () => {
 
   const modelGuiStateTests = [{
     path: 'http://abc.com:123/u/hatch/staging/i/inspector/haproxy/config',
-    state: { user: 'hatch/staging', gui: { inspector: 'haproxy/config' } },
+    state: {
+      user: 'hatch/staging',
+      gui: {
+        inspector: {id: 'haproxy', activeComponent: 'config', config: true }
+      }},
     error: null
   }, {
     path: 'http://abc.com:123/u/frankban/production/i/machines',
@@ -161,13 +217,17 @@ describe('State', () => {
     path:
       'http://abc.com:123/u/hatch/staging/i/applications/inspector/ghost',
     state: {
-      user: 'hatch/staging', gui: {applications: '', inspector: 'ghost' }},
+      user: 'hatch/staging', gui: {applications: '', inspector: {id:'ghost' }}},
     error: null
   }];
 
   const storeGuiStateTests = [{
     path: 'http://abc.com:123/haproxy/i/inspector/haproxy/config',
-    state: { store: 'haproxy', gui: { inspector: 'haproxy/config' } },
+    state: {
+      store: 'haproxy',
+      gui: {
+        inspector: {id: 'haproxy', activeComponent: 'config', config: true }
+      }},
     error: null
   }, {
     path: 'http://abc.com:123/ghost/xenial/i/machines',
@@ -176,7 +236,7 @@ describe('State', () => {
   }, {
     path: 'http://abc.com:123/ghost/42/i/applications/inspector/ghost',
     state: {
-      store: 'ghost/42', gui: { applications: '', inspector: 'ghost' } },
+      store: 'ghost/42', gui: {applications: '', inspector: {id: 'ghost'}}},
     error: null
   }, {
     path: 'http://abc.com:123/django/bundle/47/i/machines',
@@ -186,7 +246,7 @@ describe('State', () => {
     path: 'http://abc.com:123/u/hatch/mongodb/xenial/i/applications/inspector/ghost', // eslint-disable-line max-len
     state: {
       store: 'u/hatch/mongodb/xenial',
-      gui: { applications: '', inspector: 'ghost'} },
+      gui: {applications: '', inspector: {id: 'ghost'}}},
     error: null
   }, {
     path: 'http://abc.com:123/u/frankban/django/bundle/0/i/machines',
@@ -199,7 +259,7 @@ describe('State', () => {
     state: {
       user: 'hatch/staging',
       store: 'haproxy',
-      gui: { inspector: 'haproxy/config' }
+      gui: {inspector: {id: 'haproxy', activeComponent: 'config', config: true}}
     },
     error: null
   }, {
@@ -207,7 +267,7 @@ describe('State', () => {
     state: {
       user: 'frankban/production',
       store: 'ghost/xenial',
-      gui: { inspector: 'haproxy/config' }
+      gui: {inspector: {id: 'haproxy', activeComponent: 'config', config: true}}
     },
     error: null
   }, {
@@ -215,7 +275,7 @@ describe('State', () => {
     state: {
       user: 'hatch/staging',
       store: 'ghost/42',
-      gui: { inspector: 'haproxy/config' }
+      gui: {inspector: {id: 'haproxy', activeComponent: 'config', config: true}}
     },
     error: null
   }, {
@@ -231,7 +291,7 @@ describe('State', () => {
     state: {
       user: 'hatch/staging',
       store: 'u/frankban/django',
-      gui: { applications: '', inspector: 'ghost' }
+      gui: {applications: '', inspector: {id: 'ghost'}}
     },
     error: null
   }, {
@@ -247,7 +307,7 @@ describe('State', () => {
     state: {
       user: 'hatch/staging',
       store: 'u/hatch/mongodb/47',
-      gui: { applications: '', inspector: 'ghost' }
+      gui: {applications: '', inspector: {id: 'ghost'}}
     },
     error: null
   }, {
@@ -345,7 +405,17 @@ describe('State', () => {
       state._appStateHistory.push('step2');
       state._appStateHistory.push('step3');
       state._appStateHistory.push('step2');
-      assert.equal(state.appState, 'step2');
+      assert.equal(state.current, 'step2');
+    });
+
+    it('has a public accessor', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList: ['trusty']
+      });
+      state._appStateHistory.push('step1');
+      state._appStateHistory.push('step2');
+      assert.deepEqual(state.history, ['step1', 'step2']);
     });
   });
 
@@ -389,7 +459,28 @@ describe('State', () => {
       assert.deepEqual(state._parseSearch([], {}),{});
       assert.deepEqual(
         state._parseSearch(['k8s', 'core'], {}),
-        {search: 'k8s/core'});
+        {
+          search: {
+            text: 'k8s/core'
+          }
+        });
+    });
+
+    it('handles query parameters', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
+      });
+      assert.deepEqual(state._parseSearch([], {}),{});
+      assert.deepEqual(
+        state._parseSearch(['k8s', 'core', '?tags=ops,db&series=yakkety'], {}),
+        {
+          search: {
+            series: 'yakkety',
+            tags: ['ops', 'db'],
+            text: 'k8s/core'
+          }
+        });
     });
   });
 
@@ -406,25 +497,36 @@ describe('State', () => {
         error: 'invalid GUI path.'
       }, {
         parts: ['inspector', 'haproxy', 'config'],
-        state: { gui: { inspector: 'haproxy/config' } },
+        state: {
+          gui: {
+            inspector: {id: 'haproxy', activeComponent: 'config', config: true}
+          }},
         error: null
       }, {
         parts: ['machines'],
-        state: { gui: { machines: '' } },
+        state: {gui: {machines: ''}},
         error: null
       }, {
         parts: ['applications', 'inspector', 'ghost'],
-        state: { gui: { applications: '', inspector: 'ghost' } },
+        state: {gui: {applications: '', inspector: {id: 'ghost'}}},
         error: null
       }, {
         parts: ['inspector', 'service123', 'relate-to', 'serviceabc'],
-        state: { gui: { inspector: 'service123/relate-to/serviceabc' } },
+        state: {
+          gui: {
+            inspector: {
+              id: 'service123',
+              activeComponent: 'relate-to',
+              'relate-to': 'serviceabc'
+            }}},
         error: null
       }, {
         parts: [
           'inspector', 'apache2', 'machines', '3', 'lxc-0', 'deploy', 'foo'],
         state: {
-          gui: { inspector: 'apache2', machines: '3/lxc-0', deploy: 'foo' }
+          gui: {
+            inspector: {id: 'apache2'}, machines: '3/lxc-0', deploy: 'foo'
+          }
         },
         error: null
       }];
@@ -763,6 +865,27 @@ describe('State', () => {
       assert.deepEqual(state._appStateHistory, [{new: 'state'}]);
     });
 
+    it('properly extracts complex states', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial'],
+        location: {href: 'hatch/ghost'}
+      });
+      const currentState = {
+        gui: {
+          deploy: '',
+          inspector: { id: '$foo'}}};
+      sinon.stub(state,
+        'generateState', () => ({
+          error: null,
+          state: currentState}));
+      const dispatch = sinon.stub(state, '_dispatch');
+      state.dispatch();
+      assert.deepEqual(dispatch.args[1], [currentState, 'gui.deploy', []]);
+      assert.deepEqual(
+        dispatch.args[2], [currentState, 'gui.inspector.id', []]);
+    });
+
     it('dispatches registered dispatchers in proper order', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
@@ -841,6 +964,21 @@ describe('State', () => {
       assert.deepEqual(execution, {
         stub5: 1, stub6: 2, stub: 3, stub3: 4, stub4: 5, stub2: 6});
     });
+
+    it('finds and executes parent dispatchers', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial'],
+        location: {href: '/i/inspector/apache/unit/0'}
+      });
+      const stub1 = sinon.stub();
+      state.register([
+        ['*', sinon.stub()],
+        ['gui.inspector', stub1]
+      ]);
+      state.dispatch();
+      assert.equal(stub1.callCount, 1);
+    });
   });
 
   describe('State.changeState()', () => {
@@ -853,19 +991,24 @@ describe('State', () => {
       const pushStub = sinon.stub(state, '_pushState');
       state.dispatch();
       assert.deepEqual(
-        state.appState,
-        {user: 'hatch/staging', gui: {applications: '', inspector: 'ghost' }},
+        state.current, {
+          user: 'hatch/staging',
+          gui: {applications: '', inspector: {id: 'ghost' }}
+        },
         'generateState() did not parse location properly');
-      const dispatchStub = sinon.stub(state, 'dispatch');
+      const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});
       state.changeState({
         gui: {
           applications: 'foo'
         }
       });
-      assert.deepEqual(state._appStateHistory, [
-        {user: 'hatch/staging', gui: {applications: '', inspector: 'ghost' }},
-        {user: 'hatch/staging', gui: {applications: 'foo', inspector: 'ghost' }}
-      ]);
+      assert.deepEqual(state._appStateHistory, [{
+        user: 'hatch/staging',
+        gui: {applications: '', inspector: {id: 'ghost' }}
+      }, {
+        user: 'hatch/staging',
+        gui: {applications: 'foo', inspector: {id: 'ghost' }}
+      }]);
       assert.equal(pushStub.callCount, 1);
       assert.equal(dispatchStub.callCount, 1);
     });
@@ -879,19 +1022,24 @@ describe('State', () => {
       const pushStub = sinon.stub(state, '_pushState');
       state.dispatch();
       assert.deepEqual(
-        state.appState,
-        {user: 'hatch/staging', gui: {applications: '', inspector: 'ghost' }},
+        state.current, {
+          user: 'hatch/staging',
+          gui: {applications: '', inspector: {id: 'ghost' }}
+        },
         'generateState() did not parse location properly');
-      const dispatchStub = sinon.stub(state, 'dispatch');
+      const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});
       state.changeState({
         gui: {
           applications: null
         }
       });
-      assert.deepEqual(state._appStateHistory, [
-        {user: 'hatch/staging', gui: {applications: '', inspector: 'ghost'}},
-        {user: 'hatch/staging', gui: {inspector: 'ghost'}}
-      ]);
+      assert.deepEqual(state._appStateHistory, [{
+        user: 'hatch/staging',
+        gui: {applications: '', inspector: {id: 'ghost'}}
+      }, {
+        user: 'hatch/staging',
+        gui: {inspector: {id: 'ghost'}}
+      }]);
       assert.equal(pushStub.callCount, 1);
       assert.equal(dispatchStub.callCount, 1);
     });
@@ -904,15 +1052,37 @@ describe('State', () => {
       });
       const pushStub = sinon.stub(state, '_pushState');
       state.dispatch();
-      const dispatchStub = sinon.stub(state, 'dispatch');
+      const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});
       state.changeState({
         gui: {
+          inspector: null,
           applications: null
         }
       });
       assert.equal(pushStub.callCount, 1);
       assert.equal(dispatchStub.callCount, 1);
-      assert.deepEqual(dispatchStub.args[0], [['gui.applications'], false]);
+      assert.deepEqual(dispatchStub.args[0],
+        [['gui.inspector', 'gui.applications'], false]);
+    });
+
+    it('calls dispatch with the key paths that were pruned #2', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial'],
+        location: {href: '/i/machines'}
+      });
+      const pushStub = sinon.stub(state, '_pushState');
+      state.dispatch();
+      const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});
+      state.changeState({
+        root: 'store',
+        gui: {
+          machines: null
+        }
+      });
+      assert.equal(pushStub.callCount, 1);
+      assert.equal(dispatchStub.callCount, 1);
+      assert.deepEqual(dispatchStub.args[0], [['gui.machines'], false]);
     });
   });
 
@@ -925,7 +1095,7 @@ describe('State', () => {
         baseURL: 'http://abc.com:123',
         seriesList:  ['precise', 'trusty', 'xenial'],
         location: {href: '/u/hatch/staging'},
-        history: historyStub
+        browserHistory: historyStub
       });
       state.dispatch();
       state._pushState();

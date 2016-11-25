@@ -454,6 +454,7 @@ describe('Endpoints map', function() {
 
 });
 
+
 describe('Endpoints map handlers', function() {
   var app, conn, container, controller, destroyMe, ecs,
       env, factory, juju, utils, Y;

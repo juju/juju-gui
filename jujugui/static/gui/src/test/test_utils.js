@@ -839,7 +839,7 @@ describe('utilities', function() {
       utils._hidePopup = sinon.stub();
       _showUncommittedConfirm = utils._showUncommittedConfirm;
       utils._showUncommittedConfirm = sinon.stub();
-      utils.changeState = sinon.stub();
+      utils.state = {changeState: sinon.stub()};
       utils.set = sinon.stub();
       utils.showConnectingMask = sinon.stub();
       models = [{
@@ -922,7 +922,7 @@ describe('utilities', function() {
       assert.deepEqual(envSet[1], 'ev');
 
       assert.deepEqual(utils.showConnectingMask.callCount, 1);
-      assert.deepEqual(utils.changeState.callCount, 1);
+      assert.deepEqual(utils.state.changeState.callCount, 1);
     });
 
     it('just disconnects if uuid is missing', function() {
@@ -977,7 +977,7 @@ describe('utilities', function() {
         getCurrentChangeSet: sinon.stub().returns({})
       };
       var changeState = sinon.stub();
-      utils.showProfile(ecs, changeState);
+      utils.showProfile(ecs, changeState, 'spinach');
       assert.deepEqual(changeState.callCount, 1);
       assert.deepEqual(utils._showUncommittedConfirm.callCount, 0);
     });
@@ -987,7 +987,7 @@ describe('utilities', function() {
         getCurrentChangeSet: sinon.stub().returns({change: 'one'})
       };
       var changeState = sinon.stub();
-      utils.showProfile(ecs, changeState);
+      utils.showProfile(ecs, changeState, 'spinach');
       assert.deepEqual(changeState.callCount, 0);
       assert.deepEqual(utils._showUncommittedConfirm.callCount, 1);
     });
@@ -998,13 +998,10 @@ describe('utilities', function() {
         getCurrentChangeSet: sinon.stub().returns({change: 'one'})
       };
       var changeState = sinon.stub();
-      utils._showProfile(ecs, changeState, true);
+      utils._showProfile(ecs, changeState, 'spinach', true);
       assert.deepEqual(changeState.callCount, 1);
       assert.deepEqual(changeState.lastCall.args[0], {
-        sectionB: {
-          component: 'profile',
-          metadata: null
-        }
+        profile: 'spinach'
       });
       assert.deepEqual(utils._hidePopup.callCount, 1);
       assert.deepEqual(ecs.clear.callCount, 1);

@@ -273,16 +273,6 @@ YUI.add('juju-view-utils', function(Y) {
       // Re-render this view when the model changes, and after it is loaded,
       // to support "loaded" flags.
       this.after(['*:change', '*:load'], this.render, this);
-    },
-
-    renderable_charm: function(charm_name, db, getModelURL) {
-      var charm = db.charms.getById(charm_name);
-      if (charm) {
-        var result = charm.getAttrs();
-        result.app_url = getModelURL(charm);
-        return result;
-      }
-      return null;
     }
 
   });
@@ -1474,19 +1464,10 @@ YUI.add('juju-view-utils', function(Y) {
     // Show the model connection mask.
     this.showConnectingMask();
     // Reset the state of the GUI ready for displaying the new model.
-    this.changeState({
-      sectionA: {
-        component: null,
-        metadata: null
-      },
-      sectionB: {
-        component: null,
-        metadata: null
-      },
-      sectionC: {
-        component: null,
-        metadata: null
-      }
+    this.state.changeState({
+      root: 'new',
+      profile: null,
+      gui: null
     });
     // Update the model name. The onEnvironmentNameChange in app.js method will
     // update the name correctly accross components.
@@ -1533,17 +1514,18 @@ YUI.add('juju-view-utils', function(Y) {
     @method showProfile
     @param {Object} ecs Reference to the ecs.
     @param {Function} changeState The method for changing the app state.
+    @param {String} username The username of the profile to display.
   */
-  utils.showProfile = function(ecs, changeState) {
+  utils.showProfile = function(ecs, changeState, username) {
     var currentChangeSet = ecs.getCurrentChangeSet();
     // If there are uncommitted changes then show a confirmation popup.
     if (Object.keys(currentChangeSet).length > 0) {
       utils._showUncommittedConfirm(
-        utils._showProfile.bind(this, ecs, changeState, true));
+        utils._showProfile.bind(this, ecs, changeState, username, true));
       return;
     }
     // If there are no uncommitted changes then switch right away.
-    utils._showProfile(ecs, changeState, false);
+    utils._showProfile(ecs, changeState, username, false);
   };
 
   /**
@@ -1553,8 +1535,10 @@ YUI.add('juju-view-utils', function(Y) {
     @method _showProfile
     @param {Object} ecs Reference to the ecs.
     @param {Function} changeState The method for changing the app state.
+    @param {String} username The username of the profile to display.
+    @param {Boolean} clear Whether to clear the ecs.
   */
-  utils._showProfile = function(ecs, changeState, clear=false) {
+  utils._showProfile = function(ecs, changeState, username, clear=false) {
     utils._hidePopup();
     if (clear) {
       // Have to go ahead and clear the ECS otherwise future navigation will
@@ -1562,10 +1546,7 @@ YUI.add('juju-view-utils', function(Y) {
       ecs.clear();
     }
     changeState({
-      sectionB: {
-        component: 'profile',
-        metadata: null
-      }
+      profile: username
     });
   };
 

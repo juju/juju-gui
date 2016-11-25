@@ -26,6 +26,7 @@ YUI.add('user-profile', function() {
       addNotification: React.PropTypes.func.isRequired,
       changeState: React.PropTypes.func.isRequired,
       charmstore: React.PropTypes.object.isRequired,
+      facadesExist: React.PropTypes.bool.isRequired,
       currentModel: React.PropTypes.string,
       destroyModels: React.PropTypes.func.isRequired,
       getAgreements: React.PropTypes.func.isRequired,
@@ -88,6 +89,7 @@ YUI.add('user-profile', function() {
           key='modelList'
           ref='modelList'
           currentModel={props.currentModel}
+          facadesExist={props.facadesExist}
           destroyModels={props.destroyModels}
           listModelsWithInfo={props.listModelsWithInfo}
           switchModel={props.switchModel}

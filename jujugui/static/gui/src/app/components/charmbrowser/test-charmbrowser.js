@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('Charmbrowser', function() {
-  var acl;
+  var acl, appState;
 
   beforeAll(function(done) {
     // Mock these out since we just do shallow renders.
@@ -35,26 +35,16 @@ describe('Charmbrowser', function() {
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    appState = {
+      current: {},
+      changeState: sinon.stub()
+    };
   });
 
   it('displays the search results when the app state calls for it', function() {
     var query = 'django';
-    var appState = {
-      sectionC: {
-        metadata: {
-          activeComponent: 'search-results',
-          search: query,
-          tags: 'ops',
-          sort: '-name',
-          type: 'bundle',
-          series: 'wily',
-          provides: 'http',
-          requires: 'cache',
-          owner: 'charmers'
-        }
-      }};
+    appState.current.search = {text: query};
     var series = {};
-    var changeState = sinon.stub();
     var charmstoreSearch = sinon.stub();
     var makeEntityModel = sinon.spy();
     var utils = {getName: sinon.stub()};
@@ -65,7 +55,6 @@ describe('Charmbrowser', function() {
         apiUrl="http://example.com/"
         apiVersion="v5"
         appState={appState}
-        changeState={changeState}
         charmstoreSearch={charmstoreSearch}
         charmstoreURL="http://1.2.3.4/"
         deployService={sinon.stub()}
@@ -91,18 +80,19 @@ describe('Charmbrowser', function() {
           <div className="charmbrowser"
             ref="charmbrowser">
             <juju.components.SearchResults
-              changeState={changeState}
+              changeState={
+                output.props.children.props.children.props.changeState}
               getName={utils.getName}
               seriesList={series}
               makeEntityModel={makeEntityModel}
               query={query}
-              tags="ops"
-              sort="-name"
-              type="bundle"
-              series="wily"
-              provides="http"
-              requires="cache"
-              owner="charmers"
+              tags={undefined}
+              sort={undefined}
+              type={undefined}
+              series={undefined}
+              provides={undefined}
+              requires={undefined}
+              owner={undefined}
               charmstoreSearch={charmstoreSearch} />
             </div>
         </juju.components.Panel>);
@@ -110,14 +100,7 @@ describe('Charmbrowser', function() {
   });
 
   it('displays the store when the app state calls for it', function() {
-    var appState = {
-      sectionC: {
-        metadata: {
-          activeComponent: 'store'
-        }
-      }};
     var charmstoreSearch = sinon.stub();
-    var changeState = sinon.stub();
     var utils = {getName: sinon.stub()};
     var makeEntityModel = sinon.spy();
     var seriesList = {};
@@ -128,7 +111,6 @@ describe('Charmbrowser', function() {
         apiUrl="http://example.com/"
         apiVersion="v5"
         appState={appState}
-        changeState={changeState}
         charmstoreSearch={charmstoreSearch}
         charmstoreURL="http://1.2.3.4/"
         deployService={sinon.stub()}
@@ -158,7 +140,8 @@ describe('Charmbrowser', function() {
               staticURL='surl'
               apiVersion="v5"
               charmstoreURL="http://1.2.3.4/"
-              changeState={changeState} />
+              changeState={
+                output.props.children.props.children.props.changeState} />
           </div>
         </juju.components.Panel>);
     assert.deepEqual(output, expected);
@@ -167,16 +150,9 @@ describe('Charmbrowser', function() {
   it('displays entity details when the app state calls for it', function() {
     var id = 'foobar';
     var apiUrl = 'http://example.com';
-    var appState = {
-      sectionC: {
-        metadata: {
-          activeComponent: 'entity-details',
-          id: id
-        }
-      }};
+    appState.current.store = id;
     var getEntity = sinon.spy();
     var makeEntityModel = sinon.spy();
-    var changeState = sinon.spy();
     var deployService = sinon.spy();
     var importBundleYAML = sinon.spy();
     var getBundleYAML = sinon.spy();
@@ -195,7 +171,6 @@ describe('Charmbrowser', function() {
         apiUrl={apiUrl}
         apiVersion="v5"
         appState={appState}
-        changeState={changeState}
         charmstoreSearch={sinon.stub()}
         charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
@@ -212,7 +187,7 @@ describe('Charmbrowser', function() {
         series={{}} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
-    assert.deepEqual(output,
+    const expected = (
         <juju.components.Panel
           instanceName="white-box"
           clickAction={instance._close}
@@ -225,7 +200,8 @@ describe('Charmbrowser', function() {
               apiUrl={apiUrl}
               importBundleYAML={importBundleYAML}
               getBundleYAML={getBundleYAML}
-              changeState={changeState}
+              changeState={
+                output.props.children.props.children.props.changeState}
               getEntity={getEntity}
               scrollPosition={0}
               listPlansForCharm={listPlansForCharm}
@@ -240,5 +216,77 @@ describe('Charmbrowser', function() {
               pluralize={utils.pluralize} />
           </div>
         </juju.components.Panel>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('displays entity details when the state has a user path', function() {
+    const apiUrl = 'http://example.com';
+    appState.current.user = 'spinch/koala';
+    const getEntity = sinon.stub();
+    const makeEntityModel = sinon.stub();
+    const deployService = sinon.stub();
+    const importBundleYAML = sinon.stub();
+    const getBundleYAML = sinon.stub();
+    const getFile = sinon.stub();
+    const renderMarkdown = sinon.stub();
+    const getDiagramURL = sinon.stub();
+    const listPlansForCharm = sinon.stub();
+    const addNotification = sinon.stub();
+    const utils = {
+      pluralize: sinon.stub()
+    };
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Charmbrowser
+        acl={acl}
+        addNotification={addNotification}
+        apiUrl={apiUrl}
+        apiVersion="v5"
+        appState={appState}
+        charmstoreSearch={sinon.stub()}
+        charmstoreURL="http://1.2.3.4/"
+        deployService={deployService}
+        displayPlans={true}
+        getBundleYAML={getBundleYAML}
+        getDiagramURL={getDiagramURL}
+        getEntity={getEntity}
+        getFile={getFile}
+        importBundleYAML={importBundleYAML}
+        listPlansForCharm={listPlansForCharm}
+        makeEntityModel={makeEntityModel}
+        utils={utils}
+        renderMarkdown={renderMarkdown}
+        series={{}} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    const expected = (
+        <juju.components.Panel
+          instanceName="white-box"
+          clickAction={instance._close}
+          focus={false}
+          visible={true}>
+          <div className="charmbrowser"
+            ref="charmbrowser">
+            <juju.components.EntityDetails
+              acl={acl}
+              apiUrl={apiUrl}
+              importBundleYAML={importBundleYAML}
+              getBundleYAML={getBundleYAML}
+              changeState={
+                output.props.children.props.children.props.changeState}
+              getEntity={getEntity}
+              scrollPosition={0}
+              listPlansForCharm={listPlansForCharm}
+              makeEntityModel={makeEntityModel}
+              getDiagramURL={getDiagramURL}
+              getFile={getFile}
+              renderMarkdown={renderMarkdown}
+              deployService={deployService}
+              displayPlans={true}
+              id='~spinch/koala'
+              addNotification={addNotification}
+              pluralize={utils.pluralize} />
+          </div>
+        </juju.components.Panel>);
+    assert.deepEqual(output, expected);
   });
 });

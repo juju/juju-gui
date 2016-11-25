@@ -28,6 +28,7 @@ YUI.add('user-profile-model-list', function() {
       addNotification: React.PropTypes.func.isRequired,
       broadcastStatus: React.PropTypes.func,
       currentModel: React.PropTypes.string,
+      facadesExist: React.PropTypes.bool.isRequired,
       destroyModels: React.PropTypes.func.isRequired,
       listModelsWithInfo: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
@@ -52,7 +53,7 @@ YUI.add('user-profile-model-list', function() {
     },
 
     componentWillMount: function() {
-      this._fetchModels();
+      this._fetchModels(this.props.facadesExist);
     },
 
     componentWillUnmount: function() {
@@ -65,8 +66,9 @@ YUI.add('user-profile-model-list', function() {
       const props = this.props;
       const currentUser = props.user && props.user.user;
       const nextUser = nextProps.user && nextProps.user.user;
-      if (nextUser !== currentUser) {
-        this._fetchModels();
+      if (nextUser !== currentUser ||
+        props.facadesExist !== nextProps.facadesExist) {
+        this._fetchModels(nextProps.facadesExist);
       }
     },
 
@@ -74,8 +76,14 @@ YUI.add('user-profile-model-list', function() {
       Makes a request of the controller to fetch the user's availble models.
 
       @method _fetchModels
+      @param {Boolean} facadesExist - Whether the controller is
+        connected or not.
     */
-    _fetchModels:  function() {
+    _fetchModels:  function(facadesExist) {
+      if (!facadesExist) {
+        console.warn('Controller not connected, skipping fetching models.');
+        return;
+      }
       this.props.broadcastStatus('starting');
       // Delay the call until after the state change to prevent race
       // conditions.

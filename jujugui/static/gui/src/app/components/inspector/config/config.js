@@ -131,9 +131,8 @@ YUI.add('inspector-config', function() {
     */
     _showInspectorIndex: function() {
       this.props.changeState({
-        sectionA: {
-          component: 'inspector',
-          metadata: {
+        gui: {
+          inspector: {
             id: this.props.service.get('id'),
             activeComponent: undefined
           }}});
@@ -319,9 +318,8 @@ YUI.add('inspector-config', function() {
           level: 'error'
         });
         props.changeState({
-          sectionB: {
-            component: 'machine',
-            metadata: {}
+          gui: {
+            machines: ''
           }});
       }
     },

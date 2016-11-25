@@ -23,8 +23,7 @@ YUI.add('header-search', function() {
   juju.components.HeaderSearch = React.createClass({
 
     propTypes: {
-      changeState: React.PropTypes.func.isRequired,
-      getAppState: React.PropTypes.func.isRequired
+      appState: React.PropTypes.object.isRequired
     },
 
     /**
@@ -46,20 +45,20 @@ YUI.add('header-search', function() {
       @returns {String} The search query.
     */
     _getSearchQuery: function() {
-      var metadata = this.props.getAppState('current', 'sectionC', 'metadata');
-      return metadata && metadata.search || '';
+      const current = this.props.appState.current;
+      return current.search && current.search.text || '';
     },
 
     /**
-      Based on the active component in sectionC this will return true or false
+      Based on the current state this will return true or false
       if this component is to be in its active state.
 
       @method _activeForComponent
     */
     _activeForComponent: function() {
-      var component = this.props.getAppState(
-        'current', 'sectionC', 'component');
-      return component === 'charmbrowser';
+      const state = this.props.appState.current;
+      return state.root === 'store' ||
+              state.store !== undefined || state.search !== undefined;
     },
 
     /**
@@ -68,7 +67,7 @@ YUI.add('header-search', function() {
       @method componentWillReceiveProps
     */
     componentWillReceiveProps: function() {
-      // Need to check if there is a change to sectionC and if it has been
+      // Need to check if there is a change to the state and if it has been
       // cleared (store/search results have been closed) then we also need
       // to deactivate the search box.
       const query = this._getSearchQuery();
@@ -93,17 +92,10 @@ YUI.add('header-search', function() {
       @returns {String} The collection of class names.
     */
     _generateClasses: function() {
-      var metadata = this.props.getAppState('current', 'sectionC', 'metadata');
-      var classes = {
-        'header-search--active': this.state.active
-      };
-      if (metadata && metadata.activeComponent) {
-        classes['header-search--' + metadata.activeComponent] = true;
-      }
       return classNames(
-        'header-search',
-         classes
-      );
+        'header-search', {
+          'header-search--active': this.state.active
+        });
     },
 
     /**
@@ -114,11 +106,9 @@ YUI.add('header-search', function() {
     */
     _closeClasses: function() {
       return classNames(
-        'header-search__close',
-        {
+        'header-search__close', {
           hidden: !this.state.active
-        }
-      );
+        });
     },
 
     /**
@@ -129,12 +119,13 @@ YUI.add('header-search', function() {
     _handleSearchFocus: function() {
       this._openSearch(true);
       if (!this.state.active && !this.state.query) {
-        this.props.changeState({
-          sectionC: {
-            component: 'charmbrowser',
-            metadata: {
-              activeComponent: 'store'
-            }
+        this.props.appState.changeState({
+          root: 'store',
+          user: null,
+          profile: null,
+          gui: {
+            machines: null,
+            inspector: null
           }
         });
       }
@@ -147,9 +138,7 @@ YUI.add('header-search', function() {
       @param {Boolean} inputOpen Whether the input should be open.
     */
     _openSearch: function(inputOpen) {
-      this.setState({
-        active: true
-      });
+      this.setState({active: true});
       this.refs.searchInput.focus();
     },
 
@@ -179,29 +168,31 @@ YUI.add('header-search', function() {
         this._openSearch(true);
         return;
       }
-      this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'search-results',
-            search: this.state.query
-          }
+      this.props.appState.changeState({
+        root: null,
+        search: {
+          owner: null,
+          provides: null,
+          requires: null,
+          series: null,
+          tags: null,
+          text: this.state.query,
+          type: null
         }
       });
     },
 
     /**
-      Close the header and sectionC when the button is clicked.
+      Close the header and clear the state when the button is clicked.
 
       @method _handleClose
     */
     _handleClose: function() {
       this._closeSearch();
-      this.props.changeState({
-        sectionC: {
-          component: null,
-          metadata: null
-        }
+      this.props.appState.changeState({
+        root: null,
+        store: null,
+        search: null
       });
     },
 
@@ -223,13 +214,8 @@ YUI.add('header-search', function() {
     */
     _handleStoreClick: function(e) {
       this.setState({query: ''});
-      this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'store'
-          }
-        }
+      this.props.appState.changeState({
+        root: 'store'
       });
     },
 

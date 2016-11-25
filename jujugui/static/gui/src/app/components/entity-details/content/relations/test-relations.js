@@ -97,14 +97,11 @@ describe('EntityContentRelations', function() {
     testUtils.Simulate.click(item);
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'search-results',
-          search: null,
-          provides: 'http'
-        }
-      }
+      search: {
+        text: '',
+        provides: 'http'
+      },
+      store: null
     });
   });
 });

@@ -4,8 +4,9 @@ PYTEST := bin/py.test
 GUISRC := jujugui/static/gui/src
 GUIBUILD := jujugui/static/gui/build
 SVG_SPRITE_DIR := $(GUIBUILD)/app/assets
-SVG_SPRITE_FILE := $(SVG_SPRITE_FILE)/stack/svg/sprite.css.svg
+SVG_SPRITE_FILE := $(SVG_SPRITE_DIR)/stack/svg/sprite.css.svg
 SVG_SPRITE_SOURCE_DIR := $(GUISRC)/app/assets/svgs
+SVG_FILES := $(shell find $(SVG_SPRITE_SOURCE_DIR) -name "*.svg")
 STATIC_CSS := $(GUIBUILD)/app/assets/css
 STATIC_IMAGES := $(GUIBUILD)/app/assets/images
 FAVICON := $(GUIBUILD)/app/favicon.ico
@@ -128,17 +129,13 @@ $(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(BUILT_RAWJSFILES) $(MIN_JS_FILES) $(
 	bin/python scripts/generate_modules.py -n YUI_MODULES -s $(GUIBUILD)/app -o $(MODULES) -x "(-min.js)|(\/yui\/)|(javascripts\/d3\.js)"
 	$(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments $(MODULES) -o $(MODULESMIN)
 
-# fast-babel is simply passed an input and output folder which dramatically
-# speeds up the build time because it doesn't need to spin up a new instance
-# for every file.
-.PHONY: fast-babel
-fast-babel: $(NODE_MODULES)
-	FILE_LIST="$(RAWJSFILES)" ./scripts/transpile.js
+# fast-babel will be passed a list of all files which have been
+# changed since the last time this target has run.
+fast-babel: $(RAWJSFILES)
+	FILE_LIST="$?" ./scripts/transpile.js
+	@touch $@
 
-$(GUIBUILD)/app/%-min.js: $(GUIBUILD)/app/%.js $(NODE_MODULES)
-	FILE_LIST="$(GUISRC)/app/$*.js" ./scripts/transpile.js
-
-$(GUIBUILD)/app/%.js: $(GUISRC)/app/%.js $(NODE_MODULES)
+$(GUIBUILD)/app/%.js $(GUIBUILD)/app/%-min.js: $(GUISRC)/app/%.js $(NODE_MODULES)
 	FILE_LIST="$(GUISRC)/app/$*.js" ./scripts/transpile.js
 
 $(BUILT_JS_ASSETS): $(NODE_MODULES)
@@ -190,7 +187,7 @@ $(CSS_FILE): $(PYRAMID) $(SCSS_FILES)
 .phony: css
 css: $(CSS_FILE) $(STATIC_CSS_FILES)
 
-$(SVG_SPRITE_FILE): $(NODE_MODULES)
+$(SVG_SPRITE_FILE): $(SVG_FILES) $(NODE_MODULES)
 	$(NODE_MODULES)/.bin/svg-sprite --dest=$(SVG_SPRITE_DIR) --stack $(SVG_SPRITE_SOURCE_DIR)/*.svg
 
 $(STATIC_IMAGES):
@@ -363,6 +360,7 @@ clean-pyc:
 .PHONY: clean-gui
 clean-gui:
 	- rm -rf jujugui/static/gui/build
+	- rm -rf fast-babel
 
 .PHONY: clean-all
 clean-all: clean-venv clean-pyc clean-gui clean-dist clean-uitest

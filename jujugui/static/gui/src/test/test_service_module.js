@@ -211,9 +211,6 @@ describe.skip('service module events', function() {
         update_annotations: function() {},
         get: function() {}
       },
-      nsRouter: {
-        url: function() { return; }
-      },
       charmstore: fakeStore
     });
     view.render();
@@ -241,7 +238,7 @@ describe.skip('service module events', function() {
   it('hides onboarding for existing services', function(done) {
     topo.on('changeState', function(e) {
       var state = e.details[0];
-      assert.equal(true, state.sectionA.metadata.flash.hideHelp);
+      assert.equal(true, state.gui.inspector.flash.hideHelp);
       done();
     });
     var menuStub = utils.makeStubMethod(serviceModule, 'showServiceMenu');
@@ -756,9 +753,8 @@ describe.skip('service module events', function() {
     assert.equal(fireStub.callCount, 1);
     assert.equal(fireStub.lastCall.args[0], 'changeState');
     assert.deepEqual(fireStub.lastCall.args[1], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+      gui: {
+        inspector: {
           id: null,
           localType: 'update',
           flash: {
@@ -783,9 +779,8 @@ describe.skip('service module events', function() {
     assert.equal(fireStub.callCount, 1);
     assert.equal(fireStub.lastCall.args[0], 'changeState');
     assert.deepEqual(fireStub.lastCall.args[1], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+      gui: {
+        inspector: {
           id: null,
           localType: 'new',
           flash: {

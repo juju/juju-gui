@@ -323,9 +323,10 @@ describe('AddedServicesListItem', function() {
     assert.equal(panToService.callCount, 1);
     assert.equal(changeStub.callCount, 1);
     assert.deepEqual(changeStub.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: { id: 'serviceId' }
+      gui: {
+        inspector: {
+          id: 'serviceId'
+        }
       }
     });
   });
