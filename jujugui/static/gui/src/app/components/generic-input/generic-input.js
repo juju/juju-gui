@@ -66,7 +66,8 @@ YUI.add('generic-input', function() {
           var error = validator.error;
           errors.push(
             <li className="generic-input__error"
-              key={error}>
+              key={error}
+              role="alert">
               {error}
             </li>);
         }
@@ -158,6 +159,7 @@ YUI.add('generic-input', function() {
     */
     _generateInput: function(id) {
       const disabled = this.props.disabled;
+      const errors = !!this.state.errors;
       if (this.props.multiLine) {
         const classes = classNames(
           'generic-input__multiline-field',
@@ -171,6 +173,7 @@ YUI.add('generic-input', function() {
             onChange={this.validate}
             onFocus={this._focusHandler}
             onBlur={this._blurHandler}
+            aria-invalid={errors}
             ref="field">
           </div>);
       }
@@ -184,6 +187,7 @@ YUI.add('generic-input', function() {
           required={this.props.required}
           onFocus={this._focusHandler}
           onBlur={this._blurHandler}
+          aria-invalid={errors}
           ref="field"
           type={this.props.type} />);
     },
@@ -192,7 +196,7 @@ YUI.add('generic-input', function() {
       var {labelElement, id} = this._generateLabel();
       var classes = classNames(
         'generic-input', {
-          error: !!this.state.errors
+          'has-error': !!this.state.errors
         }
       );
       return (
