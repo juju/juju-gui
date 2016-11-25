@@ -60,7 +60,6 @@ describe('GenericInput', function() {
           id="Region"
           placeholder="us-central-1"
           required={true}
-          onChange={instance.validate}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
           ref="field"
@@ -137,7 +136,6 @@ describe('GenericInput', function() {
           id="Region"
           placeholder="us-central-1"
           required={true}
-          onChange={instance.validate}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
           ref="field"
@@ -228,7 +226,7 @@ describe('GenericInput', function() {
     assert.isNull(output.props.children[2]);
   });
 
-  it('can validate the form when typing', () => {
+  it('can validate the input when leaving', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.GenericInput
         disabled={false}
@@ -243,7 +241,7 @@ describe('GenericInput', function() {
     const instance = renderer.getMountedInstance();
     instance.refs = {field: {value: ''}};
     let output = renderer.getRenderOutput();
-    output.props.children[1].props.onChange();
+    output.props.children[1].props.onBlur();
     output = renderer.getRenderOutput();
     const expected = (
       <ul className="generic-input__errors">
@@ -280,7 +278,6 @@ describe('GenericInput', function() {
           id={undefined}
           placeholder="us-central-1"
           required={true}
-          onChange={instance.validate}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
           ref="field"
@@ -305,7 +302,7 @@ describe('GenericInput', function() {
     const instance = renderer.getMountedInstance();
     instance.refs = {field: {value: ''}};
     let output = renderer.getRenderOutput();
-    output.props.children[1].props.onChange();
+    output.props.children[1].props.onBlur();
     output = renderer.getRenderOutput();
     assert.deepEqual(output.props.className, 'generic-input error');
   });

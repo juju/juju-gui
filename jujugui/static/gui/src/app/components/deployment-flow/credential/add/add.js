@@ -277,7 +277,7 @@ YUI.add('deployment-credential-add', function() {
                   regex: /\S+/,
                   error: 'This field is required.'
                 }, {
-                  regex: /^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/,
+                  regex: /^([a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?)?$/,
                   error: 'This field must only contain upper and lowercase ' +
                     'letters, numbers, and hyphens. It must not start or ' +
                     'end with a hyphen.'
