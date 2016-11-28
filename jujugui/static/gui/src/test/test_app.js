@@ -209,7 +209,7 @@ describe('App', function() {
         })
       }, this);
       const place = sinon.stub(app, '_autoPlaceUnits');
-      const commit = sinon.stub()
+      const commit = sinon.stub();
       app.env.get('ecs').commit = commit;
       app.fire('autoplaceAndCommitAll');
       assert.equal(place.callCount, 1);
