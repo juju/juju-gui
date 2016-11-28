@@ -599,7 +599,7 @@ describe('App', function() {
       });
     });
 
-    beforeEach(function(done) {
+    beforeEach(function() {
       conn = new testUtils.SocketStub();
       conn2 = new testUtils.SocketStub();
       ecs = new juju.EnvironmentChangeSet();
@@ -638,7 +638,6 @@ describe('App', function() {
       });
       legacyApp.navigate = function() { return true; };
       destroyMe = [ecs, controller];
-      done();
     });
 
     afterEach(function(done) {

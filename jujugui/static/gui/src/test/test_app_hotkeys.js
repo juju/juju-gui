@@ -19,41 +19,39 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('application hotkeys', function() {
-  let app, container, controllerAPI, env, windowNode, Y;
+  let app, container, env, juju, jujuConfig, utils, windowNode, Y;
   const requirements = ['juju-gui', 'juju-tests-utils', 'node-event-simulate'];
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
-      controllerAPI = {
-        after: () => {},
-        getBundleChanges: () => {},
-        set: () => {},
-        setAttrs: () => {},
-        setCredentials: () => {}
-      };
-      env = {
-        after: () => {},
-        get: () => {},
-        on: () => {},
-        once: () => {},
-        set: () => {},
-        setCredentials: () => {},
-        getCredentials: () => {
-          return {areAvailable: false};
-        }
-      };
+      utils = Y.namespace('juju-tests.utils');
+      juju = Y.namespace('juju');
       windowNode = Y.one(window);
       done();
     });
   });
 
   beforeEach(function() {
-    container = Y.namespace('juju-tests.utils').makeContainer(this);
-    container.appendChild(Y.Node.create('<div/>'))
-      .set('id', 'shortcut-help')
-      .setStyle('display', 'none');
+    jujuConfig = window.juju_config;
+    window.juju_config = {
+      charmstoreURL: 'http://1.2.3.4/',
+      plansURL: 'http://plans.example.com/',
+      termsURL: 'http://terms.example.com/'
+    };
+    container = utils.makeAppContainer(Y);
+    container.one('#shortcut-help').setStyle('display', 'none');
+    env = new juju.environments.GoEnvironment({
+      conn: new utils.SocketStub(),
+      ecs: new juju.EnvironmentChangeSet(),
+      password: 'password',
+      user: 'user'
+    });
+    env.connect();
     app = new Y.juju.App({
-      controllerAPI: controllerAPI,
+      consoleEnabled: true,
+      controllerAPI: new juju.ControllerAPI({
+        conn: new utils.SocketStub()
+      }),
       env: env,
       container: container,
       viewContainer: container,
@@ -66,6 +64,7 @@ describe('application hotkeys', function() {
   });
 
   afterEach(function(done) {
+    window.juju_config = jujuConfig;
     app.after('destroy', () => done());
     container.remove(true);
     app.destroy({remove: true});
