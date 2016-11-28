@@ -125,7 +125,6 @@ YUI.add('charmbrowser-component', function() {
     */
     _generateContent: function() {
       let activeChild;
-      const metadata = {};
       const utils = this.props.utils;
       const currentState = this.props.appState.current;
       const changeState = this.props.appState.changeState.bind(
