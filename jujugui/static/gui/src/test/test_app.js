@@ -200,33 +200,6 @@ describe('App', function() {
       container.getAttribute('class').should.include('container');
     });
 
-    it('attaches a handler for autoplaceAndCommitAll event', function(done) {
-      constructAppInstance({
-        jujuCoreVersion: '2.1.1-trusty-amd64',
-        env: new juju.environments.GoEnvironment({
-          conn: new testUtils.SocketStub(),
-          ecs: new juju.EnvironmentChangeSet()
-        })
-      }, this);
-      app._autoplaceAndCommitAll = function() {
-        // This test will hang if this method is not called from the following
-        // event being fired.
-        done();
-      };
-      app.after('ready', function() {
-        app.fire('autoplaceAndCommitAll');
-      });
-    });
-
-    it('autoplaceAndCommitAll places and deploys', function() {
-      constructAppInstance({
-        jujuCoreVersion: '1.21.1.1-trusty-amd64'
-      }, this);
-      app._autoPlaceUnits = sinon.stub();
-      app._autoplaceAndCommitAll();
-      assert.equal(app._autoPlaceUnits.callCount, 1);
-    });
-
     describe('MAAS support', function() {
       var env, maasNode;
 
