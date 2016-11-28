@@ -1100,7 +1100,7 @@ describe('State', () => {
       state.dispatch();
       state._pushState();
       assert.deepEqual(historyStub.pushState.args[0], [
-        {}, 'Juju GUI', '/u/hatch/staging']);
+        {}, 'Juju GUI', 'http://abc.com:123/u/hatch/staging']);
     });
 
   });
@@ -1143,10 +1143,7 @@ describe('State', () => {
         });
         test.test.forEach(test => {
           state._appStateHistory.push(test.state);
-          assert.equal(
-            state.generatePath(),
-            // Remove baseURL as generatePath method only generates the path.
-            test.path.replace(baseURL, ''));
+          assert.equal(state.generatePath(), test.path);
         });
       });
     });
