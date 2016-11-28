@@ -42,10 +42,16 @@ const State = class State {
       @property baseURL
       @type {String}
     */
-    if (!cfg.baseURL) {
+    let baseURL = cfg.baseURL;
+    if (!baseURL) {
       throw new Error('baseURL must be provided.');
     }
-    this.baseURL = cfg.baseURL;
+    // If the baseURL doesn't have a trailing slash then add one.
+    const baseURLLength = baseURL.length;
+    if (baseURL[baseURLLength-1] !== '/') {
+      baseURL += '/';
+    }
+    this.baseURL = baseURL;
 
     if (!cfg.seriesList || !Array.isArray(cfg.seriesList)) {
       throw new Error('Series list must be an Array.');
@@ -140,7 +146,7 @@ const State = class State {
     @type {Object}
   */
   get current() {
-    return this._appStateHistory[this._appStateHistory.length-1];
+    return this._appStateHistory[this._appStateHistory.length-1] || {};
   }
 
   /**
@@ -279,7 +285,7 @@ const State = class State {
       return;
     }
     const iterator = dispatchers[Symbol.iterator]();
-    function next() {
+    const next = () => {
       const data = iterator.next();
       if (!data.done) {
         const index = cleanup ? 1 : 0;
@@ -290,7 +296,7 @@ const State = class State {
           dispatcher(state, next);
         }
       }
-    }
+    };
     next();
     return matchingDispatchers.key;
   }
@@ -529,7 +535,7 @@ const State = class State {
         }
       });
     }
-    return '/' + path.join('/');
+    return `${this.baseURL}${path.join('/')}`;
   }
 
   /**

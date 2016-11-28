@@ -1464,11 +1464,14 @@ YUI.add('juju-view-utils', function(Y) {
     // Show the model connection mask.
     this.showConnectingMask();
     // Reset the state of the GUI ready for displaying the new model.
-    this.state.changeState({
-      root: 'new',
+    let newState = {
       profile: null,
       gui: null
-    });
+    };
+    if (!uuid || !name) {
+      newState.root = 'new';
+    }
+    this.state.changeState(newState);
     // Update the model name. The onEnvironmentNameChange in app.js method will
     // update the name correctly accross components.
     // Make sure it is done after the switchEnv.

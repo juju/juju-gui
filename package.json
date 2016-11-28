@@ -9,9 +9,9 @@
     "url": "https://github.com/juju/juju-gui.git"
   },
   "dependencies": {
-    "babel-cli": "^6.16.0",
+    "babel-cli": "^6.18.0",
     "babel-plugin-transform-react-jsx": "^6.8.0",
-    "babel-preset-babili": "0.0.5",
+    "babel-preset-babili": "0.0.9",
     "classnames": "^2.2.5",
     "clipboard": "^1.5.12",
     "cloud-vanilla-theme": "0.0.24",

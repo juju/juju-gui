@@ -256,7 +256,7 @@ $(PYRAMID): $(PY) $(CACHE) requirements.txt build-requirements.txt
 	@touch $(PYRAMID)
 
 .PHONY: deps
-deps: $(PYRAMID)
+deps: $(PYRAMID) $(NODE_MODULES)
 
 # Use the pytest binary as our indicator that the test dependencies are installed.
 $(PYTEST): $(PY) $(CACHE) test-requirements.txt
