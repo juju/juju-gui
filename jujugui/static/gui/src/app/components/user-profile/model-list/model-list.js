@@ -28,8 +28,8 @@ YUI.add('user-profile-model-list', function() {
       addNotification: React.PropTypes.func.isRequired,
       broadcastStatus: React.PropTypes.func,
       currentModel: React.PropTypes.string,
-      facadesExist: React.PropTypes.bool.isRequired,
       destroyModels: React.PropTypes.func.isRequired,
+      facadesExist: React.PropTypes.bool.isRequired,
       listModelsWithInfo: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
       user: React.PropTypes.object
