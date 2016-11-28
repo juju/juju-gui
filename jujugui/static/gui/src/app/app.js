@@ -427,9 +427,13 @@ YUI.add('juju-gui', function(Y) {
       });
 
       let environments = juju.environments;
-
-      cfg.baseUrl = window.location.origin;
-      this.state = this._setupState(cfg.baseUrl);
+      // If there is no protocol in the baseURL then prefix the origin when
+      // creating state.
+      let baseURL = cfg.baseUrl;
+      if (baseURL.indexOf('://') < 0) {
+        baseURL = `${window.location.origin}${baseURL}`;
+      }
+      this.state = this._setupState(baseURL);
       // Create an environment facade to interact with.
       // Allow "env" as an attribute/option to ease testing.
       var env = this.get('env');
