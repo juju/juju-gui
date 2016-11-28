@@ -615,7 +615,7 @@ describe('App', function() {
 
   describe('Application authentication', function() {
     var app, conn, conn2, controller, destroyMe, ecs, env, juju, legacyApp,
-        legacyEnv, Y;
+        legacyEnv, legacyConn, Y;
     var requirements = [
       'juju-gui', 'juju-tests-utils', 'juju-views', 'environment-change-set'];
 
@@ -628,6 +628,7 @@ describe('App', function() {
 
     beforeEach(function() {
       conn = new testUtils.SocketStub();
+      legacyConn = new testUtils.SocketStub();
       conn2 = new testUtils.SocketStub();
       ecs = new juju.EnvironmentChangeSet();
       env = new juju.environments.GoEnvironment({
@@ -637,7 +638,7 @@ describe('App', function() {
         password: 'password'
       });
       legacyEnv = new juju.environments.GoLegacyEnvironment({
-        conn: conn,
+        conn: legacyConn,
         ecs: ecs,
         user: 'user',
         password: 'password'
@@ -717,8 +718,8 @@ describe('App', function() {
       legacyApp.location = {search: '?authtoken=demoToken'};
       legacyEnv.setCredentials(null);
       legacyEnv.connect();
-      assert.equal(conn.messages.length, 1);
-      assert.deepEqual(conn.last_message(), {
+      assert.equal(legacyConn.messages.length, 1);
+      assert.deepEqual(legacyConn.last_message(), {
         RequestId: 1,
         Type: 'GUIToken',
         Version: 0,
@@ -732,8 +733,8 @@ describe('App', function() {
       legacyApp.location = {search: '?authtoken=demoToken&authtoken=discarded'};
       legacyEnv.setCredentials(null);
       legacyEnv.connect();
-      assert.equal(conn.messages.length, 1);
-      assert.deepEqual(conn.last_message(), {
+      assert.equal(legacyConn.messages.length, 1);
+      assert.deepEqual(legacyConn.last_message(), {
         RequestId: 1,
         Type: 'GUIToken',
         Version: 0,
@@ -747,8 +748,8 @@ describe('App', function() {
       legacyApp.location = {search: '?authtoken=demoToken'};
       legacyEnv.setCredentials({user: 'user', password: 'password'});
       legacyEnv.connect();
-      assert.equal(1, conn.messages.length);
-      var message = conn.last_message();
+      assert.equal(1, legacyConn.messages.length);
+      var message = legacyConn.last_message();
       assert.equal('Admin', message.Type);
       assert.equal('Login', message.Request);
     });
@@ -872,45 +873,36 @@ describe('App', function() {
         Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
     });
 
-    it('tries to log in on first connection', function(done) {
-      // This is the case when credential are stashed.
-      app.after('ready', function() {
-        env.connect();
-        assert.equal(1, conn.messages.length);
-        assertIsLogin(conn.last_message());
-        done();
-      });
-    });
-
-    it('tries to re-login on disconnections', function(done) {
+    it('tries to log in on first connection', function() {
       // This is the case when credential are stashed.
       env.connect();
-      app.after('ready', function() {
-        // Disconnect and reconnect the WebSocket.
-        conn.transient_close();
-        conn.open();
-        assert.equal(1, conn.messages.length, 'no login messages sent');
-        assertIsLogin(conn.last_message());
-        done();
-      });
+      assert.equal(1, conn.messages.length);
+      assertIsLogin(conn.last_message());
     });
 
-    it('tries to re-login with macaroons on disconnections', function(done) {
+    it('tries to re-login on disconnections', function() {
+      // This is the case when credential are stashed.
+      env.connect();
+      // Disconnect and reconnect the WebSocket.
+      conn.transient_close();
+      conn.open();
+      assert.equal(1, conn.messages.length, 'no login messages sent');
+      assertIsLogin(conn.last_message());
+    });
+
+    it('tries to re-login with macaroons on disconnections', function() {
       sessionStorage.clear();
       env.setAttrs({user: null, password: null, jujuCoreVersion: '2.0.0'});
       env.connect();
-      app.after('ready', function() {
-        env.setCredentials({macaroons: ['macaroon']});
-        // Disconnect and reconnect the WebSocket.
-        conn.transient_close();
-        conn.open();
-        assert.equal(1, conn.messages.length, 'no login messages sent');
-        var msg = conn.last_message();
-        assert.strictEqual(msg.type, 'Admin');
-        assert.strictEqual(msg.request, 'Login');
-        assert.deepEqual(msg.params, {macaroons: [['macaroon']]});
-        done();
-      });
+      env.setCredentials({macaroons: ['macaroon']});
+      // Disconnect and reconnect the WebSocket.
+      conn.transient_close();
+      conn.open();
+      assert.equal(1, conn.messages.length, 'no login messages sent');
+      var msg = conn.last_message();
+      assert.strictEqual(msg.type, 'Admin');
+      assert.strictEqual(msg.request, 'Login');
+      assert.deepEqual(msg.params, {macaroons: [['macaroon']]});
     });
 
     it('should allow closing the connection', function(done) {
