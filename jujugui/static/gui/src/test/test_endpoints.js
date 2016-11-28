@@ -22,8 +22,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 // the addition of puppet subordinate relations.
 
 describe('Relation endpoints logic', function() {
-  var Y, container, juju, utils, db, app, models, sample_endpoints, sample_env,
-      env, ecs;
+  var Y, container, juju, jujuConfig, utils, db, app, models, sample_endpoints,
+      env, ecs, sample_env;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['array-extras',
@@ -48,10 +48,21 @@ describe('Relation endpoints logic', function() {
   });
 
   beforeEach(function() {
+    jujuConfig = window.juju_config;
+    window.juju_config = {
+      charmstoreURL: 'http://1.2.3.4/',
+      plansURL: 'http://plans.example.com/',
+      termsURL: 'http://terms.example.com/'
+    };
     container = utils.makeAppContainer(Y);
     var conn = new utils.SocketStub();
     ecs = new juju.EnvironmentChangeSet();
-    env = new juju.environments.GoEnvironment({conn: conn, ecs: ecs});
+    env = new juju.environments.GoEnvironment({
+      conn: conn,
+      ecs: ecs,
+      password: 'password',
+      user: 'user'
+    });
     env.connect();
     app = new Y.juju.App({
       controllerAPI: new juju.ControllerAPI({
@@ -69,6 +80,7 @@ describe('Relation endpoints logic', function() {
   });
 
   afterEach(function(done) {
+    window.juju_config = jujuConfig;
     env.close(() => {
       app.destroy();
       container.remove(true);
@@ -457,7 +469,7 @@ describe('Endpoints map', function() {
 
 describe('Endpoints map handlers', function() {
   var app, conn, container, controller, destroyMe, ecs,
-      env, factory, juju, utils, Y;
+      env, factory, juju, jujuConfig, utils, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-gui',
@@ -476,6 +488,12 @@ describe('Endpoints map handlers', function() {
   });
 
   beforeEach(function() {
+    jujuConfig = window.juju_config;
+    window.juju_config = {
+      charmstoreURL: 'http://1.2.3.4/',
+      plansURL: 'http://plans.example.com/',
+      termsURL: 'http://terms.example.com/'
+    };
     destroyMe = [];
     container = utils.makeAppContainer(Y);
     conn = new utils.SocketStub();
@@ -514,6 +532,7 @@ describe('Endpoints map handlers', function() {
   });
 
   afterEach(function(done) {
+    window.juju_config = jujuConfig;
     env.close(() => {
       app.destroy();
       destroyMe.forEach(thing => {
@@ -672,7 +691,8 @@ describe('Endpoints map handlers', function() {
 
 
 describe('Application config handlers', function() {
-  var Y, container, juju, utils, app, conn, env, controller, destroyMe;
+  var Y, container, juju, jujuConfig, utils, app, conn, env, controller,
+      destroyMe;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-gui',
@@ -691,6 +711,12 @@ describe('Application config handlers', function() {
   });
 
   beforeEach(function() {
+    jujuConfig = window.juju_config;
+    window.juju_config = {
+      charmstoreURL: 'http://1.2.3.4/',
+      plansURL: 'http://plans.example.com/',
+      termsURL: 'http://terms.example.com/'
+    };
     destroyMe = [];
     container = utils.makeAppContainer(Y);
     conn = new utils.SocketStub();
@@ -719,6 +745,7 @@ describe('Application config handlers', function() {
   });
 
   afterEach(function(done) {
+    window.juju_config = jujuConfig;
     env.close(() => {
       app.destroy();
       destroyMe.forEach(thing => {

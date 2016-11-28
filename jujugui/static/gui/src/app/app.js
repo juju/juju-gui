@@ -1846,7 +1846,7 @@ YUI.add('juju-gui', function(Y) {
         var charmstoreURL = '';
         var existingMacaroons, existingCookie, existingDischargeToken;
         if (!jujuConfig || !jujuConfig.charmstoreURL) {
-          console.error('no juju config for charmstoreURL availble');
+          console.error('no juju config for charmstoreURL available');
         } else {
           charmstoreURL = views.utils.ensureTrailingSlash(
             jujuConfig.charmstoreURL);
