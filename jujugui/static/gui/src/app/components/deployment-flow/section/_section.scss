@@ -1,13 +1,18 @@
 .deployment-section {
-  position: relative;
+  background-color: $light-grey;
+  display: none;
   margin-bottom: 40px;
   padding: 20px;
-  background-color: $light-grey;
+  position: relative;
 
   &--completed {
     .deployment-section__title-checkmark {
       fill: $success;
     }
+  }
+
+  &--active {
+    display: block;
   }
 
   &__title {
@@ -40,16 +45,5 @@
     display: inline-block;
     margin-right: 40px;
     vertical-align: middle;
-  }
-
-  &__mask {
-    position: absolute;
-    // The mask must be above the children:
-    z-index: 1;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: rgba(255, 255, 255, .8);
   }
 }
