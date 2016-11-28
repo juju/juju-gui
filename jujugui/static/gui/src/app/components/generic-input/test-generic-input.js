@@ -62,6 +62,7 @@ describe('GenericInput', function() {
           required={true}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
+          aria-invalid={false}
           ref="field"
           type="text" />
         {null}
@@ -101,6 +102,7 @@ describe('GenericInput', function() {
           onChange={instance.validate}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
+          aria-invalid={false}
           ref="field">
         </div>
         {null}
@@ -138,6 +140,7 @@ describe('GenericInput', function() {
           required={true}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
+          aria-invalid={false}
           ref="field"
           type="password" />
         {null}
@@ -202,6 +205,7 @@ describe('GenericInput', function() {
     const expected = (
       <ul className="generic-input__errors">
         {[<li className="generic-input__error"
+          role="alert"
           key="This field is required.">
           This field is required.
         </li>]}
@@ -246,6 +250,7 @@ describe('GenericInput', function() {
     const expected = (
       <ul className="generic-input__errors">
         {[<li className="generic-input__error"
+          role="alert"
           key="This field is required.">
           This field is required.
         </li>]}
@@ -280,6 +285,7 @@ describe('GenericInput', function() {
           required={true}
           onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
+          aria-invalid={false}
           ref="field"
           type="text" />
         {null}
@@ -304,7 +310,7 @@ describe('GenericInput', function() {
     let output = renderer.getRenderOutput();
     output.props.children[1].props.onBlur();
     output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.className, 'generic-input error');
+    assert.deepEqual(output.props.className, 'generic-input has-error');
   });
 
   it('can set the focus on the field', () => {
