@@ -869,6 +869,15 @@ YUI.add('juju-view-utils', function(Y) {
     @param {String} entityId The id of the charm or bundle to deploy.
   */
   utils.deployTargetDispatcher = function(entityId) {
+    if (this.deployTargetcalled) {
+      // XXX Jeff - Because of a bug in state this route gets dispatched twice.
+      // This isn't worth fixing right now as it's going to be removed and
+      // replaced with a new state system shortly. When this is switched to the
+      // new state delete this singleton hack.
+      return;
+    }
+    this.deployTargetcalled = true;
+
     var charmstore = this.get('charmstore');
     /**
       Handles parsing and displaying the failure notification returned from
@@ -895,42 +904,30 @@ YUI.add('juju-view-utils', function(Y) {
     // start, for charmers bundles, or after the username, for namespaced
     // bundles. ex) bundle/swift & ~jorge/bundle/swift
     if (entityId.indexOf('bundle/') > -1) {
-      charmstore.getBundleYAML(entityId, function(error, bundleYAML) {
+      charmstore.getBundleYAML(entityId, (error, bundleYAML) => {
         if (error) {
           failureNotification(error);
         } else {
           this.bundleImporter.importBundleYAML(bundleYAML);
         }
-      }.bind(this));
+      });
     } else {
       // If it's not a bundle then it's a charm.
-      charmstore.getEntity(entityId.replace('cs:', ''), function(error, charm) {
+      charmstore.getEntity(entityId.replace('cs:', ''), (error, charm) => {
         if (error) {
           failureNotification(error);
         } else {
           charm = charm[0];
-          var config = {},
+          let config = {},
               options = charm.get ? charm.get('options') : charm.options;
-          var series = charm.series;
-          // If series is an array then pick the first one. This will be the
-          // case if it is a multi-series charm and we're picking the default
-          // and preferred series.
-          var activeSeries = Array.isArray(series) ? series[0] : series;
           Object.keys(options).forEach(function(key) {
             config[key] = options[key]['default'];
           });
           // We call the env deploy method directly because we don't want
           // the ghost inspector to open.
-          this.env.deploy({
-            charmURL: charm.get ? charm.get('id') : charm.id,
-            applicationName: charm.get ? charm.get('name') : charm.name,
-            series: activeSeries,
-            config: config,
-            numUnits: 1
-          });
-          this.fire('autoplaceAndCommitAll');
+          this.deployService(new Y.juju.models.Charm(charm));
         }
-      }.bind(this));
+      });
     }
     // Because deploy-target is an action and not a state we need to clear
     // it out of the state as soon as we are done with it so that we can

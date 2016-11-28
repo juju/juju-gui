@@ -670,7 +670,6 @@ YUI.add('juju-gui', function(Y) {
           this.env.connect();
         }
         this.dispatch();
-        this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
       }, this);
     },
 
@@ -1880,17 +1879,6 @@ YUI.add('juju-gui', function(Y) {
         return 'yaml';
       }
       return '';
-    },
-
-    /**
-      When the user provides a charm id in the deploy-target query param we want
-      to auto deploy that charm.
-
-      @method _autoplaceAndCommitAll
-    */
-    _autoplaceAndCommitAll: function() {
-      this._autoPlaceUnits();
-      this.env.get('ecs').commit(this.env);
     },
 
     /**
