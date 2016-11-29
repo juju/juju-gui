@@ -116,12 +116,7 @@ YUI.add('scale-service', function() {
         };
       } else {
         var constraints = this.state.constraints;
-        this.props.createMachinesPlaceUnits(numUnits, {
-          'cpu-power': constraints.cpu,
-          'cpu-cores': constraints.cores,
-          'mem': constraints.mem,
-          'root-disk': constraints.disk
-        });
+        this.props.createMachinesPlaceUnits(numUnits, constraints);
       }
       this.props.changeState(appState);
     },

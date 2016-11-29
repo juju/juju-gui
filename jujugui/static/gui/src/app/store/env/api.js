@@ -184,7 +184,7 @@ YUI.add('juju-env-api', function(Y) {
       @type {Array}
     */
     genericConstraints: [
-      'cpu-power', 'cpu-cores', 'mem', 'arch', 'tags', 'root-disk'],
+      'cpu-power', 'cores', 'cpu-cores', 'mem', 'arch', 'tags', 'root-disk'],
 
     /**
       A list of the constraints that need to be integers. We require
@@ -194,7 +194,7 @@ YUI.add('juju-env-api', function(Y) {
       @property integerConstraints
       @type {Array}
     */
-    integerConstraints: ['cpu-power', 'cpu-cores', 'mem', 'root-disk'],
+    integerConstraints: ['cpu-power', 'cores', 'cpu-cores', 'mem', 'root-disk'],
 
     /**
       A list of valid Ubuntu series.
@@ -441,12 +441,31 @@ YUI.add('juju-env-api', function(Y) {
       var result = Object.create(null);
       Object.keys(constraints).forEach(function(key) {
         var value;
+        const constraint = constraints[key];
         if (this.integerConstraints.indexOf(key) !== -1) {
           // Some of the constraints have to be integers.
-          value = parseInt(constraints[key], 10);
+          // Some of the integers need to be converted to a base unit, e.g.,
+          // Mebibytes. See:
+          // github.com/juju/juju/blob/staging/constraints/constraints.go#L666
+          let multiplier;
+          if (constraint && constraint.slice) {
+            const unit = constraint.slice(-1).toLowerCase();
+            if (unit === 'g') {
+              multiplier = 1024;
+            } else if (unit === 't') {
+              multiplier = 1024 * 1024;
+            } else if (unit === 'p') {
+              multiplier = 1024 * 1024 * 1024;
+            } else {
+              multiplier = 1;
+            }
+          } else {
+            multiplier = 1;
+          }
+          value = parseInt(constraint, 10) * multiplier;
         } else if (this.genericConstraints.indexOf(key) !== -1) {
           // Trim string constraints.
-          value = (constraints[key] || '').trim();
+          value = (constraint || '').trim();
         }
         if (value || value === 0) {
           result[key] = value;

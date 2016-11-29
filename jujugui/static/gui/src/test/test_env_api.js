@@ -311,6 +311,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(input, backup);
       });
 
+      it('parses units on integer constraints', function() {
+        let constraints = env.prepareConstraints(
+          {'root-disk': '3m', mem: '5G'});
+        assert.equal(constraints['root-disk'], 3,
+          'Mebi unit not parsed properly');
+        assert.equal(constraints.mem, 5120,
+          'Gibi unit not parsed properly');
+        constraints = env.prepareConstraints(
+          {'root-disk': '4T', mem: '2p'});
+        assert.equal(constraints['root-disk'], 4194304,
+          'Tebi unit not parsed properly');
+        assert.equal(constraints.mem, 2147483648,
+          'Pebi unit not parsed properly');
+      });
+
     });
 
     describe('login', function() {

@@ -122,7 +122,7 @@ describe('ScaleService', function() {
     assert.equal(createMachineStub.args[0][0], 3);
     assert.deepEqual(createMachineStub.args[0][1], {
       'cpu-power': 'c p u',
-      'cpu-cores': 'c o r e s',
+      'cores': 'c o r e s',
       'mem': 'r a m',
       'root-disk': 'd i s k'
     });

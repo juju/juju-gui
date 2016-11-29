@@ -45,17 +45,17 @@ YUI.add('deployment-machines', function() {
         const args = machine.command.args[0][0];
         const series = args.series;
         const constraints = args.constraints || {};
-        let cpu = constraints.cpu;
-        let disk = constraints.disk;
+        let cpu = constraints['cpu-power'];
+        let disk = constraints['root-disk'];
         let mem = constraints.mem;
         const cores = constraints.cores;
         const parts = [];
         if (cores && cpu && disk && mem) {
+          // Until we have a better way of handling the various units, just
+          // display the constraint without manipulation. See 7e7fd27 for the
+          // massaged, prettier output.
           cpu = cpu / 100;
-          disk = disk / 1024;
-          mem = mem / 1024;
-          constraintsDetails = `${cores}x${cpu}GHz, ${mem.toFixed(2)}GB, ` +
-            `${disk.toFixed(2)}GB`;
+          constraintsDetails = `${cores}x${cpu}GHz, ${mem}, ${disk}`;
         }
         if (series) {
           parts.push(`${series}${constraintsDetails ? ',' : ''}`);
