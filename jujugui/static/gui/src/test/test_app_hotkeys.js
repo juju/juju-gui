@@ -66,9 +66,11 @@ describe('application hotkeys', function() {
 
   afterEach(function(done) {
     window.juju_config = jujuConfig;
-    app.after('destroy', () => done());
-    container.remove(true);
-    app.destroy({remove: true});
+    env.close(() => {
+      app.destroy({remove: true});
+      container.remove(true);
+      done();
+    });
   });
 
   it('should listen for "?" events', function() {
