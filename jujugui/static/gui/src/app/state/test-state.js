@@ -20,6 +20,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('State', () => {
 
+  const specialStateTests = [{
+    path: 'http://abc.com:123/?deploy-target=cs:ghost-4',
+    state: {special: {deployTarget: 'cs:ghost-4'}},
+    error: null
+  }];
+
   const userStateTests = [{
     path: 'http://abc.com:123/u/ant',
     state: { profile: 'ant' },
@@ -437,6 +443,21 @@ describe('State', () => {
     });
   });
 
+  describe('State._parseSpecial()', () => {
+    it('extracts the deploy-target from the query string', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList: ['precise', 'trusty', 'xenial']
+      });
+      assert.deepEqual(
+        state._parseSpecial(['?deploy-target=cs:ghost-4'], {}), {
+          special: {
+            deployTarget: 'cs:ghost-4'
+          }
+        });
+    });
+  });
+
   describe('State._parseRoot()', () => {
     it('populates the root portion of the state object', () => {
       const state = new window.jujugui.State({
@@ -688,6 +709,9 @@ describe('State', () => {
     [{
       title: 'builds the proper state for the reserved urls',
       test: rootStateTests
+    }, {
+      title: 'builds proper state for the special urls',
+      test: specialStateTests
     }, {
       title: 'builds proper state for the user urls',
       test: userStateTests

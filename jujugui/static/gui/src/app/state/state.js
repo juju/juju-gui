@@ -412,6 +412,7 @@ const State = class State {
     if (parts.length === 1 && parts[0] === '') {
       return {error, state};
     }
+    state = this._parseSpecial(parts, state);
     state = this._parseRoot(parts, state);
     // If we have root paths in the URL then we can ignore everything else.
     if (state.root) {
@@ -536,6 +537,40 @@ const State = class State {
       });
     }
     return `${this.baseURL}${path.join('/')}`;
+  }
+
+  /**
+    Inspects the URL path to see if there are parts in the special section.
+    @param {Array} urlParts - The URL path split into parts.
+    @param {Object} state - The application state object as being parsed
+      from the URL.
+    @return {Object} The updated state to contain the root value, if any.
+  */
+  _parseSpecial(urlParts, state) {
+    urlParts.forEach((part, index) => {
+      // If the part starts with a ? then we've found the query portion.
+      const queryIndex = part.indexOf('?');
+      if (queryIndex > -1) {
+        part.split('?')[1]
+            .split('&')
+            .some(param => {
+              const values = param.split('=');
+              if (values[0] === 'deploy-target') {
+                if (!state.special) {
+                  state.special = {};
+                }
+                state.special.deployTarget = values[1];
+                // Remove the deploy-target from the query param.
+                urlParts[index] = urlParts[index].replace(param, '');
+                if (urlParts[index] === '?') {
+                  urlParts.splice(index, 1);
+                }
+                return true;
+              }
+            });
+      }
+    });
+    return state;
   }
 
   /**
