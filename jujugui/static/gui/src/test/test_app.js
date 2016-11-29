@@ -114,7 +114,7 @@ describe('App', function() {
       config.container = container;
       config.viewContainer = container;
       app = new Y.juju.App(Y.mix(config, {
-        baseUrl: 'http://example.com/',
+        baseUrl: 'http://0.0.0.0:6543/',
         consoleEnabled: true,
         socketTemplate: '/model/$uuid/api',
         controllerSocketTemplate: '/api'
@@ -665,6 +665,8 @@ describe('App', function() {
       legacyApp = new Y.juju.App({
         baseUrl: 'http://example.com/',
         consoleEnabled: true,
+        controllerAPI: controller,
+        controllerSocketTemplate: '/api',
         env: legacyEnv,
         jujuCoreVersion: '1.25.6',
         viewContainer: container
