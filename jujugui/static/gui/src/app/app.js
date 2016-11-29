@@ -356,7 +356,6 @@ YUI.add('juju-gui', function(Y) {
       }
 
       /**
-
         Reference to the juju.Cookies instance.
 
         @property cookieHandler
@@ -384,7 +383,6 @@ YUI.add('juju-gui', function(Y) {
       // file. This array keeps track of those masks and their respective
       // handlers with a { mask: mask, handlers: handlers } format.
       this.dragNotifications = [];
-
 
       /**
         The object used for storing a mapping of previously visited user paths

@@ -48,6 +48,7 @@ describe('application hotkeys', function() {
     });
     env.connect();
     app = new Y.juju.App({
+      baseUrl: 'http://example.com/',
       consoleEnabled: true,
       controllerAPI: new juju.ControllerAPI({
         conn: new utils.SocketStub()
