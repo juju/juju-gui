@@ -184,7 +184,7 @@ YUI.add('juju-env-api', function(Y) {
       @type {Array}
     */
     genericConstraints: [
-      'cpu-power', 'cpu-cores', 'mem', 'arch', 'tags', 'root-disk'],
+      'cpu-power', 'cores', 'cpu-cores', 'mem', 'arch', 'tags', 'root-disk'],
 
     /**
       A list of the constraints that need to be integers. We require
@@ -194,7 +194,7 @@ YUI.add('juju-env-api', function(Y) {
       @property integerConstraints
       @type {Array}
     */
-    integerConstraints: ['cpu-power', 'cpu-cores', 'mem', 'root-disk'],
+    integerConstraints: ['cpu-power', 'cores', 'cpu-cores', 'mem', 'root-disk'],
 
     /**
       A list of valid Ubuntu series.
