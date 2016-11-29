@@ -65,6 +65,7 @@ describe('Relation endpoints logic', function() {
     });
     env.connect();
     app = new Y.juju.App({
+      baseUrl: 'http://example.com/',
       controllerAPI: new juju.ControllerAPI({
         conn: new utils.SocketStub()
       }),
@@ -512,6 +513,7 @@ describe('Endpoints map handlers', function() {
         Y.juju.App.prototype, '_renderComponents');
     this._cleanups.push(_renderComponents.reset);
     app = new Y.juju.App({
+      baseUrl: 'http://example.com/',
       env: env,
       controllerAPI: new juju.ControllerAPI({
         conn: utils.SocketStub(),
@@ -730,6 +732,7 @@ describe('Application config handlers', function() {
     env.connect();
     env.set('facades', {Application: [1]});
     app = new Y.juju.App({
+      baseUrl: 'http://example.com/',
       controllerAPI: new juju.ControllerAPI({
         conn: new utils.SocketStub()
       }),

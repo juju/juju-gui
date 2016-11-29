@@ -114,6 +114,7 @@ describe('App', function() {
       config.container = container;
       config.viewContainer = container;
       app = new Y.juju.App(Y.mix(config, {
+        baseUrl: 'http://example.com/',
         consoleEnabled: true,
         socketTemplate: '/model/$uuid/api',
         controllerSocketTemplate: '/api'
@@ -162,6 +163,7 @@ describe('App', function() {
           });
           env.connect();
           app = new Y.juju.App({
+            baseUrl: 'http://example.com/',
             controllerAPI: new juju.ControllerAPI({
               conn: new testUtils.SocketStub()
             }),
@@ -369,6 +371,7 @@ describe('App', function() {
       config.controllerAPI = config.controllerAPI || new juju.ControllerAPI({
         conn: new testUtils.SocketStub(),
       });
+      config.baseUrl = 'http://example.com';
       config.env = config.env || env;
       config.container = container;
       config.viewContainer = container;
@@ -623,6 +626,7 @@ describe('App', function() {
       });
       env.setCredentials({user: 'user', password: 'password'});
       app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
         consoleEnabled: true,
         controllerAPI: controller,
         env: env,
@@ -632,6 +636,7 @@ describe('App', function() {
       });
       app.navigate = function() { return true; };
       legacyApp = new Y.juju.App({
+        baseUrl: 'http://example.com/',
         consoleEnabled: true,
         env: legacyEnv,
         jujuCoreVersion: '1.25.6',
@@ -754,6 +759,7 @@ describe('App', function() {
         Y.juju.App.prototype.onLogin = oldOnLogin;
       });
       localApp = new Y.juju.App({
+        baseUrl: 'http://example.com/',
         controllerAPI: controller,
         env: env,
         controllerSocketTemplate: '/api',
@@ -945,6 +951,7 @@ describe('App', function() {
       }
       const noop = function() {return this;};
       const app = new juju.App({
+        baseUrl: 'http://example.com/',
         env: model,
         controllerAPI: controller,
         consoleEnabled: true,
@@ -1196,6 +1203,7 @@ describe('App', function() {
     var _generateMockedApp = function(noWebsocket) {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
+        baseUrl: 'http://example.com/',
         charmstorestore: new window.jujulib.charmstore('http://1.2.3.4/'),
         consoleEnabled: true,
         container: container,
@@ -1358,6 +1366,7 @@ describe('App', function() {
         password: 'password'
       });
       app = new juju.App({
+        baseUrl: 'http://example.com/',
         controllerAPI: controllerAPI,
         env: modelAPI,
         consoleEnabled: true,
@@ -1413,6 +1422,7 @@ describe('App', function() {
         password: 'password'
       });
       app = new juju.App({
+        baseUrl: 'http://example.com/',
         controllerAPI: controllerAPI,
         env: modelAPI,
         consoleEnabled: true,
@@ -1454,6 +1464,7 @@ describe('App', function() {
     beforeEach(function() {
       container = Y.Node.create('<div id="test" class="container"></div>');
       app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
         controllerAPI: new juju.ControllerAPI({
           conn: new testUtils.SocketStub()
         }),
@@ -1503,6 +1514,7 @@ describe('App', function() {
     beforeEach(function() {
       container = Y.Node.create('<div id="test" class="container"></div>');
       app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
         controllerAPI: new juju.ControllerAPI({
           conn: new testUtils.SocketStub()
         }),
@@ -1574,6 +1586,7 @@ describe('App', function() {
     it('instantiates correctly', function() {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
+        baseUrl: 'http://example.com/',
         charmstore: new window.jujulib.charmstore('http://1.2.3.4/'),
         container: container,
         jujuCoreVersion: '2.1.1',
@@ -1602,6 +1615,7 @@ describe('App', function() {
     it('passes a fake web handler to the model', function() {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
+        baseUrl: 'http://example.com/',
         charmstore: new window.jujulib.charmstore('http://1.2.3.4/'),
         container: container,
         jujuCoreVersion: '1.21.1.1-trusty-amd64',
@@ -1622,6 +1636,7 @@ describe('App', function() {
     it('creates a placeholder socketUrl', function() {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
+        baseUrl: 'http://example.com/',
         charmstore: new window.jujulib.charmstore('http://1.2.3.4/'),
         container: container,
         jujuCoreVersion: '2.0.0',
@@ -1673,6 +1688,7 @@ describe('App', function() {
         const modelUUID = 'who-uuid';
         app = new Y.juju.App({
           apiAddress: 'example.com:17070',
+          baseUrl: 'http://example.com/',
           conn: {close: function() {}},
           container: container,
           jujuCoreVersion: '2.1.1',
@@ -1698,6 +1714,7 @@ describe('App', function() {
       it('does not pick a model when there is no config', () => {
         app = new Y.juju.App({
           apiAddress: 'example.com:17070',
+          baseUrl: 'http://example.com/',
           conn: {close: function() {}},
           container: container,
           jujuCoreVersion: '2.1.1',
@@ -1722,6 +1739,7 @@ describe('App', function() {
         const modelUUID = 'bannakaffalatta-uuid';
         app = new Y.juju.App({
           apiAddress: 'example.com:17070',
+          baseUrl: 'http://example.com/',
           conn: {close: function() {}},
           container: container,
           jujuCoreVersion: '2.1.1',
@@ -1747,6 +1765,7 @@ describe('App', function() {
     it('honors socket_protocol and uuid', function() {
       app = new Y.juju.App({
         apiAddress: 'example.com:17070',
+        baseUrl: 'http://example.com/',
         conn: {close: function() {}},
         container: container,
         jujuCoreVersion: '2.1.1',
@@ -1771,6 +1790,7 @@ describe('App', function() {
     it('honors a fully qualified provided socket URL', function() {
       app = new Y.juju.App({
         apiAddress: 'example.com:17070',
+        baseUrl: 'http://example.com/',
         conn: {close: function() {}},
         container: container,
         jujuCoreVersion: '2.1.1',
@@ -1792,6 +1812,7 @@ describe('App', function() {
     beforeEach(function(done) {
       YUI(GlobalConfig).use(['juju-gui'], Y => {
         app = new Y.juju.App({
+          baseUrl: 'http://example.com/',
           consoleEnabled: true,
           jujuCoreVersion: '2.0.0',
           viewContainer: container,
@@ -1946,6 +1967,7 @@ describe('App', function() {
 
     beforeEach(function() {
       app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
         controllerAPI: new juju.ControllerAPI({
           conn: new testUtils.SocketStub()
         }),
