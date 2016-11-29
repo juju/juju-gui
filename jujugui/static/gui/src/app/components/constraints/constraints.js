@@ -50,10 +50,10 @@ YUI.add('constraints', function() {
     _handleValueChanged: function() {
       var refs = this.refs;
       this.props.valuesChanged({
-        cpu: refs.cpuConstraintInput.value,
+        'cpu-power': refs.cpuConstraintInput.value,
         cores: refs.coresConstraintInput.value,
         mem: refs.memConstraintInput.value,
-        disk: refs.diskConstraintInput.value
+        'root-disk': refs.diskConstraintInput.value
       });
     },
 

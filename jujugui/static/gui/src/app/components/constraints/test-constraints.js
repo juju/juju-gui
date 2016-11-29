@@ -153,10 +153,10 @@ describe('Constraints', function() {
         valuesChanged={valuesChanged} />);
     assert.equal(valuesChanged.callCount, 1);
     assert.deepEqual(valuesChanged.args[0][0], {
-      cpu: '',
+      'cpu-power': '',
       cores: '',
       mem: '',
-      disk: ''
+      'root-disk': ''
     });
   });
 
@@ -178,10 +178,10 @@ describe('Constraints', function() {
     testUtils.Simulate.change(cpu);
     assert.equal(valuesChanged.callCount, 2);
     assert.deepEqual(valuesChanged.args[1][0], {
-      cpu: '1024',
+      'cpu-power': '1024',
       cores: '2',
       mem: '2048',
-      disk: '4096'
+      'root-disk': '4096'
     });
   });
 

@@ -47,8 +47,8 @@ describe('DeploymentMachines', function() {
           args: [[{
             constraints: {
               cores: 2,
-              cpu: 3,
-              disk: 4096,
+              'cpu-power': 3,
+              'root-disk': 4096,
               mem: 1024
             },
             series: null
@@ -60,8 +60,8 @@ describe('DeploymentMachines', function() {
           args: [[{
             constraints: {
               cores: 2,
-              cpu: 3,
-              disk: 4096,
+              'cpu-power': 3,
+              'root-disk': 4096,
               mem: 1024
             }
           }]]
@@ -72,8 +72,8 @@ describe('DeploymentMachines', function() {
           args: [[{
             constraints: {
               cores: 2,
-              cpu: 3,
-              disk: 4096,
+              'cpu-power': 3,
+              'root-disk': 4096,
               mem: 1024
             },
             series: 'trusty'
