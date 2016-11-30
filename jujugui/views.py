@@ -43,6 +43,7 @@ def app(request):
         'combine': settings['jujugui.combine'],
         'logo_url': logo_url,
         'raw': settings['jujugui.raw'],
+        'static_url': settings['jujugui.static_url'],
     }
 
 

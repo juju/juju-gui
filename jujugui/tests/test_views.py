@@ -42,6 +42,24 @@ class AppTests(ViewTestCase):
             'raw': False,
             'logo_url': '',
             'combine': True,
+            'static_url': '',
+        }
+        context = views.app(self.request)
+        self.assertEqual(expected_context, context)
+
+    def test_static_url(self):
+        self.update_settings({
+            'jujugui.cachebuster': 'foo',
+            'jujugui.static_url': '/new',
+        })
+        jujugui.make_application(self.config)
+        expected_context = {
+            'config_url': '/config.js',
+            'convoy_url': '/foo/combo',
+            'raw': False,
+            'logo_url': '',
+            'combine': True,
+            'static_url': '/new',
         }
         context = views.app(self.request)
         self.assertEqual(expected_context, context)
@@ -55,15 +73,14 @@ class AppTests(ViewTestCase):
             'raw': False,
             'logo_url': '',
             'combine': True,
+            'static_url': '',
         }
         self.request.matchdict['uuid'] = 'env-uuid'
         context = views.app(self.request)
         self.assertEqual(expected_context, context)
 
     def test_sandbox_logo_url(self):
-        self.update_settings({
-            'jujugui.cachebuster': 'foo',
-        })
+        self.update_settings({'jujugui.cachebuster': 'foo'})
         self.request.domain = 'demo.jujucharms.com'
         gui.includeme(self.config)
         expected_context = {
@@ -72,6 +89,7 @@ class AppTests(ViewTestCase):
             'raw': False,
             'logo_url': 'http://jujucharms.com/',
             'combine': True,
+            'static_url': '',
         }
         context = views.app(self.request)
         self.assertEqual(expected_context, context)
