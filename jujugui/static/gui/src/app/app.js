@@ -1234,6 +1234,7 @@ YUI.add('juju-gui', function(Y) {
           updateCloudCredential={
             controllerAPI && controllerAPI.updateCloudCredential.bind(
               controllerAPI)}
+          updateModelName={this._updateModelName.bind(this)}
           user={user}
           withPlans={false} />,
         document.getElementById('deployment-container'));
@@ -1248,6 +1249,20 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.unmountComponentAtNode(
         document.getElementById('deployment-container'));
       next();
+    },
+
+    /**
+      Updates the db's environment name when the model name is changed
+      in the deployment panel.
+
+      @method _updateModelName
+    */
+    _updateModelName: function(e) {
+      const db = this.db;
+      const modelName = e.currentTarget.value;
+      if (modelName !== '') {
+        db.environment.set('name', modelName);
+      }
     },
 
     /**

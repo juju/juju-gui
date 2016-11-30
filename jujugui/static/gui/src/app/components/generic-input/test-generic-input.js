@@ -331,4 +331,26 @@ describe('GenericInput', function() {
     instance.focus();
     assert.equal(instance.refs.field.focus.callCount, 1);
   });
+
+  it('can call the passed blur function', () => {
+    const updateModelName = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.GenericInput
+        disabled={false}
+        label="Region"
+        placeholder="us-central-1"
+        required={true}
+        onBlur={updateModelName}
+        ref="templateRegion"
+        validate={[{
+          regex: /\S+/,
+          error: 'This field is required.'
+        }]}
+        value="default" />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {field: {value: ''}};
+    let output = renderer.getRenderOutput();
+    output.props.children[1].props.onBlur();
+    assert.equal(updateModelName.callCount, 1);
+  });
 });
