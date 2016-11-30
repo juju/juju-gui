@@ -1,23 +1,24 @@
 .inset-select {
   $padding: 8px;
-  padding-top: $padding;
   background-color: $white;
   border: 1px solid $light-mid-grey;
   border-radius: $border-radius;
   width: calc(100% - 20px);
+  position: relative;
 
   &__label {
-    padding-left: $padding;
+    padding: $padding;
     color: $warm-grey;
     font-size: .688em;
+    position: absolute;
   }
 
   &__field {
-    padding: 3px $padding $padding;
+    padding: 25px 30px $padding $padding;
     border: 0;
     border-radius: 0;
     box-shadow: none;
-    line-height: 17px;
+    line-height: 25px;
   }
 
   &--disabled {
