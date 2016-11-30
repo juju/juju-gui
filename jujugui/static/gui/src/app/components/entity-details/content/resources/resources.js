@@ -24,7 +24,7 @@ YUI.add('entity-resources', function() {
 
     propTypes: {
       pluralize: React.PropTypes.func.isRequired,
-      resources: React.PropTypes.object
+      resources: React.PropTypes.array
     },
 
     /**

@@ -24,7 +24,7 @@ YUI.add('inspector-resources-list', function() {
 
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      resources: React.PropTypes.object.isRequired
+      resources: React.PropTypes.array.isRequired
     },
     /**
       Generate a list of resources to display.
@@ -33,13 +33,12 @@ YUI.add('inspector-resources-list', function() {
     */
     _generateResources: function() {
       const resources = this.props.resources;
-      const resourceList = Object.keys(resources).map((key, i) => {
-        const resource = resources[key];
+      const resourceList = resources.map((resource, i) => {
         return (
           <li className="inspector-resources-list__resource"
-            key={resource.name + i}>
-              <p>{resource.name}</p>
-              <p>{resource.description}</p>
+            key={resource.Name + i}>
+              <p>{resource.Name}</p>
+              <p>{resource.Description}</p>
           </li>);
       });
       return (
