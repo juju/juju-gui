@@ -159,10 +159,12 @@ describe('DeploymentFlow', function() {
           title={
             <span className="deployment-flow__service-title">
               Applications to be deployed
-              <juju.components.GenericButton
-                action={instance._toggleChangelogs}
-                type="base"
-                title="Show changelog" />
+              <div className="right">
+                <juju.components.GenericButton
+                  action={instance._toggleChangelogs}
+                  type="inline-neutral"
+                  title="Show changelog" />
+              </div>
             </span>}>
           <juju.components.DeploymentServices
             acl={acl}
@@ -283,10 +285,12 @@ describe('DeploymentFlow', function() {
           title={
             <span className="deployment-flow__service-title">
               Applications to be deployed
-              <juju.components.GenericButton
-                action={instance._toggleChangelogs}
-                type="base"
-                title="Show changelog" />
+              <div className="right">
+                <juju.components.GenericButton
+                  action={instance._toggleChangelogs}
+                  type="inline-neutral"
+                  title="Show changelog" />
+              </div>
             </span>}>
           <juju.components.DeploymentServices
             acl={acl}
