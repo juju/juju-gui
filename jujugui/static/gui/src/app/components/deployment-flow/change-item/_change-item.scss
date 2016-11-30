@@ -17,6 +17,7 @@
 
   &__icon {
     @extend %icon--small;
+    border-radius: 0;
     margin-right: 10px;
   }
 }
