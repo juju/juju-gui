@@ -29,6 +29,7 @@ YUI.add('deployment-flow', function() {
       cloud: React.PropTypes.object,
       credential: React.PropTypes.string,
       deploy: React.PropTypes.func.isRequired,
+      environment: React.PropTypes.object.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
       getAuth: React.PropTypes.func.isRequired,
@@ -46,6 +47,7 @@ YUI.add('deployment-flow', function() {
       region: React.PropTypes.string,
       servicesGetById: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func,
+      updateModelName: React.PropTypes.func,
       user: React.PropTypes.string,
       withPlans: React.PropTypes.bool
     },
@@ -333,6 +335,7 @@ YUI.add('deployment-flow', function() {
               key="modelName"
               label="Model name"
               required={true}
+              onBlur={this._updateModelName}
               ref="modelName"
               validate={[{
                 regex: /\S+/,
@@ -346,6 +349,19 @@ YUI.add('deployment-flow', function() {
               value="" />
           </div>
         </juju.components.DeploymentSection>);
+    },
+
+    /**
+      Updates the db's environment name when the model name is changed
+      in the deployment panel.
+
+      @method _updateModelName
+    */
+    _updateModelName: function(e) {
+      const modelName = e.currentTarget.value;
+      if (modelName !== '') {
+        this.props.environment.set('name', modelName);
+      }
     },
 
     /**
