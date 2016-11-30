@@ -36,20 +36,17 @@ describe('InspectorResourcesList', function() {
   });
 
   it('can display a list of resources', function() {
-    const resources = {
-      file1: {
-        description: 'file1 desc',
-        name: 'file1',
-        path: 'file1.zip',
-        revision: 5
-      },
-      file2: {
-        description: 'file2 desc',
-        name: 'file2',
-        path: 'file2',
-        revision: 2
-      }
-    };
+    const resources = [{
+      Description: 'file1 desc',
+      Name: 'file1',
+      Path: 'file1.zip',
+      Revision: 5
+    }, {
+      Description: 'file2 desc',
+      Name: 'file2',
+      Path: 'file2',
+      Revision: 2
+    }];
     const renderer = jsTestUtils.shallowRender(
       <juju.components.InspectorResourcesList
         acl={acl}
