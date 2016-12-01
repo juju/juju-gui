@@ -1,3 +1,12 @@
+- 2.2.5:
+
+    - Enable deploy-target queries to work with new deployment flow.
+    - Restyle invalid inputs in deployment flow.
+    - Small UI changes throughout.
+    - (Fix) Respect bundle constraints when deploying units.
+    - (Fix) Show favicon regardless of base url.
+    - (Fix) Increase hitbox size for adding credentials.
+
 - 2.2.4:
 
     - [bda69b5] Update the sign up copy and add a button to sign up.
