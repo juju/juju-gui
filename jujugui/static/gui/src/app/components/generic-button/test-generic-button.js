@@ -138,4 +138,17 @@ describe('GenericButton', function() {
         My action
       </button>);
   });
+
+  it('sets the extra classes if provided', function() {
+    var output = jsTestUtils.shallowRender(
+        <juju.components.GenericButton
+          title="My action"
+          extraClasses="button--large" />);
+    assert.deepEqual(output,
+      <button className="button--neutral button--large"
+       onClick={output.props.onClick}
+       type="button">
+        My action
+      </button>);
+  });
 });

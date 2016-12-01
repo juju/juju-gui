@@ -303,13 +303,12 @@ YUI.add('deployment-flow', function() {
       return (
         <span className="deployment-flow__service-title">
           Applications to be deployed
-          <div className="right">
-            <juju.components.GenericButton
-              action={this._toggleChangelogs}
-              type="inline-neutral"
-              title={this.state.showChangelogs ?
-                'Hide changelog' : 'Show changelog'} />
-          </div>
+          <juju.components.GenericButton
+            action={this._toggleChangelogs}
+            type="inline-neutral"
+            extraClasses="right"
+            title={this.state.showChangelogs ?
+              'Hide changelog' : 'Show changelog'} />
         </span>);
     },
 
