@@ -11,7 +11,7 @@ install_requires = parse_requirements("requirements.txt")
 tests_requires = parse_requirements("test-requirements.txt")
 
 setup(name='jujugui',
-      version='2.2.4',
+      version='2.2.5',
       description='jujugui',
       classifiers=[
           "Programming Language :: Python",
