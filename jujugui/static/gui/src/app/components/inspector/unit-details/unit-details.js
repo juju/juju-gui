@@ -40,9 +40,8 @@ YUI.add('unit-details', function() {
       this.props.destroyUnits([this.props.unit.id]);
       // Navigate to the unit list for the unit's service.
       this.props.changeState({
-        sectionA: {
-          component: 'inspector',
-          metadata: {
+        gui: {
+          inspector: {
             id: this.props.service.get('id'),
             activeComponent: this.props.previousComponent || 'units',
             unitStatus: this.props.unitStatus,

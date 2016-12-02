@@ -884,10 +884,9 @@ YUI.add('juju-topology-service', function(Y) {
      */
     _deployLocalCharm: function(file, env, db) {
       var topo = this.get('component');
-      topo.fire('changeState', {
-        sectionA: {
-          component: 'inspector',
-          metadata: {
+      topo.get('state').changeState({
+        gui: {
+          inspector: {
             id: null,
             localType: 'new',
             flash: {
@@ -1021,10 +1020,9 @@ YUI.add('juju-topology-service', function(Y) {
       });
 
       var topo = this.get('component');
-      topo.fire('changeState', {
-        sectionA: {
-          component: 'inspector',
-          metadata: {
+      topo.get('state').changeState({
+        gui: {
+          inspector: {
             id: null,
             localType: 'update',
             flash: {
@@ -1099,14 +1097,12 @@ YUI.add('juju-topology-service', function(Y) {
       container.all('.environment-menu.active').removeClass('active');
       this.deselectNodes();
       this.unhoverServices();
-      topo.fire('changeState', {
-        sectionA: {
-          component: 'applications',
-          metadata: null
-        },
-        sectionC: {
-          component: null,
-          metadata: null
+      topo.get('state').changeState({
+        root: null,
+        user: null,
+        gui: {
+          machines: null,
+          inspector: null
         }
       });
     },
@@ -1861,10 +1857,9 @@ YUI.add('juju-topology-service', function(Y) {
       // service" workflow, but only one to "show details for existing service",
       // so it was easier to hide the help on that one entrance and then show it
       // by default for all the rest.
-      topo.fire('changeState', {
-        sectionA: {
-          component: 'inspector',
-          metadata: {
+      topo.get('state').changeState({
+        gui: {
+          inspector: {
             id: box.id,
             flash: { hideHelp: true }
           }

@@ -45,9 +45,8 @@ YUI.add('inspector-relations', function() {
     */
     _showCreateRelation: function(e) {
       this.props.changeState({
-        sectionA: {
-          component: 'inspector',
-          metadata: {
+        gui: {
+          inspector: {
             id: this.props.service.get('id'),
             activeComponent: 'relate-to'
           }}});
@@ -146,9 +145,8 @@ YUI.add('inspector-relations', function() {
       // Cast to string to pass state null check
       index = index + '';
       this.props.changeState({
-        sectionA: {
-          component: 'inspector',
-          metadata: {
+        gui: {
+          inspector: {
             activeComponent: 'relation',
             unit: index
           }

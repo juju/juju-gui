@@ -145,9 +145,8 @@ describe('InspectorExpose', function() {
     });
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+      gui: {
+        inspector: {
           id: 'demo',
           unit: '1',
           activeComponent: 'unit'

@@ -214,14 +214,11 @@ YUI.add('entity-content', function() {
     _handleTagClick: function(e) {
       e.stopPropagation();
       this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'search-results',
-            search: null,
-            tags: e.target.getAttribute('data-id')
-          }
-        }
+        search: {
+          tags: e.target.getAttribute('data-id'),
+          text: ''
+        },
+        store: null
       });
     },
 

@@ -15,6 +15,7 @@ rules:
   no-debugger: 2
   no-shadow: 0
   no-single-tests: 2
+  no-sparse-arrays: 2
   no-test-utils: 2
   no-undef: 2
   no-underscore-dangle: 0

@@ -114,10 +114,10 @@ describe('App', function() {
       config.container = container;
       config.viewContainer = container;
       app = new Y.juju.App(Y.mix(config, {
+        baseUrl: 'http://0.0.0.0:6543/',
         consoleEnabled: true,
         socketTemplate: '/model/$uuid/api',
-        controllerSocketTemplate: '/api',
-        consoleEnabled: true
+        controllerSocketTemplate: '/api'
       }));
       if (config.env && config.env.connect) {
         config.env.connect();
@@ -150,7 +150,7 @@ describe('App', function() {
         });
 
     it('should propagate login credentials from the configuration',
-        function(done) {
+        function() {
           const user = 'nehi';
           const password = 'moonpie';
           const conn = new testUtils.SocketStub();
@@ -163,6 +163,7 @@ describe('App', function() {
           });
           env.connect();
           app = new Y.juju.App({
+            baseUrl: 'http://example.com/',
             controllerAPI: new juju.ControllerAPI({
               conn: new testUtils.SocketStub()
             }),
@@ -180,19 +181,18 @@ describe('App', function() {
           this._cleanups.push(() => {
             env.close(app.destroy.bind(app));
           });
-          app.after('ready', function() {
-            var credentials = app.env.getCredentials();
-            assert.equal(credentials.user, user + '@local');
-            assert.equal(credentials.password, password);
-            done();
-          });
+          var credentials = app.env.getCredentials();
+          assert.equal(credentials.user, user + '@local');
+          assert.equal(credentials.password, password);
         });
 
     it('should produce a valid index', function() {
       constructAppInstance({
         env: new juju.environments.GoEnvironment({
           conn: new testUtils.SocketStub(),
-          ecs: new juju.EnvironmentChangeSet()
+          ecs: new juju.EnvironmentChangeSet(),
+          user: 'user',
+          password: 'password'
         })
       }, this);
       var container = app.get('container');
@@ -213,7 +213,9 @@ describe('App', function() {
         // Create the environment.
         env = new juju.environments.GoEnvironment({
           conn: new testUtils.SocketStub(),
-          ecs: new juju.EnvironmentChangeSet()
+          ecs: new juju.EnvironmentChangeSet(),
+          user: 'user',
+          password: 'password'
         });
       });
 
@@ -284,7 +286,9 @@ describe('App', function() {
         constructAppInstance({
           env: new juju.environments.GoEnvironment({
             conn: new testUtils.SocketStub(),
-            ecs: new juju.EnvironmentChangeSet()
+            ecs: new juju.EnvironmentChangeSet(),
+            user: 'user',
+            password: 'password'
           })
         }, this);
         assert.equal(setup.callCount, 1);
@@ -294,7 +298,9 @@ describe('App', function() {
         constructAppInstance({
           env: new juju.environments.GoEnvironment({
             conn: new testUtils.SocketStub(),
-            ecs: new juju.EnvironmentChangeSet()
+            ecs: new juju.EnvironmentChangeSet(),
+            user: 'user',
+            password: 'password'
           })
         }, this);
         // The charmstore attribute is undefined by default
@@ -313,7 +319,9 @@ describe('App', function() {
         app = constructAppInstance({
           env: new juju.environments.GoEnvironment({
             conn: new testUtils.SocketStub(),
-            ecs: new juju.EnvironmentChangeSet()
+            ecs: new juju.EnvironmentChangeSet(),
+            user: 'user',
+            password: 'password'
           })
         }, this);
         assert.strictEqual(app.plans instanceof window.jujulib.plans, true);
@@ -363,6 +371,7 @@ describe('App', function() {
       config.controllerAPI = config.controllerAPI || new juju.ControllerAPI({
         conn: new testUtils.SocketStub(),
       });
+      config.baseUrl = 'http://example.com';
       config.env = config.env || env;
       config.container = container;
       config.viewContainer = container;
@@ -378,7 +387,14 @@ describe('App', function() {
       it('binds the drag handlers', function() {
         var stub = testUtils.makeStubMethod(document, 'addEventListener');
         this._cleanups.push(stub.reset);
-        constructAppInstance({}, this);
+        constructAppInstance({
+          env: new juju.environments.GoEnvironment({
+            conn: new testUtils.SocketStub(),
+            ecs: new juju.EnvironmentChangeSet(),
+            user: 'user',
+            password: 'password'
+          })
+        }, this);
         assert.equal(stub.callCount, 3);
         var args = stub.args;
         assert.equal(args[0][0], 'dragenter');
@@ -392,7 +408,14 @@ describe('App', function() {
       it('removes the drag handlers', function(done) {
         var stub = testUtils.makeStubMethod(document, 'removeEventListener');
         this._cleanups.push(stub.reset);
-        constructAppInstance({}, this);
+        constructAppInstance({
+          env: new juju.environments.GoEnvironment({
+            conn: new testUtils.SocketStub(),
+            ecs: new juju.EnvironmentChangeSet(),
+            user: 'user',
+            password: 'password'
+          })
+        }, this);
 
         app.after('destroy', function() {
           assert.equal(stub.callCount, 3);
@@ -412,7 +435,14 @@ describe('App', function() {
     describe('_determineFileType', function() {
       beforeEach(function() {
         // This gets cleaned up by the parent after function.
-        constructAppInstance({}, this);
+        constructAppInstance({
+          env: new juju.environments.GoEnvironment({
+            conn: new testUtils.SocketStub(),
+            ecs: new juju.EnvironmentChangeSet(),
+            user: 'user',
+            password: 'password'
+          })
+        }, this);
       });
 
       it('returns false if it\'s not a file being dragged', function() {
@@ -498,10 +528,17 @@ describe('App', function() {
       });
     });
 
-    it('dispatches drag events properly: _appDragOverHanlder', function() {
+    it('dispatches drag events properly: _appDragOverHandler', function() {
       var determineFileTypeStub, renderDragOverStub, dragTimerControlStub;
 
-      constructAppInstance({}, this);
+      constructAppInstance({
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet(),
+          user: 'user',
+          password: 'password'
+        })
+      }, this);
 
       determineFileTypeStub = testUtils.makeStubMethod(
           app, '_determineFileType', 'zip');
@@ -535,7 +572,14 @@ describe('App', function() {
     });
 
     it('can start and stop the drag timer: _dragLeaveTimerControl', function() {
-      var app = constructAppInstance({}, this);
+      var app = constructAppInstance({
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet(),
+          user: 'user',
+          password: 'password'
+        })
+      }, this);
       app._dragleaveTimerControl('start');
       assert.equal(app._dragLeaveTimer !== undefined, true);
       app._dragleaveTimerControl('stop');
@@ -547,7 +591,7 @@ describe('App', function() {
 
   describe('Application authentication', function() {
     var app, conn, conn2, controller, destroyMe, ecs, env, juju, legacyApp,
-        legacyEnv, Y;
+        legacyEnv, legacyConn, Y;
     var requirements = [
       'juju-gui', 'juju-tests-utils', 'juju-views', 'environment-change-set'];
 
@@ -558,8 +602,9 @@ describe('App', function() {
       });
     });
 
-    beforeEach(function(done) {
+    beforeEach(function() {
       conn = new testUtils.SocketStub();
+      legacyConn = new testUtils.SocketStub();
       conn2 = new testUtils.SocketStub();
       ecs = new juju.EnvironmentChangeSet();
       env = new juju.environments.GoEnvironment({
@@ -569,7 +614,7 @@ describe('App', function() {
         password: 'password'
       });
       legacyEnv = new juju.environments.GoLegacyEnvironment({
-        conn: conn,
+        conn: legacyConn,
         ecs: ecs,
         user: 'user',
         password: 'password'
@@ -581,6 +626,7 @@ describe('App', function() {
       });
       env.setCredentials({user: 'user', password: 'password'});
       app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
         consoleEnabled: true,
         controllerAPI: controller,
         env: env,
@@ -590,14 +636,16 @@ describe('App', function() {
       });
       app.navigate = function() { return true; };
       legacyApp = new Y.juju.App({
+        baseUrl: 'http://example.com/',
         consoleEnabled: true,
+        controllerAPI: controller,
+        controllerSocketTemplate: '/api',
         env: legacyEnv,
         jujuCoreVersion: '1.25.6',
         viewContainer: container
       });
       legacyApp.navigate = function() { return true; };
       destroyMe = [ecs, controller];
-      done();
     });
 
     afterEach(function(done) {
@@ -622,23 +670,17 @@ describe('App', function() {
       assert.equal(message.request, 'Login');
     };
 
-    it('avoids trying to login if the env is not connected', function(done) {
-      app.after('ready', () => {
-        assert.equal(0, conn.messages.length);
-        done();
-      });
+    it('avoids trying to login if the env is not connected', function() {
+      assert.equal(0, conn.messages.length);
     });
 
-    it('tries to login if the env connection is established', function(done) {
-      app.after('ready', () => {
-        env.connect();
-        assert.equal(1, conn.messages.length);
-        assertIsLogin(conn.last_message());
-        done();
-      });
+    it('tries to login if the env connection is established', function() {
+      env.connect();
+      assert.equal(1, conn.messages.length);
+      assertIsLogin(conn.last_message());
     });
 
-    it('avoids trying to login without credentials', function(done) {
+    it('avoids trying to login without credentials', function() {
       sessionStorage.clear();
       env.setAttrs({
         user: null,
@@ -646,77 +688,62 @@ describe('App', function() {
       });
       env.setCredentials(null);
       app.navigate = function() { return; };
-      app.after('ready', function() {
-        assert.deepEqual(
-          app.env.getCredentials(), {user: '', password: '', macaroons: null});
-        assert.equal(conn.messages.length, 0);
-        done();
-      });
+      assert.deepEqual(
+        app.env.getCredentials(), {user: '', password: '', macaroons: null});
+      assert.equal(conn.messages.length, 0);
     });
 
-    it('uses the auth token if there are no credentials', function(done) {
+    it('uses the auth token if there are no credentials', function() {
       // Override the local window.location object.
       legacyApp.location = {search: '?authtoken=demoToken'};
       legacyEnv.setCredentials(null);
       legacyEnv.connect();
-      legacyApp.after('ready', function() {
-        assert.equal(conn.messages.length, 1);
-        assert.deepEqual(conn.last_message(), {
-          RequestId: 1,
-          Type: 'GUIToken',
-          Version: 0,
-          Request: 'Login',
-          Params: {Token: 'demoToken'}
-        });
-        done();
+      assert.equal(legacyConn.messages.length, 1);
+      assert.deepEqual(legacyConn.last_message(), {
+        RequestId: 1,
+        Type: 'GUIToken',
+        Version: 0,
+        Request: 'Login',
+        Params: {Token: 'demoToken'}
       });
     });
 
-    it('handles multiple authtokens', function(done) {
+    it('handles multiple authtokens', function() {
       // Override the local window.location object.
       legacyApp.location = {search: '?authtoken=demoToken&authtoken=discarded'};
       legacyEnv.setCredentials(null);
       legacyEnv.connect();
-      legacyApp.after('ready', function() {
-        assert.equal(conn.messages.length, 1);
-        assert.deepEqual(conn.last_message(), {
-          RequestId: 1,
-          Type: 'GUIToken',
-          Version: 0,
-          Request: 'Login',
-          Params: {Token: 'demoToken'}
-        });
-        done();
+      assert.equal(legacyConn.messages.length, 1);
+      assert.deepEqual(legacyConn.last_message(), {
+        RequestId: 1,
+        Type: 'GUIToken',
+        Version: 0,
+        Request: 'Login',
+        Params: {Token: 'demoToken'}
       });
     });
 
-    it('ignores the authtoken if credentials exist', function(done) {
+    it('ignores the authtoken if credentials exist', function() {
       // Override the local window.location object.
       legacyApp.location = {search: '?authtoken=demoToken'};
       legacyEnv.setCredentials({user: 'user', password: 'password'});
       legacyEnv.connect();
-      legacyApp.after('ready', function() {
-        assert.equal(1, conn.messages.length);
-        var message = conn.last_message();
-        assert.equal('Admin', message.Type);
-        assert.equal('Login', message.Request);
-        done();
-      });
+      assert.equal(1, legacyConn.messages.length);
+      var message = legacyConn.last_message();
+      assert.equal('Admin', message.Type);
+      assert.equal('Login', message.Request);
     });
 
-    it('displays the login view if credentials are not valid', function(done) {
+    it('displays the login view if credentials are not valid', function() {
       env.connect();
       var loginStub = testUtils.makeStubMethod(app, '_renderLogin');
-      app.after('ready', function() {
-        app.env.login();
-        // Mimic a login failed response assuming login is the first request.
-        conn.msg({'request-id': 1, error: 'bad wolf'});
-        assert.equal(1, conn.messages.length);
-        assertIsLogin(conn.last_message());
-        assert.equal(loginStub.callCount, 1);
-        assert.deepEqual(loginStub.lastCall.args, ['bad wolf']);
-        done();
-      });
+      app.env.login();
+      // Mimic a login failed response assuming login is the first request.
+      conn.msg({'request-id': 1, error: 'bad wolf'});
+      assert.equal(1, conn.messages.length);
+      assertIsLogin(conn.last_message());
+      assert.equal(loginStub.callCount, 1);
+      assert.deepEqual(loginStub.lastCall.args, ['bad wolf']);
     });
 
     it('login method handler is called after successful login',
@@ -734,6 +761,7 @@ describe('App', function() {
         Y.juju.App.prototype.onLogin = oldOnLogin;
       });
       localApp = new Y.juju.App({
+        baseUrl: 'http://example.com/',
         controllerAPI: controller,
         env: env,
         controllerSocketTemplate: '/api',
@@ -826,45 +854,36 @@ describe('App', function() {
         Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
     });
 
-    it('tries to log in on first connection', function(done) {
-      // This is the case when credential are stashed.
-      app.after('ready', function() {
-        env.connect();
-        assert.equal(1, conn.messages.length);
-        assertIsLogin(conn.last_message());
-        done();
-      });
-    });
-
-    it('tries to re-login on disconnections', function(done) {
+    it('tries to log in on first connection', function() {
       // This is the case when credential are stashed.
       env.connect();
-      app.after('ready', function() {
-        // Disconnect and reconnect the WebSocket.
-        conn.transient_close();
-        conn.open();
-        assert.equal(1, conn.messages.length, 'no login messages sent');
-        assertIsLogin(conn.last_message());
-        done();
-      });
+      assert.equal(1, conn.messages.length);
+      assertIsLogin(conn.last_message());
     });
 
-    it('tries to re-login with macaroons on disconnections', function(done) {
+    it('tries to re-login on disconnections', function() {
+      // This is the case when credential are stashed.
+      env.connect();
+      // Disconnect and reconnect the WebSocket.
+      conn.transient_close();
+      conn.open();
+      assert.equal(1, conn.messages.length, 'no login messages sent');
+      assertIsLogin(conn.last_message());
+    });
+
+    it('tries to re-login with macaroons on disconnections', function() {
       sessionStorage.clear();
       env.setAttrs({user: null, password: null, jujuCoreVersion: '2.0.0'});
       env.connect();
-      app.after('ready', function() {
-        env.setCredentials({macaroons: ['macaroon']});
-        // Disconnect and reconnect the WebSocket.
-        conn.transient_close();
-        conn.open();
-        assert.equal(1, conn.messages.length, 'no login messages sent');
-        var msg = conn.last_message();
-        assert.strictEqual(msg.type, 'Admin');
-        assert.strictEqual(msg.request, 'Login');
-        assert.deepEqual(msg.params, {macaroons: [['macaroon']]});
-        done();
-      });
+      env.setCredentials({macaroons: ['macaroon']});
+      // Disconnect and reconnect the WebSocket.
+      conn.transient_close();
+      conn.open();
+      assert.equal(1, conn.messages.length, 'no login messages sent');
+      var msg = conn.last_message();
+      assert.strictEqual(msg.type, 'Admin');
+      assert.strictEqual(msg.request, 'Login');
+      assert.deepEqual(msg.params, {macaroons: [['macaroon']]});
     });
 
     it('should allow closing the connection', function(done) {
@@ -890,21 +909,21 @@ describe('App', function() {
     describe('popLoginRedirectPath', function() {
       it('returns and clears redirectPath', function() {
         app.redirectPath = '/foo/bar/';
-        app.location = {toString: function() {return '/login/';}};
+        app.location = {pathname: '/login/'};
         assert.equal(app.popLoginRedirectPath(), '/foo/bar/');
         assert.isUndefined(app.redirectPath);
       });
 
       it('prefers the current path if not login', function() {
         app.redirectPath = '/';
-        app.location = {toString: function() {return '/foo/bar/';}};
+        app.location = {pathname: '/foo/bar/'};
         assert.equal(app.popLoginRedirectPath(), '/foo/bar/');
         assert.isUndefined(app.redirectPath);
       });
 
       it('uses root if the redirectPath is /login/', function() {
         app.redirectPath = '/login/';
-        app.location = {toString: function() {return '/login/';}};
+        app.location = {pathname: '/login/'};
         assert.equal(app.popLoginRedirectPath(), '/');
         assert.isUndefined(app.redirectPath);
       });
@@ -912,68 +931,11 @@ describe('App', function() {
       it('uses root if the redirectPath is /login', function() {
         // Missing trailing slash is only difference from previous test.
         app.redirectPath = '/login';
-        app.location = {toString: function() {return '/login';}};
+        app.location = {pathname: '/login/'};
         assert.equal(app.popLoginRedirectPath(), '/');
         assert.isUndefined(app.redirectPath);
       });
     });
-
-    describe('currentUrl', function() {
-      it('returns the full current path', function() {
-        var expected = '/foo/bar/';
-        app.location = {
-          toString: function() {return 'https://foo.com' + expected;}};
-        assert.equal(expected, app.get('currentUrl'));
-        expected = '/';
-        assert.equal(expected, app.get('currentUrl'));
-        expected = '/foo/?bar=bing#shazam';
-        assert.equal(expected, app.get('currentUrl'));
-      });
-
-      // Ensure the given token is removed from the query string.
-      var checkTokenIgnored = function(context, token) {
-        var expected_path = '/foo/bar/';
-        var expected_querystring = '';
-        var expected_hash = '';
-        var expected = function(add_authtoken) {
-          var result = expected_path;
-          var querystring = expected_querystring;
-          if (add_authtoken) {
-            querystring += '&' + token + '=demoToken';
-          }
-          if (querystring) {
-            result += '?' + querystring;
-          }
-          result += expected_hash;
-          return result;
-        };
-        app.location = {
-          toString: function() {return 'https://foo.com' + expected(true);}};
-        assert.equal(expected(), app.get('currentUrl'));
-        expected_path = '/';
-        assert.equal(expected(), app.get('currentUrl'));
-        expected_path = '/foo/';
-        expected_querystring = 'bar=bing';
-        expected_hash = '#shazam';
-        assert.equal(expected(), app.get('currentUrl'));
-      };
-
-      it('ignores authtokens', function() {
-        // This is intended to be the canonical current path.  This should
-        // never include authtokens, which are transient and can never be
-        // re-used.
-        checkTokenIgnored(this, 'authtoken');
-      });
-
-      it('ignores changestokens', function() {
-        // This is intended to be the canonical current path.  This should
-        // never include changestokens, which are transient and can never be
-        // re-used.
-        checkTokenIgnored(this, 'changestoken');
-      });
-
-    });
-
   });
 
 
@@ -991,6 +953,7 @@ describe('App', function() {
       }
       const noop = function() {return this;};
       const app = new juju.App({
+        baseUrl: 'http://example.com/',
         env: model,
         controllerAPI: controller,
         consoleEnabled: true,
@@ -1236,11 +1199,13 @@ describe('App', function() {
 
   });
 
+
   describe('switchEnv', function() {
     var Y, app;
     var _generateMockedApp = function(noWebsocket) {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
+        baseUrl: 'http://example.com/',
         charmstorestore: new window.jujulib.charmstore('http://1.2.3.4/'),
         consoleEnabled: true,
         container: container,
@@ -1398,9 +1363,12 @@ describe('App', function() {
       });
       const modelAPI = new juju.environments.GoEnvironment({
         conn: new testUtils.SocketStub(),
-        ecs: new juju.EnvironmentChangeSet()
+        ecs: new juju.EnvironmentChangeSet(),
+        user: 'user',
+        password: 'password'
       });
       app = new juju.App({
+        baseUrl: 'http://example.com/',
         controllerAPI: controllerAPI,
         env: modelAPI,
         consoleEnabled: true,
@@ -1451,9 +1419,12 @@ describe('App', function() {
       });
       const modelAPI = new juju.environments.GoEnvironment({
         conn: new testUtils.SocketStub(),
-        ecs: new juju.EnvironmentChangeSet()
+        ecs: new juju.EnvironmentChangeSet(),
+        user: 'user',
+        password: 'password'
       });
       app = new juju.App({
+        baseUrl: 'http://example.com/',
         controllerAPI: controllerAPI,
         env: modelAPI,
         consoleEnabled: true,
@@ -1495,12 +1466,15 @@ describe('App', function() {
     beforeEach(function() {
       container = Y.Node.create('<div id="test" class="container"></div>');
       app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
         controllerAPI: new juju.ControllerAPI({
           conn: new testUtils.SocketStub()
         }),
         env: new juju.environments.GoEnvironment({
           conn: new testUtils.SocketStub(),
-          ecs: new juju.EnvironmentChangeSet()
+          ecs: new juju.EnvironmentChangeSet(),
+          user: 'user',
+          password: 'password'
         }),
         socketTemplate: '/model/$uuid/api',
         controllerSocketTemplate: '/api',
@@ -1528,6 +1502,7 @@ describe('App', function() {
     });
   });
 
+
   describe('_getAuth', function() {
     var Y, app, credStub, juju;
 
@@ -1541,6 +1516,7 @@ describe('App', function() {
     beforeEach(function() {
       container = Y.Node.create('<div id="test" class="container"></div>');
       app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
         controllerAPI: new juju.ControllerAPI({
           conn: new testUtils.SocketStub()
         }),
@@ -1612,6 +1588,7 @@ describe('App', function() {
     it('instantiates correctly', function() {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
+        baseUrl: 'http://example.com/',
         charmstore: new window.jujulib.charmstore('http://1.2.3.4/'),
         container: container,
         jujuCoreVersion: '2.1.1',
@@ -1640,12 +1617,15 @@ describe('App', function() {
     it('passes a fake web handler to the model', function() {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
+        baseUrl: 'http://example.com/',
         charmstore: new window.jujulib.charmstore('http://1.2.3.4/'),
         container: container,
         jujuCoreVersion: '1.21.1.1-trusty-amd64',
         sandbox: true,
         controllerSocketTemplate: '/api',
+        password: 'admin',
         socketTemplate: '/model/$uuid/api',
+        user: 'admin',
         viewContainer: container
       });
       app.showView(new Y.View());
@@ -1658,12 +1638,15 @@ describe('App', function() {
     it('creates a placeholder socketUrl', function() {
       app = new Y.juju.App({
         apiAddress: 'http://example.com:17070',
+        baseUrl: 'http://example.com/',
         charmstore: new window.jujulib.charmstore('http://1.2.3.4/'),
         container: container,
         jujuCoreVersion: '2.0.0',
         sandbox: true,
         controllerSocketTemplate: '/api',
+        password: 'admin',
         socketTemplate: '/model/$uuid/api',
+        user: 'admin',
         viewContainer: container
       });
       const host = window.location.hostname;
@@ -1707,6 +1690,7 @@ describe('App', function() {
         const modelUUID = 'who-uuid';
         app = new Y.juju.App({
           apiAddress: 'example.com:17070',
+          baseUrl: 'http://example.com/',
           conn: {close: function() {}},
           container: container,
           jujuCoreVersion: '2.1.1',
@@ -1729,9 +1713,10 @@ describe('App', function() {
         assert.strictEqual(app.get('modelUUID'), 'who-uuid');
       });
 
-      it('picks the first model in a list without config', () => {
+      it('does not pick a model when there is no config', () => {
         app = new Y.juju.App({
           apiAddress: 'example.com:17070',
+          baseUrl: 'http://example.com/',
           conn: {close: function() {}},
           container: container,
           jujuCoreVersion: '2.1.1',
@@ -1749,14 +1734,14 @@ describe('App', function() {
           uuid: 'rose-uuid'
         }];
         const model = app._pickModel(fakeModelList, null);
-        assert.strictEqual(model.uuid, 'dalek-uuid');
-        assert.strictEqual(app.get('modelUUID'), 'dalek-uuid');
+        assert.isNull(model);
       });
 
-      it('picks the first model if no model matches', () => {
+      it('handles no model matches', () => {
         const modelUUID = 'bannakaffalatta-uuid';
         app = new Y.juju.App({
           apiAddress: 'example.com:17070',
+          baseUrl: 'http://example.com/',
           conn: {close: function() {}},
           container: container,
           jujuCoreVersion: '2.1.1',
@@ -1775,14 +1760,14 @@ describe('App', function() {
           uuid: 'rose-uuid'
         }];
         const model = app._pickModel(fakeModelList, modelUUID);
-        assert.strictEqual(model.uuid, 'dalek-uuid');
-        assert.strictEqual(app.get('modelUUID'), 'dalek-uuid');
+        assert.isNull(model);
       });
     });
 
     it('honors socket_protocol and uuid', function() {
       app = new Y.juju.App({
         apiAddress: 'example.com:17070',
+        baseUrl: 'http://example.com/',
         conn: {close: function() {}},
         container: container,
         jujuCoreVersion: '2.1.1',
@@ -1807,6 +1792,7 @@ describe('App', function() {
     it('honors a fully qualified provided socket URL', function() {
       app = new Y.juju.App({
         apiAddress: 'example.com:17070',
+        baseUrl: 'http://example.com/',
         conn: {close: function() {}},
         container: container,
         jujuCoreVersion: '2.1.1',
@@ -1828,6 +1814,7 @@ describe('App', function() {
     beforeEach(function(done) {
       YUI(GlobalConfig).use(['juju-gui'], Y => {
         app = new Y.juju.App({
+          baseUrl: 'http://example.com/',
           consoleEnabled: true,
           jujuCoreVersion: '2.0.0',
           viewContainer: container,
@@ -1982,12 +1969,15 @@ describe('App', function() {
 
     beforeEach(function() {
       app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
         controllerAPI: new juju.ControllerAPI({
           conn: new testUtils.SocketStub()
         }),
         env: new juju.environments.GoEnvironment({
           conn: new testUtils.SocketStub(),
-          ecs: new juju.EnvironmentChangeSet()
+          ecs: new juju.EnvironmentChangeSet(),
+          user: 'user',
+          password: 'password'
         }),
         socketTemplate: '/model/$uuid/api',
         controllerSocketTemplate: '/api',

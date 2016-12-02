@@ -50,6 +50,7 @@ describe('DeploymentFlow', function() {
     var getCloudCredentials = sinon.stub();
     var getCloudCredentialNames = sinon.stub();
     var servicesGetById = sinon.stub();
+    var updateModelName = sinon.stub();
     const getCloudProviderDetails = sinon.stub();
     const changes = {};
     const generateCloudCredentialName = sinon.stub();
@@ -75,6 +76,7 @@ describe('DeploymentFlow', function() {
         modelCommitted={false}
         modelName="Pavlova"
         servicesGetById={servicesGetById}
+        updateModelName={updateModelName}
         user="user-admin"
         withPlans={true}>
         <span>content</span>
@@ -95,6 +97,7 @@ describe('DeploymentFlow', function() {
               key="modelName"
               label="Model name"
               required={true}
+              onBlur={updateModelName}
               ref="modelName"
               validate={[{
                 regex: /\S+/,

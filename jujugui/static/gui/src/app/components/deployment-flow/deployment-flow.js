@@ -46,6 +46,7 @@ YUI.add('deployment-flow', function() {
       region: React.PropTypes.string,
       servicesGetById: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func,
+      updateModelName: React.PropTypes.func,
       user: React.PropTypes.string,
       withPlans: React.PropTypes.bool
     },
@@ -225,9 +226,8 @@ YUI.add('deployment-flow', function() {
     */
     _handleClose: function() {
       this.props.changeState({
-        sectionC: {
-          component: null,
-          metadata: {}
+        gui: {
+          deploy: null
         }
       });
     },
@@ -334,6 +334,7 @@ YUI.add('deployment-flow', function() {
               key="modelName"
               label="Model name"
               required={true}
+              onBlur={this.props.updateModelName}
               ref="modelName"
               validate={[{
                 regex: /\S+/,

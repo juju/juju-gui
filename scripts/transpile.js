@@ -35,17 +35,11 @@ if (spliceLength == 0) {
   return;
 }
 
-for (let i = 0; i < cpuCount; i+=1) {
-  if (fileList.length < spliceLength) {
+for (let i = 1; i <= cpuCount; i+=1) {
+  if (fileList.length < spliceLength || i === cpuCount) {
     spliceLength = fileList.length;
   }
-  const filesSubset = fileList.splice(0, spliceLength).join(',');
-  // If this is the last loop then skip spwaning and use this instance
-  // to transpile the remaining code.
-  if (i === cpuCount) {
-    transpile(filesSubset);
-    return;
-  }
+  let filesSubset = fileList.splice(0, spliceLength).join(',');
   const transpiler = childProcess.spawn(
     'node', ['scripts/transpile.js', '--spawned', '--files', filesSubset]);
   const onData = data => console.log(`${data}`);

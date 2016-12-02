@@ -323,13 +323,8 @@ describe('SearchResultsItem', function() {
     assert.equal(changeState.callCount, 1);
     assert.equal(stopPropagation.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'entity-details',
-          id: 'mysql'
-        }
-      }
+      search: null,
+      store: 'mysql'
     });
   });
 
@@ -363,25 +358,15 @@ describe('SearchResultsItem', function() {
     assert.equal(changeState.callCount, 1);
     assert.equal(stopPropagation.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'entity-details',
-          id: '~test-owner/vivid/mysql'
-        }
-      }
+      search: null,
+      store: '~test-owner/vivid/mysql'
     });
     series[1].props.children.props.onClick({stopPropagation: stopPropagation});
     assert.equal(changeState.callCount, 2);
     assert.equal(stopPropagation.callCount, 2);
     assert.deepEqual(changeState.args[1][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'entity-details',
-          id: '~test-owner/wily/mysql'
-        }
-      }
+      search: null,
+      store: '~test-owner/wily/mysql'
     });
   });
 
@@ -412,13 +397,14 @@ describe('SearchResultsItem', function() {
     assert.equal(changeState.callCount, 1);
     assert.equal(stopPropagation.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'search-results',
-          search: null,
-          tags: 'tag1'
-        }
+      search: {
+        owner: null,
+        provides: null,
+        requires: null,
+        series: null,
+        tags: 'tag1',
+        text: '',
+        type: null
       }
     });
   });
@@ -450,13 +436,14 @@ describe('SearchResultsItem', function() {
     assert.equal(changeState.callCount, 1);
     assert.equal(stopPropagation.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'search-results',
-          search: null,
-          owner: 'test-owner'
-        }
+      search: {
+        owner: 'test-owner',
+        provides: null,
+        requires: null,
+        series: null,
+        tags: null,
+        text: '',
+        type: null
       }
     });
   });
