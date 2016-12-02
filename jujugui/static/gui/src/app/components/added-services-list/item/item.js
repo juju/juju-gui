@@ -88,13 +88,13 @@ YUI.add('added-services-list-item', function() {
     */
     _onClickHandler: function(e) {
       this.props.panToService(this.props.service.get('id'));
-      var state = {
-        sectionA: {
-          component: 'inspector',
-          metadata: { id: e.currentTarget.getAttribute('data-serviceid') }
+      this.props.changeState({
+        gui: {
+          inspector: {
+            id: e.currentTarget.getAttribute('data-serviceid')
+          }
         }
-      };
-      this.props.changeState(state);
+      });
     },
 
     _generateClassName: function() {

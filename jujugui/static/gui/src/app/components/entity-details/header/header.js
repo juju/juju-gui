@@ -80,6 +80,7 @@ YUI.add('entity-header', function() {
         var id = entity.id.replace('cs:', '');
         this.props.getBundleYAML(id, this._getBundleYAMLCallback);
       }
+      this._closeEntityDetails();
     },
 
     /**
@@ -89,10 +90,7 @@ YUI.add('entity-header', function() {
     */
     _closeEntityDetails: function() {
       this.props.changeState({
-        sectionC: {
-          component: null,
-          metadata: null
-        }
+        store: null
       });
     },
 

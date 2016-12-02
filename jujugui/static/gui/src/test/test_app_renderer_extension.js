@@ -76,7 +76,7 @@ describe('App Renderer Extension', function() {
     renderer._getAuth = sinon.stub().returns({user: 'test'});
 
     renderer.state = {
-      getState: sinon.stub()
+      changeState: sinon.stub()
     };
     renderer.db = {
       environment: {

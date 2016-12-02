@@ -23,23 +23,10 @@ YUI.add('env-size-display', function() {
   juju.components.EnvSizeDisplay = React.createClass({
 
     propTypes: {
-      changeState: React.PropTypes.func.isRequired,
-      getAppState: React.PropTypes.func.isRequired,
+      appState: React.PropTypes.object.isRequired,
       machineCount: React.PropTypes.number.isRequired,
       pluralize: React.PropTypes.func.isRequired,
       serviceCount: React.PropTypes.number.isRequired
-    },
-
-    getInitialState: function() {
-      return {
-        activeComponent: this.props.getAppState(
-            'current', 'sectionB', 'component')
-      };
-    },
-
-    componentWillReceiveProps: function() {
-      this.setState({activeComponent: this.props.getAppState(
-          'current', 'sectionB', 'component')});
     },
 
     /**
@@ -50,16 +37,14 @@ YUI.add('env-size-display', function() {
       @param {Object} e The click event handler
     */
     _changeEnvironmentView: function(e) {
-      var view = e.currentTarget.dataset.view;
-      var component = (view === 'machine') ? 'machine' : null;
-      var changeState = {
-        sectionB: {
-          component: component,
-          metadata: {}
+      const activeComponent =
+        (e.currentTarget.dataset.view === 'machine') ? '' : null;
+      this.props.appState.changeState({
+        gui: {
+          machines: activeComponent
         }
-      };
-      this.props.changeState(changeState);
-      this.setState({activeComponent: component});
+      });
+      this.setState({activeComponent});
     },
 
     /**
@@ -72,16 +57,11 @@ YUI.add('env-size-display', function() {
       @returns {String} The collection of class names.
     */
     _genClasses: function(section) {
-      var active = false;
-      if ((section === 'application') && !this.state.activeComponent) {
-        active = true;
-      } else if (section === this.state.activeComponent) {
-        active = true;
-      }
+      const guiState = this.props.appState.current.gui;
       return classNames(
         'env-size-display__list-item',
         {
-          'is-active': active
+          'is-active': guiState && guiState[section]
         }
       );
     },

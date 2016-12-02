@@ -417,9 +417,8 @@ describe('UnitDetails', function() {
     output.props.children[1].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+      gui: {
+        inspector: {
           id: 'service1',
           activeComponent: 'units',
           unitStatus: 'pending',
@@ -441,9 +440,8 @@ describe('UnitDetails', function() {
     output.props.children[1].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+      gui: {
+        inspector: {
           id: 'service1',
           activeComponent: 'expose',
           unitStatus: undefined,

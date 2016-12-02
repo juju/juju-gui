@@ -117,10 +117,9 @@ YUI.add('juju-view-environment', function(Y) {
           env: this.get('env'),
           db: this.get('db'),
           bundleImporter: this.get('bundleImporter'),
-          getModelURL: this.get('getModelURL'),
           container: container,
           endpointsController: this.get('endpointsController'),
-          nsRouter: this.get('nsRouter'),
+          state: this.get('state'),
           staticURL: this.get('staticURL')
         });
         // Bind all the behaviors we need as modules.
@@ -198,23 +197,9 @@ YUI.add('juju-view-environment', function(Y) {
       @param {Object} e The click event
     */
     _handlePlusClick: function(e) {
-      this.fire('changeState', {
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'store'
-          }
-        }
+      this.get('state').changeState({
+        root: 'store'
       });
-    }
-  }, {
-    ATTRS: {
-      /**
-        Applications router utility methods
-
-        @attribute nsRouter
-      */
-      nsRouter: {}
     }
   });
 

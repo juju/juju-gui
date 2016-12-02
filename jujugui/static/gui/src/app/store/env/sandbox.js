@@ -378,7 +378,7 @@ YUI.add('juju-env-sandbox', function(Y) {
               name: 'sandbox',
               'default-series': state.get('defaultSeries'),
               'provider-type': state.get('providerType'),
-              uuid: 'sandboxuuid1',
+              uuid: 'sandbox',
               'controller-uuid': 'controlleruuid1',
               life: 'alive',
               'owner-tag': 'user-admin@local'

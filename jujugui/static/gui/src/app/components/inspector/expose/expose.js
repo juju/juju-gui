@@ -42,9 +42,8 @@ YUI.add('inspector-expose', function() {
     _unitItemAction: function(e) {
       var unitId = e.currentTarget.getAttribute('data-id').split('/')[1];
       this.props.changeState({
-        sectionA: {
-          component: 'inspector',
-          metadata: {
+        gui: {
+          inspector: {
             id: this.props.service.get('id'),
             unit: unitId,
             activeComponent: 'unit'

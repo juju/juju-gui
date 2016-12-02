@@ -161,7 +161,8 @@ describe('DeploymentFlow', function() {
               Applications to be deployed
               <juju.components.GenericButton
                 action={instance._toggleChangelogs}
-                type="base"
+                type="inline-neutral"
+                extraClasses="right"
                 title="Show changelog" />
             </span>}>
           <juju.components.DeploymentServices
@@ -285,7 +286,8 @@ describe('DeploymentFlow', function() {
               Applications to be deployed
               <juju.components.GenericButton
                 action={instance._toggleChangelogs}
-                type="base"
+                type="inline-neutral"
+                extraClasses="right"
                 title="Show changelog" />
             </span>}>
           <juju.components.DeploymentServices

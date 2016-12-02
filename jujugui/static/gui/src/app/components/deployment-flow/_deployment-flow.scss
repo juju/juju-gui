@@ -27,16 +27,9 @@
   }
 
   &__service-title {
-    .button--base {
-      width: auto;
-      color: $ubuntu-orange;
+    .button--inline-neutral {
       font-size: $base;
-
-      &:focus,
-      &:active,
-      &:hover {
-        background-color: transparent;
-      }
+      margin-bottom: 20px;
     }
   }
 

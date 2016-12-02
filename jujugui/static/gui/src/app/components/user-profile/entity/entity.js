@@ -57,13 +57,8 @@ YUI.add('user-profile-entity', function() {
     */
     _viewEntity: function(id, e) {
       this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'entity-details',
-            id: id.replace('cs:', '')
-          }
-        }
+        profile: null,
+        store: id.replace('cs:', '')
       });
     },
 
@@ -76,13 +71,9 @@ YUI.add('user-profile-entity', function() {
     */
     _handleTagClick: function(tag, e) {
       this.props.changeState({
-        sectionC: {
-          component: 'charmbrowser',
-          metadata: {
-            activeComponent: 'search-results',
-            search: null,
-            tags: tag
-          }
+        profile: null,
+        search: {
+          tags: tag
         }
       });
     },

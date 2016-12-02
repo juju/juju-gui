@@ -149,9 +149,8 @@ YUI.add('local-inspector', function() {
     */
     _close: function() {
       this.props.changeState({
-        sectionA: {
-          component: 'applications',
-          metadata: null
+        gui: {
+          machines: null
         }});
     },
 

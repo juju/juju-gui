@@ -163,13 +163,8 @@ YUI.add('juju-topology', function(Y) {
             // Don't allow the click if the element is being dragged.
             return;
           }
-          self.fire('changeState', {
-            sectionC: {
-              component: 'charmbrowser',
-              metadata: {
-                activeComponent: 'store'
-              }
-            }
+          self.get('state').changeState({
+            root: 'store'
           });
           // Pass the wheel events to the canvas so that it can be zoomed.
         }).on('mousewheel.zoom', this.handleZoom.bind(this))

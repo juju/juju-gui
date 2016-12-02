@@ -50,9 +50,8 @@ YUI.add('unit-list', function() {
     */
     _navigate: function(e) {
       this.props.changeState({
-        sectionA: {
-          component: 'inspector',
-          metadata: {
+        gui: {
+          inspector: {
             id: this.props.service.get('id'),
             activeComponent: 'scale'
           }}});
@@ -107,9 +106,8 @@ YUI.add('unit-list', function() {
     _unitItemAction: function(e) {
       var unitParts = e.currentTarget.getAttribute('data-id').split('/');
       this.props.changeState({
-        sectionA: {
-          component: 'inspector',
-          metadata: {
+        gui: {
+          inspector: {
             // This is done in parts like this because subordinate units show
             // the service unit that it's placed on, not the subordinate itself.
             id: unitParts[0], // Service Id

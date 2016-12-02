@@ -225,13 +225,7 @@ describe('InspectorChangeVersion', function() {
     output.props.children[0].props.children[1].props.onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'entity-details',
-          id: 'django-5'
-        }
-      }
+      store: 'django-5'
     });
   });
 
@@ -260,13 +254,7 @@ describe('InspectorChangeVersion', function() {
     output.props.children[1].props.children[0].props.itemAction();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionC: {
-        component: 'charmbrowser',
-        metadata: {
-          activeComponent: 'entity-details',
-          id: 'django-4'
-        }
-      }
+      store: 'django-4'
     });
   });
 

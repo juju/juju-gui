@@ -175,9 +175,8 @@ describe('Configuration', function() {
     assert.deepEqual(args[1], {option1: 'new value', option2: false});
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+      gui: {
+        inspector: {
           id: 'cs:trusty/ghost',
           activeComponent: undefined
         }}});
@@ -468,9 +467,8 @@ describe('Configuration', function() {
     assert.equal(addNotification.callCount, 1);
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionB: {
-        component: 'machine',
-        metadata: {}
+      gui: {
+        machines: ''
       }});
   });
 
@@ -586,9 +584,8 @@ describe('Configuration', function() {
     output.props.children[1].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      sectionA: {
-        component: 'inspector',
-        metadata: {
+      gui: {
+        inspector: {
           id: 'mysql',
           activeComponent: undefined
         }}});

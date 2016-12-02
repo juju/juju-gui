@@ -24,6 +24,7 @@ YUI.add('generic-button', function() {
     propTypes: {
       action: React.PropTypes.func,
       disabled: React.PropTypes.bool,
+      extraClasses: React.PropTypes.string,
       icon: React.PropTypes.string,
       submit: React.PropTypes.bool,
       title: React.PropTypes.string,
@@ -40,7 +41,8 @@ YUI.add('generic-button', function() {
         this.props.type ? 'button--' + this.props.type : 'button--neutral',
         {
           'button--disabled': this.props.disabled
-        }
+        },
+        this.props.extraClasses
       );
     },
 

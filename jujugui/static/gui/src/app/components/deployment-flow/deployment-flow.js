@@ -225,9 +225,8 @@ YUI.add('deployment-flow', function() {
     */
     _handleClose: function() {
       this.props.changeState({
-        sectionC: {
-          component: null,
-          metadata: {}
+        gui: {
+          deploy: null
         }
       });
     },
@@ -306,7 +305,8 @@ YUI.add('deployment-flow', function() {
           Applications to be deployed
           <juju.components.GenericButton
             action={this._toggleChangelogs}
-            type="base"
+            type="inline-neutral"
+            extraClasses="right"
             title={this.state.showChangelogs ?
               'Hide changelog' : 'Show changelog'} />
         </span>);
