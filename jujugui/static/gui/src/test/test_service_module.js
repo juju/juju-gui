@@ -967,7 +967,8 @@ describe('updateElementVisibility', function() {
     var highlight = sinon.stub(serviceModule, 'highlight');
     var unhighlight = sinon.stub(serviceModule, 'unhighlight');
     this._cleanups.concat([
-      fade.restore, hide.restore, show.restore, highlight.restore, unhighlight.restore
+      fade.restore, hide.restore, show.restore, highlight.restore,
+      unhighlight.restore
     ]);
     var serviceList = new models.ServiceList();
     serviceList.add([{

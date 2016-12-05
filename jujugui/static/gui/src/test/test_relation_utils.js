@@ -20,18 +20,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('RelationUtils', function() {
-  var models, relationUtils, testUtils;
+  var models, relationUtils;
 
   before(function(done) {
     var requirements = [
       'juju-models',
       'relation-utils',
-      'juju-tests-utils'
     ];
     YUI(GlobalConfig).use(requirements, function(Y) {
       models = Y.namespace('juju.models');
       relationUtils = window.juju.utils.RelationUtils;
-      testUtils = Y.namespace('juju-tests.utils');
       done();
     });
   });
