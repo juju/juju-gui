@@ -25,7 +25,7 @@ YUI.add('file-field', function() {
     propTypes: {
       accept: React.PropTypes.string,
       disabled: React.PropTypes.bool,
-      label: React.PropTypes.string,
+      label: React.PropTypes.string.isRequired,
       required: React.PropTypes.bool,
     },
 
@@ -159,7 +159,6 @@ YUI.add('file-field', function() {
       );
       return (
         <div className={classes}>
-          {labelElement}
           <input accept={this.props.accept}
             className="file-field__field"
             disabled={this.props.disabled}
@@ -168,6 +167,7 @@ YUI.add('file-field', function() {
             onChange={this.validate}
             ref="field"
             type="file" />
+          {labelElement}
           {this.state.errors}
         </div>
       );
