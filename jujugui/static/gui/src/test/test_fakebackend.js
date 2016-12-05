@@ -1665,14 +1665,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.removeUnit', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'node', 'juju-tests-factory', 'juju-models',
       'juju-charm-models'
     ];
-    var factory, fakebackend, utils;
+    var factory, fakebackend;
 
     before(function(done) {
       YUI(GlobalConfig).use(requires, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
         factory = Y.namespace('juju-tests.factory');
         done();
       });
@@ -1691,9 +1690,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var self = this;
       fakebackend.deploy('cs:precise/wordpress-27', function() {
         var unitId = 'wordpress/0';
-        var mockRemoveUnits = utils.makeStubMethod(
+        var mockRemoveUnits = sinon.stub(
             fakebackend.db, 'removeUnits');
-        self._cleanups.push(mockRemoveUnits.reset);
+        self._cleanups.push(mockRemoveUnits.restore);
         var result = fakebackend.removeUnits(unitId);
         assert.deepEqual(result, {
           error: undefined,
@@ -1713,9 +1712,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var self = this;
       fakebackend.deploy('cs:precise/wordpress-27', function() {
         var unitIds = ['wordpress/0', 'wordpress/1'];
-        var mockRemoveUnits = utils.makeStubMethod(
+        var mockRemoveUnits = sinon.stub(
             fakebackend.db, 'removeUnits');
-        self._cleanups.push(mockRemoveUnits.reset);
+        self._cleanups.push(mockRemoveUnits.restore);
         var result = fakebackend.removeUnits(unitIds);
         assert.deepEqual(result, {
           error: undefined,
@@ -1737,9 +1736,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Simulate the application is a subordinate.
         fakebackend.db.services.item(0).set('subordinate', true);
         var unitId = 'wordpress/0';
-        var mockRemoveUnits = utils.makeStubMethod(
+        var mockRemoveUnits = sinon.stub(
             fakebackend.db, 'removeUnits');
-        self._cleanups.push(mockRemoveUnits.reset);
+        self._cleanups.push(mockRemoveUnits.restore);
         var result = fakebackend.removeUnits(unitId);
         assert.deepEqual(result, {
           error: ['wordpress/0 is a subordinate, cannot remove.'],
@@ -1754,9 +1753,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // This assumes that the addUnit tests above pass.
       var self = this;
       fakebackend.deploy('cs:precise/wordpress-27', function() {
-        var mockRemoveUnits = utils.makeStubMethod(
+        var mockRemoveUnits = sinon.stub(
             fakebackend.db, 'removeUnits');
-        self._cleanups.push(mockRemoveUnits.reset);
+        self._cleanups.push(mockRemoveUnits.restore);
         var result = fakebackend.removeUnits('wordpress/42');
         assert.deepEqual(result, {
           error: undefined,
@@ -2168,14 +2167,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.addRelations', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'node', 'juju-tests-factory', 'juju-models',
       'juju-charm-models'
     ];
-    var factory, fakebackend, utils;
+    var factory, fakebackend;
 
     before(function(done) {
       YUI(GlobalConfig).use(requires, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
         factory = Y.namespace('juju-tests.factory');
         done();
       });
@@ -2208,7 +2206,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('calls addRelation once if both endpoints are strings', function() {
-      var addRelation = utils.makeStubMethod(fakebackend, 'addRelation', 'foo');
+      var addRelation = sinon.stub(fakebackend, 'addRelation').returns('foo');
       var result = fakebackend.addRelations('bar:baz', 'bax:qux', true);
       assert.equal(result, 'foo');
       assert.equal(addRelation.callCount, 1);
@@ -2218,8 +2216,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('calls addRelation in loop if endpoints are one-many', function() {
-      var addRelation = utils.makeStubMethod(
-          fakebackend, 'addRelation', 'foo', 'bar');
+      var addRelation = sinon.stub(fakebackend, 'addRelation');
+      addRelation.onFirstCall().returns('foo');
+      addRelation.onSecondCall().returns('bar');
       var result = fakebackend.addRelations(
           'bar:baz', ['bax:qux', 'foo:bar'], true);
       assert.deepEqual(result, ['foo', 'bar']);
@@ -2395,14 +2394,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.handleUploadLocalCharm', function() {
     var completedCallback, environmentsModule, fakebackend, mockGetEntries,
-        testUtils, ziputils;
+        ziputils;
     var requirements = [
-      'node', 'juju-env-fakebackend', 'juju-tests-utils', 'zip-utils'];
+      'node', 'juju-env-fakebackend', 'zip-utils'];
 
     before(function(done) {
       YUI(GlobalConfig).use(requirements, function(Y) {
         environmentsModule = Y.namespace('juju.environments');
-        testUtils = Y.namespace('juju-tests.utils');
         ziputils = Y.namespace('juju.ziputils');
         done();
       });
@@ -2412,8 +2410,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Instantiate a fake backend.
       fakebackend = new environmentsModule.FakeBackend();
       // Set up the ziputils.getEntries and the completedCallback mocks.
-      mockGetEntries = testUtils.makeStubMethod(ziputils, 'getEntries');
-      this._cleanups.push(mockGetEntries.reset);
+      mockGetEntries = sinon.stub(ziputils, 'getEntries');
+      this._cleanups.push(mockGetEntries.restore);
       completedCallback = sinon.stub();
     });
 
@@ -2456,9 +2454,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         metadata: metadataEntry
       };
       // Patch the ziputils.readCharmEntries function.
-      var mockReadCharmEntries = testUtils.makeStubMethod(
+      var mockReadCharmEntries = sinon.stub(
           ziputils, 'readCharmEntries');
-      this._cleanups.push(mockReadCharmEntries.reset);
+      this._cleanups.push(mockReadCharmEntries.restore);
       // Call the callback passed to ziputils.getEntries.
       var callback = retrieveGetEntriesArgs().callback;
       callback([configEntry, metadataEntry]);
@@ -2487,9 +2485,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         metadata: metadataEntry
       };
       // Patch the ziputils.readCharmEntries function.
-      var mockReadCharmEntries = testUtils.makeStubMethod(
+      var mockReadCharmEntries = sinon.stub(
           ziputils, 'readCharmEntries');
-      this._cleanups.push(mockReadCharmEntries.reset);
+      this._cleanups.push(mockReadCharmEntries.restore);
       // Call the callback passed to ziputils.getEntries.
       var callback = retrieveGetEntriesArgs().callback;
       callback(allEntries);
@@ -2503,9 +2501,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend.handleUploadLocalCharm(
           'a file object', 'trusty', completedCallback);
       // Patch the ziputils.readCharmEntries function.
-      var mockReadCharmEntries = testUtils.makeStubMethod(
+      var mockReadCharmEntries = sinon.stub(
           ziputils, 'readCharmEntries');
-      this._cleanups.push(mockReadCharmEntries.reset);
+      this._cleanups.push(mockReadCharmEntries.restore);
       // Call the callback passed to ziputils.getEntries.
       var callback = retrieveGetEntriesArgs().callback;
       callback([makeEntry('config.yaml')]);
@@ -2526,9 +2524,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend.handleUploadLocalCharm(
           'a file object', 'trusty', completedCallback);
       // Patch the ziputils.readCharmEntries function.
-      var mockReadCharmEntries = testUtils.makeStubMethod(
+      var mockReadCharmEntries = sinon.stub(
           ziputils, 'readCharmEntries');
-      this._cleanups.push(mockReadCharmEntries.reset);
+      this._cleanups.push(mockReadCharmEntries.restore);
       // Call the errback passed to ziputils.getEntries.
       var errback = retrieveGetEntriesArgs().errback;
       errback('bad wolf');
@@ -2730,13 +2728,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('FakeBackend.getLocalCharmFileUrl', function() {
-    var environmentsModule, fakebackend, testUtils;
-    var requirements = ['juju-env-fakebackend', 'juju-tests-utils'];
+    var environmentsModule, fakebackend;
+    var requirements = ['juju-env-fakebackend'];
 
     before(function(done) {
       YUI(GlobalConfig).use(requirements, function(Y) {
         environmentsModule = Y.namespace('juju.environments');
-        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
@@ -2768,10 +2765,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('prints a console error if other files are requested', function() {
       // Patch the console.error method.
-      var mockError = testUtils.makeStubMethod(console, 'error');
+      var mockError = sinon.stub(console, 'error');
       // Make a POST request to an unexpected URL.
       fakebackend.getLocalCharmFileUrl('local:trusty/django-42', 'readme');
-      mockError.reset();
+      mockError.restore();
       // An error has been printed to the console.
       assert.strictEqual(mockError.callCount, 1);
       var lastArguments = mockError.lastCall.args;
