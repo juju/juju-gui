@@ -89,6 +89,7 @@ YUI.add('app-renderer-extension', function(Y) {
 }, '0.1.0', {
   requires: [
     'base',
+    'header-breadcrumb',
     'juju-view-utils'
   ]
 });

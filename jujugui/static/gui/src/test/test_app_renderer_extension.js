@@ -25,18 +25,15 @@ describe('App Renderer Extension', function() {
       Renderer,
       renderer,
       renderStub,
-      utils,
       Y;
 
   before(function(done) {
     var requires = [
       'base',
-      'app-renderer-extension',
-      'juju-tests-utils'
+      'app-renderer-extension'
     ];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
       juju = Y.namespace('juju');
-      utils = Y.namespace('juju-tests.utils');
       done();
     });
   });
@@ -52,10 +49,10 @@ describe('App Renderer Extension', function() {
         });
     renderer = new Renderer();
     // React method stubs.
-    renderStub = utils.makeStubMethod(ReactDOM, 'render');
-    this._cleanups.push(renderStub.reset);
-    createElementStub = utils.makeStubMethod(React, 'createElement');
-    this._cleanups.push(createElementStub.reset);
+    renderStub = sinon.stub(ReactDOM, 'render');
+    this._cleanups.push(renderStub.restore);
+    createElementStub = sinon.stub(React, 'createElement');
+    this._cleanups.push(createElementStub.restore);
     // Bootstrap various renderer attributes and properties.
     var ecs = {
       getCurrentChangeSet: sinon.stub().returns({})
@@ -94,10 +91,14 @@ describe('App Renderer Extension', function() {
   });
 
   describe('_renderBreadcrumb', function() {
+    let stub;
+
     beforeEach(function() {
-      var stub = utils.makeStubMethod(window.juju.components,
-                                      'HeaderBreadcrumb');
-      this._cleanups.push(stub.reset);
+      stub = sinon.stub(window.juju.components, 'HeaderBreadcrumb');
+    });
+
+    afterEach(function() {
+      stub.restore();
     });
 
     it('renders a normal breadcrumb', function() {
