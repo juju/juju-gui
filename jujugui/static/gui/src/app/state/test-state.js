@@ -24,6 +24,10 @@ describe('State', () => {
     path: 'http://abc.com:123/?deploy-target=cs:ghost-4',
     state: {special: {deployTarget: 'cs:ghost-4'}},
     error: null
+  }, {
+    path: 'http://abc.com:123/?deploy-target=cs:trusty/kibana-15',
+    state: {special: {deployTarget: 'cs:trusty/kibana-15'}},
+    error: null
   }];
 
   const userStateTests = [{
@@ -104,7 +108,6 @@ describe('State', () => {
     path: 'http://abc.com:123/q/?series=yakkety',
     state: {
       search: {
-        text: '',
         series: 'yakkety'
       }
     },
@@ -425,21 +428,31 @@ describe('State', () => {
     });
   });
 
-  describe('State._getCleanPath()', () => {
-    it('can clean the url', () => {
+  describe('State._processURL()', () => {
+    it('correctly processes urls', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
         seriesList:  ['precise', 'trusty', 'xenial']
       });
-      assert.equal(
-        state._getCleanPath('http://abc.com:123/a/b/c/d/'),
-        'a/b/c/d');
-      assert.equal(
-        state._getCleanPath('http://abc.com:123///a/b/c/d/'),
-        'a/b/c/d');
-      assert.equal(
-        state._getCleanPath('http://abc.com:123/a/b/c/d///'),
-        'a/b/c/d');
+      assert.deepEqual(
+        state._processURL('http://abc.com:123/a/b/c/d/'),
+        {parts: ['a', 'b', 'c', 'd']});
+      assert.deepEqual(
+        state._processURL('http://abc.com:123///a/b/c/d/'),
+        {parts: ['a', 'b', 'c', 'd']});
+      assert.deepEqual(
+        state._processURL('http://abc.com:123/a/b/c/d///'),
+        {parts: ['a', 'b', 'c', 'd']});
+      assert.deepEqual(
+        state._processURL('http://abc.com:123/?deploy-target=cs:ceph45'),
+        {query: {'deploy-target': 'cs:ceph45'}});
+      assert.deepEqual(
+        state._processURL('http://abc.com:123/?deploy-target=cs:trusty/ceph45'),
+        {query: {'deploy-target': 'cs:trusty/ceph45'}});
+      assert.deepEqual(
+        state._processURL(
+          'http://abc.com:123/a/b/c/?deploy-target=cs:trusty/ceph45'),
+        {parts: ['a', 'b', 'c'], query: {'deploy-target': 'cs:trusty/ceph45'}});
     });
   });
 
@@ -450,7 +463,7 @@ describe('State', () => {
         seriesList: ['precise', 'trusty', 'xenial']
       });
       assert.deepEqual(
-        state._parseSpecial(['?deploy-target=cs:ghost-4'], {}), {
+        state._parseSpecial({'deploy-target': 'cs:ghost-4'}, {}), {
           special: {
             deployTarget: 'cs:ghost-4'
           }
@@ -477,10 +490,9 @@ describe('State', () => {
         baseURL: 'http://abc.com:123',
         seriesList:  ['precise', 'trusty', 'xenial']
       });
-      assert.deepEqual(state._parseSearch([], {}),{});
+      assert.deepEqual(state._parseSearch([], {}, {}), {});
       assert.deepEqual(
-        state._parseSearch(['k8s', 'core'], {}),
-        {
+        state._parseSearch(['k8s', 'core'], {}, {}), {
           search: {
             text: 'k8s/core'
           }
@@ -492,16 +504,16 @@ describe('State', () => {
         baseURL: 'http://abc.com:123',
         seriesList:  ['precise', 'trusty', 'xenial']
       });
-      assert.deepEqual(state._parseSearch([], {}),{});
+      assert.deepEqual(state._parseSearch([], {}, {}),{});
       assert.deepEqual(
-        state._parseSearch(['k8s', 'core', '?tags=ops,db&series=yakkety'], {}),
-        {
-          search: {
-            series: 'yakkety',
-            tags: ['ops', 'db'],
-            text: 'k8s/core'
-          }
-        });
+        state._parseSearch(
+          ['k8s', 'core'], {tags: 'ops,db', series: 'yakkety'}, {}), {
+            search: {
+              series: 'yakkety',
+              tags: ['ops', 'db'],
+              text: 'k8s/core'
+            }
+          });
     });
   });
 

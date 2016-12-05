@@ -101,16 +101,31 @@ const State = class State {
   }
 
   /**
-    Takes a complete URL, strips off the supplied baseURL and extra slashes.
-    @param {String} url - The URL to sanitize.
-    @return {String} The sanitized path.
+    Takes the complete URL and runs it through various process methods and
+    returns an object with the processed url parts and query string.
+    @param {String} url - The URL to process.
+    @return {Object} The processed url.
   */
-  _getCleanPath(url) {
-    return url
-      // Strip the baseURL before parsing the sections.
-      .replace(this.baseURL, '')
-      // Strip the leading and trailing slashes off the URL.
-      .replace(/^\/*/, '').replace(/\/*$/, '');
+  _processURL(url) {
+    const stripLRSlashes = path => path.replace(/^\/*/, '').replace(/\/*$/, '');
+    // Strip the baseURL before parsing the sections.
+    const cleanURL = stripLRSlashes(url.replace(this.baseURL, ''));
+    const splitURL = cleanURL.split('?');
+    const processed = {};
+    if (splitURL[1]) {
+      processed.query = {};
+      splitURL[1].split('&')
+           .forEach(section => {
+             const parts = section.split('=');
+             processed.query[parts[0]] = parts[1];
+           });
+    }
+    // The url parts without the query split on the / delimeter.
+    const cleanParts = stripLRSlashes(splitURL[0]);
+    if (cleanParts.length > 0) {
+      processed.parts = cleanParts.split('/');
+    }
+    return processed;
   }
 
   /**
@@ -404,15 +419,20 @@ const State = class State {
       }
   */
   generateState(url) {
+    // If we have a single part and it's an empty string then we are at '/' and
+    // there is nothing to parse so we can return early or it's an invalid path.
+    const invalidParts =
+      parts => !parts || (parts.length === 1 && parts[0] === '');
     let error = null;
     let state = {};
-    let parts = this._getCleanPath(url).split('/');
-    // If we have a single part and it's an empty string then we are at '/' and
-    // there is nothing to parse so we can return early.
-    if (parts.length === 1 && parts[0] === '') {
+    const splitURL = this._processURL(url);
+    let parts = splitURL.parts;
+    const query = splitURL.query;
+    state = this._parseSpecial(query, state);
+    // If we have an invalid parts or invalid query then we can return early.
+    if (invalidParts(parts) && !query) {
       return {error, state};
     }
-    state = this._parseSpecial(parts, state);
     state = this._parseRoot(parts, state);
     // If we have root paths in the URL then we can ignore everything else.
     if (state.root) {
@@ -424,9 +444,14 @@ const State = class State {
     }
     // The order of the PATH_DELIMETERS is important so we can assume the
     // order for easy parsing of the path.
-    if (parts[0] === PATH_DELIMETERS.get('search')) {
-      state = this._parseSearch(parts.splice(1), state);
+    if (!invalidParts(parts) && parts[0] === PATH_DELIMETERS.get('search')) {
+      state = this._parseSearch(parts.splice(1), query, state);
       // If we have a search path in the URL then we can ignore everything else.
+      return {error, state};
+    }
+    // We should be done parsing the parts and query now so if there are
+    // no more valid parts we can dump out early.
+    if (invalidParts(parts)) {
       return {error, state};
     }
     // Working backwards to split up the URL.
@@ -540,36 +565,20 @@ const State = class State {
   }
 
   /**
-    Inspects the URL path to see if there are parts in the special section.
-    @param {Array} urlParts - The URL path split into parts.
+    Inspects the query path to see if there are parts in the special section.
+    @param {Object} query - The query path split into parts.
     @param {Object} state - The application state object as being parsed
       from the URL.
     @return {Object} The updated state to contain the root value, if any.
   */
-  _parseSpecial(urlParts, state) {
-    urlParts.forEach((part, index) => {
-      // If the part starts with a ? then we've found the query portion.
-      const queryIndex = part.indexOf('?');
-      if (queryIndex > -1) {
-        part.split('?')[1]
-            .split('&')
-            .some(param => {
-              const values = param.split('=');
-              if (values[0] === 'deploy-target') {
-                if (!state.special) {
-                  state.special = {};
-                }
-                state.special.deployTarget = values[1];
-                // Remove the deploy-target from the query param.
-                urlParts[index] = urlParts[index].replace(param, '');
-                if (urlParts[index] === '?') {
-                  urlParts.splice(index, 1);
-                }
-                return true;
-              }
-            });
+  _parseSpecial(query, state) {
+    if (query && query['deploy-target']) {
+      if (!state.special) {
+        state.special = {};
       }
-    });
+      state.special.deployTarget = query['deploy-target'];
+      delete query['deploy-target'];
+    }
     return state;
   }
 
@@ -582,7 +591,7 @@ const State = class State {
   */
   _parseRoot(urlParts, state) {
     ROOT_RESERVED.some(key => {
-      if (urlParts[0] === key) {
+      if (urlParts && urlParts[0] === key) {
         state.root = key;
         return true;
       }
@@ -594,30 +603,26 @@ const State = class State {
     Parses the search portion of the URL without the
     PATH_DELIMETERS.get('search') key value.
     @param {Array} urlParts - The URL path split into parts.
+    @param {Object} query - The query portion of the path.
     @param {Object} state - The application state object as being parsed
       from the URL.
     @return {Object} The updated state to contain the search value, if any.
   */
-  _parseSearch(urlParts, state) {
+  _parseSearch(urlParts, query, state) {
     if (urlParts.length > 0) {
-      // Split the path at the start of the query params.
-      const parts = urlParts.join('/').split('?');
       state.search = {
-        // The path may have a trailing slash so clean it up.
-        text: this._getCleanPath(parts[0])
+        text: urlParts.join('/')
       };
-      // If there is more than one part then there are query params.
-      if (parts.length > 1) {
-        const params = parts[1].split('&');
-        params.forEach(param => {
-          // Split the param into the key and value.
-          const paramParts = param.split('=');
-          let value = paramParts[1] || '';
-          // Turn the value into an array if required.
-          if (value.indexOf(',') > -1) {
-            value = value.split(',');
-          }
-          state.search[paramParts[0]] = value;
+    }
+    if (query) {
+      const queryKeys = Object.keys(query);
+      if (queryKeys.length) {
+        if (!state.search) {
+          state.search = {};
+        }
+        queryKeys.forEach(key => {
+          const value = query[key];
+          state.search[key] = value.includes(',') ? value.split(',') : value;
         });
       }
     }
