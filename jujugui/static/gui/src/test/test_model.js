@@ -104,18 +104,17 @@ describe('test_model.js', function() {
   });
 
   describe('juju models', function() {
-    var models, Y, utils, relationUtils;
+    var models, Y, relationUtils;
+    const cleanups = [];
     var requirements = [
       'juju-models',
       'juju-charm-models',
-      'juju-tests-utils',
       'relation-utils'
     ];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
-        utils = Y.namespace('juju-tests.utils');
         relationUtils = window.juju.utils.RelationUtils;
         done();
       });
@@ -123,6 +122,12 @@ describe('test_model.js', function() {
 
     beforeEach(function() {
       window._gaq = [];
+    });
+
+    afterEach(function() {
+      cleanups.forEach(cleanup => {
+        cleanup();
+      });
     });
 
     it('percolates flags set on the service into the unit', function() {
@@ -213,9 +218,9 @@ describe('test_model.js', function() {
       var relations = [
         {far: {service: 'wordpress'}}
       ];
-      var stub = utils.makeStubMethod(
-        relationUtils, 'getRelationDataForService', relations);
-      this._cleanups.push(stub.reset);
+      var stub = sinon.stub(
+        relationUtils, 'getRelationDataForService').returns(relations);
+      cleanups.push(stub.restore);
       var related = db.findRelatedServices(service);
       related.each(function(s) {
         console.log(s.getAttrs());
@@ -236,9 +241,9 @@ describe('test_model.js', function() {
       var relations = [
         {far: {service: 'wordpress'}}
       ];
-      var stub = utils.makeStubMethod(
-        relationUtils, 'getRelationDataForService', relations);
-      this._cleanups.push(stub.reset);
+      var stub = sinon.stub(
+        relationUtils, 'getRelationDataForService').returns(relations);
+      cleanups.push(stub.restore);
       var unrelated = db.findUnrelatedServices(service);
       assert.equal(unrelated.size(), 1);
       assert.equal(unrelated.item(0).get('name'), 'haproxy');
@@ -253,9 +258,9 @@ describe('test_model.js', function() {
         {id: 'haproxy', name: 'haproxy'}
       ]);
       var relations = [{}];
-      var stub = utils.makeStubMethod(
-        relationUtils, 'getRelationDataForService', relations);
-      this._cleanups.push(stub.reset);
+      var stub = sinon.stub(
+        relationUtils, 'getRelationDataForService').returns(relations);
+      cleanups.push(stub.restore);
       var unrelated = db.findUnrelatedServices(service);
       assert.equal(unrelated.size(), 2);
     });
@@ -336,9 +341,9 @@ describe('test_model.js', function() {
     it('should aggregate unit info when adding units', function() {
       var service_unit = {id: 'mysql/0'};
       var db = new models.Database();
-      var stub = utils.makeStubMethod(
+      var stub = sinon.stub(
           db.units, 'update_service_unit_aggregates');
-      this._cleanups.push(stub.reset);
+      this._cleanups.push(stub.restore);
       db.services.add({id: 'mysql'});
       db.addUnits(service_unit);
       assert.equal(stub.calledOnce, true);
@@ -605,10 +610,10 @@ describe('test_model.js', function() {
 
       it('should change machines when units change', function() {
         var db = new models.Database();
-        var machinesStub = utils.makeStubMethod(db.machines, 'process_delta'),
-            unitsStub = utils.makeStubMethod(db.units, 'process_delta');
-        this._cleanups.push(machinesStub.reset);
-        this._cleanups.push(unitsStub.reset);
+        var machinesStub = sinon.stub(db.machines, 'process_delta'),
+            unitsStub = sinon.stub(db.units, 'process_delta');
+        this._cleanups.push(machinesStub.restore);
+        this._cleanups.push(unitsStub.restore);
         db.onDelta({data: {result: [
           ['unitInfo', 'remove', {'machine-id': '0'}]
         ]}});
@@ -669,7 +674,7 @@ describe('test_model.js', function() {
          });
 
       it('uses default handler for unknown deltas', function() {
-        var handler = utils.makeStubMethod(
+        var handler = sinon.stub(
             Y.juju.models.handlers, 'defaultHandler');
         var db = new models.Database();
         db.onDelta({data: {result: [
