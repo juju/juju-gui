@@ -21,13 +21,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('Web sandbox', function() {
-    var mockState, utils, webSandbox, webModule;
-    var requirements = ['juju-env-web-sandbox', 'juju-tests-utils'];
+    var mockError, mockState, webSandbox, webModule;
+    var requirements = ['juju-env-web-sandbox'];
 
     before(function(done) {
       // Set up the YUI instance, the test utils and the web namespace.
       YUI(GlobalConfig).use(requirements, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
         webModule = Y.namespace('juju.environments.web');
         done();
       });
@@ -41,10 +40,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         handleUploadLocalCharm: sinon.stub()
       };
       webSandbox = new webModule.WebSandbox({state: mockState});
+      mockError = sinon.stub(console, 'error');
     });
 
     afterEach(function() {
       webSandbox.destroy();
+      mockError.restore();
     });
 
     describe('sendPostRequest', function() {
@@ -71,12 +72,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('prints a console error if the request is not valid', function() {
-        // Patch the console.error method.
-        var mockError = utils.makeStubMethod(console, 'error');
         // Make a POST request to an unexpected URL.
         webSandbox.sendPostRequest(
             '/no-such-resource/', {}, 'data', 'user', 'passwd');
-        mockError.reset();
         // The state object has not been used.
         assert.strictEqual(mockState.handleUploadLocalCharm.called, false);
         // An error has been printed to the console.
@@ -132,11 +130,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('prints a console error if the request is not valid', function() {
-        // Patch the console.error method.
-        var mockError = utils.makeStubMethod(console, 'error');
         // Make a GET request to an unexpected URL.
         webSandbox.sendGetRequest('/no-such-resource/', {}, 'user', 'passwd');
-        mockError.reset();
         // The state object has not been used.
         assert.strictEqual(
             mockState.handleLocalCharmFileRequest.called, false);
@@ -168,11 +163,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('prints a console error if the request is not valid', function() {
-        // Patch the console.error method.
-        var mockError = utils.makeStubMethod(console, 'error');
         // Make a POST request to an unexpected URL.
         webSandbox.getUrl('/no-such-resource/', 'myuser', 'mypassword');
-        mockError.reset();
         // An error has been printed to the console.
         assert.strictEqual(mockError.callCount, 1);
         var lastArguments = mockError.lastCall.args;
