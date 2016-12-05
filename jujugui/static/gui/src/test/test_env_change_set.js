@@ -1986,7 +1986,7 @@ describe('Environment Change Set', function() {
         // Set up a mock unit.
         unit = {id: 'django/42'};
         // Mock the validateUnitPlacement function: without errors the function
-        // returns null (third argument of makeStubMethod).
+        // returns null.
         mockValidateUnitPlacement = sinon.stub(
             ecs, 'validateUnitPlacement').returns(null);
         this._cleanups.push(mockValidateUnitPlacement.restore);
