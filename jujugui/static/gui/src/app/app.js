@@ -1758,6 +1758,8 @@ YUI.add('juju-gui', function(Y) {
         ['search',
           this._renderCharmbrowser.bind(this),
           this._clearCharmbrowser.bind(this)],
+        ['special.deployTarget',
+          this._deployTarget.bind(this)],
         ['gui.machines',
           this._renderMachineView.bind(this),
           this._clearMachineView.bind(this)],
@@ -1800,6 +1802,64 @@ YUI.add('juju-gui', function(Y) {
     */
     _clearRoot: function(state, next) {
       this._clearCharmbrowser(state, next);
+      next();
+    },
+
+    /**
+      Handles the deploy target functionality.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _deployTarget: function(state, next) {
+      const charmstore = this.get('charmstore');
+      const entityId = state.special['deployTarget'];
+      /**
+        Handles parsing and displaying the failure notification returned from
+        the charmstore api.
+        @param {Object} error The XHR request object from the charmstore req.
+      */
+      const failureNotification = error => {
+        let message = `Unable to deploy target: ${entityId}`;
+        try {
+          message = JSON.parse(error.currentTarget.responseText).Message;
+        } catch (e) {
+          console.error(e);
+        }
+        this.db.notifications.add({
+          title: 'Error deploying target.',
+          message: message,
+          level: 'error'
+        });
+      };
+      // The charmstore apiv4 format can have the bundle keyword either at the
+      // start, for charmers bundles, or after the username, for namespaced
+      // bundles. ex) bundle/swift & ~jorge/bundle/swift
+      if (entityId.indexOf('bundle/') > -1) {
+        charmstore.getBundleYAML(entityId, (error, bundleYAML) => {
+          if (error) {
+            failureNotification(error);
+          } else {
+            this.bundleImporter.importBundleYAML(bundleYAML);
+          }
+        });
+      } else {
+        // If it's not a bundle then it's a charm.
+        charmstore.getEntity(entityId.replace('cs:', ''), (error, charm) => {
+          if (error) {
+            failureNotification(error);
+          } else {
+            charm = charm[0];
+            let config = {},
+                options = charm.get ? charm.get('options') : charm.options;
+            Object.keys(options).forEach(function(key) {
+              config[key] = options[key]['default'];
+            });
+            // We call the env deploy method directly because we don't want
+            // the ghost inspector to open.
+            this.deployService(new Y.juju.models.Charm(charm));
+          }
+        });
+      }
       next();
     },
 
