@@ -1036,10 +1036,10 @@ describe('RelationUtils', function() {
       var getEndpoints = sinon.stub().returns(endpointData);
       var applicationFrom = vals.applicationFrom || {};
       var applicationTo = { get: function() { return vals.applicationToId; } };
-      var dataStub = testUtils.makeStubMethod(relationUtils,
-        'getRelationDataForService',
-        JSON.parse(vals.getRelationDataForService));
-      context._cleanups.push(dataStub.reset);
+      var dataStub = sinon.stub(
+          relationUtils, 'getRelationDataForService').returns(
+              JSON.parse(vals.getRelationDataForService));
+      context._cleanups.push(dataStub.restore);
       return relationUtils.getAvailableEndpoints(
         endpointsController, db, getEndpoints, applicationFrom, applicationTo);
     }
