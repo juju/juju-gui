@@ -1687,10 +1687,10 @@ YUI.add('juju-view-utils', function(Y) {
             you set it up and get the relevant credentials. For more
             information see
             &nbsp;<a className="deployment-panel__link"
-              href={'https://cloud.google.com/copmute/dosc/api/how-tos/' +
+              href={'https://cloud.google.com/compute/docs/api/how-tos/' +
                 'authorization'}
               target="_blank">
-              https://cloud.google.com/copmute/dosc/api/how-tos/
+              https://cloud.google.com/compute/docs/api/how-tos/
               authorization
             </a>.
             The key information can be downloaded as a JSON file, or copied
