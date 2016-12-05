@@ -136,7 +136,7 @@ YUI.add('changes-utils', function(Y) {
         case '_addCharm':
           var command = change.command;
           changeItem.description = ' ' + command.args[0] +
-            ' charm has been added.';
+            ' has been added to the controller.';
           // TODO frankban: retrieve the icon from the charm itself. We cannot
           // always pass applicationId as an option, and maybe we should never
           // do that, and just get what we need from the charm.
@@ -163,7 +163,7 @@ YUI.add('changes-utils', function(Y) {
               change.command.options.modelId);
           changeItem.icon = ghostService.get('icon');
           changeItem.description = ' ' + ghostService.get('name') +
-              ' has been added.';
+              ' has been added to the model.';
           break;
         case '_destroyApplication':
           changeItem.icon = 'changes-service-destroyed';

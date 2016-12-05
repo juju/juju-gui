@@ -99,7 +99,7 @@ describe('ChangesUtils', function() {
     addEntities(db);
     var tests = [{
       icon: 'django.svg',
-      msg: ' cs:trusty/django-1 charm has been added.',
+      msg: ' cs:trusty/django-1 has been added to the controller.',
       change: {
         command: {
           method: '_addCharm',
@@ -118,7 +118,7 @@ describe('ChangesUtils', function() {
       }
     }, {
       icon: 'django.svg',
-      msg: ' django has been added.',
+      msg: ' django has been added to the model.',
       change: {
         command: {
           method: '_deploy',
