@@ -53,7 +53,7 @@ describe('App', function() {
   var jujuConfig, container, testUtils, yui;
 
   before(done => {
-    YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils',], function(Y) {
+    YUI(GlobalConfig).use(['juju-tests-utils'], function(Y) {
       yui = Y;
       testUtils = Y.namespace('juju-tests.utils');
       done();
@@ -278,11 +278,8 @@ describe('App', function() {
 
     describe('_setupCharmstore', function() {
       it('is called on application instantiation', function() {
-        var setup = testUtils.makeStubMethod(
-            Y.juju.App.prototype, '_setupCharmstore', {
-              getBundleChanges: () => {}
-            });
-        this._cleanups.push(setup.reset);
+        var setup = sinon.stub(Y.juju.App.prototype, '_setupCharmstore');
+        this._cleanups.push(setup.restore);
         constructAppInstance({
           env: new juju.environments.GoEnvironment({
             conn: new testUtils.SocketStub(),
@@ -385,8 +382,8 @@ describe('App', function() {
 
     describe('drag event attach and detach', function() {
       it('binds the drag handlers', function() {
-        var stub = testUtils.makeStubMethod(document, 'addEventListener');
-        this._cleanups.push(stub.reset);
+        var stub = sinon.stub(document, 'addEventListener');
+        this._cleanups.push(stub.restore);
         constructAppInstance({
           env: new juju.environments.GoEnvironment({
             conn: new testUtils.SocketStub(),
@@ -406,8 +403,8 @@ describe('App', function() {
       });
 
       it('removes the drag handlers', function(done) {
-        var stub = testUtils.makeStubMethod(document, 'removeEventListener');
-        this._cleanups.push(stub.reset);
+        var stub = sinon.stub(document, 'removeEventListener');
+        this._cleanups.push(stub.restore);
         constructAppInstance({
           env: new juju.environments.GoEnvironment({
             conn: new testUtils.SocketStub(),
@@ -496,8 +493,8 @@ describe('App', function() {
 
       it('_renderDragOverNotification renders drop UI', function() {
         var fade = sinon.stub();
-        var reactdom = testUtils.makeStubMethod(ReactDOM, 'render');
-        this._cleanups.push(reactdom.reset);
+        var reactdom = sinon.stub(ReactDOM, 'render');
+        this._cleanups.push(reactdom.restore);
         app._renderDragOverNotification.call({
           views: {
             environment: {
@@ -512,9 +509,9 @@ describe('App', function() {
 
       it('_hideDragOverNotification hides drop UI', function() {
         var fade = sinon.stub();
-        var reactdom = testUtils.makeStubMethod(
+        var reactdom = sinon.stub(
           ReactDOM, 'unmountComponentAtNode');
-        this._cleanups.push(reactdom.reset);
+        this._cleanups.push(reactdom.restore);
         app._hideDragOverNotification.call({
           views: {
             environment: {
@@ -540,15 +537,15 @@ describe('App', function() {
         })
       }, this);
 
-      determineFileTypeStub = testUtils.makeStubMethod(
-          app, '_determineFileType', 'zip');
-      renderDragOverStub = testUtils.makeStubMethod(
+      determineFileTypeStub = sinon.stub(
+          app, '_determineFileType').returns('zip');
+      renderDragOverStub = sinon.stub(
           app, '_renderDragOverNotification');
-      dragTimerControlStub = testUtils.makeStubMethod(
+      dragTimerControlStub = sinon.stub(
           app, '_dragleaveTimerControl');
       this._cleanups.concat([
-        determineFileTypeStub.reset,
-        renderDragOverStub.reset,
+        determineFileTypeStub.restore,
+        renderDragOverStub.restore,
         dragTimerControlStub
       ]);
 
@@ -736,7 +733,7 @@ describe('App', function() {
 
     it('displays the login view if credentials are not valid', function() {
       env.connect();
-      var loginStub = testUtils.makeStubMethod(app, '_renderLogin');
+      var loginStub = sinon.stub(app, '_renderLogin');
       app.env.login();
       // Mimic a login failed response assuming login is the first request.
       conn.msg({'request-id': 1, error: 'bad wolf'});
@@ -776,14 +773,13 @@ describe('App', function() {
     it('navigates to requested url on login', function() {
       // The difference between this test and the following one is that this
       // tests the path where there is no hash in the url.
-      var stubit = testUtils.makeStubMethod;
-      var popup = testUtils.makeStubMethod(
-          Y.juju.App.prototype, 'popLoginRedirectPath', '/foo/bar');
-      this._cleanups.push(popup.reset);
+      var popup = sinon.stub(
+          Y.juju.App.prototype, 'popLoginRedirectPath').returns('/foo/bar');
+      this._cleanups.push(popup.restore);
       env.connect();
-      stubit(app, 'maskVisibility');
-      stubit(app, 'navigate');
-      stubit(app, 'dispatch');
+      sinon.stub(app, 'maskVisibility');
+      sinon.stub(app, 'navigate');
+      sinon.stub(app, 'dispatch');
       app.onLogin({ data: { result: true } });
       assert.equal(app.navigate.calledOnce, true);
       assert.deepEqual(app.navigate.lastCall.args, [
@@ -795,15 +791,14 @@ describe('App', function() {
     });
 
     it('does not navigate to requested url on login with gisf', function() {
-      var stubit = testUtils.makeStubMethod;
-      var popup = testUtils.makeStubMethod(
-          Y.juju.App.prototype, 'popLoginRedirectPath', '/foo/bar');
-      this._cleanups.push(popup.reset);
+      var popup = sinon.stub(
+          Y.juju.App.prototype, 'popLoginRedirectPath').returns('/foo/bar');
+      this._cleanups.push(popup.restore);
       env.connect();
       app.set('gisf', true);
-      stubit(app, 'maskVisibility');
-      stubit(app, 'navigate');
-      stubit(app, 'dispatch');
+      sinon.stub(app, 'maskVisibility');
+      sinon.stub(app, 'navigate');
+      sinon.stub(app, 'dispatch');
       app.onLogin({ data: { result: true } });
       assert.equal(app.navigate.calledOnce, false,
         'navigate should not be called in gisf mode here');
@@ -813,18 +808,18 @@ describe('App', function() {
     // When the notification system gets refactored this test can be un-skipped.
     it.skip('creates a notification if logged in with a token', function(done) {
       // We need to change the prototype before we instantiate.
-      // See the "this.reset()" call in the callback below that cleans up.
-      var stub = testUtils.makeStubMethod(Y.juju.App.prototype, 'onLogin');
-      testUtils.makeStubMethod(app, 'maskVisibility');
+      // See the "this.restore()" call in the callback below that cleans up.
+      var stub = sinon.stub(Y.juju.App.prototype, 'onLogin');
+      sinon.stub(app, 'maskVisibility');
       app.redirectPath = '/foo/bar/';
       app.location = {
         toString: function() {return '/login/';},
         search: '?authtoken=demoToken'};
-      testUtils.makeStubMethod(app.env, 'onceAfter');
-      testUtils.makeStubMethod(app, 'navigate');
+      sinon.stub(app.env, 'onceAfter');
+      sinon.stub(app, 'navigate');
       stub.addCallback(function() {
         // Clean up.
-        this.reset();
+        this.restore();
         // Begin assertions.
         var e = this.lastCall.args[0];
         // These two really simply verify that our test prep did what we
@@ -1330,7 +1325,7 @@ describe('App', function() {
 
     it('skips the reconnect when necessary', function() {
       app = _generateMockedApp(false);
-      var connect = testUtils.makeStubMethod(app.env, 'connect');
+      var connect = sinon.stub(app.env, 'connect');
       this._cleanups.push(connect);
       // Try calling switchEnv both with explicit false and with socketUrl not
       // set (implicit).
@@ -1483,7 +1478,7 @@ describe('App', function() {
         jujuCoreVersion: '2.0.0'
       });
       var charmstore = app.get('charmstore');
-      csStub = testUtils.makeStubMethod(charmstore, 'whoami');
+      csStub = sinon.stub(charmstore, 'whoami');
       this._cleanups.push(csStub);
     });
 
@@ -1530,9 +1525,9 @@ describe('App', function() {
         consoleEnabled: true,
         jujuCoreVersion: '2.0.0'
       });
-      credStub = testUtils.makeStubMethod(
-        app.env, 'getCredentials', {user: ''});
-      this._cleanups.push(credStub.reset);
+      credStub = sinon.stub(
+        app.env, 'getCredentials').returns({user: ''});
+      this._cleanups.push(credStub.restore);
     });
 
     afterEach(function() {
