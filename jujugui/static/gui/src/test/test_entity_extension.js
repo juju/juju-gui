@@ -73,7 +73,7 @@ describe('Entity Extension', function() {
       tags: ['database', 'application'],
     };
     var iconPath = 'v5/' + entityModel.get('id') + '/icon.svg';
-    utils.makeStubMethod(utils, 'getIconPath', iconPath);
+    utils.getIconPath = sinon.stub().returns(iconPath);
     entityModel.setAttrs(attrs);
     var entity = entityModel.toEntity();
     var expected = {
@@ -98,7 +98,7 @@ describe('Entity Extension', function() {
   });
 
   it('converts a bundle to an entity POJO', function() {
-    utils.makeStubMethod(entityModel, 'parseBundleServices', []);
+    entityModel.parseBundleServices = sinon.stub().returns([]);
     var attrs = {
       id: 'foobar',
       machines: {machine1: 1, machine2: 2},
@@ -139,7 +139,7 @@ describe('Entity Extension', function() {
     window.juju_config = {
       staticURL: 'static'
     };
-    utils.makeStubMethod(entityModel, 'parseBundleServices', []);
+    entityModel.parseBundleServices = sinon.stub().returns([]);
     var attrs = {
       id: 'foobar',
       owner: 'foobar-charmers',
