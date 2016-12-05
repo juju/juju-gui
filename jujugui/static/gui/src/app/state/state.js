@@ -423,6 +423,8 @@ const State = class State {
     // there is nothing to parse so we can return early or it's an invalid path.
     const invalidParts =
       parts => !parts || (parts.length === 1 && parts[0] === '');
+    const invalidRootPath = 'invalid root path.';
+    const invalidStorePath = 'invalid store path.';
     let error = null;
     let state = {};
     const splitURL = this._processURL(url);
@@ -438,7 +440,7 @@ const State = class State {
     if (state.root) {
       // If there is anything after this then it's an invalid URL.
       if (parts.length > 1) {
-        error = 'invalid root path.';
+        error = invalidRootPath;
       }
       return {error, state};
     }
@@ -457,7 +459,13 @@ const State = class State {
     // Working backwards to split up the URL.
     const guiIndex = parts.indexOf(PATH_DELIMETERS.get('gui'));
     if (guiIndex > -1) {
-      ({state, error} = this._parseGUI(parts.splice(guiIndex), state));
+      // XXX This return value isn't using object destructuring because babili
+      // minifier incorrectly munges the return values and it breaks. In the
+      // future it can be reverted and tested against a newer version than
+      // 0.0.9
+      let parsed = this._parseGUI(parts.splice(guiIndex), state);
+      error = parsed.error;
+      state = parsed.state;
       if (error !== null) {
         error = `cannot parse the GUI path: ${error}`;
         return {error, state};
@@ -471,18 +479,19 @@ const State = class State {
         return {error, state};
       }
     }
+    const partsLength = parts.length;
     // By this point there should only be the 'store only' content left.
-    if (!state.store && parts.length) {
+    if (!state.store && partsLength) {
       // If there are more than 3 parts then this is an invalid url.
-      if (parts.length > 3) {
-        error = 'invalid store path.';
+      if (partsLength > 3) {
+        error = invalidStorePath;
       } else {
         state.store = parts.join('/');
       }
       // If we have more content here but there is already a store populated.
       // then this is an invalid url.
-    } else if (state.store && parts.length) {
-      error = 'invalid store path.';
+    } else if (state.store && partsLength) {
+      error = invalidStorePath;
       state.store = parts.join('/');
     }
     return {error, state};
