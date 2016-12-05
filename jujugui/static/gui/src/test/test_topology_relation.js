@@ -118,8 +118,8 @@ describe('topology relation module', function() {
       }
     };
     view.set('component', topo);
-    var stubUpdate = utils.makeStubMethod(view, 'update');
-    this._cleanups.push(stubUpdate.reset);
+    var stubUpdate = sinon.stub(view, 'update');
+    this._cleanups.push(stubUpdate.restore);
     view.rerender();
     assert.equal(stubRemove.calledOnce, true, 'Remove was not called');
     assert.equal(stubUpdate.calledOnce, true, 'Update was not called');
@@ -144,15 +144,15 @@ describe('topology relation module', function() {
 
   describe('updateRelationVisibility', function() {
     it('is called on update', function() {
-      var updateVis = utils.makeStubMethod(view, 'updateRelationVisibility');
-      this._cleanups.push(updateVis.reset);
-      var decorate = utils.makeStubMethod(view, 'decorateRelations');
-      this._cleanups.push(decorate.reset);
-      var update = utils.makeStubMethod(view, 'updateLinks');
-      this._cleanups.push(update.reset);
-      var updateSubs = utils.makeStubMethod(
+      var updateVis = sinon.stub(view, 'updateRelationVisibility');
+      this._cleanups.push(updateVis.restore);
+      var decorate = sinon.stub(view, 'decorateRelations');
+      this._cleanups.push(decorate.restore);
+      var update = sinon.stub(view, 'updateLinks');
+      this._cleanups.push(update.restore);
+      var updateSubs = sinon.stub(
           view, 'updateSubordinateRelationsCount');
-      this._cleanups.push(updateSubs.reset);
+      this._cleanups.push(updateSubs.restore);
       view.set('component', {
         get: function() {
           return {
@@ -166,10 +166,10 @@ describe('topology relation module', function() {
     });
 
     it('categorizes and calls the appropriate vis method', function() {
-      var fade = utils.makeStubMethod(view, 'fade');
-      var hide = utils.makeStubMethod(view, 'hide');
-      var show = utils.makeStubMethod(view, 'show');
-      this._cleanups.concat([fade.reset, hide.reset, show.reset]);
+      var fade = sinon.stub(view, 'fade');
+      var hide = sinon.stub(view, 'hide');
+      var show = sinon.stub(view, 'show');
+      this._cleanups.concat([fade.restore, hide.restore, show.restore]);
       var serviceList = new models.ServiceList();
       serviceList.add([{
         id: 'foo1',
@@ -207,16 +207,16 @@ describe('topology relation module', function() {
   describe('ambiguousAddRelationCheck', function() {
     var addRelationEnd, getDisplayName, menuStub, relSelect, posMenu;
     function stubThemAll(context) {
-      addRelationEnd = utils.makeStubMethod(view, 'addRelationEnd');
-      context._cleanups.push(addRelationEnd.reset);
-      getDisplayName = utils.makeStubMethod(view, '_getServiceDisplayName');
-      context._cleanups.push(getDisplayName.reset);
-      menuStub = utils.makeStubMethod(view, '_renderAmbiguousRelationMenu');
-      context._cleanups.push(menuStub.reset);
-      relSelect = utils.makeStubMethod(view, '_attachAmbiguousReleationSelect');
-      context._cleanups.push(relSelect.reset);
-      posMenu = utils.makeStubMethod(view, '_positionAmbiguousRelationMenu');
-      context._cleanups.push(posMenu.reset);
+      addRelationEnd = sinon.stub(view, 'addRelationEnd');
+      context._cleanups.push(addRelationEnd.restore);
+      getDisplayName = sinon.stub(view, '_getServiceDisplayName');
+      context._cleanups.push(getDisplayName.restore);
+      menuStub = sinon.stub(view, '_renderAmbiguousRelationMenu');
+      context._cleanups.push(menuStub.restore);
+      relSelect = sinon.stub(view, '_attachAmbiguousReleationSelect');
+      context._cleanups.push(relSelect.restore);
+      posMenu = sinon.stub(view, '_positionAmbiguousRelationMenu');
+      context._cleanups.push(posMenu.restore);
     }
 
     it('calls addRelationEnd if relation is not ambiguous', function() {
@@ -375,10 +375,10 @@ describe('topology relation module', function() {
         set: set,
         fire: sinon.stub()
       };
-      var locate = utils.makeStubMethod(
-          Y.juju.topology.utils, 'locateRelativePointOnCanvas',
+      var locate = sinon.stub(
+          Y.juju.topology.utils, 'locateRelativePointOnCanvas').returns(
           ['locate1', 'locate2']);
-      this._cleanups.push(locate.reset);
+      this._cleanups.push(locate.restore);
 
       view._positionAmbiguousRelationMenu(menu, topo, 'm', 'context');
 
