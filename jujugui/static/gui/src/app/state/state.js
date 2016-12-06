@@ -101,16 +101,31 @@ const State = class State {
   }
 
   /**
-    Takes a complete URL, strips off the supplied baseURL and extra slashes.
-    @param {String} url - The URL to sanitize.
-    @return {String} The sanitized path.
+    Takes the complete URL and runs it through various process methods and
+    returns an object with the processed url parts and query string.
+    @param {String} url - The URL to process.
+    @return {Object} The processed url.
   */
-  _getCleanPath(url) {
-    return url
-      // Strip the baseURL before parsing the sections.
-      .replace(this.baseURL, '')
-      // Strip the leading and trailing slashes off the URL.
-      .replace(/^\/*/, '').replace(/\/*$/, '');
+  _processURL(url) {
+    const stripLRSlashes = path => path.replace(/^\/*/, '').replace(/\/*$/, '');
+    // Strip the baseURL before parsing the sections.
+    const cleanURL = stripLRSlashes(url.replace(this.baseURL, ''));
+    const splitURL = cleanURL.split('?');
+    const processed = {};
+    if (splitURL[1]) {
+      processed.query = {};
+      splitURL[1].split('&')
+           .forEach(section => {
+             const parts = section.split('=');
+             processed.query[parts[0]] = parts[1];
+           });
+    }
+    // The url parts without the query split on the / delimeter.
+    const cleanParts = stripLRSlashes(splitURL[0]);
+    if (cleanParts.length > 0) {
+      processed.parts = cleanParts.split('/');
+    }
+    return processed;
   }
 
   /**
@@ -404,12 +419,20 @@ const State = class State {
       }
   */
   generateState(url) {
+    // If we have a single part and it's an empty string then we are at '/' and
+    // there is nothing to parse so we can return early or it's an invalid path.
+    const invalidParts =
+      parts => !parts || (parts.length === 1 && parts[0] === '');
+    const invalidRootPath = 'invalid root path.';
+    const invalidStorePath = 'invalid store path.';
     let error = null;
     let state = {};
-    let parts = this._getCleanPath(url).split('/');
-    // If we have a single part and it's an empty string then we are at '/' and
-    // there is nothing to parse so we can return early.
-    if (parts.length === 1 && parts[0] === '') {
+    const splitURL = this._processURL(url);
+    let parts = splitURL.parts;
+    const query = splitURL.query;
+    state = this._parseSpecial(query, state);
+    // If we have an invalid parts or invalid query then we can return early.
+    if (invalidParts(parts) && !query) {
       return {error, state};
     }
     state = this._parseRoot(parts, state);
@@ -417,21 +440,32 @@ const State = class State {
     if (state.root) {
       // If there is anything after this then it's an invalid URL.
       if (parts.length > 1) {
-        error = 'invalid root path.';
+        error = invalidRootPath;
       }
       return {error, state};
     }
     // The order of the PATH_DELIMETERS is important so we can assume the
     // order for easy parsing of the path.
-    if (parts[0] === PATH_DELIMETERS.get('search')) {
-      state = this._parseSearch(parts.splice(1), state);
+    if (!invalidParts(parts) && parts[0] === PATH_DELIMETERS.get('search')) {
+      state = this._parseSearch(parts.splice(1), query, state);
       // If we have a search path in the URL then we can ignore everything else.
+      return {error, state};
+    }
+    // We should be done parsing the parts and query now so if there are
+    // no more valid parts we can dump out early.
+    if (invalidParts(parts)) {
       return {error, state};
     }
     // Working backwards to split up the URL.
     const guiIndex = parts.indexOf(PATH_DELIMETERS.get('gui'));
     if (guiIndex > -1) {
-      ({state, error} = this._parseGUI(parts.splice(guiIndex), state));
+      // XXX This return value isn't using object destructuring because babili
+      // minifier incorrectly munges the return values and it breaks. In the
+      // future it can be reverted and tested against a newer version than
+      // 0.0.9
+      let parsed = this._parseGUI(parts.splice(guiIndex), state);
+      error = parsed.error;
+      state = parsed.state;
       if (error !== null) {
         error = `cannot parse the GUI path: ${error}`;
         return {error, state};
@@ -445,18 +479,19 @@ const State = class State {
         return {error, state};
       }
     }
+    const partsLength = parts.length;
     // By this point there should only be the 'store only' content left.
-    if (!state.store && parts.length) {
+    if (!state.store && partsLength) {
       // If there are more than 3 parts then this is an invalid url.
-      if (parts.length > 3) {
-        error = 'invalid store path.';
+      if (partsLength > 3) {
+        error = invalidStorePath;
       } else {
         state.store = parts.join('/');
       }
       // If we have more content here but there is already a store populated.
       // then this is an invalid url.
-    } else if (state.store && parts.length) {
-      error = 'invalid store path.';
+    } else if (state.store && partsLength) {
+      error = invalidStorePath;
       state.store = parts.join('/');
     }
     return {error, state};
@@ -539,6 +574,24 @@ const State = class State {
   }
 
   /**
+    Inspects the query path to see if there are parts in the special section.
+    @param {Object} query - The query path split into parts.
+    @param {Object} state - The application state object as being parsed
+      from the URL.
+    @return {Object} The updated state to contain the root value, if any.
+  */
+  _parseSpecial(query, state) {
+    if (query && query['deploy-target']) {
+      if (!state.special) {
+        state.special = {};
+      }
+      state.special.deployTarget = query['deploy-target'];
+      delete query['deploy-target'];
+    }
+    return state;
+  }
+
+  /**
     Inspects the URL path to see if it is for the root.
     @param {Array} urlParts - The URL path split into parts.
     @param {Object} state - The application state object as being parsed
@@ -547,7 +600,7 @@ const State = class State {
   */
   _parseRoot(urlParts, state) {
     ROOT_RESERVED.some(key => {
-      if (urlParts[0] === key) {
+      if (urlParts && urlParts[0] === key) {
         state.root = key;
         return true;
       }
@@ -559,30 +612,26 @@ const State = class State {
     Parses the search portion of the URL without the
     PATH_DELIMETERS.get('search') key value.
     @param {Array} urlParts - The URL path split into parts.
+    @param {Object} query - The query portion of the path.
     @param {Object} state - The application state object as being parsed
       from the URL.
     @return {Object} The updated state to contain the search value, if any.
   */
-  _parseSearch(urlParts, state) {
+  _parseSearch(urlParts, query, state) {
     if (urlParts.length > 0) {
-      // Split the path at the start of the query params.
-      const parts = urlParts.join('/').split('?');
       state.search = {
-        // The path may have a trailing slash so clean it up.
-        text: this._getCleanPath(parts[0])
+        text: urlParts.join('/')
       };
-      // If there is more than one part then there are query params.
-      if (parts.length > 1) {
-        const params = parts[1].split('&');
-        params.forEach(param => {
-          // Split the param into the key and value.
-          const paramParts = param.split('=');
-          let value = paramParts[1] || '';
-          // Turn the value into an array if required.
-          if (value.indexOf(',') > -1) {
-            value = value.split(',');
-          }
-          state.search[paramParts[0]] = value;
+    }
+    if (query) {
+      const queryKeys = Object.keys(query);
+      if (queryKeys.length) {
+        if (!state.search) {
+          state.search = {};
+        }
+        queryKeys.forEach(key => {
+          const value = query[key];
+          state.search[key] = value.includes(',') ? value.split(',') : value;
         });
       }
     }
