@@ -305,7 +305,8 @@ YUI.add('deployment-flow', function() {
           Applications to be deployed
           <juju.components.GenericButton
             action={this._toggleChangelogs}
-            type="base"
+            type="inline-neutral"
+            extraClasses="right"
             title={this.state.showChangelogs ?
               'Hide changelog' : 'Show changelog'} />
         </span>);
