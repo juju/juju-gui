@@ -42,7 +42,7 @@ describe('Relation endpoints logic', function() {
       models = Y.namespace('juju.models');
       sample_env = utils.loadFixture('data/large_stream.json', true);
       sample_endpoints = utils.loadFixture('data/large_endpoints.json', true);
-      utils.makeStubMethod(Y.juju.App.prototype, '_renderComponents');
+      sinon.stub(Y.juju.App.prototype, '_renderComponents');
       done();
     });
   });
@@ -470,7 +470,7 @@ describe('Endpoints map', function() {
 
 describe('Endpoints map handlers', function() {
   var app, conn, container, controller, destroyMe, ecs,
-      env, factory, juju, jujuConfig, utils, Y;
+      env, factory, juju, jujuConfig, utils, Y, _renderComponents;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-gui',
@@ -483,7 +483,6 @@ describe('Endpoints map handlers', function() {
       juju = Y.namespace('juju');
       utils = Y.namespace('juju-tests.utils');
       factory = Y.namespace('juju-tests.factory');
-      utils.makeStubMethod(Y.juju.App.prototype, '_renderComponents');
       done();
     });
   });
@@ -506,12 +505,8 @@ describe('Endpoints map handlers', function() {
       conn: conn
     });
     env.connect();
-    var _renderDeployerBarView = utils.makeStubMethod(
-        Y.juju.App.prototype, '_renderDeployerBarView');
-    this._cleanups.push(_renderDeployerBarView.reset);
-    var _renderComponents = utils.makeStubMethod(
+    _renderComponents = sinon.stub(
         Y.juju.App.prototype, '_renderComponents');
-    this._cleanups.push(_renderComponents.reset);
     app = new Y.juju.App({
       baseUrl: 'http://example.com/',
       env: env,
@@ -543,6 +538,7 @@ describe('Endpoints map handlers', function() {
       container.remove(true);
       done();
     });
+    _renderComponents.restore();
   });
 
   it('should update endpoints map when pending services are added',
@@ -707,7 +703,7 @@ describe('Application config handlers', function() {
       juju = Y.namespace('juju');
       utils = Y.namespace('juju-tests.utils');
 
-      utils.makeStubMethod(Y.juju.App.prototype, '_renderComponents');
+      sinon.stub(Y.juju.App.prototype, '_renderComponents');
       done();
     });
   });

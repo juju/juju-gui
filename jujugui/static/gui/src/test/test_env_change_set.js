@@ -47,12 +47,11 @@ describe('Environment Change Set', function() {
       password: 'password',
       ecs: ecs
     });
-    testUtils.makeStubMethod(envObj, '_addCharm');
-    testUtils.makeStubMethod(envObj, '_deploy');
-    testUtils.makeStubMethod(envObj, '_set_config');
-    testUtils.makeStubMethod(envObj, '_add_relation');
-    testUtils.makeStubMethod(envObj, '_add_units');
-    testUtils.makeStubMethod(envObj, '_addMachines');
+    sinon.stub(envObj, '_addCharm');
+    sinon.stub(envObj, '_deploy');
+    sinon.stub(envObj, '_set_config');
+    sinon.stub(envObj, '_add_relation');
+    sinon.stub(envObj, '_addMachines');
   });
 
   afterEach(function() {
@@ -199,8 +198,8 @@ describe('Environment Change Set', function() {
     describe('_createNewRecord', function() {
       it('always creates a unique key for new records', function() {
         var result = [];
-        var wrapCallback = testUtils.makeStubMethod(ecs, '_wrapCallback');
-        this._cleanups.push(wrapCallback.reset);
+        var wrapCallback = sinon.stub(ecs, '_wrapCallback');
+        this._cleanups.push(wrapCallback.restore);
         for (var i = 0; i < 999; i += 1) {
           result.push(ecs._createNewRecord('service'));
         }
@@ -211,9 +210,9 @@ describe('Environment Change Set', function() {
 
       it('creates a new record of the specified type', function() {
         var command = { foo: 'foo' };
-        var wrapCallback = testUtils.makeStubMethod(
-            ecs, '_wrapCallback', command);
-        this._cleanups.push(wrapCallback.reset);
+        var wrapCallback = sinon.stub(
+            ecs, '_wrapCallback').returns(command);
+        this._cleanups.push(wrapCallback.restore);
         var key = ecs._createNewRecord('service', command);
         assert.equal(wrapCallback.calledOnce, true);
         // Note that we cannot guarantee the duration of the tests, so we
@@ -238,9 +237,9 @@ describe('Environment Change Set', function() {
 
       it('adds supplied parent records to the new record', function() {
         var command = { foo: 'foo' };
-        var wrapCallback = testUtils.makeStubMethod(
-            ecs, '_wrapCallback', command);
-        this._cleanups.push(wrapCallback.reset);
+        var wrapCallback = sinon.stub(
+            ecs, '_wrapCallback').returns(command);
+        this._cleanups.push(wrapCallback.restore);
         var parent = ['service-123'];
         var key = ecs._createNewRecord('service', command, parent);
         assert.equal(wrapCallback.calledOnce, true);
@@ -273,7 +272,7 @@ describe('Environment Change Set', function() {
       });
 
       it('fires a changeSetModified event', function() {
-        var fire = testUtils.makeStubMethod(ecs, 'fire');
+        var fire = sinon.stub(ecs, 'fire');
         ecs.changeSet.abc123 = 'foo';
         ecs._removeExistingRecord('abc123');
         assert.equal(fire.calledOnce, true);
@@ -295,8 +294,8 @@ describe('Environment Change Set', function() {
         };
         ecs._wrapCallback(record);
         // The callback should now be wrapped.
-        var fire = testUtils.makeStubMethod(ecs, 'fire');
-        this._cleanups.push(fire.reset);
+        var fire = sinon.stub(ecs, 'fire');
+        this._cleanups.push(fire.restore);
         var result = record.command.args[3]();
         assert.equal(result, 'real cb');
         assert.equal(fire.callCount, 2);
@@ -353,8 +352,10 @@ describe('Environment Change Set', function() {
 
       beforeEach(function() {
         db = ecs.get('db');
-        db.units = {};
-        filterStub = testUtils.makeStubMethod(db.units, 'filterByMachine');
+        filterStub = sinon.stub();
+        db.units = {
+          filterByMachine: filterStub
+        };
       });
 
       it('only acts on the current index', function() {
@@ -441,8 +442,7 @@ describe('Environment Change Set', function() {
           }}
         };
 
-        filterStub = testUtils.makeStubMethod(
-            db.units, 'filterByMachine', [{id: '75930989$/0'}]);
+        filterStub.returns([{id: '75930989$/0'}]);
         var result = ecs._buildHierarchy(true);
         // XXX assert.deepEqual does not seem to play well with arrays
         // of objects.  Slack card on board - Makyo 2014-04-23
@@ -467,15 +467,16 @@ describe('Environment Change Set', function() {
     describe('commit', function() {
       beforeEach(function() {
         var db = ecs.get('db');
-        db.units = {};
-        testUtils.makeStubMethod(db.units, 'filterByMachine');
+        db.units = {
+          filterByMachine: sinon.stub()
+        };
       });
 
       it('loops through the changeSet calling execute on them', function() {
-        var execute = testUtils.makeStubMethod(ecs, '_execute');
-        this._cleanups.push(execute.reset);
-        var fire = testUtils.makeStubMethod(ecs, 'fire');
-        this._cleanups.push(fire.reset);
+        var execute = sinon.stub(ecs, '_execute');
+        this._cleanups.push(execute.restore);
+        var fire = sinon.stub(ecs, 'fire');
+        this._cleanups.push(fire.restore);
         var changeSet = {
           'service-568': {
             index: 0,
@@ -496,10 +497,10 @@ describe('Environment Change Set', function() {
       });
 
       it('commits one index at a time', function() {
-        var execute = testUtils.makeStubMethod(ecs, '_execute');
-        this._cleanups.push(execute.reset);
-        var fire = testUtils.makeStubMethod(ecs, 'fire');
-        this._cleanups.push(fire.reset);
+        var execute = sinon.stub(ecs, '_execute');
+        this._cleanups.push(execute.restore);
+        var fire = sinon.stub(ecs, 'fire');
+        this._cleanups.push(fire.restore);
         var changeSet = {
           'service-568': {
             index: 0,
@@ -525,8 +526,8 @@ describe('Environment Change Set', function() {
       });
 
       it('passes the commit index through an event', function() {
-        var fire = testUtils.makeStubMethod(ecs, 'fire');
-        this._cleanups.push(fire.reset);
+        var fire = sinon.stub(ecs, 'fire');
+        this._cleanups.push(fire.restore);
         ecs.levelRecordCount = 0;
         ecs.levelTimer = { cancel: sinon.stub() };
         ecs._waitOnLevel(null, 0);
@@ -539,13 +540,14 @@ describe('Environment Change Set', function() {
   describe('clear', function() {
     beforeEach(function() {
       var db = ecs.get('db');
-      db.units = {};
-      testUtils.makeStubMethod(db.units, 'filterByMachine');
+      db.units = {
+        filterByMachine: sinon.stub()
+      };
     });
 
     it('clears the change set', function() {
-      var stubClearDB = testUtils.makeStubMethod(ecs, '_clearFromDB');
-      this._cleanups.push(stubClearDB.reset);
+      var stubClearDB = sinon.stub(ecs, '_clearFromDB');
+      this._cleanups.push(stubClearDB.restore);
       var changeSet = {
         'service-568': {
           index: 0,
@@ -562,8 +564,8 @@ describe('Environment Change Set', function() {
     });
 
     it('works with multiple indices', function() {
-      var stubClearDB = testUtils.makeStubMethod(ecs, '_clearFromDB');
-      this._cleanups.push(stubClearDB.reset);
+      var stubClearDB = sinon.stub(ecs, '_clearFromDB');
+      this._cleanups.push(stubClearDB.restore);
       var changeSet = {
         'service-568': {
           index: 0,
@@ -599,9 +601,11 @@ describe('Environment Change Set', function() {
   describe('_clearFromDB', function() {
     it('clears deployed services', function() {
       var db = ecs.get('db');
-      db.services = {};
-      var stubRemove = testUtils.makeStubMethod(db.services, 'remove');
-      testUtils.makeStubMethod(db.services, 'getById');
+      var stubRemove = sinon.stub();
+      db.services = {
+        remove: stubRemove,
+        getById: sinon.stub()
+      };
       ecs._clearFromDB({method: '_deploy', options: {modelId: 1}});
       assert.equal(stubRemove.calledOnce, true, 'Service not removed');
     });
@@ -679,9 +683,11 @@ describe('Environment Change Set', function() {
 
     it('clears added relations', function() {
       var db = ecs.get('db');
-      db.relations = {};
-      var stubRemove = testUtils.makeStubMethod(db.relations, 'remove');
-      testUtils.makeStubMethod(db.relations, 'getById');
+      var stubRemove = sinon.stub();
+      db.relations = {
+        remove: stubRemove,
+        getById: sinon.stub()
+      };
       ecs._clearFromDB({method: '_add_relation', options: {modelId: 1}});
       assert.equal(stubRemove.calledOnce, true, 'Relation not removed');
     });
@@ -742,18 +748,23 @@ describe('Environment Change Set', function() {
 
     it('clears added machines', function() {
       var db = ecs.get('db');
-      db.machines = {};
-      var stubRemove = testUtils.makeStubMethod(db.machines, 'remove');
-      testUtils.makeStubMethod(db.machines, 'getById');
+      var stubRemove = sinon.stub();
+      db.machines = {
+        remove: stubRemove,
+        getById: sinon.stub()
+      };
       ecs._clearFromDB({method: '_addMachines', options: {modelId: 1}});
       assert.equal(stubRemove.calledOnce, true, 'Machine not removed');
     });
 
     it('clears added units', function() {
       var db = ecs.get('db');
-      db.units = {};
-      var stubRemove = testUtils.makeStubMethod(db, 'removeUnits');
-      testUtils.makeStubMethod(db.units, 'getById');
+      var stubRemove = sinon.stub();
+      db.removeUnits =  stubRemove;
+      db.units = {
+        getById: sinon.stub(),
+        reset: sinon.stub()
+      };
       ecs._clearFromDB({method: '_add_unit', options: {modelId: 1}});
       assert.equal(stubRemove.calledOnce, true, 'Unit not removed');
     });
@@ -977,8 +988,8 @@ describe('Environment Change Set', function() {
         db.relations = {
           remove: sinon.stub()
         };
-        var stubRemoveUnits = testUtils.makeStubMethod(db, 'removeUnits');
-        this._cleanups.push(stubRemoveUnits.reset);
+        var stubRemoveUnits = sinon.stub(db, 'removeUnits');
+        this._cleanups.push(stubRemoveUnits.restore);
 
         ecs._lazyDeploy([{charmURL: 'wp'}, function() {}, {modelId: 'baz'}]);
         ecs.lazyDestroyApplication(['baz']);
@@ -1041,8 +1052,8 @@ describe('Environment Change Set', function() {
             }
           }
         });
-        var removeStub = testUtils.makeStubMethod(ecs, '_lazyRemoveUnit');
-        this._cleanups.push(removeStub.reset);
+        var removeStub = sinon.stub(ecs, '_lazyRemoveUnit');
+        this._cleanups.push(removeStub.restore);
         ecs.lazyDestroyApplication(args);
         assert.equal(removeStub.calledOnce, true);
         assert.deepEqual(removeStub.lastCall.args[0], [unitIds]);
@@ -1124,9 +1135,9 @@ describe('Environment Change Set', function() {
       });
 
       it('removes records for queued uncommitted machines', function() {
-        var stubDestroy = testUtils.makeStubMethod(
+        var stubDestroy = sinon.stub(
             ecs, '_destroyQueuedMachine');
-        this._cleanups.push(stubDestroy.reset);
+        this._cleanups.push(stubDestroy.restore);
         ecs.get('db').machines = {
           detachAll: function() {},
           destroy: function() {},
@@ -1282,9 +1293,8 @@ describe('Environment Change Set', function() {
 
     describe('lazyAddMachines', function() {
       it('creates a new `addMachines` record', function(done) {
-        var translateStub = testUtils.makeStubMethod(ecs,
-            '_translateKeysToIds');
-        this._cleanups.push(translateStub.reset);
+        var translateStub = sinon.stub();
+        ecs._translateKeysToIds = translateStub;
         var args = [[{}], done];
         var key = ecs.lazyAddMachines(args, {modelId: ''});
         var record = ecs.changeSet[key];
@@ -1424,8 +1434,8 @@ describe('Environment Change Set', function() {
           id: '756482$/3',
           number: '3'
         };
-        testUtils.makeStubMethod(db.units, 'getById', unit);
-        testUtils.makeStubMethod(db, 'updateUnitId', {
+        db.units.getById = sinon.stub().returns(unit);
+        sinon.stub(db, 'updateUnitId').returns({
           id: 'my-service/3'
         });
         const key = ecs.lazyAddUnits(args, {modelId: '1'});
@@ -1478,8 +1488,9 @@ describe('Environment Change Set', function() {
       });
 
       it('creates a new `setConfig` record for a deployed service', function() {
-        var addToRecord = testUtils.makeStubMethod(ecs, '_addToRecord');
-        this._cleanups.push(addToRecord.reset);
+        var addToRecord = sinon.stub();
+        ecs._addToRecord = addToRecord;
+        this._cleanups.push(addToRecord.restore);
         var args = [1, {}, 'foo', {}];
         var key = ecs._lazySetConfig(args);
         var record = ecs.changeSet[key];
@@ -1533,8 +1544,9 @@ describe('Environment Change Set', function() {
     describe('_lazyAddRelation', function() {
       beforeEach(function() {
         var db = ecs.get('db');
-        db.units = {};
-        testUtils.makeStubMethod(db.units, 'filterByMachine');
+        db.units = {
+          filterByMachine: sinon.stub()
+        };
       });
 
       it('creates a new `addRelation` record', function() {
@@ -1779,7 +1791,7 @@ describe('Environment Change Set', function() {
             }
           }
         };
-        var stubRemove = testUtils.makeStubMethod(ecs, '_removeExistingRecord');
+        var stubRemove = sinon.stub(ecs, '_removeExistingRecord');
         ecs.lazyUnexpose(['service']);
         assert.deepEqual(stubSet.lastCall.args, ['exposed', false]);
         assert.equal(stubRemove.calledOnce, true);
@@ -1791,8 +1803,8 @@ describe('Environment Change Set', function() {
   describe('public ENV methods', function() {
     describe('addCharm', function() {
       it('can immediately add a charm via the env', function() {
-        var lazyAddCharm = testUtils.makeStubMethod(ecs, '_lazyAddCharm');
-        this._cleanups.push(lazyAddCharm.reset);
+        var lazyAddCharm = sinon.stub(ecs, '_lazyAddCharm');
+        this._cleanups.push(lazyAddCharm.restore);
         var callback = sinon.stub();
         var args = [1, 2, callback, { immediate: true}];
         envObj.addCharm.apply(envObj, args);
@@ -1806,8 +1818,8 @@ describe('Environment Change Set', function() {
       });
 
       it('can add a `addCharm` command to the changeSet', function() {
-        var lazyAddCharm = testUtils.makeStubMethod(ecs, '_lazyAddCharm');
-        this._cleanups.push(lazyAddCharm. reset);
+        var lazyAddCharm = sinon.stub(ecs, '_lazyAddCharm');
+        this._cleanups.push(lazyAddCharm.restore);
         var callback = sinon.stub();
         var args = [1, 2, callback];
         envObj.addCharm.apply(envObj, args);
@@ -1824,8 +1836,8 @@ describe('Environment Change Set', function() {
 
     describe('deploy', function() {
       it('can immediately deploy a charm via the env', function() {
-        const lazyDeploy = testUtils.makeStubMethod(ecs, '_lazyDeploy');
-        this._cleanups.push(lazyDeploy.reset);
+        const lazyDeploy = sinon.stub(ecs, '_lazyDeploy');
+        this._cleanups.push(lazyDeploy.restore);
         const callback = sinon.stub();
         const args = {charmURL: 'cs:haproxy-42', applicationName: 'haproxy'};
         envObj.deploy.apply(envObj, [args, callback, {immediate: true}]);
@@ -1837,8 +1849,8 @@ describe('Environment Change Set', function() {
       });
 
       it('can add a `deploy` command to the changeSet', function() {
-        var lazyDeploy = testUtils.makeStubMethod(ecs, '_lazyDeploy');
-        this._cleanups.push(lazyDeploy.reset);
+        var lazyDeploy = sinon.stub(ecs, '_lazyDeploy');
+        this._cleanups.push(lazyDeploy.restore);
         var callback = sinon.stub();
         var args = [1, 2, 3, 4, 5, 6, 7, callback];
         envObj.deploy.apply(envObj, args);
@@ -1855,8 +1867,8 @@ describe('Environment Change Set', function() {
 
     describe('setConfig', function() {
       it('can immediately set config to a deployed service', function() {
-        var lazySetConfig = testUtils.makeStubMethod(ecs, '_lazySetConfig');
-        this._cleanups.push(lazySetConfig.reset);
+        var lazySetConfig = sinon.stub(ecs, '_lazySetConfig');
+        this._cleanups.push(lazySetConfig.restore);
         var callback = sinon.stub();
         var args = ['service', {key: 'value'}, callback, { immediate: true}];
         envObj.set_config.apply(envObj, args);
@@ -1871,8 +1883,8 @@ describe('Environment Change Set', function() {
       });
 
       it('throws if immediately setting config to queued app', function() {
-        var lazySetConfig = testUtils.makeStubMethod(ecs, '_lazySetConfig');
-        this._cleanups.push(lazySetConfig.reset);
+        var lazySetConfig = sinon.stub(ecs, '_lazySetConfig');
+        this._cleanups.push(lazySetConfig.restore);
         var callback = sinon.stub();
         ecs.changeSet.foo = {};
         assert.throws(
@@ -1887,8 +1899,8 @@ describe('Environment Change Set', function() {
       });
 
       it('can add a `set_config` command to the changeSet', function() {
-        var lazySetConfig = testUtils.makeStubMethod(ecs, '_lazySetConfig');
-        this._cleanups.push(lazySetConfig.reset);
+        var lazySetConfig = sinon.stub(ecs, '_lazySetConfig');
+        this._cleanups.push(lazySetConfig.restore);
         var callback = sinon.stub();
         var args = [1, 2, 3, 4, callback];
         envObj.set_config.apply(envObj, args);
@@ -1902,8 +1914,9 @@ describe('Environment Change Set', function() {
         var db = ecs.get('db');
         db.services = new Y.juju.models.ServiceList();
         db.services.add({ id: 'serviceId1$' });
-        db.units = {};
-        testUtils.makeStubMethod(db.units, 'filterByMachine');
+        db.units = {
+          filterByMachine: sinon.stub()
+        };
         ecs.changeSet = {
           'service-1': {
             command: {
@@ -1929,8 +1942,8 @@ describe('Environment Change Set', function() {
 
     describe('addRelation', function() {
       it('can immediately call `add_relation`', function() {
-        var lazyAddRelation = testUtils.makeStubMethod(ecs, '_lazyAddRelation');
-        this._cleanups.push(lazyAddRelation.reset);
+        var lazyAddRelation = sinon.stub(ecs, '_lazyAddRelation');
+        this._cleanups.push(lazyAddRelation.restore);
         var callback = sinon.stub();
         var args = [1, 2, callback, {immediate: true}];
         envObj.add_relation.apply(envObj, args);
@@ -1941,8 +1954,8 @@ describe('Environment Change Set', function() {
         assert.deepEqual(envObj._add_relation.lastCall.args, args);
       });
       it('can add a `add_relation` command to the changeSet', function() {
-        var lazyAddRelation = testUtils.makeStubMethod(ecs, '_lazyAddRelation');
-        this._cleanups.push(lazyAddRelation.reset);
+        var lazyAddRelation = sinon.stub(ecs, '_lazyAddRelation');
+        this._cleanups.push(lazyAddRelation.restore);
         var callback = sinon.stub();
         var args = [1, 2, callback];
         envObj.add_relation.apply(envObj, args);
@@ -1973,10 +1986,10 @@ describe('Environment Change Set', function() {
         // Set up a mock unit.
         unit = {id: 'django/42'};
         // Mock the validateUnitPlacement function: without errors the function
-        // returns null (third argument of makeStubMethod).
-        mockValidateUnitPlacement = testUtils.makeStubMethod(
-            ecs, 'validateUnitPlacement', null);
-        this._cleanups.push(mockValidateUnitPlacement.reset);
+        // returns null.
+        mockValidateUnitPlacement = sinon.stub(
+            ecs, 'validateUnitPlacement').returns(null);
+        this._cleanups.push(mockValidateUnitPlacement.restore);
         // Set up a base changeset: tests can override this value if required.
         ecs.changeSet = {
           a: {
@@ -2064,9 +2077,7 @@ describe('Environment Change Set', function() {
       it('does not apply changes if unit placement is not valid', function() {
         var addStub = sinon.stub();
         ecs.get('db').notifications = {add: addStub};
-        mockValidateUnitPlacement = testUtils.makeStubMethod(
-            ecs, 'validateUnitPlacement', 'bad wolf');
-        this._cleanups.push(mockValidateUnitPlacement.reset);
+        mockValidateUnitPlacement.returns('bad wolf');
         var err = ecs.placeUnit(unit, machineId);
         assert.strictEqual(err, 'bad wolf');
         // A notification should have been added.

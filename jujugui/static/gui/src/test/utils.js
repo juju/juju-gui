@@ -23,45 +23,6 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
   var jujuTests = Y.namespace('juju-tests');
 
   jujuTests.utils = {
-    /**
-     * Make a stub method.  Pass in 0 or more arguments to become responses
-     * that the method cycles through.
-     *
-     * The function has all introspection methods from makeMockFunction,
-     * plus "reset", which resets the object with the original value.
-     * This is pre-bound, so it is easy to pass in as a clean-up function.
-     *
-     * @method makeStubMethod
-     * @param {Object} context the object on which the method will sit.
-     * @param {String} name the name to be replaced.
-     * @return {Function} the new stub function.
-     */
-    makeStubMethod: function(context, name, args) {
-      const responses = Array.prototype.slice.call(arguments, 2);
-      const mockMethod = sinon.stub();
-      if (responses.length === 1) {
-        // If only one reponse is supplied then return that every time the
-        // method is called.
-        mockMethod.returns(responses[0]);
-      } else {
-        responses.forEach((response, i) => {
-          mockMethod.onCall(i).returns(response);
-        });
-      }
-      const original = context[name];
-      context[name] = mockMethod;
-      mockMethod.reset = function() {
-        context[name] = original;
-      };
-      mockMethod.passThroughToOriginalMethod = function(instance) {
-        if (!Y.Lang.isValue(instance)) {
-          instance = context;
-        }
-        return original.apply(instance, mockMethod.lastCall.args);
-      };
-      return mockMethod;
-    },
-
     makeContainer: function(ctx, id, visibleContainer) {
       // You must pass a context and it must be a valid object.
       if (arguments.length < 1) {

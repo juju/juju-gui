@@ -21,13 +21,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('Web handler', function() {
-    var mockXhr, utils, webHandler, webModule, Y;
-    var requirements = ['juju-env-web-handler', 'juju-tests-utils'];
+    var mockXhr, webHandler, webModule, Y;
+    var requirements = ['juju-env-web-handler'];
 
     before(function(done) {
       // Set up the YUI instance, the test utils and the web namespace.
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
-        utils = Y.namespace('juju-tests.utils');
         webModule = Y.namespace('juju.environments.web');
         done();
       });
@@ -38,11 +37,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       webHandler = new webModule.WebHandler();
       var context = XMLHttpRequest.prototype;
       mockXhr = {
-        addEventListener: utils.makeStubMethod(context, 'addEventListener'),
-        open: utils.makeStubMethod(context, 'open'),
-        setRequestHeader: utils.makeStubMethod(context, 'setRequestHeader'),
-        send: utils.makeStubMethod(context, 'send'),
-        removeEventListener: utils.makeStubMethod(
+        addEventListener: sinon.stub(context, 'addEventListener'),
+        open: sinon.stub(context, 'open'),
+        setRequestHeader: sinon.stub(context, 'setRequestHeader'),
+        send: sinon.stub(context, 'send'),
+        removeEventListener: sinon.stub(
             context, 'removeEventListener')
       };
     });
@@ -51,7 +50,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       webHandler.destroy();
       // Reset all the method mocks.
       Y.each(mockXhr, function(value) {
-        value.reset();
+        value.restore();
       });
     });
 

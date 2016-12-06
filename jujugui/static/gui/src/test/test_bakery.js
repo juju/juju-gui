@@ -19,13 +19,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Bakery', function() {
-  var bakery, fakeLocalStorage, macaroon, utils, Y;
+  var bakery, fakeLocalStorage, macaroon, Y;
 
   before(function (done) {
-    var modules = ['juju-env-bakery', 'juju-env-web-handler',
-                   'juju-tests-utils', 'macaroon' ];
+    var modules = ['juju-env-bakery', 'juju-env-web-handler', 'macaroon' ];
     Y = YUI(GlobalConfig).use(modules, function (Y) {
-      utils = Y['juju-tests'].utils;
       macaroon = Y['macaroon'];
       done();
     });
@@ -127,8 +125,8 @@ describe('Bakery', function() {
   describe('_fetchMacaroonFromStaticPath', function() {
 
     it('can return a saved macaroon', function() {
-      var getStub = utils.makeStubMethod(bakery, 'getMacaroon', 'macaroons');
-      this._cleanups.push(getStub.reset);
+      var getStub = sinon.stub(bakery, 'getMacaroon').returns('macaroons');
+      this._cleanups.push(getStub.restore);
       var callback = sinon.stub();
       bakery.fetchMacaroonFromStaticPath(callback);
       assert.equal(callback.callCount, 1);
@@ -136,8 +134,8 @@ describe('Bakery', function() {
     });
 
     it('fails gracefully if no static path is defined', function() {
-      var getStub = utils.makeStubMethod(bakery, 'getMacaroon', null);
-      this._cleanups.push(getStub.reset);
+      var getStub = sinon.stub(bakery, 'getMacaroon').returns(null);
+      this._cleanups.push(getStub.restore);
       var callback = sinon.stub();
       bakery.staticMacaroonPath = false;
       bakery.fetchMacaroonFromStaticPath(callback);
@@ -147,10 +145,10 @@ describe('Bakery', function() {
     });
 
     it('sends get request to fetch macaroon', function() {
-      var getStub = utils.makeStubMethod(bakery, 'getMacaroon', null);
-      var sendGet = utils.makeStubMethod(bakery.webhandler, 'sendGetRequest');
-      this._cleanups.push(sendGet.reset);
-      this._cleanups.push(getStub.reset);
+      var getStub = sinon.stub(bakery, 'getMacaroon').returns(null);
+      var sendGet = sinon.stub(bakery.webhandler, 'sendGetRequest');
+      this._cleanups.push(sendGet.restore);
+      this._cleanups.push(getStub.restore);
       var callback = sinon.stub();
       bakery.staticMacaroonPath = 'path/to/macaroon';
       bakery.fetchMacaroonFromStaticPath(callback);
@@ -165,11 +163,13 @@ describe('Bakery', function() {
     });
 
     it('authenticates the macaroon after fetching', function() {
-      var getStub = utils.makeStubMethod(
-        bakery, 'getMacaroon', null, 'macaroons');
-      var authStub = utils.makeStubMethod(bakery, '_authenticate');
-      var sendGet = utils.makeStubMethod(bakery.webhandler, 'sendGetRequest');
-      this._cleanups.concat([sendGet.reset, getStub.reset, authStub.reset]);
+      var getStub = sinon.stub(bakery, 'getMacaroon');
+      getStub.onFirstCall().returns(null);
+      getStub.onSecondCall().returns('macaroons');
+      var authStub = sinon.stub(bakery, '_authenticate');
+      var sendGet = sinon.stub(bakery.webhandler, 'sendGetRequest');
+      this._cleanups.concat(
+        [sendGet.restore, getStub.restore, authStub.restore]);
       var callback = sinon.stub();
       bakery.staticMacaroonPath = 'path/to/macaroon';
       bakery.fetchMacaroonFromStaticPath(callback);
@@ -191,11 +191,12 @@ describe('Bakery', function() {
     });
 
     it('fails gracefully if it cannot parse the macaroon response', function() {
-      var getStub = utils.makeStubMethod(
-        bakery, 'getMacaroon', null, 'macaroons');
-      var authStub = utils.makeStubMethod(bakery, '_authenticate');
-      var sendGet = utils.makeStubMethod(bakery.webhandler, 'sendGetRequest');
-      this._cleanups.concat([sendGet.reset, getStub.reset, authStub.reset]);
+      var getStub = sinon.stub(
+        bakery, 'getMacaroon').returns(null, 'macaroons');
+      var authStub = sinon.stub(bakery, '_authenticate');
+      var sendGet = sinon.stub(bakery.webhandler, 'sendGetRequest');
+      this._cleanups.concat(
+        [sendGet.restore, getStub.restore, authStub.restore]);
       var callback = sinon.stub();
       bakery.staticMacaroonPath = 'path/to/macaroon';
       bakery.fetchMacaroonFromStaticPath(callback);
@@ -563,9 +564,9 @@ describe('Bakery', function() {
     });
 
     it('no need for authentication when not 401', function() {
-      var requestHandler = utils.makeStubMethod(bakery, '_requestHandler');
+      var requestHandler = sinon.stub(bakery, '_requestHandler');
 
-      this._cleanups.push(requestHandler.reset);
+      this._cleanups.push(requestHandler.restore);
 
       bakery._requestHandlerWithInteraction(
         'path', success, failure, true, {

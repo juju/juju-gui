@@ -69,10 +69,10 @@ describe('Bundle Importer', function() {
 
     describe('importBundleYAML', function() {
       it('calls fetchDryRun with yaml', function() {
-        var fetch = utils.makeStubMethod(bundleImporter, 'fetchDryRun');
-        var notify = utils.makeStubMethod(
+        var fetch = sinon.stub(bundleImporter, 'fetchDryRun');
+        var notify = sinon.stub(
           bundleImporter.db.notifications, 'add');
-        this._cleanups.concat([fetch.reset, notify.reset]);
+        this._cleanups.concat([fetch.restore, notify.restore]);
         bundleImporter.importBundleYAML('foo: bar');
         assert.equal(fetch.callCount, 1);
         var args = fetch.lastCall.args;
@@ -90,8 +90,8 @@ describe('Bundle Importer', function() {
 
     describe('importChangesToken', function() {
       it('calls fetchDryRun with token', function() {
-        var fetch = utils.makeStubMethod(bundleImporter, 'fetchDryRun');
-        this._cleanups.push(fetch.reset);
+        var fetch = sinon.stub(bundleImporter, 'fetchDryRun');
+        this._cleanups.push(fetch.restore);
         bundleImporter.importChangesToken('TOKEN');
         assert.equal(fetch.callCount, 1);
         var args = fetch.lastCall.args;
@@ -105,15 +105,15 @@ describe('Bundle Importer', function() {
 
       it('sets up and loads the FileReader', function() {
         var asText = sinon.stub();
-        var generate = utils.makeStubMethod(
-            bundleImporter, '_generateFileReader', {
-              onload: '',
-              readAsText: asText
-            });
-        var hideNotification = utils.makeStubMethod(
-          bundleImporter, 'hideDragOverNotification');
-        var onload = utils.makeStubMethod(bundleImporter, '_fileReaderOnload');
-        this._cleanups.concat([generate.reset, onload.reset]);
+        var generate = sinon.stub(
+          bundleImporter, '_generateFileReader').returns({
+            onload: '',
+            readAsText: asText
+          });
+        var hideNotification = sinon.stub();
+        bundleImporter.hideDragOverNotification = hideNotification;
+        var onload = sinon.stub(bundleImporter, '_fileReaderOnload');
+        this._cleanups.concat([generate.restore, onload.restore]);
         var reader = bundleImporter.importBundleFile('path/to/file');
         assert.equal(generate.callCount, 1);
         assert.equal(asText.callCount, 1);
@@ -126,9 +126,9 @@ describe('Bundle Importer', function() {
       describe('FileReader onload callback', function() {
         var file = { name: 'path/to/file.json' };
         it('shows notification if file contains invalid json', function() {
-          var notification = utils.makeStubMethod(
+          var notification = sinon.stub(
               bundleImporter.db.notifications, 'add');
-          this._cleanups.push(notification.reset);
+          this._cleanups.push(notification.restore);
           bundleImporter._fileReaderOnload(file, {
             target: { result: '[invalid json]' }
           });
@@ -137,11 +137,11 @@ describe('Bundle Importer', function() {
         });
 
         it('shows notification before kicking off import', function() {
-          var importStub = utils.makeStubMethod(
+          var importStub = sinon.stub(
               bundleImporter, 'importBundleDryRun');
-          var notification = utils.makeStubMethod(
+          var notification = sinon.stub(
               bundleImporter.db.notifications, 'add');
-          this._cleanups.concat([importStub.reset, notification.reset]);
+          this._cleanups.concat([importStub.restore, notification.restore]);
           bundleImporter._fileReaderOnload(file, {
             target: { result: '["valid", "json"]' }
           });
@@ -151,7 +151,7 @@ describe('Bundle Importer', function() {
         });
 
         it('calls fetchDryRun if yaml file', function() {
-          var fetch = utils.makeStubMethod(bundleImporter, 'fetchDryRun');
+          var fetch = sinon.stub(bundleImporter, 'fetchDryRun');
           var yamlFile = { name: 'path/to/file.yaml' };
           bundleImporter._fileReaderOnload(yamlFile, {target: {result: 'foo'}});
           assert.equal(fetch.callCount, 1);
@@ -184,8 +184,8 @@ describe('Bundle Importer', function() {
       ];
 
       it('sorts the records then calls to execute', function() {
-        var execute = utils.makeStubMethod(bundleImporter, '_executeDryRun');
-        this._cleanups.push(execute.reset);
+        var execute = sinon.stub(bundleImporter, '_executeDryRun');
+        this._cleanups.push(execute.restore);
         bundleImporter.importBundleDryRun(unsortedRecords);
         assert.deepEqual(bundleImporter.recordSet, sortedRecords);
         assert.equal(execute.callCount, 1);
@@ -237,7 +237,7 @@ describe('Bundle Importer', function() {
 
       it('has a callback which calls to import the dry run', function() {
         const yaml = 'foo';
-        const dryRun = utils.makeStubMethod(
+        const dryRun = sinon.stub(
           bundleImporter, 'importBundleDryRun');
         const changes = [{foo: 'bar'}];
         bundleImporter.fetchDryRun(yaml);
@@ -312,12 +312,14 @@ describe('Bundle Importer', function() {
       var sortedRecords = [
         { method: 'badMethod' }
       ];
-      var execute = utils.makeStubMethod(bundleImporter, '_executeRecord');
-      var notification = utils.makeStubMethod(
+      var execute = sinon.stub(bundleImporter, '_executeRecord');
+      var notification = sinon.stub(
           bundleImporter.db.notifications, 'add');
-      this._cleanups.concat([execute.reset, notification.reset]);
+      this._cleanups.push(notification.restore);
       bundleImporter._executeDryRun(sortedRecords);
-      execute.passThroughToOriginalMethod();
+      const args = execute.lastCall.args;
+      execute.restore();
+      bundleImporter._executeRecord.apply(bundleImporter, args);
       // the executor should only be called once at which time it'll throw a
       // notification instead of continuing on.
       assert.equal(execute.callCount, 1, 'execute not called');

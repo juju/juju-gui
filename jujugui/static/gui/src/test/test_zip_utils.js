@@ -21,13 +21,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('Zip utils', function() {
-    var testUtils, Y, ziputils;
-    var requirements = ['juju-tests-utils', 'zip-utils'];
+    let Y, ziputils;
+    var requirements = ['zip-utils'];
 
     before(function(done) {
       // Set up the YUI instance, the test utils and the zip namespace.
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
-        testUtils = Y.namespace('juju-tests.utils');
         ziputils = Y.namespace('juju.ziputils');
         done();
       });
@@ -40,14 +39,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       beforeEach(function() {
         // Patch the zip library.
-        createReaderMock = testUtils.makeStubMethod(zip, 'createReader');
+        createReaderMock = sinon.stub(zip, 'createReader');
         // Set up the callback and errback mocks.
         callback = sinon.stub();
         errback = sinon.stub();
       });
 
       afterEach(function() {
-        createReaderMock.reset();
+        createReaderMock.restore();
       });
 
       // Return an object including the arguments passed when calling the

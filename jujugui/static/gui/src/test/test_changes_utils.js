@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('ChangesUtils', function() {
-  var db, ECS, ecs, models, utils, changesUtils, Y;
+  var db, ECS, ecs, models, changesUtils, Y;
 
   before(function(done) {
     var requirements = [
@@ -28,13 +28,11 @@ describe('ChangesUtils', function() {
       'environment-change-set',
       'event-simulate',
       'juju-models',
-      'juju-tests-utils',
       'node',
       'node-event-simulate'
     ];
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
       models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
       ECS = Y.namespace('juju').EnvironmentChangeSet;
       changesUtils = window.juju.utils.ChangesUtils;
       done();
@@ -225,9 +223,9 @@ describe('ChangesUtils', function() {
       }
     }];
     // This method needs to be stubbed out for the add relation path.
-    var endpointNames = utils.makeStubMethod(
-        changesUtils, 'getRealRelationEndpointNames', ['foo', 'baz']);
-    this._cleanups.push(endpointNames.reset);
+    var endpointNames = sinon.stub(
+        changesUtils, 'getRealRelationEndpointNames').returns(['foo', 'baz']);
+    this._cleanups.push(endpointNames.restore);
     tests.forEach(function(test) {
       var change = changesUtils.generateChangeDescription(
           db.services, db.units, test.change, true);
@@ -242,10 +240,10 @@ describe('ChangesUtils', function() {
   });
 
   it('can generate descriptions for all the changes in the ecs', function() {
-    var stubDescription = utils.makeStubMethod(
+    var stubDescription = sinon.stub(
         changesUtils,
         'generateChangeDescription');
-    this._cleanups.push(stubDescription.reset);
+    this._cleanups.push(stubDescription.restore);
     ecs.changeSet = { foo: { index: 0 }, bar: { index: 0 } };
     changesUtils.generateAllChangeDescriptions(
         db.services, db.units, ecs.changeSet);

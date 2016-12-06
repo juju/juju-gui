@@ -241,8 +241,8 @@ describe.skip('service module events', function() {
       assert.equal(true, state.gui.inspector.flash.hideHelp);
       done();
     });
-    var menuStub = utils.makeStubMethod(serviceModule, 'showServiceMenu');
-    this._cleanups.push(menuStub.reset);
+    var menuStub = sinon.stub(serviceModule, 'showServiceMenu');
+    this._cleanups.push(menuStub.restore);
     serviceModule.showServiceDetails({id: 'test'}, topo);
   });
 
@@ -277,8 +277,8 @@ describe.skip('service module events', function() {
       life: 'dying',
       aggregated_status: {error: 42}
     });
-    var unhighlight = utils.makeStubMethod(serviceModule, 'unhighlight');
-    this._cleanups.push(unhighlight.reset);
+    var unhighlight = sinon.stub(serviceModule, 'unhighlight');
+    this._cleanups.push(unhighlight.restore);
     serviceModule.update();
     var boxes = topo.service_boxes;
     // There are five services in total.
@@ -346,8 +346,8 @@ describe.skip('service module events', function() {
   });
 
   it('should pan to a deployed bundle', function() {
-    var stubFindCentroid = utils.makeStubMethod(serviceModule, 'findCentroid');
-    this._cleanups.push(stubFindCentroid.reset);
+    var stubFindCentroid = sinon.stub(serviceModule, 'findCentroid');
+    this._cleanups.push(stubFindCentroid.restore);
     db.services.add([
       {
         id: 'apache2',
@@ -479,9 +479,9 @@ describe.skip('service module events', function() {
     };
 
     serviceModule.set('component', view.topo);
-    var extractCharmMetadata = utils.makeStubMethod(
+    var extractCharmMetadata = sinon.stub(
         serviceModule, '_extractCharmMetadata');
-    this._cleanups.push(extractCharmMetadata.reset);
+    this._cleanups.push(extractCharmMetadata.restore);
 
     serviceModule.canvasDropHandler(fakeEventObject);
 
@@ -512,9 +512,9 @@ describe.skip('service module events', function() {
     };
 
     serviceModule.set('component', view.topo);
-    var extractCharmMetadata = utils.makeStubMethod(
+    var extractCharmMetadata = sinon.stub(
         serviceModule, '_extractCharmMetadata');
-    this._cleanups.push(extractCharmMetadata.reset);
+    this._cleanups.push(extractCharmMetadata.restore);
 
     serviceModule.canvasDropHandler(fakeEventObject);
 
@@ -531,12 +531,12 @@ describe.skip('service module events', function() {
         topoObj = { topo: '' },
         envObj = { env: '' },
         dbObj = { db: '' };
-    var getEntries = utils.makeStubMethod(Y.juju.ziputils, 'getEntries');
-    this._cleanups.push(getEntries.reset);
-    var findCharmEntries = utils.makeStubMethod(
+    var getEntries = sinon.stub(Y.juju.ziputils, 'getEntries');
+    this._cleanups.push(getEntries.restore);
+    var findCharmEntries = sinon.stub(
         serviceModule, '_findCharmEntries');
-    this._cleanups.push(findCharmEntries.reset);
-    var zipExtractionError = utils.makeStubMethod(
+    this._cleanups.push(findCharmEntries.restore);
+    var zipExtractionError = sinon.stub(
         serviceModule, '_zipExtractionError');
     this._cleanups.push(zipExtractionError);
 
@@ -579,12 +579,12 @@ describe.skip('service module events', function() {
 
     it('finds the files in the zip', function() {
       var entries = { metadata: 'foo' };
-      var findEntries = utils.makeStubMethod(
-          Y.juju.ziputils, 'findCharmEntries', entries);
-      this._cleanups.push(findEntries.reset);
-      var readEntries = utils.makeStubMethod(
+      var findEntries = sinon.stub(
+          Y.juju.ziputils, 'findCharmEntries').returns(entries);
+      this._cleanups.push(findEntries.restore);
+      var readEntries = sinon.stub(
           serviceModule, '_readCharmEntries');
-      this._cleanups.push(readEntries.reset);
+      this._cleanups.push(readEntries.restore);
 
       serviceModule._findCharmEntries(fileObj, topoObj, envObj, dbObj, {});
 
@@ -601,12 +601,12 @@ describe.skip('service module events', function() {
 
     it('shows an error notification if there is no metadata.yaml', function() {
       var entries = { foo: 'bar' };
-      var findEntries = utils.makeStubMethod(
-          Y.juju.ziputils, 'findCharmEntries', entries);
-      this._cleanups.push(findEntries.reset);
-      var readEntries = utils.makeStubMethod(
+      var findEntries = sinon.stub(
+          Y.juju.ziputils, 'findCharmEntries').returns(entries);
+      this._cleanups.push(findEntries.restore);
+      var readEntries = sinon.stub(
           serviceModule, '_readCharmEntries');
-      this._cleanups.push(readEntries.reset);
+      this._cleanups.push(readEntries.restore);
 
       serviceModule._findCharmEntries(fileObj, topoObj, envObj, dbObj, {});
 
@@ -627,12 +627,12 @@ describe.skip('service module events', function() {
         topoObj = { topo: '' },
         envObj = { env: '' },
         dbObj = { db: '' };
-    var readEntries = utils.makeStubMethod(Y.juju.ziputils, 'readCharmEntries');
-    this._cleanups.push(readEntries.reset);
-    var existingServices = utils.makeStubMethod(
+    var readEntries = sinon.stub(Y.juju.ziputils, 'readCharmEntries');
+    this._cleanups.push(readEntries.restore);
+    var existingServices = sinon.stub(
         serviceModule, '_checkForExistingServices');
     this._cleanups.push(existingServices);
-    var extractionError = utils.makeStubMethod(
+    var extractionError = sinon.stub(
         serviceModule, '_zipExtractionError');
 
     serviceModule._readCharmEntries(fileObj, topoObj, envObj, dbObj, {});
@@ -670,13 +670,13 @@ describe.skip('service module events', function() {
     });
 
     function setup(context) {
-      jsYamlMock = utils.makeStubMethod(jsyaml, 'safeLoad', { name: 'ghost' });
-      context._cleanups.push(jsYamlMock.reset);
-      showInspector = utils.makeStubMethod(
+      jsYamlMock = sinon.stub(jsyaml, 'safeLoad').returns({ name: 'ghost' });
+      context._cleanups.push(jsYamlMock.restore);
+      showInspector = sinon.stub(
           serviceModule, '_showUpgradeOrNewInspector');
-      context._cleanups.push(showInspector.reset);
-      deployCharm = utils.makeStubMethod(serviceModule, '_deployLocalCharm');
-      context._cleanups.push(deployCharm.reset);
+      context._cleanups.push(showInspector.restore);
+      deployCharm = sinon.stub(serviceModule, '_deployLocalCharm');
+      context._cleanups.push(deployCharm.restore);
     }
 
     function sharedAssert() {
@@ -952,22 +952,23 @@ describe('updateElementVisibility', function() {
     serviceModule.rendered = true;
     serviceModule.service_scale = true;
     serviceModule.dragBehaviour = true;
-    var update = utils.makeStubMethod(serviceModule, 'updateElementVisibility');
-    var updateData = utils.makeStubMethod(serviceModule, 'updateData');
-    this._cleanups.push(updateData.reset);
-    this._cleanups.push(update.reset);
+    var update = sinon.stub(serviceModule, 'updateElementVisibility');
+    var updateData = sinon.stub(serviceModule, 'updateData');
+    this._cleanups.push(updateData.restore);
+    this._cleanups.push(update.restore);
     serviceModule.update();
     assert.equal(update.callCount, 1);
   });
 
   it('categorizes and calls the appropriate vis method', function() {
-    var fade = utils.makeStubMethod(serviceModule, 'fade');
-    var hide = utils.makeStubMethod(serviceModule, 'hide');
-    var show = utils.makeStubMethod(serviceModule, 'show');
-    var highlight = utils.makeStubMethod(serviceModule, 'highlight');
-    var unhighlight = utils.makeStubMethod(serviceModule, 'unhighlight');
+    var fade = sinon.stub(serviceModule, 'fade');
+    var hide = sinon.stub(serviceModule, 'hide');
+    var show = sinon.stub(serviceModule, 'show');
+    var highlight = sinon.stub(serviceModule, 'highlight');
+    var unhighlight = sinon.stub(serviceModule, 'unhighlight');
     this._cleanups.concat([
-      fade.reset, hide.reset, show.reset, highlight.reset, unhighlight.reset
+      fade.restore, hide.restore, show.restore, highlight.restore,
+      unhighlight.restore
     ]);
     var serviceList = new models.ServiceList();
     serviceList.add([{

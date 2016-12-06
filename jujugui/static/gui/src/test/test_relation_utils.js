@@ -20,18 +20,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('RelationUtils', function() {
-  var models, relationUtils, testUtils;
+  var models, relationUtils;
 
   before(function(done) {
     var requirements = [
       'juju-models',
       'relation-utils',
-      'juju-tests-utils'
     ];
     YUI(GlobalConfig).use(requirements, function(Y) {
       models = Y.namespace('juju.models');
       relationUtils = window.juju.utils.RelationUtils;
-      testUtils = Y.namespace('juju-tests.utils');
       done();
     });
   });
@@ -1036,10 +1034,10 @@ describe('RelationUtils', function() {
       var getEndpoints = sinon.stub().returns(endpointData);
       var applicationFrom = vals.applicationFrom || {};
       var applicationTo = { get: function() { return vals.applicationToId; } };
-      var dataStub = testUtils.makeStubMethod(relationUtils,
-        'getRelationDataForService',
-        JSON.parse(vals.getRelationDataForService));
-      context._cleanups.push(dataStub.reset);
+      var dataStub = sinon.stub(
+          relationUtils, 'getRelationDataForService').returns(
+              JSON.parse(vals.getRelationDataForService));
+      context._cleanups.push(dataStub.restore);
       return relationUtils.getAvailableEndpoints(
         endpointsController, db, getEndpoints, applicationFrom, applicationTo);
     }
