@@ -883,15 +883,14 @@ YUI.add('juju-topology-service', function(Y) {
      * @return {undefined} Nothing.
      */
     _deployLocalCharm: function(file, env, db) {
-      var topo = this.get('component');
-      topo.get('state').changeState({
+      // Store the local file in the global store.
+      window.localCharmFile = file;
+      this.get('component').get('state').changeState({
         gui: {
           inspector: {
             id: null,
             localType: 'new',
-            flash: {
-              file: file
-            }}}
+          }}
       });
     },
 
@@ -973,11 +972,10 @@ YUI.add('juju-topology-service', function(Y) {
         keys: "config", "revision" and "readme".
     */
     _checkForExistingServices: function(file, topo, env, db, contents) {
-      var charmName = jsyaml.safeLoad(contents.metadata).name;
-      var services = db.services.getServicesFromCharmName(charmName);
-
+      const charmName = jsyaml.safeLoad(contents.metadata).name;
+      const services = db.services.getServicesFromCharmName(charmName);
       if (services.length > 0) {
-        this._showUpgradeOrNewInspector(services, file, env, db);
+        this._showUpgradeOrNewInspector(file, env, db);
       } else {
         this._deployLocalCharm(file, env, db);
       }
@@ -1005,30 +1003,19 @@ YUI.add('juju-topology-service', function(Y) {
       Shows an inspector allowing the user to decide if they want to upgrade
       an existing service with a local charm or deploy a new service. Or calls
       _deployLocalCharm if there are no existing services.
-
-      @method _showUpgradeOrNewInspector
-      @param {Array} services An array of services which use a charm with the
-        same name.
       @param {Object} file The file that was dropped on the canvas.
       @param {Object} env A reference to the app env.
       @param {Object} db A reference to the apps db.
     */
-    _showUpgradeOrNewInspector: function(services, file, env, db) {
-      services.forEach(function(service, index, source) {
-        // `source` param is the services array.
-        source[index] = service.getAttrs();
-      });
-
-      var topo = this.get('component');
-      topo.get('state').changeState({
+    _showUpgradeOrNewInspector: function(file, env, db) {
+      // Store the local file in the global store.
+      window.localCharmFile = file;
+      this.get('component').get('state').changeState({
         gui: {
           inspector: {
             id: null,
-            localType: 'update',
-            flash: {
-              file: file,
-              services: services
-            }}}
+            localType: 'update'
+          }}
       });
     },
 
@@ -1850,19 +1837,9 @@ YUI.add('juju-topology-service', function(Y) {
       @param {Object} topo The reference to the topology object.
     */
     showServiceDetails: function(box, topo) {
-      // We set the hideHelp flag when the user clicks on an existing service in
-      // the canvas; in otherwords, we're not in the "create a service"
-      // workflow, which is the only one where we want to display the help
-      // notification. Right now there are multiple entrances to the "create a
-      // service" workflow, but only one to "show details for existing service",
-      // so it was easier to hide the help on that one entrance and then show it
-      // by default for all the rest.
       topo.get('state').changeState({
         gui: {
-          inspector: {
-            id: box.id,
-            flash: { hideHelp: true }
-          }
+          inspector: {id: box.id}
         }});
     },
 
