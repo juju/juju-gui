@@ -463,7 +463,7 @@ const State = class State {
       // minifier incorrectly munges the return values and it breaks. In the
       // future it can be reverted and tested against a newer version than
       // 0.0.9
-      let parsed = this._parseGUI(parts.splice(guiIndex), state);
+      const parsed = this._parseGUI(parts.splice(guiIndex), state);
       error = parsed.error;
       state = parsed.state;
       if (error !== null) {
@@ -477,7 +477,7 @@ const State = class State {
       // minifier incorrectly munges the return values and it breaks. In the
       // future it can be reverted and tested against a newer version than
       // 0.0.9
-      let parsed = this._parseUser(parts, state);
+      const parsed = this._parseUser(parts, state);
       state = parsed.state;
       parts = parsed.parts;
       error = parsed.error;
