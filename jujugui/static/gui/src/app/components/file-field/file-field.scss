@@ -1,10 +1,25 @@
 .file-field {
-  &__label {
-    font-size: .688em;
+  &__field {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
   }
 
-  [type=file] {
-    margin-bottom: 20px;
+  &__field + &__label {
+    border: 2px dashed $mid-grey;
+    width: 100%;
+    display: block;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  &__field:focus + &__label,
+  &__label:hover {
+    background: $light-grey;
   }
 
   &__errors {

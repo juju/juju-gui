@@ -41,10 +41,6 @@ describe('FileField', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="file-field">
-        <label className="file-field__label"
-          htmlFor="Dingo">
-          Dingo
-        </label>
         <input accept=".json"
           className="file-field__field"
           disabled={false}
@@ -53,6 +49,10 @@ describe('FileField', function() {
           onChange={instance.validate}
           ref="field"
           type="file" />
+        <label className="file-field__label"
+          htmlFor="Dingo">
+          Dingo
+        </label>
         {null}
       </div>);
     assert.deepEqual(output, expected);
@@ -102,10 +102,6 @@ describe('FileField', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="file-field error">
-        <label className="file-field__label"
-          htmlFor="Dingo">
-          Dingo
-        </label>
         <input accept=".json"
           className="file-field__field"
           disabled={false}
@@ -114,6 +110,10 @@ describe('FileField', function() {
           onChange={instance.validate}
           ref="field"
           type="file" />
+        <label className="file-field__label"
+          htmlFor="Dingo">
+          Dingo
+        </label>
         <ul className="file-field__errors">
           {[<li className="file-field__error"
             key="required">
