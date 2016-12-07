@@ -1412,6 +1412,17 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      The cleanup dispatcher for the inspector state path.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _clearInspector: function(state, next) {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('inspector-container'));
+      next();
+    },
+
+    /**
       Renders the Inspector component to the page.
       @param {Object} state - The app state.
       @param {Function} next - Call to continue dispatching.
@@ -1780,17 +1791,29 @@ YUI.add('juju-gui', function(Y) {
           this._clearCharmbrowser.bind(this)],
         ['special.deployTarget',
           this._deployTarget.bind(this)],
+        ['gui', null, this._clearAllGUIComponents.bind(this)],
         ['gui.machines',
           this._renderMachineView.bind(this),
           this._clearMachineView.bind(this)],
         ['gui.inspector',
-          this._renderInspector.bind(this)],
+          this._renderInspector.bind(this)
+          // the this._clearInspector method is not called here because the
+          // added services component is also rendered into the inspector so
+          // calling it here causes React to throw an error.
+        ],
         ['gui.deploy',
           this._renderDeployment.bind(this),
           this._clearDeployment.bind(this)]
       ]);
 
       return state;
+    },
+
+    _clearAllGUIComponents: function(state, next) {
+      const noop = () => {};
+      this._clearMachineView(state, noop);
+      this._clearDeployment(state, noop);
+      this._clearInspector(state, noop);
     },
 
     /**
