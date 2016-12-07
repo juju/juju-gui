@@ -60,7 +60,6 @@ describe('DeploymentFlow', function() {
         changes={changes}
         changesFilterByParent={changesFilterByParent}
         changeState={changeState}
-        controller={sinon.stub()}
         deploy={sinon.stub()}
         generateAllChangeDescriptions={generateAllChangeDescriptions}
         generateCloudCredentialName={generateCloudCredentialName}
@@ -233,7 +232,6 @@ describe('DeploymentFlow', function() {
         acl={acl}
         updateCloudCredential={updateCloudCredential}
         changes={changes}
-        controllerAPI={sinon.stub()}
         changesFilterByParent={changesFilterByParent}
         changeState={changeState}
         deploy={sinon.stub()}
@@ -670,6 +668,63 @@ describe('DeploymentFlow', function() {
       output.props.children[8].props.children.props.children[0]);
   });
 
+  // Click log in and pass the given error string to the login callback used by
+  // the component. Return the component instance.
+  const login = function(err) {
+    const loginToController = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        changes={{}}
+        changesFilterByParent={sinon.stub()}
+        changeState={sinon.stub()}
+        deploy={sinon.stub()}
+        generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
+        getAuth={sinon.stub().returns(false)}
+        getCloudCredentials={sinon.stub()}
+        getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
+        groupedChanges={groupedChanges}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        loginToController={loginToController}
+        modelCommitted={true}
+        modelName="Pavlova"
+        servicesGetById={sinon.stub()}
+        updateCloudCredential={sinon.stub()}
+        user="user-admin">
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    const instance = renderer.getMountedInstance();
+    assert.strictEqual(instance.state.loggedIn, false);
+    instance.refs = {
+      modelName: {
+        getValue: sinon.stub().returns('Lamington')
+      }
+    };
+    const output = renderer.getRenderOutput();
+    const loginSection = output.props.children[1];
+    const loginButton = loginSection.props.children.props.children.props;
+    // Click to log in.
+    loginButton.action();
+    assert.strictEqual(loginToController.callCount, 1);
+    const cb = loginToController.args[0][0];
+    cb(err);
+    return instance;
+  };
+
+  it('can login (success)', function() {
+    const instance = login(null);
+    assert.strictEqual(instance.state.loggedIn, true);
+  });
+
+  it('can login (failure)', function() {
+    const instance = login('bad wolf');
+    assert.strictEqual(instance.state.loggedIn, false);
+  });
+
   it('can deploy', function() {
     var deploy = sinon.stub().callsArg(0);
     var changeState = sinon.stub();
@@ -679,7 +734,6 @@ describe('DeploymentFlow', function() {
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={changeState}
-        controllerAPI={sinon.stub()}
         deploy={deploy}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}

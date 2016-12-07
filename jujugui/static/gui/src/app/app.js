@@ -334,6 +334,16 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Return the current model unique identifier.
+      @method _getModelUUID
+      @return {String} The model UUID.
+    */
+    _getModelUUID: function() {
+      return this.get('modelUUID') ||
+        (window.juju_config && window.juju_config.jujuEnvUUID);
+    },
+
+    /**
      * @method initializer
      * @param {Object} cfg Application configuration data.
      */
@@ -482,9 +492,7 @@ YUI.add('juju-gui', function(Y) {
     */
     _init: function(cfg, modelAPI, controllerAPI) {
       // Store the initial model UUID.
-      const modelUUID = this.get('modelUUID') ||
-          (window.juju_config && window.juju_config.jujuEnvUUID);
-
+      const modelUUID = this._getModelUUID();
       this.set('modelUUID', modelUUID);
       // If the user closed the GUI when they were on a different env than
       // their default then it would show them the login screen. This sets
@@ -672,9 +680,7 @@ YUI.add('juju-gui', function(Y) {
       });
 
       // We are now ready to connect the environment and bootstrap the app.
-      if (this.get('gisf') && this.get('modelUUID') === 'anon') {
-        this.maskVisibility(false);
-      } else if (this.controllerAPI) {
+      if (this.controllerAPI) {
         // In Juju >= 2 we connect to the controller and then to the model.
         this.controllerAPI.connect();
       } else {
@@ -754,14 +760,17 @@ YUI.add('juju-gui', function(Y) {
         if (this.env.get('modelUUID')) {
           return;
         }
-        // If the modelUUID provided by the external system is 'disconnected'
-        // that means that the external GUI host decided that it wants to
-        // load the GUI in the disconnected mode.
-        const modelUUID = this.get('modelUUID') ||
-           (window.juju_config && window.juju_config.jujuEnvUUID);
-        if (modelUUID === 'anon') {
+        const modelUUID = this._getModelUUID();
+        // If the model UUID has been set to "do-not-switch" this probably
+        // indicates that the user started in anonymous mode and they are
+        // currently at the beginning of the deployment flow. For this reason
+        // return here so that the flow is not interrupted.
+        if (modelUUID === 'do-not-switch') {
           return;
         }
+        // If the model UUID provided by the external system is 'disconnected'
+        // that means that the external GUI host decided that it wants to
+        // load the GUI in the disconnected mode.
         if (modelUUID === 'disconnected') {
           this.switchEnv();
           return;
@@ -806,7 +815,16 @@ YUI.add('juju-gui', function(Y) {
           return;
         }
         const creds = this.controllerAPI.getCredentials();
-        if (!creds.areAvailable && !this.get('gisf')) {
+        if (!creds.areAvailable) {
+          if (this.get('gisf') && this._getModelUUID() === 'disconnected') {
+            console.log('switching to anonymous mode');
+            // Set the model UUID to a value that communicates login handlers
+            // to not switch away from the deployment flow when the user will
+            // be required to authenticate later.
+            this.set('modelUUID', 'do-not-switch');
+            this.maskVisibility(false);
+            return;
+          }
           this._displayLogin();
           return;
         }
@@ -1198,6 +1216,8 @@ YUI.add('juju-gui', function(Y) {
       }
       const credentials = controllerAPI && controllerAPI.getCredentials();
       const user = credentials && credentials.user || undefined;
+      const loginToController = controllerAPI.loginWithMacaroon.bind(
+        controllerAPI, this.bakeryFactory.get('juju'));
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
@@ -1207,7 +1227,6 @@ YUI.add('juju-gui', function(Y) {
           cloud={cloud}
           credential={env.get('credential')}
           changes={currentChangeSet}
-          controllerAPI={this.controllerAPI}
           deploy={utils.deploy.bind(utils, this)}
           generateAllChangeDescriptions={
             changesUtils.generateAllChangeDescriptions.bind(
@@ -1227,6 +1246,7 @@ YUI.add('juju-gui', function(Y) {
           listClouds={
             controllerAPI && controllerAPI.listClouds.bind(controllerAPI)}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
+          loginToController={loginToController}
           modelCommitted={this.env.get('connected')}
           modelName={modelName}
           region={env.get('region')}
@@ -1912,7 +1932,7 @@ YUI.add('juju-gui', function(Y) {
           existingDischargeToken = jujuConfig.dischargeToken;
         }
         var apiVersion = window.jujulib.charmstoreAPIVersion;
-        if (window.flags && window.flags.gisf) {
+        if (this.get('gisf')) {
           existingCookie = 'macaroon-storefront';
         }
         var bakery = this.bakeryFactory.create({
@@ -2263,7 +2283,7 @@ YUI.add('juju-gui', function(Y) {
           // authenticated to it.
           return false;
         }
-        return !api.userIsAuthenticated;
+        return !api.userIsAuthenticated && !this.get('gisf');
       });
       if (shouldDisplayLogin) {
         this._displayLogin();
