@@ -1501,7 +1501,7 @@ YUI.add('juju-gui', function(Y) {
             linkify={utils.linkify}
             appState={this.state} />
         );
-      } else if (localType && inspectorState.file) {
+      } else if (localType && window.localCharmFile) {
         // When dragging a local charm zip over the canvas it animates the
         // drag over notification which needs to be closed when the inspector
         // is opened.
@@ -1510,7 +1510,7 @@ YUI.add('juju-gui', function(Y) {
         inspector = (
           <window.juju.components.LocalInspector
             acl={this.acl}
-            file={inspectorState.file}
+            file={window.localCharmFile}
             localType={localType}
             services={this.db.services}
             series={utils.getSeriesList()}

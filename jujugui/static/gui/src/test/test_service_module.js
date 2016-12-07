@@ -235,17 +235,6 @@ describe.skip('service module events', function() {
     serviceModule.update();
   });
 
-  it('hides onboarding for existing services', function(done) {
-    topo.on('changeState', function(e) {
-      var state = e.details[0];
-      assert.equal(true, state.gui.inspector.flash.hideHelp);
-      done();
-    });
-    var menuStub = sinon.stub(serviceModule, 'showServiceMenu');
-    this._cleanups.push(menuStub.restore);
-    serviceModule.showServiceDetails({id: 'test'}, topo);
-  });
-
   it('must not process service clicks after a dragend', function() {
     // Test the work-around that prevents serviceClick from doing its work if
     // called after dragend.  Behaviour-driven testing via a tool such as
