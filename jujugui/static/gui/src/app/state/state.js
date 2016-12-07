@@ -97,7 +97,7 @@ const State = class State {
     */
     this._dispatchers = {};
 
-    window.onpopstate = this.dispatch.bind(this);
+    window.onpopstate = this.dispatch.bind(this, [], true, true);
   }
 
   /**
@@ -157,11 +157,19 @@ const State = class State {
   }
 
   /**
-    The geteter representing the current app state.
+    The getter representing the current app state.
     @type {Object}
   */
   get current() {
     return this._appStateHistory[this._appStateHistory.length-1] || {};
+  }
+
+  /**
+    The getter representing the previous app state.
+    @type {Object}
+  */
+  get previous() {
+    return this._appStateHistory[this._appStateHistory.length-2] || {};
   }
 
   /**
@@ -202,8 +210,11 @@ const State = class State {
       internal app state. This is typically only done when dispatch is called
       manually. Internal calls to dispatch are done via changeState which
       updates the state itself so it's not needed to do it here.
+    @param {Boolean} backDispatch - Whether this dispatch was from the user
+      hitting the back button. If it was we have to manually figure out the
+      null keys so we know which cleanup dispatchers to run.
   */
-  dispatch(nullKeys = [], updateState = true) {
+  dispatch(nullKeys = [], updateState = true, backDispatch = false) {
     let error, state;
     ({error, state} = this.generateState(this.location.href));
     if (error !== null) {
@@ -234,14 +245,23 @@ const State = class State {
     if (updateState) {
       this._appStateHistory.push(state);
     }
+    const stateKeys = extract(state);
+    if (backDispatch) {
+      // When we go back we need to get the list of sections that have changed
+      // between the old a new state. We need to null out those sections so that
+      // they are removed from the state. This is done by filtering the old keys
+      // and removing those that exist in the new keys.
+      nullKeys = extract(this.previous).filter(
+        key => stateKeys.indexOf(key) === -1);
+    }
     // First run all of the 'null state' dispatchers to clear out the old
     // state representations.
     const dispatched = [];
     nullKeys.forEach(key => this._dispatch(state, key, dispatched, true));
     // Then execute the 'all' dispatchers.
     this._dispatch(state, '*');
-    // Extract and loop through the state keys to execute their dispatchers.
-    extract(state).forEach(key => {
+    // Loop through the state keys to execute their dispatchers.
+    stateKeys.forEach(key => {
       const dispatcherCalled = this._dispatch(state, key, dispatched);
       // If a dispatcher was called then store it so that it doesn't get called
       // again this dispatch.

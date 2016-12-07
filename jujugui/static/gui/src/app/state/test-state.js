@@ -417,6 +417,18 @@ describe('State', () => {
       assert.equal(state.current, 'step2');
     });
 
+    it('returns the previous record in the history', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList: ['trusty']
+      });
+      state._appStateHistory.push('step1');
+      state._appStateHistory.push('step2');
+      state._appStateHistory.push('step3');
+      state._appStateHistory.push('step2');
+      assert.equal(state.previous, 'step3');
+    });
+
     it('has a public accessor', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
@@ -1014,6 +1026,36 @@ describe('State', () => {
       ]);
       state.dispatch();
       assert.equal(stub1.callCount, 1);
+    });
+
+    it('can handle dispatching when back is called', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial'],
+        location: {href: '/i/machines'}
+      });
+      const storeCleanup = sinon.stub();
+      const machinesCleanup = sinon.stub();
+      state.register([
+        ['store', sinon.stub(), storeCleanup],
+        ['gui.machines', sinon.stub(), machinesCleanup]
+      ]);
+      // The initial dispatch will be to the machine view.
+      state.dispatch();
+      // Now simulate viewing a charm.
+      state.location.href = '/apache2';
+      state.dispatch();
+      // Dispatch again, but this time simulate going back to machines.
+      state.location.href = '/i/machines';
+      state.dispatch([], true, true);
+      // The history appends the new state, even though in the browser we went
+      // back.
+      assert.deepEqual(state._appStateHistory, [
+        {gui: {machines: ''}}, {store: 'apache2'}, {gui: {machines: ''}}]);
+      // The store should have been cleaned up as it was not required when we
+      // went back to the machine view.
+      assert.equal(storeCleanup.callCount, 1);
+      assert.equal(machinesCleanup.callCount, 0);
     });
   });
 
