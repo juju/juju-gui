@@ -1869,7 +1869,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       @return {String} The full URL to the charm file.
     */
     getLocalCharmFileUrl: function(charmUrl, filename) {
-      if (filename === 'icon.svg') {
+      if (!filename || filename === 'icon.svg') {
         // This is a request for a local charm icon URL. Just return the
         // fallback icon.
         return '/static/gui/build/app/assets/images/non-sprites/charm_160.svg';
