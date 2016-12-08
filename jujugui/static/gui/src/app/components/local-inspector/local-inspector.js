@@ -150,7 +150,7 @@ YUI.add('local-inspector', function() {
     _close: function() {
       this.props.changeState({
         gui: {
-          machines: null
+          inspector: null
         }});
     },
 
