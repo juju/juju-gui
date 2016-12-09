@@ -20,11 +20,27 @@
   }
 
   &__drop-message {
-    color: $warm-grey;
-    font-size: 32px;
-    opacity: 0;
-    position: relative;
-    top: 230px;
+      position: absolute;
+      z-index: index($z-indexed-elements, environment-drop-message);
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: rgba(247, 247, 247, 0.7);
+      opacity: 0;
+      transition: opacity .3s;
+
+      &--active {
+        z-index: index($z-indexed-elements, environment-drop-message-active);
+        opacity: 1;
+      }
+
+      &-content {
+          color: $warm-grey;
+          font-size: 32px;
+          position: relative;
+          top: 290px;
+      }
   }
 
   &__tooltip {
@@ -37,6 +53,7 @@
     margin: 20px auto;
     padding: 12px 25px;
     position: relative;
+    z-index: index($z-indexed-elements, environment-help);
     top: 110px;
     transition: opacity .3s;
     width: 260px;
@@ -57,6 +74,9 @@
   }
 
   &__image {
+    position: relative;
+    z-index: index($z-indexed-elements, environment-help);
+    top: 75px;
     height: 386px;
     stroke-width: 1;
     transition: opacity .3s;
