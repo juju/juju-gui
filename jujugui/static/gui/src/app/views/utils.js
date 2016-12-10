@@ -1382,7 +1382,8 @@ YUI.add('juju-view-utils', function(Y) {
     // Reset the state of the GUI ready for displaying the new model.
     let newState = {
       profile: null,
-      gui: null
+      gui: null,
+      root: null
     };
     if (!uuid || !name) {
       newState.root = 'new';
