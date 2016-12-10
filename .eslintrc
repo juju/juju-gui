@@ -39,6 +39,7 @@ globals:
   classNames: true
   Clipboard: true
   consoleManager: true
+  dataLayer: true
   describe: true
   enhanceWithClickOutside: true
   Exception: true
