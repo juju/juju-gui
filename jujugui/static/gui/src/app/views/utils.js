@@ -621,8 +621,18 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Object} db Reference to the app db.
   */
   utils.exportEnvironmentFile = function(db, legacyServicesKey) {
-    var result = db.exportDeployer(legacyServicesKey);
+    const apps = db.services.toArray();
+    const idMap = new Map();
+    // Store a map of all the temporary app ids to the real ids.
+    apps.forEach(app => {
+      idMap.set(app.get('id'), app.get('name'));
+    });
+    var result = db.exportDeployer(legacyServicesKey, true);
     var exportData = jsyaml.dump(result);
+    // Replace the temporary app ids with the real ids.
+    idMap.forEach((name, id) => {
+      exportData = exportData.split(id).join(name);
+    });
     // In order to support Safari 7 the type of this blob needs
     // to be text/plain instead of it's actual type of application/yaml.
     var exportBlob = new Blob([exportData],

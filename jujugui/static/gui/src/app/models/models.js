@@ -2343,22 +2343,29 @@ YUI.add('juju-models', function(Y) {
 
        @method _mapServicesToMachines
        @param {Object} machineList The list of machines.
+       @param {Boolean} includeUncommitted whether to include uncommitted
+         machines.
      */
-    _mapServicesToMachines: function(machineList) {
+    _mapServicesToMachines: function(machineList, includeUncommitted) {
       var machinePlacement = {};
       var owners = {};
       var machineNames = {};
+      let machines;
 
-      // Strip uncommitted machines and containers from the machine list.
-      var db = this; // machineList.filter does not respect bindscope.
-      var machines = machineList.filter(function(machine) {
-        if (machine.commitStatus === 'uncommitted' ||
-            machine.commitStatus === 'in-progress' ||
-            db.units.filterByMachine(machine.id).length === 0) {
-          return false;
-        }
-        return true;
-      });
+      if (includeUncommitted) {
+        machines = machineList.toArray();
+      } else {
+        // Strip uncommitted machines and containers from the machine list.
+        var db = this; // machineList.filter does not respect bindscope.
+        machines = machineList.filter(function(machine) {
+          if (machine.commitStatus === 'uncommitted' ||
+          machine.commitStatus === 'in-progress' ||
+          db.units.filterByMachine(machine.id).length === 0) {
+            return false;
+          }
+          return true;
+        });
+      }
 
       // "Sort" machines w/ parents (e.g. containers) to the back of the list.
       machines.sort(function(a, b) {
@@ -2374,11 +2381,16 @@ YUI.add('juju-models', function(Y) {
       });
 
       machines.forEach(function(machine) {
-        // We're only intested in committed units on the machine.
-        var units = this.units.filterByMachine(machine.id).filter(
+        let units;
+        if (includeUncommitted) {
+          units = this.units.filterByMachine(machine.id);
+        } else {
+          // We're only intested in committed units on the machine.
+          units = this.units.filterByMachine(machine.id).filter(
             function(unit) {
               return unit.agent_state;
             });
+        }
 
         var machineName;
         var containerType = machine.containerType;
@@ -2431,9 +2443,11 @@ YUI.add('juju-models', function(Y) {
      * @method exportDeployer
      * @param legacyServicesKey boolean Whether to use 'services' or
      * 'applications' as the key for the bundle.
+     * @param {Boolean} includeUncommitted whether to include uncommitted
+     *   changes.
      * @return {Object} export object suitable for serialization.
      */
-    exportDeployer: function(legacyServicesKey) {
+    exportDeployer: function(legacyServicesKey, includeUncommitted) {
       var defaultSeries = this.environment.get('defaultSeries'),
           result = {};
 
@@ -2441,14 +2455,17 @@ YUI.add('juju-models', function(Y) {
         result.series = defaultSeries;
       }
 
-      var applications = this._generateServiceList(this.services);
+      var applications = this._generateServiceList(
+        this.services, includeUncommitted);
       if (legacyServicesKey) {
         result.services = applications;
       } else {
         result.applications = applications;
       }
-      var machinePlacement = this._mapServicesToMachines(this.machines);
-      result.relations = this._generateRelationSpec(this.relations);
+      var machinePlacement = this._mapServicesToMachines(
+        this.machines, includeUncommitted);
+      result.relations = this._generateRelationSpec(
+        this.relations, includeUncommitted);
       result.machines = this._generateMachineSpec(
           machinePlacement, this.machines, applications);
 
@@ -2462,8 +2479,10 @@ YUI.add('juju-models', function(Y) {
       @method _generateServiceList
       @param {Object} serviceList The service list.
       @return {Object} The services list for the export.
+      @param {Boolean} includeUncommitted whether to include uncommitted
+        applications.
     */
-    _generateServiceList: function(serviceList) {
+    _generateServiceList: function(serviceList, includeUncommitted) {
       var services = {};
       serviceList.each(function(service) {
         var units = service.get('units');
@@ -2472,15 +2491,17 @@ YUI.add('juju-models', function(Y) {
         var charmOptions = charm.get('options');
         var serviceName = service.get('id');
 
-        // Exclude this service if it is a ghost or if it is named "juju-gui".
-        // This way we prevent the Juju GUI service to be exported when the
-        // bundle is created from a live environment. Note that this is a weak
-        // check: in theory, each deployed charm can be named "juju-gui", but
-        // we still assume this convention since there are no other (more
-        // solid) ways to exclude the Juju GUI service.
-        if (service.get('pending') === true ||
-            serviceName === JUJU_GUI_APPLICATION_NAME) {
-          return;
+        if (!includeUncommitted) {
+          // Exclude this service if it is a ghost or if it is named "juju-gui".
+          // This way we prevent the Juju GUI service to be exported when the
+          // bundle is created from a live environment. Note that this is a weak
+          // check: in theory, each deployed charm can be named "juju-gui", but
+          // we still assume this convention since there are no other (more
+          // solid) ways to exclude the Juju GUI service.
+          if (service.get('pending') === true ||
+          serviceName === JUJU_GUI_APPLICATION_NAME) {
+            return;
+          }
         }
 
         // Process the service_options removing any values
@@ -2553,11 +2574,14 @@ YUI.add('juju-models', function(Y) {
       @method _generateRelationSpec
       @param {Object} relationList The relation list.
       @return {Object} The relations list for the export.
+      @param {Boolean} includeUncommitted whether to include uncommitted
+        relations.
     */
-    _generateRelationSpec: function(relationList) {
+    _generateRelationSpec: function(relationList, includeUncommitted) {
       var relations = [];
       relationList.each(function(relation) {
-        if (relation.get('id').indexOf('pending-') === 0) {
+        if (!includeUncommitted &&
+          relation.get('id').indexOf('pending-') === 0) {
           // Skip pending relations
           return;
         }
@@ -2694,7 +2718,8 @@ YUI.add('juju-models', function(Y) {
             machineId = parts[1];
           }
           machines[machineIdMap[machineId]] = {};
-          machines[machineIdMap[machineId]].series = machine.series;
+          machines[machineIdMap[machineId]].series = machine.series ||
+            this.environment.get('defaultSeries');
           var constraints = this._collapseMachineConstraints(machine.hardware);
           if (constraints.length > 0) {
             machines[machineIdMap[machineId]].constraints = constraints;
@@ -2721,7 +2746,7 @@ YUI.add('juju-models', function(Y) {
         cpuPower: 'cpu-power',
         disk: 'root-disk'
       };
-      Object.keys(constraints).forEach(key => {
+      Object.keys(constraints || {}).forEach(key => {
         if (key === 'availabilityZone') {
           // We do not want to export the availability-zone in the bundle
           // export because it makes the bundles less sharable.
