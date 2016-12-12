@@ -1,3 +1,7 @@
+- 2.2.6:
+
+    - (Fix) Anonymous and demo now connect to the controller.
+
 - 2.2.5:
 
     - Enable deploy-target queries to work with new deployment flow.
