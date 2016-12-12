@@ -2349,33 +2349,34 @@ describe('test_model.js', function() {
       assert.deepEqual(placement, expected);
     });
 
-    it('can include uncommitted machines when determining placements', function() {
-      var machine = { id: 'new0', commitStatus: 'uncommitted' };
-      var units = [{
-        service: 'wordpress',
-        id: 'wordpress/0',
-        agent_state: 'started',
-        machine: 'new0'
-      }, {
-        service: 'mysql',
-        id: 'mysql/0',
-        agent_state: 'started',
-        machine: 'new0'
-      }, {
-        service: 'apache2',
-        id: 'apache2/0',
-        agent_state: 'started',
-        machine: 'new0'
-      }];
-      db.machines.add(machine);
-      db.units.add(units, true);
-      var placement = db._mapServicesToMachines(db.machines, true);
-      assert.deepEqual(placement, {
-        wordpress: ['new0'],
-        mysql: ['new0'],
-        apache2: ['new0']
+    it('can include uncommitted machines when determining placements',
+      function() {
+        var machine = { id: 'new0', commitStatus: 'uncommitted' };
+        var units = [{
+          service: 'wordpress',
+          id: 'wordpress/0',
+          agent_state: 'started',
+          machine: 'new0'
+        }, {
+          service: 'mysql',
+          id: 'mysql/0',
+          agent_state: 'started',
+          machine: 'new0'
+        }, {
+          service: 'apache2',
+          id: 'apache2/0',
+          agent_state: 'started',
+          machine: 'new0'
+        }];
+        db.machines.add(machine);
+        db.units.add(units, true);
+        var placement = db._mapServicesToMachines(db.machines, true);
+        assert.deepEqual(placement, {
+          wordpress: ['new0'],
+          mysql: ['new0'],
+          apache2: ['new0']
+        });
       });
-    });
 
     it('ignores machines with no units when determining placements',
         function() {

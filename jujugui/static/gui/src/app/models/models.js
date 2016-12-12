@@ -2356,11 +2356,10 @@ YUI.add('juju-models', function(Y) {
         machines = machineList.toArray();
       } else {
         // Strip uncommitted machines and containers from the machine list.
-        var db = this; // machineList.filter does not respect bindscope.
-        machines = machineList.filter(function(machine) {
+        machines = machineList.filter(machine => {
           if (machine.commitStatus === 'uncommitted' ||
-          machine.commitStatus === 'in-progress' ||
-          db.units.filterByMachine(machine.id).length === 0) {
+            machine.commitStatus === 'in-progress' ||
+            this.units.filterByMachine(machine.id).length === 0) {
             return false;
           }
           return true;
@@ -2385,7 +2384,7 @@ YUI.add('juju-models', function(Y) {
         if (includeUncommitted) {
           units = this.units.filterByMachine(machine.id);
         } else {
-          // We're only intested in committed units on the machine.
+          // Otherwise, we're only intested in committed units on the machine.
           units = this.units.filterByMachine(machine.id).filter(
             function(unit) {
               return unit.agent_state;
