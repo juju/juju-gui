@@ -53,7 +53,7 @@
         width: $icon-size;
         height: $icon-size;
         margin-right: 10px;
-        border-radius: 2px;
+        border-radius: 50%;
       }
 
       &__title {
@@ -118,7 +118,7 @@
   }
 
   &__icon {
-    border-radius: 14px;
+    border-radius: 50%;
     height: 96px;
     width: 96px;
     display: inline-block;
@@ -185,4 +185,9 @@
     }
   }
   // scss-lint:enable IdSelector
+}
+
+
+.entity-details.bundle .entity-header__icon {
+  border-radius: 0;
 }
