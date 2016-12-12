@@ -212,7 +212,8 @@ describe('HeaderSearch', function() {
         tags: null,
         text: 'apache2',
         type: null
-      }
+      },
+      store: null
     });
   });
 });

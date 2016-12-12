@@ -178,7 +178,8 @@ YUI.add('header-search', function() {
           tags: null,
           text: this.state.query,
           type: null
-        }
+        },
+        store: null
       });
     },
 
