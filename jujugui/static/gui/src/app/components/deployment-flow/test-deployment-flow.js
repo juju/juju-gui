@@ -107,7 +107,7 @@ describe('DeploymentFlow', function() {
                   'letters, numbers, and hyphens. It must not start ' +
                   'or end with a hyphen.'
               }]}
-              value="" />
+              value="Pavlova" />
           </div>
         </juju.components.DeploymentSection>
         <juju.components.DeploymentSection

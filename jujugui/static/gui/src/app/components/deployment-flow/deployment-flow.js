@@ -320,7 +320,7 @@ YUI.add('deployment-flow', function() {
       @returns {Object} The markup.
     */
     _generateModelNameSection: function() {
-      var status = this._getSectionStatus('model-name');
+      const status = this._getSectionStatus('model-name');
       if (!status.visible) {
         return;
       }
@@ -346,7 +346,7 @@ YUI.add('deployment-flow', function() {
                   'letters, numbers, and hyphens. It must not start or ' +
                   'end with a hyphen.'
               }]}
-              value="" />
+              value={this.props.modelName} />
           </div>
         </juju.components.DeploymentSection>);
     },
