@@ -1371,7 +1371,8 @@ YUI.add('environment-change-set', function(Y) {
     */
     _retrieveUnitRecord: function(unitId) {
       var record;
-      Y.Object.some(this.changeSet, function(value, key) {
+      Object.keys(this.changeSet).some(key => {
+        const value = this.changeSet[key];
         var command = value.command;
         if (command.method === '_add_unit' &&
             command.options.modelId === unitId) {
