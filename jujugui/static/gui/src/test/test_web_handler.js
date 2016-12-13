@@ -21,12 +21,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('Web handler', function() {
-    var mockXhr, webHandler, webModule, Y;
+    var mockXhr, webHandler, webModule;
     var requirements = ['juju-env-web-handler'];
 
     before(function(done) {
       // Set up the YUI instance, the test utils and the web namespace.
-      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+      YUI(GlobalConfig).use(requirements, function(Y) {
         webModule = Y.namespace('juju.environments.web');
         done();
       });
