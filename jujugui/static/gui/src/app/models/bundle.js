@@ -320,7 +320,9 @@ YUI.add('juju-bundle-models', function(Y) {
       unitCount: {
         'getter': function() {
           var count = 0;
-          Y.Object.each(this.get('applications'), function(service) {
+          const applications = this.get('applications');
+          Object.keys(applications).forEach(key => {
+            const service = applications[key];
             if (service.num_units) {
               count += service.num_units;
             } else {

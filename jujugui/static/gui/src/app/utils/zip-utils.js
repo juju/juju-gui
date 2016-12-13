@@ -144,7 +144,8 @@ YUI.add('zip-utils', function(Y) {
   var readCharmEntries = function(entries, callback) {
     var contents = Object.create(null);
     var entriesNum = Y.Object.size(entries);
-    Y.Object.each(entries, function(entry, name) {
+    Object.keys(entries).forEach(name => {
+      const entry = entries[name];
       // Read the entry's contents.
       // The zip.TextWriter handler fails silently in Firefox if the text
       // encoding argument is not explicitly passed.

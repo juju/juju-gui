@@ -459,9 +459,9 @@ YUI.add('juju-charm-models', function(Y) {
         valueFn: function() {
           var failures = [],
               successes = [],
-              providers = this.get('tested_providers');
-          Y.Object.each(providers, function(value, key) {
-            if (value !== 'SUCCESS') {
+              providers = this.get('tested_providers') || {};
+          Object.keys(providers).forEach(key => {
+            if (providers[key] !== 'SUCCESS') {
               failures.push(key);
             }
             else {

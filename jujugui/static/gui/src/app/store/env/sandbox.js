@@ -1122,7 +1122,7 @@ YUI.add('juju-env-sandbox', function(Y) {
           var formattedConfig = {};
           var backendConfig = reply.result.options || reply.result.config;
 
-          Y.Object.each(charmData.options, function(value, key) {
+          Object.keys(charmData.options).forEach(key => {
             formattedConfig[key] = charmData.options[key];
             if (backendConfig[key]) {
               formattedConfig[key].value = backendConfig[key];
