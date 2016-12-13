@@ -1283,7 +1283,7 @@ YUI.add('juju-models', function(Y) {
      */
     update_service_unit_aggregates: function(service) {
       var aggregate = this.get_informative_states_for_service(service);
-      var sum = Y.Object.values(aggregate[0]).reduce(
+      var sum = Object.keys(aggregate[0]).map(k => aggregate[0][k]).reduce(
         (a, b) => {return a + b;}, 0);
       var previous_unit_count = service.get('unit_count');
       service.set('unit_count', sum);

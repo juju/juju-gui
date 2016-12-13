@@ -61,9 +61,9 @@ YUI.add('juju-topology-service', function(Y) {
     visibleServices.reset();
 
     // Nodes are mapped by modelId tuples.
-    this.node = vis.selectAll('.service')
-                     .data(Y.Object.values(topo.service_boxes),
-                           function(d) {return d.modelId;});
+    this.node = vis.selectAll('.service').data(
+      Object.keys(topo.service_boxes).map(k => topo.service_boxes[k]),
+      function(d) {return d.modelId;});
     // It takes a few update cycles to add the services to the database so
     // this checks to make sure we only center once we have some services to
     // center on.
@@ -1343,8 +1343,8 @@ YUI.add('juju-topology-service', function(Y) {
 
       // new_service_boxes are those w/o current x/y pos and no
       // annotations.
-      var new_service_boxes = Y.Object.values(topo.service_boxes)
-      .filter(function(boundingBox) {
+      var new_service_boxes = Object.keys(topo.service_boxes).map(
+      k => topo.service_boxes[k]).filter(function(boundingBox) {
             // In the case where a model has been removed from the database
             // and update runs before exit, boundingBox.model will be empty;
             // these can automatically be ignored.

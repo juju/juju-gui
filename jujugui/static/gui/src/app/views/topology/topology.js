@@ -264,7 +264,8 @@ YUI.add('juju-topology', function(Y) {
     */
     servicePointOutside: function(includeVertices) {
       // Existing service boxes are those with x/y attributes set.
-      var existingBoxes = Y.Object.values(this.service_boxes)
+      var existingBoxes = Object.keys(
+        this.service_boxes).map(k => this.service_boxes[k])
         .filter(function(box) {
           return box.x !== undefined && !isNaN(box.center[0]);
         });
