@@ -27,6 +27,7 @@ YUI.add('generic-input', function() {
       disabled: React.PropTypes.bool,
       label: React.PropTypes.string,
       multiLine: React.PropTypes.bool,
+      onBlur: React.PropTypes.func,
       onFocus: React.PropTypes.func,
       placeholder: React.PropTypes.string,
       required: React.PropTypes.bool,
@@ -119,9 +120,12 @@ YUI.add('generic-input', function() {
       Handle blur events for the input.
       @method _blurHandler
     */
-    _blurHandler: function() {
+    _blurHandler: function(e) {
       this.setState({focus: false});
       this.validate();
+      if (this.props.onBlur) {
+        this.props.onBlur(e);
+      }
     },
 
     /**

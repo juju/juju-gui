@@ -1228,6 +1228,7 @@ YUI.add('juju-gui', function(Y) {
           credential={env.get('credential')}
           changes={currentChangeSet}
           deploy={utils.deploy.bind(utils, this)}
+          environment={db.environment}
           generateAllChangeDescriptions={
             changesUtils.generateAllChangeDescriptions.bind(
               changesUtils, services, db.units)}
