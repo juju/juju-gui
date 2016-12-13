@@ -1455,7 +1455,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       if (keys) {
         keys.forEach(key => {
-          if (Y.Object.owns(annotations, key)) {
+          if (annotations.hasOwnProperty(key)) {
             delete annotations[key];
           }
         });
