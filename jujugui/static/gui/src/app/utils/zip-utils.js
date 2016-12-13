@@ -143,7 +143,7 @@ YUI.add('zip-utils', function(Y) {
   */
   var readCharmEntries = function(entries, callback) {
     var contents = Object.create(null);
-    var entriesNum = Y.Object.size(entries);
+    var entriesNum = Object.keys(entries).length;
     Object.keys(entries).forEach(name => {
       const entry = entries[name];
       // Read the entry's contents.
@@ -155,7 +155,7 @@ YUI.add('zip-utils', function(Y) {
           contents[name] = text;
           // If all the files have been processed, call the callback passing the
           // aggregated results.
-          if (Y.Object.size(contents) === entriesNum) {
+          if (Object.keys(contents).length === entriesNum) {
             callback(contents);
           }
         });

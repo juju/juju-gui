@@ -2525,7 +2525,7 @@ YUI.add('juju-models', function(Y) {
           // Test models or ghosts might not have a units LazyModelList.
           serviceData.num_units = units && units.size() || 0;
         }
-        if (serviceOptions && Y.Object.size(serviceOptions) >= 1) {
+        if (serviceOptions && Object.keys(serviceOptions).length >= 1) {
           serviceData.options = serviceOptions;
         }
         // Add constraints

@@ -1390,7 +1390,8 @@ YUI.add('juju-topology-service', function(Y) {
                    .radius(50)
               // Run the pack layout on the new service boxes.
                    .nodes({children: new_service_boxes});
-          if (new_service_boxes.length < Y.Object.size(topo.service_boxes)) {
+          if (new_service_boxes.length <
+            Object.keys(topo.service_boxes).length) {
             // If we have new services that do not have x/y coords and are
             // not pending, then they've likely been created from the CLI.
             // In this case, to avoid placing them overlaying any existing

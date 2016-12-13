@@ -75,7 +75,7 @@ YUI.add('juju-charm-models', function(Y) {
    *
    */
   var unsetIfNoValue = function(val) {
-    if (!val || Y.Object.size(val) === 0) {
+    if (!val || Object.keys(val).length === 0) {
       return null;
     } else {
       return val;
