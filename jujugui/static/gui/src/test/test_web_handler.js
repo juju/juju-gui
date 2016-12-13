@@ -49,8 +49,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     afterEach(function() {
       webHandler.destroy();
       // Reset all the method mocks.
-      Y.each(mockXhr, function(value) {
-        value.restore();
+      Object.keys(mockXhr).forEach(key => {
+        mockXhr[key].restore();
       });
     });
 

@@ -220,7 +220,8 @@ YUI.add('juju-charm-models', function(Y) {
         delete data.requires;
         delete data.provides;
       }
-      Y.each(data, function(value, key) {
+      Object.keys(data).forEach(key => {
+        const value = data[key];
         if (!Y.Lang.isValue(value) ||
             !self.attrAdded(key) ||
             Y.Lang.isValue(self.get(key))) {

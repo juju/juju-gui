@@ -82,7 +82,8 @@ YUI.add('juju-models', function(Y) {
         } else {
           // This must be from a LazyModelList.
           var changed = {};
-          Y.each(data, function(value, key) {
+          Object.keys(data).forEach(key => {
+            const value = data[key];
             if (value === undefined) {
               // A delta in the real environment doesn't send undefined
               // values so this makes the simulated environment work properly.
@@ -448,7 +449,9 @@ YUI.add('juju-models', function(Y) {
       constraintsStr: {
         'getter': function() {
           var result = [];
-          Y.each(this.get('constraints'), function(v, k) {
+          const constraints = this.get('constraints') || {};
+          Object.keys(constraints).forEach(k => {
+            const v = constraints[k];
             if (v !== undefined) {
               result.push(k + '=' + v);
             }
@@ -2485,7 +2488,9 @@ YUI.add('juju-models', function(Y) {
 
         // Process the service_options removing any values
         // that are the default value for the charm.
-        Y.each(service.get('config'), function(value, key) {
+        const config = service.get('config') || {};
+        Object.keys(config).forEach(key => {
+          let value = config[key];
           if (Y.Lang.isValue(value)) {
             var optionData = charmOptions && charmOptions[key];
             switch (optionData.type) {

@@ -279,8 +279,8 @@ YUI.add('juju-env-web-handler', function(Y) {
       xhr.addEventListener('load', completedHandler, false);
       // Set up the request.
       xhr.open(method, path, true);
-      Y.each(headers || {}, function(value, key) {
-        xhr.setRequestHeader(key, value);
+      Object.keys(headers || {}).forEach(key => {
+        xhr.setRequestHeader(key, headers[key]);
       });
       // Handle basic HTTP authentication. Rather than passing the username
       // and password to the xhr directly, we create the corresponding request

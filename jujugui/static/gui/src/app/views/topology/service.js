@@ -1323,7 +1323,8 @@ YUI.add('juju-topology-service', function(Y) {
       // nodes. New nodes are those that haven't been positioned by drag
       // and drop, or those who don't have position attributes/annotations.
       var vertices = [];
-      Y.each(topo.service_boxes, function(boundingBox) {
+      Object.keys(topo.service_boxes).forEach(key => {
+        const boundingBox = topo.service_boxes[key];
         // Ensure each box has position attributes set.
         var annotations = boundingBox.annotations,
             addToVertices = 0;
@@ -1399,7 +1400,7 @@ YUI.add('juju-topology-service', function(Y) {
             // below.
             var pointOutside;
             var newVertices = [];
-            Y.each(new_service_boxes, function(boxModel) {
+            new_service_boxes.forEach(boxModel => {
               pointOutside = topo.servicePointOutside(newVertices);
               boxModel.x += pointOutside[0] - boxModel.x;
               boxModel.y += pointOutside[1] - boxModel.y;
@@ -1409,7 +1410,7 @@ YUI.add('juju-topology-service', function(Y) {
             });
           }
 
-          Y.each(new_service_boxes, function(box) {
+          new_service_boxes.forEach(box => {
             var existing = box.model.get('annotations') || {};
             if (!existing || !existing['gui-x']) {
               vertices.push([box.x || 0, box.y || 0]);

@@ -652,7 +652,7 @@ describe('App', function() {
             app.destroy();
             legacyApp.destroy();
             sessionStorage.setItem('credentials', null);
-            Y.each(destroyMe, function(item) {
+            destroyMe.forEach(item => {
               item.destroy();
             });
             done();

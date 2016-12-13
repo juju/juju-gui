@@ -123,7 +123,8 @@ YUI.add('juju-gui', function(Y) {
           // This could be its own view.
           if (target && !target.getHTML().length) {
             var bindings = [];
-            Y.each(this.keybindings, function(v, k) {
+            Object.keys(this.keybindings).forEach(k => {
+              const v = this.keybindings[k];
               if (v.help && (v.condition === undefined ||
                              v.condition.call(this) === true)) {
                 // TODO: translate keybindings to
@@ -263,7 +264,8 @@ YUI.add('juju-gui', function(Y) {
         enter: 13, esc: 27, backspace: 8,
         tab: 9, pageup: 33, pagedown: 34};
       var code_map = {};
-      Y.each(key_map, function(v, k) {
+      Object.keys(key_map).forEach(k => {
+        const v = key_map[k];
         code_map[v] = k;
       });
       this._keybindings = Y.one(window).on('keydown', function(evt) {
@@ -2187,10 +2189,9 @@ YUI.add('juju-gui', function(Y) {
      * @method enableBehaviors
      */
     enableBehaviors: function() {
-      Y.each(this.behaviors, function(behavior) {
-        behavior.callback.call(this);
-      }, this);
-
+      Object.keys(this.behaviors).forEach(behavior => {
+        this.behaviors[behavior].callback.call(this);
+      });
     },
 
     /**

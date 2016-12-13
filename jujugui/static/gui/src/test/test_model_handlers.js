@@ -1004,7 +1004,7 @@ describe('Juju delta handlers utilities', function() {
 
     it('ignores bad values', function() {
       var data = ['foo', 'bar-baz', '123', 'unit-', 'application-', 'machine'];
-      Y.each(data, function(item) {
+      data.forEach(item => {
         assert.equal(item, cleanUpEntityTags(item));
       });
     });
