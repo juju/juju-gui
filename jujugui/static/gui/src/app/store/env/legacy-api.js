@@ -2322,8 +2322,8 @@ YUI.add('juju-env-legacy-api', function(Y) {
       };
       // Build the transformed data structure.
       var result,
-          response = data.Response;
-      if (!Y.Object.isEmpty(response)) {
+          response = data.Response || {};
+      if (Object.keys(response).length > 0) {
         var meta = response.Meta;
         result = {
           config: {options: parseItems(response.Config.Options)},

@@ -109,10 +109,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
         return UNAUTHENTICATED_ERROR;
       }
       var result;
-      if (Y.Object.isEmpty(this.changes.applications) &&
-          Y.Object.isEmpty(this.changes.machines) &&
-          Y.Object.isEmpty(this.changes.units) &&
-          Y.Object.isEmpty(this.changes.relations)) {
+      if (Object.keys(this.changes.applications).length === 0 &&
+          Object.keys(this.changes.machines).length === 0 &&
+          Object.keys(this.changes.units).length === 0 &&
+          Object.keys(this.changes.relations).length === 0) {
         result = null;
       } else {
         result = this.changes;
@@ -151,11 +151,11 @@ YUI.add('juju-env-fakebackend', function(Y) {
         return UNAUTHENTICATED_ERROR;
       }
       var result;
-      if (Y.Object.isEmpty(this.annotations.applications) &&
-          Y.Object.isEmpty(this.annotations.machines) &&
-          Y.Object.isEmpty(this.annotations.units) &&
-          Y.Object.isEmpty(this.annotations.relations) &&
-          Y.Object.isEmpty(this.annotations.annotations)) {
+      if (Object.keys(this.annotations.applications).length === 0 &&
+          Object.keys(this.annotations.machines).length === 0 &&
+          Object.keys(this.annotations.units).length === 0 &&
+          Object.keys(this.annotations.relations).length === 0 &&
+          Object.keys(this.annotations.annotations).length === 0) {
         result = null;
       } else {
         result = this.annotations;
@@ -661,7 +661,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         // Containers' hardware characteristics only include the architecture.
         return {arch: constraints.arch || defaults.arch};
       }
-      if (Y.Object.isEmpty(constraints)) {
+      if (Object.keys(constraints).length === 0) {
         // Return the default hardware characteristics.
         return defaults;
       }
