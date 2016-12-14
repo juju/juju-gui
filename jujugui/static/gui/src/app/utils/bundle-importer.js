@@ -695,9 +695,9 @@ YUI.add('bundle-importer', function(Y) {
         move on to the next record.
     */
     _execute_addRelation: function(record, next) {
-      var ep1 = record.args[0].split(':');
-      var ep2 = record.args[1].split(':');
-      var endpoints = [
+      const ep1 = record.args[0].split(':');
+      const ep2 = record.args[1].split(':');
+      const endpoints = [
         [ep1[0], { name: ep1[1] }],
         [ep2[0], { name: ep2[1] }]
       ];
@@ -706,8 +706,8 @@ YUI.add('bundle-importer', function(Y) {
         endpoints[index][0] = record[ep[0].replace(/^\$/, '')].get('id');
       }, this);
 
-      var relationId = 'pending-' + record.args[0] + record.args[1];
-      var relation = this.db.relations.add({
+      const relationId = 'pending-' + record.args[0] + record.args[1];
+      const pendingRelation = this.db.relations.add({
         relation_id: relationId,
         'interface': endpoints[0][1].name,
         endpoints: endpoints,
@@ -717,16 +717,17 @@ YUI.add('bundle-importer', function(Y) {
       });
       this.modelAPI.add_relation(
           endpoints[0], endpoints[1],
-          function(e) {
+          function(evt) {
             this.db.relations.create({
-              relation_id: e.result.id,
-              type: e.result['interface'],
+              relation_id: evt.result.id,
+              type: evt.result['interface'],
               endpoints: endpoints,
               pending: false,
-              scope: e.result.scope
+              scope: evt.result.scope
             });
+            this.db.relations.remove(pendingRelation);
           }.bind(this),
-          {modelId: relation.get('id')});
+          {modelId: pendingRelation.get('id')});
       next();
     },
 

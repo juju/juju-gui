@@ -1048,14 +1048,11 @@ YUI.add('juju-env-legacy-api', function(Y) {
       @method addCharm
     */
     addCharm: function(url, macaroon, callback, options) {
-      var ecs = this.get('ecs');
-      var args = ecs._getArgs(arguments);
       if (options && options.immediate) {
-        // Call the _addCharm method right away bypassing the queue.
-        this._addCharm.apply(this, args);
-      } else {
-        ecs._lazyAddCharm(arguments);
+        this._addCharm(url, macaroon, callback);
+        return;
       }
+      this.get('ecs').lazyAddCharm([url, macaroon, callback], options);
     },
 
     /**
@@ -1109,12 +1106,10 @@ YUI.add('juju-env-legacy-api', function(Y) {
     */
     deploy: function(args, callback, options) {
       if (options && options.immediate) {
-        // Call the deploy method right away bypassing the queue.
         this._deploy(args, callback);
         return;
       }
-      const ecs = this.get('ecs');
-      ecs._lazyDeploy(arguments);
+      this.get('ecs').lazyDeploy([args, callback], options);
     },
 
     /**
@@ -1204,13 +1199,11 @@ YUI.add('juju-env-legacy-api', function(Y) {
       @method addMachines
     */
     addMachines: function(params, callback, options) {
-      var ecs = this.get('ecs');
-      var args = ecs._getArgs(arguments);
       if (options && options.immediate) {
-        return this._addMachines.apply(this, args);
-      } else {
-        return ecs.lazyAddMachines(args, options);
+        this._addMachines(params, callback);
+        return;
       }
+      this.get('ecs').lazyAddMachines([params, callback], options);
     },
 
     /**
@@ -1342,13 +1335,11 @@ YUI.add('juju-env-legacy-api', function(Y) {
       @method destroyMachines
     */
     destroyMachines: function(names, force, callback, options) {
-      var ecs = this.get('ecs');
-      var args = ecs._getArgs(arguments);
       if (options && options.immediate) {
-        return this._destroyMachines.apply(this, args);
-      } else {
-        return ecs._lazyDestroyMachines(args, options);
+        this._destroyMachines(names, force, callback);
+        return;
       }
+      this.get('ecs').lazyDestroyMachines([names, force, callback], options);
     },
 
     /**
@@ -1516,15 +1507,14 @@ YUI.add('juju-env-legacy-api', function(Y) {
 
       @method add_unit
     */
-    add_unit: function(applicationName, numUnits, toMachine,
-                       callback, options) {
-      var ecs = this.get('ecs');
-      var args = ecs._getArgs(arguments);
+    add_unit: function(
+        applicationName, numUnits, toMachine, callback, options) {
       if (options && options.immediate) {
-        this._add_unit.apply(this, args);
-      } else {
-        ecs.lazyAddUnits(args, options);
+        this._add_unit(applicationName, numUnits, toMachine, callback);
+        return;
       }
+      this.get('ecs').lazyAddUnits(
+        [applicationName, numUnits, toMachine, callback], options);
     },
 
     /**
@@ -1610,13 +1600,11 @@ YUI.add('juju-env-legacy-api', function(Y) {
       @method remove_units
     */
     remove_units: function(unitNames, callback, options) {
-      var ecs = this.get('ecs'),
-          args = ecs._getArgs(arguments);
       if (options && options.immediate) {
-        this._remove_units.apply(this, args);
-      } else {
-        ecs._lazyRemoveUnit(args);
+        this._remove_units(unitNames, callback);
+        return;
       }
+      this.get('ecs').lazyRemoveUnit([unitNames, callback], options);
     },
 
     /**
@@ -1656,13 +1644,11 @@ YUI.add('juju-env-legacy-api', function(Y) {
       @method expose
     */
     expose: function(applicationName, callback, options) {
-      var ecs = this.get('ecs'),
-          args = ecs._getArgs(arguments);
-      if (options.immediate) {
-        this._expose.apply(this, args);
-      } else {
-        ecs.lazyExpose(args);
+      if (options && options.immediate) {
+        this._expose(applicationName, callback);
+        return;
       }
+      this.get('ecs').lazyExpose([applicationName, callback], options);
     },
 
     /**
@@ -1701,13 +1687,11 @@ YUI.add('juju-env-legacy-api', function(Y) {
       @method unexpose
     */
     unexpose: function(applicationName, callback, options) {
-      var ecs = this.get('ecs'),
-          args = ecs._getArgs(arguments);
-      if (options.immediate) {
-        this._unexpose.apply(this, args);
-      } else {
-        ecs.lazyUnexpose(args);
+      if (options && options.immediate) {
+        this._unexpose(applicationName, callback);
+        return;
       }
+      this.get('ecs').lazyUnexpose([applicationName, callback], options);
     },
 
     /**
@@ -1925,19 +1909,18 @@ YUI.add('juju-env-legacy-api', function(Y) {
       @method set_config
     */
     set_config: function(applicationName, config, callback, options) {
-      var ecs = this.get('ecs');
-      var args = ecs._getArgs(arguments);
+      const ecs = this.get('ecs');
       if (options && options.immediate) {
         // Need to check that the applicationName is a real application name
         // and not a queued application id before allowing immediate or not.
         if (ecs.changeSet[applicationName]) {
-          throw 'You cannot immediately set config on a queued application';
-        } else {
-          this._set_config.apply(this, args);
+          throw new Error(
+            'You cannot immediately set config on a queued application');
         }
-      } else {
-        ecs._lazySetConfig(args);
+        this._set_config(applicationName, config, callback);
+        return;
       }
+      ecs.lazySetConfig([applicationName, config, callback], options);
     },
 
     /**
@@ -1976,13 +1959,12 @@ YUI.add('juju-env-legacy-api', function(Y) {
       @method destroyApplication
     */
     destroyApplication: function(applicationName, callback, options) {
-      var ecs = this.get('ecs');
-      var args = ecs._getArgs(arguments);
       if (options && options.immediate) {
-        this._destroyApplication.apply(this, args);
-      } else {
-        ecs.lazyDestroyApplication(args);
+        this._destroyApplication(applicationName, callback);
+        return;
       }
+      this.get('ecs').lazyDestroyApplication(
+        [applicationName, callback], options);
     },
 
     /**
@@ -2077,13 +2059,12 @@ YUI.add('juju-env-legacy-api', function(Y) {
       @method add_relation
     */
     add_relation: function(endpointA, endpointB, callback, options) {
-      var ecs = this.get('ecs'),
-          args = ecs._getArgs(arguments);
       if (options && options.immediate) {
-        this._add_relation.apply(this, args);
-      } else {
-        ecs._lazyAddRelation(args, options);
+        this._add_relation(endpointA, endpointB, callback);
+        return;
       }
+      this.get('ecs').lazyAddRelation(
+        [endpointA, endpointB, callback], options);
     },
 
     /**
@@ -2159,13 +2140,12 @@ YUI.add('juju-env-legacy-api', function(Y) {
       @method remove_relation
     */
     remove_relation: function(endpointA, endpointB, callback, options) {
-      var ecs = this.get('ecs'),
-          args = ecs._getArgs(arguments);
       if (options && options.immediate) {
-        this._remove_relation.apply(this, args);
-      } else {
-        ecs._lazyRemoveRelation(args);
+        this._remove_relation(endpointA, endpointB, callback);
+        return;
       }
+      this.get('ecs').lazyRemoveRelation(
+        [endpointA, endpointB, callback], options);
     },
 
     /**
