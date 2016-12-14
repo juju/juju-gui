@@ -151,50 +151,6 @@ describe('Environment Change Set', function() {
       });
     });
 
-    describe('_getArgs', function() {
-      it('returns an array of arguments', function(done) {
-        var args = [1, 2, 'foo', 'bar', function() {}];
-        function test() {
-          var result = ecs._getArgs(arguments);
-          assert.equal(Array.isArray(arguments), false);
-          assert.equal(Array.isArray(result), true);
-          assert.deepEqual(result, args);
-          done();
-        }
-        test.apply(null, args);
-      });
-
-      it('deep copies the original arguments', function(done) {
-        var args = [{key: 'value'}, [42], function() {}];
-        var backup = Y.clone(args);
-        function test() {
-          var result = ecs._getArgs(arguments);
-          // Mutate the resulting arguments.
-          result[0].key = 'another value';
-          result[1].push(47);
-          // Ensure the original ones have not been changed.
-          assert.deepEqual(args, backup);
-          done();
-        }
-        test.apply(null, args);
-      });
-
-      it('strips the ecs options argument off the end', function(done) {
-        var stub = sinon.stub();
-        var args = [1, 2, 'foo', 'bar', stub, { options: 'foo'}];
-        function test() {
-          var result = ecs._getArgs(arguments);
-          assert.equal(Array.isArray(arguments), false);
-          assert.equal(Array.isArray(result), true);
-          var chopped = Array.prototype.slice.call(
-              [1, 2, 'foo', 'bar', stub, { options: 'foo'}], 0, -1);
-          assert.deepEqual(result, chopped);
-          done();
-        }
-        test.apply(null, args);
-      });
-    });
-
     describe('_createNewRecord', function() {
       it('always creates a unique key for new records', function() {
         var result = [];
@@ -770,34 +726,33 @@ describe('Environment Change Set', function() {
     });
   });
 
-  describe('private ENV methods', function() {
-    describe('_lazyAddCharm', function() {
+  describe('lazy methods', function() {
+    describe('lazyAddCharm', function() {
       it('adds a new `add Charm` record', function(done) {
-        var args = ['id', 'cookies are better', done, {applicationId: 'foo'}];
-        var key = ecs._lazyAddCharm(args);
-        var record = ecs.changeSet[key];
+        const args = ['id', 'cookies are better', done];
+        const options = {applicationId: 'foo'};
+        const key = ecs.lazyAddCharm(args, options);
+        const record = ecs.changeSet[key];
         assert.isObject(record);
         assert.isObject(record.command);
         assert.equal(record.executed, false);
         assert.equal(record.command.method, '_addCharm');
         // Remove the functions, which will not be equal.
-        var cb = record.command.args.pop();
-        args.pop();
-        // Also remove the options object.
+        const cb = record.command.args.pop();
         args.pop();
         assert.deepEqual(record.command.args, args);
-        assert.deepEqual(record.command.options, {applicationId: 'foo'});
+        assert.deepEqual(record.command.options, options);
         cb(); // Will call done().
       });
 
       it('only adds one `add Charm` record for duplicates', function() {
-        ecs._lazyAddCharm(
+        ecs.lazyAddCharm(
           ['cs:wordpress', 'cookies', null, {applicationId: 'foo'}]);
         assert.equal(Object.keys(ecs.changeSet).length, 1);
-        ecs._lazyAddCharm(
+        ecs.lazyAddCharm(
           ['cs:wordpress', 'cookies', null, {applicationId: 'foo'}]);
         assert.equal(Object.keys(ecs.changeSet).length, 1);
-        ecs._lazyAddCharm(
+        ecs.lazyAddCharm(
           ['cs:mysql', 'cookies', null, {applicationId: 'foo'}]);
         assert.equal(Object.keys(ecs.changeSet).length, 2);
       });
@@ -811,7 +766,7 @@ describe('Environment Change Set', function() {
           channel: 'stable',
           resources: {a: 'resource'}
         };
-        const key = ecs._lazyAddPendingResources([args]);
+        const key = ecs.lazyAddPendingResources([args, null], {});
         const record = ecs.changeSet[key];
         assert.equal(record.executed, false);
         assert.equal(record.command.method, '_addPendingResources');
@@ -821,13 +776,14 @@ describe('Environment Change Set', function() {
       });
     });
 
-    describe('_lazyDeploy', function() {
+    describe('lazyDeploy', function() {
       it('creates a new `deploy` record', function(done) {
         const args = {
           charmURL: 'cs:precise/django-42',
           applicationName: 'django',
         };
-        const key = ecs._lazyDeploy([args, done, {modelId: 'baz'}]);
+        const options = {modelId: 'baz'};
+        const key = ecs.lazyDeploy([args, done], options);
         const record = ecs.changeSet[key];
         assert.isObject(record);
         assert.isObject(record.command);
@@ -837,7 +793,7 @@ describe('Environment Change Set', function() {
         const cb = record.command.args.pop();
         // Also remove the options object.
         assert.deepEqual(record.command.args, [args]);
-        assert.deepEqual(record.command.options, {modelId: 'baz'});
+        assert.deepEqual(record.command.options, options);
         cb(); // Will call done().
       });
 
@@ -850,7 +806,7 @@ describe('Environment Change Set', function() {
         };
         const callback = sinon.stub();
         const options = {modelId: 'new1'};
-        const key = ecs._lazyDeploy([args, callback, options]);
+        const key = ecs.lazyDeploy([args, callback], options);
         const command = ecs.changeSet[key].command;
         // Add the ghost service to the db.
         const services = new Y.juju.models.ServiceList();
@@ -870,7 +826,7 @@ describe('Environment Change Set', function() {
         };
         const callback = sinon.stub();
         const options = {modelId: 'new1'};
-        const key = ecs._lazyDeploy([args, callback, options]);
+        const key = ecs.lazyDeploy([args, callback], options);
         const command = ecs.changeSet[key].command;
         // Add the ghost service to the db.
         const services = new Y.juju.models.ServiceList();
@@ -891,7 +847,7 @@ describe('Environment Change Set', function() {
         };
         const callback = sinon.stub();
         const options = {modelId: 'new1'};
-        const key = ecs._lazyDeploy([args, callback, options]);
+        const key = ecs.lazyDeploy([args, callback], options);
         const command = ecs.changeSet[key].command;
         // Add the ghost service to the db.
         const services = new Y.juju.models.ServiceList();
@@ -903,18 +859,18 @@ describe('Environment Change Set', function() {
       });
 
       it('adds the correct addCharm and addPendingResources parents', () => {
-        ecs._lazyAddCharm([
-          'cs:precise/django-42', 'cookies', null, {applicationId: 'django'}]);
-        ecs._lazyAddPendingResources([{
+        ecs.lazyAddCharm([
+          'cs:precise/django-42', 'cookies', null], {applicationId: 'django'});
+        ecs.lazyAddPendingResources([{
           applicationName: 'django',
           charmURL: 'cs:precise/django-42',
           channel: 'stable',
           resources: {a: 'resource'}
-        }]);
-        const key = ecs._lazyDeploy([{
+        }, null], {});
+        const key = ecs.lazyDeploy([{
           charmURL: 'cs:precise/django-42',
           applicationName: 'django',
-        }]);
+        }, null], {});
         const record = ecs.changeSet[key];
         assert.equal(record.parents.length, 2);
         const parentKeys = {
@@ -933,8 +889,9 @@ describe('Environment Change Set', function() {
 
     describe('lazyDestroyApplication', function() {
       it('creates a new destroy record', function(done) {
-        var args = ['foo', done, {modelId: 'baz'}];
-        var setStub = sinon.stub();
+        const args = ['foo', done];
+        const options = {modelId: 'baz'};
+        const setStub = sinon.stub();
         ecs.set('db', {
           services: {
             getById: function(arg) {
@@ -947,8 +904,8 @@ describe('Environment Change Set', function() {
               };
             }}
         });
-        var key = ecs.lazyDestroyApplication(args);
-        var record = ecs.changeSet[key];
+        const key = ecs.lazyDestroyApplication(args, options);
+        const record = ecs.changeSet[key];
         assert.isObject(record);
         assert.isObject(record.command);
         assert.equal(record.executed, false);
@@ -957,12 +914,10 @@ describe('Environment Change Set', function() {
         assert.equal(setStub.lastCall.args[0], 'deleted');
         assert.equal(setStub.lastCall.args[1], true);
         // Remove the functions, which will not be equal.
-        var cb = record.command.args.pop();
-        args.pop();
-        // Also remove the options object.
+        const cb = record.command.args.pop();
         args.pop();
         assert.deepEqual(record.command.args, args);
-        assert.deepEqual(record.command.options, {modelId: 'baz'});
+        assert.deepEqual(record.command.options,options);
         cb(); // Will call done().
       });
 
@@ -991,7 +946,7 @@ describe('Environment Change Set', function() {
         var stubRemoveUnits = sinon.stub(db, 'removeUnits');
         this._cleanups.push(stubRemoveUnits.restore);
 
-        ecs._lazyDeploy([{charmURL: 'wp'}, function() {}, {modelId: 'baz'}]);
+        ecs.lazyDeploy([{charmURL: 'wp'}, function() {}], {modelId: 'baz'});
         ecs.lazyDestroyApplication(['baz']);
         assert.equal(stubRemove.calledOnce, true, 'remove not called');
         assert.equal(stubDestroy.calledOnce, true, 'destroy not called');
@@ -1022,12 +977,12 @@ describe('Environment Change Set', function() {
         db.relations = {
           remove: sinon.stub()
         };
-        ecs._lazyAddCharm(
-          ['cs:wordpress', 'cookies', null, {applicationId: 'foo'}]);
-        ecs._lazyDeploy(
-          [{charmURL: 'cs:wordpress'}, function() {}, {modelId: 'baz'}]);
-        ecs._lazyDeploy(
-          [{charmURL: 'cs:wordpress'}, function() {}, {modelId: 'baz2'}]);
+        ecs.lazyAddCharm(
+          ['cs:wordpress', 'cookies', null], {applicationId: 'foo'});
+        ecs.lazyDeploy(
+          [{charmURL: 'cs:wordpress'}, function() {}], {modelId: 'baz'});
+        ecs.lazyDeploy(
+          [{charmURL: 'cs:wordpress'}, function() {}], {modelId: 'baz2'});
         assert.equal(Object.keys(ecs.changeSet).length, 3);
         ecs.lazyDestroyApplication(['baz']);
         assert.equal(Object.keys(ecs.changeSet).length, 2);
@@ -1036,9 +991,10 @@ describe('Environment Change Set', function() {
       });
 
       it('destroys unplaced units when the service is removed', function(done) {
-        var args = ['foo', done, {modelId: 'baz'}];
-        var units = new Y.juju.models.ServiceUnitList();
-        var unitIds = ['test/1', 'test/2'];
+        const args = ['foo', done];
+        const options = {modelId: 'baz'};
+        const units = new Y.juju.models.ServiceUnitList();
+        const unitIds = ['test/1', 'test/2'];
         units.add([{id: unitIds[0]}, {id: unitIds[1]}]);
         ecs.set('db', {
           services: {
@@ -1052,19 +1008,19 @@ describe('Environment Change Set', function() {
             }
           }
         });
-        var removeStub = sinon.stub(ecs, '_lazyRemoveUnit');
+        const removeStub = sinon.stub(ecs, 'lazyRemoveUnit');
         this._cleanups.push(removeStub.restore);
-        ecs.lazyDestroyApplication(args);
+        ecs.lazyDestroyApplication(args, options);
         assert.equal(removeStub.calledOnce, true);
-        assert.deepEqual(removeStub.lastCall.args[0], [unitIds]);
+        assert.deepEqual(removeStub.lastCall.args[0], [unitIds, null]);
         done();
       });
     });
 
-    describe('_lazyDestroyMachines', function() {
+    describe('lazyDestroyMachines', function() {
       it('creates a new destroy record', function(done) {
-        var args = [['0/lxc/0'], false, done, {}];
-        var machineObj = { units: [] };
+        const args = [['0/lxc/0'], false, done];
+        const machineObj = { units: [] };
         ecs.set('db', {
           machines: {
             getById: function(arg) {
@@ -1093,17 +1049,15 @@ describe('Environment Change Set', function() {
               return [];
             }}
         });
-        var key = ecs._lazyDestroyMachines(args);
-        var record = ecs.changeSet[key];
+        const key = ecs.lazyDestroyMachines(args, {});
+        const record = ecs.changeSet[key];
         assert.isObject(record);
         assert.isObject(record.command);
         assert.equal(record.executed, false);
         assert.equal(record.command.method, '_destroyMachines');
         assert.equal(machineObj.deleted, true);
         // Remove the functions, which will not be equal.
-        var cb = record.command.args.pop();
-        args.pop();
-        // Also remove the options object.
+        const cb = record.command.args.pop();
         args.pop();
         assert.deepEqual(record.command.args, args);
         cb(); // Will call done().
@@ -1129,7 +1083,7 @@ describe('Environment Change Set', function() {
           }
         };
         ecs.lazyAddMachines([[{}], function() {}], {modelId: 'baz'});
-        ecs._lazyDestroyMachines([['baz'], function() {}]);
+        ecs.lazyDestroyMachines([['baz'], function() {}]);
         assert.equal(stubRemove.calledOnce, true, 'remove not called');
         assert.deepEqual(ecs.changeSet, {});
       });
@@ -1156,7 +1110,7 @@ describe('Environment Change Set', function() {
             }
           }
         };
-        ecs._lazyDestroyMachines([['baz'], function() {}]);
+        ecs.lazyDestroyMachines([['baz'], function() {}]);
         assert.equal(stubDestroy.calledOnce, true);
       });
 
@@ -1228,7 +1182,7 @@ describe('Environment Change Set', function() {
             return [unit];
           }
         };
-        ecs._lazyDestroyMachines([['baz'], function() {}]);
+        ecs.lazyDestroyMachines([['baz'], function() {}]);
         assert.deepEqual(unit, {});
         assert.deepEqual(stubSet.lastCall.args, ['machine', null]);
       });
@@ -1285,7 +1239,7 @@ describe('Environment Change Set', function() {
             return [unit];
           }
         };
-        ecs._lazyDestroyMachines(cmdArgs);
+        ecs.lazyDestroyMachines(cmdArgs);
         assert.equal(unit.deleted, true, 'unit not set as deleted');
         assert.equal(machine.deleted, true, 'machine not set as deleted');
       });
@@ -1324,7 +1278,7 @@ describe('Environment Change Set', function() {
       });
 
       it('includes the series in the command on preparation', function() {
-        var args = [[{}]];
+        var args = [[{}], null];
         var options = {modelId: 'new1'};
         var key = ecs.lazyAddMachines(args, options);
         var command = ecs.changeSet[key].command;
@@ -1464,7 +1418,7 @@ describe('Environment Change Set', function() {
 
     });
 
-    describe('_lazySetConfig', function() {
+    describe('lazySetConfig', function() {
       var service;
 
       beforeEach(function() {
@@ -1492,7 +1446,7 @@ describe('Environment Change Set', function() {
         ecs._addToRecord = addToRecord;
         this._cleanups.push(addToRecord.restore);
         var args = [1, {}, 'foo', {}];
-        var key = ecs._lazySetConfig(args);
+        var key = ecs.lazySetConfig(args);
         var record = ecs.changeSet[key];
         assert.isObject(record);
         assert.isObject(record.command);
@@ -1504,17 +1458,18 @@ describe('Environment Change Set', function() {
       });
 
       it('creates a new `setConfig` record for a queued service', function() {
-        const args = [{charmURL: 'wp'}, function() {}, {modelId: 'baz'}];
-        // This assumes that the _lazyDeploy tests complete successfully.
-        var key = ecs._lazyDeploy(args);
-        var record = ecs.changeSet[key];
+        const args = [{charmURL: 'wp'}, function() {}];
+        const options = {modelId: 'baz'};
+        // This assumes that the lazyDeploy tests complete successfully.
+        const key = ecs.lazyDeploy(args, options);
+        const record = ecs.changeSet[key];
         assert.isObject(record);
-        var setArgs = [key, {}, 2, {}];
-        var setKey = ecs._lazySetConfig(setArgs);
-        var setRecord = ecs.changeSet[setKey];
+        const setArgs = [key, {}, 2, {}];
+        const setKey = ecs.lazySetConfig(setArgs);
+        const setRecord = ecs.changeSet[setKey];
         assert.equal(setRecord.executed, false);
         assert.isObject(setRecord.command);
-        var command = setRecord.command;
+        const command = setRecord.command;
         assert.equal(command.method, '_set_config');
         assert.deepEqual(command.args, setArgs);
         // It should have called to create new records
@@ -1526,7 +1481,7 @@ describe('Environment Change Set', function() {
         dirtyFields.push('bax');
         service.set('_dirtyFields', dirtyFields);
         var args = ['mysql', { foo: 'bar' }, null, { foo: 'baz' }];
-        ecs._lazySetConfig(args);
+        ecs.lazySetConfig(args);
         dirtyFields = service.get('_dirtyFields');
         assert.equal(dirtyFields.length, 2);
         assert.deepEqual(dirtyFields, ['bax', 'foo']);
@@ -1535,13 +1490,13 @@ describe('Environment Change Set', function() {
       it('sets the changed values to the service model', function() {
         var args = ['mysql', { foo: 'bar' }, null, { foo: 'baz', bax: 'qux' }];
         service.set = sinon.stub();
-        ecs._lazySetConfig(args);
+        ecs.lazySetConfig(args);
         assert.equal(service.set.callCount, 2);
         assert.deepEqual(service.set.lastCall.args[1], { foo: 'bar' });
       });
     });
 
-    describe('_lazyAddRelation', function() {
+    describe('lazyAddRelation', function() {
       beforeEach(function() {
         var db = ecs.get('db');
         db.units = {
@@ -1566,16 +1521,19 @@ describe('Environment Change Set', function() {
             }
           }
         };
-        var stubUpdateSubordinates = sinon.stub();
+        const stubUpdateSubordinates = sinon.stub();
         ecs.get('db').services.getServiceByName = function() {
           return {
             updateSubordinateUnits: stubUpdateSubordinates
           };
         };
-        var args = [['serviceId1$', ['db', 'client']],
-              ['serviceId2$', ['db', 'server']]];
-        var key = ecs._lazyAddRelation(args);
-        var record = ecs.changeSet[key];
+        const args = [
+          ['serviceId1$', ['db', 'client']],
+          ['serviceId2$', ['db', 'server']],
+          null
+        ];
+        const key = ecs.lazyAddRelation(args, {});
+        const record = ecs.changeSet[key];
         assert.equal(record.command.method, '_add_relation');
         assert.equal(record.command.args.length, 3);
         assert.deepEqual(
@@ -1596,7 +1554,7 @@ describe('Environment Change Set', function() {
       });
     });
 
-    describe('_lazyRemoveRelation', function() {
+    describe('lazyRemoveRelation', function() {
       it('can remove a ghost relation from the changeset', function() {
         const db = ecs.get('db');
         const origRelations = db.relations;
@@ -1624,7 +1582,7 @@ describe('Environment Change Set', function() {
         ecs.changeSet['addRelation-982'] = {
           command: {args: ['arg1', 'arg2'], method: '_add_relation'}
         };
-        const record = ecs._lazyRemoveRelation([arg1, arg2]);
+        const record = ecs.lazyRemoveRelation([arg1, arg2]);
         const compare = ecs.get('db').relations.compareRelationEndpoints;
         const remove = ecs.get('db').relations.remove;
         const getRelation = ecs.get('db').relations.getRelationFromEndpoints;
@@ -1640,16 +1598,16 @@ describe('Environment Change Set', function() {
       });
 
       it('can add a remove relation record into the changeset', function() {
-        var setStub = sinon.stub();
-        var db = ecs.get('db');
+        const setStub = sinon.stub();
+        const db = ecs.get('db');
         db.relations = {
           getRelationFromEndpoints: sinon.stub().returns({
             set: setStub
           })
         };
-        var record = ecs._lazyRemoveRelation(['args1', 'args2']);
+        const record = ecs.lazyRemoveRelation(['args1', 'args2', null], {});
         assert.equal(record.split('-')[0], 'removeRelation');
-        var ecsRecord = ecs.changeSet[record];
+        const ecsRecord = ecs.changeSet[record];
         assert.strictEqual(ecsRecord.executed, false);
         assert.equal(ecsRecord.id, record);
         assert.deepEqual(ecsRecord.parents, []);
@@ -1668,7 +1626,7 @@ describe('Environment Change Set', function() {
       });
     });
 
-    describe('_lazyRemoveUnit', function() {
+    describe('lazyRemoveUnit', function() {
       it('can remove a ghost unit from the changeset', function() {
         ecs.get('db').removeUnits = sinon.stub();
         ecs.get('db').units = {
@@ -1689,7 +1647,7 @@ describe('Environment Change Set', function() {
             args: ['arg1'],
             method: '_add_unit' ,
             options: {modelId: 'arg1'}}};
-        var record = ecs._lazyRemoveUnit([['arg1']]);
+        var record = ecs.lazyRemoveUnit([['arg1']]);
         var remove = ecs.get('db').removeUnits;
         assert.strictEqual(record, undefined);
         assert.strictEqual(ecs.changeSet['addUnit-982'], undefined);
@@ -1713,9 +1671,9 @@ describe('Environment Change Set', function() {
           },
           free: sinon.stub()
         };
-        var record = ecs._lazyRemoveUnit([['args1', 'args2']]);
+        const record = ecs.lazyRemoveUnit([['args1', 'args2'], null], {});
         assert.equal(record.split('-')[0], 'removeUnit');
-        var ecsRecord = ecs.changeSet[record];
+        const ecsRecord = ecs.changeSet[record];
         assert.strictEqual(ecsRecord.executed, false);
         assert.equal(ecsRecord.id, record);
         assert.deepEqual(ecsRecord.parents, []);
@@ -1731,15 +1689,15 @@ describe('Environment Change Set', function() {
 
     describe('lazyExpose', function() {
       it('can add an expose record into the changeset', function() {
-        var stubSet = sinon.stub();
+        const stubSet = sinon.stub();
         ecs.get('db').services = {
           getById: function() {
             return { set: stubSet };
           }
         };
-        var record = ecs.lazyExpose(['service']);
+        const record = ecs.lazyExpose(['service', null], {});
         assert.equal(record.split('-')[0], 'expose');
-        var ecsRecord = ecs.changeSet[record];
+        const ecsRecord = ecs.changeSet[record];
         assert.strictEqual(ecsRecord.executed, false);
         assert.equal(ecsRecord.id, record);
         assert.deepEqual(ecsRecord.parents, []);
@@ -1755,15 +1713,15 @@ describe('Environment Change Set', function() {
 
     describe('lazyUnexpose', function() {
       it('can add an unexpose record into the changeset', function() {
-        var stubSet = sinon.stub();
+        const stubSet = sinon.stub();
         ecs.get('db').services = {
           getById: function() {
             return { set: stubSet };
           }
         };
-        var record = ecs.lazyUnexpose(['service']);
+        const record = ecs.lazyUnexpose(['service', null], {});
         assert.equal(record.split('-')[0], 'unexpose');
-        var ecsRecord = ecs.changeSet[record];
+        const ecsRecord = ecs.changeSet[record];
         assert.strictEqual(ecsRecord.executed, false);
         assert.equal(ecsRecord.id, record);
         assert.deepEqual(ecsRecord.parents, []);
@@ -1798,12 +1756,10 @@ describe('Environment Change Set', function() {
         assert.deepEqual(stubRemove.lastCall.args, ['expose-123']);
       });
     });
-  });
 
-  describe('public ENV methods', function() {
-    describe('addCharm', function() {
+    describe('lazyAddCharm', function() {
       it('can immediately add a charm via the env', function() {
-        var lazyAddCharm = sinon.stub(ecs, '_lazyAddCharm');
+        var lazyAddCharm = sinon.stub(ecs, 'lazyAddCharm');
         this._cleanups.push(lazyAddCharm.restore);
         var callback = sinon.stub();
         var args = [1, 2, callback, { immediate: true}];
@@ -1818,7 +1774,7 @@ describe('Environment Change Set', function() {
       });
 
       it('can add a `addCharm` command to the changeSet', function() {
-        var lazyAddCharm = sinon.stub(ecs, '_lazyAddCharm');
+        var lazyAddCharm = sinon.stub(ecs, 'lazyAddCharm');
         this._cleanups.push(lazyAddCharm.restore);
         var callback = sinon.stub();
         var args = [1, 2, callback];
@@ -1834,9 +1790,9 @@ describe('Environment Change Set', function() {
       });
     });
 
-    describe('deploy', function() {
+    describe('lazyDeploy', function() {
       it('can immediately deploy a charm via the env', function() {
-        const lazyDeploy = sinon.stub(ecs, '_lazyDeploy');
+        const lazyDeploy = sinon.stub(ecs, 'lazyDeploy');
         this._cleanups.push(lazyDeploy.restore);
         const callback = sinon.stub();
         const args = {charmURL: 'cs:haproxy-42', applicationName: 'haproxy'};
@@ -1849,25 +1805,21 @@ describe('Environment Change Set', function() {
       });
 
       it('can add a `deploy` command to the changeSet', function() {
-        var lazyDeploy = sinon.stub(ecs, '_lazyDeploy');
+        const lazyDeploy = sinon.stub(ecs, 'lazyDeploy');
         this._cleanups.push(lazyDeploy.restore);
-        var callback = sinon.stub();
-        var args = [1, 2, 3, 4, 5, 6, 7, callback];
-        envObj.deploy.apply(envObj, args);
-        var lazyDeployArgs = lazyDeploy.lastCall.args[0];
-        // Assert within a loop, as Arguments do not deeply equal arrays.
-        args.forEach(function(arg, i) {
-          assert.equal(lazyDeployArgs[i], arg);
-        });
+        const callback = sinon.stub();
+        const args = ['args', callback];
+        envObj.deploy(args, {});
+        assert.equal(lazyDeploy.lastCall.args[0][0][0], 'args');
         assert.equal(lazyDeploy.calledOnce, true);
         // make sure we don't call the env deploy method.
         assert.equal(envObj._deploy.callCount, 0);
       });
     });
 
-    describe('setConfig', function() {
+    describe('lazySetConfig', function() {
       it('can immediately set config to a deployed service', function() {
-        var lazySetConfig = sinon.stub(ecs, '_lazySetConfig');
+        var lazySetConfig = sinon.stub(ecs, 'lazySetConfig');
         this._cleanups.push(lazySetConfig.restore);
         var callback = sinon.stub();
         var args = ['service', {key: 'value'}, callback, { immediate: true}];
@@ -1883,7 +1835,7 @@ describe('Environment Change Set', function() {
       });
 
       it('throws if immediately setting config to queued app', function() {
-        var lazySetConfig = sinon.stub(ecs, '_lazySetConfig');
+        var lazySetConfig = sinon.stub(ecs, 'lazySetConfig');
         this._cleanups.push(lazySetConfig.restore);
         var callback = sinon.stub();
         ecs.changeSet.foo = {};
@@ -1899,12 +1851,11 @@ describe('Environment Change Set', function() {
       });
 
       it('can add a `set_config` command to the changeSet', function() {
-        var lazySetConfig = sinon.stub(ecs, '_lazySetConfig');
+        const lazySetConfig = sinon.stub(ecs, 'lazySetConfig');
         this._cleanups.push(lazySetConfig.restore);
-        var callback = sinon.stub();
-        var args = [1, 2, 3, 4, callback];
-        envObj.set_config.apply(envObj, args);
-        assert.deepEqual(lazySetConfig.lastCall.args[0], args);
+        const callback = sinon.stub();
+        envObj.set_config(1, 2, callback, {});
+        assert.deepEqual(lazySetConfig.lastCall.args[0], [1, 2, callback]);
         assert.equal(lazySetConfig.calledOnce, true);
         // Make sure we don't call the env set_config method
         assert.equal(envObj._set_config.callCount, 0);
@@ -1928,7 +1879,7 @@ describe('Environment Change Set', function() {
         };
         var callback = sinon.stub();
         var args = ['serviceId1$', {}, {}, {}, callback];
-        var key = ecs._lazySetConfig(args);
+        var key = ecs.lazySetConfig(args);
         var record = ecs.changeSet[key];
         assert.equal(typeof record.command.onParentResults, 'function');
         assert.equal(record.executed, false);
@@ -1940,9 +1891,9 @@ describe('Environment Change Set', function() {
       });
     });
 
-    describe('addRelation', function() {
+    describe('lazyAddRelation', function() {
       it('can immediately call `add_relation`', function() {
-        var lazyAddRelation = sinon.stub(ecs, '_lazyAddRelation');
+        var lazyAddRelation = sinon.stub(ecs, 'lazyAddRelation');
         this._cleanups.push(lazyAddRelation.restore);
         var callback = sinon.stub();
         var args = [1, 2, callback, {immediate: true}];
@@ -1954,7 +1905,7 @@ describe('Environment Change Set', function() {
         assert.deepEqual(envObj._add_relation.lastCall.args, args);
       });
       it('can add a `add_relation` command to the changeSet', function() {
-        var lazyAddRelation = sinon.stub(ecs, '_lazyAddRelation');
+        var lazyAddRelation = sinon.stub(ecs, 'lazyAddRelation');
         this._cleanups.push(lazyAddRelation.restore);
         var callback = sinon.stub();
         var args = [1, 2, callback];
