@@ -1657,7 +1657,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('calls the ecs remove relation', function() {
-      var lazy = sinon.stub(env.get('ecs'), '_lazyRemoveRelation');
+      var lazy = sinon.stub(env.get('ecs'), 'lazyRemoveRelation');
       this._cleanups.push(lazy.restore);
       env.remove_relation([], [], function() {});
       assert.equal(lazy.calledOnce, true);
@@ -1700,7 +1700,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('calls the ecs remove unit', function() {
-      var lazy = sinon.stub(env.get('ecs'), '_lazyRemoveUnit');
+      var lazy = sinon.stub(env.get('ecs'), 'lazyRemoveUnit');
       this._cleanups.push(lazy.restore);
       env.remove_units([], function() {});
       assert.equal(lazy.calledOnce, true);

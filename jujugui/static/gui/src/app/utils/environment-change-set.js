@@ -81,27 +81,6 @@ YUI.add('environment-change-set', function(Y) {
     },
 
     /**
-      Returns an array of the parameters this method was called with skipping
-      the final parameter because it's the public method options.
-
-      @method _getArgs
-      @return {Array} An array of the arguments passed to this method.
-    */
-    _getArgs: function(args) {
-      var lastParam = args[args.length - 1];
-      var cut;
-      // If there is an object after the callback it's the
-      // configuration object for ECS.
-      if (typeof lastParam === 'object' && lastParam !== null &&
-          typeof args[args.length - 2] === 'function') {
-        cut = -1;
-      }
-      // Deep copy the resulting array of arguments, in order to prevent
-      // changeset functions to mutate the given data structures.
-      return Y.clone(Array.prototype.slice.call(args, 0, cut));
-    },
-
-    /**
       Generates a random number between 1 and 1000;
 
       @method _generateRandomNumber
@@ -185,31 +164,19 @@ YUI.add('environment-change-set', function(Y) {
       @param {Object} record The individual record object from the changeSet.
     */
     _wrapCallback: function(record) {
-      var args = record.command.args;
-      var index = args.length - 1;
-      var callback;
-      // If the dev doesn't provide a callback when the env call is made we
-      // need to supply one and increment the index that the wrapper gets
-      // placed in. The wrapper must execute as it's required to keep the
-      // changeset in sync.
-      if (typeof args[index] === 'function') {
-        callback = args[index];
-      } else {
-        callback = function() {};
-        index += 1;
-      }
-      // Possible strict violation.
-      var self = this;
-      /**
-        Wrapper function for the supplied callback for the command.
-        @method _callbackWrapper
-      */
-      function _callbackWrapper() {
+      const args = record.command.args;
+      // By convention, the callback is the last argument.
+      const callback = args[args.length - 1];
+      const self = this;
+      args[args.length - 1] = function() {
         record.executed = true;
         self._markCommitStatus('committed', record.command);
-        // `this` here is in context that the callback is called
-        //  under. In most cases this will be `env`.
-        var result = callback.apply(this, self._getArgs(arguments));
+        let result = null;
+        if (callback) {
+          // `this` here is in context that the callback is called
+          //  under. In most cases this will be `env`.
+          result = callback.apply(this, arguments);
+        }
         self.fire('taskComplete', {
           id: record.id,
           record: record,
@@ -222,8 +189,7 @@ YUI.add('environment-change-set', function(Y) {
         self._updateChangesetFromResults(record, arguments);
         self.fire('changeSetModified');
         return result;
-      }
-      args[index] = _callbackWrapper;
+      };
     },
 
     /**
@@ -572,10 +538,11 @@ YUI.add('environment-change-set', function(Y) {
       Receives all the parameters received by the models "addCharm" method
       with the exception of the ECS options object.
 
-      @method _lazyAddCharm
+      @method lazyAddCharm
       @param {Array} args The arguments to add the charm with.
+      @param {Object} options The ECS options.
     */
-    _lazyAddCharm: function(args) {
+    lazyAddCharm: function(args, options) {
       const existing = Object.keys(this.changeSet).some(key => {
         return this.changeSet[key].command.args[0] === args[0];
       });
@@ -583,22 +550,23 @@ YUI.add('environment-change-set', function(Y) {
       if (existing) {
         return;
       }
-      var command = {
-        method: '_addCharm',
-        args: this._getArgs(args),
-        options: args[3]
-      };
+      const command = {method: '_addCharm', args: args, options: options};
       return this._createNewRecord('addCharm', command, []);
     },
 
     /**
       Creates a new entry in the queue to add the pending resources.
       @param {Array} The arguments to add the pending resources with.
+
+      @method lazyAddPendingResources
+      @param {Array} args The arguments to add resources with.
+      @param {Object} options The ECS options.
     */
-    _lazyAddPendingResources: function(args) {
+    lazyAddPendingResources: function(args, options) {
       const command = {
         method: '_addPendingResources',
-        args: args
+        args: args,
+        options: options
       };
       // Set up the parents of this record.
       const parents = [];
@@ -620,13 +588,15 @@ YUI.add('environment-change-set', function(Y) {
       Receives all the parameters received by the environment's "deploy"
       method with the exception of the ECS options object.
 
-      @method _lazyDeploy
+      @method lazyDeploy
       @param {Array} args The arguments to deploy the charm with.
+      @param {Object} options The ECS options.
     */
-    _lazyDeploy: function(args) {
+    lazyDeploy: function(args, options) {
       var command = {
         method: '_deploy',
-        args: this._getArgs(args),
+        args: args,
+        options: options,
         /**
           Called immediately before executing the deploy command.
 
@@ -668,9 +638,6 @@ YUI.add('environment-change-set', function(Y) {
           }
         }
       };
-      if (command.args.length !== args.length) {
-        command.options = args[args.length - 1];
-      }
       // Set up the parents of this record.
       const parents = [];
       Object.keys(this.changeSet).forEach(key => {
@@ -699,15 +666,14 @@ YUI.add('environment-change-set', function(Y) {
 
       @method lazyDestroyApplication
       @param {Array} args The arguments used for destroying.
+      @param {Object} options The ECS options.
     */
-    lazyDestroyApplication: function(args) {
+    lazyDestroyApplication: function(args, options) {
       var command = {
         method: '_destroyApplication',
-        args: this._getArgs(args)
+        args: args,
+        options: options
       };
-      if (command.args.length !== args.length) {
-        command.options = args[args.length - 1];
-      }
       let existingService;
       let record;
       // Check if the service is pending in the change set.
@@ -729,7 +695,7 @@ YUI.add('environment-change-set', function(Y) {
         service.get('units').each(function(unit) {
           units.push(unit.id);
         }, this);
-        this._lazyRemoveUnit([units]);
+        this.lazyRemoveUnit([units, null], {});
         service.set('deleted', true);
         return this._createNewRecord('destroyApplication', command, []);
       }
@@ -792,17 +758,16 @@ YUI.add('environment-change-set', function(Y) {
       Receives all parameters received by the environment's 'destroyMachines'
       method with the exception of the ECS options object.
 
-      @method _lazyDestroyMachine
+      @method lazyDestroyMachine
       @param {Array} args The arguments used for destroying.
+      @param {Object} options The ECS options.
     */
-    _lazyDestroyMachines: function(args) {
+    lazyDestroyMachines: function(args, options) {
       var command = {
         method: '_destroyMachines',
-        args: this._getArgs(args)
+        args: args,
+        options: options
       };
-      if (command.args.length !== args.length) {
-        command.options = args[args.length - 1];
-      }
       // Search for already queued machines.
       var existingMachine;
       Object.keys(this.changeSet).forEach(function(key) {
@@ -880,10 +845,11 @@ YUI.add('environment-change-set', function(Y) {
       Receives all the parameters received by the environment's "set_config"
       method with the exception of the ECS options object.
 
-      @method _lazySetConfig
+      @method lazySetConfig
       @param {Array} args The arguments to set the config with.
+      @param {Object} options The ECS options.
     */
-    _lazySetConfig: function(args) {
+    lazySetConfig: function(args, options) {
       var ghostServiceName = args[0],
           parent = [];
       // Search for and add the service to parent.
@@ -898,6 +864,7 @@ YUI.add('environment-change-set', function(Y) {
       var command = {
         method: '_set_config', // This needs to match the method name in env.
         args: args,
+        options: options,
         /**
           Replace changeSet keys with real service names returned from the call.
 
@@ -950,10 +917,11 @@ YUI.add('environment-change-set', function(Y) {
       Receives all the parameters received by the environment's "add_relation"
       method with the exception of the ECS options object.
 
-      @method _lazyAddRelation
+      @method lazyAddRelation
       @param {Array} args The arguments to add the relation with.
+      @param {Object} options The ECS options.
     */
-    _lazyAddRelation: function(args, options) {
+    lazyAddRelation: function(args, options) {
       var serviceA;
       var serviceB;
       Y.Object.each(this.changeSet, function(value, key) {
@@ -1007,10 +975,11 @@ YUI.add('environment-change-set', function(Y) {
       Receives all the parameters received by the environment's
       "remove_relation" method with the exception of the ECS options object.
 
-      @method _lazyRemoveRelation
+      @method lazyRemoveRelation
       @param {Array} args The arguments to remove the relation with.
+      @param {Object} options The ECS options.
     */
-    _lazyRemoveRelation: function(args) {
+    lazyRemoveRelation: function(args, options) {
       // If an existing ecs record for this relation exists, remove it from the
       // queue.
       const changeSet = this.changeSet;
@@ -1044,7 +1013,8 @@ YUI.add('environment-change-set', function(Y) {
       if (!ghosted) {
         record = this._createNewRecord('removeRelation', {
           method: '_remove_relation',
-          args: args
+          args: args,
+          options: options
         });
         relations.getRelationFromEndpoints(argsEndpoints).set('deleted', true);
       }
@@ -1057,10 +1027,11 @@ YUI.add('environment-change-set', function(Y) {
       Receives all the parameters received by the environment's
       "_remove_unit" method with the exception of the ECS options object.
 
-      @method _lazyRemoveUnit
+      @method lazyRemoveUnit
       @param {Array} args The arguments to remove the unit with.
+      @param {Object} options The ECS options.
     */
-    _lazyRemoveUnit: function(args) {
+    lazyRemoveUnit: function(args, options) {
       // If an existing ecs record for this unit exists, remove it from the
       // queue.
       var changeSet = this.changeSet,
@@ -1096,7 +1067,8 @@ YUI.add('environment-change-set', function(Y) {
         args[0] = toRemove;
         record = this._createNewRecord('removeUnit', {
           method: '_remove_units',
-          args: args
+          args: args,
+          options: options
         });
         args[0].forEach(function(unit) {
           var unit = units.getById(unit);
@@ -1122,8 +1094,9 @@ YUI.add('environment-change-set', function(Y) {
 
       @method lazyExpose
       @param {Array} args The arguments to unexpose with.
+      @param {Object} options The ECS options.
     */
-    lazyExpose: function(args) {
+    lazyExpose: function(args, options) {
       var db = this.get('db');
       var parent = [];
       // Search for and add the service to parent.
@@ -1139,6 +1112,7 @@ YUI.add('environment-change-set', function(Y) {
       return this._createNewRecord('expose', {
         method: '_expose',
         args: args,
+        options: options,
 
         /**
           Replace changeSet keys with real service names returned from the call.
@@ -1172,8 +1146,9 @@ YUI.add('environment-change-set', function(Y) {
 
       @method lazyUnexpose
       @param {Array} args The arguments to unexpose with.
+      @param {Object} options The ECS options.
     */
-    lazyUnexpose: function(args) {
+    lazyUnexpose: function(args, options) {
       var existingExpose;
       var db = this.get('db');
       // Check if the service is pending in the change set.
@@ -1190,7 +1165,8 @@ YUI.add('environment-change-set', function(Y) {
       } else {
         return this._createNewRecord('unexpose', {
           method: '_unexpose',
-          args: args
+          args: args,
+          options: options
         });
       }
     },
