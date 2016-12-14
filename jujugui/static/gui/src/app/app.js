@@ -39,6 +39,8 @@ YUI.add('juju-gui', function(Y) {
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
       d3 = Y.namespace('d3');
+  // Define the disconnected model unique identifier.
+  const DISCONNECTED_UUID = 'disconnected';
 
   /**
    * The main app class.
@@ -584,8 +586,10 @@ YUI.add('juju-gui', function(Y) {
       this.env.after('connectedChange', evt => {
         if (!evt.newVal) {
           // The model is not connected, do nothing waiting for a reconnection.
+          console.log('model disconnected');
           return;
         }
+        console.log('model connected');
         this.env.userIsAuthenticated = false;
         // Attempt to log in if we already have credentials available.
         var credentials = this.env.getCredentials();
@@ -741,6 +745,7 @@ YUI.add('juju-gui', function(Y) {
           this._renderLogin(evt.err);
           return;
         }
+        console.log('successfully logged into controller');
         // After logging in trigger the app to dispatch to re-render the
         // components that require an active connection to the controllerAPI.
         this.dispatch();
@@ -750,18 +755,13 @@ YUI.add('juju-gui', function(Y) {
           return;
         }
         const modelUUID = this._getModelUUID();
-        // If the model UUID has been set to "do-not-switch" this probably
-        // indicates that the user started in anonymous mode and they are
-        // currently at the beginning of the deployment flow. For this reason
-        // return here so that the flow is not interrupted.
-        if (modelUUID === 'do-not-switch') {
-          return;
-        }
-        // If the model UUID provided by the external system is 'disconnected'
-        // that means that the external GUI host decided that it wants to
-        // load the GUI in the disconnected mode.
-        if (modelUUID === 'disconnected') {
-          this.switchEnv();
+        // If the model UUID provided by the external system is "disconnected"
+        // that means that the external GUI host decided that it wants to load
+        // the GUI in the disconnected mode. In this case, it's not necessary
+        // to switch the model, but we still want to render the breadcrumb for
+        // the new logged in user.
+        if (modelUUID === DISCONNECTED_UUID) {
+          this._renderBreadcrumb();
           return;
         }
         // If the user isn't currently connected to a model then fetch the
@@ -801,21 +801,24 @@ YUI.add('juju-gui', function(Y) {
         if (!evt.newVal) {
           // The controller is not connected, do nothing waiting for a
           // reconnection.
+          console.log('controller disconnected');
           return;
         }
+        console.log('controller connected');
         const creds = this.controllerAPI.getCredentials();
-        if (!creds.areAvailable) {
-          if (this.get('gisf') && this._getModelUUID() === 'disconnected') {
-            console.log('switching to anonymous mode');
-            // Set the model UUID to a value that communicates login handlers
-            // to not switch away from the deployment flow when the user will
-            // be required to authenticate later.
-            this.set('modelUUID', 'do-not-switch');
-            this.maskVisibility(false);
-            return;
-          }
+        if (!creds.areAvailable && !this.get('gisf')) {
+            // Credentials are not available and, not being in GISF mode, we
+            // don't support external or anonymous connections. Just show the
+            // login form.
           this._displayLogin();
           return;
+        }
+        if (this._getModelUUID() === DISCONNECTED_UUID) {
+          console.log('now in anonymous mode');
+          // When in GISF, never display the log in form. Authentication will
+          // either happen below (if macaroons are provided) or deferred to
+          // the beginning of the deployment flow.
+          this.maskVisibility(false);
         }
         // If we're in a JIMM controlled environment, HJC, or if we have
         // macaroon credentials then use the macaroon login. If not then uses
@@ -917,13 +920,18 @@ YUI.add('juju-gui', function(Y) {
       @param {String} err The login error message, if any.
     */
     _apiLoginHandler: function(api, err) {
+      if (!err) {
+        return;
+      }
       if (!views.utils.isRedirectError(err)) {
         // There is nothing to do in this case, and the user is already
         // prompted with the error in the login view.
+        console.log(`cannot log into ${api.name}: ${err}`);
         return;
       }
       // If the error is that redirection is required then we have to
       // make a request to get the appropriate model connection information.
+      console.log(`redirection required for loggin into ${api.name}`);
       api.redirectInfo((err, servers) => {
         if (err) {
           this.db.notifications.add({
@@ -1698,7 +1706,7 @@ YUI.add('juju-gui', function(Y) {
       if (this.get('charmstore') === undefined) {
         var jujuConfig = window.juju_config;
         var charmstoreURL = '';
-        var existingMacaroons, existingCookie, existingDischargeToken;
+        var existingMacaroons, existingDischargeToken;
         if (!jujuConfig || !jujuConfig.charmstoreURL) {
           console.error('no juju config for charmstoreURL availble');
         } else {
@@ -1708,15 +1716,11 @@ YUI.add('juju-gui', function(Y) {
           existingDischargeToken = jujuConfig.dischargeToken;
         }
         var apiVersion = window.jujulib.charmstoreAPIVersion;
-        if (this.get('gisf')) {
-          existingCookie = 'macaroon-storefront';
-        }
         var bakery = this.bakeryFactory.create({
           webhandler: new Y.juju.environments.web.WebHandler(),
           interactive: this.get('interactiveLogin'),
           setCookiePath: `${charmstoreURL}${apiVersion}/set-auth-cookie`,
           staticMacaroonPath: `${charmstoreURL}${apiVersion}/macaroon`,
-          existingCookie: existingCookie,
           serviceName: 'charmstore',
           macaroon: existingMacaroons,
           dischargeStore: window.localStorage,
@@ -2139,6 +2143,7 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       // The login was a success.
+      console.log('successfully logged into model');
       this.maskVisibility(false);
       this._emptySectionApp();
       this.set('loggedIn', true);
