@@ -1316,7 +1316,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     describe('addPendingResources', function() {
       it('adds to the ecs on the public method', () => {
-        const stub = sinon.stub(env.get('ecs'), '_lazyAddPendingResources');
+        const stub = sinon.stub(env.get('ecs'), 'lazyAddPendingResources');
         env.addPendingResources({
           applicationName: 'wordpress',
           charmURL: 'wordpress-42',
@@ -2446,8 +2446,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('calls the ecs remove relation', function() {
-      var lazy = utils.makeStubMethod(env.get('ecs'), '_lazyRemoveRelation');
-      this._cleanups.push(lazy.reset);
+      var lazy = sinon.stub(env.get('ecs'), 'lazyRemoveRelation');
+      this._cleanups.push(lazy.restore);
       env.remove_relation([], [], function() {});
       assert.equal(lazy.calledOnce, true);
     });
@@ -2489,8 +2489,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('calls the ecs remove unit', function() {
-      var lazy = utils.makeStubMethod(env.get('ecs'), '_lazyRemoveUnit');
-      this._cleanups.push(lazy.reset);
+      var lazy = sinon.stub(env.get('ecs'), 'lazyRemoveUnit');
+      this._cleanups.push(lazy.restore);
       env.remove_units([], function() {});
       assert.equal(lazy.calledOnce, true);
     });
