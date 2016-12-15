@@ -1499,7 +1499,7 @@ describe('App', function() {
 
 
   describe('_getAuth', function() {
-    var Y, app, credStub, juju;
+    var Y, app, controllerCredStub, modelCredStub, juju;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
@@ -1525,9 +1525,12 @@ describe('App', function() {
         consoleEnabled: true,
         jujuCoreVersion: '2.0.0'
       });
-      credStub = sinon.stub(
+      controllerCredStub = sinon.stub(
+        app.controllerAPI, 'getCredentials').returns({user: ''});
+      this._cleanups.push(controllerCredStub.restore);
+      modelCredStub = sinon.stub(
         app.env, 'getCredentials').returns({user: ''});
-      this._cleanups.push(credStub.restore);
+      this._cleanups.push(modelCredStub.restore);
     });
 
     afterEach(function() {
@@ -1535,29 +1538,51 @@ describe('App', function() {
     });
 
     it('fetches the auth', function() {
-      var user = {user: 'admin'};
-      app.set('users', {charmstore: user});
-      assert.deepEqual(app._getAuth(), user);
+      app.set('users', {charmstore: {user: 'admin'}});
+      assert.deepEqual(app._getAuth(), {
+        user: 'admin',
+        usernameDisplay: 'admin',
+        rootUserName: 'admin'
+      });
     });
 
     it('uses external auth if present', function() {
       app.set('auth', {user: {name: 'bark'}});
       app.set('users', {foo: 'bar'});
-      assert.deepEqual(
-        app._getAuth(), {
-          usernameDisplay: 'bark',
-          user: {name: 'bark'}
-        });
+      assert.deepEqual(app._getAuth(), {
+        usernameDisplay: 'bark',
+        user: {name: 'bark'}
+      });
+    });
+
+    it('uses controller credentials if present', function() {
+      app.set('users', {});
+      controllerCredStub.returns({user: 'dalek@external'});
+      assert.deepEqual(app._getAuth(), {
+        user: 'dalek@external',
+        usernameDisplay: 'dalek@external',
+        rootUserName: 'dalek'
+      });
+    });
+
+    it('uses model credentials if present', function() {
+      app.set('users', {});
+      modelCredStub.returns({user: 'who@local'});
+      assert.deepEqual(app._getAuth(), {
+        user: 'who@local',
+        usernameDisplay: 'who@local',
+        rootUserName: 'who'
+      });
     });
 
     it('does not break when auth is not set', function() {
       app.set('users', {});
-      assert.isUndefined(app._getAuth());
+      assert.strictEqual(app._getAuth(), null);
     });
 
     it('populates the display name', function() {
       app.set('users', {charmstore: {user: 'admin'}});
-      var auth = app._getAuth();
+      const auth = app._getAuth();
       assert.equal(auth.usernameDisplay, 'admin');
     });
   });
