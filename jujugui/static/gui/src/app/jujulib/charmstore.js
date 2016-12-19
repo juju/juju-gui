@@ -211,6 +211,9 @@ var module = module;
         if (meta['bundle-unit-count']) {
           processed.unitCount = meta['bundle-unit-count']['Count'];
         }
+        if (meta['bundle-machine-count']) {
+          processed.machineCount = meta['bundle-machine-count']['Count'];
+        }
         processed.deployerFileUrl =
             this.url +
             '/' +
@@ -306,6 +309,7 @@ var module = module;
       entityId = entityId.replace('cs:', '');
       var endpoints = 'include=' + [
         'bundle-metadata',
+        'bundle-machine-count',
         'charm-metadata',
         'charm-config',
         'manifest',

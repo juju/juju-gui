@@ -75,8 +75,7 @@ YUI.add('entity-extension', function(Y) {
         entity.applications = this.parseBundleServices(
           this.get('applications'));
         entity.serviceCount = attrs.serviceCount;
-        entity.machineCount = attrs.machines ?
-          Object.keys(attrs.machines).length : attrs.serviceCount;
+        entity.machineCount = attrs.machineCount;
         entity.unitCount = attrs.unitCount;
       } else {
         entity.iconPath = utils.getIconPath(entity.id, false);

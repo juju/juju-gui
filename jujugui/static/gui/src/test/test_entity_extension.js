@@ -101,11 +101,11 @@ describe('Entity Extension', function() {
     entityModel.parseBundleServices = sinon.stub().returns([]);
     var attrs = {
       id: 'foobar',
-      machines: {machine1: 1, machine2: 2},
       owner: 'foobar-charmers',
       entityType: 'bundle',
-      serviceCount: 3,
       applications: [],
+      machineCount: 2,
+      serviceCount: 3,
       unitCount: 5
     };
     entityModel.setAttrs(attrs);
