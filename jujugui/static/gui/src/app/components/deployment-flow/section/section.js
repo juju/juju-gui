@@ -111,20 +111,6 @@ YUI.add('deployment-section', function() {
           size="24" />);
     },
 
-    /**
-      Generate the mask if the component is disabled.
-
-      @method _generateMask
-      @returns {Object} The mask markup.
-    */
-    _generateMask: function() {
-      if (!this.props.disabled) {
-        return;
-      }
-      return (
-        <div className="deployment-section__mask"></div>);
-    },
-
     render: function() {
       var instance = this.props.instance;
       var extra = {
@@ -138,7 +124,6 @@ YUI.add('deployment-section', function() {
         extra);
       return (
         <div className={classes}>
-          {this._generateMask()}
           {this._generateActions()}
           <h3 className="deployment-section__title">
             {this._generateCheck()}

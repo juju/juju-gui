@@ -41,7 +41,6 @@ describe('DeploymentSection', function() {
     var expected = (
       <div className="deployment-section twelve-col deployment-section--active">
         {undefined}
-        {undefined}
         <h3 className="deployment-section__title">
           {undefined}
           Applications to be deployed
@@ -73,7 +72,6 @@ describe('DeploymentSection', function() {
       <div className={
         'deployment-section twelve-col deployment-section--completed ' +
         'section-instance'}>
-        <div className="deployment-section__mask"></div>
         <div className="deployment-section__actions">
           <div className="deployment-section__extra">
             <span>extra</span>
