@@ -329,6 +329,18 @@ YUI.add('juju-bundle-models', function(Y) {
           });
           return count;
         }
+      },
+
+      /**
+       * Determine the number of machines the bundle will use.
+       *
+       * @attribute machineCount
+       * @default 0
+       * @type {Number}
+       *
+       */
+      machineCount: {
+        value: 0
       }
     }
   });

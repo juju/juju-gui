@@ -543,6 +543,7 @@ describe('jujulib charmstore', function() {
       var path = charmstore.bakery.sendGetRequest.lastCall.args[0];
       assert.equal(
         path, 'local/v5/foobar/meta/any?include=bundle-metadata' +
+        '&include=bundle-machine-count' +
         '&include=charm-metadata&include=charm-config&include=manifest' +
         '&include=stats&include=extra-info&include=tags&include=charm-metrics' +
         '&include=owner&include=resources&include=supported-series');
