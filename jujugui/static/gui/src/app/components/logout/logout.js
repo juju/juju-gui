@@ -29,6 +29,7 @@ YUI.add('logout-component', function() {
       getUser: React.PropTypes.func.isRequired,
       gisf: React.PropTypes.bool.isRequired,
       gisfLogout: React.PropTypes.string.isRequired,
+      locationAssign: React.PropTypes.bool.isRequired,
       logout: React.PropTypes.func.isRequired,
       visible: React.PropTypes.bool.isRequired
     },
@@ -50,7 +51,7 @@ YUI.add('logout-component', function() {
       props.clearCookie();
       props.logout();
       if (props.gisf) {
-        window.location.assign(window.location.origin + props.gisfLogout);
+        props.locationAssign(window.location.origin + this.props.gisfLogout); 
       }
     },
 

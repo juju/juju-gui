@@ -1005,7 +1005,9 @@ YUI.add('juju-gui', function(Y) {
           charmstoreLogoutUrl={charmstore.getLogoutUrl()}
           getUser={this.getUser.bind(this, 'charmstore')}
           clearUser={this.clearUser.bind(this, 'charmstore')}
-          visible={visible} />,
+          visible={visible}
+        locationAssign={window.location.assign.bind(window.location)}
+          />,
         document.getElementById('profile-link-container'));
     },
 
