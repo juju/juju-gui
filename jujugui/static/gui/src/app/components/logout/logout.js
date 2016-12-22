@@ -29,24 +29,29 @@ YUI.add('logout-component', function() {
       getUser: React.PropTypes.func.isRequired,
       gisf: React.PropTypes.bool.isRequired,
       gisfLogout: React.PropTypes.string.isRequired,
+      locationAssign: React.PropTypes.bool.isRequired,
       logout: React.PropTypes.func.isRequired,
       visible: React.PropTypes.bool.isRequired
     },
 
     logout: function(e) {
       var props = this.props;
-      if (!props.getUser()) {
+
+      if (!props.getUser() || props.gisf) {
         // If we don't have stored user information for the charmstore then
         // the user isn't logged in so there is no point to redirect
         // them to another page to log out.
+
+        // If we are in gisf then we don't need to redirect b/c the storefront
+        // will be handling the remainder of logout.
         e.preventDefault();
       }
       // Clear the user data on log out.
       props.clearUser();
       props.clearCookie();
       props.logout();
-      if (this.props.gisf) {
-        window.location.href = window.location.origin + this.props.gisfLogout;
+      if (props.gisf) {
+        props.locationAssign(window.location.origin + this.props.gisfLogout); 
       }
     },
 

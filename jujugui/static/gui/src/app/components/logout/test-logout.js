@@ -115,10 +115,41 @@ describe('Logout', () => {
     assert.equal(clearCookie.callCount, 1);
 
     assert.equal(logout.callCount, 1);
-    // preventDefault should only be called if no user is defined. There is no
+    // preventDefault should be called if no user is defined. There is no
     // need to redirect the user if they do not need to log out.
     // The next test checks to make sure that it does in that case.
     assert.equal(prevent.callCount, 1);
+  });
+
+  it('allows storefront to handle logout if in gisf', () => {
+    var logout = sinon.stub();
+    var logoutUrl = 'http://logout';
+    var prevent = sinon.stub();
+    var clearUser = sinon.stub();
+    var getUser = sinon.stub().returns(true);
+    var clearCookie = sinon.stub();
+    var locationAssign = sinon.stub();
+    var gisfLogoutUrl = '/logout';
+    var output = jsTestUtils.shallowRender(
+      <juju.components.Logout
+        logout={logout}
+        visible={true}
+        clearCookie={clearCookie}
+        charmstoreLogoutUrl={logoutUrl}
+        getUser={getUser}
+        gisf={true}
+        gisfLogout={gisfLogoutUrl}
+        clearUser={clearUser}
+        locationAssign={locationAssign}
+        />);
+    assert.equal(logout.callCount, 0);
+    output.props.onClick({ preventDefault: prevent });
+    // It should clear the user and the cookie.
+    assert.equal(clearUser.callCount, 1);
+    assert.equal(clearCookie.callCount, 1);
+    assert.equal(logout.callCount, 1);
+    assert.equal(prevent.callCount, 1);
+    assert.equal(locationAssign.callCount, 1);
   });
 
   it('lets the user navigate if a user exists', () => {
