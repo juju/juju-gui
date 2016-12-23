@@ -599,6 +599,8 @@ YUI.add('juju-gui', function(Y) {
         if (!evt.newVal) {
           // The model is not connected, do nothing waiting for a reconnection.
           console.log('model disconnected');
+          // Need to re-render the provider logo so that it clears.
+          this._renderProviderLogo();
           return;
         }
         console.log('model connected');
@@ -1344,13 +1346,20 @@ YUI.add('juju-gui', function(Y) {
       @method _renderProviderLogo
     */
     _renderProviderLogo: function() {
-      const cloudProvider = this.env.get('providerType');
+      const containerId = 'provider-logo-container';
+      const clearLogo = () => {
+        document.getElementById(containerId).innerHTML = '';
+      };
+      const env = this.env;
+      const cloudProvider = env.get('providerType');
       if (!cloudProvider) {
+        clearLogo();
         return;
       }
       const providerDetails = views.utils.getCloudProviderDetails(
         cloudProvider);
       if (!providerDetails) {
+        clearLogo();
         return;
       }
       const scale = 0.65;
@@ -1359,7 +1368,7 @@ YUI.add('juju-gui', function(Y) {
           height={providerDetails.svgHeight * scale}
           name={providerDetails.id}
           width={providerDetails.svgWidth * scale} />,
-        document.getElementById('provider-logo-container'));
+        document.getElementById(containerId));
     },
 
     /**
