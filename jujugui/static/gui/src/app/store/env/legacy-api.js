@@ -1905,7 +1905,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
     _handleGetApplicationConfig: function(callback, applicationName, data) {
       var config = (data.Response || {}).Config;
       var transformedConfig = {};
-      Object.keys(config).forEacg(key => {
+      Object.keys(config).forEach(key => {
         const value = config[key];
         transformedConfig[key] = value.value;
       });
