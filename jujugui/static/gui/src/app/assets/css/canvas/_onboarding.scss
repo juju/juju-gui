@@ -20,27 +20,27 @@
   }
 
   &__drop-message {
-      position: absolute;
-      z-index: index($z-indexed-elements, environment-drop-message);
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background-color: rgba(247, 247, 247, 0.7);
-      opacity: 0;
-      transition: opacity .3s;
+    position: absolute;
+    z-index: index($z-indexed-elements, environment-drop-message);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(247, 247, 247, 0.7);
+    opacity: 0;
+    transition: opacity .3s;
 
-      &--active {
-        z-index: index($z-indexed-elements, environment-drop-message-active);
-        opacity: 1;
-      }
+    &--active {
+      z-index: index($z-indexed-elements, environment-drop-message-active);
+      opacity: 1;
+    }
 
-      &-content {
-          color: $warm-grey;
-          font-size: 32px;
-          position: relative;
-          top: 290px;
-      }
+    &-content {
+      color: $warm-grey;
+      font-size: 32px;
+      position: relative;
+      top: 290px;
+    }
   }
 
   &__tooltip {
