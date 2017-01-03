@@ -68,6 +68,7 @@ help:
 	@echo "gui - build the gui files"
 	@echo "lint - check python style with flake8"
 	@echo "lint-js - check javascript style with eslint"
+	@echo "lint-css - check scss style with sass-lint"
 	@echo "qa-server - run the server with production-like settings"
 	@echo "run - run the development server and watch for changes"
 	@echo "server - run the server with development settings"
@@ -280,7 +281,7 @@ $(SELENIUM): $(PY)
 # Tests
 #######
 .PHONY: lint
-lint: lint-python lint-js
+lint: lint-python lint-js lint-css
 
 .PHONY: lint-python
 lint-python: $(FLAKE8)
@@ -289,6 +290,10 @@ lint-python: $(FLAKE8)
 .PHONY: lint-js
 lint-js: $(NODE_MODULES)
 	$(NODE_MODULES)/.bin/eslint --rulesdir eslint-rules/ $(GUISRC)
+
+.PHONY: lint-css
+lint-css: $(NODE_MODULES)
+	$(NODE_MODULES)/.bin/sass-lint '$(GUISRC)/**/*.scss' -q -v
 
 .PHONY: test
 test: test-python test-js test-js-old
