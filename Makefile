@@ -293,7 +293,7 @@ lint-js: $(NODE_MODULES)
 
 .PHONY: lint-css
 lint-css: $(NODE_MODULES)
-	$(NODE_MODULES)/.bin/sass-lint '$(GUISRC)/**/*.scss' -q -v
+	$(NODE_MODULES)/.bin/sass-lint -q -v
 
 .PHONY: test
 test: test-python test-js test-js-old

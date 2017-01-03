@@ -35,6 +35,7 @@ $panel-space: 10px;
 $box-shadow: 0 1px 4.85px .15px rgba(0, 0, 0, .2);
 
 // z-indexing
+// sass-lint:disable indentation
 $z-indexed-elements: search-results-list-block__tags,
   search-results-list-block__tags-links,
   search-results-cell,
@@ -60,6 +61,7 @@ $z-indexed-elements: search-results-list-block__tags,
   confirmation-popup,
   full-screen-mask,
   centered-column;
+// sass-lint:enable indentation
 
 // Asset path used by Vanilla to load fonts instead of asset server
 $asset-path: 'static/gui/build/app/assets/';

@@ -61,8 +61,8 @@
   }
 }
 // scss-lint:disable IdSelector
-#loading-spinner {
-// scss-lint:enable IdSelector
+#loading-spinner { // sass-lint:disable-line no-ids, id-name-format
+  // scss-lint:enable IdSelector
   .spinner-loading {
     margin: 25px auto;
 
