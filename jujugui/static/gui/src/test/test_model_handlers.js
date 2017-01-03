@@ -434,11 +434,11 @@ describe('Juju delta handlers', function() {
 
   });
 
-  describe('remoteapplicationInfo handler', function() {
-    var remoteapplicationInfo, status, url;
+  describe('remoteApplicationInfo handler', function() {
+    let remoteApplicationInfo, status, url;
 
     before(function() {
-      remoteapplicationInfo = handlers.remoteapplicationInfo;
+      remoteApplicationInfo = handlers.remoteApplicationInfo;
       status = {
         current: 'idle',
         message: 'waiting',
@@ -449,7 +449,7 @@ describe('Juju delta handlers', function() {
     });
 
     it('creates a remote application in the database', function() {
-      var change = {
+      const change = {
         'application-url': url,
         name: 'django',
         'model-uuid': 'uuid',
@@ -457,10 +457,10 @@ describe('Juju delta handlers', function() {
         status: status
       };
       // Send the mega-watcher change.
-      remoteapplicationInfo(db, 'add', change);
+      remoteApplicationInfo(db, 'add', change);
       // A new remote application has been created.
       assert.strictEqual(db.remoteServices.size(), 1);
-      var remoteApplication = db.remoteServices.getById(url);
+      const remoteApplication = db.remoteServices.getById(url);
       // The remote application has the expected attributes.
       assert.strictEqual(remoteApplication.get('url'), url);
       assert.strictEqual(remoteApplication.get('service'), 'django');
@@ -482,7 +482,7 @@ describe('Juju delta handlers', function() {
         sourceId: 'uuid',
         life: 'alive'
       });
-      var change = {
+      const change = {
         'application-url': url,
         name: 'rails',
         'model-uuid': 'uuid',
@@ -490,10 +490,10 @@ describe('Juju delta handlers', function() {
         status: status
       };
       // Send the mega-watcher change.
-      remoteapplicationInfo(db, 'change', change);
+      remoteApplicationInfo(db, 'change', change);
       // No new remote applications have been created.
       assert.strictEqual(db.remoteServices.size(), 1);
-      var remoteApplication = db.remoteServices.getById(url);
+      const remoteApplication = db.remoteServices.getById(url);
       // The remote application has the expected attributes.
       assert.strictEqual(remoteApplication.get('url'), url);
       assert.strictEqual(remoteApplication.get('service'), 'rails');
@@ -515,14 +515,14 @@ describe('Juju delta handlers', function() {
         sourceId: 'uuid',
         life: 'alive'
       });
-      var change = {
+      const change = {
         'application-url': url,
         name: 'django',
         'model-uuid': 'uuid',
         life: 'alive',
       };
       // Send the mega-watcher change to remove the remote application.
-      remoteapplicationInfo(db, 'remove', change);
+      remoteApplicationInfo(db, 'remove', change);
       // The remote application has been removed.
       assert.strictEqual(db.remoteServices.size(), 0);
     });
