@@ -100,8 +100,8 @@
 }
 
 // scss-lint:disable IdSelector
-#relation-menu {
-// scss-lint:enable IdSelector
+#relation-menu { // sass-lint:disable-line no-ids, id-name-format
+  // scss-lint:enable IdSelector
   $icon-size: 16px;
   $height: 30px;
   $gutter: 10px;

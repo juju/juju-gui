@@ -62,26 +62,26 @@
   }
 
   @media only screen and (min-width: $breakpoint-medium) {
-      .inline-logos__image {
-        min-height: 30px;
-        max-width: none;
+    .inline-logos__image {
+      min-height: 30px;
+      max-width: none;
+    }
+
+    .inline-logos__item {
+      height: auto;
+      width: auto;
+
+      &:first-of-type {
+        .inline-logos__image {
+          min-height: 70px;
+        }
       }
 
-      .inline-logos__item {
-        height: auto;
-        width: auto;
-
-        &:first-of-type {
-          .inline-logos__image {
-            min-height: 70px;
-          }
-        }
-
-        &:nth-child(2n) {
-          .inline-logos__image {
-            min-height: 45px;
-          }
+      &:nth-child(2n) {
+        .inline-logos__image {
+          min-height: 45px;
         }
       }
     }
+  }
 }

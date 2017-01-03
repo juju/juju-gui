@@ -1,5 +1,5 @@
 // scss-lint:disable IdSelector
-#header-breadcrumb {
+#header-breadcrumb { // sass-lint:disable-line no-ids, id-name-format
   @extend .vertical-center;
   float: left;
 }

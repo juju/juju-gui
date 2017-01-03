@@ -1,8 +1,8 @@
 @media only screen and (max-width: 600px) {
   // Hide canvas on small screens
   // scss-lint:disable IdSelector
-  #viewport {
-  // scss-lint:enable IdSelector
+  #viewport { // sass-lint:disable-line no-ids, id-name-format
+    // scss-lint:enable IdSelector
     display: none;
   }
 
@@ -238,8 +238,8 @@
 
   // Import and export
   // scss-lint:disable IdSelector
-  #import-export-container {
-  // scss-lint:enable IdSelector
+  #import-export-container { // sass-lint:disable-line no-ids, id-name-format
+    // scss-lint:enable IdSelector
     bottom: 25px;
     left: 10px;
     position: fixed;

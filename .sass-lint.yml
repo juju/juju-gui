@@ -1,6 +1,9 @@
 files:
-  include: juju-gui/**/*.scss
-  exclude: juju-gui/static/gui/src/app/assets/css/plugins/**
+  include:
+    - 'jujugui/static/gui/src/app/assets/css/**/*.scss'
+    - 'jujugui/static/gui/src/app/components/**/*.scss'
+  ignore:
+    - 'jujugui/static/gui/src/app/assets/css/plugins/*.scss'
 options:
   formatter: stylish
   merge-default-rules: false
@@ -11,6 +14,9 @@ rules:
   id-name-format:
     - 1
     - convention: hyphenatedbem
+  indentation:
+    - 2
+    - size: 2
   nesting-depth: 0
   no-ids: 1
   no-vendor-prefixes: 0

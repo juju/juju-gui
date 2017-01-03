@@ -1,5 +1,5 @@
 // scss-lint:disable IdSelector
-#import-export-container {
+#import-export-container { // sass-lint:disable-line no-ids, id-name-format
   @extend .vertical-center;
   float: left;
   margin-left: 10px;

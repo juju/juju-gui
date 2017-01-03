@@ -159,6 +159,7 @@
   }
 
   // scss-lint:disable IdSelector
+  // sass-lint:disable no-ids, id-name-format
   #item-twitter,
   #item-googleplus {
     display: block;
@@ -185,6 +186,7 @@
     }
   }
   // scss-lint:enable IdSelector
+  // sass-lint:enable no-ids, id-name-format
 }
 
 

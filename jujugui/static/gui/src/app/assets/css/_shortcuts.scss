@@ -1,7 +1,7 @@
 // The keyboard shorcut panel
 // scss-lint:disable IdSelector
-#shortcut-help {
-// scss-lint:enable IdSelector
+#shortcut-help { // sass-lint:disable-line no-ids, id-name-format
+  // scss-lint:enable IdSelector
   box-shadow: (0 1px 4.85px .15px rgba(0, 0, 0, .2));
   position: absolute;
   left: 4%;
