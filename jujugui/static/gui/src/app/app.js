@@ -817,7 +817,8 @@ YUI.add('juju-gui', function(Y) {
         }
         console.log('controller connected');
         const creds = this.controllerAPI.getCredentials();
-        if (!creds.areAvailable && !this.get('gisf')) {
+        const gisf = this.get('gisf');
+        if (!creds.areAvailable && !gisf) {
             // Credentials are not available and, not being in GISF mode, we
             // don't support external or anonymous connections. Just show the
             // login form.
@@ -831,12 +832,15 @@ YUI.add('juju-gui', function(Y) {
           // the beginning of the deployment flow.
           this.maskVisibility(false);
         }
-        // If we're in a JIMM controlled environment, HJC, or if we have
-        // macaroon credentials then use the macaroon login. If not then uses
-        // the standard u/p method.
-        if (this.get('gisf') || creds.macaroons || creds.areExternal) {
+        // If macaroons are available or if we have an external token from
+        // Keystone, then proceed with the macaroons based authentication.
+        if (creds.macaroons || creds.areExternal) {
           this.loginToAPIs(null, true, [this.controllerAPI]);
-        } else {
+          return;
+        }
+        // The traditional user/password authentication does not make sense if
+        // the GUI is embedded in the storefront.
+        if (!gisf) {
           this.loginToAPIs(null, false, [this.controllerAPI]);
         }
       });
