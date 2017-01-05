@@ -596,6 +596,8 @@ YUI.add('juju-gui', function(Y) {
       // When the connection resets, reset the db, re-login (a delta will
       // arrive with successful authentication), and redispatch.
       this.env.after('connectedChange', evt => {
+        // Need to re-render the provider logo so that it clears.
+        this._renderProviderLogo();
         if (!evt.newVal) {
           // The model is not connected, do nothing waiting for a reconnection.
           console.log('model disconnected');
@@ -1348,13 +1350,19 @@ YUI.add('juju-gui', function(Y) {
       @method _renderProviderLogo
     */
     _renderProviderLogo: function() {
+      const container = document.getElementById('provider-logo-container');
+      const clearLogo = () => {
+        ReactDOM.unmountComponentAtNode(container);
+      };
       const cloudProvider = this.env.get('providerType');
       if (!cloudProvider) {
+        clearLogo();
         return;
       }
       const providerDetails = views.utils.getCloudProviderDetails(
         cloudProvider);
       if (!providerDetails) {
+        clearLogo();
         return;
       }
       const scale = 0.65;
@@ -1363,7 +1371,7 @@ YUI.add('juju-gui', function(Y) {
           height={providerDetails.svgHeight * scale}
           name={providerDetails.id}
           width={providerDetails.svgWidth * scale} />,
-        document.getElementById('provider-logo-container'));
+        container);
     },
 
     /**
