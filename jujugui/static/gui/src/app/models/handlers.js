@@ -219,8 +219,9 @@ YUI.add('juju-delta-handlers', function(Y) {
       @param {String} kind The type of delta.
     */
     defaultHandler: function(db, action, change, kind) {
-      console.error('Unknown delta type: ' + kind);
-      console.log(action, change);
+      console.warn(
+        'unknown mega-watcher ' + action + ' event of type ' + kind + ': ' +
+        JSON.stringify(change));
     },
 
     /**
@@ -326,7 +327,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       @param {Object} change The JSON entity information.
       @param {String} kind The delta event type.
      */
-    remoteapplicationInfo: function(db, action, change) {
+    remoteApplicationInfo: function(db, action, change) {
       var status = change.status || {};
       var data = {
         id: change['application-url'],
