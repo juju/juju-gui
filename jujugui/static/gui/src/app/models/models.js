@@ -137,10 +137,20 @@ YUI.add('juju-models', function(Y) {
     } else if (data.endpoints) {
       // It is a relation delta
       services = [];
-      services.push(db.services.getById(data.endpoints[0][0]));
-      if (data.endpoints[1]) {
+      const ep1Name = data.endpoints[0][0];
+      const ep2Name = data.endpoints[1] && data.endpoints[1][0];
+      let ep1Service = db.services.getById(ep1Name);
+      if (!ep1Service) {
+        ep1Service = db.remoteServices.getByServiceName(ep1Name);
+      }
+      services.push(ep1Service);
+      if (ep2Name) {
         // Peer relationships only have a single endpoint
-        services.push(db.services.getById(data.endpoints[1][0]));
+        let ep2Service = db.services.getById(ep2Name);
+        if (!ep2Service) {
+          ep2Service = db.remoteServices.getByServiceName(ep2Name);
+        }
+        services.push(ep2Service);
       }
     }
 
@@ -832,6 +842,17 @@ YUI.add('juju-models', function(Y) {
     // Define remote service attributes.
     ATTRS: {
       /**
+        Positional annotations for the remote service in this model.
+        @attribute annotations
+        @type {Object}
+      */
+      annotations: {
+        value: {
+          'gui-x': 0,
+          'gui-y': 0
+        }
+      },
+      /**
         The remote service URL, assigned to the service when it was originally
         offered. For instance "local:/u/admin/ec2/django".
         This info is included in the Juju mega-watcher for remote services.
@@ -935,6 +956,16 @@ YUI.add('juju-models', function(Y) {
     */
     process_delta: function(action, data) {
       _process_delta(this, action, data);
+    },
+
+    getByServiceName: function(serviceName) {
+      let matchingService = null;
+      this.some(service => {
+        if (service.get('service') === serviceName) {
+          matchingService = service;
+        }
+      });
+      return matchingService;
     }
   });
   models.RemoteServiceList = RemoteServiceList;
@@ -1918,8 +1949,10 @@ YUI.add('juju-models', function(Y) {
           // Because some of the tests add relations without services
           // it's possible that a service will be null
           if (service) {
-            _process_delta(service.get('relations'), action, data, db);
-            service.updateSubordinateUnits(db);
+            if (service instanceof Service) {
+              _process_delta(service.get('relations'), action, data, db);
+              service.updateSubordinateUnits(db);
+            }
           } else {
             // fixTests
             console.error('Relation added without matching service');
