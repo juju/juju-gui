@@ -1230,8 +1230,10 @@ YUI.add('juju-gui', function(Y) {
           name: env.get('cloud')
         };
       }
-      const credentials = controllerAPI && controllerAPI.getCredentials();
-      const user = credentials && credentials.user || undefined;
+      const getUserName = () => {
+        const credentials = controllerAPI && controllerAPI.getCredentials();
+        return credentials ? credentials.user : undefined;
+      };
       const loginToController = controllerAPI.loginWithMacaroon.bind(
         controllerAPI, this.bakeryFactory.get('juju'));
       ReactDOM.render(
@@ -1257,6 +1259,7 @@ YUI.add('juju-gui', function(Y) {
             controllerAPI && controllerAPI.getCloudCredentialNames.bind(
               controllerAPI)}
           getCloudProviderDetails={utils.getCloudProviderDetails.bind(utils)}
+          getUserName={getUserName}
           groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
           isLegacyJuju={this.isLegacyJuju()}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
@@ -1271,7 +1274,6 @@ YUI.add('juju-gui', function(Y) {
           updateCloudCredential={
             controllerAPI && controllerAPI.updateCloudCredential.bind(
               controllerAPI)}
-          user={user}
           withPlans={false} />,
         document.getElementById('deployment-container'));
     },

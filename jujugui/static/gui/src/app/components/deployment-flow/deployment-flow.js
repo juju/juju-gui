@@ -36,6 +36,7 @@ YUI.add('deployment-flow', function() {
       getCloudCredentialNames: React.PropTypes.func,
       getCloudCredentials: React.PropTypes.func,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
+      getUserName: React.PropTypes.func.isRequired,
       groupedChanges: React.PropTypes.object.isRequired,
       isLegacyJuju: React.PropTypes.bool,
       listBudgets: React.PropTypes.func.isRequired,
@@ -48,7 +49,6 @@ YUI.add('deployment-flow', function() {
       servicesGetById: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func,
       updateModelName: React.PropTypes.func,
-      user: React.PropTypes.string,
       withPlans: React.PropTypes.bool
     },
 
@@ -465,7 +465,7 @@ YUI.add('deployment-flow', function() {
             setCredential={this._setCredential}
             setRegion={this._setRegion}
             updateCloudCredential={this.props.updateCloudCredential}
-            user={this.props.user}
+            user={this.props.getUserName()}
             validateForm={this._validateForm} />
         </juju.components.DeploymentSection>);
     },
@@ -549,7 +549,7 @@ YUI.add('deployment-flow', function() {
             acl={this.props.acl}
             listBudgets={this.props.listBudgets}
             setBudget={this._setBudget}
-            user={this.props.user} />
+            user={this.props.getUserName()} />
         </juju.components.DeploymentSection>);
     },
 
