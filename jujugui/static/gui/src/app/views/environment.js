@@ -163,20 +163,30 @@ YUI.add('juju-view-environment', function(Y) {
       @param {Boolean} fade Whether it should fade it in or out.
     */
     fadeHelpIndicator: function(fade) {
-      var container = this.get('container');
-      var helpImg = container.one('.environment-help__image');
-      var tooltip = container.one('.environment-help__tooltip');
-      var dragMessage = container.one('.environment-help__drop-message');
+      const container = this.get('container');
+      const helpImg = container.one('.environment-help__image');
+      const tooltip = container.one('.environment-help__tooltip');
+      const dropMessage = container.one('.environment-help__drop-message');
+      const existingApps = this.get('db').services.size() > 0;
+      // If there are existing apps then the onboarding should not be
+      // displayed behind the drop notification.
+      const showOnboarding = !existingApps;
+      const helpActiveClass = 'environment-help__drop-message--active';
       if (helpImg) {
         if (fade) {
-          helpImg.setStyle('opacity', 0.5);
-          tooltip.setStyle('opacity', 0);
-          dragMessage.setStyle('opacity', 1);
+          if (existingApps) {
+            // If there are apps then the onboarding will be hidden, so we
+            // need to display it again temporarily to display the drop
+            // notification. This class will be re-added when the drop finishes
+            // and updateHelpIndicator is called above.
+            container.one('.environment-help').removeClass('shrink');
+          }
+          dropMessage.addClass(helpActiveClass);
         } else {
-          helpImg.setStyle('opacity', 1);
-          tooltip.setStyle('opacity', 1);
-          dragMessage.setStyle('opacity', 0);
+          dropMessage.removeClass(helpActiveClass);
         }
+        tooltip.setStyle('opacity', showOnboarding && !fade ? 1 : 0);
+        helpImg.setStyle('opacity', showOnboarding ? 1 : 0);
       }
     },
     /**

@@ -9,6 +9,8 @@ $expanding-progress-height: 10px;
 .expanding-progress {
   background-color: $uncommitted;
   height: $expanding-progress-height;
+  position: relative;
+  z-index: index($z-indexed-elements, expanding-progress);
   width: 20%;
   margin: 0 auto;
   transition: width .7s;

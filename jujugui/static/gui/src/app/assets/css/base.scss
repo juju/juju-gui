@@ -37,6 +37,8 @@ $box-shadow: 0 1px 4.85px .15px rgba(0, 0, 0, .2);
 // z-indexing
 // sass-lint:disable indentation
 $z-indexed-elements: search-results-list-block__tags,
+  environment-drop-message,
+  environment-help,
   search-results-list-block__tags-links,
   search-results-cell,
   search-results-cell--hover,
@@ -58,6 +60,8 @@ $z-indexed-elements: search-results-list-block__tags,
   shortcut-help,
   more-menu,
   header-search--active,
+  environment-drop-message-active,
+  expanding-progress,
   confirmation-popup,
   full-screen-mask,
   centered-column;

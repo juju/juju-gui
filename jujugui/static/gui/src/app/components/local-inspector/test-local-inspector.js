@@ -349,7 +349,7 @@ describe('LocalInspector', function() {
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
-        machines: null
+        inspector: null
       }});
   });
 
@@ -378,7 +378,7 @@ describe('LocalInspector', function() {
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
-        machines: null
+        inspector: null
       }});
   });
 

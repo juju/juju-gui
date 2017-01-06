@@ -29,9 +29,11 @@ YUI.add('environment', function() {
               <p className="environment-help__tooltip">
                 Add a charm or bundle to get started
               </p>
-              <p className="environment-help__drop-message">
-                Drop file to add to canvas
-              </p>
+              <div className="environment-help__drop-message">
+                  <p className="environment-help__drop-message-content">
+                    Drop file to add to canvas
+                  </p>
+              </div>
               <svg className="environment-help__image"
                 xmlns="http://www.w3.org/2000/svg"
                 width="789.055"
