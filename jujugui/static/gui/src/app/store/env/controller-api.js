@@ -350,7 +350,8 @@ YUI.add('juju-controller-api', function(Y) {
 
     /**
       Make a WebSocket request to retrieve the list of changes required to
-      deploy a bundle, given the bundle YAML content.
+      deploy a bundle, given the bundle YAML content. If the current connection
+      is not authenticated, fall back to using the restful bundle service API.
 
       @method getBundleChanges
       @param {String} bundleYAML The bundle YAML file contents.
@@ -362,6 +363,11 @@ YUI.add('juju-controller-api', function(Y) {
         and a list of bundle changes.
     */
     getBundleChanges: function(bundleYAML, _, callback) {
+      if (!this.userIsAuthenticated) {
+        console.log('using bundle service to retrieve bundle changes');
+        this._getBundleChangesFromBundleService(bundleYAML, callback);
+        return;
+      }
       const handle = data => {
         if (!callback) {
           console.log('data returned by Bundle.GetChanges:', data);
@@ -384,6 +390,28 @@ YUI.add('juju-controller-api', function(Y) {
         request: 'GetChanges',
         params: {yaml: bundleYAML}
       }, handle);
+    },
+
+    /**
+      Retrieve bundle changes from the bundle service.
+
+      @method _getBundleChangesFromBundleService
+      @param {String} bundleYAML The bundle YAML file contents.
+      @param {Function} callback The user supplied callback to send the bundle
+        changes response to after proper post processing. The callback receives
+        a list of errors (each one being a string describing a possible error)
+        and a list of bundle changes.
+    */
+    _getBundleChangesFromBundleService: function(bundleYAML, callback) {
+      this.get('bundleService').getBundleChangesFromYAML(
+        bundleYAML, (error, changes) => {
+          if (error) {
+            callback([error], []);
+            return;
+          }
+          callback([], changes);
+        }
+      );
     },
 
     /**
