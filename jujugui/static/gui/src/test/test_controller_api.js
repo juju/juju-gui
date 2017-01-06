@@ -48,6 +48,7 @@ describe('Controller API', function() {
       Pinger: [1],
       UserManager: [1]
     });
+    controllerAPI.userIsAuthenticated = true;
     this._cleanups.push(controllerAPI.close.bind(controllerAPI));
     cleanups = [];
   });
@@ -136,6 +137,11 @@ describe('Controller API', function() {
   });
 
   describe('login', function() {
+
+    beforeEach(function() {
+      controllerAPI.userIsAuthenticated = false;
+    });
+
     it('sends the correct login message', function() {
       noopHandleLogin();
       controllerAPI.login();
@@ -516,6 +522,36 @@ describe('Controller API', function() {
       assert.equal(callback.callCount, 1);
       assert.deepEqual(callback.lastCall.args[0], ['bad wolf']);
       assert.deepEqual(callback.lastCall.args[1], []);
+    });
+
+    it('falls back to the bundle service if not authenticated', done => {
+      controllerAPI.userIsAuthenticated = false;
+      const yaml = 'foo:\n  bar: baz';
+      controllerAPI.set('bundleService', {
+        getBundleChangesFromYAML: (bundleYAML, cb) => {
+          assert.strictEqual(bundleYAML, yaml);
+          cb(null, ['change1', 'change2']);
+        }
+      });
+      controllerAPI.getBundleChanges(yaml, null, (err, changes) => {
+        assert.deepEqual(err, []);
+        assert.deepEqual(changes, ['change1', 'change2']);
+        done();
+      });
+    });
+
+    it('properly reports bundle service errors', done => {
+      controllerAPI.userIsAuthenticated = false;
+      controllerAPI.set('bundleService', {
+        getBundleChangesFromYAML: (bundleYAML, cb) => {
+          cb('bad wolf', null);
+        }
+      });
+      controllerAPI.getBundleChanges('not valid', null, (err, changes) => {
+        assert.deepEqual(err, ['bad wolf']);
+        assert.deepEqual(changes, []);
+        done();
+      });
     });
   });
 
