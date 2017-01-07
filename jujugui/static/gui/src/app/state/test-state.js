@@ -474,12 +474,10 @@ describe('State', () => {
         baseURL: 'http://abc.com:123',
         seriesList: ['precise', 'trusty', 'xenial']
       });
-      assert.deepEqual(
-        state._parseSpecial({'deploy-target': 'cs:ghost-4'}, {}), {
-          special: {
-            deployTarget: 'cs:ghost-4'
-          }
-        });
+      const pushStub = sinon.stub(state, '_pushState');
+      const st = state._parseSpecial({'deploy-target': 'cs:ghost-4'}, {});
+      assert.deepEqual(st, {special: {deployTarget: 'cs:ghost-4'}});
+      assert.strictEqual(pushStub.callCount, 1);
     });
   });
 
@@ -767,6 +765,7 @@ describe('State', () => {
           baseURL: baseURL,
           seriesList:  ['precise', 'trusty', 'xenial']
         });
+        sinon.stub(state, '_pushState');
         test.test.forEach(test => {
           assert.deepEqual(
             state.generateState(test.path),
