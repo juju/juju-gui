@@ -625,7 +625,9 @@ const State = class State {
         state.special = {};
       }
       state.special.deployTarget = query['deploy-target'];
-      delete query['deploy-target'];
+      // Push the state so that any special query string is removed now,
+      // therefore avoiding multiple dispatches of the same special callback.
+      this._pushState();
     }
     return state;
   }
