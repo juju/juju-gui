@@ -237,11 +237,13 @@ YUI.add('entity-content', function() {
     */
     _generateDescription: function(entityModel) {
       if (entityModel.get('entityType') === 'charm') {
+        const description = entityModel.get('description');
+        const htmlDescription = this.props.renderMarkdown(description);
         return (
           <div className="row row--grey entity-content__description">
             <div className="inner-wrapper">
               <div className="twelve-col">
-                <p className="intro">{entityModel.get('description')}</p>
+                <div className="intro" dangerouslySetInnerHTML={{__html: htmlDescription}}></div>
               </div>
               {this._generateTags()}
             </div>

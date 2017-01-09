@@ -82,7 +82,7 @@ describe('EntityContent', function() {
         <div className="row row--grey entity-content__description">
           <div className="inner-wrapper">
             <div className="twelve-col">
-              <p className="intro">Django framework.</p>
+              <div className="intro">Django framework.</div>
             </div>
             <div className="four-col entity-content__metadata">
               <h4>Tags</h4>
@@ -215,7 +215,7 @@ describe('EntityContent', function() {
         <div className="row row--grey entity-content__description">
           <div className="inner-wrapper">
             <div className="twelve-col">
-              <p className="intro">Django framework.</p>
+              <div className="intro">Django framework.</div>
             </div>
             <div className="four-col entity-content__metadata">
               <h4>Tags</h4>

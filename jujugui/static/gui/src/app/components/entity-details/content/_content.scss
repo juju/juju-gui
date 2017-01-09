@@ -6,15 +6,25 @@
   }
 
   &__description {
-
-    .twelve-col,
-    p {
+    .twelve-col {
       margin: 0;
+    }
+
+    .intro {
+      // Apply to a variety of block-level elements.
+      blockquote,
+      dd,
+      dt,
+      li,
+      p,
+      pre {
+        font-size: 1.25em;
+      }
     }
   }
 
   &__metadata {
-    margin-top: 80px;
+    margin-top: 40px;
     font-size: 16px;
     font-weight: 100;
 
