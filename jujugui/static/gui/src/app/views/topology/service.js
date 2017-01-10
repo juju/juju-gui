@@ -51,14 +51,20 @@ YUI.add('juju-topology-service', function(Y) {
     var db = topo.get('db');
     var env = topo.get('env');
 
-    var visibleServices = db.services.visible();
+    // Fetch all of the services in the db which are alive or have errors.
+    const services = db.services.visible();
+    const remoteServices = db.remoteServices;
+    const allServices = new Y.ModelList();
+    allServices.add(services);
+    allServices.add(remoteServices);
+
     views.toBoundingBoxes(
-        this, visibleServices, topo.service_boxes, env);
+        this, allServices, topo.service_boxes, env);
     // Store the size of the visibleServices model list because it gets
     // reset below.
-    var serviceCount = visibleServices.size();
+    var serviceCount = allServices.size();
     // Break a reference cycle that results in uncollectable objects leaking.
-    visibleServices.reset();
+    allServices.reset();
 
     // Nodes are mapped by modelId tuples.
     this.node = vis.selectAll('.service')
@@ -98,9 +104,15 @@ YUI.add('juju-topology-service', function(Y) {
     // use that index.
     var movedNodes = 0;
     node.each(function(d) {
-      var service = d.model,
-          annotations = service.get('annotations'),
-          x, y;
+      const service = d.model;
+      let annotations = {
+        'gui-x': 0,
+        'gui-y': 0
+      };
+      let x, y;
+      if (service) {
+        annotations = service.get('annotations');
+      }
 
       // Set widths and heights.
       d.subordinate ? d.w = d.h = 130 : d.w = d.h = 190;
@@ -196,6 +208,10 @@ YUI.add('juju-topology-service', function(Y) {
       } else if (d.highlighted) {
         rerenderRelations = true;
       } else {
+        if (!d.units) {
+          // Remote Services do not have any units.
+          return;
+        }
         var units = d.units._items;
         units.forEach(function(unit) {
           if (unit.agent_state === 'installing'

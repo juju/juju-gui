@@ -2971,12 +2971,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           return delta[0];
         });
         assert.deepEqual([
+          'remoteapplicationInfo',
           'applicationInfo',
           'relationInfo',
           'unitInfo',
           'machineInfo',
           'annotationInfo',
-          'remoteapplicationInfo',
           'foobarInfo'
         ], change);
         done();

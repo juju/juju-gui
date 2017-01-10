@@ -320,6 +320,10 @@ YUI.add('relation-utils', function(Y) {
       // Find the endpoints pertinent to each end of the service.
       var endpoint = this.endpoints[0][0] === service.id ?
           this.endpoints[0] : this.endpoints[1];
+      // RemoteServices do not have units.
+      if (!service.units) {
+        return false;
+      }
       // Search the units belonging to the source service for pertinent units
       // in error.
       // Repeat the search for the target service's units.  This relies
@@ -389,8 +393,13 @@ YUI.add('relation-utils', function(Y) {
         target = relation.target,
         subordinateModel = true;
     if (target && source) {
-      subordinateModel = target.model.get('subordinate') ||
-          source.model.get('subordinate');
+      // There won't be a model key if this is a remoteService.
+      if (!target.model || !source.model) {
+        subordinateModel = false;
+      } else {
+        subordinateModel = target.model.get('subordinate') ||
+            source.model.get('subordinate');
+      }
     }
     // Relation types of juju-info may have a relation scope of container
     // without necessarily being an actual subordinate relation by virtue of

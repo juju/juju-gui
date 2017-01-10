@@ -338,11 +338,11 @@ YUI.add('juju-env-api', function(Y) {
       var deltas = [],
           cmp = {
             applicationInfo: 1,
+            remoteapplicationInfo: 1,
             relationInfo: 2,
             unitInfo: 3,
             machineInfo: 4,
-            annotationInfo: 5,
-            remoteapplicationInfo: 100,
+            annotationInfo: 5
           };
       data.response.deltas.forEach(function(delta) {
         var kind = delta[0],

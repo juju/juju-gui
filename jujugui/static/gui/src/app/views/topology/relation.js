@@ -222,7 +222,20 @@ YUI.add('juju-topology-relation', function(Y) {
       var rel_services = [];
 
       Y.each(endpoints, function(endpoint) {
-        rel_services.push([endpoint[1].name, topo.service_boxes[endpoint[0]]]);
+        const name = endpoint[0];
+        let target = topo.service_boxes[name];
+        // The target may not be found if it is a remoteService because the
+        // relation contains the remoteService name (my-service) and the
+        // service_boxes are keyed off of the id (local:/u/foo/my-service).
+        if (!target) {
+          Object.keys(topo.service_boxes).forEach(key => {
+            const box = topo.service_boxes[key];
+            if (box.service === name) {
+              target = box;
+            }
+          });
+        }
+        rel_services.push([endpoint[1].name, target]);
       });
       return rel_services;
     },
