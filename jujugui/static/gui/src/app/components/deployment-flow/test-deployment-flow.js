@@ -55,6 +55,7 @@ describe('DeploymentFlow', function() {
     const changes = {};
     const generateCloudCredentialName = sinon.stub();
     const getUserName = sinon.stub().returns('dalek');
+    const loginToController = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentFlow
         acl={acl}
@@ -74,6 +75,7 @@ describe('DeploymentFlow', function() {
         listBudgets={listBudgets}
         listClouds={listClouds}
         listPlansForCharm={listPlansForCharm}
+        loginToController={loginToController}
         modelCommitted={false}
         modelName="Pavlova"
         servicesGetById={servicesGetById}
@@ -115,10 +117,12 @@ describe('DeploymentFlow', function() {
           instance="deployment-model-login"
           showCheck={false}>
           <div className="six-col">
-            <juju.components.GenericButton
-              action={instance._handleLogin}
-              type="positive"
-              title="Sign up or Login" />
+            <juju.components.USSOLoginLink
+              callback={
+                output.props.children[1]
+                      .props.children.props.children.props.callback}
+              displayType={'button'}
+              loginToController={loginToController} />
           </div>
         </juju.components.DeploymentSection>
         {undefined}
@@ -712,8 +716,9 @@ describe('DeploymentFlow', function() {
     const output = renderer.getRenderOutput();
     const loginSection = output.props.children[1];
     const loginButton = loginSection.props.children.props.children.props;
-    // Click to log in.
-    loginButton.action();
+    // Call the supplied callback function which is called after the user
+    // logs in.
+    loginButton.loginToController(loginButton.callback);
     assert.strictEqual(loginToController.callCount, 1);
     const cb = loginToController.args[0][0];
     cb(err);
