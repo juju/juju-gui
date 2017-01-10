@@ -990,8 +990,8 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Renders the Logout component or log in link depending on the environment
-      the GUI is executing in.
+      Renders the Log out component or log in link depending on the
+      environment the GUI is executing in.
     */
     _renderLoginOutLink: function() {
       if (this.get('sandbox')) {
@@ -999,7 +999,12 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       const controllerAPI = this.controllerAPI;
-      const linkContainer = document.getElementById('profile-link-container');
+      const linkContainerId = 'profile-link-container';
+      const linkContainer = document.getElementById(linkContainerId);
+      if (linkContainer === null) {
+        console.error(`no linkContainerId: ${linkContainerId}`);
+        return;
+      }
       const bakeryFactory = this.bakeryFactory;
       if (controllerAPI && !controllerAPI.userIsAuthenticated) {
         // If the user is not authenticated but we're connected to a controller
