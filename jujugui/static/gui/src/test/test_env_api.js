@@ -3181,6 +3181,127 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    describe('remoteApplicationInfo', function() {
+      it('retrieves remote application info', function(done) {
+        // Perform the request.
+        const url = 'default.django';
+        env.remoteApplicationInfo(url, (err, info) => {
+          assert.strictEqual(err, null);
+          assert.strictEqual(info.modelTag, 'model-01234-56789');
+          assert.strictEqual(info.modelId, '01234-56789');
+          assert.strictEqual(info.name, 'django');
+          assert.strictEqual(info.description, 'django is good');
+          assert.strictEqual(info.url, url);
+          assert.strictEqual(info.sourceModel, 'default');
+          assert.deepEqual(info.endpoints, [{
+            name: 'ceph',
+            role: 'requirer',
+            interface: 'ceph-client',
+            limit: 1,
+            scope: 'global'
+          }, {
+            name: 'ha',
+            role: 'requirer',
+            interface: 'hacluster',
+            limit: 1,
+            scope: 'container'
+          }]);
+          assert.strictEqual(info.icon, 'i am an svg icon');
+          const msg = conn.last_message();
+          console.log(msg);
+          assert.deepEqual(msg, {
+            'request-id': 1,
+            type: 'Application',
+            request: 'RemoteApplicationInfo',
+            version: 7,
+            params: {'application-urls': [url]}
+          });
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {results: [{
+            result: {
+              'model-tag': 'model-01234-56789',
+              name: 'django',
+              description: 'django is good',
+              'application-url': url,
+              'source-model-label': 'default',
+              endpoints: [{
+                name: 'ceph',
+                role: 'requirer',
+                interface: 'ceph-client',
+                limit: 1,
+                scope: 'global'
+              }, {
+                name: 'ha',
+                role: 'requirer',
+                interface: 'hacluster',
+                limit: 1,
+                scope: 'container'
+              }],
+              icon: btoa('i am an svg icon')
+            }
+          }]}
+        });
+      });
+
+      it('handles request failures while getting info', function(done) {
+        // Perform the request.
+        env.remoteApplicationInfo('default.django', (err, info) => {
+          assert.strictEqual(err, 'bad wolf');
+          assert.deepEqual(info, {});
+          done();
+        });
+        // Mimic response.
+        conn.msg({'request-id': 1, error: 'bad wolf'});
+      });
+
+      it('handles API failures while getting info', function(done) {
+        // Perform the request.
+        env.remoteApplicationInfo('default.django', (err, info) => {
+          assert.strictEqual(
+            err, 'cannot get remote application info: bad wolf');
+          assert.deepEqual(info, {});
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {results: [{error: {message: 'bad wolf'}}]}
+        });
+      });
+
+      it('fails for unexpected results', function(done) {
+        // Perform the request.
+        env.remoteApplicationInfo('default.django', (err, info) => {
+          assert.strictEqual(err, 'unexpected results: [{},{}]');
+          assert.deepEqual(info, {});
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {results: [{}, {}]}
+        });
+      });
+
+      it('fails for no results', function(done) {
+        // Perform the request.
+        env.remoteApplicationInfo('default.django', (err, info) => {
+          assert.strictEqual(err, 'unexpected results: []');
+          assert.deepEqual(info, {});
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {results: []}
+        });
+      });
+    });
+
     it('lists offers', function(done) {
       // Perform the request.
       env.listOffers(null, function(data) {

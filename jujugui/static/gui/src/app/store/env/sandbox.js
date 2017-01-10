@@ -1501,6 +1501,18 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+      Handle Application.RemoteApplicationInfo messages.
+
+      @method handleApplicationRemoteApplicationInfo
+      @param {Object} data The contents of the API arguments.
+      @param {Object} client The active ClientConnection.
+      @param {Object} state An instance of FakeBackend.
+    */
+    handleApplicationRemoteApplicationInfo: function(data, client, state) {
+      console.log('remote applications are not supported in sandbox mode');
+    },
+
+    /**
       Makes a request using a real WebSocket to get the bundle changeSet data.
 
       @method handleBundleGetChanges
