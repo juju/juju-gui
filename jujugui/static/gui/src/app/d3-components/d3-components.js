@@ -228,9 +228,11 @@ YUI.add('d3-components', function(Y) {
       this.unbind(modName);
 
       // Bind 'scene' events
-      Y.each(modEvents.scene, function(handlers, selector, sceneEvents) {
-        Y.each(handlers, function(handler, trigger) {
-          handler = self._normalizeHandler(handler, module, selector);
+      Object.keys(modEvents.scene).forEach(selector => {
+        const handlers = modEvents.scene[selector];
+        Object.keys(handlers).forEach(trigger => {
+          const handler = self._normalizeHandler(
+            handlers[trigger], module, selector);
           if (L.isValue(handler)) {
             _bindEvent(trigger, handler.callback,
                        container, selector, handler.context);
@@ -244,10 +246,11 @@ YUI.add('d3-components', function(Y) {
       //       where object includes phase (before, on, after)
       if (modEvents.yui) {
         // Resolve any 'string' handlers to methods on module.
-        Y.each(['after', 'before', 'on'], function(eventPhase) {
+        ['after', 'before', 'on'].forEach(eventPhase => {
           var resolvedHandler = {};
-          Y.each(modEvents.yui, function(handler, name) {
-            handler = self._normalizeHandler(handler, module, name);
+          Object.keys(modEvents.yui).forEach(name => {
+            const handler = self._normalizeHandler(
+              modEvents.yui[name], module, name);
             if (!handler || handler.phase !== eventPhase) {
               return;
             }
@@ -255,7 +258,8 @@ YUI.add('d3-components', function(Y) {
           }, this);
           // Bind resolved event handlers as a group.
           if (Object.keys(resolvedHandler).length) {
-            Y.each(resolvedHandler, function(handler, name) {
+            Object.keys(resolvedHandler).forEach(name => {
+              const handler = resolvedHandler[name];
               // DOM and synthetic events are subscribed using Y.on with
               // this signature: Y.on(event, callback, target, context).
               // For this reason, it is not possible here to just pass the
@@ -294,7 +298,7 @@ YUI.add('d3-components', function(Y) {
         eventSet = filtered;
       }
 
-      Y.each(Object.keys(eventSet), function(name) {
+      Object.keys(eventSet).forEach(name => {
         this.events[name].subscriptions = this._bindEvents(name);
       }, this);
       return this;
@@ -324,10 +328,11 @@ YUI.add('d3-components', function(Y) {
       }
       modEvents = modEvents.d3;
       module = this.modules[modName];
-      Y.each(modEvents, function(handlers, selector) {
-        Y.each(handlers, function(handler, trigger) {
+      Object.keys(modEvents).forEach(selector => {
+        const handlers = modEvents[selector];
+        Object.keys(handlers).forEach(trigger => {
           var adapter;
-          handler = self._normalizeHandler(handler, module);
+          const handler = self._normalizeHandler(handlers[trigger], module);
           // Create an adapter
           adapter = function() {
             var selection = d3.select(this),
@@ -348,7 +353,7 @@ YUI.add('d3-components', function(Y) {
      **/
     bindAllD3Events: function() {
       var self = this;
-      Y.each(this.modules, function(mod, name) {
+      Object.keys(this.modules).forEach(name => {
         self._bindD3Events(name);
       });
     },
@@ -391,8 +396,8 @@ YUI.add('d3-components', function(Y) {
       }
       modEvents = modEvents.d3;
 
-      Y.each(modEvents, function(handlers, selector) {
-        Y.each(handlers, function(handler, trigger) {
+      Object.keys(modEvents).forEach(selector => {
+        Object.keys(modEvents[selector]).forEach(trigger => {
           d3.selectAll(selector).on(trigger, null);
         });
       });
@@ -407,7 +412,8 @@ YUI.add('d3-components', function(Y) {
           filtered = {};
 
       function _unbind(modEvents) {
-        Y.each(modEvents.subscriptions, function(handler) {
+        Object.keys(modEvents.subscriptions || {}).forEach(key => {
+          const handler = modEvents.subscriptions[key];
           if (handler) {
             handler.detach();
           }
@@ -419,7 +425,9 @@ YUI.add('d3-components', function(Y) {
         filtered[moduleName] = eventSet[moduleName];
         eventSet = filtered;
       }
-      Y.each(Y.Object.values(eventSet), _unbind, this);
+      Object.keys(eventSet).forEach(key => {
+        _unbind(eventSet[key]);
+      });
       // Remove any d3 subscriptions as well.
       this._unbindD3Events();
 
@@ -460,7 +468,9 @@ YUI.add('d3-components', function(Y) {
         this._rendered = true;
       }
       // Render modules.
-      Y.each(this.modules, renderAndBind, this);
+      Object.keys(this.modules).forEach(key => {
+        renderAndBind(this.modules[key], key);
+      });
       return this;
     },
 
@@ -508,9 +518,9 @@ YUI.add('d3-components', function(Y) {
     },
 
     all: function(methodName) {
-      Y.each(this.modules, function(mod, name) {
+      Object.keys(this.modules).forEach(name => {
+        const mod = this.modules[name];
         if (methodName in mod) {
-          //console.log('Component', methodName, 'on', name);
           mod[methodName]();
         }
       });

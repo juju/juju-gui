@@ -629,7 +629,8 @@ YUI.add('juju-env-sandbox', function(Y) {
       }
       var filtered = {},
           self = this;
-      Y.each(whitelist, function(value, key) {
+      Object.keys(whitelist).forEach(key => {
+        const value = whitelist[key];
         if (typeof value === 'string') {
           filtered[key] = attrs[value];
         } else if (typeof value === 'function') {
@@ -659,7 +660,8 @@ YUI.add('juju-env-sandbox', function(Y) {
         changes = null;
       }
       if (changes) {
-        Y.each(this._deltaWhitelist, function(whitelist, changeType) {
+        Object.keys(this._deltaWhitelist).forEach(changeType => {
+          const whitelist = this._deltaWhitelist[changeType];
           var collectionChanges = changes[changeType + 's'];
           for (var key in collectionChanges) {
             var change = collectionChanges[key];
@@ -691,15 +693,17 @@ YUI.add('juju-env-sandbox', function(Y) {
         annotations = null;
       }
       if (annotations) {
-        Y.each(this._deltaWhitelist, function(whitelist, changeType) {
-          Y.each(annotations[changeType + 's'], function(model, key) {
+        Object.keys(this._deltaWhitelist).forEach(changeType => {
+          const changeTypes = annotations[changeType + 's'];
+          Object.keys(changeTypes).forEach(key => {
+            const model = changeTypes[key];
             var attrs = models.getAnnotations(model);
             var tag = this.modelToTag(model);
             // This form will trigger the annotationInfo handler.
             deltas.push(['annotation', 'change', {
               tag: tag, annotations: attrs}]);
-          }, this);
-        }, this);
+          });
+        });
       }
       return deltas;
     },
@@ -1118,7 +1122,7 @@ YUI.add('juju-env-sandbox', function(Y) {
           var formattedConfig = {};
           var backendConfig = reply.result.options || reply.result.config;
 
-          Y.Object.each(charmData.options, function(value, key) {
+          Object.keys(charmData.options).forEach(key => {
             formattedConfig[key] = charmData.options[key];
             if (backendConfig[key]) {
               formattedConfig[key].value = backendConfig[key];

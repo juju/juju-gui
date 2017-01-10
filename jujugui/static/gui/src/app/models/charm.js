@@ -75,7 +75,7 @@ YUI.add('juju-charm-models', function(Y) {
    *
    */
   var unsetIfNoValue = function(val) {
-    if (!val || Y.Object.size(val) === 0) {
+    if (!val || Object.keys(val).length === 0) {
       return null;
     } else {
       return val;
@@ -220,7 +220,8 @@ YUI.add('juju-charm-models', function(Y) {
         delete data.requires;
         delete data.provides;
       }
-      Y.each(data, function(value, key) {
+      Object.keys(data).forEach(key => {
+        const value = data[key];
         if (!Y.Lang.isValue(value) ||
             !self.attrAdded(key) ||
             Y.Lang.isValue(self.get(key))) {
@@ -458,9 +459,9 @@ YUI.add('juju-charm-models', function(Y) {
         valueFn: function() {
           var failures = [],
               successes = [],
-              providers = this.get('tested_providers');
-          Y.Object.each(providers, function(value, key) {
-            if (value !== 'SUCCESS') {
+              providers = this.get('tested_providers') || {};
+          Object.keys(providers).forEach(key => {
+            if (providers[key] !== 'SUCCESS') {
               failures.push(key);
             }
             else {

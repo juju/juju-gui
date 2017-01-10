@@ -221,7 +221,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var endpoints = relation.get('endpoints');
       var rel_services = [];
 
-      Y.each(endpoints, function(endpoint) {
+      endpoints.forEach(endpoint => {
         rel_services.push([endpoint[1].name, topo.service_boxes[endpoint[0]]]);
       });
       return rel_services;
@@ -236,7 +236,7 @@ YUI.add('juju-topology-relation', function(Y) {
     decorateRelations: function(relations) {
       var self = this;
       var decorated = [];
-      Y.each(relations, function(relation) {
+      relations.forEach(relation => {
         var pair = self.processRelation(relation);
 
         // skip peer for now
@@ -837,7 +837,8 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Transform endpoints into a list of relatable services (to the
       // service).
-      var possible_relations = Y.Array.flatten(Y.Object.values(endpoints)).map(
+      var possible_relations = Y.Array.flatten(
+        Object.keys(endpoints).map(k => endpoints[k])).map(
         ep => {return ep.service;});
       var invalidRelationTargets = {};
 

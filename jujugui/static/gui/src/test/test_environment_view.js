@@ -442,12 +442,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // Verify that the paths render 'properly' where this
           // means no NaN in the paths
           var line = container.one('.relation');
-          Y.each(['x1', 'y1', 'x2', 'y2'],
-              function(e) {
-                Y.Lang.isNumber(
-                    parseInt(this.getAttribute(e), 10))
-                            .should.equal(true);
-              }, line);
+          ['x1', 'y1', 'x2', 'y2'].forEach(e => {
+            Y.Lang.isNumber(
+                parseInt(line.getAttribute(e), 10))
+                        .should.equal(true);
+          });
 
           // Verify that the node id has been munged as expected from the
           // relation id. This is particularly important for Juju Core.

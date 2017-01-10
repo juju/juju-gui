@@ -493,7 +493,8 @@ YUI.add('juju-view-utils', function(Y) {
         if (box_or_xy.xy !== undefined) {
           source = box_or_xy.xy;
         }
-        Y.each(connectors, function(ep) {
+        Object.keys(connectors).forEach(key => {
+          const ep = connectors[key];
           // Take the distance of each XY pair
           var d = this._distance(source, ep);
           if (!Y.Lang.isValue(result) || d < shortest_d) {
@@ -517,8 +518,10 @@ YUI.add('juju-view-utils', function(Y) {
             result = null,
             shortest_d = Infinity;
 
-        Y.each(sc, function(ep1) {
-          Y.each(oc, function(ep2) {
+        Object.keys(sc).forEach(key => {
+          const ep1 = sc[key];
+          Object.keys(oc).forEach(key => {
+            const ep2 = oc[key];
             // Take the distance of each XY pair
             var d = this._distance(ep1, ep2);
             if (!Y.Lang.isValue(result) || d < shortest_d) {
@@ -562,7 +565,7 @@ YUI.add('juju-view-utils', function(Y) {
    */
   views.toBoundingBoxes = function(module, services, existing, env) {
     var result = existing || {};
-    Y.each(result, function(val, key, obj) {
+    Object.keys(result).forEach(key => {
       if (!Y.Lang.isValue(services.getById(key))) {
         delete result[key];
       }

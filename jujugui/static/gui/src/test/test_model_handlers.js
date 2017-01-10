@@ -969,10 +969,10 @@ describe('Juju delta handlers', function() {
 });
 
 describe('Juju delta handlers utilities', function() {
-  var utils, Y;
+  var utils;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-delta-handlers'], function(Y) {
+    YUI(GlobalConfig).use(['juju-delta-handlers'], function(Y) {
       utils = Y.namespace('juju.models').utils;
       done();
     });
@@ -1004,7 +1004,7 @@ describe('Juju delta handlers utilities', function() {
 
     it('ignores bad values', function() {
       var data = ['foo', 'bar-baz', '123', 'unit-', 'application-', 'machine'];
-      Y.each(data, function(item) {
+      data.forEach(item => {
         assert.equal(item, cleanUpEntityTags(item));
       });
     });

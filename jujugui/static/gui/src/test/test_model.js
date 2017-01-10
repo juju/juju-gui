@@ -1822,11 +1822,11 @@ describe('test_model.js', function() {
   });
 
   describe('database import/export', function() {
-    var Y, models;
+    var models;
     var db;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-models',
+      YUI(GlobalConfig).use(['juju-models',
         'juju-charm-models'],
       function(Y) {
         models = Y.namespace('juju.models');
@@ -1930,7 +1930,7 @@ describe('test_model.js', function() {
       ]);
       db.charms.add([{id: 'precise/juju-gui-42'}, {id: 'trusty/django-47'}]);
       var result = db.exportDeployer(true);
-      assert.strictEqual(Y.Object.size(result.services), 1);
+      assert.strictEqual(Object.keys(result.services).length, 1);
       assert.isDefined(result.services.django);
     });
 

@@ -80,7 +80,8 @@ YUI.add('juju-env-api', function(Y) {
    */
   var createRelationKey = function(endpoints) {
     var roles = Object.create(null);
-    Y.each(endpoints, function(value, key) {
+    Object.keys(endpoints).forEach(key => {
+      const value = endpoints[key];
       roles[value.role] = key + ':' + value.name;
     });
     return roles.requirer + ' ' + roles.provider;
@@ -97,8 +98,8 @@ YUI.add('juju-env-api', function(Y) {
    */
   var lowerObjectKeys = function(obj) {
     var newObj = Object.create(null);
-    Y.each(obj, function(value, key) {
-      newObj[key.toLowerCase()] = value;
+    Object.keys(obj).forEach(key => {
+      newObj[key.toLowerCase()] = obj[key];
     });
     return newObj;
   };
@@ -141,7 +142,8 @@ YUI.add('juju-env-api', function(Y) {
    */
   var stringifyObjectValues = function(obj) {
     var newObj = Object.create(null);
-    Y.each(obj, function(value, key) {
+    Object.keys(obj).forEach(key => {
+      const value = obj[key];
       if (value === null) {
         newObj[key] = value;
       } else {
@@ -2050,9 +2052,10 @@ YUI.add('juju-env-api', function(Y) {
      * @param {Object} data The response returned by the server.
      */
     _handleGetApplicationConfig: function(callback, applicationName, data) {
-      var config = (data.response || {}).config;
+      var config = (data.response || {}).config || {};
       var transformedConfig = {};
-      Y.each(config, function(value, key) {
+      Object.keys(config).forEach(key => {
+        const value = config[key];
         transformedConfig[key] = value.value;
       });
       callback({
@@ -2262,7 +2265,7 @@ YUI.add('juju-env-api', function(Y) {
           var applicationNameA = epA.split(':')[0];
           var applicationNameB = epB.split(':')[0];
           result.endpoints = [];
-          Y.each([applicationNameA, applicationNameB], function(name) {
+          [applicationNameA, applicationNameB].forEach(name => {
             var jujuEndpoint = endpoints[name];
             var guiEndpoint = {};
             guiEndpoint[name] = {'name': jujuEndpoint.name};
