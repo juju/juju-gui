@@ -758,6 +758,7 @@ YUI.add('juju-gui', function(Y) {
           this._renderLogin(evt.err);
           return;
         }
+        this._renderLoginOutLink();
         console.log('successfully logged into controller');
         // After logging in trigger the app to dispatch to re-render the
         // components that require an active connection to the controllerAPI.
@@ -989,32 +990,44 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Renders the Logout component.
-
-      @method _renderLogout
+      Renders the Logout component or log in link depending on the environment
+      the GUI is executing in.
     */
-    _renderLogout: function() {
+    _renderLoginOutLink: function() {
       if (this.get('sandbox')) {
         // Do not show the logout link if the user is in sandbox mode.
         return;
       }
-      // If the charmbrowser is open then don't show the logout link.
-      var visible = !this.state.current.store;
-      var charmstore = this.get('charmstore');
+      const controllerAPI = this.controllerAPI;
+      const linkContainer = document.getElementById('profile-link-container');
       const bakeryFactory = this.bakeryFactory;
+      if (controllerAPI && !controllerAPI.userIsAuthenticated) {
+        // If the user is not authenticated but we're connected to a controller
+        // then the user is anonymous and we should show them a login button
+        // so that they can log in via USSO.
+        ReactDOM.render(
+          <window.juju.components.USSOLoginLink
+            loginToController={controllerAPI.loginWithMacaroon.bind(
+              controllerAPI, bakeryFactory.get('juju'))}
+            displayType={'text'} />,
+          linkContainer);
+        return;
+      }
+
       ReactDOM.render(
         <window.juju.components.Logout
           logout={this.logout.bind(this)}
           clearCookie={bakeryFactory.clearAllCookies.bind(bakeryFactory)}
           gisfLogout={window.juju_config.gisfLogout || ''}
           gisf={window.juju_config.gisf || false}
-          charmstoreLogoutUrl={charmstore.getLogoutUrl()}
+          charmstoreLogoutUrl={this.get('charmstore').getLogoutUrl()}
           getUser={this.getUser.bind(this, 'charmstore')}
           clearUser={this.clearUser.bind(this, 'charmstore')}
-          visible={visible}
+          // If the charmbrowser is open then don't show the logout link.
+          visible={!this.state.current.store}
         locationAssign={window.location.assign.bind(window.location)}
           />,
-        document.getElementById('profile-link-container'));
+        linkContainer);
     },
 
     /**
@@ -2732,7 +2745,7 @@ YUI.add('juju-gui', function(Y) {
       }
       this._renderComponents();
       this._renderNotifications();
-      this._renderLogout();
+      this._renderLoginOutLink();
 
       next();
     },
@@ -2983,6 +2996,7 @@ YUI.add('juju-gui', function(Y) {
     'notification-list',
     'panel-component',
     'shortcuts',
+    'usso-login-link',
     'user-profile',
     'zoom',
     // juju-views group
