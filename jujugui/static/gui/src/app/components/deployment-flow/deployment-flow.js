@@ -262,21 +262,6 @@ YUI.add('deployment-flow', function() {
     },
 
     /**
-      Handle logging in within the deployment flow.
-
-     @method _handleLogin
-    */
-    _handleLogin: function() {
-      this.props.loginToController(err => {
-        if (err) {
-          console.error('cannot log into the controller:', err);
-          return;
-        }
-        this.setState({loggedIn: true});
-      });
-    },
-
-    /**
       Generate a change cloud action if a cloud has been selected.
 
       @method _generateCloudAction
@@ -375,15 +360,20 @@ YUI.add('deployment-flow', function() {
       if (!status.visible) {
         return;
       }
+      const callback = err => {
+        if (!err) {
+          this.setState({loggedIn: true});
+        }
+      };
       return (
         <juju.components.DeploymentSection
           instance="deployment-model-login"
           showCheck={false}>
           <div className="six-col">
-            <juju.components.GenericButton
-              action={this._handleLogin}
-              type="positive"
-              title="Sign up or Login" />
+            <juju.components.USSOLoginLink
+              callback={callback}
+              displayType={'button'}
+              loginToController={this.props.loginToController}/>
           </div>
         </juju.components.DeploymentSection>);
     },
