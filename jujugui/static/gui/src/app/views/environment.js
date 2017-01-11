@@ -142,10 +142,9 @@ YUI.add('juju-view-environment', function(Y) {
     updateHelpIndicator: function(evt) {
       var helpText = this.get('container').one('.environment-help'),
           includedPlus = this.topo.vis.select('.included-plus'),
-          db = this.get('db'),
-          services = db.services;
+          db = this.get('db');
       if (helpText) {
-        if (services.size() === 0) {
+        if (db.services.size() === 0 && db.remoteServices.size() === 0) {
           helpText.show();
           helpText.removeClass('shrink');
           includedPlus.classed('show', false);

@@ -1636,7 +1636,7 @@ YUI.add('juju-topology-service', function(Y) {
           },
           fill: '#f5f5f5',
           'stroke-width': 1,
-          stroke: '#888888'
+          stroke: d => d.clientId.indexOf('remote') ? '#888888' : '#7500ce'
         })
         .classed('service-block', true);
 
@@ -1644,6 +1644,14 @@ YUI.add('juju-topology-service', function(Y) {
        .classed('service-icon', true)
        .attr({
          'xlink:href': function(d) {
+           // XXX This is a hack for a demo
+           if (!d.icon) {
+             if (d.service.indexOf('mysql') > -1) {
+               return 'https://api.jujucharms.com/charmstore/v5/mysql-56/icon.svg'; // eslint-disable-line max-len
+             } else {
+               return 'https://api.jujucharms.com/charmstore/v5/trusty/mediawiki-7/icon.svg'; // eslint-disable-line max-len
+             }
+           }
            return d.icon;
          },
          width: 96,
