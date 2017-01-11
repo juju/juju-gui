@@ -67,13 +67,12 @@ describe('views.ViewportModule (Topology module)', function() {
       one: testUtils.getter({}, {})
     };
     // Catch global custom page resize events.
-    Y.each(['beforePageSizeRecalculation', 'afterPageSizeRecalculation'],
-        function(evt) {
-          Y.on(evt, function() {
-            events.push(evt);
-          });
-        }
-    );
+    ['beforePageSizeRecalculation', 'afterPageSizeRecalculation'].forEach(
+      evt => {
+        Y.on(evt, function() {
+          events.push(evt);
+        });
+      });
 
     var view = new views.ViewportModule();
     // Provide a test container that likes to return empty objects.

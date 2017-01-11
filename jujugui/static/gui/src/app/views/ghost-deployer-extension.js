@@ -60,7 +60,9 @@ YUI.add('ghost-deployer-extension', function(Y) {
 
       var config = {};
       var ghostServiceId = ghostService.get('id');
-      Y.Object.each(charm.get('options'), function(v, k) {
+      const charmOptions = charm.get('options') || {};
+      Object.keys(charmOptions).forEach(k => {
+        const v = charmOptions[k];
         config[k] = v['default'];
       });
       var series = charm.get('series');

@@ -82,7 +82,8 @@ YUI.add('juju-models', function(Y) {
         } else {
           // This must be from a LazyModelList.
           var changed = {};
-          Y.each(data, function(value, key) {
+          Object.keys(data).forEach(key => {
+            const value = data[key];
             if (value === undefined) {
               // A delta in the real environment doesn't send undefined
               // values so this makes the simulated environment work properly.
@@ -458,7 +459,9 @@ YUI.add('juju-models', function(Y) {
       constraintsStr: {
         'getter': function() {
           var result = [];
-          Y.each(this.get('constraints'), function(v, k) {
+          const constraints = this.get('constraints') || {};
+          Object.keys(constraints).forEach(k => {
+            const v = constraints[k];
             if (v !== undefined) {
               result.push(k + '=' + v);
             }
@@ -1311,7 +1314,7 @@ YUI.add('juju-models', function(Y) {
      */
     update_service_unit_aggregates: function(service) {
       var aggregate = this.get_informative_states_for_service(service);
-      var sum = Y.Object.values(aggregate[0]).reduce(
+      var sum = Object.keys(aggregate[0]).map(k => aggregate[0][k]).reduce(
         (a, b) => {return a + b;}, 0);
       var previous_unit_count = service.get('unit_count');
       service.set('unit_count', sum);
@@ -2518,7 +2521,9 @@ YUI.add('juju-models', function(Y) {
 
         // Process the service_options removing any values
         // that are the default value for the charm.
-        Y.each(service.get('config'), function(value, key) {
+        const config = service.get('config') || {};
+        Object.keys(config).forEach(key => {
+          let value = config[key];
           if (Y.Lang.isValue(value)) {
             var optionData = charmOptions && charmOptions[key];
             switch (optionData.type) {
@@ -2553,7 +2558,7 @@ YUI.add('juju-models', function(Y) {
           // Test models or ghosts might not have a units LazyModelList.
           serviceData.num_units = units && units.size() || 0;
         }
-        if (serviceOptions && Y.Object.size(serviceOptions) >= 1) {
+        if (serviceOptions && Object.keys(serviceOptions).length >= 1) {
           serviceData.options = serviceOptions;
         }
         // Add constraints

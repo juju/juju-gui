@@ -49,11 +49,12 @@ YUI.add('environment-change-set', function(Y) {
     */
     getCurrentChangeSet: function() {
       var currentChangeSet = {};
-      Y.Object.each(this.changeSet, function(value, key) {
+      Object.keys(this.changeSet).forEach(key => {
+        const value = this.changeSet[key];
         if (value.index === this.currentIndex) {
           currentChangeSet[key] = value;
         }
-      }, this);
+      });
       return currentChangeSet;
     },
 
@@ -231,11 +232,12 @@ YUI.add('environment-change-set', function(Y) {
       this.placedCount = 0;
 
       // Retrieve only the keys for changeSet entries in the current index.
-      Y.Object.each(this.changeSet, function(value, key) {
+      Object.keys(this.changeSet).forEach(key => {
+        const value = this.changeSet[key];
         if (value.index === this.currentIndex) {
           keys.push(key);
         }
-      }, this);
+      });
 
       // Filter out unplaced units and increment their changeSet index;
       // they should remain undeployed by default.
@@ -280,8 +282,10 @@ YUI.add('environment-change-set', function(Y) {
       // runtime efficiency.
       while (this.placedCount < keys.length) {
         hierarchy.push([]);
-        Y.Object.each(keyToLevelMap, Y.bind(this._placeIfNeeded, this,
-            currLevel, keyToLevelMap, hierarchy));
+        Object.keys(keyToLevelMap).forEach(key => {
+          this._placeIfNeeded(
+            currLevel, keyToLevelMap, hierarchy, keyToLevelMap[key], key);
+        });
         currLevel += 1;
       }
       return hierarchy;
@@ -440,11 +444,12 @@ YUI.add('environment-change-set', function(Y) {
         }.bind(this));
       }.bind(this));
       // Wipe out the current index from the changeset.
-      Y.Object.each(this.changeSet, function(value, key) {
+      Object.keys(this.changeSet).forEach(key => {
+        const value = this.changeSet[key];
         if (value.index === this.currentIndex) {
           delete this.changeSet[key];
         }
-      }, this);
+      });
       this.currentIndex += 1;
       this.currentCommit = [];
       this.fire('changeSetModified');
@@ -853,7 +858,8 @@ YUI.add('environment-change-set', function(Y) {
       var ghostServiceName = args[0],
           parent = [];
       // Search for and add the service to parent.
-      Y.Object.each(this.changeSet, function(value, key) {
+      Object.keys(this.changeSet).forEach(key => {
+        const value = this.changeSet[key];
         if (value.command.method === '_deploy') {
           if (value.command.options.modelId === args[0]) {
             parent.push(key);
@@ -924,7 +930,8 @@ YUI.add('environment-change-set', function(Y) {
     lazyAddRelation: function(args, options) {
       var serviceA;
       var serviceB;
-      Y.Object.each(this.changeSet, function(value, key) {
+      Object.keys(this.changeSet).forEach(key => {
+        const value = this.changeSet[key];
         if (value.command.method === '_deploy') {
           if (value.command.options.modelId === args[0][0]) {
             serviceA = key;
@@ -1100,7 +1107,8 @@ YUI.add('environment-change-set', function(Y) {
       var db = this.get('db');
       var parent = [];
       // Search for and add the service to parent.
-      Y.Object.each(this.changeSet, function(value, key) {
+      Object.keys(this.changeSet).forEach(key => {
+        const value = this.changeSet[key];
         if (value.command.method === '_deploy') {
           if (value.command.options.modelId === args[0]) {
             parent.push(key);
@@ -1187,13 +1195,14 @@ YUI.add('environment-change-set', function(Y) {
       // Search for and add the container to its parent machine.
       args[0].forEach(function(param) {
         if (param.parentId) {
-          Y.Object.each(this.changeSet, function(value, key) {
+          Object.keys(this.changeSet).forEach(key => {
+            const value = this.changeSet[key];
             var command = value.command;
             if (command.method === '_addMachines' &&
                 command.options.modelId === param.parentId) {
               parent.push(key);
             }
-          }, this);
+          });
         }
       }, this);
       var command = {
@@ -1263,7 +1272,8 @@ YUI.add('environment-change-set', function(Y) {
     lazyAddUnits: function(args, options) {
       var parent = [];
       // Search for and add the service to parent.
-      Y.Object.each(this.changeSet, function(value, key) {
+      Object.keys(this.changeSet).forEach(key => {
+        const value = this.changeSet[key];
         if (value.command.method === '_deploy') {
           if (value.command.options.modelId === args[0]) {
             parent.push(key);
@@ -1274,13 +1284,14 @@ YUI.add('environment-change-set', function(Y) {
       // If toMachine is specified, search for and add the machine to parent.
       var toMachine = args[2];
       if (toMachine) {
-        Y.Object.each(this.changeSet, function(value, key) {
+        Object.keys(this.changeSet).forEach(key => {
+          const value = this.changeSet[key];
           var command = value.command;
           if (command.method === '_addMachines' &&
               command.options.modelId === toMachine) {
             parent.push(key);
           }
-        }, this);
+        });
       }
       var db = this.get('db');
       var command = {
@@ -1336,7 +1347,8 @@ YUI.add('environment-change-set', function(Y) {
     */
     _retrieveUnitRecord: function(unitId) {
       var record;
-      Y.Object.some(this.changeSet, function(value, key) {
+      Object.keys(this.changeSet).some(key => {
+        const value = this.changeSet[key];
         var command = value.command;
         if (command.method === '_add_unit' &&
             command.options.modelId === unitId) {

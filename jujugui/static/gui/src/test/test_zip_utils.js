@@ -21,12 +21,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('Zip utils', function() {
-    let Y, ziputils;
+    let ziputils;
     var requirements = ['zip-utils'];
 
     before(function(done) {
       // Set up the YUI instance, the test utils and the zip namespace.
-      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+      YUI(GlobalConfig).use(requirements, function(Y) {
         ziputils = Y.namespace('juju.ziputils');
         done();
       });
@@ -264,7 +264,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('reads data from each entry', function() {
         ziputils.readCharmEntries(entries, callback);
-        Y.Object.each(entries, function(entry, name) {
+        Object.keys(entries).forEach(name => {
+          const entry = entries[name];
           // The getData has been called on the entry.
           assert.strictEqual(entry.getData.callCount, 1);
           // The TextWriter and a callback function has been passed to getData.

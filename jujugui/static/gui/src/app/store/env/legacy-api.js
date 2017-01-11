@@ -61,7 +61,8 @@ YUI.add('juju-env-legacy-api', function(Y) {
    */
   var createRelationKey = function(endpoints) {
     var roles = Object.create(null);
-    Y.each(endpoints, function(value, key) {
+    Object.keys(endpoints).forEach(key => {
+      const value = endpoints[key];
       roles[value.Role] = key + ':' + value.Name;
     });
     return roles.requirer + ' ' + roles.provider;
@@ -78,8 +79,8 @@ YUI.add('juju-env-legacy-api', function(Y) {
    */
   var lowerObjectKeys = function(obj) {
     var newObj = Object.create(null);
-    Y.each(obj, function(value, key) {
-      newObj[key.toLowerCase()] = value;
+    Object.keys(obj).forEach(key => {
+      newObj[key.toLowerCase()] = obj[key];
     });
     return newObj;
   };
@@ -122,7 +123,8 @@ YUI.add('juju-env-legacy-api', function(Y) {
    */
   var stringifyObjectValues = function(obj) {
     var newObj = Object.create(null);
-    Y.each(obj, function(value, key) {
+    Object.keys(obj).forEach(key => {
+      const value = obj[key];
       if (value === null) {
         newObj[key] = value;
       } else {
@@ -1887,7 +1889,8 @@ YUI.add('juju-env-legacy-api', function(Y) {
     _handleGetApplicationConfig: function(callback, applicationName, data) {
       var config = (data.Response || {}).Config;
       var transformedConfig = {};
-      Y.each(config, function(value, key) {
+      Object.keys(config).forEach(key => {
+        const value = config[key];
         transformedConfig[key] = value.value;
       });
       callback({
@@ -2099,7 +2102,7 @@ YUI.add('juju-env-legacy-api', function(Y) {
           var applicationNameA = epA.split(':')[0];
           var applicationNameB = epB.split(':')[0];
           result.endpoints = [];
-          Y.each([applicationNameA, applicationNameB], function(name) {
+          [applicationNameA, applicationNameB].forEach(name => {
             var jujuEndpoint = response.Endpoints[name];
             var guiEndpoint = {};
             guiEndpoint[name] = {'name': jujuEndpoint.Name};
@@ -2292,15 +2295,15 @@ YUI.add('juju-env-legacy-api', function(Y) {
       // returned by juju-core into that suitable for the user callback.
       var parseItems = function(items) {
         var result = {};
-        Y.each(items, function(value, key) {
-          result[key] = lowerObjectKeys(value);
+        Object.keys(items).forEach(key => {
+          result[key] = lowerObjectKeys(items[key]);
         });
         return result;
       };
       // Build the transformed data structure.
       var result,
-          response = data.Response;
-      if (!Y.Object.isEmpty(response)) {
+          response = data.Response || {};
+      if (Object.keys(response).length > 0) {
         var meta = response.Meta;
         result = {
           config: {options: parseItems(response.Config.Options)},

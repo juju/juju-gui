@@ -67,9 +67,9 @@ YUI.add('juju-topology-service', function(Y) {
     allServices.reset();
 
     // Nodes are mapped by modelId tuples.
-    this.node = vis.selectAll('.service')
-                     .data(Y.Object.values(topo.service_boxes),
-                           function(d) {return d.modelId;});
+    this.node = vis.selectAll('.service').data(
+      Object.keys(topo.service_boxes).map(k => topo.service_boxes[k]),
+      function(d) {return d.modelId;});
     // It takes a few update cycles to add the services to the database so
     // this checks to make sure we only center once we have some services to
     // center on.
@@ -1339,7 +1339,8 @@ YUI.add('juju-topology-service', function(Y) {
       // nodes. New nodes are those that haven't been positioned by drag
       // and drop, or those who don't have position attributes/annotations.
       var vertices = [];
-      Y.each(topo.service_boxes, function(boundingBox) {
+      Object.keys(topo.service_boxes).forEach(key => {
+        const boundingBox = topo.service_boxes[key];
         // Ensure each box has position attributes set.
         var annotations = boundingBox.annotations,
             addToVertices = 0;
@@ -1358,8 +1359,8 @@ YUI.add('juju-topology-service', function(Y) {
 
       // new_service_boxes are those w/o current x/y pos and no
       // annotations.
-      var new_service_boxes = Y.Object.values(topo.service_boxes)
-      .filter(function(boundingBox) {
+      var new_service_boxes = Object.keys(topo.service_boxes).map(
+      k => topo.service_boxes[k]).filter(function(boundingBox) {
             // In the case where a model has been removed from the database
             // and update runs before exit, boundingBox.model will be empty;
             // these can automatically be ignored.
@@ -1405,7 +1406,8 @@ YUI.add('juju-topology-service', function(Y) {
                    .radius(50)
               // Run the pack layout on the new service boxes.
                    .nodes({children: new_service_boxes});
-          if (new_service_boxes.length < Y.Object.size(topo.service_boxes)) {
+          if (new_service_boxes.length <
+            Object.keys(topo.service_boxes).length) {
             // If we have new services that do not have x/y coords and are
             // not pending, then they've likely been created from the CLI.
             // In this case, to avoid placing them overlaying any existing
@@ -1415,7 +1417,7 @@ YUI.add('juju-topology-service', function(Y) {
             // below.
             var pointOutside;
             var newVertices = [];
-            Y.each(new_service_boxes, function(boxModel) {
+            new_service_boxes.forEach(boxModel => {
               pointOutside = topo.servicePointOutside(newVertices);
               boxModel.x += pointOutside[0] - boxModel.x;
               boxModel.y += pointOutside[1] - boxModel.y;
@@ -1425,7 +1427,7 @@ YUI.add('juju-topology-service', function(Y) {
             });
           }
 
-          Y.each(new_service_boxes, function(box) {
+          new_service_boxes.forEach(box => {
             var existing = box.model.get('annotations') || {};
             if (!existing || !existing['gui-x']) {
               vertices.push([box.x || 0, box.y || 0]);

@@ -1473,7 +1473,7 @@ describe('Environment Change Set', function() {
         assert.equal(command.method, '_set_config');
         assert.deepEqual(command.args, setArgs);
         // It should have called to create new records
-        assert.equal(Y.Object.size(ecs.changeSet), 2);
+        assert.equal(Object.keys(ecs.changeSet).length, 2);
       });
 
       it('concats changed fields to the service modesl', function() {
@@ -1547,7 +1547,7 @@ describe('Environment Change Set', function() {
         assert.equal(record.executed, false);
         assert.equal(record.id, key);
         assert.deepEqual(record.parents, ['service-1', 'service-2']);
-        assert.equal(Y.Object.size(ecs.changeSet), 3);
+        assert.equal(Object.keys(ecs.changeSet).length, 3);
         // Perform this last, as it will mutate ecs.changeSet.
         assert.equal(ecs._buildHierarchy(ecs.changeSet).length, 2);
         assert.equal(stubUpdateSubordinates.calledOnce, true);
@@ -1885,7 +1885,7 @@ describe('Environment Change Set', function() {
         assert.equal(record.executed, false);
         assert.equal(record.id, key);
         assert.deepEqual(record.parents, ['service-1']);
-        assert.equal(Y.Object.size(ecs.changeSet), 2);
+        assert.equal(Object.keys(ecs.changeSet).length, 2);
         // Perform this last, as it will mutate ecs.changeSet.
         assert.equal(ecs._buildHierarchy(ecs.changeSet).length, 2);
       });

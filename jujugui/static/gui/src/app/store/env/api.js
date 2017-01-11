@@ -80,7 +80,8 @@ YUI.add('juju-env-api', function(Y) {
    */
   var createRelationKey = function(endpoints) {
     var roles = Object.create(null);
-    Y.each(endpoints, function(value, key) {
+    Object.keys(endpoints).forEach(key => {
+      const value = endpoints[key];
       roles[value.role] = key + ':' + value.name;
     });
     return roles.requirer + ' ' + roles.provider;
@@ -97,8 +98,8 @@ YUI.add('juju-env-api', function(Y) {
    */
   var lowerObjectKeys = function(obj) {
     var newObj = Object.create(null);
-    Y.each(obj, function(value, key) {
-      newObj[key.toLowerCase()] = value;
+    Object.keys(obj).forEach(key => {
+      newObj[key.toLowerCase()] = obj[key];
     });
     return newObj;
   };
@@ -141,7 +142,8 @@ YUI.add('juju-env-api', function(Y) {
    */
   var stringifyObjectValues = function(obj) {
     var newObj = Object.create(null);
-    Y.each(obj, function(value, key) {
+    Object.keys(obj).forEach(key => {
+      const value = obj[key];
       if (value === null) {
         newObj[key] = value;
       } else {
@@ -2050,9 +2052,10 @@ YUI.add('juju-env-api', function(Y) {
      * @param {Object} data The response returned by the server.
      */
     _handleGetApplicationConfig: function(callback, applicationName, data) {
-      var config = (data.response || {}).config;
+      var config = (data.response || {}).config || {};
       var transformedConfig = {};
-      Y.each(config, function(value, key) {
+      Object.keys(config).forEach(key => {
+        const value = config[key];
         transformedConfig[key] = value.value;
       });
       callback({
@@ -2262,7 +2265,7 @@ YUI.add('juju-env-api', function(Y) {
           var applicationNameA = epA.split(':')[0];
           var applicationNameB = epB.split(':')[0];
           result.endpoints = [];
-          Y.each([applicationNameA, applicationNameB], function(name) {
+          [applicationNameA, applicationNameB].forEach(name => {
             var jujuEndpoint = endpoints[name];
             var guiEndpoint = {};
             guiEndpoint[name] = {'name': jujuEndpoint.name};
@@ -2574,6 +2577,87 @@ YUI.add('juju-env-api', function(Y) {
         request: 'Offer',
         params: {offers: [offer]}
       }, handleOffer);
+    },
+
+    /**
+      Return information about the requested remote application.
+
+      @method remoteApplicationInfo
+      @param {String} url The remote application URL, usually retrieved via the
+        mega-watcher.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive two arguments: an error string
+        and the requested information. If the operation succeeds, the error is
+        null and the information is an object with the following fields:
+          - modelTag: the tag of the model where the application lives;
+          - modelId: the UUID of the model where the application lives;
+          - name: the remote application name;
+          - description: a description for the remote application;
+          - url: the remote application URL;
+          - sourceModel: only populated if the application originates from
+            another model on the same controller rather than via an offer URL;
+          - endpoints: each one having the name, role, interface, limit and
+            scope fields;
+          - icon: the remote application icon contents. Note that this is not a
+            URL, this is the actual icon bytes.
+    */
+    remoteApplicationInfo: function(url, callback) {
+      if (!url) {
+        callback('no remote application URL provided', {});
+        return;
+      }
+      const handler = data => {
+        if (!callback) {
+          console.log('data returned by RemoteApplicationInfo call:', data);
+          return;
+        }
+        if (data.error) {
+          callback(data.error, {});
+          return;
+        }
+        const results = data.response && data.response.results;
+        if (!results || results.length !== 1) {
+          // This should never happen.
+          callback('unexpected results: ' + JSON.stringify(results), {});
+          return;
+        }
+        const result = results[0];
+        const err = result.error && result.error.message;
+        if (err) {
+          callback('cannot get remote application info: ' + err, {});
+          return;
+        }
+        const info = result.result;
+        let icon = '';
+        if (info.icon) {
+          icon = atob(info.icon);
+        }
+        callback(null, {
+          modelTag: info['model-tag'],
+          modelId: tags.parse(tags.MODEL, info['model-tag']),
+          name: info.name,
+          description: info.description,
+          url: info['application-url'],
+          sourceModel: info['source-model-label'],
+          endpoints: info.endpoints.map(endpoint => {
+            return {
+              name: endpoint.name,
+              role: endpoint.role,
+              interface: endpoint.interface,
+              limit: endpoint.limit,
+              scope: endpoint.scope
+            };
+          }),
+          icon: icon
+        });
+      };
+
+      // Send the API call.
+      this._send_rpc({
+        type: 'Application',
+        request: 'RemoteApplicationInfo',
+        params: {'application-urls': [url]}
+      }, handler);
     },
 
     /**

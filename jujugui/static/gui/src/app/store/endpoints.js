@@ -94,7 +94,7 @@ YUI.add('juju-endpoints-controller', function(Y) {
          * @return {undefined} Nothing.
          */
         unbind: function() {
-          Y.each(this._subscriptions, function(sub) {
+          this._subscriptions.forEach(sub => {
             sub.detach();
           });
           this._subscriptions = [];
@@ -196,11 +196,12 @@ YUI.add('juju-endpoints-controller', function(Y) {
           var rel;
           if (Y.Lang.isValue(meta)) {
 
-            Y.each(meta, function(vo, ko) {
+            Object.keys(meta).forEach(ko => {
+              const vo = meta[ko];
               rel = {};
               rel.name = ko;
-              Y.each(vo, function(vi, ki) {
-                rel[ki] = vi;
+              Object.keys(vo).forEach(ki => {
+                rel[ki] = vo[ki];
               });
               result.push(rel);
             });
