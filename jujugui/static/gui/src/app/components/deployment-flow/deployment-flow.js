@@ -23,15 +23,18 @@ YUI.add('deployment-flow', function() {
   juju.components.DeploymentFlow = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
+      applications: React.PropTypes.array,
       changeState: React.PropTypes.func.isRequired,
       changes: React.PropTypes.object.isRequired,
       changesFilterByParent: React.PropTypes.func.isRequired,
+      charmsGetById: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.object,
       credential: React.PropTypes.string,
       deploy: React.PropTypes.func.isRequired,
       environment: React.PropTypes.object.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
+      getAgreements: React.PropTypes.func.isRequired,
       getAuth: React.PropTypes.func.isRequired,
       getCloudCredentialNames: React.PropTypes.func,
       getCloudCredentials: React.PropTypes.func,
@@ -47,6 +50,7 @@ YUI.add('deployment-flow', function() {
       modelName: React.PropTypes.string.isRequired,
       region: React.PropTypes.string,
       servicesGetById: React.PropTypes.func.isRequired,
+      showTerms: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func,
       updateModelName: React.PropTypes.func,
       withPlans: React.PropTypes.bool
@@ -136,7 +140,7 @@ YUI.add('deployment-flow', function() {
         case 'agreements':
           completed = false;
           disabled = false;
-          visible = false;
+          visible = true;
           break;
       }
       return {
@@ -562,9 +566,9 @@ YUI.add('deployment-flow', function() {
           showCheck={false}
           title="Model changes">
           <juju.components.DeploymentChanges
-          changes={this.props.changes}
-          generateAllChangeDescriptions={
-            this.props.generateAllChangeDescriptions} />
+            changes={this.props.changes}
+            generateAllChangeDescriptions={
+              this.props.generateAllChangeDescriptions} />
         </juju.components.DeploymentSection>);
     },
 
@@ -579,34 +583,13 @@ YUI.add('deployment-flow', function() {
       if (!status.visible) {
         return;
       }
-      var disabled = this.props.acl.isReadOnly();
       return (
-        <div>
-          <div className="deployment-flow__deploy-option">
-            <input className="deployment-flow__deploy-checkbox"
-              disabled={disabled}
-              id="emails"
-              type="checkbox" />
-            <label className="deployment-flow__deploy-label"
-              htmlFor="emails">
-              Please email me updates regarding feature
-              announcements, performance suggestions, feedback
-              surveys and special offers.
-            </label>
-          </div>
-          <div className="deployment-flow__deploy-option">
-            <input className="deployment-flow__deploy-checkbox"
-              disabled={disabled}
-              id="terms"
-              type="checkbox" />
-            <label className="deployment-flow__deploy-label"
-              htmlFor="terms">
-              I agree that my use of any services and related APIs
-              is subject to my compliance with the applicable&nbsp;
-              <a href="" target="_blank">Terms of service</a>.
-            </label>
-          </div>
-        </div>);
+        <juju.components.DeploymentTerms
+          acl={this.props.acl}
+          charmsGetById={this.props.charmsGetById}
+          getAgreements={this.props.getAgreements}
+          applications={this.props.applications}
+          showTerms={this.props.showTerms} />);
     },
 
     render: function() {
@@ -652,6 +635,7 @@ YUI.add('deployment-flow', function() {
     'deployment-panel',
     'deployment-section',
     'deployment-services',
+    'deployment-terms',
     'generic-button',
     'generic-input'
   ]
