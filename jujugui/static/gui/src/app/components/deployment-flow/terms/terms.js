@@ -26,21 +26,22 @@ YUI.add('deployment-terms', function() {
       applications: React.PropTypes.array,
       charmsGetById: React.PropTypes.func.isRequired,
       getAgreements: React.PropTypes.func.isRequired,
+      setTerms: React.PropTypes.func.isRequired,
       showTerms: React.PropTypes.func.isRequired,
+      terms: React.PropTypes.array.isRequired
     },
 
     getDefaultProps: function() {
       return {
-        applications: []
+        applications: [],
+        terms: []
       };
     },
 
     getInitialState: function() {
       this.xhrs = [];
       return {
-        loadingTerms: true,
-        termIds: null,
-        terms: []
+        loadingTerms: true
       };
     },
 
@@ -49,10 +50,10 @@ YUI.add('deployment-terms', function() {
     },
 
     componentWillReceiveProps: function(nextProps) {
-      const newApps = nextProps.applications;
-      const currentApps = this.props.applications;
+      const newApps = nextProps.applications.map(app => app.get('id'));
+      const currentApps = this.props.applications.map(app => app.get('id'));
       if (newApps.length !== currentApps.length ||
-        currentApps.filter(a => newApps.indexOf(a) === 0).length > 0) {
+        currentApps.filter(a => newApps.indexOf(a) === -1).length > 0) {
         this._getAgreements();
       }
     },
@@ -74,7 +75,8 @@ YUI.add('deployment-terms', function() {
       // If there are no charms with terms then we don't need to display
       // anything.
       if (terms.length === 0) {
-        this.setState({loadingTerms: false, termIds: null, terms: []});
+        this.props.setTerms([]);
+        this.setState({loadingTerms: false});
         return;
       }
       const xhr = this.props.getAgreements((error, agreements) => {
@@ -89,19 +91,16 @@ YUI.add('deployment-terms', function() {
           return agreed.indexOf(term) === -1;
         });
         // Reset the terms so that we don't keep pushing the same terms.
-        this.setState({termIds: newTerms, terms: []}, () => {
-          newTerms.forEach(term => {
-            const xhr = this.props.showTerms(term, null, (error, term) => {
-              if (error) {
-                console.error('cannot retrieve terms:', error);
-              }
-              this.setState({
-                terms: this.state.terms.concat([term])
-              });
-            });
-            this.xhrs.push(xhr);
-            this.setState({loadingTerms: false});
+        this.props.setTerms([]);
+        newTerms.forEach(term => {
+          const xhr = this.props.showTerms(term, null, (error, term) => {
+            if (error) {
+              console.error('cannot retrieve terms:', error);
+            }
+            this.props.setTerms(this.props.terms.concat([term]));
           });
+          this.xhrs.push(xhr);
+          this.setState({loadingTerms: false});
         });
         this.xhrs.push(xhr);
       });
@@ -115,11 +114,11 @@ YUI.add('deployment-terms', function() {
       @returns {Object} The terms markup.
     */
     _generateTerms: function() {
-      if (!this.state.termIds) {
+      if (this.props.terms.length === 0) {
         return;
       }
       let terms = [];
-      this.state.terms.forEach(term => {
+      this.props.terms.forEach(term => {
         terms.push(
           <li className="deployment-flow__terms-item"
             key={term.name}>
@@ -165,7 +164,9 @@ YUI.add('deployment-terms', function() {
             <juju.components.Spinner />
           </div>);
       }
-      if (!this.state.termIds) {
+      // Control the visibility of the terms component inside the component so
+      // it can do the terms lookup to determine if it needs to be visible.
+      if (this.props.terms.length === 0) {
         return <div></div>;
       }
       var disabled = this.props.acl.isReadOnly();

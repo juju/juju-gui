@@ -68,7 +68,8 @@ YUI.add('deployment-flow', function() {
         modelName: this.props.modelName,
         region: this.props.region,
         showChangelogs: false,
-        sshKey: null
+        sshKey: null,
+        terms: []
       };
     },
 
@@ -205,6 +206,16 @@ YUI.add('deployment-flow', function() {
     */
     _setBudget: function(budget) {
       this.setState({budget: budget});
+    },
+
+    /**
+      Store the terms in state.
+
+      @method _setBudget
+      @param {String} term The terms to agree to.
+    */
+    _setTerms: function(terms) {
+      this.setState({terms: terms});
     },
 
     /**
@@ -642,7 +653,9 @@ YUI.add('deployment-flow', function() {
           charmsGetById={this.props.charmsGetById}
           getAgreements={this.props.getAgreements}
           applications={this.props.applications}
-          showTerms={this.props.showTerms} />);
+          setTerms={this._setTerms}
+          showTerms={this.props.showTerms}
+          terms={this.state.terms} />);
     },
 
     /**
