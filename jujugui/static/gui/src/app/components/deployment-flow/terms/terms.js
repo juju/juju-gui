@@ -1,7 +1,7 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2016 Canonical Ltd.
+Copyright (C) 2017 Canonical Ltd.
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3, as published by
@@ -53,7 +53,7 @@ YUI.add('deployment-terms', function() {
       const newApps = nextProps.applications.map(app => app.get('id'));
       const currentApps = this.props.applications.map(app => app.get('id'));
       if (newApps.length !== currentApps.length ||
-        currentApps.filter(a => newApps.indexOf(a) === -1).length > 0) {
+        newApps.filter(a => currentApps.indexOf(a) === -1).length > 0) {
         this._getAgreements();
       }
     },
@@ -79,14 +79,18 @@ YUI.add('deployment-terms', function() {
         this.setState({loadingTerms: false});
         return;
       }
+      // Get all the terms the user has agreed to.
       const xhr = this.props.getAgreements((error, agreements) => {
         if (error) {
           console.error('cannot retrieve agreements:', error);
+          return;
         }
         agreements = agreements || [];
+        // Map the agreements to the term ids.
         const agreed = agreements.map(agreement => {
           return agreement.term;
         });
+        // Filter the terms for those the user hasn't already agreed to.
         const newTerms = terms.filter(term => {
           return agreed.indexOf(term) === -1;
         });
@@ -96,13 +100,13 @@ YUI.add('deployment-terms', function() {
           const xhr = this.props.showTerms(term, null, (error, term) => {
             if (error) {
               console.error('cannot retrieve terms:', error);
+              return;
             }
             this.props.setTerms(this.props.terms.concat([term]));
           });
           this.xhrs.push(xhr);
           this.setState({loadingTerms: false});
         });
-        this.xhrs.push(xhr);
       });
       this.xhrs.push(xhr);
     },
@@ -172,9 +176,7 @@ YUI.add('deployment-terms', function() {
       var disabled = this.props.acl.isReadOnly();
       return (
         <div>
-          <div>
-            {this._generateTerms()}
-          </div>
+          {this._generateTerms()}
           <div className="deployment-flow__deploy-option">
             <input className="deployment-flow__deploy-checkbox"
               disabled={disabled}

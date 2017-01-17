@@ -51,6 +51,9 @@ describe('DeploymentFlow', function() {
     var getCloudCredentialNames = sinon.stub();
     var servicesGetById = sinon.stub();
     var updateModelName = sinon.stub();
+    var charmsGetById = sinon.stub();
+    var getAgreements = sinon.stub();
+    var showTerms = sinon.stub();
     const getCloudProviderDetails = sinon.stub();
     const changes = {};
     const generateCloudCredentialName = sinon.stub();
@@ -59,16 +62,18 @@ describe('DeploymentFlow', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentFlow
         acl={acl}
-        updateCloudCredential={updateCloudCredential}
         changes={changes}
         changesFilterByParent={changesFilterByParent}
         changeState={changeState}
+        charmsGetById={charmsGetById}
         deploy={sinon.stub()}
+        environment={{}}
         generateAllChangeDescriptions={generateAllChangeDescriptions}
         generateCloudCredentialName={generateCloudCredentialName}
+        getAgreements={getAgreements}
         getAuth={sinon.stub()}
-        getCloudCredentials={getCloudCredentials}
         getCloudCredentialNames={getCloudCredentialNames}
+        getCloudCredentials={getCloudCredentials}
         getCloudProviderDetails={getCloudProviderDetails}
         getUserName={getUserName}
         groupedChanges={groupedChanges}
@@ -79,6 +84,8 @@ describe('DeploymentFlow', function() {
         modelCommitted={false}
         modelName="Pavlova"
         servicesGetById={servicesGetById}
+        showTerms={showTerms}
+        updateCloudCredential={updateCloudCredential}
         updateModelName={updateModelName}
         withPlans={true}>
         <span>content</span>
@@ -218,7 +225,14 @@ describe('DeploymentFlow', function() {
         </juju.components.DeploymentSection>
         <div className="twelve-col">
           <div className="deployment-flow__deploy">
-            {undefined}
+            <juju.components.DeploymentTerms
+              acl={acl}
+              charmsGetById={charmsGetById}
+              getAgreements={getAgreements}
+              applications={undefined}
+              setTerms={instance._setTerms}
+              showTerms={showTerms}
+              terms={[]} />
             <div className="deployment-flow__deploy-action">
               <juju.components.GenericButton
                 action={instance._handleDeploy}
@@ -246,19 +260,24 @@ describe('DeploymentFlow', function() {
     const changes = {};
     const generateCloudCredentialName = sinon.stub();
     const getUserName = sinon.stub();
+    const charmsGetById = sinon.stub();
+    const getAgreements = sinon.stub();
+    const showTerms = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentFlow
         acl={acl}
-        updateCloudCredential={updateCloudCredential}
         changes={changes}
         changesFilterByParent={changesFilterByParent}
         changeState={changeState}
+        charmsGetById={charmsGetById}
         deploy={sinon.stub()}
+        environment={{}}
         generateAllChangeDescriptions={generateAllChangeDescriptions}
         generateCloudCredentialName={generateCloudCredentialName}
+        getAgreements={getAgreements}
         getAuth={sinon.stub()}
-        getCloudCredentials={getCloudCredentials}
         getCloudCredentialNames={getCloudCredentialNames}
+        getCloudCredentials={getCloudCredentials}
         getCloudProviderDetails={sinon.stub()}
         getUserName={getUserName}
         groupedChanges={groupedChanges}
@@ -266,9 +285,12 @@ describe('DeploymentFlow', function() {
         listBudgets={listBudgets}
         listClouds={listClouds}
         listPlansForCharm={listPlansForCharm}
+        loginToController={sinon.stub()}
         modelCommitted={false}
         modelName="Pavlova"
         servicesGetById={servicesGetById}
+        showTerms={showTerms}
+        updateCloudCredential={updateCloudCredential}
         withPlans={true}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
@@ -333,7 +355,14 @@ describe('DeploymentFlow', function() {
         </juju.components.DeploymentSection>
         <div className="twelve-col">
           <div className="deployment-flow__deploy">
-            {undefined}
+            <juju.components.DeploymentTerms
+              acl={acl}
+              charmsGetById={charmsGetById}
+              getAgreements={getAgreements}
+              applications={undefined}
+              setTerms={instance._setTerms}
+              showTerms={showTerms}
+              terms={[]} />
             <div className="deployment-flow__deploy-action">
               <juju.components.GenericButton
                 action={instance._handleDeploy}
@@ -354,20 +383,25 @@ describe('DeploymentFlow', function() {
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={sinon.stub()}
+        charmsGetById={sinon.stub()}
         deploy={sinon.stub()}
+        environment={{}}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAgreements={sinon.stub()}
         getAuth={sinon.stub().returns(true)}
-        getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
         getUserName={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
+        loginToController={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
+        showTerms={sinon.stub()}
         updateCloudCredential={sinon.stub()}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
@@ -385,21 +419,26 @@ describe('DeploymentFlow', function() {
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={sinon.stub()}
+        charmsGetById={sinon.stub()}
         deploy={sinon.stub()}
+        environment={{}}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAgreements={sinon.stub()}
         getAuth={sinon.stub()}
-        getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
         getUserName={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
+        loginToController={sinon.stub()}
         modelCommitted={true}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
+        showTerms={sinon.stub()}
         updateCloudCredential={sinon.stub()}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
@@ -414,20 +453,25 @@ describe('DeploymentFlow', function() {
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={sinon.stub()}
+        charmsGetById={sinon.stub()}
         deploy={sinon.stub()}
+        environment={{}}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAgreements={sinon.stub()}
         getAuth={sinon.stub().returns(true)}
-        getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
         getUserName={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
+        loginToController={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
+        showTerms={sinon.stub()}
         updateCloudCredential={sinon.stub()}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
@@ -443,20 +487,25 @@ describe('DeploymentFlow', function() {
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={sinon.stub()}
+        charmsGetById={sinon.stub()}
         deploy={sinon.stub()}
+        environment={{}}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAgreements={sinon.stub()}
         getAuth={sinon.stub().returns(true)}
-        getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
         getUserName={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
+        loginToController={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
+        showTerms={sinon.stub()}
         updateCloudCredential={sinon.stub()}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
@@ -473,20 +522,25 @@ describe('DeploymentFlow', function() {
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={sinon.stub()}
+        charmsGetById={sinon.stub()}
         deploy={sinon.stub()}
+        environment={{}}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAgreements={sinon.stub()}
         getAuth={sinon.stub().returns(true)}
-        getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
         getUserName={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
+        loginToController={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
+        showTerms={sinon.stub()}
         updateCloudCredential={sinon.stub()}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
@@ -503,20 +557,25 @@ describe('DeploymentFlow', function() {
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={sinon.stub()}
+        charmsGetById={sinon.stub()}
         deploy={sinon.stub()}
+        environment={{}}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAgreements={sinon.stub()}
         getAuth={sinon.stub().returns(true)}
-        getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
         getUserName={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
+        loginToController={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
+        showTerms={sinon.stub()}
         updateCloudCredential={sinon.stub()}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
@@ -538,20 +597,25 @@ describe('DeploymentFlow', function() {
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={sinon.stub()}
+        charmsGetById={sinon.stub()}
         deploy={sinon.stub()}
+        environment={{}}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAgreements={sinon.stub()}
         getAuth={sinon.stub().returns(true)}
-        getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
         getUserName={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
+        loginToController={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
+        showTerms={sinon.stub()}
         updateCloudCredential={sinon.stub()}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
@@ -568,20 +632,25 @@ describe('DeploymentFlow', function() {
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={sinon.stub()}
+        charmsGetById={sinon.stub()}
         deploy={sinon.stub()}
+        environment={{}}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAgreements={sinon.stub()}
         getAuth={sinon.stub()}
-        getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
         getUserName={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
+        loginToController={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
+        showTerms={sinon.stub()}
         updateCloudCredential={sinon.stub()}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
@@ -599,20 +668,25 @@ describe('DeploymentFlow', function() {
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={sinon.stub()}
+        charmsGetById={sinon.stub()}
         deploy={sinon.stub()}
+        environment={{}}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAgreements={sinon.stub()}
         getAuth={sinon.stub()}
-        getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
         getUserName={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
+        loginToController={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
+        showTerms={sinon.stub()}
         updateCloudCredential={sinon.stub()}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
@@ -630,20 +704,25 @@ describe('DeploymentFlow', function() {
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={sinon.stub()}
+        charmsGetById={sinon.stub()}
         deploy={sinon.stub()}
+        environment={{}}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAgreements={sinon.stub()}
         getAuth={sinon.stub()}
-        getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
         getUserName={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
+        loginToController={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
+        showTerms={sinon.stub()}
         updateCloudCredential={sinon.stub()}
         withPlans={true}>
         <span>content</span>
@@ -698,12 +777,15 @@ describe('DeploymentFlow', function() {
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={sinon.stub()}
+        charmsGetById={sinon.stub()}
         deploy={sinon.stub()}
+        environment={{}}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAgreements={sinon.stub()}
         getAuth={sinon.stub().returns(false)}
-        getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
         getUserName={sinon.stub()}
         groupedChanges={groupedChanges}
@@ -714,6 +796,7 @@ describe('DeploymentFlow', function() {
         modelCommitted={true}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
+        showTerms={sinon.stub()}
         updateCloudCredential={sinon.stub()}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
@@ -756,6 +839,7 @@ describe('DeploymentFlow', function() {
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={changeState}
+        charmsGetById={sinon.stub()}
         deploy={deploy}
         environment={{set: (key, value) => {
           assert.strictEqual(key, 'name');
@@ -763,18 +847,21 @@ describe('DeploymentFlow', function() {
         }}}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAgreements={sinon.stub()}
         getAuth={sinon.stub().returns(true)}
-        getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
         getUserName={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
+        loginToController={sinon.stub()}
         modelCommitted={true}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
+        showTerms={sinon.stub()}
         updateCloudCredential={sinon.stub()}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
@@ -976,21 +1063,26 @@ describe('DeploymentFlow', function() {
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={changeState}
+        charmsGetById={sinon.stub()}
         deploy={deploy}
+        environment={{}}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAgreements={sinon.stub()}
         getAuth={sinon.stub()}
-        getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
         getUserName={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
+        loginToController={sinon.stub()}
         modelCommitted={true}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
+        showTerms={sinon.stub()}
         updateCloudCredential={sinon.stub()}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
@@ -1070,12 +1162,15 @@ describe('DeploymentFlow', function() {
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={changeState}
+        charmsGetById={sinon.stub()}
         deploy={deploy}
+        environment={{}}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAgreements={sinon.stub()}
         getAuth={sinon.stub()}
-        getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
         getUserName={sinon.stub()}
         groupedChanges={groupedChanges}
@@ -1083,9 +1178,11 @@ describe('DeploymentFlow', function() {
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
+        loginToController={sinon.stub()}
         modelCommitted={true}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
+        showTerms={sinon.stub()}
         updateCloudCredential={sinon.stub()}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
@@ -1112,20 +1209,25 @@ describe('DeploymentFlow', function() {
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={sinon.stub()}
+        charmsGetById={sinon.stub()}
         deploy={sinon.stub()}
+        environment={{}}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
+        getAgreements={sinon.stub()}
         getAuth={sinon.stub()}
-        getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
         getUserName={sinon.stub()}
         groupedChanges={groupedChanges}
         listBudgets={sinon.stub()}
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
+        loginToController={sinon.stub()}
         modelName="Pavlova"
         servicesGetById={sinon.stub()}
+        showTerms={sinon.stub()}
         updateCloudCredential={sinon.stub()}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
