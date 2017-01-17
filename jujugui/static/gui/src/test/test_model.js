@@ -2164,7 +2164,7 @@ describe('test_model.js', function() {
       assert.deepEqual(placement, expected);
     });
 
-    it('can determinte container placement for units', function() {
+    it('can determine container placement for units', function() {
       var machines = [{
         id: '0'
       }, {
@@ -2320,6 +2320,63 @@ describe('test_model.js', function() {
       var placement = db._mapServicesToMachines(db.machines);
       assert.deepEqual(placement, {});
     });
+
+    it('can include uncommmitted units when determining placement', function() {
+      var machine = { id: '0' };
+      var units = [{
+        service: 'wordpress',
+        id: 'wordpress/0',
+        machine: '0'
+      }, {
+        service: 'mysql',
+        id: 'mysql/0',
+        agent_state: 'started',
+        machine: '0'
+      }, {
+        service: 'apache2',
+        id: 'apache2/0',
+        agent_state: 'started',
+        machine: '0'
+      }];
+      db.machines.add(machine);
+      db.units.add(units, true);
+      var placement = db._mapServicesToMachines(db.machines, true);
+      var expected = {
+        wordpress: ['0'],
+        mysql: ['0'],
+        apache2: ['0']
+      };
+      assert.deepEqual(placement, expected);
+    });
+
+    it('can include uncommitted machines when determining placements',
+      function() {
+        var machine = { id: 'new0', commitStatus: 'uncommitted' };
+        var units = [{
+          service: 'wordpress',
+          id: 'wordpress/0',
+          agent_state: 'started',
+          machine: 'new0'
+        }, {
+          service: 'mysql',
+          id: 'mysql/0',
+          agent_state: 'started',
+          machine: 'new0'
+        }, {
+          service: 'apache2',
+          id: 'apache2/0',
+          agent_state: 'started',
+          machine: 'new0'
+        }];
+        db.machines.add(machine);
+        db.units.add(units, true);
+        var placement = db._mapServicesToMachines(db.machines, true);
+        assert.deepEqual(placement, {
+          wordpress: ['new0'],
+          mysql: ['new0'],
+          apache2: ['new0']
+        });
+      });
 
     it('ignores machines with no units when determining placements',
         function() {
