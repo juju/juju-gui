@@ -62,7 +62,7 @@ function transpile (fileList) {
     }, (err, data) => {
       console.log('Transpiling', fullPath);
       mkdirp.sync(directory);
-      const full = babel.transform(data, { plugins });
+      const full = babel.transform(data, { plugins, compact: false });
       fs.writeFile(fullPath, full.code);
       const min = babel.transform(data, {
         presets: ['babel-preset-babili'],
