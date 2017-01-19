@@ -908,7 +908,7 @@ YUI.add('juju-topology-service', function(Y) {
       ziputils.getEntries(
           file,
           this._findCharmEntries.bind(this, file, topo, env, db),
-          this._zipExtractionError.bind(this, db, topo));
+          this._zipExtractionError.bind(this, db, topo, file));
     },
 
     /**
