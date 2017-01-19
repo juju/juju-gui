@@ -41,6 +41,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     beforeEach(function() {
       state = factory.makeFakeBackend();
+      sinon.spy(state, 'updateAnnotations');
       juju = new sandboxModule.GoJujuAPI({
         state: state,
         socket_url: 'socket url'
@@ -58,6 +59,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     afterEach(function() {
+      state.updateAnnotations.restore();
       // We need to clear any credentials stored in sessionStorage.
       const destroyAPI = api => {
         if (api.get('connected')) {
@@ -676,14 +678,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can set annotations', function(done) {
+      const entityId = 'wordpress';
+      const annotations = {foo: 'bar'};
       generateApplications(function() {
         var data = {
           type: 'Annotations',
           request: 'Set',
           params: {
             annotations: [{
-              entity: 'application-wordpress',
-              annotations: {'foo': 'bar'}
+              entity: 'application-' + entityId,
+              annotations: annotations
             }]
           },
           'request-id': 42
@@ -691,6 +695,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         client.onmessage = function(received) {
           var receivedData = JSON.parse(received.data);
           assert.isUndefined(receivedData.error);
+          const updateCall = state.updateAnnotations.args[0];
+          assert.equal(updateCall[0], entityId);
+          assert.deepEqual(updateCall[1], annotations);
           assert.deepEqual(receivedData.response, {});
           done();
         };

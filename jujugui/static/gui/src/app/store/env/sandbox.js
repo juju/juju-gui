@@ -1091,7 +1091,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       var args = data.params.annotations[0];
       var entityId = /^(application|unit|machine|model)-([^ ]*)$/.
           exec(args.entity)[2];
-      var result = state.updateAnnotations(entityId, args.Annotations);
+      var result = state.updateAnnotations(entityId, args.annotations);
       this._basicReceive(data, client, result);
     },
 
