@@ -1659,13 +1659,23 @@ YUI.add('juju-view-utils', function(Y) {
         message: (
           <p>
             The following fields require your Windows Azure management
-            information. For more information please see:&nbsp;
+            information. Having Juju installed, is really easy to&nbsp;
             <a className="deployment-panel__link"
-              href="https://msdn.microsoft.com/en-us/library/windowsazure"
+              href='https://jujucharms.com/docs/2.0/help-azure#credentials'
               target="_blank">
-              https://msdn.microsoft.com/en-us/library/windowsazure
+              set up credentials interactively
             </a>
-            &nbsp;for details.
+            . All required values are then available and can be displayed
+            running<br/>
+            "juju credentials --show-secrets --format yaml azure".<br/>
+            Is it also possible to&nbsp;
+            <a className="deployment-panel__link"
+              href={'https://jujucharms.com/docs/2.0/help-azure' +
+                    '#manually-adding-credentials'}
+              target="_blank">
+              manually add credentials
+            </a>
+            .
           </p>)
       },
       'ec2': {
