@@ -715,8 +715,13 @@ describe.skip('service module events', function() {
       }
     };
     var fileObj = { name: 'foo' };
-
-    serviceModule._zipExtractionError(dbObj, fileObj);
+    const fadeHelpIndicator = sinon.stub();
+    const topo = {
+      get: sinon.stub().returns({
+        fadeHelpIndicator: fadeHelpIndicator
+      })
+    };
+    serviceModule._zipExtractionError(dbObj, topo, fileObj);
 
     assert.deepEqual(notificationParams, {
       title: 'Import failed',
@@ -724,6 +729,7 @@ describe.skip('service module events', function() {
           'error object',
       level: 'error'
     });
+    assert.equal(fadeHelpIndicator.callCount, 1);
   });
 
   it('_showUpgradeOrNewInspector: shows the inspector', function() {

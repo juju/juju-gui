@@ -908,7 +908,7 @@ YUI.add('juju-topology-service', function(Y) {
       ziputils.getEntries(
           file,
           this._findCharmEntries.bind(this, file, topo, env, db),
-          this._zipExtractionError.bind(this, db));
+          this._zipExtractionError.bind(this, db, topo, file));
     },
 
     /**
@@ -933,6 +933,8 @@ YUI.add('juju-topology-service', function(Y) {
               'file, missing metadata.yaml',
           level: 'error'
         });
+        // Hide the file drop overlay.
+        topo.get('environmentView').fadeHelpIndicator(false);
         return;
       }
       this._readCharmEntries(file, topo, env, db, entries);
@@ -953,7 +955,7 @@ YUI.add('juju-topology-service', function(Y) {
       ziputils.readCharmEntries(
           entries,
           this._checkForExistingServices.bind(this, file, topo, env, db),
-          this._zipExtractionError.bind(this, db, file));
+          this._zipExtractionError.bind(this, db, topo, file));
     },
 
     /**
@@ -986,17 +988,20 @@ YUI.add('juju-topology-service', function(Y) {
 
       @method _zipExtractError
       @param {Object} db Reference to the app db.
+      @param {Object} topo The topology.
       @param {Object} file The dropped file.
       @param {Object} error The error returned from the zip lib.
     */
-    _zipExtractionError: function(db, file, error) {
+    _zipExtractionError: function(db, topo, file, error) {
       db.notifications.add({
         title: 'Import failed',
-        message: 'Import from "' + file.name + '" failed. See console for' +
+        message: 'Import from "' + file.name + '" failed. See console for ' +
             'error object',
         level: 'error'
       });
       console.error(error);
+      // Hide the file drop overlay.
+      topo.get('environmentView').fadeHelpIndicator(false);
     },
 
     /**

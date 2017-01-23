@@ -115,6 +115,7 @@ YUI.add('juju-view-environment', function(Y) {
           size: [640, 480],
           ecs: this.get('ecs'),
           env: this.get('env'),
+          environmentView: this,
           db: this.get('db'),
           bundleImporter: this.get('bundleImporter'),
           container: container,
