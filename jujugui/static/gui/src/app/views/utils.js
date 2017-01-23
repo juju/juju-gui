@@ -1644,15 +1644,12 @@ YUI.add('juju-view-utils', function(Y) {
         svgWidth: 204,
         title: 'Microsoft Azure',
         forms: {
-          userpass: [{
+          'service-principal-secret': [{
             id: 'application-id',
             title: 'Azure Active Directory application ID'
           }, {
             id: 'subscription-id',
             title: 'Azure subscription ID'
-          }, {
-            id: 'tenant-id',
-            title: 'Azure Active Directory tenant ID'
           }, {
             id: 'application-password',
             title: 'Azure Active Directory application password',
