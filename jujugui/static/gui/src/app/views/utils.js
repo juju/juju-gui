@@ -1659,13 +1659,15 @@ YUI.add('juju-view-utils', function(Y) {
         message: (
           <p>
             The following fields require your Windows Azure management
-            information. For more information please see:&nbsp;
+            information. For instructions on retrieving the required
+            information please see:&nbsp;
             <a className="deployment-panel__link"
-              href="https://msdn.microsoft.com/en-us/library/windowsazure"
+              href={'https://jujucharms.com/docs/2.0/help-azure' +
+                    '#manually-adding-credentials'}
               target="_blank">
-              https://msdn.microsoft.com/en-us/library/windowsazure
+              the Azure Juju documentation
             </a>
-            &nbsp;for details.
+            .
           </p>)
       },
       'ec2': {
