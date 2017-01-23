@@ -2113,7 +2113,9 @@ YUI.add('juju-gui', function(Y) {
     */
     _appDragOverHandler: function(e) {
       e.preventDefault(); // required to allow items to be dropped
-      if (!this._determineFileType(e.dataTransfer)) {
+      // In this case, we want an empty string to be a truthy value.
+      const fileType = this._determineFileType(e.dataTransfer);
+      if (fileType === false) {
         return; // Ignore if it's not a supported type
       }
       if (e.type === 'dragenter') {
@@ -2147,12 +2149,12 @@ YUI.add('juju-gui', function(Y) {
       Takes the information from the dataTransfer object to determine what
       kind of file the user is dragging over the canvas.
 
-      Unfortunately Chrome, Firefox, And IE in OSX and Windows do not show mime
-      types for files that it is not familiar with. This isn't an issue once the
-      user has dropped the file because we can parse the file name but while
-      it's still hovering the browser only tells us the mime type if it knows
-      it, else it's an empty string. This means that we cannot determine between
-      a yaml file or a folder during hover.
+      Unfortunately Safari and IE do not show mime types for files that they
+      are not familiar with. This isn't an issue once the user has dropped the
+      file because we can parse the file name but while it's still hovering the
+      browser only tells us the mime type if it knows it, else it's an empty
+      string. This means that we cannot determine between a yaml file or a
+      folder during hover.
       Bug: https://code.google.com/p/chromium/issues/detail?id=342554
       Real mime type for yaml files should be: application/x-yaml
 
@@ -2174,7 +2176,7 @@ YUI.add('juju-gui', function(Y) {
         return false;
       }
 
-      // IE10, 11 and Firefox do not have this property during hover so we
+      // IE10, 11 and Safari do not have this property during hover so we
       // cannot tell what type of file is being hovered over the canvas.
       if (dataTransfer.items) {
         // See method doc for bug information.
