@@ -238,15 +238,15 @@
 
   // Import and export
   // scss-lint:disable IdSelector
-  #import-export-container { // sass-lint:disable-line no-ids, id-name-format
+  #model-actions-container { // sass-lint:disable-line no-ids, id-name-format
     // scss-lint:enable IdSelector
     bottom: 25px;
     left: 10px;
     position: fixed;
   }
 
-  .import-export__export,
-  .import-export__import {
+  .model-actions__export,
+  .model-actions__import {
     top: -6px;
     left: 0;
   }

@@ -23,12 +23,12 @@ var juju = {components: {}}; // eslint-disable-line no-unused-vars
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('ImportExport', function() {
+describe('ModelActions', function() {
   var acl;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
-    YUI().use('import-export', function() { done(); });
+    YUI().use('model-actions', function() { done(); });
   });
 
   beforeEach(function() {
@@ -38,7 +38,7 @@ describe('ImportExport', function() {
   it('can render and pass the correct props', function() {
     var currentChangeSet = {one: 1, two: 2};
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.ImportExport
+      <juju.components.ModelActions
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -50,13 +50,13 @@ describe('ImportExport', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="import-export">
-        <span className="import-export__export link tooltip"
+      <div className="model-actions">
+        <span className="model-actions__export link tooltip"
           onClick={instance._handleExport}
           role="button"
           tabIndex="0">
           <juju.components.SvgIcon name="export_16"
-            className="import-export__icon"
+            className="model-actions__icon"
             size="16" />
           <span className="tooltip__tooltip--below">
             <span className="tooltip__inner tooltip__inner--up">
@@ -64,12 +64,12 @@ describe('ImportExport', function() {
             </span>
           </span>
         </span>
-        <span className="import-export__import link tooltip"
+        <span className="model-actions__import link tooltip"
           onClick={instance._handleImportClick}
           role="button"
           tabIndex="0">
           <juju.components.SvgIcon name="import_16"
-            className="import-export__icon"
+            className="model-actions__icon"
             size="16" />
           <span className="tooltip__tooltip--below">
             <span className="tooltip__inner tooltip__inner--up">
@@ -77,7 +77,7 @@ describe('ImportExport', function() {
             </span>
           </span>
         </span>
-        <input className="import-export__file"
+        <input className="model-actions__file"
           type="file"
           onChange={instance._handleImportFile}
           accept=".zip,.yaml,.yml"
@@ -89,7 +89,7 @@ describe('ImportExport', function() {
   it('sets the initial class if there are no changes or entites', function() {
     var currentChangeSet = {};
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.ImportExport
+      <juju.components.ModelActions
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -100,13 +100,13 @@ describe('ImportExport', function() {
         renderDragOverNotification={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     assert.equal(output.props.className,
-      'import-export import-export--initial');
+      'model-actions model-actions--initial');
   });
 
   it('does not set the initial class if there are entites', function() {
     var currentChangeSet = {};
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.ImportExport
+      <juju.components.ModelActions
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -117,14 +117,14 @@ describe('ImportExport', function() {
         renderDragOverNotification={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     assert.equal(output.props.className,
-      'import-export');
+      'model-actions');
   });
 
   it('can export the env', function() {
     var currentChangeSet = {one: 1, two: 2};
     var exportEnvironmentFile = sinon.stub();
     var output = jsTestUtils.shallowRender(
-      <juju.components.ImportExport
+      <juju.components.ModelActions
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -145,7 +145,7 @@ describe('ImportExport', function() {
     var renderDragOverNotification = sinon.stub();
     var exportEnvironmentFile = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.ImportExport
+      <juju.components.ModelActions
         acl={acl}
         changeState={sinon.stub()}
         exportEnvironmentFile={exportEnvironmentFile}
@@ -168,7 +168,7 @@ describe('ImportExport', function() {
     var renderDragOverNotification = sinon.stub();
     var exportEnvironmentFile = sinon.stub();
     var shallowRenderer = jsTestUtils.shallowRender(
-      <juju.components.ImportExport
+      <juju.components.ModelActions
         acl={acl}
         changeState={sinon.stub()}
         exportEnvironmentFile={exportEnvironmentFile}
@@ -191,7 +191,7 @@ describe('ImportExport', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     var currentChangeSet = {one: 1, two: 2};
     var renderer = jsTestUtils.shallowRender(
-      <juju.components.ImportExport
+      <juju.components.ModelActions
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
@@ -203,13 +203,13 @@ describe('ImportExport', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <div className="import-export">
-        <span className="import-export__export link tooltip"
+      <div className="model-actions">
+        <span className="model-actions__export link tooltip"
           onClick={instance._handleExport}
           role="button"
           tabIndex="0">
           <juju.components.SvgIcon name="export_16"
-            className="import-export__icon"
+            className="model-actions__icon"
             size="16" />
           <span className="tooltip__tooltip--below">
             <span className="tooltip__inner tooltip__inner--up">
@@ -217,12 +217,12 @@ describe('ImportExport', function() {
             </span>
           </span>
         </span>
-        <span className="import-export__import link tooltip"
+        <span className="model-actions__import link tooltip"
           onClick={false}
           role="button"
           tabIndex="0">
           <juju.components.SvgIcon name="import_16"
-            className="import-export__icon"
+            className="model-actions__icon"
             size="16" />
           <span className="tooltip__tooltip--below">
             <span className="tooltip__inner tooltip__inner--up">
@@ -230,7 +230,7 @@ describe('ImportExport', function() {
             </span>
           </span>
         </span>
-        <input className="import-export__file"
+        <input className="model-actions__file"
           type="file"
           onChange={null}
           accept=".zip,.yaml,.yml"

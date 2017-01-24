@@ -18,9 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('import-export', function() {
+YUI.add('model-actions', function() {
 
-  juju.components.ImportExport = React.createClass({
+  juju.components.ModelActions = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
@@ -76,9 +76,9 @@ YUI.add('import-export', function() {
     */
     _generateClasses: function() {
       return classNames(
-        'import-export',
+        'model-actions',
         {
-          'import-export--initial': !this.props.hasEntities &&
+          'model-actions--initial': !this.props.hasEntities &&
             Object.keys(this.props.currentChangeSet).length === 0
         }
       );
@@ -88,12 +88,12 @@ YUI.add('import-export', function() {
       var isReadOnly = this.props.acl.isReadOnly();
       return (
         <div className={this._generateClasses()}>
-          <span className="import-export__export link tooltip"
+          <span className="model-actions__export link tooltip"
             onClick={this._handleExport}
             role="button"
             tabIndex="0">
             <juju.components.SvgIcon name="export_16"
-              className="import-export__icon"
+              className="model-actions__icon"
               size="16" />
             <span className="tooltip__tooltip--below">
               <span className="tooltip__inner tooltip__inner--up">
@@ -101,12 +101,12 @@ YUI.add('import-export', function() {
               </span>
             </span>
           </span>
-          <span className="import-export__import link tooltip"
+          <span className="model-actions__import link tooltip"
             onClick={!isReadOnly && this._handleImportClick}
             role="button"
             tabIndex="0">
             <juju.components.SvgIcon name="import_16"
-              className="import-export__icon"
+              className="model-actions__icon"
               size="16" />
             <span className="tooltip__tooltip--below">
               <span className="tooltip__inner tooltip__inner--up">
@@ -114,7 +114,7 @@ YUI.add('import-export', function() {
               </span>
             </span>
           </span>
-          <input className="import-export__file"
+          <input className="model-actions__file"
             type="file"
             onChange={isReadOnly ? null : this._handleImportFile}
             accept=".zip,.yaml,.yml"

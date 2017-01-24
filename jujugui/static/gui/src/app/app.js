@@ -1342,14 +1342,14 @@ YUI.add('juju-gui', function(Y) {
       Renders the import and export component to the page in the
       designated element.
 
-      @method _renderImportExport
+      @method _renderModelActions
     */
-    _renderImportExport: function() {
+    _renderModelActions: function() {
       const env = this.env;
       const db = this.db;
       const utils = views.utils;
       ReactDOM.render(
-        <window.juju.components.ImportExport
+        <window.juju.components.ModelActions
           acl={this.acl}
           changeState={this.state.changeState.bind(this.state)}
           currentChangeSet={env.get('ecs').getCurrentChangeSet()}
@@ -1363,7 +1363,7 @@ YUI.add('juju-gui', function(Y) {
             this.bundleImporter)}
           renderDragOverNotification={
             this._renderDragOverNotification.bind(this)} />,
-        document.getElementById('import-export-container'));
+        document.getElementById('model-actions-container'));
     },
 
     /**
@@ -2701,7 +2701,7 @@ YUI.add('juju-gui', function(Y) {
         this.db.machines.filterByParent().length
       );
       this._renderDeploymentBar();
-      this._renderImportExport();
+      this._renderModelActions();
       this._renderProviderLogo();
       this._renderZoom();
       this._renderBreadcrumb();
@@ -2992,7 +2992,7 @@ YUI.add('juju-gui', function(Y) {
     'deployment-signup',
     'env-size-display',
     'header-breadcrumb',
-    'import-export',
+    'model-actions',
     'expanding-progress',
     'header-search',
     'inspector-component',

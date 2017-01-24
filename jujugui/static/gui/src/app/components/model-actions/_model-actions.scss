@@ -1,12 +1,12 @@
 // scss-lint:disable IdSelector
-#import-export-container { // sass-lint:disable-line no-ids, id-name-format
+#model-actions-container { // sass-lint:disable-line no-ids, id-name-format
   @extend .vertical-center;
   float: left;
   margin-left: 10px;
 }
 // scss-lint:enable IdSelector
 
-.import-export {
+.model-actions {
   &__export,
   &__import {
     padding: 10px 11px;
