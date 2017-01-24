@@ -22,11 +22,17 @@
   }
 
   &__close {
+    margin-bottom: 10px;
     text-align: right;
 
-    button {
-      width: auto;
+    .button--base {
       display: inline-block;
+      width: auto;
+      padding: 0;
+
+      &:hover {
+        background: none;
+      }
     }
   }
 
