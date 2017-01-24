@@ -1,13 +1,33 @@
 .confirmation-popup {
   &__panel {
-    $width: 420px;
     @extend %floating-panel;
     position: absolute;
-    top: calc(50% - 150px);
-    left: calc(50% - (#{$width} / 2));
-    width: $width - 40px;
     padding: 20px;
     box-shadow: 0 7px 20px .15px rgba(0, 0, 0, .2);
+
+    &--narrow {
+      $width: 420px;
+      top: calc(50% - 150px);
+      left: calc(50% - (#{$width} / 2));
+      width: $width - 40px;
+    }
+
+    &--wide {
+      $spacing: 40px;
+      top: $spacing;
+      bottom: $spacing;
+      left: $spacing;
+      right: $spacing;
+    }
+  }
+
+  &__close {
+    text-align: right;
+
+    button {
+      width: auto;
+      display: inline-block;
+    }
   }
 
   &__title {

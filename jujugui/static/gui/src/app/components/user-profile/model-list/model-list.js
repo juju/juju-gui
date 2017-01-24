@@ -163,8 +163,9 @@ YUI.add('user-profile-model-list', function() {
       return (
         <juju.components.ConfirmationPopup
           buttons={buttons}
-          message={message}
-          title="Destroy model" />);
+          title="Destroy model">
+          <p>{message}</p>
+        </juju.components.ConfirmationPopup>);
     },
 
     /**

@@ -575,12 +575,14 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentServices
             acl={this.props.acl}
             changesFilterByParent={this.props.changesFilterByParent}
+            charmsGetById={this.props.charmsGetById}
             generateAllChangeDescriptions={
               this.props.generateAllChangeDescriptions}
             groupedChanges={this.props.groupedChanges}
             listPlansForCharm={this.props.listPlansForCharm}
             servicesGetById={this.props.servicesGetById}
             showChangelogs={this.state.showChangelogs}
+            showTerms={this.props.showTerms}
             withPlans={this.props.withPlans} />
         </juju.components.DeploymentSection>);
     },

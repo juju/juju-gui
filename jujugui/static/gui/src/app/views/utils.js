@@ -1353,9 +1353,12 @@ YUI.add('juju-view-utils', function(Y) {
     ReactDOM.render(
       <window.juju.components.ConfirmationPopup
         buttons={buttons}
-        message={'You have uncommitted changes to your model. You will ' +
-          'lose these changes if you continue.'}
-        title="Uncommitted changes" />,
+        title="Uncommitted changes">
+        <p>
+          You have uncommitted changes to your model. You will
+          lose these changes if you continue.
+        </p>
+      </window.juju.components.ConfirmationPopup>,
       document.getElementById('popup-container'));
   };
 
