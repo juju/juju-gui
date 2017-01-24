@@ -22,4 +22,17 @@
   &__terms {
     list-style: none;
   }
+
+  &__link {
+    text-align: right;
+
+    .button--base {
+      width: auto;
+      padding: 0;
+
+      &:hover {
+        background-color: transparent;
+      }
+    }
+  }
 }

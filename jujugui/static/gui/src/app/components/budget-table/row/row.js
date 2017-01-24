@@ -324,7 +324,8 @@ YUI.add('budget-table-row', function() {
       const terms = this._getTermIds();
       if (terms && terms.length > 0) {
         return (
-          <div className="two-col prepend-five no-margin-bottom">
+          <div className={
+            'two-col prepend-five no-margin-bottom budget-table-row__link'}>
             <juju.components.GenericButton
               action={this._toggleTerms}
               type="base"
