@@ -185,6 +185,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     {name: 'Charms', versions: [2]},
     {name: 'Client', versions: [1]},
     {name: 'Cloud', versions: [1]},
+    {name: 'KeyManager', versions: [1]},
     {name: 'ModelManager', versions: [2]},
     {name: 'Pinger', versions: [1]},
     {name: 'Resources', versions: [1]}
@@ -1514,6 +1515,23 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleApplicationRemoteApplicationInfo: function(data, client, state) {
       console.log('remote applications are not supported in sandbox mode');
+    },
+
+    /**
+      Handle KeyManager.ListKeys messages.
+
+      @method handleKeyManagerListKeys
+      @param {Object} data The contents of the API arguments.
+      @param {Object} client The active ClientConnection.
+      @param {Object} state An instance of FakeBackend.
+    */
+    handleKeyManagerListKeys: function(data, client, state) {
+      client.receive({
+        'request-id': data['request-id'],
+        response: {results: [{
+          result: ['sandbox SSH key']
+        }]}
+      });
     },
 
     /**

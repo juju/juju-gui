@@ -1433,6 +1433,31 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    describe('KeyManager facade', function() {
+      it('can list available keys', function(done) {
+        client.onmessage = function(received) {
+          const data = JSON.parse(received.data);
+          assert.deepEqual(data, {
+            'request-id': 42,
+            response: {results: [{
+              result: ['sandbox SSH key']
+            }]}
+          });
+          done();
+        };
+        client.open();
+        client.send(JSON.stringify({
+          'request-id': 42,
+          type: 'KeyManager',
+          request: 'ListKeys',
+          params: {
+            entities: {entities: [{tag: 'user-admin'}]},
+            mode: true
+          }
+        }));
+      });
+    });
+
     describe('Cloud facade', function() {
       it('can list available clouds', function(done) {
         client.onmessage = function(received) {

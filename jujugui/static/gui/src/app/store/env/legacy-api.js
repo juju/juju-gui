@@ -2513,6 +2513,23 @@ YUI.add('juju-env-legacy-api', function(Y) {
     listModelsWithInfo: function(callback) {
       // TODO frankban: implement by only using listModels.
       callback('not implemented', []);
+    },
+
+    /**
+      Return the authorized SSH keys for the specified user.
+      Only defined for API compatibility, but not implemented for legacy Juju.
+
+      @method listKeys
+      @param {String} user The user for whom the keys must be listed.
+      @param {Boolean} requestFullKeys Whether to pass full keys to the
+        callback, or just the SSH key fingerprints.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive two arguments: an error string
+        and the list of keys as strings. If the operation succeeds, the error
+        is null.
+    */
+    listKeys: function(user, requestFullKeys, callback) {
+      callback('not implemented', []);
     }
 
   });
