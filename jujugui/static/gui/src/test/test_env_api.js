@@ -125,6 +125,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Client: [1],
         CrossModelRelations: [1],
         GUIToken: [46, 47],
+        KeyManager: [77],
         ModelConfig: [41, 42],
         ModelManager: [2],
         Pinger: [42],
@@ -3056,6 +3057,116 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    describe('listKeys', function() {
+      it('retrieves keys', function(done) {
+        // Perform the request.
+        env.listKeys('who', true, (err, keys) => {
+          assert.strictEqual(err, null);
+          assert.deepEqual(keys, ['ssh-rsa key1', 'ssh-rsa key2']);
+          const msg = conn.last_message();
+          assert.deepEqual(msg, {
+            'request-id': 1,
+            type: 'KeyManager',
+            request: 'ListKeys',
+            version: 77,
+            params: {
+              entities: {entities: [{tag: 'user-who'}]},
+              mode: true
+            }
+          });
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {results: [{
+            result: ['ssh-rsa key1', 'ssh-rsa key2']
+          }]}
+        });
+      });
+
+      it('retrieves key fingerprints', function(done) {
+        // Perform the request.
+        env.listKeys('dalek', false, (err, keys) => {
+          assert.strictEqual(err, null);
+          assert.deepEqual(keys, ['fingerprint']);
+          const msg = conn.last_message();
+          assert.deepEqual(msg, {
+            'request-id': 1,
+            type: 'KeyManager',
+            request: 'ListKeys',
+            version: 77,
+            params: {
+              entities: {entities: [{tag: 'user-dalek'}]},
+              mode: false
+            }
+          });
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {results: [{
+            result: ['fingerprint']
+          }]}
+        });
+      });
+
+      it('handles request failures while retrieving keys', function(done) {
+        // Perform the request.
+        env.listKeys('who', false, (err, keys) => {
+          assert.strictEqual(err, 'bad wolf');
+          assert.deepEqual(keys, []);
+          done();
+        });
+        // Mimic response.
+        conn.msg({'request-id': 1, error: 'bad wolf'});
+      });
+
+      it('handles API failures while retrieving keys', function(done) {
+        // Perform the request.
+        env.listKeys('dalek', false, (err, keys) => {
+          assert.strictEqual(
+            err, 'cannot list keys: bad wolf');
+          assert.deepEqual(keys, []);
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {results: [{error: {message: 'bad wolf'}}]}
+        });
+      });
+
+      it('fails for unexpected results', function(done) {
+        // Perform the request.
+        env.listKeys('cyberman', false, (err, keys) => {
+          assert.strictEqual(err, 'unexpected results: [{},{}]');
+          assert.deepEqual(keys, []);
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {results: [{}, {}]}
+        });
+      });
+
+      it('fails for no results', function(done) {
+        // Perform the request.
+        env.listKeys('rose', false, (err, keys) => {
+          assert.strictEqual(err, 'unexpected results: []');
+          assert.deepEqual(keys, []);
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {results: []}
+        });
+      });
+    });
+
     it('offers endpoints', function(done) {
       // Define the asynchronous callback.
       var callback = function(data) {
@@ -3208,7 +3319,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }]);
           assert.strictEqual(info.icon, 'i am an svg icon');
           const msg = conn.last_message();
-          console.log(msg);
           assert.deepEqual(msg, {
             'request-id': 1,
             type: 'Application',

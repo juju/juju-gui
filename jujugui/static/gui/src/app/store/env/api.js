@@ -2502,6 +2502,59 @@ YUI.add('juju-env-api', function(Y) {
     },
 
     /**
+      Return the authorized SSH keys for the specified user.
+
+      @method listKeys
+      @param {String} user The user for whom the keys must be listed.
+      @param {Boolean} requestFullKeys Whether to request full keys or just the
+        SSH key fingerprints to be returned and passed to the callback.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive two arguments: an error string
+        and the list of keys as strings. If the operation succeeds, the error
+        is null.
+    */
+    listKeys: function(user, requestFullKeys, callback) {
+      if (!user) {
+        callback('no user provided', []);
+        return;
+      }
+      const handler = data => {
+        if (!callback) {
+          console.log('data returned by KeyManager.ListKeys API call:', data);
+          return;
+        }
+        if (data.error) {
+          callback(data.error, []);
+          return;
+        }
+        const results = data.response && data.response.results;
+        if (!results || results.length !== 1) {
+          // This should never happen.
+          callback('unexpected results: ' + JSON.stringify(results), []);
+          return;
+        }
+        const result = results[0];
+        const err = result.error && result.error.message;
+        if (err) {
+          callback('cannot list keys: ' + err, []);
+          return;
+        }
+        callback(null, result.result);
+      };
+
+      // Send the API call.
+      const entityTag = tags.build(tags.USER, user);
+      this._send_rpc({
+        type: 'KeyManager',
+        request: 'ListKeys',
+        params: {
+          entities: {entities: [{tag: entityTag}]},
+          mode: !!requestFullKeys
+        }
+      }, handler);
+    },
+
+    /**
       Make application endpoints available for consumption.
 
       @method offer
