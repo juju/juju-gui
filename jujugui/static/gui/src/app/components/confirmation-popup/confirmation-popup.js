@@ -26,9 +26,78 @@ YUI.add('confirmation-popup', function() {
   */
   juju.components.ConfirmationPopup = React.createClass({
     propTypes: {
-      buttons: React.PropTypes.array.isRequired,
-      message: React.PropTypes.string.isRequired,
-      title: React.PropTypes.string.isRequired
+      buttons: React.PropTypes.array,
+      children: React.PropTypes.oneOfType([
+        React.PropTypes.object,
+        React.PropTypes.array
+      ]),
+      close: React.PropTypes.func,
+      title: React.PropTypes.string,
+      type: React.PropTypes.string
+    },
+
+    getDefaultProps: function() {
+      return {type: 'narrow'};
+    },
+
+    /**
+     Generate the buttons component if required.
+
+     @method _generateButtons
+    */
+    _generateButtons: function() {
+      const buttons = this.props.buttons;
+      if (buttons) {
+        return (
+          <juju.components.ButtonRow
+            buttons={buttons} />);
+      }
+    },
+
+    /**
+     Generate the close component if required.
+
+     @method _generateClose
+    */
+    _generateClose: function() {
+      const close = this.props.close;
+      if (close) {
+        return (
+          <div className="confirmation-popup__close">
+            <juju.components.GenericButton
+               action={close}
+               type="base"
+               icon="close_16" />
+           </div>);
+      }
+    },
+
+    /**
+     Generate the title if required.
+
+     @method _generateTitle
+    */
+    _generateTitle: function() {
+      const title = this.props.title;
+      if (title) {
+        return (
+          <h3 className="confirmation-popup__title">
+            {title}
+          </h3>);
+      }
+    },
+
+    /**
+      Generate the classes based on the props.
+
+      @method _generateClasses
+      @returns {String} The collection of class names.
+    */
+    _generateClasses: function() {
+      return classNames(
+        'confirmation-popup__panel',
+        `confirmation-popup__panel--${this.props.type}`
+      );
     },
 
     render: function() {
@@ -36,13 +105,11 @@ YUI.add('confirmation-popup', function() {
         <juju.components.Panel
           instanceName="confirmation-popup"
           visible={true}>
-          <div className="confirmation-popup__panel">
-            <h3 className="confirmation-popup__title">
-              {this.props.title}
-            </h3>
-            <p>{this.props.message}</p>
-            <juju.components.ButtonRow
-              buttons={this.props.buttons} />
+          <div className={this._generateClasses()}>
+            {this._generateClose()}
+            {this._generateTitle()}
+            {this.props.children}
+            {this._generateButtons()}
           </div>
         </juju.components.Panel>
       );
@@ -53,6 +120,7 @@ YUI.add('confirmation-popup', function() {
 }, '', {
   requires: [
     'button-row',
+    'generic-button',
     'panel-component'
   ]
 });
