@@ -2506,8 +2506,8 @@ YUI.add('juju-env-api', function(Y) {
 
       @method listKeys
       @param {String} user The user for whom the keys must be listed.
-      @param {Boolean} requestFullKeys Whether to pass full keys to the
-        callback, or just the SSH key fingerprints.
+      @param {Boolean} requestFullKeys Whether to request full keys or just the
+        SSH key fingerprints to be returned and passed to the callback.
       @param {Function} callback A callable that must be called once the
         operation is performed. It will receive two arguments: an error string
         and the list of keys as strings. If the operation succeeds, the error
