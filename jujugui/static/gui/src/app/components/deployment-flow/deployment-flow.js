@@ -58,6 +58,7 @@ YUI.add('deployment-flow', function() {
       const modelCommitted = this.props.modelCommitted;
       return {
         cloud: modelCommitted ? this.props.cloud : null,
+        deploying: false,
         credential: this.props.credential,
         loggedIn: !!this.props.getAuth(),
         region: this.props.region,
@@ -242,6 +243,9 @@ YUI.add('deployment-flow', function() {
           deploy: null
         }
       });
+      this.setState({
+        deploying: false
+      });
     },
 
     /**
@@ -261,6 +265,7 @@ YUI.add('deployment-flow', function() {
       @method _handleDeploy
     */
     _handleDeploy: function() {
+      this.setState({deploying: true});
       let modelName = '';
       if (this.refs.modelName) {
         modelName = this.refs.modelName.getValue();
@@ -625,7 +630,8 @@ YUI.add('deployment-flow', function() {
     },
 
     render: function() {
-      var disabled = this.props.acl.isReadOnly();
+      const disabled = this.props.acl.isReadOnly() || this.state.deploying;
+      const deployTitle = this.state.deploying ? 'Deploying...' : 'Deploy';
       return (
         <juju.components.DeploymentPanel
           changeState={this.props.changeState}
@@ -647,7 +653,7 @@ YUI.add('deployment-flow', function() {
                   disabled={
                     !this.props.isLegacyJuju && (disabled || !this.state.cloud)}
                   type="positive"
-                  title="Deploy" />
+                  title={deployTitle} />
               </div>
             </div>
           </div>

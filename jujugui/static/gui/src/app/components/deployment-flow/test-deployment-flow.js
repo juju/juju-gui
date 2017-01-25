@@ -785,6 +785,56 @@ describe('DeploymentFlow', function() {
     assert.equal(changeState.callCount, 1);
   });
 
+  it('can disable the deploy button on deploy', function () {
+    var deploy = sinon.stub();
+    var changeState = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        changes={{}}
+        changesFilterByParent={sinon.stub()}
+        changeState={changeState}
+        deploy={deploy}
+        generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
+        getAuth={sinon.stub().returns(true)}
+        getCloudCredentials={sinon.stub()}
+        getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
+        getUserName={sinon.stub()}
+        groupedChanges={groupedChanges}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        modelCommitted={true}
+        modelName="Pavlova"
+        servicesGetById={sinon.stub()}
+        updateCloudCredential={sinon.stub()}>
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {
+      modelName: {
+        getValue: sinon.stub().returns('Lamington')
+      }
+    };
+    instance._setCloud({name: 'cloud'});
+    instance._setCredential('cred');
+    instance._setRegion('north');
+    let output = renderer.getRenderOutput();
+    let deployButton = output.props.children[8].props.children.props
+      .children[1].props.children.props;
+    deployButton.action();
+
+    // .action() rerenders the component so we need to get it again
+    output = renderer.getRenderOutput();
+    deployButton = output.props.children[8].props.children.props
+      .children[1].props.children.props;
+
+    assert.equal(deployButton.disabled, true);
+    assert.equal(deployButton.title, 'Deploying...');
+  });
+
   it('can deploy without a model name', function() {
     var deploy = sinon.stub().callsArg(0);
     var changeState = sinon.stub();
