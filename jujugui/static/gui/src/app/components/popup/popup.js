@@ -18,13 +18,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('confirmation-popup', function() {
+YUI.add('popup', function() {
 
   /**
-    ConfirmationPopup provides a React component for modal confirmation of an
+    Popup provides a React component for modal confirmation of an
     action.
   */
-  juju.components.ConfirmationPopup = React.createClass({
+  juju.components.Popup = React.createClass({
     propTypes: {
       buttons: React.PropTypes.array,
       children: React.PropTypes.oneOfType([
@@ -63,7 +63,7 @@ YUI.add('confirmation-popup', function() {
       const close = this.props.close;
       if (close) {
         return (
-          <div className="confirmation-popup__close">
+          <div className="popup__close">
             <juju.components.GenericButton
                action={close}
                type="base"
@@ -81,7 +81,7 @@ YUI.add('confirmation-popup', function() {
       const title = this.props.title;
       if (title) {
         return (
-          <h3 className="confirmation-popup__title">
+          <h3 className="popup__title">
             {title}
           </h3>);
       }
@@ -95,15 +95,15 @@ YUI.add('confirmation-popup', function() {
     */
     _generateClasses: function() {
       return classNames(
-        'confirmation-popup__panel',
-        `confirmation-popup__panel--${this.props.type}`
+        'popup__panel',
+        `popup__panel--${this.props.type}`
       );
     },
 
     render: function() {
       return (
         <juju.components.Panel
-          instanceName="confirmation-popup"
+          instanceName="popup"
           visible={true}>
           <div className={this._generateClasses()}>
             {this._generateClose()}

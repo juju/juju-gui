@@ -79,9 +79,9 @@
     box-shadow: none;
   }
 
-  &.confirmation-popup {
+  &.popup {
     position: fixed;
-    z-index: index($z-indexed-elements, confirmation-popup);
+    z-index: index($z-indexed-elements, popup);
     top: 0;
     bottom: 0;
     left: 0;

@@ -376,11 +376,11 @@ YUI.add('budget-table-row', function() {
           </div>);
       }
       return (
-        <juju.components.ConfirmationPopup
+        <juju.components.Popup
           close={this._toggleTerms}
           type="wide">
           {content}
-        </juju.components.ConfirmationPopup>);
+        </juju.components.Popup>);
     },
 
     /**
@@ -445,8 +445,8 @@ YUI.add('budget-table-row', function() {
 
 }, '0.1.0', {
   requires: [
-    'confirmation-popup',
     'expanding-row',
-    'generic-button'
+    'generic-button',
+    'popup'
   ]
 });
