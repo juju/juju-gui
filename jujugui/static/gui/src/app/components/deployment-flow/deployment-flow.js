@@ -232,6 +232,9 @@ YUI.add('deployment-flow', function() {
           deploy: null
         }
       });
+      this.setState({
+        deploying: false
+      });
     },
 
     /**
@@ -612,9 +615,8 @@ YUI.add('deployment-flow', function() {
     },
 
     render: function() {
-      var disabled = this.props.acl.isReadOnly() ||
-        this.state.deploying === true;
-      var deployTitle = this.state.deploying ? 'Deploying...' : 'Deploy';
+      const disabled = this.props.acl.isReadOnly() || this.state.deploying;
+      const deployTitle = this.state.deploying ? 'Deploying...' : 'Deploy';
       return (
         <juju.components.DeploymentPanel
           changeState={this.props.changeState}
