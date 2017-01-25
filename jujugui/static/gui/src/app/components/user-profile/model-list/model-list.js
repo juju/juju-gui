@@ -161,11 +161,11 @@ YUI.add('user-profile-model-list', function() {
         + ' All the applications and units included in the model will be'
         + ' destroyed. This action cannot be undone.';
       return (
-        <juju.components.ConfirmationPopup
+        <juju.components.Popup
           buttons={buttons}
           title="Destroy model">
           <p>{message}</p>
-        </juju.components.ConfirmationPopup>);
+        </juju.components.Popup>);
     },
 
     /**
@@ -380,12 +380,12 @@ YUI.add('user-profile-model-list', function() {
 
 }, '', {
   requires: [
-    'confirmation-popup',
     'create-model-button',
     'date-display',
     'generic-button',
     'generic-input',
     'loading-spinner',
+    'popup',
     'user-profile-entity'
   ]
 });

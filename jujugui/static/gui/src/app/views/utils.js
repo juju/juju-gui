@@ -1351,14 +1351,14 @@ YUI.add('juju-view-utils', function(Y) {
       type: 'destructive'
     }];
     ReactDOM.render(
-      <window.juju.components.ConfirmationPopup
+      <window.juju.components.Popup
         buttons={buttons}
         title="Uncommitted changes">
         <p>
           You have uncommitted changes to your model. You will
           lose these changes if you continue.
         </p>
-      </window.juju.components.ConfirmationPopup>,
+      </window.juju.components.Popup>,
       document.getElementById('popup-container'));
   };
 
@@ -1850,11 +1850,11 @@ YUI.add('juju-view-utils', function(Y) {
 }, '0.1.0', {
   requires: [
     'base-build',
-    'confirmation-popup',
     'escape',
     'node',
     'view',
     'panel',
+    'popup',
     'json-stringify',
     'datatype-date-format'
   ]
