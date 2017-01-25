@@ -200,12 +200,25 @@ YUI.add('entity-details', function() {
       // Set the keyboard focus on the component so it can be scrolled with the
       // keyboard. Requires tabIndex to be set on the element.
       this.refs.content.focus();
-      this.detailsXhr = this.props.getEntity(
-          this.props.id, this.fetchCallback);
+      // Be sure to convert the id to the legacy id as the url will be in the
+      // new id format.
+      const entityId = this.props.id;
+      let processedId = entityId;
+      // If the entityId contains a / and no ~ then it needs to be converted
+      // into the legacy charm format until the charmstore can accept the new
+      // format.
+      if (entityId.indexOf('/') !== -1 && entityId.indexOf('~') === -1) {
+        const urlParts = window.jujulib.URL.fromString(entityId);
+        const URLlib = new window.jujulib.URL(urlParts);
+        processedId = URLlib.legacyPath();
+      }
+      this.detailsXhr = this.props.getEntity(processedId, this.fetchCallback);
     },
 
     componentWillUnmount: function() {
-      this.detailsXhr.abort();
+      if (this.detailsXhr) {
+        this.detailsXhr.abort();
+      }
     },
 
     /**
