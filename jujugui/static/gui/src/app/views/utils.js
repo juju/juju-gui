@@ -1399,7 +1399,8 @@ YUI.add('juju-view-utils', function(Y) {
     let newState = {
       profile: null,
       gui: null,
-      root: null
+      root: null,
+      model: {path: `${this._getAuth().rootUserName}/${name}`, uuid}
     };
     if (!uuid || !name) {
       newState.root = 'new';
@@ -1482,7 +1483,8 @@ YUI.add('juju-view-utils', function(Y) {
       ecs.clear();
     }
     changeState({
-      profile: username
+      profile: username,
+      model: null
     });
   };
 
