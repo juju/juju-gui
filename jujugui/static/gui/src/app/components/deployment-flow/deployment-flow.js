@@ -62,6 +62,7 @@ YUI.add('deployment-flow', function() {
         region: this.props.region,
         showChangelogs: false,
         loggedIn: !!this.props.getAuth(),
+        deploying: false
       };
     },
 
@@ -231,6 +232,9 @@ YUI.add('deployment-flow', function() {
           deploy: null
         }
       });
+      this.setState({
+        deploying: false
+      });
     },
 
     /**
@@ -257,6 +261,7 @@ YUI.add('deployment-flow', function() {
       if (this.refs.modelName) {
         modelName = this.refs.modelName.getValue();
       }
+      this.setState({deploying: true});
       this.props.deploy(
         this._handleClose, true, modelName, credential, cloud, region);
     },
@@ -610,7 +615,8 @@ YUI.add('deployment-flow', function() {
     },
 
     render: function() {
-      var disabled = this.props.acl.isReadOnly();
+      const disabled = this.props.acl.isReadOnly() || this.state.deploying;
+      const deployTitle = this.state.deploying ? 'Deploying...' : 'Deploy';
       return (
         <juju.components.DeploymentPanel
           changeState={this.props.changeState}
@@ -632,7 +638,7 @@ YUI.add('deployment-flow', function() {
                   disabled={
                     !this.props.isLegacyJuju && (disabled || !this.state.cloud)}
                   type="positive"
-                  title="Deploy" />
+                  title={deployTitle} />
               </div>
             </div>
           </div>
