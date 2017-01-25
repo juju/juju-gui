@@ -46,15 +46,19 @@ describe('DeploymentServices', function() {
 
   it('can render', function() {
     var listPlansForCharm = sinon.stub();
+    const charmsGetById = sinon.stub();
+    const showTerms = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentServices
         acl={acl}
         changesFilterByParent={sinon.stub()}
+        charmsGetById={charmsGetById}
         generateAllChangeDescriptions={sinon.stub().returns([{id: 'change1'}])}
         groupedChanges={groupedChanges}
         listPlansForCharm={listPlansForCharm}
         servicesGetById={servicesGetById}
         showChangelogs={false}
+        showTerms={showTerms}
         withPlans={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -62,6 +66,7 @@ describe('DeploymentServices', function() {
         <juju.components.BudgetTable
           acl={acl}
           allocationEditable={true}
+          charmsGetById={charmsGetById}
           extraInfo={{
             'apache2': (
               <ul className="deployment-services__changes">
@@ -82,6 +87,7 @@ describe('DeploymentServices', function() {
           plansEditable={true}
           services={[{service: 'apache2'}, {service: 'mysql'}]}
           showExtra={false}
+          showTerms={showTerms}
           withPlans={true} />
         <div className="prepend-seven">
           Maximum monthly spend:&nbsp;
@@ -95,15 +101,19 @@ describe('DeploymentServices', function() {
 
   it('can render without plans', function() {
     var listPlansForCharm = sinon.stub();
+    const charmsGetById = sinon.stub();
+    const showTerms = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentServices
         acl={acl}
         changesFilterByParent={sinon.stub()}
+        charmsGetById={charmsGetById}
         generateAllChangeDescriptions={sinon.stub().returns([{id: 'change1'}])}
         groupedChanges={groupedChanges}
         listPlansForCharm={listPlansForCharm}
         servicesGetById={servicesGetById}
         showChangelogs={false}
+        showTerms={showTerms}
         withPlans={false} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
@@ -111,6 +121,7 @@ describe('DeploymentServices', function() {
         <juju.components.BudgetTable
           acl={acl}
           allocationEditable={true}
+          charmsGetById={charmsGetById}
           extraInfo={{
             'apache2': (
               <ul className="deployment-services__changes">
@@ -131,6 +142,7 @@ describe('DeploymentServices', function() {
           plansEditable={true}
           services={[{service: 'apache2'}, {service: 'mysql'}]}
           showExtra={false}
+          showTerms={showTerms}
           withPlans={false} />
         {undefined}
       </div>);

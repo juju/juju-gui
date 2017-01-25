@@ -277,9 +277,11 @@ describe('UserProfileModelList', () => {
       <juju.components.Popup
         buttons={output.props.children[2].props.buttons}
         title="Destroy model">
-        Are you sure you want to destroy spinach/sandbox? All the
-        applications and units included in the model will be destroyed.
-        This action cannot be undone.
+        <p>
+          Are you sure you want to destroy spinach/sandbox? All the
+          applications and units included in the model will be destroyed.
+          This action cannot be undone.
+        </p>
       </juju.components.Popup>);
     assert.deepEqual(output.props.children[2], expected);
   });

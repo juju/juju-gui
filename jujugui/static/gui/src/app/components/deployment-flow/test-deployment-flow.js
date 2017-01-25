@@ -182,12 +182,14 @@ describe('DeploymentFlow', function() {
           <juju.components.DeploymentServices
             acl={acl}
             changesFilterByParent={changesFilterByParent}
+            charmsGetById={charmsGetById}
             generateAllChangeDescriptions={
               generateAllChangeDescriptions}
             groupedChanges={groupedChanges}
             listPlansForCharm={listPlansForCharm}
             servicesGetById={servicesGetById}
             showChangelogs={false}
+            showTerms={showTerms}
             withPlans={true} />
         </juju.components.DeploymentSection>
         <juju.components.DeploymentSection
@@ -215,14 +217,7 @@ describe('DeploymentFlow', function() {
         </juju.components.DeploymentSection>
         <div className="twelve-col">
           <div className="deployment-flow__deploy">
-            <juju.components.DeploymentTerms
-              acl={acl}
-              charmsGetById={charmsGetById}
-              getAgreements={getAgreements}
-              applications={undefined}
-              setTerms={instance._setTerms}
-              showTerms={showTerms}
-              terms={[]} />
+            {undefined}
             <div className="deployment-flow__deploy-action">
               <juju.components.GenericButton
                 action={instance._handleDeploy}
@@ -322,12 +317,14 @@ describe('DeploymentFlow', function() {
           <juju.components.DeploymentServices
             acl={acl}
             changesFilterByParent={changesFilterByParent}
+            charmsGetById={charmsGetById}
             generateAllChangeDescriptions={
               generateAllChangeDescriptions}
             groupedChanges={groupedChanges}
             listPlansForCharm={listPlansForCharm}
             servicesGetById={servicesGetById}
             showChangelogs={false}
+            showTerms={showTerms}
             withPlans={true} />
         </juju.components.DeploymentSection>
         {undefined}
@@ -344,14 +341,7 @@ describe('DeploymentFlow', function() {
         </juju.components.DeploymentSection>
         <div className="twelve-col">
           <div className="deployment-flow__deploy">
-            <juju.components.DeploymentTerms
-              acl={acl}
-              charmsGetById={charmsGetById}
-              getAgreements={getAgreements}
-              applications={undefined}
-              setTerms={instance._setTerms}
-              showTerms={showTerms}
-              terms={[]} />
+            {undefined}
             <div className="deployment-flow__deploy-action">
               <juju.components.GenericButton
                 action={instance._handleDeploy}
@@ -721,6 +711,63 @@ describe('DeploymentFlow', function() {
     instance._setCredential('cred');
     var output = renderer.getRenderOutput();
     assert.isFalse(output.props.children[5].props.disabled);
+  });
+
+  it('can display the agreements section', function() {
+    const applications = [{
+      get: sinon.stub().returns('django')
+    }];
+    const charmsGetById = sinon.stub().returns({
+      get: sinon.stub().returns(['django-terms'])
+    });
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        applications={applications}
+        changes={{}}
+        changesFilterByParent={sinon.stub()}
+        changeState={sinon.stub()}
+        charmsGetById={charmsGetById}
+        deploy={sinon.stub()}
+        environment={{}}
+        generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
+        getAgreements={sinon.stub()}
+        getAuth={sinon.stub()}
+        getCloudCredentialNames={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
+        getUserName={sinon.stub()}
+        groupedChanges={groupedChanges}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        loginToController={sinon.stub()}
+        modelName="Pavlova"
+        servicesGetById={sinon.stub()}
+        showTerms={sinon.stub()}
+        updateCloudCredential={sinon.stub()}
+        withPlans={true}>
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    const instance = renderer.getMountedInstance();
+    instance._setCloud({name: 'cloud'});
+    instance._setCredential('cred');
+    const output = renderer.getRenderOutput();
+    const agreements = output.props.children[8].props.children
+      .props.children[0];
+    const expected = (
+      <div className="deployment-flow__deploy-option">
+        <input className="deployment-flow__deploy-checkbox"
+          disabled={false}
+          id="terms"
+          type="checkbox" />
+        <label className="deployment-flow__deploy-label"
+          htmlFor="terms">
+          I agree to all terms.
+        </label>
+      </div>);
+    assert.deepEqual(agreements, expected);
   });
 
   // Click log in and pass the given error string to the login callback used by

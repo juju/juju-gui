@@ -24,7 +24,7 @@ YUI.add('deployment-services', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       changesFilterByParent: React.PropTypes.func.isRequired,
-      charmsGetById: React.PropTypes.func,
+      charmsGetById: React.PropTypes.func.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
       groupedChanges: React.PropTypes.object.isRequired,
       listPlansForCharm: React.PropTypes.func.isRequired,

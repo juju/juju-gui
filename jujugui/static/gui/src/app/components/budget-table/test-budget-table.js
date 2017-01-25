@@ -72,23 +72,27 @@ describe('BudgetTable', function() {
         </div>
         {[<juju.components.BudgetTableRow
             acl={acl}
-            key={0}
             allocationEditable={false}
+            charmsGetById={undefined}
             extraInfo={undefined}
+            key={0}
             listPlansForCharm={listPlansForCharm}
             plansEditable={false}
             service={{}}
             showExtra={undefined}
+            showTerms={undefined}
             withPlans={true} />,
           <juju.components.BudgetTableRow
             acl={acl}
-            key={1}
             allocationEditable={false}
+            charmsGetById={undefined}
             extraInfo={undefined}
+            key={1}
             listPlansForCharm={listPlansForCharm}
             plansEditable={false}
             service={{}}
             showExtra={undefined}
+            showTerms={undefined}
             withPlans={true} />]}
       </div>);
     assert.deepEqual(output, expected);
@@ -118,23 +122,27 @@ describe('BudgetTable', function() {
         </div>
         {[<juju.components.BudgetTableRow
             acl={acl}
-            key={0}
             allocationEditable={false}
+            charmsGetById={undefined}
             extraInfo={undefined}
+            key={0}
             listPlansForCharm={listPlansForCharm}
             plansEditable={false}
             service={{}}
             showExtra={undefined}
+            showTerms={undefined}
             withPlans={false} />,
           <juju.components.BudgetTableRow
             acl={acl}
-            key={1}
             allocationEditable={false}
+            charmsGetById={undefined}
             extraInfo={undefined}
+            key={1}
             listPlansForCharm={listPlansForCharm}
             plansEditable={false}
             service={{}}
             showExtra={undefined}
+            showTerms={undefined}
             withPlans={false} />]}
       </div>);
     assert.deepEqual(output, expected);
@@ -177,23 +185,27 @@ describe('BudgetTable', function() {
         </div>
         {[<juju.components.BudgetTableRow
             acl={acl}
-            key={0}
             allocationEditable={false}
+            charmsGetById={undefined}
             extraInfo={undefined}
+            key={0}
             listPlansForCharm={listPlansForCharm}
             plansEditable={true}
             service={{}}
             showExtra={undefined}
+            showTerms={undefined}
             withPlans={true} />,
           <juju.components.BudgetTableRow
             acl={acl}
-            key={1}
             allocationEditable={false}
+            charmsGetById={undefined}
             extraInfo={undefined}
+            key={1}
             listPlansForCharm={listPlansForCharm}
             plansEditable={true}
             service={{}}
             showExtra={undefined}
+            showTerms={undefined}
             withPlans={true} />]}
       </div>);
     assert.deepEqual(output, expected);
