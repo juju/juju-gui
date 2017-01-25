@@ -139,9 +139,10 @@ YUI.add('deployment-flow', function() {
           visible = true;
           break;
         case 'agreements':
+          const terms = this._getTerms();
           completed = false;
           disabled = false;
-          visible = true;
+          visible = terms && terms.length > 0;
           break;
       }
       return {
@@ -274,6 +275,30 @@ YUI.add('deployment-flow', function() {
       }
       this.props.deploy(
         this._handleClose, true, modelName, credential, cloud, region);
+    },
+
+    /**
+      Get the list of terms for the uncommitted apps.
+
+      @method _getTerms
+      @returns {Array} The list of terms.
+    */
+    _getTerms: function() {
+      let termIds = [];
+      this.props.applications.forEach(app => {
+        // Get the terms from the app's charm.
+        const terms = this.props.charmsGetById(app.get('charm')).get('terms');
+        if (terms && terms.length > 0) {
+          // If there are terms then add them if they haven't already been
+          // recorded.
+          terms.forEach(id => {
+            if (termIds.indexOf(id) === -1) {
+              termIds.push(id);
+            }
+          });
+        }
+      });
+      return termIds;
     },
 
     /**
@@ -592,19 +617,22 @@ YUI.add('deployment-flow', function() {
       @returns {Object} The markup.
     */
     _generateAgreementsSection: function() {
-      var status = this._getSectionStatus('agreements');
+      const status = this._getSectionStatus('agreements');
       if (!status.visible) {
         return;
       }
+      const disabled = this.props.acl.isReadOnly();
       return (
-        <juju.components.DeploymentTerms
-          acl={this.props.acl}
-          charmsGetById={this.props.charmsGetById}
-          getAgreements={this.props.getAgreements}
-          applications={this.props.applications}
-          setTerms={this._setTerms}
-          showTerms={this.props.showTerms}
-          terms={this.state.terms} />);
+          <div className="deployment-flow__deploy-option">
+            <input className="deployment-flow__deploy-checkbox"
+              disabled={disabled}
+              id="terms"
+              type="checkbox" />
+            <label className="deployment-flow__deploy-label"
+              htmlFor="terms">
+              I agree to all terms.
+            </label>
+          </div>);
     },
 
     render: function() {
@@ -650,7 +678,6 @@ YUI.add('deployment-flow', function() {
     'deployment-panel',
     'deployment-section',
     'deployment-services',
-    'deployment-terms',
     'generic-button',
     'generic-input'
   ]
