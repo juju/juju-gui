@@ -30,9 +30,8 @@ YUI.add('budget-table-row', function() {
       plansEditable: React.PropTypes.bool,
       service: React.PropTypes.object.isRequired,
       showExtra: React.PropTypes.bool,
-      showTerms: React.PropTypes.func.isRequired,
-      withPlans: React.PropTypes.bool,
-      withTerms: React.PropTypes.bool
+      showTerms: React.PropTypes.func,
+      withPlans: React.PropTypes.bool
     },
 
     getInitialState: function() {
@@ -49,8 +48,12 @@ YUI.add('budget-table-row', function() {
     },
 
     componentWillMount: function() {
-      this._getPlans();
-      this._getTerms();
+      if (this.props.withPlans) {
+        this._getPlans();
+      }
+      if (this.props.showTerms) {
+        this._getTerms();
+      }
     },
 
     componentWillUnmount: function() {
@@ -306,7 +309,9 @@ YUI.add('budget-table-row', function() {
               console.error('cannot retrieve terms:', error);
               return;
             }
-            this.setState({terms: this.state.terms.concat([term])});
+            let terms = this.state.terms;
+            terms.push(term);
+            this.setState({terms: terms});
           });
           this.xhrs.push(xhr);
           this.setState({termsLoading: false});
@@ -321,16 +326,18 @@ YUI.add('budget-table-row', function() {
       @returns {Object} The terms link markup.
     */
     _generateTermsLink: function() {
-      const terms = this._getTermIds();
-      if (terms && terms.length > 0) {
-        return (
-          <div className={
-            'two-col prepend-five no-margin-bottom budget-table-row__link'}>
-            <juju.components.GenericButton
-              action={this._toggleTerms}
-              type="base"
-              title="Terms" />
-          </div>);
+      if (this.props.showTerms) {
+        const terms = this._getTermIds();
+        if (terms && terms.length > 0) {
+          return (
+            <div className={
+              'two-col prepend-five no-margin-bottom budget-table-row__link'}>
+              <juju.components.GenericButton
+                action={this._toggleTerms}
+                type="base"
+                title="Terms" />
+            </div>);
+        }
       }
     },
 
@@ -447,6 +454,7 @@ YUI.add('budget-table-row', function() {
   requires: [
     'expanding-row',
     'generic-button',
+    'loading-spinner',
     'popup'
   ]
 });

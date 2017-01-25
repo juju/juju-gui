@@ -31,8 +31,7 @@ YUI.add('budget-table', function() {
       services: React.PropTypes.array.isRequired,
       showExtra: React.PropTypes.bool,
       showTerms: React.PropTypes.func.isRequired,
-      withPlans: React.PropTypes.bool,
-      withTerms: React.PropTypes.bool
+      withPlans: React.PropTypes.bool
     },
 
     /**

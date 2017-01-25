@@ -54,6 +54,9 @@ describe('BudgetTableRow', function() {
           case 'unit_count':
             return 4;
             break;
+          case 'charm':
+            return 'cs:landscape';
+            break;
         }
       }
     };
@@ -70,45 +73,49 @@ describe('BudgetTableRow', function() {
         withPlans={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.ExpandingRow
-        classes={{
-          'budget-table-row': true,
-          'twelve-col': true
-        }}
-        clickable={false}
-        expanded={false}>
-        <div>
+      <div>
+        <juju.components.ExpandingRow
+          classes={{
+            'budget-table-row': true,
+            'twelve-col': true
+          }}
+          clickable={false}
+          expanded={false}>
           <div>
-            <div className="three-col no-margin-bottom">
-              <img className="budget-table__charm-icon"
-                src="landscape.svg" />
-              Landscape
+            <div>
+              <div className="three-col no-margin-bottom">
+                <img className="budget-table__charm-icon"
+                  src="landscape.svg" />
+                Landscape
+              </div>
+              <div className="one-col no-margin-bottom">
+                {4}
+              </div>
             </div>
-            <div className="one-col no-margin-bottom">
-              {4}
-            </div>
-          </div>
-          <div>
-            <div className="three-col no-margin-bottom">
-              <span>You need to select a plan</span>
-            </div>
-            <div className="two-col no-margin-bottom">
-              $1
-            </div>
-            <div className="two-col no-margin-bottom">
-              <span onClick={undefined}>$1</span>
-            </div>
-            <div className="one-col no-margin-bottom last-col">
-              $1
+            <div>
+              <div className="three-col no-margin-bottom">
+                <span>You need to select a plan</span>
+              </div>
+              <div className="two-col no-margin-bottom">
+                $1
+              </div>
+              <div className="two-col no-margin-bottom">
+                <span onClick={undefined}>$1</span>
+              </div>
+              <div className="one-col no-margin-bottom last-col">
+                $1
+              </div>
+              {undefined}
             </div>
             {undefined}
+            {undefined}
           </div>
-          {undefined}
-        </div>
-        <div>
-          {undefined}
-        </div>
-      </juju.components.ExpandingRow>);
+          <div>
+            {undefined}
+          </div>
+        </juju.components.ExpandingRow>
+        {undefined}
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -123,31 +130,35 @@ describe('BudgetTableRow', function() {
         withPlans={false} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.ExpandingRow
-        classes={{
-          'budget-table-row': true,
-          'twelve-col': true
-        }}
-        clickable={false}
-        expanded={false}>
-        <div>
+      <div>
+        <juju.components.ExpandingRow
+          classes={{
+            'budget-table-row': true,
+            'twelve-col': true
+          }}
+          clickable={false}
+          expanded={false}>
           <div>
-            <div className="three-col no-margin-bottom">
-              <img className="budget-table__charm-icon"
-                src="landscape.svg" />
-              Landscape
+            <div>
+              <div className="three-col no-margin-bottom">
+                <img className="budget-table__charm-icon"
+                  src="landscape.svg" />
+                Landscape
+              </div>
+              <div className="one-col no-margin-bottom">
+                {4}
+              </div>
             </div>
-            <div className="one-col no-margin-bottom">
-              {4}
-            </div>
+            {undefined}
+            {undefined}
+            {undefined}
           </div>
-          {undefined}
-          {undefined}
-        </div>
-        <div>
-          {undefined}
-        </div>
-      </juju.components.ExpandingRow>);
+          <div>
+            {undefined}
+          </div>
+        </juju.components.ExpandingRow>
+        {undefined}
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -164,47 +175,51 @@ describe('BudgetTableRow', function() {
         withPlans={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.ExpandingRow
-        classes={{
-          'budget-table-row': true,
-          'twelve-col': true
-        }}
-        clickable={false}
-        expanded={false}>
-        <div>
+      <div>
+        <juju.components.ExpandingRow
+          classes={{
+            'budget-table-row': true,
+            'twelve-col': true
+          }}
+          clickable={false}
+          expanded={false}>
           <div>
-            <div className="three-col no-margin-bottom">
-              <img className="budget-table__charm-icon"
-                src="landscape.svg" />
-              Landscape
+            <div>
+              <div className="three-col no-margin-bottom">
+                <img className="budget-table__charm-icon"
+                  src="landscape.svg" />
+                Landscape
+              </div>
+              <div className="one-col no-margin-bottom">
+                {4}
+              </div>
             </div>
-            <div className="one-col no-margin-bottom">
-              {4}
+            <div>
+              <div className="three-col no-margin-bottom">
+                <span>You need to select a plan</span>
+              </div>
+              <div className="two-col no-margin-bottom">
+                $1
+              </div>
+              <div className="two-col no-margin-bottom">
+                <span onClick={undefined}>$1</span>
+              </div>
+              <div className="one-col no-margin-bottom last-col">
+                $1
+              </div>
+              {undefined}
             </div>
-          </div>
-          <div>
-            <div className="three-col no-margin-bottom">
-              <span>You need to select a plan</span>
-            </div>
-            <div className="two-col no-margin-bottom">
-              $1
-            </div>
-            <div className="two-col no-margin-bottom">
-              <span onClick={undefined}>$1</span>
-            </div>
-            <div className="one-col no-margin-bottom last-col">
-              $1
+            <div className="twelve-col no-margin-bottom">
+              <span>extra</span>
             </div>
             {undefined}
           </div>
-          <div className="twelve-col no-margin-bottom">
-            <span>extra</span>
+          <div>
+            {undefined}
           </div>
-        </div>
-        <div>
-          {undefined}
-        </div>
-      </juju.components.ExpandingRow>);
+        </juju.components.ExpandingRow>
+        {undefined}
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -241,45 +256,49 @@ describe('BudgetTableRow', function() {
         withPlans={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.ExpandingRow
-        classes={{
-          'budget-table-row': true,
-          'twelve-col': true
-        }}
-        clickable={false}
-        expanded={false}>
-        <div>
+      <div>
+        <juju.components.ExpandingRow
+          classes={{
+            'budget-table-row': true,
+            'twelve-col': true
+          }}
+          clickable={false}
+          expanded={false}>
           <div>
-            <div className="three-col no-margin-bottom">
-              <img className="budget-table__charm-icon"
-                src="landscape.svg" />
-              Landscape
+            <div>
+              <div className="three-col no-margin-bottom">
+                <img className="budget-table__charm-icon"
+                  src="landscape.svg" />
+                Landscape
+              </div>
+              <div className="one-col no-margin-bottom">
+                {4}
+              </div>
             </div>
-            <div className="one-col no-margin-bottom">
-              {4}
-            </div>
-          </div>
-          <div>
-            <div className="three-col no-margin-bottom">
-              <span>{'plan 1'} ({'$5'})</span>
-            </div>
-            <div className="two-col no-margin-bottom">
-              $1
-            </div>
-            <div className="two-col no-margin-bottom">
-              <span onClick={undefined}>$1</span>
-            </div>
-            <div className="one-col no-margin-bottom last-col">
-              $1
+            <div>
+              <div className="three-col no-margin-bottom">
+                <span>{'plan 1'} ({'$5'})</span>
+              </div>
+              <div className="two-col no-margin-bottom">
+                $1
+              </div>
+              <div className="two-col no-margin-bottom">
+                <span onClick={undefined}>$1</span>
+              </div>
+              <div className="one-col no-margin-bottom last-col">
+                $1
+              </div>
+              {undefined}
             </div>
             {undefined}
+            {undefined}
           </div>
-          {undefined}
-        </div>
-        <div>
-          {undefined}
-        </div>
-      </juju.components.ExpandingRow>);
+          <div>
+            {undefined}
+          </div>
+        </juju.components.ExpandingRow>
+        {undefined}
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -295,45 +314,49 @@ describe('BudgetTableRow', function() {
         withPlans={true} />, true);
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.ExpandingRow
-        classes={{
-          'budget-table-row': true,
-          'twelve-col': true
-        }}
-        clickable={false}
-        expanded={false}>
-        <div>
+      <div>
+        <juju.components.ExpandingRow
+          classes={{
+            'budget-table-row': true,
+            'twelve-col': true
+          }}
+          clickable={false}
+          expanded={false}>
           <div>
-            <div className="three-col no-margin-bottom">
-              <img className="budget-table__charm-icon"
-                src="landscape.svg" />
-              Landscape
+            <div>
+              <div className="three-col no-margin-bottom">
+                <img className="budget-table__charm-icon"
+                  src="landscape.svg" />
+                Landscape
+              </div>
+              <div className="one-col no-margin-bottom">
+                {4}
+              </div>
             </div>
-            <div className="one-col no-margin-bottom">
-              {4}
-            </div>
-          </div>
-          <div>
-            <div className="three-col no-margin-bottom">
-              <span>-</span>
-            </div>
-            <div className="one-col no-margin-bottom">
-              $1
-            </div>
-            <div className="one-col no-margin-bottom">
-              <span onClick={undefined}>$1</span>
-            </div>
-            <div className="one-col no-margin-bottom">
-              $1
+            <div>
+              <div className="three-col no-margin-bottom">
+                <span>-</span>
+              </div>
+              <div className="one-col no-margin-bottom">
+                $1
+              </div>
+              <div className="one-col no-margin-bottom">
+                <span onClick={undefined}>$1</span>
+              </div>
+              <div className="one-col no-margin-bottom">
+                $1
+              </div>
+              {undefined}
             </div>
             {undefined}
+            {undefined}
           </div>
-          {undefined}
-        </div>
-        <div>
-          {undefined}
-        </div>
-      </juju.components.ExpandingRow>);
+          <div>
+            {undefined}
+          </div>
+        </juju.components.ExpandingRow>
+        {undefined}
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -349,112 +372,117 @@ describe('BudgetTableRow', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.ExpandingRow
-        classes={{
-          'budget-table-row': true,
-          'twelve-col': true
-        }}
-        clickable={false}
-        expanded={false}>
-        <div>
+      <div>
+        <juju.components.ExpandingRow
+          classes={{
+            'budget-table-row': true,
+            'twelve-col': true
+          }}
+          clickable={false}
+          expanded={false}>
           <div>
-            <div className="three-col no-margin-bottom">
-              <img className="budget-table__charm-icon"
-                src="landscape.svg" />
-              Landscape
-            </div>
-            <div className="one-col no-margin-bottom">
-              {4}
-            </div>
-          </div>
-          <div>
-            <div className="three-col no-margin-bottom">
-              <span>You need to select a plan</span>
-            </div>
-            <div className="one-col no-margin-bottom">
-              $1
-            </div>
-            <div className="one-col no-margin-bottom">
-              <span onClick={undefined}>$1</span>
-            </div>
-            <div className="one-col no-margin-bottom">
-              $1
-            </div>
-            <div className="two-col last-col no-margin-bottom">
-              <div className="budget-table__edit">
-                <juju.components.GenericButton
-                  action={instance._toggle}
-                  disabled={false}
-                  type="neutral"
-                  title="Change plan" />
+            <div>
+              <div className="three-col no-margin-bottom">
+                <img className="budget-table__charm-icon"
+                  src="landscape.svg" />
+                Landscape
+              </div>
+              <div className="one-col no-margin-bottom">
+                {4}
               </div>
             </div>
-          </div>
-          {undefined}
-        </div>
-        <div>
-          <div>
-            <div className="budget-table__current twelve-col no-margin-bottom">
-              <div>
-                <div className="three-col no-margin-bottom">
-                  <img className="budget-table__charm-icon"
-                    src="landscape.svg" />
-                  Landscape
-                </div>
-                <div className="one-col no-margin-bottom">
-                  {4}
-                </div>
+            <div>
+              <div className="three-col no-margin-bottom">
+                <span>You need to select a plan</span>
               </div>
-            </div>
-            <ul className="budget-table__plans twelve-col no-margin-bottom">
-              {[<li className="budget-table__plan twelve-col"
-                key={0}>
-                <div className="six-col">
-                  <h4>plan 1</h4>
-                  <p>The basic support plan</p>
-                </div>
-                <div className="two-col">
-                  $5
-                </div>
-                <div className="two-col">
-                  Recommended allocation: $550.
-                </div>
-                <div className="two-col last-col">
+              <div className="one-col no-margin-bottom">
+                $1
+              </div>
+              <div className="one-col no-margin-bottom">
+                <span onClick={undefined}>$1</span>
+              </div>
+              <div className="one-col no-margin-bottom">
+                $1
+              </div>
+              <div className="two-col last-col no-margin-bottom">
+                <div className="budget-table__edit">
                   <juju.components.GenericButton
                     action={instance._toggle}
                     disabled={false}
                     type="neutral"
-                    title="Select plan" />
+                    title="Change plan" />
                 </div>
-              </li>,
-              <li className="budget-table__plan twelve-col"
-                key={1}>
-                <div className="six-col">
-                  <h4>plan 2</h4>
-                  <p>The expensive support plan</p>
-                </div>
-                <div className="two-col">
-                  $1,000,000
-                </div>
-                <div className="two-col">
-                  Recommended allocation: $550.
-                </div>
-                <div className="two-col last-col">
-                  <juju.components.GenericButton
-                    action={instance._toggle}
-                    disabled={false}
-                    type="neutral"
-                    title="Select plan" />
-                </div>
-              </li>]}
-            </ul>
-            <p className="budget-table__plan-notice twelve-col">
-              By setting an allocation and selecting a plan you agree to the
-              plans terms and conditions
-            </p>
+              </div>
+            </div>
+            {undefined}
+            {undefined}
           </div>
-        </div>
-      </juju.components.ExpandingRow>);
+          <div>
+            <div>
+              <div className={
+                'budget-table__current twelve-col no-margin-bottom'}>
+                <div>
+                  <div className="three-col no-margin-bottom">
+                    <img className="budget-table__charm-icon"
+                      src="landscape.svg" />
+                    Landscape
+                  </div>
+                  <div className="one-col no-margin-bottom">
+                    {4}
+                  </div>
+                </div>
+              </div>
+              <ul className="budget-table__plans twelve-col no-margin-bottom">
+                {[<li className="budget-table__plan twelve-col"
+                  key={0}>
+                  <div className="six-col">
+                    <h4>plan 1</h4>
+                    <p>The basic support plan</p>
+                  </div>
+                  <div className="two-col">
+                    $5
+                  </div>
+                  <div className="two-col">
+                    Recommended allocation: $550.
+                  </div>
+                  <div className="two-col last-col">
+                    <juju.components.GenericButton
+                      action={instance._toggle}
+                      disabled={false}
+                      type="neutral"
+                      title="Select plan" />
+                  </div>
+                </li>,
+                <li className="budget-table__plan twelve-col"
+                  key={1}>
+                  <div className="six-col">
+                    <h4>plan 2</h4>
+                    <p>The expensive support plan</p>
+                  </div>
+                  <div className="two-col">
+                    $1,000,000
+                  </div>
+                  <div className="two-col">
+                    Recommended allocation: $550.
+                  </div>
+                  <div className="two-col last-col">
+                    <juju.components.GenericButton
+                      action={instance._toggle}
+                      disabled={false}
+                      type="neutral"
+                      title="Select plan" />
+                  </div>
+                </li>]}
+              </ul>
+              <p className="budget-table__plan-notice twelve-col">
+                By setting an allocation and selecting a plan you agree to the
+                plans terms and conditions
+              </p>
+            </div>
+          </div>
+        </juju.components.ExpandingRow>
+        {undefined}
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -471,112 +499,117 @@ describe('BudgetTableRow', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <juju.components.ExpandingRow
-        classes={{
-          'budget-table-row': true,
-          'twelve-col': true
-        }}
-        clickable={false}
-        expanded={false}>
-        <div>
+      <div>
+        <juju.components.ExpandingRow
+          classes={{
+            'budget-table-row': true,
+            'twelve-col': true
+          }}
+          clickable={false}
+          expanded={false}>
           <div>
-            <div className="three-col no-margin-bottom">
-              <img className="budget-table__charm-icon"
-                src="landscape.svg" />
-              Landscape
-            </div>
-            <div className="one-col no-margin-bottom">
-              {4}
-            </div>
-          </div>
-          <div>
-            <div className="three-col no-margin-bottom">
-              <span>You need to select a plan</span>
-            </div>
-            <div className="one-col no-margin-bottom">
-              $1
-            </div>
-            <div className="one-col no-margin-bottom">
-              <span onClick={undefined}>$1</span>
-            </div>
-            <div className="one-col no-margin-bottom">
-              $1
-            </div>
-            <div className="two-col last-col no-margin-bottom">
-              <div className="budget-table__edit">
-                <juju.components.GenericButton
-                  action={instance._toggle}
-                  disabled={true}
-                  type="neutral"
-                  title="Change plan" />
+            <div>
+              <div className="three-col no-margin-bottom">
+                <img className="budget-table__charm-icon"
+                  src="landscape.svg" />
+                Landscape
+              </div>
+              <div className="one-col no-margin-bottom">
+                {4}
               </div>
             </div>
-          </div>
-          {undefined}
-        </div>
-        <div>
-          <div>
-            <div className="budget-table__current twelve-col no-margin-bottom">
-              <div>
-                <div className="three-col no-margin-bottom">
-                  <img className="budget-table__charm-icon"
-                    src="landscape.svg" />
-                  Landscape
-                </div>
-                <div className="one-col no-margin-bottom">
-                  {4}
-                </div>
+            <div>
+              <div className="three-col no-margin-bottom">
+                <span>You need to select a plan</span>
               </div>
-            </div>
-            <ul className="budget-table__plans twelve-col no-margin-bottom">
-              {[<li className="budget-table__plan twelve-col"
-                key={0}>
-                <div className="six-col">
-                  <h4>plan 1</h4>
-                  <p>The basic support plan</p>
-                </div>
-                <div className="two-col">
-                  $5
-                </div>
-                <div className="two-col">
-                  Recommended allocation: $550.
-                </div>
-                <div className="two-col last-col">
+              <div className="one-col no-margin-bottom">
+                $1
+              </div>
+              <div className="one-col no-margin-bottom">
+                <span onClick={undefined}>$1</span>
+              </div>
+              <div className="one-col no-margin-bottom">
+                $1
+              </div>
+              <div className="two-col last-col no-margin-bottom">
+                <div className="budget-table__edit">
                   <juju.components.GenericButton
                     action={instance._toggle}
                     disabled={true}
                     type="neutral"
-                    title="Select plan" />
+                    title="Change plan" />
                 </div>
-              </li>,
-              <li className="budget-table__plan twelve-col"
-                key={1}>
-                <div className="six-col">
-                  <h4>plan 2</h4>
-                  <p>The expensive support plan</p>
-                </div>
-                <div className="two-col">
-                  $1,000,000
-                </div>
-                <div className="two-col">
-                  Recommended allocation: $550.
-                </div>
-                <div className="two-col last-col">
-                  <juju.components.GenericButton
-                    action={instance._toggle}
-                    disabled={true}
-                    type="neutral"
-                    title="Select plan" />
-                </div>
-              </li>]}
-            </ul>
-            <p className="budget-table__plan-notice twelve-col">
-              By setting an allocation and selecting a plan you agree to the
-              plans terms and conditions
-            </p>
+              </div>
+            </div>
+            {undefined}
+            {undefined}
           </div>
-        </div>
-      </juju.components.ExpandingRow>);
+          <div>
+            <div>
+              <div className={
+                'budget-table__current twelve-col no-margin-bottom'}>
+                <div>
+                  <div className="three-col no-margin-bottom">
+                    <img className="budget-table__charm-icon"
+                      src="landscape.svg" />
+                    Landscape
+                  </div>
+                  <div className="one-col no-margin-bottom">
+                    {4}
+                  </div>
+                </div>
+              </div>
+              <ul className="budget-table__plans twelve-col no-margin-bottom">
+                {[<li className="budget-table__plan twelve-col"
+                  key={0}>
+                  <div className="six-col">
+                    <h4>plan 1</h4>
+                    <p>The basic support plan</p>
+                  </div>
+                  <div className="two-col">
+                    $5
+                  </div>
+                  <div className="two-col">
+                    Recommended allocation: $550.
+                  </div>
+                  <div className="two-col last-col">
+                    <juju.components.GenericButton
+                      action={instance._toggle}
+                      disabled={true}
+                      type="neutral"
+                      title="Select plan" />
+                  </div>
+                </li>,
+                <li className="budget-table__plan twelve-col"
+                  key={1}>
+                  <div className="six-col">
+                    <h4>plan 2</h4>
+                    <p>The expensive support plan</p>
+                  </div>
+                  <div className="two-col">
+                    $1,000,000
+                  </div>
+                  <div className="two-col">
+                    Recommended allocation: $550.
+                  </div>
+                  <div className="two-col last-col">
+                    <juju.components.GenericButton
+                      action={instance._toggle}
+                      disabled={true}
+                      type="neutral"
+                      title="Select plan" />
+                  </div>
+                </li>]}
+              </ul>
+              <p className="budget-table__plan-notice twelve-col">
+                By setting an allocation and selecting a plan you agree to the
+                plans terms and conditions
+              </p>
+            </div>
+          </div>
+        </juju.components.ExpandingRow>
+        {undefined}
+      </div>);
     assert.deepEqual(output, expected);
   });
 
@@ -593,5 +626,188 @@ describe('BudgetTableRow', function() {
         withPlans={true} />, true);
     renderer.unmount();
     assert.equal(abort.callCount, 1);
+  });
+
+  it('can display applications without terms', function() {
+    const charmsGetById = sinon.stub().returns({
+      get: sinon.stub().returns(null)
+    });
+    const showTerms = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.BudgetTableRow
+        acl={acl}
+        allocationEditable={false}
+        charmsGetById={charmsGetById}
+        listPlansForCharm={listPlansForCharm}
+        plansEditable={false}
+        service={service}
+        showTerms={showTerms}
+        withPlans={true} />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div>
+        <juju.components.ExpandingRow
+          classes={{
+            'budget-table-row': true,
+            'twelve-col': true
+          }}
+          clickable={false}
+          expanded={false}>
+          <div>
+            <div>
+              <div className="three-col no-margin-bottom">
+                <img className="budget-table__charm-icon"
+                  src="landscape.svg" />
+                Landscape
+              </div>
+              <div className="one-col no-margin-bottom">
+                {4}
+              </div>
+            </div>
+            <div>
+              <div className="three-col no-margin-bottom">
+                <span>You need to select a plan</span>
+              </div>
+              <div className="two-col no-margin-bottom">
+                $1
+              </div>
+              <div className="two-col no-margin-bottom">
+                <span onClick={undefined}>$1</span>
+              </div>
+              <div className="one-col no-margin-bottom last-col">
+                $1
+              </div>
+              {undefined}
+            </div>
+            {undefined}
+            {undefined}
+          </div>
+          <div>
+            {undefined}
+          </div>
+        </juju.components.ExpandingRow>
+        {undefined}
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can display applications with terms', function() {
+    const charmsGetById = sinon.stub().returns({
+      get: sinon.stub().returns(['landscape-terms'])
+    });
+    const showTerms = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.BudgetTableRow
+        acl={acl}
+        allocationEditable={false}
+        charmsGetById={charmsGetById}
+        listPlansForCharm={listPlansForCharm}
+        plansEditable={false}
+        service={service}
+        showTerms={showTerms}
+        withPlans={true} />, true);
+    const output = renderer.getRenderOutput();
+    const instance = renderer.getMountedInstance();
+    const expected = (
+      <div>
+        <juju.components.ExpandingRow
+          classes={{
+            'budget-table-row': true,
+            'twelve-col': true
+          }}
+          clickable={false}
+          expanded={false}>
+          <div>
+            <div>
+              <div className="three-col no-margin-bottom">
+                <img className="budget-table__charm-icon"
+                  src="landscape.svg" />
+                Landscape
+              </div>
+              <div className="one-col no-margin-bottom">
+                {4}
+              </div>
+            </div>
+            <div>
+              <div className="three-col no-margin-bottom">
+                <span>You need to select a plan</span>
+              </div>
+              <div className="two-col no-margin-bottom">
+                $1
+              </div>
+              <div className="two-col no-margin-bottom">
+                <span onClick={undefined}>$1</span>
+              </div>
+              <div className="one-col no-margin-bottom last-col">
+                $1
+              </div>
+              {undefined}
+            </div>
+            {undefined}
+            <div className={
+              'two-col prepend-five no-margin-bottom budget-table-row__link'}>
+              <juju.components.GenericButton
+                action={instance._toggleTerms}
+                type="base"
+                title="Terms" />
+            </div>
+          </div>
+          <div>
+            {undefined}
+          </div>
+        </juju.components.ExpandingRow>
+        {undefined}
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
+  it('can display a terms popup', function() {
+    const charmsGetById = sinon.stub().returns({
+      get: sinon.stub().returns(['landscape-terms', 'apache2-terms'])
+    });
+    const showTerms = sinon.stub();
+    showTerms.withArgs('landscape-terms').callsArgWith(2, null, {
+      name: 'landscape',
+      content: 'Landscape terms.'
+    });
+    showTerms.withArgs('apache2-terms').callsArgWith(2, null, {
+      name: 'apache2',
+      content: 'Apache2 terms.'
+    });
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.BudgetTableRow
+        acl={acl}
+        allocationEditable={false}
+        charmsGetById={charmsGetById}
+        listPlansForCharm={listPlansForCharm}
+        plansEditable={false}
+        service={service}
+        showTerms={showTerms}
+        withPlans={true} />, true);
+    const instance = renderer.getMountedInstance();
+    let output = renderer.getRenderOutput();
+    output.props.children[0].props.children[0].props.children[3].props.children
+      .props.action();
+    output = renderer.getRenderOutput();
+    const expected = (
+      <juju.components.Popup
+        close={instance._toggleTerms}
+        type="wide">
+        <div className="budget-table-row__terms-container">
+          <ul className="budget-table-row__terms">
+            <li key="landscape">
+              <pre>
+                Landscape terms.
+              </pre>
+            </li>
+            <li key="apache2">
+              <pre>
+                Apache2 terms.
+              </pre>
+            </li>
+          </ul>
+        </div>
+      </juju.components.Popup>);
+    assert.deepEqual(output.props.children[1], expected);
   });
 });

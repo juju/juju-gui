@@ -56,6 +56,10 @@ YUI.add('deployment-flow', function() {
       withPlans: React.PropTypes.bool
     },
 
+    getDefaultProps: function() {
+      return {applications: []};
+    },
+
     getInitialState: function() {
       // Set up the cloud, credential and region from props, as if they exist at
       // mount they can't be changed.
@@ -68,8 +72,7 @@ YUI.add('deployment-flow', function() {
         modelName: this.props.modelName,
         region: this.props.region,
         showChangelogs: false,
-        sshKey: null,
-        terms: []
+        sshKey: null
       };
     },
 
@@ -207,16 +210,6 @@ YUI.add('deployment-flow', function() {
     */
     _setBudget: function(budget) {
       this.setState({budget: budget});
-    },
-
-    /**
-      Store the terms in state.
-
-      @method _setBudget
-      @param {String} term The terms to agree to.
-    */
-    _setTerms: function(terms) {
-      this.setState({terms: terms});
     },
 
     /**
@@ -676,16 +669,16 @@ YUI.add('deployment-flow', function() {
       }
       const disabled = this.props.acl.isReadOnly();
       return (
-          <div className="deployment-flow__deploy-option">
-            <input className="deployment-flow__deploy-checkbox"
-              disabled={disabled}
-              id="terms"
-              type="checkbox" />
-            <label className="deployment-flow__deploy-label"
-              htmlFor="terms">
-              I agree to all terms.
-            </label>
-          </div>);
+        <div className="deployment-flow__deploy-option">
+          <input className="deployment-flow__deploy-checkbox"
+            disabled={disabled}
+            id="terms"
+            type="checkbox" />
+          <label className="deployment-flow__deploy-label"
+            htmlFor="terms">
+            I agree to all terms.
+          </label>
+        </div>);
     },
 
     /**
@@ -771,6 +764,7 @@ YUI.add('deployment-flow', function() {
     'deployment-services',
     'deployment-ssh-key',
     'generic-button',
-    'generic-input'
+    'generic-input',
+    'usso-login-link'
   ]
 });
