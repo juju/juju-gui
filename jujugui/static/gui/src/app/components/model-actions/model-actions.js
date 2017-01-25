@@ -95,7 +95,8 @@ YUI.add('model-actions', function() {
 
     render: function() {
       var isReadOnly = this.props.acl.isReadOnly();
-      const shareIcon = window.flags.share ? (
+      const shareFlag = window.juju_config && window.juju_config.shareFlag;
+      const shareIcon = shareFlag ? (
         <span className="model-actions__share link tooltip"
           onClick={this._handleShareClick}
           role="button"

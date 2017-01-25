@@ -278,7 +278,8 @@ YUI.add('user-profile-entity', function() {
           action={props.displayConfirmation}
           type="inline-base"
           title="Destroy model" />) : undefined;
-      const shareIcon = window.flags.share ? (
+      const shareFlag = window.juju_config && window.juju_config.shareFlag;
+      const shareIcon = shareFlag ? (
         <span className="entity-share link tooltip"
           onClick={this._handleShareClick}
           role="button"
