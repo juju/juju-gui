@@ -1492,12 +1492,15 @@ YUI.add('juju-view-utils', function(Y) {
       complete.
     @param {Boolean} autoplace Whether the unplace units should be placed.
     @param {String} model The name of the new model.
-    @param {String} credential The credentials to be used with the new model.
-    @param {String} cloud The cloud to deploy to.
-    @param {String} region The cloud region to deploy to.
+    @param {Object} args Any other optional argument that can be provided when
+      creating a new model. This includes the following fields:
+      - config: the optional model config;
+      - cloud: the name of the cloud to create the model in;
+      - region: the name of the cloud region to create the model in;
+      - credential: the name of the cloud credential to use for managing the
+        model's resources.
   */
-  utils.deploy = function(
-    app, callback, autoplace=true, model, credential, cloud, region) {
+  utils.deploy = function(app, callback, autoplace=true, model, args) {
     const env = app.env;
     const controllerAPI = app.controllerAPI;
     if (autoplace) {
@@ -1509,13 +1512,9 @@ YUI.add('juju-view-utils', function(Y) {
       callback();
       return;
     }
-    controllerAPI.createModel(
-      model,
-      controllerAPI.getCredentials().user, {
-        credential: credential,
-        cloud: cloud,
-        region: region
-      }, utils._newModelCallback.bind(this, app, callback));
+    const user = controllerAPI.getCredentials().user;
+    const cb = utils._newModelCallback.bind(this, app, callback);
+    controllerAPI.createModel(model, user, args, cb);
   };
 
   /**
