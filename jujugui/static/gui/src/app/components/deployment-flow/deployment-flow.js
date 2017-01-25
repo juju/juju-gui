@@ -23,15 +23,18 @@ YUI.add('deployment-flow', function() {
   juju.components.DeploymentFlow = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
+      applications: React.PropTypes.array,
       changeState: React.PropTypes.func.isRequired,
       changes: React.PropTypes.object.isRequired,
       changesFilterByParent: React.PropTypes.func.isRequired,
+      charmsGetById: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.object,
       credential: React.PropTypes.string,
       deploy: React.PropTypes.func.isRequired,
       environment: React.PropTypes.object.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
+      getAgreements: React.PropTypes.func.isRequired,
       getAuth: React.PropTypes.func.isRequired,
       getCloudCredentialNames: React.PropTypes.func,
       getCloudCredentials: React.PropTypes.func,
@@ -47,9 +50,14 @@ YUI.add('deployment-flow', function() {
       modelName: React.PropTypes.string.isRequired,
       region: React.PropTypes.string,
       servicesGetById: React.PropTypes.func.isRequired,
+      showTerms: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func,
       updateModelName: React.PropTypes.func,
       withPlans: React.PropTypes.bool
+    },
+
+    getDefaultProps: function() {
+      return {applications: []};
     },
 
     getInitialState: function() {
@@ -136,9 +144,10 @@ YUI.add('deployment-flow', function() {
           visible = true;
           break;
         case 'agreements':
+          const terms = this._getTerms();
           completed = false;
           disabled = false;
-          visible = false;
+          visible = terms && terms.length > 0;
           break;
       }
       return {
@@ -279,6 +288,30 @@ YUI.add('deployment-flow', function() {
         args.config = {'authorized-keys': this.state.sshKey};
       }
       this.props.deploy(this._handleClose, true, modelName, args);
+    },
+
+    /**
+      Get the list of terms for the uncommitted apps.
+
+      @method _getTerms
+      @returns {Array} The list of terms.
+    */
+    _getTerms: function() {
+      let termIds = [];
+      this.props.applications.forEach(app => {
+        // Get the terms from the app's charm.
+        const terms = this.props.charmsGetById(app.get('charm')).get('terms');
+        if (terms && terms.length > 0) {
+          // If there are terms then add them if they haven't already been
+          // recorded.
+          terms.forEach(id => {
+            if (termIds.indexOf(id) === -1) {
+              termIds.push(id);
+            }
+          });
+        }
+      });
+      return termIds;
     },
 
     /**
@@ -527,12 +560,14 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentServices
             acl={this.props.acl}
             changesFilterByParent={this.props.changesFilterByParent}
+            charmsGetById={this.props.charmsGetById}
             generateAllChangeDescriptions={
               this.props.generateAllChangeDescriptions}
             groupedChanges={this.props.groupedChanges}
             listPlansForCharm={this.props.listPlansForCharm}
             servicesGetById={this.props.servicesGetById}
             showChangelogs={this.state.showChangelogs}
+            showTerms={this.props.showTerms}
             withPlans={this.props.withPlans} />
         </juju.components.DeploymentSection>);
     },
@@ -582,9 +617,9 @@ YUI.add('deployment-flow', function() {
           showCheck={false}
           title="Model changes">
           <juju.components.DeploymentChanges
-          changes={this.props.changes}
-          generateAllChangeDescriptions={
-            this.props.generateAllChangeDescriptions} />
+            changes={this.props.changes}
+            generateAllChangeDescriptions={
+              this.props.generateAllChangeDescriptions} />
         </juju.components.DeploymentSection>);
     },
 
@@ -595,37 +630,21 @@ YUI.add('deployment-flow', function() {
       @returns {Object} The markup.
     */
     _generateAgreementsSection: function() {
-      var status = this._getSectionStatus('agreements');
+      const status = this._getSectionStatus('agreements');
       if (!status.visible) {
         return;
       }
-      var disabled = this.props.acl.isReadOnly();
+      const disabled = this.props.acl.isReadOnly();
       return (
-        <div>
-          <div className="deployment-flow__deploy-option">
-            <input className="deployment-flow__deploy-checkbox"
-              disabled={disabled}
-              id="emails"
-              type="checkbox" />
-            <label className="deployment-flow__deploy-label"
-              htmlFor="emails">
-              Please email me updates regarding feature
-              announcements, performance suggestions, feedback
-              surveys and special offers.
-            </label>
-          </div>
-          <div className="deployment-flow__deploy-option">
-            <input className="deployment-flow__deploy-checkbox"
-              disabled={disabled}
-              id="terms"
-              type="checkbox" />
-            <label className="deployment-flow__deploy-label"
-              htmlFor="terms">
-              I agree that my use of any services and related APIs
-              is subject to my compliance with the applicable&nbsp;
-              <a href="" target="_blank">Terms of service</a>.
-            </label>
-          </div>
+        <div className="deployment-flow__deploy-option">
+          <input className="deployment-flow__deploy-checkbox"
+            disabled={disabled}
+            id="terms"
+            type="checkbox" />
+          <label className="deployment-flow__deploy-label"
+            htmlFor="terms">
+            I agree to all terms.
+          </label>
         </div>);
     },
 
@@ -674,6 +693,7 @@ YUI.add('deployment-flow', function() {
     'deployment-section',
     'deployment-services',
     'generic-button',
-    'generic-input'
+    'generic-input',
+    'usso-login-link'
   ]
 });

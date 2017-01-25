@@ -1,0 +1,48 @@
+.popup {
+  &__panel {
+    @extend %floating-panel;
+    position: absolute;
+    padding: 20px;
+    box-shadow: 0 7px 20px .15px rgba(0, 0, 0, .2);
+
+    &--narrow {
+      $width: 420px;
+      top: calc(50% - 150px);
+      left: calc(50% - (#{$width} / 2));
+      width: $width - 40px;
+    }
+
+    &--wide {
+      $spacing: 40px;
+      top: $spacing;
+      bottom: $spacing;
+      left: $spacing;
+      right: $spacing;
+    }
+  }
+
+  &__close {
+    margin-bottom: 10px;
+    text-align: right;
+
+    .button--base {
+      display: inline-block;
+      width: auto;
+      padding: 0;
+
+      &:hover {
+        background: none;
+      }
+    }
+  }
+
+  &__title {
+    margin-bottom: 10px;
+  }
+
+  .button-row {
+    float: right;
+    width: 60%;
+    margin: 0 -10px -10px 0;
+  }
+}

@@ -24,11 +24,13 @@ YUI.add('deployment-services', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       changesFilterByParent: React.PropTypes.func.isRequired,
+      charmsGetById: React.PropTypes.func.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
       groupedChanges: React.PropTypes.object.isRequired,
       listPlansForCharm: React.PropTypes.func.isRequired,
       servicesGetById: React.PropTypes.func.isRequired,
       showChangelogs: React.PropTypes.bool,
+      showTerms: React.PropTypes.func,
       withPlans: React.PropTypes.bool
     },
 
@@ -104,11 +106,13 @@ YUI.add('deployment-services', function() {
           <juju.components.BudgetTable
             acl={this.props.acl}
             allocationEditable={true}
+            charmsGetById={this.props.charmsGetById}
             extraInfo={this._generateExtraInfo()}
             listPlansForCharm={this.props.listPlansForCharm}
             plansEditable={true}
             services={this._getServices()}
             showExtra={this.props.showChangelogs}
+            showTerms={this.props.showTerms}
             withPlans={this.props.withPlans} />
           {this._generateSpend()}
         </div>

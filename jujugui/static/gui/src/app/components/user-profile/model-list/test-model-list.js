@@ -274,12 +274,15 @@ describe('UserProfileModelList', () => {
     output.props.children[1].props.children[1][0].props.displayConfirmation();
     output = component.getRenderOutput();
     const expected = (
-      <juju.components.ConfirmationPopup
+      <juju.components.Popup
         buttons={output.props.children[2].props.buttons}
-        message={'Are you sure you want to destroy spinach/sandbox? All the ' +
-          'applications and units included in the model will be destroyed. ' +
-          'This action cannot be undone.'}
-        title="Destroy model" />);
+        title="Destroy model">
+        <p>
+          Are you sure you want to destroy spinach/sandbox? All the
+          applications and units included in the model will be destroyed.
+          This action cannot be undone.
+        </p>
+      </juju.components.Popup>);
     assert.deepEqual(output.props.children[2], expected);
   });
 
