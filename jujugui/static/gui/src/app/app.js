@@ -706,7 +706,7 @@ YUI.add('juju-gui', function(Y) {
         this.env.connect();
       }
       this.on('*:autoplaceAndCommitAll', this._autoplaceAndCommitAll, this);
-      this.state.dispatch();
+      this.state.bootstrap();
     },
 
     /**
