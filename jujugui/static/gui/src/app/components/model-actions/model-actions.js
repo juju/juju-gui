@@ -54,6 +54,15 @@ YUI.add('model-actions', function() {
     },
 
     /**
+      Share the model with other users.
+
+      @method _handleShareClick
+    */
+    _handleShareClick: function() {
+      alert('Sharing button clicked.');
+    },
+
+    /**
       When file is submitted the drag over animation is triggered and the file
       is passed to the utils function.
 
@@ -86,34 +95,52 @@ YUI.add('model-actions', function() {
 
     render: function() {
       var isReadOnly = this.props.acl.isReadOnly();
+      const shareIcon = window.flags.share ? (
+        <span className="model-actions__share link tooltip"
+          onClick={this._handleShareClick}
+          role="button"
+          tabIndex="0">
+          <juju.components.SvgIcon name="share_16"
+            className="model-actions__icon"
+            size="16" />
+          <span className="tooltip__tooltip--below">
+            <span className="tooltip__inner tooltip__inner--up">
+              Share
+            </span>
+          </span>
+        </span>
+      ) : undefined;
       return (
         <div className={this._generateClasses()}>
-          <span className="model-actions__export link tooltip"
-            onClick={this._handleExport}
-            role="button"
-            tabIndex="0">
-            <juju.components.SvgIcon name="export_16"
-              className="model-actions__icon"
-              size="16" />
-            <span className="tooltip__tooltip--below">
-              <span className="tooltip__inner tooltip__inner--up">
-                Export
+          <div className="model-actions__buttons">
+            <span className="model-actions__export link tooltip"
+              onClick={this._handleExport}
+              role="button"
+              tabIndex="0">
+              <juju.components.SvgIcon name="export_16"
+                className="model-actions__icon"
+                size="16" />
+              <span className="tooltip__tooltip--below">
+                <span className="tooltip__inner tooltip__inner--up">
+                  Export
+                </span>
               </span>
             </span>
-          </span>
-          <span className="model-actions__import link tooltip"
-            onClick={!isReadOnly && this._handleImportClick}
-            role="button"
-            tabIndex="0">
-            <juju.components.SvgIcon name="import_16"
-              className="model-actions__icon"
-              size="16" />
-            <span className="tooltip__tooltip--below">
-              <span className="tooltip__inner tooltip__inner--up">
-                Import
+            <span className="model-actions__import link tooltip"
+              onClick={!isReadOnly && this._handleImportClick}
+              role="button"
+              tabIndex="0">
+              <juju.components.SvgIcon name="import_16"
+                className="model-actions__icon"
+                size="16" />
+              <span className="tooltip__tooltip--below">
+                <span className="tooltip__inner tooltip__inner--up">
+                  Import
+                </span>
               </span>
             </span>
-          </span>
+            {shareIcon}
+          </div>
           <input className="model-actions__file"
             type="file"
             onChange={isReadOnly ? null : this._handleImportFile}

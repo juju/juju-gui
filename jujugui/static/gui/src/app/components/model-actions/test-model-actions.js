@@ -33,6 +33,11 @@ describe('ModelActions', function() {
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    window.flags = {};
+  });
+
+  afterEach(function() {
+    delete window.flags;
   });
 
   it('can render and pass the correct props', function() {
@@ -51,32 +56,35 @@ describe('ModelActions', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="model-actions">
-        <span className="model-actions__export link tooltip"
-          onClick={instance._handleExport}
-          role="button"
-          tabIndex="0">
-          <juju.components.SvgIcon name="export_16"
-            className="model-actions__icon"
-            size="16" />
-          <span className="tooltip__tooltip--below">
-            <span className="tooltip__inner tooltip__inner--up">
-              Export
+        <div className="model-actions__buttons">
+          <span className="model-actions__export link tooltip"
+            onClick={instance._handleExport}
+            role="button"
+            tabIndex="0">
+            <juju.components.SvgIcon name="export_16"
+              className="model-actions__icon"
+              size="16" />
+            <span className="tooltip__tooltip--below">
+              <span className="tooltip__inner tooltip__inner--up">
+                Export
+              </span>
             </span>
           </span>
-        </span>
-        <span className="model-actions__import link tooltip"
-          onClick={instance._handleImportClick}
-          role="button"
-          tabIndex="0">
-          <juju.components.SvgIcon name="import_16"
-            className="model-actions__icon"
-            size="16" />
-          <span className="tooltip__tooltip--below">
-            <span className="tooltip__inner tooltip__inner--up">
-              Import
+          <span className="model-actions__import link tooltip"
+            onClick={instance._handleImportClick}
+            role="button"
+            tabIndex="0">
+            <juju.components.SvgIcon name="import_16"
+              className="model-actions__icon"
+              size="16" />
+            <span className="tooltip__tooltip--below">
+              <span className="tooltip__inner tooltip__inner--up">
+                Import
+              </span>
             </span>
           </span>
-        </span>
+          {undefined}
+        </div>
         <input className="model-actions__file"
           type="file"
           onChange={instance._handleImportFile}
@@ -133,7 +141,7 @@ describe('ModelActions', function() {
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         renderDragOverNotification={sinon.stub()} />);
-    output.props.children[0].props.onClick();
+    output.props.children[0].props.children[0].props.onClick();
     assert.equal(exportEnvironmentFile.callCount, 1);
   });
 
@@ -157,7 +165,7 @@ describe('ModelActions', function() {
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {'file-input': {click: fileClick}};
     var output = shallowRenderer.getRenderOutput();
-    output.props.children[1].props.onClick();
+    output.props.children[0].props.children[1].props.onClick();
     assert.equal(fileClick.callCount, 1);
   });
 
@@ -182,7 +190,7 @@ describe('ModelActions', function() {
       'file-input': {files: ['apache2.yaml']},
     };
     var output = shallowRenderer.getRenderOutput();
-    output.props.children[2].props.onChange();
+    output.props.children[1].props.onChange();
     assert.equal(importBundleFile.callCount, 1);
     assert.equal(importBundleFile.args[0][0], 'apache2.yaml');
   });
@@ -204,32 +212,35 @@ describe('ModelActions', function() {
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="model-actions">
-        <span className="model-actions__export link tooltip"
-          onClick={instance._handleExport}
-          role="button"
-          tabIndex="0">
-          <juju.components.SvgIcon name="export_16"
-            className="model-actions__icon"
-            size="16" />
-          <span className="tooltip__tooltip--below">
-            <span className="tooltip__inner tooltip__inner--up">
-              Export
+        <div className="model-actions__buttons">
+          <span className="model-actions__export link tooltip"
+            onClick={instance._handleExport}
+            role="button"
+            tabIndex="0">
+            <juju.components.SvgIcon name="export_16"
+              className="model-actions__icon"
+              size="16" />
+            <span className="tooltip__tooltip--below">
+              <span className="tooltip__inner tooltip__inner--up">
+                Export
+              </span>
             </span>
           </span>
-        </span>
-        <span className="model-actions__import link tooltip"
-          onClick={false}
-          role="button"
-          tabIndex="0">
-          <juju.components.SvgIcon name="import_16"
-            className="model-actions__icon"
-            size="16" />
-          <span className="tooltip__tooltip--below">
-            <span className="tooltip__inner tooltip__inner--up">
-              Import
+          <span className="model-actions__import link tooltip"
+            onClick={false}
+            role="button"
+            tabIndex="0">
+            <juju.components.SvgIcon name="import_16"
+              className="model-actions__icon"
+              size="16" />
+            <span className="tooltip__tooltip--below">
+              <span className="tooltip__inner tooltip__inner--up">
+                Import
+              </span>
             </span>
           </span>
-        </span>
+          {undefined}
+        </div>
         <input className="model-actions__file"
           type="file"
           onChange={null}
