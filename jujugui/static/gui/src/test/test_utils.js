@@ -1074,15 +1074,17 @@ describe('utilities', function() {
 
     it('can create a new model', function() {
       envGet.withArgs('connected').returns(false);
-      utils.deploy(
-        app, callback, true, 'new-model', 'the-credential',
-        'azure', 'north');
+      utils.deploy(app, callback, true, 'new-model', {
+        credential: 'the-credential',
+        cloud: 'azure',
+        region: 'north'
+      });
       assert.equal(commit.callCount, 0);
       assert.equal(callback.callCount, 0);
       assert.equal(app.controllerAPI.createModel.callCount, 1);
-      var args = app.controllerAPI.createModel.args[0];
-      assert.equal(args[0], 'new-model');
-      assert.equal(args[1], 'user-spinach');
+      const args = app.controllerAPI.createModel.args[0];
+      assert.strictEqual(args[0], 'new-model');
+      assert.strictEqual(args[1], 'user-spinach');
       assert.deepEqual(args[2], {
         credential: 'the-credential',
         cloud: 'azure',

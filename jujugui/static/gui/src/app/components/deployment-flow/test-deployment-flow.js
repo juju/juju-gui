@@ -775,10 +775,13 @@ describe('DeploymentFlow', function() {
     output.props.children[8].props.children.props.children[1].props.children
       .props.action();
     assert.equal(deploy.callCount, 1);
+    assert.strictEqual(deploy.args[0].length, 4);
     assert.equal(deploy.args[0][2], 'Lamington');
-    assert.equal(deploy.args[0][3], 'cred');
-    assert.equal(deploy.args[0][4], 'cloud');
-    assert.equal(deploy.args[0][5], 'north');
+    assert.deepEqual(deploy.args[0][3], {
+      credential: 'cred',
+      cloud: 'cloud',
+      region: 'north'
+    });
     assert.equal(changeState.callCount, 1);
   });
 
@@ -818,12 +821,68 @@ describe('DeploymentFlow', function() {
     output.props.children[8].props.children.props.children[1].props.children
       .props.action();
     assert.equal(deploy.callCount, 1);
+    assert.strictEqual(deploy.args[0].length, 4);
     assert.equal(deploy.args[0][2], '');
-    assert.equal(deploy.args[0][3], 'cred');
-    assert.equal(deploy.args[0][4], 'cloud');
-    assert.equal(deploy.args[0][5], 'north');
+    assert.deepEqual(deploy.args[0][3], {
+      credential: 'cred',
+      cloud: 'cloud',
+      region: 'north'
+    });
     assert.equal(changeState.callCount, 1);
   });
+
+  it('can deploy with SSH keys', function() {
+    var deploy = sinon.stub().callsArg(0);
+    var changeState = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        changes={{}}
+        changesFilterByParent={sinon.stub()}
+        changeState={changeState}
+        deploy={deploy}
+        generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
+        getAuth={sinon.stub().returns(true)}
+        getCloudCredentials={sinon.stub()}
+        getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
+        getUserName={sinon.stub()}
+        groupedChanges={groupedChanges}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        modelCommitted={true}
+        modelName="Pavlova"
+        servicesGetById={sinon.stub()}
+        updateCloudCredential={sinon.stub()}>
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    instance.refs = {
+      modelName: {
+        getValue: sinon.stub().returns('mymodel')
+      }
+    };
+    instance._setCloud({name: 'azure'});
+    instance._setCredential('creds');
+    instance._setRegion('skaro');
+    instance._setSSHKey('my SSH key');
+    var output = renderer.getRenderOutput();
+    output.props.children[8].props.children.props.children[1].props.children
+      .props.action();
+    assert.equal(deploy.callCount, 1);
+    assert.strictEqual(deploy.args[0].length, 4);
+    assert.equal(deploy.args[0][2], 'mymodel');
+    assert.deepEqual(deploy.args[0][3], {
+      credential: 'creds',
+      cloud: 'azure',
+      region: 'skaro',
+      config: {'authorized-keys': 'my SSH key'}
+    });
+    assert.equal(changeState.callCount, 1);
+  });
+
 
   it('can deploy with Juju 1', function() {
     var deploy = sinon.stub().callsArg(0);
@@ -859,10 +918,13 @@ describe('DeploymentFlow', function() {
     output.props.children[8].props.children.props.children[1].props.children
       .props.action();
     assert.equal(deploy.callCount, 1);
+    assert.strictEqual(deploy.args[0].length, 4);
     assert.equal(deploy.args[0][2], '');
-    assert.equal(deploy.args[0][3], null);
-    assert.equal(deploy.args[0][4], null);
-    assert.equal(deploy.args[0][5], null);
+    assert.deepEqual(deploy.args[0][3], {
+      credential: undefined,
+      cloud: undefined,
+      region: undefined
+    });
     assert.equal(changeState.callCount, 1);
   });
 

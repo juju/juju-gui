@@ -59,9 +59,10 @@ YUI.add('deployment-flow', function() {
       return {
         cloud: modelCommitted ? this.props.cloud : null,
         credential: this.props.credential,
+        loggedIn: !!this.props.getAuth(),
         region: this.props.region,
         showChangelogs: false,
-        loggedIn: !!this.props.getAuth(),
+        sshKey: null
       };
     },
 
@@ -177,6 +178,16 @@ YUI.add('deployment-flow', function() {
     },
 
     /**
+      Store the provided SSH key in state.
+
+      @method _setSSHKey
+      @param {String} key The SSH key.
+    */
+    _setSSHKey: function(key) {
+      this.setState({sshKey: key});
+    },
+
+    /**
       Store the selected budget in state.
 
       @method _setBudget
@@ -250,15 +261,19 @@ YUI.add('deployment-flow', function() {
       @method _handleDeploy
     */
     _handleDeploy: function() {
-      const credential = this.state.credential;
-      const cloud = this.state.cloud && this.state.cloud.name || null;
-      const region = this.state.region;
       let modelName = '';
       if (this.refs.modelName) {
         modelName = this.refs.modelName.getValue();
       }
-      this.props.deploy(
-        this._handleClose, true, modelName, credential, cloud, region);
+      const args = {
+        credential: this.state.credential,
+        cloud: this.state.cloud && this.state.cloud.name || undefined,
+        region: this.state.region
+      };
+      if (this.state.sshKey) {
+        args.config = {'authorized-keys': this.state.sshKey};
+      }
+      this.props.deploy(this._handleClose, true, modelName, args);
     },
 
     /**
