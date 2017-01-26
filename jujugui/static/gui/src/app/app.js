@@ -39,9 +39,6 @@ YUI.add('juju-gui', function(Y) {
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
       d3 = Y.namespace('d3');
-  // Define the disconnected model unique identifier.
-  const DISCONNECTED_UUID = 'disconnected';
-
   /**
    * The main app class.
    *
@@ -782,12 +779,14 @@ YUI.add('juju-gui', function(Y) {
         const modelUUID = this._getModelUUID();
         if (modelUUID) {
           // A model uuid was defined in the config so attempt to connect to it.
-          this._switchModelToUUID(modelUUID);
+          this._listAndSwitchModel(null, modelUUID);
         } else if (entityPromise !== null) {
           this._disambiguateUserState(entityPromise);
         } else {
           // Drop into unconnected mode.
-          this._switchModelToUUID();
+          this.state.changeState({
+            root: 'new'
+          });
         }
       });
 
@@ -1611,9 +1610,17 @@ YUI.add('juju-gui', function(Y) {
       next();
     },
 
-    _emptySectionApp: function() {
+    /**
+      The cleanup dispatcher for the root state path.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _clearLogin: function(state, next) {
       ReactDOM.unmountComponentAtNode(
         document.getElementById('login-container'));
+      if (next) {
+        next();
+      }
     },
 
     /**
@@ -1680,7 +1687,8 @@ YUI.add('juju-gui', function(Y) {
       @param {Function} next - Run the next route handler, if any.
     */
     _handleModelState: function(state, next) {
-      if (this.get('modelUUID') !== state.model.uuid) {
+      if (this.get('modelUUID') !== state.model.uuid ||
+          !this.env.get('connected')) {
         this._switchModelToUUID(state.model.uuid);
       }
       next();
@@ -1692,6 +1700,7 @@ YUI.add('juju-gui', function(Y) {
       @param {String} uuid The uuid of the model to switch to, or none.
     */
     _switchModelToUUID: function(uuid) {
+      console.log('switching to model: ', uuid);
       let socketURL = undefined;
       if (uuid) {
         this.set('modelUUID', uuid);
@@ -1731,6 +1740,45 @@ YUI.add('juju-gui', function(Y) {
       return entityPromise;
     },
 
+    _listAndSwitchModel: function(modelName, modelUUID) {
+      this.controllerAPI.listModelsWithInfo((err, modelList) => {
+        if (err) {
+          console.error('unable to list models', err);
+          this.db.notifications.add({
+            title: 'Unable to list models',
+            message: 'Unable to list models: ' + err,
+            level: 'error'
+          });
+          return;
+        }
+        const noErrorModels = modelList.filter(model => !model.err);
+        let model = undefined;
+        if (modelName) {
+          model = noErrorModels.find(model => model.name === modelName);
+        } else if (modelUUID) {
+          model = noErrorModels.find(model => model.uuid === modelUUID);
+        }
+
+        if (model) {
+          console.log('model found, switching to model');
+          this.maskVisibility(false);
+          this.state.changeState({
+            model: {
+              path: `${this._getAuth().rootUserName}/${model.name}`,
+              uuid: model.uuid
+            },
+            user: null,
+            root: null
+          });
+        } else {
+          // If no model was found then put the user in unconnected mode
+          this.state.changeState({
+            root: 'new'
+          });
+        }
+      });
+    },
+
     _disambiguateUserState: function(entityPromise) {
       entityPromise.then(userState => {
         console.log('entity found, showing store');
@@ -1749,36 +1797,10 @@ YUI.add('juju-gui', function(Y) {
           console.log('not logged into controller');
           return;
         }
-        this.controllerAPI.listModelsWithInfo((err, modelList) => {
-          if (err) {
-            console.error('unable to list models', err);
-            this.db.notifications.add({
-              title: 'Unable to list models',
-              message: 'Unable to list models: ' + err,
-              level: 'error'
-            });
-            return;
-          }
-          // Get the model name from the userState which should be in the
-          // format userName/modelName.
-          const modelName = userState.split('/')[1];
-          // Filter out any models which may be in an error state
-          const model = modelList
-                          .filter(model => !model.err)
-                          .find(model => model.name === modelName);
-          if (model) {
-            console.log('model found, switching to model');
-            this.state.changeState({
-              model: {path: userState, uuid: model.uuid},
-              user: null
-            });
-          } else {
-            // If no model was found then put the user in unconnected mode
-            this.state.changeState({
-              root: 'new'
-            });
-          }
-        });
+        // Get the model name from the userState which should be in the
+        // format userName/modelName.
+        const modelName = userState.split('/')[1];
+        this._listAndSwitchModel(modelName);
       });
     },
 
@@ -1902,6 +1924,7 @@ YUI.add('juju-gui', function(Y) {
     */
     _clearRoot: function(state, next) {
       this._clearCharmbrowser(state, next);
+      this._clearLogin(state, next);
       next();
     },
 
@@ -2324,6 +2347,9 @@ YUI.add('juju-gui', function(Y) {
       if (controllerAPI) {
         closeController = controllerAPI.close.bind(controllerAPI);
       }
+      this.state.changeState({
+        model: null
+      });
       this.env.close(() => {
         closeController(() => {
           if (controllerAPI) {
@@ -2433,7 +2459,7 @@ YUI.add('juju-gui', function(Y) {
       // The login was a success.
       console.log('successfully logged into model');
       this.maskVisibility(false);
-      this._emptySectionApp();
+      this._clearLogin();
       this.set('loggedIn', true);
       if (this.state.current.root === 'login') {
         this.state.changeState({root: null});

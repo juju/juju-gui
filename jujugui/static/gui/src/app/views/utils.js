@@ -1404,6 +1404,7 @@ YUI.add('juju-view-utils', function(Y) {
     };
     if (!uuid || !name) {
       newState.root = 'new';
+      newState.model = null;
     }
     this.state.changeState(newState);
     // Update the model name. The onEnvironmentNameChange in app.js method will
@@ -1484,7 +1485,8 @@ YUI.add('juju-view-utils', function(Y) {
     }
     changeState({
       profile: username,
-      model: null
+      model: null,
+      root: null
     });
   };
 
