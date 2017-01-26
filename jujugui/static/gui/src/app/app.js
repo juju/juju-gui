@@ -784,6 +784,7 @@ YUI.add('juju-gui', function(Y) {
           this._disambiguateUserState(entityPromise);
         } else {
           // Drop into unconnected mode.
+          this.maskVisibility(false);
           this.state.changeState({
             root: 'new'
           });
@@ -800,10 +801,7 @@ YUI.add('juju-gui', function(Y) {
         console.log('controller connected');
         const creds = this.controllerAPI.getCredentials();
         const gisf = this.get('gisf');
-        if (!creds.areAvailable && !gisf) {
-            // Credentials are not available and, not being in GISF mode, we
-            // don't support external or anonymous connections. Just show the
-            // login form.
+        if (!creds.areAvailable) {
           this._displayLogin();
           return;
         }
@@ -1675,13 +1673,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Handle the request to display the new model state.
-    */
-    _handleNewModel: function() {
-      this.switchEnv();
-    },
-
-    /**
       Handles the state changes for the model key.
       @param {Object} state - The application state.
       @param {Function} next - Run the next route handler, if any.
@@ -1760,7 +1751,6 @@ YUI.add('juju-gui', function(Y) {
         }
 
         if (model) {
-          console.log('model found, switching to model');
           this.maskVisibility(false);
           this.state.changeState({
             model: {
@@ -1853,8 +1843,6 @@ YUI.add('juju-gui', function(Y) {
         ['root',
           this._rootDispatcher.bind(this),
           this._clearRoot.bind(this)],
-        ['new',
-          this._handleNewModel.bind(this)],
         ['profile',
           this._renderUserProfile.bind(this),
           this._clearUserProfile.bind(this)],
@@ -1910,6 +1898,14 @@ YUI.add('juju-gui', function(Y) {
           break;
         case 'store':
           this._renderCharmbrowser(state, next);
+          break;
+        case 'new':
+          // When going to disconnected mode the modelUUID should be set to
+          // a falsy value. If it's not then we're still connected and need to
+          // switch.
+          if (this.get('modelUUID')) {
+            this._switchModelToUUID();
+          }
           break;
         default:
           next();

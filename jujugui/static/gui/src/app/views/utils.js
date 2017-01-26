@@ -1407,42 +1407,8 @@ YUI.add('juju-view-utils', function(Y) {
       newState.model = null;
     }
     this.state.changeState(newState);
-    // Update the model name. The onEnvironmentNameChange in app.js method will
-    // update the name correctly accross components.
-    // Make sure it is done after the switchEnv.
-    var updateModelName = function(params) {
-      env.set('environmentName', name);
-      if (callback) {
-        callback(params);
-      }
-    };
     env.set('environmentName', name);
     this.set('modelUUID', uuid);
-    var username, password, address, port;
-    if (uuid && modelList) {
-      var found = modelList.some((model) => {
-        if (model.uuid === uuid) {
-          username = model.user;
-          password = model.password;
-          // Note that the hostPorts attribute is only present in models
-          // returned by JEM.
-          if (model.hostPorts && model.hostPorts.length) {
-            var hostport = model.hostPorts[0].split(':');
-            address = hostport[0];
-            port = hostport[1];
-          }
-          return true;
-        }
-      });
-      if (!found) {
-        console.log('No user credentials for model: ', uuid);
-      }
-      var socketUrl = createSocketURL(uuid, address, port);
-      switchEnv(socketUrl, username, password, updateModelName, true, clearDB);
-    } else {
-      // Just reset without reconnecting to an env.
-      switchEnv(null, null, null, callback, false, clearDB);
-    }
   };
 
   /**
