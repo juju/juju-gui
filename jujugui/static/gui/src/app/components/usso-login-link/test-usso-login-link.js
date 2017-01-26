@@ -36,11 +36,18 @@ describe('USSOLoginLink', () => {
           displayType={'text'}
           loginToController={sinon.stub()} />);
     assert.deepEqual(output,
-      <a className="logout-link"
-        onClick={output.props.onClick}
-        target="_blank">
-        Login
-      </a>);
+      <div className="usso-login">
+        <a className="logout-link"
+          onClick={output.props.onClick}
+          target="_blank">
+          Login
+        </a>
+        <div className="usso-login__notification">
+          When requested,
+          in your address bar above, please allow popups
+          from {window.location.origin} to login.
+        </div>
+      </div>);
   });
 
   it('calls loginToController on click for text link', () => {
@@ -60,10 +67,17 @@ describe('USSOLoginLink', () => {
           displayType={'button'}
           loginToController={sinon.stub()} />, true);
     assert.deepEqual(component.getRenderOutput(),
-      <juju.components.GenericButton
-        action={component.getMountedInstance()._handleLogin}
-        type="positive"
-        title="Sign up or Login" />);
+      <div className="usso-login">
+        <juju.components.GenericButton
+          action={component.getMountedInstance()._handleLogin}
+          type="positive"
+          title="Sign up or Login" />
+        <div className="usso-login__notification">
+          When requested,
+          in your address bar above, please allow popups
+          from {window.location.origin} to login.
+        </div>
+      </div>);
   });
 
   it('calls loginToController on click for button link', () => {

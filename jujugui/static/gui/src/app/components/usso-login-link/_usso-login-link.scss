@@ -11,7 +11,7 @@
     margin: 10px auto 0;
     padding: 12px 25px;
     position: absolute;
-    z-index: 3;
+    z-index: index($z-indexed-elements, usso-login-link);
     top: 100%;
     right: 10px;
     transition: opacity 0.3s;
