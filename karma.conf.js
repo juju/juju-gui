@@ -71,7 +71,7 @@ module.exports = function(config) {
     // set the options for the various preprocessors used
     babelPreprocessor: {
       filename: function (file) {
-        return file.originalPath.replace(/\/src\//, '/build/');
+        return file.originalPath.replace(/gui\/src\//, 'gui/build/');
       },
       sourceFileName: function (file) {
         return file.originalPath;
