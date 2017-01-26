@@ -1204,7 +1204,8 @@ YUI.add('juju-gui', function(Y) {
     _renderDeployment: function(state, next) {
       const env = this.env;
       const db = this.db;
-      const modelName = db.environment.get('name');
+      const connected = this.env.get('connected');
+      const modelName = connected ? db.environment.get('name') : 'mymodel';
       const utils = views.utils;
       const currentChangeSet = env.get('ecs').getCurrentChangeSet();
       if (Object.keys(currentChangeSet).length === 0) {
@@ -1287,7 +1288,7 @@ YUI.add('juju-gui', function(Y) {
             controllerAPI && controllerAPI.listClouds.bind(controllerAPI)}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
           loginToController={loginToController}
-          modelCommitted={this.env.get('connected')}
+          modelCommitted={connected}
           modelName={modelName}
           region={env.get('region')}
           servicesGetById={services.getById.bind(services)}
