@@ -1,0 +1,26 @@
+.usso-login {
+  position: relative;
+
+  &__notification {
+    background: #fff;
+    box-shadow: 0 1px 4.85px 0.15px rgba(0,0,0,0.2);
+    box-sizing: border-box;
+    color: #666;
+    font-size: 14px;
+    line-height: normal;
+    margin: 10px auto 0;
+    padding: 12px 25px;
+    position: absolute;
+    z-index: 3;
+    top: 100%;
+    right: 10px;
+    transition: opacity 0.3s;
+    width: 300px;
+    display: none;
+  }
+
+  a:hover + &__notification,
+  button:hover + &__notification {
+    display: block;
+  }
+}
