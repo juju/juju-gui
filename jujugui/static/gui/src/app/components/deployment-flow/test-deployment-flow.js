@@ -150,6 +150,16 @@ describe('DeploymentFlow', function() {
         <juju.components.DeploymentSection
           completed={false}
           disabled={true}
+          instance="deployment-ssh-key"
+          showCheck={false}>
+          <juju.components.DeploymentSSHKey
+            cloud={null}
+            setSSHKey={instance._setSSHKey}
+          />
+        </juju.components.DeploymentSection>
+        <juju.components.DeploymentSection
+          completed={false}
+          disabled={true}
           instance="deployment-machines"
           showCheck={false}
           title="Machines to be deployed">
@@ -268,6 +278,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentPanel
         changeState={changeState}
         title="Pavlova">
+        {undefined}
         {undefined}
         {undefined}
         {undefined}
@@ -674,7 +685,7 @@ describe('DeploymentFlow', function() {
     instance._setCredential('cred');
     var output = renderer.getRenderOutput();
     assert.isUndefined(
-      output.props.children[8].props.children.props.children[0]);
+      output.props.children[9].props.children.props.children[0]);
   });
 
   // Click log in and pass the given error string to the login callback used by
@@ -772,7 +783,7 @@ describe('DeploymentFlow', function() {
     instance._setCredential('cred');
     instance._setRegion('north');
     var output = renderer.getRenderOutput();
-    output.props.children[8].props.children.props.children[1].props.children
+    output.props.children[9].props.children.props.children[1].props.children
       .props.action();
     assert.equal(deploy.callCount, 1);
     assert.strictEqual(deploy.args[0].length, 4);
@@ -822,13 +833,13 @@ describe('DeploymentFlow', function() {
     instance._setCredential('cred');
     instance._setRegion('north');
     let output = renderer.getRenderOutput();
-    let deployButton = output.props.children[8].props.children.props
+    let deployButton = output.props.children[9].props.children.props
       .children[1].props.children.props;
     deployButton.action();
 
     // .action() rerenders the component so we need to get it again
     output = renderer.getRenderOutput();
-    deployButton = output.props.children[8].props.children.props
+    deployButton = output.props.children[9].props.children.props
       .children[1].props.children.props;
 
     assert.equal(deployButton.disabled, true);
@@ -868,7 +879,7 @@ describe('DeploymentFlow', function() {
     instance._setCredential('cred');
     instance._setRegion('north');
     var output = renderer.getRenderOutput();
-    output.props.children[8].props.children.props.children[1].props.children
+    output.props.children[9].props.children.props.children[1].props.children
       .props.action();
     assert.equal(deploy.callCount, 1);
     assert.strictEqual(deploy.args[0].length, 4);
@@ -919,7 +930,7 @@ describe('DeploymentFlow', function() {
     instance._setRegion('skaro');
     instance._setSSHKey('my SSH key');
     var output = renderer.getRenderOutput();
-    output.props.children[8].props.children.props.children[1].props.children
+    output.props.children[9].props.children.props.children[1].props.children
       .props.action();
     assert.equal(deploy.callCount, 1);
     assert.strictEqual(deploy.args[0].length, 4);
@@ -965,7 +976,7 @@ describe('DeploymentFlow', function() {
     var instance = renderer.getMountedInstance();
     instance.refs = {};
     var output = renderer.getRenderOutput();
-    output.props.children[8].props.children.props.children[1].props.children
+    output.props.children[9].props.children.props.children[1].props.children
       .props.action();
     assert.equal(deploy.callCount, 1);
     assert.strictEqual(deploy.args[0].length, 4);

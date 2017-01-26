@@ -113,6 +113,11 @@ YUI.add('deployment-flow', function() {
           disabled = !hasCloud;
           visible = !isLegacyJuju;
           break;
+        case 'ssh-key':
+          completed = false;
+          disabled = !hasCloud;
+          visible = mode === 'deploy' && !isLegacyJuju;
+          break;
         case 'machines':
           const addMachines = groupedChanges._addMachines;
           completed = false;
@@ -316,6 +321,31 @@ YUI.add('deployment-flow', function() {
             title={this.state.showChangelogs ?
               'Hide changelog' : 'Show changelog'} />
         </span>);
+    },
+
+    /**
+      Generate the SSH key management section.
+
+      @method _generateSSHKeySection
+      @returns {Object} The markup.
+    */
+    _generateSSHKeySection: function() {
+      const status = this._getSectionStatus('ssh-key');
+      if (!status.visible) {
+        return;
+      }
+      const cloud = this.state.cloud;
+      return (
+        <juju.components.DeploymentSection
+          completed={status.completed}
+          disabled={status.disabled}
+          instance="deployment-ssh-key"
+          showCheck={false}>
+          <juju.components.DeploymentSSHKey
+            cloud={cloud}
+            setSSHKey={this._setSSHKey}
+          />
+        </juju.components.DeploymentSection>);
     },
 
     /**
@@ -640,6 +670,7 @@ YUI.add('deployment-flow', function() {
           {this._generateLogin()}
           {this._generateCloudSection()}
           {this._generateCredentialSection()}
+          {this._generateSSHKeySection()}
           {this._generateMachinesSection()}
           {this._generateServicesSection()}
           {this._generateBudgetSection()}
@@ -673,6 +704,7 @@ YUI.add('deployment-flow', function() {
     'deployment-panel',
     'deployment-section',
     'deployment-services',
+    'deployment-ssh-key',
     'generic-button',
     'generic-input'
   ]
