@@ -1678,8 +1678,9 @@ YUI.add('juju-gui', function(Y) {
       @param {Function} next - Run the next route handler, if any.
     */
     _handleModelState: function(state, next) {
+      const env = this.env;
       if (this.get('modelUUID') !== state.model.uuid ||
-          !this.env.get('connected')) {
+          (!env.get('connected') && !env.get('connecting'))) {
         this._switchModelToUUID(state.model.uuid);
       }
       next();
