@@ -49,29 +49,15 @@ YUI.add('usso-login-link', function() {
     },
 
     /**
-       Returns a notification about popups
-     */
-    _renderNotification: function() {
-      return (
-        <div className="usso-login__notification">
-          When requested please allow popups from {window.location.origin} to login
-        </div>
-      );
-    },
-
-    /**
       Returns the text login link.
     */
     _renderTextLink: function() {
       return (
-        <div className="usso-login">
-          <a className={'logout-link'}
-            onClick={this._handleLogin}
-            target="_blank">
-            Login
-          </a>
-          {this._renderNotification()}
-        </div>);
+        <a className={'logout-link'}
+          onClick={this._handleLogin}
+          target="_blank">
+          Login
+        </a>);
     },
 
     /**
@@ -79,20 +65,28 @@ YUI.add('usso-login-link', function() {
     */
     _renderButtonLink: function() {
       return (
-        <div className="usso-login">
-          <juju.components.GenericButton
-            action={this._handleLogin}
-            type="positive"
-            title="Sign up or Login" />
-          {this._renderNotification()}
-        </div>);
+        <juju.components.GenericButton
+          action={this._handleLogin}
+          type="positive"
+          title="Sign up or Login" />);
     },
 
     render: function() {
+      const notification = `When requested,  
+        in your address bar above, please allow popups 
+        from ${window.location.origin} to login.`;
+      let ele = this._renderTextLink();
       if (this.props.displayType === 'button') {
-        return this._renderButtonLink();
+        ele = this._renderButtonLink();
       }
-      return this._renderTextLink();
+
+      return(
+        <div className="usso-login">
+          {ele}
+          <div className="usso-login__notification">
+            {notification}
+          </div>
+        </div>);
     }
 
   });
