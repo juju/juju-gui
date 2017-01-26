@@ -204,7 +204,7 @@ const State = class State {
   /**
     Used to bootstrap the application from state. This calls the dispatch
     method with the necessary values as we only want to dispatch from the
-    url once on initial application load.
+    URL once on initial application load.
 
     @return {Object} See dispatch() for return arguments.
   */
@@ -245,7 +245,7 @@ const State = class State {
       }
       ({error, state} = this.generateState(this.location.href));
       if (error !== null) {
-        error += ` unable to generate state: ${error}`;
+        error = `unable to generate state: ${error}`;
         return {error, state};
       }
     }

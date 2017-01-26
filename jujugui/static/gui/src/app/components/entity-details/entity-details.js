@@ -200,7 +200,7 @@ YUI.add('entity-details', function() {
       // Set the keyboard focus on the component so it can be scrolled with the
       // keyboard. Requires tabIndex to be set on the element.
       this.refs.content.focus();
-      // Be sure to convert the id to the legacy id as the url will be in the
+      // Be sure to convert the id to the legacy id as the URL will be in the
       // new id format.
       const entityId = this.props.id;
       let processedId = entityId;
@@ -208,9 +208,7 @@ YUI.add('entity-details', function() {
       // into the legacy charm format until the charmstore can accept the new
       // format.
       if (entityId.indexOf('/') !== -1 && entityId.indexOf('~') === -1) {
-        const urlParts = window.jujulib.URL.fromString(entityId);
-        const URLlib = new window.jujulib.URL(urlParts);
-        processedId = URLlib.legacyPath();
+        processedId = window.jujulib.URL.fromString(entityId).legacyPath();
       }
       this.detailsXhr = this.props.getEntity(processedId, this.fetchCallback);
     },

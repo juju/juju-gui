@@ -514,7 +514,7 @@ YUI.add('juju-gui', function(Y) {
       }
       modelAPI.setCredentials({ user, password, macaroons });
       this.env = modelAPI;
-      // Generate the application state to then see if we have to disambiguate
+      // Generate the application state then see if we have to disambiguate
       // the user portion of the state.
       const pathState = this.state.generateState(window.location.href);
       let entityPromise = null;
@@ -1699,7 +1699,7 @@ YUI.add('juju-gui', function(Y) {
         socketURL = this.createSocketURL(this.get('socketTemplate'), uuid);
       } else {
         this.set('modelUUID', undefined);
-        console.log('no uuid or model name defined: using unconnected mode');
+        console.log('no uuid or model name defined: using disconnected mode');
       }
       this.switchEnv(socketURL);
     },
@@ -1710,8 +1710,8 @@ YUI.add('juju-gui', function(Y) {
       @return {Promise} A promise with the charmstore entity if one exists.
     */
     _fetchEntityFromUserState: function(userState) {
-      const urlParts = window.jujulib.URL.fromString('u/' + userState);
-      const URLlib = new window.jujulib.URL(urlParts);
+      const legacyPath =
+        window.jujulib.URL.fromString('u/' + userState).legacyPath();
       const userPaths = this.userPaths;
       const entityCache = userPaths.get(userState);
       if (entityCache && entityCache.promise) {
@@ -1719,7 +1719,7 @@ YUI.add('juju-gui', function(Y) {
       }
       const entityPromise = new Promise((resolve, reject) => {
         this.get('charmstore').getEntity(
-          URLlib.legacyPath(), (err, entityData) => {
+          legacyPath, (err, entityData) => {
             if (err) {
               console.error(err);
               reject(userState);
