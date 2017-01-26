@@ -41,7 +41,9 @@ YUI.add('entity-content-readme', function() {
     },
 
     componentWillUnmount: function() {
-      this.readmeXhr.abort();
+      if (this.readmeXhr) {
+        this.readmeXhr.abort();
+      }
     },
 
     /**
