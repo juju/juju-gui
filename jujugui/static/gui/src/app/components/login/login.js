@@ -112,17 +112,6 @@ YUI.add('login-component', function() {
     },
 
     render: function() {
-      const buttons = [{
-        // Since this is a submit button, there is no need for attaching the
-        // _handleLoginSubmit action here as well.
-        submit: true,
-        title: 'Login',
-        type: 'positive'
-      }];
-      const macaroonButton = this._generateLoginWithMacaroonButton();
-      if (macaroonButton) {
-        buttons.push(macaroonButton);
-      }
       return (
         <div className="login">
           <div className="login__logo">
@@ -155,8 +144,12 @@ YUI.add('login-component', function() {
                   name="password"
                   ref="password" />
               </label>
-              <juju.components.ButtonRow
-                buttons={buttons} />
+              <juju.components.GenericButton
+                submit={true}
+                title={"Login"}
+                type={"positive"} />
+              <juju.components.USSOLoginLink
+                displayType="button" />
             </form>
           </div>
           <div className="login__message">
