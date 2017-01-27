@@ -289,7 +289,8 @@ YUI.add('budget-table-row', function() {
     },
 
     /**
-      Get the list of terms for the application.
+      Get the list of terms for the application, updating the state with these
+      terms.
 
       @method _getTerms
     */
@@ -298,7 +299,7 @@ YUI.add('budget-table-row', function() {
       const terms = this._getTermIds();
       // If there are no terms for this application then we don't need to
       // display anything.
-      if (!terms || terms.length === 0) {
+      if (!terms || !terms.length) {
         this.setState({terms: [], termsLoading: false});
         return;
       }
@@ -306,10 +307,15 @@ YUI.add('budget-table-row', function() {
         terms.forEach(term => {
           const xhr = this.props.showTerms(term, null, (error, term) => {
             if (error) {
-              console.error('cannot retrieve terms:', error);
+              db.notifications.add({
+                title: 'Error retrieving terms',
+                message: `Could not retrieve "${term}" terms. ` +
+                  'Server responded with: ' + error,
+                level: 'error'
+              });
               return;
             }
-            let terms = this.state.terms;
+            const terms = this.state.terms;
             terms.push(term);
             this.setState({terms: terms});
           });
@@ -326,18 +332,19 @@ YUI.add('budget-table-row', function() {
       @returns {Object} The terms link markup.
     */
     _generateTermsLink: function() {
-      if (this.props.showTerms) {
-        const terms = this._getTermIds();
-        if (terms && terms.length > 0) {
-          return (
-            <div className={
-              'two-col prepend-five no-margin-bottom budget-table-row__link'}>
-              <juju.components.GenericButton
-                action={this._toggleTerms}
-                type="base"
-                title="Terms" />
-            </div>);
-        }
+      if (!this.props.showTerms) {
+        return;
+      }
+      const terms = this._getTermIds();
+      if (terms && terms.length > 0) {
+        return (
+          <div className={
+            'two-col prepend-five no-margin-bottom budget-table-row__link'}>
+            <juju.components.GenericButton
+              action={this._toggleTerms}
+              type="base"
+              title="Terms" />
+          </div>);
       }
     },
 
@@ -349,7 +356,7 @@ YUI.add('budget-table-row', function() {
     */
     _getTermIds: function() {
       return this.props.charmsGetById(
-        this.props.service.get('charm')).get('terms');
+        this.props.service.get('charm')).get('terms') || [];
     },
 
     /**
@@ -366,14 +373,12 @@ YUI.add('budget-table-row', function() {
       if (this.state.termsLoading) {
         content = <juju.components.Spinner />;
       } else {
-        let terms = [];
-        this.state.terms.forEach(term => {
-          terms.push(
+        const terms = this.state.terms.map(term => {
+          return (
             <li key={term.name}>
-              <pre>
-                {term.content}
-              </pre>
-            </li>);
+              <pre>{term.content}</pre>
+            </li>
+          );
         });
         content = (
           <div className="budget-table-row__terms-container">
