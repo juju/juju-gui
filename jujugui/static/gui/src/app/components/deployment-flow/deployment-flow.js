@@ -674,7 +674,7 @@ YUI.add('deployment-flow', function() {
         return false;
       }
       if (this.props.isLegacyJuju) {
-        // That said, always allow deployment on Juju 1.
+        // On legacy Juju having the model name is sufficient for proceeding.
         return true;
       }
       // Check that we have a cloud where to deploy to.
