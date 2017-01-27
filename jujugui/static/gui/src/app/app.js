@@ -982,11 +982,15 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderLogin: function(err) {
       document.getElementById('loading-message').style.display = 'none';
+      const controllerAPI = this.controllerAPI;
+      const loginToController = controllerAPI.loginWithMacaroon.bind(
+        controllerAPI, this.bakeryFactory.get('juju'));
       ReactDOM.render(
         <window.juju.components.Login
           setCredentials={this.env.setCredentials.bind(this.env)}
           isLegacyJuju={this.isLegacyJuju()}
           loginToAPIs={this.loginToAPIs.bind(this)}
+          loginToController={loginToController}
           errorMessage={err} />,
         document.getElementById('login-container'));
     },
@@ -1255,7 +1259,7 @@ YUI.add('juju-gui', function(Y) {
         const credentials = controllerAPI && controllerAPI.getCredentials();
         return credentials ? credentials.user : undefined;
       };
-      const loginToController = controllerAPI.loginWithMacaroon.bind(
+      const loginToController = ControllerAPI.loginWithMacaroon.bind(
         controllerAPI, this.bakeryFactory.get('juju'));
       ReactDOM.render(
         <window.juju.components.DeploymentFlow

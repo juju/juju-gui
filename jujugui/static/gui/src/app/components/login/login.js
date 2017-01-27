@@ -25,7 +25,8 @@ YUI.add('login-component', function() {
     propTypes: {
       errorMessage: React.PropTypes.string,
       isLegacyJuju: React.PropTypes.bool.isRequired,
-      loginToAPIs: React.PropTypes.func.isRequired
+      loginToAPIs: React.PropTypes.func.isRequired,
+      loginToController: React.PropTypes.func.isRequired
     },
 
     componentDidMount: function () {
@@ -149,6 +150,7 @@ YUI.add('login-component', function() {
                 title={"Login"}
                 type={"positive"} />
               <juju.components.USSOLoginLink
+                loginToController={this.props.loginToController}
                 displayType="button" />
             </form>
           </div>
