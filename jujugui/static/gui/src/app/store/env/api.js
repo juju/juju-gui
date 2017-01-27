@@ -814,7 +814,15 @@ YUI.add('juju-env-api', function(Y) {
           console.warn('error calling ModelGet API: ' + data.err);
           return;
         }
-        this.setConnectedAttr('maasServer', data.config['maas-server'].value);
+        const maasServer = data.config['maas-server'];
+        let value;
+        if (maasServer) {
+          value = maasServer.value;
+        } else {
+          value = null;
+          console.log('cannot retrieve maas-server from ModelGet call');
+        }
+        this.setConnectedAttr('maasServer', value);
       });
     },
 

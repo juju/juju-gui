@@ -826,6 +826,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(env.get('maasServer'), '1.2.3.4/MAAS');
     });
 
+    it('does not assume MAAS server on ModelGet results on MAAS', function() {
+      env.currentModelInfo(env._handleCurrentModelInfo.bind(env));
+      conn.msg({
+        'request-id': 1,
+        response: {
+          'default-series': 'xenial',
+          name: 'my-model',
+          'provider-type': 'maas',
+          uuid: '5bea955d-7a43-47d3-89dd-tag1',
+          life: 'alive',
+          'owner-tag': 'user-admin@local',
+          'cloud-tag': 'cloud-maas',
+          'cloud-credential-tag': 'cloudcred-admin'
+        }
+      });
+      conn.msg({
+        'request-id': 2,
+        response: {config: {}}
+      });
+      assert.strictEqual(env.get('maasServer'), null);
+    });
+
     it('ignores MAAS data on ModelGet results not in MAAS', function() {
       env.set('providerType', 'ec2');
       env.modelGet();
