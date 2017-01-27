@@ -747,15 +747,20 @@ describe('DeploymentFlow', function() {
   });
 
   it('can deploy', function() {
-    var deploy = sinon.stub().callsArg(0);
-    var changeState = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const deploy = sinon.stub().callsArg(0);
+    const changeState = sinon.stub();
+    let modelName;
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentFlow
         acl={acl}
         changes={{}}
         changesFilterByParent={sinon.stub()}
         changeState={changeState}
         deploy={deploy}
+        environment={{set: (key, value) => {
+          assert.strictEqual(key, 'name');
+          modelName = value;
+        }}}
         generateAllChangeDescriptions={sinon.stub()}
         generateCloudCredentialName={sinon.stub()}
         getAuth={sinon.stub().returns(true)}
@@ -773,16 +778,18 @@ describe('DeploymentFlow', function() {
         updateCloudCredential={sinon.stub()}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
-    var instance = renderer.getMountedInstance();
+    const instance = renderer.getMountedInstance();
     instance.refs = {
       modelName: {
         getValue: sinon.stub().returns('Lamington')
       }
     };
+    instance._updateModelName();
+    assert.strictEqual(modelName, 'Lamington');
     instance._setCloud({name: 'cloud'});
     instance._setCredential('cred');
     instance._setRegion('north');
-    var output = renderer.getRenderOutput();
+    const output = renderer.getRenderOutput();
     output.props.children[9].props.children.props.children[1].props.children
       .props.action();
     assert.equal(deploy.callCount, 1);
@@ -794,6 +801,120 @@ describe('DeploymentFlow', function() {
       region: 'north'
     });
     assert.equal(changeState.callCount, 1);
+  });
+
+  it('allow or disallow deployments', function() {
+    const tests = [{
+      about: 'no model name',
+      state: {modelName: ''},
+      allowed: false
+    }, {
+      about: 'no model name: legacy juju',
+      state: {modelName: ''},
+      isLegacyJuju: true,
+      allowed: false
+    }, {
+      about: 'legacy juju',
+      state: {modelName: 'mymodel'},
+      isLegacyJuju: true,
+      allowed: true
+    }, {
+      about: 'no cloud',
+      state: {modelName: 'mymodel'},
+      modelCommitted: true,
+      allowed: false
+    }, {
+      about: 'read only',
+      state: {
+        modelName: 'mymodel',
+        cloud: {cloudType: 'aws'}
+      },
+      isReadOnly: true,
+      modelCommitted: true,
+      allowed: false
+    }, {
+      about: 'deploying',
+      state: {
+        modelName: 'mymodel',
+        cloud: {cloudType: 'aws'},
+        deploying: true
+      },
+      modelCommitted: true,
+      allowed: false
+    }, {
+      about: 'model committed',
+      state: {
+        modelName: 'mymodel',
+        cloud: {cloudType: 'aws'}
+      },
+      modelCommitted: true,
+      allowed: true
+    }, {
+      about: 'no ssh on azure',
+      state: {
+        modelName: 'mymodel',
+        cloud: {cloudType: 'azure'}
+      },
+      allowed: false
+    }, {
+      about: 'no ssh on aws',
+      state: {
+        modelName: 'mymodel',
+        cloud: {cloudType: 'aws'}
+      },
+      allowed: true
+    }, {
+      about: 'ssh provided on azure',
+      state: {
+        modelName: 'mymodel',
+        cloud: {cloudType: 'azure'},
+        sshKey: 'mykey'
+      },
+      allowed: true
+    }, {
+      about: 'ssh provided on aws',
+      state: {
+        modelName: 'mymodel',
+        cloud: {cloudType: 'aws'},
+        sshKey: 'mykey'
+      },
+      allowed: true
+    }];
+    tests.forEach(test => {
+      const isLegacyJuju = !!test.isLegacyJuju;
+      const acl = {isReadOnly: () => !!test.isReadOnly};
+      const modelCommitted = !!test.modelCommitted;
+      const renderer = jsTestUtils.shallowRender(
+        <juju.components.DeploymentFlow
+          acl={acl}
+          changes={{}}
+          changesFilterByParent={sinon.stub()}
+          changeState={sinon.stub()}
+          deploy={sinon.stub()}
+          environment={sinon.stub()}
+          generateAllChangeDescriptions={sinon.stub()}
+          generateCloudCredentialName={sinon.stub()}
+          getAuth={sinon.stub().returns(true)}
+          getCloudCredentials={sinon.stub()}
+          getCloudCredentialNames={sinon.stub()}
+          getCloudProviderDetails={sinon.stub()}
+          getUserName={sinon.stub()}
+          groupedChanges={groupedChanges}
+          isLegacyJuju={isLegacyJuju}
+          listBudgets={sinon.stub()}
+          listClouds={sinon.stub()}
+          listPlansForCharm={sinon.stub()}
+          modelCommitted={modelCommitted}
+          modelName="Pavlova"
+          servicesGetById={sinon.stub()}
+          updateCloudCredential={sinon.stub()}>
+          <span>content</span>
+        </juju.components.DeploymentFlow>, true);
+      const instance = renderer.getMountedInstance();
+      instance.setState(test.state);
+      const allowed = instance._deploymentAllowed();
+      assert.strictEqual(allowed, test.allowed, test.about);
+    });
   });
 
   it('can disable the deploy button on deploy', function () {
@@ -846,7 +967,7 @@ describe('DeploymentFlow', function() {
     assert.equal(deployButton.title, 'Deploying...');
   });
 
-  it('can deploy without a model name', function() {
+  it('can deploy without updating the model name', function() {
     var deploy = sinon.stub().callsArg(0);
     var changeState = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
@@ -883,7 +1004,7 @@ describe('DeploymentFlow', function() {
       .props.action();
     assert.equal(deploy.callCount, 1);
     assert.strictEqual(deploy.args[0].length, 4);
-    assert.equal(deploy.args[0][2], '');
+    assert.equal(deploy.args[0][2], 'Pavlova');
     assert.deepEqual(deploy.args[0][3], {
       credential: 'cred',
       cloud: 'cloud',
@@ -914,17 +1035,12 @@ describe('DeploymentFlow', function() {
         listClouds={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         modelCommitted={true}
-        modelName="Pavlova"
+        modelName="mymodel"
         servicesGetById={sinon.stub()}
         updateCloudCredential={sinon.stub()}>
         <span>content</span>
       </juju.components.DeploymentFlow>, true);
     var instance = renderer.getMountedInstance();
-    instance.refs = {
-      modelName: {
-        getValue: sinon.stub().returns('mymodel')
-      }
-    };
     instance._setCloud({name: 'azure'});
     instance._setCredential('creds');
     instance._setRegion('skaro');
@@ -980,7 +1096,7 @@ describe('DeploymentFlow', function() {
       .props.action();
     assert.equal(deploy.callCount, 1);
     assert.strictEqual(deploy.args[0].length, 4);
-    assert.equal(deploy.args[0][2], '');
+    assert.equal(deploy.args[0][2], 'Pavlova');
     assert.deepEqual(deploy.args[0][3], {
       credential: undefined,
       cloud: undefined,
