@@ -2,25 +2,23 @@
   position: relative;
 
   &__notification {
-    background: #fff;
-    box-shadow: 0 1px 4.85px 0.15px rgba(0,0,0,0.2);
+    background: $white;
+    box-shadow: $box-shadow;
     box-sizing: border-box;
-    color: #666;
-    font-size: 14px;
+    color: $warm-grey;
+    font-size: 0.875rem;
     line-height: normal;
     margin: 10px auto 0;
     padding: 12px 25px;
     position: absolute;
-    z-index: index($z-indexed-elements, usso-login-link);
+    z-index: index($z-indexed-elements, environment-help);
     top: 100%;
     right: 10px;
-    transition: opacity 0.3s;
-    width: 300px;
+    width: 280px;
     display: none;
   }
 
-  a:hover + &__notification,
-  button:hover + &__notification {
+  &__action:hover + &__notification {
     display: block;
   }
 }

@@ -25,29 +25,31 @@ chai.config.truncateThreshold = 0;
 
 describe('USSOLoginLink', () => {
 
+  const notification = `When requested,
+        in the address bar above, please allow popups
+        from ${window.location.origin}.`;
+
   beforeAll(done => {
     // By loading this file it adds the component to the juju components.
     YUI().use('usso-login-link', () => { done(); });
   });
 
-  it('can render an text link', () => {
+  it('can render a text link', () => {
     const output = jsTestUtils.shallowRender(
         <juju.components.USSOLoginLink
           displayType={'text'}
           loginToController={sinon.stub()} />);
-    assert.deepEqual(output,
-      <div className="usso-login">
-        <a className="logout-link"
-          onClick={output.props.onClick}
-          target="_blank">
+    const expected = <div className="usso-login">
+        <a className={'logout-link usso-login__action'}
+           onClick={output.props.children[0].props.onClick}
+           target="_blank">
           Login
         </a>
         <div className="usso-login__notification">
-          When requested,
-          in your address bar above, please allow popups
-          from {window.location.origin} to login.
+          {notification}
         </div>
-      </div>);
+      </div>;
+    assert.deepEqual(output, expected);
   });
 
   it('calls loginToController on click for text link', () => {
@@ -61,7 +63,7 @@ describe('USSOLoginLink', () => {
     assert.equal(loginToController.callCount, 1);
   });
 
-  it('can render an button link', () => {
+  it('can render a button link', () => {
     const component = jsTestUtils.shallowRender(
         <juju.components.USSOLoginLink
           displayType={'button'}
@@ -70,12 +72,11 @@ describe('USSOLoginLink', () => {
       <div className="usso-login">
         <juju.components.GenericButton
           action={component.getMountedInstance()._handleLogin}
+          extraClasses="usso-login__action"
           type="positive"
           title="Sign up or Login" />
         <div className="usso-login__notification">
-          When requested,
-          in your address bar above, please allow popups
-          from {window.location.origin} to login.
+          {notification}
         </div>
       </div>);
   });
