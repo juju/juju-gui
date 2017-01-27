@@ -61,6 +61,7 @@ YUI.add('deployment-flow', function() {
         deploying: false,
         credential: this.props.credential,
         loggedIn: !!this.props.getAuth(),
+        modelName: this.props.modelName,
         region: this.props.region,
         showChangelogs: false,
         sshKey: null
@@ -83,20 +84,19 @@ YUI.add('deployment-flow', function() {
       @returns {Object} The object with completed, disabled and visible params.
     */
     _getSectionStatus: function(section) {
-      var completed;
-      var disabled;
-      var visible;
-      var hasCloud = !!this.state.cloud;
-      var hasCredential = !!this.state.credential;
+      let completed;
+      let disabled;
+      let visible;
+      const hasCloud = !!this.state.cloud;
+      const hasCredential = !!this.state.credential;
       const isLegacyJuju = this.props.isLegacyJuju;
-      var mode = this.props.modelCommitted ? 'commit' : 'deploy';
-      var includesPlans = this.props.withPlans;
+      const willCreateModel = !this.props.modelCommitted;
       const groupedChanges = this.props.groupedChanges;
       switch (section) {
         case 'model-name':
           completed = false;
           disabled = false;
-          visible = !isLegacyJuju && mode === 'deploy';
+          visible = !isLegacyJuju && willCreateModel;
           break;
         case 'login':
           completed = this.state.loggedIn;
@@ -116,7 +116,7 @@ YUI.add('deployment-flow', function() {
         case 'ssh-key':
           completed = false;
           disabled = !hasCloud;
-          visible = mode === 'deploy' && !isLegacyJuju;
+          visible = willCreateModel && !isLegacyJuju;
           break;
         case 'machines':
           const addMachines = groupedChanges._addMachines;
@@ -133,7 +133,7 @@ YUI.add('deployment-flow', function() {
         case 'budget':
           completed = false;
           disabled = !isLegacyJuju && (!hasCloud || !hasCredential);
-          visible = !isLegacyJuju && includesPlans;
+          visible = !isLegacyJuju && this.props.withPlans;
           break;
         case 'changes':
           completed = false;
@@ -270,11 +270,13 @@ YUI.add('deployment-flow', function() {
       @method _handleDeploy
     */
     _handleDeploy: function() {
-      this.setState({deploying: true});
-      let modelName = '';
-      if (this.refs.modelName) {
-        modelName = this.refs.modelName.getValue();
+      if (!this._deploymentAllowed()) {
+        // This should never happen, as in these cases the deployment button is
+        // disabled.
+        console.log('deploy button clicked but it should have been disabled');
+        return;
       }
+      this.setState({deploying: true});
       const args = {
         credential: this.state.credential,
         cloud: this.state.cloud && this.state.cloud.name || undefined,
@@ -283,7 +285,7 @@ YUI.add('deployment-flow', function() {
       if (this.state.sshKey) {
         args.config = {'authorized-keys': this.state.sshKey};
       }
-      this.props.deploy(this._handleClose, true, modelName, args);
+      this.props.deploy(this._handleClose, true, this.state.modelName, args);
     },
 
     /**
@@ -392,8 +394,9 @@ YUI.add('deployment-flow', function() {
 
       @method _updateModelName
     */
-    _updateModelName: function(e) {
-      const modelName = e.currentTarget.value;
+    _updateModelName: function(evt) {
+      const modelName = this.refs.modelName.getValue();
+      this.setState({modelName: modelName});
       if (modelName !== '') {
         this.props.environment.set('name', modelName);
       }
@@ -659,8 +662,45 @@ YUI.add('deployment-flow', function() {
         </div>);
     },
 
+    /**
+      Report whether going forward with the deployment is currently allowed.
+
+      @method _deploymentAllowed
+      @returns {Bool} Whether deployment is allowed.
+    */
+    _deploymentAllowed: function() {
+      // No deployments are possible without a model name.
+      if (!this.state.modelName) {
+        return false;
+      }
+      if (this.props.isLegacyJuju) {
+        // That said, always allow deployment on Juju 1.
+        return true;
+      }
+      // Check that we have a cloud where to deploy to.
+      if (!this.state.cloud) {
+        return false;
+      }
+      // Check that the user can deploy and they are not already deploying.
+      if (this.props.acl.isReadOnly() || this.state.deploying) {
+        return false;
+      }
+      // That's all we need if the model already exists.
+      if (this.props.modelCommitted) {
+        return true;
+      }
+      // When a new model will be created, check that the SSH key, if required,
+      // has been provided.
+      // TODO frankban: avoid duplicating the logic already implemented in the
+      // DeploymentSSHKey component.
+      if (this.state.cloud.cloudType === 'azure' && !this.state.sshKey) {
+        return false;
+      }
+      // A new model is ready to be created.
+      return true;
+    },
+
     render: function() {
-      const disabled = this.props.acl.isReadOnly() || this.state.deploying;
       const deployTitle = this.state.deploying ? 'Deploying...' : 'Deploy';
       return (
         <juju.components.DeploymentPanel
@@ -681,8 +721,7 @@ YUI.add('deployment-flow', function() {
               <div className="deployment-flow__deploy-action">
                 <juju.components.GenericButton
                   action={this._handleDeploy}
-                  disabled={
-                    !this.props.isLegacyJuju && (disabled || !this.state.cloud)}
+                  disabled={!this._deploymentAllowed()}
                   type="positive"
                   title={deployTitle} />
               </div>
