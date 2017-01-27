@@ -1,0 +1,24 @@
+.usso-login {
+  position: relative;
+
+  &__notification {
+    background: $white;
+    box-shadow: $box-shadow;
+    box-sizing: border-box;
+    color: $warm-grey;
+    font-size: .875rem;
+    line-height: normal;
+    margin: 10px auto 0;
+    padding: 12px 25px;
+    position: absolute;
+    z-index: index($z-indexed-elements, environment-help);
+    top: 100%;
+    right: 10px;
+    width: 280px;
+    display: none;
+  }
+
+  &__action:hover + &__notification {
+    display: block;
+  }
+}

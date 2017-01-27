@@ -53,7 +53,7 @@ YUI.add('usso-login-link', function() {
     */
     _renderTextLink: function() {
       return (
-        <a className={'logout-link'}
+        <a className={'logout-link usso-login__action'}
           onClick={this._handleLogin}
           target="_blank">
           Login
@@ -67,15 +67,28 @@ YUI.add('usso-login-link', function() {
       return (
         <juju.components.GenericButton
           action={this._handleLogin}
+          extraClasses="usso-login__action"
           type="positive"
-          title="Sign up or Login" /> );
+          title="Sign up or Login" />);
     },
 
     render: function() {
+
+      const notification = `When requested,
+        in the address bar above, please allow popups
+        from ${window.location.origin}.`;
+      let ele = this._renderTextLink();
       if (this.props.displayType === 'button') {
-        return this._renderButtonLink();
+        ele = this._renderButtonLink();
       }
-      return this._renderTextLink();
+
+      return(
+        <div className="usso-login">
+          {ele}
+          <div className="usso-login__notification">
+            {notification}
+          </div>
+        </div>);
     }
 
   });
