@@ -52,36 +52,6 @@ YUI.add('login-component', function() {
     },
 
     /**
-      Handle the form submit in the case macaroons based authentication is
-      attempted.
-
-      @method _handleLoginWithMacaroonSubmit
-      @param {Object} evt The submit event.
-    */
-    _handleLoginWithMacaroonSubmit: function(evt) {
-      if (evt && evt.preventDefault){
-        evt.preventDefault();
-      }
-      this.props.loginToAPIs(null, true);
-    },
-
-    /**
-      Display a button for starting the macaroons based authentication if
-      available.
-
-      @method _generateLoginWithMacaroonButton
-    */
-    _generateLoginWithMacaroonButton: function() {
-      if (!this.props.isLegacyJuju) {
-        return ({
-          action: this._handleLoginWithMacaroonSubmit,
-          title: 'Login with USSO',
-          type: 'neutral'
-        });
-      }
-    },
-
-    /**
       Display a message if the login failed.
 
       @method _generateErrorMessage
