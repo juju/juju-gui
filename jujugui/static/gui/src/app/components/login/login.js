@@ -82,6 +82,15 @@ YUI.add('login-component', function() {
           </p>);
     },
 
+    _generateUSSOLink: function () {
+      if (!this.props.isLegacyJuju) {
+        return (
+          <juju.components.USSOLoginLink
+            loginToController={this.props.loginToController}
+            displayType="button" />);
+      }
+    },
+
     render: function() {
       return (
         <div className="login">
@@ -119,9 +128,7 @@ YUI.add('login-component', function() {
                 submit={true}
                 title={"Login"}
                 type={"positive"} />
-              <juju.components.USSOLoginLink
-                loginToController={this.props.loginToController}
-                displayType="button" />
+              {this._generateUSSOLink()}
             </form>
           </div>
           <div className="login__message">
@@ -139,7 +146,8 @@ YUI.add('login-component', function() {
 
 }, '0.1.0', {
   requires: [
-    'button-row',
+    'generic-button',
+    'usso-login-link',
     'svg-icon'
   ]
 });

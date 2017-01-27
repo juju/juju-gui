@@ -1259,7 +1259,7 @@ YUI.add('juju-gui', function(Y) {
         const credentials = controllerAPI && controllerAPI.getCredentials();
         return credentials ? credentials.user : undefined;
       };
-      const loginToController = ControllerAPI.loginWithMacaroon.bind(
+      const loginToController = controllerAPI.loginWithMacaroon.bind(
         controllerAPI, this.bakeryFactory.get('juju'));
       ReactDOM.render(
         <window.juju.components.DeploymentFlow

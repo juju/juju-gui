@@ -28,10 +28,12 @@ describe('LoginComponent', function() {
   });
 
   it('renders', function() {
+    var loginToControllerStub = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
         isLegacyJuju={false}
-        loginToAPIs={sinon.stub()}/>, true);
+        loginToAPIs={sinon.stub()}
+        loginToController={loginToControllerStub}/>, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -66,16 +68,13 @@ describe('LoginComponent', function() {
                 name="password"
                 ref="password" />
             </label>
-            <juju.components.ButtonRow
-              buttons={[{
-                submit: true,
-                title: 'Login',
-                type: 'positive'
-              }, {
-                action: instance._handleLoginWithMacaroonSubmit,
-                title: 'Login with USSO',
-                type: 'neutral'
-              }]} />
+            <juju.components.GenericButton
+              submit={true}
+              title={"Login"}
+              type={"positive"} />
+            <juju.components.USSOLoginLink
+              loginToController={loginToControllerStub}
+              displayType="button" />
           </form>
         </div>
         <div className="login__message">
@@ -98,7 +97,8 @@ describe('LoginComponent', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
         isLegacyJuju={true}
-        loginToAPIs={sinon.stub()}/>, true);
+        loginToAPIs={sinon.stub()}
+        loginToController={sinon.stub()}/>, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -133,12 +133,11 @@ describe('LoginComponent', function() {
                 name="password"
                 ref="password" />
             </label>
-            <juju.components.ButtonRow
-              buttons={[{
-                submit: true,
-                title: 'Login',
-                type: 'positive'
-              }]} />
+            <juju.components.GenericButton
+              submit={true}
+              title={"Login"}
+              type={"positive"} />
+            {undefined}
           </form>
         </div>
         <div className="login__message">
@@ -183,19 +182,6 @@ describe('LoginComponent', function() {
       user: 'foo',
       password: 'bar'
     }, false]);
-  });
-
-  it('calls to log the user in with USSO', function() {
-    const loginToAPIs = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <juju.components.Login
-        isLegacyJuju={false}
-        loginToAPIs={loginToAPIs}/>, true);
-    var output = renderer.getRenderOutput();
-    var buttons = output.props.children[1].props.children[2].props.children[2];
-    buttons.props.buttons[1].action();
-    assert.equal(loginToAPIs.callCount, 1, 'loginToAPIs never called');
-    assert.deepEqual(loginToAPIs.args[0], [null, true]);
   });
 
   it('can focus on the username field', function() {
