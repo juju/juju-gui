@@ -1352,7 +1352,7 @@ describe('Controller API', function() {
       // Perform the request.
       controllerAPI.listClouds((err, clouds) => {
         assert.strictEqual(err, null);
-        let expected = {
+        const expected = {
           'lxd': {
             cloudType: 'lxd',
             authTypes: ['empty'],
