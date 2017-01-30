@@ -94,7 +94,6 @@ def config(request):
         # Base YUI options.
         'auth': settings['jujugui.auth'],
         'serverRouting': False,
-        'html5': True,
         'container': '#main',
         'viewContainer': '#main',
         'baseUrl': base_url,
@@ -136,6 +135,7 @@ def config(request):
         'gisf': settings['jujugui.gisf'],
         'staticURL': settings['jujugui.static_url'],
         'gisfLogout': gisfLogout,
+        'shareFlag': False,
     }
     return 'var juju_config = {};'.format(json.dumps(options))
 

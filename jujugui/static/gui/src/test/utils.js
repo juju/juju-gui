@@ -79,7 +79,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
         'full-screen-mask',
         'header-breadcrumb',
         'header-search-container',
-        'import-export-container',
+        'model-actions-container',
         'inspector-container',
         'loading-message',
         'login-container',

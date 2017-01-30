@@ -1,14 +1,15 @@
 // scss-lint:disable IdSelector
-#import-export-container { // sass-lint:disable-line no-ids, id-name-format
+#model-actions-container { // sass-lint:disable-line no-ids, id-name-format
   @extend .vertical-center;
   float: left;
   margin-left: 10px;
 }
 // scss-lint:enable IdSelector
 
-.import-export {
+.model-actions {
   &__export,
-  &__import {
+  &__import,
+  &__share {
     padding: 10px 11px;
     border: 1px solid $light-mid-grey;
     transition: background-color .2s;
@@ -22,13 +23,9 @@
     }
   }
 
-  &__import {
-    border-radius: 0 2px 2px 0;
-  }
-
-  &__export {
+  &__export,
+  &__share {
     @extend %fade-in;
-    border-right-width: 0;
   }
 
   &__file {
@@ -39,11 +36,24 @@
     width: 0;
   }
 
-  &--initial &__export {
-    display: none;
+  &--initial {
+    &__export,
+    &__share {
+      display: none;
+    }
   }
 
-  &--initial &__import {
+  .link {
     border-radius: 2px;
+    border-right-width: 0;
+
+    &:first-child {
+      border-radius: 2px 0 0 2px;
+    }
+
+    &:last-child {
+      border-radius: 0 2px 2px 0;
+      border-right-width: 1px;
+    }
   }
 }

@@ -63,6 +63,16 @@ YUI.add('user-profile-entity', function() {
     },
 
     /**
+      Share the model with other users.
+
+      @method _handleShareClick
+    */
+    _handleShareClick: function() {
+      alert('Sharing button clicked.');
+    },
+
+
+    /**
       Handle clicks on tags.
 
       @method _handleTagClick
@@ -268,17 +278,36 @@ YUI.add('user-profile-entity', function() {
           action={props.displayConfirmation}
           type="inline-base"
           title="Destroy model" />) : undefined;
+      const shareFlag = window.juju_config && window.juju_config.shareFlag;
+      const shareIcon = shareFlag ? (
+        <span className="entity-share link tooltip"
+          onClick={this._handleShareClick}
+          role="button"
+          tabIndex="0">
+          <juju.components.SvgIcon name="share_16"
+            className="entity-share__icon"
+            size="16" />
+          <span className="tooltip__tooltip--below">
+            <span className="tooltip__inner tooltip__inner--up">
+              Share
+            </span>
+          </span>
+        </span>
+      ) : undefined;
       return (
         <juju.components.ExpandingRow classes={classes}
           expanded={this.props.expanded}>
           {this.props.children}
           <div>
             <div className="expanding-row__expanded-header twelve-col">
-              <div className="seven-col no-margin-bottom">
+              <div className="three-col no-margin-bottom">
                 {icon}{name}
               </div>
+              <div className="five-col">
+                {shareIcon}
+              </div>
               <div className={'expanding-row__expanded-header-action ' +
-                'five-col last-col no-margin-bottom'}>
+                'four-col last-col no-margin-bottom'}>
                 {destroyButton}
                 <juju.components.GenericButton
                   action={buttonAction}

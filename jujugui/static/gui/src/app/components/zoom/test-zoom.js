@@ -47,7 +47,7 @@ describe('Zoom', function() {
           role="button"
           tabIndex="0">
           <juju.components.SvgIcon name="add_16"
-            className="import-export__icon"
+            className="zoom-in__icon"
             size="12" />
         </li>
         <li className="zoom__out link"
@@ -55,7 +55,7 @@ describe('Zoom', function() {
           role="button"
           tabIndex="0">
           <juju.components.SvgIcon name="minus_16"
-            className="import-export__icon"
+            className="zoom-out__icon"
             size="12" />
         </li>
       </ul>);
