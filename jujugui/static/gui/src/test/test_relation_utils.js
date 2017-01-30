@@ -647,6 +647,32 @@ describe('RelationUtils', function() {
       var relation = {scope: 'not-a-container'};
       assert.isFalse(relationUtils.isSubordinateRelation(relation));
     });
+
+    it('can handle getting subordinate model from the target', function() {
+      const relation = {
+        target: {model: {get: sinon.stub().returns(true)}},
+        source: {model: {get: sinon.stub().returns(false)}},
+        scope: 'container'
+      };
+      assert.isTrue(relationUtils.isSubordinateRelation(relation));
+    });
+
+    it('can handle getting subordinate model from the source', function() {
+      const relation = {
+        target: {model: {get: sinon.stub().returns(false)}},
+        source: {model: {get: sinon.stub().returns(true)}},
+        scope: 'container'
+      };
+      assert.isTrue(relationUtils.isSubordinateRelation(relation));
+    });
+
+    it('can handle remote models', function() {
+      const relation = {
+        target: {},
+        source: {}
+      };
+      assert.isFalse(relationUtils.isSubordinateRelation(relation));
+    });
   });
 
   describe('createRelation', function() {

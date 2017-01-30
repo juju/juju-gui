@@ -142,6 +142,30 @@ describe('topology relation module', function() {
           }});
       });
 
+  it('can process remote relations', function() {
+    var topo = {
+      service_boxes: {
+        apache2: {
+          service: 'apache2'
+        },
+        second: {
+          service: 'django'
+        }
+      }
+    };
+    view.set('component', topo);
+    const related = view.processRelation({
+      get: sinon.stub().returns([
+        ['apache2', {name: 'Apache2'}],
+        ['django', {name: 'Django'}]
+      ])
+    });
+    assert.deepEqual(related, [
+      ['Apache2', {service: 'apache2'}],
+      ['Django', {service: 'django'}]
+    ]);
+  });
+
   describe('updateRelationVisibility', function() {
     it('is called on update', function() {
       var updateVis = sinon.stub(view, 'updateRelationVisibility');
