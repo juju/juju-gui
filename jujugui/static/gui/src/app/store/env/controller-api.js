@@ -931,14 +931,17 @@ YUI.add('juju-controller-api', function(Y) {
       @returns {Object} the parsed/modified result.
     */
     _parseCloudResult: result => {
-      const regions = result.regions.map(region => {
-        return {
-          name: region.name,
-          endpoint: region.endpoint || '',
-          identityEndpoint: region['identity-endpoint'] || '',
-          storageEndpoint: region['storage-endpoint'] || ''
-        };
-      });
+      let regions = null;
+      if (result.regions) {
+        regions = result.regions.map(region => {
+          return {
+            name: region.name,
+            endpoint: region.endpoint || '',
+            identityEndpoint: region['identity-endpoint'] || '',
+            storageEndpoint: region['storage-endpoint'] || ''
+          };
+        });
+      }
       return {
         cloudType: result.type,
         authTypes: result['auth-types'] || [],

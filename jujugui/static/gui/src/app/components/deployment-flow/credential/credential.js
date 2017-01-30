@@ -191,18 +191,21 @@ YUI.add('deployment-credential', function() {
       const regions = !this.props.editable ? [{name: this.props.region}] :
         this.props.cloud && this.props.cloud.regions || [];
       // Setup the default option.
-      const defaultValue = [
+      let regionList = [
         {label: 'Default', value: ''}
       ];
-      // Setup each region option.
-      const regionValues = regions.map(region => {
-        return {
-          label: region.name,
-          value: region.name
-        };
-      });
-      // Return the default option + the regions.
-      return defaultValue.concat(regionValues);
+      if (regions.length && regions.length > 0) {
+        // Setup each region option.
+        const regionValues = regions.map(region => {
+          return {
+            label: region.name,
+            value: region.name
+          };
+        });
+        // Return the default option + the regions.
+        regionList = regionList.concat(regionValues);
+      }
+      return regionList;
     },
 
     /**

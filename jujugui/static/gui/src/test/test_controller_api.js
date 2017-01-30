@@ -1352,7 +1352,7 @@ describe('Controller API', function() {
       // Perform the request.
       controllerAPI.listClouds((err, clouds) => {
         assert.strictEqual(err, null);
-        assert.deepEqual(clouds, {
+        const expected = {
           'lxd': {
             cloudType: 'lxd',
             authTypes: ['empty'],
@@ -1383,8 +1383,17 @@ describe('Controller API', function() {
               identityEndpoint: 'https://1.2.3.4/lxd-identity-region1',
               storageEndpoint: 'https://1.2.3.4/lxd-storage-region1'
             }]
+          },
+          'guimaas': {
+            cloudType: 'maas',
+            authTypes: ['oauth1'],
+            endpoint: 'http://maas.jujugui.org/MAAS',
+            identityEndpoint: '',
+            storageEndpoint: '',
+            regions: null
           }
-        });
+        };
+        assert.deepEqual(clouds, expected);
         const msg = conn.last_message();
         assert.deepEqual(msg, {
           'request-id': 1,
@@ -1429,7 +1438,12 @@ describe('Controller API', function() {
                 endpoint: 'https://1.2.3.4/lxd-api-gamma-quadrant',
                 'identity-endpoint': 'https://1.2.3.4/lxd-identity-region1',
                 'storage-endpoint': 'https://1.2.3.4/lxd-storage-region1'
-              }]
+              }],
+            },
+            'cloud-guimaas': {
+              'type':'maas',
+              'auth-types':['oauth1'],
+              'endpoint':'http://maas.jujugui.org/MAAS'
             }
           }
         }
