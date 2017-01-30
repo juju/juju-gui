@@ -25,7 +25,7 @@ chai.config.truncateThreshold = 0;
 
 describe('USSOLoginLink', () => {
 
-  const notification = `When requested,
+  const notification = `If requested,
         in the address bar above, please allow popups
         from ${window.location.origin}.`;
 

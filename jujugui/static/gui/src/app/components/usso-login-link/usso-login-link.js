@@ -73,15 +73,15 @@ YUI.add('usso-login-link', function() {
     },
 
     render: function() {
-
-      const notification = `When requested,
+      const notification = `If requested,
         in the address bar above, please allow popups
         from ${window.location.origin}.`;
-      let ele = this._renderTextLink();
+      let ele;
       if (this.props.displayType === 'button') {
         ele = this._renderButtonLink();
+      } else {
+        ele = this._renderTextLink();
       }
-
       return(
         <div className="usso-login">
           {ele}
