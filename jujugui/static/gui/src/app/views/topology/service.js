@@ -1644,14 +1644,6 @@ YUI.add('juju-topology-service', function(Y) {
        .classed('service-icon', true)
        .attr({
          'xlink:href': function(d) {
-           // XXX This is a hack for a demo
-           if (!d.icon) {
-             if (d.service.indexOf('mysql') > -1) {
-               return 'https://api.jujucharms.com/charmstore/v5/mysql-56/icon.svg'; // eslint-disable-line max-len
-             } else {
-               return 'https://api.jujucharms.com/charmstore/v5/trusty/mediawiki-7/icon.svg'; // eslint-disable-line max-len
-             }
-           }
            return d.icon;
          },
          width: 96,

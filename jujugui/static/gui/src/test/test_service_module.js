@@ -104,7 +104,6 @@ describe('service updates', function() {
 
   before(function(done) {
     YUI(GlobalConfig).use([
-      'juju-gui',
       'juju-models',
       'juju-tests-utils',
       'juju-views',
@@ -164,6 +163,18 @@ describe('service updates', function() {
     serviceModule.update();
     // Call it a second time to see if it fails.
     serviceModule.update();
+  });
+
+  it('should include remote applications', function() {
+    db.services.add({
+      id: 'foo'
+    });
+    db.remoteServices.add({
+      id: 'remote-foo'
+    });
+    serviceModule.update();
+    const apps = serviceModule.get('component').vis.selectAll('.service');
+    assert.equal(apps.size(), 2);
   });
 });
 
