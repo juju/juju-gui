@@ -23,7 +23,6 @@ YUI.add('deployment-flow', function() {
   juju.components.DeploymentFlow = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      applications: React.PropTypes.array,
       changeState: React.PropTypes.func.isRequired,
       changes: React.PropTypes.object.isRequired,
       changesFilterByParent: React.PropTypes.func.isRequired,
@@ -72,7 +71,9 @@ YUI.add('deployment-flow', function() {
         modelName: this.props.modelName,
         region: this.props.region,
         showChangelogs: false,
-        sshKey: null
+        sshKey: null,
+        terms: this._getTerms(),
+        termsAgreed: false
       };
     },
 
@@ -149,7 +150,7 @@ YUI.add('deployment-flow', function() {
           visible = true;
           break;
         case 'agreements':
-          const terms = this._getTerms();
+          const terms = this.state.terms;
           completed = false;
           disabled = false;
           visible = terms && terms.length > 0;
@@ -252,13 +253,13 @@ YUI.add('deployment-flow', function() {
       @method _handleClose
     */
     _handleClose: function() {
+      this.setState({
+        deploying: false
+      });
       this.props.changeState({
         gui: {
           deploy: null
         }
-      });
-      this.setState({
-        deploying: false
       });
     },
 
@@ -304,10 +305,17 @@ YUI.add('deployment-flow', function() {
       @returns {Array} The list of terms.
     */
     _getTerms: function() {
-      let termIds = [];
-      this.props.applications.forEach(app => {
+      const appIds = [];
+      // Find the undeployed app IDs.
+      const deployCommands = this.props.groupedChanges['_deploy'];
+      Object.keys(deployCommands).forEach(key => {
+        appIds.push(deployCommands[key].command.args[0].charmURL);
+      }) || [];
+      // Get the terms for each undeployed app.
+      const termIds = [];
+      appIds.forEach(appId => {
         // Get the terms from the app's charm.
-        const terms = this.props.charmsGetById(app.get('charm')).get('terms');
+        const terms = this.props.charmsGetById(appId).get('terms');
         if (terms && terms.length > 0) {
           // If there are terms then add them if they haven't already been
           // recorded.
@@ -657,6 +665,16 @@ YUI.add('deployment-flow', function() {
     },
 
     /**
+      Handles checking on the "I agree to the terms" checkbox.
+
+      @method _generateAgreementsSection
+      @param {Object} evt The change event.
+    */
+    _handleTermsAgreement: function(evt) {
+      this.setState({termsAgreed: evt.target.checked});
+    },
+
+    /**
       Generate the agreements section.
 
       @method _generateAgreementsSection
@@ -671,6 +689,7 @@ YUI.add('deployment-flow', function() {
       return (
         <div className="deployment-flow__deploy-option">
           <input className="deployment-flow__deploy-checkbox"
+            onChange={this._handleTermsAgreement}
             disabled={disabled}
             id="terms"
             type="checkbox" />
@@ -702,6 +721,10 @@ YUI.add('deployment-flow', function() {
       }
       // Check that the user can deploy and they are not already deploying.
       if (this.props.acl.isReadOnly() || this.state.deploying) {
+        return false;
+      }
+      // Check that any terms have been agreed to.
+      if (this.state.terms.length > 0 && !this.state.termsAgreed) {
         return false;
       }
       // That's all we need if the model already exists.

@@ -307,12 +307,9 @@ YUI.add('budget-table-row', function() {
         terms.forEach(term => {
           const xhr = this.props.showTerms(term, null, (error, term) => {
             if (error) {
-              db.notifications.add({
-                title: 'Error retrieving terms',
-                message: `Could not retrieve "${term}" terms. ` +
-                  'Server responded with: ' + error,
-                level: 'error'
-              });
+              // XXX kadams54: display this error to the user.
+              console.error(`Could not retrieve "${term}" terms. ` +
+                            `Server responded with: ${error}`);
               return;
             }
             const terms = this.state.terms;
