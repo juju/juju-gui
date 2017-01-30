@@ -1440,10 +1440,10 @@ describe('Controller API', function() {
                 'storage-endpoint': 'https://1.2.3.4/lxd-storage-region1'
               }],
             },
-            "cloud-guimaas": {
-              "type":"maas",
-              "auth-types":["oauth1"],
-              "endpoint":"http://maas.jujugui.org/MAAS"
+            'cloud-guimaas': {
+              'type':'maas',
+              'auth-types':['oauth1'],
+              'endpoint':'http://maas.jujugui.org/MAAS'
             }
           }
         }
