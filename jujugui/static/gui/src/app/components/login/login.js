@@ -25,7 +25,8 @@ YUI.add('login-component', function() {
     propTypes: {
       errorMessage: React.PropTypes.string,
       isLegacyJuju: React.PropTypes.bool.isRequired,
-      loginToAPIs: React.PropTypes.func.isRequired
+      loginToAPIs: React.PropTypes.func.isRequired,
+      loginToController: React.PropTypes.func.isRequired
     },
 
     componentDidMount: function () {
@@ -48,36 +49,6 @@ YUI.add('login-component', function() {
         user: this.refs.username.value,
         password: this.refs.password.value
       }, false);
-    },
-
-    /**
-      Handle the form submit in the case macaroons based authentication is
-      attempted.
-
-      @method _handleLoginWithMacaroonSubmit
-      @param {Object} evt The submit event.
-    */
-    _handleLoginWithMacaroonSubmit: function(evt) {
-      if (evt && evt.preventDefault){
-        evt.preventDefault();
-      }
-      this.props.loginToAPIs(null, true);
-    },
-
-    /**
-      Display a button for starting the macaroons based authentication if
-      available.
-
-      @method _generateLoginWithMacaroonButton
-    */
-    _generateLoginWithMacaroonButton: function() {
-      if (!this.props.isLegacyJuju) {
-        return ({
-          action: this._handleLoginWithMacaroonSubmit,
-          title: 'Login with USSO',
-          type: 'neutral'
-        });
-      }
     },
 
     /**
@@ -111,18 +82,16 @@ YUI.add('login-component', function() {
           </p>);
     },
 
-    render: function() {
-      const buttons = [{
-        // Since this is a submit button, there is no need for attaching the
-        // _handleLoginSubmit action here as well.
-        submit: true,
-        title: 'Login',
-        type: 'positive'
-      }];
-      const macaroonButton = this._generateLoginWithMacaroonButton();
-      if (macaroonButton) {
-        buttons.push(macaroonButton);
+    _generateUSSOLink: function () {
+      if (!this.props.isLegacyJuju) {
+        return (
+          <juju.components.USSOLoginLink
+            loginToController={this.props.loginToController}
+            displayType="button" />);
       }
+    },
+
+    render: function() {
       return (
         <div className="login">
           <div className="login__logo">
@@ -155,8 +124,11 @@ YUI.add('login-component', function() {
                   name="password"
                   ref="password" />
               </label>
-              <juju.components.ButtonRow
-                buttons={buttons} />
+              <juju.components.GenericButton
+                submit={true}
+                title={"Login"}
+                type={"positive"} />
+              {this._generateUSSOLink()}
             </form>
           </div>
           <div className="login__message">
@@ -174,7 +146,8 @@ YUI.add('login-component', function() {
 
 }, '0.1.0', {
   requires: [
-    'button-row',
+    'generic-button',
+    'usso-login-link',
     'svg-icon'
   ]
 });
