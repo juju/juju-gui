@@ -195,15 +195,15 @@ YUI.add('deployment-credential', function() {
         {label: 'Default', value: ''}
       ];
       if (regions.length && regions.length > 0) {
-          // Setup each region option.
-          const regionValues = regions.map(region => {
-            return {
-              label: region.name,
-              value: region.name
-            };
-          });
-          // Return the default option + the regions.
-          regionList = regionList.concat(regionValues);
+        // Setup each region option.
+        const regionValues = regions.map(region => {
+          return {
+            label: region.name,
+            value: region.name
+          };
+        });
+        // Return the default option + the regions.
+        regionList = regionList.concat(regionValues);
       }
       return regionList;
     },
