@@ -982,6 +982,9 @@ YUI.add('juju-gui', function(Y) {
     */
     _renderLogin: function(err) {
       document.getElementById('loading-message').style.display = 'none';
+      // XXX j.c.sackett 2017-01-30 Right now USSO link is using
+      // loginToController, while loginToAPIs is used by the login form.
+      // We want to use loginToAPIs everywhere since it handles more.
       const controllerAPI = this.controllerAPI;
       const loginToController = controllerAPI.loginWithMacaroon.bind(
         controllerAPI, this.bakeryFactory.get('juju'));
