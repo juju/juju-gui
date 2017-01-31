@@ -96,9 +96,12 @@ YUI.add('header-breadcrumb', function() {
     },
 
     render: function() {
-      var userItem = this._generateUserLink();
+      const userItem = this._generateUserLink();
+      const authDetails = this.props.authDetails;
       return (
-        <ul className="header-breadcrumb">
+        <ul className="header-breadcrumb"
+            // This attribute is required by uitests.
+            data-username={authDetails && authDetails.rootUserName}>
           {userItem}
           {this._renderEnvSwitcher()}
         </ul>

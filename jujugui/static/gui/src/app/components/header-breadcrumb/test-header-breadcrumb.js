@@ -45,7 +45,8 @@ describe('HeaderBreadcrumb', () => {
     var listModelsWithInfo = sinon.stub();
     var authDetails = {
       user: 'foo',
-      usernameDisplay: 'Foo'
+      usernameDisplay: 'Foo',
+      rootUserName: 'foo-root'
     };
     var component = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
@@ -61,7 +62,7 @@ describe('HeaderBreadcrumb', () => {
     var output = component.getRenderOutput();
 
     var expected = (
-      <ul className="header-breadcrumb">
+      <ul className="header-breadcrumb" data-username="foo-root">
         <li className="header-breadcrumb__list-item">
           <a className="header-breadcrumb--link"
              onClick={instance._handleProfileClick}>
