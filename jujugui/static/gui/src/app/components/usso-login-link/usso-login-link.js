@@ -31,7 +31,7 @@ YUI.add('usso-login-link', function() {
     /**
       Handle the login form the user click.
     */
-    _handleLogin: function(e) {
+   handleLogin: function(e) {
       if (e && e.preventDefault) {
         // Depending on the login link type there may or may not be a
         // preventDefault method.
@@ -54,7 +54,7 @@ YUI.add('usso-login-link', function() {
     _renderTextLink: function() {
       return (
         <a className={'logout-link usso-login__action'}
-          onClick={this._handleLogin}
+          onClick={this.handleLogin}
           target="_blank">
           Login
         </a>);
@@ -66,7 +66,7 @@ YUI.add('usso-login-link', function() {
     _renderButtonLink: function() {
       return (
         <juju.components.GenericButton
-          action={this._handleLogin}
+          action={this.handleLogin}
           extraClasses="usso-login__action"
           type="positive"
           title="Sign up or Login" />);

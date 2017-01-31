@@ -36,7 +36,7 @@ YUI.add('login-component', function() {
       if (this.props.gisf) {
         const bounce = () => {
           if (this.props.controllerAPI.get('connected')) {
-            this.refs.USSOLoginLink._handleLogin();
+            this.refs.USSOLoginLink.handleLogin();
           } else {
             setTimeout(bounce, 150);
           }
