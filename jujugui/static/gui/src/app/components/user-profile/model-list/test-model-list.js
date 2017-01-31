@@ -47,10 +47,12 @@ describe('UserProfileModelList', () => {
     const acl = {
       canAddModels: () => true
     };
+    const changeState = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         acl={acl}
         addNotification={sinon.stub()}
+        changeState={changeState}
         currentModel={'model1'}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, [])}
         switchModel={sinon.stub()}
@@ -65,6 +67,7 @@ describe('UserProfileModelList', () => {
             ({0})
           </span>
           <juju.components.CreateModelButton
+            changeState={changeState}
             switchModel={instance.switchModel} />
         </div>
         {undefined}
@@ -96,10 +99,12 @@ describe('UserProfileModelList', () => {
     const acl = {
       canAddModels: () => true
     };
+    const changeState = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         acl={acl}
         addNotification={sinon.stub()}
+        changeState={changeState}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
         facadesExist={true}
@@ -117,6 +122,7 @@ describe('UserProfileModelList', () => {
             ({1})
           </span>
           <juju.components.CreateModelButton
+            changeState={changeState}
             switchModel={instance.switchModel} />
         </div>
         <ul className="user-profile__list twelve-col">

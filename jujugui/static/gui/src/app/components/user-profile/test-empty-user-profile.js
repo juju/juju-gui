@@ -28,8 +28,10 @@ describe('EmptyUserProfile', () => {
 
   it('renders the empty state', () => {
     var staticURL = 'test-url';
+    const changeState = sinon.stub();
     var component = jsTestUtils.shallowRender(
       <juju.components.EmptyUserProfile
+       changeState={changeState}
        switchModel={sinon.stub()}
        staticURL={staticURL} />, true);
     var src = staticURL + '/static/gui/build/app'
@@ -49,6 +51,7 @@ describe('EmptyUserProfile', () => {
           them.
         </p>
         <juju.components.CreateModelButton
+          changeState={changeState}
           switchModel={instance.switchModel}
           title="Start building"
           type="inline-positive" />

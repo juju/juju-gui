@@ -27,6 +27,7 @@ YUI.add('user-profile-model-list', function() {
       acl: React.PropTypes.object,
       addNotification: React.PropTypes.func.isRequired,
       broadcastStatus: React.PropTypes.func,
+      changeState: React.PropTypes.func.isRequired,
       currentModel: React.PropTypes.string,
       destroyModels: React.PropTypes.func.isRequired,
       facadesExist: React.PropTypes.bool.isRequired,
@@ -347,6 +348,7 @@ YUI.add('user-profile-model-list', function() {
       //if (acl && acl.canAddModels()) {
       createNewButton = (
         <juju.components.CreateModelButton
+          changeState={this.props.changeState}
           switchModel={this.switchModel} />
       );
       //}

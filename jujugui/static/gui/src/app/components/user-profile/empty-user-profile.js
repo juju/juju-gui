@@ -22,6 +22,7 @@ YUI.add('empty-user-profile', function() {
 
   juju.components.EmptyUserProfile = React.createClass({
     propTypes: {
+      changeState: React.PropTypes.func.isRequired,
       staticURL: React.PropTypes.string,
       switchModel: React.PropTypes.func.isRequired
     },
@@ -68,6 +69,7 @@ YUI.add('empty-user-profile', function() {
             appear here when you create them.
           </p>
           <juju.components.CreateModelButton
+            changeState={props.changeState}
             switchModel={this.switchModel}
             title="Start building"
             type="inline-positive" />
