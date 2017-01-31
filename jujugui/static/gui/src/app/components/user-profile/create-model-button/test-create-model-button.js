@@ -28,15 +28,15 @@ describe('CreateModelButton', () => {
   });
 
   it('renders a button with default values', () => {
-    const switchModel = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.CreateModelButton
-        switchModel={switchModel} />, true);
+        changeState={sinon.stub()}
+        switchModel={sinon.stub()} />, true);
     const output = component.getRenderOutput();
     const expected = (
       <div className="user-profile__create-new">
         <juju.components.GenericButton
-          action={switchModel}
+          action={output.props.children.props.action}
           type="inline-neutral"
           title="Create new" />
       </div>
@@ -45,21 +45,39 @@ describe('CreateModelButton', () => {
   });
 
   it('renders a button with provided values', () => {
-    const switchModel = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.CreateModelButton
         type="positive"
         title="test"
-        switchModel={switchModel} />, true);
+        changeState={sinon.stub()}
+        switchModel={sinon.stub()} />, true);
     const output = component.getRenderOutput();
     const expected = (
       <div className="user-profile__create-new">
         <juju.components.GenericButton
-          action={switchModel}
+          action={output.props.children.props.action}
           type="positive"
           title="test" />
       </div>
     );
     assert.deepEqual(output, expected);
+  });
+
+  it('closes the profile before switching to a new model', () => {
+    const changeState = sinon.stub();
+    const switchModel = sinon.stub();
+    const component = jsTestUtils.shallowRender(
+      <juju.components.CreateModelButton
+        type="positive"
+        title="test"
+        changeState={changeState}
+        switchModel={switchModel} />, true);
+    const output = component.getRenderOutput();
+    // Call the action passed to the GenericButton
+    output.props.children.props.action();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0], [{profile: null}]);
+    assert.equal(switchModel.callCount, 1);
+    assert.deepEqual(switchModel.args[0], []);
   });
 });
