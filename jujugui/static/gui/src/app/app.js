@@ -994,6 +994,7 @@ YUI.add('juju-gui', function(Y) {
           gisf={this.get('gisf')}
           isLegacyJuju={this.isLegacyJuju()}
           loginToAPIs={this.loginToAPIs.bind(this)}
+          controllerAPI={controllerAPI}
           loginToController={loginToController}
           setCredentials={this.env.setCredentials.bind(this.env)} />,
         document.getElementById('login-container'));

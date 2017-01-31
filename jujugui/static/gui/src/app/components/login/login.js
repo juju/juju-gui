@@ -26,12 +26,23 @@ YUI.add('login-component', function() {
       errorMessage: React.PropTypes.string,
       gisf: React.PropTypes.bool.isRequired,
       isLegacyJuju: React.PropTypes.bool.isRequired,
+      controllerAPI: React.PropTypes.object.isRequired,
       loginToAPIs: React.PropTypes.func.isRequired,
       loginToController: React.PropTypes.func.isRequired
     },
 
     componentDidMount: function () {
       this.refs.username.focus();
+      if (this.props.gisf) {
+        const bounce = () => {
+          if (this.props.controllerAPI.get('connected')) {
+            this.refs.USSOLoginLink._handleLogin();
+          } else {
+            setTimeout(bounce, 150);
+          }
+        };
+        bounce();
+      }
     },
 
     /**
@@ -87,6 +98,7 @@ YUI.add('login-component', function() {
       if (!this.props.isLegacyJuju) {
         return (
           <juju.components.USSOLoginLink
+            ref="USSOLoginLink"
             loginToController={this.props.loginToController}
             displayType="button" />);
       }
