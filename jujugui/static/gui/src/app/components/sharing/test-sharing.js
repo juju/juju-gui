@@ -51,6 +51,7 @@ describe('Sharing', () => {
     }];
     const expected = (
       <juju.components.Popup
+        className="sharing__popup"
         title="Sharing"
         buttons={expectedButtons}>
         <div className="sharing__users">
@@ -63,7 +64,17 @@ describe('Sharing', () => {
   });
 
   it('can render with users', () => {
-    const modelUserInfo = sinon.stub().returns([
+    const modelUserInfo = sinon.stub().callsArgWith(0, false, [
+      {
+        icon: 'who.png',
+        username: 'drwho',
+        name: 'Dr. Who',
+        role: 'owner'
+      }, {
+        icon: 'dalek.png',
+        username: 'dalek',
+        name: 'Dalek'
+      }
     ]);
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Sharing
@@ -72,8 +83,36 @@ describe('Sharing', () => {
     const output = renderer.getRenderOutput();
     // Get all the children except the header, which is the first item in the
     // array.
-    const actual = output.props.children.props.children.slice(1);
-    const expected = [];
-    assert.deepEqual(output, expected);
+    const actual = output.props.children.props.children[1];
+    const expected = [(
+      <div key="drwho" className="sharing__user">
+        <div className="sharing__user-icon">
+          <img src="who.png"/>
+        </div>
+        <div className="sharing__user-username">
+          drwho
+        </div>
+        <div className="sharing__user-name">
+          Dr. Who
+        </div>
+        <div className="sharing__user-role">
+          owner
+        </div>
+      </div>
+    ), (
+      <div key="dalek" className="sharing__user">
+        <div className="sharing__user-icon">
+          <img src="dalek.png"/>
+        </div>
+        <div className="sharing__user-username">
+          dalek
+        </div>
+        <div className="sharing__user-name">
+          Dalek
+        </div>
+        {undefined}
+      </div>
+    )];
+    assert.deepEqual(actual, expected);
   });
 });

@@ -18,35 +18,98 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('sharing', () => {
+YUI.add('sharing', function() {
 
   juju.components.Sharing = React.createClass({
     propTypes: {
       modelUserInfo: React.PropTypes.func.isRequired
     },
 
-    _generateUsers: () => {
-      const users = this.state.users;
+    getInitialState: function() {
+      this.xhrs = [];
+
+      return {
+        usersWithAccess: []
+      }
+    },
+
+    componentWillMount: function() {
+      this._getModelUserInfo();
+    },
+
+    componentWillUnmount: function() {
+      this.xhrs.forEach((xhr) => {
+        xhr && xhr.abort && xhr.abort();
+      });
+    },
+
+    /**
+      Fetch the a list, from the API, of user info for each user attached to
+      the model.
+
+      @method _getModelUserInfo
+    */
+    _getModelUserInfo: function() {
+      this.setState({loadingUsers: true}, () => {
+        const xhr = this.props.modelUserInfo(this._getModelUserInfoCallback);
+        this.xhrs.push(xhr);
+      });
+    },
+
+    /**
+      Handle the API-returned data about the model's users. When successful, it
+      will update the component's internal state.
+
+      @method _getModelUserCallback
+    */
+    _getModelUserInfoCallback: function(error, data) {
+      this.setState({loadingUsers: false}, () => {
+        if (error) {
+          // TODO kadams54: figure out a better way to handle this.
+          console.error('cannot fetch model user info', error);
+          return;
+        }
+        // TODO kadams54: transform into the expected user objects.
+        const usersWithAccess = data;
+        this.setState({usersWithAccess: usersWithAccess});
+      });
+    },
+
+    /**
+      Generate the list of users with access to the model.
+
+      @method _generateUsersWithAccess
+      @returns {Array} An array of markup objects for each user.
+    */
+    _generateUsersWithAccess: function() {
+      const users = this.state.usersWithAccess;
       if (!users.length) {
         return;
       }
       return users.map((user) => {
+        const roleMarkup = user.role ? (
+          <div className="sharing__user-role">
+            {user.role}
+          </div>
+        ) : undefined;
         return (
-          <div className="sharing__user">
+          <div key={user.username} className="sharing__user">
             <div className="sharing__user-icon">
+              <img src={user.icon}/>
             </div>
             <div className="sharing__user-username">
+              {user.username}
             </div>
             <div className="sharing__user-name">
+              {user.name}
             </div>
-            <div className="sharing__user-role">
-            </div>
+            {roleMarkup}
           </div>
         );
       });
     },
 
-    render: () => {
+    render: function() {
       const buttons = [{
         title: 'Cancel',
         action: undefined,
@@ -63,7 +126,7 @@ YUI.add('sharing', () => {
           buttons={buttons}>
           <div className="sharing__users">
             <h5>Users with access</h5>
-            {this._generateUsers()}
+            {this._generateUsersWithAccess()}
           </div>
         </juju.components.Popup>
       );
