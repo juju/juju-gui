@@ -777,16 +777,19 @@ YUI.add('juju-gui', function(Y) {
           return;
         }
         const modelUUID = this._getModelUUID();
+        const current = this.state.current;
         if (modelUUID) {
           // A model uuid was defined in the config so attempt to connect to it.
           this._listAndSwitchModel(null, modelUUID);
         } else if (entityPromise !== null) {
           this._disambiguateUserState(entityPromise);
-        } else {
-          // Drop into unconnected mode.
+        } else if (current && !current.root) {
+          // Drop into disconnected mode and show the profile but only if there
+          // is no state defined in root. If there is a state defined in root
+          // then we want to let that dispatcher handle the routing.
           this.maskVisibility(false);
           this.state.changeState({
-            root: 'new'
+            profile: this._getAuth().rootUserName
           });
         }
       });
@@ -801,6 +804,14 @@ YUI.add('juju-gui', function(Y) {
         console.log('controller connected');
         const creds = this.controllerAPI.getCredentials();
         const gisf = this.get('gisf');
+        const currentState = this.state.current;
+        // If an anon user lands on the GUI at /new then don't attempt to log
+        // into the controller.
+        if (!creds.areAvailable &&
+            (currentState && currentState.root === 'new')) {
+          this.maskVisibility(false);
+          return;
+        }
         if (!creds.areAvailable) {
           this._displayLogin();
           return;
@@ -886,6 +897,9 @@ YUI.add('juju-gui', function(Y) {
       @param {String} err The login error message, if any.
     */
     _apiLoginHandler: function(api, err) {
+      if (this.state.current.root === 'login') {
+        this.state.changeState({root: null});
+      }
       if (!err) {
         return;
       }
@@ -1748,12 +1762,12 @@ YUI.add('juju-gui', function(Y) {
         } else if (modelUUID) {
           model = noErrorModels.find(model => model.uuid === modelUUID);
         }
-
+        const rootUserName = this._getAuth().rootUserName;
         if (model) {
           this.maskVisibility(false);
           this.state.changeState({
             model: {
-              path: `${this._getAuth().rootUserName}/${model.name}`,
+              path: `${rootUserName}/${model.name}`,
               uuid: model.uuid
             },
             user: null,
@@ -1762,7 +1776,8 @@ YUI.add('juju-gui', function(Y) {
         } else {
           // If no model was found then put the user in unconnected mode
           this.state.changeState({
-            root: 'new'
+            root: null,
+            user: rootUserName
           });
         }
       });
@@ -1905,6 +1920,7 @@ YUI.add('juju-gui', function(Y) {
           if (this.get('modelUUID')) {
             this._switchModelToUUID();
           }
+          this.maskVisibility(false);
           break;
         default:
           next();
