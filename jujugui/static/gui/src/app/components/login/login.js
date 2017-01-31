@@ -24,6 +24,7 @@ YUI.add('login-component', function() {
 
     propTypes: {
       errorMessage: React.PropTypes.string,
+      gisf: React.PropTypes.bool.isRequired,
       isLegacyJuju: React.PropTypes.bool.isRequired,
       loginToAPIs: React.PropTypes.func.isRequired,
       loginToController: React.PropTypes.func.isRequired

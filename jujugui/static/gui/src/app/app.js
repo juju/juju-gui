@@ -990,11 +990,12 @@ YUI.add('juju-gui', function(Y) {
         controllerAPI, this.bakeryFactory.get('juju'));
       ReactDOM.render(
         <window.juju.components.Login
-          setCredentials={this.env.setCredentials.bind(this.env)}
+          errorMessage={err}
+          gisf={this.get('gisf')}
           isLegacyJuju={this.isLegacyJuju()}
           loginToAPIs={this.loginToAPIs.bind(this)}
           loginToController={loginToController}
-          errorMessage={err} />,
+          setCredentials={this.env.setCredentials.bind(this.env)} />,
         document.getElementById('login-container'));
     },
 
