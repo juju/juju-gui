@@ -219,14 +219,7 @@ describe('UserProfileModelList', () => {
     // We need to call to generate the proper socket URL.
     // Check that switchModel is called with the proper values.
     assert.equal(switchModel.callCount, 1, 'switchModel not called');
-    assert.deepEqual(switchModel.args[0], ['abc123', [{
-      uuid: 'model1',
-      name: 'spinach/sandbox',
-      lastConnection: '2016-09-12T15:42:09Z',
-      ownerTag: 'user-who',
-      owner: 'who',
-      isAlive: true
-    }], 'modelname', undefined]);
+    assert.deepEqual(switchModel.args[0], ['abc123', 'modelname']);
   });
 
   it('can reset the model connection', () => {

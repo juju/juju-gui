@@ -1301,28 +1301,14 @@ YUI.add('juju-view-utils', function(Y) {
     Switch model, displaying a confirmation if there are uncommitted changes.
 
     @method switchModel
-    @param {Function} createSocketURL The function to create a socket URL.
-    @param {Function} switchEnv The function to switch models.
     @param {Object} env Reference to the app env.
     @param {String} uuid A model UUID.
-    @param {Array} modelList A list of models.
     @param {String} name A model name.
-    @param {Function} callback The function to be called once the model has
-      been switched and logged into. Takes the following parameters:
-      {Object} env The env that has been switched to.
-    @param {Boolean} clearDB Whether to clear the database and ecs when
-      switching models.
     @param {Boolean} confirmUncommitted Whether to show a confirmation if there
       are uncommitted changes.
   */
-  utils.switchModel = function(
-    createSocketURL, switchEnv, env, uuid, modelList, name, callback,
-    clearDB, confirmUncommitted=true) {
-
-    const switchModel = utils._switchModel.bind(this,
-      createSocketURL, switchEnv, env, uuid, modelList, name, callback,
-      clearDB);
-
+  utils.switchModel = function(env, uuid, name, confirmUncommitted=true) {
+    const switchModel = utils._switchModel.bind(this, env, uuid, name);
     const currentChangeSet = env.get('ecs').getCurrentChangeSet();
     // If there are uncommitted changes then show a confirmation popup.
     if (confirmUncommitted && Object.keys(currentChangeSet).length > 0) {
@@ -1376,20 +1362,12 @@ YUI.add('juju-view-utils', function(Y) {
     Switch models using the correct username and password.
 
     @method _switchModel
-    @param {Function} createSocketURL The function to create a socket URL.
-    @param {Function} switchEnv The function to switch models.
     @param {Object} env Reference to the app env.
     @param {String} uuid A model UUID.
-    @param {Array} modelList A list of models.
     @param {String} name A model name.
-    @param {Function} callback The function to be called once the model has
-      been switched and logged into. Takes the following parameters:
-      {Object} env The env that has been switched to.
-    @param {Boolean} clearDB Whether to clear the database and ecs when
-      switching models.
+  switching models.
   */
-  utils._switchModel = function(
-    createSocketURL, switchEnv, env, uuid, modelList, name, callback, clearDB) {
+  utils._switchModel = function(env, uuid, name) {
     // Remove the switch model confirmation popup if it has been displayed to
     // the user.
     utils._hidePopup();
@@ -1403,8 +1381,11 @@ YUI.add('juju-view-utils', function(Y) {
       model: {path: `${this._getAuth().rootUserName}/${name}`, uuid}
     };
     if (!uuid || !name) {
-      newState.root = 'new';
       newState.model = null;
+      const current = this.state.current;
+      if (!current || !current.profile) {
+        newState.root = 'new';
+      }
     }
     this.state.changeState(newState);
     env.set('environmentName', name);

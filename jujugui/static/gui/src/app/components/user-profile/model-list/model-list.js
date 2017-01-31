@@ -240,12 +240,9 @@ YUI.add('user-profile-model-list', function() {
       @method switchModel
       @param {String} uuid The model UUID.
       @param {String} name The model name.
-      @param {Function} callback The function to be called once the model has
-        been switched and logged into. Takes the following parameters:
-        {Object} env The env that has been switched to.
     */
-    switchModel: function(uuid, name, callback) {
-      this.props.switchModel(uuid, this.state.modelList, name, callback);
+    switchModel: function(uuid, name) {
+      this.props.switchModel(uuid, name);
     },
 
     /**

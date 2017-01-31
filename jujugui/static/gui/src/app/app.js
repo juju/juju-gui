@@ -1057,9 +1057,7 @@ YUI.add('juju-gui', function(Y) {
           pluralize={utils.pluralize.bind(this)}
           staticURL={window.juju_config.staticURL}
           storeUser={this.storeUser.bind(this)}
-          switchModel={utils.switchModel.bind(this,
-            this.createSocketURL.bind(this, this.get('socketTemplate')),
-            this.switchEnv.bind(this), this.env)}
+          switchModel={utils.switchModel.bind(this, this.env)}
           user={this._getAuth()}
           users={Y.clone(this.get('users'), true)}
           charmstore={this.get('charmstore')} />,

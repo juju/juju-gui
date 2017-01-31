@@ -115,7 +115,7 @@ YUI.add('env-switcher', function() {
     handleEnvClick: function(model) {
       var props = this.props;
       this.setState({showEnvList: false});
-      props.switchModel(model.id, this.state.envList, model.name);
+      props.switchModel(model.id, model.name);
     },
 
     /**
