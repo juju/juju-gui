@@ -20,31 +20,61 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
-describe('ConfirmationPopup', () => {
+describe('Popup', () => {
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
-    YUI().use('confirmation-popup', () => { done(); });
+    YUI().use('popup', () => { done(); });
   });
 
   it('can render', () => {
-    var buttons = ['one', 'two'];
-    var output = jsTestUtils.shallowRender(
-      <juju.components.ConfirmationPopup
+    const buttons = ['one', 'two'];
+    const close = sinon.stub();
+    const output = jsTestUtils.shallowRender(
+      <juju.components.Popup
         buttons={buttons}
-        message="A message"
-        title="A title" />);
-    var expected = (
+        close={close}
+        title="A title">
+        <span>Content</span>
+      </juju.components.Popup>);
+    const expected = (
       <juju.components.Panel
-        instanceName="confirmation-popup"
+        instanceName="popup"
         visible={true}>
-        <div className="confirmation-popup__panel">
-          <h3 className="confirmation-popup__title">
+        <div className="popup__panel popup__panel--narrow">
+          <div className="popup__close">
+            <juju.components.GenericButton
+               action={close}
+               type="base"
+               icon="close_16" />
+          </div>
+          <h3 className="popup__title">
             A title
           </h3>
-          <p>A message</p>
+          <span>Content</span>
           <juju.components.ButtonRow
             buttons={buttons} />
+        </div>
+      </juju.components.Panel>
+    );
+    assert.deepEqual(output, expected);
+  });
+
+  it('can set a type class', () => {
+    const output = jsTestUtils.shallowRender(
+      <juju.components.Popup
+        type="wide">
+        <span>Content</span>
+      </juju.components.Popup>);
+    const expected = (
+      <juju.components.Panel
+        instanceName="popup"
+        visible={true}>
+        <div className="popup__panel popup__panel--wide">
+          {undefined}
+          {undefined}
+          <span>Content</span>
+          {undefined}
         </div>
       </juju.components.Panel>
     );

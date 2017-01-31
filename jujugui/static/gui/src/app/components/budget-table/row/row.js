@@ -24,33 +24,42 @@ YUI.add('budget-table-row', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       allocationEditable: React.PropTypes.bool,
+      charmsGetById: React.PropTypes.func,
       extraInfo: React.PropTypes.object,
       listPlansForCharm: React.PropTypes.func,
       plansEditable: React.PropTypes.bool,
       service: React.PropTypes.object.isRequired,
       showExtra: React.PropTypes.bool,
+      showTerms: React.PropTypes.func,
       withPlans: React.PropTypes.bool
     },
 
-    plansXHR: null,
-
     getInitialState: function() {
+      this.xhrs = [];
       return {
         editAllocation: false,
         expanded: false,
+        plans: [],
         plansLoading: false,
-        plans: []
+        showTerms: false,
+        terms: [],
+        termsLoading: false
       };
     },
 
     componentWillMount: function() {
-      this._getPlans();
+      if (this.props.withPlans) {
+        this._getPlans();
+      }
+      if (this.props.showTerms) {
+        this._getTerms();
+      }
     },
 
     componentWillUnmount: function() {
-      if (this.plansXHR) {
-        this.plansXHR.abort();
-      }
+      this.xhrs.forEach((xhr) => {
+        xhr && xhr.abort && xhr.abort();
+      });
     },
 
     /**
@@ -59,8 +68,9 @@ YUI.add('budget-table-row', function() {
     */
     _getPlans: function() {
       this.setState({plansLoading: true}, () => {
-        this.plansXHR = this.props.listPlansForCharm(
+        const xhr = this.props.listPlansForCharm(
           this.props.service.get('charm'), this._getPlansCallback);
+        this.xhrs.push(xhr);
       });
     },
 
@@ -89,6 +99,15 @@ YUI.add('budget-table-row', function() {
     */
     _toggle: function() {
       this.setState({expanded: !this.state.expanded});
+    },
+
+    /**
+     Toggle the terms state.
+
+     @method _toggleTerms
+    */
+    _toggleTerms: function() {
+      this.setState({showTerms: !this.state.showTerms});
     },
 
     /**
@@ -270,6 +289,110 @@ YUI.add('budget-table-row', function() {
     },
 
     /**
+      Get the list of terms for the application, updating the state with these
+      terms.
+
+      @method _getTerms
+    */
+    _getTerms: function() {
+      // Get the list of terms for the uncommitted apps.
+      const terms = this._getTermIds();
+      // If there are no terms for this application then we don't need to
+      // display anything.
+      if (!terms || !terms.length) {
+        this.setState({terms: [], termsLoading: false});
+        return;
+      }
+      this.setState({termsLoading: true}, () => {
+        terms.forEach(term => {
+          const xhr = this.props.showTerms(term, null, (error, term) => {
+            if (error) {
+              // XXX kadams54: display this error to the user.
+              console.error(`Could not retrieve "${term}" terms. ` +
+                            `Server responded with: ${error}`);
+              return;
+            }
+            const terms = this.state.terms;
+            terms.push(term);
+            this.setState({terms: terms});
+          });
+          this.xhrs.push(xhr);
+          this.setState({termsLoading: false});
+        });
+      });
+    },
+
+    /**
+      Generate the terms link.
+
+      @method _generateTermsLink
+      @returns {Object} The terms link markup.
+    */
+    _generateTermsLink: function() {
+      if (!this.props.showTerms) {
+        return;
+      }
+      const terms = this._getTermIds();
+      if (terms && terms.length > 0) {
+        return (
+          <div className={
+            'two-col prepend-five no-margin-bottom budget-table-row__link'}>
+            <juju.components.GenericButton
+              action={this._toggleTerms}
+              type="base"
+              title="Terms" />
+          </div>);
+      }
+    },
+
+    /**
+      Get the terms ids for the application.
+
+      @method _getTermIds
+      @returns {Array} The list of terms for the application.
+    */
+    _getTermIds: function() {
+      return this.props.charmsGetById(
+        this.props.service.get('charm')).get('terms') || [];
+    },
+
+    /**
+      Generate the terms the user needs to agree to.
+
+      @method _generateTerms
+      @returns {Object} The terms markup.
+    */
+    _generateTerms: function() {
+      if (!this.state.showTerms) {
+        return;
+      }
+      let content;
+      if (this.state.termsLoading) {
+        content = <juju.components.Spinner />;
+      } else {
+        const terms = this.state.terms.map(term => {
+          return (
+            <li key={term.name}>
+              <pre>{term.content}</pre>
+            </li>
+          );
+        });
+        content = (
+          <div className="budget-table-row__terms-container">
+            <ul className="budget-table-row__terms">
+              {terms}
+            </ul>
+          </div>);
+      }
+      return (
+        <juju.components.Popup
+          close={this._toggleTerms}
+          type="wide">
+          {content}
+        </juju.components.Popup>);
+    },
+
+    /**
       Generate plan cols.
 
       @method _generatePlanCols
@@ -307,19 +430,23 @@ YUI.add('budget-table-row', function() {
         'twelve-col': true
       };
       return (
-        <juju.components.ExpandingRow
-          classes={classes}
-          clickable={false}
-          expanded={this.state.expanded}>
-          <div>
-            {this._generateSharedFields()}
-            {this._generatePlanCols()}
-            {this._generateExtra()}
-          </div>
-          <div>
-            {this._generateChangePlan()}
-          </div>
-        </juju.components.ExpandingRow>
+        <div>
+          <juju.components.ExpandingRow
+            classes={classes}
+            clickable={false}
+            expanded={this.state.expanded}>
+            <div>
+              {this._generateSharedFields()}
+              {this._generatePlanCols()}
+              {this._generateExtra()}
+              {this._generateTermsLink()}
+            </div>
+            <div>
+              {this._generateChangePlan()}
+            </div>
+          </juju.components.ExpandingRow>
+          {this._generateTerms()}
+        </div>
       );
     }
 
@@ -328,6 +455,8 @@ YUI.add('budget-table-row', function() {
 }, '0.1.0', {
   requires: [
     'expanding-row',
-    'generic-button'
+    'generic-button',
+    'loading-spinner',
+    'popup'
   ]
 });

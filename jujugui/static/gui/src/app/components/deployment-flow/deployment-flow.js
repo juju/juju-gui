@@ -26,12 +26,14 @@ YUI.add('deployment-flow', function() {
       changeState: React.PropTypes.func.isRequired,
       changes: React.PropTypes.object.isRequired,
       changesFilterByParent: React.PropTypes.func.isRequired,
+      charmsGetById: React.PropTypes.func.isRequired,
       cloud: React.PropTypes.object,
       credential: React.PropTypes.string,
       deploy: React.PropTypes.func.isRequired,
       environment: React.PropTypes.object.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
+      getAgreements: React.PropTypes.func.isRequired,
       getAuth: React.PropTypes.func.isRequired,
       getCloudCredentialNames: React.PropTypes.func,
       getCloudCredentials: React.PropTypes.func,
@@ -47,9 +49,14 @@ YUI.add('deployment-flow', function() {
       modelName: React.PropTypes.string.isRequired,
       region: React.PropTypes.string,
       servicesGetById: React.PropTypes.func.isRequired,
+      showTerms: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func,
       updateModelName: React.PropTypes.func,
       withPlans: React.PropTypes.bool
+    },
+
+    getDefaultProps: function() {
+      return {applications: []};
     },
 
     getInitialState: function() {
@@ -64,7 +71,9 @@ YUI.add('deployment-flow', function() {
         modelName: this.props.modelName,
         region: this.props.region,
         showChangelogs: false,
-        sshKey: null
+        sshKey: null,
+        terms: this._getTerms(),
+        termsAgreed: false
       };
     },
 
@@ -141,9 +150,10 @@ YUI.add('deployment-flow', function() {
           visible = true;
           break;
         case 'agreements':
+          const terms = this.state.terms;
           completed = false;
           disabled = false;
-          visible = false;
+          visible = terms && terms.length > 0;
           break;
       }
       return {
@@ -243,13 +253,13 @@ YUI.add('deployment-flow', function() {
       @method _handleClose
     */
     _handleClose: function() {
+      this.setState({
+        deploying: false
+      });
       this.props.changeState({
         gui: {
           deploy: null
         }
-      });
-      this.setState({
-        deploying: false
       });
     },
 
@@ -286,6 +296,37 @@ YUI.add('deployment-flow', function() {
         args.config = {'authorized-keys': this.state.sshKey};
       }
       this.props.deploy(this._handleClose, true, this.state.modelName, args);
+    },
+
+    /**
+      Get the list of terms for the uncommitted apps.
+
+      @method _getTerms
+      @returns {Array} The list of terms.
+    */
+    _getTerms: function() {
+      const appIds = [];
+      // Find the undeployed app IDs.
+      const deployCommands = this.props.groupedChanges['_deploy'];
+      Object.keys(deployCommands).forEach(key => {
+        appIds.push(deployCommands[key].command.args[0].charmURL);
+      }) || [];
+      // Get the terms for each undeployed app.
+      const termIds = [];
+      appIds.forEach(appId => {
+        // Get the terms from the app's charm.
+        const terms = this.props.charmsGetById(appId).get('terms');
+        if (terms && terms.length > 0) {
+          // If there are terms then add them if they haven't already been
+          // recorded.
+          terms.forEach(id => {
+            if (termIds.indexOf(id) === -1) {
+              termIds.push(id);
+            }
+          });
+        }
+      });
+      return termIds;
     },
 
     /**
@@ -560,12 +601,14 @@ YUI.add('deployment-flow', function() {
           <juju.components.DeploymentServices
             acl={this.props.acl}
             changesFilterByParent={this.props.changesFilterByParent}
+            charmsGetById={this.props.charmsGetById}
             generateAllChangeDescriptions={
               this.props.generateAllChangeDescriptions}
             groupedChanges={this.props.groupedChanges}
             listPlansForCharm={this.props.listPlansForCharm}
             servicesGetById={this.props.servicesGetById}
             showChangelogs={this.state.showChangelogs}
+            showTerms={this.props.showTerms}
             withPlans={this.props.withPlans} />
         </juju.components.DeploymentSection>);
     },
@@ -615,10 +658,20 @@ YUI.add('deployment-flow', function() {
           showCheck={false}
           title="Model changes">
           <juju.components.DeploymentChanges
-          changes={this.props.changes}
-          generateAllChangeDescriptions={
-            this.props.generateAllChangeDescriptions} />
+            changes={this.props.changes}
+            generateAllChangeDescriptions={
+              this.props.generateAllChangeDescriptions} />
         </juju.components.DeploymentSection>);
+    },
+
+    /**
+      Handles checking on the "I agree to the terms" checkbox.
+
+      @method _generateAgreementsSection
+      @param {Object} evt The change event.
+    */
+    _handleTermsAgreement: function(evt) {
+      this.setState({termsAgreed: evt.target.checked});
     },
 
     /**
@@ -628,37 +681,22 @@ YUI.add('deployment-flow', function() {
       @returns {Object} The markup.
     */
     _generateAgreementsSection: function() {
-      var status = this._getSectionStatus('agreements');
+      const status = this._getSectionStatus('agreements');
       if (!status.visible) {
         return;
       }
-      var disabled = this.props.acl.isReadOnly();
+      const disabled = this.props.acl.isReadOnly();
       return (
-        <div>
-          <div className="deployment-flow__deploy-option">
-            <input className="deployment-flow__deploy-checkbox"
-              disabled={disabled}
-              id="emails"
-              type="checkbox" />
-            <label className="deployment-flow__deploy-label"
-              htmlFor="emails">
-              Please email me updates regarding feature
-              announcements, performance suggestions, feedback
-              surveys and special offers.
-            </label>
-          </div>
-          <div className="deployment-flow__deploy-option">
-            <input className="deployment-flow__deploy-checkbox"
-              disabled={disabled}
-              id="terms"
-              type="checkbox" />
-            <label className="deployment-flow__deploy-label"
-              htmlFor="terms">
-              I agree that my use of any services and related APIs
-              is subject to my compliance with the applicable&nbsp;
-              <a href="" target="_blank">Terms of service</a>.
-            </label>
-          </div>
+        <div className="deployment-flow__deploy-option">
+          <input className="deployment-flow__deploy-checkbox"
+            onChange={this._handleTermsAgreement}
+            disabled={disabled}
+            id="terms"
+            type="checkbox" />
+          <label className="deployment-flow__deploy-label"
+            htmlFor="terms">
+            I agree to all terms.
+          </label>
         </div>);
     },
 
@@ -683,6 +721,10 @@ YUI.add('deployment-flow', function() {
       }
       // Check that the user can deploy and they are not already deploying.
       if (this.props.acl.isReadOnly() || this.state.deploying) {
+        return false;
+      }
+      // Check that any terms have been agreed to.
+      if (this.state.terms.length > 0 && !this.state.termsAgreed) {
         return false;
       }
       // That's all we need if the model already exists.
@@ -745,6 +787,7 @@ YUI.add('deployment-flow', function() {
     'deployment-services',
     'deployment-ssh-key',
     'generic-button',
-    'generic-input'
+    'generic-input',
+    'usso-login-link'
   ]
 });

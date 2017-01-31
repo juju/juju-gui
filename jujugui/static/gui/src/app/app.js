@@ -1273,12 +1273,14 @@ YUI.add('juju-gui', function(Y) {
           cloud={cloud}
           credential={env.get('credential')}
           changes={currentChangeSet}
+          charmsGetById={db.charms.getById.bind(db.charms)}
           deploy={utils.deploy.bind(utils, this)}
           environment={db.environment}
           generateAllChangeDescriptions={
             changesUtils.generateAllChangeDescriptions.bind(
               changesUtils, services, db.units)}
           generateCloudCredentialName={utils.generateCloudCredentialName}
+          getAgreements={this.terms.getAgreements.bind(this.terms)}
           getAuth={this._getAuth.bind(this)}
           getCloudCredentials={
             controllerAPI && controllerAPI.getCloudCredentials.bind(
@@ -1299,6 +1301,7 @@ YUI.add('juju-gui', function(Y) {
           modelName={modelName}
           region={env.get('region')}
           servicesGetById={services.getById.bind(services)}
+          showTerms={this.terms.showTerms.bind(this.terms)}
           updateCloudCredential={
             controllerAPI && controllerAPI.updateCloudCredential.bind(
               controllerAPI)}
