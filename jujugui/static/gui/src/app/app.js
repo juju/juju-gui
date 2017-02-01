@@ -1998,33 +1998,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Chooses a model to connect to from the model list based on config and/or
-      model availability in this controller.
-
-      @method _pickModel
-      @param {Array} modelList The list of models to pick from.
-      @param {String} modelUUID The uuid of the model to attempt to connect to.
-      @return {Object} The selected model, or null if there are no models
-        accessible by the user.
-     */
-    _pickModel: function(modelList, modelUUID) {
-      if (!modelList.length) {
-        return null;
-      }
-      let matching = [];
-      if (modelUUID) {
-        matching = modelList.filter(model => model.name === modelUUID);
-      }
-      // Connect to the first matching model. Not sure if it's possible to match
-      // more than one UUID.
-      const selectedModel = matching.length ? matching[0] : null;
-      if (selectedModel) {
-        this.set('modelUUID', selectedModel.uuid);
-      }
-      return selectedModel;
-    },
-
-    /**
       Creates a new instance of the new charmstore api and assigns it to the
       charmstore attribute. Idempotent.
 
