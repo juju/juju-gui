@@ -1543,6 +1543,53 @@ describe('test_model.js', function() {
 
     });
 
+    describe('getServicesfromDelta', function() {
+      let db, models;
+
+      before(function(done) {
+        YUI(GlobalConfig).use(['juju-models',
+          'juju-charm-models'],
+        function(Y) {
+          models = Y.namespace('juju.models');
+          done();
+        });
+      });
+
+      beforeEach(function() {
+        db = new models.Database();
+      });
+
+      it('can get applications for endpoints', function() {
+        const expected = [
+          db.services.add({id: 'django'}),
+          db.services.add({id: 'apache2'})
+        ];
+        const endpoints = [
+          ['django', {name: 'misc', role: 'provider'}],
+          ['apache2', {name: 'misc', role: 'requirer'}]];
+        const data = {
+          endpoints: endpoints
+        };
+        const apps = models._getServicesfromDelta(null, data, db);
+        assert.deepEqual(apps, expected);
+      });
+
+      it('can get remote applications for endpoints', function() {
+        const expected = [
+          db.remoteServices.add({service: 'django'}),
+          db.remoteServices.add({service: 'apache2'})
+        ];
+        const endpoints = [
+          ['django', {name: 'misc', role: 'provider'}],
+          ['apache2', {name: 'misc', role: 'requirer'}]];
+        const data = {
+          endpoints: endpoints
+        };
+        const apps = models._getServicesfromDelta(null, data, db);
+        assert.deepEqual(apps, expected);
+      });
+    });
+
   });
 
   describe('Charm load', function() {

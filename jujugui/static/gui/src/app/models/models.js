@@ -159,6 +159,9 @@ YUI.add('juju-models', function(Y) {
     return services;
   };
 
+  // Expose the utility to allow testing.
+  models._getServicesfromDelta = getServicesfromDelta;
+
   /**
    * Model a single Environment. Serves as a place to collect
    * Environment level annotations.
