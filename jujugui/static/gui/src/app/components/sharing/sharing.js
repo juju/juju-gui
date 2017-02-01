@@ -22,15 +22,17 @@ YUI.add('sharing', function() {
 
   juju.components.Sharing = React.createClass({
     propTypes: {
-      modelUserInfo: React.PropTypes.func.isRequired
+      modelUserInfo: React.PropTypes.func.isRequired,
+      closeHandler: React.PropTypes.func
     },
 
     getInitialState: function() {
       this.xhrs = [];
 
       return {
+        loadingUsers: false,
         usersWithAccess: []
-      }
+      };
     },
 
     componentWillMount: function() {
@@ -66,6 +68,7 @@ YUI.add('sharing', function() {
       this.setState({loadingUsers: false}, () => {
         if (error) {
           // TODO kadams54: figure out a better way to handle this.
+          // TODO kadams54: test the error scenario
           console.error('cannot fetch model user info', error);
           return;
         }
@@ -82,6 +85,7 @@ YUI.add('sharing', function() {
       @returns {Array} An array of markup objects for each user.
     */
     _generateUsersWithAccess: function() {
+      // TODO kadams54: display a spinner instead when loading data.
       const users = this.state.usersWithAccess;
       if (!users.length) {
         return;
@@ -111,12 +115,8 @@ YUI.add('sharing', function() {
 
     render: function() {
       const buttons = [{
-        title: 'Cancel',
-        action: undefined,
-        type: 'base'
-      }, {
         title: 'Done',
-        action: undefined,
+        action: this.props.closeHandler,
         type: 'neutral'
       }];
       return (

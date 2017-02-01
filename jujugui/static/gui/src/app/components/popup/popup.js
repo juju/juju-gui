@@ -31,13 +31,17 @@ YUI.add('popup', function() {
         React.PropTypes.object,
         React.PropTypes.array
       ]),
+      className: React.PropTypes.string,
       close: React.PropTypes.func,
       title: React.PropTypes.string,
       type: React.PropTypes.string
     },
 
     getDefaultProps: function() {
-      return {type: 'narrow'};
+      return {
+        type: 'narrow',
+        className: ''
+      };
     },
 
     /**
@@ -96,7 +100,8 @@ YUI.add('popup', function() {
     _generateClasses: function() {
       return classNames(
         'popup__panel',
-        `popup__panel--${this.props.type}`
+        `popup__panel--${this.props.type}`,
+        this.props.className
       );
     },
 

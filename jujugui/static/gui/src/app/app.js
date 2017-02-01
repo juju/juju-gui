@@ -1360,6 +1360,22 @@ YUI.add('juju-gui', function(Y) {
       const env = this.env;
       const db = this.db;
       const utils = views.utils;
+      // XXX kadams54: temporary until we wire in the actual modelUserInfo API
+      // call.
+      const modelUserInfo = function(callback) {
+        callback(false, [
+          {
+            icon: 'who.png',
+            username: 'drwho',
+            name: 'Dr. Who',
+            role: 'owner'
+          }, {
+            icon: 'dalek.png',
+            username: 'dalek',
+            name: 'Dalek'
+          }
+        ]);
+      };
       ReactDOM.render(
         <window.juju.components.ModelActions
           acl={this.acl}
@@ -1373,6 +1389,7 @@ YUI.add('juju-gui', function(Y) {
           hideDragOverNotification={this._hideDragOverNotification.bind(this)}
           importBundleFile={this.bundleImporter.importBundleFile.bind(
             this.bundleImporter)}
+          modelUserInfo={modelUserInfo}
           renderDragOverNotification={
             this._renderDragOverNotification.bind(this)} />,
         document.getElementById('model-actions-container'));

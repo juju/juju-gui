@@ -51,13 +51,14 @@ describe('ModelActions', function() {
         hasEntities={true}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
+        modelUserInfo={sinon.stub()}
         renderDragOverNotification={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="model-actions">
         <div className="model-actions__buttons">
-          <span className="model-actions__export link tooltip"
+          <span className="model-actions__export model-actions__button"
             onClick={instance._handleExport}
             role="button"
             tabIndex="0">
@@ -70,7 +71,7 @@ describe('ModelActions', function() {
               </span>
             </span>
           </span>
-          <span className="model-actions__import link tooltip"
+          <span className="model-actions__import model-actions__button"
             onClick={instance._handleImportClick}
             role="button"
             tabIndex="0">
@@ -90,6 +91,7 @@ describe('ModelActions', function() {
           onChange={instance._handleImportFile}
           accept=".zip,.yaml,.yml"
           ref="file-input" />
+        {undefined}
       </div>);
     assert.deepEqual(output, expected);
   });
@@ -105,6 +107,7 @@ describe('ModelActions', function() {
         hasEntities={false}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
+        modelUserInfo={sinon.stub()}
         renderDragOverNotification={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     assert.equal(output.props.className,
@@ -122,6 +125,7 @@ describe('ModelActions', function() {
         hasEntities={true}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
+        modelUserInfo={sinon.stub()}
         renderDragOverNotification={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     assert.equal(output.props.className,
@@ -140,6 +144,7 @@ describe('ModelActions', function() {
         hasEntities={false}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
+        modelUserInfo={sinon.stub()}
         renderDragOverNotification={sinon.stub()} />);
     output.props.children[0].props.children[0].props.onClick();
     assert.equal(exportEnvironmentFile.callCount, 1);
@@ -160,6 +165,7 @@ describe('ModelActions', function() {
         renderDragOverNotification={renderDragOverNotification}
         hasEntities={false}
         importBundleFile={importBundleFile}
+        modelUserInfo={sinon.stub()}
         hideDragOverNotification={hideDragOverNotification}
         currentChangeSet={currentChangeSet} />, true);
     var instance = shallowRenderer.getMountedInstance();
@@ -184,6 +190,7 @@ describe('ModelActions', function() {
         importBundleFile={importBundleFile}
         hasEntities={false}
         hideDragOverNotification={hideDragOverNotification}
+        modelUserInfo={sinon.stub()}
         currentChangeSet={currentChangeSet} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {
@@ -207,13 +214,14 @@ describe('ModelActions', function() {
         hasEntities={true}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
+        modelUserInfo={sinon.stub()}
         renderDragOverNotification={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
       <div className="model-actions">
         <div className="model-actions__buttons">
-          <span className="model-actions__export link tooltip"
+          <span className="model-actions__export model-actions__button"
             onClick={instance._handleExport}
             role="button"
             tabIndex="0">
@@ -226,7 +234,7 @@ describe('ModelActions', function() {
               </span>
             </span>
           </span>
-          <span className="model-actions__import link tooltip"
+          <span className="model-actions__import model-actions__button"
             onClick={false}
             role="button"
             tabIndex="0">
@@ -246,7 +254,34 @@ describe('ModelActions', function() {
           onChange={null}
           accept=".zip,.yaml,.yml"
           ref="file-input" />
+        {undefined}
       </div>);
     assert.deepEqual(output, expected);
+  });
+
+  it('can display the sharing popup', function() {
+    const currentChangeSet = {one: 1, two: 2};
+    const modelUserInfo = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.ModelActions
+        acl={acl}
+        changeState={sinon.stub()}
+        currentChangeSet={currentChangeSet}
+        exportEnvironmentFile={sinon.stub()}
+        hasEntities={true}
+        hideDragOverNotification={sinon.stub()}
+        importBundleFile={sinon.stub()}
+        modelUserInfo={modelUserInfo}
+        renderDragOverNotification={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.setState({showSharing: true});
+    const output = renderer.getRenderOutput();
+    const sharing = output.props.children[2];
+    const expected = (
+      <juju.components.Sharing
+        modelUserInfo={modelUserInfo}
+        closeHandler={instance._toggleSharing}/>
+    );
+    assert.deepEqual(sharing, expected);
   });
 });

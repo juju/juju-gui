@@ -38,13 +38,8 @@ describe('Sharing', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Sharing
         modelUserInfo={modelUserInfo} />, true);
-    const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expectedButtons = [{
-      title: 'Cancel',
-      action: undefined,
-      type: 'base'
-    }, {
       title: 'Done',
       action: undefined,
       type: 'neutral'
@@ -79,7 +74,6 @@ describe('Sharing', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Sharing
         modelUserInfo={modelUserInfo} />, true);
-    const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     // Get all the children except the header, which is the first item in the
     // array.

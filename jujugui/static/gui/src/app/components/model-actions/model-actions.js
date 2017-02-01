@@ -29,7 +29,14 @@ YUI.add('model-actions', function() {
       hasEntities: React.PropTypes.bool.isRequired,
       hideDragOverNotification: React.PropTypes.func.isRequired,
       importBundleFile: React.PropTypes.func.isRequired,
+      modelUserInfo: React.PropTypes.func.isRequired,
       renderDragOverNotification: React.PropTypes.func.isRequired,
+    },
+
+    getInitialState: function() {
+      return {
+        showSharing: false
+      }
     },
 
     /**
@@ -54,12 +61,12 @@ YUI.add('model-actions', function() {
     },
 
     /**
-      Share the model with other users.
+      Toggle the sharing popup on and off.
 
-      @method _handleShareClick
+      @method _toggleSharing
     */
-    _handleShareClick: function() {
-      alert('Sharing button clicked.');
+    _toggleSharing: function() {
+      this.setState({showSharing: !this.state.showSharing});
     },
 
     /**
@@ -93,12 +100,28 @@ YUI.add('model-actions', function() {
       );
     },
 
+    /**
+      Displays the sharing popup.
+      @method _generateSharing
+      @returns {Object} The sharing component markup.
+    */
+    _generateSharing: function() {
+      if (!this.state.showSharing) {
+        return;
+      }
+      return (
+        <juju.components.Sharing
+          modelUserInfo={this.props.modelUserInfo}
+          closeHandler={this._toggleSharing} />
+      );
+    },
+
     render: function() {
       var isReadOnly = this.props.acl.isReadOnly();
       const shareFlag = window.juju_config && window.juju_config.shareFlag;
       const shareIcon = shareFlag ? (
-        <span className="model-actions__share link tooltip"
-          onClick={this._handleShareClick}
+        <span className="model-actions__share model-actions__button"
+          onClick={this._toggleSharing}
           role="button"
           tabIndex="0">
           <juju.components.SvgIcon name="share_16"
@@ -114,7 +137,7 @@ YUI.add('model-actions', function() {
       return (
         <div className={this._generateClasses()}>
           <div className="model-actions__buttons">
-            <span className="model-actions__export link tooltip"
+            <span className="model-actions__export model-actions__button"
               onClick={this._handleExport}
               role="button"
               tabIndex="0">
@@ -127,7 +150,7 @@ YUI.add('model-actions', function() {
                 </span>
               </span>
             </span>
-            <span className="model-actions__import link tooltip"
+            <span className="model-actions__import model-actions__button"
               onClick={!isReadOnly && this._handleImportClick}
               role="button"
               tabIndex="0">
@@ -147,9 +170,12 @@ YUI.add('model-actions', function() {
             onChange={isReadOnly ? null : this._handleImportFile}
             accept=".zip,.yaml,.yml"
             ref="file-input" />
+          {this._generateSharing()}
         </div>
       );
     }
   });
 
-}, '0.1.0', { requires: []});
+}, '0.1.0', { requires: [
+  'sharing'
+]});
