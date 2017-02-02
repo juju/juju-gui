@@ -25,13 +25,15 @@ YUI.add('usso-login-link', function() {
     propTypes: {
       callback: React.PropTypes.func,
       displayType: React.PropTypes.string.isRequired,
-      loginToController: React.PropTypes.func.isRequired
+      gisf: React.PropTypes.bool,
+      loginToController: React.PropTypes.func.isRequired,
+      sendPost: React.PropTypes.func
     },
 
     /**
       Handle the login form the user click.
     */
-   handleLogin: function(e) {
+    handleLogin: function(e) {
       if (e && e.preventDefault) {
         // Depending on the login link type there may or may not be a
         // preventDefault method.
@@ -41,6 +43,20 @@ YUI.add('usso-login-link', function() {
         if (err) {
           console.error('cannot log into the controller:', err);
         }
+
+        if (this.props.gisf) {
+          const dischargeToken = window.localStorage.getItem(
+            'discharge-token', null);
+          if (dischargeToken) {
+            console.log('sending discharge token to storefront');
+            const content = 'discharge-token=' + dischargeToken;
+            this.props.sendPost(
+              '/_login',
+              {'Content-Type': 'application/x-www-form-urlencoded'},
+              content);
+          }
+        }
+
         const callback = this.props.callback;
         if (callback) {
           callback(err);

@@ -23,12 +23,13 @@ YUI.add('login-component', function() {
   juju.components.Login = React.createClass({
 
     propTypes: {
+      controllerAPI: React.PropTypes.object.isRequired,
       errorMessage: React.PropTypes.string,
       gisf: React.PropTypes.bool.isRequired,
       isLegacyJuju: React.PropTypes.bool.isRequired,
-      controllerAPI: React.PropTypes.object.isRequired,
       loginToAPIs: React.PropTypes.func.isRequired,
-      loginToController: React.PropTypes.func.isRequired
+      loginToController: React.PropTypes.func.isRequired,
+      sendPost: React.PropTypes.func
     },
 
     componentDidMount: function () {
@@ -98,6 +99,8 @@ YUI.add('login-component', function() {
       if (!this.props.isLegacyJuju) {
         return (
           <juju.components.USSOLoginLink
+            gisf={this.props.gisf}
+            sendPost={this.props.sendPost}
             ref="USSOLoginLink"
             loginToController={this.props.loginToController}
             displayType="button" />);

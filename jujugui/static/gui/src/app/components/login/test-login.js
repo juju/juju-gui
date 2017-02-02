@@ -29,11 +29,16 @@ describe('LoginComponent', function() {
 
   it('renders', function() {
     var loginToControllerStub = sinon.stub();
+    var controllerAPI = sinon.stub();
+    var sendPost = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
         isLegacyJuju={false}
         loginToAPIs={sinon.stub()}
-        loginToController={loginToControllerStub}/>, true);
+        loginToController={loginToControllerStub}
+        controllerAPI={controllerAPI}
+        sendPost={sendPost}
+        gisf={false} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -73,6 +78,9 @@ describe('LoginComponent', function() {
               title={"Login"}
               type={"positive"} />
             <juju.components.USSOLoginLink
+              gisf={false}
+              sendPost={sendPost}
+              ref="USSOLoginLink"
               loginToController={loginToControllerStub}
               displayType="button" />
           </form>

@@ -67,11 +67,14 @@ describe('USSOLoginLink', () => {
     const component = jsTestUtils.shallowRender(
         <juju.components.USSOLoginLink
           displayType={'button'}
-          loginToController={sinon.stub()} />, true);
-    assert.deepEqual(component.getRenderOutput(),
+          loginToController={sinon.stub()}
+          sendPost={sinon.stub()}
+          gisf={false}/>, true);
+    var output = component.getRenderOutput();
+    var expected = (
       <div className="usso-login">
         <juju.components.GenericButton
-          action={component.getMountedInstance()._handleLogin}
+          action={component.getMountedInstance().handleLogin}
           extraClasses="usso-login__action"
           type="positive"
           title="Sign up or Login" />
@@ -79,6 +82,8 @@ describe('USSOLoginLink', () => {
           {notification}
         </div>
       </div>);
+    jsTestUtils.compare(output, expected, true);
+    assert.deepEqual(output, expected);
   });
 
   it('calls loginToController on click for button link', () => {
