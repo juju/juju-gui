@@ -30,9 +30,6 @@ describe('Sharing', () => {
     YUI().use('sharing', () => { done(); });
   });
 
-  beforeEach(() => {
-  });
-
   it('can render with no users', () => {
     const modelUserInfo = sinon.stub().returns([]);
     const renderer = jsTestUtils.shallowRender(
