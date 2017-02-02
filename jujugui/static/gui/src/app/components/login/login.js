@@ -27,6 +27,7 @@ YUI.add('login-component', function() {
       errorMessage: React.PropTypes.string,
       gisf: React.PropTypes.bool.isRequired,
       isLegacyJuju: React.PropTypes.bool.isRequired,
+      localStorageGet: React.PropTypes.func,
       loginToAPIs: React.PropTypes.func.isRequired,
       loginToController: React.PropTypes.func.isRequired,
       sendPost: React.PropTypes.func
@@ -102,6 +103,7 @@ YUI.add('login-component', function() {
             gisf={this.props.gisf}
             sendPost={this.props.sendPost}
             ref="USSOLoginLink"
+            localStorageGet={this.props.localStorageGet}
             loginToController={this.props.loginToController}
             displayType="button" />);
       }

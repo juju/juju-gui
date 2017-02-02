@@ -112,4 +112,33 @@ describe('USSOLoginLink', () => {
     assert.equal(callback.callCount, 1);
   });
 
+  it('does a postback to a url in gisf', function() {
+    var loginToController = function(cb) {
+      cb();
+    }
+    var controllerAPI = sinon.stub();
+    var localStorageGet = sinon.stub().returns('foo');
+    controllerAPI.get = sinon.stub().returns(true);
+    var sendPost = sinon.stub();
+    const callback = sinon.stub();
+    const output = testUtils.renderIntoDocument(
+      <juju.components.USSOLoginLink
+        callback={callback}
+        controllerAPI={controllerAPI}
+        displayType={'text'}
+        gisf={true}
+        localStorageGet={localStorageGet}
+        loginToController={loginToController}
+        sendPost={sendPost} />, true);
+    testUtils.Simulate.click(
+      testUtils.findRenderedDOMComponentWithTag(output, 'a'));
+    assert.equal(sendPost.callCount, 1, "Did not postback");
+    assert.equal(
+      sendPost.calledWith(
+        '/_login',
+        {'Content-Type': 'application/x-www-form-urlencoded'},
+        'discharge-token=foo'), true,
+      'sendPost not called with correct arguments');
+
+  });
 });

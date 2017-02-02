@@ -995,6 +995,7 @@ YUI.add('juju-gui', function(Y) {
           errorMessage={err}
           gisf={this.get('gisf')}
           isLegacyJuju={this.isLegacyJuju()}
+          localStorageGet={window.localStorage.getItem}
           loginToAPIs={this.loginToAPIs.bind(this)}
           loginToController={loginToController}
           sendPost={webhandler.sendPostRequest.bind(webhandler)}

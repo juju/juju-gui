@@ -26,6 +26,7 @@ YUI.add('usso-login-link', function() {
       callback: React.PropTypes.func,
       displayType: React.PropTypes.string.isRequired,
       gisf: React.PropTypes.bool,
+      localStorageGet: React.PropTypes.func,
       loginToController: React.PropTypes.func.isRequired,
       sendPost: React.PropTypes.func
     },
@@ -43,9 +44,8 @@ YUI.add('usso-login-link', function() {
         if (err) {
           console.error('cannot log into the controller:', err);
         }
-
         if (this.props.gisf) {
-          const dischargeToken = window.localStorage.getItem(
+          const dischargeToken = this.props.localStorageGet(
             'discharge-token', null);
           if (dischargeToken) {
             console.log('sending discharge token to storefront');

@@ -31,11 +31,13 @@ describe('LoginComponent', function() {
     var loginToControllerStub = sinon.stub();
     var controllerAPI = sinon.stub();
     var sendPost = sinon.stub();
+    var localStorageGet = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
         isLegacyJuju={false}
         loginToAPIs={sinon.stub()}
         loginToController={loginToControllerStub}
+        localStorageGet={localStorageGet}
         controllerAPI={controllerAPI}
         sendPost={sendPost}
         gisf={false} />, true);
@@ -82,6 +84,7 @@ describe('LoginComponent', function() {
               sendPost={sendPost}
               ref="USSOLoginLink"
               loginToController={loginToControllerStub}
+              localStorageGet={localStorageGet}
               displayType="button" />
           </form>
         </div>
@@ -190,6 +193,23 @@ describe('LoginComponent', function() {
       user: 'foo',
       password: 'bar'
     }, false]);
+  });
+
+  it('automatically logs in for gisf via usso', function() {
+    var loginToController = sinon.stub();
+    var controllerAPI = sinon.stub();
+    controllerAPI.get = sinon.stub().returns(true);
+    var sendPost = sinon.stub();
+    var component = testUtils.renderIntoDocument(
+      <juju.components.Login
+        isLegacyJuju={false}
+        loginToAPIs={sinon.stub()}
+        loginToController={loginToController}
+        controllerAPI={controllerAPI}
+        sendPost={sendPost}
+        gisf={true} />);
+    assert.equal(
+      loginToController.callCount, 1, 'loginToController not called');
   });
 
   it('can focus on the username field', function() {
