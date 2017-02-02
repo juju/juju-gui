@@ -308,6 +308,9 @@ YUI.add('deployment-flow', function() {
       const appIds = [];
       // Find the undeployed app IDs.
       const deployCommands = this.props.groupedChanges['_deploy'];
+      if (!deployCommands) {
+        return;
+      }
       Object.keys(deployCommands).forEach(key => {
         appIds.push(deployCommands[key].command.args[0].charmURL);
       }) || [];
@@ -724,7 +727,8 @@ YUI.add('deployment-flow', function() {
         return false;
       }
       // Check that any terms have been agreed to.
-      if (this.state.terms.length > 0 && !this.state.termsAgreed) {
+      const terms = this.state.terms;
+      if (terms && terms.length > 0 && !this.state.termsAgreed) {
         return false;
       }
       // That's all we need if the model already exists.

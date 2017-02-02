@@ -767,6 +767,41 @@ describe('DeploymentFlow', function() {
       output.props.children[9].props.children.props.children[0]);
   });
 
+  it('can handle the agreements when there are no added apps', function() {
+    delete groupedChanges['_deploy'];
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        changes={{}}
+        changesFilterByParent={sinon.stub()}
+        changeState={sinon.stub()}
+        charmsGetById={charmsGetById}
+        deploy={sinon.stub()}
+        generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
+        getAuth={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
+        getCloudCredentialNames={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
+        getUserName={sinon.stub()}
+        groupedChanges={groupedChanges}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        modelCommitted={true}
+        modelName="Pavlova"
+        servicesGetById={sinon.stub()}
+        updateCloudCredential={sinon.stub()}>
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    var instance = renderer.getMountedInstance();
+    instance._setCloud({name: 'cloud'});
+    instance._setCredential('cred');
+    var output = renderer.getRenderOutput();
+    assert.isUndefined(
+      output.props.children[9].props.children.props.children[0]);
+  });
+
   it('can display the agreements section', function() {
     charmsGetById = sinon.stub().returns({
       get: sinon.stub().returns(['django-terms'])
