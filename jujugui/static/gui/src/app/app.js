@@ -520,7 +520,8 @@ YUI.add('juju-gui', function(Y) {
       let entityPromise = null;
       if (!pathState.error && pathState.state.user) {
         // If we have a user component to the state then it is ambiguous.
-        // disambiguate the user state
+        // disambiguate the user state by checking if the user fragment
+        // represents a charm store entity.
         entityPromise = this._fetchEntityFromUserState(pathState.state.user);
       }
 
@@ -783,14 +784,21 @@ YUI.add('juju-gui', function(Y) {
           this._listAndSwitchModel(null, modelUUID);
         } else if (entityPromise !== null) {
           this._disambiguateUserState(entityPromise);
-        } else if (current && !current.root) {
+        } else {
           // Drop into disconnected mode and show the profile but only if there
           // is no state defined in root. If there is a state defined in root
           // then we want to let that dispatcher handle the routing.
           this.maskVisibility(false);
-          this.state.changeState({
-            profile: this._getAuth().rootUserName
-          });
+          const isLogin = current.root === 'login';
+          const newState = {
+            root: isLogin ? null : current.root,
+          };
+          if ((isLogin || !current.root) && this.get('gisf')) {
+            // We only want to redirect the users to the profile page if they
+            // are in gisf(not gijoe) and root state is login.
+            newState.profile = this._getAuth().rootUserName;
+          }
+          this.state.changeState(newState);
         }
       });
 
@@ -807,8 +815,9 @@ YUI.add('juju-gui', function(Y) {
         const currentState = this.state.current;
         // If an anon user lands on the GUI at /new then don't attempt to log
         // into the controller.
-        if (!creds.areAvailable &&
+        if (!creds.areAvailable && gisf &&
             (currentState && currentState.root === 'new')) {
+          console.log('now in anonymous mode');
           this.maskVisibility(false);
           return;
         }
@@ -1023,6 +1032,15 @@ YUI.add('juju-gui', function(Y) {
       @param {Function} next - Call to continue dispatching.
     */
     _renderUserProfile: function(state, next) {
+      // XXX Jeff - 1-2-2016 - Because of a bug in the state system the profile
+      // view renders itself and then makes requests to identity before the
+      // controller is setup and the user has successfully logged in. As a
+      // temporary workaround we will just prevent rendering the profile until
+      // the controller is connected.
+      if (!this.controllerAPI.get('connected') &&
+          !this.controllerAPI.userIsAuthenticated) {
+        return;
+      }
       // XXX Jeff - 18-11-2016 - This profile gets rendered before the
       // controller has completed connecting and logging in when in gisf. The
       // proper fix is to queue up the RPC calls but due to time constraints
@@ -1039,7 +1057,8 @@ YUI.add('juju-gui', function(Y) {
       }
       // If the username does not match the logged in user then display a new
       // model instead of the profile.
-      if (state.profile !== this._getAuth().rootUserName) {
+      const auth = this._getAuth();
+      if (auth && state.profile !== auth.rootUserName) {
         this.state.changeState({
           new: '',
           profile: null
@@ -1710,7 +1729,7 @@ YUI.add('juju-gui', function(Y) {
         this.set('modelUUID', uuid);
         socketURL = this.createSocketURL(this.get('socketTemplate'), uuid);
       } else {
-        this.set('modelUUID', undefined);
+        this.set('modelUUID', null);
         console.log('no uuid or model name defined: using disconnected mode');
       }
       this.switchEnv(socketURL);
@@ -1718,18 +1737,26 @@ YUI.add('juju-gui', function(Y) {
 
     /**
       Determines if the user state is a store path or a model path.
-      @param {String} The state value for the 'user' key.
+      @param {String} userState The state value for the 'user' key.
       @return {Promise} A promise with the charmstore entity if one exists.
     */
     _fetchEntityFromUserState: function(userState) {
-      const legacyPath =
-        window.jujulib.URL.fromString('u/' + userState).legacyPath();
       const userPaths = this.userPaths;
       const entityCache = userPaths.get(userState);
       if (entityCache && entityCache.promise) {
         return entityCache.promise;
       }
       const entityPromise = new Promise((resolve, reject) => {
+        let legacyPath = undefined;
+        try {
+          legacyPath =
+            window.jujulib.URL.fromString('u/' + userState).legacyPath();
+        } catch (e) {
+          // If the state cannot be parsed into a url we can be sure it's
+          // not an entity.
+          reject(userState);
+          return;
+        }
         this.get('charmstore').getEntity(
           legacyPath, (err, entityData) => {
             if (err) {
@@ -1744,7 +1771,18 @@ YUI.add('juju-gui', function(Y) {
       return entityPromise;
     },
 
-    _listAndSwitchModel: function(modelName, modelUUID) {
+    /**
+      Calls the listModelsWithInfo method on the controller API and then
+      switches to the provided model name or model uuid if available. If no
+      matching model is found then state is changed to the users profile page.
+      If both model name and model uuid are provided then the model name will
+      win.
+
+      @param {String} modelPath The model path to switch to in the format
+        username/modelname.
+      @param {String} modelUUID The model uuid to switch to.
+    */
+    _listAndSwitchModel: function(modelPath, modelUUID) {
       this.controllerAPI.listModelsWithInfo((err, modelList) => {
         if (err) {
           console.error('unable to list models', err);
@@ -1756,33 +1794,44 @@ YUI.add('juju-gui', function(Y) {
           return;
         }
         const noErrorModels = modelList.filter(model => !model.err);
+        const generatePath = (owner, name) => `${owner.split('@')[0]}/${name}`;
+
         let model = undefined;
-        if (modelName) {
-          model = noErrorModels.find(model => model.name === modelName);
+        if (modelPath) {
+          model = noErrorModels.find(model =>
+            generatePath(model.owner, model.name) === modelPath);
         } else if (modelUUID) {
           model = noErrorModels.find(model => model.uuid === modelUUID);
         }
-        const rootUserName = this._getAuth().rootUserName;
+        this.maskVisibility(false);
         if (model) {
-          this.maskVisibility(false);
           this.state.changeState({
             model: {
-              path: `${rootUserName}/${model.name}`,
+              path: generatePath(model.owner, model.name),
               uuid: model.uuid
             },
             user: null,
             root: null
           });
         } else {
-          // If no model was found then put the user in unconnected mode
+          // If no model was found then put the user in disconnected mode.
           this.state.changeState({
             root: null,
-            user: rootUserName
+            user: null,
+            profile: this._getAuth().rootUserName
           });
         }
       });
     },
 
+    /**
+      Provided an entityPromise, attaches handlers for the resolve and reject
+      cases. If resolved it changes state to the entity found, if rejected
+      calls _listAndSwitchModel with the possible model name.
+
+      @param {Promise} entityPromise A promise containing the result of a
+        getEntity charmstore call.
+    */
     _disambiguateUserState: function(entityPromise) {
       entityPromise.then(userState => {
         console.log('entity found, showing store');
@@ -1801,10 +1850,7 @@ YUI.add('juju-gui', function(Y) {
           console.log('not logged into controller');
           return;
         }
-        // Get the model name from the userState which should be in the
-        // format userName/modelName.
-        const modelName = userState.split('/')[1];
-        this._listAndSwitchModel(modelName);
+        this._listAndSwitchModel(userState);
       });
     },
 
@@ -2360,10 +2406,20 @@ YUI.add('juju-gui', function(Y) {
       @param {Function} next The next route handler.
     */
     checkUserCredentials: function(state, next) {
+      // If we're in the /new state then allow the canvas to be shown.
+      if (state && state.root && state.root === 'new') {
+        next();
+        return;
+      }
       const apis = [this.env, this.controllerAPI];
       // Loop through each api connection and see if we are properly
       // authenticated. If we aren't then display the login screen.
       const shouldDisplayLogin = apis.some(api => {
+        // If the api is connecting then we can't know if they are properly
+        // logged in yet.
+        if (api.get('connecting')) {
+          return true;
+        }
         if (!api || !api.get('connected')) {
           // If we do not have an api instance or if we are not connected with
           // it then we don't need to concern ourselves with being
