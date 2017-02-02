@@ -200,7 +200,7 @@ describe('LoginComponent', function() {
     var controllerAPI = sinon.stub();
     controllerAPI.get = sinon.stub().returns(true);
     var sendPost = sinon.stub();
-    var component = testUtils.renderIntoDocument(
+    testUtils.renderIntoDocument(
       <juju.components.Login
         isLegacyJuju={false}
         loginToAPIs={sinon.stub()}

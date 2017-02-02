@@ -82,7 +82,6 @@ describe('USSOLoginLink', () => {
           {notification}
         </div>
       </div>);
-    jsTestUtils.compare(output, expected, true);
     assert.deepEqual(output, expected);
   });
 
@@ -115,7 +114,7 @@ describe('USSOLoginLink', () => {
   it('does a postback to a url in gisf', function() {
     var loginToController = function(cb) {
       cb();
-    }
+    };
     var controllerAPI = sinon.stub();
     var localStorageGet = sinon.stub().returns('foo');
     controllerAPI.get = sinon.stub().returns(true);
@@ -132,7 +131,7 @@ describe('USSOLoginLink', () => {
         sendPost={sendPost} />, true);
     testUtils.Simulate.click(
       testUtils.findRenderedDOMComponentWithTag(output, 'a'));
-    assert.equal(sendPost.callCount, 1, "Did not postback");
+    assert.equal(sendPost.callCount, 1, 'Did not postback');
     assert.equal(
       sendPost.calledWith(
         '/_login',
