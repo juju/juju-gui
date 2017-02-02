@@ -1360,22 +1360,6 @@ YUI.add('juju-gui', function(Y) {
       const env = this.env;
       const db = this.db;
       const utils = views.utils;
-      // XXX kadams54: temporary until we wire in the actual modelUserInfo API
-      // call.
-      const modelUserInfo = function(callback) {
-        callback(false, [
-          {
-            icon: 'who.png',
-            username: 'drwho',
-            name: 'Dr. Who',
-            role: 'owner'
-          }, {
-            icon: 'dalek.png',
-            username: 'dalek',
-            name: 'Dalek'
-          }
-        ]);
-      };
       ReactDOM.render(
         <window.juju.components.ModelActions
           acl={this.acl}
@@ -1389,9 +1373,9 @@ YUI.add('juju-gui', function(Y) {
           hideDragOverNotification={this._hideDragOverNotification.bind(this)}
           importBundleFile={this.bundleImporter.importBundleFile.bind(
             this.bundleImporter)}
-          modelUserInfo={modelUserInfo}
           renderDragOverNotification={
-            this._renderDragOverNotification.bind(this)} />,
+            this._renderDragOverNotification.bind(this)}
+          showSharing={this.showSharing.bind(this, true)}/>,
         document.getElementById('model-actions-container'));
     },
 
@@ -2732,6 +2716,36 @@ YUI.add('juju-gui', function(Y) {
       maasContainer.show();
     },
 
+    // TODO: Move to views/utils.js.
+    showSharing: function(show = true) {
+      const sharing = document.getElementById('sharing-container');
+      // XXX kadams54: temporary until we wire in the actual modelUserInfo API
+      // call.
+      const modelUserInfo = function(callback) {
+        callback(false, [
+          {
+            icon: 'who.png',
+            username: 'drwho',
+            name: 'Dr. Who',
+            role: 'owner'
+          }, {
+            icon: 'dalek.png',
+            username: 'dalek',
+            name: 'Dalek'
+          }
+        ]);
+      };
+      if (show) {
+        ReactDOM.render(
+          <window.juju.components.Sharing
+            modelUserInfo={modelUserInfo}
+            closeHandler={this.showSharing.bind(this, false)} />,
+        sharing);
+      } else {
+        ReactDOM.unmountComponentAtNode(sharing);
+      }
+    },
+
     maskVisibility: function(visibility = true) {
       var mask = document.getElementById('full-screen-mask');
       var display = visibility ? 'block' : 'none';
@@ -3112,6 +3126,7 @@ YUI.add('juju-gui', function(Y) {
     'logout-component',
     'notification-list',
     'panel-component',
+    'sharing',
     'shortcuts',
     'usso-login-link',
     'user-profile',

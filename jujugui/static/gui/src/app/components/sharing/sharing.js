@@ -22,8 +22,8 @@ YUI.add('sharing', function() {
 
   juju.components.Sharing = React.createClass({
     propTypes: {
-      modelUserInfo: React.PropTypes.func.isRequired,
-      closeHandler: React.PropTypes.func
+      closeHandler: React.PropTypes.func,
+      modelUserInfo: React.PropTypes.func.isRequired
     },
 
     getInitialState: function() {
@@ -117,15 +117,15 @@ YUI.add('sharing', function() {
       const buttons = [{
         title: 'Done',
         action: this.props.closeHandler,
-        type: 'neutral'
+        type: 'positive'
       }];
       return (
         <juju.components.Popup
           className="sharing__popup"
-          title="Sharing"
+          title="Share"
           buttons={buttons}>
           <div className="sharing__users">
-            <h5>Users with access</h5>
+            <h5 className="sharing__users-header">Users with access</h5>
             {this._generateUsersWithAccess()}
           </div>
         </juju.components.Popup>

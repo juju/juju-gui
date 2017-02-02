@@ -42,15 +42,15 @@ describe('Sharing', () => {
     const expectedButtons = [{
       title: 'Done',
       action: undefined,
-      type: 'neutral'
+      type: 'positive'
     }];
     const expected = (
       <juju.components.Popup
         className="sharing__popup"
-        title="Sharing"
+        title="Share"
         buttons={expectedButtons}>
         <div className="sharing__users">
-          <h5>Users with access</h5>
+          <h5 className="sharing__users-header">Users with access</h5>
           {undefined}
         </div>
       </juju.components.Popup>
