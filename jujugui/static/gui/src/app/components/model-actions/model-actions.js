@@ -30,13 +30,13 @@ YUI.add('model-actions', function() {
       hideDragOverNotification: React.PropTypes.func.isRequired,
       importBundleFile: React.PropTypes.func.isRequired,
       renderDragOverNotification: React.PropTypes.func.isRequired,
-      showSharing: React.PropTypes.func
+      sharingVisibility: React.PropTypes.func
     },
 
     getDefaultProps: function() {
       return {
-        showSharing: () => {
-          console.log('No showSharing function was provided.');
+        sharingVisibility: () => {
+          console.log('No sharingVisibility function was provided.');
         }
       };
     },
@@ -98,7 +98,7 @@ YUI.add('model-actions', function() {
       const shareFlag = window.juju_config && window.juju_config.shareFlag;
       const shareIcon = shareFlag ? (
         <span className="model-actions__share model-actions__button"
-          onClick={this.props.showSharing}
+          onClick={this.props.sharingVisibility}
           role="button"
           tabIndex="0">
           <juju.components.SvgIcon name="share_16"

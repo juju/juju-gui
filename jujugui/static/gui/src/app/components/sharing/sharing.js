@@ -20,10 +20,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('sharing', function() {
 
+  /**
+    Modal component for viewing which users have access to the model, as well
+    as sharing access with other users.
+  */
   juju.components.Sharing = React.createClass({
     propTypes: {
       closeHandler: React.PropTypes.func,
-      modelUserInfo: React.PropTypes.func.isRequired
+      getModelUserInfo: React.PropTypes.func.isRequired
     },
 
     getInitialState: function() {
@@ -53,7 +57,7 @@ YUI.add('sharing', function() {
     */
     _getModelUserInfo: function() {
       this.setState({loadingUsers: true}, () => {
-        const xhr = this.props.modelUserInfo(this._getModelUserInfoCallback);
+        const xhr = this.props.getModelUserInfo(this._getModelUserInfoCallback);
         this.xhrs.push(xhr);
       });
     },
@@ -91,23 +95,20 @@ YUI.add('sharing', function() {
         return;
       }
       return users.map((user) => {
-        const roleMarkup = user.role ? (
-          <div className="sharing__user-role">
-            {user.role}
+        const accessMarkup = user.access == 'admin' ? (
+          <div className="sharing__user-access">
+            {user.access}
           </div>
         ) : undefined;
         return (
-          <div key={user.username} className="sharing__user">
-            <div className="sharing__user-icon">
-              <img src={user.icon}/>
-            </div>
-            <div className="sharing__user-username">
-              {user.username}
-            </div>
+          <div key={user.name} className="sharing__user">
             <div className="sharing__user-name">
               {user.name}
             </div>
-            {roleMarkup}
+            <div className="sharing__user-displayname">
+              {user.displayName}
+            </div>
+            {accessMarkup}
           </div>
         );
       });

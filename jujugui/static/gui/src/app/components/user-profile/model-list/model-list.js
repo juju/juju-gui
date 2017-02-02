@@ -32,7 +32,7 @@ YUI.add('user-profile-model-list', function() {
       destroyModels: React.PropTypes.func.isRequired,
       facadesExist: React.PropTypes.bool.isRequired,
       listModelsWithInfo: React.PropTypes.func.isRequired,
-      showSharing: React.PropTypes.func,
+      sharingVisibility: React.PropTypes.func,
       switchModel: React.PropTypes.func.isRequired,
       user: React.PropTypes.object
     },
@@ -280,7 +280,7 @@ YUI.add('user-profile-model-list', function() {
           entity={model}
           expanded={isCurrent}
           key={uuid}
-          showSharing={this.props.showSharing}
+          sharingVisibility={this.props.sharingVisibility}
           switchModel={this.switchModel}
           type="model">
           <span className="user-profile__list-col three-col">

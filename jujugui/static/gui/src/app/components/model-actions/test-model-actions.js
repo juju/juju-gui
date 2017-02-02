@@ -256,7 +256,7 @@ describe('ModelActions', function() {
     // XXX delete this once the shareFlag is no longer in place.
     window.juju_config['shareFlag'] = true;
     const currentChangeSet = {one: 1, two: 2};
-    const showSharing = sinon.stub();
+    const sharingVisibility = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.ModelActions
         acl={acl}
@@ -267,11 +267,11 @@ describe('ModelActions', function() {
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         renderDragOverNotification={sinon.stub()}
-        showSharing={showSharing} />, true);
+        sharingVisibility={sharingVisibility} />, true);
     const output = renderer.getRenderOutput();
     const sharingButton = output.props.children[0].props.children[2];
     assert.notEqual(sharingButton, undefined);
     sharingButton.props.onClick();
-    assert.equal(showSharing.callCount, 1);
+    assert.equal(sharingVisibility.callCount, 1);
   });
 });

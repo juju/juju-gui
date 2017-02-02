@@ -17,23 +17,17 @@
     margin-bottom: 10px;
     position: relative;
 
-    &-icon {
-      @extend %icon--small;
-      float: left;
-      margin-right: 10px;
-    }
-
-    &-username {
+    &-name {
       margin-bottom: 3px;
       text-transform: capitalize;
     }
 
-    &-name {
+    &-displayname {
       font-size: 14px;
       color: #999;
     }
 
-    &-role {
+    &-access {
       @extend .vertical-center;
       position: absolute;
       right: 0;

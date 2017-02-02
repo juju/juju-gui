@@ -31,10 +31,10 @@ describe('Sharing', () => {
   });
 
   it('can render with no users', () => {
-    const modelUserInfo = sinon.stub().returns([]);
+    const getModelUserInfo = sinon.stub().returns([]);
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Sharing
-        modelUserInfo={modelUserInfo} />, true);
+        getModelUserInfo={getModelUserInfo} />, true);
     const output = renderer.getRenderOutput();
     const expectedButtons = [{
       title: 'Done',
@@ -56,49 +56,45 @@ describe('Sharing', () => {
   });
 
   it('can render with users', () => {
-    const modelUserInfo = sinon.stub().callsArgWith(0, false, [
+    const getModelUserInfo = sinon.stub().callsArgWith(0, false, [
       {
-        icon: 'who.png',
-        username: 'drwho',
-        name: 'Dr. Who',
-        role: 'owner'
+        name: 'drwho',
+        displayName: 'Dr. Who',
+        lastConnection: 'now',
+        access: 'admin'
       }, {
-        icon: 'dalek.png',
-        username: 'dalek',
-        name: 'Dalek'
+        name: 'dalek',
+        displayName: 'Dalek',
+        lastConnection: 'never',
+        access: 'write',
+        err: 'exterminate!'
       }
     ]);
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Sharing
-        modelUserInfo={modelUserInfo} />, true);
+        getModelUserInfo={getModelUserInfo} />, true);
     const output = renderer.getRenderOutput();
     // Get all the children except the header, which is the first item in the
     // array.
     const actual = output.props.children.props.children[1];
     const expected = [(
       <div key="drwho" className="sharing__user">
-        <div className="sharing__user-icon">
-          <img src="who.png"/>
-        </div>
-        <div className="sharing__user-username">
+        <div className="sharing__user-name">
           drwho
         </div>
-        <div className="sharing__user-name">
+        <div className="sharing__user-displayname">
           Dr. Who
         </div>
-        <div className="sharing__user-role">
-          owner
+        <div className="sharing__user-access">
+          admin
         </div>
       </div>
     ), (
       <div key="dalek" className="sharing__user">
-        <div className="sharing__user-icon">
-          <img src="dalek.png"/>
-        </div>
-        <div className="sharing__user-username">
+        <div className="sharing__user-name">
           dalek
         </div>
-        <div className="sharing__user-name">
+        <div className="sharing__user-displayname">
           Dalek
         </div>
         {undefined}

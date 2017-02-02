@@ -53,7 +53,7 @@ describe('UserProfile', () => {
     const staticURL = 'test-url';
     const user = users.charmstore;
     const charmstore = {};
-    const showSharing = sinon.stub();
+    const sharingVisibility = sinon.stub();
     window.flags = {blues: true};
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfile
@@ -71,7 +71,7 @@ describe('UserProfile', () => {
         interactiveLogin={true}
         changeState={changeState}
         pluralize={sinon.stub()}
-        showSharing={showSharing}
+        sharingVisibility={sharingVisibility}
         staticURL={staticURL}
         storeUser={sinon.stub()}
         user={user} />, true);
@@ -95,7 +95,7 @@ describe('UserProfile', () => {
         destroyModels={destroyModels}
         facadesExist={true}
         listModelsWithInfo={listModelsWithInfo}
-        showSharing={showSharing}
+        sharingVisibility={sharingVisibility}
         switchModel={switchModel}
         user={user} />,
       <juju.components.UserProfileEntityList

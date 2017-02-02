@@ -1101,7 +1101,7 @@ YUI.add('juju-gui', function(Y) {
           gisf={this.get('gisf')}
           interactiveLogin={this.get('interactiveLogin')}
           pluralize={utils.pluralize.bind(this)}
-          showSharing={this.showSharing.bind(this, true)}
+          sharingVisibility={utils.sharingVisibility.bind(utils, true)}
           staticURL={window.juju_config.staticURL}
           storeUser={this.storeUser.bind(this)}
           switchModel={utils.switchModel.bind(this, this.env)}
@@ -1376,7 +1376,7 @@ YUI.add('juju-gui', function(Y) {
             this.bundleImporter)}
           renderDragOverNotification={
             this._renderDragOverNotification.bind(this)}
-          showSharing={this.showSharing.bind(this, true)}/>,
+          sharingVisibility={utils.sharingVisibility.bind(utils, true)}/>,
         document.getElementById('model-actions-container'));
     },
 
@@ -2715,36 +2715,6 @@ YUI.add('juju-gui', function(Y) {
       var maasContainer = Y.one('#maas-server');
       maasContainer.one('a').set('href', maasServer);
       maasContainer.show();
-    },
-
-    // TODO: Move to views/utils.js.
-    showSharing: function(show = true) {
-      const sharing = document.getElementById('sharing-container');
-      // XXX kadams54: temporary until we wire in the actual modelUserInfo API
-      // call.
-      const modelUserInfo = function(callback) {
-        callback(false, [
-          {
-            icon: 'who.png',
-            username: 'drwho',
-            name: 'Dr. Who',
-            role: 'owner'
-          }, {
-            icon: 'dalek.png',
-            username: 'dalek',
-            name: 'Dalek'
-          }
-        ]);
-      };
-      if (show) {
-        ReactDOM.render(
-          <window.juju.components.Sharing
-            modelUserInfo={modelUserInfo}
-            closeHandler={this.showSharing.bind(this, false)} />,
-        sharing);
-      } else {
-        ReactDOM.unmountComponentAtNode(sharing);
-      }
     },
 
     maskVisibility: function(visibility = true) {

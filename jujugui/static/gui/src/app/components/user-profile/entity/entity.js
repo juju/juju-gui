@@ -32,15 +32,15 @@ YUI.add('user-profile-entity', function() {
       entity: React.PropTypes.object.isRequired,
       expanded: React.PropTypes.bool,
       getDiagramURL: React.PropTypes.func,
-      showSharing: React.PropTypes.func,
+      sharingVisibility: React.PropTypes.func,
       switchModel: React.PropTypes.func,
       type: React.PropTypes.string.isRequired
     },
 
     getDefaultProps: function() {
       return {
-        showSharing: () => {
-          console.log('No showSharing function was provided.');
+        sharingVisibility: () => {
+          console.log('No sharingVisibility function was provided.');
         }
       };
     },
@@ -280,7 +280,7 @@ YUI.add('user-profile-entity', function() {
       const shareFlag = window.juju_config && window.juju_config.shareFlag;
       const shareIcon = shareFlag ? (
         <span className="entity-share link tooltip"
-          onClick={this.props.showSharing}
+          onClick={this.props.sharingVisibility}
           role="button"
           tabIndex="0">
           <juju.components.SvgIcon name="share_16"
