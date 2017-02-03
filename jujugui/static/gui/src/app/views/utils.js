@@ -1304,14 +1304,13 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Object} env Reference to the app env.
     @param {String} uuid A model UUID.
     @param {String} name A model name.
-    @param {Function} callback The callback to call after switching models.
     @param {Boolean} confirmUncommitted Whether to show a confirmation if there
       are uncommitted changes.
   */
   utils.switchModel = function(
-    env, uuid, name, callback, confirmUncommitted=true) {
+    env, uuid, name, confirmUncommitted=true) {
     const switchModel =
-      utils._switchModel.bind(this, env, uuid, name, callback);
+      utils._switchModel.bind(this, env, uuid, name);
     const currentChangeSet = env.get('ecs').getCurrentChangeSet();
     // If there are uncommitted changes then show a confirmation popup.
     if (confirmUncommitted && Object.keys(currentChangeSet).length > 0) {
@@ -1368,10 +1367,8 @@ YUI.add('juju-view-utils', function(Y) {
     @param {Object} env Reference to the app env.
     @param {String} uuid A model UUID.
     @param {String} name A model name.
-    @param {Function} callback An optional callback that gets called after
-      switching models.
   */
-  utils._switchModel = function(env, uuid, name, callback) {
+  utils._switchModel = function(env, uuid, name) {
     // Remove the switch model confirmation popup if it has been displayed to
     // the user.
     utils._hidePopup();

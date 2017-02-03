@@ -998,7 +998,7 @@ describe('utilities', function() {
   });
 
   describe('deploy util', function() {
-    let app, callback, commit, envGet, switchModel, utils;
+    let app, callback, commit, envGet, utils;
 
     before(function(done) {
       YUI(GlobalConfig).use('juju-view-utils', function(Y) {
@@ -1036,12 +1036,6 @@ describe('utilities', function() {
         get: sinon.stub().returns('wss://socket-url'),
         switchEnv: sinon.stub(),
       };
-      switchModel = utils.switchModel;
-      utils.switchModel = sinon.stub().callsArgWith(6, app.env);
-    });
-
-    afterEach(() => {
-      utils.switchModel = switchModel;
     });
 
     it('can auto place when requested', function() {
@@ -1082,46 +1076,50 @@ describe('utilities', function() {
       assert.isFunction(args[3]);
     });
 
-    it('can connect to a newly created model', function() {
-      var model = {
-        name: 'koala',
-        uuid: 'uuid123'
-      };
-      utils._newModelCallback(app, callback, null, model);
-      assert.equal(utils.switchModel.callCount, 1);
-      var switchArgs = utils.switchModel.args[0];
-      assert.isFunction(switchArgs[1]);
-      assert.deepEqual(switchArgs[2], app.env);
-      assert.equal(switchArgs[3], 'uuid123');
-      assert.deepEqual(switchArgs[4], [model]);
-      assert.equal(switchArgs[5], 'koala');
-      assert.isFunction(switchArgs[6]);
-      assert.isFalse(switchArgs[7]);
-      assert.isFalse(switchArgs[8]);
-    });
-
-    it('can commit changes after connecting to a new model', function() {
-      var model = {
-        name: 'koala',
-        uuid: 'uuid123'
-      };
-      utils._newModelCallback(app, callback, null, model);
+    it('can create, connect, and commit to the new model', function() {
+      const modelData = {uuid: 'the-uuid'};
+      const args = {model: 'args'};
+      envGet.withArgs('connected').returns(false);
+      const commit = sinon.stub();
+      envGet.withArgs('ecs').returns({commit});
+      utils.deploy(app, callback, false, 'my-model', args);
+      assert.equal(app.controllerAPI.createModel.callCount, 1);
+      // Call the handler for the createModel callCount
+      app.controllerAPI.createModel.args[0][3](null, modelData);
+      assert.deepEqual(app.set.args[0], ['modelUUID', modelData.uuid]);
+      assert.equal(app.createSocketURL.callCount, 1);
+      assert.deepEqual(
+        app.createSocketURL.args[0], ['wss://socket-url', modelData.uuid]);
+      assert.equal(app.get.callCount, 1);
+      assert.deepEqual(app.get.args[0], ['socketTemplate']);
+      assert.equal(app.switchEnv.callCount, 1);
+      assert.equal(app.switchEnv.args[0][0], 'wss://socket-url');
+      assert.strictEqual(app.switchEnv.args[0][1], null);
+      assert.strictEqual(app.switchEnv.args[0][2], null);
+      assert.equal(typeof app.switchEnv.args[0][3], 'function');
+      assert.strictEqual(app.switchEnv.args[0][4], true);
+      assert.strictEqual(app.switchEnv.args[0][5], false);
+      // Call the switchEnv callback handler.
+      app.switchEnv.args[0][3](args);
       assert.equal(commit.callCount, 1);
-      assert.deepEqual(commit.args[0][0], app.env);
       assert.equal(callback.callCount, 1);
+      assert.deepEqual(callback.args[0], [args]);
     });
 
     it('can display an error notification', function() {
-      var model = {
-        name: 'koala',
-        uuid: 'uuid123'
-      };
-      utils._newModelCallback(
-        app, callback, 'Error: no Tasmanian Tigers were found', model);
+      const modelData = {uuid: 'the-uuid'};
+      const args = {model: 'args'};
+      envGet.withArgs('connected').returns(false);
+      utils.deploy(app, callback, false, 'my-model', args);
+      assert.equal(app.controllerAPI.createModel.callCount, 1);
+      // Call the handler for the createModel callCount
+      app.controllerAPI.createModel.args[0][3]('it broke', modelData);
       assert.equal(app.db.notifications.add.callCount, 1);
-      assert.equal(
-        app.db.notifications.add.args[0][0].title,
-        'Error: no Tasmanian Tigers were found');
+      assert.deepEqual(app.db.notifications.add.args[0], [{
+        title: 'it broke',
+        message: 'it broke',
+        level: 'error'
+      }]);
     });
   });
 

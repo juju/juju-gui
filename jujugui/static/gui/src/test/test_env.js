@@ -82,6 +82,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.destroy();
     });
 
+    it('sets connecting when it is attempting a connection', function() {
+      const env = new environments.BaseEnvironment();
+      env.set('socket_url', 'ws://sandbox');
+      env.connect();
+      assert.equal(env.get('connecting'), true);
+      env.close();
+      env.destroy();
+    });
+
     it('uses the module-defined sessionStorage.', function() {
       var conn = new ClientConnection({juju: {open: function() {}}});
       var env = new environments.BaseEnvironment({conn: conn});

@@ -222,7 +222,7 @@ YUI.add('juju-env-base', function(Y) {
     */
     'connected': {value: false},
     /**
-      Whether or not we're attempting a connection.
+      Whether or not a connection is being attempted.
       @attribute connecting
       @type {Boolean}
     */
