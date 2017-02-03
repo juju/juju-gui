@@ -70,7 +70,7 @@ describe('USSOLoginLink', () => {
           loginToController={sinon.stub()}
           sendPost={sinon.stub()}
           gisf={false}/>, true);
-    var output = component.getRenderOutput();
+    const output = component.getRenderOutput();
     var expected = (
       <div className="usso-login">
         <juju.components.GenericButton
@@ -111,19 +111,16 @@ describe('USSOLoginLink', () => {
     assert.equal(callback.callCount, 1);
   });
 
-  it('does a postback to a url in gisf', function() {
-    var loginToController = function(cb) {
+  it('does a postback to a URL in gisf', function() {
+    const loginToController = function(cb) {
       cb();
     };
-    var controllerAPI = sinon.stub();
-    var localStorageGet = sinon.stub().returns('foo');
-    controllerAPI.get = sinon.stub().returns(true);
-    var sendPost = sinon.stub();
+    const localStorageGet = sinon.stub().returns('foo');
+    const sendPost = sinon.stub();
     const callback = sinon.stub();
     const output = testUtils.renderIntoDocument(
       <juju.components.USSOLoginLink
         callback={callback}
-        controllerAPI={controllerAPI}
         displayType={'text'}
         gisf={true}
         localStorageGet={localStorageGet}

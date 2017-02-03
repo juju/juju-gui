@@ -28,10 +28,10 @@ describe('LoginComponent', function() {
   });
 
   it('renders', function() {
-    var loginToControllerStub = sinon.stub();
-    var controllerIsConnected = sinon.stub();
-    var sendPost = sinon.stub();
-    var localStorageGet = sinon.stub();
+    const loginToControllerStub = sinon.stub();
+    const controllerIsConnected = sinon.stub();
+    const sendPost = sinon.stub();
+    const localStorageGet = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
         isLegacyJuju={false}
