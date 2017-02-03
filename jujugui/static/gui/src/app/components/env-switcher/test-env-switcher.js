@@ -69,14 +69,16 @@ describe('EnvSwitcher', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('open the list on click', function() {
-    var showProfile = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+  it('opens the list on click', function() {
+    const showProfile = sinon.stub();
+    const authDetails = {user: 'who@external', rootUserName: 'who'};
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
+        authDetails={authDetails}
         listModelsWithInfo={sinon.stub()}
         showProfile={showProfile}
         switchModel={sinon.stub()} />, true);
-    var output = renderer.getRenderOutput();
+    let output = renderer.getRenderOutput();
     // Click the toggler
     output.props.children[0].props.onClick({
       preventDefault: () => null
@@ -84,19 +86,21 @@ describe('EnvSwitcher', function() {
 
     renderer.render(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
+        authDetails={authDetails}
         listModelsWithInfo={sinon.stub()}
         showProfile={showProfile}
         switchModel={sinon.stub()} />);
 
-    var instance = renderer.getMountedInstance();
+    const instance = renderer.getMountedInstance();
     output = renderer.getRenderOutput();
 
     assert.deepEqual(output.props.children[1],
       <juju.components.EnvList
+        authDetails={authDetails}
+        envs={[]}
         handleEnvClick={instance.handleEnvClick}
-        createNewEnv={instance.createNewEnv}
         showProfile={showProfile}
-        envs={[]} />);
+      />);
   });
 
   it('fetches a list of environments on mount', function() {

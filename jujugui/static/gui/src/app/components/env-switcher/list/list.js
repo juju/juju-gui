@@ -23,6 +23,7 @@ YUI.add('env-list', function() {
   juju.components.EnvList = React.createClass({
 
     propTypes: {
+      authDetails: React.PropTypes.object,
       envs: React.PropTypes.array.isRequired,
       handleEnvClick: React.PropTypes.func.isRequired,
       showProfile: React.PropTypes.func.isRequired
@@ -38,42 +39,51 @@ YUI.add('env-list', function() {
       this.setState({envs: nextProps.envs});
     },
 
-    generateEnvList: function() {
-      var envs = [];
-      const envList = this.state.envs;
-      if (envList.length === 0) {
-        return (<li className="env-list__environment"
-          key="none">
-          No models available, click below to view your profile and create a
-          new model.
-        </li>);
+    /**
+      Generate the elements for the list of models.
+
+      @method generateModelList
+    */
+    generateModelList: function() {
+      const models = this.state.envs;
+      if (!models.length) {
+        return (
+          <li className="env-list__environment" key="none">
+            No models available, click below to view your profile and create a
+            new model.
+          </li>
+        );
       }
-      envList.forEach(function(env) {
-        // below the env.name is for JES response object and env.path is for
-        // the JEM response object.
-        var envName = env.name || env.path;
-        envs.push(
+      const auth = this.props.authDetails;
+      const currentUser = auth ? auth.user : null;
+      return models.map(model => {
+        let name = model.name;
+        if (model.owner !== currentUser) {
+          const owner = model.owner.split('@')[0];
+          name = `${owner}/${model.name}`;
+        }
+        return (
           <li className="env-list__environment"
             role="menuitem"
             tabIndex="0"
-            data-id={env.uuid}
-            data-name={envName}
+            data-id={model.uuid}
+            data-name={model.name}
             onClick={this._handleModelClick}
-            key={env.uuid}>
-            {envName}
-          </li>);
-      }, this);
-      return envs;
+            key={model.uuid}>
+            {name}
+          </li>
+        );
+      });
     },
 
     /**
       Handle clicking on a model.
 
       @method _handleModelClick
-      @param {Object} e The click event.
+      @param {Object} evt The click event.
     */
-    _handleModelClick: function(e) {
-      var currentTarget = e.currentTarget;
+    _handleModelClick: function(evt) {
+      const currentTarget = evt.currentTarget;
       this.props.handleEnvClick({
         id: currentTarget.getAttribute('data-id'),
         name: currentTarget.getAttribute('data-name')
@@ -93,23 +103,30 @@ YUI.add('env-list', function() {
           aria-expanded="true"
           aria-hidden="false"
           aria-labelledby="environmentSwitcherToggle">
-          {this.generateEnvList()}
+          {this.generateModelList()}
         </ul>
       );
     },
 
     render: function() {
-      var buttons = [{
-        title: 'Profile',
-        type: 'neutral',
-        action: this.props.showProfile
-      }];
+      const auth = this.props.authDetails;
+      let buttonRow;
+      if (auth && auth.rootUserName) {
+        const buttons = [{
+          title: 'Profile',
+          type: 'neutral',
+          action: () => {
+            this.props.showProfile(auth.rootUserName);
+          }
+        }];
+        buttonRow = <juju.components.ButtonRow buttons={buttons} />;
+      }
       return (
         <juju.components.Panel
           instanceName="env-list-panel"
           visible={true}>
           {this._generateModels()}
-          <juju.components.ButtonRow buttons={buttons} />
+          {buttonRow}
         </juju.components.Panel>
       );
     }

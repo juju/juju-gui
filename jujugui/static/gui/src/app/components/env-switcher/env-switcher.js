@@ -22,6 +22,7 @@ YUI.add('env-switcher', function() {
 
   var EnvSwitcher = React.createClass({
     propTypes: {
+      authDetails: React.PropTypes.object,
       environmentName: React.PropTypes.string,
       listModelsWithInfo: React.PropTypes.func,
       showProfile: React.PropTypes.func.isRequired,
@@ -128,10 +129,11 @@ YUI.add('env-switcher', function() {
     environmentList: function() {
       if (this.state.showEnvList) {
         return <juju.components.EnvList
+          authDetails={this.props.authDetails}
           handleEnvClick={this.handleEnvClick}
-          createNewEnv={this.createNewEnv}
+          envs={this.state.envList}
           showProfile={this.props.showProfile}
-          envs={this.state.envList} />;
+        />;
       }
     },
 

@@ -49,11 +49,12 @@ YUI.add('header-breadcrumb', function() {
         return (
           <li className="header-breadcrumb__list-item">
             <window.juju.components.EnvSwitcher
+              authDetails={this.props.authDetails}
               environmentName={this.props.modelName}
               listModelsWithInfo={this.props.listModelsWithInfo}
               showProfile={this.props.showProfile}
               switchModel={this.props.switchModel}
-              authDetails={this.props.authDetails} />
+            />
           </li>);
       }
       return;
