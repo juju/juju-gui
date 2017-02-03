@@ -54,7 +54,7 @@ YUI.add('usso-login-link', function() {
           console.log('sending discharge token to storefront');
           const content = 'discharge-token=' + dischargeToken;
           this.props.sendPost(
-            '/_login',
+            'http://localhost:8000',
             {'Content-Type': 'application/x-www-form-urlencoded'},
             content);
         }

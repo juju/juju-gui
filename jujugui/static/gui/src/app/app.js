@@ -991,7 +991,7 @@ YUI.add('juju-gui', function(Y) {
       const webhandler = new Y.juju.environments.web.WebHandler();
       const controllerIsConnected = function() {
         return controllerAPI.get('connected');
-      }
+      };
       ReactDOM.render(
         <window.juju.components.Login
           controllerIsConnected={controllerIsConnected}
