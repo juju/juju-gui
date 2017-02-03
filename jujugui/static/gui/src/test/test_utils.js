@@ -1112,27 +1112,26 @@ describe('utilities', function() {
     });
 
     it('can commit changes after connecting to a new model', function() {
-      var model = {
-        name: 'koala',
-        uuid: 'uuid123'
-      };
+      const model = {name: 'koala', uuid: 'uuid123'};
       utils._newModelCallback(app, callback, null, model);
       assert.equal(commit.callCount, 1);
       assert.deepEqual(commit.args[0][0], app.env);
       assert.equal(callback.callCount, 1);
+      const args = callback.args[0];
+      assert.strictEqual(args.length, 1);
+      assert.strictEqual(args[0], null);
     });
 
     it('can display an error notification', function() {
-      var model = {
-        name: 'koala',
-        uuid: 'uuid123'
-      };
-      utils._newModelCallback(
-        app, callback, 'Error: no Tasmanian Tigers were found', model);
+      const model = {name: 'koala', uuid: 'uuid123'};
+      utils._newModelCallback(app, callback, 'bad wolf', model);
+      const expectedError = 'cannot create model: bad wolf';
       assert.equal(app.db.notifications.add.callCount, 1);
-      assert.equal(
-        app.db.notifications.add.args[0][0].title,
-        'Error: no Tasmanian Tigers were found');
+      assert.equal(app.db.notifications.add.args[0][0].title, expectedError);
+      assert.equal(callback.callCount, 1);
+      const args = callback.args[0];
+      assert.strictEqual(args.length, 1);
+      assert.strictEqual(args[0], expectedError);
     });
   });
 

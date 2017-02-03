@@ -1492,7 +1492,8 @@ YUI.add('juju-view-utils', function(Y) {
     @method deploy
     @param {Object} app The app instance itself.
     @param {Function} callback The function to be called once the deploy is
-      complete.
+      complete. It must be passed an error string or null if the operation
+      succeeds.
     @param {Boolean} autoplace Whether the unplace units should be placed.
     @param {String} model The name of the new model.
     @param {Object} args Any other optional argument that can be provided when
@@ -1512,7 +1513,7 @@ YUI.add('juju-view-utils', function(Y) {
     // If we're in a model which exists then just commit the ecs and return.
     if (env.get('connected')) {
       env.get('ecs').commit(env);
-      callback();
+      callback(null);
       return;
     }
     const user = controllerAPI.getCredentials().user;
@@ -1532,11 +1533,9 @@ YUI.add('juju-view-utils', function(Y) {
   */
   utils._newModelCallback = function(app, callback, error, model) {
     if (error) {
-      app.db.notifications.add({
-        title: error,
-        message: error,
-        level: 'error'
-      });
+      const msg = 'cannot create model: ' + error;
+      app.db.notifications.add({title: msg, message: msg, level: 'error'});
+      callback(msg);
       return;
     }
     utils.switchModel.call(
@@ -1544,7 +1543,7 @@ YUI.add('juju-view-utils', function(Y) {
       app.switchEnv.bind(app), app.env, model.uuid, [model], model.name,
       env => {
         env.get('ecs').commit(env);
-        callback();
+        callback(null);
       }, false, false);
   };
 
