@@ -994,7 +994,7 @@ YUI.add('juju-gui', function(Y) {
       };
       const getDischargeToken = function() {
         return window.localStorage.getItem('discharge-token', null);
-      }
+      };
       ReactDOM.render(
         <window.juju.components.Login
           controllerIsConnected={controllerIsConnected}

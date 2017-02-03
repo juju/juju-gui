@@ -197,8 +197,7 @@ describe('LoginComponent', function() {
 
   it('automatically logs in for gisf via usso', function() {
     var loginToController = sinon.stub();
-    var controllerIsConnected = sinon.stub();
-    controllerIsConnected.get = sinon.stub().returns(true);
+    var controllerIsConnected = sinon.stub().returns(true);
     var sendPost = sinon.stub();
     testUtils.renderIntoDocument(
       <juju.components.Login
