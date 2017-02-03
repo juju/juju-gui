@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('HeaderBreadcrumb', () => {
-  let appState;
+  let appState, listModelsWithInfo, showProfile, switchModel;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -35,166 +35,172 @@ describe('HeaderBreadcrumb', () => {
     appState = {
       current: {}
     };
+    listModelsWithInfo = sinon.stub();
+    showProfile = sinon.stub();
+    switchModel = sinon.stub();
   });
 
-  it('Renders properly', () => {
-    var switchModel = sinon.stub();
-    var envName = 'bar';
-    var envList = ['envList'];
-    var showProfile = sinon.stub();
-    var listModelsWithInfo = sinon.stub();
-    var authDetails = {
-      user: 'foo',
-      usernameDisplay: 'Foo',
-      rootUserName: 'foo-root'
-    };
-    var component = jsTestUtils.shallowRender(
+  // Render the component and return the instance and the output.
+  const render = attrs => {
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderBreadcrumb
-        envName={envName}
-        envList={envList}
         appState={appState}
-        authDetails={authDetails}
+        authDetails={attrs.authDetails}
         listModelsWithInfo={listModelsWithInfo}
+        modelName={attrs.modelName}
+        modelOwner={attrs.modelOwner}
+        showEnvSwitcher={attrs.showEnvSwitcher}
         showProfile={showProfile}
-        showEnvSwitcher={true}
-        switchModel={switchModel} />, true);
-    var instance = component.getMountedInstance();
-    var output = component.getRenderOutput();
+        switchModel={switchModel}
+      />, true);
+    const output = renderer.getRenderOutput();
+    const userSection = output.props.children[0];
+    let clickUser = null;
+    if (userSection) {
+      clickUser = userSection.props.children.props.onClick;
+    }
+    return {
+      instance: renderer.getMountedInstance(),
+      output: output,
+      clickUser: clickUser
+    };
+  };
 
-    var expected = (
-      <ul className="header-breadcrumb" data-username="foo-root">
+  it('renders properly with the current user', () => {
+    const comp = render({
+      authDetails: {user: 'who@external', rootUserName: 'who'},
+      modelName: 'mymodel',
+      modelOwner: '',
+      showEnvSwitcher: true
+    });
+    const expectedOutput = (
+      <ul className="header-breadcrumb" data-username="who">
         <li className="header-breadcrumb__list-item">
-          <a className="header-breadcrumb--link"
-             onClick={instance._handleProfileClick}>
-            Foo
+          <a className="header-breadcrumb--link" onClick={comp.clickUser}>
+            who
           </a>
         </li>
         <li className="header-breadcrumb__list-item">
           <window.juju.components.EnvSwitcher
-            environmentName={envName}
-            envList={envList}
-            authDetails={authDetails}
+            environmentName={'mymodel'}
+            authDetails={{user: 'who@external', rootUserName: 'who'}}
             listModelsWithInfo={listModelsWithInfo}
             showProfile={showProfile}
             switchModel={switchModel} />
         </li>
       </ul>
     );
-    assert.deepEqual(output, expected);
+    assert.deepEqual(comp.output, expectedOutput);
   });
 
-  it('removes username from breadcrumbs if none is provided', () => {
-    var app = {app:'app'};
-    var envName = 'bar';
-    var envList = ['envList'];
-    var output = jsTestUtils.shallowRender(
-      <juju.components.HeaderBreadcrumb
-        app={app}
-        envName={envName}
-        envList={envList}
-        appState={appState}
-        listModelsWithInfo={sinon.stub()}
-        showEnvSwitcher={true}
-        showProfile={sinon.stub()}
-        switchModel={sinon.stub()} />);
-    assert.equal(output.props.children[0], undefined);
+  it('renders properly with the model owner', () => {
+    const comp = render({
+      authDetails: {user: 'dalek@external', rootUserName: 'dalek'},
+      modelName: 'mymodel',
+      modelOwner: 'rose',
+      showEnvSwitcher: true
+    });
+    const expectedOutput = (
+      <ul className="header-breadcrumb" data-username="dalek">
+        <li className="header-breadcrumb__list-item">
+          <a className="header-breadcrumb--link" onClick={comp.clickUser}>
+            rose
+          </a>
+        </li>
+        <li className="header-breadcrumb__list-item">
+          <window.juju.components.EnvSwitcher
+            environmentName={'mymodel'}
+            authDetails={{user: 'dalek@external', rootUserName: 'dalek'}}
+            listModelsWithInfo={listModelsWithInfo}
+            showProfile={showProfile}
+            switchModel={switchModel} />
+        </li>
+      </ul>
+    );
+    assert.deepEqual(comp.output, expectedOutput);
   });
 
-  it('does not render the env switcher if told not to', () => {
-    var app = {app:'app'};
-    var envName = 'bar';
-    var envList = ['envList'];
-    var output = jsTestUtils.shallowRender(
-      <juju.components.HeaderBreadcrumb
-        app={app}
-        envName={envName}
-        envList={envList}
-        appState={appState}
-        listModelsWithInfo={sinon.stub()}
-        showEnvSwitcher={false}
-        showProfile={sinon.stub()}
-        switchModel={sinon.stub()} />);
-    // There will be no third child if the envSwitcher is rendered
-    assert.equal(output.props.children[1], undefined);
+  it('removes user name from breadcrumbs if none is provided', () => {
+    const comp = render({
+      modelName: 'mymodel',
+      modelOwner: '',
+      showEnvSwitcher: true
+    });
+    assert.strictEqual(comp.output.props.children[0], undefined);
   });
 
-  it('doesn\'t render the env switcher when profile is visible', () => {
-    var app = {app:'app'};
-    var envName = 'bar';
-    var envList = ['envList'];
+  it('does not render the model switcher if told not to', () => {
+    const comp = render({
+      authDetails: {user: 'who@external', rootUserName: 'who'},
+      modelName: 'mymodel',
+      modelOwner: '',
+      showEnvSwitcher: false
+    });
+    assert.strictEqual(comp.output.props.children[1], undefined);
+  });
+
+  it('does not render the model switcher when profile is visible', () => {
     appState.current.profile = true;
-    var output = jsTestUtils.shallowRender(
-      <juju.components.HeaderBreadcrumb
-        app={app}
-        envName={envName}
-        envList={envList}
-        appState={appState}
-        listModelsWithInfo={sinon.stub()}
-        // Even though showEnvSwitcher is true, because the profile is visibile
-        // it shouldn't render the env switcher.
-        showEnvSwitcher={true}
-        showProfile={sinon.stub()}
-        switchModel={sinon.stub()} />);
+    const comp = render({
+      authDetails: {user: 'who@external', rootUserName: 'who'},
+      modelName: 'mymodel',
+      modelOwner: '',
+      // Even though showEnvSwitcher is true, because the profile is visibile
+      // it shouldn't render the model switcher.
+      showEnvSwitcher: true
+    });
     // There will be no third child if the envSwitcher is rendered
-    assert.equal(output.props.children[1], undefined);
+    assert.equal(comp.output.props.children[1], undefined);
   });
 
-  it('doesn\'t make the username linkable if we hide model switcher', () => {
-    var app = {app:'app'};
-    var envName = 'bar';
-    var envList = ['envList'];
-    var showProfile = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <juju.components.HeaderBreadcrumb
-        app={app}
-        authDetails={{
-          user: 'foo',
-          usernameDisplay: 'foo'
-        }}
-        envName={envName}
-        envList={envList}
-        appState={appState}
-        listModelsWithInfo={sinon.stub()}
-        showEnvSwitcher={false}
-        showProfile={showProfile}
-        switchModel={sinon.stub()} />);
+  it('does not make the username linkable if we hide model switcher', () => {
+    const comp = render({
+      authDetails: {user: 'who@external', rootUserName: 'who'},
+      modelName: 'mymodel',
+      modelOwner: '',
+      showEnvSwitcher: false
+    });
+    const userSection = comp.output.props.children[0];
     assert.equal(
-      output.props.children[0].props.children.props.className,
+      userSection.props.children.props.className,
       'header-breadcrumb--link profile-disabled');
     // Manually call the onClick handler and make sure it doesn't navigate
     // to show the profile.
-    output.props.children[0].props.children.props.onClick({
-      preventDefault: sinon.stub()
-    });
-    assert.equal(showProfile.callCount, 0, 'profile should not have navigated');
+    comp.clickUser({preventDefault: sinon.stub()});
+    assert.equal(showProfile.callCount, 0, 'showProfile called');
   });
 
-  it('can display the profile when the profile link is clicked', () => {
-    var app = {app:'app'};
-    var envName = 'bar';
-    var envList = ['envList'];
-    var showProfile = sinon.stub();
-    var authDetails = {
-      user: 'foo',
-      usernameDisplay: 'Foo'
-    };
-    var component = jsTestUtils.shallowRender(
-      <juju.components.HeaderBreadcrumb
-        app={app}
-        envName={envName}
-        envList={envList}
-        appState={appState}
-        authDetails={authDetails}
-        listModelsWithInfo={sinon.stub()}
-        showEnvSwitcher={true}
-        showProfile={showProfile}
-        switchModel={sinon.stub()} />, true);
-    var instance = component.getMountedInstance();
-    instance._handleProfileClick({
-      preventDefault: sinon.stub()
+  it('calls the profile view when the current user link is clicked', () => {
+    const comp = render({
+      authDetails: {user: 'who@external', rootUserName: 'who'},
+      modelName: 'mymodel',
+      modelOwner: '',
+      showEnvSwitcher: true
     });
-    assert.equal(showProfile.called, true,
-                 'showProfile was not called');
+    checkProfileCalled(comp.clickUser, 'who');
   });
+
+  it('calls the profile view when the model owner link is clicked', () => {
+    const comp = render({
+      authDetails: {user: 'who@external', rootUserName: 'who'},
+      modelName: 'mymodel',
+      modelOwner: 'dalek',
+      showEnvSwitcher: true
+    });
+    checkProfileCalled(comp.clickUser, 'dalek');
+  });
+
+  // Check that the link to go to the profile view has been called.
+  const checkProfileCalled = (clickUser, username) => {
+    const preventDefault = sinon.stub();
+    clickUser({preventDefault: preventDefault});
+    assert.equal(preventDefault.callCount, 1, 'preventDefault not called');
+    let args = preventDefault.args[0];
+    assert.equal(args.length, 0, 'preventDefault args');
+    assert.equal(showProfile.callCount, 1, 'showProfile not called');
+    args = showProfile.args[0];
+    assert.equal(args.length, 1, 'showProfile args');
+    assert.strictEqual(args[0], username, 'showProfile user');
+  };
 
 });
