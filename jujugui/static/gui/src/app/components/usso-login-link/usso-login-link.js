@@ -47,14 +47,16 @@ YUI.add('usso-login-link', function() {
         if (this.props.gisf) {
           const dischargeToken = this.props.localStorageGet(
             'discharge-token', null);
-          if (dischargeToken) {
-            console.log('sending discharge token to storefront');
-            const content = 'discharge-token=' + dischargeToken;
-            this.props.sendPost(
-              '/_login',
-              {'Content-Type': 'application/x-www-form-urlencoded'},
-              content);
+          if (!dischargeToken) {
+            console.error('no discharge token in local storage after login');
+            return;
           }
+          console.log('sending discharge token to storefront');
+          const content = 'discharge-token=' + dischargeToken;
+          this.props.sendPost(
+            '/_login',
+            {'Content-Type': 'application/x-www-form-urlencoded'},
+            content);
         }
 
         const callback = this.props.callback;
