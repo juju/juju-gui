@@ -23,7 +23,7 @@ YUI.add('login-component', function() {
   juju.components.Login = React.createClass({
 
     propTypes: {
-      controllerAPI: React.PropTypes.object.isRequired,
+      controllerIsConnected: React.PropTypes.func.isRequired,
       errorMessage: React.PropTypes.string,
       gisf: React.PropTypes.bool.isRequired,
       isLegacyJuju: React.PropTypes.bool.isRequired,
@@ -37,7 +37,7 @@ YUI.add('login-component', function() {
       this.refs.username.focus();
       if (this.props.gisf) {
         const bounce = () => {
-          if (this.props.controllerAPI.get('connected')) {
+          if (this.props.controllerIsConnected) {
             this.refs.USSOLoginLink.handleLogin();
           } else {
             setTimeout(bounce, 150);

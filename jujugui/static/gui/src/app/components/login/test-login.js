@@ -29,7 +29,7 @@ describe('LoginComponent', function() {
 
   it('renders', function() {
     var loginToControllerStub = sinon.stub();
-    var controllerAPI = sinon.stub();
+    var controllerIsConnected = sinon.stub();
     var sendPost = sinon.stub();
     var localStorageGet = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
@@ -38,7 +38,7 @@ describe('LoginComponent', function() {
         loginToAPIs={sinon.stub()}
         loginToController={loginToControllerStub}
         localStorageGet={localStorageGet}
-        controllerAPI={controllerAPI}
+        controllerIsConnected={controllerIsConnected}
         sendPost={sendPost}
         gisf={false} />, true);
     var instance = renderer.getMountedInstance();
@@ -197,15 +197,15 @@ describe('LoginComponent', function() {
 
   it('automatically logs in for gisf via usso', function() {
     var loginToController = sinon.stub();
-    var controllerAPI = sinon.stub();
-    controllerAPI.get = sinon.stub().returns(true);
+    var controllerIsConnected = sinon.stub();
+    controllerIsConnected.get = sinon.stub().returns(true);
     var sendPost = sinon.stub();
     testUtils.renderIntoDocument(
       <juju.components.Login
         isLegacyJuju={false}
         loginToAPIs={sinon.stub()}
         loginToController={loginToController}
-        controllerAPI={controllerAPI}
+        controllerIsConnected={controllerIsConnected}
         sendPost={sendPost}
         gisf={true} />);
     assert.equal(
