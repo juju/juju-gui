@@ -25,9 +25,9 @@ YUI.add('login-component', function() {
     propTypes: {
       controllerIsConnected: React.PropTypes.func.isRequired,
       errorMessage: React.PropTypes.string,
+      getDischargeToken: React.PropTypes.func,
       gisf: React.PropTypes.bool.isRequired,
       isLegacyJuju: React.PropTypes.bool.isRequired,
-      localStorageGet: React.PropTypes.func,
       loginToAPIs: React.PropTypes.func.isRequired,
       loginToController: React.PropTypes.func.isRequired,
       sendPost: React.PropTypes.func
@@ -37,7 +37,7 @@ YUI.add('login-component', function() {
       this.refs.username.focus();
       if (this.props.gisf) {
         const bounce = () => {
-          if (this.props.controllerIsConnected) {
+          if (this.props.controllerIsConnected()) {
             this.refs.USSOLoginLink.handleLogin();
           } else {
             setTimeout(bounce, 150);
@@ -103,7 +103,7 @@ YUI.add('login-component', function() {
             gisf={this.props.gisf}
             sendPost={this.props.sendPost}
             ref="USSOLoginLink"
-            localStorageGet={this.props.localStorageGet}
+            getDischargeToken={this.props.getDischargeToken}
             loginToController={this.props.loginToController}
             displayType="button" />);
       }

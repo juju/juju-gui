@@ -115,7 +115,7 @@ describe('USSOLoginLink', () => {
     const loginToController = function(cb) {
       cb();
     };
-    const localStorageGet = sinon.stub().returns('foo');
+    const getDischargeToken = sinon.stub().returns('foo');
     const sendPost = sinon.stub();
     const callback = sinon.stub();
     const output = testUtils.renderIntoDocument(
@@ -123,7 +123,7 @@ describe('USSOLoginLink', () => {
         callback={callback}
         displayType={'text'}
         gisf={true}
-        localStorageGet={localStorageGet}
+        getDischargeToken={getDischargeToken}
         loginToController={loginToController}
         sendPost={sendPost} />, true);
     testUtils.Simulate.click(

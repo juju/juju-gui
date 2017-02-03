@@ -31,13 +31,13 @@ describe('LoginComponent', function() {
     const loginToControllerStub = sinon.stub();
     const controllerIsConnected = sinon.stub();
     const sendPost = sinon.stub();
-    const localStorageGet = sinon.stub();
+    const getDischargeToken = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
         isLegacyJuju={false}
         loginToAPIs={sinon.stub()}
         loginToController={loginToControllerStub}
-        localStorageGet={localStorageGet}
+        getDischargeToken={getDischargeToken}
         controllerIsConnected={controllerIsConnected}
         sendPost={sendPost}
         gisf={false} />, true);
@@ -84,7 +84,7 @@ describe('LoginComponent', function() {
               sendPost={sendPost}
               ref="USSOLoginLink"
               loginToController={loginToControllerStub}
-              localStorageGet={localStorageGet}
+              getDischargeToken={getDischargeToken}
               displayType="button" />
           </form>
         </div>
