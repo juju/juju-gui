@@ -1482,6 +1482,7 @@ YUI.add('juju-view-utils', function(Y) {
       ecs.clear();
     }
     changeState({
+      root: null,
       profile: username
     });
   };
