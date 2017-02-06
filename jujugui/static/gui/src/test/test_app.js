@@ -1954,7 +1954,85 @@ describe('App', function() {
         assert.strictEqual(app.isLegacyJuju(), false, version);
       });
     });
+  });
 
+  describe('checkUserCredentials', function() {
+    let app, juju, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        juju = juju = Y.namespace('juju');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
+        controllerAPI: new juju.ControllerAPI({
+          conn: new testUtils.SocketStub()
+        }),
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet(),
+          user: 'user',
+          password: 'password'
+        }),
+        socketTemplate: '/model/$uuid/api',
+        controllerSocketTemplate: '/api',
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0'
+      });
+    });
+
+    afterEach(function() {
+      app.destroy();
+    });
+
+    it('calls next and returns if root state is new', () => {
+      const next = sinon.stub();
+      const displayStub = sinon.stub(app, '_displayLogin');
+      app.checkUserCredentials({root: 'new'}, next);
+      assert.equal(next.callCount, 1);
+      assert.equal(
+        displayStub.callCount, 0, 'login should not have been displayed');
+    });
+
+    it('displays login if one of the apis is still connecting', () => {
+      app.controllerAPI.set('connecting', true);
+      const next = sinon.stub();
+      const displayStub = sinon.stub(app, '_displayLogin');
+      app.checkUserCredentials({}, next);
+      assert.equal(displayStub.callCount, 1);
+    });
+
+    it('does not login if all apis are not connected', () => {
+      app.controllerAPI.set('connected', false);
+      app.env.set('connected', false);
+      const next = sinon.stub();
+      const displayStub = sinon.stub(app, '_displayLogin');
+      app.checkUserCredentials({}, next);
+      assert.equal(displayStub.callCount, 0);
+    });
+
+    it('displays login if one of the apis is not authenticated', () => {
+      app.controllerAPI.set('connected', true);
+      app.controllerAPI.userIsAuthenticated = false;
+      const next = sinon.stub();
+      const displayStub = sinon.stub(app, '_displayLogin');
+      app.checkUserCredentials({}, next);
+      assert.equal(displayStub.callCount, 1);
+    });
+
+    it('displays login if one of the apis is not authd and not gisf', () => {
+      app.controllerAPI.set('connected', true);
+      app.controllerAPI.userIsAuthenticated = false;
+      app.set('gisf', false);
+      const next = sinon.stub();
+      const displayStub = sinon.stub(app, '_displayLogin');
+      app.checkUserCredentials({}, next);
+      assert.equal(displayStub.callCount, 1);
+    });
   });
 
 });
