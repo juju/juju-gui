@@ -25,13 +25,16 @@ YUI.add('usso-login-link', function() {
     propTypes: {
       callback: React.PropTypes.func,
       displayType: React.PropTypes.string.isRequired,
-      loginToController: React.PropTypes.func.isRequired
+      getDischargeToken: React.PropTypes.func,
+      gisf: React.PropTypes.bool,
+      loginToController: React.PropTypes.func.isRequired,
+      sendPost: React.PropTypes.func
     },
 
     /**
       Handle the login form the user click.
     */
-    _handleLogin: function(e) {
+    handleLogin: function(e) {
       if (e && e.preventDefault) {
         // Depending on the login link type there may or may not be a
         // preventDefault method.
@@ -41,6 +44,20 @@ YUI.add('usso-login-link', function() {
         if (err) {
           console.error('cannot log into the controller:', err);
         }
+        if (this.props.gisf) {
+          const dischargeToken = this.props.getDischargeToken();
+          if (!dischargeToken) {
+            console.error('no discharge token in local storage after login');
+            return;
+          }
+          console.log('sending discharge token to storefront');
+          const content = 'discharge-token=' + dischargeToken;
+          this.props.sendPost(
+            '/_login',
+            {'Content-Type': 'application/x-www-form-urlencoded'},
+            content);
+        }
+
         const callback = this.props.callback;
         if (callback) {
           callback(err);
@@ -54,7 +71,7 @@ YUI.add('usso-login-link', function() {
     _renderTextLink: function() {
       return (
         <a className={'logout-link usso-login__action'}
-          onClick={this._handleLogin}
+          onClick={this.handleLogin}
           target="_blank">
           Login
         </a>);
@@ -66,7 +83,7 @@ YUI.add('usso-login-link', function() {
     _renderButtonLink: function() {
       return (
         <juju.components.GenericButton
-          action={this._handleLogin}
+          action={this.handleLogin}
           extraClasses="usso-login__action"
           type="positive"
           title="Sign up or Login" />);

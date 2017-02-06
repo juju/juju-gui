@@ -968,13 +968,24 @@ YUI.add('juju-gui', function(Y) {
       const controllerAPI = this.controllerAPI;
       const loginToController = controllerAPI.loginWithMacaroon.bind(
         controllerAPI, this.bakeryFactory.get('juju'));
+      const webhandler = new Y.juju.environments.web.WebHandler();
+      const controllerIsConnected = function() {
+        return controllerAPI.get('connected');
+      };
+      const getDischargeToken = function() {
+        return window.localStorage.getItem('discharge-token', null);
+      };
       ReactDOM.render(
         <window.juju.components.Login
-          setCredentials={this.env.setCredentials.bind(this.env)}
+          controllerIsConnected={controllerIsConnected}
+          errorMessage={err}
+          getDischargeToken={getDischargeToken}
+          gisf={this.get('gisf')}
           isLegacyJuju={this.isLegacyJuju()}
           loginToAPIs={this.loginToAPIs.bind(this)}
           loginToController={loginToController}
-          errorMessage={err} />,
+          sendPost={webhandler.sendPostRequest.bind(webhandler)}
+          setCredentials={this.env.setCredentials.bind(this.env)} />,
         document.getElementById('login-container'));
     },
 
