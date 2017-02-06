@@ -1281,6 +1281,8 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
+          addAgreement={this.terms.addAgreement.bind(this.terms)}
+          applications={services.toArray()}
           changesFilterByParent={
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
           changeState={this.state.changeState.bind(this.state)}

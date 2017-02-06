@@ -23,6 +23,8 @@ YUI.add('deployment-flow', function() {
   juju.components.DeploymentFlow = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
+      addAgreement: React.PropTypes.func.isRequired,
+      applications: React.PropTypes.array.isRequired,
       changeState: React.PropTypes.func.isRequired,
       changes: React.PropTypes.object.isRequired,
       changesFilterByParent: React.PropTypes.func.isRequired,
@@ -58,11 +60,8 @@ YUI.add('deployment-flow', function() {
       withPlans: React.PropTypes.bool
     },
 
-    getDefaultProps: function() {
-      return {applications: []};
-    },
-
     getInitialState: function() {
+      this.xhrs = [];
       // Set up the cloud, credential and region from props, as if they exist at
       // mount they can't be changed.
       const modelCommitted = this.props.modelCommitted;
@@ -72,12 +71,18 @@ YUI.add('deployment-flow', function() {
         credential: this.props.credential,
         loggedIn: !!this.props.getAuth(),
         modelName: this.props.modelName,
+        newTerms: [],
         region: this.props.region,
         showChangelogs: false,
         sshKey: null,
         terms: this._getTerms(),
+        termsList: [],
         termsAgreed: false
       };
+    },
+
+    componentWillMount: function() {
+      this._getAgreements();
     },
 
     componentDidMount: function() {
@@ -85,6 +90,21 @@ YUI.add('deployment-flow', function() {
       if (modelName) {
         modelName.focus();
       }
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      const newApps = nextProps.applications;
+      const currentApps = this.props.applications;
+      if (newApps.length !== currentApps.length ||
+        currentApps.filter(a => newApps.indexOf(a) === 0).length > 0) {
+        this._getAgreements();
+      }
+    },
+
+    componentWillUnmount: function() {
+      this.xhrs.forEach((xhr) => {
+        xhr && xhr.abort && xhr.abort();
+      });
     },
 
     /**
@@ -153,10 +173,10 @@ YUI.add('deployment-flow', function() {
           visible = true;
           break;
         case 'agreements':
-          const terms = this.state.terms;
+          const newTerms = this.state.newTerms;
           completed = false;
           disabled = false;
-          visible = terms && terms.length > 0;
+          visible = newTerms && newTerms.length > 0;
           break;
       }
       return {
@@ -214,6 +234,16 @@ YUI.add('deployment-flow', function() {
     */
     _setBudget: function(budget) {
       this.setState({budget: budget});
+    },
+
+    /**
+      Store the terms in state.
+
+      @method _setBudget
+      @param {Array} terms The terms.
+    */
+    _setTerms: function(terms) {
+      this.setState({termsList: terms});
     },
 
     /**
@@ -302,7 +332,19 @@ YUI.add('deployment-flow', function() {
       if (this.state.sshKey) {
         args.config = {'authorized-keys': this.state.sshKey};
       }
-      this.props.deploy(this._handleClose, true, this.state.modelName, args);
+      const deploy = this.props.deploy.bind(
+        this, this._handleClose, true, this.state.modelName, args);
+      if (this.state.newTerms.length > 0) {
+        this.props.addAgreement(this.state.termsList, (error, response) => {
+          if (error) {
+            console.error('Could not agree to terms:', error);
+          } else {
+            deploy();
+          }
+        });
+      } else {
+        deploy();
+      }
     },
 
     /**
@@ -313,11 +355,12 @@ YUI.add('deployment-flow', function() {
     */
     _getTerms: function() {
       const appIds = [];
-      // Find the undeployed app IDs.
+      // Get the list of undeployed apps. _deploy is the key for added apps.
       const deployCommands = this.props.groupedChanges['_deploy'];
       if (!deployCommands) {
         return;
       }
+      // Find the undeployed app IDs.
       Object.keys(deployCommands).forEach(key => {
         appIds.push(deployCommands[key].command.args[0].charmURL);
       }) || [];
@@ -337,6 +380,53 @@ YUI.add('deployment-flow', function() {
         }
       });
       return termIds;
+    },
+
+    /**
+      Get the list of terms that the user has already agreed to.
+
+      @method _getAgreements
+    */
+    _getAgreements: function() {
+      // Get the list of terms for the uncommitted apps.
+      const terms = this.state.terms;
+      // If there are no charms with terms then we don't need to display
+      // anything.
+      if (terms.length === 0) {
+        this.setState({newTerms: [], termsList: []});
+        return;
+      }
+      const xhr = this.props.getAgreements((error, agreements) => {
+        if (error) {
+          console.error('cannot retrieve agreements:', error);
+          return;
+        }
+        agreements = agreements || [];
+        const agreed = agreements.map(agreement => {
+          return agreement.term;
+        });
+        // Find the terms that aren't in the list of terms that have already
+        // been agreed to.
+        const newTerms = terms.filter(term => {
+          return agreed.indexOf(term) === -1;
+        });
+        // Reset the terms so that we don't keep pushing the same terms.
+        this.setState({newTerms: newTerms, termsList: []}, () => {
+          newTerms.forEach(term => {
+            const xhr = this.props.showTerms(term, null, (error, term) => {
+              if (error) {
+                console.error('cannot retrieve terms:', error);
+                return;
+              }
+              this.setState({
+                termsList: this.state.termsList.concat([term])
+              });
+            });
+            this.xhrs.push(xhr);
+          });
+        });
+      });
+      this.xhrs.push(xhr);
     },
 
     /**
@@ -741,8 +831,8 @@ YUI.add('deployment-flow', function() {
         return false;
       }
       // Check that any terms have been agreed to.
-      const terms = this.state.terms;
-      if (terms && terms.length > 0 && !this.state.termsAgreed) {
+      const newTerms = this.state.newTerms;
+      if (newTerms && newTerms.length > 0 && !this.state.termsAgreed) {
         return false;
       }
       // That's all we need if the model already exists.
