@@ -39,6 +39,7 @@ YUI.add('juju-gui', function(Y) {
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
       d3 = Y.namespace('d3');
+
   /**
    * The main app class.
    *
@@ -336,6 +337,7 @@ YUI.add('juju-gui', function(Y) {
 
     /**
       Return the current model unique identifier.
+
       @method _getModelUUID
       @return {String} The model UUID.
     */
