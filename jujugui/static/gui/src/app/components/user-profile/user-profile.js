@@ -35,7 +35,6 @@ YUI.add('user-profile', function() {
       listBudgets: React.PropTypes.func.isRequired,
       listModelsWithInfo: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
-      sharingVisibility: React.PropTypes.func,
       staticURL: React.PropTypes.string,
       storeUser: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
@@ -95,7 +94,6 @@ YUI.add('user-profile', function() {
           facadesExist={props.facadesExist}
           destroyModels={props.destroyModels}
           listModelsWithInfo={props.listModelsWithInfo}
-          sharingVisibility={props.sharingVisibility}
           switchModel={props.switchModel}
           user={props.user} />,
         <juju.components.UserProfileEntityList

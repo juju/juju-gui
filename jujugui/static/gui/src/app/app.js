@@ -1101,7 +1101,6 @@ YUI.add('juju-gui', function(Y) {
           gisf={this.get('gisf')}
           interactiveLogin={this.get('interactiveLogin')}
           pluralize={utils.pluralize.bind(this)}
-          sharingVisibility={utils.sharingVisibility.bind(utils, true)}
           staticURL={window.juju_config.staticURL}
           storeUser={this.storeUser.bind(this)}
           switchModel={utils.switchModel.bind(this, this.env)}

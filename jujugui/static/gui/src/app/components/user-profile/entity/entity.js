@@ -32,17 +32,8 @@ YUI.add('user-profile-entity', function() {
       entity: React.PropTypes.object.isRequired,
       expanded: React.PropTypes.bool,
       getDiagramURL: React.PropTypes.func,
-      sharingVisibility: React.PropTypes.func,
       switchModel: React.PropTypes.func,
       type: React.PropTypes.string.isRequired
-    },
-
-    getDefaultProps: function() {
-      return {
-        sharingVisibility: () => {
-          console.log('No sharingVisibility function was provided.');
-        }
-      };
     },
 
     /**
@@ -277,36 +268,17 @@ YUI.add('user-profile-entity', function() {
           action={props.displayConfirmation}
           type="inline-base"
           title="Destroy model" />) : undefined;
-      const shareFlag = window.juju_config && window.juju_config.shareFlag;
-      const shareIcon = shareFlag ? (
-        <span className="entity-share link tooltip"
-          onClick={this.props.sharingVisibility}
-          role="button"
-          tabIndex="0">
-          <juju.components.SvgIcon name="share_16"
-            className="entity-share__icon"
-            size="16" />
-          <span className="tooltip__tooltip--below">
-            <span className="tooltip__inner tooltip__inner--up">
-              Share
-            </span>
-          </span>
-        </span>
-      ) : undefined;
       return (
         <juju.components.ExpandingRow classes={classes}
           expanded={this.props.expanded}>
           {this.props.children}
           <div>
             <div className="expanding-row__expanded-header twelve-col">
-              <div className="three-col no-margin-bottom">
+              <div className="six-col no-margin-bottom">
                 {icon}{name}
               </div>
-              <div className="five-col">
-                {shareIcon}
-              </div>
               <div className={'expanding-row__expanded-header-action ' +
-                'four-col last-col no-margin-bottom'}>
+                'six-col last-col no-margin-bottom'}>
                 {destroyButton}
                 <juju.components.GenericButton
                   action={buttonAction}
