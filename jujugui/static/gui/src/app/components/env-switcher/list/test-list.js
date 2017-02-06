@@ -67,6 +67,42 @@ describe('EnvList', function() {
     ]);
   });
 
+  it('handles local model owners', function() {
+    const models = [
+      {uuid: 'model-uuid-1', name: 'model-name-1', owner: 'who'},
+      {uuid: 'model-uuid-2', name: 'model-name-2', owner: 'dalek'}
+    ];
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.EnvList
+        authDetails={{user: 'who@local', rootUserName: 'who'}}
+        envs={models}
+        handleEnvClick={sinon.stub()}
+        showProfile={sinon.stub()}
+      />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    assert.deepEqual(output.props.children[0].props.children, [
+      <li className="env-list__environment"
+        role="menuitem"
+        tabIndex="0"
+        data-id={models[0].uuid}
+        data-name={models[0].name}
+        onClick={instance._handleModelClick}
+        key={models[0].uuid}>
+        {models[0].name}
+      </li>,
+      <li className="env-list__environment"
+        role="menuitem"
+        tabIndex="0"
+        data-id={models[1].uuid}
+        data-name={models[1].name}
+        onClick={instance._handleModelClick}
+        key={models[1].uuid}>
+        {'dalek/model-name-2'}
+      </li>
+    ]);
+  });
+
   it('displays a message if there are no models', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.EnvList

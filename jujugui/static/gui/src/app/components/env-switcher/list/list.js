@@ -58,9 +58,17 @@ YUI.add('env-list', function() {
       const currentUser = auth ? auth.user : null;
       return models.map(model => {
         let name = model.name;
-        if (model.owner !== currentUser) {
-          const owner = model.owner.split('@')[0];
-          name = `${owner}/${model.name}`;
+        let owner = model.owner;
+        let ownerNoDomain;
+        if (owner.indexOf('@') === -1) {
+          // Juju does not return domains for local owners when listing models.
+          ownerNoDomain = owner;
+          owner += '@local';
+        } else {
+          ownerNoDomain = owner.split('@')[0];
+        }
+        if (owner !== currentUser) {
+          name = `${ownerNoDomain}/${model.name}`;
         }
         return (
           <li className="env-list__environment"
