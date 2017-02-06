@@ -1444,7 +1444,8 @@ YUI.add('juju-view-utils', function(Y) {
     @method deploy
     @param {Object} app The app instance itself.
     @param {Function} callback The function to be called once the deploy is
-      complete.
+      complete. It must be passed an error string or null if the operation
+      succeeds.
     @param {Boolean} autoplace Whether the unplace units should be placed.
     @param {String} modelName The name of the new model.
     @param {Object} args Any other optional argument that can be provided when
@@ -1464,21 +1465,19 @@ YUI.add('juju-view-utils', function(Y) {
     // If we're in a model which exists then just commit the ecs and return.
     if (env.get('connected')) {
       env.get('ecs').commit(env);
-      callback();
+      callback(null);
       return;
     }
     const handler = (err, model) => {
       if (err) {
-        app.db.notifications.add({
-          title: err,
-          message: err,
-          level: 'error'
-        });
+        const msg = 'cannot create model: ' + err;
+        app.db.notifications.add({title: msg, message: msg, level: 'error'});
+        callback(msg);
         return;
       }
       const commit = args => {
         env.get('ecs').commit(env);
-        callback(args);
+        callback(null);
       };
       app.set('modelUUID', model.uuid);
       const socketUrl = app.createSocketURL(

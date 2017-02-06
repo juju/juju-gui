@@ -1103,7 +1103,7 @@ describe('utilities', function() {
       app.switchEnv.args[0][3](args);
       assert.equal(commit.callCount, 1);
       assert.equal(callback.callCount, 1);
-      assert.deepEqual(callback.args[0], [args]);
+      assert.deepEqual(callback.args[0], [null]);
     });
 
     it('can display an error notification', function() {
@@ -1115,11 +1115,14 @@ describe('utilities', function() {
       // Call the handler for the createModel callCount
       app.controllerAPI.createModel.args[0][3]('it broke', modelData);
       assert.equal(app.db.notifications.add.callCount, 1);
+      const expectedError = 'cannot create model: it broke';
       assert.deepEqual(app.db.notifications.add.args[0], [{
-        title: 'it broke',
-        message: 'it broke',
+        title: expectedError,
+        message: expectedError,
         level: 'error'
       }]);
+      assert.equal(callback.callCount, 1);
+      assert.deepEqual(callback.args[0], [expectedError]);
     });
   });
 

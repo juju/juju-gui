@@ -67,19 +67,18 @@ YUI.add('app-renderer-extension', function(Y) {
       }
       ReactDOM.render(
         <juju.components.HeaderBreadcrumb
-          envName={this.db.environment.get('name')}
-          envList={this.get('environmentList')}
           appState={this.state}
           authDetails={auth}
           listModelsWithInfo={listModelsWithInfo}
+          modelName={this.db.environment.get('name')}
+          modelOwner={env.get('modelOwner')}
           showEnvSwitcher={showEnvSwitcher}
           showProfile={utils.showProfile.bind(
             this, env && env.get('ecs'),
-            this.state.changeState.bind(this.state), auth && auth.rootUserName)}
+            this.state.changeState.bind(this.state))}
           switchModel={utils.switchModel.bind(this, env)} />,
         document.getElementById('header-breadcrumb'));
     },
-
   };
 
   Y.namespace('juju').AppRenderer = AppRenderer;

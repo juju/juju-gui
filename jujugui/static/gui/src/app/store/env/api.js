@@ -794,13 +794,14 @@ YUI.add('juju-env-api', function(Y) {
         return;
       }
       // Store received model information on the model.
-      this.setConnectedAttr('defaultSeries', data.series);
-      this.setConnectedAttr('providerType', data.provider);
-      this.setConnectedAttr('environmentName', data.name);
-      this.setConnectedAttr('modelUUID', data.uuid);
       this.setConnectedAttr('cloud', data.cloud);
-      this.setConnectedAttr('region', data.region);
       this.setConnectedAttr('credential', data.credential);
+      this.setConnectedAttr('defaultSeries', data.series);
+      this.setConnectedAttr('environmentName', data.name);
+      this.setConnectedAttr('modelOwner', data.owner);
+      this.setConnectedAttr('modelUUID', data.uuid);
+      this.setConnectedAttr('providerType', data.provider);
+      this.setConnectedAttr('region', data.region);
 
       // For now we only need to call modelGet if the provider is MAAS.
       if (data.provider !== 'maas') {

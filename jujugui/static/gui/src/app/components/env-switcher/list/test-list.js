@@ -32,61 +32,65 @@ describe('EnvList', function() {
   });
 
   it('renders a list of environments', function() {
-    // JEM and JES use different keys for the name so this checks to make sure
-    // that both are displayed as the name.
-    var envs = [{ uuid: 'abc123', name: 'the name' },
-                { uuid: '123abc', path: 'the path' }];
-    var renderer = jsTestUtils.shallowRender(
+    const models = [
+      {uuid: 'model-uuid-1', name: 'model-name-1', owner: 'who@external'},
+      {uuid: 'model-uuid-2', name: 'model-name-2', owner: 'dalek@external'}
+    ];
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvList
-        envs={envs}
+        authDetails={{user: 'who@external', rootUserName: 'who'}}
+        envs={models}
         handleEnvClick={sinon.stub()}
-        showProfile={sinon.stub()} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    assert.deepEqual(output.props.children[0].props.children,
-      [<li className="env-list__environment"
+        showProfile={sinon.stub()}
+      />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    assert.deepEqual(output.props.children[0].props.children, [
+      <li className="env-list__environment"
         role="menuitem"
         tabIndex="0"
-        data-id={envs[0].uuid}
-        data-name={envs[0].name}
+        data-id={models[0].uuid}
+        data-name={models[0].name}
         onClick={instance._handleModelClick}
-        key={envs[0].uuid}>
-        {envs[0].name}
+        key={models[0].uuid}>
+        {models[0].name}
       </li>,
       <li className="env-list__environment"
         role="menuitem"
         tabIndex="0"
-        data-id={envs[1].uuid}
-        data-name={envs[1].path}
+        data-id={models[1].uuid}
+        data-name={models[1].name}
         onClick={instance._handleModelClick}
-        key={envs[1].uuid}>
-        {envs[1].path}
-      </li>]);
+        key={models[1].uuid}>
+        {'dalek/model-name-2'}
+      </li>
+    ]);
   });
 
   it('displays a message if there are no models', function() {
     const output = jsTestUtils.shallowRender(
       <juju.components.EnvList
+        authDetails={{user: 'who@external', rootUserName: 'who'}}
         envs={[]}
         handleEnvClick={sinon.stub()}
         showProfile={sinon.stub()} />);
     assert.deepEqual(output.props.children[0].props.children,
-      <li className="env-list__environment"
-        key="none">
+      <li className="env-list__environment" key="none">
         No models available, click below to view your profile and create a new
         model.
       </li>);
   });
 
   it('clicking an env calls the handleEnvClick prop', function() {
-    var envs = [{ uuid: 'abc123', name: 'the name' }];
-    var handleEnvClick = sinon.stub();
-    var getAttribute = sinon.stub();
+    const models = [{uuid: 'abc123', name: 'the name', owner: 'who@external'}];
+    const handleEnvClick = sinon.stub();
+    const getAttribute = sinon.stub();
     getAttribute.withArgs('data-id').returns('abc123');
     getAttribute.withArgs('data-name').returns('the name');
-    var output = jsTestUtils.shallowRender(
+    const output = jsTestUtils.shallowRender(
       <juju.components.EnvList
-        envs={envs}
+        authDetails={{user: 'who@external', rootUserName: 'who'}}
+        envs={models}
         handleEnvClick={handleEnvClick}
         showProfile={sinon.stub()} />);
     output.props.children[0].props.children[0].props.onClick({
@@ -98,18 +102,17 @@ describe('EnvList', function() {
   });
 
   it('showProfile call is made when clicking on buttonRow button', function() {
-    var showProfile = sinon.stub();
-    var envs = [{ uuid: 'abc123', name: 'the name' }];
-    var component = testUtils.renderIntoDocument(
+    const showProfile = sinon.stub();
+    const models = [{uuid: 'abc123', name: 'the name', owner: 'who@external'}];
+    const component = testUtils.renderIntoDocument(
       <juju.components.EnvList
-        envs={envs}
+        authDetails={{user: 'who@external', rootUserName: 'who'}}
+        envs={models}
         handleEnvClick={sinon.stub()}
         showProfile={showProfile} />);
-
     testUtils.Simulate.click(
         ReactDOM.findDOMNode(component)
                 .querySelector('.button--neutral'));
-
     assert.equal(showProfile.callCount, 1);
   });
 

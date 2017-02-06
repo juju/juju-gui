@@ -102,14 +102,13 @@ describe('App Renderer Extension', function() {
     });
 
     it('renders a normal breadcrumb', function() {
+      renderer.env.set('modelOwner', 'who');
       renderer._renderBreadcrumb();
-      assert.equal(renderStub.callCount, 1,
-                   'React\'s render was not invoked.');
-      var props = createElementStub.lastCall.args[1];
-      assert.equal(props['showEnvSwitcher'], true,
-                   'The showEnvSwitcher prop was not set properly.');
-      assert.equal(props['envName'], 'test-model',
-                   'The envName prop was not set properly.');
+      assert.equal(renderStub.callCount, 1, 'render not invoked');
+      const props = createElementStub.lastCall.args[1];
+      assert.strictEqual(props['showEnvSwitcher'], true, 'showEnvSwitcher');
+      assert.strictEqual(props['modelName'], 'test-model', 'modelName');
+      assert.strictEqual(props['modelOwner'], 'who', 'modelOwner');
     });
 
     it('passes args through to the component', function() {

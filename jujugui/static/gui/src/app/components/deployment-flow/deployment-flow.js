@@ -251,11 +251,15 @@ YUI.add('deployment-flow', function() {
       Handle closing the panel when the close button is clicked.
 
       @method _handleClose
+      @param {String} err An error if deployment failed, null otherwise.
     */
-    _handleClose: function() {
-      this.setState({
-        deploying: false
-      });
+    _handleClose: function(err) {
+      this.setState({deploying: false});
+      if (err) {
+        // Error handling is already done by the original deploy callback.
+        // Here we need to just prevent the deployment flow to close.
+        return;
+      }
       this.props.changeState({
         gui: {
           deploy: null
