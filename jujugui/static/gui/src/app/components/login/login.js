@@ -36,14 +36,18 @@ YUI.add('login-component', function() {
     componentDidMount: function () {
       this.refs.username.focus();
       if (this.props.gisf) {
-        const bounce = () => {
+        const bounce = (startTime) => {
           if (this.props.controllerIsConnected()) {
             this.refs.USSOLoginLink.handleLogin();
+          } else if ((performance.now() - startTime) < 5000) {
+            console.log(
+              'controller not yet connected, attempting retry.');
+            setTimeout(bounce, 150, performance.now());
           } else {
-            setTimeout(bounce, 150);
+            console.error('controller never connected');
           }
         };
-        bounce();
+        bounce(performance.now());
       }
     },
 
