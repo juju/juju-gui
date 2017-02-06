@@ -1,3 +1,12 @@
+- 2.2.7:
+
+    - (Fix) Correctly clear cookies when visiting from the storefront.
+    - (Fix) Exposed applications in bundles no longer halt deployment.
+
+- 2.2.6:
+
+    - (Fix) Anonymous and demo now connect to the controller.
+
 - 2.2.5:
 
     - Enable deploy-target queries to work with new deployment flow.

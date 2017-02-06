@@ -979,7 +979,7 @@ describe('DeploymentFlow', function() {
     assert.equal(changeState.callCount, 1);
   });
 
-  it('allow or disallow deployments', function() {
+  it('allows or disallows deployments', function() {
     const tests = [{
       about: 'no model name',
       state: {modelName: ''},
