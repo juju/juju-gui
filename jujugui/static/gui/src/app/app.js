@@ -1374,7 +1374,8 @@ YUI.add('juju-gui', function(Y) {
           importBundleFile={this.bundleImporter.importBundleFile.bind(
             this.bundleImporter)}
           renderDragOverNotification={
-            this._renderDragOverNotification.bind(this)} />,
+            this._renderDragOverNotification.bind(this)}
+          sharingVisibility={utils.sharingVisibility.bind(utils, true)}/>,
         document.getElementById('model-actions-container'));
     },
 
@@ -3095,6 +3096,7 @@ YUI.add('juju-gui', function(Y) {
     'logout-component',
     'notification-list',
     'panel-component',
+    'sharing',
     'shortcuts',
     'usso-login-link',
     'user-profile',

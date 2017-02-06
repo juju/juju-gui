@@ -1,0 +1,42 @@
+.sharing {
+  &__popup {
+    .popup__title {
+      border-bottom: 1px solid #ccc;
+      margin: 0 -20px 10px -20px;
+      padding: 0 20px 20px;
+    }
+  }
+
+  &__users-header {
+    border-bottom: 1px solid #ccc;
+    margin: 0 -20px 10px -20px;
+    padding: 0 20px 10px 20px;
+  }
+
+  &__user {
+    margin-bottom: 10px;
+    position: relative;
+
+    &-name {
+      margin-bottom: 3px;
+      text-transform: capitalize;
+    }
+
+    &-displayname {
+      font-size: 14px;
+      color: #999;
+    }
+
+    &-access {
+      @extend .vertical-center;
+      position: absolute;
+      right: 0;
+      text-transform: capitalize;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+}

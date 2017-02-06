@@ -43,7 +43,10 @@
     }
   }
 
-  .link {
+  &__button {
+    @extend .link;
+    @extend .tooltip;
+    display: inline-block;
     border-radius: 2px;
     border-right-width: 0;
 

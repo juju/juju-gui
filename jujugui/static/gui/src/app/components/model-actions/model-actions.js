@@ -30,6 +30,15 @@ YUI.add('model-actions', function() {
       hideDragOverNotification: React.PropTypes.func.isRequired,
       importBundleFile: React.PropTypes.func.isRequired,
       renderDragOverNotification: React.PropTypes.func.isRequired,
+      sharingVisibility: React.PropTypes.func
+    },
+
+    getDefaultProps: function() {
+      return {
+        sharingVisibility: () => {
+          console.log('No sharingVisibility function was provided.');
+        }
+      };
     },
 
     /**
@@ -51,15 +60,6 @@ YUI.add('model-actions', function() {
       if (input) {
         input.click();
       }
-    },
-
-    /**
-      Share the model with other users.
-
-      @method _handleShareClick
-    */
-    _handleShareClick: function() {
-      alert('Sharing button clicked.');
     },
 
     /**
@@ -97,8 +97,8 @@ YUI.add('model-actions', function() {
       var isReadOnly = this.props.acl.isReadOnly();
       const shareFlag = window.juju_config && window.juju_config.shareFlag;
       const shareIcon = shareFlag ? (
-        <span className="model-actions__share link tooltip"
-          onClick={this._handleShareClick}
+        <span className="model-actions__share model-actions__button"
+          onClick={this.props.sharingVisibility}
           role="button"
           tabIndex="0">
           <juju.components.SvgIcon name="share_16"
@@ -114,7 +114,7 @@ YUI.add('model-actions', function() {
       return (
         <div className={this._generateClasses()}>
           <div className="model-actions__buttons">
-            <span className="model-actions__export link tooltip"
+            <span className="model-actions__export model-actions__button"
               onClick={this._handleExport}
               role="button"
               tabIndex="0">
@@ -127,7 +127,7 @@ YUI.add('model-actions', function() {
                 </span>
               </span>
             </span>
-            <span className="model-actions__import link tooltip"
+            <span className="model-actions__import model-actions__button"
               onClick={!isReadOnly && this._handleImportClick}
               role="button"
               tabIndex="0">

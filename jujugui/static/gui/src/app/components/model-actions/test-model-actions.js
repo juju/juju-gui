@@ -33,11 +33,13 @@ describe('ModelActions', function() {
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    window.flags = {};
+    // XXX delete this once the shareFlag is no longer in place.
+    window.juju_config = {shareFlag: false};
   });
 
   afterEach(function() {
-    delete window.flags;
+    // XXX delete this once the shareFlag is no longer in place.
+    delete window.juju_config;
   });
 
   it('can render and pass the correct props', function() {
@@ -57,7 +59,7 @@ describe('ModelActions', function() {
     var expected = (
       <div className="model-actions">
         <div className="model-actions__buttons">
-          <span className="model-actions__export link tooltip"
+          <span className="model-actions__export model-actions__button"
             onClick={instance._handleExport}
             role="button"
             tabIndex="0">
@@ -70,7 +72,7 @@ describe('ModelActions', function() {
               </span>
             </span>
           </span>
-          <span className="model-actions__import link tooltip"
+          <span className="model-actions__import model-actions__button"
             onClick={instance._handleImportClick}
             role="button"
             tabIndex="0">
@@ -213,7 +215,7 @@ describe('ModelActions', function() {
     var expected = (
       <div className="model-actions">
         <div className="model-actions__buttons">
-          <span className="model-actions__export link tooltip"
+          <span className="model-actions__export model-actions__button"
             onClick={instance._handleExport}
             role="button"
             tabIndex="0">
@@ -226,7 +228,7 @@ describe('ModelActions', function() {
               </span>
             </span>
           </span>
-          <span className="model-actions__import link tooltip"
+          <span className="model-actions__import model-actions__button"
             onClick={false}
             role="button"
             tabIndex="0">
@@ -248,5 +250,28 @@ describe('ModelActions', function() {
           ref="file-input" />
       </div>);
     assert.deepEqual(output, expected);
+  });
+
+  it('can trigger the sharing UI', function() {
+    // XXX delete this once the shareFlag is no longer in place.
+    window.juju_config['shareFlag'] = true;
+    const currentChangeSet = {one: 1, two: 2};
+    const sharingVisibility = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.ModelActions
+        acl={acl}
+        changeState={sinon.stub()}
+        currentChangeSet={currentChangeSet}
+        exportEnvironmentFile={sinon.stub()}
+        hasEntities={true}
+        hideDragOverNotification={sinon.stub()}
+        importBundleFile={sinon.stub()}
+        renderDragOverNotification={sinon.stub()}
+        sharingVisibility={sharingVisibility} />, true);
+    const output = renderer.getRenderOutput();
+    const sharingButton = output.props.children[0].props.children[2];
+    assert.notEqual(sharingButton, undefined);
+    sharingButton.props.onClick();
+    assert.equal(sharingVisibility.callCount, 1);
   });
 });

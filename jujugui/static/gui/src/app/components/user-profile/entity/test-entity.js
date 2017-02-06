@@ -56,7 +56,7 @@ describe('UserProfileEntity', () => {
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
     const output = renderer.getRenderOutput();
-    const button = output.props.children[1].props.children[0].props.children[2]
+    const button = output.props.children[1].props.children[0].props.children[1]
       .props.children[1];
     const expected = (
       <juju.components.ExpandingRow classes={{
@@ -65,14 +65,11 @@ describe('UserProfileEntity', () => {
         <span>Summary details</span>
         <div>
           <div className="expanding-row__expanded-header twelve-col">
-            <div className="three-col no-margin-bottom">
+            <div className="six-col no-margin-bottom">
               {undefined}{"sandbox"}
             </div>
-            <div className="five-col">
-              {undefined}
-            </div>
             <div className={'expanding-row__expanded-header-action ' +
-              'four-col last-col no-margin-bottom'}>
+              'six-col last-col no-margin-bottom'}>
               <juju.components.GenericButton
                 action={displayConfirmation}
                 type="inline-base"
@@ -119,7 +116,7 @@ describe('UserProfileEntity', () => {
       </juju.components.UserProfileEntity>, true);
     const output = renderer.getRenderOutput();
     const viewButton = output.props.children[1].props.children[0]
-      .props.children[2].props.children[1];
+      .props.children[1].props.children[1];
     const tag = output.props.children[1].props.children[1]
       .props.children[5].props.children[1].props.children[0];
     const expected = (
@@ -129,14 +126,11 @@ describe('UserProfileEntity', () => {
         <span>Summary details</span>
         <div>
           <div className="expanding-row__expanded-header twelve-col">
-            <div className="three-col no-margin-bottom">
+            <div className="six-col no-margin-bottom">
               {undefined}{"django-cluster"}
             </div>
-            <div className="five-col">
-              {undefined}
-            </div>
             <div className={'expanding-row__expanded-header-action ' +
-              'four-col last-col no-margin-bottom'}>
+              'six-col last-col no-margin-bottom'}>
               {undefined}
               <juju.components.GenericButton
                 action={viewButton.props.action}
@@ -215,7 +209,7 @@ describe('UserProfileEntity', () => {
       </juju.components.UserProfileEntity>, true);
     const output = renderer.getRenderOutput();
     const viewButton = output.props.children[1].props.children[0]
-      .props.children[2].props.children[1];
+      .props.children[1].props.children[1];
     const tag = output.props.children[1].props.children[1]
       .props.children[5].props.children[1].props.children[0];
     const expected = (
@@ -225,14 +219,11 @@ describe('UserProfileEntity', () => {
         <span>Summary details</span>
         <div>
           <div className="expanding-row__expanded-header twelve-col">
-            <div className="three-col no-margin-bottom">
+            <div className="six-col no-margin-bottom">
               {undefined}{"django-cluster"}
             </div>
-            <div className="five-col">
-              {undefined}
-            </div>
             <div className={'expanding-row__expanded-header-action ' +
-              'four-col last-col no-margin-bottom'}>
+              'six-col last-col no-margin-bottom'}>
               {undefined}
               <juju.components.GenericButton
                 action={viewButton.props.action}
@@ -304,7 +295,7 @@ describe('UserProfileEntity', () => {
       </juju.components.UserProfileEntity>, true);
     const output = renderer.getRenderOutput();
     const viewButton = output.props.children[1].props.children[0]
-      .props.children[2].props.children[1];
+      .props.children[1].props.children[1];
     const tag = output.props.children[1].props.children[1]
       .props.children[5].props.children[1].props.children[0];
     const expected = (
@@ -314,17 +305,14 @@ describe('UserProfileEntity', () => {
         <span>Summary details</span>
         <div>
           <div className="expanding-row__expanded-header twelve-col">
-            <div className="three-col no-margin-bottom">
+            <div className="six-col no-margin-bottom">
               <img className="user-profile__entity-icon"
                 src={undefined}
                 title="django" />
               django
             </div>
-            <div className="five-col">
-              {undefined}
-            </div>
             <div className={'expanding-row__expanded-header-action ' +
-              'four-col last-col no-margin-bottom'}>
+              'six-col last-col no-margin-bottom'}>
               {undefined}
               <juju.components.GenericButton
                 action={viewButton.props.action}
@@ -381,7 +369,7 @@ describe('UserProfileEntity', () => {
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
     const output = renderer.getRenderOutput();
-    output.props.children[1].props.children[0].props.children[2]
+    output.props.children[1].props.children[0].props.children[1]
       .props.children[1].props.action();
     assert.equal(switchModel.callCount, 1);
     assert.equal(switchModel.args[0][0], 'env1');
@@ -398,7 +386,7 @@ describe('UserProfileEntity', () => {
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
     const output = renderer.getRenderOutput();
-    output.props.children[1].props.children[0].props.children[2]
+    output.props.children[1].props.children[0].props.children[1]
       .props.children[0].props.action();
     assert.equal(displayConfirmation.callCount, 1);
   });
@@ -413,7 +401,7 @@ describe('UserProfileEntity', () => {
       </juju.components.UserProfileEntity>, true);
     const output = renderer.getRenderOutput();
     const destroyButton = output.props.children[1].props.children[0].props
-      .children[2].props.children[0];
+      .children[1].props.children[0];
     assert.equal(destroyButton, undefined);
   });
 
@@ -431,7 +419,7 @@ describe('UserProfileEntity', () => {
         <span>Summary details</span>
       </juju.components.UserProfileEntity>, true);
     const output = renderer.getRenderOutput();
-    output.props.children[1].props.children[0].props.children[2]
+    output.props.children[1].props.children[0].props.children[1]
       .props.children[1].props.action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
