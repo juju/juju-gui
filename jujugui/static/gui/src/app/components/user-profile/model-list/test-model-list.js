@@ -47,10 +47,12 @@ describe('UserProfileModelList', () => {
     const acl = {
       canAddModels: () => true
     };
+    const changeState = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         acl={acl}
         addNotification={sinon.stub()}
+        changeState={changeState}
         currentModel={'model1'}
         listModelsWithInfo={sinon.stub().callsArgWith(0, null, [])}
         switchModel={sinon.stub()}
@@ -65,6 +67,7 @@ describe('UserProfileModelList', () => {
             ({0})
           </span>
           <juju.components.CreateModelButton
+            changeState={changeState}
             switchModel={instance.switchModel} />
         </div>
         {undefined}
@@ -96,10 +99,12 @@ describe('UserProfileModelList', () => {
     const acl = {
       canAddModels: () => true
     };
+    const changeState = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <juju.components.UserProfileModelList
         acl={acl}
         addNotification={sinon.stub()}
+        changeState={changeState}
         currentModel={'model1'}
         destroyModels={sinon.stub()}
         facadesExist={true}
@@ -117,6 +122,7 @@ describe('UserProfileModelList', () => {
             ({1})
           </span>
           <juju.components.CreateModelButton
+            changeState={changeState}
             switchModel={instance.switchModel} />
         </div>
         <ul className="user-profile__list twelve-col">
@@ -213,14 +219,7 @@ describe('UserProfileModelList', () => {
     // We need to call to generate the proper socket URL.
     // Check that switchModel is called with the proper values.
     assert.equal(switchModel.callCount, 1, 'switchModel not called');
-    assert.deepEqual(switchModel.args[0], ['abc123', [{
-      uuid: 'model1',
-      name: 'spinach/sandbox',
-      lastConnection: '2016-09-12T15:42:09Z',
-      ownerTag: 'user-who',
-      owner: 'who',
-      isAlive: true
-    }], 'modelname', undefined]);
+    assert.deepEqual(switchModel.args[0], ['abc123', 'modelname']);
   });
 
   it('can reset the model connection', () => {

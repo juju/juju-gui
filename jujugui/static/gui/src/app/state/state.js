@@ -202,6 +202,17 @@ const State = class State {
   }
 
   /**
+    Used to bootstrap the application from state. This calls the dispatch
+    method with the necessary values as we only want to dispatch from the
+    URL once on initial application load.
+
+    @return {Object} See dispatch() for return arguments.
+  */
+  bootstrap() {
+    return this.dispatch([], true, false, true);
+  }
+
+  /**
     Checks the current location and parses it, building the state, then
     executing the registered dispatchers.
     @param {Array} nullKeys - A list of keys which we must run the 'cleanup'
@@ -213,13 +224,30 @@ const State = class State {
     @param {Boolean} backDispatch - Whether this dispatch was from the user
       hitting the back button. If it was we have to manually figure out the
       null keys so we know which cleanup dispatchers to run.
+    @param {Boolean} stateFromURL - Whether the dispatch should get its state
+      from the URL or from the latest app state.
+    @return {Object} {error <String|Null>, state <Object>}
+      - error: a string or any errors that may be returned, or null.
+      - state: the application state, or as much state as it was
+               able to generate
   */
-  dispatch(nullKeys = [], updateState = true, backDispatch = false) {
+  dispatch(nullKeys = [], updateState = true,
+    backDispatch = false,  stateFromURL = false) {
     let error, state;
-    ({error, state} = this.generateState(this.location.href));
-    if (error !== null) {
-      error += ` unable to generate state: ${error}`;
-      return {error, state};
+    // We only want to dispatch the state from the URL on application load or
+    // when explicitly requested by the developer.
+    const currentState = this.current;
+    if (!stateFromURL && currentState) {
+      state = currentState;
+    } else {
+      if (!currentState) {
+        console.log('no current state to dispatch, generating state from URL');
+      }
+      ({error, state} = this.generateState(this.location.href));
+      if (error !== null) {
+        error = `unable to generate state: ${error}`;
+        return {error, state};
+      }
     }
 
     /**
@@ -573,6 +601,10 @@ const State = class State {
     const user = this.current.user || this.current.profile;
     if (user) {
       path = path.concat([PATH_DELIMETERS.get('user'), user]);
+    }
+    const model = this.current.model;
+    if (model) {
+      path = path.concat([PATH_DELIMETERS.get('user'), model.path]);
     }
     const store = this.current.store;
     if (store) {

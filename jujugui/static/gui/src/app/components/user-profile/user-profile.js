@@ -77,6 +77,7 @@ YUI.add('user-profile', function() {
       const props = this.props;
       const emptyComponent = (
         <juju.components.EmptyUserProfile
+          changeState={props.changeState}
           staticURL={props.staticURL}
           switchModel={props.switchModel} />
       );
@@ -86,6 +87,7 @@ YUI.add('user-profile', function() {
         <juju.components.UserProfileModelList
           acl={props.acl}
           addNotification={props.addNotification}
+          changeState={props.changeState}
           key='modelList'
           ref='modelList'
           currentModel={props.currentModel}

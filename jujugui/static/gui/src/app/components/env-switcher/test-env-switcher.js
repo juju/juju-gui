@@ -168,7 +168,7 @@ describe('EnvSwitcher', function() {
       showEnvList: false,
       envList: models
     });
-    assert.deepEqual(switchModel.args[0], ['abc123', models, 'abc123']);
+    assert.deepEqual(switchModel.args[0], ['abc123', 'abc123']);
   });
 
   it('can show the profile', function() {

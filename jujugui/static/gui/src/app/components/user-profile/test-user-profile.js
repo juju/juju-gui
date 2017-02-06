@@ -78,6 +78,7 @@ describe('UserProfile', () => {
     const content = output.props.children.props.children;
     const emptyComponent = (
       <juju.components.EmptyUserProfile
+        changeState={changeState}
         staticURL={staticURL}
         switchModel={switchModel} />
     );
@@ -87,6 +88,7 @@ describe('UserProfile', () => {
         addNotification={addNotification}
         ref="modelList"
         key="modelList"
+        changeState={changeState}
         currentModel={undefined}
         destroyModels={destroyModels}
         facadesExist={true}

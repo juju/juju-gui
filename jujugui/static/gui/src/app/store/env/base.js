@@ -222,6 +222,12 @@ YUI.add('juju-env-base', function(Y) {
     */
     'connected': {value: false},
     /**
+      Whether or not a connection is being attempted.
+      @attribute connecting
+      @type {Boolean}
+    */
+    connecting: {value: false},
+    /**
       Whether or not to run in debug mode.
 
       @attribute debug
@@ -357,6 +363,7 @@ YUI.add('juju-env-base', function(Y) {
       } else {
         const url = this.get('socket_url');
         console.log('connecting to ' + url);
+        this.set('connecting', true);
         this.ws = new jujulib.ReconnectingWebSocket(url);
         this._txn_callbacks = {};
       }
@@ -374,10 +381,12 @@ YUI.add('juju-env-base', function(Y) {
 
     on_open: function(data) {
       this.set('connected', true);
+      this.set('connecting', false);
     },
 
     on_close: function(data) {
       this.set('connected', false);
+      this.set('connecting', false);
     },
 
     /**
@@ -388,7 +397,9 @@ YUI.add('juju-env-base', function(Y) {
         closed and the API cleaned up.
     */
     close: function(callback) {
-      console.log(`closing the ${this.name} API connection`);
+      console.log(
+        `closing the ${this.name} API connection: ${this.socket_url}`);
+      this.set('connecting', false);
       if (!callback) {
         callback = () => {};
       }
