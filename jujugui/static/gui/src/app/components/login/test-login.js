@@ -211,6 +211,22 @@ describe('LoginComponent', function() {
       loginToController.callCount, 1, 'loginToController not called');
   });
 
+  it('eventually fails auto login if controller does not connect', function() {
+    var loginToController = sinon.stub();
+    var controllerIsConnected = sinon.stub().returns(false);
+    var sendPost = sinon.stub();
+    testUtils.renderIntoDocument(
+        <juju.components.Login
+      isLegacyJuju={false}
+      loginToAPIs={sinon.stub()}
+      loginToController={loginToController}
+      controllerIsConnected={controllerIsConnected}
+      sendPost={sendPost}
+      gisf={true} />);
+    assert.equal(
+      loginToController.callCount, 0, 'loginToController not called');
+  });
+
   it('can focus on the username field', function() {
     var focus = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
