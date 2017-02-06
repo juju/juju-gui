@@ -76,12 +76,9 @@ YUI.add('app-renderer-extension', function(Y) {
           showProfile={utils.showProfile.bind(
             this, env && env.get('ecs'),
             this.state.changeState.bind(this.state))}
-          switchModel={utils.switchModel.bind(
-            this, this.createSocketURL.bind(this, this.get('socketTemplate')),
-            this.switchEnv.bind(this), env)} />,
+          switchModel={utils.switchModel.bind(this, env)} />,
         document.getElementById('header-breadcrumb'));
     },
-
   };
 
   Y.namespace('juju').AppRenderer = AppRenderer;

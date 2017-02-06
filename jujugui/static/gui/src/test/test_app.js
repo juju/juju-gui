@@ -1107,6 +1107,7 @@ describe('App', function() {
             },
             get: sinon.stub().returns(ecs)
           };
+          app.state.changeState = sinon.stub();
           this._cleanups.push(() => {
             app.controllerAPI = controllerAPI;
             app.env = env;
@@ -1127,6 +1128,10 @@ describe('App', function() {
           assert.strictEqual(ecs.clear.calledOnce, true, 'ecs.clear');
           // The login mask has been displayed.
           assert.strictEqual(app._renderLogin.calledOnce, true, 'login');
+          assert.equal(app.state.changeState.callCount, 1);
+          assert.deepEqual(app.state.changeState.args[0], [{
+            model: null
+          }]);
           done();
         });
       });
@@ -1140,6 +1145,7 @@ describe('App', function() {
         // Create an application instance.
         app = constructAppInstance(true);
         app.after('ready', () => {
+          app.state.changeState = sinon.stub();
           // Mock the API connections for the resulting application.
           app.env = {
             close: (callback) => {
@@ -1170,6 +1176,10 @@ describe('App', function() {
           assert.strictEqual(ecs.clear.calledOnce, true, 'ecs.clear');
           // The login mask has been displayed.
           assert.strictEqual(app._renderLogin.calledOnce, true, 'login');
+          assert.equal(app.state.changeState.callCount, 1);
+          assert.deepEqual(app.state.changeState.args[0], [{
+            model: null
+          }]);
           done();
         });
       });
@@ -1703,85 +1713,6 @@ describe('App', function() {
       Y.getLocation = getLocation;
       container.destroy();
       app.destroy();
-    });
-
-    describe('pickModel', () => {
-      it('can pick the right model from a list based on config', () => {
-        const modelUUID = 'who-uuid';
-        app = new Y.juju.App({
-          apiAddress: 'example.com:17070',
-          baseUrl: 'http://example.com/',
-          conn: {close: function() {}},
-          container: container,
-          jujuCoreVersion: '2.1.1',
-          modelUUID: modelUUID,
-          user: 'rose',
-          socket_protocol: 'ws',
-          socketTemplate: '/juju/api/$server/$port/$uuid',
-          controllerSocketTemplate: '/api',
-          viewContainer: container
-        });
-        const fakeModelList = [{
-          uuid: 'dalek-uuid',
-        }, {
-          uuid: 'who-uuid',
-        }, {
-          uuid: 'rose-uuid'
-        }];
-        const model = app._pickModel(fakeModelList, modelUUID);
-        assert.strictEqual(model.uuid, 'who-uuid');
-        assert.strictEqual(app.get('modelUUID'), 'who-uuid');
-      });
-
-      it('does not pick a model when there is no config', () => {
-        app = new Y.juju.App({
-          apiAddress: 'example.com:17070',
-          baseUrl: 'http://example.com/',
-          conn: {close: function() {}},
-          container: container,
-          jujuCoreVersion: '2.1.1',
-          user: 'rose',
-          socket_protocol: 'ws',
-          socketTemplate: '/juju/api/$server/$port/$uuid',
-          controllerSocketTemplate: '/api',
-          viewContainer: container
-        });
-        const fakeModelList = [{
-          uuid: 'dalek-uuid',
-        }, {
-          uuid: 'who-uuid',
-        }, {
-          uuid: 'rose-uuid'
-        }];
-        const model = app._pickModel(fakeModelList, null);
-        assert.isNull(model);
-      });
-
-      it('handles no model matches', () => {
-        const modelUUID = 'bannakaffalatta-uuid';
-        app = new Y.juju.App({
-          apiAddress: 'example.com:17070',
-          baseUrl: 'http://example.com/',
-          conn: {close: function() {}},
-          container: container,
-          jujuCoreVersion: '2.1.1',
-          modelUUID: modelUUID,
-          user: 'rose',
-          socket_protocol: 'ws',
-          socketTemplate: '/juju/api/$server/$port/$uuid',
-          controllerSocketTemplate: '/api',
-          viewContainer: container
-        });
-        const fakeModelList = [{
-          uuid: 'dalek-uuid',
-        }, {
-          uuid: 'who-uuid',
-        }, {
-          uuid: 'rose-uuid'
-        }];
-        const model = app._pickModel(fakeModelList, modelUUID);
-        assert.isNull(model);
-      });
     });
 
     it('honors socket_protocol and uuid', function() {

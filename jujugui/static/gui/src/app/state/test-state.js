@@ -886,7 +886,42 @@ describe('State', () => {
     });
   });
 
+  describe('State.bootstrap()', () => {
+    it('calls dispatch with the proper values', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList: ['precise', 'trusty', 'xenial'],
+        location: {href: '/hatch/ghost'}
+      });
+      const dispatch = sinon.stub(state, 'dispatch');
+      state.bootstrap();
+      assert.equal(dispatch.callCount, 1);
+      assert.deepEqual(dispatch.args[0], [[], true, false, true]);
+    });
+  });
+
   describe('State.dispatch()', () => {
+    it('dispatches from the current state not the url by default', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList: ['precise', 'trusty', 'xenial'],
+        location: {href: '/hatch/ghost'}
+      });
+      // Set the state to something different than the location to prove where
+      // we're dispatching from. In the real case this should never happen
+      // because every time state is updated the URL is as well, even if we
+      // no longer read from it all the time.
+      state._appStateHistory.push({
+        gui: {inspector: {id: 'haproxy'}}
+      });
+      const generateState = sinon.stub(state, 'generateState');
+      const dispatchStub = sinon.stub(state, '_dispatch');
+      state.dispatch();
+      assert.equal(generateState.callCount, 0);
+      assert.equal(dispatchStub.callCount, 2);
+      assert.equal(dispatchStub.args[1][1], 'gui.inspector.id');
+    });
+
     it('passes the current location to generateState', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
@@ -895,7 +930,7 @@ describe('State', () => {
       });
       const stub = sinon.stub(
         state, 'generateState', () => ({ error: null, state: {}}));
-      state.dispatch();
+      state.dispatch([], true, false, true);
       assert.equal(stub.callCount, 1);
       assert.deepEqual(stub.args[0], ['/hatch/ghost']);
     });
@@ -908,7 +943,7 @@ describe('State', () => {
       });
       sinon.stub(state,
         'generateState', () => ({ error: null, state: {new: 'state'}}));
-      state.dispatch();
+      state.dispatch([], true, false, true);
       assert.deepEqual(state._appStateHistory, [{new: 'state'}]);
     });
 
@@ -927,7 +962,7 @@ describe('State', () => {
           error: null,
           state: currentState}));
       const dispatch = sinon.stub(state, '_dispatch');
-      state.dispatch();
+      state.dispatch([], true, false, true);
       assert.deepEqual(dispatch.args[1], [currentState, 'gui.deploy', []]);
       assert.deepEqual(
         dispatch.args[2], [currentState, 'gui.inspector.id', []]);
@@ -964,7 +999,7 @@ describe('State', () => {
         ['*', stub3],
         ['gui.machines', stub4]
       ]);
-      state.dispatch();
+      state.dispatch([], true, false, true);
       assert.deepEqual(execution, {stub: 1, stub2: 4, stub3: 2, stub4: 3});
     });
 
@@ -1007,7 +1042,7 @@ describe('State', () => {
         ['*', stub3],
         ['gui.machines', stub4, stub6]
       ]);
-      state.dispatch(['store', 'gui.machines']);
+      state.dispatch(['store', 'gui.machines'], true, false, true);
       assert.deepEqual(execution, {
         stub5: 1, stub6: 2, stub: 3, stub3: 4, stub4: 5, stub2: 6});
     });
@@ -1023,7 +1058,7 @@ describe('State', () => {
         ['*', sinon.stub()],
         ['gui.inspector', stub1]
       ]);
-      state.dispatch();
+      state.dispatch([], true, false, true);
       assert.equal(stub1.callCount, 1);
     });
 
@@ -1040,13 +1075,13 @@ describe('State', () => {
         ['gui.machines', sinon.stub(), machinesCleanup]
       ]);
       // The initial dispatch will be to the machine view.
-      state.dispatch();
+      state.dispatch([], true, false, true);
       // Now simulate viewing a charm.
       state.location.href = '/apache2';
-      state.dispatch();
+      state.dispatch([], true, false, true);
       // Dispatch again, but this time simulate going back to machines.
       state.location.href = '/i/machines';
-      state.dispatch([], true, true);
+      state.dispatch([], true, true, true);
       // The history appends the new state, even though in the browser we went
       // back.
       assert.deepEqual(state._appStateHistory, [
@@ -1066,7 +1101,7 @@ describe('State', () => {
         location: {href: '/u/hatch/staging/i/applications/inspector/ghost'}
       });
       const pushStub = sinon.stub(state, '_pushState');
-      state.dispatch();
+      state.dispatch([], true, false, true);
       assert.deepEqual(
         state.current, {
           user: 'hatch/staging',
@@ -1097,7 +1132,7 @@ describe('State', () => {
         location: {href: '/u/hatch/staging/i/applications/inspector/ghost'}
       });
       const pushStub = sinon.stub(state, '_pushState');
-      state.dispatch();
+      state.dispatch([], true, false, true);
       assert.deepEqual(
         state.current, {
           user: 'hatch/staging',
@@ -1174,7 +1209,7 @@ describe('State', () => {
         location: {href: '/u/hatch/staging'},
         browserHistory: historyStub
       });
-      state.dispatch();
+      state.dispatch([], true, false, true);
       state._pushState();
       assert.deepEqual(historyStub.pushState.args[0], [
         {}, 'Juju GUI', 'http://abc.com:123/u/hatch/staging']);

@@ -67,11 +67,14 @@ describe('USSOLoginLink', () => {
     const component = jsTestUtils.shallowRender(
         <juju.components.USSOLoginLink
           displayType={'button'}
-          loginToController={sinon.stub()} />, true);
-    assert.deepEqual(component.getRenderOutput(),
+          loginToController={sinon.stub()}
+          sendPost={sinon.stub()}
+          gisf={false}/>, true);
+    const output = component.getRenderOutput();
+    var expected = (
       <div className="usso-login">
         <juju.components.GenericButton
-          action={component.getMountedInstance()._handleLogin}
+          action={component.getMountedInstance().handleLogin}
           extraClasses="usso-login__action"
           type="positive"
           title="Sign up or Login" />
@@ -79,6 +82,7 @@ describe('USSOLoginLink', () => {
           {notification}
         </div>
       </div>);
+    assert.deepEqual(output, expected);
   });
 
   it('calls loginToController on click for button link', () => {
@@ -107,4 +111,30 @@ describe('USSOLoginLink', () => {
     assert.equal(callback.callCount, 1);
   });
 
+  it('does a postback to a URL in gisf', function() {
+    const loginToController = function(cb) {
+      cb();
+    };
+    const getDischargeToken = sinon.stub().returns('foo');
+    const sendPost = sinon.stub();
+    const callback = sinon.stub();
+    const output = testUtils.renderIntoDocument(
+      <juju.components.USSOLoginLink
+        callback={callback}
+        displayType={'text'}
+        gisf={true}
+        getDischargeToken={getDischargeToken}
+        loginToController={loginToController}
+        sendPost={sendPost} />, true);
+    testUtils.Simulate.click(
+      testUtils.findRenderedDOMComponentWithTag(output, 'a'));
+    assert.equal(sendPost.callCount, 1, 'Did not postback');
+    assert.equal(
+      sendPost.calledWith(
+        '/_login',
+        {'Content-Type': 'application/x-www-form-urlencoded'},
+        'discharge-token=foo'), true,
+      'sendPost not called with correct arguments');
+
+  });
 });

@@ -27,6 +27,7 @@ YUI.add('user-profile-model-list', function() {
       acl: React.PropTypes.object,
       addNotification: React.PropTypes.func.isRequired,
       broadcastStatus: React.PropTypes.func,
+      changeState: React.PropTypes.func.isRequired,
       currentModel: React.PropTypes.string,
       destroyModels: React.PropTypes.func.isRequired,
       facadesExist: React.PropTypes.bool.isRequired,
@@ -239,12 +240,9 @@ YUI.add('user-profile-model-list', function() {
       @method switchModel
       @param {String} uuid The model UUID.
       @param {String} name The model name.
-      @param {Function} callback The function to be called once the model has
-        been switched and logged into. Takes the following parameters:
-        {Object} env The env that has been switched to.
     */
-    switchModel: function(uuid, name, callback) {
-      this.props.switchModel(uuid, this.state.modelList, name, callback);
+    switchModel: function(uuid, name) {
+      this.props.switchModel(uuid, name);
     },
 
     /**
@@ -347,6 +345,7 @@ YUI.add('user-profile-model-list', function() {
       //if (acl && acl.canAddModels()) {
       createNewButton = (
         <juju.components.CreateModelButton
+          changeState={this.props.changeState}
           switchModel={this.switchModel} />
       );
       //}

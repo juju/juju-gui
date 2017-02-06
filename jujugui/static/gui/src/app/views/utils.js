@@ -1301,28 +1301,16 @@ YUI.add('juju-view-utils', function(Y) {
     Switch model, displaying a confirmation if there are uncommitted changes.
 
     @method switchModel
-    @param {Function} createSocketURL The function to create a socket URL.
-    @param {Function} switchEnv The function to switch models.
     @param {Object} env Reference to the app env.
     @param {String} uuid A model UUID.
-    @param {Array} modelList A list of models.
     @param {String} name A model name.
-    @param {Function} callback The function to be called once the model has
-      been switched and logged into. Takes the following parameters:
-      {Object} env The env that has been switched to.
-    @param {Boolean} clearDB Whether to clear the database and ecs when
-      switching models.
     @param {Boolean} confirmUncommitted Whether to show a confirmation if there
       are uncommitted changes.
   */
   utils.switchModel = function(
-    createSocketURL, switchEnv, env, uuid, modelList, name, callback,
-    clearDB, confirmUncommitted=true) {
-
-    const switchModel = utils._switchModel.bind(this,
-      createSocketURL, switchEnv, env, uuid, modelList, name, callback,
-      clearDB);
-
+    env, uuid, name, confirmUncommitted=true) {
+    const switchModel =
+      utils._switchModel.bind(this, env, uuid, name);
     const currentChangeSet = env.get('ecs').getCurrentChangeSet();
     // If there are uncommitted changes then show a confirmation popup.
     if (confirmUncommitted && Object.keys(currentChangeSet).length > 0) {
@@ -1376,20 +1364,11 @@ YUI.add('juju-view-utils', function(Y) {
     Switch models using the correct username and password.
 
     @method _switchModel
-    @param {Function} createSocketURL The function to create a socket URL.
-    @param {Function} switchEnv The function to switch models.
     @param {Object} env Reference to the app env.
     @param {String} uuid A model UUID.
-    @param {Array} modelList A list of models.
     @param {String} name A model name.
-    @param {Function} callback The function to be called once the model has
-      been switched and logged into. Takes the following parameters:
-      {Object} env The env that has been switched to.
-    @param {Boolean} clearDB Whether to clear the database and ecs when
-      switching models.
   */
-  utils._switchModel = function(
-    createSocketURL, switchEnv, env, uuid, modelList, name, callback, clearDB) {
+  utils._switchModel = function(env, uuid, name) {
     // Remove the switch model confirmation popup if it has been displayed to
     // the user.
     utils._hidePopup();
@@ -1399,48 +1378,19 @@ YUI.add('juju-view-utils', function(Y) {
     let newState = {
       profile: null,
       gui: null,
-      root: null
+      root: null,
+      model: {path: `${this._getAuth().rootUserName}/${name}`, uuid}
     };
     if (!uuid || !name) {
-      newState.root = 'new';
+      newState.model = null;
+      const current = this.state.current;
+      if (!current || !current.profile) {
+        newState.root = 'new';
+      }
     }
     this.state.changeState(newState);
-    // Update the model name. The onEnvironmentNameChange in app.js method will
-    // update the name correctly accross components.
-    // Make sure it is done after the switchEnv.
-    var updateModelName = function(params) {
-      env.set('environmentName', name);
-      if (callback) {
-        callback(params);
-      }
-    };
     env.set('environmentName', name);
     this.set('modelUUID', uuid);
-    var username, password, address, port;
-    if (uuid && modelList) {
-      var found = modelList.some((model) => {
-        if (model.uuid === uuid) {
-          username = model.user;
-          password = model.password;
-          // Note that the hostPorts attribute is only present in models
-          // returned by JEM.
-          if (model.hostPorts && model.hostPorts.length) {
-            var hostport = model.hostPorts[0].split(':');
-            address = hostport[0];
-            port = hostport[1];
-          }
-          return true;
-        }
-      });
-      if (!found) {
-        console.log('No user credentials for model: ', uuid);
-      }
-      var socketUrl = createSocketURL(uuid, address, port);
-      switchEnv(socketUrl, username, password, updateModelName, true, clearDB);
-    } else {
-      // Just reset without reconnecting to an env.
-      switchEnv(null, null, null, callback, false, clearDB);
-    }
   };
 
   /**
@@ -1482,7 +1432,9 @@ YUI.add('juju-view-utils', function(Y) {
       ecs.clear();
     }
     changeState({
-      profile: username
+      profile: username,
+      model: null,
+      root: null
     });
   };
 
@@ -1495,7 +1447,7 @@ YUI.add('juju-view-utils', function(Y) {
       complete. It must be passed an error string or null if the operation
       succeeds.
     @param {Boolean} autoplace Whether the unplace units should be placed.
-    @param {String} model The name of the new model.
+    @param {String} modelName The name of the new model.
     @param {Object} args Any other optional argument that can be provided when
       creating a new model. This includes the following fields:
       - config: the optional model config;
@@ -1504,7 +1456,7 @@ YUI.add('juju-view-utils', function(Y) {
       - credential: the name of the cloud credential to use for managing the
         model's resources.
   */
-  utils.deploy = function(app, callback, autoplace=true, model, args) {
+  utils.deploy = function(app, callback, autoplace=true, modelName, args) {
     const env = app.env;
     const controllerAPI = app.controllerAPI;
     if (autoplace) {
@@ -1516,35 +1468,24 @@ YUI.add('juju-view-utils', function(Y) {
       callback(null);
       return;
     }
-    const user = controllerAPI.getCredentials().user;
-    const cb = utils._newModelCallback.bind(this, app, callback);
-    controllerAPI.createModel(model, user, args, cb);
-  };
-
-  /**
-    The function to call to connect to a new model once it has been created.
-
-    @method _newModelCallback
-    @param {Object} app The app instance itself.
-    @param {Function} callback The function to be called once the deploy is
-      complete.
-    @param {Object} error The model creation error.
-    @param {Object} model The newly created model data.
-  */
-  utils._newModelCallback = function(app, callback, error, model) {
-    if (error) {
-      const msg = 'cannot create model: ' + error;
-      app.db.notifications.add({title: msg, message: msg, level: 'error'});
-      callback(msg);
-      return;
-    }
-    utils.switchModel.call(
-      app, app.createSocketURL.bind(app, app.get('socketTemplate')),
-      app.switchEnv.bind(app), app.env, model.uuid, [model], model.name,
-      env => {
+    const handler = (err, model) => {
+      if (err) {
+        const msg = 'cannot create model: ' + err;
+        app.db.notifications.add({title: msg, message: msg, level: 'error'});
+        callback(msg);
+        return;
+      }
+      const commit = args => {
         env.get('ecs').commit(env);
         callback(null);
-      }, false, false);
+      };
+      app.set('modelUUID', model.uuid);
+      const socketUrl = app.createSocketURL(
+        app.get('socketTemplate'), model.uuid);
+      app.switchEnv(socketUrl, null, null, commit, true, false);
+    };
+    controllerAPI.createModel(
+      modelName, controllerAPI.getCredentials().user, args, handler);
   };
 
   /**

@@ -824,8 +824,7 @@ describe('utilities', function() {
   });
 
   describe('switchModel', function() {
-    var utils, _showUncommittedConfirm, _hidePopup,
-        models;
+    let utils, _showUncommittedConfirm, _hidePopup;
 
     before(function(done) {
       YUI(GlobalConfig).use('juju-view-utils', function(Y) {
@@ -841,13 +840,8 @@ describe('utilities', function() {
       utils._showUncommittedConfirm = sinon.stub();
       utils.state = {changeState: sinon.stub()};
       utils.set = sinon.stub();
+      utils._getAuth = sinon.stub().returns({rootUserName: 'animal'});
       utils.showConnectingMask = sinon.stub();
-      models = [{
-        uuid: 'uuid1',
-        user: 'spinach',
-        password: 'hasselhoff',
-        hostPorts: ['localhost:80', 'localhost:443']
-      }];
     });
 
     afterEach(function() {
@@ -856,97 +850,90 @@ describe('utilities', function() {
     });
 
     it('can switch directly if there are no uncommitted changes', function() {
-      var createSocketURL = sinon.stub().returns('newaddress:80');
-      var switchEnv = sinon.stub();
-      var env = {
+      const env = {
         get: sinon.stub().returns({
           getCurrentChangeSet: sinon.stub().returns({})
         })
       };
-      var callback = sinon.stub();
-      var _switchModel = utils._switchModel;
+      const _switchModel = utils._switchModel;
       utils._switchModel = sinon.stub();
-      utils.switchModel(
-        createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
+      utils.switchModel(env, 'uuid1', 'ev');
       assert.deepEqual(utils._switchModel.callCount, 1);
-      var switchArgs = utils._switchModel.lastCall.args;
-      assert.deepEqual(switchArgs, [
-        createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback,
-        undefined]);
+      const switchArgs = utils._switchModel.lastCall.args;
+      assert.deepEqual(switchArgs, [env, 'uuid1', 'ev']);
       utils._switchModel = _switchModel;
     });
 
     it('can show a confirmation if there are uncommitted changes', function() {
-      var createSocketURL = sinon.stub().returns('newaddress:80');
-      var switchEnv = sinon.stub();
-      var env = {
+      const env = {
         get: sinon.stub().returns({
           getCurrentChangeSet: sinon.stub().returns({change: 'a change'})
         })
       };
-      var callback = sinon.stub();
-      var _switchModel = utils._switchModel;
+      const _switchModel = utils._switchModel;
       utils._switchModel = sinon.stub();
-      utils.switchModel(
-        createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
+      utils.switchModel(env, 'uuid1', 'ev');
       assert.deepEqual(utils._showUncommittedConfirm.callCount, 1);
       assert.deepEqual(utils._switchModel.callCount, 0);
       utils._switchModel = _switchModel;
     });
 
     it('can switch models', function() {
-      var createSocketURL = sinon.stub().returns('newaddress:80');
-      var switchEnv = sinon.stub();
-      var env = {set: sinon.stub()};
-      var callback = sinon.stub();
-      utils._switchModel(
-        createSocketURL, switchEnv, env, 'uuid1', models, 'ev', callback);
-
-      assert.deepEqual(utils._hidePopup.callCount, 1);
-      assert.deepEqual(createSocketURL.callCount, 1);
-      var socketArgs = createSocketURL.lastCall.args;
-      assert.deepEqual(socketArgs[0], models[0].uuid);
-      assert.deepEqual(socketArgs[1], 'localhost');
-      assert.deepEqual(socketArgs[2], '80');
-
-      assert.deepEqual(switchEnv.callCount, 1);
-      var switchEnvArgs = switchEnv.lastCall.args;
-      assert.deepEqual(switchEnvArgs[0], 'newaddress:80');
-      assert.deepEqual(switchEnvArgs[1], models[0].user);
-      assert.deepEqual(switchEnvArgs[2], models[0].password);
-      //assert.deepEqual(switchEnvArgs[3], callback);
-
-      assert.deepEqual(env.set.callCount, 1);
-      var envSet = env.set.lastCall.args;
-      assert.deepEqual(envSet[0], 'environmentName');
-      assert.deepEqual(envSet[1], 'ev');
-
-      assert.deepEqual(utils.showConnectingMask.callCount, 1);
-      assert.deepEqual(utils.state.changeState.callCount, 1);
+      const env = {set: sinon.stub()};
+      utils._switchModel(env, 'uuid1', 'ev');
+      assert.equal(utils._hidePopup.callCount, 1);
+      assert.equal(utils.showConnectingMask.callCount, 1);
+      assert.equal(utils.state.changeState.callCount, 1);
+      assert.deepEqual(utils.state.changeState.args[0], [{
+        profile: null,
+        gui: null,
+        root: null,
+        model: {
+          path: 'animal/ev',
+          uuid: 'uuid1'
+        }
+      }]);
+      assert.equal(env.set.callCount, 1);
+      assert.deepEqual(env.set.args[0], ['environmentName', 'ev']);
+      assert.equal(utils.set.callCount, 1);
+      assert.deepEqual(utils.set.args[0], ['modelUUID', 'uuid1']);
     });
 
-    it('just disconnects if uuid is missing', function() {
-      var createSocketURL = sinon.stub();
-      var switchEnv = sinon.stub();
-      var env = {set: sinon.stub()};
-      utils._switchModel(createSocketURL, switchEnv, env, undefined, models);
-      assert.deepEqual(createSocketURL.callCount, 0);
-      assert.deepEqual(switchEnv.callCount, 1);
-      assert.deepEqual(
-        switchEnv.lastCall.args,
-        [null, null, null, undefined, false, undefined]);
+    it('changes to disconnected mode if model uuid is missing', function() {
+      const env = {set: sinon.stub()};
+      utils._switchModel(env, undefined, 'foo');
+      assert.deepEqual(utils.state.changeState.args[0], [{
+        profile: null,
+        gui: null,
+        root: 'new',
+        model: null
+      }]);
     });
 
-    it('just disconnects if modelList is missing', function() {
-      var createSocketURL = sinon.stub();
-      var switchEnv = sinon.stub();
-      var env = {set: sinon.stub()};
-      utils._switchModel(createSocketURL, switchEnv, env, 'model1', undefined);
-      assert.deepEqual(createSocketURL.callCount, 0);
-      assert.deepEqual(switchEnv.callCount, 1);
-      assert.deepEqual(
-        switchEnv.lastCall.args,
-        [null, null, null, undefined, false, undefined]);
+    it('changes to disconnected mode if model name is missing', function() {
+      const env = {set: sinon.stub()};
+      utils._switchModel(env, 'foo');
+      assert.deepEqual(utils.state.changeState.args[0], [{
+        profile: null,
+        gui: null,
+        root: 'new',
+        model: null
+      }]);
+    });
+
+    it('does not set root state to new if profile state exists', function() {
+      // when model uuid or name is missing
+      const env = {set: sinon.stub()};
+      utils.state.current = {
+        profile: 'animal'
+      };
+      utils._switchModel(env, 'foo');
+      assert.deepEqual(utils.state.changeState.args[0], [{
+        profile: null,
+        gui: null,
+        root: null,
+        model: null
+      }]);
     });
   });
 
@@ -1001,7 +988,9 @@ describe('utilities', function() {
       utils._showProfile(ecs, changeState, 'spinach', true);
       assert.deepEqual(changeState.callCount, 1);
       assert.deepEqual(changeState.lastCall.args[0], {
-        profile: 'spinach'
+        profile: 'spinach',
+        model: null,
+        root: null
       });
       assert.deepEqual(utils._hidePopup.callCount, 1);
       assert.deepEqual(ecs.clear.callCount, 1);
@@ -1009,7 +998,7 @@ describe('utilities', function() {
   });
 
   describe('deploy util', function() {
-    let app, callback, commit, envGet, switchModel, utils;
+    let app, callback, commit, envGet, utils;
 
     before(function(done) {
       YUI(GlobalConfig).use('juju-view-utils', function(Y) {
@@ -1047,12 +1036,6 @@ describe('utilities', function() {
         get: sinon.stub().returns('wss://socket-url'),
         switchEnv: sinon.stub(),
       };
-      switchModel = utils.switchModel;
-      utils.switchModel = sinon.stub().callsArgWith(6, app.env);
-    });
-
-    afterEach(() => {
-      utils.switchModel = switchModel;
     });
 
     it('can auto place when requested', function() {
@@ -1093,45 +1076,53 @@ describe('utilities', function() {
       assert.isFunction(args[3]);
     });
 
-    it('can connect to a newly created model', function() {
-      var model = {
-        name: 'koala',
-        uuid: 'uuid123'
-      };
-      utils._newModelCallback(app, callback, null, model);
-      assert.equal(utils.switchModel.callCount, 1);
-      var switchArgs = utils.switchModel.args[0];
-      assert.isFunction(switchArgs[1]);
-      assert.deepEqual(switchArgs[2], app.env);
-      assert.equal(switchArgs[3], 'uuid123');
-      assert.deepEqual(switchArgs[4], [model]);
-      assert.equal(switchArgs[5], 'koala');
-      assert.isFunction(switchArgs[6]);
-      assert.isFalse(switchArgs[7]);
-      assert.isFalse(switchArgs[8]);
-    });
-
-    it('can commit changes after connecting to a new model', function() {
-      const model = {name: 'koala', uuid: 'uuid123'};
-      utils._newModelCallback(app, callback, null, model);
+    it('can create, connect, and commit to the new model', function() {
+      const modelData = {uuid: 'the-uuid'};
+      const args = {model: 'args'};
+      envGet.withArgs('connected').returns(false);
+      const commit = sinon.stub();
+      envGet.withArgs('ecs').returns({commit});
+      utils.deploy(app, callback, false, 'my-model', args);
+      assert.equal(app.controllerAPI.createModel.callCount, 1);
+      // Call the handler for the createModel callCount
+      app.controllerAPI.createModel.args[0][3](null, modelData);
+      assert.deepEqual(app.set.args[0], ['modelUUID', modelData.uuid]);
+      assert.equal(app.createSocketURL.callCount, 1);
+      assert.deepEqual(
+        app.createSocketURL.args[0], ['wss://socket-url', modelData.uuid]);
+      assert.equal(app.get.callCount, 1);
+      assert.deepEqual(app.get.args[0], ['socketTemplate']);
+      assert.equal(app.switchEnv.callCount, 1);
+      assert.equal(app.switchEnv.args[0][0], 'wss://socket-url');
+      assert.strictEqual(app.switchEnv.args[0][1], null);
+      assert.strictEqual(app.switchEnv.args[0][2], null);
+      assert.equal(typeof app.switchEnv.args[0][3], 'function');
+      assert.strictEqual(app.switchEnv.args[0][4], true);
+      assert.strictEqual(app.switchEnv.args[0][5], false);
+      // Call the switchEnv callback handler.
+      app.switchEnv.args[0][3](args);
       assert.equal(commit.callCount, 1);
-      assert.deepEqual(commit.args[0][0], app.env);
       assert.equal(callback.callCount, 1);
-      const args = callback.args[0];
-      assert.strictEqual(args.length, 1);
-      assert.strictEqual(args[0], null);
+      assert.deepEqual(callback.args[0], [null]);
     });
 
     it('can display an error notification', function() {
-      const model = {name: 'koala', uuid: 'uuid123'};
-      utils._newModelCallback(app, callback, 'bad wolf', model);
-      const expectedError = 'cannot create model: bad wolf';
+      const modelData = {uuid: 'the-uuid'};
+      const args = {model: 'args'};
+      envGet.withArgs('connected').returns(false);
+      utils.deploy(app, callback, false, 'my-model', args);
+      assert.equal(app.controllerAPI.createModel.callCount, 1);
+      // Call the handler for the createModel callCount
+      app.controllerAPI.createModel.args[0][3]('it broke', modelData);
       assert.equal(app.db.notifications.add.callCount, 1);
-      assert.equal(app.db.notifications.add.args[0][0].title, expectedError);
+      const expectedError = 'cannot create model: it broke';
+      assert.deepEqual(app.db.notifications.add.args[0], [{
+        title: expectedError,
+        message: expectedError,
+        level: 'error'
+      }]);
       assert.equal(callback.callCount, 1);
-      const args = callback.args[0];
-      assert.strictEqual(args.length, 1);
-      assert.strictEqual(args[0], expectedError);
+      assert.deepEqual(callback.args[0], [expectedError]);
     });
   });
 

@@ -28,12 +28,19 @@ describe('LoginComponent', function() {
   });
 
   it('renders', function() {
-    var loginToControllerStub = sinon.stub();
+    const loginToControllerStub = sinon.stub();
+    const controllerIsConnected = sinon.stub();
+    const sendPost = sinon.stub();
+    const getDischargeToken = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
         isLegacyJuju={false}
         loginToAPIs={sinon.stub()}
-        loginToController={loginToControllerStub}/>, true);
+        loginToController={loginToControllerStub}
+        getDischargeToken={getDischargeToken}
+        controllerIsConnected={controllerIsConnected}
+        sendPost={sendPost}
+        gisf={false} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -73,7 +80,11 @@ describe('LoginComponent', function() {
               title={"Login"}
               type={"positive"} />
             <juju.components.USSOLoginLink
+              gisf={false}
+              sendPost={sendPost}
+              ref="USSOLoginLink"
               loginToController={loginToControllerStub}
+              getDischargeToken={getDischargeToken}
               displayType="button" />
           </form>
         </div>
@@ -182,6 +193,22 @@ describe('LoginComponent', function() {
       user: 'foo',
       password: 'bar'
     }, false]);
+  });
+
+  it('automatically logs in for gisf via usso', function() {
+    var loginToController = sinon.stub();
+    var controllerIsConnected = sinon.stub().returns(true);
+    var sendPost = sinon.stub();
+    testUtils.renderIntoDocument(
+      <juju.components.Login
+        isLegacyJuju={false}
+        loginToAPIs={sinon.stub()}
+        loginToController={loginToController}
+        controllerIsConnected={controllerIsConnected}
+        sendPost={sendPost}
+        gisf={true} />);
+    assert.equal(
+      loginToController.callCount, 1, 'loginToController not called');
   });
 
   it('can focus on the username field', function() {
