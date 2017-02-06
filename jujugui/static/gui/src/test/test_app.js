@@ -2035,4 +2035,64 @@ describe('App', function() {
     });
   });
 
+  describe('_disambiguateUserState', function() {
+    let app, juju, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        juju = juju = Y.namespace('juju');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
+        controllerAPI: new juju.ControllerAPI({
+          conn: new testUtils.SocketStub()
+        }),
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet(),
+          user: 'user',
+          password: 'password'
+        }),
+        socketTemplate: '/model/$uuid/api',
+        controllerSocketTemplate: '/api',
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0'
+      });
+    });
+
+    afterEach(function() {
+      app.destroy();
+    });
+
+    it('properly handles a resolved entity promise', done => {
+      const userState = {user: 'hatch'};
+      const entityPromise = Promise.reject(userState);
+      app.controllerAPI.userIsAuthenticated = true;
+      app._listAndSwitchModel = args => {
+        assert.deepEqual(args, userState);
+        done();
+      };
+      app._disambiguateUserState(entityPromise);
+    });
+
+    it('properly handles a rejected entity promise', done => {
+      const userState = 'hatch';
+      const entityPromise = Promise.resolve(userState);
+      app.maskVisibility = sinon.stub();
+      app.state.changeState = state => {
+        assert.deepEqual(app.maskVisibility.args[0], [false]);
+        assert.deepEqual({
+          store: 'u/hatch',
+          user: null
+        }, state);
+        done();
+      };
+      app._disambiguateUserState(entityPromise);
+    });
+  });
+
 });
