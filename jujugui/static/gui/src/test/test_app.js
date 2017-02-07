@@ -2068,7 +2068,7 @@ describe('App', function() {
       app.destroy();
     });
 
-    it('properly handles a resolved entity promise', done => {
+    it('properly handles a rejected entity promise', done => {
       const userState = {user: 'hatch'};
       const entityPromise = Promise.reject(userState);
       app.controllerAPI.userIsAuthenticated = true;
@@ -2079,7 +2079,7 @@ describe('App', function() {
       app._disambiguateUserState(entityPromise);
     });
 
-    it('properly handles a rejected entity promise', done => {
+    it('properly handles a resolved entity promise', done => {
       const userState = 'hatch';
       const entityPromise = Promise.resolve(userState);
       app.maskVisibility = sinon.stub();
@@ -2147,6 +2147,12 @@ describe('App', function() {
         'isController':false,
         'lastConnection':null
       }];
+      app.maskVisibility = sinon.stub();
+      app.state.changeState = sinon.stub();
+      app._getAuth = sinon.stub().returns({rootUserName: 'pug'});
+      app.controllerAPI.listModelsWithInfo = function(callback) {
+        callback.call(app, null, modelList);
+      };
     });
 
     afterEach(function() {
@@ -2154,14 +2160,9 @@ describe('App', function() {
     });
 
     it('switches to a supplied model path', () => {
-      app.maskVisibility = sinon.stub();
-      app.state.changeState = sinon.stub();
-      app._getAuth = sinon.stub().returns({rootUserName: 'pug'});
-      app.controllerAPI.listModelsWithInfo = function(callback) {
-        callback.call(app, null, modelList);
-      };
-      app._listAndSwitchModel('frankban/latta');
+      app._listAndSwitchModel('frankban/latta', null);
       assert.equal(app.maskVisibility.callCount, 1);
+      assert.deepEqual(app.maskVisibility.args[0], [false]);
       assert.equal(app.state.changeState.callCount, 1);
       assert.deepEqual(app.state.changeState.args[0], [{
         model: {
@@ -2173,14 +2174,9 @@ describe('App', function() {
     });
 
     it('switches to a supplied model uuid', () => {
-      app.maskVisibility = sinon.stub();
-      app.state.changeState = sinon.stub();
-      app._getAuth = sinon.stub().returns({rootUserName: 'pug'});
-      app.controllerAPI.listModelsWithInfo = function(callback) {
-        callback.call(app, null, modelList);
-      };
       app._listAndSwitchModel(null, '509f6e4c-4da4-49c8-8f18-537c33b4d3a0');
       assert.equal(app.maskVisibility.callCount, 1);
+      assert.deepEqual(app.maskVisibility.args[0], [false]);
       assert.equal(app.state.changeState.callCount, 1);
       assert.deepEqual(app.state.changeState.args[0], [{
         model: {
@@ -2191,15 +2187,21 @@ describe('App', function() {
       }]);
     });
 
-    it('switches to disconnected state if no model found', () => {
-      app.maskVisibility = sinon.stub();
-      app.state.changeState = sinon.stub();
-      app._getAuth = sinon.stub().returns({rootUserName: 'pug'});
-      app.controllerAPI.listModelsWithInfo = function(callback) {
-        callback.call(app, null, modelList);
-      };
+    it('switches to disconnected state if no model is found via uuid', () => {
       app._listAndSwitchModel(null, 'bad-uuid');
       assert.equal(app.maskVisibility.callCount, 1);
+      assert.deepEqual(app.maskVisibility.args[0], [false]);
+      assert.equal(app.state.changeState.callCount, 1);
+      assert.deepEqual(app.state.changeState.args[0], [{
+        root: null, store: null, model: null, user: null,
+        profile: 'pug'
+      }]);
+    });
+
+    it('switches to disconnected state if no model found via path', () => {
+      app._listAndSwitchModel('bad/path', null);
+      assert.equal(app.maskVisibility.callCount, 1);
+      assert.deepEqual(app.maskVisibility.args[0], [false]);
       assert.equal(app.state.changeState.callCount, 1);
       assert.deepEqual(app.state.changeState.args[0], [{
         root: null, store: null, model: null, user: null,
