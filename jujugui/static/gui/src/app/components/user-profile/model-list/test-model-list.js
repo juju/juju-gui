@@ -68,7 +68,7 @@ describe('UserProfileModelList', () => {
           </span>
           <juju.components.CreateModelButton
             changeState={changeState}
-            switchModel={instance.switchModel} />
+            switchModel={instance.props.switchModel} />
         </div>
         {undefined}
         {undefined}
@@ -123,7 +123,7 @@ describe('UserProfileModelList', () => {
           </span>
           <juju.components.CreateModelButton
             changeState={changeState}
-            switchModel={instance.switchModel} />
+            switchModel={instance.props.switchModel} />
         </div>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
@@ -149,7 +149,7 @@ describe('UserProfileModelList', () => {
             entity={models[0]}
             expanded={true}
             key="model1"
-            switchModel={instance.switchModel}
+            switchModel={instance.props.switchModel}
             type="model">
             <span className="user-profile__list-col three-col">
               spinach/sandbox
@@ -197,47 +197,6 @@ describe('UserProfileModelList', () => {
         {'spinach/sandbox'} is being destroyed.
       </li>);
     assert.deepEqual(content, expected);
-  });
-
-  it('switches models when calling switchModel method passed to list', () => {
-    // This method is passed down to child components and called from there.
-    // We are just calling it directly here to unit test the method.
-    const switchModel = sinon.stub();
-    const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
-    const component = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
-        addNotification={sinon.stub()}
-        currentModel={'model1'}
-        facadesExist={true}
-        listModelsWithInfo={listModelsWithInfo}
-        switchModel={switchModel}
-        user={user} />, true);
-    const instance = component.getMountedInstance();
-    // Call the method that's passed down. We test that this method is
-    // correctly passed down in the initial 'happy path' full rendering test.
-    instance.switchModel('abc123', 'modelname');
-    // We need to call to generate the proper socket URL.
-    // Check that switchModel is called with the proper values.
-    assert.equal(switchModel.callCount, 1, 'switchModel not called');
-    assert.deepEqual(switchModel.args[0], ['abc123', 'modelname']);
-  });
-
-  it('can reset the model connection', () => {
-    const utilsSwitchModel = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <juju.components.UserProfileModelList
-        addNotification={sinon.stub()}
-        facadesExist={true}
-        listModelsWithInfo={sinon.stub()}
-        switchModel={utilsSwitchModel}
-        user={user} />, true);
-    const instance = renderer.getMountedInstance();
-    instance.switchModel();
-    assert.equal(utilsSwitchModel.callCount, 1,
-                 'Model disconnect not called');
-    const switchArgs = utilsSwitchModel.args[0];
-    assert.equal(switchArgs[0], undefined,
-                 'UUID should not be defined');
   });
 
   // XXX kadams54 2016-09-29: ACL check disabled until

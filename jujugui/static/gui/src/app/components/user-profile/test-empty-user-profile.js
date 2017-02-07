@@ -52,7 +52,7 @@ describe('EmptyUserProfile', () => {
         </p>
         <juju.components.CreateModelButton
           changeState={changeState}
-          switchModel={instance.switchModel}
+          switchModel={instance.props.switchModel}
           title="Start building"
           type="inline-positive" />
       </div>

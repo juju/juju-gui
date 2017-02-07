@@ -1302,15 +1302,21 @@ YUI.add('juju-view-utils', function(Y) {
 
     @method switchModel
     @param {Object} env Reference to the app env.
-    @param {String} uuid A model UUID.
-    @param {String} name A model name.
+    @param {Object} model The model to switch to, with these attributes:
+      - name: the model name;
+      - id: the model unique identifier;
+      - owner: the user owning the model, like "admin" or "who@external".
     @param {Boolean} confirmUncommitted Whether to show a confirmation if there
       are uncommitted changes.
   */
-  utils.switchModel = function(
-    env, uuid, name, confirmUncommitted=true) {
-    const switchModel =
-      utils._switchModel.bind(this, env, uuid, name);
+  utils.switchModel = function(env, model, confirmUncommitted=true) {
+    if (model && model.id === this.get('modelUUID')) {
+      // There is nothing to be done as we are already connected to this model.
+      // Note that this check is always false when switching models from the
+      // profile view, as the "modelUUID" is set to null in that case.
+      return;
+    }
+    const switchModel = utils._switchModel.bind(this, env, model);
     const currentChangeSet = env.get('ecs').getCurrentChangeSet();
     // If there are uncommitted changes then show a confirmation popup.
     if (confirmUncommitted && Object.keys(currentChangeSet).length > 0) {
@@ -1365,23 +1371,27 @@ YUI.add('juju-view-utils', function(Y) {
 
     @method _switchModel
     @param {Object} env Reference to the app env.
-    @param {String} uuid A model UUID.
-    @param {String} name A model name.
+    @param {Object} model The model to switch to, with these attributes:
+      - name: the model name;
+      - id: the model unique identifier;
+      - owner: the user owning the model, like "admin" or "who@external".
   */
-  utils._switchModel = function(env, uuid, name) {
+  utils._switchModel = function(env, model) {
     // Remove the switch model confirmation popup if it has been displayed to
     // the user.
     utils._hidePopup();
     // Show the model connection mask.
     this.showConnectingMask();
     // Reset the state of the GUI ready for displaying the new model.
-    let newState = {
-      profile: null,
-      gui: null,
-      root: null,
-      model: {path: `${this._getAuth().rootUserName}/${name}`, uuid}
-    };
-    if (!uuid || !name) {
+    const newState = {profile: null, gui: null, root: null};
+    let name = '';
+    let uuid = '';
+    if (model) {
+      uuid = model.id;
+      name = model.name;
+      const owner = model.owner.split('@')[0];
+      newState.model = {path: `${owner}/${name}`, uuid: uuid};
+    } else {
       newState.model = null;
       const current = this.state.current;
       if (!current || !current.profile) {

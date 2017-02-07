@@ -39,13 +39,15 @@ YUI.add('user-profile-entity', function() {
     /**
       Calls to switch the env to the one the user clicked on.
 
-      @method _switchEnv
-      @param {String} uuid The model uuid.
-      @param {String} name The model name.
-      @param {Object} e The click event.
+      @method _switchModel
+      @param {Object} model The model to switch to, with these attributes:
+        - name: the model name;
+        - id: the model unique identifier;
+        - owner: the user owning the model, like "admin" or "who@external".
+      @param {Object} evt The click event.
     */
-    _switchEnv: function(uuid, name, e) {
-      this.props.switchModel(uuid, name);
+    _switchModel: function(model, evt) {
+      this.props.switchModel(model);
     },
 
     /**
@@ -249,12 +251,19 @@ YUI.add('user-profile-entity', function() {
       // Model names will be in the format "username/model-name" so we have to
       // extract the part we need.
       let name = entity.name;
-      if (isModel && entity.name.indexOf('/') !== -1) {
-        name = name.split('/')[1];
+      let buttonAction;
+      if (isModel) {
+        if (entity.name.indexOf('/') !== -1) {
+          name = name.split('/')[1];
+        }
+        buttonAction = this._switchModel.bind(this, {
+          id: entity.uuid,
+          name: name,
+          owner: entity.owner
+        });
+      } else {
+        buttonAction = this._viewEntity.bind(this, entity.id);
       }
-      const id = isModel ? entity.uuid : entity.id;
-      const buttonAction = isModel ? this._switchEnv.bind(
-        this, id, name) : this._viewEntity.bind(this, id);
       const icon = isCharm ? (
         <img className="user-profile__entity-icon"
           src={entity.icon}
@@ -270,8 +279,8 @@ YUI.add('user-profile-entity', function() {
           title="Destroy model" />) : undefined;
       return (
         <juju.components.ExpandingRow classes={classes}
-          expanded={this.props.expanded}>
-          {this.props.children}
+          expanded={props.expanded}>
+          {props.children}
           <div>
             <div className="expanding-row__expanded-header twelve-col">
               <div className="six-col no-margin-bottom">

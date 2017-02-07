@@ -781,7 +781,7 @@ YUI.add('juju-gui', function(Y) {
         }
         const modelUUID = this._getModelUUID();
         const current = this.state.current;
-        if (modelUUID) {
+        if (modelUUID && !current.profile) {
           // A model uuid was defined in the config so attempt to connect to it.
           this._listAndSwitchModel(null, modelUUID);
         } else if (entityPromise !== null) {
@@ -1072,14 +1072,16 @@ YUI.add('juju-gui', function(Y) {
       // model instead of the profile.
       const auth = this._getAuth();
       if (auth && state.profile !== auth.rootUserName) {
-        this.state.changeState({
-          new: '',
-          profile: null
-        });
+        this.state.changeState({new: '', profile: null});
         return;
       }
       const charmstore = this.get('charmstore');
       const utils = views.utils;
+      const currentModel = this.get('modelUUID');
+      // When going to the profile view, we are theoretically no longer
+      // connected to any model. Setting the current model identifier to null
+      // also allows switching to the same model from the profile view.
+      this.set('modelUUID', null);
       // NOTE: we need to clone this.get('users') below; passing in without
       // cloning breaks React's ability to distinguish between this.props and
       // nextProps on the lifecycle methods.
@@ -1088,7 +1090,7 @@ YUI.add('juju-gui', function(Y) {
           acl={this.acl}
           addNotification=
             {this.db.notifications.add.bind(this.db.notifications)}
-          currentModel={this.get('modelUUID')}
+          currentModel={currentModel}
           facadesExist={facadesExist}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listModelsWithInfo={
@@ -1737,14 +1739,14 @@ YUI.add('juju-gui', function(Y) {
       @param {String} uuid The uuid of the model to switch to, or none.
     */
     _switchModelToUUID: function(uuid) {
-      console.log('switching to model: ', uuid);
       let socketURL = undefined;
       if (uuid) {
+        console.log('switching to model: ', uuid);
         this.set('modelUUID', uuid);
         socketURL = this.createSocketURL(this.get('socketTemplate'), uuid);
       } else {
+        console.log('switching to disconnected mode');
         this.set('modelUUID', null);
-        console.log('no uuid or model name defined: using disconnected mode');
       }
       this.switchEnv(socketURL);
     },
@@ -1828,9 +1830,15 @@ YUI.add('juju-gui', function(Y) {
             root: null
           });
         } else {
-          // If no model was found then put the user in disconnected mode.
+          // If no model was found then navigate to the user profile.
+          const msg = `no such charm, bundle or model: u/${modelPath}`;
+          // TODO frankban: here we should put a notification, but we can't as
+          // this seems to be dispatched twice.
+          console.log(msg);
           this.state.changeState({
             root: null,
+            store: null,
+            model:null,
             user: null,
             profile: this._getAuth().rootUserName
           });
@@ -1974,10 +1982,9 @@ YUI.add('juju-gui', function(Y) {
           this._renderCharmbrowser(state, next);
           break;
         case 'new':
-          // When going to disconnected mode the modelUUID should be set to
-          // a falsy value. If it's not then we're still connected and need to
-          // switch.
-          if (this.get('modelUUID')) {
+          // When going to disconnected mode we need to be disconnected from
+          // models.
+          if (this.env.get('connected')) {
             this._switchModelToUUID();
           }
           this.maskVisibility(false);

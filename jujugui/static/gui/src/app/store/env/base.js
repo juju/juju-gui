@@ -397,8 +397,11 @@ YUI.add('juju-env-base', function(Y) {
         closed and the API cleaned up.
     */
     close: function(callback) {
-      console.log(
-        `closing the ${this.name} API connection: ${this.socket_url}`);
+      if (this.socket_url) {
+        console.log(`closing the ${this.name} connection: ${this.socket_url}`);
+      } else {
+        console.log(`closing the ${this.name} inactive connection`);
+      }
       this.set('connecting', false);
       if (!callback) {
         callback = () => {};

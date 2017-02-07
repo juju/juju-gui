@@ -232,20 +232,6 @@ YUI.add('user-profile-model-list', function() {
     },
 
     /**
-
-      Take the supplied UUID, fetch the username and password then call the
-      passed in switchModel method. If the UUID and name are null, simply
-      disconnect without reconnecting to a new model.
-
-      @method switchModel
-      @param {String} uuid The model UUID.
-      @param {String} name The model name.
-    */
-    switchModel: function(uuid, name) {
-      this.props.switchModel(uuid, name);
-    },
-
-    /**
       Generate the details for the provided model.
 
       @method _generateRow
@@ -253,8 +239,9 @@ YUI.add('user-profile-model-list', function() {
       @returns {Array} The markup for the row.
     */
     _generateRow: function(model) {
+      const props = this.props;
       const uuid = model.uuid;
-      const isCurrent = uuid === this.props.currentModel;
+      const isCurrent = uuid === props.currentModel;
       const classes = classNames(
         'expanding-row',
         'twelve-col',
@@ -279,7 +266,7 @@ YUI.add('user-profile-model-list', function() {
           entity={model}
           expanded={isCurrent}
           key={uuid}
-          switchModel={this.switchModel}
+          switchModel={props.switchModel}
           type="model">
           <span className="user-profile__list-col three-col">
             {model.name || '--'}
@@ -337,16 +324,16 @@ YUI.add('user-profile-model-list', function() {
           </div>
         );
       }
+      const props = this.props;
       let createNewButton;
       // XXX kadams54 2016-09-29: ACL check disabled until
       // https://bugs.launchpad.net/juju/+bug/1629089 is resolved.
-      //const props = this.props;
       //const acl = props.acl;
       //if (acl && acl.canAddModels()) {
       createNewButton = (
         <juju.components.CreateModelButton
-          changeState={this.props.changeState}
-          switchModel={this.switchModel} />
+          changeState={props.changeState}
+          switchModel={props.switchModel} />
       );
       //}
       const list = this.state.modelList;

@@ -824,7 +824,7 @@ describe('utilities', function() {
   });
 
   describe('switchModel', function() {
-    let utils, _showUncommittedConfirm, _hidePopup;
+    let _hidePopup, _showUncommittedConfirm, originalSwitchModel, utils;
 
     before(function(done) {
       YUI(GlobalConfig).use('juju-view-utils', function(Y) {
@@ -834,86 +834,114 @@ describe('utilities', function() {
     });
 
     beforeEach(function() {
+      originalSwitchModel = utils._switchModel;
       _hidePopup = utils._hidePopup;
       utils._hidePopup = sinon.stub();
       _showUncommittedConfirm = utils._showUncommittedConfirm;
       utils._showUncommittedConfirm = sinon.stub();
-      utils.state = {changeState: sinon.stub()};
-      utils.set = sinon.stub();
       utils._getAuth = sinon.stub().returns({rootUserName: 'animal'});
-      utils.showConnectingMask = sinon.stub();
     });
 
     afterEach(function() {
       utils._hidePopup = _hidePopup;
       utils._showUncommittedConfirm = _showUncommittedConfirm;
+      utils._switchModel = originalSwitchModel;
     });
 
     it('can switch directly if there are no uncommitted changes', function() {
+      const app = {
+        get: sinon.stub().withArgs('modelUUID').returns('model-uuid')
+      };
       const env = {
         get: sinon.stub().returns({
           getCurrentChangeSet: sinon.stub().returns({})
         })
       };
-      const _switchModel = utils._switchModel;
+      const model = {id: 'uuid', name: 'mymodel', 'owner': 'who'};
       utils._switchModel = sinon.stub();
-      utils.switchModel(env, 'uuid1', 'ev');
+      utils.switchModel.call(app, env, model);
       assert.deepEqual(utils._switchModel.callCount, 1);
       const switchArgs = utils._switchModel.lastCall.args;
-      assert.deepEqual(switchArgs, [env, 'uuid1', 'ev']);
-      utils._switchModel = _switchModel;
+      assert.deepEqual(switchArgs, [env, model]);
+    });
+
+    it('does not switch to the current model', function() {
+      const app = {
+        get: sinon.stub().withArgs('modelUUID').returns('model-uuid-1')
+      };
+      const env = {};
+      const model = {id: 'model-uuid-1', name: 'mymodel', 'owner': 'who'};
+      utils._switchModel = sinon.stub();
+      utils.switchModel.call(app, env, model);
+      // The underlying _switchModel is not called.
+      assert.deepEqual(utils._switchModel.callCount, 0);
     });
 
     it('can show a confirmation if there are uncommitted changes', function() {
+      const app = {
+        get: sinon.stub().withArgs('modelUUID').returns('model-uuid')
+      };
       const env = {
         get: sinon.stub().returns({
           getCurrentChangeSet: sinon.stub().returns({change: 'a change'})
         })
       };
-      const _switchModel = utils._switchModel;
+      const model = {id: 'uuid', name: 'mymodel', 'owner': 'who'};
       utils._switchModel = sinon.stub();
-      utils.switchModel(env, 'uuid1', 'ev');
+      utils.switchModel.call(app, env, model);
       assert.deepEqual(utils._showUncommittedConfirm.callCount, 1);
       assert.deepEqual(utils._switchModel.callCount, 0);
-      utils._switchModel = _switchModel;
+    });
+
+    it('allows switching to disconnected state', function() {
+      const app = {
+        get: sinon.stub().withArgs('modelUUID').returns('model-uuid')
+      };
+      const env = {
+        get: sinon.stub().returns({
+          getCurrentChangeSet: sinon.stub().returns({})
+        })
+      };
+      utils._switchModel = sinon.stub();
+      utils.switchModel.call(app, env, null);
+      assert.deepEqual(utils._switchModel.callCount, 1);
+      const switchArgs = utils._switchModel.lastCall.args;
+      assert.deepEqual(switchArgs, [env, null]);
     });
 
     it('can switch models', function() {
+      const app = {
+        set: sinon.stub().withArgs('modelUUID'),
+        showConnectingMask: sinon.stub().withArgs(),
+        state: {changeState: sinon.stub()}
+      };
       const env = {set: sinon.stub()};
-      utils._switchModel(env, 'uuid1', 'ev');
-      assert.equal(utils._hidePopup.callCount, 1);
-      assert.equal(utils.showConnectingMask.callCount, 1);
-      assert.equal(utils.state.changeState.callCount, 1);
-      assert.deepEqual(utils.state.changeState.args[0], [{
+      const model = {id: 'my-uuid', name: 'mymodel', 'owner': 'who'};
+      utils._switchModel.call(app, env, model);
+      assert.equal(utils._hidePopup.callCount, 1, '_hidePopup');
+      assert.equal(app.showConnectingMask.callCount, 1, 'showConnectingMask');
+      assert.equal(app.state.changeState.callCount, 1, 'changeState');
+      assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
         gui: null,
         root: null,
-        model: {
-          path: 'animal/ev',
-          uuid: 'uuid1'
-        }
+        model: {path: 'who/mymodel', uuid: 'my-uuid'}
       }]);
-      assert.equal(env.set.callCount, 1);
-      assert.deepEqual(env.set.args[0], ['environmentName', 'ev']);
-      assert.equal(utils.set.callCount, 1);
-      assert.deepEqual(utils.set.args[0], ['modelUUID', 'uuid1']);
+      assert.equal(env.set.callCount, 1, 'env.set');
+      assert.deepEqual(env.set.args[0], ['environmentName', 'mymodel']);
+      assert.equal(app.set.callCount, 1, 'app.set');
+      assert.deepEqual(app.set.args[0], ['modelUUID', 'my-uuid']);
     });
 
-    it('changes to disconnected mode if model uuid is missing', function() {
+    it('changes to disconnected mode if model is missing', function() {
+      const app = {
+        set: sinon.stub().withArgs('modelUUID'),
+        showConnectingMask: sinon.stub().withArgs(),
+        state: {changeState: sinon.stub()}
+      };
       const env = {set: sinon.stub()};
-      utils._switchModel(env, undefined, 'foo');
-      assert.deepEqual(utils.state.changeState.args[0], [{
-        profile: null,
-        gui: null,
-        root: 'new',
-        model: null
-      }]);
-    });
-
-    it('changes to disconnected mode if model name is missing', function() {
-      const env = {set: sinon.stub()};
-      utils._switchModel(env, 'foo');
-      assert.deepEqual(utils.state.changeState.args[0], [{
+      utils._switchModel.call(app, env, null);
+      assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
         gui: null,
         root: 'new',
@@ -922,13 +950,14 @@ describe('utilities', function() {
     });
 
     it('does not set root state to new if profile state exists', function() {
-      // when model uuid or name is missing
-      const env = {set: sinon.stub()};
-      utils.state.current = {
-        profile: 'animal'
+      const app = {
+        set: sinon.stub().withArgs('modelUUID'),
+        showConnectingMask: sinon.stub().withArgs(),
+        state: {current: {profile: 'animal'}, changeState: sinon.stub()}
       };
-      utils._switchModel(env, 'foo');
-      assert.deepEqual(utils.state.changeState.args[0], [{
+      const env = {set: sinon.stub()};
+      utils._switchModel.call(app, env, null);
+      assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
         gui: null,
         root: null,
