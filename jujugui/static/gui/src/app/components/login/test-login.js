@@ -104,6 +104,83 @@ describe('LoginComponent', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('renders but is hidden in gisf', function() {
+    const loginToControllerStub = sinon.stub();
+    const controllerIsConnected = sinon.stub();
+    const sendPost = sinon.stub();
+    const getDischargeToken = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Login
+        isLegacyJuju={false}
+        loginToAPIs={sinon.stub()}
+        loginToController={loginToControllerStub}
+        getDischargeToken={getDischargeToken}
+        controllerIsConnected={controllerIsConnected}
+        sendPost={sendPost}
+        gisf={true} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="login hidden">
+        <div className="login__logo">
+          <juju.components.SvgIcon width="75" height="30" name="juju-logo" />
+        </div>
+        <div className="login__full-form">
+          <div className="login__env-name">
+            Login
+          </div>
+          {undefined}
+          <form
+            className="login__form"
+            ref="form"
+            onSubmit={instance._handleLoginSubmit}>
+            <label
+              className="login__label">
+              Username
+              <input
+                className="login__input"
+                type="text"
+                name="username"
+                ref="username" />
+            </label>
+            <label
+              className="login__label">
+              Password
+              <input
+                className="login__input"
+                type="password"
+                name="password"
+                ref="password" />
+            </label>
+            <juju.components.GenericButton
+              submit={true}
+              title={"Login"}
+              type={"positive"} />
+            <juju.components.USSOLoginLink
+              gisf={true}
+              sendPost={sendPost}
+              ref="USSOLoginLink"
+              loginToController={loginToControllerStub}
+              getDischargeToken={getDischargeToken}
+              displayType="button" />
+          </form>
+        </div>
+        <div className="login__message">
+          <p>
+            Find your username and password with<br />
+            <code>juju show-controller --show-password</code>
+          </p>
+          <div className="login__message-link">
+            <a href="https://jujucharms.com" target="_blank">
+              jujucharms.com
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+    assert.deepEqual(output, expected);
+  });
+
   it('renders for legacy Juju', function() {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login

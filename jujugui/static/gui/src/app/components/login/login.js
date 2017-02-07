@@ -113,9 +113,13 @@ YUI.add('login-component', function() {
       }
     },
 
+    _generateClassnames: function() {
+      return classNames('login', {'hidden': this.props.gisf});
+    },
+
     render: function() {
       return (
-        <div className="login">
+        <div className={this._generateClassnames()}>
           <div className="login__logo">
             <juju.components.SvgIcon width="75" height="30" name="juju-logo" />
           </div>
