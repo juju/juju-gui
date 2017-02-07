@@ -1523,6 +1523,11 @@ YUI.add('juju-view-utils', function(Y) {
       }
       const commit = args => {
         env.get('ecs').commit(env);
+        // After committing then update state to update the url. This is done
+        // after committing because changing state will change models and we
+        // won't have visibility on when we're connected again and can
+        // commit the changes.
+        utils._switchModel.call(app, app.env, model);
         callback(null);
       };
       app.set('modelUUID', model.uuid);
