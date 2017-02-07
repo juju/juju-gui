@@ -2207,4 +2207,85 @@ describe('App', function() {
       }]);
     });
   });
+
+  describe('_fetchEntityFromUserState', function() {
+    let app, juju, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        juju = juju = Y.namespace('juju');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
+        controllerAPI: new juju.ControllerAPI({
+          conn: new testUtils.SocketStub()
+        }),
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet(),
+          user: 'user',
+          password: 'password'
+        }),
+        socketTemplate: '/model/$uuid/api',
+        controllerSocketTemplate: '/api',
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0'
+      });
+
+    });
+
+    afterEach(function() {
+      app.destroy();
+    });
+
+    it('returns a promise for an entity', done => {
+      const legacyPath = sinon.stub().returns('~hatch/ghost');
+      window.jujulib.URL.fromString = sinon.stub().returns({legacyPath});
+      const charmstore = {
+        getEntity: sinon.stub()
+      };
+      app.set('charmstore', charmstore);
+      const entityPromise = app._fetchEntityFromUserState('hatch/ghost');
+      assert.equal(legacyPath.callCount, 1, 'legacy path not called');
+      assert.equal(charmstore.getEntity.callCount, 1, 'getEntity not called');
+      assert.equal(charmstore.getEntity.args[0][0], '~hatch/ghost');
+      // Call the callback to make sure it properly resolves the promise.
+      charmstore.getEntity.args[0][1](null, {});
+      entityPromise.then(() => {
+        done();
+      });
+    });
+
+    it('caches the entity promises', () => {
+      const legacyPath = sinon.stub().returns('~hatch/ghost');
+      window.jujulib.URL.fromString = sinon.stub().returns({legacyPath});
+      const charmstore = {
+        getEntity: sinon.stub()
+      };
+      app.set('charmstore', charmstore);
+      const entityPromise = app._fetchEntityFromUserState('hatch/ghost');
+      assert.deepEqual(app.userPaths.get('hatch/ghost'), {
+        promise: entityPromise
+      });
+    });
+
+    it('returns a cached promise', () => {
+      const legacyPath = sinon.stub().returns('~hatch/ghost');
+      window.jujulib.URL.fromString = sinon.stub().returns({legacyPath});
+      const charmstore = {
+        getEntity: sinon.stub()
+      };
+      app.set('charmstore', charmstore);
+      const response = {promise: 'its a promise'};
+      app.userPaths.set('hatch/ghost', response);
+      const entityPromise = app._fetchEntityFromUserState('hatch/ghost');
+      // hacking the userPaths cache so that we can tell if it pulls from there.
+      assert.deepEqual(entityPromise, response.promise);
+    });
+
+  });
 });
