@@ -781,7 +781,7 @@ YUI.add('juju-gui', function(Y) {
         }
         const modelUUID = this._getModelUUID();
         const current = this.state.current;
-        if (modelUUID) {
+        if (modelUUID && !current.profile) {
           // A model uuid was defined in the config so attempt to connect to it.
           this._listAndSwitchModel(null, modelUUID);
         } else if (entityPromise !== null) {
@@ -1072,10 +1072,7 @@ YUI.add('juju-gui', function(Y) {
       // model instead of the profile.
       const auth = this._getAuth();
       if (auth && state.profile !== auth.rootUserName) {
-        this.state.changeState({
-          new: '',
-          profile: null
-        });
+        this.state.changeState({new: '', profile: null});
         return;
       }
       const charmstore = this.get('charmstore');
