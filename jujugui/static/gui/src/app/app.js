@@ -1833,9 +1833,15 @@ YUI.add('juju-gui', function(Y) {
             root: null
           });
         } else {
-          // If no model was found then put the user in disconnected mode.
+          // If no model was found then navigate to the user profile.
+          const msg = `no such charm, bundle or model: u/${modelPath}`;
+          // TODO frankban: here we should put a notification, but we can't as
+          // this seems to be dispatched twice.
+          console.log(msg);
           this.state.changeState({
             root: null,
+            store: null,
+            model:null,
             user: null,
             profile: this._getAuth().rootUserName
           });
