@@ -36,12 +36,11 @@ YUI.add('create-model-button', function() {
     },
 
     _createNewModel: function() {
+      const props = this.props;
       // We want to explicitly close the profile when switching to a new
       // model to resolve a race condition with the new model setup.
-      this.props.changeState({
-        profile: null
-      });
-      this.props.switchModel();
+      props.changeState({profile: null});
+      props.switchModel(null);
     },
 
     render: function() {

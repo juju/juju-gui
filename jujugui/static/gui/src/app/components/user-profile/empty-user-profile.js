@@ -20,6 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('empty-user-profile', function() {
 
+  // This component handles the empty user profile.
   juju.components.EmptyUserProfile = React.createClass({
     propTypes: {
       changeState: React.PropTypes.func.isRequired,
@@ -33,25 +34,9 @@ YUI.add('empty-user-profile', function() {
       };
     },
 
-    /**
-
-      A simply wrapper around the passed-in switchModel function; all the
-      wrapper does in pass an empty modelList into the provied switchModel.
-      After all, this is an EmptyUserProfile component; by definition we know
-      the modelList is empty.
-
-      @method switchModel
-      @param {String} uuid The model UUID.
-      @param {String} name The model name.
-    */
-    switchModel: function(uuid, name) {
-      this.props.switchModel(uuid, name);
-    },
-
-
     render: function() {
-      var props = this.props;
-      var basePath = `${props.staticURL}/static/gui/build/app`;
+      const props = this.props;
+      const basePath = `${props.staticURL}/static/gui/build/app`;
       return (
         <div className="user-profile__empty twelve-col no-margin-bottom">
           <img alt="Empty profile"
@@ -67,10 +52,11 @@ YUI.add('empty-user-profile', function() {
           </p>
           <juju.components.CreateModelButton
             changeState={props.changeState}
-            switchModel={this.switchModel}
+            switchModel={props.switchModel}
             title="Start building"
             type="inline-positive" />
-        </div>);
+        </div>
+      );
     }
 
   });

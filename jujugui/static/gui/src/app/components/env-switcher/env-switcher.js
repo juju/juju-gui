@@ -107,16 +107,19 @@ YUI.add('env-switcher', function() {
     },
 
     /**
-      Hides the env list and calls the switchModel method based on the data-id
-      of the currentTarget passed to this click handler.
+      Hides the model list and calls the switchModel method with the selected
+      model.
 
-      @method handleEnvClick
-      @param {String} model The model to switch to.
+      @method handleModelClick
+      @param {Object} model The model to switch to, with these attributes:
+        - name: the model name;
+        - id: the model unique identifier;
+        - owner: the user owning the model, like "admin" or "who@external".
     */
-    handleEnvClick: function(model) {
-      var props = this.props;
+    handleModelClick: function(model) {
+      const props = this.props;
       this.setState({showEnvList: false});
-      props.switchModel(model.id, model.name);
+      props.switchModel(model);
     },
 
     /**
@@ -130,7 +133,7 @@ YUI.add('env-switcher', function() {
       if (this.state.showEnvList) {
         return <juju.components.EnvList
           authDetails={this.props.authDetails}
-          handleEnvClick={this.handleEnvClick}
+          handleModelClick={this.handleModelClick}
           envs={this.state.envList}
           showProfile={this.props.showProfile}
         />;

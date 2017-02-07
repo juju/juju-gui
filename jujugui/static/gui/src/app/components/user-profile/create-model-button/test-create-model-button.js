@@ -78,6 +78,6 @@ describe('CreateModelButton', () => {
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0], [{profile: null}]);
     assert.equal(switchModel.callCount, 1);
-    assert.deepEqual(switchModel.args[0], []);
+    assert.deepEqual(switchModel.args[0], [null]);
   });
 });

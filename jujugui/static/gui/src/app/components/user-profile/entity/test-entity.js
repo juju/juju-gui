@@ -359,7 +359,7 @@ describe('UserProfileEntity', () => {
     assert.deepEqual(output, expected);
   });
 
-  it('can switch envs for a model', () => {
+  it('can switch to a model', () => {
     const switchModel = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.UserProfileEntity
@@ -372,8 +372,13 @@ describe('UserProfileEntity', () => {
     output.props.children[1].props.children[0].props.children[1]
       .props.children[1].props.action();
     assert.equal(switchModel.callCount, 1);
-    assert.equal(switchModel.args[0][0], 'env1');
-    assert.equal(switchModel.args[0][1], 'sandbox');
+    const args = switchModel.args[0];
+    assert.equal(args.length, 1);
+    assert.deepEqual(args[0], {
+      id: 'env1',
+      name: 'sandbox',
+      owner: 'test-owner'
+    });
   });
 
   it('can display a delete confirmation', () => {

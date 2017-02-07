@@ -40,7 +40,7 @@ describe('EnvList', function() {
       <juju.components.EnvList
         authDetails={{user: 'who@external', rootUserName: 'who'}}
         envs={models}
-        handleEnvClick={sinon.stub()}
+        handleModelClick={sinon.stub()}
         showProfile={sinon.stub()}
       />, true);
     const instance = renderer.getMountedInstance();
@@ -51,6 +51,7 @@ describe('EnvList', function() {
         tabIndex="0"
         data-id={models[0].uuid}
         data-name={models[0].name}
+        data-owner={models[0].owner}
         onClick={instance._handleModelClick}
         key={models[0].uuid}>
         {models[0].name}
@@ -60,6 +61,7 @@ describe('EnvList', function() {
         tabIndex="0"
         data-id={models[1].uuid}
         data-name={models[1].name}
+        data-owner={models[1].owner}
         onClick={instance._handleModelClick}
         key={models[1].uuid}>
         {'dalek/model-name-2'}
@@ -76,7 +78,7 @@ describe('EnvList', function() {
       <juju.components.EnvList
         authDetails={{user: 'who@local', rootUserName: 'who'}}
         envs={models}
-        handleEnvClick={sinon.stub()}
+        handleModelClick={sinon.stub()}
         showProfile={sinon.stub()}
       />, true);
     const instance = renderer.getMountedInstance();
@@ -87,6 +89,7 @@ describe('EnvList', function() {
         tabIndex="0"
         data-id={models[0].uuid}
         data-name={models[0].name}
+        data-owner={models[0].owner}
         onClick={instance._handleModelClick}
         key={models[0].uuid}>
         {models[0].name}
@@ -96,6 +99,7 @@ describe('EnvList', function() {
         tabIndex="0"
         data-id={models[1].uuid}
         data-name={models[1].name}
+        data-owner={models[1].owner}
         onClick={instance._handleModelClick}
         key={models[1].uuid}>
         {'dalek/model-name-2'}
@@ -108,7 +112,7 @@ describe('EnvList', function() {
       <juju.components.EnvList
         authDetails={{user: 'who@external', rootUserName: 'who'}}
         envs={[]}
-        handleEnvClick={sinon.stub()}
+        handleModelClick={sinon.stub()}
         showProfile={sinon.stub()} />);
     assert.deepEqual(output.props.children[0].props.children,
       <li className="env-list__environment" key="none">
@@ -117,24 +121,25 @@ describe('EnvList', function() {
       </li>);
   });
 
-  it('clicking an env calls the handleEnvClick prop', function() {
+  it('clicking a model calls the handleModelClick prop', function() {
     const models = [{uuid: 'abc123', name: 'the name', owner: 'who@external'}];
-    const handleEnvClick = sinon.stub();
+    const handleModelClick = sinon.stub();
     const getAttribute = sinon.stub();
     getAttribute.withArgs('data-id').returns('abc123');
     getAttribute.withArgs('data-name').returns('the name');
+    getAttribute.withArgs('data-owner').returns('who@external');
     const output = jsTestUtils.shallowRender(
       <juju.components.EnvList
         authDetails={{user: 'who@external', rootUserName: 'who'}}
         envs={models}
-        handleEnvClick={handleEnvClick}
+        handleModelClick={handleModelClick}
         showProfile={sinon.stub()} />);
     output.props.children[0].props.children[0].props.onClick({
       currentTarget: {
         getAttribute: getAttribute
       }
     });
-    assert.equal(handleEnvClick.callCount, 1);
+    assert.equal(handleModelClick.callCount, 1);
   });
 
   it('showProfile call is made when clicking on buttonRow button', function() {
@@ -144,7 +149,7 @@ describe('EnvList', function() {
       <juju.components.EnvList
         authDetails={{user: 'who@external', rootUserName: 'who'}}
         envs={models}
-        handleEnvClick={sinon.stub()}
+        handleModelClick={sinon.stub()}
         showProfile={showProfile} />);
     testUtils.Simulate.click(
         ReactDOM.findDOMNode(component)

@@ -25,7 +25,7 @@ YUI.add('env-list', function() {
     propTypes: {
       authDetails: React.PropTypes.object,
       envs: React.PropTypes.array.isRequired,
-      handleEnvClick: React.PropTypes.func.isRequired,
+      handleModelClick: React.PropTypes.func.isRequired,
       showProfile: React.PropTypes.func.isRequired
     },
 
@@ -76,6 +76,7 @@ YUI.add('env-list', function() {
             tabIndex="0"
             data-id={model.uuid}
             data-name={model.name}
+            data-owner={model.owner}
             onClick={this._handleModelClick}
             key={model.uuid}>
             {name}
@@ -92,9 +93,10 @@ YUI.add('env-list', function() {
     */
     _handleModelClick: function(evt) {
       const currentTarget = evt.currentTarget;
-      this.props.handleEnvClick({
+      this.props.handleModelClick({
         id: currentTarget.getAttribute('data-id'),
-        name: currentTarget.getAttribute('data-name')
+        name: currentTarget.getAttribute('data-name'),
+        owner: currentTarget.getAttribute('data-owner')
       });
     },
 

@@ -98,7 +98,7 @@ describe('EnvSwitcher', function() {
       <juju.components.EnvList
         authDetails={authDetails}
         envs={[]}
-        handleEnvClick={instance.handleEnvClick}
+        handleModelClick={instance.handleModelClick}
         showProfile={showProfile}
       />);
   });
@@ -149,30 +149,29 @@ describe('EnvSwitcher', function() {
     const models = [{
       uuid: 'abc123',
       name: 'Tardis',
-      user: 'The Dr.',
+      owner: 'The Dr.',
       password: 'buffalo',
       isAlive: true
     }];
-    var listModelsWithInfo = sinon.stub();
-    var switchModel = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
+    const listModelsWithInfo = sinon.stub();
+    const switchModel = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
       <juju.components.EnvSwitcher.prototype.wrappedComponent
         listModelsWithInfo={listModelsWithInfo}
         showProfile={sinon.stub()}
         switchModel={switchModel} />, true);
-    var instance = renderer.getMountedInstance();
+    const instance = renderer.getMountedInstance();
     instance.componentDidMount();
     listModelsWithInfo.args[0][0](null, models);
-    instance.handleEnvClick({
-      name: 'abc123',
-      id: 'abc123'
-    });
+    const model = {
+      id: 'abc123',
+      name: 'Tardis',
+      owner: 'The Dr.'
+    };
+    instance.handleModelClick(model);
     assert.equal(switchModel.callCount, 1);
-    assert.deepEqual(instance.state, {
-      showEnvList: false,
-      envList: models
-    });
-    assert.deepEqual(switchModel.args[0], ['abc123', 'abc123']);
+    assert.deepEqual(instance.state, {showEnvList: false, envList: models});
+    assert.deepEqual(switchModel.args[0], [model]);
   });
 
   it('can show the profile', function() {
