@@ -1954,7 +1954,398 @@ describe('App', function() {
         assert.strictEqual(app.isLegacyJuju(), false, version);
       });
     });
+  });
+
+  describe('checkUserCredentials', function() {
+    let app, juju, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        juju = juju = Y.namespace('juju');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
+        controllerAPI: new juju.ControllerAPI({
+          conn: new testUtils.SocketStub()
+        }),
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet(),
+          user: 'user',
+          password: 'password'
+        }),
+        socketTemplate: '/model/$uuid/api',
+        controllerSocketTemplate: '/api',
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0'
+      });
+    });
+
+    afterEach(function() {
+      app.destroy();
+    });
+
+    it('calls next and returns if root state is new', () => {
+      const next = sinon.stub();
+      const displayStub = sinon.stub(app, '_displayLogin');
+      app.checkUserCredentials({root: 'new'}, next);
+      assert.equal(next.callCount, 1);
+      assert.equal(
+        displayStub.callCount, 0, 'login should not have been displayed');
+    });
+
+    it('displays login if one of the apis is still connecting', () => {
+      app.controllerAPI.set('connecting', true);
+      const next = sinon.stub();
+      const displayStub = sinon.stub(app, '_displayLogin');
+      app.checkUserCredentials({}, next);
+      assert.equal(displayStub.callCount, 1);
+    });
+
+    it('does not login if all apis are not connected', () => {
+      app.controllerAPI.set('connected', false);
+      app.env.set('connected', false);
+      const next = sinon.stub();
+      const displayStub = sinon.stub(app, '_displayLogin');
+      app.checkUserCredentials({}, next);
+      assert.equal(displayStub.callCount, 0);
+    });
+
+    it('displays login if one of the apis is not authenticated', () => {
+      app.controllerAPI.set('connected', true);
+      app.controllerAPI.userIsAuthenticated = false;
+      const next = sinon.stub();
+      const displayStub = sinon.stub(app, '_displayLogin');
+      app.checkUserCredentials({}, next);
+      assert.equal(displayStub.callCount, 1);
+    });
+
+    it('displays login if one of the apis is not authd and not gisf', () => {
+      app.controllerAPI.set('connected', true);
+      app.controllerAPI.userIsAuthenticated = false;
+      app.set('gisf', false);
+      const next = sinon.stub();
+      const displayStub = sinon.stub(app, '_displayLogin');
+      app.checkUserCredentials({}, next);
+      assert.equal(displayStub.callCount, 1);
+    });
+  });
+
+  describe('_disambiguateUserState', function() {
+    let app, juju, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        juju = juju = Y.namespace('juju');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
+        controllerAPI: new juju.ControllerAPI({
+          conn: new testUtils.SocketStub()
+        }),
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet(),
+          user: 'user',
+          password: 'password'
+        }),
+        socketTemplate: '/model/$uuid/api',
+        controllerSocketTemplate: '/api',
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0'
+      });
+    });
+
+    afterEach(function() {
+      app.destroy();
+    });
+
+    it('properly handles a rejected entity promise', done => {
+      const userState = {user: 'hatch'};
+      const entityPromise = Promise.reject(userState);
+      app.controllerAPI.userIsAuthenticated = true;
+      app._listAndSwitchModel = args => {
+        assert.deepEqual(args, userState);
+        done();
+      };
+      app._disambiguateUserState(entityPromise);
+    });
+
+    it('properly handles a resolved entity promise', done => {
+      const userState = 'hatch';
+      const entityPromise = Promise.resolve(userState);
+      app.maskVisibility = sinon.stub();
+      app.state.changeState = state => {
+        assert.deepEqual(app.maskVisibility.args[0], [false]);
+        assert.deepEqual({
+          store: 'u/hatch',
+          user: null
+        }, state);
+        done();
+      };
+      app._disambiguateUserState(entityPromise);
+    });
+  });
+
+  describe('_listAndSwitchModel', function() {
+    let app, modelList, juju, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        juju = juju = Y.namespace('juju');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
+        controllerAPI: new juju.ControllerAPI({
+          conn: new testUtils.SocketStub()
+        }),
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet(),
+          user: 'user',
+          password: 'password'
+        }),
+        socketTemplate: '/model/$uuid/api',
+        controllerSocketTemplate: '/api',
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0'
+      });
+      modelList = [{
+        'id':'fe9a2845-4829-4d61-8653-248b7052204e',
+        'name':'latta',
+        'series':'xenial',
+        'provider':'gce',
+        'uuid':'fe9a2845-4829-4d61-8653-248b7052204e',
+        'controllerUUID':'a030379a-940f-4760-8fcf-3062b41a04e7',
+        'owner':'frankban@external',
+        'life':'alive',
+        'isAlive':true,
+        'isController':false,
+        'lastConnection':null
+      },{
+        'id':'509f6e4c-4da4-49c8-8f18-537c33b4d3a0',
+        'name':'jujugui-org',
+        'series':'xenial',
+        'provider':'gce',
+        'uuid':'509f6e4c-4da4-49c8-8f18-537c33b4d3a0',
+        'controllerUUID':'a030379a-940f-4760-8fcf-3062b41a04e7',
+        'owner':'uros-jovanovic@external',
+        'life':'alive',
+        'isAlive':true,
+        'isController':false,
+        'lastConnection':null
+      }];
+      app.maskVisibility = sinon.stub();
+      app.state.changeState = sinon.stub();
+      app._getAuth = sinon.stub().returns({rootUserName: 'pug'});
+      app.controllerAPI.listModelsWithInfo = function(callback) {
+        callback.call(app, null, modelList);
+      };
+    });
+
+    afterEach(function() {
+      app.destroy();
+    });
+
+    it('switches to a supplied model path', () => {
+      app._listAndSwitchModel('frankban/latta', null);
+      assert.equal(app.maskVisibility.callCount, 1);
+      assert.deepEqual(app.maskVisibility.args[0], [false]);
+      assert.equal(app.state.changeState.callCount, 1);
+      assert.deepEqual(app.state.changeState.args[0], [{
+        model: {
+          path: 'frankban/latta',
+          uuid: 'fe9a2845-4829-4d61-8653-248b7052204e'
+        },
+        user: null, root: null
+      }]);
+    });
+
+    it('switches to a supplied model uuid', () => {
+      app._listAndSwitchModel(null, '509f6e4c-4da4-49c8-8f18-537c33b4d3a0');
+      assert.equal(app.maskVisibility.callCount, 1);
+      assert.deepEqual(app.maskVisibility.args[0], [false]);
+      assert.equal(app.state.changeState.callCount, 1);
+      assert.deepEqual(app.state.changeState.args[0], [{
+        model: {
+          path: 'uros-jovanovic/jujugui-org',
+          uuid: '509f6e4c-4da4-49c8-8f18-537c33b4d3a0'
+        },
+        user: null, root: null
+      }]);
+    });
+
+    it('switches to disconnected state if no model is found via uuid', () => {
+      app._listAndSwitchModel(null, 'bad-uuid');
+      assert.equal(app.maskVisibility.callCount, 1);
+      assert.deepEqual(app.maskVisibility.args[0], [false]);
+      assert.equal(app.state.changeState.callCount, 1);
+      assert.deepEqual(app.state.changeState.args[0], [{
+        root: null, store: null, model: null, user: null,
+        profile: 'pug'
+      }]);
+    });
+
+    it('switches to disconnected state if no model found via path', () => {
+      app._listAndSwitchModel('bad/path', null);
+      assert.equal(app.maskVisibility.callCount, 1);
+      assert.deepEqual(app.maskVisibility.args[0], [false]);
+      assert.equal(app.state.changeState.callCount, 1);
+      assert.deepEqual(app.state.changeState.args[0], [{
+        root: null, store: null, model: null, user: null,
+        profile: 'pug'
+      }]);
+    });
+  });
+
+  describe('_fetchEntityFromUserState', function() {
+    let app, juju, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        juju = juju = Y.namespace('juju');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
+        controllerAPI: new juju.ControllerAPI({
+          conn: new testUtils.SocketStub()
+        }),
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet(),
+          user: 'user',
+          password: 'password'
+        }),
+        socketTemplate: '/model/$uuid/api',
+        controllerSocketTemplate: '/api',
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0'
+      });
+
+    });
+
+    afterEach(function() {
+      app.destroy();
+    });
+
+    it('returns a promise for an entity', done => {
+      const legacyPath = sinon.stub().returns('~hatch/ghost');
+      window.jujulib.URL.fromString = sinon.stub().returns({legacyPath});
+      const charmstore = {
+        getEntity: sinon.stub()
+      };
+      app.set('charmstore', charmstore);
+      const entityPromise = app._fetchEntityFromUserState('hatch/ghost');
+      assert.equal(legacyPath.callCount, 1, 'legacy path not called');
+      assert.equal(charmstore.getEntity.callCount, 1, 'getEntity not called');
+      assert.equal(charmstore.getEntity.args[0][0], '~hatch/ghost');
+      // Call the callback to make sure it properly resolves the promise.
+      charmstore.getEntity.args[0][1](null, {});
+      entityPromise.then(() => {
+        done();
+      });
+    });
+
+    it('caches the entity promises', () => {
+      const legacyPath = sinon.stub().returns('~hatch/ghost');
+      window.jujulib.URL.fromString = sinon.stub().returns({legacyPath});
+      const charmstore = {
+        getEntity: sinon.stub()
+      };
+      app.set('charmstore', charmstore);
+      const entityPromise = app._fetchEntityFromUserState('hatch/ghost');
+      assert.deepEqual(app.userPaths.get('hatch/ghost'), {
+        promise: entityPromise
+      });
+    });
+
+    it('returns a cached promise', () => {
+      const legacyPath = sinon.stub().returns('~hatch/ghost');
+      window.jujulib.URL.fromString = sinon.stub().returns({legacyPath});
+      const charmstore = {
+        getEntity: sinon.stub()
+      };
+      app.set('charmstore', charmstore);
+      const response = {promise: 'its a promise'};
+      app.userPaths.set('hatch/ghost', response);
+      const entityPromise = app._fetchEntityFromUserState('hatch/ghost');
+      // hacking the userPaths cache so that we can tell if it pulls from there.
+      assert.deepEqual(entityPromise, response.promise);
+    });
 
   });
 
+  describe('_switchModelToUUID', function() {
+    let app, juju, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        juju = juju = Y.namespace('juju');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
+        controllerAPI: new juju.ControllerAPI({
+          conn: new testUtils.SocketStub()
+        }),
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet(),
+          user: 'user',
+          password: 'password'
+        }),
+        socketTemplate: '/model/$uuid/api',
+        controllerSocketTemplate: '/api',
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0'
+      });
+
+    });
+
+    afterEach(function() {
+      app.destroy();
+    });
+
+    it('switches to the provided uuid', () => {
+      app.switchEnv = sinon.stub();
+      app.createSocketURL = sinon.stub().returns('build-url');
+      app._switchModelToUUID('my-uuid');
+      assert.equal(app.get('modelUUID'), 'my-uuid');
+      assert.equal(app.createSocketURL.callCount, 1);
+      assert.deepEqual(app.createSocketURL.args[0], [
+        '/model/$uuid/api', 'my-uuid'
+      ]);
+      assert.equal(app.switchEnv.callCount, 1);
+      assert.deepEqual(app.switchEnv.args[0], ['build-url']);
+    });
+
+    it('switches to disconnected if none provided', () => {
+      app.switchEnv = sinon.stub();
+      app.createSocketURL = sinon.stub();
+      app._switchModelToUUID();
+      assert.strictEqual(app.get('modelUUID'), null);
+      assert.equal(app.createSocketURL.callCount, 0);
+      assert.equal(app.switchEnv.callCount, 1);
+      assert.deepEqual(app.switchEnv.args[0], [undefined]);
+    });
+  });
 });

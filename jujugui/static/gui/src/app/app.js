@@ -1838,7 +1838,7 @@ YUI.add('juju-gui', function(Y) {
           this.state.changeState({
             root: null,
             store: null,
-            model:null,
+            model: null,
             user: null,
             profile: this._getAuth().rootUserName
           });
