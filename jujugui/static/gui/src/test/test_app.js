@@ -2288,4 +2288,62 @@ describe('App', function() {
     });
 
   });
+
+  describe('_switchModelToUUID', function() {
+    let app, juju, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        juju = juju = Y.namespace('juju');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
+        controllerAPI: new juju.ControllerAPI({
+          conn: new testUtils.SocketStub()
+        }),
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet(),
+          user: 'user',
+          password: 'password'
+        }),
+        socketTemplate: '/model/$uuid/api',
+        controllerSocketTemplate: '/api',
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0'
+      });
+
+    });
+
+    afterEach(function() {
+      app.destroy();
+    });
+
+    it('switches to the provided uuid', () => {
+      app.switchEnv = sinon.stub();
+      app.createSocketURL = sinon.stub().returns('build-url');
+      app._switchModelToUUID('my-uuid');
+      assert.equal(app.get('modelUUID'), 'my-uuid');
+      assert.equal(app.createSocketURL.callCount, 1);
+      assert.deepEqual(app.createSocketURL.args[0], [
+        '/model/$uuid/api', 'my-uuid'
+      ]);
+      assert.equal(app.switchEnv.callCount, 1);
+      assert.deepEqual(app.switchEnv.args[0], ['build-url']);
+    });
+
+    it('switches to disconnected if none provided', () => {
+      app.switchEnv = sinon.stub();
+      app.createSocketURL = sinon.stub();
+      app._switchModelToUUID();
+      assert.strictEqual(app.get('modelUUID'), null);
+      assert.equal(app.createSocketURL.callCount, 0);
+      assert.equal(app.switchEnv.callCount, 1);
+      assert.deepEqual(app.switchEnv.args[0], [undefined]);
+    });
+  });
 });
