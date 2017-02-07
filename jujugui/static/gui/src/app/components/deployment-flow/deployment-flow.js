@@ -75,7 +75,7 @@ YUI.add('deployment-flow', function() {
         region: this.props.region,
         showChangelogs: false,
         sshKey: null,
-        terms: this._getTerms(),
+        terms: this._getTerms() || [],
         termsList: [],
         termsAgreed: false
       };
@@ -96,7 +96,7 @@ YUI.add('deployment-flow', function() {
       const newApps = nextProps.applications;
       const currentApps = this.props.applications;
       if (newApps.length !== currentApps.length ||
-        currentApps.filter(a => newApps.indexOf(a) === 0).length > 0) {
+        newApps.filter(a => currentApps.indexOf(a) === -1).length > 0) {
         this._getAgreements();
       }
     },
@@ -396,12 +396,14 @@ YUI.add('deployment-flow', function() {
         this.setState({newTerms: [], termsList: []});
         return;
       }
+      // Get all the terms the user has agreed to.
       const xhr = this.props.getAgreements((error, agreements) => {
         if (error) {
           console.error('cannot retrieve agreements:', error);
           return;
         }
         agreements = agreements || [];
+        // Map the agreements to the term ids.
         const agreed = agreements.map(agreement => {
           return agreement.term;
         });
