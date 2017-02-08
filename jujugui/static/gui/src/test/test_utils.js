@@ -1065,6 +1065,7 @@ describe('utilities', function() {
         get: sinon.stub().returns('wss://socket-url'),
         switchEnv: sinon.stub(),
         showConnectingMask: sinon.stub(),
+        hideConnectingMask: sinon.stub(),
         state: {
           changeState: sinon.stub()
         }
@@ -1151,7 +1152,7 @@ describe('utilities', function() {
         root: null,
         model: {
           path: 'foo/model-name',
-          uuid: 'abc123'
+          uuid: 'the-uuid'
         }
       }]);
     });
