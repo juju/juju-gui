@@ -781,7 +781,7 @@ YUI.add('juju-gui', function(Y) {
         }
         const modelUUID = this._getModelUUID();
         const current = this.state.current;
-        if (modelUUID && !current.profile) {
+        if (modelUUID && !current.profile && current.root !== 'store') {
           // A model uuid was defined in the config so attempt to connect to it.
           this._listAndSwitchModel(null, modelUUID);
         } else if (entityPromise !== null) {
@@ -815,8 +815,8 @@ YUI.add('juju-gui', function(Y) {
         const creds = this.controllerAPI.getCredentials();
         const gisf = this.get('gisf');
         const currentState = this.state.current;
-        // If an anon user lands on the GUI at /new then don't attempt to log
-        // into the controller.
+        // If an anonymous GISF user lands on the GUI at /new then don't
+        // attempt to log into the controller.
         if (!creds.areAvailable && gisf &&
             (currentState && currentState.root === 'new')) {
           console.log('now in anonymous mode');
@@ -2362,7 +2362,7 @@ YUI.add('juju-gui', function(Y) {
     _displayLogin: function() {
       this.set('loggedIn', false);
       const root = this.state.current.root;
-      if (!root || root !== 'login') {
+      if (root !== 'login') {
         this.state.changeState({
           root: 'login'
         });
@@ -2427,8 +2427,9 @@ YUI.add('juju-gui', function(Y) {
       @param {Function} next The next route handler.
     */
     checkUserCredentials: function(state, next) {
-      // If we're in the /new state then allow the canvas to be shown.
-      if (state && state.root && state.root === 'new') {
+      // If we're in disconnected mode (either "/new" or "/store"), then allow
+      // the canvas to be shown.
+      if (state && (state.root === 'new' || state.root === 'store')) {
         next();
         return;
       }

@@ -1989,13 +1989,22 @@ describe('App', function() {
       app.destroy();
     });
 
+    // Ensure next is called and the login view is not displayed when
+    // dispatching the given state.
+    const checkNext = state => {
+      const next = sinon.stub().withArgs();
+      const displayLogin = sinon.stub(app, '_displayLogin');
+      app.checkUserCredentials(state, next);
+      assert.equal(next.callCount, 1, 'next not called');
+      assert.equal(displayLogin.callCount, 0, '_displayLogin called');
+    };
+
     it('calls next and returns if root state is new', () => {
-      const next = sinon.stub();
-      const displayStub = sinon.stub(app, '_displayLogin');
-      app.checkUserCredentials({root: 'new'}, next);
-      assert.equal(next.callCount, 1);
-      assert.equal(
-        displayStub.callCount, 0, 'login should not have been displayed');
+      checkNext({root: 'new'});
+    });
+
+    it('calls next and returns if root state is store', () => {
+      checkNext({root: 'store'});
     });
 
     it('displays login if one of the apis is still connecting', () => {
