@@ -41,6 +41,7 @@ YUI.add('usso-login-link', function() {
         e.preventDefault();
       }
       this.props.loginToController(err => {
+        console.log('In login');
         if (err) {
           console.error('cannot log into the controller:', err);
         }
@@ -59,6 +60,7 @@ YUI.add('usso-login-link', function() {
         }
 
         const callback = this.props.callback;
+        console.log('CALLBACK' + callback);
         if (callback) {
           callback(err);
         }

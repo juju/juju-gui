@@ -27,15 +27,17 @@ YUI.add('login-component', function() {
       errorMessage: React.PropTypes.string,
       getDischargeToken: React.PropTypes.func,
       gisf: React.PropTypes.bool.isRequired,
+      hideSpinner: React.PropTypes.func,
       isLegacyJuju: React.PropTypes.bool.isRequired,
       loginToAPIs: React.PropTypes.func.isRequired,
       loginToController: React.PropTypes.func.isRequired,
-      sendPost: React.PropTypes.func
+      sendPost: React.PropTypes.func,
+      showSpinner: React.PropTypes.func
     },
 
     componentDidMount: function () {
-      this.refs.username.focus();
       if (this.props.gisf) {
+        this.props.showSpinner();
         const bounce = (startTime) => {
           if (this.props.controllerIsConnected()) {
             this.refs.USSOLoginLink.handleLogin();
@@ -48,6 +50,8 @@ YUI.add('login-component', function() {
           }
         };
         bounce(performance.now());
+      } else {
+        this.refs.username.focus();
       }
     },
 
@@ -104,12 +108,13 @@ YUI.add('login-component', function() {
       if (!this.props.isLegacyJuju) {
         return (
           <juju.components.USSOLoginLink
-            gisf={this.props.gisf}
-            sendPost={this.props.sendPost}
-            ref="USSOLoginLink"
+            callback={this.props.hideSpinner}
+            displayType="button"
             getDischargeToken={this.props.getDischargeToken}
+            gisf={this.props.gisf}
             loginToController={this.props.loginToController}
-            displayType="button" />);
+            ref="USSOLoginLink"
+            sendPost={this.props.sendPost} />);
       }
     },
 

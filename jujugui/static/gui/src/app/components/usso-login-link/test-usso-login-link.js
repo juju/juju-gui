@@ -112,9 +112,7 @@ describe('USSOLoginLink', () => {
   });
 
   it('does a postback to a URL in gisf', function() {
-    const loginToController = function(cb) {
-      cb();
-    };
+    const loginToController = sinon.stub().callsArg(0);
     const getDischargeToken = sinon.stub().returns('foo');
     const sendPost = sinon.stub();
     const callback = sinon.stub();
