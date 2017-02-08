@@ -7,6 +7,7 @@
     @extend %input;
     min-height: $base;
     margin: 10px 0;
+    box-sizing: content-box;
   }
 
   &--disabled {
