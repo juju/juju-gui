@@ -359,14 +359,14 @@ describe('SearchResultsItem', function() {
     assert.equal(stopPropagation.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       search: null,
-      store: '~test-owner/vivid/mysql'
+      store: 'u/test-owner/mysql/vivid'
     });
     series[1].props.children.props.onClick({stopPropagation: stopPropagation});
     assert.equal(changeState.callCount, 2);
     assert.equal(stopPropagation.callCount, 2);
     assert.deepEqual(changeState.args[1][0], {
       search: null,
-      store: '~test-owner/wily/mysql'
+      store: 'u/test-owner/mysql/wily'
     });
   });
 
