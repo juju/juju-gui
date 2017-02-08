@@ -24,6 +24,7 @@ YUI.add('deployment-flow', function() {
     propTypes: {
       acl: React.PropTypes.object.isRequired,
       addAgreement: React.PropTypes.func.isRequired,
+      addNotification: React.PropTypes.func.isRequired,
       applications: React.PropTypes.array.isRequired,
       changeState: React.PropTypes.func.isRequired,
       changes: React.PropTypes.object.isRequired,
@@ -75,8 +76,11 @@ YUI.add('deployment-flow', function() {
         region: this.props.region,
         showChangelogs: false,
         sshKey: null,
+        // The list of term ids for the uncommitted applications.
         terms: this._getTerms() || [],
+        // The list of full terms objects returned from the charmstore.
         termsList: [],
+        // Whether the user has ticked the checked to agree to terms.
         termsAgreed: false
       };
     },
@@ -95,8 +99,10 @@ YUI.add('deployment-flow', function() {
     componentWillReceiveProps: function(nextProps) {
       const newApps = nextProps.applications;
       const currentApps = this.props.applications;
-      if (newApps.length !== currentApps.length ||
-        newApps.filter(a => currentApps.indexOf(a) === -1).length > 0) {
+      // Filter the list of new apps to find that don't exist in the current
+      // list of apps.
+      const appDiff = newApps.filter(a => currentApps.indexOf(a) === -1);
+      if (newApps.length !== currentApps.length || appDiff.length > 0) {
         this._getAgreements();
       }
     },
@@ -337,10 +343,14 @@ YUI.add('deployment-flow', function() {
       if (this.state.newTerms.length > 0) {
         this.props.addAgreement(this.state.termsList, (error, response) => {
           if (error) {
-            console.error('Could not agree to terms:', error);
-          } else {
-            deploy();
+            this.props.addNotification({
+              title: 'Could not agree to terms',
+              message: `Could not agree to terms: ${error}`,
+              level: 'error'
+            });
+            return;
           }
+          deploy();
         });
       } else {
         deploy();

@@ -96,6 +96,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={changes}
         changesFilterByParent={changesFilterByParent}
@@ -302,6 +303,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={changes}
         changesFilterByParent={changesFilterByParent}
@@ -413,6 +415,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -451,6 +454,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -487,6 +491,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -523,6 +528,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -560,6 +566,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -597,6 +604,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -639,6 +647,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -676,6 +685,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -714,6 +724,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -752,6 +763,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -791,6 +803,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -832,6 +845,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -875,6 +889,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={applications}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -931,6 +946,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -995,6 +1011,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -1064,6 +1081,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={addAgreement}
+        addNotification={sinon.stub()}
         applications={applications}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -1236,6 +1254,7 @@ describe('DeploymentFlow', function() {
         <juju.components.DeploymentFlow
           acl={acl}
           addAgreement={sinon.stub()}
+          addNotification={sinon.stub()}
           applications={applications}
           changes={{}}
           changesFilterByParent={sinon.stub()}
@@ -1278,6 +1297,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -1335,6 +1355,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -1388,6 +1409,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -1443,6 +1465,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -1492,6 +1515,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={[]}
         changes={{}}
         changesFilterByParent={sinon.stub()}
@@ -1531,6 +1555,7 @@ describe('DeploymentFlow', function() {
       <juju.components.DeploymentFlow
         acl={acl}
         addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
         applications={applications}
         changes={{}}
         changesFilterByParent={sinon.stub()}

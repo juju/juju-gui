@@ -1282,6 +1282,7 @@ YUI.add('juju-gui', function(Y) {
         <window.juju.components.DeploymentFlow
           acl={this.acl}
           addAgreement={this.terms.addAgreement.bind(this.terms)}
+          addNotification={db.notifications.add.bind(db.notifications)}
           applications={services.toArray()}
           changesFilterByParent={
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
