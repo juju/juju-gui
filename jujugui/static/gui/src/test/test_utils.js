@@ -1064,6 +1064,11 @@ describe('utilities', function() {
         createSocketURL: sinon.stub().returns('wss://socket-url'),
         get: sinon.stub().returns('wss://socket-url'),
         switchEnv: sinon.stub(),
+        showConnectingMask: sinon.stub(),
+        hideConnectingMask: sinon.stub(),
+        state: {
+          changeState: sinon.stub()
+        }
       };
     });
 
@@ -1106,11 +1111,17 @@ describe('utilities', function() {
     });
 
     it('can create, connect, and commit to the new model', function() {
-      const modelData = {uuid: 'the-uuid'};
+      const modelData = {
+        id: 'abc123',
+        name: 'model-name',
+        owner: 'foo@external',
+        uuid: 'the-uuid'
+      };
       const args = {model: 'args'};
       envGet.withArgs('connected').returns(false);
       const commit = sinon.stub();
       envGet.withArgs('ecs').returns({commit});
+      utils._hidePopup = sinon.stub();
       utils.deploy(app, callback, false, 'my-model', args);
       assert.equal(app.controllerAPI.createModel.callCount, 1);
       // Call the handler for the createModel callCount
@@ -1133,6 +1144,17 @@ describe('utilities', function() {
       assert.equal(commit.callCount, 1);
       assert.equal(callback.callCount, 1);
       assert.deepEqual(callback.args[0], [null]);
+      // Check to make sure that the state was changed.
+      assert.equal(app.state.changeState.callCount, 1);
+      assert.deepEqual(app.state.changeState.args[0], [{
+        profile: null,
+        gui: null,
+        root: null,
+        model: {
+          path: 'foo/model-name',
+          uuid: 'the-uuid'
+        }
+      }]);
     });
 
     it('can display an error notification', function() {
