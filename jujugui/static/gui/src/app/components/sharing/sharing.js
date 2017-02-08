@@ -105,7 +105,11 @@ YUI.add('sharing', function() {
     */
     _generateUsersWithAccess: function() {
       if (this.state.loadingUsers) {
-        return <juju.components.Spinner />;
+        return (
+          <div className="sharing__loading">
+            <juju.components.Spinner />
+          </div>
+        );
       }
       const users = this.state.usersWithAccess;
       if (!users.length) {

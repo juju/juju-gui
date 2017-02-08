@@ -66,7 +66,11 @@ describe('Sharing', () => {
     instance.setState({loadingUsers: true});
     const output = renderer.getRenderOutput();
     const spinner = output.props.children.props.children[1];
-    const expected = <juju.components.Spinner />;
+    const expected = (
+      <div className="sharing__loading">
+        <juju.components.Spinner />
+      </div>
+    );
     assert.deepEqual(spinner, expected);
   });
 
@@ -122,11 +126,11 @@ describe('Sharing', () => {
     const getModelUserInfo = sinon.stub().callsArgWith(0, 'boom', []);
     const addNotification = sinon.stub();
     const closeHandler = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
+    jsTestUtils.shallowRender(
       <juju.components.Sharing
         addNotification={addNotification}
         closeHandler={closeHandler}
-        getModelUserInfo={getModelUserInfo} />, true);
+        getModelUserInfo={getModelUserInfo} />);
     assert.equal(addNotification.called, true);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Unable to load users.',
