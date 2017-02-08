@@ -31,14 +31,16 @@ describe('Sharing', () => {
   });
 
   it('can render with no users', () => {
-    const getModelUserInfo = sinon.stub().returns([]);
+    const getModelUserInfo = sinon.stub().callsArgWith(0, null, []);
+    const closeHandler = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Sharing
+        closeHandler={closeHandler}
         getModelUserInfo={getModelUserInfo} />, true);
     const output = renderer.getRenderOutput();
     const expectedButtons = [{
       title: 'Done',
-      action: undefined,
+      action: closeHandler,
       type: 'positive'
     }];
     const expected = (
@@ -55,8 +57,21 @@ describe('Sharing', () => {
     assert.deepEqual(output, expected);
   });
 
+  it('can render with a spinner', () => {
+    const getModelUserInfo = sinon.stub().callsArgWith(0, null, []);
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.Sharing
+        getModelUserInfo={getModelUserInfo} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.setState({loadingUsers: true});
+    const output = renderer.getRenderOutput();
+    const spinner = output.props.children.props.children[1];
+    const expected = <juju.components.Spinner />;
+    assert.deepEqual(spinner, expected);
+  });
+
   it('can render with users', () => {
-    const getModelUserInfo = sinon.stub().callsArgWith(0, false, [
+    const getModelUserInfo = sinon.stub().callsArgWith(0, null, [
       {
         name: 'drwho',
         displayName: 'Dr. Who',
@@ -102,4 +117,23 @@ describe('Sharing', () => {
     )];
     assert.deepEqual(actual, expected);
   });
+
+  it('can handle an API call error', () => {
+    const getModelUserInfo = sinon.stub().callsArgWith(0, 'boom', []);
+    const addNotification = sinon.stub();
+    const closeHandler = sinon.stub();
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.Sharing
+        addNotification={addNotification}
+        closeHandler={closeHandler}
+        getModelUserInfo={getModelUserInfo} />, true);
+    assert.equal(addNotification.called, true);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Unable to load users.',
+      message: 'Unable to load user information for this model: boom',
+      level: 'error'
+    });
+    assert.equal(closeHandler.called, true);
+  });
+
 });

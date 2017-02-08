@@ -1409,12 +1409,17 @@ YUI.add('juju-view-utils', function(Y) {
     @method sharingVisibility
     @param {Boolean} visibility Controls whether to show (true) or hide (false);
                      defaults to true.
+    @param {Function} getModelUser The API call to list users.
+    @param {Function} addNotification The function to display user
+                      notifications.
   */
-  utils.sharingVisibility = function(visibility = true, getModelUserInfo) {
+  utils.sharingVisibility = function(visibility = true, getModelUserInfo,
+    addNotification) {
     const sharing = document.getElementById('sharing-container');
     if (visibility) {
       ReactDOM.render(
         <window.juju.components.Sharing
+          addNotification={addNotification}
           getModelUserInfo={getModelUserInfo}
           closeHandler={utils.sharingVisibility.bind(utils, false)} />,
       sharing);
