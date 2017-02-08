@@ -983,11 +983,13 @@ YUI.add('juju-gui', function(Y) {
           errorMessage={err}
           getDischargeToken={getDischargeToken}
           gisf={this.get('gisf')}
+          hideSpinner={this.hideConnectingMask.bind(this)}
           isLegacyJuju={this.isLegacyJuju()}
           loginToAPIs={this.loginToAPIs.bind(this)}
           loginToController={loginToController}
           sendPost={webhandler.sendPostRequest.bind(webhandler)}
-          setCredentials={this.env.setCredentials.bind(this.env)} />,
+          setCredentials={this.env.setCredentials.bind(this.env)}
+          showSpinner={this.showConnectingMask.bind(this)} />,
         document.getElementById('login-container'));
     },
 

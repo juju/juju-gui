@@ -32,15 +32,19 @@ describe('LoginComponent', function() {
     const controllerIsConnected = sinon.stub();
     const sendPost = sinon.stub();
     const getDischargeToken = sinon.stub();
+    const showSpinner = sinon.stub();
+    const hideSpinner = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
+        controllerIsConnected={controllerIsConnected}
+        getDischargeToken={getDischargeToken}
+        gisf={false}
+        hideSpinner={hideSpinner}
         isLegacyJuju={false}
         loginToAPIs={sinon.stub()}
         loginToController={loginToControllerStub}
-        getDischargeToken={getDischargeToken}
-        controllerIsConnected={controllerIsConnected}
         sendPost={sendPost}
-        gisf={false} />, true);
+        showSpinner={showSpinner} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -80,12 +84,95 @@ describe('LoginComponent', function() {
               title={"Login"}
               type={"positive"} />
             <juju.components.USSOLoginLink
-              gisf={false}
-              sendPost={sendPost}
-              ref="USSOLoginLink"
-              loginToController={loginToControllerStub}
+              callback={hideSpinner}
+              displayType="button"
               getDischargeToken={getDischargeToken}
-              displayType="button" />
+              gisf={false}
+              loginToController={loginToControllerStub}
+              ref="USSOLoginLink"
+              sendPost={sendPost} />
+          </form>
+        </div>
+        <div className="login__message">
+          <p>
+            Find your username and password with<br />
+            <code>juju show-controller --show-password</code>
+          </p>
+          <div className="login__message-link">
+            <a href="https://jujucharms.com" target="_blank">
+              jujucharms.com
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+    assert.deepEqual(output, expected);
+  });
+
+  it('renders but is hidden in gisf', function() {
+    const loginToControllerStub = sinon.stub();
+    const controllerIsConnected = sinon.stub();
+    const sendPost = sinon.stub();
+    const getDischargeToken = sinon.stub();
+    const showSpinner = sinon.stub();
+    const hideSpinner = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.Login
+        controllerIsConnected={controllerIsConnected}
+        getDischargeToken={getDischargeToken}
+        gisf={true}
+        hideSpinner={hideSpinner}
+        isLegacyJuju={false}
+        loginToAPIs={sinon.stub()}
+        loginToController={loginToControllerStub}
+        sendPost={sendPost}
+        showSpinner={showSpinner} />, true);
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="login hidden">
+        <div className="login__logo">
+          <juju.components.SvgIcon width="75" height="30" name="juju-logo" />
+        </div>
+        <div className="login__full-form">
+          <div className="login__env-name">
+            Login
+          </div>
+          {undefined}
+          <form
+            className="login__form"
+            ref="form"
+            onSubmit={instance._handleLoginSubmit}>
+            <label
+              className="login__label">
+              Username
+              <input
+                className="login__input"
+                type="text"
+                name="username"
+                ref="username" />
+            </label>
+            <label
+              className="login__label">
+              Password
+              <input
+                className="login__input"
+                type="password"
+                name="password"
+                ref="password" />
+            </label>
+            <juju.components.GenericButton
+              submit={true}
+              title={"Login"}
+              type={"positive"} />
+            <juju.components.USSOLoginLink
+              callback={hideSpinner}
+              displayType="button"
+              getDischargeToken={getDischargeToken}
+              gisf={true}
+              loginToController={loginToControllerStub}
+              ref="USSOLoginLink"
+              sendPost={sendPost} />
           </form>
         </div>
         <div className="login__message">
@@ -196,33 +283,45 @@ describe('LoginComponent', function() {
   });
 
   it('automatically logs in for gisf via usso', function() {
-    var loginToController = sinon.stub();
-    var controllerIsConnected = sinon.stub().returns(true);
-    var sendPost = sinon.stub();
+    const loginToController = sinon.stub().callsArg(0);
+    const controllerIsConnected = sinon.stub().returns(true);
+    const sendPost = sinon.stub();
+    const showSpinner = sinon.stub();
+    const hideSpinner = sinon.stub();
+    const getDischargeToken = sinon.stub().returns('foo');
     testUtils.renderIntoDocument(
       <juju.components.Login
+        controllerIsConnected={controllerIsConnected}
+        getDischargeToken={getDischargeToken}
+        gisf={true}
+        hideSpinner={hideSpinner}
         isLegacyJuju={false}
         loginToAPIs={sinon.stub()}
         loginToController={loginToController}
-        controllerIsConnected={controllerIsConnected}
         sendPost={sendPost}
-        gisf={true} />);
+        showSpinner={showSpinner} />);
     assert.equal(
       loginToController.callCount, 1, 'loginToController not called');
+    assert.equal(showSpinner.callCount, 1, 'spinner not shown');
+    assert.equal(hideSpinner.callCount, 1, 'spinner not stopped');
   });
 
   it('eventually fails auto login if controller does not connect', function() {
     var loginToController = sinon.stub();
     var controllerIsConnected = sinon.stub().returns(false);
     var sendPost = sinon.stub();
+    const showSpinner = sinon.stub();
+    const hideSpinner = sinon.stub();
     testUtils.renderIntoDocument(
-        <juju.components.Login
-      isLegacyJuju={false}
-      loginToAPIs={sinon.stub()}
-      loginToController={loginToController}
-      controllerIsConnected={controllerIsConnected}
-      sendPost={sendPost}
-      gisf={true} />);
+      <juju.components.Login
+        controllerIsConnected={controllerIsConnected}
+        gisf={true}
+        hideSpinner={hideSpinner}
+        isLegacyJuju={false}
+        loginToAPIs={sinon.stub()}
+        loginToController={loginToController}
+        sendPost={sendPost}
+        showSpinner={showSpinner} />);
     assert.equal(
       loginToController.callCount, 0, 'loginToController not called');
   });
