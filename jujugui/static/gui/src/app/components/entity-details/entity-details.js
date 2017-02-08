@@ -141,7 +141,7 @@ YUI.add('entity-details', function() {
     fetchCallback: function(error, data) {
       if (error) {
         this._changeActiveComponent('error');
-        console.error('Fetching the entity failed.');
+        console.error('cannot fetch the entity:' + error);
         return;
       }
       if (data.length > 0) {
@@ -202,15 +202,7 @@ YUI.add('entity-details', function() {
       this.refs.content.focus();
       // Be sure to convert the id to the legacy id as the URL will be in the
       // new id format.
-      const entityId = this.props.id;
-      let processedId = entityId;
-      // If the entityId contains a / and no ~ then it needs to be converted
-      // into the legacy charm format until the charmstore can accept the new
-      // format.
-      if (entityId.indexOf('/') !== -1 && entityId.indexOf('~') === -1) {
-        processedId = window.jujulib.URL.fromString(entityId).legacyPath();
-      }
-      this.detailsXhr = this.props.getEntity(processedId, this.fetchCallback);
+      this.detailsXhr = this.props.getEntity(this.props.id, this.fetchCallback);
     },
 
     componentWillUnmount: function() {

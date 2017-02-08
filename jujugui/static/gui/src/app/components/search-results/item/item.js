@@ -143,13 +143,20 @@ YUI.add('search-results-item', function(Y) {
 
       @method _handleItemClick
       @param {String} id The entity id.
-      @param {Object} e The click event.
+      @param {Object} evt The click event.
     */
-    _handleItemClick: function(id, e) {
-      e.stopPropagation();
+    _handleItemClick: function(id, evt) {
+      evt.stopPropagation();
+      // TODO frankban: it should be clear whether this id is legacy or not.
+      let url;
+      try {
+        url = window.jujulib.URL.fromLegacyString(id);
+      } catch(_) {
+        url = window.jujulib.URL.fromString(id);
+      }
       this.props.changeState({
         search: null,
-        store: id.replace('cs:', '')
+        store: url.path()
       });
     },
 
