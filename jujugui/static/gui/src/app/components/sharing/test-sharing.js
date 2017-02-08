@@ -48,8 +48,8 @@ describe('Sharing', () => {
         className="sharing__popup"
         title="Share"
         buttons={expectedButtons}>
+        <h5 className="sharing__users-header">Users with access</h5>
         <div className="sharing__users">
-          <h5 className="sharing__users-header">Users with access</h5>
           {undefined}
         </div>
       </juju.components.Popup>

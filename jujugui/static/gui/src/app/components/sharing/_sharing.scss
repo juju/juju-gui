@@ -13,6 +13,11 @@
     padding: 0 20px 10px 20px;
   }
 
+  &__users {
+    max-height: 300px;
+    overflow-y: scroll;
+  }
+
   &__user {
     margin-bottom: 10px;
     position: relative;
@@ -29,7 +34,7 @@
     &-access {
       @extend .vertical-center;
       position: absolute;
-      right: 0;
+      right: 1px;  // Provide room for scrollbars on longer lists.
     }
 
     &:last-child {

@@ -146,8 +146,8 @@ YUI.add('sharing', function() {
           className="sharing__popup"
           title="Share"
           buttons={buttons}>
+          <h5 className="sharing__users-header">Users with access</h5>
           <div className="sharing__users">
-            <h5 className="sharing__users-header">Users with access</h5>
             {this._generateUsersWithAccess()}
           </div>
         </juju.components.Popup>
