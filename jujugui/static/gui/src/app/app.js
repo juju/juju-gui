@@ -1615,6 +1615,18 @@ YUI.add('juju-gui', function(Y) {
           }
         }
       });
+      // Retrieve from the charm store information on the charm or bundle with
+      // the given new style id.
+      const getEntity = (id, callback) => {
+        let url;
+        try {
+          url = window.jujulib.URL.fromString(id);
+        } catch(err) {
+          callback(err, {});
+          return;
+        }
+        charmstore.getEntity(url.legacyPath(), callback);
+      };
       ReactDOM.render(
         <window.juju.components.Charmbrowser
           acl={this.acl}
@@ -1625,7 +1637,7 @@ YUI.add('juju-gui', function(Y) {
           importBundleYAML={this.bundleImporter.importBundleYAML.bind(
               this.bundleImporter)}
           getBundleYAML={charmstore.getBundleYAML.bind(charmstore)}
-          getEntity={charmstore.getEntity.bind(charmstore)}
+          getEntity={getEntity}
           getFile={charmstore.getFile.bind(charmstore)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
