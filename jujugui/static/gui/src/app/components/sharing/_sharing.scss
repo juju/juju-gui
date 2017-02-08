@@ -19,7 +19,6 @@
 
     &-name {
       margin-bottom: 3px;
-      text-transform: capitalize;
     }
 
     &-displayname {
@@ -31,7 +30,6 @@
       @extend .vertical-center;
       position: absolute;
       right: 0;
-      text-transform: capitalize;
     }
 
     &:last-child {
