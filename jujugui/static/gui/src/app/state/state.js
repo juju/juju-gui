@@ -499,7 +499,7 @@ const State = class State {
     // If we have root paths in the URL then we can ignore everything else.
     if (state.root) {
       // If there is anything after this then it's an invalid URL.
-      if (parts.length > 1) {
+      if (parts.length > 1 && parts[0] !== 'store') {
         error = invalidRootPath;
       }
       return {error, state};
