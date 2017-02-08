@@ -858,6 +858,33 @@ describe('State', () => {
           JSON.stringify(test.state));
       });
     });
+
+    it('works with store as the root, but not other ROOT_RESERVED', () => {
+      const ROOT_RESERVED = [
+        'about', 'bigdata', 'docs', 'juju', 'login', 'logout', 'new', 'store'];
+
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
+      });
+
+      const tests = ROOT_RESERVED.map(root => {
+        return {
+          path: `http://abc.com:123/${root}/u/lukewh/cheese`,
+          state: {
+            root: root
+          },
+          error: root === 'store' ? null : 'invalid root path.'
+        };
+      });
+
+      tests.forEach(test => {
+        assert.deepEqual(
+          state.generateState(test.path),
+          {error: test.error, state: test.state}
+        );
+      });
+    });
   });
 
   describe('State.register()', () => {

@@ -499,7 +499,12 @@ const State = class State {
     // If we have root paths in the URL then we can ignore everything else.
     if (state.root) {
       // If there is anything after this then it's an invalid URL.
-      if (parts.length > 1) {
+      // Unless it's the store. This is a hack for 2.3.0 release and
+      // should be removed when the store url routing is sorted.
+      // This fixes an issue that even though `/store/u/:user/:model` isn't
+      // a valid url navigating through the search box works, navigating
+      // backwards from an entity doesn't work.
+      if (parts.length > 1 && parts[0] !== 'store') {
         error = invalidRootPath;
       }
       return {error, state};
