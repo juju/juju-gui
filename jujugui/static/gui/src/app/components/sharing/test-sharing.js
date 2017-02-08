@@ -65,7 +65,7 @@ describe('Sharing', () => {
     const instance = renderer.getMountedInstance();
     instance.setState({loadingUsers: true});
     const output = renderer.getRenderOutput();
-    const spinner = output.props.children.props.children[1];
+    const spinner = output.props.children[1].props.children;
     const expected = (
       <div className="sharing__loading">
         <juju.components.Spinner />
@@ -95,7 +95,7 @@ describe('Sharing', () => {
     const output = renderer.getRenderOutput();
     // Get all the children except the header, which is the first item in the
     // array.
-    const actual = output.props.children.props.children[1];
+    const actual = output.props.children[1].props.children;
     const expected = [(
       <div key="drwho" className="sharing__user">
         <div className="sharing__user-name">
