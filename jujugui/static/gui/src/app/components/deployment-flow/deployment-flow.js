@@ -38,7 +38,9 @@ YUI.add('deployment-flow', function() {
       getCloudCredentialNames: React.PropTypes.func,
       getCloudCredentials: React.PropTypes.func,
       getCloudProviderDetails: React.PropTypes.func.isRequired,
+      getDischargeToken: React.PropTypes.func,
       getUserName: React.PropTypes.func.isRequired,
+      gisf: React.PropTypes.bool,
       groupedChanges: React.PropTypes.object.isRequired,
       isLegacyJuju: React.PropTypes.bool,
       listBudgets: React.PropTypes.func.isRequired,
@@ -48,6 +50,7 @@ YUI.add('deployment-flow', function() {
       modelCommitted: React.PropTypes.bool,
       modelName: React.PropTypes.string.isRequired,
       region: React.PropTypes.string,
+      sendPost: React.PropTypes.func,
       servicesGetById: React.PropTypes.func.isRequired,
       showTerms: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func,
@@ -472,8 +475,11 @@ YUI.add('deployment-flow', function() {
           showCheck={false}>
           <div className="six-col">
             <juju.components.USSOLoginLink
+              gisf={this.props.gisf}
               callback={callback}
               displayType={'button'}
+              sendPost={this.props.sendPost}
+              getDischargeToken={this.props.getDischargeToken}
               loginToController={this.props.loginToController}/>
           </div>
         </juju.components.DeploymentSection>);
