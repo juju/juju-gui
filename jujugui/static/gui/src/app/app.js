@@ -518,7 +518,7 @@ YUI.add('juju-gui', function(Y) {
       this.env = modelAPI;
       // Generate the application state then see if we have to disambiguate
       // the user portion of the state.
-      const pathState = this.state.generateState(window.location.href);
+      const pathState = this.state.generateState(window.location.href, false);
       let entityPromise = null;
       if (!pathState.error && pathState.state.user) {
         // If we have a user component to the state then it is ambiguous.
@@ -2040,6 +2040,13 @@ YUI.add('juju-gui', function(Y) {
     _deployTarget: function(state, next) {
       const charmstore = this.get('charmstore');
       const entityId = state.special['deployTarget'];
+      // Remove the deployTarget from state so that we don't end up
+      // dispatching it again by accident.
+      this.state.changeState({
+        special: {
+          deployTarget: null
+        }
+      });
       /**
         Handles parsing and displaying the failure notification returned from
         the charmstore api.
