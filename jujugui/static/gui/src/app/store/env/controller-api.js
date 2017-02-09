@@ -570,7 +570,6 @@ YUI.add('juju-controller-api', function(Y) {
       });
     },
 
-
     /**
       Create a new model within this controller, using the given name, account
       and config.

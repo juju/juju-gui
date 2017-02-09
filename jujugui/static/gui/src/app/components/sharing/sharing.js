@@ -116,20 +116,37 @@ YUI.add('sharing', function() {
         return;
       }
       return users.map((user) => {
-        const accessMarkup = user.access == 'admin' ? (
-          <div className="sharing__user-access">
-            {user.access}
-          </div>
-        ) : undefined;
+        if (user.err) {
+          return (
+            <div key={user.name} className="sharing__user">
+              <div className="sharing__user-name">
+                {user.displayName}
+              </div>
+              <div className="sharing__user-displayname">
+                {user.err}
+              </div>
+            </div>
+          );
+        }
+        let lastConnection = 'never connected';
+        if (user.lastConnection) {
+          const utcDate = user.lastConnection.toUTCString().split(',')[1];
+          lastConnection = `last connection: ${utcDate}`;
+        }
         return (
           <div key={user.name} className="sharing__user">
             <div className="sharing__user-name">
-              {user.name}
-            </div>
-            <div className="sharing__user-displayname">
               {user.displayName}
             </div>
-            {accessMarkup}
+            <div className="sharing__user-displayname">
+              {user.domain} user
+            </div>
+            <div className="sharing__user-displayname">
+              {lastConnection}
+            </div>
+            <div className="sharing__user-access">
+              {user.access}
+            </div>
           </div>
         );
       });
@@ -158,6 +175,7 @@ YUI.add('sharing', function() {
 
 }, '0.1.0', {
   requires: [
+    'loading-spinner',
     'popup'
   ]
 });

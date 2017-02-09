@@ -3636,16 +3636,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Perform the request.
         env.modelUserInfo((err, users) => {
           assert.strictEqual(err, null);
-          assert.strictEqual(users.length, 1);
-          const actual = users[0];
-          const expected = {
+          assert.strictEqual(users.length, 2);
+          assert.deepEqual(users[0], {
             name: 'dalek',
             displayName: 'Dalek',
-            lastConnection: '2000-01-01T00:00:00Z',
-            access: 'owner',
+            domain: 'local',
+            lastConnection: new Date('2000-01-01T00:00:00Z'),
+            access: 'admin',
             err: undefined
-          };
-          assert.deepEqual(actual, expected);
+          });
+          assert.deepEqual(users[1], {
+            name: 'rose@external',
+            displayName: 'rose',
+            domain: 'Ubuntu SSO',
+            lastConnection: null,
+            access: 'write',
+            err: undefined
+          });
           assert.equal(conn.messages.length, 1);
           assert.deepEqual(conn.last_message(), {
             type: 'Client',
@@ -3665,7 +3672,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 user: 'dalek',
                 'display-name': 'Dalek',
                 'last-connection': '2000-01-01T00:00:00Z',
-                access: 'owner',
+                access: 'admin',
+                err: null
+              }
+            }, {
+              result: {
+                user: 'rose@external',
+                'display-name': '',
+                'last-connection': '',
+                access: 'write',
                 err: null
               }
             }]

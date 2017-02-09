@@ -33,13 +33,6 @@ describe('ModelActions', function() {
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    // XXX delete this once the shareFlag is no longer in place.
-    window.juju_config = {shareFlag: false};
-  });
-
-  afterEach(function() {
-    // XXX delete this once the shareFlag is no longer in place.
-    delete window.juju_config;
   });
 
   it('can render and pass the correct props', function() {
@@ -53,7 +46,10 @@ describe('ModelActions', function() {
         hasEntities={true}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        renderDragOverNotification={sinon.stub()} />, true);
+        modelConnected={sinon.stub().withArgs().returns(true)}
+        renderDragOverNotification={sinon.stub()}
+        sharingVisibility={sinon.stub()}
+      />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -85,7 +81,19 @@ describe('ModelActions', function() {
               </span>
             </span>
           </span>
-          {undefined}
+          <span className="model-actions__share model-actions__button"
+            onClick={instance.props.sharingVisibility}
+            role="button"
+            tabIndex="0">
+            <juju.components.SvgIcon name="share_16"
+              className="model-actions__icon"
+              size="16" />
+            <span className="tooltip__tooltip--below">
+              <span className="tooltip__inner tooltip__inner--up">
+                Share
+              </span>
+            </span>
+          </span>
         </div>
         <input className="model-actions__file"
           type="file"
@@ -107,7 +115,10 @@ describe('ModelActions', function() {
         hasEntities={false}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        renderDragOverNotification={sinon.stub()} />, true);
+        modelConnected={sinon.stub().withArgs().returns(true)}
+        renderDragOverNotification={sinon.stub()}
+        sharingVisibility={sinon.stub()}
+      />, true);
     var output = renderer.getRenderOutput();
     assert.equal(output.props.className,
       'model-actions model-actions--initial');
@@ -124,7 +135,10 @@ describe('ModelActions', function() {
         hasEntities={true}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        renderDragOverNotification={sinon.stub()} />, true);
+        modelConnected={sinon.stub().withArgs().returns(true)}
+        renderDragOverNotification={sinon.stub()}
+        sharingVisibility={sinon.stub()}
+      />, true);
     var output = renderer.getRenderOutput();
     assert.equal(output.props.className,
       'model-actions');
@@ -142,7 +156,10 @@ describe('ModelActions', function() {
         hasEntities={false}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        renderDragOverNotification={sinon.stub()} />);
+        modelConnected={sinon.stub().withArgs().returns(true)}
+        renderDragOverNotification={sinon.stub()}
+        sharingVisibility={sinon.stub()}
+      />);
     output.props.children[0].props.children[0].props.onClick();
     assert.equal(exportEnvironmentFile.callCount, 1);
   });
@@ -163,7 +180,10 @@ describe('ModelActions', function() {
         hasEntities={false}
         importBundleFile={importBundleFile}
         hideDragOverNotification={hideDragOverNotification}
-        currentChangeSet={currentChangeSet} />, true);
+        modelConnected={sinon.stub().withArgs().returns(true)}
+        currentChangeSet={currentChangeSet}
+        sharingVisibility={sinon.stub()}
+      />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {'file-input': {click: fileClick}};
     var output = shallowRenderer.getRenderOutput();
@@ -186,7 +206,10 @@ describe('ModelActions', function() {
         importBundleFile={importBundleFile}
         hasEntities={false}
         hideDragOverNotification={hideDragOverNotification}
-        currentChangeSet={currentChangeSet} />, true);
+        modelConnected={sinon.stub().withArgs().returns(true)}
+        currentChangeSet={currentChangeSet}
+        sharingVisibility={sinon.stub()}
+      />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {
       'file-input': {files: ['apache2.yaml']},
@@ -209,7 +232,10 @@ describe('ModelActions', function() {
         hasEntities={true}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        renderDragOverNotification={sinon.stub()} />, true);
+        modelConnected={sinon.stub().withArgs().returns(true)}
+        renderDragOverNotification={sinon.stub()}
+        sharingVisibility={sinon.stub()}
+      />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -241,7 +267,19 @@ describe('ModelActions', function() {
               </span>
             </span>
           </span>
-          {undefined}
+          <span className="model-actions__share model-actions__button"
+            onClick={instance.props.sharingVisibility}
+            role="button"
+            tabIndex="0">
+            <juju.components.SvgIcon name="share_16"
+              className="model-actions__icon"
+              size="16" />
+            <span className="tooltip__tooltip--below">
+              <span className="tooltip__inner tooltip__inner--up">
+                Share
+              </span>
+            </span>
+          </span>
         </div>
         <input className="model-actions__file"
           type="file"
@@ -252,9 +290,24 @@ describe('ModelActions', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('disables everything when not connected', function() {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.ModelActions
+        acl={sinon.stub()}
+        changeState={sinon.stub()}
+        currentChangeSet={{one: 1, two: 2}}
+        exportEnvironmentFile={sinon.stub()}
+        hasEntities={true}
+        hideDragOverNotification={sinon.stub()}
+        importBundleFile={sinon.stub()}
+        modelConnected={sinon.stub().withArgs().returns(false)}
+        renderDragOverNotification={sinon.stub()}
+        sharingVisibility={sinon.stub()}
+      />, true);
+    assert.deepEqual(renderer.getRenderOutput(), null);
+  });
+
   it('can trigger the sharing UI', function() {
-    // XXX delete this once the shareFlag is no longer in place.
-    window.juju_config['shareFlag'] = true;
     const currentChangeSet = {one: 1, two: 2};
     const sharingVisibility = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
@@ -266,6 +319,7 @@ describe('ModelActions', function() {
         hasEntities={true}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
+        modelConnected={sinon.stub().withArgs().returns(true)}
         renderDragOverNotification={sinon.stub()}
         sharingVisibility={sharingVisibility} />, true);
     const output = renderer.getRenderOutput();

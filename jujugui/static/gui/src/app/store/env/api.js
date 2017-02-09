@@ -2874,10 +2874,13 @@ YUI.add('juju-env-api', function(Y) {
         Otherwise, if everything went well, it will receive null as first
         argument and a list of user objects, each one with the following
         fields:
-        - name: the username;
-        - displayName: the user's full name;
-        - lastConnection: the last time the user connected to the model;
-        - access: the type of access the user has;
+        - name: the username like "who@external" or "admin";
+        - displayName: the user's display name, without the "@" part;
+        - domain: the user domain, like "local" or "Ubuntu SSO";
+        - lastConnection: the last time the user connected to the model as a
+          Date object, or null if the user has never connected;
+        - access: the type of access the user has as a string, like "read" or
+          "admin";
         - err: a message describing a specific user error, or undefined.
       @return {undefined} Sends a message to the server only.
     */
@@ -2892,15 +2895,25 @@ YUI.add('juju-env-api', function(Y) {
           callback(data.error, []);
           return;
         }
-
         const results = data.response.results;
         const users = results.map((result, index) => {
           const err = result.error && result.error.message;
           result = result.result || {};
+          const parts = result.user ? result.user.split('@') : [''];
+          let domain = 'local';
+          if (parts.length === 2) {
+            domain = parts[1] === 'external' ? 'Ubuntu SSO' : parts[1];
+          }
+          const displayName = result['display-name'] || parts[0];
+          let lastConnection = null;
+          if (result['last-connection']) {
+            lastConnection = new Date(result['last-connection']);
+          }
           return {
             name: result.user,
-            displayName: result['display-name'],
-            lastConnection: result['last-connection'],
+            displayName: displayName,
+            domain: domain,
+            lastConnection: lastConnection,
             access: result.access,
             err: err,
           };

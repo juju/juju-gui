@@ -77,14 +77,24 @@ describe('Sharing', () => {
   it('can render with users', () => {
     const getModelUserInfo = sinon.stub().callsArgWith(0, null, [
       {
-        name: 'drwho',
-        displayName: 'Dr. Who',
-        lastConnection: 'now',
+        name: 'drwho@external',
+        displayName: 'drwho',
+        domain: 'Ubuntu SSO',
+        lastConnection: {
+          toUTCString: sinon.stub().withArgs().returns(
+            'Thu, 09 Feb 2017 09:51:18 GMT')
+        },
         access: 'admin'
+      }, {
+        name: 'rose',
+        displayName: 'Rose',
+        domain: 'local',
+        lastConnection: null,
+        access: 'write',
       }, {
         name: 'dalek',
         displayName: 'Dalek',
-        lastConnection: 'never',
+        lastConnection: null,
         access: 'write',
         err: 'exterminate!'
       }
@@ -95,31 +105,50 @@ describe('Sharing', () => {
     const output = renderer.getRenderOutput();
     // Get all the children except the header, which is the first item in the
     // array.
-    const actual = output.props.children[1].props.children;
+    const obtained = output.props.children[1].props.children;
     const expected = [(
-      <div key="drwho" className="sharing__user">
+      <div key="drwho@external" className="sharing__user">
         <div className="sharing__user-name">
           drwho
         </div>
         <div className="sharing__user-displayname">
-          Dr. Who
+          {'Ubuntu SSO'} user
+        </div>
+        <div className="sharing__user-displayname">
+          last connection:  09 Feb 2017 09:51:18 GMT
         </div>
         <div className="sharing__user-access">
           admin
         </div>
       </div>
     ), (
-      <div key="dalek" className="sharing__user">
+      <div key="rose" className="sharing__user">
         <div className="sharing__user-name">
-          dalek
+          Rose
         </div>
         <div className="sharing__user-displayname">
+          {'local'} user
+        </div>
+        <div className="sharing__user-displayname">
+          never connected
+        </div>
+        <div className="sharing__user-access">
+          write
+        </div>
+      </div>
+    ), (
+      <div key="dalek" className="sharing__user">
+        <div className="sharing__user-name">
           Dalek
         </div>
-        {undefined}
+        <div className="sharing__user-displayname">
+          exterminate!
+        </div>
       </div>
     )];
-    assert.deepEqual(actual, expected);
+    console.log('============ obtained:', JSON.stringify(obtained, null, 2));
+    console.log('\n============ expected:', JSON.stringify(expected, null, 2));
+    assert.deepEqual(obtained, expected);
   });
 
   it('can handle an API call error', () => {
