@@ -28,7 +28,8 @@ YUI.add('sharing', function() {
     propTypes: {
       addNotification: React.PropTypes.func,
       closeHandler: React.PropTypes.func,
-      getModelUserInfo: React.PropTypes.func.isRequired
+      getModelUserInfo: React.PropTypes.func.isRequired,
+      humanizeTimestamp: React.PropTypes.func.isRequired
     },
 
     getInitialState: function() {
@@ -119,30 +120,35 @@ YUI.add('sharing', function() {
         if (user.err) {
           return (
             <div key={user.name} className="sharing__user">
-              <div className="sharing__user-name">
-                {user.displayName}
-              </div>
-              <div className="sharing__user-displayname">
-                {user.err}
+              <div className="sharing__user-details">
+                <div className="sharing__user-name">
+                  {user.displayName}
+                </div>
+                <div className="sharing__user-display-name">
+                  {user.err}
+                </div>
               </div>
             </div>
           );
         }
         let lastConnection = 'never connected';
         if (user.lastConnection) {
-          const utcDate = user.lastConnection.toUTCString().split(',')[1];
-          lastConnection = `last connection: ${utcDate}`;
+          const humanTime = this.props.humanizeTimestamp(
+            user.lastConnection);
+          lastConnection = `last connection: ${humanTime}`;
         }
         return (
           <div key={user.name} className="sharing__user">
-            <div className="sharing__user-name">
-              {user.displayName}
-            </div>
-            <div className="sharing__user-displayname">
-              {user.domain} user
-            </div>
-            <div className="sharing__user-displayname">
-              {lastConnection}
+            <div className="sharing__user-details">
+              <div className="sharing__user-name">
+                {user.displayName}
+              </div>
+              <div className="sharing__user-display-name">
+                {user.domain} user
+              </div>
+              <div className="sharing__user-last-connection">
+                {lastConnection}
+              </div>
             </div>
             <div className="sharing__user-access">
               {user.access}
@@ -156,14 +162,17 @@ YUI.add('sharing', function() {
       const buttons = [{
         title: 'Done',
         action: this.props.closeHandler,
-        type: 'positive'
+        type: 'neutral'
       }];
       return (
         <juju.components.Popup
           className="sharing__popup"
-          title="Share"
+          title="Shared with"
           buttons={buttons}>
-          <h5 className="sharing__users-header">Users with access</h5>
+          <div className="sharing__users-header">
+              <div className="sharing__users-header-user">User</div>
+              <div className="sharing__users-header-access">Access</div>
+          </div>
           <div className="sharing__users">
             {this._generateUsersWithAccess()}
           </div>

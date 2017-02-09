@@ -1421,7 +1421,8 @@ YUI.add('juju-view-utils', function(Y) {
         <window.juju.components.Sharing
           addNotification={addNotification}
           getModelUserInfo={getModelUserInfo}
-          closeHandler={utils.sharingVisibility.bind(utils, false)} />,
+          closeHandler={utils.sharingVisibility.bind(utils, false)}
+          humanizeTimestamp={views.humanizeTimestamp} />,
       sharing);
     } else {
       ReactDOM.unmountComponentAtNode(sharing);

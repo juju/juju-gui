@@ -24,6 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('Sharing', () => {
+  const humanizeTimestamp = sinon.stub().returns('9 minutes ago');
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -36,19 +37,23 @@ describe('Sharing', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Sharing
         closeHandler={closeHandler}
-        getModelUserInfo={getModelUserInfo} />, true);
+        getModelUserInfo={getModelUserInfo}
+        humanizeTimestamp={humanizeTimestamp} />, true);
     const output = renderer.getRenderOutput();
     const expectedButtons = [{
       title: 'Done',
       action: closeHandler,
-      type: 'positive'
+      type: 'neutral'
     }];
     const expected = (
       <juju.components.Popup
         className="sharing__popup"
-        title="Share"
+        title="Shared with"
         buttons={expectedButtons}>
-        <h5 className="sharing__users-header">Users with access</h5>
+        <div className="sharing__users-header">
+            <div className="sharing__users-header-user">User</div>
+            <div className="sharing__users-header-access">Access</div>
+        </div>
         <div className="sharing__users">
           {undefined}
         </div>
@@ -80,10 +85,7 @@ describe('Sharing', () => {
         name: 'drwho@external',
         displayName: 'drwho',
         domain: 'Ubuntu SSO',
-        lastConnection: {
-          toUTCString: sinon.stub().withArgs().returns(
-            'Thu, 09 Feb 2017 09:51:18 GMT')
-        },
+        lastConnection: '9 minutes ago',
         access: 'admin'
       }, {
         name: 'rose',
@@ -99,23 +101,27 @@ describe('Sharing', () => {
         err: 'exterminate!'
       }
     ]);
+
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Sharing
-        getModelUserInfo={getModelUserInfo} />, true);
+        getModelUserInfo={getModelUserInfo}
+        humanizeTimestamp={humanizeTimestamp} />, true);
     const output = renderer.getRenderOutput();
     // Get all the children except the header, which is the first item in the
     // array.
     const obtained = output.props.children[1].props.children;
     const expected = [(
       <div key="drwho@external" className="sharing__user">
-        <div className="sharing__user-name">
-          drwho
-        </div>
-        <div className="sharing__user-displayname">
-          {'Ubuntu SSO'} user
-        </div>
-        <div className="sharing__user-displayname">
-          last connection:  09 Feb 2017 09:51:18 GMT
+        <div className="sharing__user-details">
+          <div className="sharing__user-name">
+            drwho
+          </div>
+          <div className="sharing__user-display-name">
+            {'Ubuntu SSO'} user
+          </div>
+          <div className="sharing__user-last-connection">
+            last connection: 9 minutes ago
+          </div>
         </div>
         <div className="sharing__user-access">
           admin
@@ -123,14 +129,16 @@ describe('Sharing', () => {
       </div>
     ), (
       <div key="rose" className="sharing__user">
-        <div className="sharing__user-name">
-          Rose
-        </div>
-        <div className="sharing__user-displayname">
-          {'local'} user
-        </div>
-        <div className="sharing__user-displayname">
-          never connected
+        <div className="sharing__user-details">
+          <div className="sharing__user-name">
+            Rose
+          </div>
+          <div className="sharing__user-display-name">
+            {'local'} user
+          </div>
+          <div className="sharing__user-last-connection">
+            never connected
+          </div>
         </div>
         <div className="sharing__user-access">
           write
@@ -138,14 +146,17 @@ describe('Sharing', () => {
       </div>
     ), (
       <div key="dalek" className="sharing__user">
-        <div className="sharing__user-name">
-          Dalek
-        </div>
-        <div className="sharing__user-displayname">
-          exterminate!
+        <div className="sharing__user-details">
+          <div className="sharing__user-name">
+            Dalek
+          </div>
+          <div className="sharing__user-display-name">
+            exterminate!
+          </div>
         </div>
       </div>
     )];
+
     assert.deepEqual(obtained, expected);
   });
 

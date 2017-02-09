@@ -5,36 +5,65 @@
       margin: 0 -20px 10px -20px;
       padding: 0 20px 20px;
     }
+
+    .button-row--count-1 {
+      width: 100%;
+      box-sizing: content-box;
+    }
   }
 
   &__users-header {
     border-bottom: 1px solid #ccc;
-    margin: 0 -20px 10px -20px;
     padding: 0 20px 10px 20px;
+    margin: 0 -20px;
+    height: 29px;
+
+    &-user {
+      width: 270px;
+      float: left;
+    }
+    &-access {
+      width: 50px;
+      float: left;
+    }
   }
 
   &__users {
     max-height: 300px;
     overflow-y: scroll;
+    margin: 0 -20px;
+    clear: both;
   }
 
   &__user {
-    margin-bottom: 10px;
     position: relative;
+    padding: 10px 20px;
+    float: left;
+    width: 100%;
+
+    &-details {
+      float: left;
+      width: 270px;
+    }
 
     &-name {
       margin-bottom: 3px;
     }
 
-    &-displayname {
+    &-display-name {
+      font-size: 14px;
+      color: #999;
+    }
+
+    &-last-connection {
       font-size: 14px;
       color: #999;
     }
 
     &-access {
-      @extend .vertical-center;
-      position: absolute;
-      right: 1px;  // Provide room for scrollbars on longer lists.
+      float: left;
+      width: 50px;
+      line-height: 53px;
     }
 
     &:last-child {
