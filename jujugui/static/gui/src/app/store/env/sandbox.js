@@ -337,7 +337,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle ModelInfo messages.
+    Handle Client.ModelInfo messages.
 
     @method handleClientModelInfo
     @param {Object} data The contents of the API arguments.
@@ -362,7 +362,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle ModelInfo messages.
+    Handle ModelManager.ModelInfo messages.
 
     @method handleModelManagerModelInfo
     @param {Object} data The contents of the API arguments.
@@ -383,6 +383,36 @@ YUI.add('juju-env-sandbox', function(Y) {
               'controller-uuid': 'controlleruuid1',
               life: 'alive',
               'owner-tag': 'user-admin@local'
+            }
+          }]
+        }
+      });
+    },
+
+    /**
+    Handle Client.ModelUserInfo messages.
+
+    @method handleClientModelUserInfo
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientModelUserInfo: function(data, client, state) {
+      client.receive({
+        'request-id': data['request-id'],
+        response: {
+          results: [{
+            result: {
+              user: 'admin@sandbox',
+              'last-connection': new Date().toString(),
+              access: 'admin'
+            }
+          }, {
+            result: {
+              user: 'dalek@skaro',
+              'last-connection': '',
+              access: 'read'
             }
           }]
         }
