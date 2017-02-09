@@ -938,6 +938,62 @@ describe('DeploymentFlow', function() {
     assert.deepEqual(agreements, expected);
   });
 
+  it('can disable the agreements section', function() {
+    charmsGetById = sinon.stub().returns({
+      get: sinon.stub().returns(['django-terms'])
+    });
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentFlow
+        acl={acl}
+        addAgreement={sinon.stub()}
+        addNotification={sinon.stub()}
+        applications={applications}
+        changes={{}}
+        changesFilterByParent={sinon.stub()}
+        changeState={sinon.stub()}
+        charmsGetById={charmsGetById}
+        deploy={sinon.stub()}
+        environment={{}}
+        generateAllChangeDescriptions={sinon.stub()}
+        generateCloudCredentialName={sinon.stub()}
+        getAgreements={getAgreements}
+        getAuth={sinon.stub()}
+        getCloudCredentialNames={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
+        getCloudProviderDetails={sinon.stub()}
+        getUserName={sinon.stub()}
+        groupedChanges={groupedChanges}
+        listBudgets={sinon.stub()}
+        listClouds={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        loginToController={sinon.stub()}
+        modelName="Pavlova"
+        servicesGetById={sinon.stub()}
+        showTerms={showTerms}
+        updateCloudCredential={sinon.stub()}
+        withPlans={true}>
+        <span>content</span>
+      </juju.components.DeploymentFlow>, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const agreements = output.props.children[9].props.children
+      .props.children[0];
+    const expected = (
+      <div className={'deployment-flow__deploy-option ' +
+        'deployment-flow__deploy-option--disabled'}>
+        <input className="deployment-flow__deploy-checkbox"
+          onChange={instance._handleTermsAgreement}
+          disabled={true}
+          id="terms"
+          type="checkbox" />
+        <label className="deployment-flow__deploy-label"
+          htmlFor="terms">
+          I agree to all terms.
+        </label>
+      </div>);
+    assert.deepEqual(agreements, expected);
+  });
+
   // Click log in and pass the given error string to the login callback used by
   // the component. Return the component instance.
   const login = function(err) {

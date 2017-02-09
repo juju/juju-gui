@@ -181,7 +181,7 @@ YUI.add('deployment-flow', function() {
         case 'agreements':
           const newTerms = this.state.newTerms;
           completed = false;
-          disabled = false;
+          disabled = !hasCloud || !hasCredential;
           visible = newTerms && newTerms.length > 0;
           break;
       }
@@ -800,9 +800,14 @@ YUI.add('deployment-flow', function() {
       if (!status.visible) {
         return;
       }
-      const disabled = this.props.acl.isReadOnly();
+      const disabled = this.props.acl.isReadOnly() || status.disabled;
+      const classes = classNames(
+        'deployment-flow__deploy-option',
+        {
+          'deployment-flow__deploy-option--disabled' : status.disabled
+        });
       return (
-        <div className="deployment-flow__deploy-option">
+        <div className={classes}>
           <input className="deployment-flow__deploy-checkbox"
             onChange={this._handleTermsAgreement}
             disabled={disabled}
