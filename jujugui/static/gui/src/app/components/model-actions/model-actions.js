@@ -29,8 +29,9 @@ YUI.add('model-actions', function() {
       hasEntities: React.PropTypes.bool.isRequired,
       hideDragOverNotification: React.PropTypes.func.isRequired,
       importBundleFile: React.PropTypes.func.isRequired,
+      modelConnected: React.PropTypes.func.isRequired,
       renderDragOverNotification: React.PropTypes.func.isRequired,
-      sharingVisibility: React.PropTypes.func
+      sharingVisibility: React.PropTypes.func.isRequired
     },
 
     getDefaultProps: function() {
@@ -94,23 +95,25 @@ YUI.add('model-actions', function() {
     },
 
     render: function() {
-      var isReadOnly = this.props.acl.isReadOnly();
-      const shareFlag = window.juju_config && window.juju_config.shareFlag;
-      const shareIcon = shareFlag ? (
-        <span className="model-actions__share model-actions__button"
-          onClick={this.props.sharingVisibility}
-          role="button"
-          tabIndex="0">
-          <juju.components.SvgIcon name="share_16"
-            className="model-actions__icon"
-            size="16" />
-          <span className="tooltip__tooltip--below">
-            <span className="tooltip__inner tooltip__inner--up">
-              Share
+      let shareAction;
+      if (this.props.modelConnected()) {
+        shareAction = (
+          <span className="model-actions__share model-actions__button"
+            onClick={this.props.sharingVisibility}
+            role="button"
+            tabIndex="0">
+            <juju.components.SvgIcon name="share_16"
+              className="model-actions__icon"
+              size="16" />
+            <span className="tooltip__tooltip--below">
+              <span className="tooltip__inner tooltip__inner--up">
+                Share
+              </span>
             </span>
           </span>
-        </span>
-      ) : undefined;
+        );
+      }
+      var isReadOnly = this.props.acl.isReadOnly();
       return (
         <div className={this._generateClasses()}>
           <div className="model-actions__buttons">
@@ -140,7 +143,7 @@ YUI.add('model-actions', function() {
                 </span>
               </span>
             </span>
-            {shareIcon}
+            {shareAction}
           </div>
           <input className="model-actions__file"
             type="file"

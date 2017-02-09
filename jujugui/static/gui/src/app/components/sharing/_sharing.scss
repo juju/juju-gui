@@ -13,13 +13,17 @@
     padding: 0 20px 10px 20px;
   }
 
+  &__users {
+    max-height: 300px;
+    overflow-y: scroll;
+  }
+
   &__user {
     margin-bottom: 10px;
     position: relative;
 
     &-name {
       margin-bottom: 3px;
-      text-transform: capitalize;
     }
 
     &-displayname {
@@ -30,8 +34,7 @@
     &-access {
       @extend .vertical-center;
       position: absolute;
-      right: 0;
-      text-transform: capitalize;
+      right: 1px;  // Provide room for scrollbars on longer lists.
     }
 
     &:last-child {
@@ -39,4 +42,7 @@
     }
   }
 
+  &__loading {
+    text-align: center;
+  }
 }

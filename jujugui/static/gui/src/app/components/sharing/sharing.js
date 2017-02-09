@@ -26,6 +26,7 @@ YUI.add('sharing', function() {
   */
   juju.components.Sharing = React.createClass({
     propTypes: {
+      addNotification: React.PropTypes.func,
       closeHandler: React.PropTypes.func,
       getModelUserInfo: React.PropTypes.func.isRequired
     },
@@ -36,6 +37,17 @@ YUI.add('sharing', function() {
       return {
         loadingUsers: false,
         usersWithAccess: []
+      };
+    },
+
+    getDefaultProps: function() {
+      return {
+        closeHandler: () => {
+          console.log('No closeHandler specified.');
+        },
+        addNotification: () => {
+          console.log('No addNotification specified.');
+        }
       };
     },
 
@@ -71,14 +83,17 @@ YUI.add('sharing', function() {
     _getModelUserInfoCallback: function(error, data) {
       this.setState({loadingUsers: false}, () => {
         if (error) {
-          // TODO kadams54: figure out a better way to handle this.
-          // TODO kadams54: test the error scenario
-          console.error('cannot fetch model user info', error);
+          // Display the error message.
+          this.props.addNotification({
+            title: 'Unable to load users.',
+            message: 'Unable to load user information for this model: ' + error,
+            level: 'error'
+          });
+          // Go ahead and close the popup.
+          this.props.closeHandler();
           return;
         }
-        // TODO kadams54: transform into the expected user objects.
-        const usersWithAccess = data;
-        this.setState({usersWithAccess: usersWithAccess});
+        this.setState({usersWithAccess: data});
       });
     },
 
@@ -89,26 +104,49 @@ YUI.add('sharing', function() {
       @returns {Array} An array of markup objects for each user.
     */
     _generateUsersWithAccess: function() {
-      // TODO kadams54: display a spinner instead when loading data.
+      if (this.state.loadingUsers) {
+        return (
+          <div className="sharing__loading">
+            <juju.components.Spinner />
+          </div>
+        );
+      }
       const users = this.state.usersWithAccess;
       if (!users.length) {
         return;
       }
       return users.map((user) => {
-        const accessMarkup = user.access == 'admin' ? (
-          <div className="sharing__user-access">
-            {user.access}
-          </div>
-        ) : undefined;
+        if (user.err) {
+          return (
+            <div key={user.name} className="sharing__user">
+              <div className="sharing__user-name">
+                {user.displayName}
+              </div>
+              <div className="sharing__user-displayname">
+                {user.err}
+              </div>
+            </div>
+          );
+        }
+        let lastConnection = 'never connected';
+        if (user.lastConnection) {
+          const utcDate = user.lastConnection.toUTCString().split(',')[1];
+          lastConnection = `last connection: ${utcDate}`;
+        }
         return (
           <div key={user.name} className="sharing__user">
             <div className="sharing__user-name">
-              {user.name}
-            </div>
-            <div className="sharing__user-displayname">
               {user.displayName}
             </div>
-            {accessMarkup}
+            <div className="sharing__user-displayname">
+              {user.domain} user
+            </div>
+            <div className="sharing__user-displayname">
+              {lastConnection}
+            </div>
+            <div className="sharing__user-access">
+              {user.access}
+            </div>
           </div>
         );
       });
@@ -125,8 +163,8 @@ YUI.add('sharing', function() {
           className="sharing__popup"
           title="Share"
           buttons={buttons}>
+          <h5 className="sharing__users-header">Users with access</h5>
           <div className="sharing__users">
-            <h5 className="sharing__users-header">Users with access</h5>
             {this._generateUsersWithAccess()}
           </div>
         </juju.components.Popup>
@@ -137,6 +175,7 @@ YUI.add('sharing', function() {
 
 }, '0.1.0', {
   requires: [
+    'loading-spinner',
     'popup'
   ]
 });

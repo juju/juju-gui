@@ -3631,6 +3631,93 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    describe('modelUserInfo', function() {
+      it('retrieves model user info', done => {
+        // Perform the request.
+        env.modelUserInfo((err, users) => {
+          assert.strictEqual(err, null);
+          assert.strictEqual(users.length, 2);
+          assert.deepEqual(users[0], {
+            name: 'dalek',
+            displayName: 'Dalek',
+            domain: 'local',
+            lastConnection: new Date('2000-01-01T00:00:00Z'),
+            access: 'admin',
+            err: undefined
+          });
+          assert.deepEqual(users[1], {
+            name: 'rose@external',
+            displayName: 'rose',
+            domain: 'Ubuntu SSO',
+            lastConnection: null,
+            access: 'write',
+            err: undefined
+          });
+          assert.equal(conn.messages.length, 1);
+          assert.deepEqual(conn.last_message(), {
+            type: 'Client',
+            version: 1,
+            request: 'ModelUserInfo',
+            params: {},
+            'request-id': 1
+          });
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {
+            results: [{
+              result: {
+                user: 'dalek',
+                'display-name': 'Dalek',
+                'last-connection': '2000-01-01T00:00:00Z',
+                access: 'admin',
+                err: null
+              }
+            }, {
+              result: {
+                user: 'rose@external',
+                'display-name': '',
+                'last-connection': '',
+                access: 'write',
+                err: null
+              }
+            }]
+          }
+        });
+      });
+
+      it('handles request failures while fetching model user info', done => {
+        // Perform the request.
+        env.modelUserInfo((err, users) => {
+          assert.strictEqual(err, 'bad wolf');
+          assert.deepEqual(users, []);
+          done();
+        });
+        // Mimic response.
+        conn.msg({'request-id': 1, error: 'bad wolf'});
+      });
+
+      it('handles API failures while retrieving model user info', done => {
+        // Perform the request.
+        env.modelUserInfo((err, users) => {
+          assert.strictEqual(err, null);
+          assert.strictEqual(users.length, 1);
+          assert.strictEqual(users[0].err, 'bad wolf');
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {
+            results: [{
+              error: {message: 'bad wolf'}
+            }]
+          }
+        });
+      });
+    });
   });
 
 })();
