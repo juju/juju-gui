@@ -290,10 +290,10 @@ describe('ModelActions', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('disables everything when not connected', function() {
+  it('disables sharing when not connected', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.ModelActions
-        acl={sinon.stub()}
+        acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={{one: 1, two: 2}}
         exportEnvironmentFile={sinon.stub()}
@@ -304,7 +304,45 @@ describe('ModelActions', function() {
         renderDragOverNotification={sinon.stub()}
         sharingVisibility={sinon.stub()}
       />, true);
-    assert.deepEqual(renderer.getRenderOutput(), null);
+    const instance = renderer.getMountedInstance();
+    const expected = (
+      <div className="model-actions">
+        <div className="model-actions__buttons">
+          <span className="model-actions__export model-actions__button"
+            onClick={instance._handleExport}
+            role="button"
+            tabIndex="0">
+            <juju.components.SvgIcon name="export_16"
+              className="model-actions__icon"
+              size="16" />
+            <span className="tooltip__tooltip--below">
+              <span className="tooltip__inner tooltip__inner--up">
+                Export
+              </span>
+            </span>
+          </span>
+          <span className="model-actions__import model-actions__button"
+            onClick={instance._handleImportClick}
+            role="button"
+            tabIndex="0">
+            <juju.components.SvgIcon name="import_16"
+              className="model-actions__icon"
+              size="16" />
+            <span className="tooltip__tooltip--below">
+              <span className="tooltip__inner tooltip__inner--up">
+                Import
+              </span>
+            </span>
+          </span>
+          {undefined}
+        </div>
+        <input className="model-actions__file"
+          type="file"
+          onChange={instance._handleImportFile}
+          accept=".zip,.yaml,.yml"
+          ref="file-input" />
+      </div>);
+    assert.deepEqual(renderer.getRenderOutput(), expected);
   });
 
   it('can trigger the sharing UI', function() {

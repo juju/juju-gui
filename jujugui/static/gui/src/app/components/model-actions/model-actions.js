@@ -95,8 +95,23 @@ YUI.add('model-actions', function() {
     },
 
     render: function() {
-      if (!this.props.modelConnected()) {
-        return null;
+      let shareAction;
+      if (this.props.modelConnected()) {
+        shareAction = (
+          <span className="model-actions__share model-actions__button"
+            onClick={this.props.sharingVisibility}
+            role="button"
+            tabIndex="0">
+            <juju.components.SvgIcon name="share_16"
+              className="model-actions__icon"
+              size="16" />
+            <span className="tooltip__tooltip--below">
+              <span className="tooltip__inner tooltip__inner--up">
+                Share
+              </span>
+            </span>
+          </span>
+        );
       }
       var isReadOnly = this.props.acl.isReadOnly();
       return (
@@ -128,19 +143,7 @@ YUI.add('model-actions', function() {
                 </span>
               </span>
             </span>
-            <span className="model-actions__share model-actions__button"
-              onClick={this.props.sharingVisibility}
-              role="button"
-              tabIndex="0">
-              <juju.components.SvgIcon name="share_16"
-                className="model-actions__icon"
-                size="16" />
-              <span className="tooltip__tooltip--below">
-                <span className="tooltip__inner tooltip__inner--up">
-                  Share
-                </span>
-              </span>
-            </span>
+            {shareAction}
           </div>
           <input className="model-actions__file"
             type="file"
