@@ -1368,6 +1368,10 @@ YUI.add('juju-gui', function(Y) {
       const env = this.env;
       const db = this.db;
       const utils = views.utils;
+      const modelUserInfo = env.modelUserInfo.bind(env);
+      const addNotification = db.notifications.add.bind(db.notifications);
+      const sharingVisibility = utils.sharingVisibility.bind(utils, true,
+        modelUserInfo, addNotification);
       ReactDOM.render(
         <window.juju.components.ModelActions
           acl={this.acl}
@@ -1383,7 +1387,7 @@ YUI.add('juju-gui', function(Y) {
             this.bundleImporter)}
           renderDragOverNotification={
             this._renderDragOverNotification.bind(this)}
-          sharingVisibility={utils.sharingVisibility.bind(utils, true)}/>,
+          sharingVisibility={sharingVisibility}/>,
         document.getElementById('model-actions-container'));
     },
 

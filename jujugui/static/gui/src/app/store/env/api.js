@@ -2861,6 +2861,59 @@ YUI.add('juju-env-api', function(Y) {
         request: 'ApplicationOffers',
         params: {applicationurls: [url]}
       }, handleGetOffer);
+    },
+
+    /**
+      Lists users who have access to a Juju model by performing a
+      Client.ModelUserInfo Juju API request.
+
+      @method modelUserInfo
+      @param {Function} callback A callable that must be called once the
+        operation is performed. In case of errors, it will receive an error
+        containing a string describing the problem and an empty list of users.
+        Otherwise, if everything went well, it will receive null as first
+        argument and a list of user objects, each one with the following
+        fields:
+        - name: the username;
+        - displayName: the user's full name;
+        - lastConnection: the last time the user connected to the model;
+        - access: the type of access the user has;
+        - err: a message describing a specific user error, or undefined.
+      @return {undefined} Sends a message to the server only.
+    */
+    modelUserInfo: function(callback) {
+      // Decorate the user supplied callback.
+      const handler = data => {
+        if (!callback) {
+          console.log('data returned by model user info API call:', data);
+          return;
+        }
+        if (data.error) {
+          callback(data.error, []);
+          return;
+        }
+
+        const results = data.response.results;
+        const users = results.map((result, index) => {
+          const err = result.error && result.error.message;
+          result = result.result || {};
+          return {
+            name: result.user,
+            displayName: result['display-name'],
+            lastConnection: result['last-connection'],
+            access: result.access,
+            err: err,
+          };
+        });
+        callback(null, users);
+      };
+
+      // Send the API request.
+      this._send_rpc({
+        type: 'Client',
+        request: 'ModelUserInfo',
+        params: {}
+      }, handler);
     }
 
   });
