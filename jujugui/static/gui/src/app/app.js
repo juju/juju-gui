@@ -2424,9 +2424,6 @@ YUI.add('juju-gui', function(Y) {
       if (controllerAPI) {
         closeController = controllerAPI.close.bind(controllerAPI);
       }
-      this.state.changeState({
-        model: null
-      });
       this.env.close(() => {
         closeController(() => {
           if (controllerAPI) {
@@ -2440,6 +2437,12 @@ YUI.add('juju-gui', function(Y) {
           this.env.get('ecs').clear();
           this.db.reset();
           this.db.fire('update');
+          this.state.changeState({
+            model: null,
+            profile: null,
+            root: null,
+            store: null
+          });
           this._renderLogin(null);
         });
       });
