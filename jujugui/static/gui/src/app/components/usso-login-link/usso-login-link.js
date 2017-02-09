@@ -86,7 +86,7 @@ YUI.add('usso-login-link', function() {
           action={this.handleLogin}
           extraClasses="usso-login__action"
           type="positive"
-          title="Sign up or Login" />);
+          title="Sign up/Log in with USSO" />);
     },
 
     render: function() {

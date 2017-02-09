@@ -77,7 +77,7 @@ describe('USSOLoginLink', () => {
           action={component.getMountedInstance().handleLogin}
           extraClasses="usso-login__action"
           type="positive"
-          title="Sign up or Login" />
+          title="Sign up/Log in with USSO" />
         <div className="usso-login__notification">
           {notification}
         </div>
