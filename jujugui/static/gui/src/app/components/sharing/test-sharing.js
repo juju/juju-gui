@@ -146,8 +146,6 @@ describe('Sharing', () => {
         </div>
       </div>
     )];
-    console.log('============ obtained:', JSON.stringify(obtained, null, 2));
-    console.log('\n============ expected:', JSON.stringify(expected, null, 2));
     assert.deepEqual(obtained, expected);
   });
 
