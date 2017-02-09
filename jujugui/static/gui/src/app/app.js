@@ -2954,7 +2954,7 @@ YUI.add('juju-gui', function(Y) {
           // If the profile is visible then we want to rerender it with the
           // updated username.
           if (rerenderProfile) {
-            this._renderUserProfile();
+            this._renderUserProfile(this.state.current, ()=>{});
           }
         }
         if (rerenderBreadcrumb) {
