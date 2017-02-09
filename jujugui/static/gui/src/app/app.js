@@ -800,7 +800,7 @@ YUI.add('juju-gui', function(Y) {
           // or there is no root defined and no store defined then we want to
           // render the users profile.
           if (!current.store &&
-              (isLogin ||!current.root) &&
+              (isLogin || !current.root) &&
               this.get('gisf')) {
             newState.profile = this._getAuth().rootUserName;
           }
