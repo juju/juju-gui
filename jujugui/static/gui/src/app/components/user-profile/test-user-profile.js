@@ -112,17 +112,7 @@ describe('UserProfile', () => {
         getDiagramURL={getDiagramURL}
         type='charm'
         user={user}
-        users={users} />,
-      <juju.components.UserProfileAgreementList
-        ref="agreementList"
-        key="agreementList"
-        getAgreements={getAgreements}
-        user={user} />,
-      <juju.components.UserProfileBudgetList
-        ref="budgetList"
-        key="budgetList"
-        listBudgets={listBudgets}
-        user={user} />
+        users={users} />
     ];
     const expected = (
       <div className="inner-wrapper">

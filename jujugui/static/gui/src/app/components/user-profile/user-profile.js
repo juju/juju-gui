@@ -113,17 +113,7 @@ YUI.add('user-profile', function() {
           getDiagramURL={props.getDiagramURL}
           type='charm'
           user={props.user}
-          users={props.users} />,
-        <juju.components.UserProfileAgreementList
-          key='agreementList'
-          ref='agreementList'
-          getAgreements={props.getAgreements}
-          user={props.user} />,
-        <juju.components.UserProfileBudgetList
-          key='budgetList'
-          ref='budgetList'
-          listBudgets={props.listBudgets}
-          user={props.user} />
+          users={props.users} />
       ];
       // The original list of sections to render, regardless of what other
       // decisions are made.
