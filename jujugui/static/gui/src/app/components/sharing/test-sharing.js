@@ -120,7 +120,7 @@ describe('Sharing', () => {
             {'Ubuntu SSO'} user
           </div>
           <div className="sharing__user-last-connection">
-            last connection:  9 minutes ago
+            last connection: 9 minutes ago
           </div>
         </div>
         <div className="sharing__user-access">
@@ -139,9 +139,9 @@ describe('Sharing', () => {
           <div className="sharing__user-last-connection">
             never connected
           </div>
-          <div className="sharing__user-access">
-            write
-          </div>
+        </div>
+        <div className="sharing__user-access">
+          write
         </div>
       </div>
     ), (
@@ -150,12 +150,13 @@ describe('Sharing', () => {
           <div className="sharing__user-name">
             Dalek
           </div>
-          <div className="sharing__user-last-connection">
+          <div className="sharing__user-display-name">
             exterminate!
           </div>
         </div>
       </div>
     )];
+
     assert.deepEqual(obtained, expected);
   });
 

@@ -120,11 +120,13 @@ YUI.add('sharing', function() {
         if (user.err) {
           return (
             <div key={user.name} className="sharing__user">
-              <div className="sharing__user-name">
-                {user.displayName}
-              </div>
-              <div className="sharing__user-displayname">
-                {user.err}
+              <div className="sharing__user-details">
+                <div className="sharing__user-name">
+                  {user.displayName}
+                </div>
+                <div className="sharing__user-display-name">
+                  {user.err}
+                </div>
               </div>
             </div>
           );
