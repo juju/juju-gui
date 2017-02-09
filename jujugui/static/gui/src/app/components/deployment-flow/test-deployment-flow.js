@@ -69,6 +69,8 @@ describe('DeploymentFlow', function() {
     const generateCloudCredentialName = sinon.stub();
     const getUserName = sinon.stub().returns('dalek');
     const loginToController = sinon.stub();
+    const sendPost = sinon.stub();
+    const getDischargeToken = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentFlow
         acl={acl}
@@ -85,7 +87,9 @@ describe('DeploymentFlow', function() {
         getCloudCredentialNames={getCloudCredentialNames}
         getCloudCredentials={getCloudCredentials}
         getCloudProviderDetails={getCloudProviderDetails}
+        getDischargeToken={getDischargeToken}
         getUserName={getUserName}
+        gisf={false}
         groupedChanges={groupedChanges}
         listBudgets={listBudgets}
         listClouds={listClouds}
@@ -93,6 +97,7 @@ describe('DeploymentFlow', function() {
         loginToController={loginToController}
         modelCommitted={false}
         modelName="Pavlova"
+        sendPost={sendPost}
         servicesGetById={servicesGetById}
         showTerms={showTerms}
         updateCloudCredential={updateCloudCredential}
@@ -139,6 +144,9 @@ describe('DeploymentFlow', function() {
                 output.props.children[1]
                       .props.children.props.children.props.callback}
               displayType={'button'}
+              gisf={false}
+              sendPost={sendPost}
+              getDischargeToken={getDischargeToken}
               loginToController={loginToController} />
           </div>
         </juju.components.DeploymentSection>
