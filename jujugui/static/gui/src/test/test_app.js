@@ -1130,7 +1130,10 @@ describe('App', function() {
           assert.strictEqual(app._renderLogin.calledOnce, true, 'login');
           assert.equal(app.state.changeState.callCount, 1);
           assert.deepEqual(app.state.changeState.args[0], [{
-            model: null
+            model: null,
+            profile: null,
+            root: null,
+            store: null
           }]);
           done();
         });
@@ -1178,7 +1181,10 @@ describe('App', function() {
           assert.strictEqual(app._renderLogin.calledOnce, true, 'login');
           assert.equal(app.state.changeState.callCount, 1);
           assert.deepEqual(app.state.changeState.args[0], [{
-            model: null
+            model: null,
+            profile: null,
+            root: null,
+            store: null
           }]);
           done();
         });
