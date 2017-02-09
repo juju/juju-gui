@@ -18,12 +18,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
+let juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('Sharing', () => {
+  const humanizeTimestamp = sinon.stub().returns('9 minutes ago');
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -36,7 +37,8 @@ describe('Sharing', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Sharing
         closeHandler={closeHandler}
-        getModelUserInfo={getModelUserInfo} />, true);
+        getModelUserInfo={getModelUserInfo}
+        humanizeTimestamp={humanizeTimestamp} />, true);
     const output = renderer.getRenderOutput();
     const expectedButtons = [{
       title: 'Done',
@@ -102,7 +104,8 @@ describe('Sharing', () => {
 
     const renderer = jsTestUtils.shallowRender(
       <juju.components.Sharing
-        getModelUserInfo={getModelUserInfo} />, true);
+        getModelUserInfo={getModelUserInfo}
+        humanizeTimestamp={humanizeTimestamp} />, true);
     const output = renderer.getRenderOutput();
     // Get all the children except the header, which is the first item in the
     // array.

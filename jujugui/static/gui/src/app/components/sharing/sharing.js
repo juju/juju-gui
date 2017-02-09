@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('sharing', function(Y) {
+YUI.add('sharing', function() {
 
   /**
     Modal component for viewing which users have access to the model, as well
@@ -28,7 +28,8 @@ YUI.add('sharing', function(Y) {
     propTypes: {
       addNotification: React.PropTypes.func,
       closeHandler: React.PropTypes.func,
-      getModelUserInfo: React.PropTypes.func.isRequired
+      getModelUserInfo: React.PropTypes.func.isRequired,
+      humanizeTimestamp: React.PropTypes.func.isRequired
     },
 
     getInitialState: function() {
@@ -130,7 +131,7 @@ YUI.add('sharing', function(Y) {
         }
         let lastConnection = 'never connected';
         if (user.lastConnection) {
-          const humanTime = Y.juju.views.humanizeTimestamp(
+          const humanTime = this.props.humanizeTimestamp(
             user.lastConnection);
           lastConnection = `last connection: ${humanTime}`;
         }
@@ -182,7 +183,6 @@ YUI.add('sharing', function(Y) {
 }, '0.1.0', {
   requires: [
     'loading-spinner',
-    'popup',
-    'juju-view-utils'
+    'popup'
   ]
 });
