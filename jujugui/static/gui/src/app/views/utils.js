@@ -926,11 +926,13 @@ YUI.add('juju-view-utils', function(Y) {
         units = [],
         displayName, ghostUnit, unitId, unitIdCount;
     // u will be a unit OR the previous unit index value.
-    var parseId = u => parseInt((u.id && u.id.split('/')[1]) || u, 10);
-    var serviceUnits = service.get('units').toArray();
-    var highestIndex =
-      serviceUnits.reduce(
+    const parseId = u => parseInt((u.id && u.id.split('/')[1]) || u, 10);
+    const serviceUnits = service.get('units').toArray();
+    let highestIndex = -1;
+    if (serviceUnits.length) {
+      highestIndex = serviceUnits.reduce(
         (prev, curr) => Math.max(parseId(prev), parseId(curr)), 0);
+    }
     // Service names have a $ in them when they are uncommitted. Uncomitted
     // service's display names are also wrapped in parens to display on the
     // canvas.
@@ -940,8 +942,9 @@ YUI.add('juju-view-utils', function(Y) {
     } else {
       displayName = serviceName;
     }
-    for (var i = 1; i <= unitCount; i += 1) {
-      unitIdCount = serviceUnits.length === 0 ? highestIndex : highestIndex + i;
+
+    for (let i = 1; i <= unitCount; i += 1) {
+      unitIdCount = highestIndex + i;
       unitId = serviceName + '/' + unitIdCount;
       ghostUnit = db.addUnits({
         id: unitId,
