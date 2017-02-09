@@ -479,6 +479,18 @@ describe('State', () => {
       assert.deepEqual(st, {special: {deployTarget: 'cs:ghost-4'}});
       assert.strictEqual(pushStub.callCount, 1);
     });
+
+    it('does not pushState if allowStateModifications is false', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList: ['precise', 'trusty', 'xenial']
+      });
+      const pushStub = sinon.stub(state, '_pushState');
+      const st = state._parseSpecial({
+        'deploy-target': 'cs:ghost-4'}, {}, false);
+      assert.deepEqual(st, {special: {deployTarget: 'cs:ghost-4'}});
+      assert.strictEqual(pushStub.callCount, 0);
+    });
   });
 
   describe('State._parseRoot()', () => {
@@ -885,6 +897,19 @@ describe('State', () => {
         );
       });
     });
+
+    it('can disable state modifications for parse special', () => {
+      const state = new window.jujugui.State({
+        baseURL: 'http://abc.com:123',
+        seriesList:  ['precise', 'trusty', 'xenial']
+      });
+      state._parseSpecial = sinon.stub().returns({});
+      state.generateState(
+        'http://abc.com:123/new?deploy-target=cs:trusty/kibana-15', false);
+      assert.deepEqual(state._parseSpecial.args[0], [{
+        'deploy-target': 'cs:trusty/kibana-15'
+      }, {}, false]);
+    });
   });
 
   describe('State.register()', () => {
@@ -959,7 +984,7 @@ describe('State', () => {
         state, 'generateState', () => ({ error: null, state: {}}));
       state.dispatch([], true, false, true);
       assert.equal(stub.callCount, 1);
-      assert.deepEqual(stub.args[0], ['/hatch/ghost']);
+      assert.deepEqual(stub.args[0], ['/hatch/ghost', true]);
     });
 
     it('updates the _appStateHistory with the new state', () => {

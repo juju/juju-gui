@@ -243,7 +243,7 @@ const State = class State {
       if (!currentState) {
         console.log('no current state to dispatch, generating state from URL');
       }
-      ({error, state} = this.generateState(this.location.href));
+      ({error, state} = this.generateState(this.location.href, true));
       if (error !== null) {
         error = `unable to generate state: ${error}`;
         return {error, state};
@@ -472,13 +472,17 @@ const State = class State {
   /**
     Splits the URL up and generates a state object.
     @param {String} url - The URL to turn into state.
+    @param {Boolean} allowStateModifications - In certain cases we may only
+      want to generate and return state not actually modify it for dispatching.
+      If this is the case then set this to false so that it doesn't modify
+      the url.
     @return {Object} The generated state object. In the format:
       {
         error: <String>,
         state: <Object
       }
   */
-  generateState(url) {
+  generateState(url, allowStateModifications = true) {
     // If we have a single part and it's an empty string then we are at '/' and
     // there is nothing to parse so we can return early or it's an invalid path.
     const invalidParts =
@@ -490,7 +494,7 @@ const State = class State {
     const splitURL = this._processURL(url);
     let parts = splitURL.parts;
     const query = splitURL.query;
-    state = this._parseSpecial(query, state);
+    state = this._parseSpecial(query, state, allowStateModifications);
     // If we have an invalid parts or invalid query then we can return early.
     if (invalidParts(parts) && !query) {
       return {error, state};
@@ -654,9 +658,11 @@ const State = class State {
     @param {Object} query - The query path split into parts.
     @param {Object} state - The application state object as being parsed
       from the URL.
+    @param {Boolean} allowStateModifications - If we want to allow state to be
+      modified as a side effect of parsing this section.
     @return {Object} The updated state to contain the root value, if any.
   */
-  _parseSpecial(query, state) {
+  _parseSpecial(query, state, allowStateModifications = true) {
     if (query && query['deploy-target']) {
       if (!state.special) {
         state.special = {};
@@ -664,7 +670,9 @@ const State = class State {
       state.special.deployTarget = query['deploy-target'];
       // Push the state so that any special query string is removed now,
       // therefore avoiding multiple dispatches of the same special callback.
-      this._pushState();
+      if (allowStateModifications) {
+        this._pushState();
+      }
     }
     return state;
   }
