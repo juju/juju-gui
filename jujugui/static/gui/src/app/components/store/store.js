@@ -36,8 +36,8 @@ YUI.add('store', function() {
       @return {String} A path to the local asset
     */
     _generateLocalImagePath: function(filename) {
-      var staticURL = this.props.staticURL || '';
-      var basePath = `${staticURL}/static/gui/build/app/assets/images/store/`;
+      const staticURL = this.props.staticURL || '';
+      const basePath = `${staticURL}/static/gui/build/app/assets/images/store/`;
       return basePath + filename;
     },
 
@@ -49,8 +49,8 @@ YUI.add('store', function() {
       @return {String} A URL to the entity icon
     */
     _generateIconPath: function(entityName) {
-      var charmstoreURL = this.props.charmstoreURL;
-      var apiVersion = this.props.apiVersion;
+      const charmstoreURL = this.props.charmstoreURL;
+      const apiVersion = this.props.apiVersion;
       return `${charmstoreURL}${apiVersion}/${entityName}/icon.svg`;
     },
 
@@ -62,8 +62,8 @@ YUI.add('store', function() {
       @return {String} A URL to the bundles diagram
     */
     _generateDiagramPath: function(entityName) {
-      var charmstoreURL = this.props.charmstoreURL;
-      var apiVersion = this.props.apiVersion;
+      const charmstoreURL = this.props.charmstoreURL;
+      const apiVersion = this.props.apiVersion;
       return `${charmstoreURL}${apiVersion}/bundle/${entityName}/diagram.svg`;
     },
 
@@ -451,7 +451,7 @@ YUI.add('store', function() {
                 </li>
                 <li className="three-col last-col featured-entity">
                     <span className="featured-entity__link link"
-                        data-entity="~canonical-bootstack/prometheus"
+                        data-entity="u/canonical-bootstack/prometheus"
                         onClick={this._handleEntityClick}>
                         <div className="one-col no-margin-bottom">
                             <img
@@ -527,7 +527,7 @@ YUI.add('store', function() {
                 </li>
                 <li className="three-col last-col featured-entity">
                     <span className="featured-entity__link link"
-                        data-entity="~ricardokirkner/sentry"
+                        data-entity="u/ricardokirkner/sentry"
                         onClick={this._handleEntityClick}>
                         <div className="one-col no-margin-bottom">
                             <img src={this._generateIconPath(
@@ -729,7 +729,7 @@ YUI.add('store', function() {
                 </li>
                 <li className="three-col featured-entity">
                     <span className="featured-entity__link link"
-                        data-entity="~containers/elk-stack"
+                        data-entity="u/containers/elk-stack"
                         onClick={this._handleEntityClick}>
                         <ul className="featured-entity__image-list one-col">
                             <li className="featured-entity__image-list-item">
