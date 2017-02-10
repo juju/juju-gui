@@ -1,3 +1,26 @@
+- 2.3.0:
+
+    - New, easy to share URL scheme.
+    - New application state system.
+    ->
+      New Sharing interface which shows which users currently have access to
+      the active model.
+    - Model exports now include uncommitted changes.
+    - Deployment Flow now allows you to add custom SSH keys.
+    - Model switcher now shows the model owner's name if not the logged in user.
+    - Alpha support for remote applications.
+    - (Fix) When scaling units, correctly increment the unit id.
+    - (Fix) Inspector configuration input heights are now set properly.
+    - (Fix) Properly handle regions in MAAS.
+    - (Fix) Improved validation on required deployment fields.
+    - (Fix) Invalid required fields will now block deployment.
+    - (Fix) Model name changes are now synced throughout the UI.
+    - (Fix) Hide inactive Deployment Flow components until they are needed.
+    - (Fix) Show file drop message even if there are matching applications.
+    - (Fix) Drag and drop of external charm/bundle files now works in Safari.
+    - (Fix) Fetch bundle details when viewing the GUI anonymously.
+    - (Fix) Azure credentials now use the same fields as Juju.
+
 - 2.2.7:
 
     - (Fix) Correctly clear cookies when visiting from the storefront.
