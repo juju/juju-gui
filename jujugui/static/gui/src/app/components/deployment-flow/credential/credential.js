@@ -144,7 +144,14 @@ YUI.add('deployment-credential', function() {
       @method _toggleAdd
     */
     _toggleAdd: function() {
-      this.setState({showAdd: !this.state.showAdd});
+      const showAdd = !this.state.showAdd;
+      // When displaying the add credentials form we need to clear the
+      // currently selected credential in case someone tries to deploy while
+      // the add credential form is open.
+      if (showAdd) {
+        this.props.setCredential(null);
+      }
+      this.setState({showAdd: showAdd});
     },
 
     /**

@@ -732,6 +732,10 @@ YUI.add('deployment-flow', function() {
       if (!this.state.cloud) {
         return false;
       }
+      // Check that we have credentials selected.
+      if (!this.state.credential) {
+        return false;
+      }
       // Check that the user can deploy and they are not already deploying.
       if (this.props.acl.isReadOnly() || this.state.deploying) {
         return false;

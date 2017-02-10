@@ -1029,7 +1029,8 @@ describe('DeploymentFlow', function() {
       about: 'model committed',
       state: {
         modelName: 'mymodel',
-        cloud: {cloudType: 'aws'}
+        cloud: {cloudType: 'aws'},
+        credential: 'cred'
       },
       modelCommitted: true,
       allowed: true
@@ -1037,14 +1038,16 @@ describe('DeploymentFlow', function() {
       about: 'no ssh on azure',
       state: {
         modelName: 'mymodel',
-        cloud: {cloudType: 'azure'}
+        cloud: {cloudType: 'azure'},
+        credential: 'cred'
       },
       allowed: false
     }, {
       about: 'no ssh on aws',
       state: {
         modelName: 'mymodel',
-        cloud: {cloudType: 'aws'}
+        cloud: {cloudType: 'aws'},
+        credential: 'cred'
       },
       allowed: true
     }, {
@@ -1052,6 +1055,7 @@ describe('DeploymentFlow', function() {
       state: {
         modelName: 'mymodel',
         cloud: {cloudType: 'azure'},
+        credential: 'cred',
         sshKey: 'mykey'
       },
       allowed: true
@@ -1060,6 +1064,7 @@ describe('DeploymentFlow', function() {
       state: {
         modelName: 'mymodel',
         cloud: {cloudType: 'aws'},
+        credential: 'cred',
         sshKey: 'mykey'
       },
       allowed: true
@@ -1068,6 +1073,7 @@ describe('DeploymentFlow', function() {
       state: {
         modelName: 'mymodel',
         cloud: {cloudType: 'aws'},
+        credential: 'cred',
         terms: ['foo'],
         termsAgreed: false
       },
@@ -1077,10 +1083,19 @@ describe('DeploymentFlow', function() {
       state: {
         modelName: 'mymodel',
         cloud: {cloudType: 'aws'},
+        credential: 'cred',
         terms: ['foo'],
         termsAgreed: true
       },
       allowed: true
+    }, {
+      about: 'deploy should be disabled when there no credentials',
+      state: {
+        modelName: 'mymodel',
+        cloud: {cloudType: 'aws'},
+        credential: null
+      },
+      allowed: false
     }];
     tests.forEach(test => {
       const isLegacyJuju = !!test.isLegacyJuju;
