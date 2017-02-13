@@ -479,4 +479,32 @@ describe('DeploymentCredential', function() {
       </div>);
     assert.deepEqual(output, expected);
   });
+
+  it('clears the credential when displaying the form', function() {
+    var updateCloudCredential = sinon.stub();
+    var setCredential = sinon.stub();
+    var setRegion = sinon.stub();
+    var validateForm = sinon.stub();
+    const getCloudProviderDetails = sinon.stub();
+    const generateCloudCredentialName = sinon.stub();
+    var renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredential
+        acl={acl}
+        updateCloudCredential={updateCloudCredential}
+        cloud={cloud}
+        editable={true}
+        generateCloudCredentialName={generateCloudCredentialName}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
+        getCloudCredentialNames={
+          sinon.stub().callsArgWith(1, null, tags)}
+        getCloudProviderDetails={getCloudProviderDetails}
+        setCredential={setCredential}
+        setRegion={setRegion}
+        user={user}
+        validateForm={validateForm} />, true);
+    var instance = renderer.getMountedInstance();
+    instance._handleCredentialChange('add-credential');
+    assert.equal(setCredential.callCount, 2);
+    assert.equal(setCredential.args[1][0], null);
+  });
 });
