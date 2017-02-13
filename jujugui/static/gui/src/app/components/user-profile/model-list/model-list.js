@@ -261,6 +261,8 @@ YUI.add('user-profile-model-list', function() {
       }
       const region = model.region || 'no region';
       let owner = '--';
+      // TODO frankban: it's not clear why we should ever miss an owner.
+      // Anyway, this logic pre-existed my change.
       if (model.owner) {
         owner = model.owner.split('@')[0];
       }
