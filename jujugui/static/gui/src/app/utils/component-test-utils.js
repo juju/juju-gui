@@ -188,6 +188,12 @@ var jsTestUtils = {
         owner: 'test-owner',
         promulgated: true,
         id: 'django-cluster',
+        revision_id: 123,
+        latest_revision: {
+          id: 123,
+          url: 'django-cluster/123',
+          full_id: 'cs:django-cluster-123'
+        },
         type: 'bundle',
         entityType: 'bundle',
         iconPath: 'data:image/gif;base64,',
@@ -223,6 +229,12 @@ var jsTestUtils = {
         owner: 'test-owner',
         promulgated: true,
         id: 'cs:django',
+        revision_id: 123,
+        latest_revision: {
+          id: 123,
+          url: 'django/123',
+          full_id: 'cs:django-123'
+        },
         type: 'charm',
         entityType: 'charm',
         iconPath: 'data:image/gif;base64,',
@@ -318,5 +330,36 @@ var jsTestUtils = {
         }
       }
     };
+  },
+
+  specificDeepEquals: function(output, expected) {
+    if (output && output.props &&
+      output.props.children &&
+      expected && expected.props &&
+      expected.props.children) {
+      if (Array.isArray(output.props.children)) {
+        for(let i = 0, ii = output.props.children.length; i < ii; i += 1) {
+          if (output.props &&
+            output.props.children &&
+            expected.props &&
+            expected.props.children) {
+            this.specificDeepEquals.bind(this,
+              output.props.children[i],
+              expected.props.children[i]);
+          }
+        }
+      } else {
+        // assert.isDefined(expected.props.children);
+        if (output.props &&
+          output.props.children &&
+          expected.props &&
+          expected.props.children) {
+          this.specificDeepEquals.bind(this,
+            output.props.children,
+            expected.props.children);
+        }
+      }
+    }
+    assert.deepEqual(output, expected);
   }
 };

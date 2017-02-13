@@ -146,6 +146,33 @@ var module = module;
       }, this);
     },
 
+    // def _expand_revision(self, revision_id, charm_name):
+    //     '''From a revision id, create a Dict.
+    //
+    //     @param revision_id A revision id string.
+    //     @param charm_name The name of the charm
+    //     '''
+    //     id = revision_id.split('-')[-1]
+    //     url = charm_name + '/' + id
+    //     return {
+    //         'id': int(id),
+    //         'full_id': revision_id,
+    //         'url': url}
+
+    /**
+     * Parse a revision string to create an object of info
+     * @param  {String} revision e.g. 'cs:openstack-dashboard-243'
+     * @return {Object}          id: number,
+     */
+    _expandRevision: function(revision_id, charm_name) {
+      const id = parseInt(revision_id.split('-').pop());
+      return {
+        id: id,
+        full_id: revision_id,
+        url: `${charm_name}/${id}`
+      };
+    },
+
     /**
       The response object returned from the apiv4 search endpoint is a complex
       object with golang style keys. This parses the complex object and
@@ -156,12 +183,13 @@ var module = module;
       @return {Object} The processed data structure.
     */
     _processEntityQueryData: function(data) {
-      var meta = data.Meta,
+      const meta = data.Meta,
           extraInfo = meta['extra-info'],
           charmMeta = meta['charm-metadata'],
           charmConfig = meta['charm-config'],
           bundleMeta = meta['bundle-metadata'],
           owner = meta.owner && meta.owner.User;
+
       // Singletons and keys which are outside of the common structure
       var processed = {
         id: data.Id,
@@ -181,6 +209,7 @@ var module = module;
       if (meta['charm-metrics']) {
         processed.metrics = meta['charm-metrics'].Metrics;
       }
+
       // Convert the options keys to lowercase.
       if (charmConfig && typeof charmConfig.Options === 'object') {
         this._lowerCaseKeys(charmConfig.Options, charmConfig.Options, 0);
@@ -232,6 +261,16 @@ var module = module;
       // for the addPendingResources call.
       if (meta.resources && meta.resources.length) {
         processed.resources = meta.resources;
+      }
+
+      if (meta['revision-info']) {
+        processed['latest_revision'] =
+          this._expandRevision(meta['revision-info']['Revisions'][0],
+          processed.name);
+      }
+
+      if (meta['id-revision']) {
+        processed['revision_id'] = meta['id-revision']['Revision'];
       }
       return processed;
     },
@@ -312,6 +351,8 @@ var module = module;
         'bundle-machine-count',
         'charm-metadata',
         'charm-config',
+        'id-revision',
+        'revision-info',
         'manifest',
         'stats',
         'extra-info',

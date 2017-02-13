@@ -61,10 +61,12 @@ YUI.add('entity-extension', function(Y) {
         displayName: attrs.name.replace('-', ' '),
         downloads: attrs.downloads,
         id: attrs.id,
+        latest_revision: attrs.latest_revision,
         storeId: attrs.storeId,
         name: attrs.name,
         owner: attrs.owner || this.ownerFromId(),
         promulgated: attrs.is_approved,
+        revision_id: attrs.revision_id,
         revisions: attrs.revisions,
         special: attrs.special,  // XXX Not currently implemented.
         type: type,

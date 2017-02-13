@@ -25,7 +25,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('EntityHeader', function() {
-  var acl, mockEntity;
+  let acl, mockEntity;
 
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
@@ -41,7 +41,7 @@ describe('EntityHeader', function() {
     mockEntity = undefined;
   });
 
-  it('renders an entity properly', function() {
+  it('renders latest entity properly', function() {
     var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityHeader
           acl={acl}
@@ -69,13 +69,19 @@ describe('EntityHeader', function() {
                 className="entity-header__title"
                 itemProp="name"
                 ref="entityHeaderTitle">
-                django
+                django{' '}
+                <span className="entity-header__version">
+                  {'#'}{123}
+                </span>
               </h1>
               <ul className="bullets inline entity-header__properties">
                 <li className="entity-header__by">
                   By{' '}
                   <a href="https://launchpad.net/~test-owner"
                     target="_blank">test-owner</a>
+                </li>
+                <li>
+                  {'Latest version (#'}{123}{')'}
                 </li>
                 {[<li key="trusty" className="entity-header__series">
                   trusty
@@ -122,6 +128,100 @@ describe('EntityHeader', function() {
         </header>
       </div>);
     assert.deepEqual(output, expected);
+  });
+
+  it('renders an old entity properly', function() {
+    mockEntity.set('revision_id', 122);
+    const renderer = jsTestUtils.shallowRender(
+        <juju.components.EntityHeader
+          acl={acl}
+          addNotification={sinon.stub()}
+          deployService={sinon.spy()}
+          changeState={sinon.spy()}
+          entityModel={mockEntity}
+          getBundleYAML={sinon.stub()}
+          hasPlans={false}
+          importBundleYAML={sinon.stub()}
+          pluralize={sinon.stub()}
+          scrollPosition={0} />, true);
+    const instance = renderer.getMountedInstance();
+    const output = renderer.getRenderOutput();
+    const latestClickHandler = instance._handleRevisionClick;
+    const expected = (
+      <div className="row-hero"
+        ref="headerWrapper"
+        style={{}}>
+        <header className="entity-header">
+          <div className="inner-wrapper">
+            <div className="eight-col no-margin-bottom">
+              <img src="data:image/gif;base64," alt="django"
+                   width="96" className="entity-header__icon"/>
+              <h1
+                className="entity-header__title"
+                itemProp="name"
+                ref="entityHeaderTitle">
+                django{' '}
+                <span className="entity-header__version">
+                  {'#'}{122}
+                </span>
+              </h1>
+              <ul className="bullets inline entity-header__properties">
+                <li className="entity-header__by">
+                  By{' '}
+                  <a href="https://launchpad.net/~test-owner"
+                    target="_blank">test-owner</a>
+                </li>
+                <li>
+                  <a onClick={latestClickHandler}>
+                    {'Latest version (#'}{123}{')'}
+                  </a>
+                </li>
+                {[<li key="trusty" className="entity-header__series">
+                  trusty
+                </li>]}
+                {undefined}
+              </ul>
+              <ul className="entity-header__social-list">
+                <li>
+                  <a id="item-twitter"
+                    target="_blank"
+                    href={'https://twitter.com/intent/tweet?text=django%20' +
+                      'charm&via=ubuntu_cloud&url=https%3A%2F%2Fjujucharms' +
+                      '.com%2Fdjango%2Ftrusty%2F'}>
+                    <juju.components.SvgIcon
+                      name="icon-social-twitter"
+                      size="35"/>
+                  </a>
+                </li>
+                <li>
+                  <a id="item-googleplus"
+                    target="_blank"
+                    href={'https://plus.google.com/share?url=https%3A%2F%2F' +
+                      'jujucharms.com%2Fdjango%2Ftrusty%2F'}>
+                    <juju.components.SvgIcon
+                      name="icon-social-google"
+                      size="35"/>
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div className={
+              'entity-header__right four-col last-col no-margin-bottom'}>
+              {undefined}
+              <juju.components.CopyToClipboard
+                value="juju deploy cs:django" />
+              <juju.components.GenericButton
+                ref="deployAction"
+                action={instance._handleDeployClick}
+                disabled={false}
+                type="positive"
+                title="Add to canvas" />
+            </div>
+          </div>
+        </header>
+      </div>);
+
+    jsTestUtils.specificDeepEquals.bind(this, output, expected);
   });
 
   it('can display plans', function() {
@@ -232,7 +332,7 @@ describe('EntityHeader', function() {
       </li>);
     assert.deepEqual(
       output.props.children.props.children.props.children[0]
-        .props.children[2].props.children[2], expected);
+        .props.children[2].props.children[3], expected);
   });
 
   it('displays an add to canvas button', function() {
