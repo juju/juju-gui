@@ -146,19 +146,6 @@ var module = module;
       }, this);
     },
 
-    // def _expand_revision(self, revision_id, charm_name):
-    //     '''From a revision id, create a Dict.
-    //
-    //     @param revision_id A revision id string.
-    //     @param charm_name The name of the charm
-    //     '''
-    //     id = revision_id.split('-')[-1]
-    //     url = charm_name + '/' + id
-    //     return {
-    //         'id': int(id),
-    //         'full_id': revision_id,
-    //         'url': url}
-
     /**
      * Parse a revision string to create an object of info
      * @param  {String} revision e.g. 'cs:openstack-dashboard-243'
