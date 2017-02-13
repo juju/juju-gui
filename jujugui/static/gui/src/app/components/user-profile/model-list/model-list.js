@@ -259,7 +259,13 @@ YUI.add('user-profile-model-list', function() {
           return null;
         }
       }
-      const lastConnection = model.lastConnection || '--';
+      const region = model.region || 'no region';
+      let owner = '--';
+      // TODO frankban: it's not clear why we should ever miss an owner.
+      // Anyway, this logic pre-existed my change.
+      if (model.owner) {
+        owner = model.owner.split('@')[0];
+      }
       return (
         <juju.components.UserProfileEntity
           displayConfirmation={this._displayConfirmation.bind(this, model)}
@@ -272,18 +278,18 @@ YUI.add('user-profile-model-list', function() {
             {model.name || '--'}
           </span>
           <span className="user-profile__list-col four-col">
-            --
+            {model.cloud + '/' + region}
           </span>
           <span className="user-profile__list-col two-col">
             <juju.components.DateDisplay
-              date={lastConnection}
+              date={model.lastConnection || '--'}
               relative={true} />
           </span>
           <span className="user-profile__list-col one-col">
-            --
+            {model.numMachines}
           </span>
           <span className="user-profile__list-col two-col last-col">
-            {model.owner || '--'}
+            {owner}
           </span>
         </juju.components.UserProfileEntity>);
     },
@@ -301,13 +307,13 @@ YUI.add('user-profile-model-list', function() {
             Name
           </span>
           <span className="user-profile__list-col four-col">
-            Credential
+            Cloud/Region
           </span>
           <span className="user-profile__list-col two-col">
             Last accessed
           </span>
           <span className="user-profile__list-col one-col">
-            Units
+            Machines
           </span>
           <span className={
             'user-profile__list-col two-col last-col'}>

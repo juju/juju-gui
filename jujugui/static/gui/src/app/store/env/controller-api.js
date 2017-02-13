@@ -434,6 +434,20 @@ YUI.add('juju-controller-api', function(Y) {
         - uuid: the model unique identifier (usually the same as id);
         - controllerUUID: the corresponding controller unique identifier;
         - owner: the name of the user owning the model;
+        - credential: the name of the credential used to create the model;
+        - region: the model region (or null if no regions apply);
+        - cloud: the cloud used to deploy the model, as a string;
+        - numMachines: the number of machines in the model;
+        - users: a list of users with access to the model, in which each user
+          is an object with the following fields:
+          - name: the username like "who@external" or "admin";
+          - displayName: the user's display name, without the "@" part;
+          - domain: the user domain, like "local" or "Ubuntu SSO";
+          - lastConnection: the last time the user connected to the model as a
+            Date object, or null if the user has never connected;
+          - access: the type of access the user has as a string, like "read" or
+            "admin";
+          - err: a message describing a specific user error, or undefined;
         - life: the lifecycle status of the model: "alive", "dying" or "dead";
         - isAlive: whether the model is alive or dying/dead;
         - isController: whether the model is a controller model;
@@ -464,6 +478,38 @@ YUI.add('juju-controller-api', function(Y) {
             return {id: id, err: err};
           }
           result = result.result;
+          let credential = '';
+          const credentialTag = result['cloud-credential-tag'];
+          if (credentialTag) {
+            credential = tags.parse(tags.CREDENTIAL, credentialTag);
+          }
+          const machines = result.machines || [];
+          const users = (result.users || []).map(userResult => {
+            const err = userResult.error;
+            if (err) {
+              return {err: err.message};
+            }
+            let fullName = userResult.user;
+            const parts = fullName.split('@');
+            let domain = 'local';
+            if (parts.length === 2) {
+              domain = parts[1] === 'external' ? 'Ubuntu SSO' : parts[1];
+            } else {
+              fullName = parts[0] + '@' + domain;
+            }
+            const displayName = userResult['display-name'] || parts[0];
+            let lastConnection = null;
+            if (userResult['last-connection']) {
+              lastConnection = new Date(userResult['last-connection']);
+            }
+            return {
+              name: fullName,
+              displayName: displayName,
+              domain: domain,
+              lastConnection: lastConnection,
+              access: userResult.access
+            };
+          });
           return {
             id: id,
             name: result.name,
@@ -472,6 +518,11 @@ YUI.add('juju-controller-api', function(Y) {
             uuid: result.uuid,
             controllerUUID: result['controller-uuid'],
             owner: tags.parse(tags.USER, result['owner-tag']),
+            credential: credential,
+            region: result['cloud-region'] || null,
+            cloud: tags.parse(tags.CLOUD, result['cloud-tag']),
+            numMachines: machines.length,
+            users: users,
             life: result.life,
             isAlive: result.life === 'alive',
             isController: result.name === 'controller'
@@ -509,11 +560,25 @@ YUI.add('juju-controller-api', function(Y) {
         - uuid: the model unique identifier (usually the same as id);
         - controllerUUID: the corresponding controller unique identifier;
         - owner: the name of the user owning the model;
+        - credential: the name of the credential used to create the model;
+        - region: the model region (or null if no regions apply);
+        - cloud: the cloud used to deploy the model, as a string;
+        - numMachines: the number of machines in the model;
+        - users: a list of users with access to the model, in which each user
+          is an object with the following fields:
+          - name: the username like "who@external" or "admin";
+          - displayName: the user's display name, without the "@" part;
+          - domain: the user domain, like "local" or "Ubuntu SSO";
+          - lastConnection: the last time the user connected to the model as a
+            Date object, or null if the user has never connected;
+          - access: the type of access the user has as a string, like "read" or
+            "admin";
+          - err: a message describing a specific user error, or undefined;
         - life: the lifecycle status of the model: "alive", "dying" or "dead";
         - isAlive: whether the model is alive or dying/dead;
         - isController: whether the model is a controller model;
-        - lastConnection: the date of the last connection as a string, e.g.:
-          '2015-09-24T10:08:50Z' or null if the model was never connected to;
+        - lastConnection: the date of the last connection of the current user
+          as a Date object, or null if the model was never connected to;
         - err: a message describing a specific model error, or undefined.
       @return {undefined} Sends a message to the server only.
     */
@@ -547,9 +612,17 @@ YUI.add('juju-controller-api', function(Y) {
             callback(err, []);
             return;
           }
-          const models = infoModels.map((model, index) => {
+          const models = infoModels.map(model => {
             if (model.err) {
               return {id: model.id, err: model.err};
+            }
+            let lastConnection = null;
+            for (let i = 0; i < model.users.length; i++) {
+              const user =  model.users[i];
+              if (user.name === credentials.user) {
+                lastConnection = user.lastConnection;
+                break;
+              }
             }
             return {
               id: model.id,
@@ -559,10 +632,15 @@ YUI.add('juju-controller-api', function(Y) {
               uuid: model.uuid,
               controllerUUID: model.controllerUUID,
               owner: model.owner,
+              credential: model.credential,
+              region: model.region,
+              cloud: model.cloud,
+              numMachines: model.numMachines,
+              users: model.users,
               life: model.life,
               isAlive: model.isAlive,
               isController: model.isController,
-              lastConnection: listedModels[index].lastConnection
+              lastConnection: lastConnection
             };
           });
           callback(null, models);

@@ -31,10 +31,13 @@ describe('UserProfileModelList', () => {
   beforeEach(() => {
     models = [{
       uuid: 'model1',
-      name: 'spinach/sandbox',
+      name: 'spinach',
       lastConnection: '2016-09-12T15:42:09Z',
       ownerTag: 'user-who',
       owner: 'who',
+      cloud: 'aws',
+      region: 'gallifrey',
+      numMachines: 42,
       isAlive: true
     }];
     user = {
@@ -131,13 +134,13 @@ describe('UserProfileModelList', () => {
               Name
             </span>
             <span className="user-profile__list-col four-col">
-              Credential
+              Cloud/Region
             </span>
             <span className="user-profile__list-col two-col">
               Last accessed
             </span>
             <span className="user-profile__list-col one-col">
-              Units
+              Machines
             </span>
             <span className={
               'user-profile__list-col two-col last-col'}>
@@ -152,10 +155,10 @@ describe('UserProfileModelList', () => {
             switchModel={instance.props.switchModel}
             type="model">
             <span className="user-profile__list-col three-col">
-              spinach/sandbox
+              spinach
             </span>
             <span className="user-profile__list-col four-col">
-              --
+              aws/gallifrey
             </span>
             <span className="user-profile__list-col two-col">
               <juju.components.DateDisplay
@@ -163,7 +166,7 @@ describe('UserProfileModelList', () => {
                 relative={true}/>
             </span>
             <span className="user-profile__list-col one-col">
-              --
+              {42}
             </span>
             <span className="user-profile__list-col two-col last-col">
               who
@@ -194,7 +197,7 @@ describe('UserProfileModelList', () => {
     const expected = (
       <li className={classes}
         key="model1">
-        {'spinach/sandbox'} is being destroyed.
+        {'spinach'} is being destroyed.
       </li>);
     assert.deepEqual(content, expected);
   });
@@ -236,7 +239,7 @@ describe('UserProfileModelList', () => {
         buttons={output.props.children[2].props.buttons}
         title="Destroy model">
         <p>
-          Are you sure you want to destroy spinach/sandbox? All the
+          Are you sure you want to destroy spinach? All the
           applications and units included in the model will be destroyed.
           This action cannot be undone.
         </p>
