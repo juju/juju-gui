@@ -2077,4 +2077,181 @@ describe('Controller API', function() {
     });
   });
 
+  describe('grantModelAccess', function() {
+    it('grants users access', function(done) {
+      // Perform the request.
+      const users = ['dalek', 'drwho@external'];
+      const access = 'read';
+      controllerAPI.grantModelAccess(users, 'uuid-1234', access, err => {
+        assert.strictEqual(err, null);
+        const msg = conn.last_message();
+        assert.deepEqual(msg, {
+          'request-id': 1,
+          type: 'ModelManager',
+          request: 'ModifyModelAccess',
+          version: 2,
+          params: {
+            changes: [
+              {
+                'access': 'read',
+                'action': 'grant',
+                'model-tag': 'model-uuid-1234',
+                'user-tag': 'user-dalek'
+              },
+              {
+                'access': 'read',
+                'action': 'grant',
+                'model-tag': 'model-uuid-1234',
+                'user-tag': 'user-drwho@external'
+              }
+            ]
+          }
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: [{}]}
+      });
+    });
+
+    it('handles request failures while granting user access', function(done) {
+      // Perform the request.
+      controllerAPI.grantModelAccess(['dalek'], 'uuid-1234', 'read', err => {
+        assert.strictEqual(err, 'bad wolf');
+        done();
+      });
+      // Mimic response.
+      conn.msg({'request-id': 1, error: 'bad wolf'});
+    });
+
+    it('handles API failures while granting user access', function(done) {
+      // Perform the request.
+      controllerAPI.grantModelAccess(['dalek'], 'uuid-1234', 'read', err => {
+        assert.strictEqual(err, 'bad wolf');
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: [{error: {message: 'bad wolf'}}]}
+      });
+    });
+
+    it('fails for unexpected results granting user access', function(done) {
+      // Perform the request.
+      controllerAPI.grantModelAccess(['dalek'], 'uuid-1234', 'read', err => {
+        assert.strictEqual(err, 'invalid results from Juju: [{},{}]');
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: [{}, {}]}
+      });
+    });
+
+    it('fails for no results granting user access', function(done) {
+      // Perform the request.
+      controllerAPI.grantModelAccess(['invalid'], 'uuid-1234', 'read', err => {
+        assert.strictEqual(err, 'invalid results from Juju: []');
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: []}
+      });
+    });
+  });
+
+  describe('revokeModelAccess', function() {
+    it('revokes users access', function(done) {
+      // Perform the request.
+      const users = ['dalek', 'drwho@external'];
+      controllerAPI.revokeModelAccess(users, 'uuid-1234', 'read', err => {
+        assert.strictEqual(err, null);
+        const msg = conn.last_message();
+        assert.deepEqual(msg, {
+          'request-id': 1,
+          type: 'ModelManager',
+          request: 'ModifyModelAccess',
+          version: 2,
+          params: {
+            changes: [
+              {
+                'access': 'read',
+                'action': 'revoke',
+                'model-tag': 'model-uuid-1234',
+                'user-tag': 'user-dalek'
+              },
+              {
+                'access': 'read',
+                'action': 'revoke',
+                'model-tag': 'model-uuid-1234',
+                'user-tag': 'user-drwho@external'
+              }
+            ]
+          }
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: [{}]}
+      });
+    });
+
+    it('handles request failures while revoking user access', function(done) {
+      // Perform the request.
+      controllerAPI.revokeModelAccess(['dalek'], 'uuid-1234', 'read', err => {
+        assert.strictEqual(err, 'bad wolf');
+        done();
+      });
+      // Mimic response.
+      conn.msg({'request-id': 1, error: 'bad wolf'});
+    });
+
+    it('handles API failures while revoking user access', function(done) {
+      // Perform the request.
+      controllerAPI.revokeModelAccess(['dalek'], 'uuid-1234', 'read', err => {
+        assert.strictEqual(err, 'bad wolf');
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: [{error: {message: 'bad wolf'}}]}
+      });
+    });
+
+    it('fails for unexpected results revoking user access', function(done) {
+      controllerAPI.revokeModelAccess(['dalek'], 'uuid-1234', 'read', err => {
+      // Perform the request.
+        assert.strictEqual(err, 'invalid results from Juju: [{},{}]');
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: [{}, {}]}
+      });
+    });
+
+    it('fails for no results revoking user access', function(done) {
+      // Perform the request.
+      controllerAPI.revokeModelAccess(['invalid'], 'uuid-1234', 'read', err => {
+        assert.strictEqual(err, 'invalid results from Juju: []');
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: []}
+      });
+    });
+  });
+
 });

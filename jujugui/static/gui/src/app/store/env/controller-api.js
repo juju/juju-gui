@@ -1261,6 +1261,96 @@ YUI.add('juju-controller-api', function(Y) {
         request: 'RevokeCredentials',
         params: {entities: [{tag: tags.build(tags.CREDENTIAL, name)}]}
       }, handler);
+    },
+
+    /**
+      Modify (grant or revoke) user access to the specified model.
+
+      @method _modifyModelAccess
+      @param {Array} users The usernames of the users who need modified access.
+      @param {String} modelId The ID for the model on which the access is being
+                              changed.
+      @param {String} access The level of access to grant the users; can be
+                             'read', 'write', or 'admin'.
+      @param {String} action Either 'revoke' or 'grant'.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an error message or null if the
+        access modification succeeded.
+    */
+    _modifyModelAccess: function(users, modelId, access, action, callback) {
+      // Decorate the user supplied callback.
+      const handler = data => {
+        if (!callback) {
+          console.log(
+            'Data returned by ModelManager.ModifyModelAccess API call:', data);
+          return;
+        }
+        if (data.error) {
+          callback(data.error);
+          return;
+        }
+        const results = data.response.results;
+        if (!results || results.length !== 1) {
+          // This should never happen.
+          callback('invalid results from Juju: ' + JSON.stringify(results));
+          return;
+        }
+        const err = results[0].error && results[0].error.message;
+        if (err) {
+          callback(err);
+          return;
+        }
+        callback(null);
+      };
+      const modelTag = tags.build(tags.MODEL, modelId);
+      const changes = users.map(username => {
+        return {
+          access: access,
+          action: action,
+          'model-tag': modelTag,
+          'user-tag': tags.build(tags.USER, username)
+        };
+      });
+      // Send the API request.
+      this._send_rpc({
+        type: 'ModelManager',
+        request: 'ModifyModelAccess',
+        params: {changes: changes}
+      }, handler);
+    },
+
+    /**
+      Grant users access to the current model.
+
+      @method grantModelAccess
+      @param {Array} users The usernames of the users who need modified access.
+      @param {String} modelId The ID for the model on which the access is being
+                              changed.
+      @param {String} access The level of access to grant the users; can be
+                             'read', 'write', or 'admin'.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an error message or null if the
+        access grant succeeded.
+    */
+    grantModelAccess: function(users, modelId, access, callback) {
+      this._modifyModelAccess(users, modelId, access, 'grant', callback);
+    },
+
+    /**
+      Revoke users access to the current model.
+
+      @method revokeModelAccess
+      @param {Array} users The usernames of the users who need modified access.
+      @param {String} modelId The ID for the model on which the access is being
+                              changed.
+      @param {String} access The level of access to grant the users; can be
+                             'read', 'write', or 'admin'.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an error message or null if the
+        access revocation succeeded.
+    */
+    revokeModelAccess: function(users, modelId, access, callback) {
+      this._modifyModelAccess(users, modelId, access, 'revoke', callback);
     }
 
   });
