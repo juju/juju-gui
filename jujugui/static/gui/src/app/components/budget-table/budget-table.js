@@ -27,6 +27,7 @@ YUI.add('budget-table', function() {
       charmsGetById: React.PropTypes.func,
       extraInfo: React.PropTypes.object,
       listPlansForCharm: React.PropTypes.func,
+      parseTermId: React.PropTypes.func,
       plansEditable: React.PropTypes.bool,
       services: React.PropTypes.array.isRequired,
       showExtra: React.PropTypes.bool,
@@ -51,6 +52,7 @@ YUI.add('budget-table', function() {
             extraInfo={
               this.props.extraInfo && this.props.extraInfo[service.get('id')]}
             listPlansForCharm={this.props.listPlansForCharm}
+            parseTermId={this.props.parseTermId}
             plansEditable={this.props.plansEditable}
             service={service}
             showExtra={this.props.showExtra}

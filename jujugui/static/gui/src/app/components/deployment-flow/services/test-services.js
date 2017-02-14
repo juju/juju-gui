@@ -56,6 +56,7 @@ describe('DeploymentServices', function() {
         generateAllChangeDescriptions={sinon.stub().returns([{id: 'change1'}])}
         groupedChanges={groupedChanges}
         listPlansForCharm={listPlansForCharm}
+        parseTermId={sinon.stub()}
         servicesGetById={servicesGetById}
         showChangelogs={false}
         showTerms={showTerms}
@@ -111,6 +112,7 @@ describe('DeploymentServices', function() {
         generateAllChangeDescriptions={sinon.stub().returns([{id: 'change1'}])}
         groupedChanges={groupedChanges}
         listPlansForCharm={listPlansForCharm}
+        parseTermId={sinon.stub()}
         servicesGetById={servicesGetById}
         showChangelogs={false}
         showTerms={showTerms}

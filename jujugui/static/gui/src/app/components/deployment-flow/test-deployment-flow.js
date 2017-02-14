@@ -242,6 +242,7 @@ describe('DeploymentFlow', function() {
               generateAllChangeDescriptions}
             groupedChanges={groupedChanges}
             listPlansForCharm={listPlansForCharm}
+            parseTermId={instance._parseTermId}
             servicesGetById={servicesGetById}
             showChangelogs={false}
             showTerms={showTerms}
@@ -380,6 +381,7 @@ describe('DeploymentFlow', function() {
               generateAllChangeDescriptions}
             groupedChanges={groupedChanges}
             listPlansForCharm={listPlansForCharm}
+            parseTermId={instance._parseTermId}
             servicesGetById={servicesGetById}
             showChangelogs={false}
             showTerms={showTerms}

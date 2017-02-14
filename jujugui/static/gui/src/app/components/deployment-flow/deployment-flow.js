@@ -422,20 +422,28 @@ YUI.add('deployment-flow', function() {
           console.error('cannot retrieve agreements:', error);
           return;
         }
-        agreements = agreements || [];
-        // Map the agreements to the term ids.
-        const agreed = agreements.map(agreement => {
-          let term = agreement.term;
-          if (agreement.owner) {
-            term = `${agreement.owner}/${term}`;
-          }
-          return term;
-        });
-        // Find the terms that aren't in the list of terms that have already
-        // been agreed to.
-        const newTerms = terms.filter(term => {
-          return agreed.indexOf(term) === -1;
-        });
+        // TODO: Here we need to check term ids from the charm against those
+        // that have been agreed to, matching the owner, name and revision. If
+        // there is no revision provided by the term id on the charm we need to
+        // look up the terms for that owner/name and get the latest revision and
+        // then match against that to see if we've agreed to it already.
+        // There is a _parseTermId method to go from a term id string to an
+        // object containing the owner, name and revision.
+
+        // agreements = agreements || [];
+        // // Map the agreements to the term ids.
+        // const agreed = agreements.map(agreement => {
+        //   let term = agreement.term;
+        //   if (agreement.owner) {
+        //     term = `${agreement.owner}/${term}`;
+        //   }
+        //   return term;
+        // });
+        // // Find the terms that aren't in the list of terms that have already
+        // // been agreed to.
+        // const newTerms = terms.filter(term => {
+        //   return agreed.indexOf(term) === -1;
+        // });
         // Reset the terms so that we don't keep pushing the same terms.
         this.setState({newTerms: newTerms, termsList: []}, () => {
           newTerms.forEach(term => {
@@ -453,6 +461,41 @@ YUI.add('deployment-flow', function() {
         });
       });
       this.xhrs.push(xhr);
+    },
+
+    /**
+      Split the term id into the attributes.
+
+      @method _parseTermId
+      @returns {Object} The term attributes.
+    */
+    _parseTermId: function(terms) {
+      const parts = name.split('/');
+      let owner = null;
+      let name = null;
+      let revision = null;
+      if (parts.length === 3) {
+        // The string must be in the format `owner/name/id`;
+        owner = parts[0];
+        name = parts[1];
+        revision = parseInt(parts[2]);
+      } else if (parts.length === 1) {
+        // The string must be in the format `name`;
+        name = parts[0];
+      } else if (!isNaN(parts[1])) {
+        // The string must be in the format `name/id`;
+        name = parts[0];
+        revision = parseInt(parts[1]);
+      } else {
+        // The string must be in the format `owner/name`;
+        owner = parts[0];
+        name = parts[1];
+      }
+      return {
+        owner: owner,
+        name: name,
+        revision: revision
+      };
     },
 
     /**
@@ -735,6 +778,7 @@ YUI.add('deployment-flow', function() {
               this.props.generateAllChangeDescriptions}
             groupedChanges={this.props.groupedChanges}
             listPlansForCharm={this.props.listPlansForCharm}
+            parseTermId={this._parseTermId}
             servicesGetById={this.props.servicesGetById}
             showChangelogs={this.state.showChangelogs}
             showTerms={this.props.showTerms}
