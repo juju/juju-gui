@@ -146,7 +146,10 @@ describe('jujulib terms service', function() {
           user: 'spinach',
           term: 'these-terms',
           revision: 42,
-          createdAt: new Date(1465510044000)
+          createdAt: new Date(1465510044000),
+          name: undefined,
+          owner: undefined,
+          content: undefined
         }]);
         done();
       }
@@ -177,7 +180,10 @@ describe('jujulib terms service', function() {
         user: 'spinach',
         term: 'One fancy term',
         revision: 47,
-        createdAt: new Date(1465510044000)
+        createdAt: new Date(1465510044000),
+        name: undefined,
+        owner: undefined,
+        content: undefined
       }]);
       done();
     });
