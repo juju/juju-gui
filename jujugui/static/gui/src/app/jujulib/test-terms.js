@@ -146,7 +146,10 @@ describe('jujulib terms service', function() {
           user: 'spinach',
           term: 'these-terms',
           revision: 42,
-          createdAt: new Date(1465510044000)
+          createdAt: new Date(1465510044000),
+          name: undefined,
+          owner: undefined,
+          content: undefined
         }]);
         done();
       }
@@ -177,7 +180,10 @@ describe('jujulib terms service', function() {
         user: 'spinach',
         term: 'One fancy term',
         revision: 47,
-        createdAt: new Date(1465510044000)
+        createdAt: new Date(1465510044000),
+        name: undefined,
+        owner: undefined,
+        content: undefined
       }]);
       done();
     });
@@ -210,6 +216,93 @@ describe('jujulib terms service', function() {
       assert.equal(error, 'bad wolf');
       assert.strictEqual(terms, null);
       done();
+    });
+  });
+
+  describe('getAgreementsByTerms', () => {
+    it('makes a proper request with a single term supplied', done => {
+      const bakery = {
+        sendGetRequest: (path, success, failure) => {
+          assert.equal(
+            path,
+            'http://1.2.3.4/' +
+            window.jujulib.termsAPIVersion +
+            '/agreement?Terms=hatch/test-term1');
+          success(makeXHRRequest([{
+            'created-on': '2016-06-09T22:07:24Z',
+            content: 'I am term1\n',
+            id: 'hatch/test-term1',
+            name: 'test-term1',
+            owner: 'hatch',
+            published: true,
+            revision: 2
+          }]));
+        }
+      };
+      const terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
+      terms.getAgreementsByTerms(['hatch/test-term1'], (error, terms) => {
+        assert.strictEqual(error, null);
+        assert.deepEqual(terms, [{
+          content: 'I am term1\n',
+          createdAt: new Date(1465510044000),
+          name: 'test-term1',
+          owner: 'hatch',
+          revision: 2,
+          term: undefined,
+          user: undefined
+        }]);
+        done();
+      });
+    });
+
+    it('makes a proper request with multiple terms supplied', done => {
+      const bakery = {
+        sendGetRequest: (path, success, failure) => {
+          assert.equal(
+            path,
+            'http://1.2.3.4/' +
+            window.jujulib.termsAPIVersion +
+            '/agreement?Terms=hatch/test-term1&Terms=hatch/test-term2');
+          success(makeXHRRequest([{
+            'created-on': '2016-06-09T22:07:24Z',
+            content: 'I am term1\n',
+            name: 'test-term1',
+            owner: 'hatch',
+            published: true,
+            revision: 2
+          }]));
+        }
+      };
+      const terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
+      terms.getAgreementsByTerms([
+        'hatch/test-term1', 'hatch/test-term2'
+      ], (error, terms) => {
+        assert.strictEqual(error, null);
+        assert.deepEqual(terms, [{
+          content: 'I am term1\n',
+          createdAt: new Date(1465510044000),
+          name: 'test-term1',
+          owner: 'hatch',
+          revision: 2,
+          term: undefined,
+          user: undefined
+        }]);
+        done();
+      });
+    });
+
+    it('handles failures fetching agreements', done => {
+      const bakery = {
+        sendGetRequest: (path, success, failure) => {
+          failure(makeXHRRequest({Message: 'it broke'}));
+        }
+      };
+      const terms = new window.jujulib.terms('http://1.2.3.4/', bakery);
+      terms.getAgreementsByTerms(['user/termname'], (error, terms) => {
+        assert.equal(error, 'it broke');
+        assert.strictEqual(terms, null);
+        done();
+      });
     });
   });
 
