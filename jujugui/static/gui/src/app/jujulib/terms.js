@@ -65,6 +65,7 @@ var module = module;
         var milliseconds = Date.parse(terms['created-on']);
         callback(null, {
           name: terms.name,
+          owner: terms.owner,
           title: terms.title,
           revision: terms.revision,
           content: terms.content,

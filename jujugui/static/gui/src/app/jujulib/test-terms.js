@@ -43,6 +43,7 @@ describe('jujulib terms service', function() {
           '/terms/canonical?revision=42');
         var xhr = makeXHRRequest([{
           name: 'canonical',
+          owner: 'spinach',
           title: 'canonical terms',
           revision: 42,
           'created-on': '2016-06-09T22:07:24Z',
@@ -56,6 +57,7 @@ describe('jujulib terms service', function() {
       assert.strictEqual(error, null);
       assert.deepEqual(terms, {
         name: 'canonical',
+        owner: 'spinach',
         title: 'canonical terms',
         revision: 42,
         createdAt: new Date(1465510044000),
@@ -75,6 +77,7 @@ describe('jujulib terms service', function() {
           '/terms/canonical');
         var xhr = makeXHRRequest([{
           name: 'canonical',
+          owner: 'spinach',
           title: 'canonical recent terms',
           revision: 47,
           'created-on': '2016-06-09T22:07:24Z',
@@ -88,6 +91,7 @@ describe('jujulib terms service', function() {
       assert.strictEqual(error, null);
       assert.deepEqual(terms, {
         name: 'canonical',
+        owner: 'spinach',
         title: 'canonical recent terms',
         revision: 47,
         createdAt: new Date(1465510044000),
