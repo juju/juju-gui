@@ -154,6 +154,7 @@ describe('jujulib terms service', function() {
       function(error, terms) {
         assert.equal(error, null);
         assert.deepEqual(terms, [{
+          owner: null,
           user: 'spinach',
           term: 'these-terms',
           revision: 42,
@@ -189,6 +190,7 @@ describe('jujulib terms service', function() {
           window.jujulib.termsAPIVersion +
           '/agreements');
         var xhr = makeXHRRequest([{
+          owner: 'org',
           user: 'spinach',
           term: 'One fancy term',
           revision: 47,
@@ -201,6 +203,7 @@ describe('jujulib terms service', function() {
     terms.getAgreements(function(error, terms) {
       assert.strictEqual(error, null);
       assert.deepEqual(terms, [{
+        owner: 'org',
         user: 'spinach',
         term: 'One fancy term',
         revision: 47,

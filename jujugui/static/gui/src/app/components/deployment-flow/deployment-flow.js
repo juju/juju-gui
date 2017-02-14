@@ -425,7 +425,11 @@ YUI.add('deployment-flow', function() {
         agreements = agreements || [];
         // Map the agreements to the term ids.
         const agreed = agreements.map(agreement => {
-          return agreement.term;
+          let term = agreement.term;
+          if (agreement.owner) {
+            term = `${agreement.owner}/${term}`;
+          }
+          return term;
         });
         // Find the terms that aren't in the list of terms that have already
         // been agreed to.
