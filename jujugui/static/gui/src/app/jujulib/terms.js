@@ -105,6 +105,7 @@ var module = module;
       @param terms {Array} A list of terms to agree to. Each term should be an
         object with the following parameters:
         - name {String} The terms name.
+        - owner {String} The terms owner.
         - revision {Int} The terms revision.
       @param callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its

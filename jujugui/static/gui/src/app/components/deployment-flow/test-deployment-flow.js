@@ -63,11 +63,14 @@ describe('DeploymentFlow', function() {
     showTerms = sinon.stub();
     showTerms.withArgs('service1-terms').callsArgWith(2, null, {
       name: 'service1-terms',
-      content: 'service1 terms.'
+      content: 'service1 terms.',
+      owner: 'spinach',
+      revision: 5
     });
     showTerms.withArgs('mysql-terms').callsArgWith(2, null, {
       name: 'mysql-terms',
-      content: 'Mysql terms.'
+      content: 'Mysql terms.',
+      revision: 9
     });
   });
 
@@ -1187,7 +1190,8 @@ describe('DeploymentFlow', function() {
     assert.equal(addAgreement.callCount, 1);
     assert.deepEqual(addAgreement.args[0][0], [{
       name: 'service1-terms',
-      content: 'service1 terms.'
+      owner: 'spinach',
+      revision: 5
     }]);
   });
 

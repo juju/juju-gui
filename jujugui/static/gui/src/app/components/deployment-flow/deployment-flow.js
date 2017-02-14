@@ -341,7 +341,17 @@ YUI.add('deployment-flow', function() {
       const deploy = this.props.deploy.bind(
         this, this._handleClose, true, this.state.modelName, args);
       if (this.state.newTerms.length > 0) {
-        this.props.addAgreement(this.state.termsList, (error, response) => {
+        const terms = this.state.termsList.map(term => {
+          const args = {
+            name: term.name,
+            revision: term.revision
+          };
+          if (term.owner) {
+            args.owner = term.owner;
+          }
+          return args;
+        });
+        this.props.addAgreement(terms, (error, response) => {
           if (error) {
             this.props.addNotification({
               title: 'Could not agree to terms',
