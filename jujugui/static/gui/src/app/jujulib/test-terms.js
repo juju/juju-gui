@@ -6,10 +6,17 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('jujulib terms service', function() {
+  let cleanups = [];
 
   var makeXHRRequest = function(obj) {
     return {target: {responseText: JSON.stringify(obj)}};
   };
+
+  afterEach(function() {
+    cleanups.forEach(cleanup => {
+      cleanup();
+    });
+  });
 
   it('exists', function() {
     var bakery = {};
@@ -154,6 +161,19 @@ describe('jujulib terms service', function() {
         done();
       }
     );
+  });
+
+  it('passes the agreements request the correct args', function() {
+    const makeRequest = sinon.stub(window.jujulib, '_makeRequest');
+    cleanups.push(makeRequest.restore);
+    var terms = new window.jujulib.terms('http://1.2.3.4/', {});
+    terms.addAgreement([{name: 'canonical', owner: 'spinach', revision: 5}]);
+    assert.equal(makeRequest.callCount, 1);
+    assert.deepEqual(makeRequest.args[0][3][0], {
+      termname: 'canonical',
+      termowner: 'spinach',
+      termrevision: 5
+    });
   });
 
   it('can get agreements for a user', function(done) {

@@ -125,10 +125,14 @@ var module = module;
       };
       var url = this.url + '/agreement';
       var payload = terms.map(function(term) {
-        return {
+        const args = {
           termname: term.name,
           termrevision: term.revision
         };
+        if (term.owner) {
+          args.termowner = term.owner;
+        }
+        return args;
       });
       return jujulib._makeRequest(this.bakery, url, 'POST', payload, handler);
     },
