@@ -87,10 +87,13 @@ var module = module;
     _formatTerm: function(term) {
       var milliseconds = Date.parse(term['created-on']);
       return {
-        user: term.user,
-        term: term.term,
+        content: term.content,
+        createdAt: new Date(milliseconds),
+        name: term.name,
+        owner: term.owner,
         revision: term.revision,
-        createdAt: new Date(milliseconds)
+        term: term.term,
+        user: term.user
       };
     },
 
@@ -161,6 +164,42 @@ var module = module;
       };
       var url = this.url + '/agreements';
       return jujulib._makeRequest(this.bakery, url, 'GET', null, handler);
+    },
+
+    /**
+      Calls to check if the supplied terms have been agreed to. If they have
+      it returns an empty array, else it'll return the terms which need to be
+      agreed to.
+      @param termList {Array} A list of agreement names that you'd like to
+        check if the user has
+      @param callback {Function} A callback to handle errors or accept the
+        data from the request. Must accept an error message or null as its
+        first parameter and the agreements data as its second. The agreements
+        data includes the following fields:
+        - content: the content of the term.
+        - createdAt: a date object with the terms creation time.
+        - name: the name of the term
+        - owner: the owner of the term.
+        - revision: the terms revision, as a positive number;
+        If no terms are left to agree to then the second argument is null.
+    */
+    getAgreementsByTerms: function(termList, callback) {
+      const handler = (error, response) => {
+        if (error !== null) {
+          callback(error, null);
+          return;
+        }
+        if (!response.length) {
+          callback(null, null);
+          return;
+        }
+        const terms = response.map(term => this._formatTerm(term));
+        callback(null, terms);
+      };
+      const terms = termList.reduce(
+        (acc, val, idx) => `${acc}${idx === 0 ? '' : '&'}Terms=${val}`, '');
+      return jujulib._makeRequest(
+        this.bakery, `${this.url}/agreement?${terms}`, 'GET', null, handler);
     }
 
   };
