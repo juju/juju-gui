@@ -1584,7 +1584,8 @@ describe('App', function() {
       app.set('users', {foo: 'bar'});
       assert.deepEqual(app._getAuth(), {
         usernameDisplay: 'bark',
-        user: {name: 'bark'}
+        user: {name: 'bark'},
+        rootUserName: 'bark'
       });
     });
 

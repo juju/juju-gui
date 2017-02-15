@@ -37,9 +37,8 @@ YUI.add('deployment-panel', function() {
     */
     _handleClose: function() {
       this.props.changeState({
-        gui: {
-          deploy: null
-        }
+        gui: {deploy: null},
+        profile: null
       });
     },
 

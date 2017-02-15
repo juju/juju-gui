@@ -43,7 +43,7 @@ YUI.add('user-profile', function() {
     },
 
     /**
-      Calls the bakery to get a charmstore macaroon.
+      Calls the bakery to get a charm store macaroon.
 
       @method _interactiveLogin
     */
@@ -62,9 +62,9 @@ YUI.add('user-profile', function() {
     _fetchMacaroonCallback: function(error, macaroon) {
       if (error) {
         console.log(error);
-      } else {
-        this.props.storeUser('charmstore', true);
+        return;
       }
+      this.props.storeUser('charmstore', true);
     },
 
     /**
@@ -127,8 +127,7 @@ YUI.add('user-profile', function() {
       }
       // Exclude/include sections that require charmstore authentication.
       const charmstoreUser = props.users.charmstore;
-      const authenticated = charmstoreUser && charmstoreUser.user;
-      if (!props.interactiveLogin || authenticated) {
+      if (charmstoreUser && charmstoreUser.user) {
         toRender.push('bundleList');
         toRender.push('charmList');
       }
@@ -162,8 +161,7 @@ YUI.add('user-profile', function() {
               <juju.components.UserProfileHeader
                 users={this.props.users}
                 avatar=""
-                interactiveLogin={this.props.interactiveLogin ?
-                  this._interactiveLogin : undefined}
+                interactiveLogin={this._interactiveLogin}
                 links={links}
                 username={username} />
               {this._generateContent()}
