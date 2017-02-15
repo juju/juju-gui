@@ -32,19 +32,31 @@ YUI.add('header-help', function() {
       };
     },
 
+    /**
+      When the menu is shown, clicking anywhere but the menu will close
+      the menu.
+
+      @method handleClickOutside
+    */
     handleClickOutside: function(e) {
-      this.setState({showHelpMenu: false});
+      this.setState({ showHelpMenu: false });
     },
 
+    /**
+      Clicking the help menu will toggle whether it's shown
+
+      @method toggleHelpMenu
+    */
     toggleHelpMenu: function() {
       this.setState({ showHelpMenu: !this.state.showHelpMenu });
     },
 
-    _handleDocsClick: function() {
-      window.open('https://jujucharms.com/docs/stable/getting-started');
-    },
+    /**
+     Generate menu based on whether the button has been clicked.
 
-    helpMenu: function() {
+      @method generateHelpMenu
+    */
+    generateHelpMenu: function() {
       if (this.state.showHelpMenu) {
         return (
           <juju.components.Panel
@@ -53,9 +65,9 @@ YUI.add('header-help', function() {
               <ul className="header-help-menu__list" role="menubar">
                 <li className="header-help-menu__list-item
                   header-help-menu__list-item-with-link"
-                  role="menuitem" tabIndex="0"
-                  onClick={this._handleDocsClick}>
-                  View Documentation
+                  role="menuitem" tabIndex="0">
+                  <a href="https://jujucharms.com/docs/stable/getting-started">
+                    View Documentation</a>
                 </li>
                 <li className="header-help-menu__list-item
                   header-help-menu__list-item-info"
@@ -71,17 +83,24 @@ YUI.add('header-help', function() {
       return '';
     },
 
-    getClassNames: function() {
-      if (this.state.showHelpMenu) {
-        return 'header-help__button header-help__hide-tooltip';
-      }
-      return 'header-help__button';
+    /**
+     Get class names based on whether the help menu is shown.
+     If it is we want to hide the tooltip otherwise there's a black halo
+     around the tooltip up arrow.
+
+      @method _getClassNames
+    */
+    _getClassNames: function() {
+      return classNames(
+        'header-help__button', {
+          'header-help__hide-tooltip': this.state.showHelpMenu
+        });
     },
 
     render: function() {
       return (
         <div className="header-help">
-          <span className={this.getClassNames()}
+          <span className={this._getClassNames()}
             onClick={this.toggleHelpMenu}
             role="button"
             tabIndex="0"
@@ -98,7 +117,7 @@ YUI.add('header-help', function() {
               </span>
             </span>
           </span>
-          {this.helpMenu()}
+          {this.generateHelpMenu()}
         </div>);
     }
   });
