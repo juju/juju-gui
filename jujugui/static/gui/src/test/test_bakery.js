@@ -24,7 +24,7 @@ describe('Bakery', function() {
   before(function (done) {
     var modules = ['juju-env-bakery', 'juju-env-web-handler', 'macaroon' ];
     Y = YUI(GlobalConfig).use(modules, function (Y) {
-      macaroon = Y['macaroon'];
+      macaroon = Y.macaroon;
       done();
     });
   });
@@ -241,12 +241,6 @@ describe('Bakery', function() {
   });
 
   describe('_requestHandlerWithInteraction', function() {
-    var success, failure;
-
-    beforeEach(function() {
-      success = sinon.stub();
-      failure = sinon.stub();
-    });
 
     it('calls original send with macaroon without auth needed', function() {
       bakery = new Y.juju.environments.web.Bakery({
@@ -254,51 +248,48 @@ describe('Bakery', function() {
         serviceName: 'test',
         setCookiePath: 'set-auth-cookie'
       });
-      var putCalled = 0;
-      bakery.webhandler.sendPutRequest = function(a,b,c,d,e,f,g,h) {
-        putCalled++;
-        h({'target' : {
-          status: 200
-        }});
-      };
-      var originalCalled = 0;
-      bakery._sendOriginalRequest = function(a,b,c) {
-        originalCalled++;
-        assert.equal(a, 'path');
-        assert.equal(b, success);
-        assert.equal(c, failure);
-      };
-      var m = macaroon.export(
-        macaroon.newMacaroon(nacl.util.decodeUTF8('secret'), 'some id',
-            'a location')
-      );
-      bakery._requestHandlerWithInteraction(
-        'path', success, failure, true, {
-          target: {
-            status: 401,
-            responseText: JSON.stringify({'Info': {'Macaroon': m}}),
-            getResponseHeader: function(k) {return 'Macaroon';}
-          }
+      const onAuthRequired = sinon.stub().withArgs();
+      const onAuthDone = sinon.stub();
+      const onFailure = sinon.stub();
+      const redirect = true;
+      const m = macaroon.export(macaroon.newMacaroon(
+        nacl.util.decodeUTF8('secret'), 'some id', 'a location'));
+      const response = {
+        target: {
+          status: 401,
+          responseText: JSON.stringify({'Info': {'Macaroon': m}}),
+          getResponseHeader: sinon.stub().withArgs(
+            'Www-Authenticate').returns('Macaroon')
         }
-      );
-      assert.equal(putCalled, 1);
-      assert.equal(originalCalled, 1);
+      };
+      let putCalled = 0;
+      bakery.webhandler.sendPutRequest = function(
+        path, headers, data, username, password, withCredentials,
+        progressCallback, completedCallback
+      ) {
+        putCalled++;
+        completedCallback({'target' : {status: 200}});
+      };
+      bakery._requestHandlerWithInteraction(
+        onAuthRequired, onAuthDone, onFailure, redirect, response);
+      assert.equal(onAuthRequired.callCount, 1, 'onAuthRequired');
+      assert.equal(onAuthDone.callCount, 0, 'onAuthDone');
+      assert.equal(onFailure.callCount, 0, 'onFailure');
+      assert.equal(putCalled, 1, 'putCalled');
     });
 
     describe('with third party caveat', function() {
-      var m, thirdParty;
-      var originalCalled, postCalled, postSuccess;
+      let m, postCalled, postSuccess, thirdParty;
 
       beforeEach(function() {
-        var originalMacaroon = macaroon.newMacaroon(
+        const originalMacaroon = macaroon.newMacaroon(
           nacl.util.decodeUTF8('secret'), 'some id', 'a location');
-        var firstParty = nacl.box.keyPair();
+        const firstParty = nacl.box.keyPair();
         thirdParty = nacl.box.keyPair();
         bakery.addThirdPartyCaveat(originalMacaroon,
           '[some third party secret]', 'elsewhere',
           thirdParty.publicKey, firstParty);
         m = macaroon.export(originalMacaroon);
-        originalCalled = 0;
         postCalled = 0;
         postSuccess = false;
       });
@@ -311,37 +302,41 @@ describe('Bakery', function() {
           serviceName: 'test',
           dischargeStore: fakeLocalStorage
         });
-        bakery._sendOriginalRequest = function (path, sucessCallback,
-                                                failureCallback) {
-          originalCalled++;
-          assert.equal(path, 'path');
-          assert.equal(sucessCallback, success);
-          assert.equal(failureCallback, failure);
+        const onAuthRequired = sinon.stub().withArgs();
+        const onAuthDone = sinon.stub();
+        const onFailure = sinon.stub();
+        const redirect = true;
+        const response = {
+          target: {
+            status: 401,
+            responseText: JSON.stringify({'Info': {'Macaroon': m}}),
+            getResponseHeader: sinon.stub().withArgs(
+              'Www-Authenticate').returns('Macaroon')
+          }
         };
-
-        bakery.webhandler.sendPostRequest = function (path, headers, query,
-                                                      d, e, f, g, completed) {
+        bakery.webhandler.sendPostRequest = function (
+          path, headers, data, username, password, withCredentials,
+          progressCallback, completedCallback
+        ) {
           postCalled++;
-          postSuccess = (path == 'elsewhere/discharge')
-            && (headers['Bakery-Protocol-Version'] == 1)
-            && (headers['Content-Type'] ==
-            'application/x-www-form-urlencoded');
-
-          var caveatObj = {};
+          postSuccess = (
+            path === 'elsewhere/discharge' &&
+            headers['Bakery-Protocol-Version'] === 1 &&
+            headers['Content-Type'] === 'application/x-www-form-urlencoded'
+          );
+          const caveatObj = {};
           try {
-            query.split('&').forEach(function (part) {
-              var item = part.split('=');
+            data.split('&').forEach(function (part) {
+              const item = part.split('=');
               caveatObj[item[0]] = decodeURIComponent(item[1]);
             });
           } catch (ex) {
-            fail('unable to read url query params from sendPost request');
+            throw new Error('cannot read URL query params');
           }
-
-          var dischargeMacaroon = bakery.dischargeThirdPartyCaveat(caveatObj.id,
-            thirdParty, function (m) {
-            });
-          // Call completed with 200 leads to no interaction
-          completed({
+          const dischargeMacaroon = bakery.dischargeThirdPartyCaveat(
+            caveatObj.id, thirdParty, m => {});
+          // Call completed with 200 leads to no interaction.
+          completedCallback({
             'target': {
               status: 200,
               responseText: JSON.stringify({
@@ -351,24 +346,17 @@ describe('Bakery', function() {
             }
           });
         };
-
         bakery._requestHandlerWithInteraction(
-          'path', success, failure, true, {
-            target: {
-              status: 401,
-              responseText: JSON.stringify({'Info': {'Macaroon': m}}),
-              getResponseHeader: function (k) {
-                return 'Macaroon';
-              }
-            }
-          }
+          onAuthRequired, onAuthDone, onFailure, redirect, response);
+        assert.equal(onAuthRequired.callCount, 1, 'onAuthRequired');
+        assert.equal(onAuthDone.callCount, 0, 'onAuthDone');
+        assert.equal(onFailure.callCount, 0, 'onFailure');
+        assert.equal(postCalled, 1, 'postCalled');
+        assert.equal(postSuccess, true, 'postSuccess');
+        assert.equal(
+          fakeLocalStorage.getItem('discharge-token'),
+          btoa(JSON.stringify('discharge-foo'))
         );
-
-        assert.equal(postCalled, 1);
-        assert.equal(postSuccess, true);
-        assert.equal(originalCalled, 1);
-        assert.equal(fakeLocalStorage.getItem('discharge-token'),
-          btoa(JSON.stringify('discharge-foo')));
       });
 
       it('calls original send with macaroon with third party ' +
@@ -380,38 +368,42 @@ describe('Bakery', function() {
           dischargeStore: fakeLocalStorage,
           dischargeToken: 'discharge-foo'
         });
-        bakery._sendOriginalRequest = function (path, sucessCallback,
-                                                failureCallback) {
-          originalCalled++;
-          assert.equal(path, 'path');
-          assert.equal(sucessCallback, success);
-          assert.equal(failureCallback, failure);
+        const onAuthRequired = sinon.stub().withArgs();
+        const onAuthDone = sinon.stub();
+        const onFailure = sinon.stub();
+        const redirect = true;
+        const response = {
+          target: {
+            status: 401,
+            responseText: JSON.stringify({'Info': {'Macaroon': m}}),
+            getResponseHeader: sinon.stub().withArgs(
+              'Www-Authenticate').returns('Macaroon')
+          }
         };
-
-        bakery.webhandler.sendPostRequest = function (path, headers, query,
-                                                      d, e, f, g, completed) {
+        bakery.webhandler.sendPostRequest = function (
+          path, headers, data, username, password, withCredentials,
+          progressCallback, completedCallback
+        ) {
           postCalled++;
-          postSuccess = (path == 'elsewhere/discharge')
-            && (headers['Bakery-Protocol-Version'] == 1)
-            && (headers['Content-Type'] ==
-            'application/x-www-form-urlencoded')
-            && (headers['Macaroons'] == 'discharge-foo');
-
-          var caveatObj = {};
+          postSuccess = (
+            path === 'elsewhere/discharge' &&
+            headers['Bakery-Protocol-Version'] === 1 &&
+            headers['Content-Type'] === 'application/x-www-form-urlencoded' &&
+            headers['Macaroons'] == 'discharge-foo'
+          );
+          const caveatObj = {};
           try {
-            query.split('&').forEach(function (part) {
-              var item = part.split('=');
+            data.split('&').forEach(function (part) {
+              const item = part.split('=');
               caveatObj[item[0]] = decodeURIComponent(item[1]);
             });
           } catch (ex) {
-            fail('unable to read url query params from sendPost request');
+            throw new Error('cannot read URL query params');
           }
-
-          var dischargeMacaroon = bakery.dischargeThirdPartyCaveat(caveatObj.id,
-            thirdParty, function (m) {
-            });
-          // Call completed with 200 leads to no interaction
-          completed({
+          const dischargeMacaroon = bakery.dischargeThirdPartyCaveat(
+            caveatObj.id, thirdParty, m => {});
+          // Call completed with 200 leads to no interaction.
+          completedCallback({
             'target': {
               status: 200,
               responseText: JSON.stringify({
@@ -421,86 +413,83 @@ describe('Bakery', function() {
             }
           });
         };
-
         bakery._requestHandlerWithInteraction(
-          'path', success, failure, true, {
-            target: {
-              status: 401,
-              responseText: JSON.stringify({'Info': {'Macaroon': m}}),
-              getResponseHeader: function (k) {
-                return 'Macaroon';
-              }
-            }
-          }
+          onAuthRequired, onAuthDone, onFailure, redirect, response);
+        assert.equal(onAuthRequired.callCount, 1, 'onAuthRequired');
+        assert.equal(onAuthDone.callCount, 0, 'onAuthDone');
+        assert.equal(onFailure.callCount, 0, 'onFailure');
+        assert.equal(postCalled, 1, 'postCalled');
+        assert.equal(postSuccess, true, 'postSuccess');
+        assert.equal(
+          fakeLocalStorage.getItem('discharge-token'),
+          btoa(JSON.stringify('discharge-foo'))
         );
-
-        assert.equal(postCalled, 1);
-        assert.equal(postSuccess, true);
-        assert.equal(originalCalled, 1);
-        assert.equal(fakeLocalStorage.getItem('discharge-token'),
-          btoa(JSON.stringify('discharge-foo')));
       });
 
       it('calls original send with macaroon with third party ' +
         'and with interaction', function () {
-        var visitMethod = sinon.stub();
+        const visitMethod = sinon.stub();
         bakery = new Y.juju.environments.web.Bakery({
           webhandler: new Y.juju.environments.web.WebHandler(),
           visitMethod: visitMethod,
           serviceName: 'test',
           dischargeStore: fakeLocalStorage
         });
-        bakery._sendOriginalRequest = function (path, sucessCallback,
-                                                failureCallback) {
-          originalCalled++;
-          assert.equal(path, 'path');
-          assert.equal(sucessCallback, success);
-          assert.equal(failureCallback, failure);
+        const onAuthRequired = sinon.stub().withArgs();
+        const onAuthDone = sinon.stub();
+        const onFailure = sinon.stub();
+        const redirect = true;
+        const response = {
+          target: {
+            status: 401,
+            responseText: JSON.stringify({'Info': {'Macaroon': m}}),
+            getResponseHeader: sinon.stub().withArgs(
+              'Www-Authenticate').returns('Macaroon')
+          }
         };
-
-        var dischargeMacaroon;
-        bakery.webhandler.sendPostRequest = function (path, headers, query, d,
-                                                      e, f, g, completed) {
+        let dischargeMacaroon;
+        bakery.webhandler.sendPostRequest = function (
+          path, headers, data, username, password, withCredentials,
+          progressCallback, completedCallback
+        ) {
           postCalled++;
-          postSuccess = (path == 'elsewhere/discharge')
-            && (headers['Bakery-Protocol-Version'] == 1)
-            && (headers['Content-Type'] ==
-            'application/x-www-form-urlencoded');
-
-          var caveatObj = {};
+          postSuccess = (
+            path === 'elsewhere/discharge' &&
+            headers['Bakery-Protocol-Version'] === 1 &&
+            headers['Content-Type'] === 'application/x-www-form-urlencoded'
+          );
+          const caveatObj = {};
           try {
-            query.split('&').forEach(function (part) {
-              var item = part.split('=');
+            data.split('&').forEach(function (part) {
+              const item = part.split('=');
               caveatObj[item[0]] = decodeURIComponent(item[1]);
             });
           } catch (ex) {
-            fail('unable to read url query params from sendPost request');
+            throw new Error('cannot read URL query params');
           }
-
-          dischargeMacaroon = bakery.dischargeThirdPartyCaveat(caveatObj.id,
-            thirdParty, function (m) {
-            });
-
-          // Call completed with a 400
-          // and Interaction Required to simulate interaction
-          completed({
+          dischargeMacaroon = bakery.dischargeThirdPartyCaveat(
+            caveatObj.id, thirdParty, m => {});
+          // Call completed with 200 leads to no interaction.
+          completedCallback({
             'target': {
               status: 400,
-              responseText: '{"Code": "interaction required", ' +
-              '"Info": {"WaitURL": "/mywaiturl"}}'
+              responseText: JSON.stringify({
+                Code: 'interaction required',
+                Info: {WaitURL: '/mywaiturl'}
+              })
             }
           });
         };
-
-        var getCalled = 0, getSuccess = false;
-        bakery.webhandler.sendGetRequest = function (path, headers, query, d,
-                                                     e, f, completed) {
-
+        let getCalled = 0;
+        let getSuccess = false;
+        bakery.webhandler.sendGetRequest = function (
+          path, headers, username, password, withCredentials, progressCallback,
+          completedCallback
+        ) {
           assert.deepEqual(headers, {'Content-Type': 'application/json'});
           getCalled++;
-          getSuccess = (path == '/mywaiturl');
-
-          completed({
+          getSuccess = path == '/mywaiturl';
+          completedCallback({
             'target': {
               status: 200,
               responseText: JSON.stringify({
@@ -509,74 +498,69 @@ describe('Bakery', function() {
             }
           });
         };
-
         bakery._requestHandlerWithInteraction(
-          'path', success, failure, true, {
-            target: {
-              status: 401,
-              responseText: JSON.stringify({'Info': {'Macaroon': m}}),
-              getResponseHeader: function (k) {
-                return 'Macaroon';
-              }
-            }
-          }
-        );
-
-        assert.equal(postCalled, 1);
-        assert.equal(postSuccess, true);
-        assert.equal(visitMethod.callCount, 1);
+          onAuthRequired, onAuthDone, onFailure, redirect, response);
+        assert.equal(onAuthRequired.callCount, 1, 'onAuthRequired');
+        assert.equal(onAuthDone.callCount, 0, 'onAuthDone');
+        assert.equal(onFailure.callCount, 0, 'onFailure');
+        assert.equal(postCalled, 1, 'postCalled');
+        assert.equal(postSuccess, true, 'postSuccess');
         assert.equal(getCalled, 1);
         assert.equal(getSuccess, true);
-        assert.equal(originalCalled, 1);
+        assert.equal(visitMethod.callCount, 1);
       });
     });
 
     it('no PUT when no cookie path provided', function() {
-      var putCalled = 0;
-      bakery.webhandler.sendPutRequest = function(a,b,c,d,e,f,g,h) {
-        putCalled++;
-        h({'target' : {
-          status: 200
-        }});
-      };
-      var originalCalled = 0;
-      bakery._sendOriginalRequest = function(a,b,c) {
-        originalCalled++;
-        assert.equal(a, 'path');
-        assert.equal(b, success);
-        assert.equal(c, failure);
-      };
-      var m = macaroon.export(
-        macaroon.newMacaroon(
-            nacl.util.decodeUTF8('secret'), 'some id', 'a location')
-      );
-      bakery._requestHandlerWithInteraction(
-        'path', success, failure, true, {
-          target: {
-            status: 401,
-            responseText: JSON.stringify({'Info': {'Macaroon': m}}),
-            getResponseHeader: function(k) {return 'Macaroon';}
-          }
+      const onAuthRequired = sinon.stub().withArgs();
+      const onAuthDone = sinon.stub();
+      const onFailure = sinon.stub();
+      const redirect = true;
+      const m = macaroon.export(macaroon.newMacaroon(
+        nacl.util.decodeUTF8('secret'), 'some id', 'a location'));
+      const response = {
+        target: {
+          status: 401,
+          responseText: JSON.stringify({'Info': {'Macaroon': m}}),
+          getResponseHeader: sinon.stub().withArgs(
+            'Www-Authenticate').returns('Macaroon')
         }
-      );
-      assert.equal(putCalled, 0);
-      assert.equal(originalCalled, 1);
+      };
+      let putCalled = 0;
+      bakery.webhandler.sendPutRequest = function(
+        path, headers, data, username, password, withCredentials,
+        progressCallback, completedCallback
+      ) {
+        putCalled++;
+        completedCallback({'target' : {status: 200}});
+      };
+      bakery._requestHandlerWithInteraction(
+        onAuthRequired, onAuthDone, onFailure, redirect, response);
+      assert.equal(onAuthRequired.callCount, 1, 'onAuthRequired');
+      assert.equal(onAuthDone.callCount, 0, 'onAuthDone');
+      assert.equal(onFailure.callCount, 0, 'onFailure');
+      assert.equal(putCalled, 0, 'putCalled');
     });
 
     it('no need for authentication when not 401', function() {
-      var requestHandler = sinon.stub(bakery, '_requestHandler');
-
-      this._cleanups.push(requestHandler.restore);
-
-      bakery._requestHandlerWithInteraction(
-        'path', success, failure, true, {
-          target: {
-            status: 200,
-            responseText: '{"Info": "Success"}'
-          }
+      const onAuthRequired = sinon.stub().withArgs();
+      const onAuthDone = sinon.stub();
+      const onFailure = sinon.stub();
+      const redirect = true;
+      const response = {
+        target: {
+          status: 200,
+          responseText: JSON.stringify({Info: 'Success'})
         }
-      );
-      assert.equal(requestHandler.callCount, 1);
+      };
+      bakery._requestHandlerWithInteraction(
+        onAuthRequired, onAuthDone, onFailure, redirect, response);
+      assert.equal(onAuthRequired.callCount, 0, 'onAuthRequired');
+      assert.equal(onAuthDone.callCount, 1, 'onAuthDone');
+      const args = onAuthDone.args[0];
+      assert.equal(args.length, 1);
+      assert.deepEqual(args[0], response);
+      assert.equal(onFailure.callCount, 0, 'onFailure');
     });
   });
 });
