@@ -97,6 +97,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           <li id="maas-server" style="display:none" class="header-banner__list-item">
             <a href="" target="_blank" class="header-banner__link">MAAS UI</a>
           </li>
+          <li id="header-help" class="header-banner__list-item header-banner__list-item--no-padding">
+          </li>
           <li id="header-search-container"
               class="header-banner__list-item header-banner__list-item--no-padding"></li>
           <li id="profile-link-container"

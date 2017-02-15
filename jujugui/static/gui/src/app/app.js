@@ -120,7 +120,6 @@ YUI.add('juju-gui', function(Y) {
         target: '#shortcut-help',
         toggle: true,
         callback: function(evt, target) {
-          // This could be its own view.
           if (target && !target.getHTML().length) {
             var bindings = [];
             Object.keys(this.keybindings).forEach(k => {
@@ -1192,6 +1191,15 @@ YUI.add('juju-gui', function(Y) {
           changeState={this.state.changeState.bind(this.state)}
           appState={this.state} />,
         document.getElementById('header-search-container'));
+    },
+
+
+    _renderHeaderHelp: function() {
+      ReactDOM.render(
+        <window.juju.components.HeaderHelp
+          changeState={this.state.changeState.bind(this.state)}
+          appState={this.state} />,
+        document.getElementById('header-help'));
     },
 
     /**
@@ -2850,6 +2858,7 @@ YUI.add('juju-gui', function(Y) {
       this._renderZoom();
       this._renderBreadcrumb();
       this._renderHeaderSearch();
+      this._renderHeaderHelp();
       const gui = this.state.current.gui;
       if (!gui || (gui && !gui.inspector)) {
         this._renderAddedServices();
@@ -3138,6 +3147,7 @@ YUI.add('juju-gui', function(Y) {
     'header-breadcrumb',
     'model-actions',
     'expanding-progress',
+    'header-help',
     'header-search',
     'inspector-component',
     'isv-profile',
