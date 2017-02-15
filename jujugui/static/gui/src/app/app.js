@@ -1297,7 +1297,7 @@ YUI.add('juju-gui', function(Y) {
             changesUtils.generateAllChangeDescriptions.bind(
               changesUtils, services, db.units)}
           generateCloudCredentialName={utils.generateCloudCredentialName}
-          getAgreements={this.terms.getAgreements.bind(this.terms)}
+          getAgreementsByTerms={this.terms.getAgreementsByTerms.bind(this.terms)}
           getAuth={this._getAuth.bind(this)}
           getCloudCredentials={
             controllerAPI && controllerAPI.getCloudCredentials.bind(

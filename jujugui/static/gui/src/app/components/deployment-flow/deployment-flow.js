@@ -36,7 +36,7 @@ YUI.add('deployment-flow', function() {
       environment: React.PropTypes.object.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
-      getAgreements: React.PropTypes.func.isRequired,
+      getAgreementsByTerms: React.PropTypes.func.isRequired,
       getAuth: React.PropTypes.func.isRequired,
       getCloudCredentialNames: React.PropTypes.func,
       getCloudCredentials: React.PropTypes.func,
@@ -78,8 +78,6 @@ YUI.add('deployment-flow', function() {
         sshKey: null,
         // The list of term ids for the uncommitted applications.
         terms: this._getTerms() || [],
-        // The list of full terms objects returned from the charmstore.
-        termsList: [],
         // Whether the user has ticked the checked to agree to terms.
         termsAgreed: false
       };
@@ -243,16 +241,6 @@ YUI.add('deployment-flow', function() {
     },
 
     /**
-      Store the terms in state.
-
-      @method _setBudget
-      @param {Array} terms The terms.
-    */
-    _setTerms: function(terms) {
-      this.setState({termsList: terms});
-    },
-
-    /**
       Toggle the visibility of the changelogs.
 
       @method _toggleChangelogs
@@ -341,7 +329,7 @@ YUI.add('deployment-flow', function() {
       const deploy = this.props.deploy.bind(
         this, this._handleClose, true, this.state.modelName, args);
       if (this.state.newTerms.length > 0) {
-        const terms = this.state.termsList.map(term => {
+        const terms = this.state.newTerms.map(term => {
           const args = {
             name: term.name,
             revision: term.revision
@@ -413,53 +401,18 @@ YUI.add('deployment-flow', function() {
       // If there are no charms with terms then we don't need to display
       // anything.
       if (terms.length === 0) {
-        this.setState({newTerms: [], termsList: []});
+        this.setState({newTerms: []});
         return;
       }
       // Get all the terms the user has agreed to.
-      const xhr = this.props.getAgreements((error, agreements) => {
-        if (error) {
-          console.error('cannot retrieve agreements:', error);
-          return;
-        }
-        // TODO: Here we need to check term ids from the charm against those
-        // that have been agreed to, matching the owner, name and revision. If
-        // there is no revision provided by the term id on the charm we need to
-        // look up the terms for that owner/name and get the latest revision and
-        // then match against that to see if we've agreed to it already.
-        // There is a _parseTermId method to go from a term id string to an
-        // object containing the owner, name and revision.
-
-        // agreements = agreements || [];
-        // // Map the agreements to the term ids.
-        // const agreed = agreements.map(agreement => {
-        //   let term = agreement.term;
-        //   if (agreement.owner) {
-        //     term = `${agreement.owner}/${term}`;
-        //   }
-        //   return term;
-        // });
-        // // Find the terms that aren't in the list of terms that have already
-        // // been agreed to.
-        // const newTerms = terms.filter(term => {
-        //   return agreed.indexOf(term) === -1;
-        // });
-        // Reset the terms so that we don't keep pushing the same terms.
-        this.setState({newTerms: newTerms, termsList: []}, () => {
-          newTerms.forEach(term => {
-            const xhr = this.props.showTerms(term, null, (error, term) => {
-              if (error) {
-                console.error('cannot retrieve terms:', error);
-                return;
-              }
-              this.setState({
-                termsList: this.state.termsList.concat([term])
-              });
-            });
-            this.xhrs.push(xhr);
-          });
+      const xhr = this.props.getAgreementsByTerms(
+        terms, (error, agreements) => {
+          if (error) {
+            console.error('cannot retrieve agreements:', error);
+            return;
+          }
+          this.setState({newTerms: agreements || []});
         });
-      });
       this.xhrs.push(xhr);
     },
 
@@ -470,7 +423,7 @@ YUI.add('deployment-flow', function() {
       @returns {Object} The term attributes.
     */
     _parseTermId: function(terms) {
-      const parts = name.split('/');
+      const parts = terms.split('/');
       let owner = null;
       let name = null;
       let revision = null;

@@ -77,6 +77,7 @@ describe('BudgetTable', function() {
             extraInfo={undefined}
             key={0}
             listPlansForCharm={listPlansForCharm}
+            parseTermId={undefined}
             plansEditable={false}
             service={{}}
             showExtra={undefined}
@@ -89,6 +90,7 @@ describe('BudgetTable', function() {
             extraInfo={undefined}
             key={1}
             listPlansForCharm={listPlansForCharm}
+            parseTermId={undefined}
             plansEditable={false}
             service={{}}
             showExtra={undefined}
@@ -127,6 +129,7 @@ describe('BudgetTable', function() {
             extraInfo={undefined}
             key={0}
             listPlansForCharm={listPlansForCharm}
+            parseTermId={undefined}
             plansEditable={false}
             service={{}}
             showExtra={undefined}
@@ -139,6 +142,7 @@ describe('BudgetTable', function() {
             extraInfo={undefined}
             key={1}
             listPlansForCharm={listPlansForCharm}
+            parseTermId={undefined}
             plansEditable={false}
             service={{}}
             showExtra={undefined}
@@ -190,6 +194,7 @@ describe('BudgetTable', function() {
             extraInfo={undefined}
             key={0}
             listPlansForCharm={listPlansForCharm}
+            parseTermId={undefined}
             plansEditable={true}
             service={{}}
             showExtra={undefined}
@@ -202,6 +207,7 @@ describe('BudgetTable', function() {
             extraInfo={undefined}
             key={1}
             listPlansForCharm={listPlansForCharm}
+            parseTermId={undefined}
             plansEditable={true}
             service={{}}
             showExtra={undefined}

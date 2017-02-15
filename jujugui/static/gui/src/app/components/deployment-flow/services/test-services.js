@@ -47,6 +47,7 @@ describe('DeploymentServices', function() {
   it('can render', function() {
     var listPlansForCharm = sinon.stub();
     const charmsGetById = sinon.stub();
+    const parseTermId = sinon.stub();
     const showTerms = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentServices
@@ -56,7 +57,7 @@ describe('DeploymentServices', function() {
         generateAllChangeDescriptions={sinon.stub().returns([{id: 'change1'}])}
         groupedChanges={groupedChanges}
         listPlansForCharm={listPlansForCharm}
-        parseTermId={sinon.stub()}
+        parseTermId={parseTermId}
         servicesGetById={servicesGetById}
         showChangelogs={false}
         showTerms={showTerms}
@@ -85,6 +86,7 @@ describe('DeploymentServices', function() {
               </ul>)
           }}
           listPlansForCharm={listPlansForCharm}
+          parseTermId={parseTermId}
           plansEditable={true}
           services={[{service: 'apache2'}, {service: 'mysql'}]}
           showExtra={false}
@@ -103,6 +105,7 @@ describe('DeploymentServices', function() {
   it('can render without plans', function() {
     var listPlansForCharm = sinon.stub();
     const charmsGetById = sinon.stub();
+    const parseTermId = sinon.stub();
     const showTerms = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentServices
@@ -112,7 +115,7 @@ describe('DeploymentServices', function() {
         generateAllChangeDescriptions={sinon.stub().returns([{id: 'change1'}])}
         groupedChanges={groupedChanges}
         listPlansForCharm={listPlansForCharm}
-        parseTermId={sinon.stub()}
+        parseTermId={parseTermId}
         servicesGetById={servicesGetById}
         showChangelogs={false}
         showTerms={showTerms}
@@ -141,6 +144,7 @@ describe('DeploymentServices', function() {
               </ul>)
           }}
           listPlansForCharm={listPlansForCharm}
+          parseTermId={parseTermId}
           plansEditable={true}
           services={[{service: 'apache2'}, {service: 'mysql'}]}
           showExtra={false}

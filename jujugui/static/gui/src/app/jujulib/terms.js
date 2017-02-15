@@ -174,7 +174,7 @@ var module = module;
 
     /**
       Calls to check if the supplied terms have been agreed to. If they have
-      it returns an empty array, else it'll return the terms which need to be
+      it returns null, else it'll return the terms which need to be
       agreed to.
       @param termList {Array} A list of agreement names that you'd like to
         check if the user has
