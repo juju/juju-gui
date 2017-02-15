@@ -120,6 +120,7 @@ YUI.add('juju-gui', function(Y) {
         target: '#shortcut-help',
         toggle: true,
         callback: function(evt, target) {
+          // This could be its own view.
           if (target && !target.getHTML().length) {
             var bindings = [];
             Object.keys(this.keybindings).forEach(k => {
