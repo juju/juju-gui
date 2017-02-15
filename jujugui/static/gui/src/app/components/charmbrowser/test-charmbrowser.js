@@ -97,17 +97,7 @@ describe('Charmbrowser', function() {
               charmstoreSearch={charmstoreSearch} />
             </div>
         </juju.components.Panel>);
-    assert.deepEqual(
-      output.
-      props.
-      children.
-      props,
-
-      expected.
-      props.
-      children.
-      props
-    );
+    assert.deepEqual(output, expected);
   });
 
   it('displays the store when the app state calls for it', function() {
