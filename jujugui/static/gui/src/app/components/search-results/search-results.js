@@ -520,7 +520,7 @@ YUI.add('search-results', function(Y) {
         results = merged.length ? merged : results;
       }
 
-      if (!results.length) {promulgated
+      if (!results.length) {
         title = 'Community';
         results = community;
       }
