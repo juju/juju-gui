@@ -1724,4 +1724,44 @@ describe('DeploymentFlow', function() {
     renderer.unmount();
     assert.deepEqual(abort.callCount, 1);
   });
+
+  describe('_parseTermId', function() {
+    let parseTermId;
+
+    beforeAll(function() {
+      parseTermId = juju.components.DeploymentFlow.prototype._parseTermId;
+    });
+
+    it('can get the name', function() {
+      assert.deepEqual(parseTermId('general'), {
+        name: 'general',
+        owner: null,
+        revision: null
+      });
+    });
+
+    it('can get the name and owner', function() {
+      assert.deepEqual(parseTermId('spinach/general'), {
+        name: 'general',
+        owner: 'spinach',
+        revision: null
+      });
+    });
+
+    it('can get the name and revision', function() {
+      assert.deepEqual(parseTermId('general/22'), {
+        name: 'general',
+        owner: null,
+        revision: 22
+      });
+    });
+
+    it('can get the name, owner and revision', function() {
+      assert.deepEqual(parseTermId('spinach/general/22'), {
+        name: 'general',
+        owner: 'spinach',
+        revision: 22
+      });
+    });
+  });
 });
