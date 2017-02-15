@@ -1302,6 +1302,7 @@ describe('DeploymentFlow', function() {
         cloud: {cloudType: 'aws'},
         credential: 'cred'
       },
+      noTerms: true,
       allowed: true
     }, {
       about: 'ssh provided on azure',
@@ -1311,6 +1312,7 @@ describe('DeploymentFlow', function() {
         credential: 'cred',
         sshKey: 'mykey'
       },
+      noTerms: true,
       allowed: true
     }, {
       about: 'ssh provided on aws',
@@ -1320,6 +1322,7 @@ describe('DeploymentFlow', function() {
         credential: 'cred',
         sshKey: 'mykey'
       },
+      noTerms: true,
       allowed: true
     }, {
       about: 'terms not agreed',
@@ -1341,6 +1344,7 @@ describe('DeploymentFlow', function() {
         terms: ['foo'],
         termsAgreed: true
       },
+      noTerms: true,
       allowed: true
     }, {
       about: 'terms not finished loading',
@@ -1369,6 +1373,10 @@ describe('DeploymentFlow', function() {
       if (test.noTerms) {
         charmsGetById.withArgs('service1').returns({
           get: sinon.stub().returns([])
+        });
+      } else {
+        charmsGetById.withArgs('service1').returns({
+          get: sinon.stub().returns(['service1-terms'])
         });
       }
       const renderer = jsTestUtils.shallowRender(
