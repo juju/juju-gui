@@ -2381,4 +2381,56 @@ describe('App', function() {
       assert.deepEqual(app.switchEnv.args[0], [undefined]);
     });
   });
+
+  describe('_sharingVisibility', function() {
+    let app, juju, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        juju = juju = Y.namespace('juju');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
+        controllerAPI: new juju.ControllerAPI({
+          conn: new testUtils.SocketStub()
+        }),
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet(),
+          user: 'user',
+          password: 'password'
+        }),
+        socketTemplate: '/model/$uuid/api',
+        controllerSocketTemplate: '/api',
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0'
+      });
+
+    });
+
+    afterEach(function() {
+      app.destroy();
+    });
+
+    it('can render the sharing component', () => {
+      const render = sinon.stub(ReactDOM, 'render');
+      app._sharingVisibility(true);
+      // It would be nice if we could assert against expected JSX; however,
+      // since the "old" js files aren't run through a JSX transform, we have
+      // to limit ourselves to asserting on call count.
+      assert.equal(render.callCount, 1);
+      render.restore();
+    });
+
+    it('can unmount the sharing component', () => {
+      const unmount = sinon.stub(ReactDOM, 'unmountComponentAtNode');
+      app._sharingVisibility(false);
+      assert.equal(unmount.callCount, 1);
+      unmount.restore();
+    });
+  });
 });

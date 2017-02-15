@@ -1379,30 +1379,63 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Display or hide the sharing modal.
+
+      @method _sharingVisibility
+      @param {Boolean} visibility Controls whether to show (true) or hide
+                       (false); defaults to true.
+    */
+    _sharingVisibility: function(visibility = true) {
+      // Grab app attributes for easy access.
+      const controllerAPI = this.controllerAPI;
+      const db = this.db;
+      const env = this.env;
+      // Bind required functions appropriately.
+      const getModelUserInfo = env.modelUserInfo.bind(env);
+      const addNotification = db.notifications.add.bind(db.notifications);
+      const grantAccess = controllerAPI.grantModelAccess.bind(controllerAPI,
+        env.get('modelUUID'));
+      const revokeAccess = controllerAPI.revokeModelAccess.bind(controllerAPI,
+        env.get('modelUUID'));
+      // Render or un-render the sharing component.
+      const sharing = document.getElementById('sharing-container');
+      if (visibility) {
+        ReactDOM.render(
+          <window.juju.components.Sharing
+            addNotification={addNotification}
+            canShareModel={this.acl.canShareModel()}
+            closeHandler={this._sharingVisibility.bind(this, false)}
+            getModelUserInfo={getModelUserInfo}
+            grantModelAccess={grantAccess}
+            humanizeTimestamp={views.utils.humanizeTimestamp}
+            revokeModelAccess={revokeAccess} />,
+        sharing);
+      } else {
+        ReactDOM.unmountComponentAtNode(sharing);
+      }
+    },
+
+    /**
       Renders the import and export component to the page in the
       designated element.
 
       @method _renderModelActions
     */
     _renderModelActions: function() {
-      const model = this.env;
-      const modelConnected = () => {
-        return model.get('connected') && this.get('modelUUID');
-      };
       const db = this.db;
       const utils = views.utils;
-      const modelUserInfo = model.modelUserInfo.bind(model);
-      const addNotification = db.notifications.add.bind(db.notifications);
-      const sharingVisibility = utils.sharingVisibility.bind(utils, true,
-        modelUserInfo, addNotification);
+      const env = this.env;
+      const modelConnected = () => {
+        return env.get('connected') && this.get('modelUUID');
+      };
       ReactDOM.render(
         <window.juju.components.ModelActions
           acl={this.acl}
           changeState={this.state.changeState.bind(this.state)}
-          currentChangeSet={model.get('ecs').getCurrentChangeSet()}
+          currentChangeSet={env.get('ecs').getCurrentChangeSet()}
           exportEnvironmentFile={
             utils.exportEnvironmentFile.bind(utils, db,
-              model.findFacadeVersion('Application') === null)}
+              env.findFacadeVersion('Application') === null)}
           hasEntities={db.services.toArray().length > 0 ||
             db.machines.toArray().length > 0}
           hideDragOverNotification={this._hideDragOverNotification.bind(this)}
@@ -1411,7 +1444,7 @@ YUI.add('juju-gui', function(Y) {
           modelConnected={modelConnected}
           renderDragOverNotification={
             this._renderDragOverNotification.bind(this)}
-          sharingVisibility={sharingVisibility}/>,
+          sharingVisibility={this._sharingVisibility.bind(this)}/>,
         document.getElementById('model-actions-container'));
     },
 
