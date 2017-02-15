@@ -52,7 +52,7 @@ describe('UserProfileHeader', () => {
     var expected = (
       <div className="user-profile-header twelve-col">
         <juju.components.GenericButton
-          title="Log in to the charmstore"
+          title="Log in to the charm store"
           type="inline-neutral"
           action={interactiveLogin} />
         <img alt="spinach"
@@ -104,7 +104,7 @@ describe('UserProfileHeader', () => {
         username="spinach" />);
     var expected = (
       <juju.components.GenericButton
-        title="Log in to the charmstore"
+        title="Log in to the charm store"
         type="inline-neutral"
         action={interactiveLogin} />
     );

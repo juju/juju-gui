@@ -40,7 +40,9 @@ YUI.add('login-component', function() {
         this.props.showSpinner();
         const bounce = (startTime) => {
           if (this.props.controllerIsConnected()) {
-            this.refs.USSOLoginLink.handleLogin();
+            if (this.refs.USSOLoginLink) {
+              this.refs.USSOLoginLink.handleLogin();
+            }
           } else if ((performance.now() - startTime) < 5000) {
             console.log(
               'controller not yet connected, attempting retry.');

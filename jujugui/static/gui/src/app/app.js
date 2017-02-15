@@ -1096,6 +1096,7 @@ YUI.add('juju-gui', function(Y) {
           acl={this.acl}
           addNotification=
             {this.db.notifications.add.bind(this.db.notifications)}
+          charmstore={charmstore}
           currentModel={currentModel}
           facadesExist={facadesExist}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
@@ -1114,7 +1115,7 @@ YUI.add('juju-gui', function(Y) {
           switchModel={utils.switchModel.bind(this, this.env)}
           user={this._getAuth()}
           users={Y.clone(this.get('users'), true)}
-          charmstore={this.get('charmstore')} />,
+        />,
         document.getElementById('top-page-container'));
       // The model name should not be visible when viewing the profile.
       this._renderBreadcrumb({ showEnvSwitcher: false });
@@ -1514,8 +1515,8 @@ YUI.add('juju-gui', function(Y) {
       const topo = this.views.environment.instance.topo;
       const charmstore = this.get('charmstore');
       let inspector = {};
-      const service = this.db.services.getById(state.gui.inspector.id);
-      const inspectorState = this.state.current.gui.inspector;
+      const inspectorState = state.gui.inspector;
+      const service = this.db.services.getById(inspectorState.id);
       const localType = inspectorState.localType;
       // If there is a hoverService event listener then we need to detach it
       // when rendering the inspector.
@@ -3024,11 +3025,12 @@ YUI.add('juju-gui', function(Y) {
       @return {Object|Undefined} The external auth.
     */
     _getExternalAuth: function() {
-      var externalAuth = this.get('auth');
+      const externalAuth = this.get('auth');
       if (externalAuth && externalAuth.user) {
         // When HJC supplies an external auth it's possible that the name is
         // stored in a nested user object.
         externalAuth.usernameDisplay = externalAuth.user.name;
+        externalAuth.rootUserName = externalAuth.user.name;
       }
       return externalAuth;
     }

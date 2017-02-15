@@ -36,7 +36,6 @@ YUI.add('section-load-watcher', function(Y) {
 
     getInitialState: function() {
       this._childrenStatuses = new Map();
-
       return {
         renderEmpty: false,
         renderError: false
@@ -92,13 +91,18 @@ YUI.add('section-load-watcher', function(Y) {
       @method _renderContent
     */
     _renderContent: function() {
-      if (this.state.renderEmpty) {
-        return this.props.EmptyComponent;
-      } else if (this.state.renderError) {
-        return this.props.ErrorComponent;
+      const props = this.props;
+      let hasNewChildren = false;
+      if (this._childrenStatuses) {
+        hasNewChildren = props.children.length !== this._childrenStatuses.size;
+      }
+      if (this.state.renderEmpty && !hasNewChildren) {
+        return props.EmptyComponent;
+      } else if (this.state.renderError && !hasNewChildren) {
+        return props.ErrorComponent;
       } else {
         // Augment the children with the broadcastStatus method
-        const children = React.Children.map(this.props.children, child => {
+        const children = React.Children.map(props.children, child => {
           const ref = child.ref;
           if (!ref) {
             throw 'ref required but not supplied for component';
