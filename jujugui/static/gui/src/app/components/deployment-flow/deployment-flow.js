@@ -70,6 +70,7 @@ YUI.add('deployment-flow', function() {
         cloud: modelCommitted ? this.props.cloud : null,
         deploying: false,
         credential: this.props.credential,
+        loadingTerms: false,
         loggedIn: !!this.props.getAuth(),
         modelName: this.props.modelName,
         newTerms: [],
@@ -401,19 +402,26 @@ YUI.add('deployment-flow', function() {
       // If there are no charms with terms then we don't need to display
       // anything.
       if (terms.length === 0) {
-        this.setState({newTerms: []});
+        this.setState({newTerms: [], loadingTerms: false});
         return;
       }
-      // Get all the terms the user has agreed to.
-      const xhr = this.props.getAgreementsByTerms(
-        terms, (error, agreements) => {
-          if (error) {
-            console.error('cannot retrieve agreements:', error);
-            return;
-          }
-          this.setState({newTerms: agreements || []});
-        });
-      this.xhrs.push(xhr);
+      this.setState({loadingTerms: true}, () => {
+        // Get the terms the user has not yet agreed to.
+        const xhr = this.props.getAgreementsByTerms(
+          terms, (error, agreements) => {
+            if (error) {
+              this.props.addNotification({
+                title: 'Problem loading terms',
+                message: `Problem loading terms: ${error}`,
+                level: 'error'
+              });
+              console.error('Problem loading terms:', error);
+              return;
+            }
+            this.setState({newTerms: agreements || [], loadingTerms: false});
+          });
+        this.xhrs.push(xhr);
+      });
     },
 
     /**
@@ -861,6 +869,10 @@ YUI.add('deployment-flow', function() {
       // Check that any terms have been agreed to.
       const newTerms = this.state.newTerms;
       if (newTerms && newTerms.length > 0 && !this.state.termsAgreed) {
+        return false;
+      }
+      // Check that the terms are not still loading.
+      if (this.state.loadingTerms) {
         return false;
       }
       // That's all we need if the model already exists.

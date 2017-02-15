@@ -1105,6 +1105,9 @@ describe('DeploymentFlow', function() {
     const deploy = sinon.stub().callsArg(0);
     const changeState = sinon.stub();
     let modelName;
+    charmsGetById.withArgs('service1').returns({
+      get: sinon.stub().returns([])
+    });
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentFlow
         acl={acl}
@@ -1282,6 +1285,7 @@ describe('DeploymentFlow', function() {
         credential: 'cred'
       },
       modelCommitted: true,
+      noTerms: true,
       allowed: true
     }, {
       about: 'no ssh on azure',
@@ -1339,6 +1343,17 @@ describe('DeploymentFlow', function() {
       },
       allowed: true
     }, {
+      about: 'terms not finished loading',
+      state: {
+        loadingTerms: true,
+        modelName: 'mymodel',
+        cloud: {cloudType: 'aws'},
+        credential: 'cred',
+        terms: ['foo'],
+        termsAgreed: true
+      },
+      allowed: false
+    }, {
       about: 'deploy should be disabled when there no credentials',
       state: {
         modelName: 'mymodel',
@@ -1351,6 +1366,11 @@ describe('DeploymentFlow', function() {
       const isLegacyJuju = !!test.isLegacyJuju;
       const acl = {isReadOnly: () => !!test.isReadOnly};
       const modelCommitted = !!test.modelCommitted;
+      if (test.noTerms) {
+        charmsGetById.withArgs('service1').returns({
+          get: sinon.stub().returns([])
+        });
+      }
       const renderer = jsTestUtils.shallowRender(
         <juju.components.DeploymentFlow
           acl={acl}
@@ -1395,6 +1415,9 @@ describe('DeploymentFlow', function() {
   it('can disable the deploy button on deploy', function () {
     var deploy = sinon.stub();
     var changeState = sinon.stub();
+    charmsGetById.withArgs('service1').returns({
+      get: sinon.stub().returns([])
+    });
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentFlow
         acl={acl}
@@ -1453,6 +1476,9 @@ describe('DeploymentFlow', function() {
   it('can deploy without updating the model name', function() {
     var deploy = sinon.stub().callsArg(0);
     var changeState = sinon.stub();
+    charmsGetById.withArgs('service1').returns({
+      get: sinon.stub().returns([])
+    });
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentFlow
         acl={acl}
@@ -1507,6 +1533,9 @@ describe('DeploymentFlow', function() {
   it('can deploy with SSH keys', function() {
     var deploy = sinon.stub().callsArg(0);
     var changeState = sinon.stub();
+    charmsGetById.withArgs('service1').returns({
+      get: sinon.stub().returns([])
+    });
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentFlow
         acl={acl}
