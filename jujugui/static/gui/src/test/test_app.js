@@ -265,6 +265,8 @@ describe('App', function() {
         assert.strictEqual(maasNode.getStyle('display'), 'none');
       });
 
+    });
+
     describe('_setupCharmstore', function() {
       it('is called on application instantiation', function() {
         var setup = sinon.stub(Y.juju.App.prototype, '_setupCharmstore');
