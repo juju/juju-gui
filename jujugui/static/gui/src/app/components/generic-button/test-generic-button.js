@@ -88,12 +88,14 @@ describe('GenericButton', function() {
     assert.equal(stopPropagation.callCount, 1);
   });
 
-  it('displays the provided title', function() {
+  it('displays the provided title and tooltip', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.GenericButton
-          title="My action" />);
+          title="My action"
+          tooltip="My tooltip" />);
     assert.deepEqual(output,
       <button className="button--neutral"
+        title="My tooltip"
         onClick={output.props.onClick}
         type="button">
         My action
@@ -106,6 +108,7 @@ describe('GenericButton', function() {
           icon="plus_1" />);
     assert.deepEqual(output,
       <button className="button--neutral"
+        title={undefined}
         onClick={output.props.onClick}
         type="button">
         <juju.components.SvgIcon name="plus_1"
@@ -120,6 +123,7 @@ describe('GenericButton', function() {
           type="neutral" />);
     assert.deepEqual(output,
       <button className="button--neutral"
+       title={undefined}
        onClick={output.props.onClick}
        type="button">
         My action
@@ -133,6 +137,7 @@ describe('GenericButton', function() {
           disabled={true} />);
     assert.deepEqual(output,
       <button className="button--neutral button--disabled"
+       title={undefined}
        onClick={output.props.onClick}
        type="button">
         My action
@@ -146,6 +151,7 @@ describe('GenericButton', function() {
           extraClasses="button--large" />);
     assert.deepEqual(output,
       <button className="button--neutral button--large"
+       title={undefined}
        onClick={output.props.onClick}
        type="button">
         My action
