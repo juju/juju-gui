@@ -1,7 +1,7 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2015 Canonical Ltd.
+Copyright (C) 2017 Canonical Ltd.
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3, as published by
@@ -18,6 +18,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+/**
+  Provides a help menu to the header. The idea moving forward is to have a
+  more complete 'built-in' small help system for tips.
+*/
 YUI.add('header-help', function() {
 
   const HeaderHelp = React.createClass({
@@ -38,12 +42,12 @@ YUI.add('header-help', function() {
 
       @method handleClickOutside
     */
-    handleClickOutside: function(e) {
+    handleClickOutside: function() {
       this.setState({ showHelpMenu: false });
     },
 
     /**
-      Clicking the help menu will toggle whether it's shown
+      Clicking the help menu will toggle whether it's visibility.
 
       @method toggleHelpMenu
     */

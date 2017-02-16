@@ -1198,7 +1198,6 @@ YUI.add('juju-gui', function(Y) {
     _renderHeaderHelp: function() {
       ReactDOM.render(
         <window.juju.components.HeaderHelp
-          changeState={this.state.changeState.bind(this.state)}
           appState={this.state} />,
         document.getElementById('header-help'));
     },
