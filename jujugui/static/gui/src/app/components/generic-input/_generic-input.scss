@@ -27,6 +27,8 @@
     margin-bottom: 20px;
     padding-top: 25px;
     padding-bottom: 7px;
+    box-sizing: content-box;
+    min-height: 18px;
 
     &[aria-invalid='true'] {
       border-color: $error;
