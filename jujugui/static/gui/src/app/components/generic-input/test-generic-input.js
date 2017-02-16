@@ -167,6 +167,45 @@ describe('GenericInput', function() {
     assert.equal(instance.getValue(), 'default');
   });
 
+  it('can set the field value', () => {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.GenericInput
+        disabled={false}
+        label="Region"
+        placeholder="us-central-1"
+        required={true}
+        ref="templateRegion"
+        validate={[{
+          regex: /\S+/,
+          error: 'This field is required.'
+        }]}
+        value="default" />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {field: {value: 'default'}};
+    instance.setValue('scooby');
+    assert.equal(instance.getValue(), 'scooby');
+  });
+
+  it('can set a multi line field value', () => {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.GenericInput
+        disabled={false}
+        label="Region"
+        multiLine={true}
+        placeholder="us-central-1"
+        required={true}
+        ref="templateRegion"
+        validate={[{
+          regex: /\S+/,
+          error: 'This field is required.'
+        }]}
+        value="default" />, true);
+    const instance = renderer.getMountedInstance();
+    instance.refs = {field: {innerText: 'default'}};
+    instance.setValue('scooby');
+    assert.equal(instance.getValue(), 'scooby');
+  });
+
   it('can return a multi line field value', () => {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.GenericInput
