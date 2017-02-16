@@ -79,7 +79,7 @@ describe('HeaderHelp', function() {
 
     assert.equal(output.props.children.length, 2);
     assert.deepEqual(output.props.children[0].props.className,
-      'header-help__button header-help__hide-tooltip');
+      'header-help__button header-help__show-menu');
 
     assert.deepEqual(output.props.children[1],
       <juju.components.Panel
@@ -88,9 +88,11 @@ describe('HeaderHelp', function() {
           <ul className="header-help-menu__list" role="menubar">
             <li className="header-help-menu__list-item
               header-help-menu__list-item-with-link"
-              role="menuitem" tabIndex="0"
-              onClick={instance._handleDocsClick}>
-              View Documentation
+              role="menuitem" tabIndex="0">
+              <a
+                href="https://jujucharms.com/docs/stable/getting-started"
+                target="_blank">
+                View Documentation</a>
             </li>
             <li className="header-help-menu__list-item
               header-help-menu__list-item-info"

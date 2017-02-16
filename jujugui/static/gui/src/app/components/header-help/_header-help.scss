@@ -10,11 +10,14 @@
     background-color: $canvas-background;
     padding: 13px 11px;
     margin: 12px 0 11px 12px;
+    // scss-lint:disable ImportantRule
+    color: #888 !important;
+    // scss-lint:disable ImportantRule
 
     &:hover {
       background-color: $white;
       // scss-lint:disable ImportantRule
-      color: $ubuntu-orange !important;
+      color: $warm-grey !important;
       // scss-lint:disable ImportantRule
     }
   }
@@ -23,10 +26,17 @@
     display: block;
   }
 
-  &__hide-tooltip .tooltip__tooltip--below {
+  &__show-menu {
+    background-color: $white;
     // scss-lint:disable ImportantRule
-    display: none !important;
+    color: $warm-grey !important;
     // scss-lint:disable ImportantRule
+
+    .tooltip__tooltip--below {
+      // scss-lint:disable ImportantRule
+      display: none !important;
+      // scss-lint:disable ImportantRule
+    }
   }
 }
 
@@ -67,15 +77,22 @@
 
     &-with-link {
       cursor: pointer;
-      &:hover {
-        background-color: $hover-background;
+      padding: 0;
+
+      a {
+        display: block;
+        padding: 10px 20px 10px;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: none;
+          background-color: $hover-background;
+        }
       }
     }
 
-    a {
-      display: block;
-      text-decoration: none;
-      color: $dark-grey;
+    &-info {
+      color: $warm-grey;
     }
   }
 

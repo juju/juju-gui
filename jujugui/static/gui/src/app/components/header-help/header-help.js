@@ -66,7 +66,9 @@ YUI.add('header-help', function() {
                 <li className="header-help-menu__list-item
                   header-help-menu__list-item-with-link"
                   role="menuitem" tabIndex="0">
-                  <a href="https://jujucharms.com/docs/stable/getting-started">
+                  <a
+                    href="https://jujucharms.com/docs/stable/getting-started"
+                    target="_blank">
                     View Documentation</a>
                 </li>
                 <li className="header-help-menu__list-item
@@ -93,7 +95,7 @@ YUI.add('header-help', function() {
     _getClassNames: function() {
       return classNames(
         'header-help__button', {
-          'header-help__hide-tooltip': this.state.showHelpMenu
+          'header-help__show-menu': this.state.showHelpMenu
         });
     },
 
