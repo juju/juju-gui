@@ -1607,7 +1607,9 @@ describe('Controller API', function() {
       // Perform the request.
       controllerAPI.getClouds(['lxd', 'google', 'no-such'], (err, clouds) => {
         assert.strictEqual(err, null);
+        console.log(clouds);
         assert.deepEqual(clouds, {
+          '.names': ['lxd', 'google'],
           'lxd': {
             cloudType: 'lxd',
             authTypes: ['empty'],

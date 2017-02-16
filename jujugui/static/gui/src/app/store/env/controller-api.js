@@ -926,7 +926,7 @@ YUI.add('juju-controller-api', function(Y) {
     */
     getClouds: function(names, callback) {
       // Decorate the user supplied callback.
-      const handler = data => {
+      const handler = (data) => {
         if (!callback) {
           console.log('data returned by Cloud.Cloud API call:', data);
           return;
@@ -948,6 +948,11 @@ YUI.add('juju-controller-api', function(Y) {
             return prev;
           }
           prev[name] = this._parseCloudResult(result.cloud);
+          if (!prev['.names'] || !prev['.names'].length) {
+            prev['.names'] = [name];
+          } else {
+            prev['.names'].push(name);
+          }
           return prev;
         }, {});
         callback(null, clouds);

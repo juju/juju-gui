@@ -585,11 +585,15 @@ YUI.add('juju-gui', function(Y) {
       this.env.after('login', this.onLogin, this);
 
       // Once we know about MAAS server, update the header accordingly.
-      var maasServer = this.env.get('maasServer');
-      if (maasServer === undefined) {
-        this.env.once('maasServerChange', this._onMaasServer, this);
-      } else {
+      let maasServer = this.env.get('maasServer');
+      if (!maasServer) {
+        maasServer = this.controllerAPI.get('maasServer');
+      }
+      if (maasServer) {
         this._displayMaasLink(maasServer);
+      } else {
+        this.controllerAPI.once('maasServerChange', this._onMaasServer, this);
+        this.env.once('maasServerChange', this._onMaasServer, this);
       }
 
       // Feed environment changes directly into the database.
@@ -2585,6 +2589,18 @@ YUI.add('juju-gui', function(Y) {
           );
         }, this);
       }
+      // Retrieve maas credentials should they exist.
+      // NB: this assumes that a maas cloud cannot be added to a multi-cloud
+      // controller. If this changes in the future, this code will need to be
+      // called somewhere else. - Makyo 2017-02-16
+      this.controllerAPI.getDefaultCloudName((error, name) => {
+        this.controllerAPI.getClouds([name], (error, data) => {
+          if (data['.names']) {
+            this.controllerAPI.set('maasServer',
+                data[data['.names'][0]].endpoint);
+          }
+        });
+      });
       // Handle the change set token if provided in the query.
       // The change set token identifies a collections of changes required
       // to deploy a bundle. Those changes are assumed to be already
@@ -2747,6 +2763,10 @@ YUI.add('juju-gui', function(Y) {
       @param {Object} evt An event object (with a "newVal" attribute).
     */
     _onMaasServer: function(evt) {
+      if (evt.newVal === evt.prevVal) {
+        // This can happen if the attr is set blithely. Ignore if so.
+        return;
+      }
       this._displayMaasLink(evt.newVal);
     },
 
