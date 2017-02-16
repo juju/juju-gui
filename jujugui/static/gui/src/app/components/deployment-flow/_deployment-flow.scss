@@ -36,6 +36,10 @@
   &__deploy {
     &-option {
       margin-bottom: 20px;
+
+      &--disabled {
+        opacity: 0.5;
+      }
     }
 
     &-checkbox {

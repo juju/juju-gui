@@ -1289,6 +1289,9 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
+          addAgreement={this.terms.addAgreement.bind(this.terms)}
+          addNotification={db.notifications.add.bind(db.notifications)}
+          applications={services.toArray()}
           changesFilterByParent={
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
           changeState={this.state.changeState.bind(this.state)}
@@ -1302,7 +1305,8 @@ YUI.add('juju-gui', function(Y) {
             changesUtils.generateAllChangeDescriptions.bind(
               changesUtils, services, db.units)}
           generateCloudCredentialName={utils.generateCloudCredentialName}
-          getAgreements={this.terms.getAgreements.bind(this.terms)}
+          getAgreementsByTerms={
+              this.terms.getAgreementsByTerms.bind(this.terms)}
           getAuth={this._getAuth.bind(this)}
           getCloudCredentials={
             controllerAPI && controllerAPI.getCloudCredentials.bind(

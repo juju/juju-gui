@@ -27,6 +27,7 @@ YUI.add('budget-table-row', function() {
       charmsGetById: React.PropTypes.func,
       extraInfo: React.PropTypes.object,
       listPlansForCharm: React.PropTypes.func,
+      parseTermId: React.PropTypes.func,
       plansEditable: React.PropTypes.bool,
       service: React.PropTypes.object.isRequired,
       showExtra: React.PropTypes.bool,
@@ -305,7 +306,9 @@ YUI.add('budget-table-row', function() {
       }
       this.setState({termsLoading: true}, () => {
         terms.forEach(term => {
-          const xhr = this.props.showTerms(term, null, (error, term) => {
+          term = this.props.parseTermId(term);
+          const id = term.owner ? `${term.owner}/${term.name}` : term.name;
+          const xhr = this.props.showTerms(id, term.revision, (error, term) => {
             if (error) {
               // XXX kadams54: display this error to the user.
               console.error(`Could not retrieve "${term}" terms. ` +

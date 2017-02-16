@@ -6,10 +6,17 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('jujulib terms service', function() {
+  let cleanups = [];
 
   var makeXHRRequest = function(obj) {
     return {target: {responseText: JSON.stringify(obj)}};
   };
+
+  afterEach(function() {
+    cleanups.forEach(cleanup => {
+      cleanup();
+    });
+  });
 
   it('exists', function() {
     var bakery = {};
@@ -36,6 +43,7 @@ describe('jujulib terms service', function() {
           '/terms/canonical?revision=42');
         var xhr = makeXHRRequest([{
           name: 'canonical',
+          owner: 'spinach',
           title: 'canonical terms',
           revision: 42,
           'created-on': '2016-06-09T22:07:24Z',
@@ -49,6 +57,7 @@ describe('jujulib terms service', function() {
       assert.strictEqual(error, null);
       assert.deepEqual(terms, {
         name: 'canonical',
+        owner: 'spinach',
         title: 'canonical terms',
         revision: 42,
         createdAt: new Date(1465510044000),
@@ -68,6 +77,7 @@ describe('jujulib terms service', function() {
           '/terms/canonical');
         var xhr = makeXHRRequest([{
           name: 'canonical',
+          owner: 'spinach',
           title: 'canonical recent terms',
           revision: 47,
           'created-on': '2016-06-09T22:07:24Z',
@@ -81,6 +91,7 @@ describe('jujulib terms service', function() {
       assert.strictEqual(error, null);
       assert.deepEqual(terms, {
         name: 'canonical',
+        owner: 'spinach',
         title: 'canonical recent terms',
         revision: 47,
         createdAt: new Date(1465510044000),
@@ -143,6 +154,7 @@ describe('jujulib terms service', function() {
       function(error, terms) {
         assert.equal(error, null);
         assert.deepEqual(terms, [{
+          owner: null,
           user: 'spinach',
           term: 'these-terms',
           revision: 42,
@@ -154,6 +166,19 @@ describe('jujulib terms service', function() {
         done();
       }
     );
+  });
+
+  it('passes the agreements request the correct args', function() {
+    const makeRequest = sinon.stub(window.jujulib, '_makeRequest');
+    cleanups.push(makeRequest.restore);
+    var terms = new window.jujulib.terms('http://1.2.3.4/', {});
+    terms.addAgreement([{name: 'canonical', owner: 'spinach', revision: 5}]);
+    assert.equal(makeRequest.callCount, 1);
+    assert.deepEqual(makeRequest.args[0][3][0], {
+      termname: 'canonical',
+      termowner: 'spinach',
+      termrevision: 5
+    });
   });
 
   it('can get agreements for a user', function(done) {
@@ -177,6 +202,7 @@ describe('jujulib terms service', function() {
     terms.getAgreements(function(error, terms) {
       assert.strictEqual(error, null);
       assert.deepEqual(terms, [{
+        owner: undefined,
         user: 'spinach',
         term: 'One fancy term',
         revision: 47,

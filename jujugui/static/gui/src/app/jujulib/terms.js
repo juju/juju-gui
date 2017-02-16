@@ -65,6 +65,7 @@ var module = module;
         var milliseconds = Date.parse(terms['created-on']);
         callback(null, {
           name: terms.name,
+          owner: terms.owner,
           title: terms.title,
           revision: terms.revision,
           content: terms.content,
@@ -105,6 +106,7 @@ var module = module;
       @param terms {Array} A list of terms to agree to. Each term should be an
         object with the following parameters:
         - name {String} The terms name.
+        - owner {String} The terms owner.
         - revision {Int} The terms revision.
       @param callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
@@ -124,10 +126,14 @@ var module = module;
       };
       var url = this.url + '/agreement';
       var payload = terms.map(function(term) {
-        return {
+        const args = {
           termname: term.name,
           termrevision: term.revision
         };
+        if (term.owner) {
+          args.termowner = term.owner;
+        }
+        return args;
       });
       return jujulib._makeRequest(this.bakery, url, 'POST', payload, handler);
     },
@@ -168,7 +174,7 @@ var module = module;
 
     /**
       Calls to check if the supplied terms have been agreed to. If they have
-      it returns an empty array, else it'll return the terms which need to be
+      it returns null, else it'll return the terms which need to be
       agreed to.
       @param termList {Array} A list of agreement names that you'd like to
         check if the user has
