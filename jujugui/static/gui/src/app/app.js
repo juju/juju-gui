@@ -990,8 +990,10 @@ YUI.add('juju-gui', function(Y) {
       const getDischargeToken = function() {
         return window.localStorage.getItem('discharge-token');
       };
+      const charmstore = this.get('charmstore');
       ReactDOM.render(
         <window.juju.components.Login
+          charmstore={charmstore}
           controllerIsConnected={controllerIsConnected}
           errorMessage={err}
           getDischargeToken={getDischargeToken}
@@ -1002,7 +1004,8 @@ YUI.add('juju-gui', function(Y) {
           loginToController={loginToController}
           sendPost={webhandler.sendPostRequest.bind(webhandler)}
           setCredentials={this.env.setCredentials.bind(this.env)}
-          showSpinner={this.showConnectingMask.bind(this)} />,
+          showSpinner={this.showConnectingMask.bind(this)}
+          storeUser={this.storeUser.bind(this)} />,
         document.getElementById('login-container'));
     },
 
@@ -1086,8 +1089,12 @@ YUI.add('juju-gui', function(Y) {
       // If the username does not match the logged in user then display a new
       // model instead of the profile.
       const auth = this._getAuth();
+      console.log(JSON.stringify(auth));
+      console.log(auth.rootUserName);
+      console.log(state.profile);
+      console.log(JSON.stringify(auth));
       if (auth && state.profile !== auth.rootUserName) {
-        this.state.changeState({new: '', profile: null});
+        this.state.changeState({root: 'new', profile: null});
         return;
       }
       const charmstore = this.get('charmstore');
