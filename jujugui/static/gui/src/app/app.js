@@ -586,13 +586,15 @@ YUI.add('juju-gui', function(Y) {
 
       // Once we know about MAAS server, update the header accordingly.
       let maasServer = this.env.get('maasServer');
-      if (!maasServer) {
+      if (!maasServer && this.controllerAPI) {
         maasServer = this.controllerAPI.get('maasServer');
       }
       if (maasServer) {
         this._displayMaasLink(maasServer);
       } else {
-        this.controllerAPI.once('maasServerChange', this._onMaasServer, this);
+        if (this.controllerAPI) {
+          this.controllerAPI.once('maasServerChange', this._onMaasServer, this);
+        }
         this.env.once('maasServerChange', this._onMaasServer, this);
       }
 
