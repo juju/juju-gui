@@ -2,7 +2,7 @@
   $transition-duration: .3s;
   background-color: transparent;
   color: $warm-grey;
-  padding: 11px 12px;
+  padding: 12px 12px 11px;
   transition: background-color $transition-duration;
 
   &--active {
@@ -10,7 +10,7 @@
     box-shadow: 0 -4px 4.95px .05px rgba(51, 51, 51, .2);
     position: relative;
     z-index: index($z-indexed-elements, header-search--active);
-    
+
     .header-search__search--mobile {
       display: none;
     }
@@ -49,7 +49,7 @@
     left: 15px;
     padding: 0;
     position: absolute;
-    top: 11px;
+    top: 10px;
 
     &:focus,
     &:active,
@@ -64,7 +64,7 @@
     border: 1px solid $mid-grey;
     border-radius: $border-radius;
     width: 236px;
-    height: 25px;
+    height: 22px;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, .12);
   }
 

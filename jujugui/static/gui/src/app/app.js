@@ -1195,6 +1195,14 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('header-search-container'));
     },
 
+
+    _renderHeaderHelp: function() {
+      ReactDOM.render(
+        <window.juju.components.HeaderHelp
+          appState={this.state} />,
+        document.getElementById('header-help'));
+    },
+
     /**
       Renders the notification component to the page in the designated element.
 
@@ -2851,6 +2859,7 @@ YUI.add('juju-gui', function(Y) {
       this._renderZoom();
       this._renderBreadcrumb();
       this._renderHeaderSearch();
+      this._renderHeaderHelp();
       const gui = this.state.current.gui;
       if (!gui || (gui && !gui.inspector)) {
         this._renderAddedServices();
@@ -3140,6 +3149,7 @@ YUI.add('juju-gui', function(Y) {
     'header-breadcrumb',
     'model-actions',
     'expanding-progress',
+    'header-help',
     'header-search',
     'inspector-component',
     'isv-profile',

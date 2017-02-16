@@ -1,0 +1,106 @@
+// The !importants in this file are due to the cloud-vanilla-theme being
+// specific with it's colours. This should be improved when the juju-gui
+// finally moves on to a new vanilla theme.
+.header-help {
+  &__button {
+    @extend .link;
+    @extend .tooltip;
+    display: inline-block;
+    border-radius: 2px;
+    border-right-width: 0;
+    border: 1px solid $light-mid-grey;
+    transition: background-color .2s;
+    background-color: $canvas-background;
+    padding: 13px 11px;
+    margin: 12px 0 11px 12px;
+    // scss-lint:disable ImportantRule
+    color: #888 !important;
+    // scss-lint:disable ImportantRule
+
+    &:hover {
+      background-color: $white;
+      // scss-lint:disable ImportantRule
+      color: $warm-grey !important;
+      // scss-lint:disable ImportantRule
+    }
+  }
+
+  &__icon {
+    display: block;
+  }
+
+  &__show-menu {
+    background-color: $white;
+    // scss-lint:disable ImportantRule
+    color: $warm-grey !important;
+    // scss-lint:disable ImportantRule
+
+    .tooltip__tooltip--below {
+      // scss-lint:disable ImportantRule
+      display: none !important;
+      // scss-lint:disable ImportantRule
+    }
+  }
+}
+
+.header-help-menu {
+  box-sizing: border-box;
+  width: 275px;
+  margin-left: -20px;
+  padding: 10px 0;
+
+  &:before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    position: absolute;
+    display: block;
+    background-color: #fff;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+    bottom: -4px;
+    top: -8px;
+    left: 45px;
+    width: 13px;
+    height: 13px;
+    border-width: 1px 0 0 1px;
+    border-style: solid;
+    border-color: rgba(0,0,0,0.1);
+  }
+
+  &__list {
+    list-style-type: none;
+    margin-left: 0;
+  }
+
+  &__list-item {
+    padding: 10px 20px 10px;
+    margin: 0;
+
+    &-with-link {
+      cursor: pointer;
+      padding: 0;
+
+      a {
+        display: block;
+        padding: 10px 20px 10px;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: none;
+          background-color: $hover-background;
+        }
+      }
+    }
+
+    &-info {
+      color: $warm-grey;
+    }
+  }
+
+  &__extra-info {
+    float: right;
+    color: $warm-grey;
+  }
+}
