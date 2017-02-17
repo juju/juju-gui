@@ -27,9 +27,12 @@ YUI.add('sharing', function() {
   juju.components.Sharing = React.createClass({
     propTypes: {
       addNotification: React.PropTypes.func,
+      canShareModel: React.PropTypes.bool,
       closeHandler: React.PropTypes.func,
       getModelUserInfo: React.PropTypes.func.isRequired,
-      humanizeTimestamp: React.PropTypes.func.isRequired
+      grantModelAccess: React.PropTypes.func.isRequired,
+      humanizeTimestamp: React.PropTypes.func,
+      revokeModelAccess: React.PropTypes.func.isRequired
     },
 
     getInitialState: function() {
@@ -43,11 +46,16 @@ YUI.add('sharing', function() {
 
     getDefaultProps: function() {
       return {
+        addNotification: () => {
+          console.log('No addNotification specified.');
+        },
+        canShareModel: false,
         closeHandler: () => {
           console.log('No closeHandler specified.');
         },
-        addNotification: () => {
-          console.log('No addNotification specified.');
+        humanizeTimestamp: timestamp => {
+          // Least we can do.
+          return timestamp.toLocaleDateString();
         }
       };
     },
@@ -99,6 +107,59 @@ YUI.add('sharing', function() {
     },
 
     /**
+      Provides a callback for both revoke and grant actions. The callback
+      handles any errors that occurred while applying the changes. If no
+      errors occur, then update the list of users with access to the model.
+
+      @method _modifyModelAccessCallback
+      @param {String} error Any errors that occured while updating access.
+    */
+    _modifyModelAccessCallback: function(error) {
+      if (error) {
+        this.setState({inviteError: error});
+      } else {
+        // Reset the form fields.
+        this.refs.username.setValue('');
+        this.refs.access.setValue('read');
+        // Clear out any errors and refresh the user list.
+        this.setState({inviteError: null}, () => {
+          this._getModelUserInfo();
+        });
+      }
+    },
+
+    /**
+      Grants access to the specified user.
+
+      @method _grantModelAccess
+      @param {Object} evt The form submission event object.
+    */
+    _grantModelAccess: function(evt) {
+      if (evt) {
+        evt.preventDefault();
+      }
+      const username = this.refs.username.getValue();
+      const access = this.refs.access.getValue();
+      this.props.grantModelAccess([username], access,
+        this._modifyModelAccessCallback);
+    },
+
+    /**
+      Revokes access to the specified user.
+
+      @method _revokeModelAccess
+      @param {String} user The user who's access is being revoked.
+    */
+    _revokeModelAccess: function(user) {
+      // Juju's revoke access API doesn't actually revoke access, it just
+      // downgrades it to the next level at the moment (as of 2.0). So if you
+      // want a user to have no access, you have to specify 'read'. Because:
+      // admin -> write -> read -> no access.
+      this.props.revokeModelAccess([user.name], 'read',
+        this._modifyModelAccessCallback);
+    },
+
+    /**
       Generate the list of users with access to the model.
 
       @method _generateUsersWithAccess
@@ -133,9 +194,20 @@ YUI.add('sharing', function() {
         }
         let lastConnection = 'never connected';
         if (user.lastConnection) {
-          const humanTime = this.props.humanizeTimestamp(
-            user.lastConnection);
+          const humanTime = this.props.humanizeTimestamp(user.lastConnection);
           lastConnection = `last connection: ${humanTime}`;
+        }
+        let revokeMarkup;
+        if (this.props.canShareModel) {
+          const revokeUserAccess = this._revokeModelAccess.bind(this, user);
+          revokeMarkup = (
+            <div className="sharing__user-revoke">
+              <juju.components.GenericButton
+                action={revokeUserAccess}
+                tooltip="Remove user"
+                icon="close_16" />
+            </div>
+          );
         }
         return (
           <div key={user.name} className="sharing__user">
@@ -153,9 +225,62 @@ YUI.add('sharing', function() {
             <div className="sharing__user-access">
               {user.access}
             </div>
+            {revokeMarkup}
           </div>
         );
       });
+    },
+
+    _generateInvite: function() {
+      if (!this.props.canShareModel) {
+        return;
+      }
+      const accessOptions = [{
+        label: 'read',
+        value: 'read'
+      }, {
+        label: 'write',
+        value: 'write'
+      }, {
+        label: 'admin',
+        value: 'admin'
+      }];
+      const inviteError = this.state.inviteError;
+      const inviteErrorMarkup = inviteError ? (
+        <div className="sharing__invite--error">
+          {inviteError}
+        </div>
+      ) : undefined;
+      return (
+        <div className="sharing__invite">
+          <div className="sharing__invite--header">Add a user</div>
+          <form onSubmit={this._grantModelAccess}>
+            <div className="sharing__invite--username">
+              <juju.components.GenericInput
+                label="Username"
+                placeholder="Username"
+                ref="username"
+                required={true} />
+            </div>
+            <div className="sharing__invite--access">
+              <juju.components.InsetSelect
+                label="Access"
+                defaultValue="read"
+                ref="access"
+                options={accessOptions} />
+            </div>
+            <div className="sharing__invite--grant-button">
+              <juju.components.GenericButton
+                submit={true}
+                icon="add_16"
+                tooltip="Add user"
+                ref="grantButton"
+                type="positive" />
+            </div>
+          </form>
+          {inviteErrorMarkup}
+        </div>
+      );
     },
 
     render: function() {
@@ -167,11 +292,12 @@ YUI.add('sharing', function() {
       return (
         <juju.components.Popup
           className="sharing__popup"
-          title="Shared with"
+          title="Share"
           buttons={buttons}>
+          {this._generateInvite()}
           <div className="sharing__users-header">
-              <div className="sharing__users-header-user">User</div>
-              <div className="sharing__users-header-access">Access</div>
+            <div className="sharing__users-header-user">User</div>
+            <div className="sharing__users-header-access">Access</div>
           </div>
           <div className="sharing__users">
             {this._generateUsersWithAccess()}
@@ -184,6 +310,9 @@ YUI.add('sharing', function() {
 
 }, '0.1.0', {
   requires: [
+    'generic-button',
+    'generic-input',
+    'inset-select',
     'loading-spinner',
     'popup'
   ]

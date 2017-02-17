@@ -2082,7 +2082,7 @@ describe('Controller API', function() {
       // Perform the request.
       const users = ['dalek', 'drwho@external'];
       const access = 'read';
-      controllerAPI.grantModelAccess(users, 'uuid-1234', access, err => {
+      controllerAPI.grantModelAccess('uuid-1234', users, access, err => {
         assert.strictEqual(err, null);
         const msg = conn.last_message();
         assert.deepEqual(msg, {
@@ -2118,7 +2118,7 @@ describe('Controller API', function() {
 
     it('handles request failures while granting user access', function(done) {
       // Perform the request.
-      controllerAPI.grantModelAccess(['dalek'], 'uuid-1234', 'read', err => {
+      controllerAPI.grantModelAccess('uuid-1234', ['dalek'], 'read', err => {
         assert.strictEqual(err, 'bad wolf');
         done();
       });
@@ -2128,7 +2128,7 @@ describe('Controller API', function() {
 
     it('handles API failures while granting user access', function(done) {
       // Perform the request.
-      controllerAPI.grantModelAccess(['dalek'], 'uuid-1234', 'read', err => {
+      controllerAPI.grantModelAccess('uuid-1234', ['dalek'], 'read', err => {
         assert.strictEqual(err, 'bad wolf');
         done();
       });
@@ -2141,7 +2141,7 @@ describe('Controller API', function() {
 
     it('fails for unexpected results granting user access', function(done) {
       // Perform the request.
-      controllerAPI.grantModelAccess(['dalek'], 'uuid-1234', 'read', err => {
+      controllerAPI.grantModelAccess('uuid-1234', ['dalek'], 'read', err => {
         assert.strictEqual(err, 'invalid results from Juju: [{},{}]');
         done();
       });
@@ -2154,7 +2154,7 @@ describe('Controller API', function() {
 
     it('fails for no results granting user access', function(done) {
       // Perform the request.
-      controllerAPI.grantModelAccess(['invalid'], 'uuid-1234', 'read', err => {
+      controllerAPI.grantModelAccess('uuid-1234', ['invalid'], 'read', err => {
         assert.strictEqual(err, 'invalid results from Juju: []');
         done();
       });
@@ -2170,7 +2170,7 @@ describe('Controller API', function() {
     it('revokes users access', function(done) {
       // Perform the request.
       const users = ['dalek', 'drwho@external'];
-      controllerAPI.revokeModelAccess(users, 'uuid-1234', 'read', err => {
+      controllerAPI.revokeModelAccess('uuid-1234', users, 'read', err => {
         assert.strictEqual(err, null);
         const msg = conn.last_message();
         assert.deepEqual(msg, {
@@ -2206,7 +2206,7 @@ describe('Controller API', function() {
 
     it('handles request failures while revoking user access', function(done) {
       // Perform the request.
-      controllerAPI.revokeModelAccess(['dalek'], 'uuid-1234', 'read', err => {
+      controllerAPI.revokeModelAccess('uuid-1234', ['dalek'], 'read', err => {
         assert.strictEqual(err, 'bad wolf');
         done();
       });
@@ -2216,7 +2216,7 @@ describe('Controller API', function() {
 
     it('handles API failures while revoking user access', function(done) {
       // Perform the request.
-      controllerAPI.revokeModelAccess(['dalek'], 'uuid-1234', 'read', err => {
+      controllerAPI.revokeModelAccess('uuid-1234', ['dalek'], 'read', err => {
         assert.strictEqual(err, 'bad wolf');
         done();
       });
@@ -2228,7 +2228,7 @@ describe('Controller API', function() {
     });
 
     it('fails for unexpected results revoking user access', function(done) {
-      controllerAPI.revokeModelAccess(['dalek'], 'uuid-1234', 'read', err => {
+      controllerAPI.revokeModelAccess('uuid-1234', ['dalek'], 'read', err => {
       // Perform the request.
         assert.strictEqual(err, 'invalid results from Juju: [{},{}]');
         done();
@@ -2242,7 +2242,7 @@ describe('Controller API', function() {
 
     it('fails for no results revoking user access', function(done) {
       // Perform the request.
-      controllerAPI.revokeModelAccess(['invalid'], 'uuid-1234', 'read', err => {
+      controllerAPI.revokeModelAccess('uuid-1234', ['invalid'], 'read', err => {
         assert.strictEqual(err, 'invalid results from Juju: []');
         done();
       });

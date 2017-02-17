@@ -1,5 +1,7 @@
 .sharing {
   &__popup {
+    top: calc(50% - 250px);
+
     .popup__title {
       border-bottom: 1px solid #ccc;
       margin: 0 -20px 10px -20px;
@@ -12,6 +14,63 @@
     }
   }
 
+  &__invite {
+    margin-bottom: 20px;
+
+    &--header {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: none;
+    }
+
+    .generic-input__field,
+    .inset-select__field {
+      padding: 7px 10px;
+    }
+
+    &--username,
+    &--access,
+    &--grant-button {
+      display: inline-block;
+    }
+
+    &--username {
+      margin-right: 5px;
+
+      .generic-input__field {
+        margin-bottom: 0;
+        width: 180px;
+      }
+    }
+
+    &--access {
+      margin-right: 5px;
+
+      .inset-select {
+        width: auto;
+
+        &__field {
+          line-height: normal;
+          padding-right: 30px;
+        }
+      }
+    }
+
+    &--grant-button {
+      .button--positive {
+        line-height: normal;
+        padding: 7.5px 9px 7.5px 9px;
+      }
+    }
+
+    &--error {
+      color: $error;
+      margin-top: 5px;
+    }
+  }
+
   &__users-header {
     border-bottom: 1px solid #ccc;
     padding: 0 20px 10px 20px;
@@ -19,7 +78,7 @@
     height: 29px;
 
     &-user {
-      width: 270px;
+      width: 251px;
       float: left;
     }
     &-access {
@@ -29,7 +88,7 @@
   }
 
   &__users {
-    max-height: 300px;
+    max-height: 250px;
     overflow-y: scroll;
     margin: 0 -20px;
     clear: both;
@@ -41,9 +100,30 @@
     float: left;
     width: 100%;
 
+    &:hover .sharing__user-revoke {
+      visibility: visible;
+    }
+
+    &-revoke {
+      float: left;
+      line-height: 49px;
+      margin: 4px 0 0 10px;
+      visibility: hidden;
+
+      .button--neutral {
+        border: 0;
+        line-height: normal;
+        padding: 0;
+
+        &:hover {
+          background-color: transparent;
+        }
+      }
+    }
+
     &-details {
       float: left;
-      width: 270px;
+      width: 251px;
     }
 
     &-name {

@@ -94,11 +94,11 @@ YUI.add('inset-select', function() {
     _generateOptions: function() {
       return this.props.options.map((option, i) => {
         return (
-          <option
-            key={option.value + i}
+          <option key={option.value + i}
             value={option.value}>
             {option.label}
-          </option>);
+          </option>
+        );
       });
     },
 

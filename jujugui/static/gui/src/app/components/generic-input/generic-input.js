@@ -100,6 +100,22 @@ YUI.add('generic-input', function() {
     },
 
     /**
+      Set the value of the field.
+
+      @method setValue
+      @param {String} newValue The field's new value.
+    */
+    setValue: function(newValue) {
+      if (this.refs.field) {
+        if (this.props.multiLine) {
+          this.refs.field.innerText = newValue;
+        } else {
+          this.refs.field.value = newValue;
+        }
+      }
+    },
+
+    /**
       Set the focus on the input.
 
       @method focus
