@@ -265,15 +265,6 @@ describe('App', function() {
         assert.strictEqual(maasNode.getStyle('display'), 'none');
       });
 
-      it('does not show the MAAS link if already null in the env', function() {
-        env.set('maasServer', null);
-        constructAppInstance({env: env}, this);
-        assert.strictEqual(maasNode.getStyle('display'), 'none');
-        // Further changes to the maasServer attribute don't activate the link.
-        env.set('maasServer', 'http://1.2.3.4/MAAS');
-        assert.strictEqual(maasNode.getStyle('display'), 'none');
-      });
-
     });
 
     describe('_setupCharmstore', function() {

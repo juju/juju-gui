@@ -588,11 +588,17 @@ YUI.add('juju-gui', function(Y) {
       this.env.after('login', this.onLogin, this);
 
       // Once we know about MAAS server, update the header accordingly.
-      var maasServer = this.env.get('maasServer');
-      if (maasServer === undefined) {
-        this.env.once('maasServerChange', this._onMaasServer, this);
-      } else {
+      let maasServer = this.env.get('maasServer');
+      if (!maasServer && this.controllerAPI) {
+        maasServer = this.controllerAPI.get('maasServer');
+      }
+      if (maasServer) {
         this._displayMaasLink(maasServer);
+      } else {
+        if (this.controllerAPI) {
+          this.controllerAPI.once('maasServerChange', this._onMaasServer, this);
+        }
+        this.env.once('maasServerChange', this._onMaasServer, this);
       }
 
       // Feed environment changes directly into the database.
@@ -2798,6 +2804,10 @@ YUI.add('juju-gui', function(Y) {
       @param {Object} evt An event object (with a "newVal" attribute).
     */
     _onMaasServer: function(evt) {
+      if (evt.newVal === evt.prevVal) {
+        // This can happen if the attr is set blithely. Ignore if so.
+        return;
+      }
       this._displayMaasLink(evt.newVal);
     },
 

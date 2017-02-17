@@ -2929,6 +2929,12 @@ YUI.add('juju-env-api', function(Y) {
       }, handler);
     }
 
+  }, {
+    ATTRS: {
+      maasServer: {
+        value: null,
+      }
+    }
   });
 
 
