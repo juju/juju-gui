@@ -1257,7 +1257,8 @@ YUI.add('juju-gui', function(Y) {
       const env = this.env;
       const db = this.db;
       const connected = this.env.get('connected');
-      const modelName = connected ? db.environment.get('name') : 'mymodel';
+      const environmentName = env.get('environmentName')
+      const modelName = environmentName ? environmentName : 'mymodel';
       const utils = views.utils;
       const currentChangeSet = env.get('ecs').getCurrentChangeSet();
       if (Object.keys(currentChangeSet).length === 0) {
@@ -1329,7 +1330,7 @@ YUI.add('juju-gui', function(Y) {
           changes={currentChangeSet}
           charmsGetById={db.charms.getById.bind(db.charms)}
           deploy={utils.deploy.bind(utils, this)}
-          environment={db.environment}
+          env={env}
           generateAllChangeDescriptions={
             changesUtils.generateAllChangeDescriptions.bind(
               changesUtils, services, db.units)}

@@ -34,7 +34,7 @@ YUI.add('deployment-flow', function() {
       cloud: React.PropTypes.object,
       credential: React.PropTypes.string,
       deploy: React.PropTypes.func.isRequired,
-      environment: React.PropTypes.object.isRequired,
+      env: React.PropTypes.object.isRequired,
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
       generateCloudCredentialName: React.PropTypes.func.isRequired,
       getAgreementsByTerms: React.PropTypes.func.isRequired,
@@ -571,7 +571,7 @@ YUI.add('deployment-flow', function() {
       const modelName = this.refs.modelName.getValue();
       this.setState({modelName: modelName});
       if (modelName !== '') {
-        this.props.environment.set('name', modelName);
+        this.props.env.set('environmentName', modelName);
       }
     },
 
