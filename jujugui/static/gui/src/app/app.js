@@ -1089,10 +1089,6 @@ YUI.add('juju-gui', function(Y) {
       // If the username does not match the logged in user then display a new
       // model instead of the profile.
       const auth = this._getAuth();
-      console.log(JSON.stringify(auth));
-      console.log(auth.rootUserName);
-      console.log(state.profile);
-      console.log(JSON.stringify(auth));
       if (auth && state.profile !== auth.rootUserName) {
         this.state.changeState({root: 'new', profile: null});
         return;
