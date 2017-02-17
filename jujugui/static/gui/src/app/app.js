@@ -482,6 +482,9 @@ YUI.add('juju-gui', function(Y) {
         modelAPI = new environments.GoEnvironment(modelOptions);
         controllerAPI = new Y.juju.ControllerAPI(controllerOptions);
       }
+      if (this.get('gisf')) {
+        document.body.classList.add('u-is-beta');
+      }
       this._init(cfg, modelAPI, controllerAPI);
     },
 
@@ -2902,10 +2905,6 @@ YUI.add('juju-gui', function(Y) {
       const gui = this.state.current.gui;
       if (!gui || (gui && !gui.inspector)) {
         this._renderAddedServices();
-      }
-
-      if (this.get('gisf')) {
-        document.body.classList.add('u-is-beta');
       }
     },
 
