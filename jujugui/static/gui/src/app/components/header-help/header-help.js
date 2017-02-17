@@ -59,17 +59,15 @@ YUI.add('header-help', function() {
 
     /**
       Generate a link to issues based on whether the user is logged in
-      and in gisf
+      and in gisf.
 
       @method _generateIssuesLink
      */
     _generateIssuesLink: function() {
       let link = 'https://github.com/juju/juju-gui/issues';
-
       if (this.props.gisf && this.props.user) {
         link = 'https://jujucharms.com/issues';
       }
-
       return (
         <li className="header-help-menu__list-item
           header-help-menu__list-item-with-link"
