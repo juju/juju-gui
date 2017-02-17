@@ -141,5 +141,7 @@ $asset-path: 'static/gui/build/app/assets/';
 @import 'plugins/prism';
 @import 'plugins/prism-overrides';
 
+@import 'beta';
+
 // Mobile styles
 @import 'mobile';

@@ -482,6 +482,9 @@ YUI.add('juju-gui', function(Y) {
         modelAPI = new environments.GoEnvironment(modelOptions);
         controllerAPI = new Y.juju.ControllerAPI(controllerOptions);
       }
+      if (this.get('gisf')) {
+        document.body.classList.add('u-is-beta');
+      }
       this._init(cfg, modelAPI, controllerAPI);
     },
 
