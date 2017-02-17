@@ -324,10 +324,12 @@ var jsTestUtils = {
     While assert.deepEqual is great, if a nested child errors it's
     hard to debug. This function goes to the deepest level and works
     it's way out - giving an easier to debug error.
-    Remember to bind the scope:
-      jsTestUtils.specificDeepEquals.bind(this, output, expected);
+    This code is not 100% tested, always follow up with a standard
+    assert.deepEqual(output,expected), Just incase this drops the ball.
+
+    @method specificDeepEqual
   */
-  specificDeepEquals: function(output, expected) {
+  specificDeepEqual: function(output, expected) {
     if (output && output.props &&
       output.props.children &&
       expected && expected.props &&
@@ -338,18 +340,17 @@ var jsTestUtils = {
             output.props.children &&
             expected.props &&
             expected.props.children) {
-            this.specificDeepEquals.bind(this,
+            this.specificDeepEqual(
               output.props.children[i],
               expected.props.children[i]);
           }
         }
       } else {
-        // assert.isDefined(expected.props.children);
         if (output.props &&
           output.props.children &&
           expected.props &&
           expected.props.children) {
-          this.specificDeepEquals.bind(this,
+          this.specificDeepEqual(
             output.props.children,
             expected.props.children);
         }
