@@ -1199,7 +1199,9 @@ YUI.add('juju-gui', function(Y) {
     _renderHeaderHelp: function() {
       ReactDOM.render(
         <window.juju.components.HeaderHelp
-          appState={this.state} />,
+          appState={this.state}
+          gisf={this.get('gisf')}
+          user={this._getAuth()} />,
         document.getElementById('header-help'));
     },
 
