@@ -41,7 +41,9 @@ describe('HeaderHelp', function() {
   it('renders', function () {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderHelp.prototype.wrappedComponent
-        appState={appState} />, true);
+        appState={appState}
+        gisf={false}
+        user={null} />, true);
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
 
@@ -69,40 +71,98 @@ describe('HeaderHelp', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('opens a menu when clicked', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <juju.components.HeaderHelp.prototype.wrappedComponent
-        appState={appState} />, true);
-    const instance = renderer.getMountedInstance();
-    instance.toggleHelpMenu();
-    const output = renderer.getRenderOutput();
+  describe('menu', function () {
+    const issueUrl = 'https://github.com/juju/juju-gui/issues';
+    const loggedInIssueUrl = 'https://jujucharms.com/issues';
+    const docsUrl = 'https://jujucharms.com/docs/stable/getting-started';
 
-    assert.equal(output.props.children.length, 2);
-    assert.deepEqual(output.props.children[0].props.className,
-      'header-help__button header-help__show-menu');
+    it('opens a menu when clicked', function () {
+      const renderer = jsTestUtils.shallowRender(
+        <juju.components.HeaderHelp.prototype.wrappedComponent
+          appState={appState}
+          gisf={false}
+          user={null} />, true);
+      const instance = renderer.getMountedInstance();
+      instance.toggleHelpMenu();
+      const output = renderer.getRenderOutput();
 
-    assert.deepEqual(output.props.children[1],
-      <juju.components.Panel
-        instanceName="header-help-menu"
-        visible={true}>
-          <ul className="header-help-menu__list" role="menubar">
-            <li className="header-help-menu__list-item
-              header-help-menu__list-item-with-link"
-              role="menuitem" tabIndex="0">
-              <a
-                href="https://jujucharms.com/docs/stable/getting-started"
-                target="_blank">
-                View Documentation</a>
-            </li>
-            <li className="header-help-menu__list-item
-              header-help-menu__list-item-info"
-              role="menuItem" tabIndex="1">
-              Keyboard shortcuts
-              <span className="header-help-menu__extra-info">
-                Shift + ?
-              </span>
-            </li>
-          </ul>
-        </juju.components.Panel>);
+      assert.equal(output.props.children.length, 2);
+      assert.deepEqual(output.props.children[0].props.className,
+        'header-help__button header-help__show-menu');
+
+      assert.deepEqual(output.props.children[1],
+        <juju.components.Panel
+          instanceName="header-help-menu"
+          visible={true}>
+            <ul className="header-help-menu__list" role="menubar">
+              <li className="header-help-menu__list-item
+                header-help-menu__list-item-with-link"
+                role="menuitem" tabIndex="0">
+                <a
+                  href={docsUrl}
+                  target="_blank">
+                  View Documentation</a>
+              </li>
+              <li className="header-help-menu__list-item
+                header-help-menu__list-item-with-link"
+                role="menuitem" tabIndex="1">
+                <a href={issueUrl} target="_blank">File Issue</a>
+              </li>
+              <li className="header-help-menu__list-item
+                header-help-menu__list-item-info"
+                role="menuItem" tabIndex="2">
+                Keyboard shortcuts
+                <span className="header-help-menu__extra-info">
+                  Shift + ?
+                </span>
+              </li>
+            </ul>
+          </juju.components.Panel>);
+    });
+
+    it('shows the jujuchams issues page if in gisf and logged in',
+      function () {
+        const renderer = jsTestUtils.shallowRender(
+          <juju.components.HeaderHelp.prototype.wrappedComponent
+            appState={appState}
+            gisf={true}
+            user={{}} />, true);
+        const instance = renderer.getMountedInstance();
+        instance.toggleHelpMenu();
+        const output = renderer.getRenderOutput();
+
+        assert.equal(output.props.children.length, 2);
+        assert.deepEqual(output.props.children[0].props.className,
+          'header-help__button header-help__show-menu');
+
+        assert.deepEqual(output.props.children[1],
+          <juju.components.Panel
+            instanceName="header-help-menu"
+            visible={true}>
+              <ul className="header-help-menu__list" role="menubar">
+                <li className="header-help-menu__list-item
+                  header-help-menu__list-item-with-link"
+                  role="menuitem" tabIndex="0">
+                  <a
+                    href={docsUrl}
+                    target="_blank">
+                    View Documentation</a>
+                </li>
+                <li className="header-help-menu__list-item
+                  header-help-menu__list-item-with-link"
+                  role="menuitem" tabIndex="1">
+                  <a href={loggedInIssueUrl} target="_blank">File Issue</a>
+                </li>
+                <li className="header-help-menu__list-item
+                  header-help-menu__list-item-info"
+                  role="menuItem" tabIndex="2">
+                  Keyboard shortcuts
+                  <span className="header-help-menu__extra-info">
+                    Shift + ?
+                  </span>
+                </li>
+              </ul>
+            </juju.components.Panel>);
+      });
   });
 });

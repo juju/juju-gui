@@ -27,7 +27,9 @@ YUI.add('header-help', function() {
   const HeaderHelp = React.createClass({
 
     propTypes: {
-      appState: React.PropTypes.object.isRequired
+      appState: React.PropTypes.object.isRequired,
+      gisf: React.PropTypes.bool.isRequired,
+      user: React.PropTypes.object.isRequired
     },
 
     getInitialState: function() {
@@ -56,11 +58,33 @@ YUI.add('header-help', function() {
     },
 
     /**
+      Generate a link to issues based on whether the user is logged in
+      and in gisf
+
+      @method _generateIssuesLink
+     */
+    _generateIssuesLink: function() {
+      let link = 'https://github.com/juju/juju-gui/issues';
+
+      if (this.props.gisf && this.props.user) {
+        link = 'https://jujucharms.com/issues';
+      }
+
+      return (
+        <li className="header-help-menu__list-item
+          header-help-menu__list-item-with-link"
+          role="menuitem" tabIndex="1">
+          <a href={link} target="_blank">File Issue</a>
+        </li>
+        );
+    },
+
+    /**
      Generate menu based on whether the button has been clicked.
 
       @method generateHelpMenu
     */
-    generateHelpMenu: function() {
+    _generateHelpMenu: function() {
       if (this.state.showHelpMenu) {
         return (
           <juju.components.Panel
@@ -75,9 +99,10 @@ YUI.add('header-help', function() {
                     target="_blank">
                     View Documentation</a>
                 </li>
+                {this._generateIssuesLink()}
                 <li className="header-help-menu__list-item
                   header-help-menu__list-item-info"
-                  role="menuItem" tabIndex="1">
+                  role="menuItem" tabIndex="2">
                   Keyboard shortcuts
                   <span className="header-help-menu__extra-info">
                     Shift + ?
@@ -123,7 +148,7 @@ YUI.add('header-help', function() {
               </span>
             </span>
           </span>
-          {this.generateHelpMenu()}
+          {this._generateHelpMenu()}
         </div>);
     }
   });
