@@ -163,8 +163,8 @@ YUI.add('juju-controller-api', function(Y) {
           }
           this.getClouds([name], (error, clouds) => {
             const err = error || clouds[name].err;
-            if (error) {
-              console.log('error retrieving cloud info', error);
+            if (err) {
+              console.log('error retrieving cloud info', err);
               return;
             }
             this.set('maasServer', clouds[name].endpoint);
