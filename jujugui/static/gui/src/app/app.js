@@ -2591,18 +2591,6 @@ YUI.add('juju-gui', function(Y) {
           );
         }, this);
       }
-      // Retrieve maas credentials should they exist.
-      // NB: this assumes that a maas cloud cannot be added to a multi-cloud
-      // controller. If this changes in the future, this code will need to be
-      // called somewhere else. - Makyo 2017-02-16
-      this.controllerAPI.getDefaultCloudName((error, name) => {
-        this.controllerAPI.getClouds([name], (error, data) => {
-          if (data['.names']) {
-            this.controllerAPI.set('maasServer',
-                data[data['.names'][0]].endpoint);
-          }
-        });
-      });
       // Handle the change set token if provided in the query.
       // The change set token identifies a collections of changes required
       // to deploy a bundle. Those changes are assumed to be already

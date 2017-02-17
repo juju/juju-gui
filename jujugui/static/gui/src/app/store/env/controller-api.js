@@ -152,6 +152,24 @@ YUI.add('juju-controller-api', function(Y) {
         }
         // Clean up for log out text.
         this.failedAuthentication = false;
+        // Retrieve maas credentials should they exist.
+        // NB: this assumes that a maas cloud cannot be added to a multi-cloud
+        // controller. If this changes in the future, this code will need to be
+        // called somewhere else. - Makyo 2017-02-16
+        this.getDefaultCloudName((error, name) => {
+          if (error) {
+            console.log('error retrieving default cloud name', error);
+            return;
+          }
+          this.getClouds([name], (error, clouds) => {
+            const err = error || clouds[name].err;
+            if (error) {
+              console.log('error retrieving cloud info', error);
+              return;
+            }
+            this.set('maasServer', clouds[name].endpoint);
+          });
+        });
       } else {
         // If the credentials were rejected remove them.
         this.setCredentials(null);
@@ -948,11 +966,6 @@ YUI.add('juju-controller-api', function(Y) {
             return prev;
           }
           prev[name] = this._parseCloudResult(result.cloud);
-          if (!prev['.names'] || !prev['.names'].length) {
-            prev['.names'] = [name];
-          } else {
-            prev['.names'].push(name);
-          }
           return prev;
         }, {});
         callback(null, clouds);
