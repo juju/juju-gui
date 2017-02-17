@@ -3034,11 +3034,18 @@ YUI.add('juju-gui', function(Y) {
       if (!users) {
         return null;
       }
-      const mkUser = user => {
+      const mkUser = (user, canBeLocal) => {
+        const parts = user.split('@');
+        let usernameDisplay = user;
+        if (parts.length === 1 && canBeLocal) {
+          usernameDisplay += '@local';
+        } else if (parts.length > 1 && parts[1] === 'external') {
+          usernameDisplay = parts[0];
+        }
         return {
           user: user,
-          usernameDisplay: user,
-          rootUserName: user.split('@')[0]
+          usernameDisplay: usernameDisplay,
+          rootUserName: parts[0]
         };
       };
       let credentials;
@@ -3046,20 +3053,20 @@ YUI.add('juju-gui', function(Y) {
       if (this.env) {
         credentials = this.env.getCredentials();
         if (credentials.user) {
-          return mkUser(credentials.user);
+          return mkUser(credentials.user, true);
         }
       }
       // Try to retrieve the user from the controller connection.
       if (this.controllerAPI) {
         credentials = this.controllerAPI.getCredentials();
         if (credentials.user) {
-          return mkUser(credentials.user);
+          return mkUser(credentials.user, true);
         }
       }
       // Last chance: the charm store.
       const charmstore = users.charmstore;
       if (charmstore && charmstore.user) {
-        return mkUser(charmstore.user);
+        return mkUser(charmstore.user, false);
       }
       return null;
     },

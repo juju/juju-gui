@@ -264,7 +264,7 @@ YUI.add('user-profile-model-list', function() {
       // TODO frankban: it's not clear why we should ever miss an owner.
       // Anyway, this logic pre-existed my change.
       if (model.owner) {
-        owner = model.owner.split('@')[0];
+        owner = model.owner = model.owner.split('@')[0];
       }
       return (
         <juju.components.UserProfileEntity

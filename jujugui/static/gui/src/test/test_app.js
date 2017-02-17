@@ -1570,12 +1570,30 @@ describe('App', function() {
       app.destroy({remove: true});
     });
 
-    it('fetches the auth', function() {
+    it('uses charm store credentials if present', function() {
       app.set('users', {charmstore: {user: 'admin'}});
       assert.deepEqual(app._getAuth(), {
         user: 'admin',
         usernameDisplay: 'admin',
         rootUserName: 'admin'
+      });
+    });
+
+    it('uses charm store credentials if present (external)', function() {
+      app.set('users', {charmstore: {user: 'who@external'}});
+      assert.deepEqual(app._getAuth(), {
+        user: 'who@external',
+        usernameDisplay: 'who',
+        rootUserName: 'who'
+      });
+    });
+
+    it('uses charm store credentials if present (customized)', function() {
+      app.set('users', {charmstore: {user: 'dalek@skaro'}});
+      assert.deepEqual(app._getAuth(), {
+        user: 'dalek@skaro',
+        usernameDisplay: 'dalek@skaro',
+        rootUserName: 'dalek'
       });
     });
 
@@ -1594,12 +1612,52 @@ describe('App', function() {
       controllerCredStub.returns({user: 'dalek@external'});
       assert.deepEqual(app._getAuth(), {
         user: 'dalek@external',
-        usernameDisplay: 'dalek@external',
+        usernameDisplay: 'dalek',
+        rootUserName: 'dalek'
+      });
+    });
+
+    it('uses controller credentials if present (local)', function() {
+      app.set('users', {});
+      controllerCredStub.returns({user: 'dalek'});
+      assert.deepEqual(app._getAuth(), {
+        user: 'dalek',
+        usernameDisplay: 'dalek@local',
+        rootUserName: 'dalek'
+      });
+    });
+
+    it('uses controller credentials if present (customized)', function() {
+      app.set('users', {});
+      controllerCredStub.returns({user: 'dalek@skaro'});
+      assert.deepEqual(app._getAuth(), {
+        user: 'dalek@skaro',
+        usernameDisplay: 'dalek@skaro',
         rootUserName: 'dalek'
       });
     });
 
     it('uses model credentials if present', function() {
+      app.set('users', {});
+      modelCredStub.returns({user: 'who@external'});
+      assert.deepEqual(app._getAuth(), {
+        user: 'who@external',
+        usernameDisplay: 'who',
+        rootUserName: 'who'
+      });
+    });
+
+    it('uses model credentials if present (local)', function() {
+      app.set('users', {});
+      modelCredStub.returns({user: 'who'});
+      assert.deepEqual(app._getAuth(), {
+        user: 'who',
+        usernameDisplay: 'who@local',
+        rootUserName: 'who'
+      });
+    });
+
+    it('uses model credentials if present (customized)', function() {
       app.set('users', {});
       modelCredStub.returns({user: 'who@local'});
       assert.deepEqual(app._getAuth(), {
