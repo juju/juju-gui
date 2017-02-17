@@ -2903,6 +2903,10 @@ YUI.add('juju-gui', function(Y) {
       if (!gui || (gui && !gui.inspector)) {
         this._renderAddedServices();
       }
+
+      if (this.get('gisf')) {
+        document.body.classList.add('u-is-beta');
+      }
     },
 
     /**
