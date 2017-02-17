@@ -32,9 +32,9 @@ YUI.add('login-component', function() {
       isLegacyJuju: React.PropTypes.bool.isRequired,
       loginToAPIs: React.PropTypes.func.isRequired,
       loginToController: React.PropTypes.func.isRequired,
-      storeUser: React.PropTypes.func.isRequired,
       sendPost: React.PropTypes.func,
-      showSpinner: React.PropTypes.func
+      showSpinner: React.PropTypes.func,
+      storeUser: React.PropTypes.func.isRequired
     },
 
     componentDidMount: function () {
