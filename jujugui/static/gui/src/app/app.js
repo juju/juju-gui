@@ -1300,12 +1300,14 @@ YUI.add('juju-gui', function(Y) {
         return window.localStorage.getItem('discharge-token');
       };
       const webhandler = new Y.juju.environments.web.WebHandler();
+      const charmstore = this.get('charmstore');
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
           addAgreement={this.terms.addAgreement.bind(this.terms)}
           addNotification={db.notifications.add.bind(db.notifications)}
           applications={services.toArray()}
+          charmstore={charmstore}
           changesFilterByParent={
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
           changeState={this.state.changeState.bind(this.state)}
@@ -1345,6 +1347,7 @@ YUI.add('juju-gui', function(Y) {
           sendPost={webhandler.sendPostRequest.bind(webhandler)}
           servicesGetById={services.getById.bind(services)}
           showTerms={this.terms.showTerms.bind(this.terms)}
+          storeUser={this.storeUser.bind(this)}
           updateCloudCredential={
             controllerAPI && controllerAPI.updateCloudCredential.bind(
               controllerAPI)}

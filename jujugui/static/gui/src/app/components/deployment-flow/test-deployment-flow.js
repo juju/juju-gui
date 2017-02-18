@@ -69,25 +69,27 @@ describe('DeploymentFlow', function() {
   });
 
   it('can render', function() {
-    var updateCloudCredential = sinon.stub();
-    var changesFilterByParent = sinon.stub();
-    var changeState = sinon.stub();
-    var generateAllChangeDescriptions = sinon.stub();
-    var listBudgets = sinon.stub();
-    var listClouds = sinon.stub();
-    var listPlansForCharm = sinon.stub();
-    var getCloudCredentials = sinon.stub();
-    var getCloudCredentialNames = sinon.stub();
-    var servicesGetById = sinon.stub();
-    var updateModelName = sinon.stub();
-    var getAgreementsByTerms = sinon.stub();
-    var showTerms = sinon.stub();
+    const updateCloudCredential = sinon.stub();
+    const changesFilterByParent = sinon.stub();
+    const changeState = sinon.stub();
+    const generateAllChangeDescriptions = sinon.stub();
+    const listBudgets = sinon.stub();
+    const listClouds = sinon.stub();
+    const listPlansForCharm = sinon.stub();
+    const getCloudCredentials = sinon.stub();
+    const getCloudCredentialNames = sinon.stub();
+    const servicesGetById = sinon.stub();
+    const updateModelName = sinon.stub();
+    const getAgreementsByTerms = sinon.stub();
+    const showTerms = sinon.stub();
     const getCloudProviderDetails = sinon.stub();
     const changes = {};
     const generateCloudCredentialName = sinon.stub();
     const getUserName = sinon.stub().returns('dalek');
     const loginToController = sinon.stub();
     const sendPost = sinon.stub();
+    const storeUser = sinon.stub();
+    const charmstore = sinon.stub();
     const getDischargeToken = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentFlow
@@ -99,6 +101,7 @@ describe('DeploymentFlow', function() {
         changesFilterByParent={changesFilterByParent}
         changeState={changeState}
         charmsGetById={charmsGetById}
+        charmstore={charmstore}
         deploy={sinon.stub()}
         environment={{}}
         generateAllChangeDescriptions={generateAllChangeDescriptions}
@@ -121,6 +124,7 @@ describe('DeploymentFlow', function() {
         sendPost={sendPost}
         servicesGetById={servicesGetById}
         showTerms={showTerms}
+        storeUser={storeUser}
         updateCloudCredential={updateCloudCredential}
         updateModelName={updateModelName}
         withPlans={true}>
@@ -168,7 +172,9 @@ describe('DeploymentFlow', function() {
               gisf={false}
               sendPost={sendPost}
               getDischargeToken={getDischargeToken}
-              loginToController={loginToController} />
+              loginToController={loginToController}
+              storeUser={storeUser}
+              charmstore={charmstore} />
           </div>
         </juju.components.DeploymentSection>
         {undefined}
