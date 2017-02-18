@@ -30,6 +30,7 @@ YUI.add('deployment-flow', function() {
       changes: React.PropTypes.object.isRequired,
       changesFilterByParent: React.PropTypes.func.isRequired,
       charmsGetById: React.PropTypes.func.isRequired,
+      charmstore: React.PropTypes.object.isRequired,
       cloud: React.PropTypes.object,
       credential: React.PropTypes.string,
       deploy: React.PropTypes.func.isRequired,
@@ -56,6 +57,7 @@ YUI.add('deployment-flow', function() {
       sendPost: React.PropTypes.func,
       servicesGetById: React.PropTypes.func.isRequired,
       showTerms: React.PropTypes.func.isRequired,
+      storeUser: React.PropTypes.func.isRequired,
       updateCloudCredential: React.PropTypes.func,
       updateModelName: React.PropTypes.func,
       withPlans: React.PropTypes.bool
@@ -596,9 +598,11 @@ YUI.add('deployment-flow', function() {
           <div className="six-col">
             <juju.components.USSOLoginLink
               gisf={this.props.gisf}
+              charmstore={this.props.charmstore}
               callback={callback}
               displayType={'button'}
               sendPost={this.props.sendPost}
+              storeUser={this.props.storeUser}
               getDischargeToken={this.props.getDischargeToken}
               loginToController={this.props.loginToController}/>
           </div>

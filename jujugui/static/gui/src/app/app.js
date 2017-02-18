@@ -990,8 +990,10 @@ YUI.add('juju-gui', function(Y) {
       const getDischargeToken = function() {
         return window.localStorage.getItem('discharge-token');
       };
+      const charmstore = this.get('charmstore');
       ReactDOM.render(
         <window.juju.components.Login
+          charmstore={charmstore}
           controllerIsConnected={controllerIsConnected}
           errorMessage={err}
           getDischargeToken={getDischargeToken}
@@ -1002,7 +1004,8 @@ YUI.add('juju-gui', function(Y) {
           loginToController={loginToController}
           sendPost={webhandler.sendPostRequest.bind(webhandler)}
           setCredentials={this.env.setCredentials.bind(this.env)}
-          showSpinner={this.showConnectingMask.bind(this)} />,
+          showSpinner={this.showConnectingMask.bind(this)}
+          storeUser={this.storeUser.bind(this)} />,
         document.getElementById('login-container'));
     },
 
@@ -1087,7 +1090,7 @@ YUI.add('juju-gui', function(Y) {
       // model instead of the profile.
       const auth = this._getAuth();
       if (auth && state.profile !== auth.rootUserName) {
-        this.state.changeState({new: '', profile: null});
+        this.state.changeState({root: 'new', profile: null});
         return;
       }
       const charmstore = this.get('charmstore');
@@ -1297,12 +1300,14 @@ YUI.add('juju-gui', function(Y) {
         return window.localStorage.getItem('discharge-token');
       };
       const webhandler = new Y.juju.environments.web.WebHandler();
+      const charmstore = this.get('charmstore');
       ReactDOM.render(
         <window.juju.components.DeploymentFlow
           acl={this.acl}
           addAgreement={this.terms.addAgreement.bind(this.terms)}
           addNotification={db.notifications.add.bind(db.notifications)}
           applications={services.toArray()}
+          charmstore={charmstore}
           changesFilterByParent={
             changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
           changeState={this.state.changeState.bind(this.state)}
@@ -1342,6 +1347,7 @@ YUI.add('juju-gui', function(Y) {
           sendPost={webhandler.sendPostRequest.bind(webhandler)}
           servicesGetById={services.getById.bind(services)}
           showTerms={this.terms.showTerms.bind(this.terms)}
+          storeUser={this.storeUser.bind(this)}
           updateCloudCredential={
             controllerAPI && controllerAPI.updateCloudCredential.bind(
               controllerAPI)}
