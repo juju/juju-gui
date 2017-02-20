@@ -1218,10 +1218,15 @@ YUI.add('juju-gui', function(Y) {
     },
 
     _renderHeaderLogo: function() {
+      const navigateUserProfile = this.state.changeState.bind(this.state, {
+        model: null,
+        profile: this._getAuth().rootUserName,
+        root: null,
+        store: null
+      });
       ReactDOM.render(
         <window.juju.components.HeaderLogo
-        changeState={this.state.changeState.bind(this.state)}
-        user={this._getAuth()} />,
+        navigateUserProfile={navigateUserProfile} />,
         document.getElementById('header-logo'));
     },
 

@@ -27,25 +27,12 @@ YUI.add('header-logo', function() {
   juju.components.HeaderLogo = React.createClass({
 
     propTypes: {
-      changeState: React.PropTypes.func.isRequired,
-      user: React.PropTypes.object.isRequired
-    },
-
-    /**
-      Change state to the user profile when clicked for when you're browsing
-      another user/model
-
-     @method _handleLogoClick
-    */
-    _handleLogoClick: function() {
-      this.props.changeState({
-        user: this.props.user
-      });
+      navigateUserProfile: React.PropTypes.func.isRequired
     },
 
     render: function() {
       return (
-        <a onClick={this._handleLogoClick}
+        <a onClick={this.props.navigateUserProfile}
           role="button">
           <juju.components.SvgIcon name="juju-logo"
             className="svg-icon"
