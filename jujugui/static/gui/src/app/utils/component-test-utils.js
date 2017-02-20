@@ -356,7 +356,6 @@ var jsTestUtils = {
           }
         }
       } else {
-        // assert.isDefined(expected.props.children);
         if (output.props &&
           output.props.children &&
           expected.props &&
