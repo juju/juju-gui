@@ -40,7 +40,6 @@ describe('HeaderLogo', function() {
       <juju.components.HeaderLogo
         navigateUserProfile={navigateUserProfile} />, true);
     const output = renderer.getRenderOutput();
-    const instance = renderer.getMountedInstance();
 
     const expected = (<a onClick={navigateUserProfile}
       role="button" title="Goto User Profile">
