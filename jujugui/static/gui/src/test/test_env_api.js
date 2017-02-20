@@ -858,7 +858,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           config: {'maas-server': '1.2.3.4/MAAS'}
         }
       });
-      assert.strictEqual(env.get('maasServer'), undefined);
+      assert.strictEqual(env.get('maasServer'), null);
     });
 
     it('calls ModelGet after ModelInfo on MAAS', function() {
@@ -890,7 +890,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('does not call ModelGet after Info when not on MAAS', function() {
       // The MAAS server attribute is initially undefined.
-      assert.strictEqual(env.get('maasServer'), undefined);
+      assert.strictEqual(env.get('maasServer'), null);
       // Simulate a ModelInfo request/response.
       env.currentModelInfo(env._handleCurrentModelInfo.bind(env));
       conn.msg({

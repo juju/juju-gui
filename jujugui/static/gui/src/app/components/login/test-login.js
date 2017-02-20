@@ -34,8 +34,11 @@ describe('LoginComponent', function() {
     const getDischargeToken = sinon.stub();
     const showSpinner = sinon.stub();
     const hideSpinner = sinon.stub();
+    const charmstore = sinon.stub();
+    const storeUser = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
+        charmstore={charmstore}
         controllerIsConnected={controllerIsConnected}
         getDischargeToken={getDischargeToken}
         gisf={false}
@@ -44,7 +47,8 @@ describe('LoginComponent', function() {
         loginToAPIs={sinon.stub()}
         loginToController={loginToControllerStub}
         sendPost={sendPost}
-        showSpinner={showSpinner} />, true);
+        showSpinner={showSpinner}
+      storeUser={storeUser} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -85,12 +89,14 @@ describe('LoginComponent', function() {
               type={"positive"} />
             <juju.components.USSOLoginLink
               callback={hideSpinner}
+              charmstore={charmstore}
               displayType="button"
               getDischargeToken={getDischargeToken}
               gisf={false}
               loginToController={loginToControllerStub}
               ref="USSOLoginLink"
-              sendPost={sendPost} />
+              sendPost={sendPost}
+              storeUser={storeUser}/>
           </form>
         </div>
         <div className="login__message">
@@ -116,8 +122,11 @@ describe('LoginComponent', function() {
     const getDischargeToken = sinon.stub();
     const showSpinner = sinon.stub();
     const hideSpinner = sinon.stub();
+    const charmstore = sinon.stub();
+    const storeUser = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.Login
+        charmstore={charmstore}
         controllerIsConnected={controllerIsConnected}
         getDischargeToken={getDischargeToken}
         gisf={true}
@@ -126,7 +135,8 @@ describe('LoginComponent', function() {
         loginToAPIs={sinon.stub()}
         loginToController={loginToControllerStub}
         sendPost={sendPost}
-        showSpinner={showSpinner} />, true);
+        showSpinner={showSpinner}
+        storeUser={storeUser}/>, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -166,12 +176,14 @@ describe('LoginComponent', function() {
               title={"Login"}
               type={"positive"} />
             <juju.components.USSOLoginLink
+              charmstore={charmstore}
               callback={hideSpinner}
               displayType="button"
               getDischargeToken={getDischargeToken}
               gisf={true}
               loginToController={loginToControllerStub}
               ref="USSOLoginLink"
+              storeUser={storeUser}
               sendPost={sendPost} />
           </form>
         </div>
@@ -289,8 +301,13 @@ describe('LoginComponent', function() {
     const showSpinner = sinon.stub();
     const hideSpinner = sinon.stub();
     const getDischargeToken = sinon.stub().returns('foo');
+    const charmstore = sinon.stub();
+    charmstore.bakery = sinon.stub();
+    charmstore.bakery.fetchMacaroonFromStaticPath = sinon.stub();
+    const storeUser = sinon.stub();
     testUtils.renderIntoDocument(
       <juju.components.Login
+        charmstore={charmstore}
         controllerIsConnected={controllerIsConnected}
         getDischargeToken={getDischargeToken}
         gisf={true}
@@ -299,7 +316,8 @@ describe('LoginComponent', function() {
         loginToAPIs={sinon.stub()}
         loginToController={loginToController}
         sendPost={sendPost}
-        showSpinner={showSpinner} />);
+        showSpinner={showSpinner}
+        storeUser={storeUser} />);
     assert.equal(
       loginToController.callCount, 1, 'loginToController not called');
     assert.equal(showSpinner.callCount, 1, 'spinner not shown');

@@ -31,7 +31,12 @@ YUI.add('juju-env-bakery', function(Y) {
   var module = Y.namespace('juju.environments.web');
   var macaroon = Y.namespace('macaroon');
 
-  var DISCHARGE_TOKEN = 'discharge-token';
+  // Define the discharge token header.
+  const DISCHARGE_TOKEN = 'discharge-token';
+  // Define the bakery protocol version used by the GUI.
+  const PROTOCOL_VERSION = 1;
+  // Define the HTTP content type for JSON requests.
+  const JSON_CONTENT_TYPE = 'application/json';
 
   /**
    * Bakery client inspired by the equivalent GO code.
@@ -150,6 +155,24 @@ YUI.add('juju-env-bakery', function(Y) {
       },
 
       /**
+       Prepare and return HTTP request headers for macaraq requests.
+
+       @param {Object} overrides Any additional headers.
+       @return {Object} The resulting request headers.
+      */
+      _prepareHeaders: function(overrides) {
+        const headers = {'Bakery-Protocol-Version': PROTOCOL_VERSION};
+        Object.keys(overrides || {}).forEach(key => {
+          headers[key] = overrides[key];
+        });
+        const macaroons = this.getMacaroon();
+        if (macaroons !== null) {
+          headers['Macaroons'] = macaroons;
+        }
+        return headers;
+      },
+
+      /**
        Takes the path supplied by the caller and makes a get request to the
        requestHandlerWithInteraction instance. If setCookiePath is set then
        it is used to set a cookie back to the ui after authentication.
@@ -164,23 +187,19 @@ YUI.add('juju-env-bakery', function(Y) {
               is a 401 on the request.
        @return {Object} The asynchronous request instance.
       */
-      sendGetRequest: function (
+      sendGetRequest: function(
         path, successCallback, failureCallback, redirect) {
-        var macaroons = this.getMacaroon();
-        var headers = {'Bakery-Protocol-Version': 1};
-        if (macaroons !== null) {
-          headers['Macaroons'] = macaroons;
-        }
-
+        const onAuthDone = this._requestHandler.bind(
+          this, successCallback, failureCallback);
+        const onAuthRequired = function() {
+          return this.webhandler.sendGetRequest(
+            path, this._prepareHeaders(null), null, null, false, null,
+            onAuthDone);
+        }.bind(this);
         return this.webhandler.sendGetRequest(
-          path, headers, null, null, false, null,
+          path, this._prepareHeaders(null), null, null, false, null,
           this._requestHandlerWithInteraction.bind(
-            this,
-            path,
-            successCallback,
-            failureCallback,
-            redirect
-          )
+            this, onAuthRequired, onAuthDone, failureCallback, redirect)
         );
       },
 
@@ -199,23 +218,19 @@ YUI.add('juju-env-bakery', function(Y) {
               is a 401 on the request.
        @return {Object} The asynchronous request instance.
       */
-      sendDeleteRequest: function (
+      sendDeleteRequest: function(
         path, successCallback, failureCallback, redirect) {
-        var macaroons = this.getMacaroon();
-        var headers = {'Bakery-Protocol-Version': 1};
-        if (macaroons !== null) {
-          headers['Macaroons'] = macaroons;
-        }
-
+        const onAuthDone = this._requestHandler.bind(
+          this, successCallback, failureCallback);
+        const onAuthRequired = function() {
+          return this.webhandler.sendDeleteRequest(
+            path, this._prepareHeaders(null), null, null, false, null,
+            onAuthDone);
+        }.bind(this);
         return this.webhandler.sendDeleteRequest(
-          path, headers, null, null, false, null,
+          path, this._prepareHeaders(null), null, null, false, null,
           this._requestHandlerWithInteraction.bind(
-            this,
-            path,
-            successCallback,
-            failureCallback,
-            redirect
-          )
+            this, onAuthRequired, onAuthDone, failureCallback, redirect)
         );
       },
 
@@ -236,26 +251,20 @@ YUI.add('juju-env-bakery', function(Y) {
               is a 401 on the request.
        @param {Object} response The XHR response object from initial request.
       */
-      sendPostRequest: function (
+      sendPostRequest: function(
         path, data, successCallback, failureCallback, redirect) {
-        var macaroons = this.getMacaroon();
-        var headers = {
-          'Bakery-Protocol-Version': 1,
-          'Content-type': 'application/json'
-        };
-        if (macaroons !== null) {
-          headers['Macaroons'] = macaroons;
-        }
-
+        const onAuthDone = this._requestHandler.bind(
+          this, successCallback, failureCallback);
+        const onAuthRequired = function() {
+          return this.webhandler.sendPostRequest(
+            path, this._prepareHeaders({'Content-type': JSON_CONTENT_TYPE}),
+            data, null, null, false, null, onAuthDone);
+        }.bind(this);
         return this.webhandler.sendPostRequest(
-          path, headers, data, null, null, false, null,
+          path, this._prepareHeaders({'Content-type': JSON_CONTENT_TYPE}),
+          data, null, null, false, null,
           this._requestHandlerWithInteraction.bind(
-            this,
-            path,
-            successCallback,
-            failureCallback,
-            redirect
-          )
+            this, onAuthRequired, onAuthDone, failureCallback, redirect)
         );
       },
 
@@ -278,24 +287,18 @@ YUI.add('juju-env-bakery', function(Y) {
       */
       sendPutRequest: function(
         path, data, successCallback, failureCallback, redirect) {
-        var macaroons = this.getMacaroon();
-        var headers = {
-          'Bakery-Protocol-Version': 1,
-          'Content-type': 'application/json'
-        };
-        if (macaroons !== null) {
-          headers['Macaroons'] = macaroons;
-        }
-
+        const onAuthDone = this._requestHandler.bind(
+          this, successCallback, failureCallback);
+        const onAuthRequired = function() {
+          return this.webhandler.sendPutRequest(
+            path, this._prepareHeaders({'Content-type': JSON_CONTENT_TYPE}),
+            data, null, null, false, null, onAuthDone);
+        }.bind(this);
         return this.webhandler.sendPutRequest(
-          path, headers, data, null, null, false, null,
+          path, this._prepareHeaders({'Content-type': JSON_CONTENT_TYPE}),
+          data, null, null, false, null,
           this._requestHandlerWithInteraction.bind(
-            this,
-            path,
-            successCallback,
-            failureCallback,
-            redirect
-          )
+            this, onAuthRequired, onAuthDone, failureCallback, redirect)
         );
       },
 
@@ -318,65 +321,51 @@ YUI.add('juju-env-bakery', function(Y) {
       */
       sendPatchRequest: function(
         path, data, successCallback, failureCallback, redirect) {
-        const macaroons = this.getMacaroon();
-        let headers = {
-          'Bakery-Protocol-Version': 1,
-          'Content-type': 'application/json'
-        };
-        if (macaroons !== null) {
-          headers.Macaroons = macaroons;
-        }
-
+        const onAuthDone = this._requestHandler.bind(
+          this, successCallback, failureCallback);
+        const onAuthRequired = function() {
+          return this.webhandler.sendPatchRequest(
+            path, this._prepareHeaders({'Content-type': JSON_CONTENT_TYPE}),
+            data, null, null, false, null, onAuthDone);
+        }.bind(this);
         return this.webhandler.sendPatchRequest(
-          path, headers, data, null, null, false, null,
+          path, this._prepareHeaders({'Content-type': JSON_CONTENT_TYPE}),
+          data, null, null, false, null,
           this._requestHandlerWithInteraction.bind(
-            this,
-            path,
-            successCallback,
-            failureCallback,
-            redirect
-          )
+            this, onAuthRequired, onAuthDone, failureCallback, redirect)
         );
       },
 
       /**
-       Handles the request response from the _makeRequest method, calling the
-       supplied failure callback if the response status was >= 400 or passing
-       the response object to the supplied success callback. For 407/401
-       response it will request authentication through the macaroon provided in
-       the 401/407 response.
+        Handle sending requests after authenticating using macaroons.
 
-       @method _requestHandlerWithInteraction
-       @param {String} The path to make the api request to.
-       @param {Function} successCallback Called when the api request completes
-              successfully.
-       @param {Function} failureCallback Called when the api request fails
-              with a response of >= 40  0 (except 401/407).
-       @param {Boolean} redirect Whether the handler should redirect if there
-              is a 401 on the request.
-       @param {Object} response The XHR response object.
-       @return {undefined} Nothing.
+        @method _requestHandlerWithInteraction
+        @param {Function} onAuthRequired The original request to be performed
+          after authenticating.
+        @param {Function} onAuthDone Called when the response is finally
+          available.
+        @param {Function} onFailure Called when there are errors in the
+          authentication process.
+        @param {Boolean} redirect Whether the handler should redirect if there
+          is a 401 on the request.
+        @param {Object} response The XHR response object.
       */
       _requestHandlerWithInteraction: function (
-        path, successCallback, failureCallback, redirect=true, response) {
-
-        var target = response.target;
+        onAuthRequired, onAuthDone, onFailure, redirect=true, response) {
+        const target = response.target;
         // XXX I reliably recieve a 401 when signing in for the first time.
         // This may not be the best path forward. Makyo 2016-04-25
-        if (target.status === 401 &&
+        if (
+          target.status === 401 &&
           target.getResponseHeader('Www-Authenticate') === 'Macaroon' &&
-          redirect === true) {
-          var jsonResponse = JSON.parse(target.responseText);
+          redirect === true
+        ) {
+          const jsonResponse = JSON.parse(target.responseText);
           this._authenticate(
-            jsonResponse.Info.Macaroon,
-            this._sendOriginalRequest.bind(
-              this, path, successCallback, failureCallback
-            ),
-            failureCallback
-          );
-        } else {
-          this._requestHandler(successCallback, failureCallback, response);
+            jsonResponse.Info.Macaroon, onAuthRequired, onFailure);
+          return;
         }
+        onAuthDone(response);
       },
 
       /**
@@ -399,31 +388,6 @@ YUI.add('juju-env-bakery', function(Y) {
           return;
         }
         successCallback(response);
-      },
-
-      /**
-       Used to resend the original request without any interaction this time.
-
-       @method _sendOriginalRequest
-       @param {String} The path to make the api request to.
-       @param {Function} successCallback Called when the api request completes
-              successfully.
-       @param {Function} failureCallback Called when the api request fails
-              with a response of >= 400 (except 401/407).
-       @return {Object} The asynchronous request instance.
-       */
-      _sendOriginalRequest: function(path, successCallback, failureCallback) {
-        var macaroons = this.getMacaroon();
-        var headers = {'Bakery-Protocol-Version': 1};
-        if (macaroons !== null) {
-          headers['Macaroons'] = macaroons;
-        }
-        return this.webhandler.sendGetRequest(
-          path, headers, null, null, false, null,
-          this._requestHandler.bind(
-            this, successCallback, failureCallback
-          )
-        );
       },
 
       /**
@@ -464,7 +428,7 @@ YUI.add('juju-env-bakery', function(Y) {
             failureCallback
           );
         } catch (exc) {
-          failureCallback(exc.message);
+          failureCallback('discharge failed: ' + exc.message);
         }
       },
 
@@ -606,7 +570,7 @@ YUI.add('juju-env-bakery', function(Y) {
 
         return this.webhandler.sendGetRequest(
             response.Info.WaitURL,
-            {'Content-Type': 'application/json'},
+            {'Content-Type': JSON_CONTENT_TYPE},
             null, null, false, null,
             this._requestHandler.bind(
               this,
@@ -625,8 +589,8 @@ YUI.add('juju-env-bakery', function(Y) {
        @return {Object} The asynchronous request instance.
       */
       _nonInteractiveVisitMethod: function(response) {
-        var acceptHeaders = {'Accept': 'application/json'};
-        var contentHeaders = {'Content-Type': 'application/json'};
+        var acceptHeaders = {'Accept': JSON_CONTENT_TYPE};
+        var contentHeaders = {'Content-Type': JSON_CONTENT_TYPE};
         var login = function(response) {
           var method = JSON.parse(response.target.responseText).jujugui;
           var data = JSON.stringify({login: window.juju_config.auth});

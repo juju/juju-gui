@@ -37,18 +37,16 @@ YUI.add('user-profile-header', function() {
       @returns {Object} The login component.
     */
     _generateLogin: function() {
-      var props = this.props;
-      var interactiveLogin = props.interactiveLogin;
-      var users = props.users;
-      var authenticated = users.charmstore && users.charmstore.user;
-      if (!interactiveLogin || authenticated) {
+      const props = this.props;
+      const users = props.users;
+      if (users.charmstore && users.charmstore.user) {
         return;
       }
       return (
         <juju.components.GenericButton
-          title="Log in to the charmstore"
+          title="Log in to the charm store"
           type="inline-neutral"
-          action={interactiveLogin} />);
+          action={props.interactiveLogin} />);
     },
 
     /**

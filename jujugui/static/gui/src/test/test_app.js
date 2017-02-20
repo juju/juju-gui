@@ -265,15 +265,6 @@ describe('App', function() {
         assert.strictEqual(maasNode.getStyle('display'), 'none');
       });
 
-      it('does not show the MAAS link if already null in the env', function() {
-        env.set('maasServer', null);
-        constructAppInstance({env: env}, this);
-        assert.strictEqual(maasNode.getStyle('display'), 'none');
-        // Further changes to the maasServer attribute don't activate the link.
-        env.set('maasServer', 'http://1.2.3.4/MAAS');
-        assert.strictEqual(maasNode.getStyle('display'), 'none');
-      });
-
     });
 
     describe('_setupCharmstore', function() {
@@ -1570,7 +1561,7 @@ describe('App', function() {
       app.destroy({remove: true});
     });
 
-    it('fetches the auth', function() {
+    it('uses charm store credentials if present', function() {
       app.set('users', {charmstore: {user: 'admin'}});
       assert.deepEqual(app._getAuth(), {
         user: 'admin',
@@ -1579,12 +1570,31 @@ describe('App', function() {
       });
     });
 
+    it('uses charm store credentials if present (external)', function() {
+      app.set('users', {charmstore: {user: 'who@external'}});
+      assert.deepEqual(app._getAuth(), {
+        user: 'who@external',
+        usernameDisplay: 'who',
+        rootUserName: 'who'
+      });
+    });
+
+    it('uses charm store credentials if present (customized)', function() {
+      app.set('users', {charmstore: {user: 'dalek@skaro'}});
+      assert.deepEqual(app._getAuth(), {
+        user: 'dalek@skaro',
+        usernameDisplay: 'dalek@skaro',
+        rootUserName: 'dalek'
+      });
+    });
+
     it('uses external auth if present', function() {
       app.set('auth', {user: {name: 'bark'}});
       app.set('users', {foo: 'bar'});
       assert.deepEqual(app._getAuth(), {
         usernameDisplay: 'bark',
-        user: {name: 'bark'}
+        user: {name: 'bark'},
+        rootUserName: 'bark'
       });
     });
 
@@ -1593,12 +1603,52 @@ describe('App', function() {
       controllerCredStub.returns({user: 'dalek@external'});
       assert.deepEqual(app._getAuth(), {
         user: 'dalek@external',
-        usernameDisplay: 'dalek@external',
+        usernameDisplay: 'dalek',
+        rootUserName: 'dalek'
+      });
+    });
+
+    it('uses controller credentials if present (local)', function() {
+      app.set('users', {});
+      controllerCredStub.returns({user: 'dalek'});
+      assert.deepEqual(app._getAuth(), {
+        user: 'dalek',
+        usernameDisplay: 'dalek@local',
+        rootUserName: 'dalek'
+      });
+    });
+
+    it('uses controller credentials if present (customized)', function() {
+      app.set('users', {});
+      controllerCredStub.returns({user: 'dalek@skaro'});
+      assert.deepEqual(app._getAuth(), {
+        user: 'dalek@skaro',
+        usernameDisplay: 'dalek@skaro',
         rootUserName: 'dalek'
       });
     });
 
     it('uses model credentials if present', function() {
+      app.set('users', {});
+      modelCredStub.returns({user: 'who@external'});
+      assert.deepEqual(app._getAuth(), {
+        user: 'who@external',
+        usernameDisplay: 'who',
+        rootUserName: 'who'
+      });
+    });
+
+    it('uses model credentials if present (local)', function() {
+      app.set('users', {});
+      modelCredStub.returns({user: 'who'});
+      assert.deepEqual(app._getAuth(), {
+        user: 'who',
+        usernameDisplay: 'who@local',
+        rootUserName: 'who'
+      });
+    });
+
+    it('uses model credentials if present (customized)', function() {
       app.set('users', {});
       modelCredStub.returns({user: 'who@local'});
       assert.deepEqual(app._getAuth(), {
@@ -2378,6 +2428,58 @@ describe('App', function() {
       assert.equal(app.createSocketURL.callCount, 0);
       assert.equal(app.switchEnv.callCount, 1);
       assert.deepEqual(app.switchEnv.args[0], [undefined]);
+    });
+  });
+
+  describe('_sharingVisibility', function() {
+    let app, juju, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        juju = juju = Y.namespace('juju');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
+        controllerAPI: new juju.ControllerAPI({
+          conn: new testUtils.SocketStub()
+        }),
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet(),
+          user: 'user',
+          password: 'password'
+        }),
+        socketTemplate: '/model/$uuid/api',
+        controllerSocketTemplate: '/api',
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0'
+      });
+
+    });
+
+    afterEach(function() {
+      app.destroy();
+    });
+
+    it('can render the sharing component', () => {
+      const render = sinon.stub(ReactDOM, 'render');
+      app._sharingVisibility(true);
+      // It would be nice if we could assert against expected JSX; however,
+      // since the "old" js files aren't run through a JSX transform, we have
+      // to limit ourselves to asserting on call count.
+      assert.equal(render.callCount, 1);
+      render.restore();
+    });
+
+    it('can unmount the sharing component', () => {
+      const unmount = sinon.stub(ReactDOM, 'unmountComponentAtNode');
+      app._sharingVisibility(false);
+      assert.equal(unmount.callCount, 1);
+      unmount.restore();
     });
   });
 });

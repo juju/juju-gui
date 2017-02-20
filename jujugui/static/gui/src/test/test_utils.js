@@ -1248,32 +1248,4 @@ describe('utilities', function() {
       assert.equal(provider.id, 'google');
     });
   });
-
-  describe('sharingVisibility', function() {
-    let utils;
-
-    before((done) => {
-      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
-        utils = Y.namespace('juju.views.utils');
-        done();
-      });
-    });
-
-    it('can render the sharing component', () => {
-      const render = sinon.stub(ReactDOM, 'render');
-      utils.sharingVisibility(true);
-      // It would be nice if we could assert against expected JSX; however,
-      // since the "old" js files aren't run through a JSX transform, we have
-      // to limit ourselves to asserting on call count.
-      assert.equal(render.callCount, 1);
-      render.restore();
-    });
-
-    it('can unmount the sharing component', () => {
-      const unmount = sinon.stub(ReactDOM, 'unmountComponentAtNode');
-      utils.sharingVisibility(false);
-      assert.equal(unmount.callCount, 1);
-      unmount.restore();
-    });
-  });
 })();

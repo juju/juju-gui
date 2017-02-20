@@ -1,3 +1,15 @@
+- 2.4.0:
+
+    ->
+      Sharing interface now allows you to grant and revoke permissions of
+      users on a per model basis.
+    ->
+      Charm terms are now shown in the deployment flow and any charms with
+      terms now require those terms to be agreed to before deploying.
+    - Added help button to header for links to documentation and shortcuts.
+    - (Fix) Charmstore now uses the new URL scheme.
+    - (Fix) SSH Key input field is now styled properly in Firefox/Safari.
+
 - 2.3.0:
 
     - New, easy to share URL scheme.

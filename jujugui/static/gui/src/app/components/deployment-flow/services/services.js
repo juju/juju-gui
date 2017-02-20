@@ -28,6 +28,7 @@ YUI.add('deployment-services', function() {
       generateAllChangeDescriptions: React.PropTypes.func.isRequired,
       groupedChanges: React.PropTypes.object.isRequired,
       listPlansForCharm: React.PropTypes.func.isRequired,
+      parseTermId: React.PropTypes.func.isRequired,
       servicesGetById: React.PropTypes.func.isRequired,
       showChangelogs: React.PropTypes.bool,
       showTerms: React.PropTypes.func,
@@ -109,6 +110,7 @@ YUI.add('deployment-services', function() {
             charmsGetById={this.props.charmsGetById}
             extraInfo={this._generateExtraInfo()}
             listPlansForCharm={this.props.listPlansForCharm}
+            parseTermId={this.props.parseTermId}
             plansEditable={true}
             services={this._getServices()}
             showExtra={this.props.showChangelogs}

@@ -1,0 +1,11 @@
+body.u-is-beta:before {
+  position: fixed;
+  bottom: 30px;
+  left: 20px;
+  content: 'Beta';
+  font-family: Ubuntu;
+  font-size: 23px;
+  font-weight: 300;
+  opacity: 0.6;
+  z-index: 10;
+}

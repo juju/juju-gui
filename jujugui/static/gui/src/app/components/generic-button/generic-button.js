@@ -28,6 +28,7 @@ YUI.add('generic-button', function() {
       icon: React.PropTypes.string,
       submit: React.PropTypes.bool,
       title: React.PropTypes.string,
+      tooltip: React.PropTypes.string,
       type: React.PropTypes.string
     },
 
@@ -85,6 +86,7 @@ YUI.add('generic-button', function() {
     render: function() {
       return (
         <button className={this._generateClasses()}
+          title={this.props.tooltip}
           onClick={this._handleClick}
           type={this.props.submit ? 'submit' : 'button'}>
           {this._generateContent()}

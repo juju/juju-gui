@@ -24,11 +24,39 @@ YUI.add('usso-login-link', function() {
 
     propTypes: {
       callback: React.PropTypes.func,
+      charmstore: React.PropTypes.object.isRequired,
       displayType: React.PropTypes.string.isRequired,
       getDischargeToken: React.PropTypes.func,
       gisf: React.PropTypes.bool,
       loginToController: React.PropTypes.func.isRequired,
-      sendPost: React.PropTypes.func
+      sendPost: React.PropTypes.func,
+      storeUser: React.PropTypes.func.isRequired
+    },
+
+    /**
+     Calls the bakery to get a charm store macaroon.
+
+     @method _interactiveLogin
+     */
+    loginToCharmstore: function() {
+      const bakery = this.props.charmstore.bakery;
+      bakery.fetchMacaroonFromStaticPath(this._fetchMacaroonCallback);
+    },
+
+    /**
+     Callback for fetching the macaroon.
+
+     @method _fetchMacaroonCallback
+     @param {String|Object|Null} error The error response from the callback.
+     @param {String} macaroon The resolved macaroon.
+     */
+    _fetchMacaroonCallback: function(error, macaroon) {
+      if (error) {
+        console.log(error);
+        return;
+      }
+      this.props.storeUser('charmstore', true);
+      console.log('logged into charmstore');
     },
 
     /**
@@ -48,14 +76,15 @@ YUI.add('usso-login-link', function() {
           const dischargeToken = this.props.getDischargeToken();
           if (!dischargeToken) {
             console.error('no discharge token in local storage after login');
-            return;
+          } else {
+            console.log('sending discharge token to storefront');
+            const content = 'discharge-token=' + dischargeToken;
+            this.props.sendPost(
+              '/_login',
+              {'Content-Type': 'application/x-www-form-urlencoded'},
+              content);
           }
-          console.log('sending discharge token to storefront');
-          const content = 'discharge-token=' + dischargeToken;
-          this.props.sendPost(
-            '/_login',
-            {'Content-Type': 'application/x-www-form-urlencoded'},
-            content);
+          this.loginToCharmstore();
         }
 
         const callback = this.props.callback;

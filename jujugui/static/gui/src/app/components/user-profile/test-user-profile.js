@@ -133,35 +133,6 @@ describe('UserProfile', () => {
     assert.deepEqual(content, expected);
   });
 
-  it('does not pass the charmstore login if interactiveLogin is falsey', () => {
-    const pluralize = sinon.stub();
-    pluralize.withArgs('model', sinon.match.any).returns('models');
-    const links = [];
-    const output = jsTestUtils.shallowRender(
-      <juju.components.UserProfile
-        users={users}
-        charmstore={{}}
-        switchModel={sinon.stub()}
-        listBudgets={sinon.stub()}
-        listModelsWithInfo={sinon.stub()}
-        changeState={sinon.stub()}
-        getAgreements={sinon.stub()}
-        getDiagramURL={sinon.stub()}
-        interactiveLogin={false}
-        pluralize={pluralize}
-        storeUser={sinon.stub()}
-        user={users.charmstore} />);
-    const expected = (
-      <juju.components.UserProfileHeader
-        users={users}
-        avatar=""
-        interactiveLogin={undefined}
-        links={links}
-        username={users.charmstore.usernameDisplay} />);
-    assert.deepEqual(output.props.children.props.children.props.children[0],
-      expected);
-  });
-
   it('can log in to charmstore fetch macaroons from the bakery', () => {
     const macaroon = sinon.spy();
     const storeUser = sinon.stub();

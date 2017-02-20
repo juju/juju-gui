@@ -74,6 +74,14 @@ describe('test_model.js', function() {
           '~alt-bac/openstack-dashboard/json');
     });
 
+    it('generates a proper full_name for multi-series charms', () => {
+      var charm = new models.Charm({
+        id: 'cs:~alt-bac/openstack-dashboard',
+        series: ['precise', 'trusty', 'xenial']
+      });
+      assert.equal(charm.get('full_name'), '~alt-bac/openstack-dashboard');
+    });
+
     it('must be able to parse hyphenated owner names', function() {
       // Note that an earlier version of the parsing code did not handle
       // hyphens in user names, so this test intentionally includes one.

@@ -24,7 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('BudgetTableRow', function() {
-  var acl, listPlansForCharm, service;
+  var acl, listPlansForCharm, parseTermId, service;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -42,6 +42,32 @@ describe('BudgetTableRow', function() {
       description: 'The expensive support plan',
       price: '$1,000,000'
     }]);
+    parseTermId = sinon.stub().returns();
+    parseTermId.withArgs('apache2-terms').returns({
+      name: 'apache2-terms',
+      owner: null,
+      revision: null
+    });
+    parseTermId.withArgs('spinach/landscape-terms/15').returns({
+      name: 'landscape-terms',
+      owner: 'spinach',
+      revision: 15
+    });
+    parseTermId.withArgs('landscape-terms').returns({
+      name: 'landscape-terms',
+      owner: null,
+      revision: null
+    });
+    parseTermId.withArgs('landscape-terms/15').returns({
+      name: 'landscape-terms',
+      owner: null,
+      revision: 15
+    });
+    parseTermId.withArgs('spinach/landscape-terms').returns({
+      name: 'landscape-terms',
+      owner: 'spinach',
+      revision: null
+    });
     service = {
       get: (val) => {
         switch (val) {
@@ -702,6 +728,7 @@ describe('BudgetTableRow', function() {
         allocationEditable={false}
         charmsGetById={charmsGetById}
         listPlansForCharm={listPlansForCharm}
+        parseTermId={parseTermId}
         plansEditable={false}
         service={service}
         showTerms={showTerms}
@@ -761,6 +788,90 @@ describe('BudgetTableRow', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('can get terms by name', function() {
+    const charmsGetById = sinon.stub().returns({
+      get: sinon.stub().returns(['landscape-terms'])
+    });
+    const showTerms = sinon.stub();
+    jsTestUtils.shallowRender(
+      <juju.components.BudgetTableRow
+        acl={acl}
+        allocationEditable={false}
+        charmsGetById={charmsGetById}
+        listPlansForCharm={listPlansForCharm}
+        parseTermId={parseTermId}
+        plansEditable={false}
+        service={service}
+        showTerms={showTerms}
+        withPlans={true} />);
+    assert.equal(showTerms.callCount, 1);
+    assert.equal(showTerms.args[0][0], 'landscape-terms');
+    assert.isNull(showTerms.args[0][1]);
+  });
+
+  it('can get terms by name and revision', function() {
+    const charmsGetById = sinon.stub().returns({
+      get: sinon.stub().returns(['landscape-terms/15'])
+    });
+    const showTerms = sinon.stub();
+    jsTestUtils.shallowRender(
+      <juju.components.BudgetTableRow
+        acl={acl}
+        allocationEditable={false}
+        charmsGetById={charmsGetById}
+        listPlansForCharm={listPlansForCharm}
+        plansEditable={false}
+        parseTermId={parseTermId}
+        service={service}
+        showTerms={showTerms}
+        withPlans={true} />);
+    assert.equal(showTerms.callCount, 1);
+    assert.equal(showTerms.args[0][0], 'landscape-terms');
+    assert.equal(showTerms.args[0][1], 15);
+  });
+
+  it('can get terms by name and owner', function() {
+    const charmsGetById = sinon.stub().returns({
+      get: sinon.stub().returns(['spinach/landscape-terms'])
+    });
+    const showTerms = sinon.stub();
+    jsTestUtils.shallowRender(
+      <juju.components.BudgetTableRow
+        acl={acl}
+        allocationEditable={false}
+        charmsGetById={charmsGetById}
+        listPlansForCharm={listPlansForCharm}
+        parseTermId={parseTermId}
+        plansEditable={false}
+        service={service}
+        showTerms={showTerms}
+        withPlans={true} />);
+    assert.equal(showTerms.callCount, 1);
+    assert.equal(showTerms.args[0][0], 'spinach/landscape-terms');
+    assert.isNull(showTerms.args[0][1]);
+  });
+
+  it('can get terms by name, owner and revision', function() {
+    const charmsGetById = sinon.stub().returns({
+      get: sinon.stub().returns(['spinach/landscape-terms/15'])
+    });
+    const showTerms = sinon.stub();
+    jsTestUtils.shallowRender(
+      <juju.components.BudgetTableRow
+        acl={acl}
+        allocationEditable={false}
+        charmsGetById={charmsGetById}
+        listPlansForCharm={listPlansForCharm}
+        parseTermId={parseTermId}
+        plansEditable={false}
+        service={service}
+        showTerms={showTerms}
+        withPlans={true} />);
+    assert.equal(showTerms.callCount, 1);
+    assert.equal(showTerms.args[0][0], 'spinach/landscape-terms');
+    assert.equal(showTerms.args[0][1], 15);
+  });
+
   it('can display a terms popup', function() {
     const charmsGetById = sinon.stub().returns({
       get: sinon.stub().returns(['landscape-terms', 'apache2-terms'])
@@ -780,6 +891,7 @@ describe('BudgetTableRow', function() {
         allocationEditable={false}
         charmsGetById={charmsGetById}
         listPlansForCharm={listPlansForCharm}
+        parseTermId={parseTermId}
         plansEditable={false}
         service={service}
         showTerms={showTerms}

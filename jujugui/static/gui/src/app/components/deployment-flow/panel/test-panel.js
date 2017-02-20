@@ -79,9 +79,8 @@ describe('DeploymentPanel', function() {
       .props.action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
-      gui: {
-        deploy: null
-      }
+      gui: {deploy: null},
+      profile: null
     });
   });
 });

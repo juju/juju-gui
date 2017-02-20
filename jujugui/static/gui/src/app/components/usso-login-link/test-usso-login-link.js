@@ -96,34 +96,25 @@ describe('USSOLoginLink', () => {
     assert.equal(loginToController.callCount, 1);
   });
 
-  it('calls a callback after login if supplied', () => {
-    const loginToController = sinon.stub();
-    const callback = sinon.stub();
-    const output = testUtils.renderIntoDocument(
-        <juju.components.USSOLoginLink
-          callback={callback}
-          displayType={'text'}
-          loginToController={loginToController} />, true);
-    testUtils.Simulate.click(
-      testUtils.findRenderedDOMComponentWithTag(output, 'a'));
-    assert.equal(loginToController.callCount, 1);
-    loginToController.args[0][0]();
-    assert.equal(callback.callCount, 1);
-  });
 
   it('does a postback to a URL in gisf', function() {
     const loginToController = sinon.stub().callsArg(0);
     const getDischargeToken = sinon.stub().returns('foo');
     const sendPost = sinon.stub();
     const callback = sinon.stub();
+    const charmstore = sinon.stub();
+    charmstore.bakery = sinon.stub();
+    charmstore.bakery.fetchMacaroonFromStaticPath = sinon.stub();
     const output = testUtils.renderIntoDocument(
       <juju.components.USSOLoginLink
         callback={callback}
+        charmstore={charmstore}
         displayType={'text'}
         gisf={true}
         getDischargeToken={getDischargeToken}
         loginToController={loginToController}
-        sendPost={sendPost} />, true);
+        sendPost={sendPost}
+        storeUser={sinon.stub()}/>, true);
     testUtils.Simulate.click(
       testUtils.findRenderedDOMComponentWithTag(output, 'a'));
     assert.equal(sendPost.callCount, 1, 'Did not postback');
@@ -133,6 +124,8 @@ describe('USSOLoginLink', () => {
         {'Content-Type': 'application/x-www-form-urlencoded'},
         'discharge-token=foo'), true,
       'sendPost not called with correct arguments');
-
+    assert.equal(
+      charmstore.bakery.fetchMacaroonFromStaticPath.callCount, 1,
+      'Did not log in to chamstore');
   });
 });
