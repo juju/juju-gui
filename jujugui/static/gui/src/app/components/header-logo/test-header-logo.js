@@ -24,8 +24,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('HeaderLogo', function() {
-  let changeState;
-  let user;
+  let navigateUserProfile;
 
   beforeAll(function(done) {
     // By loading this file it adds the component to the juju components.
@@ -33,39 +32,22 @@ describe('HeaderLogo', function() {
   });
 
   beforeEach(function() {
-    changeState = sinon.stub();
-    user = {
-      username: 'admin'
-    };
+    navigateUserProfile = sinon.stub();
   });
 
   it('renders', function() {
     const renderer = jsTestUtils.shallowRender(
       <juju.components.HeaderLogo
-        changeState={changeState}
-        user={user} />, true);
+        navigateUserProfile={navigateUserProfile} />, true);
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
 
-    const expected = (<a onClick={instance._handleLogoClick}
-      role="button">
+    const expected = (<a onClick={navigateUserProfile}
+      role="button" title="Goto User Profile">
       <juju.components.SvgIcon name="juju-logo"
         className="svg-icon"
         width="90" height="35" />
     </a>);
     assert.deepEqual(output, expected);
-  });
-
-  it('clicking the icon changes state', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <juju.components.HeaderLogo
-        changeState={changeState}
-        user={user} />, true);
-    const instance = renderer.getMountedInstance();
-
-    instance._handleLogoClick();
-
-    assert.isTrue(changeState.called);
-    assert.deepEqual(changeState.args[0][0], {user: user});
   });
 });
