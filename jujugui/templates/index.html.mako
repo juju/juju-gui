@@ -73,20 +73,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       </div>
 
       <div class="header-banner header-banner--left">
-        <div class="header-banner__logo">
-          ## Conditionally linking is not needed in the Go version of the template.
-          % if logo_url:
-          <a class="header-banner__link" target="_blank" href="${logo_url}">
-          % endif
-            <svg class="svg-icon"
-              viewBox="0 0 90 35"
-              style="width:90px; height:35px;">
-              <use xlink:href="#juju-logo" />
-            </svg>
-          % if logo_url:
-          </a>
-          % endif
-        </div>
+        <div id="header-logo" class="header-banner__logo"></div>
         <div id="header-breadcrumb"></div>
         <div id="model-actions-container"></div>
         <div id="provider-logo-container" class="header-banner__provider"></div>
@@ -404,8 +391,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 comboBase: "${convoy_url}?",
                 root: 'app/',
                 // From modules.js
-                modules: YUI_MODULES,
-            },
+                modules: YUI_MODULES
+            }
           }
         };
 
