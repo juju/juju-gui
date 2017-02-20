@@ -259,8 +259,8 @@ YUI.add('entity-header', function() {
     /**
      When the latest version link is click, go to that version.
    */
-    _handleRevisionClick: function(e) {
-      e.stopPropagation();
+    _handleRevisionClick: function(evt) {
+      evt.stopPropagation();
       this.props.changeState({
         search: null,
         store: this.props.entityModel.get('latest_revision').url
@@ -272,19 +272,20 @@ YUI.add('entity-header', function() {
       or display the latest version
    */
     _generateLatestRevision: function() {
-      const latest_revision = this.props.entityModel.get('latest_revision');
-      const revision_id = this.props.entityModel.get('revision_id');
+      const entityModel = this.props.entityModel;
+      const latest_revision = entityModel.get('latest_revision');
+      const revision_id = entityModel.get('revision_id');
 
       if (latest_revision.id !== revision_id) {
-        return <li>
+        return (<li>
           <a onClick={this._handleRevisionClick}>
             Latest version (#{latest_revision.id})
           </a>
-        </li>;
+        </li>);
       } else {
-        return <li>
+        return (<li>
           Latest version (#{latest_revision.id})
-        </li>;
+        </li>);
       }
     },
 
