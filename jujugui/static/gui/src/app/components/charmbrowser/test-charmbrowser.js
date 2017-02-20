@@ -289,4 +289,40 @@ describe('Charmbrowser', function() {
         </juju.components.Panel>);
     assert.deepEqual(output, expected);
   });
+
+  it('closes when clicked outside', function() {
+    appState.current.user = 'spinch/koala';
+    const utils = {
+      pluralize: sinon.stub()
+    };
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.Charmbrowser
+        acl={acl}
+        addNotification={sinon.stub()}
+        apiUrl="http://example.com"
+        apiVersion="v5"
+        appState={appState}
+        charmstoreSearch={sinon.stub()}
+        charmstoreURL="http://1.2.3.4/"
+        deployService={sinon.stub()}
+        displayPlans={true}
+        getBundleYAML={sinon.stub()}
+        getDiagramURL={sinon.stub()}
+        getEntity={sinon.stub()}
+        getFile={sinon.stub()}
+        importBundleYAML={sinon.stub()}
+        listPlansForCharm={sinon.stub()}
+        makeEntityModel={sinon.stub()}
+        utils={utils}
+        renderMarkdown={sinon.stub()}
+        series={{}} />, true);
+    const output = renderer.getRenderOutput();
+    output.props.clickAction();
+    assert.equal(appState.changeState.callCount, 1);
+    assert.deepEqual(appState.changeState.args[0][0], {
+      root: null,
+      search: null,
+      store: null
+    });
+  });
 });
