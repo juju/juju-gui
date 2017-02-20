@@ -389,8 +389,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 comboBase: "{{.comboURL}}?",
                 root: 'app/',
                 // From modules.js
-                modules: YUI_MODULES,
-            },
+                modules: YUI_MODULES
+            }
           }
         };
 

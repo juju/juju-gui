@@ -391,9 +391,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 comboBase: "${convoy_url}?",
                 root: 'app/',
                 // From modules.js
-                modules: YUI_MODULES,
-            },
-          },
+                modules: YUI_MODULES
+            }
+          }
         };
 
         YUI(GlobalConfig).use(['juju-gui', 'yui-patches'], function(Y) {
