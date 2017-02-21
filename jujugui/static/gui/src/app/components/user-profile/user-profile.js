@@ -38,8 +38,15 @@ YUI.add('user-profile', function() {
       staticURL: React.PropTypes.string,
       storeUser: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
-      user: React.PropTypes.object,
-      users: React.PropTypes.object.isRequired
+      // userInfo must have the following attributes:
+      // - external: the external user name to use for retrieving data, for
+      //   instance, from the charm store. Might be null if the user is being
+      //   displayed for the current user and they are not authenticated to
+      //   the charm store;
+      // - isCurrent: whether the profile is being displayed for the currently
+      //   authenticated user;
+      // - profile: the user name for whom profile details must be displayed.
+      userInfo: React.PropTypes.object.isRequired
     },
 
     /**
@@ -95,7 +102,8 @@ YUI.add('user-profile', function() {
           destroyModels={props.destroyModels}
           listModelsWithInfo={props.listModelsWithInfo}
           switchModel={props.switchModel}
-          user={props.user} />,
+          userInfo={props.userInfo}
+        />,
         <juju.components.UserProfileEntityList
           key='bundleList'
           ref='bundleList'
@@ -103,8 +111,8 @@ YUI.add('user-profile', function() {
           charmstore={props.charmstore}
           getDiagramURL={props.getDiagramURL}
           type='bundle'
-          user={props.user}
-          users={props.users} />,
+          user={props.userInfo.external}
+        />,
         <juju.components.UserProfileEntityList
           key='charmList'
           ref='charmList'
@@ -112,22 +120,22 @@ YUI.add('user-profile', function() {
           charmstore={props.charmstore}
           getDiagramURL={props.getDiagramURL}
           type='charm'
-          user={props.user}
-          users={props.users} />
+          user={props.userInfo.external}
+        />
       ];
-      // The original list of sections to render, regardless of what other
-      // decisions are made.
-      const toRender = [
-        'modelList',
-        'agreementList'
-      ];
-      // Exclude/include sections that are not public.
-      if (window.flags && window.flags.blues) {
-        toRender.push('budgetList');
+      // The list of models is always included, even if the profile is not for
+      // the current user, in which case we'll display only the models owned
+      // by that profile.
+      const toRender = ['modelList'];
+      // Exclude/include sections only displayed to the current user.
+      if (props.userInfo.isCurrent) {
+        toRender.push('agreementList');
+        if (window.flags && window.flags.blues) {
+          toRender.push('budgetList');
+        }
       }
-      // Exclude/include sections that require charmstore authentication.
-      const charmstoreUser = props.users.charmstore;
-      if (charmstoreUser && charmstoreUser.user) {
+      // Exclude/include sections that require a charm store user.
+      if (props.userInfo.external) {
         toRender.push('bundleList');
         toRender.push('charmList');
       }
@@ -147,8 +155,6 @@ YUI.add('user-profile', function() {
     },
 
     render: function() {
-      const username = this.props.user && this.props.user.usernameDisplay ||
-        'Anonymous user';
       // XXX kadams54 2016-09-05: Will need to restore the header links and
       // counts functionality here.
       const links = [];
@@ -159,11 +165,11 @@ YUI.add('user-profile', function() {
           <div className="twelve-col">
             <div className="inner-wrapper">
               <juju.components.UserProfileHeader
-                users={this.props.users}
                 avatar=""
                 interactiveLogin={this._interactiveLogin}
                 links={links}
-                username={username} />
+                userInfo={this.props.userInfo}
+              />
               {this._generateContent()}
             </div>
           </div>
