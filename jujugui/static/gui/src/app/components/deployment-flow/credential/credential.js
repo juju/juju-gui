@@ -41,7 +41,7 @@ YUI.add('deployment-credential', function() {
     getInitialState: function() {
       return {
         credentials: [],
-        credentialsLoading: true,
+        credentialsLoading: false,
         showAdd: this.props.editable
       };
     },
@@ -69,9 +69,11 @@ YUI.add('deployment-credential', function() {
       const cloud = this.props.cloud && this.props.cloud.name;
       const user = this.props.user;
       if (user) {
-        this.props.getCloudCredentialNames(
-          [[user, cloud]],
-          this._getCloudCredentialNamesCallback.bind(this, credential));
+        this.setState({credentialsLoading: true}, () => {
+          this.props.getCloudCredentialNames(
+            [[user, cloud]],
+            this._getCloudCredentialNamesCallback.bind(this, credential));
+        });
       }
     },
 
