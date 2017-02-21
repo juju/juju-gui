@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 var juju = {components: {}}; // eslint-disable-line no-unused-vars
 
 describe('UserProfileEntityList', () => {
-  var charmstore, charms, bundles, users;
+  var charmstore, charms, bundles;
 
   beforeAll((done) => {
     // By loading this file it adds the component to the juju components.
@@ -36,18 +36,14 @@ describe('UserProfileEntityList', () => {
     var bundle = jsTestUtils.makeEntity(true).toEntity();
     bundle.series = [bundle.series];
     bundles = [bundle];
-    list.withArgs('test-owner', sinon.match.any, 'charm').callsArgWith(
+    list.withArgs('who', sinon.match.any, 'charm').callsArgWith(
       1, null, charms);
-    list.withArgs('test-owner', sinon.match.any, 'bundle').callsArgWith(
+    list.withArgs('who', sinon.match.any, 'bundle').callsArgWith(
       1, null, bundles);
     charmstore = {
       list: list,
       url: 'example.com/9'
     };
-    users = {charmstore: {
-      user: 'test-owner',
-      usernameDisplay: 'test owner'
-    }};
   });
 
   it('renders the empty state', () => {
@@ -57,8 +53,8 @@ describe('UserProfileEntityList', () => {
         charmstore={{}}
         getDiagramURL={sinon.stub()}
         type='charm'
-        user={users.charmstore}
-        users={users} />, true);
+        user='who'
+      />, true);
     var output = component.getRenderOutput();
     assert.equal(output, null);
   });
@@ -72,8 +68,8 @@ describe('UserProfileEntityList', () => {
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
         type={type}
-        user={users.charmstore}
-        users={users} />, true);
+        user='who'
+      />, true);
     var output = component.getRenderOutput();
     assert.deepEqual(output, (
       <div className="user-profile__charm-list twelve-col">
@@ -91,8 +87,8 @@ describe('UserProfileEntityList', () => {
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
         type={type}
-        user={users.charmstore}
-        users={users} />, true);
+        user='who'
+      />, true);
     var output = component.getRenderOutput();
     var expected = (
       <div className="user-profile__charm-list">
@@ -162,8 +158,8 @@ describe('UserProfileEntityList', () => {
         charmstore={charmstore}
         getDiagramURL={getDiagramURL}
         type='bundle'
-        user={users.charmstore}
-        users={users} />, true);
+        user='who'
+      />, true);
     var output = component.getRenderOutput();
     var expected = (
       <div className="user-profile__bundle-list">
@@ -236,12 +232,12 @@ describe('UserProfileEntityList', () => {
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
         type='charm'
-        user={users.charmstore}
-        users={users} />, true);
+        user='who'
+      />, true);
     var instance = component.getMountedInstance();
     assert.equal(charmstore.list.callCount, 1,
                  'charmstore list not called');
-    assert.equal(charmstore.list.args[0][0], 'test-owner',
+    assert.equal(charmstore.list.args[0][0], 'who',
                  'username not passed to list request');
     assert.deepEqual(instance.state.entityList, charms,
                      'callback does not properly set entity state');
@@ -254,12 +250,12 @@ describe('UserProfileEntityList', () => {
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
         type='bundle'
-        user={users.charmstore}
-        users={users} />, true);
+        user='who'
+      />, true);
     var instance = component.getMountedInstance();
     assert.equal(charmstore.list.callCount, 1,
                  'charmstore list not called');
-    assert.equal(charmstore.list.args[0][0], 'test-owner',
+    assert.equal(charmstore.list.args[0][0], 'who',
                  'username not passed to list request');
     assert.deepEqual(instance.state.entityList, bundles,
                      'callback does not properly set entity state');
@@ -274,8 +270,8 @@ describe('UserProfileEntityList', () => {
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
         type='charm'
-        user={users.charmstore}
-        users={users} />, true);
+        user='who'
+      />, true);
     renderer.unmount();
     assert.equal(charmstoreAbort.callCount, 1);
   });
@@ -289,8 +285,7 @@ describe('UserProfileEntityList', () => {
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
         type='charm'
-        users={{}}
-        user={users.charmstore} />, true);
+        user={null} />, true);
     assert.equal(list.callCount, 0);
     component.render(
       <juju.components.UserProfileEntityList
@@ -298,8 +293,7 @@ describe('UserProfileEntityList', () => {
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
         type='charm'
-        users={users}
-        user={users.charmstore} />);
+        user='who' />);
     assert.equal(list.callCount, 1);
   });
 
@@ -312,8 +306,7 @@ describe('UserProfileEntityList', () => {
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
         type='charm'
-        users={users}
-        user={users.charmstore} />);
+        user='who' />);
     assert.equal(broadcastStatus.args[0][0], 'starting');
   });
 
@@ -326,8 +319,7 @@ describe('UserProfileEntityList', () => {
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
         type='charm'
-        users={users}
-        user={users.charmstore} />);
+        user='who' />);
     assert.equal(broadcastStatus.args[1][0], 'ok');
   });
 
@@ -341,8 +333,7 @@ describe('UserProfileEntityList', () => {
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
         type='charm'
-        users={users}
-        user={users.charmstore} />);
+        user='who' />);
     assert.equal(broadcastStatus.args[1][0], 'empty');
   });
 
@@ -356,8 +347,7 @@ describe('UserProfileEntityList', () => {
         charmstore={charmstore}
         getDiagramURL={sinon.stub()}
         type='charm'
-        users={users}
-        user={users.charmstore} />);
+        user='who' />);
     assert.equal(broadcastStatus.args[1][0], 'error');
   });
 });

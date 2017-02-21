@@ -803,14 +803,18 @@ YUI.add('juju-gui', function(Y) {
           this.maskVisibility(false);
           const isLogin = current.root === 'login';
           const newState = {
-            root: isLogin ? null : current.root,
+            profile: current.profile,
+            root: isLogin ? null : current.root
           };
           // If the current root is 'login' after logging into the controller,
-          // or there is no root defined and no store defined then we want to
-          // render the users profile.
-          if (!current.store &&
-              (isLogin || !current.root) &&
-              this.get('gisf')) {
+          // and there is no root, no store and no profile defined then we
+          // want to render the users profile.
+          if (
+            !current.store &&
+            !newState.profile &&
+            (isLogin || !current.root) &&
+            this.get('gisf')
+          ) {
             newState.profile = this._getAuth().rootUserName;
           }
           this.state.changeState(newState);
@@ -1068,8 +1072,13 @@ YUI.add('juju-gui', function(Y) {
       // controller is setup and the user has successfully logged in. As a
       // temporary workaround we will just prevent rendering the profile until
       // the controller is connected.
-      if (!this.controllerAPI.get('connected') &&
-          !this.controllerAPI.userIsAuthenticated) {
+      // XXX frankban: it seems that the profile is rendered even when the
+      // profile is not included in the state.
+      if (
+        !state.profile ||
+        !this.controllerAPI.get('connected') ||
+        !this.controllerAPI.userIsAuthenticated
+      ) {
         return;
       }
       // XXX Jeff - 18-11-2016 - This profile gets rendered before the
@@ -1086,12 +1095,17 @@ YUI.add('juju-gui', function(Y) {
           }
         });
       }
-      // If the username does not match the logged in user then display a new
-      // model instead of the profile.
-      const auth = this._getAuth();
-      if (auth && state.profile !== auth.rootUserName) {
-        this.state.changeState({root: 'new', profile: null});
-        return;
+      const userInfo = {
+        external: state.profile,
+        isCurrent: false,
+        profile: state.profile
+      };
+      if (userInfo.profile === this._getAuth().rootUserName) {
+        userInfo.isCurrent = true;
+        // This is the current user, and might be a local one. Use the
+        // authenticated charm store user as the external (USSO) name.
+        const users = this.get('users') || {};
+        userInfo.external = users.charmstore ? users.charmstore.user : null;
       }
       const charmstore = this.get('charmstore');
       const utils = views.utils;
@@ -1125,8 +1139,7 @@ YUI.add('juju-gui', function(Y) {
           staticURL={window.juju_config.staticURL}
           storeUser={this.storeUser.bind(this)}
           switchModel={utils.switchModel.bind(this, this.env)}
-          user={this._getAuth()}
-          users={Y.clone(this.get('users'), true)}
+          userInfo={userInfo}
         />,
         document.getElementById('top-page-container'));
       // The model name should not be visible when viewing the profile.
@@ -1218,12 +1231,18 @@ YUI.add('juju-gui', function(Y) {
     },
 
     _renderHeaderLogo: function() {
-      const navigateUserProfile = this.state.changeState.bind(this.state, {
-        model: null,
-        profile: this._getAuth().rootUserName,
-        root: null,
-        store: null
-      });
+      const navigateUserProfile = () => {
+        const auth = this._getAuth();
+        if (!auth) {
+          return;
+        }
+        this.state.changeState({
+          model: null,
+          profile: auth.rootUserName,
+          root: null,
+          store: null
+        });
+      };
       ReactDOM.render(
         <window.juju.components.HeaderLogo
         navigateUserProfile={navigateUserProfile} />,

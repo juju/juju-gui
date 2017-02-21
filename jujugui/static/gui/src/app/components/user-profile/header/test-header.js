@@ -29,7 +29,7 @@ describe('UserProfileHeader', () => {
   });
 
   beforeEach(() => {
-    var action = sinon.stub();
+    const action = sinon.stub();
     links = [{
       action: action,
       label: 'a link'
@@ -40,26 +40,26 @@ describe('UserProfileHeader', () => {
   });
 
   it('renders', () => {
-    var interactiveLogin = sinon.stub();
-    var users = {};
-    var output = jsTestUtils.shallowRender(
+    const interactiveLogin = sinon.stub();
+    const userInfo = {profile: 'who'};
+    const output = jsTestUtils.shallowRender(
       <juju.components.UserProfileHeader
-        users={users}
         avatar="avatar.png"
         interactiveLogin={interactiveLogin}
         links={links}
-        username="spinach" />);
-    var expected = (
+        userInfo={userInfo}
+      />);
+    const expected = (
       <div className="user-profile-header twelve-col">
         <juju.components.GenericButton
           title="Log in to the charm store"
           type="inline-neutral"
           action={interactiveLogin} />
-        <img alt="spinach"
+        <img alt="who"
           className="user-profile-header__avatar"
           src="avatar.png" />
         <h1 className="user-profile-header__username">
-          spinach
+          who
         </h1>
         <ul className="user-profile-header__links">
           <li className={
@@ -80,29 +80,29 @@ describe('UserProfileHeader', () => {
     assert.deepEqual(output, expected);
   });
 
-  it('hides the login button when authenticated to charmstore', () => {
-    var users = {charmstore: {user: 'test'}};
-    var output = jsTestUtils.shallowRender(
+  it('hides the login button when authenticated to charm store', () => {
+    const userInfo = {external: 'who-ext', profile: 'who'};
+    const output = jsTestUtils.shallowRender(
       <juju.components.UserProfileHeader
-        users={users}
         avatar="avatar.png"
         interactiveLogin={sinon.stub()}
         links={links}
-        username="spinach" />);
+        userInfo={userInfo}
+      />);
     assert.isUndefined(output.props.children[0]);
   });
 
-  it('shows the login button when no username', () => {
-    var users = {charmstore: {loading: true}};
-    var interactiveLogin = sinon.stub();
-    var output = jsTestUtils.shallowRender(
+  it('shows the login button when no external user', () => {
+    const interactiveLogin = sinon.stub();
+    const userInfo = {profile: 'who'};
+    const output = jsTestUtils.shallowRender(
       <juju.components.UserProfileHeader
-        users={users}
         avatar="avatar.png"
         interactiveLogin={interactiveLogin}
         links={links}
-        username="spinach" />);
-    var expected = (
+        userInfo={userInfo}
+      />);
+    const expected = (
       <juju.components.GenericButton
         title="Log in to the charm store"
         type="inline-neutral"
@@ -112,15 +112,15 @@ describe('UserProfileHeader', () => {
   });
 
   it('can render with a default avatar', () => {
-    var users = {charmstore: {user: 'test'}};
-    var output = jsTestUtils.shallowRender(
+    const userInfo = {external: 'who-ext', profile: 'who'};
+    const output = jsTestUtils.shallowRender(
       <juju.components.UserProfileHeader
-        users={users}
         avatar=""
         interactiveLogin={undefined}
         links={links}
-        username="spinach" />);
-    var expected = (
+        userInfo={userInfo}
+      />);
+    const expected = (
       <span className={
         'user-profile-header__avatar user-profile-header__avatar--default'}>
         <span className="avatar-overlay"></span>

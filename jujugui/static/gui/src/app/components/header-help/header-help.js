@@ -29,7 +29,7 @@ YUI.add('header-help', function() {
     propTypes: {
       appState: React.PropTypes.object.isRequired,
       gisf: React.PropTypes.bool.isRequired,
-      user: React.PropTypes.object.isRequired
+      user: React.PropTypes.object
     },
 
     getInitialState: function() {

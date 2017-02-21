@@ -29,8 +29,7 @@ YUI.add('user-profile-entity-list', function() {
       charmstore: React.PropTypes.object.isRequired,
       getDiagramURL: React.PropTypes.func.isRequired,
       type: React.PropTypes.string.isRequired,
-      user: React.PropTypes.object,
-      users: React.PropTypes.object.isRequired
+      user: React.PropTypes.string,
     },
 
     getInitialState: function() {
@@ -51,8 +50,7 @@ YUI.add('user-profile-entity-list', function() {
     },
 
     componentWillMount: function() {
-      const users = this.props.users;
-      if (users.charmstore && users.charmstore.user) {
+      if (this.props.user) {
         this._fetchEntities(this.props);
       }
     },
@@ -66,9 +64,7 @@ YUI.add('user-profile-entity-list', function() {
     componentWillReceiveProps: function(nextProps) {
       const props = this.props;
       // Compare next and previous charmstore users in a data-safe manner.
-      const prevCSUser = props.users.charmstore || {};
-      const nextCSUser = nextProps.users.charmstore || {};
-      if (nextCSUser.user !== prevCSUser.user) {
+      if (props.user !== nextProps.user) {
         this._fetchEntities(nextProps);
       }
     },
@@ -80,15 +76,14 @@ YUI.add('user-profile-entity-list', function() {
       @param {Object} props the component properties to use.
     */
     _fetchEntities:  function(props) {
-      const callback = this._fetchEntitiesCallback;
       const charmstore = props.charmstore;
-      const username = props.users.charmstore && props.users.charmstore.user;
-      if (charmstore && charmstore.list && username) {
+      if (charmstore && charmstore.list && props.user) {
         this.props.broadcastStatus('starting');
+        const callback = this._fetchEntitiesCallback;
         // Delay the call until after the state change to prevent race
         // conditions.
         this.setState({loadingEntities: true}, () => {
-          const xhr = charmstore.list(username, callback, props.type);
+          const xhr = charmstore.list(props.user, callback, props.type);
           this.xhrs.push(xhr);
         });
       }
