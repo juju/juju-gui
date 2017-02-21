@@ -1078,7 +1078,9 @@ YUI.add('juju-gui', function(Y) {
       // the controller is connected.
       // XXX frankban: it seems that the profile is rendered even when the
       // profile is not included in the state.
+      const guiState = state.gui || {};
       if (
+        guiState.deploy !== undefined ||
         !state.profile ||
         !this.controllerAPI.get('connected') ||
         !this.controllerAPI.userIsAuthenticated
