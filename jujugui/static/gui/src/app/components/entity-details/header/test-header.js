@@ -144,9 +144,7 @@ describe('EntityHeader', function() {
           importBundleYAML={sinon.stub()}
           pluralize={sinon.stub()}
           scrollPosition={0} />, true);
-    const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
-    const latestClickHandler = instance._handleRevisionClick;
 
     assert.deepEqual(
       output.props.children.props.children.props.children[0].
