@@ -318,5 +318,44 @@ var jsTestUtils = {
         }
       }
     };
+  },
+
+  /**
+    While assert.deepEqual is great, if a nested child errors it's
+    hard to debug. This function goes to the deepest level and works
+    it's way out - giving an easier to debug error.
+    This code is not 100% tested, always follow up with a standard
+    assert.deepEqual(output,expected), Just incase this drops the ball.
+
+    @method specificDeepEqual
+  */
+  specificDeepEqual: function(output, expected) {
+    if (output && output.props &&
+      output.props.children &&
+      expected && expected.props &&
+      expected.props.children) {
+      if (Array.isArray(output.props.children)) {
+        for(let i = 0, ii = output.props.children.length; i < ii; i += 1) {
+          if (output.props &&
+            output.props.children &&
+            expected.props &&
+            expected.props.children) {
+            this.specificDeepEqual(
+              output.props.children[i],
+              expected.props.children[i]);
+          }
+        }
+      } else {
+        if (output.props &&
+          output.props.children &&
+          expected.props &&
+          expected.props.children) {
+          this.specificDeepEqual(
+            output.props.children,
+            expected.props.children);
+        }
+      }
+    }
+    assert.deepEqual(output, expected);
   }
 };
