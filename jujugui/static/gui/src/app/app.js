@@ -1030,15 +1030,19 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       const bakeryFactory = this.bakeryFactory;
+      const charmstore = this.get('charmstore');
       if (controllerAPI && !controllerAPI.userIsAuthenticated) {
         // If the user is not authenticated but we're connected to a controller
         // then the user is anonymous and we should show them a login button
         // so that they can log in via USSO.
         ReactDOM.render(
           <window.juju.components.USSOLoginLink
+            charmstore={charmstore}
             loginToController={controllerAPI.loginWithMacaroon.bind(
               controllerAPI, bakeryFactory.get('juju'))}
-            displayType={'text'} />,
+            displayType={'text'}
+            storeUser={this.storeUser.bind(this)}
+          />,
           linkContainer);
         return;
       }
@@ -1049,13 +1053,13 @@ YUI.add('juju-gui', function(Y) {
           clearCookie={bakeryFactory.clearAllCookies.bind(bakeryFactory)}
           gisfLogout={window.juju_config.gisfLogout || ''}
           gisf={window.juju_config.gisf || false}
-          charmstoreLogoutUrl={this.get('charmstore').getLogoutUrl()}
+          charmstoreLogoutUrl={charmstore.getLogoutUrl()}
           getUser={this.getUser.bind(this, 'charmstore')}
           clearUser={this.clearUser.bind(this, 'charmstore')}
           // If the charmbrowser is open then don't show the logout link.
           visible={!this.state.current.store}
-        locationAssign={window.location.assign.bind(window.location)}
-          />,
+          locationAssign={window.location.assign.bind(window.location)}
+        />,
         linkContainer);
     },
 
