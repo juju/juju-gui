@@ -1,6 +1,6 @@
 --require should
 --reporter dot
 --ui bdd
---ignore-leaks 
+--ignore-leaks
 --debug
 -G

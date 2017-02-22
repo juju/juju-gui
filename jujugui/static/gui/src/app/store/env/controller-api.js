@@ -39,18 +39,40 @@ YUI.add('juju-controller-api', function(Y) {
   Y.extend(ControllerAPI, module.BaseEnvironment, {
 
     /**
-     * Go environment constructor.
-     *
-     * @method initializer
-     * @return {undefined} Nothing.
-     */
+      Juju controller API client constructor.
+
+      @method initializer
+    */
     initializer: function() {
       // Define the default user name for this environment. It will appear as
       // predefined value in the login mask.
       this.defaultUser = 'admin';
-      this._pinger = null;
       // pendingLoginResponse is set to true when the login process is running.
       this.pendingLoginResponse = false;
+
+      this._pinger = null;
+      this.after('connectedChange', evt => {
+        if (evt.newVal) {
+          console.log('starting controller pinger');
+          this._pinger = setInterval(
+            this.ping.bind(this), module.PING_INTERVAL * 1000);
+          return;
+        }
+        console.log('stopping controller pinger');
+        clearInterval(this._pinger);
+        this._pinger = null;
+      });
+    },
+
+    /**
+      Juju controller API client destructor.
+
+      @method destructor
+    */
+    destructor: function() {
+      if (this._pinger) {
+        clearInterval(this._pinger);
+      }
     },
 
     /**
@@ -89,6 +111,13 @@ YUI.add('juju-controller-api', function(Y) {
       var version = op.version;
       if (facade !== 'Admin') {
         version = this.findFacadeVersion(facade, version);
+      }
+      if (version === null && facade === 'Pinger') {
+        // Note that, even if we don't have an available Pinger (which can
+        // happen for instance if the user is not logged in yet) we still need
+        // to ping, in order to avoid disconnections. We don't really care if
+        // the server returns an error: an error it is still WebSocket traffic.
+        version = 1;
       }
       if (version === null) {
         var err = 'api client: operation not supported: ' + JSON.stringify(op);
@@ -143,13 +172,6 @@ YUI.add('juju-controller-api', function(Y) {
         this.setConnectedAttr(
           'controllerId',
           tags.parse(tags.CONTROLLER, response['controller-tag']));
-        // Start pinging the server.
-        // XXX frankban: this is only required as a temporary workaround to
-        // prevent Apache to disconnect the WebSocket in the embedded Juju.
-        if (!this._pinger) {
-          this._pinger = setInterval(
-            this.ping.bind(this), module.PING_INTERVAL * 1000);
-        }
         // Clean up for log out text.
         this.failedAuthentication = false;
         // Retrieve maas credentials should they exist.
@@ -158,7 +180,7 @@ YUI.add('juju-controller-api', function(Y) {
         // called somewhere else. - Makyo 2017-02-16
         this.getDefaultCloudName((error, name) => {
           if (error) {
-            console.log('error retrieving default cloud name', error);
+            console.log('cannot retrieve default cloud name:', error);
             return;
           }
           if (name !== 'maas') {
@@ -167,7 +189,7 @@ YUI.add('juju-controller-api', function(Y) {
           this.getClouds([name], (error, clouds) => {
             const err = error || clouds[name].err;
             if (err) {
-              console.log('error retrieving cloud info', err);
+              console.log('cannot retrieve cloud info:', err);
               return;
             }
             this.set('maasServer', clouds[name].endpoint);
@@ -351,10 +373,6 @@ YUI.add('juju-controller-api', function(Y) {
     */
     cleanup: function(done) {
       console.log('cleaning up the controller API connection');
-      if (this._pinger) {
-        clearInterval(this._pinger);
-        this._pinger = null;
-      }
       this.resetConnectedAttrs();
       done();
     },

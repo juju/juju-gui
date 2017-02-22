@@ -102,23 +102,57 @@ describe('Controller API', function() {
     });
   });
 
-  describe('close', () => {
-    it('stops the pinger', function(done) {
+  describe('lifecycle', () => {
+    beforeEach(function() {
       const originalClearInterval = clearInterval;
+      const originalSetInterval = setInterval;
       clearInterval = sinon.stub();
-      this._cleanups.push(() => {
+      setInterval = sinon.stub().returns('mypinger');
+      cleanups.push(() => {
         clearInterval = originalClearInterval;
-      });
-      controllerAPI._pinger = 'I am the pinger';
-      controllerAPI.close(() => {
-        assert.strictEqual(clearInterval.calledOnce, true);
-        const pinger = clearInterval.getCall(0).args[0];
-        assert.strictEqual(pinger, 'I am the pinger');
-        assert.strictEqual(controllerAPI._pinger, null);
-        done();
+        setInterval = originalSetInterval;
       });
     });
 
+    it('starts the pinger when the controller connects', function(done) {
+      controllerAPI.set('connected', false);
+      controllerAPI.after('connectedChange', evt => {
+        assert.strictEqual(setInterval.calledOnce, true, 'setInterval');
+        assert.strictEqual(controllerAPI._pinger, 'mypinger');
+        done();
+      });
+      controllerAPI.set('connected', true);
+    });
+
+    it('stops the pinger when the controller disconnects', function(done) {
+      controllerAPI.set('connected', true);
+      const initialPinger = controllerAPI._pinger;
+      assert.notEqual(initialPinger, null);
+      controllerAPI.after('connectedChange', evt => {
+        assert.strictEqual(clearInterval.calledOnce, true, 'clearInterval');
+        const pinger = clearInterval.getCall(0).args[0];
+        assert.strictEqual(pinger, initialPinger);
+        assert.strictEqual(controllerAPI._pinger, null);
+        done();
+      });
+      controllerAPI.set('connected', false);
+    });
+
+    it('stops the pinger when the controller is destroyed', function(done) {
+      const api = new juju.ControllerAPI({conn: conn});
+      api.after('destroy', evt => {
+        assert.strictEqual(setInterval.calledOnce, true, 'setInterval');
+        assert.strictEqual(clearInterval.calledOnce, true, 'clearInterval');
+        const pinger = clearInterval.getCall(0).args[0];
+        assert.strictEqual(pinger, 'mypinger');
+        done();
+      });
+      api.set('connected', true);
+      api.destroy();
+    });
+  });
+
+  describe('close', () => {
     it('resets attributes', done => {
       controllerAPI.setConnectedAttr('controllerAccess', 'test');
       controllerAPI.close(() => {
