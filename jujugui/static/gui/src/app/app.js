@@ -1031,6 +1031,10 @@ YUI.add('juju-gui', function(Y) {
       }
       const bakeryFactory = this.bakeryFactory;
       const charmstore = this.get('charmstore');
+      const webhandler = new Y.juju.environments.web.WebHandler();
+      const getDischargeToken = function() {
+        return window.localStorage.getItem('discharge-token');
+      };
       if (controllerAPI && !controllerAPI.userIsAuthenticated) {
         // If the user is not authenticated but we're connected to a controller
         // then the user is anonymous and we should show them a login button
@@ -1038,9 +1042,12 @@ YUI.add('juju-gui', function(Y) {
         ReactDOM.render(
           <window.juju.components.USSOLoginLink
             charmstore={charmstore}
+            displayType={'text'}
+            getDischargeToken={getDischargeToken}
+            gisf={this.get('gisf')}
             loginToController={controllerAPI.loginWithMacaroon.bind(
               controllerAPI, bakeryFactory.get('juju'))}
-            displayType={'text'}
+            sendPost={webhandler.sendPostRequest.bind(webhandler)}
             storeUser={this.storeUser.bind(this)}
           />,
           linkContainer);
