@@ -150,7 +150,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div id="white-box-container"></div>
       <div id="machine-view"></div>
 
-      <div class="cookie-policy" style="display:none;">
+      <div class="cookie-policy">
         <div class="wrapper">
           <a href="" class="link-cta">Close</a>
           <p>

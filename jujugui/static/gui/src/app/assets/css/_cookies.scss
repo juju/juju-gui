@@ -1,6 +1,7 @@
 $cookie-policy-background: #fae4dc;
 
 .cookie-policy {
+  display: none;
   z-index: index($z-indexed-elements, cookie-policy);
   position: fixed;
   bottom: 0;
@@ -39,4 +40,8 @@ $cookie-policy-background: #fae4dc;
     padding: 8px 0;
     width: 100%;
   }
+}
+
+.display-cookie-notice .cookie-policy {
+  display: block;
 }

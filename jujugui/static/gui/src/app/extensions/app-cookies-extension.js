@@ -28,7 +28,7 @@ YUI.add('app-cookies-extension', function(Y) {
      @param {Object} test_node DOM node only passed in in tests.
    */
   function Cookies(test_node) {
-    this.node = test_node || Y.one('.cookie-policy');
+    this.node = test_node || Y.one('body');
   }
 
   Cookies.prototype = {
@@ -44,11 +44,13 @@ YUI.add('app-cookies-extension', function(Y) {
       var self = this;
       if (Y.Cookie.get('_cookies_accepted') !== 'true' &&
           !localStorage.getItem('disable-cookie')) {
-        this.node.setStyle('display', 'block');
+        this.node.addClass('display-cookie-notice');
         Y.one('.link-cta').once('click', function(evt) {
           evt.preventDefault();
           self.close();
         });
+      } else {
+        this.node.removeClass('display-cookie-notice');
       }
     },
 
@@ -59,7 +61,7 @@ YUI.add('app-cookies-extension', function(Y) {
       @return {undefined} Side-effects only.
     */
     close: function() {
-      this.node.setStyle('display', 'none');
+      this.node.removeClass('display-cookie-notice');
       Y.Cookie.set('_cookies_accepted', 'true',
           {expires: new Date('January 12, 2025')});
     }

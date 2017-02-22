@@ -1,6 +1,8 @@
+$bottom: 30px;
+
 body.u-is-beta:before {
   position: fixed;
-  bottom: 30px;
+  bottom: $bottom;
   left: 20px;
   content: 'Beta';
   font-family: Ubuntu;
@@ -8,4 +10,8 @@ body.u-is-beta:before {
   font-weight: 300;
   opacity: 0.6;
   z-index: 10;
+}
+
+body.u-is-beta.display-cookie-notice:before {
+  bottom: $bottom + 56px;
 }
