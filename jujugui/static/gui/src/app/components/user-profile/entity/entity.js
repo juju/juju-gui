@@ -54,14 +54,12 @@ YUI.add('user-profile-entity', function() {
       Navigate to the entity details.
 
       @method _viewEntity
-      @param {Object} e The click event.
       @param {String} id The entity id.
+      @param {Object} evt The click event.
     */
-    _viewEntity: function(id, e) {
-      this.props.changeState({
-        profile: null,
-        store: id.replace('cs:', '')
-      });
+    _viewEntity: function(id, evt) {
+      const url = window.jujulib.URL.fromLegacyString(id);
+      this.props.changeState({profile: null, store: url.path()});
     },
 
     /**

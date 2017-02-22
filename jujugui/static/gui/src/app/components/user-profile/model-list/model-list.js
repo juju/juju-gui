@@ -33,7 +33,15 @@ YUI.add('user-profile-model-list', function() {
       facadesExist: React.PropTypes.bool.isRequired,
       listModelsWithInfo: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
-      user: React.PropTypes.object
+      // userInfo must have the following attributes:
+      // - external: the external user name to use for retrieving data, for
+      //   instance, from the charm store. Might be null if the user is being
+      //   displayed for the current user and they are not authenticated to
+      //   the charm store;
+      // - isCurrent: whether the profile is being displayed for the currently
+      //   authenticated user;
+      // - profile: the user name for whom profile details must be displayed.
+      userInfo: React.PropTypes.object.isRequired
     },
 
     getInitialState: function() {
@@ -65,10 +73,10 @@ YUI.add('user-profile-model-list', function() {
 
     componentWillReceiveProps: function(nextProps) {
       const props = this.props;
-      const currentUser = props.user && props.user.user;
-      const nextUser = nextProps.user && nextProps.user.user;
-      if (nextUser !== currentUser ||
-        props.facadesExist !== nextProps.facadesExist) {
+      if (
+        props.userInfo.profile !== nextProps.userInfo.profile ||
+        props.facadesExist !== nextProps.facadesExist
+      ) {
         this._fetchModels(nextProps.facadesExist);
       }
     },
@@ -108,6 +116,12 @@ YUI.add('user-profile-model-list', function() {
           broadcastStatus('error');
           console.error(err);
           return;
+        }
+        if (!this.props.userInfo.isCurrent) {
+          const extUser = this.props.userInfo.external + '@external';
+          modelList = modelList.filter(model => {
+            return model.owner === extUser;
+          });
         }
         if (modelList.length) {
           broadcastStatus('ok');
@@ -336,11 +350,13 @@ YUI.add('user-profile-model-list', function() {
       // https://bugs.launchpad.net/juju/+bug/1629089 is resolved.
       //const acl = props.acl;
       //if (acl && acl.canAddModels()) {
-      createNewButton = (
-        <juju.components.CreateModelButton
-          changeState={props.changeState}
-          switchModel={props.switchModel} />
-      );
+      if (props.userInfo.isCurrent) {
+        createNewButton = (
+          <juju.components.CreateModelButton
+            changeState={props.changeState}
+            switchModel={props.switchModel} />
+        );
+      }
       //}
       const list = this.state.modelList;
       let content;
@@ -353,10 +369,14 @@ YUI.add('user-profile-model-list', function() {
           </ul>
         );
       }
+      let label = 'Models';
+      if (!props.userInfo.isCurrent) {
+        label = 'Models shared with you';
+      }
       return (
         <div className="user-profile__model-list">
           <div className="user-profile__header twelve-col no-margin-bottom">
-            Models
+            {label}
             <span className="user-profile__size">
               ({list.length})
             </span>

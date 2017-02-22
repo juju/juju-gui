@@ -1,3 +1,15 @@
+- 2.4.1:
+
+    - Clicking the Juju logo now takes you to your profile.
+    - Automatically log into the charmstore when logging in on hosted Juju.
+    ->
+      (Fix) Visiting another user or group's profile page now properly displays
+      their profile.
+    - (Fix) Model name is now properly synced throughout the UI.
+    - (Fix) Close the search results when clicking outside.
+    - (Fix) Display the proper cloud title after selecting a cloud.
+    - (Fix) Long charm/bundle names now properly wrap.
+
 - 2.4.0:
 
     ->

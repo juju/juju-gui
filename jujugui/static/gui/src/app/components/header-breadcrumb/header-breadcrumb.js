@@ -31,7 +31,7 @@ YUI.add('header-breadcrumb', function() {
       appState: React.PropTypes.object.isRequired,
       authDetails: React.PropTypes.object,
       listModelsWithInfo: React.PropTypes.func,
-      modelName: React.PropTypes.string.isRequired,
+      modelName: React.PropTypes.string,
       modelOwner: React.PropTypes.string,
       showEnvSwitcher: React.PropTypes.bool.isRequired,
       showProfile: React.PropTypes.func.isRequired,
@@ -74,8 +74,6 @@ YUI.add('header-breadcrumb', function() {
         // Nothing to be done: we are already in the profile view.
         return;
       }
-      // TODO frankban: showing a profile different from the current user's one
-      // does not currently work.
       this.props.showProfile(username);
     },
 

@@ -73,13 +73,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       </div>
 
       <div class="header-banner header-banner--left">
-        <div class="header-banner__logo">
-          <svg class="svg-icon"
-            viewBox="0 0 90 35"
-            style="width:90px; height:35px;">
-            <use xlink:href="#juju-logo" />
-          </svg>
-        </div>
+        <div id="header-logo" class="header-banner__logo"></div>
         <div id="header-breadcrumb"></div>
       	<div id="model-actions-container"></div>
         <div id="provider-logo-container" class="header-banner__provider"></div>
@@ -395,8 +389,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 comboBase: "{{.comboURL}}?",
                 root: 'app/',
                 // From modules.js
-                modules: YUI_MODULES,
-            },
+                modules: YUI_MODULES
+            }
           }
         };
 

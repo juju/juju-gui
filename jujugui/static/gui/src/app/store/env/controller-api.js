@@ -161,6 +161,9 @@ YUI.add('juju-controller-api', function(Y) {
             console.log('error retrieving default cloud name', error);
             return;
           }
+          if (name !== 'maas') {
+            return;
+          }
           this.getClouds([name], (error, clouds) => {
             const err = error || clouds[name].err;
             if (err) {
