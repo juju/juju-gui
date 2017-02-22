@@ -146,26 +146,29 @@ YUI.add('juju-gui', function(Y) {
             // This is only added to the DOM once and is checked if it exists
             // above. It's hidden and then shown, so this event is not auto
             // cleaned up, but can only occur once.
-            target.one('#save-settings').on('click', function(ev) {
-              var fields = target.all('input');
-              fields.each(function(node) {
-                // If it's a checkbox:
-                if (node.get('type') === 'checkbox') {
-                  // and if it's checked set that value to localStorage.
-                  if (node.get('checked')) {
-                    localStorage.setItem(node.getAttribute('name'), true);
+            const saveSettingsButton = target.one('#save-settings');
+            if (saveSettingsButton) {
+              saveSettingsButton.on('click', function(ev) {
+                var fields = target.all('input');
+                fields.each(function(node) {
+                  // If it's a checkbox:
+                  if (node.get('type') === 'checkbox') {
+                    // and if it's checked set that value to localStorage.
+                    if (node.get('checked')) {
+                      localStorage.setItem(node.getAttribute('name'), true);
+                    } else {
+                      // otherwise unset it from the localStorage.
+                      localStorage.removeItem(node.getAttribute('name'));
+                    }
                   } else {
-                    // otherwise unset it from the localStorage.
-                    localStorage.removeItem(node.getAttribute('name'));
+                    localStorage.setItem(
+                        node.getAttribute('name'), node.get('value'));
                   }
-                } else {
-                  localStorage.setItem(
-                      node.getAttribute('name'), node.get('value'));
-                }
+                });
+                // Force the GUI to reload so the settings take effect.
+                window.location.reload();
               });
-              // Force the GUI to reload so the settings take effect.
-              window.location.reload();
-            });
+            }
 
             target.one('.close').on('click', function(ev) {
               Y.one('#shortcut-help').hide();
