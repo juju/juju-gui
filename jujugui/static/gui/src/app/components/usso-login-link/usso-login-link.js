@@ -26,10 +26,10 @@ YUI.add('usso-login-link', function() {
       callback: React.PropTypes.func,
       charmstore: React.PropTypes.object.isRequired,
       displayType: React.PropTypes.string.isRequired,
-      getDischargeToken: React.PropTypes.func,
+      getDischargeToken: React.PropTypes.func.isRequired,
       gisf: React.PropTypes.bool,
       loginToController: React.PropTypes.func.isRequired,
-      sendPost: React.PropTypes.func,
+      sendPost: React.PropTypes.func.isRequired,
       storeUser: React.PropTypes.func.isRequired
     },
 
