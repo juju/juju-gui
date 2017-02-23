@@ -206,7 +206,7 @@ YUI.add('user-profile-entity', function() {
         return;
       }
       return (
-        <div className="nine-col">
+        <div className="twelve-col last-col">
           Series: {this.props.entity.series}
         </div>);
     },
@@ -232,12 +232,30 @@ YUI.add('user-profile-entity', function() {
           </li>);
       });
       return (
-        <div className="nine-col">
+        <div className="twelve-col last-col">
           Composed of:
           <ul className="user-profile__entity-service-list">
             {services}
           </ul>
         </div>);
+    },
+
+    /**
+      Generate the owner for a model.
+
+      @method _generateOwner
+      @return {Object} The owner markup.
+    */
+    _generateOwner: function() {
+      const entity = this.props.entity;
+      if (this.props.type !== 'model' || !entity.owner) {
+        return;
+      }
+      return (
+        <div className="three-col last-col">
+          Owner: {entity.owner}
+        </div>
+      );
     },
 
     render: function() {
@@ -297,9 +315,7 @@ YUI.add('user-profile-entity', function() {
               'no-margin-bottom'}>
               {this._generateSeries()}
               {this._generateServices()}
-              <div className="three-col last-col">
-                Owner: {entity.owner}
-              </div>
+              {this._generateOwner()}
               {this._generateDiagram()}
               {this._generateDescription()}
               {this._generateTags()}
