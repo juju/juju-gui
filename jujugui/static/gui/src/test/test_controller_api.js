@@ -929,6 +929,60 @@ describe('Controller API', function() {
       // Mimic response.
       conn.msg({'request-id': 1, response: {results: []}});
     });
+
+    it('retrieves model info for a sandbox model', done => {
+      // Perform the request.
+      const id = 'sandbox1';
+      controllerAPI.modelInfo([id], (err, models) => {
+        assert.strictEqual(err, null);
+        assert.strictEqual(models.length, 1);
+        const result = models[0];
+        assert.strictEqual(result.id, id);
+        assert.strictEqual(result.name, 'sandbox');
+        assert.strictEqual(result.series, 'trusty');
+        assert.strictEqual(result.provider, 'demonstration');
+        assert.strictEqual(result.uuid, 'sandbox1');
+        assert.strictEqual(result.credential, '');
+        assert.strictEqual(result.region, null);
+        assert.strictEqual(result.cloud, '');
+        assert.strictEqual(result.numMachines, 0);
+        assert.deepEqual(result.users, []);
+        assert.strictEqual(result.life, 'alive');
+        assert.strictEqual(result.owner, 'admin@local');
+        assert.strictEqual(result.isAlive, true, 'unexpected zombie model');
+        assert.strictEqual(
+          result.isController, false, 'unexpected controller model');
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          type: 'ModelManager',
+          version: 2,
+          request: 'ModelInfo',
+          params: {entities: [{tag: 'model-' + id}]},
+          'request-id': 1
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {
+          results: [{
+            result: {
+              'default-series': 'trusty',
+              name: 'sandbox',
+              'provider-type': 'demonstration',
+              uuid: 'sandbox1',
+              'controller-uuid': 'controlleruuid1',
+              machines: [],
+              users: [],
+              life: 'alive',
+              'owner-tag': 'user-admin@local'
+            }
+          }]
+        }
+      });
+    });
+
   });
 
   describe('listModelsWithInfo', function() {

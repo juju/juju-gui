@@ -549,6 +549,8 @@ YUI.add('juju-controller-api', function(Y) {
               access: userResult.access
             };
           });
+          const cloudTag = result['cloud-tag'];
+          const cloud = cloudTag ? tags.parse(tags.CLOUD, cloudTag) : '';
           return {
             id: id,
             name: result.name,
@@ -559,7 +561,7 @@ YUI.add('juju-controller-api', function(Y) {
             owner: tags.parse(tags.USER, result['owner-tag']),
             credential: credential,
             region: result['cloud-region'] || null,
-            cloud: tags.parse(tags.CLOUD, result['cloud-tag']),
+            cloud: cloud,
             numMachines: machines.length,
             users: users,
             life: result.life,
