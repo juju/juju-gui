@@ -180,6 +180,7 @@ describe('Charmbrowser', function() {
         getEntity={getEntity}
         getFile={getFile}
         importBundleYAML={importBundleYAML}
+        isLegacyJuju={false}
         listPlansForCharm={listPlansForCharm}
         makeEntityModel={makeEntityModel}
         utils={utils}
@@ -199,6 +200,7 @@ describe('Charmbrowser', function() {
               acl={acl}
               apiUrl={apiUrl}
               importBundleYAML={importBundleYAML}
+              isLegacyJuju={false}
               getBundleYAML={getBundleYAML}
               changeState={
                 output.props.children.props.children.props.changeState}
@@ -251,6 +253,7 @@ describe('Charmbrowser', function() {
         getEntity={getEntity}
         getFile={getFile}
         importBundleYAML={importBundleYAML}
+        isLegacyJuju={false}
         listPlansForCharm={listPlansForCharm}
         makeEntityModel={makeEntityModel}
         utils={utils}
@@ -270,6 +273,7 @@ describe('Charmbrowser', function() {
               acl={acl}
               apiUrl={apiUrl}
               importBundleYAML={importBundleYAML}
+              isLegacyJuju={false}
               getBundleYAML={getBundleYAML}
               changeState={
                 output.props.children.props.children.props.changeState}

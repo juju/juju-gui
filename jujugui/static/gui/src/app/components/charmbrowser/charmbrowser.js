@@ -36,6 +36,7 @@ YUI.add('charmbrowser-component', function() {
       getEntity: React.PropTypes.func.isRequired,
       getFile: React.PropTypes.func.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
+      isLegacyJuju: React.PropTypes.bool,
       listPlansForCharm: React.PropTypes.func.isRequired,
       makeEntityModel: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
@@ -176,6 +177,7 @@ YUI.add('charmbrowser-component', function() {
                 scrollPosition={this.state.scrollPosition}
                 renderMarkdown={this.props.renderMarkdown}
                 id={currentState.store || `~${currentState.user}`}
+                isLegacyJuju={this.props.isLegacyJuju}
                 pluralize={utils.pluralize}
                 listPlansForCharm={this.props.listPlansForCharm}
                 makeEntityModel={this.props.makeEntityModel} />

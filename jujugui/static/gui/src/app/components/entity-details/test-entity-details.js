@@ -89,6 +89,7 @@ describe('EntityDetails', function() {
           getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
+          isLegacyJuju={false}
           listPlansForCharm={sinon.stub()}
           scrollPosition={100}
           renderMarkdown={renderMarkdown}
@@ -128,6 +129,7 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             getFile={getFile}
             hasPlans={false}
+            isLegacyJuju={false}
             plans={null}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown} />
@@ -217,6 +219,7 @@ describe('EntityDetails', function() {
           getDiagramURL={getDiagramURL}
           listPlansForCharm={sinon.stub()}
           id={id}
+          isLegacyJuju={false}
           pluralize={pluralize}
           addNotification={addNotification}
           makeEntityModel={makeEntityModel} />, true);
@@ -254,6 +257,7 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             getFile={getFile}
             hasPlans={false}
+            isLegacyJuju={false}
             plans={null}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown} />
@@ -356,6 +360,7 @@ describe('EntityDetails', function() {
         getFile={getFile}
         id={id}
         importBundleYAML={importBundleYAML}
+        isLegacyJuju={false}
         listPlansForCharm={listPlansForCharm}
         makeEntityModel={makeEntityModel}
         pluralize={pluralize}
@@ -393,6 +398,7 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             getFile={getFile}
             hasPlans={true}
+            isLegacyJuju={false}
             plans={plans}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown} />
@@ -433,6 +439,7 @@ describe('EntityDetails', function() {
         getFile={getFile}
         id={id}
         importBundleYAML={importBundleYAML}
+        isLegacyJuju={false}
         listPlansForCharm={listPlansForCharm}
         makeEntityModel={makeEntityModel}
         pluralize={pluralize}
@@ -470,6 +477,7 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             getFile={getFile}
             hasPlans={false}
+            isLegacyJuju={false}
             plans={null}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown} />
@@ -508,6 +516,7 @@ describe('EntityDetails', function() {
         getFile={getFile}
         id={id}
         importBundleYAML={importBundleYAML}
+        isLegacyJuju={false}
         listPlansForCharm={listPlansForCharm}
         makeEntityModel={makeEntityModel}
         pluralize={pluralize}
@@ -545,6 +554,7 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             getFile={getFile}
             hasPlans={true}
+            isLegacyJuju={false}
             plans={[]}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown} />

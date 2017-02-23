@@ -28,6 +28,7 @@ YUI.add('entity-content', function() {
       entityModel: React.PropTypes.object.isRequired,
       getFile: React.PropTypes.func.isRequired,
       hasPlans: React.PropTypes.bool.isRequired,
+      isLegacyJuju: React.PropTypes.bool,
       plans: React.PropTypes.array,
       pluralize: React.PropTypes.func.isRequired,
       renderMarkdown: React.PropTypes.func.isRequired,
@@ -69,13 +70,18 @@ YUI.add('entity-content', function() {
       @return {Object} The options markup.
     */
     _generateBundleConfig: function(entityModel) {
-      var services = entityModel.get('services');
-      if (!services) {
+      let applications;
+      if (this.props.isLegacyJuju) {
+        applications = entityModel.get('services');
+      } else {
+        applications = entityModel.get('applications');
+      }
+      if (!applications) {
         return;
       }
       // Generate the options for each service in this bundle.
-      var servicesList = Object.keys(services).map((service) => {
-        var options = services[service].options || {};
+      var applicationsList = Object.keys(applications).map((service) => {
+        var options = applications[service].options || {};
         // Generate the list of options for this service.
         var optionsList = Object.keys(options).map((name, i) => {
           return (
@@ -126,7 +132,7 @@ YUI.add('entity-content', function() {
       });
       return (
         <ul>
-          {servicesList}
+          {applicationsList}
         </ul>);
     },
 
