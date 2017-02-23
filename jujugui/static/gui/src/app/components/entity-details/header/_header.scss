@@ -134,6 +134,10 @@
     text-transform: capitalize;
   }
 
+  &__version {
+    color: $warm-grey;
+  }
+
   &__deploys {
     text-transform: capitalize;
   }

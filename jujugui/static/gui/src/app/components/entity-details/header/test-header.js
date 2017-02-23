@@ -25,7 +25,7 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('EntityHeader', function() {
-  var acl, mockEntity;
+  let acl, mockEntity;
 
   beforeAll(function(done) {
     // By loading these files it makes their classes available in the tests.
@@ -41,7 +41,7 @@ describe('EntityHeader', function() {
     mockEntity = undefined;
   });
 
-  it('renders an entity properly', function() {
+  it('renders the latest entity properly', function() {
     var renderer = jsTestUtils.shallowRender(
         <juju.components.EntityHeader
           acl={acl}
@@ -69,13 +69,19 @@ describe('EntityHeader', function() {
                 className="entity-header__title"
                 itemProp="name"
                 ref="entityHeaderTitle">
-                django
+                django{' '}
+                <span className="entity-header__version">
+                  {'#'}{123}
+                </span>
               </h1>
               <ul className="bullets inline entity-header__properties">
                 <li className="entity-header__by">
                   By{' '}
                   <a href="https://launchpad.net/~test-owner"
                     target="_blank">test-owner</a>
+                </li>
+                <li>
+                  {'Latest version (#'}{123}{')'}
                 </li>
                 {[<li key="trusty" className="entity-header__series">
                   trusty
@@ -122,6 +128,29 @@ describe('EntityHeader', function() {
         </header>
       </div>);
     assert.deepEqual(output, expected);
+  });
+
+  it('renders an old entity properly', function() {
+    mockEntity.set('revision_id', 122);
+    const renderer = jsTestUtils.shallowRender(
+        <juju.components.EntityHeader
+          acl={acl}
+          addNotification={sinon.stub()}
+          deployService={sinon.spy()}
+          changeState={sinon.spy()}
+          entityModel={mockEntity}
+          getBundleYAML={sinon.stub()}
+          hasPlans={false}
+          importBundleYAML={sinon.stub()}
+          pluralize={sinon.stub()}
+          scrollPosition={0} />, true);
+    const output = renderer.getRenderOutput();
+
+    assert.deepEqual(
+      output.props.children.props.children.props.children[0].
+      props.children[1].props.children[2].props.children[1],
+      122
+    );
   });
 
   it('can display plans', function() {
@@ -232,7 +261,7 @@ describe('EntityHeader', function() {
       </li>);
     assert.deepEqual(
       output.props.children.props.children.props.children[0]
-        .props.children[2].props.children[2], expected);
+        .props.children[2].props.children[3], expected);
   });
 
   it('displays an add to canvas button', function() {

@@ -592,6 +592,7 @@ YUI.add('juju-charm-models', function(Y) {
       },
       is_approved: {},
       is_subordinate: {},
+      latest_revision: {},
       maintainer: {},
       /*
         API related metadata information for this charm object.
@@ -702,6 +703,7 @@ YUI.add('juju-charm-models', function(Y) {
           }
         }
       },
+      revision_id: {},
       scheme: {
         value: 'cs',
         /**

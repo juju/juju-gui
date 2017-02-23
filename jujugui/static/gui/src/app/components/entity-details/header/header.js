@@ -257,6 +257,39 @@ YUI.add('entity-header', function() {
     },
 
     /**
+     When the latest version link is click, go to that version.
+   */
+    _handleRevisionClick: function(evt) {
+      evt.stopPropagation();
+      this.props.changeState({
+        search: null,
+        store: this.props.entityModel.get('latest_revision').url
+      });
+    },
+
+    /**
+      Generates the list item to link to the latest version
+      or display the latest version
+   */
+    _generateLatestRevision: function() {
+      const entityModel = this.props.entityModel;
+      const latest_revision = entityModel.get('latest_revision');
+      const revision_id = entityModel.get('revision_id');
+
+      if (latest_revision.id !== revision_id) {
+        return (<li>
+          <a onClick={this._handleRevisionClick}>
+            Latest version (#{latest_revision.id})
+          </a>
+        </li>);
+      } else {
+        return (<li>
+          Latest version (#{latest_revision.id})
+        </li>);
+      }
+    },
+
+    /**
       Generates the list of series. Supports bundles, multi-series and
       single-series charms.
 
@@ -298,7 +331,10 @@ YUI.add('entity-header', function() {
                   className="entity-header__title"
                   itemProp="name"
                   ref="entityHeaderTitle">
-                  {entity.displayName}
+                  {entity.displayName}{' '}
+                  <span className="entity-header__version">
+                    #{entity.revision_id}
+                  </span>
                 </h1>
                 <ul className="bullets inline entity-header__properties">
                   <li className="entity-header__by">
@@ -306,6 +342,7 @@ YUI.add('entity-header', function() {
                     <a href={ownerUrl}
                       target="_blank">{entity.owner}</a>
                   </li>
+                  {this._generateLatestRevision()}
                   {this._generateSeriesList()}
                   {this._generateCounts()}
                 </ul>
