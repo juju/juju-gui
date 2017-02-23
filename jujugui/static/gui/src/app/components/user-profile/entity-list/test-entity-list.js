@@ -100,14 +100,12 @@ describe('UserProfileEntityList', () => {
         </div>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
-            <span className="user-profile__list-col three-col">
+            <span className="user-profile__list-col eight-col">
               Name
             </span>
-            <span className="user-profile__list-col seven-col">
+            <span className={'user-profile__list-col prepend-one three-col ' +
+              'last-col'}>
               Series
-            </span>
-            <span className="user-profile__list-col two-col last-col">
-              Owner
             </span>
           </li>
           {[<juju.components.UserProfileEntity
@@ -115,7 +113,7 @@ describe('UserProfileEntityList', () => {
             entity={charms[0]}
             key="cs:django"
             type="charm">
-            <span className={'user-profile__list-col three-col ' +
+            <span className={'user-profile__list-col five-col ' +
               'user-profile__list-name'}>
               django
               <ul className="user-profile__list-tags">
@@ -125,23 +123,20 @@ describe('UserProfileEntityList', () => {
                 </li>]}
               </ul>
             </span>
-            <span className="user-profile__list-col four-col">
+            <span className={'user-profile__list-col three-col ' +
+              'user-profile__list-icons'}>
+              <img className="user-profile__list-icon"
+                src="example.com/9/django/icon.svg"
+                title="django" />
+            </span>
+            <span className={'user-profile__list-col prepend-one three-col ' +
+              'last-col'}>
               <ul className="user-profile__list-series">
                 {[<li className="user-profile__comma-item"
                   key="cs:django-trusty">
                   trusty
                 </li>]}
               </ul>
-            </span>
-            <span className={'user-profile__list-col one-col ' +
-              'user-profile__list-icons'}>
-              <img className="user-profile__list-icon"
-                src="example.com/9/django/icon.svg"
-                title="django" />
-            </span>
-            <span className={'user-profile__list-col two-col ' +
-              'prepend-two last-col'}>
-              test-owner
             </span>
           </juju.components.UserProfileEntity>]}
         </ul>
@@ -178,12 +173,9 @@ describe('UserProfileEntityList', () => {
               'user-profile__list-col three-col user-profile__list-icons'}>
               Charms
             </span>
-            <span className="user-profile__list-col one-col prepend-one">
-              Units
-            </span>
             <span className={
-              'user-profile__list-col two-col last-col'}>
-              Owner
+              'user-profile__list-col three-col prepend-one last-col'}>
+              Units
             </span>
           </li>
           {[<juju.components.UserProfileEntity
@@ -213,11 +205,9 @@ describe('UserProfileEntityList', () => {
                 src="example.com/9/django/icon.svg"
                 title="django" />
             </span>
-            <span className="user-profile__list-col one-col prepend-one">
+            <span className={
+              'user-profile__list-col three-col prepend-one last-col'}>
               {5}
-            </span>
-            <span className="user-profile__list-col two-col last-col">
-              test-owner
             </span>
           </juju.components.UserProfileEntity>]}
         </ul>

@@ -141,7 +141,7 @@ describe('UserProfileEntity', () => {
           <div className={'expanding-row__expanded-content twelve-col ' +
             'no-margin-bottom'}>
             {undefined}
-            <div className="nine-col">
+            <div className="twelve-col last-col">
               Composed of:
               <ul className="user-profile__entity-service-list">
                 <li className="user-profile__comma-item"
@@ -154,9 +154,7 @@ describe('UserProfileEntity', () => {
                 </li>
               </ul>
             </div>
-            <div className="three-col last-col">
-              Owner: {"test-owner"}
-            </div>
+            {undefined}
             <div className="user-profile__entity-diagram twelve-col">
               <object type="image/svg+xml" data="bundle.svg"
                 className="entity-content__diagram-image" />
@@ -234,7 +232,7 @@ describe('UserProfileEntity', () => {
           <div className={'expanding-row__expanded-content twelve-col ' +
             'no-margin-bottom'}>
             {undefined}
-            <div className="nine-col">
+            <div className="twelve-col last-col">
               Composed of:
               <ul className="user-profile__entity-service-list">
                 <li className="user-profile__comma-item"
@@ -247,9 +245,7 @@ describe('UserProfileEntity', () => {
                 </li>
               </ul>
             </div>
-            <div className="three-col last-col">
-              Owner: {"test-owner"}
-            </div>
+            {undefined}
             <div className="user-profile__entity-diagram twelve-col">
               <object type="image/svg+xml" data="bundle.svg"
                 className="entity-content__diagram-image" />
@@ -322,13 +318,11 @@ describe('UserProfileEntity', () => {
           </div>
           <div className={'expanding-row__expanded-content twelve-col ' +
             'no-margin-bottom'}>
-            <div className="nine-col">
+            <div className="twelve-col last-col">
               Series: {"trusty"}
             </div>
             {undefined}
-            <div className="three-col last-col">
-              Owner: {"test-owner"}
-            </div>
+            {undefined}
             {undefined}
             <div className="twelve-col no-margin-bottom">
               <div className="two-col">
