@@ -838,16 +838,13 @@ YUI.add('juju-gui', function(Y) {
         const creds = this.controllerAPI.getCredentials();
         const gisf = this.get('gisf');
         const currentState = this.state.current;
+        const rootState = currentState ? currentState.root : null;
         // If an anonymous GISF user lands on the GUI at /new then don't
         // attempt to log into the controller.
         if ((
-          !creds.areAvailable &&
-          gisf &&
-          currentState &&
-          currentState.root === 'new'
+          !creds.areAvailable && gisf && rootState === 'new'
         ) || (
-          this.anonymousMode &&
-          currentState.root !== 'login'
+          this.anonymousMode && rootState !== 'login'
         )) {
           this.anonymousMode = true;
           console.log('now in anonymous mode');
