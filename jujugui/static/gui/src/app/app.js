@@ -407,7 +407,9 @@ YUI.add('juju-gui', function(Y) {
       */
       this.userPaths = new Map();
 
-      // Track anonymous mode.
+      // Track anonymous mode. This value will be set to true when anonymous
+      // navigation is allowed, in essence when a GISF anonymous user is being
+      // modeling on a new canvas.
       this.anonymousMode = false;
 
       this.bakeryFactory = new window.jujulib.bakeryFactory(
