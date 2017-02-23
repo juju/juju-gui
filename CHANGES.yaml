@@ -1,3 +1,12 @@
+- 2.4.2:
+
+    ->
+      (Fix) Prior to logging in, if the GUI loses connection to the controller
+      it will no longer force a login.
+    ->
+      (Fix) Clicking the log in button on the canvas now correctly automatically
+      logs you into the charmstore.
+
 - 2.4.1:
 
     - Clicking the Juju logo now takes you to your profile.
