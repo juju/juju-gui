@@ -35,7 +35,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     beforeEach(function() {
       container = utils.makeContainer(this, 'container');
-      container.setHTML('<div class="cookie-policy" style="display:none;">' +
+      container.setHTML('<div class="cookie-policy">' +
           '<a class="link-cta"></a></div>');
       node = container.one('.cookie-policy');
       cookieHandler = new Y.juju.Cookies(node);
@@ -47,9 +47,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('calling check makes the node visible', function() {
-      assert.equal(node.getStyle('display'), 'none');
+      assert.isFalse(node.hasClass('display-cookie-notice'));
       cookieHandler.check();
-      assert.equal(node.getStyle('display'), 'block');
+      assert.isTrue(node.hasClass('display-cookie-notice'));
     });
 
     it('closing the banner sets the cookie', function() {
@@ -62,13 +62,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('the cookie prevents the node from getting visible', function() {
       Y.Cookie.set('_cookies_accepted', 'true');
       cookieHandler.check();
-      assert.equal(node.getStyle('display'), 'none');
+      assert.isFalse(node.hasClass('display-cookie-notice'));
     });
 
     it('the custom setting also does', function() {
       localStorage.setItem('disable-cookie', 'true');
       cookieHandler.check();
-      assert.equal(node.getStyle('display'), 'none');
+      assert.isFalse(node.hasClass('display-cookie-notice'));
     });
 
   });
