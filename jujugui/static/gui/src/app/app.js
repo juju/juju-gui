@@ -407,6 +407,11 @@ YUI.add('juju-gui', function(Y) {
       */
       this.userPaths = new Map();
 
+      // Track anonymous mode. This value will be set to true when anonymous
+      // navigation is allowed, in essence when a GISF anonymous user is being
+      // modeling on a new canvas.
+      this.anonymousMode = false;
+
       this.bakeryFactory = new window.jujulib.bakeryFactory(
         Y.juju.environments.web.Bakery);
 
@@ -777,6 +782,7 @@ YUI.add('juju-gui', function(Y) {
       controllerAPI.setCredentials({ user, password, macaroons, external });
 
       controllerAPI.after('login', evt => {
+        this.anonymousMode = false;
         if (evt.err) {
           this._renderLogin(evt.err);
           return;
@@ -832,10 +838,15 @@ YUI.add('juju-gui', function(Y) {
         const creds = this.controllerAPI.getCredentials();
         const gisf = this.get('gisf');
         const currentState = this.state.current;
+        const rootState = currentState ? currentState.root : null;
         // If an anonymous GISF user lands on the GUI at /new then don't
         // attempt to log into the controller.
-        if (!creds.areAvailable && gisf &&
-            (currentState && currentState.root === 'new')) {
+        if ((
+          !creds.areAvailable && gisf && rootState === 'new'
+        ) || (
+          this.anonymousMode && rootState !== 'login'
+        )) {
+          this.anonymousMode = true;
           console.log('now in anonymous mode');
           this.maskVisibility(false);
           return;

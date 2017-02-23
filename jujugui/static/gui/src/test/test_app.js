@@ -2431,6 +2431,195 @@ describe('App', function() {
     });
   });
 
+  describe('anonymous mode', function() {
+    let app, juju, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        juju = juju = Y.namespace('juju');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      app = new Y.juju.App({
+        baseUrl: 'http://example.com/',
+        controllerAPI: new juju.ControllerAPI({
+          conn: new testUtils.SocketStub()
+        }),
+        env: new juju.environments.GoEnvironment({
+          conn: new testUtils.SocketStub(),
+          ecs: new juju.EnvironmentChangeSet(),
+          user: 'user',
+          password: 'password'
+        }),
+        socketTemplate: '/model/$uuid/api',
+        controllerSocketTemplate: '/api',
+        viewContainer: container,
+        jujuCoreVersion: '2.0.0'
+      });
+      app.controllerAPI.set('connected', false);
+      app.setUpControllerAPI(app.controllerAPI);
+      app._displayLogin = sinon.stub();
+      app.createSocketURL = sinon.stub();
+      app.loginToAPIs = sinon.stub();
+      app.maskVisibility = sinon.stub();
+    });
+
+    afterEach(function() {
+      app.destroy();
+    });
+
+    // Report whether the application canvas is visible.
+    const appIsVisible = () => {
+      if (!app.maskVisibility.called) {
+        return false;
+      }
+      const args = app.maskVisibility.args[0];
+      return !args[0];
+    };
+
+    it('is disabled when the app is created', () => {
+      assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
+    });
+
+    it('is enabled when the controller connects in gisf mode', done => {
+      app.set('gisf', true);
+      app.state = {current: {root: 'new'}};
+      app.controllerAPI.after('connectedChange', evt => {
+        assert.strictEqual(app.anonymousMode, true, 'anonymousMode');
+        assert.strictEqual(appIsVisible(), true, 'appIsVisible');
+        assert.strictEqual(app._displayLogin.called, false, '_displayLogin');
+        assert.strictEqual(app.loginToAPIs.called, false, 'loginToAPIs');
+        done();
+      });
+      app.controllerAPI.set('connected', true);
+    });
+
+    it('is disabled when the controller connects but not in gisf', done => {
+      app.set('gisf', false);
+      app.state = {current: {root: 'new'}};
+      app.controllerAPI.after('connectedChange', evt => {
+        assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
+        assert.strictEqual(appIsVisible(), false, 'appIsVisible');
+        assert.strictEqual(app._displayLogin.called, true, '_displayLogin');
+        assert.strictEqual(app.loginToAPIs.called, false, 'loginToAPIs');
+        done();
+      });
+      app.controllerAPI.set('connected', true);
+    });
+
+    it('is disabled when credentials are available', done => {
+      app.set('gisf', true);
+      app.controllerAPI.setCredentials({macaroons: 'macaroons'});
+      app.state = {current: {root: 'new'}};
+      app.controllerAPI.after('connectedChange', evt => {
+        assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
+        assert.strictEqual(appIsVisible(), false, 'appIsVisible');
+        assert.strictEqual(app._displayLogin.called, false, '_displayLogin');
+        assert.strictEqual(app.loginToAPIs.called, true, 'loginToAPIs');
+        done();
+      });
+      app.controllerAPI.set('connected', true);
+    });
+
+    it('is disabled when not in /new', done => {
+      app.set('gisf', true);
+      app.state = {current: {root: 'store'}};
+      app.controllerAPI.after('connectedChange', evt => {
+        assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
+        assert.strictEqual(appIsVisible(), false, 'appIsVisible');
+        assert.strictEqual(app._displayLogin.called, true, '_displayLogin');
+        assert.strictEqual(app.loginToAPIs.called, false, 'loginToAPIs');
+        done();
+      });
+      app.controllerAPI.set('connected', true);
+    });
+
+    it('is disabled when in the homepage', done => {
+      app.set('gisf', true);
+      app.state = {current: {root: null}};
+      app.controllerAPI.after('connectedChange', evt => {
+        assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
+        assert.strictEqual(appIsVisible(), false, 'appIsVisible');
+        assert.strictEqual(app._displayLogin.called, true, '_displayLogin');
+        assert.strictEqual(app.loginToAPIs.called, false, 'loginToAPIs');
+        done();
+      });
+      app.controllerAPI.set('connected', true);
+    });
+
+    it('is kept enabled when previously enabled', done => {
+      app.set('gisf', true);
+      app.anonymousMode = true;
+      app.state = {current: {root: 'store'}};
+      app.controllerAPI.after('connectedChange', evt => {
+        assert.strictEqual(app.anonymousMode, true, 'anonymousMode');
+        assert.strictEqual(appIsVisible(), true, 'appIsVisible');
+        assert.strictEqual(app._displayLogin.called, false, '_displayLogin');
+        assert.strictEqual(app.loginToAPIs.called, false, 'loginToAPIs');
+        done();
+      });
+      app.controllerAPI.set('connected', true);
+    });
+
+    it('is kept enabled when previously enabled and in homepage', done => {
+      app.set('gisf', true);
+      app.anonymousMode = true;
+      app.state = {current: {root: null}};
+      app.controllerAPI.after('connectedChange', evt => {
+        assert.strictEqual(app.anonymousMode, true, 'anonymousMode');
+        assert.strictEqual(appIsVisible(), true, 'appIsVisible');
+        assert.strictEqual(app._displayLogin.called, false, '_displayLogin');
+        assert.strictEqual(app.loginToAPIs.called, false, 'loginToAPIs');
+        done();
+      });
+      app.controllerAPI.set('connected', true);
+    });
+
+    it('is ignored when enabled but navigating to the login page', done => {
+      app.set('gisf', true);
+      app.anonymousMode = true;
+      app.state = {current: {root: 'login'}};
+      app.controllerAPI.after('connectedChange', evt => {
+        assert.strictEqual(app.anonymousMode, true, 'anonymousMode');
+        assert.strictEqual(appIsVisible(), false, 'appIsVisible');
+        assert.strictEqual(app._displayLogin.called, true, '_displayLogin');
+        assert.strictEqual(app.loginToAPIs.called, false, 'loginToAPIs');
+        done();
+      });
+      app.controllerAPI.set('connected', true);
+    });
+
+    it('is disabled after successful login', done => {
+      app.anonymousMode = true;
+      app.state = {current: {root: null}};
+      app._renderLoginOutLink = sinon.stub();
+      // Set a model UUID so that the login subscriber execution stops as soon
+      // as possible.
+      app.env.set('modelUUID', 'uuid');
+      app.controllerAPI.after('login', evt => {
+        assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
+        assert.strictEqual(
+          app._renderLoginOutLink.called, true, '_renderLoginOutLink');
+        done();
+      });
+      app.controllerAPI.fire('login', {err: null});
+    });
+
+    it('is disabled after failed login', done => {
+      app.anonymousMode = true;
+      app.state = {current: {root: null}};
+      app._renderLogin = sinon.stub();
+      app.controllerAPI.after('login', evt => {
+        assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
+        assert.strictEqual(app._renderLogin.called, true, '_renderLogin');
+        done();
+      });
+      app.controllerAPI.fire('login', {err: 'bad wolf'});
+    });
+  });
+
   describe('_sharingVisibility', function() {
     let app, juju, Y;
 
