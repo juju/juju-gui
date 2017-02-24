@@ -1260,16 +1260,13 @@ YUI.add('juju-gui', function(Y) {
         if (!auth) {
           return;
         }
-        this.state.changeState({
-          model: null,
-          profile: auth.rootUserName,
-          root: null,
-          store: null
-        });
+        views.utils.showProfile(
+         this.env && this.env.get('ecs'),
+         this.state.changeState.bind(this.state), auth.rootUserName);
       };
       ReactDOM.render(
         <window.juju.components.HeaderLogo
-        navigateUserProfile={navigateUserProfile} />,
+          navigateUserProfile={navigateUserProfile} />,
         document.getElementById('header-logo'));
     },
 
