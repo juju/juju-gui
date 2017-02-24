@@ -103,7 +103,7 @@ YUI.add('entity-content', function() {
         if (optionsList.length === 0) {
           optionsList.push(
             <div key="none">
-              No config options for this application.
+              Config options not modified in this bundle.
             </div>);
         }
         return (
