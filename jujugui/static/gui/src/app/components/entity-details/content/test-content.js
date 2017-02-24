@@ -376,7 +376,7 @@ describe('EntityContent', function() {
                   </div>
                   <dl className="entity-content__bundle-config-options">
                     {[<div key="none">
-                      No config options for this service.
+                      No config options for this application.
                     </div>]}
                   </dl>
                 </juju.components.ExpandingRow>
@@ -513,7 +513,7 @@ describe('EntityContent', function() {
                   </div>
                   <dl className="entity-content__bundle-config-options">
                     {[<div key="none">
-                      No config options for this service.
+                      No config options for this application.
                     </div>]}
                   </dl>
                 </juju.components.ExpandingRow>
