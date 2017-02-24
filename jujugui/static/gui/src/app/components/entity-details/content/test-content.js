@@ -252,13 +252,13 @@ describe('EntityContent', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('can display a bundle', function() {
+  it('can display a bundle for Juju 1', function() {
     var apiUrl = 'http://example.com';
     var renderMarkdown = sinon.spy();
     var getFile = sinon.spy();
     var changeState = sinon.spy();
     var pluralize = sinon.spy();
-    var mockEntity = jsTestUtils.makeEntity(true);
+    var mockEntity = jsTestUtils.makeEntity(true, null, true);
     var output = jsTestUtils.shallowRender(
         <juju.components.EntityContent
           apiUrl={apiUrl}
@@ -266,6 +266,7 @@ describe('EntityContent', function() {
           entityModel={mockEntity}
           getFile={getFile}
           hasPlans={false}
+          isLegacyJuju={true}
           pluralize={pluralize}
           renderMarkdown={renderMarkdown} />);
     var expected = (
@@ -375,7 +376,144 @@ describe('EntityContent', function() {
                   </div>
                   <dl className="entity-content__bundle-config-options">
                     {[<div key="none">
-                      No config options for this service.
+                      Config options not modified in this bundle.
+                    </div>]}
+                  </dl>
+                </juju.components.ExpandingRow>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+    assert.deepEqual(output, expected);
+  });
+
+  it('can display a bundle for Juju 2', function() {
+    var apiUrl = 'http://example.com';
+    var renderMarkdown = sinon.spy();
+    var getFile = sinon.spy();
+    var changeState = sinon.spy();
+    var pluralize = sinon.spy();
+    var mockEntity = jsTestUtils.makeEntity(true, null, false);
+    var output = jsTestUtils.shallowRender(
+        <juju.components.EntityContent
+          apiUrl={apiUrl}
+          changeState={changeState}
+          entityModel={mockEntity}
+          getFile={getFile}
+          hasPlans={false}
+          isLegacyJuju={false}
+          pluralize={pluralize}
+          renderMarkdown={renderMarkdown} />);
+    var expected = (
+      <div className="entity-content">
+        {undefined}
+        {undefined}
+        <div className="row">
+          <div className="inner-wrapper">
+            <div className="seven-col append-one">
+              <juju.components.EntityContentReadme
+                entityModel={mockEntity}
+                renderMarkdown={renderMarkdown}
+                getFile={getFile} />
+            </div>
+            <div className="four-col">
+              {undefined}
+              {undefined}
+              <juju.components.EntityFiles
+                apiUrl={apiUrl}
+                entityModel={mockEntity}
+                pluralize={pluralize} />
+              <juju.components.EntityContentRevisions
+                revisions={mockEntity.get('revisions')} />
+              <div className="section">
+                <h3 className="section__title">
+                  Actions
+                </h3>
+                <a href={'https://code.launchpad.net/~charmers/charms/'+
+                  'bundles/django-cluster/bundle'}
+                  target="_blank">
+                  Contribute
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="configuration"
+          className="row row--grey entity-content__configuration">
+          <div className="inner-wrapper">
+            <div className="twelve-col">
+              <h2 className="entity-content__header">Configuration</h2>
+              <ul>
+                <juju.components.ExpandingRow
+                  classes={{
+                    'entity-content__bundle-config': true
+                  }}
+                  key="gunicorn">
+                  <div className="entity-content__bundle-config-title">
+                    gunicorn
+                    <div className="entity-content__bundle-config-chevron">
+                      <div className="entity-content__bundle-config-expand">
+                        <juju.components.SvgIcon
+                          name="chevron_down_16"
+                          size="16" />
+                      </div>
+                      <div className="entity-content__bundle-config-contract">
+                        <juju.components.SvgIcon
+                          name="chevron_up_16"
+                          size="16" />
+                      </div>
+                    </div>
+                  </div>
+                  <dl className="entity-content__bundle-config-options">
+                    {[<div className="entity-content__config-option"
+                      key="name0">
+                      <dt className="entity-content__config-name">
+                        name
+                      </dt>
+                      <dd className="entity-content__config-description">
+                        <p>
+                          title
+                        </p>
+                      </dd>
+                    </div>,
+                    <div className="entity-content__config-option"
+                      key="active1">
+                      <dt className="entity-content__config-name">
+                        active
+                      </dt>
+                      <dd className="entity-content__config-description">
+                        <p>
+                          {true}
+                        </p>
+                      </dd>
+                    </div>]}
+                  </dl>
+                </juju.components.ExpandingRow>
+                <juju.components.ExpandingRow
+                  classes={{
+                    'entity-content__bundle-config': true
+                  }}
+                  key="django">
+                  <div className="entity-content__bundle-config-title">
+                    django
+                    <div className="entity-content__bundle-config-chevron">
+                      <div className="entity-content__bundle-config-expand">
+                        <juju.components.SvgIcon
+                          name="chevron_down_16"
+                          size="16" />
+                      </div>
+                      <div className="entity-content__bundle-config-contract">
+                        <juju.components.SvgIcon
+                          name="chevron_up_16"
+                          size="16" />
+                      </div>
+                    </div>
+                  </div>
+                  <dl className="entity-content__bundle-config-options">
+                    {[<div key="none">
+                      Config options not modified in this bundle.
                     </div>]}
                   </dl>
                 </juju.components.ExpandingRow>

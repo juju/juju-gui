@@ -148,7 +148,7 @@ var jsTestUtils = {
       produced is a charm or a bundle. Optional.
     @param {Boolean} files An list of files included in the entity. Optional.
    */
-  makeEntity: function(isBundle=false, files=[]) {
+  makeEntity: function(isBundle=false, files=[], juju1=false) {
     var pojo;
     var revisions = [{
       authors: [{
@@ -203,20 +203,25 @@ var jsTestUtils = {
         series: 'trusty',
         files: files,
         serviceCount: 3,
-        services: {
-          gunicorn: {
-            charm: 'gunicorn',
-            options: {
-              name: 'title',
-              active: true
-            }
-          },
-          django: {
-            charm: 'django'
-          }
-        },
         unitCount: 5
       };
+      const applications = {
+        gunicorn: {
+          charm: 'gunicorn',
+          options: {
+            name: 'title',
+            active: true
+          }
+        },
+        django: {
+          charm: 'django'
+        }
+      };
+      if (juju1) {
+        pojo.services = applications;
+      } else {
+        pojo.applications = applications;
+      }
     } else {
       pojo = {
         name: 'django',
