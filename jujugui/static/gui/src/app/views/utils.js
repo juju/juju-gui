@@ -1447,7 +1447,8 @@ YUI.add('juju-view-utils', function(Y) {
     changeState({
       profile: username,
       model: null,
-      root: null
+      root: null,
+      store: null
     });
   };
 

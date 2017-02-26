@@ -1035,7 +1035,8 @@ describe('utilities', function() {
       assert.deepEqual(changeState.lastCall.args[0], {
         profile: 'spinach',
         model: null,
-        root: null
+        root: null,
+        store: null
       });
       assert.deepEqual(utils._hidePopup.callCount, 1);
       assert.deepEqual(ecs.clear.callCount, 1);
