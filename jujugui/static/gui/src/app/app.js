@@ -2140,7 +2140,9 @@ YUI.add('juju-gui', function(Y) {
           if (this.env.get('connected')) {
             this._switchModelToUUID();
           }
-          this.maskVisibility(false);
+          if (this.anonymousMode) {
+            this.maskVisibility(false);
+          }
           break;
         default:
           next();
