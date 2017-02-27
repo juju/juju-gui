@@ -922,7 +922,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       const params = data.params.applications[0];
       state.deploy(params['charm-url'], callback, {
         name: params.application,
-        config: params.config,
+        config: params.configYAML,
         configYAML: params['config-yaml'],
         constraints: params.constraints,
         unitCount: params['num-units']
