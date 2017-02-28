@@ -129,10 +129,14 @@ YUI.add('file-field', function() {
       @method _generateLabel
     */
     _generateLabel: function() {
-      const label = this.props.label;
+      let label = this.props.label;
+      const contents = this.state.contents;
       let element, id;
       if (label) {
         id = label.replace(' ', '-');
+        if (contents) {
+          label = 'File stored.';
+        }
         element =
           <label className="file-field__label"
             htmlFor={id}>
