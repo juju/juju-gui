@@ -31,7 +31,7 @@ YUI.add('environment', function() {
               </p>
               <div className="environment-help__drop-message">
                   <p className="environment-help__drop-message-content">
-                    Drop file to add to canvas
+                    Drop file to add to model
                   </p>
               </div>
               <svg className="environment-help__image"

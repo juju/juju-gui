@@ -1767,6 +1767,10 @@ YUI.add('juju-gui', function(Y) {
         }
         charmstore.getEntity(url.legacyPath(), callback);
       };
+      const getModelName = () => {
+        const name = this.db.environment.get('name');
+        return name === 'untitled-model' ? undefined : name;
+      };
       ReactDOM.render(
         <window.juju.components.Charmbrowser
           acl={this.acl}
@@ -1780,6 +1784,7 @@ YUI.add('juju-gui', function(Y) {
           getEntity={getEntity}
           getFile={charmstore.getFile.bind(charmstore)}
           getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
+          getModelName={getModelName}
           isLegacyJuju={this.isLegacyJuju()}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
           renderMarkdown={marked.bind(this)}

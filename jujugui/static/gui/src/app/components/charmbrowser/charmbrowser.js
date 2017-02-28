@@ -35,6 +35,7 @@ YUI.add('charmbrowser-component', function() {
       getDiagramURL: React.PropTypes.func.isRequired,
       getEntity: React.PropTypes.func.isRequired,
       getFile: React.PropTypes.func.isRequired,
+      getModelName: React.PropTypes.func.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
       isLegacyJuju: React.PropTypes.bool,
       listPlansForCharm: React.PropTypes.func.isRequired,
@@ -172,6 +173,7 @@ YUI.add('charmbrowser-component', function() {
                 getBundleYAML={this.props.getBundleYAML}
                 getEntity={this.props.getEntity}
                 getDiagramURL={this.props.getDiagramURL}
+                getModelName={this.props.getModelName}
                 deployService={this.props.deployService}
                 getFile={this.props.getFile}
                 scrollPosition={this.state.scrollPosition}
