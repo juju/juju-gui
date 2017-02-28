@@ -2140,6 +2140,8 @@ YUI.add('juju-gui', function(Y) {
           if (this.env.get('connected')) {
             this._switchModelToUUID();
           }
+          // When dispatching, we only want to remove the mask if we're in
+          // anonymousMode; otherwise we need to properly redirect to login.
           if (this.anonymousMode) {
             this.maskVisibility(false);
           }
