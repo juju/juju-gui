@@ -307,30 +307,28 @@ YUI.add('entity-content', function() {
         bugLink = 'https://bugs.launchpad.net/charms/' +
           `+source/${entity.name}`;
       }
-      if (bugLink || homepageLink) {
-        return (
-          <div className="section">
-            <h3 className="section__title">
-              Contribute
-            </h3>
-            <ul className="section__links">
-              {bugLink ? (
-                <li>
-                  <a href={bugLink}
-                    target="_blank">
-                    Submit a bug
-                  </a>
-                </li>) : undefined}
-              {homepageLink ? (
-                <li>
-                  <a href={homepageLink}
-                    target="_blank">
-                    Project homepage
-                  </a>
-                </li>) : undefined}
-            </ul>
-          </div>);
-      }
+      return (
+        <div className="section">
+          <h3 className="section__title">
+            Contribute
+          </h3>
+          <ul className="section__links">
+            {bugLink ? (
+              <li>
+                <a href={bugLink}
+                  target="_blank">
+                  Submit a bug
+                </a>
+              </li>) : undefined}
+            {homepageLink ? (
+              <li>
+                <a href={homepageLink}
+                  target="_blank">
+                  Project homepage
+                </a>
+              </li>) : undefined}
+          </ul>
+        </div>);
     },
 
     /**
