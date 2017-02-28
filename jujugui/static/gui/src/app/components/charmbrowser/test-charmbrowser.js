@@ -156,6 +156,7 @@ describe('Charmbrowser', function() {
     var deployService = sinon.spy();
     var importBundleYAML = sinon.spy();
     var getBundleYAML = sinon.spy();
+    const getModelName = sinon.spy();
     var getFile = sinon.spy();
     var renderMarkdown = sinon.spy();
     var getDiagramURL = sinon.spy();
@@ -179,6 +180,7 @@ describe('Charmbrowser', function() {
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
         getFile={getFile}
+        getModelName={getModelName}
         importBundleYAML={importBundleYAML}
         isLegacyJuju={false}
         listPlansForCharm={listPlansForCharm}
@@ -205,6 +207,7 @@ describe('Charmbrowser', function() {
               changeState={
                 output.props.children.props.children.props.changeState}
               getEntity={getEntity}
+              getModelName={getModelName}
               scrollPosition={0}
               listPlansForCharm={listPlansForCharm}
               makeEntityModel={makeEntityModel}
@@ -230,6 +233,7 @@ describe('Charmbrowser', function() {
     const importBundleYAML = sinon.stub();
     const getBundleYAML = sinon.stub();
     const getFile = sinon.stub();
+    const getModelName = sinon.stub();
     const renderMarkdown = sinon.stub();
     const getDiagramURL = sinon.stub();
     const listPlansForCharm = sinon.stub();
@@ -252,6 +256,7 @@ describe('Charmbrowser', function() {
         getDiagramURL={getDiagramURL}
         getEntity={getEntity}
         getFile={getFile}
+        getModelName={getModelName}
         importBundleYAML={importBundleYAML}
         isLegacyJuju={false}
         listPlansForCharm={listPlansForCharm}
@@ -278,6 +283,7 @@ describe('Charmbrowser', function() {
               changeState={
                 output.props.children.props.children.props.changeState}
               getEntity={getEntity}
+              getModelName={getModelName}
               scrollPosition={0}
               listPlansForCharm={listPlansForCharm}
               makeEntityModel={makeEntityModel}

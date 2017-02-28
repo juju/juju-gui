@@ -73,6 +73,7 @@ describe('EntityDetails', function() {
     var changeState = sinon.spy();
     var importBundleYAML = sinon.spy();
     var getBundleYAML = sinon.spy();
+    const getModelName = sinon.spy();
     var pluralize = sinon.spy();
     var getFile = sinon.spy();
     var renderMarkdown = sinon.spy();
@@ -89,6 +90,7 @@ describe('EntityDetails', function() {
           getDiagramURL={sinon.stub()}
           getEntity={getEntity}
           getFile={getFile}
+          getModelName={getModelName}
           isLegacyJuju={false}
           listPlansForCharm={sinon.stub()}
           scrollPosition={100}
@@ -115,6 +117,7 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
+            getModelName={getModelName}
             hasPlans={false}
             changeState={changeState}
             addNotification={addNotification}
@@ -198,6 +201,7 @@ describe('EntityDetails', function() {
     var changeState = sinon.spy();
     var importBundleYAML = sinon.spy();
     var getBundleYAML = sinon.spy();
+    const getModelName = sinon.spy();
     var pluralize = sinon.spy();
     var getFile = sinon.spy();
     var renderMarkdown = sinon.spy();
@@ -214,6 +218,7 @@ describe('EntityDetails', function() {
           getBundleYAML={getBundleYAML}
           getEntity={getEntity}
           getFile={getFile}
+          getModelName={getModelName}
           scrollPosition={100}
           renderMarkdown={renderMarkdown}
           getDiagramURL={getDiagramURL}
@@ -241,6 +246,7 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
+            getModelName={getModelName}
             hasPlans={false}
             changeState={changeState}
             deployService={deployService}
@@ -340,6 +346,7 @@ describe('EntityDetails', function() {
     var getBundleYAML = sinon.spy();
     var getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
     var getFile = sinon.spy();
+    const getModelName = sinon.spy();
     var id = mockEntity.get('id');
     var importBundleYAML = sinon.spy();
     var listPlansForCharm = sinon.stub().callsArgWith(1, null, plans);
@@ -358,6 +365,7 @@ describe('EntityDetails', function() {
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
         getFile={getFile}
+        getModelName={getModelName}
         id={id}
         importBundleYAML={importBundleYAML}
         isLegacyJuju={false}
@@ -384,6 +392,7 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
+            getModelName={getModelName}
             hasPlans={true}
             changeState={changeState}
             addNotification={addNotification}
@@ -419,6 +428,7 @@ describe('EntityDetails', function() {
     var getBundleYAML = sinon.spy();
     var getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
     var getFile = sinon.spy();
+    const getModelName = sinon.spy();
     var id = mockEntity.get('id');
     var importBundleYAML = sinon.spy();
     var listPlansForCharm = sinon.stub().callsArgWith(1, null, plans);
@@ -437,6 +447,7 @@ describe('EntityDetails', function() {
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
         getFile={getFile}
+        getModelName={getModelName}
         id={id}
         importBundleYAML={importBundleYAML}
         isLegacyJuju={false}
@@ -463,6 +474,7 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
+            getModelName={getModelName}
             hasPlans={false}
             changeState={changeState}
             addNotification={addNotification}
@@ -496,6 +508,7 @@ describe('EntityDetails', function() {
     var getBundleYAML = sinon.spy();
     var getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
     var getFile = sinon.spy();
+    const getModelName = sinon.spy();
     var id = mockEntity.get('id');
     var importBundleYAML = sinon.spy();
     var listPlansForCharm = sinon.stub().callsArgWith(1, 'An error', null);
@@ -514,6 +527,7 @@ describe('EntityDetails', function() {
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
         getFile={getFile}
+        getModelName={getModelName}
         id={id}
         importBundleYAML={importBundleYAML}
         isLegacyJuju={false}
@@ -540,6 +554,7 @@ describe('EntityDetails', function() {
             entityModel={mockEntity}
             importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
+            getModelName={getModelName}
             hasPlans={true}
             changeState={changeState}
             addNotification={addNotification}
