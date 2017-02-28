@@ -283,6 +283,7 @@ var jsTestUtils = {
     mockEntity.set = function(key, value) {
       pojo[key] = value;
     };
+    mockEntity.getAttrs = sinon.stub().returns(pojo);
     return mockEntity;
   },
 
