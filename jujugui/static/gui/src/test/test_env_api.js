@@ -1614,7 +1614,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         params: {applications: [{
           application: 'mysql',
           'config-yaml': '',
-          config: {},
+          configYAML: {},
           constraints: {},
           'charm-url': 'precise/mysql',
           'num-units': 1,
@@ -1635,7 +1635,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         params: {applications: [{
           application: 'wiki',
           // Configuration values are sent as strings.
-          config: {debug: 'true', logo: 'example.com/mylogo.png'},
+          configYAML: {debug: 'true', logo: 'example.com/mylogo.png'},
           'config-yaml': '',
           constraints: {},
           'charm-url': 'precise/mediawiki',
@@ -1661,7 +1661,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         version: 7,
         params: {applications: [{
           application: 'mysql',
-          config: {},
+          configYAML: {},
           constraints: {},
           'config-yaml': configRaw,
           'charm-url': 'precise/mysql',
@@ -1714,7 +1714,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         params: {applications: [{
           application: 'wiki',
           // Configuration values are sent as strings.
-          config: {},
+          configYAML: {},
           'config-yaml': '',
           constraints: {},
           'charm-url': 'precise/mediawiki',
