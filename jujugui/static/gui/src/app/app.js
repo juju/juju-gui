@@ -1767,10 +1767,7 @@ YUI.add('juju-gui', function(Y) {
         }
         charmstore.getEntity(url.legacyPath(), callback);
       };
-      const getModelName = () => {
-        const name = this.db.environment.get('name');
-        return name === 'untitled-model' ? undefined : name;
-      };
+      const getModelName = () => this.env.get('environmentName');
       ReactDOM.render(
         <window.juju.components.Charmbrowser
           acl={this.acl}
