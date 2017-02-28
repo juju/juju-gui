@@ -174,6 +174,7 @@ var module = module;
           extraInfo = meta['extra-info'],
           charmMeta = meta['charm-metadata'],
           charmConfig = meta['charm-config'],
+          commonInfo = meta['common-info'],
           bundleMeta = meta['bundle-metadata'],
           owner = meta.owner && meta.owner.User;
 
@@ -195,6 +196,12 @@ var module = module;
       }
       if (meta['charm-metrics']) {
         processed.metrics = meta['charm-metrics'].Metrics;
+      }
+      if (commonInfo && commonInfo['bugs-url']) {
+        processed.bugUrl = commonInfo['bugs-url'];
+      }
+      if (commonInfo && commonInfo.homepage) {
+        processed.homepage = commonInfo.homepage;
       }
 
       // Convert the options keys to lowercase.
@@ -338,6 +345,7 @@ var module = module;
         'bundle-machine-count',
         'charm-metadata',
         'charm-config',
+        'common-info',
         'id-revision',
         'revision-info',
         'manifest',
