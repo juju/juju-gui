@@ -237,12 +237,6 @@ YUI.add('entity-content', function() {
     */
     _generateDescription: function(entityModel) {
       if (entityModel.get('entityType') === 'charm') {
-        var bugLink = 'https://bugs.launchpad.net/charms/+source/' +
-          `${entityModel.get('name')}`;
-        var submitLink = 'https://bugs.launchpad.net/charms/+source/' +
-          `${entityModel.get('name')}/+filebug`;
-        var contributeLink = 'https://code.launchpad.net/~charmers/charms/' +
-          `${entityModel.get('series')}/${entityModel.get('name')}/trunk`;
         return (
           <div className="row row--grey entity-content__description">
             <div className="inner-wrapper">
@@ -250,26 +244,6 @@ YUI.add('entity-content', function() {
                 <p className="intro">{entityModel.get('description')}</p>
               </div>
               {this._generateTags()}
-              <div className="four-col entity-content__metadata last-col">
-                <h4>More information</h4>
-                <ul>
-                  <li>
-                    <a href={bugLink} target="_blank">
-                      Bugs
-                    </a>
-                  </li>
-                  <li>
-                    <a href={submitLink} target="_blank">
-                      Submit a bug
-                    </a>
-                  </li>
-                  <li>
-                    <a href={contributeLink} target="_blank">
-                      Contribute
-                    </a>
-                  </li>
-                </ul>
-              </div>
             </div>
           </div>
         );
@@ -323,21 +297,37 @@ YUI.add('entity-content', function() {
       @method _generateActions
     */
     _generateActions: function() {
-      var entityModel = this.props.entityModel;
-      if (entityModel.get('entityType') !== 'bundle') {
-        return;
+      const entity = this.props.entityModel.getAttrs();
+      let bugLink = entity.bugUrl;
+      let homepageLink = entity.homepage;
+      if (entity.entityType === 'bundle' && !homepageLink) {
+        homepageLink = 'https://code.launchpad.net/' +
+          `~charmers/charms/bundles/${entity.name}/bundle`;
+      } else if (entity.entityType === 'charm' && !bugLink) {
+        bugLink = 'https://bugs.launchpad.net/charms/' +
+          `+source/${entity.name}`;
       }
-      var contributeLink = 'https://code.launchpad.net/~charmers/charms/' +
-        `bundles/${entityModel.get('name')}/bundle`;
       return (
         <div className="section">
           <h3 className="section__title">
-            Actions
-          </h3>
-          <a href={contributeLink}
-            target="_blank">
             Contribute
-          </a>
+          </h3>
+          <ul className="section__links">
+            {bugLink ? (
+              <li>
+                <a href={bugLink}
+                  target="_blank">
+                  Submit a bug
+                </a>
+              </li>) : undefined}
+            {homepageLink ? (
+              <li>
+                <a href={homepageLink}
+                  target="_blank">
+                  Project homepage
+                </a>
+              </li>) : undefined}
+          </ul>
         </div>);
     },
 
@@ -448,6 +438,7 @@ YUI.add('entity-content', function() {
                   getFile={this.props.getFile} />
               </div>
               <div className="four-col">
+                {this._generateActions()}
                 {this._generateResources()}
                 {this._showEntityRelations()}
                 <juju.components.EntityFiles
@@ -456,7 +447,6 @@ YUI.add('entity-content', function() {
                   pluralize={this.props.pluralize} />
                 <juju.components.EntityContentRevisions
                   revisions={entityModel.get('revisions')} />
-                {this._generateActions()}
               </div>
             </div>
           </div>

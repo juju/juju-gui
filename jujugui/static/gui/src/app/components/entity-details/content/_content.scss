@@ -147,6 +147,10 @@
         line-height: 1.8;
       }
     }
+
+    &__links {
+      @extend %list-style;
+    }
   }
 
   .entity-relations {
