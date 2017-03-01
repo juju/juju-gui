@@ -510,6 +510,73 @@ describe('DeploymentFlow', function() {
     assert.isTrue(agreements.props.children[0].props.disabled);
   });
 
+  it('renders the login when necessary', function() {
+    const renderer = createDeploymentFlow({
+      getAuth: sinon.stub().returns(null),
+      getDischargeToken: sinon.stub(),
+      loginToController: sinon.stub(),
+      modelCommitted: true,
+      sendPost: sinon.stub()
+    });
+    const output = renderer.getRenderOutput();
+    const instance = renderer.getMountedInstance();
+    const loginLink = output.props.children.props.children.props.children[2]
+      .props.children;
+    const expected = (
+      <juju.components.DeploymentSection
+        instance="deployment-model-login"
+        showCheck={true}>
+        <div className="twelve-col">
+          <h2 className="deployment-login__header">
+            You're almost ready to deploy!
+          </h2>
+          <div className="deployment-login__features">
+            <div className="six-col">
+              <div className="deployment-login__feature">
+                Deploy to all major clouds directly from your browser.
+              </div>
+              <div className="deployment-login__feature">
+                Identity management across all models.
+              </div>
+            </div>
+            <div className="six-col last-col">
+              <div className="deployment-login__feature">
+                Hosted and managed juju controllers.
+              </div>
+              <div className="deployment-login__feature">
+                Reusable shareable models with unlimited users.
+              </div>
+            </div>
+          </div>
+          <div className="deployment-login__login">
+            <juju.components.USSOLoginLink
+              gisf={instance.props.gisf}
+              charmstore={instance.props.charmstore}
+              callback={loginLink.props.callback}
+              displayType={'button'}
+              sendPost={instance.props.sendPost}
+              storeUser={instance.props.storeUser}
+              getDischargeToken={instance.props.getDischargeToken}
+              loginToController={instance.props.loginToController}/>
+          </div>
+          <div className="deployment-login__signup">
+            Don't have an account?
+            <juju.components.USSOLoginLink
+              gisf={instance.props.gisf}
+              charmstore={instance.props.charmstore}
+              callback={loginLink.props.callback}
+              displayType={'text'}
+              sendPost={instance.props.sendPost}
+              storeUser={instance.props.storeUser}
+              getDischargeToken={instance.props.getDischargeToken}
+              loginToController={instance.props.loginToController}/>
+          </div>
+        </div>
+      </juju.components.DeploymentSection>
+    );
+    assert.deepEqual(output.props.children, expected);
+  });
+
   // Click log in and pass the given error string to the login callback used by
   // the component. Return the component instance.
   const login = function(err) {
