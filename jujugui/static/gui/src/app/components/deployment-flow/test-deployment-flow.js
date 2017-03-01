@@ -520,30 +520,32 @@ describe('DeploymentFlow', function() {
     });
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
-    const loginLink = output.props.children.props.children.props.children[2]
+    const loginLink = output.props.children.props.children.props.children[1]
       .props.children;
     const expected = (
       <juju.components.DeploymentSection
         instance="deployment-model-login"
-        showCheck={true}>
+        showCheck={true}
+        title="You're almost ready to deploy!">
         <div className="twelve-col">
-          <h2 className="deployment-login__header">
-            You're almost ready to deploy!
-          </h2>
           <div className="deployment-login__features">
             <div className="six-col">
               <div className="deployment-login__feature">
+                <juju.components.SvgIcon name="task-done_16" size="16" />
                 Deploy to all major clouds directly from your browser.
               </div>
               <div className="deployment-login__feature">
+                <juju.components.SvgIcon name="task-done_16" size="16" />
                 Identity management across all models.
               </div>
             </div>
             <div className="six-col last-col">
               <div className="deployment-login__feature">
+                <juju.components.SvgIcon name="task-done_16" size="16" />
                 Hosted and managed juju controllers.
               </div>
               <div className="deployment-login__feature">
+                <juju.components.SvgIcon name="task-done_16" size="16" />
                 Reusable shareable models with unlimited users.
               </div>
             </div>
@@ -557,7 +559,9 @@ describe('DeploymentFlow', function() {
               sendPost={instance.props.sendPost}
               storeUser={instance.props.storeUser}
               getDischargeToken={instance.props.getDischargeToken}
-              loginToController={instance.props.loginToController}/>
+              loginToController={instance.props.loginToController}>
+              Login
+            </juju.components.USSOLoginLink>
           </div>
           <div className="deployment-login__signup">
             Don't have an account?
@@ -569,7 +573,9 @@ describe('DeploymentFlow', function() {
               sendPost={instance.props.sendPost}
               storeUser={instance.props.storeUser}
               getDischargeToken={instance.props.getDischargeToken}
-              loginToController={instance.props.loginToController}/>
+              loginToController={instance.props.loginToController}>
+              Sign up
+            </juju.components.USSOLoginLink>
           </div>
         </div>
       </juju.components.DeploymentSection>
@@ -596,7 +602,7 @@ describe('DeploymentFlow', function() {
     };
     const output = renderer.getRenderOutput();
     const loginSection = output.props.children.props.children;
-    const loginButton = loginSection.props.children[2].props.children;
+    const loginButton = loginSection.props.children[1].props.children;
     const loginToController = instance.props.loginToController;
     // Call the supplied callback function which is called after the user
     // logs in.
