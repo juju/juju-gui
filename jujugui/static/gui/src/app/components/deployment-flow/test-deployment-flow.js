@@ -520,7 +520,7 @@ describe('DeploymentFlow', function() {
     });
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
-    const loginLink = output.props.children.props.children.props.children[1]
+    const loginLink = output.props.children.props.children.props.children[2]
       .props.children;
     const expected = (
       <juju.components.DeploymentSection
@@ -528,6 +528,10 @@ describe('DeploymentFlow', function() {
         showCheck={true}
         title="You're almost ready to deploy!">
         <div className="twelve-col">
+          <p className="deployment-login__intro">
+            You will need to sign in with an Ubuntu One account to deploy your
+            model with Juju-as-a-Service.
+          </p>
           <div className="deployment-login__features">
             <div className="six-col">
               <div className="deployment-login__feature">
@@ -602,7 +606,7 @@ describe('DeploymentFlow', function() {
     };
     const output = renderer.getRenderOutput();
     const loginSection = output.props.children.props.children;
-    const loginButton = loginSection.props.children[1].props.children;
+    const loginButton = loginSection.props.children[2].props.children;
     const loginToController = instance.props.loginToController;
     // Call the supplied callback function which is called after the user
     // logs in.

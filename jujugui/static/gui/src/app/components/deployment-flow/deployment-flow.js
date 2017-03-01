@@ -588,6 +588,10 @@ YUI.add('deployment-flow', function() {
           showCheck={true}
           title="You're almost ready to deploy!">
           <div className="twelve-col">
+            <p className="deployment-login__intro">
+              You will need to sign in with an Ubuntu One account to deploy
+              your model with Juju-as-a-Service.
+            </p>
             <div className="deployment-login__features">
               <div className="six-col">
                 <div className="deployment-login__feature">
