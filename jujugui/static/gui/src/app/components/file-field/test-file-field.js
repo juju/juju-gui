@@ -124,6 +124,35 @@ describe('FileField', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('generate a label when file is stored', () => {
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.FileField
+        accept=".json"
+        disabled={false}
+        label="Dingo"
+        required={true} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.setState({contents: 'foo'});
+    let output = renderer.getRenderOutput();
+    const expected = (
+      <div className="file-field">
+        <input accept=".json"
+          className="file-field__field"
+          disabled={false}
+          id="Dingo"
+          required={true}
+          onChange={instance.validate}
+          ref="field"
+          type="file" />
+        <label className="file-field__label"
+          htmlFor="Dingo">
+          File stored.
+        </label>
+        {null}
+      </div>);
+    assert.deepEqual(output, expected);
+  });
+
   it('can set the focus on the field', () => {
     var renderer = jsTestUtils.shallowRender(
       <juju.components.FileField
