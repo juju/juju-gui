@@ -88,6 +88,10 @@ YUI.add('header-breadcrumb', function() {
       @method _generateOwnerLink
     */
     _generateOwnerLink: function() {
+      const currentState = this.props.appState.current;
+      if (currentState && currentState.profile) {
+        return this._buildProfile(currentState.profile);
+      }
       const modelOwner = this.props.modelOwner;
       const modelName = this.props.modelName;
       if (!modelOwner || !modelName || modelName === NO_MODEL) {

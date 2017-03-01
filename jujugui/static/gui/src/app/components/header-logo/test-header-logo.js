@@ -42,7 +42,7 @@ describe('HeaderLogo', function() {
     const output = renderer.getRenderOutput();
 
     const expected = (<a onClick={navigateUserProfile}
-      role="button" title="Goto User Profile">
+      role="button" title="Go to user profile">
       <juju.components.SvgIcon name="juju-logo"
         className="svg-icon"
         width="90" height="35" />
