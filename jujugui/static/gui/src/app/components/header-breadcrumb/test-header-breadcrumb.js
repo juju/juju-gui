@@ -120,6 +120,27 @@ describe('HeaderBreadcrumb', () => {
     assert.deepEqual(comp.output, expectedOutput);
   });
 
+  it('renders properly with a profile', () => {
+    appState.current.profile = 'cyberman';
+    const comp = render({
+      authDetails: {user: 'dalek@external', rootUserName: 'dalek'},
+      modelName: 'mymodel',
+      modelOwner: 'rose',
+      showEnvSwitcher: true
+    });
+    const expectedOutput = (
+      <ul className="header-breadcrumb" data-username="dalek">
+        <li className="header-breadcrumb__list-item">
+          <a className="header-breadcrumb--link" onClick={comp.clickUser}>
+            cyberman
+          </a>
+        </li>
+        {undefined}
+      </ul>
+    );
+    assert.deepEqual(comp.output, expectedOutput);
+  });
+
   it('removes user name from breadcrumbs if none is provided', () => {
     const comp = render({
       modelName: 'mymodel',
@@ -140,7 +161,7 @@ describe('HeaderBreadcrumb', () => {
   });
 
   it('does not render the model switcher when profile is visible', () => {
-    appState.current.profile = true;
+    appState.current.profile = 'who';
     const comp = render({
       authDetails: {user: 'who@external', rootUserName: 'who'},
       modelName: 'mymodel',
