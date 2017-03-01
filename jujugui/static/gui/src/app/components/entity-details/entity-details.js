@@ -35,6 +35,7 @@ YUI.add('entity-details', function() {
       getDiagramURL: React.PropTypes.func.isRequired,
       getEntity: React.PropTypes.func.isRequired,
       getFile: React.PropTypes.func.isRequired,
+      getModelName: React.PropTypes.func.isRequired,
       id: React.PropTypes.string.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
       isLegacyJuju: React.PropTypes.bool,
@@ -84,6 +85,7 @@ YUI.add('entity-details', function() {
                   addNotification={this.props.addNotification}
                   importBundleYAML={this.props.importBundleYAML}
                   getBundleYAML={this.props.getBundleYAML}
+                  getModelName={this.props.getModelName}
                   hasPlans={this.state.hasPlans}
                   changeState={this.props.changeState}
                   deployService={this.props.deployService}

@@ -29,6 +29,7 @@ YUI.add('entity-header', function() {
       deployService: React.PropTypes.func.isRequired,
       entityModel: React.PropTypes.object.isRequired,
       getBundleYAML: React.PropTypes.func.isRequired,
+      getModelName: React.PropTypes.func.isRequired,
       hasPlans: React.PropTypes.bool.isRequired,
       importBundleYAML: React.PropTypes.func.isRequired,
       plans: React.PropTypes.array,
@@ -172,10 +173,11 @@ YUI.add('entity-header', function() {
       @method _generateDeployAction
     */
     _generateDeployAction: function() {
-      var entity = this.props.entityModel.toEntity();
-      var deployAction;
+      const entity = this.props.entityModel.toEntity();
+      let deployAction;
       // If the entity is not a charm OR it is a charm and has the series set,
       // display a button. Otherwise display a "not supported" message.
+      const title = `Add to ${this.props.getModelName() || 'model'}`;
       if (entity.type !== 'charm' || entity.series) {
         deployAction = (
           <juju.components.GenericButton
@@ -183,7 +185,7 @@ YUI.add('entity-header', function() {
             action={this._handleDeployClick}
             disabled={this.props.acl.isReadOnly()}
             type="positive"
-            title="Add to canvas" />
+            title={title} />
         );
       } else {
         deployAction = (
