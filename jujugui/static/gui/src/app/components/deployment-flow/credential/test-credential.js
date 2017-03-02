@@ -507,4 +507,35 @@ describe('DeploymentCredential', function() {
     assert.equal(setCredential.callCount, 2);
     assert.equal(setCredential.args[1][0], null);
   });
+
+  it('restores the credential when canceling the form', function() {
+    const setCredential = sinon.stub();
+    const credential = 'test-credential';
+    const renderer = jsTestUtils.shallowRender(
+      <juju.components.DeploymentCredential
+        acl={acl}
+        updateCloudCredential={sinon.stub()}
+        cloud={cloud}
+        credential={credential}
+        editable={true}
+        generateCloudCredentialName={sinon.stub()}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
+        getCloudCredentialNames={
+          sinon.stub().callsArgWith(1, null, tags)}
+        getCloudProviderDetails={sinon.stub()}
+        setCredential={setCredential}
+        setRegion={sinon.stub()}
+        user={user}
+        validateForm={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    // Show add credential form...
+    instance._toggleAdd();
+    assert.equal(instance.state.savedCredential, credential);
+    // Reset our counters...
+    setCredential.reset();
+    // Then hide it as a cancel.
+    instance._toggleAdd(true);
+    assert.equal(setCredential.callCount, 1);
+    assert.equal(setCredential.args[0][0], credential);
+  });
 });

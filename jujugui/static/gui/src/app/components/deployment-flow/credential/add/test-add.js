@@ -96,12 +96,11 @@ describe('DeploymentCredentialAdd', function() {
 
   it('can render without a cloud', function() {
     var cloud = getCloudProviderDetails('gce');
-    var close = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredentialAdd
           acl={acl}
           updateCloudCredential={sinon.stub()}
-          close={close}
+          close={sinon.stub()}
           cloud={null}
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub()}
@@ -111,6 +110,7 @@ describe('DeploymentCredentialAdd', function() {
           validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
+    const buttons = output.props.children[3].props.children.props.buttons;
     var expected = (
       <div className="deployment-credential-add twelve-col">
         <h4>Create new Google Compute Engine credential</h4>
@@ -232,28 +232,18 @@ describe('DeploymentCredentialAdd', function() {
         </form>
         <div className="prepend-six six-col last-col">
           <juju.components.ButtonRow
-            buttons={[{
-              action: close,
-              title: 'Cancel',
-              type: 'neutral'
-            }, {
-              action: instance._handleAddCredentials,
-              submit: true,
-              title: 'Add cloud credential',
-              type: 'positive'
-            }]} />
+            buttons={buttons} />
         </div>
       </div>);
     assert.deepEqual(output, expected);
   });
 
   it('can update to a new cloud', function() {
-    const close = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <juju.components.DeploymentCredentialAdd
           acl={acl}
           updateCloudCredential={sinon.stub()}
-          close={close}
+          close={sinon.stub()}
           cloud={null}
           getCloudProviderDetails={getCloudProviderDetails}
           generateCloudCredentialName={sinon.stub()}
@@ -261,7 +251,6 @@ describe('DeploymentCredentialAdd', function() {
           setCredential={sinon.stub()}
           user="user-admin"
           validateForm={sinon.stub()} />, true);
-    const instance = renderer.getMountedInstance();
     let output = renderer.getRenderOutput();
     renderer.render(
       <juju.components.DeploymentCredentialAdd
@@ -277,6 +266,7 @@ describe('DeploymentCredentialAdd', function() {
           validateForm={sinon.stub()} />);
     const cloud = getCloudProviderDetails('ec2');
     output = renderer.getRenderOutput();
+    const buttons = output.props.children[3].props.children.props.buttons;
     const expected = (
       <div className="deployment-credential-add twelve-col">
         <h4>Create new Amazon Web Services credential</h4>
@@ -355,16 +345,7 @@ describe('DeploymentCredentialAdd', function() {
         </form>
         <div className="prepend-six six-col last-col">
           <juju.components.ButtonRow
-            buttons={[{
-              action: close,
-              title: 'Cancel',
-              type: 'neutral'
-            }, {
-              action: instance._handleAddCredentials,
-              submit: true,
-              title: 'Add cloud credential',
-              type: 'positive'
-            }]} />
+            buttons={buttons} />
         </div>
       </div>);
     assert.deepEqual(output, expected);
@@ -372,12 +353,11 @@ describe('DeploymentCredentialAdd', function() {
 
   it('can render credential fields for a cloud', function() {
     var cloud = getCloudProviderDetails('gce');
-    var close = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
         acl={acl}
         updateCloudCredential={sinon.stub()}
-        close={close}
+        close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
         getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
@@ -387,6 +367,7 @@ describe('DeploymentCredentialAdd', function() {
         validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
+    const buttons = output.props.children[3].props.children.props.buttons;
     var expected = (
       <div className="deployment-credential-add twelve-col">
         <h4>Create new Google Compute Engine credential</h4>
@@ -508,16 +489,7 @@ describe('DeploymentCredentialAdd', function() {
         </form>
         <div className="prepend-six six-col last-col">
           <juju.components.ButtonRow
-            buttons={[{
-              action: close,
-              title: 'Cancel',
-              type: 'neutral'
-            }, {
-              action: instance._handleAddCredentials,
-              submit: true,
-              title: 'Add cloud credential',
-              type: 'positive'
-            }]} />
+            buttons={buttons} />
         </div>
       </div>);
     assert.deepEqual(output, expected);
@@ -525,12 +497,11 @@ describe('DeploymentCredentialAdd', function() {
 
   it('can render a cloud with a json field', function() {
     var cloud = getCloudProviderDetails('gce');
-    var close = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
         acl={acl}
         updateCloudCredential={sinon.stub()}
-        close={close}
+        close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
         getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
@@ -541,6 +512,7 @@ describe('DeploymentCredentialAdd', function() {
     var instance = renderer.getMountedInstance();
     instance.setState({authType: 'jsonfile'});
     var output = renderer.getRenderOutput();
+    const buttons = output.props.children[3].props.children.props.buttons;
     var expected = (
       <div className="deployment-credential-add twelve-col">
         <h4>Create new Google Compute Engine credential</h4>
@@ -614,16 +586,7 @@ describe('DeploymentCredentialAdd', function() {
         </form>
         <div className="prepend-six six-col last-col">
           <juju.components.ButtonRow
-            buttons={[{
-              action: close,
-              title: 'Cancel',
-              type: 'neutral'
-            }, {
-              action: instance._handleAddCredentials,
-              submit: true,
-              title: 'Add cloud credential',
-              type: 'positive'
-            }]} />
+            buttons={buttons} />
         </div>
       </div>);
     assert.deepEqual(output, expected);
@@ -632,12 +595,11 @@ describe('DeploymentCredentialAdd', function() {
   it('can disable controls when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     var cloud = getCloudProviderDetails('gce');
-    var close = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
     <juju.components.DeploymentCredentialAdd
         acl={acl}
         updateCloudCredential={sinon.stub()}
-        close={close}
+        close={sinon.stub()}
         cloud={{name: 'google', cloudType: 'gce'}}
         getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
@@ -647,6 +609,7 @@ describe('DeploymentCredentialAdd', function() {
         validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
+    const buttons = output.props.children[3].props.children.props.buttons;
     var expected = (
       <div className="deployment-credential-add twelve-col">
         <h4>Create new Google Compute Engine credential</h4>
@@ -768,16 +731,7 @@ describe('DeploymentCredentialAdd', function() {
         </form>
         <div className="prepend-six six-col last-col">
           <juju.components.ButtonRow
-            buttons={[{
-              action: close,
-              title: 'Cancel',
-              type: 'neutral'
-            }, {
-              action: instance._handleAddCredentials,
-              submit: true,
-              title: 'Add cloud credential',
-              type: 'positive'
-            }]} />
+            buttons={buttons} />
         </div>
       </div>);
     assert.deepEqual(output, expected);
