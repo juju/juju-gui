@@ -235,7 +235,7 @@ YUI.add('deployment-credential-add', function() {
 
     render: function() {
       var buttons = [{
-        action: this.props.close,
+        action: () => { this.props.close(true); },
         title: 'Cancel',
         type: 'neutral'
       }, {

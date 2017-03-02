@@ -144,14 +144,21 @@ YUI.add('deployment-credential', function() {
       Show the add credentials form.
 
       @method _toggleAdd
+      @param {Boolean} cancel Indicates whether the add form is being hidden
+                              due to a form submission or a cancel.
     */
-    _toggleAdd: function() {
+    _toggleAdd: function(cancel) {
       const showAdd = !this.state.showAdd;
       // When displaying the add credentials form we need to clear the
       // currently selected credential in case someone tries to deploy while
       // the add credential form is open.
       if (showAdd) {
+        // Save the credential in case we need to restore it on cancel.
+        this.setState({savedCredential: this.props.credential});
         this.props.setCredential(null);
+      } else if (cancel) {
+        // Restore previous credentials.
+        this.props.setCredential(this.state.savedCredential);
       }
       this.setState({showAdd: showAdd});
     },
