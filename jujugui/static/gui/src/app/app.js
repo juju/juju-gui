@@ -1337,8 +1337,10 @@ YUI.add('juju-gui', function(Y) {
       // Juju 1 does not have a controller API, but many of the controller
       // methods are implemented on the env.
       let controllerAPI = this.controllerAPI;
+      let legacy = false;
       if (!controllerAPI) {
         controllerAPI = this.env;
+        legacy = true;
       }
       const services = db.services;
       // Auto place the units. This is probably not the best UX, but is required
@@ -1352,7 +1354,7 @@ YUI.add('juju-gui', function(Y) {
         };
       }
       const getUserName = () => {
-        const credentials = controllerAPI && controllerAPI.getCredentials();
+        const credentials = !legacy && controllerAPI.getCredentials();
         return credentials ? credentials.user : undefined;
       };
       const loginToController = controllerAPI.loginWithMacaroon.bind(
@@ -1386,10 +1388,10 @@ YUI.add('juju-gui', function(Y) {
               this.terms.getAgreementsByTerms.bind(this.terms)}
           getAuth={this._getAuth.bind(this)}
           getCloudCredentials={
-            controllerAPI && controllerAPI.getCloudCredentials.bind(
+            !legacy && controllerAPI.getCloudCredentials.bind(
               controllerAPI)}
           getCloudCredentialNames={
-            controllerAPI && controllerAPI.getCloudCredentialNames.bind(
+            !legacy && controllerAPI.getCloudCredentialNames.bind(
               controllerAPI)}
           getCloudProviderDetails={utils.getCloudProviderDetails.bind(utils)}
           getDischargeToken={getDischargeToken}
@@ -1399,7 +1401,7 @@ YUI.add('juju-gui', function(Y) {
           isLegacyJuju={this.isLegacyJuju()}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listClouds={
-            controllerAPI && controllerAPI.listClouds.bind(controllerAPI)}
+            !legacy && controllerAPI.listClouds.bind(controllerAPI)}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
           loginToController={loginToController}
           modelCommitted={connected}
@@ -1410,7 +1412,7 @@ YUI.add('juju-gui', function(Y) {
           showTerms={this.terms.showTerms.bind(this.terms)}
           storeUser={this.storeUser.bind(this)}
           updateCloudCredential={
-            controllerAPI && controllerAPI.updateCloudCredential.bind(
+            !legacy && controllerAPI.updateCloudCredential.bind(
               controllerAPI)}
           withPlans={false} />,
         document.getElementById('deployment-container'));
