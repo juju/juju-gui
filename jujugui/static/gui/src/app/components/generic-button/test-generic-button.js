@@ -116,6 +116,21 @@ describe('GenericButton', function() {
       </button>);
   });
 
+  it('displays provided children', function() {
+    var output = jsTestUtils.shallowRender(
+      <juju.components.GenericButton>
+        Hello, world.
+      </juju.components.GenericButton>
+    );
+    assert.deepEqual(output,
+      <button className="button--neutral"
+        title={undefined}
+        onClick={output.props.onClick}
+        type="button">
+        Hello, world.
+      </button>);
+  });
+
   it('sets the type class', function() {
     var output = jsTestUtils.shallowRender(
         <juju.components.GenericButton

@@ -137,11 +137,6 @@ YUI.add('deployment-flow', function() {
           disabled = false;
           visible = !isLegacyJuju && willCreateModel;
           break;
-        case 'login':
-          completed = this.state.loggedIn;
-          disabled = false;
-          visible = !isLegacyJuju && !this.state.loggedIn;
-          break;
         case 'cloud':
           completed = hasCloud && hasCredential;
           disabled = !this.state.loggedIn;
@@ -582,10 +577,6 @@ YUI.add('deployment-flow', function() {
       @returns {Object} The markup.
     */
     _generateLogin: function() {
-      var status = this._getSectionStatus('login');
-      if (!status.visible) {
-        return;
-      }
       const callback = err => {
         if (!err) {
           this.setState({loggedIn: true});
@@ -594,17 +585,62 @@ YUI.add('deployment-flow', function() {
       return (
         <juju.components.DeploymentSection
           instance="deployment-model-login"
-          showCheck={false}>
-          <div className="six-col">
-            <juju.components.USSOLoginLink
-              gisf={this.props.gisf}
-              charmstore={this.props.charmstore}
-              callback={callback}
-              displayType={'button'}
-              sendPost={this.props.sendPost}
-              storeUser={this.props.storeUser}
-              getDischargeToken={this.props.getDischargeToken}
-              loginToController={this.props.loginToController}/>
+          showCheck={true}
+          title="You're almost ready to deploy!">
+          <div className="twelve-col">
+            <p className="deployment-login__intro">
+              You will need to sign in with an Ubuntu One account to deploy
+              your model with Juju-as-a-Service.
+            </p>
+            <div className="deployment-login__features">
+              <div className="six-col">
+                <div className="deployment-login__feature">
+                  <juju.components.SvgIcon name="task-done_16" size="16" />
+                  Deploy to all major clouds directly from your browser.
+                </div>
+                <div className="deployment-login__feature">
+                  <juju.components.SvgIcon name="task-done_16" size="16" />
+                  Identity management across all models.
+                </div>
+              </div>
+              <div className="six-col last-col">
+                <div className="deployment-login__feature">
+                  <juju.components.SvgIcon name="task-done_16" size="16" />
+                  Hosted and managed juju controllers.
+                </div>
+                <div className="deployment-login__feature">
+                  <juju.components.SvgIcon name="task-done_16" size="16" />
+                  Reusable shareable models with unlimited users.
+                </div>
+              </div>
+            </div>
+            <div className="deployment-login__login">
+              <juju.components.USSOLoginLink
+                gisf={this.props.gisf}
+                charmstore={this.props.charmstore}
+                callback={callback}
+                displayType={'button'}
+                sendPost={this.props.sendPost}
+                storeUser={this.props.storeUser}
+                getDischargeToken={this.props.getDischargeToken}
+                loginToController={this.props.loginToController}>
+                Login
+              </juju.components.USSOLoginLink>
+            </div>
+            <div className="deployment-login__signup">
+              Don't have an account?
+              <juju.components.USSOLoginLink
+                gisf={this.props.gisf}
+                charmstore={this.props.charmstore}
+                callback={callback}
+                displayType={'text'}
+                sendPost={this.props.sendPost}
+                storeUser={this.props.storeUser}
+                getDischargeToken={this.props.getDischargeToken}
+                loginToController={this.props.loginToController}>
+                Sign up
+              </juju.components.USSOLoginLink>
+            </div>
           </div>
         </juju.components.DeploymentSection>);
     },
@@ -788,7 +824,7 @@ YUI.add('deployment-flow', function() {
     /**
       Handles checking on the "I agree to the terms" checkbox.
 
-      @method _generateAgreementsSection
+      @method _handleTermAgreement
       @param {Object} evt The change event.
     */
     _handleTermsAgreement: function(evt) {
@@ -879,33 +915,42 @@ YUI.add('deployment-flow', function() {
 
     render: function() {
       const deployTitle = this.state.deploying ? 'Deploying...' : 'Deploy';
-      return (
-        <juju.components.DeploymentPanel
-          changeState={this.props.changeState}
-          title={this.props.modelName}>
-          {this._generateModelNameSection()}
-          {this._generateLogin()}
-          {this._generateCloudSection()}
-          {this._generateCredentialSection()}
-          {this._generateSSHKeySection()}
-          {this._generateMachinesSection()}
-          {this._generateServicesSection()}
-          {this._generateBudgetSection()}
-          {this._generateChangeSection()}
-          <div className="twelve-col">
-            <div className="deployment-flow__deploy">
-              {this._generateAgreementsSection()}
-              <div className="deployment-flow__deploy-action">
-                <juju.components.GenericButton
-                  action={this._handleDeploy}
-                  disabled={!this._deploymentAllowed()}
-                  type="positive"
-                  title={deployTitle} />
+      if (this.props.isLegacyJuju || this.state.loggedIn) {
+        return (
+          <juju.components.DeploymentPanel
+            changeState={this.props.changeState}
+            title={this.props.modelName}>
+            {this._generateModelNameSection()}
+            {this._generateCloudSection()}
+            {this._generateCredentialSection()}
+            {this._generateSSHKeySection()}
+            {this._generateMachinesSection()}
+            {this._generateServicesSection()}
+            {this._generateBudgetSection()}
+            {this._generateChangeSection()}
+            <div className="twelve-col">
+              <div className="deployment-flow__deploy">
+                {this._generateAgreementsSection()}
+                <div className="deployment-flow__deploy-action">
+                  <juju.components.GenericButton
+                    action={this._handleDeploy}
+                    disabled={!this._deploymentAllowed()}
+                    type="positive"
+                    title={deployTitle} />
+                </div>
               </div>
             </div>
-          </div>
-        </juju.components.DeploymentPanel>
-      );
+          </juju.components.DeploymentPanel>
+        );
+      } else {
+        return (
+          <juju.components.DeploymentPanel
+            changeState={this.props.changeState}
+            title={this.props.modelName}>
+            {this._generateLogin()}
+          </juju.components.DeploymentPanel>
+        );
+      }
     }
 
   });

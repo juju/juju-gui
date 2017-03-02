@@ -76,13 +76,40 @@ describe('USSOLoginLink', () => {
         <juju.components.GenericButton
           action={component.getMountedInstance().handleLogin}
           extraClasses="usso-login__action"
-          type="positive"
-          title="Sign up/Log in with USSO" />
+          type="positive" >
+          Sign up/Log in with USSO
+        </juju.components.GenericButton>
         <div className="usso-login__notification">
           {notification}
         </div>
       </div>);
     assert.deepEqual(output, expected);
+  });
+
+  it('can render a button link with custom content', () => {
+    const component = jsTestUtils.shallowRender(
+        <juju.components.USSOLoginLink
+          displayType={'button'}
+          loginToController={sinon.stub()}
+          sendPost={sinon.stub()}
+          gisf={false}>
+          Scooby Doo
+        </juju.components.USSOLoginLink>, true);
+    const output = component.getRenderOutput();
+    assert.equal(output.props.children[0].props.children, 'Scooby Doo');
+  });
+
+  it('can render a text link with custom content', () => {
+    const component = jsTestUtils.shallowRender(
+        <juju.components.USSOLoginLink
+          displayType={'text'}
+          loginToController={sinon.stub()}
+          sendPost={sinon.stub()}
+          gisf={false}>
+          Scooby Doo
+        </juju.components.USSOLoginLink>, true);
+    const output = component.getRenderOutput();
+    assert.equal(output.props.children[0].props.children, 'Scooby Doo');
   });
 
   it('calls loginToController on click for button link', () => {

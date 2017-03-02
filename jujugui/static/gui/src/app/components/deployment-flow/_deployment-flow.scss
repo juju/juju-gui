@@ -62,3 +62,31 @@
     }
   }
 }
+
+.deployment-login {
+  &__intro {
+    margin-top: 20px;
+  }
+
+  &__features {
+    margin-top: 20px;
+  }
+
+  &__feature {
+    margin-bottom: 20px;
+
+    .svg-icon {
+      margin-right: 1em;
+    }
+  }
+
+  &__signup {
+    margin-top: 20px;
+    text-align: center;
+
+    .usso-login {
+      display: inline;
+      margin-left: 0.5em;
+    }
+  }
+}
