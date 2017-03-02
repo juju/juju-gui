@@ -995,7 +995,10 @@ YUI.add('juju-gui', function(Y) {
       // XXX j.c.sackett 2017-01-30 Right now USSO link is using
       // loginToController, while loginToAPIs is used by the login form.
       // We want to use loginToAPIs everywhere since it handles more.
-      const controllerAPI = this.controllerAPI;
+      let controllerAPI = this.env;
+      if (this.controllerAPI) {
+        controllerAPI = this.controllerAPI;
+      }
       const loginToController = controllerAPI.loginWithMacaroon.bind(
         controllerAPI, this.bakeryFactory.get('juju'));
       const webhandler = new Y.juju.environments.web.WebHandler();
@@ -1331,7 +1334,12 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       const changesUtils = this.changesUtils;
-      const controllerAPI = this.controllerAPI;
+      // Juju 1 does not have a controller API, but many of the controller
+      // methods are implemented on the env.
+      let controllerAPI = this.controllerAPI;
+      if (!controllerAPI) {
+        controllerAPI = this.env;
+      }
       const services = db.services;
       // Auto place the units. This is probably not the best UX, but is required
       // to display the machines in the deployment flow.
@@ -2605,6 +2613,10 @@ YUI.add('juju-gui', function(Y) {
       // Loop through each api connection and see if we are properly
       // authenticated. If we aren't then display the login screen.
       const shouldDisplayLogin = apis.some(api => {
+        // Legacy Juju won't have a controller API.
+        if (!api) {
+          return false;
+        }
         // If the api is connecting then we can't know if they are properly
         // logged in yet.
         if (api.get('connecting')) {
