@@ -1,3 +1,13 @@
+- 2.4.3:
+
+    - (Fix) Header links now correctly show the appropriate user profiles.
+    - (Fix) Adding Google Cloud credentials json file now is stored correctly.
+    - (Fix) Config options set to "" will no longer 'unset' the value in Juju.
+    - (Fix) Bundle and charm details now have proper homepage and bug links.
+    - (Fix) Display modified configuration options on bundle details pages.
+    - (Fix) No longer repeating user name in user profile.
+    - (Fix) Cookie notice no longer blocks deploy button.
+
 - 2.4.2:
 
     ->
