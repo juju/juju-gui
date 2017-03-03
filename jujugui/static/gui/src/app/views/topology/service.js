@@ -1095,7 +1095,9 @@ YUI.add('juju-topology-service', function(Y) {
         gui: {
           machines: null,
           inspector: null
-        }
+        },
+        search: null,
+        store: null
       });
     },
 
