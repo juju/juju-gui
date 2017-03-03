@@ -64,17 +64,19 @@ YUI.add('header-help', function() {
       @method _generateIssuesLink
      */
     _generateIssuesLink: function() {
+      let label = 'File Issue';
       let link = 'https://github.com/juju/juju-gui/issues';
       if (this.props.gisf && this.props.user) {
-        link = 'https://jujucharms.com/issues';
+        label = 'Get Support';
+        link = 'https://jujucharms.com/support';
       }
       return (
         <li className="header-help-menu__list-item
           header-help-menu__list-item-with-link"
           role="menuitem" tabIndex="1">
-          <a href={link} target="_blank">File Issue</a>
+          <a href={link} target="_blank">{label}</a>
         </li>
-        );
+      );
     },
 
     /**

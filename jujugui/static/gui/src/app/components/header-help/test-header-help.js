@@ -73,7 +73,7 @@ describe('HeaderHelp', function() {
 
   describe('menu', function () {
     const issueUrl = 'https://github.com/juju/juju-gui/issues';
-    const loggedInIssueUrl = 'https://jujucharms.com/issues';
+    const loggedInIssueUrl = 'https://jujucharms.com/support';
     const docsUrl = 'https://jujucharms.com/docs/stable/getting-started';
 
     it('opens a menu when clicked', function () {
@@ -151,7 +151,7 @@ describe('HeaderHelp', function() {
                 <li className="header-help-menu__list-item
                   header-help-menu__list-item-with-link"
                   role="menuitem" tabIndex="1">
-                  <a href={loggedInIssueUrl} target="_blank">File Issue</a>
+                  <a href={loggedInIssueUrl} target="_blank">Get Support</a>
                 </li>
                 <li className="header-help-menu__list-item
                   header-help-menu__list-item-info"
