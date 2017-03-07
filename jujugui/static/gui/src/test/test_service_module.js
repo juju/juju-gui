@@ -97,6 +97,24 @@ describe('service module annotations', function() {
        location['gui-x'].should.equal(0);
        location['gui-y'].should.equal(0);
      });
+
+  it('should clear the state when the event is fired', function() {
+    const topo = serviceModule.get('component');
+    const changeState = sinon.stub();
+    topo.set('state', {changeState: changeState});
+    topo.fire('clearState');
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      root: null,
+      user: null,
+      gui: {
+        machines: null,
+        inspector: null
+      },
+      search: null,
+      store: null
+    });
+  });
 });
 
 describe('service updates', function() {
