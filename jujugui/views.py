@@ -77,6 +77,7 @@ def config(request):
     charmstore_macaroons = settings.get('jujugui.charmstore_macaroons')
     discharge_token = settings.get('jujugui.discharge_token')
     plans_macaroons = settings.get('jujugui.plans_macaroons')
+    terms_macaroons = settings.get('jujugui.terms_macaroons')
 
     if sandbox_enabled:
         user = user if user is not None else 'admin'
