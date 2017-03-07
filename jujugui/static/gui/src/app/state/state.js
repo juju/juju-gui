@@ -23,7 +23,8 @@ if (typeof this.jujugui === 'undefined') {
 }
 
 const ROOT_RESERVED = [
-  'about', 'bigdata', 'docs', 'juju', 'login', 'logout', 'new', 'store'];
+  'about', 'bigdata', 'docs', 'juju', 'login', 'logout', 'new', 'store',
+  'account'];
 const PROFILE_RESERVED = ['charms', 'issues', 'revenue', 'settings'];
 const PATH_DELIMETERS = new Map([['search', 'q'], ['user', 'u'], ['gui', 'i']]);
 const GUI_PATH_DELIMETERS = [
