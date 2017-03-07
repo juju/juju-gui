@@ -999,12 +999,16 @@ YUI.add('juju-gui', function(Y) {
       // XXX j.c.sackett 2017-01-30 Right now USSO link is using
       // loginToController, while loginToAPIs is used by the login form.
       // We want to use loginToAPIs everywhere since it handles more.
-      const controllerAPI = this.controllerAPI;
-      const loginToController = controllerAPI.loginWithMacaroon.bind(
-        controllerAPI, this.bakeryFactory.get('juju'));
+      let legacy = this.isLegacyJuju();
+      const loginToController = legacy ?
+        this.env.loginWithMacaroon.bind(
+          this.env, this.bakeryFactory.get('juju')) :
+        this.controllerAPI.loginWithMacaroon.bind(
+          this.controllerAPI, this.bakeryFactory.get('juju'));
       const webhandler = new Y.juju.environments.web.WebHandler();
       const controllerIsConnected = function() {
-        return controllerAPI.get('connected');
+        return legacy ? this.env.get('connected') :
+          this.controllerAPI.get('connected');
       };
       const getDischargeToken = function() {
         return window.localStorage.getItem('discharge-token');
@@ -1018,7 +1022,7 @@ YUI.add('juju-gui', function(Y) {
           getDischargeToken={getDischargeToken}
           gisf={this.get('gisf')}
           hideSpinner={this.hideConnectingMask.bind(this)}
-          isLegacyJuju={this.isLegacyJuju()}
+          isLegacyJuju={legacy}
           loginToAPIs={this.loginToAPIs.bind(this)}
           loginToController={loginToController}
           sendPost={webhandler.sendPostRequest.bind(webhandler)}
@@ -1364,6 +1368,7 @@ YUI.add('juju-gui', function(Y) {
       }
       const changesUtils = this.changesUtils;
       const controllerAPI = this.controllerAPI;
+      const legacy = this.isLegacyJuju();
       const services = db.services;
       // Auto place the units. This is probably not the best UX, but is required
       // to display the machines in the deployment flow.
@@ -1376,11 +1381,14 @@ YUI.add('juju-gui', function(Y) {
         };
       }
       const getUserName = () => {
-        const credentials = controllerAPI && controllerAPI.getCredentials();
+        const credentials = !legacy && controllerAPI.getCredentials();
         return credentials ? credentials.user : undefined;
       };
-      const loginToController = controllerAPI.loginWithMacaroon.bind(
-        controllerAPI, this.bakeryFactory.get('juju'));
+      const loginToController = !legacy ?
+        controllerAPI.loginWithMacaroon.bind(
+          controllerAPI, this.bakeryFactory.get('juju')) :
+        this.env.loginWithMacaroon.bind(
+          this.env, this.bakeryFactory.get('juju'));
       const getDischargeToken = function() {
         return window.localStorage.getItem('discharge-token');
       };
@@ -1410,20 +1418,20 @@ YUI.add('juju-gui', function(Y) {
               this.terms.getAgreementsByTerms.bind(this.terms)}
           getAuth={this._getAuth.bind(this)}
           getCloudCredentials={
-            controllerAPI && controllerAPI.getCloudCredentials.bind(
+            !legacy && controllerAPI.getCloudCredentials.bind(
               controllerAPI)}
           getCloudCredentialNames={
-            controllerAPI && controllerAPI.getCloudCredentialNames.bind(
+            !legacy && controllerAPI.getCloudCredentialNames.bind(
               controllerAPI)}
           getCloudProviderDetails={utils.getCloudProviderDetails.bind(utils)}
           getDischargeToken={getDischargeToken}
           getUserName={getUserName}
           gisf={this.get('gisf')}
           groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
-          isLegacyJuju={this.isLegacyJuju()}
+          isLegacyJuju={legacy}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listClouds={
-            controllerAPI && controllerAPI.listClouds.bind(controllerAPI)}
+            !legacy && controllerAPI.listClouds.bind(controllerAPI)}
           listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
           loginToController={loginToController}
           modelCommitted={connected}
@@ -1434,7 +1442,7 @@ YUI.add('juju-gui', function(Y) {
           showTerms={this.terms.showTerms.bind(this.terms)}
           storeUser={this.storeUser.bind(this)}
           updateCloudCredential={
-            controllerAPI && controllerAPI.updateCloudCredential.bind(
+            !legacy && controllerAPI.updateCloudCredential.bind(
               controllerAPI)}
           withPlans={false} />,
         document.getElementById('deployment-container'));
@@ -2657,6 +2665,10 @@ YUI.add('juju-gui', function(Y) {
       // Loop through each api connection and see if we are properly
       // authenticated. If we aren't then display the login screen.
       const shouldDisplayLogin = apis.some(api => {
+        // Legacy Juju won't have a controller API.
+        if (!api) {
+          return false;
+        }
         // If the api is connecting then we can't know if they are properly
         // logged in yet.
         if (api.get('connecting')) {
