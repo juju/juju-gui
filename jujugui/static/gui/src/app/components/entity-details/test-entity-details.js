@@ -142,6 +142,45 @@ describe('EntityDetails', function() {
     assert.deepEqual(output, expected);
   });
 
+  it('can change the page title when entity loads', function() {
+    mockEntity.hasMetrics = sinon.stub().returns(false);
+    var apiUrl = 'http://example.com';
+    var id = mockEntity.get('id');
+    var getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
+    var makeEntityModel = sinon.stub().returns(mockEntity);
+    var deployService = sinon.spy();
+    var changeState = sinon.spy();
+    var importBundleYAML = sinon.spy();
+    var getBundleYAML = sinon.spy();
+    const getModelName = sinon.spy();
+    var pluralize = sinon.spy();
+    var getFile = sinon.spy();
+    var renderMarkdown = sinon.spy();
+    var addNotification = sinon.spy();
+    var shallowRenderer = jsTestUtils.shallowRender(
+        <juju.components.EntityDetails
+          acl={acl}
+          apiUrl={apiUrl}
+          changeState={changeState}
+          deployService={deployService}
+          displayPlans={true}
+          importBundleYAML={importBundleYAML}
+          getBundleYAML={getBundleYAML}
+          getDiagramURL={sinon.stub()}
+          getEntity={getEntity}
+          getFile={getFile}
+          getModelName={getModelName}
+          isLegacyJuju={false}
+          listPlansForCharm={sinon.stub()}
+          scrollPosition={100}
+          renderMarkdown={renderMarkdown}
+          id={id}
+          pluralize={pluralize}
+          addNotification={addNotification}
+          makeEntityModel={makeEntityModel} />, true);
+      assert.equal(document.title, 'django (#123) - Juju GUI');
+  });
+
   it('can display a message if there is a loading error', function() {
     var id = mockEntity.get('id');
     var getEntity = sinon.stub().callsArgWith(1, 'bad wolf', [mockEntity]);

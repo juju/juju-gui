@@ -160,7 +160,7 @@ YUI.add('entity-details', function() {
         });
         var modelEntity = model.toEntity();
         document.title = `${modelEntity.displayName}
-        (${modelEntity.revision_id}) -
+        (#${modelEntity.revision_id}) -
         Juju GUI`;
       }
     },
