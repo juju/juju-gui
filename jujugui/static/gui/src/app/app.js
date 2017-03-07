@@ -1514,7 +1514,7 @@ YUI.add('juju-gui', function(Y) {
           hideDragOverNotification={this._hideDragOverNotification.bind(this)}
           importBundleFile={this.bundleImporter.importBundleFile.bind(
             this.bundleImporter)}
-          modelAvailable={env.get('available')}
+          userIsAuthenticated={env.userIsAuthenticated}
           renderDragOverNotification={
             this._renderDragOverNotification.bind(this)}
           sharingVisibility={this._sharingVisibility.bind(this)}/>,
@@ -2806,7 +2806,6 @@ YUI.add('juju-gui', function(Y) {
         console.log('switching models is not supported in sandbox');
       }
       console.log('switching model connection');
-      this.env.set('available', false);
       if (username && password) {
         // We don't always get a new username and password when switching
         // environments; only set new credentials if we've actually gotten them.
@@ -2817,15 +2816,14 @@ YUI.add('juju-gui', function(Y) {
         });
       };
       const credentials = this.env.getCredentials();
-      const onLogin = function(callback) {
-        this.env.set('available', true);
-        if (callback) {
+      if (callback) {
+        const onLogin = function(callback) {
           callback(this.env);
-        }
-      };
-      // Delay the callback until after the env login as everything should be
-      // set up by then.
-      this.env.onceAfter('login', onLogin.bind(this, callback), this);
+        };
+        // Delay the callback until after the env login as everything should be
+        // set up by then.
+        this.env.onceAfter('login', onLogin.bind(this, callback), this);
+      }
       if (clearDB) {
         // Clear uncommitted state.
         this.env.get('ecs').clear();
