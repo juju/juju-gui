@@ -140,7 +140,7 @@ YUI.add('sharing', function() {
       }
       const username = this.refs.username.getValue();
       const access = this.refs.access.getValue();
-      this.props.grantModelAccess([username], access,
+      this.props.grantModelAccess(username, access,
         this._modifyModelAccessCallback);
     },
 
@@ -155,7 +155,7 @@ YUI.add('sharing', function() {
       // downgrades it to the next level at the moment (as of 2.0). So if you
       // want a user to have no access, you have to specify 'read'. Because:
       // admin -> write -> read -> no access.
-      this.props.revokeModelAccess([user.name], 'read',
+      this.props.revokeModelAccess(user.name, 'read',
         this._modifyModelAccessCallback);
     },
 

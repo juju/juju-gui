@@ -1456,33 +1456,32 @@ YUI.add('juju-gui', function(Y) {
                        (false); defaults to true.
     */
     _sharingVisibility: function(visibility = true) {
-      // Grab app attributes for easy access.
-      const controllerAPI = this.controllerAPI;
+      const sharing = document.getElementById('sharing-container');
+      if (!visibility) {
+        ReactDOM.unmountComponentAtNode(sharing);
+        return;
+      }
       const db = this.db;
       const env = this.env;
-      // Bind required functions appropriately.
-      const getModelUserInfo = env.modelUserInfo.bind(env);
-      const addNotification = db.notifications.add.bind(db.notifications);
-      const grantAccess = controllerAPI.grantModelAccess.bind(controllerAPI,
-        env.get('modelUUID'));
-      const revokeAccess = controllerAPI.revokeModelAccess.bind(controllerAPI,
-        env.get('modelUUID'));
-      // Render or un-render the sharing component.
-      const sharing = document.getElementById('sharing-container');
-      if (visibility) {
-        ReactDOM.render(
-          <window.juju.components.Sharing
-            addNotification={addNotification}
-            canShareModel={this.acl.canShareModel()}
-            closeHandler={this._sharingVisibility.bind(this, false)}
-            getModelUserInfo={getModelUserInfo}
-            grantModelAccess={grantAccess}
-            humanizeTimestamp={views.utils.humanizeTimestamp}
-            revokeModelAccess={revokeAccess} />,
-        sharing);
-      } else {
-        ReactDOM.unmountComponentAtNode(sharing);
-      }
+      const grantRevoke = (action, username, access, callback) => {
+        if (this.get('gisf') && username.indexOf('@') === -1) {
+          username += '@external';
+        }
+        action(env.get('modelUUID'), [username], access, callback);
+      };
+      const controllerAPI = this.controllerAPI;
+      const grantAccess = controllerAPI.grantModelAccess.bind(controllerAPI);
+      const revokeAccess = controllerAPI.revokeModelAccess.bind(controllerAPI);
+      ReactDOM.render(
+        <window.juju.components.Sharing
+          addNotification={db.notifications.add.bind(db.notifications)}
+          canShareModel={this.acl.canShareModel()}
+          closeHandler={this._sharingVisibility.bind(this, false)}
+          getModelUserInfo={env.modelUserInfo.bind(env)}
+          grantModelAccess={grantRevoke.bind(this, grantAccess)}
+          humanizeTimestamp={views.utils.humanizeTimestamp}
+          revokeModelAccess={grantRevoke.bind(this, revokeAccess)}
+        />, sharing);
     },
 
     /**
