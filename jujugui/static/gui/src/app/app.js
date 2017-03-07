@@ -1495,9 +1495,6 @@ YUI.add('juju-gui', function(Y) {
       const db = this.db;
       const utils = views.utils;
       const env = this.env;
-      const modelConnected = () => {
-        return env.get('connected') && this.get('modelUUID');
-      };
       ReactDOM.render(
         <window.juju.components.ModelActions
           acl={this.acl}
@@ -1511,7 +1508,7 @@ YUI.add('juju-gui', function(Y) {
           hideDragOverNotification={this._hideDragOverNotification.bind(this)}
           importBundleFile={this.bundleImporter.importBundleFile.bind(
             this.bundleImporter)}
-          modelConnected={modelConnected}
+          modelAvailable={env.get('available')}
           renderDragOverNotification={
             this._renderDragOverNotification.bind(this)}
           sharingVisibility={this._sharingVisibility.bind(this)}/>,
