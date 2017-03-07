@@ -151,10 +151,17 @@ YUI.add('entity-details', function() {
       if (data.length > 0) {
         var data = data[0];
         var model = this.props.makeEntityModel(data);
-        this.setState({entityModel: model}, () => {
+        this.setState({
+          entityModel: model,
+          previousPageTitle: document.title
+        }, () => {
           this._changeActiveComponent('entity-details');
           this._getPlans();
         });
+        var modelEntity = model.toEntity();
+        document.title = `${modelEntity.displayName}
+        (${modelEntity.revision_id}) -
+        Juju GUI`;
       }
     },
 
@@ -210,6 +217,7 @@ YUI.add('entity-details', function() {
     },
 
     componentWillUnmount: function() {
+      document.title = this.state.previousPageTitle;
       if (this.detailsXhr) {
         this.detailsXhr.abort();
       }
