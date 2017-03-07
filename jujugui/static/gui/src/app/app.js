@@ -2803,6 +2803,7 @@ YUI.add('juju-gui', function(Y) {
         console.log('switching models is not supported in sandbox');
       }
       console.log('switching model connection');
+      this.env.set('available', false);
       if (username && password) {
         // We don't always get a new username and password when switching
         // environments; only set new credentials if we've actually gotten them.
@@ -2813,14 +2814,15 @@ YUI.add('juju-gui', function(Y) {
         });
       };
       const credentials = this.env.getCredentials();
-      if (callback) {
-        const onLogin = function(callback) {
+      const onLogin = function(callback) {
+        this.env.set('available', true);
+        if (callback) {
           callback(this.env);
-        };
-        // Delay the callback until after the env login as everything should be
-        // set up by then.
-        this.env.onceAfter('login', onLogin.bind(this, callback), this);
-      }
+        }
+      };
+      // Delay the callback until after the env login as everything should be
+      // set up by then.
+      this.env.onceAfter('login', onLogin.bind(this, callback), this);
       if (clearDB) {
         // Clear uncommitted state.
         this.env.get('ecs').clear();
