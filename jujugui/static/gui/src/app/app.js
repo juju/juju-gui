@@ -1168,6 +1168,12 @@ YUI.add('juju-gui', function(Y) {
         document.getElementById('top-page-container'));
       // The model name should not be visible when viewing the profile.
       this._renderBreadcrumb({ showEnvSwitcher: false });
+      // Model actions should not be visible when viewing the profile.
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('model-actions-container'));
+      // Provider logo should not be visible when viewing the profile.
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('provider-logo-container'));
     },
 
     /**
