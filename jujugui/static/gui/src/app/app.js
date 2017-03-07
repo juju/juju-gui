@@ -1220,7 +1220,6 @@ YUI.add('juju-gui', function(Y) {
       @param {Function} next - Run the next route handler, if any.
     */
     _renderAccount: function(state, next) {
-        console.log('_renderAccount');
       ReactDOM.render(
         <window.juju.components.Account
           acl={this.acl}
@@ -2123,7 +2122,7 @@ YUI.add('juju-gui', function(Y) {
           this._clearCharmbrowser.bind(this)],
         ['account',
           this._renderAccount.bind(this),
-          this._clearCharmbrowser.bind(this)],
+          this._clearAccount.bind(this)],
         ['special.deployTarget', this._deployTarget.bind(this)],
         ['gui', null, this._clearAllGUIComponents.bind(this)],
         ['gui.machines',
