@@ -46,7 +46,7 @@ describe('ModelActions', function() {
         hasEntities={true}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        modelConnected={sinon.stub().withArgs().returns(true)}
+        userIsAuthenticated={true}
         renderDragOverNotification={sinon.stub()}
         sharingVisibility={sinon.stub()}
       />, true);
@@ -115,7 +115,7 @@ describe('ModelActions', function() {
         hasEntities={false}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        modelConnected={sinon.stub().withArgs().returns(true)}
+        userIsAuthenticated={true}
         renderDragOverNotification={sinon.stub()}
         sharingVisibility={sinon.stub()}
       />, true);
@@ -135,7 +135,7 @@ describe('ModelActions', function() {
         hasEntities={true}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        modelConnected={sinon.stub().withArgs().returns(true)}
+        userIsAuthenticated={true}
         renderDragOverNotification={sinon.stub()}
         sharingVisibility={sinon.stub()}
       />, true);
@@ -156,7 +156,7 @@ describe('ModelActions', function() {
         hasEntities={false}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        modelConnected={sinon.stub().withArgs().returns(true)}
+        userIsAuthenticated={true}
         renderDragOverNotification={sinon.stub()}
         sharingVisibility={sinon.stub()}
       />);
@@ -180,7 +180,7 @@ describe('ModelActions', function() {
         hasEntities={false}
         importBundleFile={importBundleFile}
         hideDragOverNotification={hideDragOverNotification}
-        modelConnected={sinon.stub().withArgs().returns(true)}
+        userIsAuthenticated={true}
         currentChangeSet={currentChangeSet}
         sharingVisibility={sinon.stub()}
       />, true);
@@ -206,7 +206,7 @@ describe('ModelActions', function() {
         importBundleFile={importBundleFile}
         hasEntities={false}
         hideDragOverNotification={hideDragOverNotification}
-        modelConnected={sinon.stub().withArgs().returns(true)}
+        userIsAuthenticated={true}
         currentChangeSet={currentChangeSet}
         sharingVisibility={sinon.stub()}
       />, true);
@@ -232,7 +232,7 @@ describe('ModelActions', function() {
         hasEntities={true}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        modelConnected={sinon.stub().withArgs().returns(true)}
+        userIsAuthenticated={true}
         renderDragOverNotification={sinon.stub()}
         sharingVisibility={sinon.stub()}
       />, true);
@@ -300,7 +300,7 @@ describe('ModelActions', function() {
         hasEntities={true}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        modelConnected={sinon.stub().withArgs().returns(false)}
+        userIsAuthenticated={false}
         renderDragOverNotification={sinon.stub()}
         sharingVisibility={sinon.stub()}
       />, true);
@@ -357,7 +357,7 @@ describe('ModelActions', function() {
         hasEntities={true}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        modelConnected={sinon.stub().withArgs().returns(true)}
+        userIsAuthenticated={true}
         renderDragOverNotification={sinon.stub()}
         sharingVisibility={sharingVisibility} />, true);
     const output = renderer.getRenderOutput();

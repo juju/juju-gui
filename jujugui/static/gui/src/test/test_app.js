@@ -99,10 +99,12 @@ describe('App', function() {
     afterEach(function(done) {
       // Reset the flags.
       window.flags = {};
-      app.after('destroy', function() {
-        sessionStorage.setItem('credentials', null);
-        done();
-      });
+      if (app) {
+        app.after('destroy', function() {
+          sessionStorage.setItem('credentials', null);
+          done();
+        });
+      }
     });
 
     function constructAppInstance(config, context) {
@@ -1227,6 +1229,7 @@ describe('App', function() {
         ecs: fake_ecs,
         closeCalled: false,
         connect: function() {},
+        onceAfter: sinon.stub(),
         socketUrl: 'wss://example.com/ws',
         setUser: 'not-called',
         setPassword: 'not-called',

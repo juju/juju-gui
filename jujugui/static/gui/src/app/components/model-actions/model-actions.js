@@ -29,9 +29,9 @@ YUI.add('model-actions', function() {
       hasEntities: React.PropTypes.bool.isRequired,
       hideDragOverNotification: React.PropTypes.func.isRequired,
       importBundleFile: React.PropTypes.func.isRequired,
-      modelConnected: React.PropTypes.func.isRequired,
       renderDragOverNotification: React.PropTypes.func.isRequired,
-      sharingVisibility: React.PropTypes.func.isRequired
+      sharingVisibility: React.PropTypes.func.isRequired,
+      userIsAuthenticated: React.PropTypes.bool.isRequired
     },
 
     getDefaultProps: function() {
@@ -96,7 +96,7 @@ YUI.add('model-actions', function() {
 
     render: function() {
       let shareAction;
-      if (this.props.modelConnected()) {
+      if (this.props.userIsAuthenticated) {
         shareAction = (
           <span className="model-actions__share model-actions__button"
             onClick={this.props.sharingVisibility}
