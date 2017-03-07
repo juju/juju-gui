@@ -995,16 +995,16 @@ YUI.add('juju-gui', function(Y) {
       // XXX j.c.sackett 2017-01-30 Right now USSO link is using
       // loginToController, while loginToAPIs is used by the login form.
       // We want to use loginToAPIs everywhere since it handles more.
-      let legacy = !this.isLegacyJuju();
+      let legacy = this.isLegacyJuju();
       const loginToController = legacy ?
-        this.controllerAPI.loginWithMacaroon.bind(
-          this.controllerAPI, this.bakeryFactory.get('juju')) :
         this.env.loginWithMacaroon.bind(
-          this.env, this.bakeryFactory.get('juju'));
+          this.env, this.bakeryFactory.get('juju')) :
+        this.controllerAPI.loginWithMacaroon.bind(
+          this.controllerAPI, this.bakeryFactory.get('juju'));
       const webhandler = new Y.juju.environments.web.WebHandler();
       const controllerIsConnected = function() {
-        return legacy ? this.controllerAPI.get('connected') :
-          this.env.get('connected');
+        return legacy ? this.env.get('connected') :
+          this.controllerAPI.get('connected');
       };
       const getDischargeToken = function() {
         return window.localStorage.getItem('discharge-token');
