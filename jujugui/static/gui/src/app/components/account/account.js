@@ -24,8 +24,7 @@ YUI.add('account', function() {
 
     propTypes: {
       acl: React.PropTypes.object.isRequired,
-      user: React.PropTypes.object.isRequired,
-      users: React.PropTypes.object.isRequired
+      userInfo: React.PropTypes.object.isRequired
     },
 
     getInitialState: function() {
@@ -200,7 +199,6 @@ YUI.add('account', function() {
     },
 
     render: function() {
-      var username = this.props.user && this.props.user.usernameDisplay;
       var links = [{
         label: '(Primary account)',
         type: 'light'
@@ -215,10 +213,9 @@ YUI.add('account', function() {
           <div className="twelve-col">
             <div className="inner-wrapper">
               <juju.components.UserProfileHeader
-                users={this.props.users}
                 avatar=""
                 links={links}
-                username={username} />
+                userInfo={this.props.userInfo} />
               <h2 className="account__title twelve-col">
                 Account management
               </h2>

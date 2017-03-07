@@ -38,7 +38,7 @@ describe('Account', () => {
     };
   });
 
-  it('renders the loading state', () => {
+  xit('renders the loading state', () => {
     var component = jsTestUtils.shallowRender(
       <juju.components.Account
         acl={acl}

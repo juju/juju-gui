@@ -808,9 +808,13 @@ YUI.add('juju-gui', function(Y) {
           // routing.
           this.maskVisibility(false);
           const isLogin = current.root === 'login';
-          const newState = {
-            profile: current.profile,
-            root: isLogin ? null : current.root
+          const previousState = this.state.previous;
+          const previousRoot = previousState && previousState.root || null;
+          // If there was a previous root before the login then redirect to that
+          // otherwise go to the profile.
+          let newState = {
+            profile: previousRoot ? null : current.profile,
+            root: isLogin ? previousRoot : current.root
           };
           // If the current root is 'login' after logging into the controller,
           // and there is no root, no store and no profile defined then we
@@ -818,6 +822,7 @@ YUI.add('juju-gui', function(Y) {
           if (
             !current.store &&
             !newState.profile &&
+            newState.root !== 'account' &&
             (isLogin || !current.root) &&
             this.get('gisf')
           ) {
@@ -1119,18 +1124,6 @@ YUI.add('juju-gui', function(Y) {
           }
         });
       }
-      const userInfo = {
-        external: state.profile,
-        isCurrent: false,
-        profile: state.profile
-      };
-      if (userInfo.profile === this._getAuth().rootUserName) {
-        userInfo.isCurrent = true;
-        // This is the current user, and might be a local one. Use the
-        // authenticated charm store user as the external (USSO) name.
-        const users = this.get('users') || {};
-        userInfo.external = users.charmstore ? users.charmstore.user : null;
-      }
       const charmstore = this.get('charmstore');
       const utils = views.utils;
       const currentModel = this.get('modelUUID');
@@ -1163,11 +1156,32 @@ YUI.add('juju-gui', function(Y) {
           staticURL={window.juju_config.staticURL}
           storeUser={this.storeUser.bind(this)}
           switchModel={utils.switchModel.bind(this, this.env)}
-          userInfo={userInfo}
+          userInfo={this._getUserInfo(state)}
         />,
         document.getElementById('top-page-container'));
       // The model name should not be visible when viewing the profile.
       this._renderBreadcrumb({ showEnvSwitcher: false });
+    },
+
+    /**
+      Generate a user info object.
+      @param {Object} state - The application state.
+    */
+    _getUserInfo: function(state) {
+      const username = state.profile || this._getAuth().rootUserName;
+      const userInfo = {
+        external: username,
+        isCurrent: false,
+        profile: username
+      };
+      if (userInfo.profile === this._getAuth().rootUserName) {
+        userInfo.isCurrent = true;
+        // This is the current user, and might be a local one. Use the
+        // authenticated charm store user as the external (USSO) name.
+        const users = this.get('users') || {};
+        userInfo.external = users.charmstore ? users.charmstore.user : null;
+      }
+      return userInfo;
     },
 
     /**
@@ -1202,14 +1216,29 @@ YUI.add('juju-gui', function(Y) {
       Renders the account component.
 
       @method _renderAccount
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
     */
-    _renderAccount: function() {
+    _renderAccount: function(state, next) {
       ReactDOM.render(
         <window.juju.components.Account
           acl={this.acl}
           user={this._getAuth()}
+          userInfo={this._getUserInfo(state)}
           users={Y.clone(this.get('users'), true)} />,
         document.getElementById('top-page-container'));
+      next();
+    },
+
+    /**
+      The cleanup dispatcher for the account path.
+      @param {Object} state - The application state.
+      @param {Function} next - Run the next route handler, if any.
+    */
+    _clearAccount: function(state, next) {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('top-page-container'));
+      next();
     },
 
     /**
@@ -2091,6 +2120,9 @@ YUI.add('juju-gui', function(Y) {
         ['search',
           this._renderCharmbrowser.bind(this),
           this._clearCharmbrowser.bind(this)],
+        ['account',
+          this._renderAccount.bind(this),
+          this._clearAccount.bind(this)],
         ['special.deployTarget', this._deployTarget.bind(this)],
         ['gui', null, this._clearAllGUIComponents.bind(this)],
         ['gui.machines',
@@ -2132,6 +2164,9 @@ YUI.add('juju-gui', function(Y) {
           break;
         case 'store':
           this._renderCharmbrowser(state, next);
+          break;
+        case 'account':
+          this._renderAccount(state, next);
           break;
         case 'new':
           // When going to disconnected mode we need to be disconnected from
