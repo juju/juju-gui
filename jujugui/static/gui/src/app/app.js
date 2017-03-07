@@ -622,8 +622,7 @@ YUI.add('juju-gui', function(Y) {
       // When the connection resets, reset the db, re-login (a delta will
       // arrive with successful authentication), and redispatch.
       this.env.after('connectedChange', evt => {
-        // Need to re-render the provider logo so that it clears.
-        this._renderProviderLogo();
+        this._clearProviderLogo();
         if (!evt.newVal) {
           // The model is not connected, do nothing waiting for a reconnection.
           console.log('model disconnected');
@@ -1169,11 +1168,9 @@ YUI.add('juju-gui', function(Y) {
       // The model name should not be visible when viewing the profile.
       this._renderBreadcrumb({ showEnvSwitcher: false });
       // Model actions should not be visible when viewing the profile.
-      ReactDOM.unmountComponentAtNode(
-        document.getElementById('model-actions-container'));
+      this._clearModelActions();
       // Provider logo should not be visible when viewing the profile.
-      ReactDOM.unmountComponentAtNode(
-        document.getElementById('provider-logo-container'));
+      this._clearProviderLogo();
     },
 
     /**
@@ -1492,8 +1489,8 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Renders the import and export component to the page in the
-      designated element.
+      Renders the model action components to the page in the designated
+      element.
 
       @method _renderModelActions
     */
@@ -1522,24 +1519,31 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Unmounts the model action components.
+
+      @method _clearModelActions
+    */
+    _clearModelActions: function() {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('model-actions-container'));
+    },
+
+    /**
       Renders the logo for the current cloud provider.
 
       @method _renderProviderLogo
     */
     _renderProviderLogo: function() {
       const container = document.getElementById('provider-logo-container');
-      const clearLogo = () => {
-        ReactDOM.unmountComponentAtNode(container);
-      };
       const cloudProvider = this.env.get('providerType');
       if (!cloudProvider) {
-        clearLogo();
+        this._clearProviderLogo();
         return;
       }
       const providerDetails = views.utils.getCloudProviderDetails(
         cloudProvider);
       if (!providerDetails) {
-        clearLogo();
+        this._clearProviderLogo();
         return;
       }
       const scale = 0.65;
@@ -1549,6 +1553,16 @@ YUI.add('juju-gui', function(Y) {
           name={providerDetails.id}
           width={providerDetails.svgWidth * scale} />,
         container);
+    },
+
+    /**
+      Unmounts the logo for the current cloud provider.
+
+      @method _clearProviderLogo
+    */
+    _clearProviderLogo: function() {
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('provider-logo-container'));
     },
 
     /**
