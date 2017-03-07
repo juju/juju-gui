@@ -63,13 +63,17 @@ describe('UserProfileModelList', () => {
     const expected = (
       <div className="user-profile__model-list">
         <div className="user-profile__header twelve-col no-margin-bottom">
-          Models
-          <span className="user-profile__size">
-            ({0})
-          </span>
-          <juju.components.CreateModelButton
-            changeState={changeState}
-            switchModel={instance.props.switchModel} />
+          <div className="left">
+            Models
+            <span className="user-profile__size">
+              ({0})
+            </span>
+          </div>
+          <div className="right">
+            <juju.components.CreateModelButton
+              changeState={changeState}
+              switchModel={instance.props.switchModel} />
+          </div>
         </div>
         {undefined}
         {undefined}
@@ -98,11 +102,15 @@ describe('UserProfileModelList', () => {
     const expected = (
       <div className="user-profile__model-list">
         <div className="user-profile__header twelve-col no-margin-bottom">
-          Models shared with you
-          <span className="user-profile__size">
-            ({0})
-          </span>
-          {undefined}
+          <div className="left">
+            Models shared with you
+            <span className="user-profile__size">
+              ({0})
+            </span>
+          </div>
+          <div className="right">
+            {undefined}
+          </div>
         </div>
         {undefined}
         {undefined}
@@ -153,13 +161,17 @@ describe('UserProfileModelList', () => {
     const expected = (
       <div className="user-profile__model-list">
         <div className="user-profile__header twelve-col no-margin-bottom">
-          Models
-          <span className="user-profile__size">
-            ({1})
-          </span>
-          <juju.components.CreateModelButton
-            changeState={changeState}
-            switchModel={instance.props.switchModel} />
+          <div className="left">
+            Models
+            <span className="user-profile__size">
+              ({1})
+            </span>
+          </div>
+          <div className="right">
+            <juju.components.CreateModelButton
+              changeState={changeState}
+              switchModel={instance.props.switchModel} />
+          </div>
         </div>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
@@ -256,11 +268,15 @@ describe('UserProfileModelList', () => {
     const expected = (
       <div className="user-profile__model-list">
         <div className="user-profile__header twelve-col no-margin-bottom">
-          Models shared with you
-          <span className="user-profile__size">
-            ({1})
-          </span>
-          {undefined}
+          <div className="left">
+            Models shared with you
+            <span className="user-profile__size">
+              ({1})
+            </span>
+          </div>
+          <div className="right">
+            {undefined}
+          </div>
         </div>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
