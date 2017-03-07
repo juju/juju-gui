@@ -421,9 +421,6 @@ YUI.add('juju-gui', function(Y) {
       this._setupCharmstore(window.jujulib.charmstore);
       // Create and set up a new instance of the bundleservice.
       this._setupBundleservice(window.jujulib.bundleservice);
-      // Create Romulus API client instances.
-      this._setupRomulusServices(
-        window.juju_config, window.jujulib, window.localStorage);
       // Set up juju bakery service.
       let dischargeToken;
       if (window.juju_config) {
@@ -491,6 +488,9 @@ YUI.add('juju-gui', function(Y) {
         document.body.classList.add('u-is-beta');
       }
       this._init(cfg, modelAPI, controllerAPI);
+      // Create Romulus API client instances.
+      this._setupRomulusServices(
+        window.juju_config, window.jujulib, window.localStorage);
     },
 
     /**
@@ -2372,26 +2372,40 @@ YUI.add('juju-gui', function(Y) {
       }
       var interactive = this.get('interactiveLogin');
       var webHandler = new Y.juju.environments.web.WebHandler();
-      var bakery = this.bakeryFactory.create({
+      const macaroons = this.controllerAPI.getCredentials().macaroons;
+      const plansBakery = this.bakeryFactory.create({
         serviceName: 'plans',
-        macaroon: config.plansMacaroons,
+        macaroon: macaroons,
         webhandler: webHandler,
         interactive: interactive,
         cookieStore: storage,
         dischargeStore: window.localStorage,
         dischargeToken: config.dischargeToken
       });
-      this.plans = new window.jujulib.plans(config.plansURL, bakery);
-      var bakery = this.bakeryFactory.create({
+      this.plans = new window.jujulib.plans(config.plansURL, plansBakery);
+      const termsBakery = this.bakeryFactory.create({
         serviceName: 'terms',
-        macaroon: config.termsMacaroons,
+        macaroon: macaroons,
         webhandler: webHandler,
         interactive: interactive,
         cookieStore: storage,
         dischargeStore: window.localStorage,
         dischargeToken: config.dischargeToken
       });
-      this.terms = new window.jujulib.terms(config.termsURL, bakery);
+      this.terms = new window.jujulib.terms(config.termsURL, termsBakery);
+      if (window.flags && window.flags.pay) {
+        const registerUserBakery = this.bakeryFactory.create({
+          serviceName: 'payment',
+          macaroon: macaroons,
+          webhandler: webHandler,
+          interactive: interactive,
+          cookieStore: storage,
+          dischargeStore: window.localStorage,
+          dischargeToken: config.dischargeToken
+        });
+        this.registerUser = new window.jujulib.registerUser(
+          config.registerUserURL, registerUserBakery);
+      }
     },
 
     /**

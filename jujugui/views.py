@@ -77,7 +77,7 @@ def config(request):
     charmstore_macaroons = settings.get('jujugui.charmstore_macaroons')
     discharge_token = settings.get('jujugui.discharge_token')
     plans_macaroons = settings.get('jujugui.plans_macaroons')
-    terms_macaroons = settings.get('jujugui.terms_macaroons')
+    register_user_macaroons = settings.get('jujugui.register_user_macaroons')
 
     if sandbox_enabled:
         user = user if user is not None else 'admin'
@@ -106,6 +106,7 @@ def config(request):
         'bundleServiceURL': settings['jujugui.bundleservice_url'],
         'charmstoreURL': settings['jujugui.charmstore_url'],
         'plansURL': settings['jujugui.plans_url'],
+        'registerUserURL': settings['jujugui.register_user_url'],
         'termsURL': settings['jujugui.terms_url'],
         # Any provided macaroons.
         'dischargeToken': discharge_token,
