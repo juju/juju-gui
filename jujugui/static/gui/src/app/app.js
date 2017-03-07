@@ -995,15 +995,16 @@ YUI.add('juju-gui', function(Y) {
       // XXX j.c.sackett 2017-01-30 Right now USSO link is using
       // loginToController, while loginToAPIs is used by the login form.
       // We want to use loginToAPIs everywhere since it handles more.
-      let controllerAPI = this.env;
-      if (this.controllerAPI) {
-        controllerAPI = this.controllerAPI;
-      }
-      const loginToController = controllerAPI.loginWithMacaroon.bind(
-        controllerAPI, this.bakeryFactory.get('juju'));
+      let legacy = !this.isLegacyJuju();
+      const loginToController = legacy ?
+        this.controllerAPI.loginWithMacaroon.bind(
+          this.controllerAPI, this.bakeryFactory.get('juju')) :
+        this.env.loginWithMacaroon.bind(
+          this.env, this.bakeryFactory.get('juju'));
       const webhandler = new Y.juju.environments.web.WebHandler();
       const controllerIsConnected = function() {
-        return controllerAPI.get('connected');
+        return legacy ? this.controllerAPI.get('connected') :
+          this.env.get('connected');
       };
       const getDischargeToken = function() {
         return window.localStorage.getItem('discharge-token');
@@ -1017,7 +1018,7 @@ YUI.add('juju-gui', function(Y) {
           getDischargeToken={getDischargeToken}
           gisf={this.get('gisf')}
           hideSpinner={this.hideConnectingMask.bind(this)}
-          isLegacyJuju={this.isLegacyJuju()}
+          isLegacyJuju={legacy}
           loginToAPIs={this.loginToAPIs.bind(this)}
           loginToController={loginToController}
           sendPost={webhandler.sendPostRequest.bind(webhandler)}
@@ -1334,14 +1335,8 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       const changesUtils = this.changesUtils;
-      // Juju 1 does not have a controller API, but many of the controller
-      // methods are implemented on the env.
-      let controllerAPI = this.controllerAPI;
-      let legacy = false;
-      if (!controllerAPI) {
-        controllerAPI = this.env;
-        legacy = true;
-      }
+      const controllerAPI = this.controllerAPI;
+      const legacy = this.isLegacyJuju();
       const services = db.services;
       // Auto place the units. This is probably not the best UX, but is required
       // to display the machines in the deployment flow.
@@ -1357,8 +1352,11 @@ YUI.add('juju-gui', function(Y) {
         const credentials = !legacy && controllerAPI.getCredentials();
         return credentials ? credentials.user : undefined;
       };
-      const loginToController = controllerAPI.loginWithMacaroon.bind(
-        controllerAPI, this.bakeryFactory.get('juju'));
+      const loginToController = !legacy ?
+        controllerAPI.loginWithMacaroon.bind(
+          controllerAPI, this.bakeryFactory.get('juju')) :
+        this.env.loginWithMacaroon.bind(
+          this.env, this.bakeryFactory.get('juju'));
       const getDischargeToken = function() {
         return window.localStorage.getItem('discharge-token');
       };
@@ -1398,7 +1396,7 @@ YUI.add('juju-gui', function(Y) {
           getUserName={getUserName}
           gisf={this.get('gisf')}
           groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
-          isLegacyJuju={this.isLegacyJuju()}
+          isLegacyJuju={legacy}
           listBudgets={this.plans.listBudgets.bind(this.plans)}
           listClouds={
             !legacy && controllerAPI.listClouds.bind(controllerAPI)}
