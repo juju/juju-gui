@@ -488,9 +488,6 @@ YUI.add('juju-gui', function(Y) {
         document.body.classList.add('u-is-beta');
       }
       this._init(cfg, modelAPI, controllerAPI);
-      // Create Romulus API client instances.
-      this._setupRomulusServices(
-        window.juju_config, window.jujulib, window.localStorage);
     },
 
     /**
@@ -544,6 +541,9 @@ YUI.add('juju-gui', function(Y) {
           controllerAPI, user, password, macaroons, entityPromise);
         getBundleChanges = this.controllerAPI.getBundleChanges.bind(
           this.controllerAPI);
+        // Create Romulus API client instances.
+        this._setupRomulusServices(
+          window.juju_config, window.jujulib, window.localStorage);
       } else {
         // In legacy Juju, we only connect to the model, and therefore bundle
         // changes are retrieved from that single WebSocket connection.
@@ -2393,7 +2393,7 @@ YUI.add('juju-gui', function(Y) {
         dischargeToken: config.dischargeToken
       });
       this.terms = new window.jujulib.terms(config.termsURL, termsBakery);
-      if (window.flags && window.flags.pay) {
+      if (config.payFlag) {
         const registerUserBakery = this.bakeryFactory.create({
           serviceName: 'payment',
           macaroon: macaroons,

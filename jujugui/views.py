@@ -137,6 +137,7 @@ def config(request):
         'staticURL': settings['jujugui.static_url'],
         'gisfLogout': gisfLogout,
         'shareFlag': False,
+        'payFlag': True,
     }
     return 'var juju_config = {};'.format(json.dumps(options))
 
