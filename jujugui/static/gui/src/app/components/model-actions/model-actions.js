@@ -29,9 +29,9 @@ YUI.add('model-actions', function() {
       hasEntities: React.PropTypes.bool.isRequired,
       hideDragOverNotification: React.PropTypes.func.isRequired,
       importBundleFile: React.PropTypes.func.isRequired,
-      userIsAuthenticated: React.PropTypes.bool.isRequired,
       renderDragOverNotification: React.PropTypes.func.isRequired,
-      sharingVisibility: React.PropTypes.func.isRequired
+      sharingVisibility: React.PropTypes.func.isRequired,
+      userIsAuthenticated: React.PropTypes.bool.isRequired
     },
 
     getDefaultProps: function() {
