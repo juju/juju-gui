@@ -79,6 +79,7 @@ describe('EntityHeader', function() {
                 <li className="entity-header__by">
                   By{' '}
                   <a href="https://launchpad.net/~test-owner"
+                    className="link"
                     target="_blank">test-owner</a>
                 </li>
                 <li>
