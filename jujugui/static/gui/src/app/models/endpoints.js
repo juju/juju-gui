@@ -70,8 +70,6 @@ YUI.add('juju-endpoints', function(Y) {
         db = controller.get('db'),
         endpointsMap = controller.endpointsMap;
     const appIsSubordinate = application.get('subordinate');
-    const appSeries = models._getSeries(db, application);
-
     // Bail out if the map doesn't yet exist for this service.  The charm may
     // not be loaded yet.
     if (!endpointsMap[appId]) {
@@ -141,23 +139,11 @@ YUI.add('juju-endpoints', function(Y) {
       const targetId = target.get('id'),
           targetProvides = endpointsMap[targetId].provides.concat();
       const targetIsSubordinate = target.get('subordinate');
-      const targetSeries = models._getSeries(db, target);
-
       // Ignore ourselves, peer relations are automatically
-      // established when a service is dendpointloyed. The gui only needs to
+      // established when a service is deployed. The GUI only needs to
       // concern itself with client/server relations.
       if (targetId === appId) {
         return;
-      }
-      // If the provided service is a subordinate it should only match targets
-      // with the same series. Or, if the target is a subordinate it needs to
-      // have a matching series to the provided app.
-      if (targetIsSubordinate || appIsSubordinate) {
-        // If there is no match beween the app and target series then exit out
-        // so this target does not get included in the list.
-        if (!appSeries.some(series => targetSeries.indexOf(series) > -1)) {
-          return;
-        }
       }
       // Process each of the service's required endpoints. It is only
       // considered a valid target if it is not satisfied by an existing
