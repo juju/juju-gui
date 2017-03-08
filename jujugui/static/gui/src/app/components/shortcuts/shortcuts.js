@@ -53,51 +53,9 @@ YUI.add('shortcuts', function() {
               size="16" />
           </span>
         </div>
-        <div className="six-col">
-          <h3 className="bordered">Actions</h3>
+        <div className="twelve-col">
           <div className="content">
             {_generateBindings(props.bindings)}
-          </div>
-        </div>
-        <div className="six-col last-col">
-          <h3 className="bordered">Custom GUI Settings</h3>
-          <div className="content">
-            <div className="two-col">
-                <input type="checkbox" name="disable-cookie" id="disable-cookie"
-                  defaultChecked={props.disableCookie} />
-            </div>
-            <div className="three-col last-col">
-              <label htmlFor="disable-cookie">
-                Disable the EU cookie warning.
-              </label>
-            </div>
-            <div className="two-col">
-              <input type="checkbox" name="force-containers"
-                id="force-containers"
-                defaultChecked={props.forceContainers} />
-            </div>
-            <div className="three-col last-col">
-              <label htmlFor="force-containers">
-                Enable container control for this provider.
-              </label>
-            </div>
-            <div className="two-col">
-              <input type="checkbox" name="disable-auto-place"
-                id="disable-auto-place"
-                defaultChecked={props.disableAutoPlace} />
-            </div>
-            <div className="three-col last-col">
-              <label htmlFor="auto-place-default">
-                Default to not automatically place units on commit.
-              </label>
-            </div>
-            <div className="two-col">
-              <input type="button" className="button" name="save-settings"
-                id="save-settings" value="Save"/>
-            </div>
-            <div className="three-col last-col">
-              NOTE: saving will reload the GUI so the settings take effect.
-            </div>
           </div>
         </div>
       </div>
