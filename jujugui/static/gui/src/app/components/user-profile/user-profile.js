@@ -35,6 +35,7 @@ YUI.add('user-profile', function() {
       listBudgets: React.PropTypes.func.isRequired,
       listModelsWithInfo: React.PropTypes.func.isRequired,
       pluralize: React.PropTypes.func.isRequired,
+      setPageTitle: React.PropTypes.func.isRequired,
       staticURL: React.PropTypes.string,
       storeUser: React.PropTypes.func.isRequired,
       switchModel: React.PropTypes.func.isRequired,
@@ -47,6 +48,14 @@ YUI.add('user-profile', function() {
       //   authenticated user;
       // - profile: the user name for whom profile details must be displayed.
       userInfo: React.PropTypes.object.isRequired
+    },
+
+    componentDidMount: function() {
+      this.props.setPageTitle(this.props.userInfo.profile);
+    },
+
+    componentWillUnmount: function () {
+      this.props.setPageTitle();
     },
 
     /**
