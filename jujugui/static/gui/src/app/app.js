@@ -421,9 +421,6 @@ YUI.add('juju-gui', function(Y) {
       this._setupCharmstore(window.jujulib.charmstore);
       // Create and set up a new instance of the bundleservice.
       this._setupBundleservice(window.jujulib.bundleservice);
-      // Create Romulus API client instances.
-      this._setupRomulusServices(
-        window.juju_config, window.jujulib, window.localStorage);
       // Set up juju bakery service.
       let dischargeToken;
       if (window.juju_config) {
@@ -544,6 +541,9 @@ YUI.add('juju-gui', function(Y) {
           controllerAPI, user, password, macaroons, entityPromise);
         getBundleChanges = this.controllerAPI.getBundleChanges.bind(
           this.controllerAPI);
+        // Create Romulus API client instances.
+        this._setupRomulusServices(
+          window.juju_config, window.jujulib, window.localStorage);
       } else {
         // In legacy Juju, we only connect to the model, and therefore bundle
         // changes are retrieved from that single WebSocket connection.
@@ -1010,7 +1010,7 @@ YUI.add('juju-gui', function(Y) {
         return legacy ? this.env.get('connected') :
           this.controllerAPI.get('connected');
       };
-      const getDischargeToken = function() {
+      const getDischargeToken = () => {
         return window.localStorage.getItem('discharge-token');
       };
       const charmstore = this.get('charmstore');
@@ -2371,26 +2371,40 @@ YUI.add('juju-gui', function(Y) {
       }
       var interactive = this.get('interactiveLogin');
       var webHandler = new Y.juju.environments.web.WebHandler();
-      var bakery = this.bakeryFactory.create({
+      const macaroons = this.controllerAPI.getCredentials().macaroons;
+      const plansBakery = this.bakeryFactory.create({
         serviceName: 'plans',
-        macaroon: config.plansMacaroons,
+        macaroon: macaroons,
         webhandler: webHandler,
         interactive: interactive,
         cookieStore: storage,
         dischargeStore: window.localStorage,
         dischargeToken: config.dischargeToken
       });
-      this.plans = new window.jujulib.plans(config.plansURL, bakery);
-      var bakery = this.bakeryFactory.create({
+      this.plans = new window.jujulib.plans(config.plansURL, plansBakery);
+      const termsBakery = this.bakeryFactory.create({
         serviceName: 'terms',
-        macaroon: config.termsMacaroons,
+        macaroon: macaroons,
         webhandler: webHandler,
         interactive: interactive,
         cookieStore: storage,
         dischargeStore: window.localStorage,
         dischargeToken: config.dischargeToken
       });
-      this.terms = new window.jujulib.terms(config.termsURL, bakery);
+      this.terms = new window.jujulib.terms(config.termsURL, termsBakery);
+      if (config.payFlag) {
+        const paymentBakery = this.bakeryFactory.create({
+          serviceName: 'payment',
+          macaroon: macaroons,
+          webhandler: webHandler,
+          interactive: interactive,
+          cookieStore: storage,
+          dischargeStore: window.localStorage,
+          dischargeToken: config.dischargeToken
+        });
+        this.payment = new window.jujulib.payment(
+          config.paymentURL, paymentBakery);
+      }
     },
 
     /**

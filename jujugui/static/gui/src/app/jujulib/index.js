@@ -19,6 +19,7 @@ var module = module;
   - the Juju identity manager (IdM);
   - the Romulus plans service;
   - the Romulus terms service.
+  - the payment service.
 */
 (function (exports) {
 
