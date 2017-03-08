@@ -1383,8 +1383,6 @@ YUI.add('juju-view-utils', function(Y) {
     // Remove the switch model confirmation popup if it has been displayed to
     // the user.
     utils._hidePopup();
-    // Show the model connection mask.
-    this.showConnectingMask();
     // Reset the state of the GUI ready for displaying the new model.
     const newState = {profile: null, gui: null, root: null};
     let name = '';

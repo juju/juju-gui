@@ -79,7 +79,8 @@ YUI.add('app-renderer-extension', function(Y) {
           showProfile={utils.showProfile.bind(
             this, env && env.get('ecs'),
             this.state.changeState.bind(this.state))}
-          switchModel={utils.switchModel.bind(this, env)} />,
+          switchModel={utils.switchModel.bind(this, env)}
+          loadingModel={this.env.loading} />,
         document.getElementById('header-breadcrumb'));
     },
   };

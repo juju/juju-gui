@@ -23,6 +23,7 @@ YUI.add('model-actions', function() {
   juju.components.ModelActions = React.createClass({
     propTypes: {
       acl: React.PropTypes.object.isRequired,
+      appState: React.PropTypes.object.isRequired,
       changeState: React.PropTypes.func.isRequired,
       currentChangeSet: React.PropTypes.object.isRequired,
       exportEnvironmentFile: React.PropTypes.func.isRequired,
@@ -31,14 +32,17 @@ YUI.add('model-actions', function() {
       importBundleFile: React.PropTypes.func.isRequired,
       renderDragOverNotification: React.PropTypes.func.isRequired,
       sharingVisibility: React.PropTypes.func.isRequired,
-      userIsAuthenticated: React.PropTypes.bool.isRequired
+      loadingModel: React.PropTypes.bool,
+      userIsAuthenticated: React.PropTypes.bool
     },
 
     getDefaultProps: function() {
       return {
         sharingVisibility: () => {
           console.log('No sharingVisibility function was provided.');
-        }
+        },
+        loadingModel: false,
+        userIsAuthenticated: false
       };
     },
 
@@ -85,35 +89,26 @@ YUI.add('model-actions', function() {
       @returns {String} The collection of class names.
     */
     _generateClasses: function() {
+      const props = this.props;
       return classNames(
         'model-actions',
         {
-          'model-actions--initial': !this.props.hasEntities &&
-            Object.keys(this.props.currentChangeSet).length === 0
+          'model-actions--loading-model': props.appState.current.profile ||
+            props.loadingModel
         }
       );
     },
 
     render: function() {
-      let shareAction;
-      if (this.props.userIsAuthenticated) {
-        shareAction = (
-          <span className="model-actions__share model-actions__button"
-            onClick={this.props.sharingVisibility}
-            role="button"
-            tabIndex="0">
-            <juju.components.SvgIcon name="share_16"
-              className="model-actions__icon"
-              size="16" />
-            <span className="tooltip__tooltip--below">
-              <span className="tooltip__inner tooltip__inner--up">
-                Share
-              </span>
-            </span>
-          </span>
-        );
-      }
-      var isReadOnly = this.props.acl.isReadOnly();
+      const props = this.props;
+      const shareClasses = classNames(
+        'model-actions__share',
+        'model-actions__button',
+        {
+          'model-actions__share--disabled': !props.userIsAuthenticated
+        }
+      );
+      const isReadOnly = props.acl.isReadOnly();
       return (
         <div className={this._generateClasses()}>
           <div className="model-actions__buttons">
@@ -143,7 +138,19 @@ YUI.add('model-actions', function() {
                 </span>
               </span>
             </span>
-            {shareAction}
+            <span className={shareClasses}
+              onClick={props.sharingVisibility}
+              role="button"
+              tabIndex="0">
+              <juju.components.SvgIcon name="share_16"
+                className="model-actions__icon"
+                size="16" />
+              <span className="tooltip__tooltip--below">
+                <span className="tooltip__inner tooltip__inner--up">
+                  Share
+                </span>
+              </span>
+            </span>
           </div>
           <input className="model-actions__file"
             type="file"

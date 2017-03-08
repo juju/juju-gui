@@ -650,7 +650,7 @@ YUI.add('juju-gui', function(Y) {
       // When the connection resets, reset the db, re-login (a delta will
       // arrive with successful authentication), and redispatch.
       this.env.after('connectedChange', evt => {
-        this._clearProviderLogo();
+        this._renderProviderLogo();
         if (!evt.newVal) {
           // The model is not connected, do nothing waiting for a reconnection.
           console.log('model disconnected');
@@ -1194,11 +1194,11 @@ YUI.add('juju-gui', function(Y) {
         />,
         document.getElementById('top-page-container'));
       // The model name should not be visible when viewing the profile.
-      this._renderBreadcrumb({ showEnvSwitcher: false });
+      //this._renderBreadcrumb({ showEnvSwitcher: false });
       // Model actions should not be visible when viewing the profile.
-      this._clearModelActions();
+      //this._clearModelActions();
       // Provider logo should not be visible when viewing the profile.
-      this._clearProviderLogo();
+      //this._clearProviderLogo();
     },
 
     /**
@@ -1583,6 +1583,7 @@ YUI.add('juju-gui', function(Y) {
       ReactDOM.render(
         <window.juju.components.ModelActions
           acl={this.acl}
+          appState={this.state}
           changeState={this.state.changeState.bind(this.state)}
           currentChangeSet={env.get('ecs').getCurrentChangeSet()}
           exportEnvironmentFile={
@@ -1593,10 +1594,11 @@ YUI.add('juju-gui', function(Y) {
           hideDragOverNotification={this._hideDragOverNotification.bind(this)}
           importBundleFile={this.bundleImporter.importBundleFile.bind(
             this.bundleImporter)}
-          userIsAuthenticated={env.userIsAuthenticated}
           renderDragOverNotification={
             this._renderDragOverNotification.bind(this)}
-          sharingVisibility={this._sharingVisibility.bind(this)}/>,
+          sharingVisibility={this._sharingVisibility.bind(this)}
+          loadingModel={env.loading}
+          userIsAuthenticated={env.userIsAuthenticated} />,
         document.getElementById('model-actions-container'));
     },
 
@@ -1618,22 +1620,25 @@ YUI.add('juju-gui', function(Y) {
     _renderProviderLogo: function() {
       const container = document.getElementById('provider-logo-container');
       const cloudProvider = this.env.get('providerType');
-      if (!cloudProvider) {
-        this._clearProviderLogo();
-        return;
-      }
-      const providerDetails = views.utils.getCloudProviderDetails(
-        cloudProvider);
-      if (!providerDetails) {
-        this._clearProviderLogo();
-        return;
-      }
+      const providerDetails = cloudProvider ?
+        views.utils.getCloudProviderDetails(cloudProvider) :
+        {};
+      const isProfile = this.state.current.profile;
+      const isDisabled = !cloudProvider || !providerDetails || isProfile;
+      const classes = classNames(
+        'provider-logo',
+        {
+          'provider-logo--disabled': isDisabled
+        }
+      );
       const scale = 0.65;
       ReactDOM.render(
-        <window.juju.components.SvgIcon
-          height={providerDetails.svgHeight * scale}
-          name={providerDetails.id}
-          width={providerDetails.svgWidth * scale} />,
+        <div className={classes}>
+          <window.juju.components.SvgIcon
+            height={providerDetails.svgHeight * scale}
+            name={providerDetails.id}
+            width={providerDetails.svgWidth * scale} />
+        </div>,
         container);
     },
 
@@ -2927,6 +2932,7 @@ YUI.add('juju-gui', function(Y) {
         console.log('switching models is not supported in sandbox');
       }
       console.log('switching model connection');
+      this.env.loading = true;
       if (username && password) {
         // We don't always get a new username and password when switching
         // environments; only set new credentials if we've actually gotten them.
@@ -2937,14 +2943,15 @@ YUI.add('juju-gui', function(Y) {
         });
       };
       const credentials = this.env.getCredentials();
-      if (callback) {
-        const onLogin = function(callback) {
+      const onLogin = function(callback) {
+        this.env.loading = false;
+        if (callback) {
           callback(this.env);
-        };
-        // Delay the callback until after the env login as everything should be
-        // set up by then.
-        this.env.onceAfter('login', onLogin.bind(this, callback), this);
-      }
+        }
+      };
+      // Delay the callback until after the env login as everything should be
+      // set up by then.
+      this.env.onceAfter('login', onLogin.bind(this, callback), this);
       if (clearDB) {
         // Clear uncommitted state.
         this.env.get('ecs').clear();
@@ -2985,6 +2992,10 @@ YUI.add('juju-gui', function(Y) {
       // environment object. Is this some kind of race?
       if (instance) {
         instance.topo.modules.ServiceModule.centerOnLoad = true;
+      }
+      // If we're not reconnecting, then mark the switch as done.
+      if (this.state.current.root === 'new') {
+        this.env.loading = false;
       }
     },
 
