@@ -6,16 +6,99 @@ chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
 describe('jujulib register user service', function() {
-  let cleanups = [];
+  let parsedUser, returnedUser;
 
   const makeXHRRequest = function(obj) {
     return {target: {responseText: JSON.stringify(obj)}};
   };
 
-  afterEach(function() {
-    cleanups.forEach(cleanup => {
-      cleanup();
-    });
+  beforeEach(function() {
+    returnedUser = {
+      nickname: 'spinach',
+      first: 'Geoffrey',
+      last: 'Spinach',
+      email: 'spinach@example.com',
+      business: true,
+      addresses: [{
+        city: 'New Orleans',
+        'post-code': '70130'
+      }],
+      vat: '1234',
+      'business-name': 'Spinachy business',
+      'billing-addresses': [{
+        city: 'New Orleans',
+        'post-code': '70130'
+      }],
+      'payment-methods': [{
+        address: {
+          name: null,
+          line1: null,
+          line2: null,
+          name: null,
+          city: 'New Orleans',
+          'post-code': null,
+          country: null,
+          phones: []
+        },
+        brand: 'Brand',
+        last4: '1234',
+        month: 3,
+        name: 'Main',
+        valid: true,
+        year: 2017
+      }],
+      'allow-email': true,
+      valid: true
+    };
+    parsedUser = {
+      nickname: 'spinach',
+      first: 'Geoffrey',
+      last: 'Spinach',
+      email: 'spinach@example.com',
+      business: true,
+      addresses: [{
+        name: null,
+        line1: null,
+        line2: null,
+        name: null,
+        city: 'New Orleans',
+        postCode: '70130',
+        country: null,
+        phones: []
+      }],
+      vat: '1234',
+      businessName: 'Spinachy business',
+      billingAddresses: [{
+        name: null,
+        line1: null,
+        line2: null,
+        name: null,
+        city: 'New Orleans',
+        postCode: '70130',
+        country: null,
+        phones: []
+      }],
+      paymentMethods: [{
+        address: {
+          name: null,
+          line1: null,
+          line2: null,
+          name: null,
+          city: 'New Orleans',
+          postCode: null,
+          country: null,
+          phones: []
+        },
+        brand: 'Brand',
+        last4: '1234',
+        month: 3,
+        name: 'Main',
+        valid: true,
+        year: 2017
+      }],
+      allowEmail: true,
+      valid: true
+    };
   });
 
   it('exists', function() {
@@ -37,19 +120,36 @@ describe('jujulib register user service', function() {
           'http://1.2.3.4/' +
           window.jujulib.registerUserAPIVersion +
           '/u/spinach');
+        const xhr = makeXHRRequest(returnedUser);
+        success(xhr);
+      }
+    };
+    const registerUser = new window.jujulib.registerUser(
+      'http://1.2.3.4/', bakery);
+    registerUser.getUser('spinach', function(error, user) {
+      assert.strictEqual(error, null);
+      assert.deepEqual(user, parsedUser);
+      done();
+    });
+  });
+
+  it('can handle missing fields when getting a user', function(done) {
+    const bakery = {
+      sendGetRequest: function(path, success, failure) {
+        assert.equal(
+          path,
+          'http://1.2.3.4/' +
+          window.jujulib.registerUserAPIVersion +
+          '/u/spinach');
         const xhr = makeXHRRequest({
-          nickname: 'spinach',
-          first: 'Geoffrey',
-          last: 'Spinach',
-          email: 'spinach@example.com',
-          business: true,
-          addresses: [{street: 'address'}],
-          vat: '1234',
-          'business-name': 'Spinachy business',
-          'billing-addresses': [{street: 'billing address'}],
-          'payment-methods': [{payment: 'method'}],
-          'allow-email': true,
-          valid: true
+          'billing-addresses': [{
+            city: 'New Orleans',
+          }],
+          'payment-methods': [{
+            address: {
+              city: 'New Orleans'
+            }
+          }]
         });
         success(xhr);
       }
@@ -59,18 +159,44 @@ describe('jujulib register user service', function() {
     registerUser.getUser('spinach', function(error, user) {
       assert.strictEqual(error, null);
       assert.deepEqual(user, {
-        nickname: 'spinach',
-        first: 'Geoffrey',
-        last: 'Spinach',
-        email: 'spinach@example.com',
-        business: true,
-        addresses: [{street: 'address'}],
-        vat: '1234',
-        businessName: 'Spinachy business',
-        billingAddresses: [{street: 'billing address'}],
-        paymentMethods: [{payment: 'method'}],
-        allowEmail: true,
-        valid: true
+        nickname: null,
+        first: null,
+        last: null,
+        email: null,
+        business: false,
+        addresses: [],
+        vat: null,
+        businessName: null,
+        billingAddresses: [{
+          name: null,
+          line1: null,
+          line2: null,
+          name: null,
+          city: 'New Orleans',
+          postCode: null,
+          country: null,
+          phones: []
+        }],
+        paymentMethods: [{
+          address: {
+            name: null,
+            line1: null,
+            line2: null,
+            name: null,
+            city: 'New Orleans',
+            postCode: null,
+            country: null,
+            phones: []
+          },
+          brand: null,
+          last4: null,
+          month: null,
+          name: null,
+          valid: false,
+          year: null
+        }],
+        allowEmail: false,
+        valid: false
       });
       done();
     });
@@ -92,7 +218,68 @@ describe('jujulib register user service', function() {
     });
   });
 
-  it('can create a user', function(done) {
+  it('can create a user', function() {
+    const originalMakeRequest = jujulib._makeRequest;
+    const makeRequest = sinon.stub();
+    jujulib._makeRequest = makeRequest;
+    const registerUser = new window.jujulib.registerUser('http://1.2.3.4/', {});
+    const newUser = {
+      first: 'Geoffrey',
+      last: 'Spinach',
+      email: 'spinach@example.com',
+      addresses: [{
+        city: 'New Orleans',
+        postCode: '70130'
+      }],
+      vat: '1234',
+      business: true,
+      businessName: 'Spinachy business',
+      billingAddresses: [{
+        city: 'New Orleans',
+        postCode: '70130'
+      }],
+      allowEmail: true,
+      token: '54321',
+      paymentMethodName: 'Platinum'
+    };
+    registerUser.createUser('spinach', newUser, sinon.stub());
+    // Restore the original method on the lib.
+    jujulib._makeRequest = originalMakeRequest;
+    assert.equal(makeRequest.callCount, 1);
+    assert.deepEqual(makeRequest.args[0][3], {
+      user: {
+        first: 'Geoffrey',
+        last: 'Spinach',
+        email: 'spinach@example.com',
+        addresses: [{
+          name: null,
+          line1: null,
+          line2: null,
+          city: 'New Orleans',
+          'post-code': '70130',
+          country: null,
+          phones: []
+        }],
+        vat: '1234',
+        business: true,
+        'business-name': 'Spinachy business',
+        'billing-addresses': [{
+          name: null,
+          line1: null,
+          line2: null,
+          city: 'New Orleans',
+          'post-code': '70130',
+          country: null,
+          phones: []
+        }],
+        'allow-email': true,
+        token: '54321',
+        'payment-method-name': 'Platinum'
+      }
+    });
+  });
+
+  it('can return the user when after creating a user', function() {
     const bakery = {
       sendPostRequest: function(path, params, success, failure) {
         assert.equal(
@@ -100,41 +287,34 @@ describe('jujulib register user service', function() {
           'http://1.2.3.4/' +
           window.jujulib.registerUserAPIVersion +
           '/u/spinach');
-        const xhr = makeXHRRequest({
-          first: 'Geoffrey',
-          last: 'Spinach',
-          email: 'spinach@example.com',
-          addresses: [{street: 'address'}],
-          vat: '1234',
-          business: true,
-          'business-name': 'Spinachy business',
-          'billing-addresses': [{street: 'billing address'}],
-          'allow-email': true,
-          token: '54321',
-          'payment-method-name': 'Platinum'
-        });
+        const xhr = makeXHRRequest(returnedUser);
         success(xhr);
       }
     };
     const registerUser = new window.jujulib.registerUser(
       'http://1.2.3.4/', bakery);
-    const userData = {
+    const newUser = {
       first: 'Geoffrey',
       last: 'Spinach',
       email: 'spinach@example.com',
-      addresses: [{street: 'address'}],
+      addresses: [{
+        city: 'New Orleans',
+        postCode: '70130'
+      }],
       vat: '1234',
       business: true,
       businessName: 'Spinachy business',
-      billingAddresses: [{street: 'billing address'}],
+      billingAddresses: [{
+        city: 'New Orleans',
+        postCode: '70130'
+      }],
       allowEmail: true,
       token: '54321',
-      paymentMethodName: 'Platinum',
+      paymentMethodName: 'Platinum'
     };
-    registerUser.createUser('spinach', {user: userData}, function(error, user) {
+    registerUser.createUser('spinach', {user: newUser}, function(error, user) {
       assert.strictEqual(error, null);
-      assert.deepEqual(user, userData);
-      done();
+      assert.deepEqual(user, parsedUser);
     });
   });
 
@@ -147,20 +327,7 @@ describe('jujulib register user service', function() {
     };
     const registerUser = new window.jujulib.registerUser(
       'http://1.2.3.4/', bakery);
-    const userData = {
-      first: 'Geoffrey',
-      last: 'Spinach',
-      email: 'spinach@example.com',
-      addresses: [{street: 'address'}],
-      vat: '1234',
-      business: true,
-      businessName: 'Spinachy business',
-      billingAddresses: [{street: 'billing address'}],
-      allowEmail: true,
-      token: '54321',
-      paymentMethodName: 'Platinum',
-    };
-    registerUser.createUser('spinach', {user: userData}, function(error, user) {
+    registerUser.createUser('spinach', {}, function(error, user) {
       assert.equal(error, 'Uh oh!');
       assert.isNull(user);
       done();
