@@ -157,7 +157,7 @@ describe('EntityDetails', function() {
     var getFile = sinon.spy();
     var renderMarkdown = sinon.spy();
     var addNotification = sinon.spy();
-    var shallowRenderer = jsTestUtils.shallowRender(
+    jsTestUtils.shallowRender(
         <juju.components.EntityDetails
           acl={acl}
           apiUrl={apiUrl}
@@ -178,7 +178,7 @@ describe('EntityDetails', function() {
           pluralize={pluralize}
           addNotification={addNotification}
           makeEntityModel={makeEntityModel} />, true);
-      assert.equal(document.title, 'django (#123) - Juju GUI');
+    assert.equal(document.title, 'django (#123) - Juju GUI');
   });
 
   it('can display a message if there is a loading error', function() {
