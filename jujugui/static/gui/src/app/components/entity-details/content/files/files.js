@@ -137,7 +137,10 @@ YUI.add('entity-files', function() {
           var fileLink = `${url}/${path}`;
           return (
             <li key={path} className="entity-files__file">
-              <a href={fileLink} className="link" title={fileName} target="_blank">
+              <a href={fileLink}
+                className="link"
+                title={fileName}
+                target="_blank">
                 {fileName}
               </a>
             </li>

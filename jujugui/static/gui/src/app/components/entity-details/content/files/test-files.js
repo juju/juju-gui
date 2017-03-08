@@ -52,7 +52,10 @@ describe('EntityFiles', function() {
     var archiveUrl = `${apiUrl}/trusty/django/archive`;
     var fileItems = [
       <li key="foo.zip" className="entity-files__file">
-        <a href={archiveUrl + '/foo.zip'} className="link" title="foo.zip" target="_blank">
+        <a href={archiveUrl + '/foo.zip'}
+          className="link"
+          title="foo.zip"
+          target="_blank">
           foo.zip
         </a>
       </li>,
