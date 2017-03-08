@@ -29,6 +29,7 @@ class TestUpdate(unittest.TestCase):
         'jujugui.socketTemplate': '/model/$uuid/api',
         'jujugui.static_url': '',
         'jujugui.terms_url': options.DEFAULT_TERMS_URL,
+        'jujugui.payment_url': options.DEFAULT_PAYMENT_URL,
         'jujugui.user': None,
     }
 
@@ -58,6 +59,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.controllerSocketTemplate': '/my-api',
             'jujugui.socketTemplate': '/juju/api/$host/$port/$uuid',
             'jujugui.static_url': '/horizon/juju',
+            'jujugui.payment_url': 'https://1.2.3.4/payment-api/',
             'jujugui.terms_url': 'https://1.2.3.4/terms-api/',
             'jujugui.user': 'who',
         }
@@ -80,6 +82,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.controllerSocketTemplate': '/my-api',
             'jujugui.socketTemplate': '/juju/api/$host/$port/$uuid',
             'jujugui.static_url': '/horizon/juju',
+            'jujugui.payment_url': 'https://1.2.3.4/payment-api/',
             'jujugui.terms_url': 'https://1.2.3.4/terms-api/',
             'jujugui.user': 'who',
         }
