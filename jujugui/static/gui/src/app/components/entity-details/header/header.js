@@ -280,7 +280,7 @@ YUI.add('entity-header', function() {
 
       if (latest_revision.id !== revision_id) {
         return (<li>
-          <a onClick={this._handleRevisionClick}>
+          <a className="link" onClick={this._handleRevisionClick}>
             Latest version (#{latest_revision.id})
           </a>
         </li>);
@@ -341,7 +341,7 @@ YUI.add('entity-header', function() {
                 <ul className="bullets inline entity-header__properties">
                   <li className="entity-header__by">
                     By{' '}
-                    <a href={ownerUrl}
+                    <a href={ownerUrl} className="link"
                       target="_blank">{entity.owner}</a>
                   </li>
                   {this._generateLatestRevision()}

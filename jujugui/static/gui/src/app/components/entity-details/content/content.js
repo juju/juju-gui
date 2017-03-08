@@ -177,7 +177,7 @@ YUI.add('entity-content', function() {
       return list.map(function(item, i) {
         return (
           <li key={item + i}>
-            <a data-id={item} onClick={handler}>
+            <a data-id={item} className="link" onClick={handler}>
               {item}
             </a>
           </li>
@@ -316,6 +316,7 @@ YUI.add('entity-content', function() {
             {bugLink ? (
               <li>
                 <a href={bugLink}
+                  className="link"
                   target="_blank">
                   Submit a bug
                 </a>
@@ -323,6 +324,7 @@ YUI.add('entity-content', function() {
             {homepageLink ? (
               <li>
                 <a href={homepageLink}
+                  className="link"
                   target="_blank">
                   Project homepage
                 </a>
