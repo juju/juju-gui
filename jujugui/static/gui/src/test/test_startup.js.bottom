@@ -11,7 +11,7 @@
               return {style: warningStyle};
             } else if (id === 'loading-message') {
               return {style: loadingStyle};
-            } else if (id === 'loading-spinner') {
+            } else if (id === 'loading-indicator') {
               return {};
             } else {
               // This should not happen.
