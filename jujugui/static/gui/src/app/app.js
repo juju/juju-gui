@@ -1006,7 +1006,7 @@ YUI.add('juju-gui', function(Y) {
         this.controllerAPI.loginWithMacaroon.bind(
           this.controllerAPI, this.bakeryFactory.get('juju'));
       const webhandler = new Y.juju.environments.web.WebHandler();
-      const controllerIsConnected = function() {
+      const controllerIsConnected = () => {
         return legacy ? this.env.get('connected') :
           this.controllerAPI.get('connected');
       };
