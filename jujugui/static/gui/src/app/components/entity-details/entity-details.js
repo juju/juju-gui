@@ -150,7 +150,7 @@ YUI.add('entity-details', function() {
         return;
       }
       if (data.length > 0) {
-        const data = data[0];
+        data = data[0];
         const model = this.props.makeEntityModel(data);
         this.setState({
           entityModel: model
