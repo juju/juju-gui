@@ -159,9 +159,10 @@ YUI.add('entity-details', function() {
           this._getPlans();
         });
         const modelEntity = model.toEntity();
-        this.props.setPageTitle(`${modelEntity.displayName}
-        (#${modelEntity.revision_id}) -
-        Juju GUI`);
+        const displayName = modelEntity.displayName;
+        const revision_id = modelEntity.revision_id;
+        const title = `${displayName} (#${revision_id})`;
+        this.props.setPageTitle(title);
       }
     },
 

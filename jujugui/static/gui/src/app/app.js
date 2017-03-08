@@ -2999,11 +2999,10 @@ YUI.add('juju-gui', function(Y) {
 
     /**
       Sets the page title.
-      @method setPageTitle
+      @param {String} title The title to be appended with ' - Juju GUI'
     */
     setPageTitle: function(title) {
-      let _title = title ? `${title} - Juju GUI` : this.defaultPageTitle;
-      document.title = _title;
+      document.title = title ? `${title} - Juju GUI` : this.defaultPageTitle;
     },
 
     /**
