@@ -376,11 +376,15 @@ YUI.add('user-profile-model-list', function() {
       return (
         <div className="user-profile__model-list">
           <div className="user-profile__header twelve-col no-margin-bottom">
-            {label}
-            <span className="user-profile__size">
-              ({list.length})
-            </span>
-            {createNewButton}
+            <div className="left">
+              {label}
+              <span className="user-profile__size">
+                ({list.length})
+              </span>
+            </div>
+            <div className="right">
+              {createNewButton}
+            </div>
           </div>
           {content}
           {this._generateConfirmation()}
