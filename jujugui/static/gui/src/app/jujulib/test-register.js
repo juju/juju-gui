@@ -5,7 +5,7 @@
 chai.config.includeStack = true;
 chai.config.truncateThreshold = 0;
 
-describe('jujulib register user service', function() {
+describe('jujulib register service', function() {
   let parsedUser, returnedUser;
 
   const makeXHRRequest = function(obj) {
@@ -103,13 +103,13 @@ describe('jujulib register user service', function() {
 
   it('exists', function() {
     const bakery = {};
-    const registerUser = new window.jujulib.registerUser(
+    const payment = new window.jujulib.payment(
       'http://1.2.3.4/', bakery);
     assert.strictEqual(
-      registerUser instanceof window.jujulib.registerUser, true);
+      payment instanceof window.jujulib.payment, true);
     assert.strictEqual(
-      registerUser.url,
-      `http://1.2.3.4/${window.jujulib.registerUserAPIVersion}`);
+      payment.url,
+      `http://1.2.3.4/${window.jujulib.paymentAPIVersion}`);
   });
 
   it('can get a user', function(done) {
@@ -118,15 +118,15 @@ describe('jujulib register user service', function() {
         assert.equal(
           path,
           'http://1.2.3.4/' +
-          window.jujulib.registerUserAPIVersion +
+          window.jujulib.paymentAPIVersion +
           '/u/spinach');
         const xhr = makeXHRRequest(returnedUser);
         success(xhr);
       }
     };
-    const registerUser = new window.jujulib.registerUser(
+    const payment = new window.jujulib.payment(
       'http://1.2.3.4/', bakery);
-    registerUser.getUser('spinach', function(error, user) {
+    payment.getUser('spinach', function(error, user) {
       assert.strictEqual(error, null);
       assert.deepEqual(user, parsedUser);
       done();
@@ -139,7 +139,7 @@ describe('jujulib register user service', function() {
         assert.equal(
           path,
           'http://1.2.3.4/' +
-          window.jujulib.registerUserAPIVersion +
+          window.jujulib.paymentAPIVersion +
           '/u/spinach');
         const xhr = makeXHRRequest({
           'billing-addresses': [{
@@ -154,9 +154,9 @@ describe('jujulib register user service', function() {
         success(xhr);
       }
     };
-    const registerUser = new window.jujulib.registerUser(
+    const payment = new window.jujulib.payment(
       'http://1.2.3.4/', bakery);
-    registerUser.getUser('spinach', function(error, user) {
+    payment.getUser('spinach', function(error, user) {
       assert.strictEqual(error, null);
       assert.deepEqual(user, {
         nickname: null,
@@ -209,9 +209,9 @@ describe('jujulib register user service', function() {
         failure(xhr);
       }
     };
-    const registerUser = new window.jujulib.registerUser(
+    const payment = new window.jujulib.payment(
       'http://1.2.3.4/', bakery);
-    registerUser.getUser('spinach', function(error, user) {
+    payment.getUser('spinach', function(error, user) {
       assert.equal(error, 'Uh oh!');
       assert.isNull(user);
       done();
@@ -222,7 +222,7 @@ describe('jujulib register user service', function() {
     const originalMakeRequest = jujulib._makeRequest;
     const makeRequest = sinon.stub();
     jujulib._makeRequest = makeRequest;
-    const registerUser = new window.jujulib.registerUser('http://1.2.3.4/', {});
+    const payment = new window.jujulib.payment('http://1.2.3.4/', {});
     const newUser = {
       first: 'Geoffrey',
       last: 'Spinach',
@@ -242,7 +242,7 @@ describe('jujulib register user service', function() {
       token: '54321',
       paymentMethodName: 'Platinum'
     };
-    registerUser.createUser('spinach', newUser, sinon.stub());
+    payment.createUser('spinach', newUser, sinon.stub());
     // Restore the original method on the lib.
     jujulib._makeRequest = originalMakeRequest;
     assert.equal(makeRequest.callCount, 1);
@@ -285,13 +285,13 @@ describe('jujulib register user service', function() {
         assert.equal(
           path,
           'http://1.2.3.4/' +
-          window.jujulib.registerUserAPIVersion +
+          window.jujulib.paymentAPIVersion +
           '/u/spinach');
         const xhr = makeXHRRequest(returnedUser);
         success(xhr);
       }
     };
-    const registerUser = new window.jujulib.registerUser(
+    const payment = new window.jujulib.payment(
       'http://1.2.3.4/', bakery);
     const newUser = {
       first: 'Geoffrey',
@@ -312,7 +312,7 @@ describe('jujulib register user service', function() {
       token: '54321',
       paymentMethodName: 'Platinum'
     };
-    registerUser.createUser('spinach', {user: newUser}, function(error, user) {
+    payment.createUser('spinach', {user: newUser}, function(error, user) {
       assert.strictEqual(error, null);
       assert.deepEqual(user, parsedUser);
     });
@@ -325,9 +325,9 @@ describe('jujulib register user service', function() {
         failure(xhr);
       }
     };
-    const registerUser = new window.jujulib.registerUser(
+    const payment = new window.jujulib.payment(
       'http://1.2.3.4/', bakery);
-    registerUser.createUser('spinach', {}, function(error, user) {
+    payment.createUser('spinach', {}, function(error, user) {
       assert.equal(error, 'Uh oh!');
       assert.isNull(user);
       done();

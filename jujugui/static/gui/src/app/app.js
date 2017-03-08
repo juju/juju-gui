@@ -2394,7 +2394,7 @@ YUI.add('juju-gui', function(Y) {
       });
       this.terms = new window.jujulib.terms(config.termsURL, termsBakery);
       if (config.payFlag) {
-        const registerUserBakery = this.bakeryFactory.create({
+        const paymentBakery = this.bakeryFactory.create({
           serviceName: 'payment',
           macaroon: macaroons,
           webhandler: webHandler,
@@ -2403,8 +2403,8 @@ YUI.add('juju-gui', function(Y) {
           dischargeStore: window.localStorage,
           dischargeToken: config.dischargeToken
         });
-        this.registerUser = new window.jujulib.registerUser(
-          config.registerUserURL, registerUserBakery);
+        this.payment = new window.jujulib.payment(
+          config.paymentURL, paymentBakery);
       }
     },
 

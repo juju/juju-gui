@@ -106,7 +106,7 @@ def config(request):
         'bundleServiceURL': settings['jujugui.bundleservice_url'],
         'charmstoreURL': settings['jujugui.charmstore_url'],
         'plansURL': settings['jujugui.plans_url'],
-        'registerUserURL': settings['jujugui.register_user_url'],
+        'paymentURL': settings['jujugui.payment_url'],
         'termsURL': settings['jujugui.terms_url'],
         # Any provided macaroons.
         'dischargeToken': discharge_token,

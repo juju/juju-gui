@@ -29,7 +29,7 @@ def update(settings):
     _update(settings, 'jujugui.GTM_enabled', default=False)
     _update(settings, 'jujugui.password', default=None)
     _update(settings, 'jujugui.plans_url', default=DEFAULT_PLANS_URL)
-    _update(settings, 'jujugui.register_user_url',
+    _update(settings, 'jujugui.payment_url',
             default=DEFAULT_REGISTER_PAYMENT_URL)
     _update(settings, 'jujugui.terms_url', default=DEFAULT_TERMS_URL)
     _update(settings, 'jujugui.socketTemplate', default='/model/$uuid/api')

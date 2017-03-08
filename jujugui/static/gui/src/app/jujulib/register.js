@@ -8,30 +8,30 @@ var module = module;
   const jujulib = exports.jujulib;
 
   /**
-    Register User service client.
+    Payment service client.
 
-    Provides access to the Register User API.
+    Provides access to the payment API.
   */
 
-  const registerUserAPIVersion = 'v1';
+  const paymentAPIVersion = 'v1';
 
   /**
     Initializer.
 
-    @function registerUser
-    @param url {String} The URL of the Register User instance, including
+    @function payment
+    @param url {String} The URL of the payment instance, including
       scheme and port, and excluding the API version.
     @param bakery {Object} A bakery object for communicating with the Register
       User instance.
-    @returns {Object} A client object for making Register User API calls.
+    @returns {Object} A client object for making payment API calls.
   */
-  function registerUser(url, bakery) {
+  function payment(url, bakery) {
     // Store the API URL (including version) handling missing trailing slash.
-    this.url = url.replace(/\/?$/, '/') + registerUserAPIVersion;
+    this.url = url.replace(/\/?$/, '/') + paymentAPIVersion;
     this.bakery = bakery;
   };
 
-  registerUser.prototype = {
+  payment.prototype = {
     /**
       Get the details for a user.
 
@@ -271,7 +271,7 @@ var module = module;
   };
 
   // Populate the library with the API client and supported version.
-  jujulib.registerUser = registerUser;
-  jujulib.registerUserAPIVersion = registerUserAPIVersion;
+  jujulib.payment = payment;
+  jujulib.paymentAPIVersion = paymentAPIVersion;
 
 }((module && module.exports) ? module.exports : this));
