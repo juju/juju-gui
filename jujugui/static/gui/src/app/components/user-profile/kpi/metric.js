@@ -55,8 +55,8 @@ YUI.add('user-profile-entity-metric', function() {
         .tickFormat('');
       let x = d3.scale.linear()
         .domain([
-          Date.parse(metric[0].Time),
-          Date.parse(metric[metric.length - 1].Time)
+          Date.parse(metric[0].time),
+          Date.parse(metric[metric.length - 1].time)
         ])
         .range([20, 500]);
       let xAxis = d3.svg.axis()
